@@ -52,7 +52,7 @@ public class DefaultAnalyzer extends Analyzer {
 		}
 		if (locale == null && userLocale.getCountry().length() > 0) {
 			// Check if at least the language is supported by BreakIterator
-			Locale language = new Locale(userLocale.getLanguage(), "");
+			Locale language = new Locale(userLocale.getLanguage(), ""); //$NON-NLS-1$
 			for (int i = 0; i < availableLocales.length; i++) {
 				if (language.equals(availableLocales[i])) {
 					locale = language;
@@ -64,9 +64,9 @@ public class DefaultAnalyzer extends Analyzer {
 		if (locale == null) {
 			// Locale is not supported, will use en_US
 			HelpBasePlugin.logError(
-				HelpBaseResources.getString("ES24", localeString),
+				HelpBaseResources.getString("ES24", localeString), //$NON-NLS-1$
 				null);
-			locale = new Locale("en", "US");
+			locale = new Locale("en", "US"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/**
@@ -88,9 +88,9 @@ public class DefaultAnalyzer extends Analyzer {
 			clientLocale = Locale.getDefault().toString();
 
 		// break the string into tokens to get the Locale object
-		StringTokenizer locales = new StringTokenizer(clientLocale, "_");
+		StringTokenizer locales = new StringTokenizer(clientLocale, "_"); //$NON-NLS-1$
 		if (locales.countTokens() == 1)
-			return new Locale(locales.nextToken(), "");
+			return new Locale(locales.nextToken(), ""); //$NON-NLS-1$
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)

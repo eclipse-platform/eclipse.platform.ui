@@ -89,7 +89,7 @@ public class SearchManager implements ITocsChangedListener{
 			if (HelpBasePlugin.DEBUG_SEARCH) {
 				System.out.println(
 					this.getClass().getName()
-						+ " IndexUpdateException occurred.");
+						+ " IndexUpdateException occurred."); //$NON-NLS-1$
 			}
 		}
 		index.search(searchQuery, collector);
@@ -113,7 +113,7 @@ public class SearchManager implements ITocsChangedListener{
 		}
 		try {
 			if (useLock && !configurationLocked) {
-				pm.beginTask("", 1);
+				pm.beginTask("", 1); //$NON-NLS-1$
 				pm.worked(1);
 				pm.done();
 				return;
@@ -124,7 +124,7 @@ public class SearchManager implements ITocsChangedListener{
 			// to prevent showing progress on first search after launch
 			// if no indexing is needed
 			if (index.isClosed() || !index.needsUpdating()) {
-				pm.beginTask("", 1);
+				pm.beginTask("", 1); //$NON-NLS-1$
 				pm.worked(1);
 				pm.done();
 				return;
@@ -150,19 +150,19 @@ public class SearchManager implements ITocsChangedListener{
 	 */
 	private synchronized void updateIndex(IProgressMonitor pm, SearchIndex index, ProgressDistributor progressDistrib) throws IndexingException {
 		if (index.isClosed() || !index.needsUpdating()) {
-			pm.beginTask("", 1);
+			pm.beginTask("", 1); //$NON-NLS-1$
 			pm.worked(1);
 			pm.done();
 			return;
 		}
 		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out.println("SearchManager indexing " + index.getLocale());
+			System.out.println("SearchManager indexing " + index.getLocale()); //$NON-NLS-1$
 		}
 		// Perform indexing
 		try {
 			PluginVersionInfo versions = index.getDocPlugins();
 			if (versions == null) {
-				pm.beginTask("", 1);
+				pm.beginTask("", 1); //$NON-NLS-1$
 				pm.worked(1);
 				pm.done();
 				return;
@@ -173,7 +173,7 @@ public class SearchManager implements ITocsChangedListener{
 		} catch (OperationCanceledException oce) {
 			progressDistrib.operationCanceled();
 			HelpBasePlugin.logWarning(HelpBaseResources
-					.getString("Search_cancelled"));
+					.getString("Search_cancelled")); //$NON-NLS-1$
 			throw oce;
 		}
 	}
@@ -198,7 +198,7 @@ public class SearchManager implements ITocsChangedListener{
 			synchronized(indexes){
 				indexes.remove(ix.getLocale());
 				ProgressDistributor pm = ix.getProgressDistributor();
-				pm.beginTask("", 1);
+				pm.beginTask("", 1); //$NON-NLS-1$
 				pm.worked(1);
 				pm.done();
 				SearchProgressMonitor.reinit(ix.getLocale());

@@ -19,18 +19,18 @@ import org.eclipse.osgi.service.environment.*;
  * Creates browser by delegating to appropriate browser adapter
  */
 public class BrowserManager {
-	public static final String ALWAYS_EXTERNAL_BROWSER_KEY = "always_external_browser";
-	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser";
+	public static final String ALWAYS_EXTERNAL_BROWSER_KEY = "always_external_browser"; //$NON-NLS-1$
+	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser"; //$NON-NLS-1$
 	public static final String BROWSER_ID_CUSTOM = HelpBasePlugin.PLUGIN_ID
-			+ ".custombrowser";
+			+ ".custombrowser"; //$NON-NLS-1$
 	public static final String BROWSER_ID_MOZILLA = HelpBasePlugin.PLUGIN_ID
-			+ ".mozilla";
+			+ ".mozilla"; //$NON-NLS-1$
 	public static final String BROWSER_ID_NETSCAPE = HelpBasePlugin.PLUGIN_ID
-			+ ".netscape";
+			+ ".netscape"; //$NON-NLS-1$
 	public static final String BROWSER_ID_MAC_SYSTEM = HelpBasePlugin.PLUGIN_ID
-			+ ".defaultBrowserMacOSX";
-	public static final String BROWSER_ID_EMBEDDED = "org.eclipse.help.ui.embeddedbrowser";
-	public static final String BROWSER_ID_SYSTEM = "org.eclipse.help.ui.systembrowser";
+			+ ".defaultBrowserMacOSX"; //$NON-NLS-1$
+	public static final String BROWSER_ID_EMBEDDED = "org.eclipse.help.ui.embeddedbrowser"; //$NON-NLS-1$
+	public static final String BROWSER_ID_SYSTEM = "org.eclipse.help.ui.systembrowser"; //$NON-NLS-1$
 	private static BrowserManager instance;
 	private boolean initialized = false;
 	private BrowserDescriptor currentBrowserDesc;
@@ -55,7 +55,7 @@ public class BrowserManager {
 		String defBrowserID = HelpBasePlugin.getDefault()
 				.getPluginPreferences()
 				.getDefaultString(DEFAULT_BROWSER_ID_KEY);
-		if (defBrowserID != null && (!"".equals(defBrowserID))) {
+		if (defBrowserID != null && (!"".equals(defBrowserID))) { //$NON-NLS-1$
 			setDefaultBrowserID(defBrowserID);
 		}
 		// 2. set default browser to embedded
@@ -95,7 +95,7 @@ public class BrowserManager {
 		// 6. use null browser
 		if (defaultBrowserDesc == null) {
 			// If no browsers at all, use the Null Browser Adapter
-			defaultBrowserDesc = new BrowserDescriptor("", "Null Browser",
+			defaultBrowserDesc = new BrowserDescriptor("", "Null Browser", //$NON-NLS-1$ //$NON-NLS-2$
 					new IBrowserFactory() {
 						public boolean isAvailable() {
 							return true;
@@ -106,7 +106,7 @@ public class BrowserManager {
 								}
 								public void displayURL(String url) {
 									String msg = HelpBaseResources.getString(
-											"no_browsers", url);
+											"no_browsers", url); //$NON-NLS-1$
 									HelpBasePlugin.logError(msg, null);
 									BaseHelpSystem.getDefaultErrorUtil()
 											.displayError(msg);
@@ -131,7 +131,7 @@ public class BrowserManager {
 		// initialize current browser
 		String curBrowserID = HelpBasePlugin.getDefault()
 				.getPluginPreferences().getString(DEFAULT_BROWSER_ID_KEY);
-		if (curBrowserID != null && (!"".equals(curBrowserID))) {
+		if (curBrowserID != null && (!"".equals(curBrowserID))) { //$NON-NLS-1$
 			setCurrentBrowserID(curBrowserID);
 			// may fail if such browser does not exist
 		}
@@ -158,19 +158,19 @@ public class BrowserManager {
 		Collection bDescriptors = new ArrayList();
 		IConfigurationElement configElements[] = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(HelpBasePlugin.PLUGIN_ID,
-						"browser");
+						"browser"); //$NON-NLS-1$
 		for (int i = 0; i < configElements.length; i++) {
-			if (!configElements[i].getName().equals("browser"))
+			if (!configElements[i].getName().equals("browser")) //$NON-NLS-1$
 				continue;
-			String id = configElements[i].getAttribute("id");
+			String id = configElements[i].getAttribute("id"); //$NON-NLS-1$
 			if (id == null)
 				continue;
-			String label = configElements[i].getAttribute("name");
+			String label = configElements[i].getAttribute("name"); //$NON-NLS-1$
 			if (label == null)
 				continue;
 			try {
 				Object adapter = configElements[i]
-						.createExecutableExtension("factoryclass");
+						.createExecutableExtension("factoryclass"); //$NON-NLS-1$
 				if (!(adapter instanceof IBrowserFactory))
 					continue;
 				if (((IBrowserFactory) adapter).isAvailable()) {

@@ -47,7 +47,7 @@ public class QueryBuilder {
 			this.locale = new Locale(language.substring(0, 2), language
 					.substring(3, 5));
 		} else {
-			this.locale = new Locale(language.substring(0, 2), "");
+			this.locale = new Locale(language.substring(0, 2), ""); //$NON-NLS-1$
 		}
 		this.analyzerDesc = analyzerDesc;
 		this.analyzer = analyzerDesc.getAnalyzer();
@@ -59,15 +59,15 @@ public class QueryBuilder {
 		List tokenList = new ArrayList();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer = new StringTokenizer(searchWords.trim(),
-				"\"", true);
+				"\"", true); //$NON-NLS-1$
 		boolean withinQuotation = false;
-		String quotedString = "";
+		String quotedString = ""; //$NON-NLS-1$
 		int termCount = 0;
 		// keep track of number of terms to disallow too many
 		int orCount = 0; // keep track of number of ORs to disallow too many
 		while (qTokenizer.hasMoreTokens()) {
 			String curToken = qTokenizer.nextToken();
-			if (curToken.equals("\"")) {
+			if (curToken.equals("\"")) { //$NON-NLS-1$
 				if (withinQuotation) {
 					// check for too many terms
 					if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER
@@ -76,7 +76,7 @@ public class QueryBuilder {
 					}
 					tokenList.add(QueryWordsToken.exactPhrase(quotedString));
 				} else {
-					quotedString = "";
+					quotedString = ""; //$NON-NLS-1$
 				}
 				withinQuotation = !withinQuotation;
 				continue;
@@ -142,7 +142,7 @@ public class QueryBuilder {
 						// wild card not allowed as the first character
 					}
 				} else {
-					List wordList = analyzeText(analyzer, "contents",
+					List wordList = analyzeText(analyzer, "contents", //$NON-NLS-1$
 							token.value);
 					if (wordList.size() > 0) {
 						if (!highlightWords.contains(token.value)) {
@@ -176,7 +176,7 @@ public class QueryBuilder {
 								// which would result in common characters
 								// highlighted all over (bug 30263)
 								if (!analyzerDesc.getId().startsWith(
-										HelpBasePlugin.PLUGIN_ID + "#")) {
+										HelpBasePlugin.PLUGIN_ID + "#")) { //$NON-NLS-1$
 									if (!highlightWords.contains(word)) {
 										highlightWords.add(word);
 									}
@@ -194,7 +194,7 @@ public class QueryBuilder {
 					|| token.type == QueryWordsToken.NOT)
 				newTokens.add(token);
 			else if (token.type == QueryWordsToken.EXACT_PHRASE) {
-				List wordList = analyzeText(analyzer, "exact_contents",
+				List wordList = analyzeText(analyzer, "exact_contents", //$NON-NLS-1$
 						token.value);
 				if (wordList.size() > 0) {
 					if (!highlightWords.contains(token.value)) {
@@ -384,7 +384,7 @@ public class QueryBuilder {
 				fields[i] = (String) fieldNamesIt.next();
 				boosts[i] = 5.0f;
 			}
-			fields[fieldNames.size()] = "contents";
+			fields[fieldNames.size()] = "contents"; //$NON-NLS-1$
 			boosts[fieldNames.size()] = 1.0f;
 		}
 		Query query = getLuceneQuery(fields, boosts);
@@ -430,7 +430,7 @@ public class QueryBuilder {
 		for (Iterator it = highlightWords.iterator(); it.hasNext();) {
 			buf.append('"');
 			buf.append(it.next());
-			buf.append("\" ");
+			buf.append("\" "); //$NON-NLS-1$
 		}
 		return buf.toString();
 	}

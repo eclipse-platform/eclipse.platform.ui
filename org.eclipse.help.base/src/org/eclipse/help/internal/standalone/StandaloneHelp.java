@@ -33,7 +33,7 @@ import org.eclipse.help.internal.base.*;
 public class StandaloneHelp extends EclipseController {
 	// ID of the application to run
 	private static final String HELP_APPLICATION_ID =
-		HelpBasePlugin.PLUGIN_ID + ".helpApplication";
+		HelpBasePlugin.PLUGIN_ID + ".helpApplication"; //$NON-NLS-1$
 
 	/**
 	 * Constructs help system
@@ -83,14 +83,14 @@ public class StandaloneHelp extends EclipseController {
 	 * @see org.eclipse.help.standalone.Help#displayHelp()
 	 */
 	public void displayHelp() throws Exception {
-		sendHelpCommand("displayHelp", new String[0]);
+		sendHelpCommand("displayHelp", new String[0]); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see org.eclipse.help.standalone.Help#displayHelp(java.lang.String)
 	 */
 	public void displayHelp(String href) throws Exception {
-		sendHelpCommand("displayHelp", new String[] { "href=" + href });
+		sendHelpCommand("displayHelp", new String[] { "href=" + href }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -104,20 +104,20 @@ public class StandaloneHelp extends EclipseController {
 		}
 		String command = (String) helpCommands.get(0);
 
-		if ("start".equalsIgnoreCase(command)) {
+		if ("start".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			start();
 			return true;
-		} else if ("shutdown".equalsIgnoreCase(command)) {
+		} else if ("shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			shutdown();
 			return true;
-		} else if ("displayHelp".equalsIgnoreCase(command)) {
+		} else if ("displayHelp".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 2) {
 				displayHelp((String) helpCommands.get(1));
 			} else {
 				displayHelp();
 			}
 			return true;
-		} else if ("displayContext".equalsIgnoreCase(command)) {
+		} else if ("displayContext".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 4) {
 				displayContext(
 					(String) helpCommands.get(1),
@@ -126,7 +126,7 @@ public class StandaloneHelp extends EclipseController {
 
 				return true;
 			}
-		} else if ("displayContextInfopop".equalsIgnoreCase(command)) {
+		} else if ("displayContextInfopop".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 4) {
 				displayContextInfopop(
 					(String) helpCommands.get(1),
@@ -145,7 +145,7 @@ public class StandaloneHelp extends EclipseController {
 		System.out.println("Parameters syntax:");
 		System.out.println();
 		System.out.println(
-			"-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs [Java VM arguments]]");
+			"-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
 		System.out.println();
 		System.out.println("where:");
 		System.out.println(" href is the URL of the help resource to display,");

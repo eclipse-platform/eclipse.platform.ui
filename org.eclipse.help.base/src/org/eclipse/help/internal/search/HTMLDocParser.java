@@ -30,12 +30,12 @@ public class HTMLDocParser {
 	private static final int MAX_OFFSET = 2048;
 
 	// elements, atributes and values contstants
-	final String ELEMENT_META = "META";
-	final String ELEMENT_BODY = "body";
-	final String ELEMENT_HEAD = "head";
-	final String ATTRIBUTE_HTTP = "http-equiv";
-	final String ATTRIBUTE_HTTP_VALUE = "content-type";
-	final String ATTRIBUTE_CONTENT = "content";
+	final String ELEMENT_META = "META"; //$NON-NLS-1$
+	final String ELEMENT_BODY = "body"; //$NON-NLS-1$
+	final String ELEMENT_HEAD = "head"; //$NON-NLS-1$
+	final String ATTRIBUTE_HTTP = "http-equiv"; //$NON-NLS-1$
+	final String ATTRIBUTE_HTTP_VALUE = "content-type"; //$NON-NLS-1$
+	final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
 
 	// states for parsing elements
 	final int STATE_ELEMENT_START = 0;
@@ -78,11 +78,11 @@ public class HTMLDocParser {
 				if (HelpBasePlugin.DEBUG_SEARCH) {
 					System.out.println(
 						this.getClass().getName()
-							+ " JVM does not support encoding "
+							+ " JVM does not support encoding " //$NON-NLS-1$
 							+ encoding
-							+ " specified in document "
+							+ " specified in document " //$NON-NLS-1$
 							+ url.getPath()
-							+ ". Default encoding will be used during indexing.");
+							+ ". Default encoding will be used during indexing."); //$NON-NLS-1$
 				}
 				htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 			}
@@ -90,9 +90,9 @@ public class HTMLDocParser {
 			if (HelpBasePlugin.DEBUG_SEARCH) {
 				System.out.println(
 					this.getClass().getName()
-						+ " Encoding not found in document "
+						+ " Encoding not found in document " //$NON-NLS-1$
 						+ url.getPath()
-						+ ". Default encoding will be used during indexing.");
+						+ ". Default encoding will be used during indexing."); //$NON-NLS-1$
 			}
 			htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 		}
@@ -115,7 +115,7 @@ public class HTMLDocParser {
 		try {
 			return htmlParser.getTitle();
 		} catch (InterruptedException ie) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	public String getSummary() throws IOException {
@@ -125,7 +125,7 @@ public class HTMLDocParser {
 		try {
 			return htmlParser.getSummary();
 		} catch (InterruptedException ie) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	public Reader getContentReader() throws IOException {
@@ -365,12 +365,12 @@ public class HTMLDocParser {
 	 *  or  null if parameter does not exist
 	 */
 	public String getCharsetFromHTTP(String contentValue) {
-		StringTokenizer t = new StringTokenizer(contentValue, ";");
+		StringTokenizer t = new StringTokenizer(contentValue, ";"); //$NON-NLS-1$
 		while (t.hasMoreTokens()) {
 			String parameter = t.nextToken().trim();
-			if (parameter.toLowerCase().startsWith("charset=")) {
+			if (parameter.toLowerCase().startsWith("charset=")) { //$NON-NLS-1$
 				String charset =
-					parameter.substring("charset=".length()).trim();
+					parameter.substring("charset=".length()).trim(); //$NON-NLS-1$
 				if (charset.length() > 0) {
 					return charset;
 				}

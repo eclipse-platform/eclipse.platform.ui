@@ -30,11 +30,11 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		if (!isSupportedOS(System.getProperty("os.name"))) {
+		if (!isSupportedOS(System.getProperty("os.name"))) { //$NON-NLS-1$
 			return false;
 		}
 		try {
-			Process pr = Runtime.getRuntime().exec("which " + executable);
+			Process pr = Runtime.getRuntime().exec("which " + executable); //$NON-NLS-1$
 			StreamConsumer outputs = new StreamConsumer(pr.getInputStream());
 			(outputs).start();
 			StreamConsumer errors = new StreamConsumer(pr.getErrorStream());
@@ -67,13 +67,13 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 		try {
 			outputs.join(1000);
 			if (outputs.getLastLine() != null
-				&& outputs.getLastLine().indexOf("no " + executable + " in")
+				&& outputs.getLastLine().indexOf("no " + executable + " in") //$NON-NLS-1$ //$NON-NLS-2$
 					>= 0) {
 				return true;
 			}
 			errors.join(1000);
 			if (errors.getLastLine() != null
-				&& errors.getLastLine().indexOf("no " + executable + " in")
+				&& errors.getLastLine().indexOf("no " + executable + " in") //$NON-NLS-1$ //$NON-NLS-2$
 					>= 0) {
 				return true;
 			}
@@ -103,16 +103,16 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 		throws CoreException {
 		try {
 			Hashtable params = (Hashtable) data;
-			executable = (String) params.get("executable");
-			executableName = (String) params.get("executableName");
-			osList = (String) params.get("os");
+			executable = (String) params.get("executable"); //$NON-NLS-1$
+			executableName = (String) params.get("executableName"); //$NON-NLS-1$
+			osList = (String) params.get("os"); //$NON-NLS-1$
 		} catch (Exception e) {
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
 					HelpBasePlugin.PLUGIN_ID,
 					IStatus.OK,
-					HelpBaseResources.getString("MozillaFactory.dataMissing"),
+					HelpBaseResources.getString("MozillaFactory.dataMissing"), //$NON-NLS-1$
 					e));
 		}
 	}
@@ -121,7 +121,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 			// parameter missing
 			return false;
 		}
-		String[] OSes = osList.split(",\\s*");
+		String[] OSes = osList.split(",\\s*"); //$NON-NLS-1$
 		for (int i = 0; i < OSes.length; i++) {
 			if (os.toLowerCase().startsWith(OSes[i].toLowerCase())) {
 				return true;

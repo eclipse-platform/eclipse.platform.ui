@@ -96,6 +96,6 @@ public class AdaptableTopic extends AdaptableHelpResource {
 		AdaptableHelpResource[] topics = toc.getChildren();
 		for (int i=0; i<topics.length; i++)
 			if (topics[i] == this)		
-				element.setAttribute("topic", String.valueOf(i));
+				element.setAttribute("topic", String.valueOf(i)); //$NON-NLS-1$
 	}
 }

@@ -37,7 +37,7 @@ public class Eclipse extends Thread {
 	public Eclipse(EclipseLifeCycleListener listener) {
 		super();
 		this.lifeCycleListener = listener;
-		this.setName("Eclipse");
+		this.setName("Eclipse"); //$NON-NLS-1$
 		this.dir = Options.getEclipseHome();
 	}
 	private void prepareCommand() throws Exception {
@@ -55,13 +55,13 @@ public class Eclipse extends Thread {
 		List eclipseArgs = Options.getEclipseArgs();
 		cmdarray = new String[3 + vmArgs.size() + 1 + eclipseArgs.size()];
 		cmdarray[0] =
-			new File(Options.getEclipseHome(), "eclipse").getAbsolutePath();
-		cmdarray[1] = "-vm";
+			new File(Options.getEclipseHome(), "eclipse").getAbsolutePath(); //$NON-NLS-1$
+		cmdarray[1] = "-vm"; //$NON-NLS-1$
 		cmdarray[2] = Options.getVm();
 		for (int i = 0; i < eclipseArgs.size(); i++) {
 			cmdarray[3 + i] = (String) eclipseArgs.get(i);
 		}
-		cmdarray[3 + eclipseArgs.size()] = "-vmargs";
+		cmdarray[3 + eclipseArgs.size()] = "-vmargs"; //$NON-NLS-1$
 		for (int i = 0; i < vmArgs.size(); i++) {
 			cmdarray[4 + eclipseArgs.size() + i] = (String) vmArgs.get(i);
 		}
@@ -74,9 +74,9 @@ public class Eclipse extends Thread {
 		for (int i = 0; i < vmArgs.size(); i++) {
 			cmdarray[1 + i] = (String) vmArgs.get(i);
 		}
-		cmdarray[1 + vmArgs.size()] = "-cp";
-		cmdarray[2 + vmArgs.size()] = "startup.jar";
-		cmdarray[3 + vmArgs.size()] = "org.eclipse.core.launcher.Main";
+		cmdarray[1 + vmArgs.size()] = "-cp"; //$NON-NLS-1$
+		cmdarray[2 + vmArgs.size()] = "startup.jar"; //$NON-NLS-1$
+		cmdarray[3 + vmArgs.size()] = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 		for (int i = 0; i < eclipseArgs.size(); i++) {
 			cmdarray[4 + vmArgs.size() + i] = (String) eclipseArgs.get(i);
 		}
@@ -104,10 +104,10 @@ public class Eclipse extends Thread {
 				}
 				if (Options.isDebug()) {
 					System.out.println(
-						"Eclipse exited with status code " + pr.exitValue());
+						"Eclipse exited with status code " + pr.exitValue()); //$NON-NLS-1$
 					if (pr.exitValue() == NEEDS_RESTART) {
 						System.out.println(
-							"Updates are installed,  Eclipse will be restarted.");
+							"Updates are installed,  Eclipse will be restarted."); //$NON-NLS-1$
 					}
 				}
 			} while (pr.exitValue() == NEEDS_RESTART);
@@ -131,7 +131,7 @@ public class Eclipse extends Thread {
 		BufferedReader bReader;
 		public StreamConsumer(InputStream inputStream) {
 			super();
-			this.setName("Eclipse out/err consumer");
+			this.setName("Eclipse out/err consumer"); //$NON-NLS-1$
 			this.setDaemon(true);
 			bReader = new BufferedReader(new InputStreamReader(inputStream));
 		}
@@ -152,7 +152,7 @@ public class Eclipse extends Thread {
 		if (vmExe.exists() && !vmExe.isDirectory()) {
 			return;
 		}
-		vmExe = new File(Options.getVm() + ".exe");
+		vmExe = new File(Options.getVm() + ".exe"); //$NON-NLS-1$
 		if (vmExe.exists() && !vmExe.isDirectory()) {
 			return;
 		}
@@ -165,10 +165,10 @@ public class Eclipse extends Thread {
 		File eclipseExe =
 			new File(
 				Options.getEclipseHome(),
-				"eclipse"
-					+ (System.getProperty("os.name").startsWith("Win")
-						? ".exe"
-						: ""));
+				"eclipse" //$NON-NLS-1$
+					+ (System.getProperty("os.name").startsWith("Win") //$NON-NLS-1$ //$NON-NLS-2$
+						? ".exe" //$NON-NLS-1$
+						: "")); //$NON-NLS-1$
 		if (eclipseExe.exists() && !eclipseExe.isDirectory()) {
 			return;
 		}
@@ -178,7 +178,7 @@ public class Eclipse extends Thread {
 				+ " does not exists.  Pass a correct -eclipsehome option");
 	}
 	private void ensureStartupJarExists() throws Exception {
-		File startupJar = new File(Options.getEclipseHome(), "startup.jar");
+		File startupJar = new File(Options.getEclipseHome(), "startup.jar"); //$NON-NLS-1$
 		if (startupJar.exists() && !startupJar.isDirectory()) {
 			return;
 		}
@@ -203,7 +203,7 @@ public class Eclipse extends Thread {
 	private void printCommand() {
 		System.out.println("Launch command is:");
 		for (int i = 0; i < cmdarray.length; i++) {
-			System.out.println("  " + cmdarray[i]);
+			System.out.println("  " + cmdarray[i]); //$NON-NLS-1$
 		}
 
 	}

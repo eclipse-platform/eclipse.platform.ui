@@ -56,7 +56,7 @@ public class SearchResults implements ISearchHitCollector {
 			} catch (IOException ioe) {
 				continue;
 			}
-			String href = doc.get("name");
+			String href = doc.get("name"); //$NON-NLS-1$
 
 			IToc toc = null; // the TOC containing the topic
 			AdaptableHelpResource scope = null;
@@ -87,8 +87,8 @@ public class SearchResults implements ISearchHitCollector {
 			}
 
 			// Set the document label
-			String label = doc.get("raw_title");
-			if ("".equals(label) && toc != null) {
+			String label = doc.get("raw_title"); //$NON-NLS-1$
+			if ("".equals(label) && toc != null) { //$NON-NLS-1$
 				ITopic t;
 				if (scope != null) {
 					t = scope.getTopic(href);
@@ -99,12 +99,12 @@ public class SearchResults implements ISearchHitCollector {
 					label=t.getLabel();
 				}
 			}
-			if (label == null || "".equals(label)){
+			if (label == null || "".equals(label)){ //$NON-NLS-1$
 				label = href;
 			}
 
 			// Set document href
-			href = href + "?resultof=" + urlEncodedWords;
+			href = href + "?resultof=" + urlEncodedWords; //$NON-NLS-1$
 			searchHitList.add(new SearchHit(href, label, score, toc));
 		}
 		searchHits =

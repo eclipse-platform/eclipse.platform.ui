@@ -19,7 +19,7 @@ import org.apache.lucene.search.*;
 public class QueryWordsExactPhrase extends QueryWordsToken {
 	private List words;
 	public QueryWordsExactPhrase() {
-		super(QueryWordsToken.EXACT_PHRASE, "");
+		super(QueryWordsToken.EXACT_PHRASE, ""); //$NON-NLS-1$
 		words = new ArrayList();
 	}
 	public void addWord(String word) {
@@ -27,7 +27,7 @@ public class QueryWordsExactPhrase extends QueryWordsToken {
 		if (words.size() <= 1)
 			value = word;
 		else
-			value += " " + word;
+			value += " " + word; //$NON-NLS-1$
 	}
 	public List getWords() {
 		return words;
@@ -41,7 +41,7 @@ public class QueryWordsExactPhrase extends QueryWordsToken {
 		for (Iterator it = getWords().iterator(); it.hasNext();)
 		{
 			String word = (String) it.next();
-			Term t = new Term("exact_"+field, word);
+			Term t = new Term("exact_"+field, word); //$NON-NLS-1$
 			q.add(t);
 			q.setBoost(boost);
 		}

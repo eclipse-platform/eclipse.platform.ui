@@ -41,7 +41,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 *
 	 * @see IPropertyChangeListener
 	 */
-	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd";
+	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd"; //$NON-NLS-1$
 	/**
 	 * Change event id when a working set is removed
 	 * newValue of the PropertyChangeEvent will be null.
@@ -49,7 +49,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 *
 	 * @see IPropertyChangeListener
 	 */
-	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove";
+	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove"; //$NON-NLS-1$
 	/**
 	 * Change event id when the working set contents changed
 	 * newValue of the PropertyChangeEvent will be the changed working set.
@@ -58,7 +58,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE =
-		"workingSetContentChange";
+		"workingSetContentChange"; //$NON-NLS-1$
 	/**
 	 * Change event id when the working set name changed.
 	 * newValue of the PropertyChangeEvent will be the changed working set.
@@ -74,10 +74,10 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 *
 	 * @see IPropertyChangeListener
 	 */
-	public static final String CHANGE_WORKING_SETS_SYNCH = "workingSetsSynch";
+	public static final String CHANGE_WORKING_SETS_SYNCH = "workingSetsSynch"; //$NON-NLS-1$
 
 	// Working set persistence
-	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml";
+	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 	private PropertyChange.ListenerList propertyChangeListeners =
 		new PropertyChange.ListenerList();
@@ -261,19 +261,19 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 
 				return true;
 			} catch (ParserConfigurationException pce) {
-				String msg = HelpBaseResources.getString("WorkingSetManager.PCE");
+				String msg = HelpBaseResources.getString("WorkingSetManager.PCE"); //$NON-NLS-1$
 				HelpPlugin.logError(msg, pce);
-				HelpPlugin.logError(HelpBaseResources.getString("E041"), pce);
+				HelpPlugin.logError(HelpBaseResources.getString("E041"), pce); //$NON-NLS-1$
 				return false;
 			} catch (SAXException se) {
-				String msg = HelpBaseResources.getString("E018", stateFile.toString());
+				String msg = HelpBaseResources.getString("E018", stateFile.toString()); //$NON-NLS-1$
 				HelpBasePlugin.logError(msg, se);
-				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), se);
+				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), se); //$NON-NLS-1$
 				return false;
 			} catch (IOException ioe) {
-				String msg = HelpBaseResources.getString("E018", stateFile.toString());
+				String msg = HelpBaseResources.getString("E018", stateFile.toString()); //$NON-NLS-1$
 				HelpBasePlugin.logError(msg, ioe);
-				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), ioe);
+				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), ioe); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -310,16 +310,16 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 */
 	private WorkingSet restoreWorkingSet(Element workingSetNode) {
 
-		String name = workingSetNode.getAttribute("name");
-		NodeList items = workingSetNode.getElementsByTagName("item");
+		String name = workingSetNode.getAttribute("name"); //$NON-NLS-1$
+		NodeList items = workingSetNode.getElementsByTagName("item"); //$NON-NLS-1$
 		List helpResources = new ArrayList(items.getLength());
 		for (int i = 0; i < items.getLength(); i++) {
 			Element item = (Element) items.item(i);
-			String href = item.getAttribute("toc");
+			String href = item.getAttribute("toc"); //$NON-NLS-1$
 			if (href == null || href.length() == 0)
 				continue;
 
-			String child_pos = item.getAttribute("topic");
+			String child_pos = item.getAttribute("topic"); //$NON-NLS-1$
 			int pos = -1;
 			if (child_pos != null) {
 				try {
@@ -368,7 +368,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 		try {
 			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("workingSets");
+			Element rootElement = doc.createElement("workingSets"); //$NON-NLS-1$
 			doc.appendChild(rootElement);
 
 			saveWorkingSetState(rootElement);
@@ -378,8 +378,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 			FileOutputStream stream = new FileOutputStream(stateFile);
 			
 			Transformer transformer=transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(stream);
 
@@ -387,16 +387,16 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 			stream.close();
 			return true;
 		}catch (ParserConfigurationException pce){
-			String msg = HelpBaseResources.getString("WorkingSetManager.PCE");
+			String msg = HelpBaseResources.getString("WorkingSetManager.PCE"); //$NON-NLS-1$
 			HelpPlugin.logError(msg, pce);
 			return false;
 		}catch (TransformerException e){
-			String message = HelpBaseResources.getString("WorkingSetManager.transformer");
+			String message = HelpBaseResources.getString("WorkingSetManager.transformer"); //$NON-NLS-1$
 			HelpPlugin.logError(message, null);
 			return false;
 		} catch (IOException e) {
 			stateFile.delete();
-			String message = HelpBaseResources.getString("E40");
+			String message = HelpBaseResources.getString("E40"); //$NON-NLS-1$
 			HelpBasePlugin.logError(message, null);
 			return false;
 		}

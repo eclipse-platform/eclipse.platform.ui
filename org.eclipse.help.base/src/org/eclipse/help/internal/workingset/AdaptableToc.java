@@ -65,6 +65,6 @@ public class AdaptableToc extends AdaptableHelpResource {
 	}
 
 	public void saveState(Element element) {
-		element.setAttribute("toc", getHref());
+		element.setAttribute("toc", getHref()); //$NON-NLS-1$
 	}
 }

@@ -84,7 +84,7 @@ public class ControlServlet extends HttpServlet {
 
 		String command = req.getParameter("command"); //$NON-NLS-1$
 		if (command == null) {
-			resp.getWriter().print("No command."); //$NON-NLS-1$
+			resp.getWriter().print("No command.");
 			return;
 		}
 
@@ -95,7 +95,7 @@ public class ControlServlet extends HttpServlet {
 				displayHelp(req);
 			}
 		} else {
-			resp.getWriter().print("Unrecognized command."); //$NON-NLS-1$
+			resp.getWriter().print("Unrecognized command.");
 		}
 	}
 	/**

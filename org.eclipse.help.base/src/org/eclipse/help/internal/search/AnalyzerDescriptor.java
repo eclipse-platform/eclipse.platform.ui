@@ -44,7 +44,7 @@ public class AnalyzerDescriptor {
 		if (this.luceneAnalyzer == null) {
 			this.id =
 				HelpBasePlugin.PLUGIN_ID
-					+ "#"
+					+ "#" //$NON-NLS-1$
 					+ HelpBasePlugin
 						.getDefault()
 						.getBundle()
@@ -91,16 +91,16 @@ public class AnalyzerDescriptor {
 		IConfigurationElement configElements[] =
 			Platform.getExtensionRegistry().getConfigurationElementsFor(
 				HelpBasePlugin.PLUGIN_ID,
-				"luceneAnalyzer");
+				"luceneAnalyzer"); //$NON-NLS-1$
 		for (int i = 0; i < configElements.length; i++) {
-			if (!configElements[i].getName().equals("analyzer"))
+			if (!configElements[i].getName().equals("analyzer")) //$NON-NLS-1$
 				continue;
-			String analyzerLocale = configElements[i].getAttribute("locale");
+			String analyzerLocale = configElements[i].getAttribute("locale"); //$NON-NLS-1$
 			if (analyzerLocale == null || !analyzerLocale.equals(locale))
 				continue;
 			try {
 				Object analyzer =
-					configElements[i].createExecutableExtension("class");
+					configElements[i].createExecutableExtension("class"); //$NON-NLS-1$
 				if (!(analyzer instanceof Analyzer))
 					continue;
 				else {
@@ -112,7 +112,7 @@ public class AnalyzerDescriptor {
 						Platform.getBundle(pluginId)
 						.getHeaders().get(Constants.BUNDLE_VERSION);
 					this.luceneAnalyzer = (Analyzer) analyzer;
-					this.id = pluginId + "#" + pluginVersion;
+					this.id = pluginId + "#" + pluginVersion; //$NON-NLS-1$
 					this.lang = locale;
 					if (HelpBasePlugin.PLUGIN_ID.equals(pluginId)) {
 						// The analyzer is contributed by help plugin.
@@ -126,8 +126,8 @@ public class AnalyzerDescriptor {
 			} catch (CoreException ce) {
 				HelpBasePlugin.logError(
 					HelpBaseResources.getString(
-						"ES23",
-						configElements[i].getAttribute("class"),
+						"ES23", //$NON-NLS-1$
+						configElements[i].getAttribute("class"), //$NON-NLS-1$
 						locale),
 					ce);
 			}

@@ -100,8 +100,8 @@ public class MozillaBrowserAdapter implements IBrowser {
 		IPath pluginPath = HelpBasePlugin.getDefault().getStateLocation();
 		File outFile =
 			pluginPath
-				.append("mozillaPositon")
-				.append("position.html")
+				.append("mozillaPositon") //$NON-NLS-1$
+				.append("position.html") //$NON-NLS-1$
 				.toFile();
 		try {
 			outFile.getParentFile().mkdirs();
@@ -110,24 +110,24 @@ public class MozillaBrowserAdapter implements IBrowser {
 					new BufferedWriter(
 						new OutputStreamWriter(
 							new FileOutputStream(outFile),
-							"UTF8")),
+							"UTF8")), //$NON-NLS-1$
 					false);
 			writer.println(
-				"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
-			writer.println("<html><head>");
+				"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"); //$NON-NLS-1$
+			writer.println("<html><head>"); //$NON-NLS-1$
 			writer.println(
-				"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
-			writer.print("<title></title><script language=\"JavaScript\">");
+				"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
+			writer.print("<title></title><script language=\"JavaScript\">"); //$NON-NLS-1$
 			if (setSizePending)
-				writer.print("window.resizeTo(" + width + "," + height + ");");
+				writer.print("window.resizeTo(" + width + "," + height + ");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (setLocationPending)
-				writer.print("window.moveTo(" + x + "," + y + ");");
-			writer.print("location.replace(\"" + url + "\");");
-			writer.print("</script></head><body>");
-			writer.print("<a href=\"" + url + "\">--&gt;</a>");
-			writer.print("</body></html>");
+				writer.print("window.moveTo(" + x + "," + y + ");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print("location.replace(\"" + url + "\");"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print("</script></head><body>"); //$NON-NLS-1$
+			writer.print("<a href=\"" + url + "\">--&gt;</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print("</body></html>"); //$NON-NLS-1$
 			writer.close();
-			return "file://" + outFile.getAbsolutePath();
+			return "file://" + outFile.getAbsolutePath(); //$NON-NLS-1$
 		} catch (IOException ioe) {
 			// return the original url
 			return url;
@@ -162,7 +162,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			} catch (IOException e) {
 				String msg =
 					HelpBaseResources.getString(
-						"MozillaBrowserAdapter.executeFailed",
+						"MozillaBrowserAdapter.executeFailed", //$NON-NLS-1$
 						executableName);
 				HelpBasePlugin.logError(msg, e);
 				BaseHelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
@@ -185,17 +185,17 @@ public class MozillaBrowserAdapter implements IBrowser {
 			try {
 				outputs.join(1000);
 				if (outputs.getLastLine() != null
-					&& (outputs.getLastLine().indexOf("No running window found")
+					&& (outputs.getLastLine().indexOf("No running window found") //$NON-NLS-1$
 						>= 0
-						|| outputs.getLastLine().indexOf("not running on display")
+						|| outputs.getLastLine().indexOf("not running on display") //$NON-NLS-1$
 							>= 0)) {
 					return true;
 				}
 				errors.join(1000);
 				if (errors.getLastLine() != null
-					&& (errors.getLastLine().indexOf("No running window found")
+					&& (errors.getLastLine().indexOf("No running window found") //$NON-NLS-1$
 						>= 0
-						|| errors.getLastLine().indexOf("not running on display")
+						|| errors.getLastLine().indexOf("not running on display") //$NON-NLS-1$
 							>= 0)) {
 					return true;
 				}
@@ -209,14 +209,14 @@ public class MozillaBrowserAdapter implements IBrowser {
 			waitForBrowser();
 			if (exitRequested)
 				return;
-			if (openBrowser(executable + " -remote openURL(" + url + ")")
+			if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
 				== 0) {
 				return;
 			}
 			if (exitRequested)
 				return;
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
-			openBrowser(executable + " " + url);
+			openBrowser(executable + " " + url); //$NON-NLS-1$
 		}
 		private void waitForBrowser() {
 			while (System.currentTimeMillis() < browserFullyOpenedAt)

@@ -70,12 +70,12 @@ public class WorkingSet {
 	
 	public void saveState(Element parent) {
 		Document doc = parent.getOwnerDocument();
-		Element ws = doc.createElement("workingSet");
-		ws.setAttribute("name", name);
+		Element ws = doc.createElement("workingSet"); //$NON-NLS-1$
+		ws.setAttribute("name", name); //$NON-NLS-1$
 		parent.appendChild(ws);
 		
 		for (Iterator it=elements.iterator(); it.hasNext(); ) {
-			Element child = doc.createElement("item");
+			Element child = doc.createElement("item"); //$NON-NLS-1$
 			AdaptableHelpResource helpResource = (AdaptableHelpResource)it.next();
 			helpResource.saveState(child);
 			ws.appendChild(child);

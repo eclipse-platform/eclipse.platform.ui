@@ -37,7 +37,7 @@ public class SmartAnalyzer extends Analyzer {
 	 * and to plugged-in analyzer for other fields.
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
-		if (fieldName != null && fieldName.startsWith("exact_")) {
+		if (fieldName != null && fieldName.startsWith("exact_")) { //$NON-NLS-1$
 			return exactAnalyzer.tokenStream(fieldName, reader);
 		}
 		return pluggedInAnalyzer.tokenStream(fieldName, reader);

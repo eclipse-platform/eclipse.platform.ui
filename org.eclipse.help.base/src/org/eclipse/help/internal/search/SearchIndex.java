@@ -37,10 +37,10 @@ public class SearchIndex {
 	private PluginVersionInfo docPlugins;
 	// table of all document names, used during indexing batches
 	private HelpProperties indexedDocs;
-	private static final String INDEXED_CONTRIBUTION_INFO_FILE = "indexed_contributions";
-	public static final String INDEXED_DOCS_FILE = "indexed_docs";
-	private static final String DEPENDENCIES_VERSION_FILENAME = "indexed_dependencies";
-	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene";
+	private static final String INDEXED_CONTRIBUTION_INFO_FILE = "indexed_contributions"; //$NON-NLS-1$
+	public static final String INDEXED_DOCS_FILE = "indexed_docs"; //$NON-NLS-1$
+	private static final String DEPENDENCIES_VERSION_FILENAME = "indexed_dependencies"; //$NON-NLS-1$
+	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene"; //$NON-NLS-1$
 	private File inconsistencyFile;
 	private HTMLDocParser parser;
 	private IndexSearcher searcher;
@@ -64,9 +64,9 @@ public class SearchIndex {
 		this.analyzerDescriptor = analyzerDesc;
 		this.tocManager = tocManager;
 		indexDir = new File(HelpBasePlugin.getConfigurationDirectory(),
-				"index/" + locale);
+				"index/" + locale); //$NON-NLS-1$
 		inconsistencyFile = new File(indexDir.getParentFile(), locale
-				+ ".inconsistent");
+				+ ".inconsistent"); //$NON-NLS-1$
 		parser = new HTMLDocParser();
 		if (!exists()) {
 			if (tryLock()) {
@@ -91,39 +91,39 @@ public class SearchIndex {
 	 */
 	public boolean addDocument(String name, URL url) {
 		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out.println("SearchIndex.addDocument(" + name + ", " + url
-					+ ")");
+			System.out.println("SearchIndex.addDocument(" + name + ", " + url //$NON-NLS-1$ //$NON-NLS-2$
+					+ ")"); //$NON-NLS-1$
 		}
 		try {
 			Document doc = new Document();
-			doc.add(Field.Keyword("name", name));
+			doc.add(Field.Keyword("name", name)); //$NON-NLS-1$
 			try {
 				try {
 					parser.openDocument(url);
 				} catch (IOException ioe) {
-					HelpBasePlugin.logError(HelpBaseResources.getString("ES25",
+					HelpBasePlugin.logError(HelpBaseResources.getString("ES25", //$NON-NLS-1$
 							name), null);
 					return false;
 				}
 				ParsedDocument parsed = new ParsedDocument(parser
 						.getContentReader());
-				doc.add(Field.Text("contents", parsed.newContentReader()));
+				doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
 				doc
-						.add(Field.Text("exact_contents", parsed
+						.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
 								.newContentReader()));
 				String title = parser.getTitle();
-				doc.add(Field.UnStored("title", title));
-				doc.add(Field.UnStored("exact_title", title));
-				doc.add(Field.UnIndexed("raw_title", title));
+				doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
+				doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
+				doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
 				// doc.add(Field.UnIndexed("summary", parser.getSummary()));
 				iw.addDocument(doc);
 			} finally {
 				parser.closeDocument();
 			}
-			indexedDocs.put(name, "0");
+			indexedDocs.put(name, "0"); //$NON-NLS-1$
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES16", name,
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES16", name, //$NON-NLS-1$
 					indexDir.getAbsolutePath()), e);
 			return false;
 		}
@@ -152,7 +152,7 @@ public class SearchIndex {
 			iw.maxFieldLength = 1000000;
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES17"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES17"), e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -170,7 +170,7 @@ public class SearchIndex {
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES18"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES18"), e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -183,14 +183,14 @@ public class SearchIndex {
 	 */
 	public boolean removeDocument(String name) {
 		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out.println("SearchIndex.removeDocument(" + name + ")");
+			System.out.println("SearchIndex.removeDocument(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Term term = new Term("name", name);
+		Term term = new Term("name", name); //$NON-NLS-1$
 		try {
 			ir.delete(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES22", name,
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES22", name, //$NON-NLS-1$
 					indexDir.getAbsolutePath()), e);
 			return false;
 		}
@@ -215,7 +215,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES19"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES19"), e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -237,7 +237,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES20"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES20"), e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -288,7 +288,7 @@ public class SearchIndex {
 		} catch (QueryTooComplexException qe) {
 			throw qe;
 		} catch (Exception e) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("ES21",
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES21", //$NON-NLS-1$
 					searchQuery.getSearchWord()), e);
 		} finally {
 			unregisterSearch(Thread.currentThread());
@@ -338,9 +338,9 @@ public class SearchIndex {
 	 * Gets analyzer identifier from a file.
 	 */
 	private String readAnalyzerId() {
-		String analyzerVersion = getDependencies().getProperty("analyzer");
+		String analyzerVersion = getDependencies().getProperty("analyzer"); //$NON-NLS-1$
 		if (analyzerVersion == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		return analyzerVersion;
 	}
@@ -348,8 +348,8 @@ public class SearchIndex {
 	 * Gets Lucene plugin version from a file.
 	 */
 	private boolean isLuceneCompatible() {
-		String usedLuceneVersion = getDependencies().getProperty("lucene");
-		String currentLuceneVersion = "";
+		String usedLuceneVersion = getDependencies().getProperty("lucene"); //$NON-NLS-1$
+		String currentLuceneVersion = ""; //$NON-NLS-1$
 		Bundle lucenePluginDescriptor = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (lucenePluginDescriptor != null) {
 			currentLuceneVersion += (String) lucenePluginDescriptor
@@ -363,14 +363,14 @@ public class SearchIndex {
 	 * Saves Lucene version and analyzer identifier to a file.
 	 */
 	private void saveDependencies() {
-		getDependencies().put("analyzer", analyzerDescriptor.getId());
+		getDependencies().put("analyzer", analyzerDescriptor.getId()); //$NON-NLS-1$
 		Bundle luceneBundle = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (luceneBundle != null) {
-			String luceneBundleVersion = ""
+			String luceneBundleVersion = "" //$NON-NLS-1$
 					+ luceneBundle.getHeaders().get(Constants.BUNDLE_VERSION);
-			getDependencies().put("lucene", luceneBundleVersion);
+			getDependencies().put("lucene", luceneBundleVersion); //$NON-NLS-1$
 		} else {
-			getDependencies().put("lucene", "");
+			getDependencies().put("lucene", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		getDependencies().save();
 	}
@@ -437,12 +437,12 @@ public class SearchIndex {
 	 */
 	private void unzipProductIndex() {
 		String indexPluginId = HelpBasePlugin.getDefault()
-				.getPluginPreferences().getString("productIndex");
+				.getPluginPreferences().getString("productIndex"); //$NON-NLS-1$
 		if (indexPluginId == null || indexPluginId.length() <= 0) {
 			return;
 		}
 		InputStream zipIn = ResourceLocator.openFromPlugin(indexPluginId,
-				"doc_index.zip", getLocale());
+				"doc_index.zip", getLocale()); //$NON-NLS-1$
 		if (zipIn == null) {
 			return;
 		}
@@ -460,8 +460,8 @@ public class SearchIndex {
 				}
 				// if it is a file, extract it
 				String filePath = zEntry.getName();
-				int lastSeparator = filePath.lastIndexOf("/");
-				String fileDir = "";
+				int lastSeparator = filePath.lastIndexOf("/"); //$NON-NLS-1$
+				String fileDir = ""; //$NON-NLS-1$
 				if (lastSeparator >= 0) {
 					fileDir = filePath.substring(0, lastSeparator);
 				}
@@ -477,8 +477,8 @@ public class SearchIndex {
 				fos.close();
 			}
 			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println("SearchIndex: Prebuilt index restored to "
-						+ destDir + ".");
+				System.out.println("SearchIndex: Prebuilt index restored to " //$NON-NLS-1$
+						+ destDir + "."); //$NON-NLS-1$
 			}
 		} catch (IOException ioe) {
 			if (fos != null) {
@@ -529,10 +529,10 @@ public class SearchIndex {
 	}
 	public boolean tryLock() {
 		File lockFile = new File(indexDir.getParentFile(), locale
-				+ ".lock");
+				+ ".lock"); //$NON-NLS-1$
 		lockFile.getParentFile().mkdirs();
 		try {
-			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
+			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 			FileLock l = raf.getChannel().tryLock();
 			if(l!=null){
 				lock = l;

@@ -22,7 +22,7 @@ import org.osgi.framework.*;
  */
 public class PluginVersionInfo extends HelpProperties {
 	// Separates plugins and versions in value strings
-	static final String SEPARATOR = "\n";
+	static final String SEPARATOR = "\n"; //$NON-NLS-1$
 	File dir;
 	boolean doComparison = true;
 	boolean hasChanged = false;

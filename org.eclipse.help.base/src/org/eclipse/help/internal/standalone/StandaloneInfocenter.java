@@ -21,7 +21,7 @@ import org.eclipse.help.internal.base.*;
 public class StandaloneInfocenter extends EclipseController {
 	// ID of the application to run
 	private static final String INFOCENTER_APPLICATION_ID =
-		HelpBasePlugin.PLUGIN_ID + ".infocenterApplication";
+		HelpBasePlugin.PLUGIN_ID + ".infocenterApplication"; //$NON-NLS-1$
 
 	/**
 	 * Constructs help system
@@ -65,10 +65,10 @@ public class StandaloneInfocenter extends EclipseController {
 			return false;
 		}
 		String command = (String) helpCommand.get(0);
-		if ("start".equalsIgnoreCase(command)) {
+		if ("start".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			start();
 			return true;
-		} else if ("shutdown".equalsIgnoreCase(command)) {
+		} else if ("shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			shutdown();
 			return true;
 		}
@@ -82,7 +82,7 @@ public class StandaloneInfocenter extends EclipseController {
 		System.out.println("Parameters syntax:");
 		System.out.println();
 		System.out.println(
-			"-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-noexec] [platform options] [-vmargs [Java VM arguments]]");
+			"-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-noexec] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
 		System.out.println();
 		System.out.println("where:");
 		System.out.println(

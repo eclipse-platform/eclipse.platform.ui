@@ -159,14 +159,14 @@ public class SearchProgressMonitor implements IProgressMonitor {
 					progressMonitors.remove(locale);
 					if (HelpBasePlugin.getDefault() != null) {
 						HelpBasePlugin.logError(HelpBaseResources
-								.getString("search_index_update_error"), e);
+								.getString("search_index_update_error"), e); //$NON-NLS-1$
 					} else {
 						// Plugin has been shut down
 					}
 				}
 			}
 		});
-		indexer.setName("HelpSearchIndexer");
+		indexer.setName("HelpSearchIndexer"); //$NON-NLS-1$
 		indexer.start();
 		// give pm chance to start
 		// this will avoid seing progress if there is no work to do
@@ -197,7 +197,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		 * Obtains search word (user query)
 		 */
 		public String getSearchWord() {
-			return "dummy";
+			return "dummy"; //$NON-NLS-1$
 		}
 		/**
 		 * @return true if search only in specified fields, not the default field

@@ -41,13 +41,13 @@ public class DefaultBrowserAdapter implements IBrowser {
 		try {
 			Runtime.getRuntime().exec(
 				new String[] {
-					"/usr/bin/osascript",
-					"-e",
-					"open location \"" + url + "\"" });
+					"/usr/bin/osascript", //$NON-NLS-1$
+					"-e", //$NON-NLS-1$
+					"open location \"" + url + "\"" }); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException ioe) {
 			HelpBasePlugin.logError(
 				HelpBaseResources.getString(
-					"DefaultBrowserAdapter.executeFailed"),
+					"DefaultBrowserAdapter.executeFailed"), //$NON-NLS-1$
 				ioe);
 		}
 	}

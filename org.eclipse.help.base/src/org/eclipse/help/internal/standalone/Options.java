@@ -79,56 +79,56 @@ public class Options {
 		eclipseArgs.addAll(options);
 
 		// consume -command option
-		helpCommand = extractOption(eclipseArgs, "-command");
+		helpCommand = extractOption(eclipseArgs, "-command"); //$NON-NLS-1$
 		if (helpCommand == null) {
 			helpCommand = new ArrayList(0);
 		}
 
 		// read -debug option
-		if (getOption(eclipseArgs, "-debug") != null) {
+		if (getOption(eclipseArgs, "-debug") != null) { //$NON-NLS-1$
 			debug = true;
-			System.out.println("Debugging is on.");
+			System.out.println("Debugging is on."); //$NON-NLS-1$
 		}
 		// consume -noexec option
-		if (extractOption(eclipseArgs, "-noexec") != null) {
+		if (extractOption(eclipseArgs, "-noexec") != null) { //$NON-NLS-1$
 			useExe = false;
 		}
 		// consume -eclipsehome (accept eclipse_home too) option
-		List homes = extractOption(eclipseArgs, "-eclipseHome");
+		List homes = extractOption(eclipseArgs, "-eclipseHome"); //$NON-NLS-1$
 		if (homes == null || homes.isEmpty()) {
-			homes = extractOption(eclipseArgs, "-eclipse_Home");
+			homes = extractOption(eclipseArgs, "-eclipse_Home"); //$NON-NLS-1$
 		}
 		if (homes != null && !homes.isEmpty()) {
 			eclipseHome = new File((String) homes.get(0));
 		} else {
-			eclipseHome = new File(System.getProperty("user.dir"));
+			eclipseHome = new File(System.getProperty("user.dir")); //$NON-NLS-1$
 		}
 
 		// read -data option
-		List workspaces = getOption(eclipseArgs, "-data");
+		List workspaces = getOption(eclipseArgs, "-data"); //$NON-NLS-1$
 		if (workspaces != null && !workspaces.isEmpty()) {
 			workspace = new File((String) workspaces.get(0));
 		} else {
-			workspace = new File(eclipseHome, "workspace");
+			workspace = new File(eclipseHome, "workspace"); //$NON-NLS-1$
 		}
-		lockFile = new File(workspace, "/.metadata/.helplock");
-		hostPortFile = new File(workspace, "/.metadata/.connection");
+		lockFile = new File(workspace, "/.metadata/.helplock"); //$NON-NLS-1$
+		hostPortFile = new File(workspace, "/.metadata/.connection"); //$NON-NLS-1$
 
 		// consume -host option
-		List hosts = extractOption(eclipseArgs, "-host");
+		List hosts = extractOption(eclipseArgs, "-host"); //$NON-NLS-1$
 		if (hosts != null && hosts.size() > 0) {
 			host = (String) hosts.get(0);
 		}
 
 		// consume -port option
-		List ports = extractOption(eclipseArgs, "-port");
+		List ports = extractOption(eclipseArgs, "-port"); //$NON-NLS-1$
 		if (ports != null && ports.size() > 0) {
 			port = (String) ports.get(0);
 		}
 
 		// consume -servertimout option
 		serverTimeout = 0;
-		List timeouts = extractOption(eclipseArgs, "-servertimeout");
+		List timeouts = extractOption(eclipseArgs, "-servertimeout"); //$NON-NLS-1$
 		if (timeouts != null && timeouts.size() > 0) {
 			try {
 				int timeout = Integer.parseInt((String) timeouts.get(0));
@@ -140,49 +140,49 @@ public class Options {
 		}
 
 		// consume -vm option
-		List vms = extractOption(eclipseArgs, "-vm");
+		List vms = extractOption(eclipseArgs, "-vm"); //$NON-NLS-1$
 		if (vms != null && !vms.isEmpty()) {
 			vm = (String) vms.get(0);
 		} else {
-			String vmName = System.getProperty("java.vm.name");
-			String executable = "J9".equals(vmName) ? "j9" : "java";
-			if (System.getProperty("os.name").startsWith("Win")) {
-				executable += "w.exe";
+			String vmName = System.getProperty("java.vm.name"); //$NON-NLS-1$
+			String executable = "J9".equals(vmName) ? "j9" : "java"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (System.getProperty("os.name").startsWith("Win")) { //$NON-NLS-1$ //$NON-NLS-2$
+				executable += "w.exe"; //$NON-NLS-1$
 			}
 			vm =
-				System.getProperty("java.home")
+				System.getProperty("java.home") //$NON-NLS-1$
 					+ File.separator
-					+ "bin"
+					+ "bin" //$NON-NLS-1$
 					+ File.separator
 					+ executable;
 		}
 
 		// consume -vmargs option
 		vmArgs = new ArrayList(0);
-		List passedVmArgs = extractOption(eclipseArgs, "-vmargs");
+		List passedVmArgs = extractOption(eclipseArgs, "-vmargs"); //$NON-NLS-1$
 		if (passedVmArgs != null && passedVmArgs.size() > 0) {
 			vmArgs = passedVmArgs;
 		}
 
 		// modify the options for passing them to eclipse
 		// add -application option
-		extractOption(eclipseArgs, "-application");
-		eclipseArgs.add(0, "-application");
+		extractOption(eclipseArgs, "-application"); //$NON-NLS-1$
+		eclipseArgs.add(0, "-application"); //$NON-NLS-1$
 		eclipseArgs.add(1, appId);
 
 		// add -nosplash option (prevent splash)
-		extractOption(eclipseArgs, "-showsplash");
-		extractOption(eclipseArgs, "-endsplash");
-		extractOption(eclipseArgs, "-nosplash");
-		eclipseArgs.add(0, "-nosplash");
+		extractOption(eclipseArgs, "-showsplash"); //$NON-NLS-1$
+		extractOption(eclipseArgs, "-endsplash"); //$NON-NLS-1$
+		extractOption(eclipseArgs, "-nosplash"); //$NON-NLS-1$
+		eclipseArgs.add(0, "-nosplash"); //$NON-NLS-1$
 
 		// add server_host and/or port to -vmargs option
 		if (host != null || port != null) {
 			if (host != null) {
-				vmArgs.add("-Dserver_host=" + host);
+				vmArgs.add("-Dserver_host=" + host); //$NON-NLS-1$
 			}
 			if (port != null) {
-				vmArgs.add("-Dserver_port=" + port);
+				vmArgs.add("-Dserver_port=" + port); //$NON-NLS-1$
 			}
 		}
 	}
@@ -245,8 +245,8 @@ public class Options {
 				options.remove(i);
 				// remove option parameters
 				while (i < options.size()) {
-					if (((String) options.get(i)).startsWith("-")
-						&& !optionName.equals("-vmargs")) {
+					if (((String) options.get(i)).startsWith("-") //$NON-NLS-1$
+						&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
 						// start of next option
 						break;
 					}
@@ -278,8 +278,8 @@ public class Options {
 				}
 				// read option parameters
 				for (int j = i + 1; j < options.size(); j++) {
-					if (((String) options.get(j)).startsWith("-")
-						&& !optionName.equals("-vmargs")) {
+					if (((String) options.get(j)).startsWith("-") //$NON-NLS-1$
+						&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
 						// start of next option
 						i = j;
 						break;

@@ -93,7 +93,7 @@ public class CookieUtil {
 		int len = data.length();
 		int n = len / MAX_COOKIE_PAYLOAD;
 		if (n > maxCookies) {
-			throw new IOException("Too may cookies required to store data."); //$NON-NLS-1$
+			throw new IOException("Too may cookies required to store data.");
 		}
 		for (int i = 1; i <= n; i++) {
 			if (i == 1) {

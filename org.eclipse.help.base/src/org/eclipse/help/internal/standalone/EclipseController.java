@@ -23,7 +23,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 
 	// control servlet path
 	private static final String CONTROL_SERVLET_PATH =
-		"/helpControl/control.html";
+		"/helpControl/control.html"; //$NON-NLS-1$
 
 	// application to launch
 	protected String applicationId;
@@ -58,7 +58,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 	public final synchronized void shutdown() throws Exception {
 		try {
 			obtainLock();
-			sendHelpCommandInternal("shutdown", new String[0]);
+			sendHelpCommandInternal("shutdown", new String[0]); //$NON-NLS-1$
 		} catch (MalformedURLException mue) {
 			mue.printStackTrace();
 		} catch (InterruptedException ie) {
@@ -109,7 +109,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		}
 		if (Options.isDebug()) {
 			System.out.println(
-				"Using workspace " + Options.getWorkspace().getAbsolutePath());
+				"Using workspace " + Options.getWorkspace().getAbsolutePath()); //$NON-NLS-1$
 		}
 		// delete old connection file
 		Options.getConnectionFile().delete();
@@ -117,7 +117,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 
 		if (Options.isDebug()) {
 			System.out.println(
-				"Ensured old .connection file is deleted.  Launching Eclipse.");
+				"Ensured old .connection file is deleted.  Launching Eclipse."); //$NON-NLS-1$
 		}
 		eclipseEnded = false;
 		eclipse = new Eclipse(this);
@@ -137,14 +137,14 @@ public class EclipseController implements EclipseLifeCycleListener {
 			return;
 		}
 		if (Options.isDebug()) {
-			System.out.println("Eclipse launched");
+			System.out.println("Eclipse launched"); //$NON-NLS-1$
 		}
 		// in case controller is killed
 		Runtime.getRuntime().addShutdownHook(new EclipseCleaner());
 	}
 	private void sendHelpCommandInternal(String command, String[] parameters)
 		throws Exception {
-		if (!"shutdown".equalsIgnoreCase(command)) {
+		if (!"shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			startEclipse();
 		}
 		if (!isApplicationRunning()) {
@@ -155,7 +155,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		}
 		try {
 			URL url = createCommandURL(command, parameters);
-			if ("shutdown".equalsIgnoreCase(command)
+			if ("shutdown".equalsIgnoreCase(command) //$NON-NLS-1$
 				&& Options.getConnectionFile().exists()) {
 				connection.connect(url);
 				long timeLimit = System.currentTimeMillis() + 60 * 1000;
@@ -186,19 +186,19 @@ public class EclipseController implements EclipseLifeCycleListener {
 	private URL createCommandURL(String command, String[] parameters)
 		throws MalformedURLException {
 		StringBuffer urlStr = new StringBuffer();
-		urlStr.append("http://");
+		urlStr.append("http://"); //$NON-NLS-1$
 		urlStr.append(connection.getHost());
-		urlStr.append(":");
+		urlStr.append(":"); //$NON-NLS-1$
 		urlStr.append(connection.getPort());
 		urlStr.append(CONTROL_SERVLET_PATH);
-		urlStr.append("?command=");
+		urlStr.append("?command="); //$NON-NLS-1$
 		urlStr.append(command);
 		for (int i = 0; i < parameters.length; i++) {
-			urlStr.append("&");
+			urlStr.append("&"); //$NON-NLS-1$
 			urlStr.append(parameters[i]);
 		}
 		if (Options.isDebug()) {
-			System.out.println("Control servlet URL=" + urlStr.toString());
+			System.out.println("Control servlet URL=" + urlStr.toString()); //$NON-NLS-1$
 		}
 		return new URL(urlStr.toString());
 	}
@@ -216,10 +216,10 @@ public class EclipseController implements EclipseLifeCycleListener {
 			Options.getLockFile().getParentFile().mkdirs();
 		}
 		RandomAccessFile raf =
-			new RandomAccessFile(Options.getLockFile(), "rw");
+			new RandomAccessFile(Options.getLockFile(), "rw"); //$NON-NLS-1$
 		lock = raf.getChannel().lock();
 		if (Options.isDebug()) {
-			System.out.println("Lock obtained.");
+			System.out.println("Lock obtained."); //$NON-NLS-1$
 		}
 	}
 	private void releaseLock() {
@@ -227,7 +227,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 			try {
 				lock.channel().close();
 				if (Options.isDebug()) {
-					System.out.println("Lock released.");
+					System.out.println("Lock released."); //$NON-NLS-1$
 				}
 				lock = null;
 			} catch (IOException ioe) {
@@ -239,11 +239,11 @@ public class EclipseController implements EclipseLifeCycleListener {
 	 */
 	private boolean isApplicationRunning() {
 		File applicationLockFile =
-			new File(Options.getLockFile().getParentFile(), ".applicationlock");
+			new File(Options.getLockFile().getParentFile(), ".applicationlock"); //$NON-NLS-1$
 		RandomAccessFile randomAccessFile = null;
 		FileLock applicationLock = null;
 		try {
-			randomAccessFile = new RandomAccessFile(applicationLockFile, "rw");
+			randomAccessFile = new RandomAccessFile(applicationLockFile, "rw"); //$NON-NLS-1$
 			applicationLock = randomAccessFile.getChannel().tryLock();
 		} catch (IOException ioe) {
 		} finally {
@@ -261,7 +261,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 			}
 			if (Options.isDebug()) {
 				System.out.println(
-					"isApplicationRunning? " + (applicationLock == null));
+					"isApplicationRunning? " + (applicationLock == null)); //$NON-NLS-1$
 			}
 		}
 		return applicationLock == null;

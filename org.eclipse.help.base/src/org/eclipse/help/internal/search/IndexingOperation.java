@@ -84,7 +84,7 @@ class IndexingOperation {
 		}
 
 		LazyProgressMonitor monitor = new LazyProgressMonitor(pm);
-		monitor.beginTask("", workTotal);
+		monitor.beginTask("", workTotal); //$NON-NLS-1$
 		removeDocuments(monitor, removedDocs);
 		addDocuments(monitor, addedDocs);
 		monitor.done();
@@ -102,7 +102,7 @@ class IndexingOperation {
 		try {
 			checkCancelled(pm);
 			pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-			pm.subTask(HelpBaseResources.getString("UpdatingIndex"));
+			pm.subTask(HelpBaseResources.getString("UpdatingIndex")); //$NON-NLS-1$
 			for (Iterator it = addedDocs.iterator(); it.hasNext();) {
 				URL doc = (URL) it.next();
 				index.addDocument(getName(doc), doc);
@@ -111,12 +111,12 @@ class IndexingOperation {
 			}
 		} catch (OperationCanceledException oce) {
 			// Need to perform rollback on the index
-			pm.subTask(HelpBaseResources.getString("Undoing_document_adds"));
+			pm.subTask(HelpBaseResources.getString("Undoing_document_adds")); //$NON-NLS-1$
 			//			if (!index.abortUpdate())
 			//				throw new Exception();
 			throw oce;
 		}
-		pm.subTask(HelpBaseResources.getString("Writing_index"));
+		pm.subTask(HelpBaseResources.getString("Writing_index")); //$NON-NLS-1$
 		if (!index.endAddBatch())
 			throw new IndexingException();
 	}
@@ -124,7 +124,7 @@ class IndexingOperation {
 	private void removeDocuments(IProgressMonitor pm, Collection removedDocs)
 		throws IndexingException {
 
-		pm.subTask(HelpBaseResources.getString("Preparing_for_indexing"));
+		pm.subTask(HelpBaseResources.getString("Preparing_for_indexing")); //$NON-NLS-1$
 		checkCancelled(pm);
 
 		if (numRemoved > 0) {
@@ -133,7 +133,7 @@ class IndexingOperation {
 			try {
 				checkCancelled(pm);
 				pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-				pm.subTask(HelpBaseResources.getString("UpdatingIndex"));
+				pm.subTask(HelpBaseResources.getString("UpdatingIndex")); //$NON-NLS-1$
 				for (Iterator it = removedDocs.iterator(); it.hasNext();) {
 					URL doc = (URL) it.next();
 					index.removeDocument(getName(doc));
@@ -142,7 +142,7 @@ class IndexingOperation {
 				}
 			} catch (OperationCanceledException oce) {
 				// Need to perform rollback on the index
-				pm.subTask(HelpBaseResources.getString("Undoing_document_deletions"));
+				pm.subTask(HelpBaseResources.getString("Undoing_document_deletions")); //$NON-NLS-1$
 				//			if (!index.abortUpdate())
 				//				throw new Exception();
 				throw oce;
@@ -183,7 +183,7 @@ class IndexingOperation {
 			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
 			int i = doc.indexOf('/', 1);
-			String plugin = i == -1 ? "" : doc.substring(1, i);
+			String plugin = i == -1 ? "" : doc.substring(1, i); //$NON-NLS-1$
 			if (!addedPlugins.contains(plugin)) {
 				continue;
 			}
@@ -214,7 +214,7 @@ class IndexingOperation {
 			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
 			int i = doc.indexOf('/', 1);
-			String plugin = i == -1 ? "" : doc.substring(1, i);
+			String plugin = i == -1 ? "" : doc.substring(1, i); //$NON-NLS-1$
 			if (!removedPlugins.contains(plugin)) {
 				continue;
 			}
@@ -231,7 +231,7 @@ class IndexingOperation {
 	 */
 	private void add(ITopic topic, Set hrefs) {
 		String href = topic.getHref();
-		if (href != null && !href.equals("") && !href.startsWith("http://"))
+		if (href != null && !href.equals("") && !href.startsWith("http://")) //$NON-NLS-1$ //$NON-NLS-2$
 			hrefs.add(href);
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i = 0; i < subtopics.length; i++)
@@ -268,15 +268,15 @@ class IndexingOperation {
 	 */
 	private URL getIndexableURL(String url) {
 		String fileName = url.toLowerCase();
-		if (fileName.endsWith(".htm")
-			|| fileName.endsWith(".html")
-			|| fileName.endsWith(".txt")
-			|| fileName.endsWith(".xml")) {
+		if (fileName.endsWith(".htm") //$NON-NLS-1$
+			|| fileName.endsWith(".html") //$NON-NLS-1$
+			|| fileName.endsWith(".txt") //$NON-NLS-1$
+			|| fileName.endsWith(".xml")) { //$NON-NLS-1$
 			// indexable
 		} else if (
-			fileName.indexOf(".htm#") >= 0
-				|| fileName.indexOf(".html#") >= 0
-				|| fileName.indexOf(".xml#") >= 0) {
+			fileName.indexOf(".htm#") >= 0 //$NON-NLS-1$
+				|| fileName.indexOf(".html#") >= 0 //$NON-NLS-1$
+				|| fileName.indexOf(".xml#") >= 0) { //$NON-NLS-1$
 			url = url.substring(0, url.lastIndexOf('#'));
 			// its a fragment, index whole document
 		} else {
@@ -287,10 +287,10 @@ class IndexingOperation {
 		try {
 			//return new URL("help:" + url + "?lang=" + index.getLocale());
 			return new URL(
-				"help",
+				"help", //$NON-NLS-1$
 				null,
 				-1,
-				url + "?lang=" + index.getLocale(),
+				url + "?lang=" + index.getLocale(), //$NON-NLS-1$
 				HelpURLStreamHandler.getDefault());
 
 		} catch (MalformedURLException mue) {

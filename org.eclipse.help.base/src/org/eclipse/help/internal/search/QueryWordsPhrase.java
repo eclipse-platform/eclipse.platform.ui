@@ -20,7 +20,7 @@ import org.apache.lucene.search.*;
 public class QueryWordsPhrase extends QueryWordsToken {
 	private List words;
 	public QueryWordsPhrase() {
-		super(QueryWordsToken.PHRASE, "");
+		super(QueryWordsToken.PHRASE, ""); //$NON-NLS-1$
 		words = new ArrayList();
 	}
 	public void addWord(String word) {
@@ -28,7 +28,7 @@ public class QueryWordsPhrase extends QueryWordsToken {
 		if (words.size() <= 1)
 			value = word;
 		else
-			value += " " + word;
+			value += " " + word; //$NON-NLS-1$
 	}
 	public List getWords() {
 		return words;

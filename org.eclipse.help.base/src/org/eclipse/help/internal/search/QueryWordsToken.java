@@ -21,9 +21,9 @@ public class QueryWordsToken {
 	public static final int EXACT_PHRASE = 3;
 	public static final int PHRASE = 4;
 	public static final int WORD = 5;
-	private static final QueryWordsToken fAND = new QueryWordsToken(AND, "AND");
-	private static final QueryWordsToken fOR = new QueryWordsToken(OR, "OR");
-	private static final QueryWordsToken fNOT = new QueryWordsToken(NOT, "NOT");
+	private static final QueryWordsToken fAND = new QueryWordsToken(AND, "AND"); //$NON-NLS-1$
+	private static final QueryWordsToken fOR = new QueryWordsToken(OR, "OR"); //$NON-NLS-1$
+	private static final QueryWordsToken fNOT = new QueryWordsToken(NOT, "NOT"); //$NON-NLS-1$
 	public int type;
 	public String value;
 	protected QueryWordsToken(int type, String value) {
@@ -39,11 +39,11 @@ public class QueryWordsToken {
 		int starPos = value.indexOf('*');
 		if (questionPos >= 0 || starPos >= 0) {
 			if (questionPos == -1 && starPos == value.length() - 1) {
-				Term t = new Term("exact_" + field, value.substring(0, starPos));
+				Term t = new Term("exact_" + field, value.substring(0, starPos)); //$NON-NLS-1$
 				q = new PrefixQuery(t);
 				((PrefixQuery) q).setBoost(boost);
 			} else {
-				Term t = new Term("exact_" + field, value);
+				Term t = new Term("exact_" + field, value); //$NON-NLS-1$
 				q = new WildcardQuery(t);
 				((WildcardQuery) q).setBoost(boost);
 			}

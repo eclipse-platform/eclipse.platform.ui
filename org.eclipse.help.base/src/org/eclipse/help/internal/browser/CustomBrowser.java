@@ -21,7 +21,7 @@ import org.eclipse.osgi.service.environment.*;
  * 
  */
 public class CustomBrowser implements IBrowser {
-	public static final String CUSTOM_BROWSER_PATH_KEY = "custom_browser_path";
+	public static final String CUSTOM_BROWSER_PATH_KEY = "custom_browser_path"; //$NON-NLS-1$
 
 	/**
 	 * @see org.eclipse.help.ui.browser.IBrowser#close()
@@ -49,17 +49,17 @@ public class CustomBrowser implements IBrowser {
 		try {
 			Process pr = Runtime.getRuntime().exec(command);
 			Thread outConsumer = new StreamConsumer(pr.getInputStream());
-			outConsumer.setName("Custom browser adapter output reader");
+			outConsumer.setName("Custom browser adapter output reader"); //$NON-NLS-1$
 			outConsumer.start();
 			Thread errConsumer = new StreamConsumer(pr.getErrorStream());
-			errConsumer.setName("Custom browser adapter error reader");
+			errConsumer.setName("Custom browser adapter error reader"); //$NON-NLS-1$
 			errConsumer.start();
 		} catch (Exception e) {
 			HelpBasePlugin.logError(
-				HelpBaseResources.getString("CustomBrowser.errorLaunching", url, path),
+				HelpBaseResources.getString("CustomBrowser.errorLaunching", url, path), //$NON-NLS-1$
 				e);
 			throw new Exception(
-				HelpBaseResources.getString("CustomBrowser.errorLaunching", url, path));
+				HelpBaseResources.getString("CustomBrowser.errorLaunching", url, path)); //$NON-NLS-1$
 		}
 	}
 
@@ -99,24 +99,24 @@ public class CustomBrowser implements IBrowser {
 		ArrayList tokenList = new ArrayList();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer =
-			new StringTokenizer(path.trim(), "\"", true);
+			new StringTokenizer(path.trim(), "\"", true); //$NON-NLS-1$
 		boolean withinQuotation = false;
-		String quotedString = "";
+		String quotedString = ""; //$NON-NLS-1$
 		while (qTokenizer.hasMoreTokens()) {
 			String curToken = qTokenizer.nextToken();
-			if (curToken.equals("\"")) {
+			if (curToken.equals("\"")) { //$NON-NLS-1$
 				if (withinQuotation) {
 					if (Constants
 						.OS_WIN32
 						.equalsIgnoreCase(Platform.getOS())) {
 						// need to quote URLs on Windows
-						tokenList.add("\"" + quotedString + "\"");
+						tokenList.add("\"" + quotedString + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						// qotes prevent launching on Unix 35673
 						tokenList.add(quotedString);
 					}
 				} else {
-					quotedString = "";
+					quotedString = ""; //$NON-NLS-1$
 				}
 				withinQuotation = !withinQuotation;
 				continue;
@@ -135,11 +135,11 @@ public class CustomBrowser implements IBrowser {
 		boolean substituted = false;
 		for (int i = 0; i < tokenList.size(); i++) {
 			String token = (String) tokenList.get(i);
-			if ("%1".equals(token)) {
+			if ("%1".equals(token)) { //$NON-NLS-1$
 				tokenList.set(i, url);
 				substituted = true;
-			} else if ("\"%1\"".equals(token)) {
-				tokenList.set(i, "\"" + url + "\"");
+			} else if ("\"%1\"".equals(token)) { //$NON-NLS-1$
+				tokenList.set(i, "\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				substituted = true;
 			}
 		}

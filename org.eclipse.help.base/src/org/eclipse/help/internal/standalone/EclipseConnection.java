@@ -50,16 +50,16 @@ public class EclipseConnection {
 			HttpURLConnection connection =
 				(HttpURLConnection) url.openConnection();
 			if (Options.isDebug()) {
-				System.out.println("Connection  to control servlet created.");
+				System.out.println("Connection  to control servlet created."); //$NON-NLS-1$
 			}
 			connection.connect();
 			if (Options.isDebug()) {
-				System.out.println("Connection  to control servlet connected.");
+				System.out.println("Connection  to control servlet connected."); //$NON-NLS-1$
 			}
 			int code = connection.getResponseCode();
 			if (Options.isDebug()) {
 				System.out.println(
-					"Response code from control servlet=" + code);
+					"Response code from control servlet=" + code); //$NON-NLS-1$
 			}
 			connection.disconnect();
 			return;
@@ -93,13 +93,13 @@ public class EclipseConnection {
 				}
 			}
 		}
-		host = (String) p.get("host");
-		port = (String) p.get("port");
+		host = (String) p.get("host"); //$NON-NLS-1$
+		port = (String) p.get("port"); //$NON-NLS-1$
 		if (Options.isDebug()) {
-			System.out.println("Help server host=" + host);
+			System.out.println("Help server host=" + host); //$NON-NLS-1$
 		}
 		if (Options.isDebug()) {
-			System.out.println("Help server port=" + port);
+			System.out.println("Help server port=" + port); //$NON-NLS-1$
 		}
 	}
 

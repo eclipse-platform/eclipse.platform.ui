@@ -73,7 +73,7 @@ public class Help {
 		ArrayList options = new ArrayList(2);
 		if (install != null) {
 			options = new ArrayList(2);
-			options.add("-eclipseHome");
+			options.add("-eclipseHome"); //$NON-NLS-1$
 			options.add(install);
 		}
 		String[] args = new String[options.size()];
