@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.target.ILocationFactory;
+import org.eclipse.team.core.target.ISiteFactory;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
@@ -66,7 +66,7 @@ public class TargetProviderTests extends TeamTest {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		ILocationFactory factory = TargetManager.getSiteFactory("org.eclipse.team.webdav");		
+		ISiteFactory factory = TargetManager.getSiteFactory("org.eclipse.team.webdav");		
 		assertNotNull(factory);
 		Properties properties = new Properties();
 		properties.put("location", test_url);
