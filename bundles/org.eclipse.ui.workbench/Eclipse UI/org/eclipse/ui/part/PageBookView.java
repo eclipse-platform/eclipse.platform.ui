@@ -125,6 +125,12 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	private Map mapPageToSite = new HashMap();
 
 	/**
+	 * Map from pages to the number of pageRecs 
+	 * actively associated with a page. 
+	 */
+	private Map mapPageToNumRecs = new HashMap();
+	
+	/**
 	 * The page rec which provided the current page or
 	 * <code>null</code> 
 	 */
@@ -182,6 +188,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		
 		/**
 		 * Creates a new page record initialized to the given part and page.
+		 * @param part
+		 * @param page
 		 */
 		public PageRec(IWorkbenchPart part, IPage page) {
 			this.part = part;
@@ -228,8 +236,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			ISelectionProvider selProvider = site.getSelectionProvider();
 			if (selProvider != null) 
 				return selProvider.getSelection();
-			else
-				return StructuredSelection.EMPTY;
+			return StructuredSelection.EMPTY;
 		}
 		/* (non-Javadoc)
 		 * Method declared on ISelectionProvider.
@@ -237,8 +244,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			selectionChangedListeners.remove(listener);
 		}
-		/* (non-Javadoc)
-		 * Method declared on ISelectionChangedListener.
+		/**
+		 * The selection has changed. Process the event.
+		 * @param event
 		 */
 		public void selectionChanged(final SelectionChangedEvent event) {
 			// pass on the notification to listeners
@@ -295,6 +303,8 @@ protected abstract IPage createDefaultPage(PageBook book);
 /**
  * Creates a page for a given part.  Adds it to the pagebook but does
  * not show it.
+ * @param part The part we are making a page for.
+ * @return IWorkbenchPart
  */
 private PageRec createPage(IWorkbenchPart part) {
 	PageRec rec = doCreatePage(part);
@@ -307,21 +317,35 @@ private PageRec createPage(IWorkbenchPart part) {
 /**
  * Prepares the page in the given page rec for use
  * in this view.
+ * @param rec
  */
 private void preparePage(PageRec rec) {
 	IPageSite site = null;
-	if (rec.page instanceof IPageBookViewPage) {
-		site = ((IPageBookViewPage)rec.page).getSite();
+	Integer count;
+	
+	if (!doesPageExist(rec.page)) {
+		if (rec.page instanceof IPageBookViewPage) {
+			site = ((IPageBookViewPage)rec.page).getSite();
+		}
+		if (site == null) {
+			// We will create a site for our use
+			site = new PageSite(getViewSite());
+		}
+		mapPageToSite.put(rec.page, site);
+		
+		rec.subActionBars = (SubActionBars)site.getActionBars();
+		rec.subActionBars.addPropertyChangeListener(actionBarPropListener);
+		// for backward compability with IPage
+		rec.page.setActionBars(rec.subActionBars);
+		
+		count = new Integer(0);
+	} else {
+		site = (IPageSite)mapPageToSite.get(rec.page);
+		rec.subActionBars = (SubActionBars)site.getActionBars();
+		count = ((Integer)mapPageToNumRecs.get(rec.page));
 	}
-	if (site == null) {
-		// We will create a site for our use
-		site = new PageSite(getViewSite());
-	}
-	mapPageToSite.put(rec.page, site);
-	rec.subActionBars = (SubActionBars)site.getActionBars();
-	rec.subActionBars.addPropertyChangeListener(actionBarPropListener);
-	// for backward compability with IPage
-	rec.page.setActionBars(rec.subActionBars);
+	
+	mapPageToNumRecs.put(rec.page, new Integer(count.intValue() + 1));
 }
 /**
  * Initializes the given page with a page site.
@@ -333,7 +357,7 @@ private void preparePage(PageRec rec) {
  * <p>
  * Subclasses may override
  * </p>
- * @param the page to initialize
+ * @param page The page to initialize
  */
 protected void initPage(IPageBookViewPage page) {
 	try {
@@ -420,6 +444,16 @@ protected abstract PageRec doCreatePage(IWorkbenchPart part);
  * @see #doCreatePage
  */
 protected abstract void doDestroyPage(IWorkbenchPart part, PageRec pageRecord);
+
+/**
+ * Returns true if the page has already been created.
+ * 
+ * @param page the page to test
+ * @return true if this page has already been created.
+ */
+protected boolean doesPageExist(IPage page) {
+	return mapPageToNumRecs.containsKey(page);
+}
 
 /**
  * The <code>PageBookView</code> implementation of this <code>IAdaptable</code> 
@@ -568,6 +602,7 @@ public void partActivated(IWorkbenchPart part) {
  * method does nothing. Subclasses may extend.
  */
 public void partBroughtToTop(IWorkbenchPart part) {
+	//Do nothing by default
 }
 /**
  * The <code>PageBookView</code> implementation of this <code>IPartListener</code>
@@ -591,13 +626,14 @@ public void partClosed(IWorkbenchPart part) {
 public void partDeactivated(IWorkbenchPart part) {
 	// Do nothing.
 }
-/**
- * The <code>PageBookView</code> implementation of this <code>IPartListener</code>
- * method does nothing. Subclasses may extend.
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
  */
 public void partOpened(IWorkbenchPart part) {
+	//Do nothing by default.
 }
-/* (non-Javadoc)
+/**
  * Refreshes the global actions for the active page.
  */
 private void refreshGlobalActionHandlers() {
@@ -618,31 +654,41 @@ private void refreshGlobalActionHandlers() {
 	}
 }
 /**
- * Removes a page.
+ * Removes a page record. If it is the last reference to the
+ * page dispose of it - otherwise just decrement the reference
+ * count.
+ * @param rec
  */
 private void removePage(PageRec rec) {
-	Object site = mapPageToSite.remove(rec.page);
 	mapPartToRec.remove(rec.part);
 
-	if (rec.subActionBars != null) {
-		rec.subActionBars.dispose();
-	}
-
-	Control control = rec.page.getControl();
-	if (control != null && !control.isDisposed()) {
-		// Dispose the page's control so pages don't have to do this in their 
-		// dispose method. 
-		// The page's control is a child of this view's control so if this view 
-		// is closed, the page's control will already be disposed.
-		control.dispose();
-	}
-
-	if (site instanceof PageSite) {
-		((PageSite)site).dispose();
-	}
+	int newCount = ((Integer)mapPageToNumRecs.get(rec.page)).intValue() - 1;
 	
-	// free the page 
-	doDestroyPage(rec.part, rec);
+	if (newCount == 0) {
+		Object site = mapPageToSite.remove(rec.page);
+		mapPageToNumRecs.remove(rec.page);
+		
+		if (rec.subActionBars != null) {
+			rec.subActionBars.dispose();
+		}
+	
+		Control control = rec.page.getControl();
+		if (control != null && !control.isDisposed()) {
+			// Dispose the page's control so pages don't have to do this in their 
+			// dispose method. 
+			// The page's control is a child of this view's control so if this view 
+			// is closed, the page's control will already be disposed.
+			control.dispose();
+		}
+	
+		if (site instanceof PageSite) {
+			((PageSite)site).dispose();
+		}
+		
+		// free the page 
+		doDestroyPage(rec.part, rec);
+	} else
+		mapPageToNumRecs.put(rec.page, new Integer(newCount));
 }
 /* (non-Javadoc)
  * Method declared on IWorkbenchPart.
@@ -656,6 +702,7 @@ public void setFocus() {
 
 /**
  * Handle page selection changes.
+ * @param event
  */
 private void pageSelectionChanged(SelectionChangedEvent event) {
 	// forward this change from a page to our site's selection provider
@@ -686,7 +733,12 @@ protected void showPageRec(PageRec pageRec) {
 	// If already showing do nothing
 	if (activeRec == pageRec)
 		return;
-	
+	// If the page is the same, just set activeRec to pageRec
+	if (activeRec != null && pageRec != null && activeRec.page == pageRec.page) {
+		activeRec = pageRec;
+		return;
+	}
+
 	// Hide old page.
 	if (activeRec != null) {
 		activeRec.subActionBars.deactivate();
