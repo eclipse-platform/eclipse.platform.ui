@@ -147,7 +147,8 @@ public class BundleModel extends NestedRegistryModelObject implements IRegistryE
 	}
 
 	public long getId() {
-		return bundle.getBundleId();
+		// returns an invalid id, but avoids NPE
+		return bundle == null ? -1 : bundle.getBundleId();
 	}
 
 	public Bundle getBundle() {
