@@ -151,7 +151,9 @@ private static void activateDefaultPlugins() throws CoreException {
 	descriptor.activateDefaultPlugins(loader);
 	loader.setPackagePrefixes(PluginClassLoader.initializePrefixes(descriptor, loader.getPrefixId()));
 	descriptor.setPluginClassLoader(loader);
-	descriptor.getPlugin();
+	Plugin plugin = descriptor.getPlugin();
+	//set default value for platform performance setting
+	plugin.getPluginPreferences().setDefault(Platform.PREF_PLATFORM_PERFORMANCE, (Platform.MAX_PERFORMANCE + Platform.MIN_PERFORMANCE)/2);
 }
 /**
  * @see Platform
@@ -639,12 +641,14 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 	createLockFile();
 	adapterManager = new AdapterManager();
 	loadOptions(bootOptions);
-	jobManager = JobManager.getInstance();
 	MultiStatus problems = loadRegistry(pluginPath);
 	initialized = true;
 	// can't register url handlers until after the plugin registry is loaded
 	PlatformURLPluginHandlerFactory.startup();
 	activateDefaultPlugins();
+	//can't start job manager until runtime plugin has
+	//been created because it uses some plugin preferences
+	jobManager = JobManager.getInstance();
 	if (DEBUG_CONTEXT)
 		System.out.println("OS: " + BootLoader.getOS() + " WS: " + BootLoader.getWS() +  //$NON-NLS-1$ //$NON-NLS-2$
 			" NL: " + BootLoader.getNL() + " ARCH: " + BootLoader.getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$

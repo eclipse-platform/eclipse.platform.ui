@@ -11,6 +11,7 @@ package org.eclipse.core.internal.jobs;
 
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -25,28 +26,14 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 class WorkerPool {
 	/**
-	 * There will always be at least MIN_THREADS workers in the pool.
-	 */
-	private static final int MIN_THREADS = 1;
-	private static final int MAX_THREADS = 25;
-	/**
 	 * Threads not used by their best before timestamp are destroyed. 
 	 */
 	private static final int BEST_BEFORE = 60000;
-	
-	private boolean running = false;
+	private static final int DEFAULT_MAX_THREADS = 25;
 	/**
-	 * The living set of workers in this pool.
+	 * There will always be at least MIN_THREADS workers in the pool.
 	 */
-	private Worker[] threads = new Worker[10];
-	/**
-	 * The number of workers in the threads array
-	 */
-	private int numThreads = 0;
-	/**
-	 * The number of threads that are currently sleeping 
-	 */
-	private int sleepingThreads = 0;
+	private static final int MIN_THREADS = 1;
 	/**
 	 * Use the busy thread count to avoid starting new threads when a living
 	 * thread is just doing house cleaning (notifying listeners, etc).
@@ -54,10 +41,32 @@ class WorkerPool {
 	private int busyThreads = 0;
 
 	private JobManager manager;
+	private int MAX_THREADS = DEFAULT_MAX_THREADS;
+	/**
+	 * The number of workers in the threads array
+	 */
+	private int numThreads = 0;
+	
+	private boolean running = false;
+	/**
+	 * The number of threads that are currently sleeping 
+	 */
+	private int sleepingThreads = 0;
+	/**
+	 * The living set of workers in this pool.
+	 */
+	private Worker[] threads = new Worker[10];
 
 	protected WorkerPool(JobManager manager) {
 		this.manager = manager;
 		running = true;
+		computeMaxThreads();
+		Platform.getPlugin(Platform.PI_RUNTIME).getPluginPreferences().addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equalsIgnoreCase(Platform.PREF_PLATFORM_PERFORMANCE))
+					computeMaxThreads();
+			}
+		});
 	}
 	/**
 	 * Adds a worker to the list of workers.
@@ -70,6 +79,30 @@ class WorkerPool {
 			threads = newThreads;
 		}
 		threads[numThreads++] = worker;
+	}
+	/**
+	 * Computes the maximum number of threads based on the machine speed
+	 * preference.
+	 */
+	protected void computeMaxThreads() {
+		int speed = Platform.getPlugin(Platform.PI_RUNTIME).getPluginPreferences().getInt(Platform.PREF_PLATFORM_PERFORMANCE);
+		switch (speed) {
+			case 1:
+				MAX_THREADS = DEFAULT_MAX_THREADS / 5;
+				break;
+			case 2:
+				MAX_THREADS =  DEFAULT_MAX_THREADS / 2;
+				break;
+			case 4:
+				MAX_THREADS =  DEFAULT_MAX_THREADS * 2;
+				break;
+			case 5:
+				MAX_THREADS =  DEFAULT_MAX_THREADS * 5;
+				break;
+			case 3:
+			default:
+				MAX_THREADS =  DEFAULT_MAX_THREADS;
+			}
 	}
 	private synchronized void decrementBusyThreads() {
 		busyThreads--;
