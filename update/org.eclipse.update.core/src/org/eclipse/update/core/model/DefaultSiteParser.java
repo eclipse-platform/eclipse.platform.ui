@@ -38,7 +38,6 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_DESCRIPTION = 6;
 	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
-	public static boolean DEBUG = false;
 
 	public static final String SITE = "site";
 	public static final String FEATURE = "feature";
@@ -65,7 +64,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		this.parser.setContentHandler(this);
 		this.factory = factory;
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("Created");
 	}
 
@@ -96,7 +95,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		if (DEBUG) {
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			debug("State: " + (Integer) stateStack.peek());
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		}
@@ -219,7 +218,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		site.setType(type);
 		objectStack.push(site);
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("End process Site tag: infoURL:" + infoURL + " type:" + type);
 
 	}
@@ -244,7 +243,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 			objectStack.push(feature);
 
-			if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 				debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type);
 		}
 	}
@@ -269,7 +268,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				SiteMapModel site = (SiteMapModel) objectStack.peek();
 				site.addArchiveReferenceModel(archive);
 			}
-			if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 				debug("End processing Archive: path:" + id + " url:" + url);
 		}
 	}
@@ -282,7 +281,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		FeatureReferenceModel feature = (FeatureReferenceModel) objectStack.peek();
 		feature.addCategoryName(category);
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("End processing Category: name:" + category);
 	}
 
@@ -300,7 +299,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		site.addCategoryModel(category);
 		objectStack.push(category);
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("End processing CategoryDef: name:" + name + " label:" + label);
 	}
 
@@ -312,7 +311,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		String infoURL = attributes.getValue("url");
 		inf.setURLString(infoURL);
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("Processed Info: url:" + infoURL);
 
 		objectStack.push(inf);
@@ -399,7 +398,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				break;
 		}
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("End Element:" + uri + ":" + localName + ":" + qName);
 	}
 

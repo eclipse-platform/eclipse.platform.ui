@@ -28,6 +28,8 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 public class DetailsForm extends PropertyWebForm {
 // NL keys
+
+
 private static final String KEY_PROVIDER = "FeaturePage.provider";
 private static final String KEY_VERSION = "FeaturePage.version";
 private static final String KEY_IVERSION = "FeaturePage.installedVersion";
@@ -43,6 +45,7 @@ private static final String KEY_LICENSE_LINK = "FeaturePage.licenseLink";
 private static final String KEY_COPYRIGHT_LINK = "FeaturePage.copyrightLink";
 private static final String KEY_NOT_INSTALLED = "FeaturePage.notInstalled";
 private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
+private static final String KEY_UNKNOWN_SIZE_VALUE = "FeaturePage.unknownSizeValue";
 private static final String KEY_DO_UNCONFIGURE="FeaturePage.doButton.unconfigure";
 private static final String KEY_DO_CONFIGURE="FeaturePage.doButton.configure";
 private static final String KEY_DO_UPDATE="FeaturePage.doButton.update";
@@ -374,10 +377,15 @@ private void refresh() {
 	else
 	   newerVersion = true;
 	installedVersionLabel.setText(installedVersion);
-	int size = 0;
-	String stext = Integer.toString(size);
-	String pattern = UpdateUIPlugin.getResourceString(KEY_SIZE_VALUE);
-	String format = UpdateUIPlugin.getFormattedMessage(pattern, stext);
+	long size = feature.getInstallSize((ISite)null);
+	String format = null;
+	if (size!=-1){
+		String stext = Long.toString(size);
+		String pattern = UpdateUIPlugin.getResourceString(KEY_SIZE_VALUE);
+		format = UpdateUIPlugin.getFormattedMessage(pattern, stext);
+	} else {
+		format = UpdateUIPlugin.getResourceString(KEY_UNKNOWN_SIZE_VALUE);
+	}
 	sizeLabel.setText(format);
 	descriptionText.setText(feature.getDescription().getAnnotation());
 	Image logoImage = loadProviderImage(feature);

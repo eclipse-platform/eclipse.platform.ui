@@ -199,7 +199,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @see IFeature#getDownloadSize(ISite)
 	 * 
 	 */
-	public long getDownloadSize(ISite site) throws CoreException {
+	public long getDownloadSize(ISite site) {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = this.getPluginEntries();
 		if (site != null) {
@@ -230,7 +230,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * 
 	 * @see IFeature#getInstallSize(ISite)
 	 */
-	public long getInstallSize(ISite site) throws CoreException {
+	public long getInstallSize(ISite site) {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = this.getPluginEntries();
 		if (site != null) {

@@ -44,8 +44,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private static final int STATE_DATA = 12;
 	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
-	public static boolean DEBUG = true;
-
 	private static final String FEATURE = "feature";
 	private static final String HANDLER = "install-handler";
 	private static final String DESCRIPTION = "description";
@@ -73,9 +71,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 		this.parser = new SAXParser();
 		this.parser.setContentHandler(this);
 		this.factory = factory;
-
-		if (DEBUG)
-			debug("Created");
 	}
 
 	/**
@@ -105,7 +100,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 
 		String tag = localName.trim();
@@ -304,7 +299,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(feature);
 
-			if (DEBUG) {
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 				debug("End process DefaultFeature tag: id:" + id + " ver:" + ver + " label:" + label + " provider:" + provider);
 				debug("End process DefaultFeature tag: image:" + imageURL);
 				debug("End process DefaultFeature tag: ws:" + ws + " os:" + os + " nl:" + nl + " application:" + application);
@@ -322,7 +317,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		objectStack.push(inf);
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("Processed Info: url:" + infoURL);
 	}
 
@@ -336,7 +331,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		inf.setURLString(infoURL);
 		inf.setAnnotation(label);
 
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("Processed URLInfo: url:" + infoURL + " label:" + label);
 
 		objectStack.push(inf);
@@ -359,7 +354,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(imp);
 
-			if (DEBUG) {
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 				debug("Processed require: id:" + id + " ver:" + ver);
 				debug("Processed require: match:" + match);
 			}
@@ -421,7 +416,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(pluginEntry);
 
-			if (DEBUG) {
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 				debug("Processed Plugin: id:" + id + " ver:" + ver + " fragment:" + fragment);
 				debug("Processed Plugin: os:" + os + " ws:" + ws + " nl:" + nl);
 				debug("Processed Plugin: download size:" + download_size + " install size:" + install_size);
@@ -467,7 +462,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(dataEntry);
 
-			if (DEBUG) {
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 				debug("Processed Data: id:" + id);
 				debug("Processed Data: download size:" + download_size + " install size:" + install_size);
 			}
@@ -641,8 +636,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		}
 
-	
-		if (DEBUG)
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("End Element:" + uri + ":" + localName + ":" + qName);
 	}
 

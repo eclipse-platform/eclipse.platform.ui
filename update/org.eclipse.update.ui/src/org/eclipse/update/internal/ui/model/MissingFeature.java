@@ -167,14 +167,14 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getDownloadSize(ISite)
 	 */
-	public long getDownloadSize(ISite site) throws CoreException {
+	public long getDownloadSize(ISite site) {
 		return 0;
 	}
 
 	/*
 	 * @see IFeature#getInstallSize(ISite)
 	 */
-	public long getInstallSize(ISite site) throws CoreException {
+	public long getInstallSize(ISite site) {
 		return 0;
 	}
 

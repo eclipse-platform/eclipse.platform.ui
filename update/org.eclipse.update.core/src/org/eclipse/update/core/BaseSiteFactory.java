@@ -12,7 +12,9 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.FeatureReference;
+import org.eclipse.update.internal.core.URLEncoder;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
@@ -33,8 +35,10 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	 */
 	protected ResourceBundle getResourceBundle(URL url) {
 		ResourceBundle bundle = null;
+
 		try {
-			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+			URL resolvedURL = URLEncoder.encode(url);
+			ClassLoader l = new URLClassLoader(new URL[] { resolvedURL }, null);
 			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			//ok, there is no bundle, keep it as null
@@ -51,9 +55,10 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 					try {
 						int index = file.lastIndexOf('/');
 						if (index != -1) {
-							file = file.substring(0, index+1);
+							file = file.substring(0, index + 1);
 							url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
-							ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+							URL resolvedURL = URLEncoder.encode(url);
+							ClassLoader l = new URLClassLoader(new URL[] { resolvedURL }, null);
 							bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
 						}
 					} catch (MalformedURLException e1) {
@@ -68,32 +73,46 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 					}
 				}
 			}
-
+		} catch (MalformedURLException e1) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug("Unable to encode URL:" + url);
+			}
 		}
+
 		return bundle;
-	} /*
-				 * @see SiteModelFactory#createSiteMapModel()
-				 */
+	}
+
+	/*
+	 * @see SiteModelFactory#createSiteMapModel()
+	*/
 	public SiteMapModel createSiteMapModel() {
 		return new Site();
-	} /*
-				 * @see SiteModelFactory#createFeatureReferenceModel()
-				 */
+	}
+
+	/*
+	 * @see SiteModelFactory#createFeatureReferenceModel()
+	 */
 	public FeatureReferenceModel createFeatureReferenceModel() {
 		return new FeatureReference();
-	} /*
-				 * @see SiteModelFactory#createArchiveReferenceModel()
-				 */
+	}
+
+	/*
+	 * @see SiteModelFactory#createArchiveReferenceModel()
+	 */
 	public ArchiveReferenceModel createArchiveReferenceModel() {
 		return new ArchiveReference();
-	} /*
-				 * @see SiteModelFactory#createURLEntryModel()
-				 */
+	}
+
+	/*
+	 * @see SiteModelFactory#createURLEntryModel()
+	 */
 	public URLEntryModel createURLEntryModel() {
 		return new URLEntry();
-	} /*
-				 * @see SiteModelFactory#createSiteCategoryModel()
-				 */
+	}
+
+	/*
+	 * @see SiteModelFactory#createSiteCategoryModel()
+	 */
 	public SiteCategoryModel createSiteCategoryModel() {
 		return new Category();
 	}

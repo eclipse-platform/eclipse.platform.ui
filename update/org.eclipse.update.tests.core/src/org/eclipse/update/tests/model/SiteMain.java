@@ -27,7 +27,6 @@ public class SiteMain {
 	private static void process(String xml, PrintWriter w) {
 		
 		SiteModelFactory factory = new SiteModelFactory();
-		DefaultSiteParser.DEBUG = false;
 		InputStream is = null;
 		SiteMapModel site = null;
 		

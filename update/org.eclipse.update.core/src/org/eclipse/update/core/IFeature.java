@@ -310,7 +310,7 @@ public interface IFeature extends IPluginContainer {
 	 * @since 2.0 
 	 */
 
-	long getDownloadSize(ISite site) throws CoreException;
+	long getDownloadSize(ISite site);
 	
 	/**
 	 * returns the install size
@@ -322,7 +322,7 @@ public interface IFeature extends IPluginContainer {
 	 * @since 2.0 
 	 */
 
-	long getInstallSize(ISite site) throws CoreException;
+	long getInstallSize(ISite site) ;
 	
 	/**
 	 * optional identifier of the Eclipse application that is to be used during

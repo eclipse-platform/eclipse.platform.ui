@@ -20,7 +20,6 @@ public class FeatureMain {
 	public static void main(String[] args) {
 		
 		FeatureModelFactory factory = new FeatureModelFactory();
-		DefaultFeatureParser.DEBUG = false;
 		InputStream is = null;
 		FeatureModel feature = null;
 		PrintWriter w = new PrintWriter(System.out);
