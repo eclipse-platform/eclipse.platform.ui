@@ -210,4 +210,23 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 			this.parent = (SynchronizeModelElement)parent;
 		}
 	}
+	
+	/**
+	 * Synchronize model elements are not copied so use identity as the
+	 * equality check.
+	 * @param object The object to test
+	 * @return true if the objects are identical
+	 */
+	public boolean equals(Object object) {
+		return this==object;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#hashCode()
+	 */
+	public int hashCode() {
+		// Use the name to get the hashCode to ensure that we can find equal elements.
+		// (The inherited hashCode uses the path which can change when items are removed) 
+		return getName().hashCode();
+	}
 }

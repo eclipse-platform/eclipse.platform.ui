@@ -162,26 +162,6 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 		return null;
 	}
 	
-	/**
-	 * Return true if the receiver's Subscriber and Resource are equal to that of object.
-	 * @param object The object to test
-	 * @return true has the same subsriber and resource
-	 */
-	public boolean equals(Object object) {
-		return this==object;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		IResource resource = getResource();
-		if (resource == null) {
-			return super.hashCode();
-		}
-		return resource.hashCode();
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
