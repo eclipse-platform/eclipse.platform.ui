@@ -168,7 +168,7 @@ public class EditorManager {
 		IEditorActionBarContributor contr = desc.createActionBarContributor();
 		if (contr != null) {
 			actionBars.setEditorContributor(contr);
-			contr.init(actionBars);
+			contr.init(actionBars, page);
 		}
 
 		// Read action extensions.
@@ -176,7 +176,7 @@ public class EditorManager {
 		contr = builder.readActionExtensions(desc, actionBars);
 		if (contr != null) {
 			actionBars.setExtensionContributor(contr);
-			contr.init(actionBars);
+			contr.init(actionBars, page);
 		}
 
 		// Return action bars.

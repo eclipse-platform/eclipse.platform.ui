@@ -61,6 +61,8 @@ public void deactivate(boolean forceVisibility) {
  */
 public void dispose() {
 	super.dispose();
+	if (editorContributor != null) 
+		editorContributor.dispose();
 	if (coolBarItem != null)
 		coolBarItem.dispose();
 }

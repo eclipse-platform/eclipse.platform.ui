@@ -31,6 +31,10 @@ public class EditorActionBarContributor
 	 * The action bars; <code>null</code> until <code>init</code> is called.
 	 */
 	private IActionBars bars;
+	/**
+	 * The workbench page; <code>null</code> until <code>init</code> is called.
+	 */
+	private IWorkbenchPage page;
 /**
  * Creates an empty editor action bar contributor. The action bars are
  * furnished later via the <code>init</code> method.
@@ -82,8 +86,33 @@ public IActionBars getActionBars() {
 	return bars;
 }
 /**
+ * Returns this contributor's workbench page.
+ *
+ * @return the workbench page
+ */
+public IWorkbenchPage getPage() {
+	return page;
+}
+/**
  * The <code>EditorActionBarContributor</code> implementation of this 
- * <code>IEditorActionBarContributor</code> method calls:
+ * <code>IEditorActionBarContributor</code> method does nothing,
+ * subclasses may override.
+ */
+public void dispose() {
+}
+
+/**
+ * The <code>EditorActionBarContributor</code> implementation of this 
+ * <code>IEditorActionBarContributor</code> method remembers the page
+ * then forwards the call to <code>init(IActionBars)</code> for
+ * backward compatibility
+ */
+public void init(IActionBars bars, IWorkbenchPage page) {
+	this.page = page;
+	init(bars);
+}
+/**
+ * This method calls:
  * <ul>
  *  <li><code>contributeToMenu</code> with <code>bars</code>' menu manager</li>
  *  <li><code>contributeToToolBar</code> with <code>bars</code>' tool bar
@@ -93,6 +122,8 @@ public IActionBars getActionBars() {
  * </ul>
  * The given action bars are also remembered and made accessible via 
  * <code>getActionBars</code>.
+ * 
+ * @param bars the action bars
  */
 public void init(IActionBars bars) {
 	this.bars = bars;

@@ -23,7 +23,9 @@ public class EditorActionBuilder extends PluginActionBuilder {
 		public ExternalContributor(List cache) {
 			this.cache = cache;
 		}
-		public void init(IActionBars bars) {
+		public void dispose() {
+		};
+		public void init(IActionBars bars, IWorkbenchPage page) {
 			contributeToMenu(bars.getMenuManager());
 			contributeToToolBar(bars.getToolBarManager());
 			contributeToStatusLine(bars.getStatusLineManager());
