@@ -72,7 +72,9 @@ public class ProgressRegion {
 			 */
 			public void animationDone() {
 				//Add an extra refresh to the viewer in case
-				//of stale input
+				//of stale input if the controls are not disposed
+				if(viewer.getControl().isDisposed())
+					return;
 				viewer.refresh();
 			}
 			
