@@ -38,7 +38,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		
 	// local file map in temporary area
 	private static Map entryMap;
-	private static File tmpDir;
+	private File tmpDir; // per-feature temp root
 	
 	// buffer pool
 	private static Stack bufferPool;	
@@ -46,7 +46,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	
 	/**
 	 * Content selector used in archive operations.
-	 * Default implementation causes all entries to be selected with
+	 * Default implementation causes all file entries to be selected with
 	 * generated identifiers being the same as the original entry name.
 	 * 
 	 * @since 2.0
@@ -55,22 +55,24 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		
 		/**
 		 * Indicates whether the archive content entry should be
-		 * selected for the operation
+		 * selected for the operation. Default behavior is to select
+		 * all non-directory entries.
 		 * 
 		 * @since 2.0
 		 */
-		public boolean include(String entry) {
-			return true;
+		public boolean include(JarEntry entry) {
+			return !entry.isDirectory();
 		}
 		
 		/**
 		 * Defines a content reference identifier for the 
-		 * archive content entry
+		 * archive content entry. Default identifier is the
+		 * same as the jar entry name.
 		 * 
 		 * @since 2.0
 		 */
-		public String defineIdentifier(String entry) {
-			return entry;
+		public String defineIdentifier(JarEntry entry) {
+			return entry.getName();
 		}
 	}
 	
@@ -219,8 +221,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			String tmpName = System.getProperty("java.io.tmpdir");
 			tmpName += "eclipse" + File.separator + ".update" + File.separator + Long.toString((new Date()).getTime()) + File.separator;
 			tmpDir = new File(tmpName);
-			tmpDir.deleteOnExit();
-			tmpDir.mkdirs();
+			verifyPath(tmpDir, false);
 			if (!tmpDir.exists())
 				throw new FileNotFoundException(tmpName);
 		}
@@ -234,13 +235,11 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			if (filePath.startsWith(File.separator))
 				filePath = filePath.substring(1);
 			temp = new File(tmpDir, filePath);
-			if (filePath.endsWith(File.separator))
-				temp.mkdirs();
 		} else {
 			// create file with temp name
 			temp = File.createTempFile("eclipse",null,tmpDir);
 		}
-		temp.deleteOnExit();
+		verifyPath(temp, true);
 		
 		// create file association 
 		if (key != null) {
@@ -295,13 +294,16 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 */
 	protected ContentReference[] unpack(JarContentReference jarReference, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
 		
+		// make sure we have a selector
+		if (selector == null)
+			selector = new ContentSelector();
+			
 		// get archive content
 		JarFile jarArchive = jarReference.asJarFile();
 		List content = new ArrayList();
 		Enumeration entries = jarArchive.entries();
 		
 		// run through the entries and unjar
-		String entryName;
 		String entryId;
 		JarEntry entry;
 		InputStream is;
@@ -309,13 +311,12 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		File localFile;
 		while(entries.hasMoreElements()) {
 			entry = (JarEntry) entries.nextElement();
-			entryName = entry.getName();
-			if (entry != null && selector != null && selector.include(entryName)) {
+			if (entry != null && selector.include(entry)) {
 				is = null;
 				os = null;
-				entryId = selector==null ? entryName : selector.defineIdentifier(entryName);
+				entryId = selector.defineIdentifier(entry);
 				localFile = createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
-				if (!localFile.isDirectory()) { // must test for directory (files do not exist at this point)
+				if (!entry.isDirectory()) { 
 					try {
 						is = jarArchive.getInputStream(entry);
 						os = new FileOutputStream(localFile);
@@ -339,7 +340,11 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * @since 2.0
 	 */
 	protected ContentReference unpack(JarContentReference jarReference, String entryName, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
-				
+						
+		// make sure we have a selector
+		if (selector == null)		
+			selector = new ContentSelector();
+			
 		// unjar the entry
 		JarFile jarArchive = jarReference.asJarFile();
 		entryName = entryName.replace(File.separatorChar,'/');
@@ -348,9 +353,9 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		if (entry != null) {
 			InputStream is = null;
 			OutputStream os = null;
-			entryId = selector==null ? entryName : selector.defineIdentifier(entryName);
+			entryId = selector.defineIdentifier(entry);
 			File localFile = createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
-			if (!localFile.isDirectory()) {  // must test for directory (files do not exist at this point)
+			if (!entry.isDirectory()) { 
 				try {
 					is = jarArchive.getInputStream(entry);
 					os = new FileOutputStream(localFile);
@@ -373,7 +378,11 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * @since 2.0
 	 */
 	protected ContentReference[] peek(JarContentReference jarReference, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
-				
+						
+		// make sure we have a selector
+		if (selector == null)		
+			selector = new ContentSelector();
+			
 		// get archive content
 		JarFile jarArchive = jarReference.asJarFile();
 		List content = new ArrayList();
@@ -381,13 +390,11 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		
 		// run through the entries and create content references
 		JarEntry entry;
-		String entryName;
 		String entryId;
 		while(entries.hasMoreElements()) {
 			entry = (JarEntry) entries.nextElement();
-			entryName = entry.getName();
-			if (selector != null && selector.include(entryName)) {
-				entryId = selector==null ? entryName : selector.defineIdentifier(entryName);
+			if (selector.include(entry)) {
+				entryId = selector.defineIdentifier(entry);
 				content.add(new JarEntryContentReference(entryId, jarReference, entry));
 			}
 		}		
@@ -401,12 +408,16 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * @since 2.0
 	 */
 	protected ContentReference peek(JarContentReference jarReference, String entryName, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
-		
+				
+		// make sure we have a selector
+		if (selector == null)
+			selector = new ContentSelector();
+			
 		// assume we have a reference that represents a jar archive.
 		JarFile jarArchive = jarReference.asJarFile();
 		entryName = entryName.replace(File.separatorChar,'/');
 		JarEntry entry = jarArchive.getJarEntry(entryName);
-		String entryId = selector==null ? entryName : selector.defineIdentifier(entryName);
+		String entryId = selector.defineIdentifier(entry);
 		return new JarEntryContentReference(entryId, jarReference, entry);
 	}
 	
@@ -454,5 +465,28 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		if (bufferPool == null)
 			bufferPool = new Stack();
 		bufferPool.push(buf);
+	}
+	
+	private void verifyPath(File path, boolean isFile) {
+		// if we are expecting a file back off 1 path element
+		if (isFile) {
+			if (path.getAbsolutePath().endsWith(File.separator)) { // make sure this is a file
+				path = path.getParentFile();
+				isFile = false;
+			}
+		}
+		
+		// already exists ... just return
+		if (path.exists())
+			return;
+
+		// does not exist ... ensure parent exists
+		File parent = path.getParentFile();
+		verifyPath(parent,false);
+		
+		// ensure directories are made. Mark files or directories for deletion
+		if (!isFile)
+			path.mkdir();
+		path.deleteOnExit();			
 	}
 }

@@ -26,23 +26,6 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 		 public boolean accept(File dir, String name){
 		 	return name.endsWith(FeaturePackagedContentProvider.JAR_EXTENSION);
 		 }
-	};	
-	
-	private FeatureContentProvider.ContentSelector contentSelector = new FeatureContentProvider.ContentSelector(){
-		/*
-		 * 
-		 */
-		public boolean include(String entry){
-			return (!entry.endsWith(File.separator) && !entry.endsWith("/"));
-		}
-		
-		/*
-		 *
-		 */
-		public String defineIdentifier(String entry){
-			return 	entry;
-		}
-		
 	};
 
 	/**
@@ -88,8 +71,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 			JarContentReference featureJarReference = (JarContentReference)asLocalReference(featureArchiveReference[0],null);
 			
 			// we need to unpack archive locally for UI browser references to be resolved correctly
-			FeatureContentProvider.ContentSelector sel = new FeatureContentProvider.ContentSelector();
-			localFeatureFiles = unpack(featureJarReference, sel, null); // unpack and cache references
+			localFeatureFiles = unpack(featureJarReference, null, null); // unpack and cache references
 			result = null;
 			for (int i=0; i<localFeatureFiles.length; i++) {
 				// find the manifest in the unpacked feature files
@@ -146,7 +128,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 		try {
 				// feature may not be known, 
 				// we may be asked for the manifest before the feature is set
-				String archiveID = (feature!=null)?contentSelector.defineIdentifier(feature.getVersionIdentifier().toString()):"";				
+				String archiveID = (feature!=null)? feature.getVersionIdentifier().toString() : "";				
 				ContentReference currentReference = new JarContentReference(archiveID,getURL());
 				currentReference = asLocalReference(currentReference,null);
 				references[0] = currentReference;
@@ -193,7 +175,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 		ContentReference[] pluginReferences = new ContentReference[0];
 		try {
 			JarContentReference localRef =	(JarContentReference)asLocalReference(references[0],null);
-			pluginReferences = peek(localRef,contentSelector,null);
+			pluginReferences = peek(localRef,null,null);
 		} catch (IOException e){
 			throw newCoreException( "Error retrieving plugin Entry Archive Reference :" + pluginEntry.getIdentifier().toString(), e);			
 		}
