@@ -198,7 +198,7 @@ public void restoreState(IMemento memento) {
 		path = path.append(customFileStr);
 		customFile = path.toFile();
 	}
-	singleton = (childMem.getInteger("singleton") != null);
+	singleton = (childMem.getInteger(IWorkbenchConstants.TAG_SINGLETON) != null);
 
 	//Find a descriptor in the registry.
 	PerspectiveDescriptor descriptor = (PerspectiveDescriptor)WorkbenchPlugin.getDefault().
@@ -228,7 +228,7 @@ public void saveState(IMemento memento) {
 	childMem.putString(IWorkbenchConstants.TAG_CLASS,className);
 	childMem.putString(IWorkbenchConstants.TAG_FILE,customFile.getName());
 	if (singleton)
-		childMem.putInteger("singleton", 1);
+		childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
 }
 /**
  * Sets the custom file.
