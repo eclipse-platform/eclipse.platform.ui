@@ -35,8 +35,8 @@ public class RunTargetAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public RunTargetAction(AntView view) {
-		super("Run", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN));
-		setToolTipText("Run the default target of the selected build file");
+		super(AntViewActionMessages.getString("RunTargetAction.Run_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN)); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("RunTargetAction.Run_Default")); //$NON-NLS-1$
 		this.view= view;
 	}
 

@@ -39,8 +39,8 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 	private static final int TOTAL_WORK_UNITS = 100;
 
 	public RunActiveTargetsAction(AntView view) {
-		super("Run Active Targets", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN));
-		setToolTipText("Run the active targets");
+		super(AntViewActionMessages.getString("RunActiveTargetsAction.Run"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN)); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("RunActiveTargetsAction.Run_2")); //$NON-NLS-1$
 		this.view = view;
 	}
 
@@ -48,7 +48,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 		try {
 			new ProgressMonitorDialog(view.getSite().getShell()).run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask("Running Ant Targets", TOTAL_WORK_UNITS);
+					monitor.beginTask(AntViewActionMessages.getString("RunActiveTargetsAction.Running"), TOTAL_WORK_UNITS); //$NON-NLS-1$
 
 					List targetList= getActiveTargets();
 					if (targetList.isEmpty()) {
@@ -79,7 +79,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 						} else {
 							// A new file. Before we start a new target string, launch the previous file.
 							if (targetString.length() > 0) {
-								monitor.subTask(previousFile.getName() + " -> " + targetString.toString());
+								monitor.subTask(previousFile.getName() + " -> " + targetString.toString()); //$NON-NLS-1$
 								launchFile(previousFile, targetString.toString());
 							}
 							// Start the target string for the new file
@@ -90,7 +90,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 					}
 					// At the end of the loop, we need to launch the last targets
 					if (targetString.length() > 0) {
-						monitor.subTask(previousFile.getName() + " -> " + targetString.toString());
+						monitor.subTask(previousFile.getName() + " -> " + targetString.toString()); //$NON-NLS-1$
 						launchFile(previousFile, targetString.toString());
 					}
 					monitor.done();
@@ -131,9 +131,9 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IStatus.ERROR, message, throwable);
 		}
 		if (message == null) {
-			message= "An exception occurred while running the selected targets";
+			message= AntViewActionMessages.getString("RunActiveTargetsAction.Exception"); //$NON-NLS-1$
 		}
-		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), "Error Running Targets", message, status);
+		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntViewActionMessages.getString("RunActiveTargetsAction.Error"), message, status); //$NON-NLS-1$
 	}
 
 	/**

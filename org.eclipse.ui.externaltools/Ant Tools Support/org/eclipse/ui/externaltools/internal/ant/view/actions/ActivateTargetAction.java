@@ -28,8 +28,8 @@ public class ActivateTargetAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public ActivateTargetAction(AntView view) {
-		super("Activate Target", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ACTIVATE));
-		setDescription("Activate the selected target");
+		super(AntViewActionMessages.getString("ActivateTargetAction.Activate_Target_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ACTIVATE)); //$NON-NLS-1$
+		setDescription(AntViewActionMessages.getString("ActivateTargetAction.Activate_selected")); //$NON-NLS-1$
 		this.view= view;
 	}
 	

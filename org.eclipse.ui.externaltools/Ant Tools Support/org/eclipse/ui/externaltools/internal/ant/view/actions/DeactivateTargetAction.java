@@ -26,8 +26,8 @@ public class DeactivateTargetAction extends Action implements IUpdate {
 	private AntView view;
 
 	public DeactivateTargetAction(AntView view) {
-		super("Deactivate Target", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_DEACTIVATE));
-		setDescription("Deactivate the selected target");
+		super(AntViewActionMessages.getString("DeactivateTargetAction.Deactivate"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_DEACTIVATE)); //$NON-NLS-1$
+		setDescription(AntViewActionMessages.getString("DeactivateTargetAction.Deactivate_selected")); //$NON-NLS-1$
 		this.view= view;
 	}
 	

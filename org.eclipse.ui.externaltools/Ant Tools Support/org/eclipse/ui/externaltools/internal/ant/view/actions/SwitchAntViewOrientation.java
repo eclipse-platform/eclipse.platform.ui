@@ -30,15 +30,15 @@ public class SwitchAntViewOrientation extends Action {
 		this.view= view;
 		this.orientation= orientation;
 		if (orientation == SWT.HORIZONTAL) {
-			setText("Horizontal View Orientation");
-			setToolTipText("Align the view components horizontally");
-			setDescription("Align the view components horizontally");
+			setText(AntViewActionMessages.getString("SwitchAntViewOrientation.Horizontal_View_Orientation_1")); //$NON-NLS-1$
+			setToolTipText(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_horizontally")); //$NON-NLS-1$
+			setDescription(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_horizontally")); //$NON-NLS-1$
 		} else if (orientation == SWT.VERTICAL) {
-			setText("Vertical View Orientation");
-			setToolTipText("Align the view components vertically");
-			setDescription("Align the view components vertically");
+			setText(AntViewActionMessages.getString("SwitchAntViewOrientation.Vertical_View_Orientation_4")); //$NON-NLS-1$
+			setToolTipText(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_vertically")); //$NON-NLS-1$
+			setDescription(AntViewActionMessages.getString("SwitchAntViewOrientation.Align_vertically")); //$NON-NLS-1$
 		} else {
-			Assert.isTrue(false, "Invalid orientation specified for Ant view orientation action");
+			Assert.isTrue(false, AntViewActionMessages.getString("SwitchAntViewOrientation.Invalid")); //$NON-NLS-1$
 		}
 	}
 

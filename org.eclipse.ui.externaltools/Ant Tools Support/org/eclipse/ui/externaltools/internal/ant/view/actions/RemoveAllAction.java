@@ -15,9 +15,9 @@ public class RemoveAllAction extends Action {
 	private AntView view;
 	
 	public RemoveAllAction(AntView view) {
-		super("Remove All Build Files", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE_ALL));
-		setDescription("Remove all build files");
-		setToolTipText("Remove All Build Files");
+		super(AntViewActionMessages.getString("RemoveAllAction.Remove_All"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE_ALL)); //$NON-NLS-1$
+		setDescription(AntViewActionMessages.getString("RemoveAllAction.Remove_all")); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("RemoveAllAction.Remove_All")); //$NON-NLS-1$
 		this.view= view;
 	}
 	

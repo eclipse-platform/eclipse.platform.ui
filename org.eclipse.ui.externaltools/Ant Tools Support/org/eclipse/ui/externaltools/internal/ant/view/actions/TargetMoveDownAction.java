@@ -27,9 +27,9 @@ public class TargetMoveDownAction extends Action implements IUpdate {
 	private AntView view;
 
 	public TargetMoveDownAction(AntView view) {
-		super("Move Down", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_MOVE_DOWN));
-		setDescription("Move the selected target down in the execution order");
-		setToolTipText("Move the selected target down in the execution order");
+		super(AntViewActionMessages.getString("TargetMoveDownAction.Move_Down_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_MOVE_DOWN)); //$NON-NLS-1$
+		setDescription(AntViewActionMessages.getString("TargetMoveDownAction.Move_Down_2")); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("TargetMoveDownAction.Move_Down_2")); //$NON-NLS-1$
 		this.view= view;
 	}
 	

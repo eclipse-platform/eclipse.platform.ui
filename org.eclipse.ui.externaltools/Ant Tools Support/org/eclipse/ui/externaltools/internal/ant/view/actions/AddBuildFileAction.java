@@ -25,16 +25,16 @@ public class AddBuildFileAction extends Action {
 	private AntView view;
 
 	public AddBuildFileAction(AntView view) {
-		super("Add Build File", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ADD));
+		super(AntViewActionMessages.getString("AddBuildFileAction.Add_Build_File_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ADD)); //$NON-NLS-1$
 		this.view= view;
-		setToolTipText("Add build file");
+		setToolTipText(AntViewActionMessages.getString("AddBuildFileAction.Add_build_file_2")); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		FileSelectionDialog dialog = new FileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "&Select a build file:");
+		FileSelectionDialog dialog = new FileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), AntViewActionMessages.getString("AddBuildFileAction.&Select")); //$NON-NLS-1$
 		dialog.setFileFilter("*.xml", true); //$NON-NLS-1$
 		dialog.open();
 		IFile file= dialog.getResult();

@@ -28,8 +28,8 @@ public class SearchForBuildFilesAction extends Action {
 	private AntView view;
 	
 	public SearchForBuildFilesAction(AntView view) {
-		super("Search", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_SEARCH));
-		setToolTipText("Add build files with search");
+		super(AntViewActionMessages.getString("SearchForBuildFilesAction.Search_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_SEARCH)); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("SearchForBuildFilesAction.Add_build_files_with_search_2")); //$NON-NLS-1$
 		this.view= view;
 	}
 	
@@ -47,10 +47,10 @@ public class SearchForBuildFilesAction extends Action {
 			try {
 				progressDialog.run(true, true, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						monitor.beginTask("Processing search results", files.length);
+						monitor.beginTask(AntViewActionMessages.getString("SearchForBuildFilesAction.Processing_search_results_3"), files.length); //$NON-NLS-1$
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 							String buildFileName= files[i].getLocation().toString();
-							monitor.subTask(MessageFormat.format("Adding {0}", new String[] {buildFileName}));
+							monitor.subTask(MessageFormat.format(AntViewActionMessages.getString("SearchForBuildFilesAction.Adding_{0}_4"), new String[] {buildFileName})); //$NON-NLS-1$
 							if (alreadyAdded(buildFileName)) {
 								// Don't parse projects that have already been added.
 								continue;
