@@ -251,7 +251,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/** Indicates whether this painter is managing decorations */
 	private boolean fIsPainting= false;
 	/** Indicates whether this painter is setting its annotation model */
-	private boolean fIsSettingModel= false;
+	private volatile boolean  fIsSettingModel= false;
 	/** The associated source viewer */
 	private ISourceViewer fSourceViewer;
 	/** The cached widget of the source viewer */
@@ -402,13 +402,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				fModel.removeAnnotationModelListener(this);
 			fModel= model;
 			if (fModel != null) {
-				synchronized(this) {
-					try {
-						fIsSettingModel= true;
-						fModel.addAnnotationModelListener(this);
-					} finally {
-						fIsSettingModel= false;
-					}
+				try {
+					fIsSettingModel= true;
+					fModel.addAnnotationModelListener(this);
+				} finally {
+					fIsSettingModel= false;
 				}
 			}
 		}
@@ -891,11 +889,19 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/*
 	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 	 */
-	public synchronized void modelChanged(final AnnotationModelEvent event) {
+	public void modelChanged(final AnnotationModelEvent event) {
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
 			if (fIsSettingModel) {
 				// inside the UI thread -> no need for posting
-				updatePainting(event);
+				 if (fTextWidget.getDisplay() == Display.getCurrent())
+				 	updatePainting(event);
+				 else {
+				 	/*
+				 	 * we can throw away the changes since
+				 	 * further update painting will happen
+				 	 */
+				 	return;
+				 }
 			} else {
 				Display d= fTextWidget.getDisplay();
 				if (DEBUG && event != null && event.isWorldChange()) {
