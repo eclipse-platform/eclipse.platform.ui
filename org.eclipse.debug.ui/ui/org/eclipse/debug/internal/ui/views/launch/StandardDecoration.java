@@ -15,7 +15,7 @@ import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * A reminder to remove any decorations created by an editor presentation
+ * A reminder to remove any annotations created by an editor presentation
  */
 public class StandardDecoration extends Decoration {
 	
@@ -33,7 +33,7 @@ public class StandardDecoration extends Decoration {
 	 * @see org.eclipse.debug.internal.ui.views.launch.Decoration#remove()
 	 */
 	public void remove() {
-		fPresentation.removeDecorations(fEditor, fThread);
+		fPresentation.removeAnnotations(fEditor, fThread);
 	}
 
 	/* (non-Javadoc)

@@ -54,7 +54,6 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -101,7 +100,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -803,100 +801,39 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			if (editor == null) {
 				return;
 			}
-	
-			int lineNumber= 0;
-			int charStart = -1;
-			int charEnd = -1;
-			try {
-				lineNumber= stackFrame.getLineNumber();
-				charStart= stackFrame.getCharStart();
-				charEnd= stackFrame.getCharEnd();
-			} catch (DebugException de) {
-				DebugUIPlugin.log(de);
+			// position and annotate editor for stack frame
+			if (fEditorPresentation.addAnnotations(editor, stackFrame)) {
+				Decoration decoration = new StandardDecoration(fEditorPresentation, editor, stackFrame.getThread());
+				DecorationManager.addDecoration(decoration);				
+			} else if (editor instanceof ITextEditor) {
+				// perform standard positioning and annotations
+				ITextEditor textEditor = (ITextEditor)editor;
+				positionEditor(textEditor, stackFrame);
+				InstructionPointerManager.getDefault().addAnnotation(textEditor, stackFrame);
 			}
-			if (!selectAndReveal(editor, stackFrame)) {
-				// perform the select and reveal ourselves
-				if (lineNumber >= 0 || charStart >= 0) {
-					if (editor instanceof ITextEditor) {
-						selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd, stackFrame.getThread());
-					} else {
-						IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
-						if (marker != null) {
-							IDE.gotoMarker(editor, marker);
-						}
-					}
-				}
-			}
-			// add instruction pointer annotation (for text editors only)
-			if (editor instanceof ITextEditor) {
-				DebugUITools.addInstructionPointer((ITextEditor)editor, stackFrame);
-			}
-			// decorate the editor
-			decorateEditor(editor, stackFrame);		
 		} finally {
 			fShowingEditor= false;
 		}
 	}
 	
 	/**
-	 * Delegate to the model presentation to decorate the opened editor.
-	 * 
-	 * @param editor editor to decorate
-	 * @param stackFrame stack frame to decorate for
+	 * Positions the text editor for the given stack frame
 	 */
-	private void decorateEditor(IEditorPart editor, IStackFrame stackFrame) {
-		if (fEditorPresentation != null) {
-			fEditorPresentation.decorateEditor(editor, stackFrame);
-			Decoration decoration = new StandardDecoration(fEditorPresentation, editor, stackFrame.getThread());
-			DecorationManager.addDecoration(decoration);
+	private void positionEditor(ITextEditor editor, IStackFrame frame) {
+		try {
+			int charStart = frame.getCharStart();
+			if (charStart > 0) {
+				editor.selectAndReveal(charStart, 0);
+				return;
+			}
+			int lineNumber = frame.getLineNumber();
+			lineNumber--; // Document line numbers are 0-based. Debug line numbers are 1-based.
+			IRegion region= getLineInformation(editor, lineNumber);
+			if (region != null) {
+				editor.selectAndReveal(region.getOffset(), 0);
+			}
+		} catch (DebugException e) {
 		}
-	}
-
-	/**
-	 * Delegates to the model presentation to perform the select and reveal,
-	 * and returns whether the select and reveal was completed.
-	 * 
-	 * @param editor the editor to position 
-	 * @param stackFrame the stack frame to position for
-	 * @return whether the select and reveal is complete
-	 */
-	private boolean selectAndReveal(IEditorPart editor, IStackFrame stackFrame) {
-		if (fEditorPresentation != null) {
-			return fEditorPresentation.selectAndReveal(editor, stackFrame);
-		}
-		return false;
-	}
-
-	/**
-	 * Highlights the given line or character range in the given editor
-	 */
-	private void selectAndReveal(ITextEditor editor, int lineNumber, int charStart, int charEnd, IThread thread) {
-		lineNumber--; // Document line numbers are 0-based. Debug line numbers are 1-based.
-		if (charStart > 0 && charEnd > charStart) {
-			editor.selectAndReveal(charStart, 0);
-			return;
-		}
-		int offset= -1;
-		IRegion region= getLineInformation(editor, lineNumber);
-		if (region == null) {
-			// use "goto marker" if line info not available
-			// increment line number for marker approach (1 based)
-			lineNumber++;
-			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
-			if (marker != null) {
-				IDE.gotoMarker(editor, marker);
-				// add decoration
-				Decoration decoration = new MarkerTextSelection(editor, lineNumber, thread);
-				DecorationManager.addDecoration(decoration);
-			}			
-			return;
-		}
-		if (charStart > 0) {
-			offset= charStart;
-		} else { 
-			offset= region.getOffset();
-		}
-		editor.selectAndReveal(offset, 0);
 	}
 	
 	/**

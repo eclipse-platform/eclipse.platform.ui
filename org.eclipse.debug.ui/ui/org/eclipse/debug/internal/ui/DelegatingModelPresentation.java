@@ -14,7 +14,6 @@ package org.eclipse.debug.internal.ui;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -34,6 +33,7 @@ import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -60,53 +60,28 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	private HashMap fLabelProviders= new HashMap(5);
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeDecorations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
 	 */
-	public void removeDecorations(IEditorPart editorPart, IThread thread) {
+	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(thread);
 		if (presentation != null) {
 			if (presentation instanceof IDebugEditorPresentation) {
-				((IDebugEditorPresentation)presentation).removeDecorations(editorPart, thread);
+				((IDebugEditorPresentation)presentation).removeAnnotations(editorPart, thread);
 			}
 		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#decorateEditor(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#addAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
 	 */
-	public void decorateEditor(IEditorPart editorPart, IStackFrame frame) {
+	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
 		if (presentation != null) {
 			if (presentation instanceof IDebugEditorPresentation) {
-				((IDebugEditorPresentation)presentation).decorateEditor(editorPart, frame);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#selectAndReveal(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
-	public boolean selectAndReveal(IEditorPart editorPart, IStackFrame frame) {
-		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
-		if (presentation != null) {
-			if (presentation instanceof IDebugEditorPresentation) {
-				return ((IDebugEditorPresentation)presentation).selectAndReveal(editorPart, frame);
+				return((IDebugEditorPresentation)presentation).addAnnotations(editorPart, frame);
 			}
 		}
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#getInstructionPointerImage(org.eclipse.debug.core.model.IStackFrame)
-	 */
-	public Image getInstructionPointerImage(IStackFrame frame) {
-		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
-		if (presentation != null) {
-			if (presentation instanceof IDebugEditorPresentation) {
-				return ((IDebugEditorPresentation)presentation).getInstructionPointerImage(frame);
-			}
-		}
-		return null;
 	}
 
 	/**

@@ -12,59 +12,42 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * A debug model presentation may implement this interface to provide
- * editor related decorations for editors opened by the debugger.
+ * A debug model presentation may implement this interface to override
+ * standard editor positioning and annotations associated with
+ * source code display for stack frames.
  * 
  * @since 3.0
  */
 public interface IDebugEditorPresentation {
-	
 	/**
-	 * Returns the image used to annotate a line of source code in an editor's
-	 * ruler corresponding to the given stack frame, or <code>null</code> if the
-	 * default image should be used.
-	 *  
-	 * @param frame stack frame
-	 * @return image used to annotate a line of source code in an editor's
-	 * ruler corresponding to the given stack frame, or <code>null</code> if the
-	 * default image should be used
-	 */
-	public Image getInstructionPointerImage(IStackFrame frame);
-	
-	/**
-	 * Provides this editor presentation with a chance to position the given editor to
-	 * the appropriate location for the given stack frame. Returns whether this 
-	 * editor presentation has performed the select and reveal. When <code>false</code>
-	 * is returned, the debugger will perform the select and reveal.
-	 *  
-	 * @param editorPart the editor the debugger has opened
-	 * @param frame the stack frame that corresponds to the editor
-	 * @return whether this presentation has performed the select and reveal
-	 */
-	public boolean selectAndReveal(IEditorPart editorPart, IStackFrame frame);
-	
-	/**
-	 * Removes any debug related decorations in the given editor. This method is
-	 * called when the debugger clears the source selection in an editor opened
-	 * by the debugger when a debug session is resumed or terminated.
-	 *   
-	 * @param editorPart an editor that was decorated 
-	 * @param thread the thread the editor was decorated for
-	 */
-	public void removeDecorations(IEditorPart editorPart, IThread thread);
-	
-	/**
-	 * Provides this editor presentation with an opportunity to decorate the given
-	 * editor in the context of the given stack frame. This method is called after
-	 * <code>selectAndReveal</code>.
+	 * Positions and adds annotations to the given editor for the specified
+	 * stack frame and returns whether any annotations were added. When
+	 * <code>true</code> is returned, a call will be made to remove anntations
+	 * when the source selection is cleared for the stack frame. When
+	 * <code>false</code> is returned, the debugger will position and add
+	 * standard annotations to the editor, and a corresponding call to remove
+	 * annotations will not be made. This method is called when the debugger is
+	 * has opened an editor to display source for the given stack frame. 
 	 * 
 	 * @param editorPart the editor the debugger has opened
-	 * @param frame the stack frame that corresponds to the editor
+	 * @param frame the stack frame for which the debugger is displaying
+	 *  source
 	 */
-	public void decorateEditor(IEditorPart editorPart, IStackFrame frame);
-
+	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame);
+	
+	/**
+	 * Removes any debug related annotations from the given editor.
+	 * This method is called when the debugger clears the source selection
+	 * in an editor opened by the debugger. For example, when a debug
+	 * session is resumed or terminated.
+	 *   
+	 * @param editorPart an editor that annotations were added to for
+	 *  a stack frame
+	 * @param thread the thread for which stack frame annotations were
+	 *  added to the editor
+	 */
+	public void removeAnnotations(IEditorPart editorPart, IThread thread);	
 }
