@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
