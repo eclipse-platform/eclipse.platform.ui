@@ -17,7 +17,15 @@ import org.eclipse.core.runtime.IPath;
  * Used for calculating moves during resource change notification.
  */
 public class NodeIDMap {
-	protected static final int MINIMUM_SIZE = 10;
+	//using prime table sizes improves our hash function
+	private static final int[] SIZES = new int[] {
+		13,29,71,173,349,733,1511,3079,6133,16381,32653,65543,131111,262139,524287, 1051601
+	};
+	private static final double LOAD_FACTOR = 0.75;
+	//2^32 * golden ratio
+	private static final long LARGE_NUMBER = 2654435761L;
+
+	int sizeOffset = 0;
 	protected int elementCount = 0;
 	protected long[] ids;
 	protected IPath[] oldPaths;
@@ -26,17 +34,10 @@ public class NodeIDMap {
  * Creates a new node ID map of default capacity.
  */
 public NodeIDMap() {
-	this(MINIMUM_SIZE);
-}
-/**
- * Creates a new node ID map with the given capacity.
- */
-public NodeIDMap(int capacity) {
-	super();
-	int size = Math.max(MINIMUM_SIZE, capacity * 2);
-	this.ids = new long[size];
-	this.oldPaths = new IPath[size];
-	this.newPaths = new IPath[size];
+	this.sizeOffset = 0;
+	this.ids = new long[SIZES[sizeOffset]];
+	this.oldPaths = new IPath[SIZES[sizeOffset]];
+	this.newPaths = new IPath[SIZES[sizeOffset]];
 }
 /**
  * Returns true if the given element is contained in the map,
@@ -50,7 +51,13 @@ public boolean contains(long id) {
  * all its current values.
  */
 protected void expand() {
-	int newLength = ids.length * 2;
+	int newLength;
+	try {
+		newLength = SIZES[++sizeOffset];
+	} catch (ArrayIndexOutOfBoundsException e) {
+		//will only occur if there are > 1 million elements in delta
+		newLength = ids.length * 2;
+	}
 	long[] grownIds = new long[newLength];
 	IPath[] grownOldPaths = new IPath[newLength];
 	IPath[] grownNewPaths = new IPath[newLength];
@@ -58,7 +65,7 @@ protected void expand() {
 	for (int i = 0; i < ids.length; i++) {
 		long id = ids[i];
 		if (id != 0) {
-			int hash = hashFor(id) % newLength;
+			int hash = hashFor(id, newLength);
 			while (grownIds[hash] != 0) {
 				hash++;
 				if (hash > maxArrayIndex)
@@ -78,21 +85,27 @@ protected void expand() {
  * found, returns -1.
  */
 private int getIndex(long searchID) {
-	int hash = hashFor(searchID) % ids.length;
+	final int len = ids.length;
+	int hash = hashFor(searchID, len);
 
 	// search the last half of the array
-	for (int i = hash; i < ids.length; i++) {
+	for (int i = hash; i < len; i++) {
 		if (ids[i] == searchID)
 			return i;
+		// marker info not found so return -1
+		if (ids[i] == 0)
+			return -1;
 	}
 
 	// search the beginning of the array
 	for (int i = 0; i < hash - 1; i++) {
 		if (ids[i] == searchID)
 			return i;
+		// marker info not found so return -1
+		if (ids[i] == 0)
+			return -1;
 	}
-
-	// marker info not found so return null
+	// marker info not found so return -1
 	return -1;
 }
 /**
@@ -116,8 +129,9 @@ public IPath getOldPath(long nodeID) {
 	return oldPaths[index];
 }
 	
-private int hashFor(long id) {
-	return Math.abs((int) id);
+private int hashFor(long id, int size) {
+	//Knuth's hash function from Art of Computer Programming section 6.4
+	return (int)Math.abs((id * LARGE_NUMBER) % size);
 }
 /**
  * Returns true if there are no elements in the map, and
@@ -133,7 +147,7 @@ public boolean isEmpty() {
 private void put(long id, IPath oldPath, IPath newPath) {
 	if (oldPath == null && newPath == null)
 		return;
-	int hash = hashFor(id) % ids.length;
+	int hash = hashFor(id, ids.length);
 
 	// search for an empty slot at the end of the array
 	for (int i = hash; i < ids.length; i++) {
@@ -184,7 +198,6 @@ private void put(long id, IPath oldPath, IPath newPath) {
 			return;
 		}
 	}
-
 	// if we didn't find a free slot, then try again with the expanded set
 	expand();
 	put(id, oldPath, newPath);
@@ -215,7 +228,7 @@ protected void rehashTo(int anIndex) {
 	IPath oldPath = oldPaths[index];
 	IPath newPath = newPaths[index];
 	while (id != 0) {
-		int hashIndex = hashFor(id) % ids.length;
+		int hashIndex = hashFor(id, ids.length);
 		boolean match;
 		if (index < target)
 			match = !(hashIndex > target || hashIndex <= index);
@@ -250,7 +263,7 @@ public void remove(long idToRemove) {
 	elementCount--;
 }
 private boolean shouldGrow() {
-	return elementCount > ids.length * 0.75;
+	return elementCount > ids.length * LOAD_FACTOR;
 }
 /**
  * Returns the number of elements currently stored in the map.
