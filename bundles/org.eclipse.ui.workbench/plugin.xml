@@ -5,7 +5,6 @@
    version="2.1.0"
    provider-name="%providerName"
    class="org.eclipse.ui.internal.WorkbenchPlugin">
-
    <runtime>
       <library name="workbench.jar">
          <export name="*"/>
@@ -19,6 +18,4 @@
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.jface.text"/>
    </requires>
-
-
 </plugin>
