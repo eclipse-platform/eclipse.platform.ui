@@ -277,6 +277,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
 		
 		fFollowLinkAction = new FollowHyperlinkAction(getConsoleViewer());
+		getSite().getKeyBindingService().registerAction(fFollowLinkAction);
+		
 		fProcessDropDownAction = new ProcessDropDownAction(this);
 		fScrollLockAction = new ScrollLockAction(getConsoleViewer());
 		fScrollLockAction.setChecked(fIsLocked);

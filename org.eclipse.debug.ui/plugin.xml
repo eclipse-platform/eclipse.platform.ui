@@ -902,6 +902,10 @@
 
 <extension point="org.eclipse.ui.actionDefinitions">
 	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction"
+		name= "%ActionDefinition.followHyperlink.name"
+		description="%ActionDefinition.followHyperlink.description"/>
+	<actionDefinition
 		id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
 		name= "%ActionDefinition.stepWithFilters.name"
 		description="%ActionDefinition.stepWithFilters.description"/>
@@ -950,6 +954,7 @@
 	<acceleratorSet
 		scopeId="org.eclipse.ui.globalScope"
 		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+		<accelerator key="" id="org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction"/>
 		<accelerator key="F8" id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate" />
 		<accelerator key="" id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate" />
 		<accelerator key="" id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate" />
