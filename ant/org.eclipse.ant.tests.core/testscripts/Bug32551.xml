@@ -5,7 +5,7 @@
   	</fileset>
   </path>
   
- <taskdef name="hello" classname="org.eclipse.ant.tests.core.tasks.AntTestTask">
+ <taskdef name="hello" classname="org.eclipse.ant.tests.core.support.tasks.AntTestTask">
   	<classpath refid="myclasspath" /> 
   </taskdef>
   

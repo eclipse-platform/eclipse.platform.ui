@@ -1,4 +1,4 @@
-package org.eclipse.ant.tests.core.inputHandlers;
+package org.eclipse.ant.tests.core.support.inputHandlers;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.

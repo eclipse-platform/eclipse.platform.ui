@@ -1,4 +1,4 @@
-package org.eclipse.ant.tests.core.types;
+package org.eclipse.ant.tests.core.support.types;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.

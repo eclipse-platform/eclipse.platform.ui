@@ -404,7 +404,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testInputHandler() throws CoreException {
 		
-		run("input.xml", new String[]{"-inputhandler", "org.eclipse.ant.tests.core.inputHandlers.AntTestInputHandler"});
+		run("input.xml", new String[]{"-inputhandler", "org.eclipse.ant.tests.core.support.inputHandlers.AntTestInputHandler"});
 		assertSuccessful();
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
 		assertTrue("Message incorrect: " + msg, msg.equals("testing handling input requests"));

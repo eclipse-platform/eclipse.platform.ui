@@ -28,8 +28,8 @@ import org.eclipse.core.runtime.Path;
 public abstract class AbstractAntTest extends TestCase {
 	
 	protected static final String BUILD_SUCCESSFUL= "BUILD SUCCESSFUL";
-	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.testloggers.TestBuildLogger"; //$NON-NLS-1$
-	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.testloggers.TestBuildListener";
+	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildLogger"; //$NON-NLS-1$
+	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener";
 	
 	/**
 	 * Returns the 'AntTests' project.

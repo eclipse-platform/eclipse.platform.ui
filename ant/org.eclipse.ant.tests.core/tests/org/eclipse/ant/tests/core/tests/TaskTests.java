@@ -37,7 +37,7 @@ public class TaskTests extends AbstractAntTest {
 		
 		newTask.setLibrary(url);
 		newTask.setTaskName("AntTestTask");
-		newTask.setClassName("org.eclipse.ant.tests.core.tasks.AntTestTask");
+		newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask");
 		prefs.setCustomTasks(new Task[]{newTask});
 		
 		prefs.updatePluginPreferences();

@@ -30,7 +30,7 @@ public class TypeTests extends AbstractAntTest {
 		URL url= new URL("file:" + path);
 		newType.setLibrary(url);
 		newType.setTypeName("anttestpath");
-		newType.setClassName("org.eclipse.ant.tests.core.types.AntTestPath");
+		newType.setClassName("org.eclipse.ant.tests.core.support.types.AntTestPath");
 		prefs.setCustomTypes(new Type[]{newType});
 		
 		run("CustomType.xml");

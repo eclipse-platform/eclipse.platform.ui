@@ -1,4 +1,4 @@
-package org.eclipse.ant.tests.core.tasks;
+package org.eclipse.ant.tests.core.support.tasks;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.
