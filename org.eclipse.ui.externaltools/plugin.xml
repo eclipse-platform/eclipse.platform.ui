@@ -53,6 +53,7 @@
 			</action>
 			<action
 				id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+				definitionId= "org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
 				label="%Action.externalTools"
 				toolbarPath="Normal/additions"
 				disabledIcon="icons/full/dtool16/external_tools.gif"
@@ -64,6 +65,21 @@
 			</action>
 		</actionSet>
 	</extension>
+
+<extension point="org.eclipse.ui.actionDefinitions">
+	<actionDefinition
+		id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+		name= "%ActionDefinition.externalToolMenuDelegateToolbar.name"
+		description="%ActionDefinition.externalToolMenuDelegateToolbar.description"/>
+</extension>
+
+<extension point="org.eclipse.ui.acceleratorSets">	
+	<acceleratorSet
+		scopeId="org.eclipse.ui.globalScope"
+		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+		<accelerator key="" id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"/>
+	</acceleratorSet>
+</extension>
 
 	<extension point="org.eclipse.ui.views">
 		<category 
