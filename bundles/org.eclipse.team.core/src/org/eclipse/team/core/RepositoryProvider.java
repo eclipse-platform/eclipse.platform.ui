@@ -551,7 +551,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 		if (canHandleLinkedResources()) {
 			return Team.OK_STATUS;
 		} else {
-			return new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, Policy.bind("RepositoryProvider.linkedResourcesNotSupported", getProject().getName(), getID()), null);
+			return new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, Policy.bind("RepositoryProvider.linkedResourcesNotSupported", getProject().getName(), getID()), null); //$NON-NLS-1$
 		}
 	}
 	

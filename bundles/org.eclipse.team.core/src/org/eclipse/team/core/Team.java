@@ -194,7 +194,7 @@ public final class Team {
 			try {
 				readIgnoreState();
 			} catch (TeamException e) {
-				TeamPlugin.log(IStatus.ERROR, "Error loading ignore state from disk", e);
+				TeamPlugin.log(IStatus.ERROR, Policy.bind("Team.Error_loading_ignore_state_from_disk_1"), e); //$NON-NLS-1$
 			}
 			initializePluginIgnores();
 		}
