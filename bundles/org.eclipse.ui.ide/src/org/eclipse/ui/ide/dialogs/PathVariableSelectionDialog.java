@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.ide.dialogs;
 
 import java.io.File;
 
@@ -29,6 +29,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.dialogs.FileFolderSelectionDialog;
+import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
 
 /**
  * A selection dialog which shows the path variables defined in the 
@@ -48,9 +50,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * </pre> 	
  * </p>
  * 
- * @since 2.1
- * @deprecated This class has been promoted to API. Use 
- * org.eclipse.ui.ide.dialogs.PathVariableSelectionDialog instead.
+ * @since 3.1
  */
 public class PathVariableSelectionDialog extends SelectionDialog {
     private static final int EXTEND_ID = IDialogConstants.CLIENT_ID + 1;
@@ -83,9 +83,8 @@ public class PathVariableSelectionDialog extends SelectionDialog {
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
-    /**
-     * Handles an "Extend" button press.
-     * 
+
+    /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
      */
     protected void buttonPressed(int buttonId) {
@@ -107,7 +106,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
     }
 
     /* (non-Javadoc)
-     * Method declared in Window.
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -115,10 +114,8 @@ public class PathVariableSelectionDialog extends SelectionDialog {
                 IIDEHelpContextIds.PATH_VARIABLE_SELECTION_DIALOG);
     }
 
-    /**
-     * Adds an Extend button in addition to OK, Cancel.
-     * 
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
@@ -130,7 +127,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
     }
 
     /* (non-Javadoc)
-     * Method declared on Dialog.
+     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
         // create composite 
@@ -140,8 +137,8 @@ public class PathVariableSelectionDialog extends SelectionDialog {
         return dialogArea;
     }
 
-    /**
-     * Disposes the path variables group.
+    
+    /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#close()
      */
     public boolean close() {
@@ -149,10 +146,12 @@ public class PathVariableSelectionDialog extends SelectionDialog {
         return super.close();
     }
 
-    /**
-     * Sets the dialog result to the selected path variable name(s). 
+  
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     protected void okPressed() {
+		//Sets the dialog result to the selected path variable name(s). 
         if (pathVariablesGroup.performOk()) {
             PathVariablesGroup.PathVariableElement[] selection = pathVariablesGroup
                     .getSelection();
@@ -189,7 +188,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
      * Updates the enabled state of the Extend button based on the 
      * current variable selection.
      */
-    protected void updateExtendButtonState() {
+    private void updateExtendButtonState() {
         PathVariablesGroup.PathVariableElement[] selection = pathVariablesGroup
                 .getSelection();
         Button extendButton = getButton(EXTEND_ID);

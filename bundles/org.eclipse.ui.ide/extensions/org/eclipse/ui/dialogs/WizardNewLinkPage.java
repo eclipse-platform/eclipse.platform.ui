@@ -44,7 +44,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.dialogs.PathVariableSelectionDialog;
+import org.eclipse.ui.ide.dialogs.PathVariableSelectionDialog;
 
 /**
  * Standard resource link page for a wizard that creates a file or 
