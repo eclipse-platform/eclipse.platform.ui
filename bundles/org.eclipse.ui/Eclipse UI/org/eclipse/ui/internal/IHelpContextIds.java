@@ -72,7 +72,6 @@ public interface IHelpContextIds {
 	public static final String SWITCH_TO_PERSPECTIVE_ACTION = PREFIX + "switch_to_perspective_action_context"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_ACTION = PREFIX + "show_view_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_ALL_SAVED_ACTION = PREFIX + "close_all_saved_action_context"; //$NON-NLS-1$
-	public static final String ACTIVATE_EDITOR_ACTION = PREFIX + "activate_editor_action_context"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_MENU_ACTION = PREFIX + "show_view_menu_action_context"; //$NON-NLS-1$
 	public static final String WORKBENCH_EDITORS_ACTION = PREFIX + "workbench_editors_action_context"; //$NON-NLS-1$
 	public static final String NEW_WIZARD_SHORTCUT_ACTION = PREFIX + "new_wizard_shortcut_action_context"; //$NON-NLS-1$
@@ -80,6 +79,7 @@ public interface IHelpContextIds {
 	public static final String TEXT_COPY_ACTION = PREFIX + "text_copy_action_context"; //$NON-NLS-1$
 	public static final String TEXT_PASTE_ACTION = PREFIX + "text_paste_action_context"; //$NON-NLS-1$
 	public static final String TEXT_DELETE_ACTION = PREFIX + "text_delete_action_context"; //$NON-NLS-1$
+	public static final String TEXT_SELECT_ALL_ACTION = PREFIX + "text_select_all_action_context"; //$NON-NLS-1$
 	public static final String CELL_CUT_ACTION = PREFIX + "cell_cut_action_context"; //$NON-NLS-1$
 	public static final String CELL_COPY_ACTION = PREFIX + "cell_copy_action_context"; //$NON-NLS-1$
 	public static final String CELL_PASTE_ACTION = PREFIX + "cell_paste_action_context"; //$NON-NLS-1$

@@ -1,9 +1,14 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. 
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -27,7 +32,7 @@ public CloseAllSavedAction(IWorkbenchWindow aWorkbench) {
 	setId("closeAllSaved");
 	updateState();
 	aWorkbench.addPageListener(this);
-//	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_ACTION);
+	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_SAVED_ACTION);
 	setAccelerator(SWT.CTRL | SWT.SHIFT | 'W');
 }
 /**

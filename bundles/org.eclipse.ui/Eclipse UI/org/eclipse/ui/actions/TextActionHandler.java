@@ -225,6 +225,7 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
 			setId("TextSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_SELECT_ALL_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeTextControl != null && !activeTextControl.isDisposed()) {
