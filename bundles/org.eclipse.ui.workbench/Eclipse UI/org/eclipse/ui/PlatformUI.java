@@ -175,7 +175,7 @@ public final class PlatformUI {
 	 * @return the workbench public preference store
 	 * @since 3.0
 	 */
-	public IPreferenceStore getPreferenceStore() {
+	public static IPreferenceStore getPreferenceStore() {
 	    return PrefUtil.getAPIPreferenceStore();
 	}
 }
