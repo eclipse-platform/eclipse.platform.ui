@@ -101,7 +101,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);
 		site.addConfiguration(newConfig);		
-		configSite.install(feature,null);
+		configSite.install(feature,null,null);
 
 				
 		// teh current one points to a real fature
@@ -178,7 +178,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
 		site.addConfiguration(newConfig);		
-		configSite.install(feature,null);
+		configSite.install(feature,null,null);
 		site.save();
 		
 		// we created the second xml file
@@ -250,7 +250,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
 		site.addConfiguration(newConfig);		
-		configSite.install(feature,null);
+		configSite.install(feature,null,null);
 		site.save();
 
 		//do not cleanup, we want to reuse previously created local site

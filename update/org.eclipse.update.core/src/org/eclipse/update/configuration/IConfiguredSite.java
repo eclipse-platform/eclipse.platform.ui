@@ -2,6 +2,7 @@ package org.eclipse.update.configuration;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.ISite;
@@ -52,11 +53,12 @@ public interface IConfiguredSite {
 	/**
 	 * 
 	 * @param feature the Feature to install
+	 * @param verifier FIXME
 	 * @param monitor the Progress Monitor
 	 * @since 2.0 
 	 */
 
-	IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	IFeatureReference install(IFeature feature,IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * 

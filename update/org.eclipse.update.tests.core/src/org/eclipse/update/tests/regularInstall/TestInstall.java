@@ -66,7 +66,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = getFeature1(remoteSite);
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
-		localSite.install(remoteFeature, null);
+		localSite.install(remoteFeature,null, null);
 
 		// verify
 		String site = localSite.getURL().getFile();
@@ -107,7 +107,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		assertNotNull("Cannot find feature2.jar on site", remoteFeature);
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
-		localSite.install(remoteFeature, null);
+		localSite.install(remoteFeature,null, null);
 		
 		// feature2.jar should not be in the local site
 		IFeatureReference[] localFeatures = localSite.getFeatureReferences();		
@@ -180,7 +180,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		Listener listener = new Listener();
 		site.addConfiguredSiteChangedListener(listener);
 		
-		site.install(remoteFeature, null);
+		site.install(remoteFeature,null,null);
 
 
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
@@ -211,7 +211,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = getFeature1(remoteSite);
 		IConfiguredSite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites()[0];
-		localSite.getSite().install(remoteFeature, null);
+		localSite.getSite().install(remoteFeature,null, null);
 
 		IFeatureReference[] features = localSite.getSite().getFeatureReferences();
 		if (features.length==0) fail("The local site does not contain feature, should not contain an XML file but features should be found anyway by parsing");

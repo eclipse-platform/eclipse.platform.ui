@@ -194,7 +194,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		}
 
 		// loop on non plugin entries
-		for (int i = 0; i < pluginEntries.length; i++) {
+		for (int i = 0; i < nonPluginEntries.length; i++) {
 			size = ((NonPluginEntryModel) nonPluginEntries[i]).getInstallSize();
 			if (size == ContentEntryModel.UNKNOWN_SIZE) {
 				return ContentEntryModel.UNKNOWN_SIZE;

@@ -63,7 +63,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = getFeature1(remoteSite);
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
-		IFeatureReference ref = localSite.install(remoteFeature, null);
+		IFeatureReference ref = localSite.install(remoteFeature,null, null);
 
 		// then remove it
 		String featureRef =  ref.getFeature().getVersionedIdentifier().toString();	

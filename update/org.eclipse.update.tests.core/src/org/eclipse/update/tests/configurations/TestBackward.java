@@ -45,7 +45,7 @@ public class TestBackward extends UpdateManagerTestCase {
 		
 		IInstallConfiguration oldInstallConfig = site.getCurrentConfiguration();
 		IConfiguredSite oldConfigSite = oldInstallConfig.getConfiguredSites()[0];
-		oldConfigSite.install(featureRef.getFeature(),null);
+		oldConfigSite.install(featureRef.getFeature(),null,null);
 		site.save();
 	
 		

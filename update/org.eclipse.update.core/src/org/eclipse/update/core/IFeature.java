@@ -253,10 +253,11 @@ public interface IFeature {
 	/**
 	 * Install this feature into the targetFeature
 	 * @param targetFeature the feature to install into
+	 * @param verifier
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public IFeatureReference install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException;
+	public IFeatureReference install(IFeature targetFeature,IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of plug-ins managed by the Feature

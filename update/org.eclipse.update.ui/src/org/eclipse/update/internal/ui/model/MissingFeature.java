@@ -255,9 +255,9 @@ public class MissingFeature implements IFeature {
 	}
 
 	/*
-	 * @see IFeature#install(IFeature, IProgressMonitor)
+	 * @see IFeature#install(IFeature,IFeatureVerification, IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException {
+	public IFeatureReference install(IFeature targetFeature, IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException {
 		return null;
 	}
 

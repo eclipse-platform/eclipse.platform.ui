@@ -5,6 +5,8 @@ package org.eclipse.update.internal.ui.wizards;
  */
 import org.eclipse.jface.wizard.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.security.JarVerificationService;
+import org.eclipse.update.internal.core.FeaturePackagedContentProvider;
 import org.eclipse.update.internal.ui.*;
 import java.util.*;
 import org.eclipse.update.core.*;
@@ -152,7 +154,7 @@ public class InstallWizard extends Wizard {
 			if (oldFeature != null) {
 				success = unconfigure(oldFeature);
 			}
-			if (success) targetSite.install(feature, monitor);
+			if (success) targetSite.install(feature,verifierFor(feature), monitor);
 			else return;
 		}
 		else if (job.getJobType() == PendingChange.CONFIGURE) {
@@ -194,5 +196,11 @@ public class InstallWizard extends Wizard {
 		if (site != null) {
 			site.configure(feature);
 		}
+	}
+	private IFeatureVerification verifierFor(IFeature feature) throws CoreException {
+		if (feature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider){ 
+			return new JarVerificationService(this.getShell());
+		}
+		return null;
 	}
 }

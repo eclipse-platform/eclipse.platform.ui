@@ -43,11 +43,12 @@ public interface ISite {
 	 * Notify listener of installation of the feature
 	 * returns the newly created feature Reference
 	 * @param feature the Feature to install
+	 * @param verifier FIXME
 	 * @param monitor the Progress Monitor
 	 * @since 2.0 
 	 */
 
-	IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	IFeatureReference install(IFeature feature, IFeatureVerification verifier, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * 

@@ -185,11 +185,10 @@ public class Feature extends FeatureModel implements IFeature {
 
 	}
 
-
 	/*
-	 * @see IFeature#install(IFeature, IProgressMonitor) throws CoreException
+	 * @see IFeature#install(IFeature,IFeatureVerification, IProgressMonitor) throws CoreException
 	 */
-	public IFeatureReference install(IFeature targetFeature, IProgressMonitor progress) throws CoreException {
+	public IFeatureReference install(IFeature targetFeature, IFeatureVerification verifier, IProgressMonitor progress) throws CoreException {
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
@@ -220,10 +219,17 @@ public class Feature extends FeatureModel implements IFeature {
 			if (monitor != null)
 				monitor.beginTask(EMPTY_STRING, taskCount);
 
+			if (verifier != null) {
+				ContentReference[] references = getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
+				verifier.verify(this, references, monitor);
+			}
+
 			//finds the contentReferences for this IFeature
 			if (monitor != null)
 				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles")); //$NON-NLS-1$
 			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
+			if (verifier != null)
+				verifier.verify(this, references, monitor);
 			for (int i = 0; i < references.length; i++) {
 				if (monitor != null)
 					monitor.subTask(references[i].getIdentifier());
@@ -237,6 +243,14 @@ public class Feature extends FeatureModel implements IFeature {
 				if (monitor != null)
 					monitor.setTaskName(Policy.bind("Feature.TaskInstallPluginFiles") + pluginsToInstall[i].getVersionedIdentifier().getIdentifier() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
+				
+				// verification
+				if (verifier != null) {
+					references = getFeatureContentProvider().getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
+					verifier.verify(this, references, monitor);
+				}
+
+				// instalation
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
 					if (monitor != null)
@@ -255,6 +269,8 @@ public class Feature extends FeatureModel implements IFeature {
 					monitor.setTaskName(Policy.bind("Feature.TaskInstallNonPluginsFiles")); //$NON-NLS-1$
 				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
 				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
+				if (verifier != null)
+					verifier.verify(this, references, monitor);
 				for (int j = 0; j < references.length; j++) {
 					if (monitor != null)
 						monitor.subTask(references[j].getIdentifier());
@@ -306,13 +322,13 @@ public class Feature extends FeatureModel implements IFeature {
 	public int getPluginEntryCount() {
 		return getPluginEntryModels().length;
 	}
-	
+
 	/*
 	 * @see IFeature#getNonPluginEntryCount()
 	 */
 	public int getNonPluginEntryCount() {
 		return getNonPluginEntryModels().length;
-	}	
+	}
 
 	/*
 	 * @see IFeature#getImports()
@@ -364,8 +380,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public String toString() {
 		String URLString = (getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm(); //$NON-NLS-1$
-		return Policy.bind("Feature.FeatureVersionToString",URLString, getVersionedIdentifier().toString()); //$NON-NLS-1$ 
+		return Policy.bind("Feature.FeatureVersionToString", URLString, getVersionedIdentifier().toString()); //$NON-NLS-1$ 
 	}
-
 
 }
