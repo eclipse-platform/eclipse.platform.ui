@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * This singleton remembers all JobTreeElements that should be
@@ -136,8 +137,6 @@ class FinishedJobs {
     private void add(JobInfo info) {
         boolean fire = false;
         
-//        JobTreeElement[] toBeRemoved= null;
-
         synchronized (keptjobinfos) {
             if (!keptjobinfos.contains(info)) {
                 keptjobinfos.add(info);
@@ -151,19 +150,11 @@ class FinishedJobs {
                 	finishedTime.put(parent, new Long(now));
                 }
   
-//            	toBeRemoved= findJobsToRemove(info);
-
                 timeStamp++;
                 fire = true;
             }
         }
         
-//        if (toBeRemoved != null) {
-//            for (int i = 0; i < toBeRemoved.length; i++) {
-//				remove(null, toBeRemoved[i]);
-//            }
-//        }
-
         if (fire) {
             Object l[] = listeners.getListeners();
             for (int i = 0; i < l.length; i++) {
@@ -178,7 +169,11 @@ class FinishedJobs {
 			JobInfo ji= (JobInfo) jte;
 			Job job= ji.getJob();
 			if (job != null) {
-				Object prop= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
+				Object prop= job.getProperty(IProgressConstants.ACTION_PROPERTY);
+				if (prop instanceof ActionFactory.IWorkbenchAction)
+					((ActionFactory.IWorkbenchAction)prop).dispose();
+				// backward compatibility
+				prop= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
 				if (prop instanceof ActionFactory.IWorkbenchAction)
 					((ActionFactory.IWorkbenchAction)prop).dispose();
 			}

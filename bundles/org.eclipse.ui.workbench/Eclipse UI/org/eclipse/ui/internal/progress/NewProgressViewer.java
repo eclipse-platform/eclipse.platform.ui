@@ -443,14 +443,18 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 					jobitem.updateIcon(job);
 
 				// check for action property
-				Object property= job.getProperty(GOTO_PROPERTY);
-		    	if (property instanceof IAction && property != gotoAction) {
-		    	    setAction((IAction) property);
-		    	}
+				Object property= job.getProperty(IProgressConstants.ACTION_PROPERTY);
+				if (property instanceof IAction) {
+					setAction((IAction) property);
+				} else {	// backward compatibility
+					property= job.getProperty(GOTO_PROPERTY);
+					if (property instanceof IAction)
+						setAction((IAction) property);
+				}
 		    	
 		    	// poll for result status
 		    	IStatus status= job.getResult();
-		    	if (status != null && status != result /* && status.getSeverity() != IStatus.OK */) {
+		    	if (status != null && status != result) {
 					if (DEBUG) System.err.println("Hyperlink.refresh: update status: " + status); //$NON-NLS-1$
 					result= status;
 					if (result.getSeverity() == IStatus.ERROR) {
@@ -484,7 +488,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 						name= taskName + ": " + name;
 				} else {
 					name= jobTreeElement.getDisplayString();
-					if (taskName != null)
+					if (taskName != null && taskName.trim().length() > 0)
 						name= taskName + " / " + name;
 				}
 				
@@ -499,7 +503,11 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 					Object[] subtasks= ji.getChildren();
 					if (subtasks != null && subtasks.length > 0) {
 						JobTreeElement sub= (JobTreeElement) subtasks[0];
-						name= name + " / " + sub.getDisplayString();
+						if (sub != null) {
+							String s= sub.getDisplayString();
+							if (s != null && s.trim().length() > 0)
+								name= name + " / " + s;
+						}
 					}
 				}
 				if (highlightJob == job) {

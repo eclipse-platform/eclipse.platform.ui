@@ -209,7 +209,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	private void setStatus(Job job) {
 	    IStatus status= job.getResult();
 	    if (status != null && !toolbar.isDisposed()) {
-	        toolbar.getDisplay().beep();
+	        //toolbar.getDisplay().beep();
 	        if (status.getSeverity() == IStatus.ERROR)
 	            setErrorImage(job);
 	        else
