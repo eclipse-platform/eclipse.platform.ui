@@ -14,18 +14,22 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderListListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,15 +39,19 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -55,7 +63,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 	private int tabLocation = -1; // Initialized in constructor.
-	private CTabFolder tabFolder;
+	private CTabFolder tabFolder = null;
 	private Map mapTabToEditor = new HashMap();
 	private ToolBar pullDownBar;
 	private ToolItem pullDownButton;
@@ -138,27 +146,132 @@ protected void createPresentation(Composite parent) {
 		}
 	});
 
+	int shellStyle= SWT.RESIZE;
+	int tableStyle= SWT.V_SCROLL | SWT.H_SCROLL;
+	final EditorsInformationControl info = new EditorsInformationControl(tabFolder.getShell(), shellStyle, tableStyle);
+	info.setInput(this);
+	
+	tabFolder.addCTabFolderListListener(new CTabFolderListListener() {
+
+		public void showList(CTabFolderEvent event) {
+			Point p = tabFolder.toDisplay(event.rect.x, event.rect.y);
+			p.y += + event.rect.height;
+ 			//showList(event.widget.getDisplay(), p.x, p.y);
+			showList(tabFolder.getShell(), p.x, p.y);
+		}
+
+		void showList(Shell parentShell, int x, int y) {
+			Point size= info.computeSizeHint();
+			int minX = 50;//labelComposite.getSize().x;
+			int minY = 300;
+			if (size.x < minX) size.x = minX;
+			if (size.y < minY) size.y = minY;
+			info.setSize(size.x, size.y);
+			info.setLocation(new Point(x, y));
+			info.setVisible(true);
+			info.setFocus();
+			info.getTableViewer().getTable().getShell().addListener(SWT.Deactivate, new Listener() {
+				public void handleEvent(Event event) {
+					info.setVisible(false);
+				}
+			});
+//			EditorsInformationControl e = new EditorsInformationControl(tabFolder.getShell(), SWT.ON_TOP | SWT.NO_TRIM, SWT.NONE);
+//			e.setMatcherString("*");
+//			e.setVisible(true);
+		}
+		
+		
+		void showList(Display display, int x,int y) {
+			final Shell shell = new Shell(tabFolder.getShell(), SWT.ON_TOP | SWT.NO_TRIM);
+			shell.addFocusListener(new FocusListener () {
+
+				public void focusGained(FocusEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				public void focusLost(FocusEvent e) {
+					if (!shell.getDisplay().getActiveShell().equals(shell)) { 
+						shell.dispose();	
+					}
+				}
+			
+			});
+			FillLayout fl = new FillLayout(SWT.VERTICAL);
+			fl.marginHeight = 3;
+			fl.marginWidth = 3;
+			shell.setLayout(fl);
+			
+			final Text text = new Text(shell, SWT.SINGLE);			
+			final Table table = new Table(shell, SWT.NONE);//SWT.BORDER);
+			CTabItem[] items = tabFolder.getItems();
+			final String[] stringItems = new String[items.length];
+			for (int i = 0; i < items.length; i++) {
+				CTabItem tab = items[i];
+				stringItems[i] = tab.getText();
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(tab.getText());
+				item.setImage(tab.getImage());
+			}
+			final int idx = tabFolder.getSelectionIndex();
+			if (idx != -1) {
+				table.setSelection(idx);
+			}
+			Listener listener = new Listener() {
+				public void handleEvent(Event e) {
+					switch (e.type) {
+						case SWT.FocusOut:
+							if (e.widget.equals(table))
+								shell.dispose();
+							break;
+						case SWT.Modify:
+							String s = text.getText();
+							// if there is no text then do nothing
+							if (s.length() == 0)
+								break;
+							for (int i = 0; i < stringItems.length; i++) {
+								String item = stringItems[i];
+								if (item.toLowerCase(Locale.getDefault()).startsWith(s.toLowerCase(Locale.getDefault()))) {
+									table.setSelection(i);
+									break;
+								}								
+							}
+							break;
+						case SWT.DefaultSelection:
+						case SWT.MouseUp:
+							int index = table.getSelectionIndex();
+							if (index != idx) {
+								tabFolder.setSelection(index);
+								setFocus();
+							}
+							shell.dispose();
+							handleTabSelection(tabFolder.getSelection());
+							break;
+					}
+				}
+			};
+			text.addListener(SWT.Modify, listener);
+			text.addListener(SWT.DefaultSelection, listener);
+			table.addListener(SWT.MouseUp, listener);
+			table.addListener(SWT.DefaultSelection, listener);
+			table.addListener(SWT.FocusOut, listener);
+			Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Rectangle displayRect = tabFolder.getMonitor().getClientArea();
+			size.y = Math.min(displayRect.height/3, size.y);
+			shell.setSize(size);
+			shell.setLocation(x, y);
+			shell.open();
+			text.setFocus();
+		}
+		
+		});
+	
 	// listener to switch between visible tabItems
 	tabFolder.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			if (handleTabSelection) {
-				EditorPane pane = (EditorPane) mapTabToEditor.get(e.item);
-				// Pane can be null when tab is just created but not map yet.
-				if (pane != null) {
-					setVisibleEditor(pane);
-					if (assignFocusOnSelection) {
-						// If we get a tab focus hide request, it's from
-						// the previous editor in this workbook which had focus.
-						// Therefore ignore it to avoid paint flicker
-						ignoreTabFocusHide = true;
-						pane.setFocus();
-						ignoreTabFocusHide = false;
-					}
-				}
-			}
+			handleTabSelection(e.item);
 		}
 	});
-
+			
 	// listener to resize visible components
 	tabFolder.addListener(SWT.Resize, new Listener() {
 		public void handleEvent(Event e) {
@@ -249,6 +362,27 @@ protected void createPresentation(Composite parent) {
 	
 	// Set the tab width
 	tabFolder.MIN_TAB_WIDTH = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH);			
+}
+
+/**
+ * @param widget
+ */
+protected void handleTabSelection(Widget tabItem) {
+	if (handleTabSelection) {
+		EditorPane pane = (EditorPane) mapTabToEditor.get(tabItem);
+		// Pane can be null when tab is just created but not map yet.
+		if (pane != null) {
+			setVisibleEditor(pane);
+			if (assignFocusOnSelection) {
+				// If we get a tab focus hide request, it's from
+				// the previous editor in this workbook which had focus.
+				// Therefore ignore it to avoid paint flicker
+				ignoreTabFocusHide = true;
+				pane.setFocus();
+				ignoreTabFocusHide = false;
+			}
+		}
+	}	
 }
 
 /**

@@ -16,6 +16,7 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -181,26 +182,41 @@ public class ViewsPreferencePage
 		activeHyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 		activeHyperlinkColorEditor.load();
 
-		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite);
+		Group colorSchemeComposite = new Group(composite, SWT.NONE);
+		colorSchemeComposite.setLayout(new GridLayout());
+		colorSchemeComposite.setText("Workbench Color Theme"); 
+		colorSchemeComposite.setFont(font);
+		GridData data2 =
+		new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		colorSchemeComposite.setLayoutData(data2); 
+		
+		//Add in an intermediate composite to allow for spacing
+		Composite spacingComposite2 = new Composite(colorSchemeComposite, SWT.NONE);
+		GridLayout spacingLayout2 = new GridLayout();
+		spacingLayout2.numColumns = 4;
+		spacingComposite2.setLayout(spacingLayout2);
+		spacingComposite2.setFont(font);
+
+		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite2);
 
 		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
 		colorSchemeBGColorEditor.load();
 		
-		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite);
+		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite2);
 
 		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
 		colorSchemeFGColorEditor.load();
 		
-		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite);
+		colorSchemeSelBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite2);
 
-		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeBGColorEditor.load();
+		colorSchemeSelBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeSelBGColorEditor.load();
 		
-		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite);
+		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
 
-		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		colorSchemeFGColorEditor.load();
-		
+		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeSelFGColorEditor.load();
 		
 		return composite;
 	}
@@ -347,7 +363,11 @@ public class ViewsPreferencePage
 		errorColorEditor.loadDefault();
 		hyperlinkColorEditor.loadDefault();
 		activeHyperlinkColorEditor.loadDefault();
-
+		colorSchemeBGColorEditor.loadDefault();
+		colorSchemeFGColorEditor.loadDefault();
+		colorSchemeSelBGColorEditor.loadDefault();
+		colorSchemeSelFGColorEditor.loadDefault();
+		
 		/*
 		 * No longer supported - remove when confirmed!
 		 * if (openFloatButton != null) 
@@ -373,12 +393,13 @@ public class ViewsPreferencePage
 
 		colorIconsEditor.store();
 		errorColorEditor.store();
+		hyperlinkColorEditor.store();
+		activeHyperlinkColorEditor.store();
 		colorSchemeBGColorEditor.store();
 		colorSchemeFGColorEditor.store();
 		colorSchemeSelBGColorEditor.store();
 		colorSchemeSelFGColorEditor.store();
-		hyperlinkColorEditor.store();
-		activeHyperlinkColorEditor.store();
+		
 		return true;
 	}
 }
