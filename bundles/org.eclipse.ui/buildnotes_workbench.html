@@ -11,6 +11,158 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20011127
+<h2>
+What's new in this drop</h2>
+
+<h3>
+<b>Contributing to Outline Context Menus</b></h3>
+The workbench has added support to allow outline context menus to be registered
+with the platform. Plug-ins will thus be able to contribute actions to
+these menu's via the org.eclipse.ui.popupMenus extension point.
+<p>The interface IPageBookViewPage has been introduced as an extension
+of IPage. It defines the methods init(IPageSite) and getSite(). The method
+init(IPageSite) is called before createControl in the page's lifecycle.
+The IPageSite api includes the method registerContextMenu(String, MenuManager,
+ISelectionProvider) to allow the context menus to be registered. The class
+org.eclipse.ui.part.Page now implements IPageBookViewPage.
+<p>Pages (e.g. content outline pages and property sheet pages) which extend
+org.eclipse.ui.part.Page will simply need to perform the menu registration
+(typically in their createControl method). Pages which implement IContentOutlinePage
+or IPropertySheetPage (but do not extend org.eclipse.ui.part.Page) will
+need to explicitly implement IPageBookViewPage. Typically this would involve
+implementing the init(IPageSite) method to store a reference to the site
+and then performing the menu registration in their createControl method.
+<p>The org.eclipse.ui.examples.propertysheet and org.eclipse.ui.examples.readmetool
+examples have been updated to demonstrate context menu registration and
+contributing actions to such menus.
+<h3>
+<b>Demo of Perspective changes</b></h3>
+In the <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/loss-of-context/Proposal.html">Loss
+of Context RFC document</a> we proposed a number of changes to the perspective
+feature.&nbsp; This build includes a demonstration of these changes.&nbsp;
+To try them out, check "Try Version 2 Perspectives" in the Workbench preferences.&nbsp;
+When you check this the following behavioral changes will come into effect.
+<p>1. If you select Perspective > Open > X, the active perspective in the
+page is changed.&nbsp; The old behavior, to create a new page, does not
+occur.
+<br>2. If you select an object in the Navigator, then invoke Open Perspective
+> X, we search the workbench.&nbsp; If a window already exists within input
+== selected object, that window is activated and the perspective is changed
+in it.&nbsp; Otherwise, a new window is created.
+<br>3. The drop down list box is visible in the tool bar.&nbsp; You can
+use it to change the active perspective in the active page.
+<br>4. The contents of any perspective menu are determined using an MRU
+algorithm, and are consistent in every perspective.
+<br>5. From any window, you can always get back to the root of the workspace
+by invoking Window > Open Workbench.&nbsp; This is like the old VAJ behavior.
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<ul>
+<li>
+Added IPageBookViewPage and IPageSite in package org.eclipse.ui.part, and
+added IPageBookViewPage as an implemented interface on class Page.</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2001%2F11%2F20&chfieldto=2001%2F11%2F27&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2001/11/20 and 2001/11/27.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
+Eclipse Integration Build 20011120
+<h2>
+What's new in this drop</h2>
+
+<h3>
+Accelerator Tag added to Action Definitions</h3>
+As the names of the modifier keys (Ctrl, Alt) are not localized in Eclipse,
+defining an action accelerator using a translated label will not work (see
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5216">bug
+5216</a>).
+<br>In order that accelerators can be used across all Locales the <i>accelerator</i>
+tag has been added to the definition for an action so that the accelerator
+can be defined via a keycode.
+<p>The current method of specifying accelerators via the labels will continue
+to work in locales where the labels use the English words for the control
+keys (like Japanese).
+<p>The accelerator is an integer or String&nbsp; that is used to specify
+the keycode of the accelerator for the action. The integer value used is
+the one resulting from a bitwise OR of zero or more SWT key modifier masks
+(i.e. SWT.CTRL or SWT.ALT) and a character code. For example, for Ctrl+Z
+use SWT.CTRL | 'Z' = (1&lt;&lt;18)|'Z' = 262234.
+<p>If you wish to use the string directly use it as you would have for
+the label (i.e. Ctrl+Z from the above example).
+<br>Such strings should go directly in the plugin.xml, and should not be
+translated in the plugin.properties file, since the strings for the modifier
+keys are not localized.
+<br>Note that this will require care to ensure that the translated, human-readable
+accelerator text in the label (in the .properties file) corresponds to
+the assigned accelerator (in the plugin.xml).
+<p>Two of the actions we ship should use this tag:
+<p>org.eclipse.jdt.ui
+<br>&nbsp;OpenTypeAction.label=Open &amp;Type...@Ctrl+Shift+T
+<p>&lt;action id="org.eclipse.jdt.ui.actions.OpenType"
+<br>&nbsp;&nbsp; menubarPath="workbench/wbEnd"
+<br>&nbsp;&nbsp; toolbarPath="Normal/Java"
+<br>&nbsp;&nbsp; label="%OpenTypeAction.label"
+<br>&nbsp;&nbsp; tooltip="%OpenTypeAction.tooltip"
+<br>&nbsp;&nbsp; icon="icons/full/ctool16/opentype.gif"
+<br>&nbsp;&nbsp; accelerator="Ctrl+Shift+T"
+<br>&nbsp;&nbsp; class="org.eclipse.jdt.internal.ui.actions.OpenTypeAction"/>
+<p>org.eclipse.search
+<br>&nbsp;OpenSearchDialogAction.label = &amp;Search...@Ctrl+H
+<p>&lt;action id="org.eclipse.search.ui.OpenSearchDialogAction"
+<br>&nbsp;&nbsp; menubarPath="edit/find"
+<br>&nbsp;&nbsp; toolbarPath="Normal/Search"
+<br>&nbsp;&nbsp; label="%OpenSearchDialogAction.label"
+<br>&nbsp;&nbsp; tooltip="%OpenSearchDialogAction.tooltip"
+<br>&nbsp;&nbsp; icon="icons/full/ctool16/search.gif"
+<br>&nbsp;&nbsp; accelerator="Ctrl+H "
+<br>&nbsp;&nbsp; class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<ul>
+<li>
+Added accelerator attribute to action elements in extension points which
+take actions (actionSets, editorActions, viewActions).</li>
+
+<li>
+Added setAccelerator(int keyCode) to IAction and Action in org.eclipse.jface.</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+
+<p><br>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20011120
 <h2>
 What's new in this drop</h2>
