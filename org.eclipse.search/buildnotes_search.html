@@ -21,7 +21,7 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 ========== Eclipse Build Input March 29rd 2004 ==========<br>
 <H3>Breaking API Changes</H3>
-The methods in <code>AbstractTextSearchResult</code> related to mapping matches to files and editors have been moved to two
+<p>The methods in <code>AbstractTextSearchResult</code> related to mapping matches to files and editors have been moved to two
 new Interfaces: <code>IFileMatchAdapter</code> and <code>IEditorMatchAdapter</code>. 
 <code>AbstractTextSearchResult</code> now has two new methods <code>getFileMatchAdapter</code>
 and <code>getEditorMatchAdapter</code> to get adapter objects. The default implementation
@@ -29,7 +29,8 @@ of these methods is to return null.
 Clients who have empty implementations of either set of methods can just delete the
 methods. Clients who had meaningful implementations can implement the interfaces
 and return <code>this</code> from the new getter methods. Note that the <code>findContainedMatches(...)</code>
-methods have a new parameter <code>AbstractTextSearchResult result</code>.<br>
+methods have a new parameter <code>AbstractTextSearchResult result</code>.</p>
+<p>The attribute "targetClass" of extension point "org.eclipse.search.searchResultViewPages" has been renamed to "searchResultClass".</p>
 <br>
 ========== Eclipse Build Input March 29rd 2004 ==========<br>
 <H3>Breaking API Changes</H3>

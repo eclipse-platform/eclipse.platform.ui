@@ -206,7 +206,7 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	 * implement <code>ITextEditor</code>.
 	 * Subclasses may override this method. 
 	 * @param editor
-	 * @param annotions A set containing the annotations to be removed.
+	 * @param annotations A set containing the annotations to be removed.
 	 * 			 @see Annotation
 	 */
 	private void removeAnnotations(IWorkbenchPart editor, Set annotations) {

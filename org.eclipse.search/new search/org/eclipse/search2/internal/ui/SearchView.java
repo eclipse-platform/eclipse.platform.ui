@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
@@ -35,17 +46,6 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener, ISearchResultListener {
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
@@ -123,9 +123,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			// do nothing
 		}
 
-		/** (non-Javadoc)
-		 * @see org.eclipse.search2.ui.ISearchResultsPage#getUIState()
-		 */
 		public Object getUIState() {
 			// empty implementation
 			return null;
@@ -172,7 +169,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fPartsToPages= new HashMap();
 		fPagesToParts= new HashMap();
 		setTitleImage(SearchPluginImages.get(SearchPluginImages.T_VIEW));
-		fSearchViewPageService= new SearchPageRegistry("org.eclipse.search.searchResultViewPages", "targetClass", "id"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		fSearchViewPageService= new SearchPageRegistry("org.eclipse.search.searchResultViewPages", "searchResultClass", "id"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		fSearchViewStates= new HashMap();
 	}
 

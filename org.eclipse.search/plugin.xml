@@ -161,7 +161,7 @@
         point="org.eclipse.search.searchResultViewPages">
 		<viewPage
 			id="org.eclipse.search.text.FileSearchResultPage"
-			targetClass="org.eclipse.search.internal.ui.text.FileSearchResult"
+			searchResultClass="org.eclipse.search.internal.ui.text.FileSearchResult"
 			class="org.eclipse.search.internal.ui.text.FileSearchPage">
 		</viewPage>
 	</extension>

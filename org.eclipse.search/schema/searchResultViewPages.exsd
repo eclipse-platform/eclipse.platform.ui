@@ -34,7 +34,7 @@
 
    <element name="viewPage">
       <complexType>
-         <attribute name="targetClass" type="string" use="required">
+         <attribute name="searchResultClass" type="string" use="required">
             <annotation>
                <documentation>
                   
