@@ -30,16 +30,18 @@ public class CommitAction extends WorkspaceAction {
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		final CommitOperation operation = new CommitOperation(getTargetPart(), getSelectedResources(), null);
+		final boolean[] retVal = {true};
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					operation.performPrompting(monitor);
+					retVal[0] = operation.performPrompting(monitor);
 				} catch (CVSException e) {
 					new InvocationTargetException(e);
 				} 
 			}
 		}, false, PROGRESS_BUSYCURSOR);
-		operation.run();
+		if(retVal[0])
+			operation.run();
 	}
 
 	/**
