@@ -403,6 +403,7 @@ public void run() {
 					break;
 				}
 			}
+			IDEWorkbenchPlugin.log(MessageFormat.format("Exception in {0}.run: {1}", new Object[] {getClass().getName(), t}), status);//$NON-NLS-1$
 			if (outOfSyncError) {
 				ErrorDialog.openError(
 					shell, 
