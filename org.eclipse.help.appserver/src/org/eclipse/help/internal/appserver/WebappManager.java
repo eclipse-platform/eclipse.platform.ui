@@ -42,8 +42,6 @@ public class WebappManager {
 		// we get the server before constructing the class loader, so
 		// class loader exposed by the server is available to the webapps.
 		IWebappServer server = AppserverPlugin.getDefault().getAppServer();
-		IPluginDescriptor descriptor =
-			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
 		server.start(webappName, webappPath, new PluginClassLoaderWrapper(pluginId));
 	}
 
