@@ -5,11 +5,11 @@ package org.eclipse.help.internal.ui;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.Help;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * ShowHelp
@@ -34,7 +34,7 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 	 * [Issue: Will be made abstract. For now, calls <code>actionPerformed()</code> for backwards compatibility.]
 	 */
 	public void run() {
-		Help.displayHelp(topicsURL);
+		WorkbenchHelp.getHelpSupport().displayHelp(topicsURL);
 	}
 	/**
 	 * Implementation of method defined on <code>IAction</code>.
@@ -46,7 +46,7 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				try {
-					Help.displayHelp(topicsURL);
+					WorkbenchHelp.getHelpSupport().displayHelp(topicsURL);
 				} catch (Exception e) {
 				}
 			}
