@@ -237,6 +237,29 @@ public class OperationsManager implements IAdaptable {
 		return false;
 	}
 
+	private void preserveOptionalState(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		boolean patch,
+		FeatureHierarchyElement2[] optionalElements) {
+		for (int i = 0; i < optionalElements.length; i++) {
+			FeatureHierarchyElement2[] children =
+				optionalElements[i].getChildren(true, patch, config);
+			preserveOptionalState(config, targetSite, patch, children);
+			if (!optionalElements[i].isEnabled(config)) {
+				IFeature newFeature = optionalElements[i].getFeature();
+				try {
+					IFeature localFeature =
+						UpdateManager.getLocalFeature(targetSite, newFeature);
+					if (localFeature != null)
+						targetSite.unconfigure(localFeature);
+				} catch (CoreException e) {
+					// Ignore this - we will leave with it
+				}
+			}
+		}
+	}
+
 	/**
 	 * Returns true if a restart is needed
 	 * @param site
@@ -259,6 +282,21 @@ public class OperationsManager implements IAdaptable {
 		else
 			toggleOperation = new ConfigOperation(config, site, feature);
 
+		return toggleFeatureState(toggleOperation, adapter);
+	}
+	/**
+	 * Returns true if a restart is needed
+	 * @param site
+	 * @param feature
+	 * @param isConfigured
+	 * @return
+	 * @throws CoreException
+	 */
+	public boolean toggleFeatureState(
+		PendingOperation toggleOperation,
+		Object adapter)
+		throws CoreException {
+
 		toggleOperation.execute(null); // no progress monitor needed
 
 		IStatus status = UpdateManager.getValidator().validateCurrentState();
@@ -271,10 +309,12 @@ public class OperationsManager implements IAdaptable {
 				boolean restartNeeded = false;
 
 				// Check if this operation is cancelling one that's already pending
-				PendingOperation oldOperation = findPendingChange(feature);
+				PendingOperation oldOperation =
+					findPendingChange(toggleOperation.getFeature());
 
-				if ((isConfigured && oldOperation instanceof UnconfigOperation)
-					|| (!isConfigured
+				if ((toggleOperation instanceof ConfigOperation
+					&& oldOperation instanceof UnconfigOperation)
+					|| (toggleOperation instanceof UnconfigOperation
 						&& oldOperation instanceof ConfigOperation)) {
 					// no need to do either pending change
 					removePendingChange(oldOperation);
@@ -332,29 +372,6 @@ public class OperationsManager implements IAdaptable {
 				site.setEnabled(oldValue);
 				UpdateManager.logException(e);
 				throw e;
-			}
-		}
-	}
-
-	private void preserveOptionalState(
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		boolean patch,
-		FeatureHierarchyElement2[] optionalElements) {
-		for (int i = 0; i < optionalElements.length; i++) {
-			FeatureHierarchyElement2[] children =
-				optionalElements[i].getChildren(true, patch, config);
-			preserveOptionalState(config, targetSite, patch, children);
-			if (!optionalElements[i].isEnabled(config)) {
-				IFeature newFeature = optionalElements[i].getFeature();
-				try {
-					IFeature localFeature =
-						UpdateManager.getLocalFeature(targetSite, newFeature);
-					if (localFeature != null)
-						targetSite.unconfigure(localFeature);
-				} catch (CoreException e) {
-					// Ignore this - we will leave with it
-				}
 			}
 		}
 	}
