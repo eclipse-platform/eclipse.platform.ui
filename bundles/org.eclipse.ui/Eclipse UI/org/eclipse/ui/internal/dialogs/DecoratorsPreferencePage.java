@@ -48,10 +48,14 @@ public class DecoratorsPreferencePage
 		
 		createDecoratorsArea(mainComposite);
 		createDescriptionArea(mainComposite);
+		populateDecorators();
 
 		return mainComposite;
 	}
 
+	/** 
+	 * Creates the widgets for the list of decorators.
+	 */
 	private void createDecoratorsArea(Composite mainComposite) {
 		Composite decoratorsComposite = new Composite(mainComposite, SWT.NONE);
 		decoratorsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -109,14 +113,11 @@ public class DecoratorsPreferencePage
 					new StructuredSelection(event.getElement()));
 			}
 		});
-		
-		DecoratorDefinition[] definitions = getDefinitions();
-		checkboxViewer.setInput(definitions);
-		for (int i = 0; i < definitions.length; i++) {
-			checkboxViewer.setChecked(definitions[i], definitions[i].isEnabled());
-		}
 	}
 
+	/** 
+	 * Creates the widgets for the description.
+	 */
 	private void createDescriptionArea(Composite mainComposite) {
 		Composite textComposite = new Composite(mainComposite, SWT.NONE);
 		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -134,9 +135,23 @@ public class DecoratorsPreferencePage
 		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));	}
 
 	/**
+	 * Populates the list of decorators.
+	 */
+	private void populateDecorators() {
+		DecoratorDefinition[] definitions = getDefinitions();
+		checkboxViewer.setInput(definitions);
+		for (int i = 0; i < definitions.length; i++) {
+			checkboxViewer.setChecked(definitions[i], definitions[i].isEnabled());
+		}
+	}
+
+	/**
 	 * Show the selected description in the text.
 	 */
 	private void showDescription(DecoratorDefinition definition) {
+		if (descriptionText == null || descriptionText.isDisposed()) {
+			return;
+		}
 		String text = definition.getDescription();
 		if (text == null || text.length() == 0)
 			descriptionText.setText(
@@ -150,6 +165,9 @@ public class DecoratorsPreferencePage
 	 * Clear the selected description in the text.
 	 */
 	private void clearDescription() {
+		if (descriptionText == null || descriptionText.isDisposed()) {
+			return;
+		}
 		descriptionText.setText(""); //$NON-NLS-1$
 	}
 
