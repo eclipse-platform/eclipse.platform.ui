@@ -481,7 +481,7 @@ public class RepositoryManager {
 							Set filenames = new HashSet();
 							int numFilenames = dis.readInt();
 							for (int k = 0; k < numFilenames; k++) {
-								filenames.add(dis.readUTF());
+								filenames.add(name + "/" + dis.readUTF());
 							}
 							repoRoot.setAutoRefreshFiles(name, (String[]) filenames.toArray(new String[filenames.size()]));
 						}
