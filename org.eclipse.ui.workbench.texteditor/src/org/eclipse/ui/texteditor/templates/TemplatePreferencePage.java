@@ -556,14 +556,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	
 	private void add() {		
 		
-		Template template= new Template();
 		Iterator it= fContextTypeRegistry.contextTypes();
 		if (it.hasNext()) {
-			template.setContextTypeId(((TemplateContextType) it.next()).getId());
+			Template template= new Template("", "", ((TemplateContextType) it.next()).getId(), "");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			
-			Dialog dialog= createTemplateEditDialog(template, false, true);
-			if (dialog.open() == Window.OK) {
-				TemplatePersistenceData data= new TemplatePersistenceData(template, true);
+			Template newTemplate= editTemplate(template, false, true);
+			if (newTemplate != null) {
+				TemplatePersistenceData data= new TemplatePersistenceData(newTemplate, true);
 				fTemplateStore.add(data);
 				fTableViewer.refresh();
 				fTableViewer.setChecked(data, true);
@@ -580,9 +579,27 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @param edit whether the dialog should be editable
 	 * @param isNameModifiable whether the template name may be modified
 	 * @return an <code>EditTemplateDialog</code> which will be opened.
+	 * @deprecated not called any longer as of 3.1 - use {@link #editTemplate(Template, boolean, boolean)}
 	 */
 	protected Dialog createTemplateEditDialog(Template template, boolean edit, boolean isNameModifiable) {
 		return new EditTemplateDialog(getShell(), template, edit, isNameModifiable, fContextTypeRegistry);
+	}
+
+	/**
+	 * Creates the edit dialog. Subclasses may override this method to provide a 
+	 * custom dialog.
+	 * 
+	 * @param template the template being edited
+	 * @param edit whether the dialog should be editable
+	 * @param isNameModifiable whether the template name may be modified
+	 * @return the created or modified template, or <code>null</code> if the edition failed
+	 */
+	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
+		EditTemplateDialog dialog= new EditTemplateDialog(getShell(), template, edit, isNameModifiable, fContextTypeRegistry);
+		if (dialog.open() == Window.OK) {
+			return dialog.getTemplate();
+		}
+		return null;
 	}
 
 	private void edit() {
@@ -598,9 +615,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	private void edit(TemplatePersistenceData data) {
 		Template oldTemplate= data.getTemplate();
-		Template newTemplate= new Template(oldTemplate);
-		Dialog dialog= createTemplateEditDialog(newTemplate, true, true);
-		if (dialog.open() == Window.OK) {
+		Template newTemplate= editTemplate(new Template(oldTemplate), true, true);
+		if (newTemplate != null) {
 
 			if (!newTemplate.getName().equals(oldTemplate.getName()) &&
 				MessageDialog.openQuestion(getShell(),

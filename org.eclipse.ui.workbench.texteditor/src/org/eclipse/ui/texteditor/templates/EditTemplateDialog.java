@@ -116,7 +116,7 @@ class EditTemplateDialog extends StatusDialog {
 		}
 	}	
 
-	private final Template fTemplate;
+	private final Template fOriginalTemplate;
 	
 	private Text fNameText;
 	private Text fDescriptionText;
@@ -154,7 +154,7 @@ class EditTemplateDialog extends StatusDialog {
 			: TextEditorTemplateMessages.getString("EditTemplateDialog.title.new"); //$NON-NLS-1$
 		setTitle(title);
 
-		fTemplate= template;
+		fOriginalTemplate= template;
 		fIsNameModifiable= isNameModifiable;
 		
 		List contexts= new ArrayList();
@@ -177,7 +177,7 @@ class EditTemplateDialog extends StatusDialog {
 	 */
 	public void create() {
 		super.create();
-		// update initial ok button to be disabled for new templates 
+		// update initial OK button to be disabled for new templates 
 		boolean valid= fNameText == null || fNameText.getText().trim().length() != 0;
 		if (!valid) {
 			StatusInfo status = new StatusInfo();
@@ -248,7 +248,7 @@ class EditTemplateDialog extends StatusDialog {
 
 		Label patternLabel= createLabel(parent, TextEditorTemplateMessages.getString("EditTemplateDialog.pattern")); //$NON-NLS-1$
 		patternLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		fPatternEditor= createEditor(parent);
+		fPatternEditor= createEditor(parent, fOriginalTemplate.getPattern());
 		
 		Label filler= new Label(parent, SWT.NONE);		
 		filler.setLayoutData(new GridData());
@@ -272,11 +272,11 @@ class EditTemplateDialog extends StatusDialog {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 
-		fDescriptionText.setText(fTemplate.getDescription());
+		fDescriptionText.setText(fOriginalTemplate.getDescription());
 		if (fIsNameModifiable) {
-			fNameText.setText(fTemplate.getName());
+			fNameText.setText(fOriginalTemplate.getName());
 			fNameText.addModifyListener(listener);
-			fContextCombo.select(getIndex(fTemplate.getContextTypeId()));
+			fContextCombo.select(getIndex(fOriginalTemplate.getContextTypeId()));
 		} else {
 			fPatternEditor.getControl().setFocus();
 		}
@@ -289,17 +289,13 @@ class EditTemplateDialog extends StatusDialog {
 	private void doTextWidgetChanged(Widget w) {
 		if (w == fNameText) {
 			fSuppressError= false;
-			String name= fNameText.getText();
-			fTemplate.setName(name);
 			updateButtons();			
 		} else if (w == fContextCombo) {
 			String name= fContextCombo.getText();
 			String contextId= getContextId(name);
-			fTemplate.setContextTypeId(contextId);
 			fTemplateProcessor.setContextType(fContextTypeRegistry.getContextType(contextId));
 		} else if (w == fDescriptionText) {
-			String desc= fDescriptionText.getText();
-			fTemplate.setDescription(desc);
+			// oh, nothing
 		}	
 	}
 	
@@ -317,9 +313,8 @@ class EditTemplateDialog extends StatusDialog {
 
 	private void doSourceChanged(IDocument document) {
 		String text= document.get();
-		fTemplate.setPattern(text);
 		fValidationStatus.setOK();
-		TemplateContextType contextType= fContextTypeRegistry.getContextType(fTemplate.getContextTypeId());
+		TemplateContextType contextType= fContextTypeRegistry.getContextType(getContextId(fContextCombo.getText()));
 		if (contextType != null) {
 			try {
 				contextType.validate(text);
@@ -355,10 +350,10 @@ class EditTemplateDialog extends StatusDialog {
 		return text;
 	}
 
-	private SourceViewer createEditor(Composite parent) {
+	private SourceViewer createEditor(Composite parent, String pattern) {
 		SourceViewer viewer= createViewer(parent);
 
-		IDocument document= new Document(fTemplate.getPattern());
+		IDocument document= new Document(pattern);
 		viewer.setEditable(true);
 		viewer.setDocument(document);
 		
@@ -542,6 +537,16 @@ class EditTemplateDialog extends StatusDialog {
  			status= fValidationStatus; 
  		}
 		updateStatus(status);
+	}
+
+	/**
+	 * Returns the created template.
+	 * 
+	 * @return the created template
+	 * @since 3.1
+	 */
+	public Template getTemplate() {
+		return new Template(fNameText.getText(), fDescriptionText.getText(), getContextId(fContextCombo.getText()), fPatternEditor.getDocument().get());
 	}
 
 }

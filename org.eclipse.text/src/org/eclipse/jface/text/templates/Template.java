@@ -20,16 +20,16 @@ import org.eclipse.jface.text.Assert;
  * @since 3.0
  */
 public class Template {
-	/* XXX this class should be final or implement Cloneable, or both. */
+	/* XXX this class should be final and non-modifieable or implement Cloneable, or both. */
 
 	/** The name of this template */
-	private String fName;
+	private /*final*/ String fName;
 	/** A description of this template */
-	private String fDescription;
+	private /*final*/ String fDescription;
 	/** The name of the context type of this template */
-	private String fContextTypeId;
+	private /*final*/ String fContextTypeId;
 	/** The template pattern. */
-	private String fPattern;
+	private /*final*/ String fPattern;
 
 	/**
 	 * Creates an empty template.
@@ -56,10 +56,12 @@ public class Template {
 	 * @param pattern the template pattern
 	 */		
 	public Template(String name, String description, String contextTypeId, String pattern) {
-		setDescription(description);
-		setName(name);
-		setContextTypeId(contextTypeId);
-		setPattern(pattern);
+		Assert.isNotNull(description);
+		fDescription= description;
+		fName= name;
+		Assert.isNotNull(contextTypeId);
+		fContextTypeId= contextTypeId;
+		fPattern= pattern;
 	}
 	
 	/*
@@ -73,6 +75,7 @@ public class Template {
 	 * Sets the description of the template.
 	 * 
 	 * @param description the new description
+	 * @deprecated Templates should never be modified
 	 */
 	public void setDescription(String description) {
 		Assert.isNotNull(description);
@@ -92,6 +95,7 @@ public class Template {
 	 * Sets the name of the context type in which the template can be applied.
 	 * 
 	 * @param contextTypeId the new context type name
+	 * @deprecated Templates should never be modified
 	 */
 	public void setContextTypeId(String contextTypeId) {
 		Assert.isNotNull(contextTypeId);
@@ -111,6 +115,7 @@ public class Template {
 	 * Sets the name of the template.
 	 * 
 	 * @param name the name of the template
+	 * @deprecated Templates should never be modified
 	 */
 	public void setName(String name) {
 		fName= name;
@@ -129,6 +134,7 @@ public class Template {
 	 * Sets the pattern of the template.
 	 * 
 	 * @param pattern the new pattern of the template
+	 * @deprecated Templates should never be modified
 	 */
 	public void setPattern(String pattern) {
 		fPattern= pattern;
