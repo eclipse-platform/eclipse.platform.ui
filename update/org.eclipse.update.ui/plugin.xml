@@ -51,7 +51,7 @@
          <action
                label="%actionSets.pendingChanges.label"
                class="org.eclipse.update.internal.ui.DeltaWizardAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
                id="org.eclipse.update.ui.pendingChanges">
          </action>
          <action
