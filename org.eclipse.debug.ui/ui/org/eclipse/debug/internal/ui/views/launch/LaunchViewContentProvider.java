@@ -18,8 +18,6 @@ import java.util.Map;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.ui.DefaultDebugViewContentProvider;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
