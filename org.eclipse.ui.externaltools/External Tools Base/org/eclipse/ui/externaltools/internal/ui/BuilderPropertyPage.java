@@ -153,8 +153,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private SelectionListener buttonListener= new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			handleButtonPressed((Button) e.widget);
-			}
-		};
+		}
+	};
 	
 	/**
 	 * Launch configuration listener which is responsible for updating items in
