@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.osgi.framework.Bundle;
  * </p>
  */
 public final class Platform {
+
 	/**
 	 * The unique identifier constant (value "<code>org.eclipse.core.runtime</code>")
 	 * of the Core Runtime (pseudo-) plug-in.
@@ -60,6 +61,17 @@ public final class Platform {
 	 * @see org.eclipse.core.boot.BootLoader#run
 	 */
 	public static final String PT_APPLICATIONS = "applications"; //$NON-NLS-1$
+
+	/** 
+	 * The simple identifier constant (value "<code>adapters</code>") of
+	 * the extension point of the Core Runtime plug-in where plug-ins declare
+	 * the existence of adapter factories. A plug-in may define any
+	 * number of adapters.
+	 * 
+	 * @see org.eclipse.core.runtime.IAdapterManager#hasAdapter
+	 * @since 3.0
+	 */
+	public static final String PT_ADAPTERS = "adapters"; //$NON-NLS-1$
 
 	/** 
 	 * Debug option value denoting the time at which the platform runtime

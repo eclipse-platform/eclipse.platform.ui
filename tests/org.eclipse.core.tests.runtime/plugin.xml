@@ -26,6 +26,13 @@
 		</handler>
 	</extension>
 
+	<extension point="org.eclipse.core.runtime.adapters">
+		<adapter
+			adaptableType="org.eclipse.core.tests.runtime.TestAdaptable"
+			adapterType="org.eclipse.core.tests.runtime.TestAdapter">
+		</adapter>
+	</extension>
+
   <extension point="org.eclipse.core.tests.harness.tests">
     <test id="runtime.AutomatedTests">
       <run class="org.eclipse.core.tests.runtime.AutomatedTests"/>
@@ -208,7 +215,6 @@
    <test id="org.eclipse.core.tests.plugintests.SavePreferencesTests">
       <run class="org.eclipse.core.tests.plugintests.SavePreferencesTests"/>
     </test>
-
 
    <test id="jobs.IJobManagerTest">
       <run class="org.eclipse.core.tests.runtime.jobs.IJobManagerTest"/>

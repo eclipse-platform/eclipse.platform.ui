@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,103 +9,119 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.runtime;
-
 /**
- * An adapter manager maintains a registry of adapter factories.
- * Clients directly invoke methods on an adapter manager to register
- * and unregister adapters.
- * All adaptable objects (that is, objects that implement the 
- * <code>IAdaptable</code> interface) funnel 
- * <code>IAdaptable.getAdapter</code> invocations to their
- * adapter manager's <code>IAdapterManger.getAdapter</code>
- * method. The adapter manager then forwards this request
- * unmodified to the <code>IAdapterFactory.getAdapter</code> 
+ * An adapter manager maintains a registry of adapter factories. Clients
+ * directly invoke methods on an adapter manager to register and unregister
+ * adapters. All adaptable objects (that is, objects that implement the <code>IAdaptable</code>
+ * interface) funnel <code>IAdaptable.getAdapter</code> invocations to their
+ * adapter manager's <code>IAdapterManger.getAdapter</code> method. The
+ * adapter manager then forwards this request unmodified to the <code>IAdapterFactory.getAdapter</code>
  * method on one of the registered adapter factories.
  * <p>
- * The following code snippet shows how one might register
- * an adapter of type <code>com.example.acme.Sticky</code>
- * on resources in the workspace.
+ * The following code snippet shows how one might register an adapter of type
+ * <code>com.example.acme.Sticky</code> on resources in the workspace.
  * <p>
+ * 
  * <pre>
- * IAdapterFactory pr = new IAdapterFactory() {
- *     public Class[] getAdapterList() {
- *         return new Class[] { com.example.acme.Sticky.class };
- *     }
- *     public Object getAdapter(Object adaptableObject, adapterType) {
- *         IResource res = (IResource) adaptableObject;
- *         QualifiedName key = new QualifiedName("com.example.acme", "sticky-note");
- *         try {
- *             com.example.acme.Sticky v = (com.example.acme.Sticky) res.getSessionProperty(key);
- *             if (v == null) {
- *                 v = new com.example.acme.Sticky();
- *                 res.setSessionProperty(key, v);
- *             }
- *         } catch (CoreException e) {
- *             // unable to access session property - ignore
- *         }
- *         return v;
- *     }
- * }
- * Platform.getAdapterManager().registerAdapters(pr, IResource.class);
-</pre>
+ *  IAdapterFactory pr = new IAdapterFactory() {
+ *  public Class[] getAdapterList() {
+ *  return new Class[] { com.example.acme.Sticky.class };
+ *  }
+ *  public Object getAdapter(Object adaptableObject, adapterType) {
+ *  IResource res = (IResource) adaptableObject;
+ *  QualifiedName key = new QualifiedName(&quot;com.example.acme&quot;, &quot;sticky-note&quot;);
+ *  try {
+ *  com.example.acme.Sticky v = (com.example.acme.Sticky) res.getSessionProperty(key);
+ *  if (v == null) {
+ *  v = new com.example.acme.Sticky();
+ *  res.setSessionProperty(key, v);
+ *  }
+ *  } catch (CoreException e) {
+ *  // unable to access session property - ignore
+ *  }
+ *  return v;
+ *  }
+ *  }
+ *  Platform.getAdapterManager().registerAdapters(pr, IResource.class);
+ *   </pre>
+ * 
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- *
+ * 
  * @see IAdaptable
  * @see IAdapterFactory
  */
 public interface IAdapterManager {
 	/**
-	 * Returns an object which is an instance of the given class
-	 * associated with the given object. Returns <code>null</code> if
-	 * no such object can be found.
-	 *
-	 * @param adaptable the adaptable object being queried
-	 *   (usually an instance of <code>IAdaptable</code>)
+	 * Returns an object which is an instance of the given class associated
+	 * with the given object. Returns <code>null</code> if no such object can
+	 * be found.
+	 * <p>
+	 * Note that this method will never cause plug-ins to be loaded. If the
+	 * only suitable factory is not yet loaded, this method will return <code>null</code>.
+	 * 
+	 * @param adaptable the adaptable object being queried (usually an instance
+	 * of <code>IAdaptable</code>)
 	 * @param adapterType the type of adapter to look up
-	 * @return a object castable to the given adapter type, 
-	 *    or <code>null</code> if the given adaptable object does not
-	 *    have an adapter of the given type
+	 * @return an object castable to the given adapter type, or <code>null</code>
+	 * if the given adaptable object does not have an available adapter of the
+	 * given type
 	 */
 	public Object getAdapter(Object adaptable, Class adapterType);
 	/**
-	 * Registers the given adapter factory as extending objects of
-	 * the given type.
+	 * Returns whether there is an adapter factory registered that may be able
+	 * to convert <code>adaptable</code> to an object of type <code>adapterTypeName</code>.
 	 * <p>
-	 * If the type being extended is a class,
-	 * the given factory's adapters are available on instances
-	 * of that class and any of its subclasses.  If it is an interface, 
-	 * the adapters are available to all classes that directly 
-	 * or indirectly implement that interface.
+	 * Note that a return value of <code>true</code> does not guarantee that
+	 * a subsequent call to <code>getAdapter</code> with the same arguments
+	 * will return a non-null result. If the factory's plug-in has not yet been
+	 * loaded, or if the factory itself returns <code>null</code>, then
+	 * <code>getAdapter</code> will still return <code>null</code>.
+	 * 
+	 * @param adaptable the adaptable object being queried (usually an instance
+	 * of <code>IAdaptable</code>)
+	 * @param adapterTypeName the fully qualified class name of an adapter to
+	 * look up
+	 * @return <code>true</code> if there is an adapter factory that claims
+	 * it can convert <code>adaptable</code> to an object of type <code>adapterType</code>,
+	 * and <code>false</code> otherwise.
+	 */
+	public boolean hasAdapter(Object adaptable, String adapterTypeName);
+	/**
+	 * Registers the given adapter factory as extending objects of the given
+	 * type.
+	 * <p>
+	 * If the type being extended is a class, the given factory's adapters are
+	 * available on instances of that class and any of its subclasses. If it is
+	 * an interface, the adapters are available to all classes that directly or
+	 * indirectly implement that interface.
 	 * </p>
-	 *
+	 * 
 	 * @param factory the adapter factory
 	 * @param adaptable the type being extended
 	 * @see #unregisterAdapters
 	 */
 	public void registerAdapters(IAdapterFactory factory, Class adaptable);
 	/**
-	 * Removes the given adapter factory completely from the list of 
-	 * registered factories. Equivalent to calling
-	 * <code>unregisterAdapters(IAdapterFactory,Class)</code>
-	 * on all classes against which it had been explicitly registered.
-	 * Does nothing if the given factory is not currently registered.
-	 *
+	 * Removes the given adapter factory completely from the list of registered
+	 * factories. Equivalent to calling <code>unregisterAdapters(IAdapterFactory,Class)</code>
+	 * on all classes against which it had been explicitly registered. Does
+	 * nothing if the given factory is not currently registered.
+	 * 
 	 * @param factory the adapter factory to remove
 	 * @see #registerAdapters
 	 */
 	public void unregisterAdapters(IAdapterFactory factory);
 	/**
-	 * Removes the given adapter factory from the list of factories
-	 * registered as extending the given class.
-	 * Does nothing if the given factory and type combination is not
-	 * registered.
-	 *
+	 * Removes the given adapter factory from the list of factories registered
+	 * as extending the given class. Does nothing if the given factory and type
+	 * combination is not registered.
+	 * 
 	 * @param factory the adapter factory to remove
-	 * @param adaptable one of the types against which the given
-	 *    factory is registered
+	 * @param adaptable one of the types against which the given factory is
+	 * registered
 	 * @see #registerAdapters
 	 */
 	public void unregisterAdapters(IAdapterFactory factory, Class adaptable);
