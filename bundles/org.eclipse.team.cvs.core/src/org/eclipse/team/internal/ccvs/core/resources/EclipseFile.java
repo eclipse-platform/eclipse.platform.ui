@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * Represents handles to CVS resource on the local file system. Synchronization
@@ -124,10 +125,10 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		// throws an exception.
 		
 		if (!exists()) return true;
-		String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(getIFile());
+		int state = EclipseSynchronizer.getInstance().getModificationState(getIFile());
 
-		if (indicator != EclipseSynchronizer.RECOMPUTE_INDICATOR) {
-			return indicator == EclipseSynchronizer.IS_DIRTY_INDICATOR;
+		if (state != UNKNOWN) {
+			return state != CLEAN;
 		}
 		
 		// nothing cached, need to manually check (and record)
@@ -390,11 +391,11 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 						newInfo.setRevision(baserevInfo.getRevision());
 						newInfo.setTimeStamp(getTimeStamp());
 						newInfo.setDeleted(false);
-						newInfo.reported(); // We report the change below
-						setSyncInfo(newInfo);
+						setSyncInfo(newInfo, ICVSFile.CLEAN);
+					} else {
+						// an unedited file is no longer modified
+						setModified(false);
 					}
-					// an unedited file is no longer modified
-					setModified(false);
 				}
 				setBaserevInfo(null);
 					
@@ -424,7 +425,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	public void checkedIn(String entryLine) throws CVSException {
 		ResourceSyncInfo oldInfo = getSyncInfo();
 		ResourceSyncInfo newInfo = null;
-		boolean modified = false;
+		int modificationState = ICVSFile.CLEAN;
 		if (entryLine == null) {
 			// The file contents matched the server contents so no entry line was sent
 			if (oldInfo == null) return;
@@ -433,8 +434,6 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				// If the entry line has no timestamp, put the file timestamp in the entry line
 				MutableResourceSyncInfo mutable = oldInfo.cloneMutable();
 				mutable.setTimeStamp(getTimeStamp());
-				// We report the modification change ourselves below
-				mutable.reported();
 				newInfo = mutable;
 			} else {
 				// reset the file timestamp to the one from the entry line
@@ -446,15 +445,14 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			// cvs add of a file
 			newInfo = new ResourceSyncInfo(entryLine, null, null);
 			// an added file should show up as modified
-			modified = true;
+			modificationState = ICVSFile.DIRTY;
 		} else {
 			// commit of a changed file
 			newInfo = new ResourceSyncInfo(entryLine, oldInfo.getPermissions(), getTimeStamp());
 			// (modified = false) a committed file is no longer modified
 			
 		}
-		if (newInfo != null) setSyncInfo(newInfo);
-		setModified(modified);
+		if (newInfo != null) setSyncInfo(newInfo, modificationState);
 		clearCachedBase();
 	}
 	
@@ -474,11 +472,10 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				EclipseFile.super.unmanage(monitor);
 				clearCachedBase();
-				// Reset the modified state of any unmanaged file
-				setModified(false);
 			}
 		}, monitor);
 	}
+	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#isEdited()
 	 */
@@ -489,26 +486,36 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#setSyncInfo(org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo)
 	 */
-	public void setSyncInfo(ResourceSyncInfo info) throws CVSException {
-		super.setSyncInfo(info);
-		if (info.needsReporting()) {
-			setModified(computeModified(info));
-			info.reported();
-		}
+	public void setSyncInfo(ResourceSyncInfo info, int modificationState) throws CVSException {
+		setSyncBytes(info.getBytes(), info, modificationState);
 	}
 	
 	/**
-	 * Method updated flags the objetc as having been modfied by the updated
-	 * handler. This flag is read during the resource delta to determine whether
-	 * the modification made the file dirty or not.
-	 *
-	 * @param mFile
+	 * @see org.eclipse.team.internal.ccvs.core.resources.EclipseResource#setSyncBytes(byte[], int)
 	 */
-	public void updated() throws CVSException {
-		EclipseSynchronizer.getInstance().markFileAsUpdated(getIFile());
+	public void setSyncBytes(byte[] syncBytes, int modificationState) throws CVSException {
+		setSyncBytes(syncBytes, null, modificationState);
 	}
 	
-	public boolean handleModification(boolean forAddition) throws CVSException {
+	/*
+	 * @see org.eclipse.team.internal.ccvs.core.resources.EclipseResource#setSyncBytes(byte[], int)
+	 */
+	private void setSyncBytes(byte[] syncBytes, ResourceSyncInfo info, int modificationState) throws CVSException {
+		Assert.isNotNull(syncBytes);
+		setSyncBytes(syncBytes);
+		boolean modified;
+		if (modificationState == UNKNOWN) {
+			if (info == null) {
+				info = new ResourceSyncInfo(syncBytes);
+			}
+			modified = computeModified(info);
+		} else {
+			modified = modificationState == DIRTY;
+		}
+		setModified(modified);
+	}
+	
+	public void handleModification(boolean forAddition) throws CVSException {
 		if (isIgnored()) {			
 			// Special case handling for when a resource passes from the un-managed state
 			// to the ignored state (e.g. ignoring the ignore file). Parent dirty state must be
@@ -519,19 +526,10 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			if(! resource.isDerived()) {
 				setModified(false);
 			}
-			return true;
+			return;
 		} 
 		// set the modification state to what it really is and return true if the modification state changed
 		setModified(computeModified(getSyncInfo()));
-		return false;
-	}
-	
-	/**
-	 * Sets the modified status of the receiver. This method
-	 * returns true if there was a change in the modified status of the file.
-	 */
-	private void setModified(boolean modified) throws CVSException {
-		EclipseSynchronizer.getInstance().setDirtyIndicator(getIFile(), modified);
 	}
 	
 	/**
@@ -540,6 +538,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	protected void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
 		getParent().run(job, monitor);
 	}
+
 }
 
 

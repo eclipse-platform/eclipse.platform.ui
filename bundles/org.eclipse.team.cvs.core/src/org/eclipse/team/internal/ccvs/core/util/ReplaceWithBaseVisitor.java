@@ -54,7 +54,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 			if (ResourceSyncInfo.isDeletion(syncBytes)) {
 				// If deleted, null the sync info so the file will be refetched
 				syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
-				file.setSyncBytes(syncBytes);
+				file.setSyncBytes(syncBytes, ICVSFile.UNKNOWN);
 				isModified = true;
 			}
 			// Fetch the file from the server
@@ -72,7 +72,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 				// Set the tag to be the original tag
 				syncBytes = file.getSyncBytes();
 				syncBytes = ResourceSyncInfo.setTag(syncBytes, tagBytes);
-				file.setSyncBytes(syncBytes);
+				file.setSyncBytes(syncBytes, ICVSFile.UNKNOWN);
 			}
 		}
 		monitor.worked(1);

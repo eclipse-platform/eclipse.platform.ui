@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
@@ -53,9 +54,9 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
  * @see FolderSyncInfo
  */
 public class EclipseSynchronizer {	
-	protected static final String IS_DIRTY_INDICATOR = SyncInfoCache.IS_DIRTY_INDICATOR;
-	protected static final String NOT_DIRTY_INDICATOR = SyncInfoCache.NOT_DIRTY_INDICATOR;
-	protected static final String RECOMPUTE_INDICATOR = SyncInfoCache.RECOMPUTE_INDICATOR; 
+	private static final String IS_DIRTY_INDICATOR = SyncInfoCache.IS_DIRTY_INDICATOR;
+	private static final String NOT_DIRTY_INDICATOR = SyncInfoCache.NOT_DIRTY_INDICATOR;
+	private static final String RECOMPUTE_INDICATOR = SyncInfoCache.RECOMPUTE_INDICATOR; 
 		
 	// the cvs eclipse synchronizer is a singleton
 	private static EclipseSynchronizer instance;
@@ -115,8 +116,14 @@ public class EclipseSynchronizer {
 		}
 		try {
 			beginOperation(null);
+			// get the old info
+			FolderSyncInfo oldInfo = getFolderSync(folder);
 			// set folder sync and notify
 			getSyncInfoCacheFor(folder).setCachedFolderSync(folder, info);
+			// if the sync info changed from null, we may need to adjust the ancestors
+			if (oldInfo == null) {
+				adjustDirtyStateRecursively(folder, RECOMPUTE_INDICATOR);
+			}
 			changedFolders.add(folder);
 		} finally {
 			endOperation(null);
@@ -282,11 +289,20 @@ public class EclipseSynchronizer {
 			cacheResourceSyncForChildren(parent);
 			if (getCachedSyncBytes(resource) != null) { // avoid redundant notifications
 				setCachedSyncBytes(resource, null);
+				clearDirtyIndicator(resource);
 				changedResources.add(resource);
 			}
 		} finally {
 			endOperation(null);
 		}
+	}
+
+	/**
+	 * @param resource
+	 */
+	private void clearDirtyIndicator(IResource resource) throws CVSException {
+		getSyncInfoCacheFor(resource).flushDirtyCache(resource);
+		adjustDirtyStateRecursively(resource.getParent(), RECOMPUTE_INDICATOR);
 	}
 
 	/**
@@ -550,6 +566,13 @@ public class EclipseSynchronizer {
 		purgeCache(resource, true);
 	}
 	
+	/**
+	 * This method is used to ensure that the sync info for a resource is moved
+	 * from the Phantom cache to the Session property cache.
+	 * 
+	 * @param resource
+	 * @throws CVSException
+	 */
 	public void created(IResource resource) throws CVSException {
 		if (resource.getType() == IResource.FILE) {
 			created((IFile)resource);
@@ -564,7 +587,7 @@ public class EclipseSynchronizer {
 	 *
 	 * @param folder the folder that has been created
 	 */
-	public void created(IFolder folder) throws CVSException {
+	private void created(IFolder folder) throws CVSException {
 		try {
 			// set the dirty count using what was cached in the phantom it
 			beginOperation(null);
@@ -616,7 +639,7 @@ public class EclipseSynchronizer {
 	 *
 	 * @param file the file that has been created
 	 */
-	public void created(IFile file) throws CVSException {
+	private void created(IFile file) throws CVSException {
 		try {
 			// set the dirty count using what was cached in the phantom it
 			beginOperation(null);
@@ -857,18 +880,6 @@ public class EclipseSynchronizer {
 	void broadcastResourceStateChanges(IResource[] resources) {
 		if (resources.length > 0) {
 			CVSProviderPlugin.broadcastSyncInfoChanges(resources);
-			
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				try {
-					if((resource.getType() == IResource.FILE && !contentsChangedByUpdate((IFile)resource, false /* don't clear */)) ||
-					    resource.getType() != IResource.FILE) {
-						adjustDirtyStateRecursively(resource, RECOMPUTE_INDICATOR);
-					}
-				} catch (CVSException e) {
-					CVSProviderPlugin.log(e);
-				}
-			}
 		}
 	}
 
@@ -1292,25 +1303,6 @@ public class EclipseSynchronizer {
 			endOperation(null);
 		}
 	}
-	
-	/**
-	 * Method updated flags the objetc as having been modfied by the updated
-	 * handler. This flag is read during the resource delta to determine whether
-	 * the modification made the file dirty or not.
-	 *
-	 * @param mFile
-	 */
-	public void markFileAsUpdated(IFile file) throws CVSException {
-		sessionPropertyCache.markFileAsUpdated(file);
-	}
-	
-	protected boolean contentsChangedByUpdate(IFile file, boolean clear) throws CVSException {
-		if(file.exists()) {
-			return sessionPropertyCache.contentsChangedByUpdate(file, clear);
-		} else {
-			return false;
-		}
-	}
 
 	/**
 	 * Method getName.
@@ -1366,6 +1358,27 @@ public class EclipseSynchronizer {
 			di = "needs recomputing";
 		} 
 		System.out.println("["+string + ":" + di + "]  "  + resource.getFullPath());
+	}
+
+	static public void debug(IResource resource, boolean modified, String string) {
+		debug(resource, modified ? IS_DIRTY_INDICATOR : NOT_DIRTY_INDICATOR, string);
+	}
+	
+	/**
+	 * @param file
+	 * @return int
+	 */
+	public int getModificationState(IResource resource) throws CVSException {
+		String indicator =  getDirtyIndicator(resource);
+		if (indicator == null || indicator == RECOMPUTE_INDICATOR) {
+			return ICVSFile.UNKNOWN;
+		} else if (indicator == IS_DIRTY_INDICATOR) {
+			return ICVSFile.DIRTY;
+		} else if (indicator == NOT_DIRTY_INDICATOR) {
+			return ICVSFile.CLEAN;
+		} else {
+			return ICVSFile.UNKNOWN;
+		}
 	}
 	
 }

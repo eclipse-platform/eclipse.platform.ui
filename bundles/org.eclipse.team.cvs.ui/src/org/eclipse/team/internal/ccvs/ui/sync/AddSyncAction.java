@@ -105,7 +105,7 @@ public class AddSyncAction extends MergeAction {
 		info.setTimeStamp(null);
 		info.setAdded();
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)changed.getResource());
-		cvsFile.setSyncInfo(info);
+		cvsFile.setSyncInfo(info, ICVSFile.UNKNOWN);
 	}
 	
 	/**

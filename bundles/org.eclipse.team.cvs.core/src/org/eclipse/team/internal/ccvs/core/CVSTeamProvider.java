@@ -719,7 +719,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 								byte[] syncBytes = file.getSyncBytes();
 								if (syncBytes != null) {
 									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", file.getName())); //$NON-NLS-1$
-									file.setSyncBytes(ResourceSyncInfo.setTag(syncBytes, tag));
+									file.setSyncBytes(ResourceSyncInfo.setTag(syncBytes, tag), ICVSFile.UNKNOWN);
 								}
 							};
 							public void visitFolder(ICVSFolder folder) throws CVSException {
@@ -980,7 +980,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 					
 					// change resource sync info immediately for an outgoing addition
 					if (ResourceSyncInfo.isAddition(syncBytes)) {
-						mFile.setSyncBytes(ResourceSyncInfo.setKeywordMode(syncBytes, toKSubst));
+						mFile.setSyncBytes(ResourceSyncInfo.setKeywordMode(syncBytes, toKSubst), ICVSFile.UNKNOWN);
 						continue;
 					}
 
@@ -1110,7 +1110,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		ResourceSyncInfo origInfo = mFile.getSyncInfo();
 		MutableResourceSyncInfo info = origInfo.cloneMutable();
 		info.setTimeStamp(null);/*set the sync timestamp to null to trigger dirtyness*/
-		mFile.setSyncInfo(info);
+		mFile.setSyncInfo(info, ICVSFile.UNKNOWN);
 	}
 	
 	/*

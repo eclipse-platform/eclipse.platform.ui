@@ -242,19 +242,6 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	public ResourceSyncInfo getSyncInfo() throws CVSException {
 		return EclipseSynchronizer.getInstance().getResourceSync(resource);
 	}
-
-	/*
-	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
-	 */
-	public void setSyncInfo(final ResourceSyncInfo info) throws CVSException {
-		if (getParent().isCVSFolder()) {
-			getParent().run(new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					EclipseSynchronizer.getInstance().setResourceSync(resource, info);	
-				}
-			}, null);
-		}
-	}
 	
 	/*
 	 * Implement the hashcode on the underlying strings, like it is done in the equals.
@@ -292,18 +279,28 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		return resource;
 	}
 
-	public abstract boolean handleModification(boolean forAddition) throws CVSException;
-	
 	/**
-	 * Method created is invoked after a resource is created
+	 * Called by a resource change listener when a resource is changed or added. This allows
+	 * CVS resources to adjust any internal state based on the change.
+	 * 
+	 * @param forAddition modification is an addition
+	 * @throws CVSException
 	 */
-	protected void created() throws CVSException {
-		EclipseSynchronizer.getInstance().created(getIResource());
-	}
+	public abstract void handleModification(boolean forAddition) throws CVSException;
 	
 	/*
 	 * Run method which obtains both the CVS synchronizer lock and the workspace
 	 * lock
 	 */
 	protected abstract void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException;
+
+	/**
+	 * Sets the modified status of the receiver. This is done to ensure that any
+	 * cached state kept by it or its parents is updated properly. The invoked method
+	 * (setDirtyIndicator) will adjust the parent dirty state if the modification
+	 * state of the resource has changed. 
+	 */
+	protected void setModified(boolean modified) throws CVSException {
+		EclipseSynchronizer.getInstance().setDirtyIndicator(getIResource(), modified);
+	}
 }

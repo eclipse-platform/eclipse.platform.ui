@@ -326,7 +326,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see IManagedFile#setFileInfo(FileProperties)
 	 */
-	public void setSyncInfo(ResourceSyncInfo fileInfo) {
+	public void setSyncInfo(ResourceSyncInfo fileInfo, int modificationState) {
 		syncBytes = fileInfo.getBytes();
 	}
 
@@ -619,8 +619,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setSyncBytes(byte[])
 	 */
-	public void setSyncBytes(byte[] syncBytes) throws CVSException {
-		setSyncInfo(new ResourceSyncInfo(syncBytes));
+	public void setSyncBytes(byte[] syncBytes, int modificationState) throws CVSException {
+		setSyncInfo(new ResourceSyncInfo(syncBytes), ICVSFile.UNKNOWN);
 	}
 
 }

@@ -26,6 +26,7 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -40,7 +41,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
  * these to properly mark files and folders as modified.
  */
 public class FileModificationManager implements IResourceChangeListener, ISaveParticipant {
-		
+	
+	private static final QualifiedName UPDATE_TIMESTAMP = new QualifiedName(CVSProviderPlugin.ID, "update-timestamp"); //$NON-NLS-1$
+	
 	private Set modifiedResources = new HashSet();
 
 	// consider the following changes types and ignore the others (e.g. marker and description changes are ignored)
@@ -78,10 +81,10 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 					if (resource.getType()==IResource.FILE && delta.getKind() == IResourceDelta.CHANGED && resource.exists()) {
 						int flags = delta.getFlags();
 						if((flags & INTERESTING_CHANGES) != 0) {
-							contentsChanged((IFile)resource);
+							resourceChanged(resource, false);
 						}
 					} else if (delta.getKind() == IResourceDelta.ADDED) {
-						resourceAdded(resource);
+						resourceChanged(resource, true);
 					} else if (delta.getKind() == IResourceDelta.REMOVED) {
 						// provide notifications for deletions since they may not have been managed
 						// The move/delete hook would have updated the parent counts properly
@@ -145,37 +148,54 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	 * 
 	 * @param mFile
 	 */
-	public void updated(ICVSFile mFile) throws CVSException {
-		if (mFile instanceof EclipseFile)
-			((EclipseFile)mFile).updated();
-	}
-	
-	public void contentsChanged(IFile file) throws CoreException {
+	public void updated(ICVSFile mFile) {
 		try {
-			EclipseFile cvsFile = (EclipseFile)CVSWorkspaceRoot.getCVSFileFor(file);
-			cvsFile.handleModification(false /* addition */);
-			modifiedResources.add(file);
+			if (mFile instanceof EclipseFile) {
+				IFile file = (IFile)mFile.getIResource();
+				file.setSessionProperty(UPDATE_TIMESTAMP, new Long(file.getModificationStamp()));
+			}
 		} catch (CVSException e) {
-			throw e.toCoreException();
+			CVSProviderPlugin.log(e);
+		} catch (CoreException e) {
+			// TODO need to log whole core exception but htis is not pretty
+			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
 		}
 	}
 	
-	public void created(IResource resource) throws CVSException {
-		EclipseResource cvsResource = (EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resource);
-		cvsResource.created();
-	}
-	
 	/*
-	 * Handle an added resource.
+	 * Handle added and changed resources by signaling the change to the corresponding
+	 * CVS resource and recording the change for broadcast to interested listeners.
 	 */
-	private void resourceAdded(IResource resource) throws CoreException {
+	private void resourceChanged(IResource resource, boolean addition) throws CoreException {
+		if (isCleanUpdate(resource)) return;
 		try {
 			EclipseResource cvsResource = (EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resource);
-			cvsResource.handleModification(true /* addition */);
+			cvsResource.handleModification(addition);
 			modifiedResources.add(resource);
 		} catch (CVSException e) {
 			throw e.toCoreException();
 		}
+	}
+
+	/**
+	 * If the file was the result of a clean update, the cached timestamp will
+	 * be removed.
+	 * 
+	 * @param resource
+	 * @return boolean
+	 */
+	private boolean isCleanUpdate(IResource resource) {
+		if(resource.getType() != IResource.FILE) return false;
+		long modStamp = resource.getModificationStamp();
+		Long whenWeWrote;
+		try {
+			whenWeWrote = (Long)resource.getSessionProperty(UPDATE_TIMESTAMP);
+			resource.setSessionProperty(UPDATE_TIMESTAMP, null);
+		} catch(CoreException e) {
+			CVSProviderPlugin.log(e.getStatus());
+			whenWeWrote = null;
+		}
+		return (whenWeWrote!=null && whenWeWrote.longValue() == modStamp);
 	}
 }
 

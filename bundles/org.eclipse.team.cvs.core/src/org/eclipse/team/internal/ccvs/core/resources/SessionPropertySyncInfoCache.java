@@ -237,37 +237,12 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	/*package*/ void flushDirtyCache(IResource resource) throws CVSException {
 		if (resource.exists()) {
 			if (resource.getType() == IResource.FILE) {
-				safeSetSessionProperty(resource, IS_DIRTY, RECOMPUTE_INDICATOR);
-				safeSetSessionProperty(resource, CLEAN_UPDATE, null);
+				safeSetSessionProperty(resource, IS_DIRTY, null);
 			} else {
-				safeSetSessionProperty(resource, IS_DIRTY, RECOMPUTE_INDICATOR);
+				safeSetSessionProperty(resource, IS_DIRTY, null);
+				flushDirtyStateFromDisk((IContainer)resource);
 			}
 		}
-	}
-	
-	/**
-	 * Method updated flags the objetc as having been modfied by the updated
-	 * handler. This flag is read during the resource delta to determine whether
-	 * the modification made the file dirty or not.
-	 *
-	 * @param mFile
-	 */
-	/*package*/ void markFileAsUpdated(IFile file) throws CVSException {
-		safeSetSessionProperty(file, CLEAN_UPDATE, UPDATED_INDICATOR);
-	}
-
-	/*package*/ boolean contentsChangedByUpdate(IFile file, boolean clear) throws CVSException {
-		Object indicator = safeGetSessionProperty(file, CLEAN_UPDATE);
-		boolean updated = false;
-		if (indicator == UPDATED_INDICATOR) {
-			// the file was changed due to a clean update (i.e. no local mods) so skip it
-			if(clear) {
-				safeSetSessionProperty(file, CLEAN_UPDATE, null);
-				safeSetSessionProperty(file, IS_DIRTY, NOT_DIRTY_INDICATOR);
-			}
-			updated = true;
-		}
-		return updated;
 	}
 	
 	/**
@@ -457,6 +432,19 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			} catch (CoreException e) {
 				CVSProviderPlugin.log(e.getStatus());
 			}
+		}
+	}
+	
+	/* 
+	 * Called to clear the folder dirty state from the resource sync tree and stop persisting
+	 * these values to disk.
+	 */
+	private void flushDirtyStateFromDisk(IContainer container) {
+		final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();									
+		try {
+			synchronizer.flushSyncInfo(FOLDER_DIRTY_STATE_KEY, container, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			CVSProviderPlugin.log(e.getStatus());
 		}
 	}
 }

@@ -144,7 +144,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	/*
 	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
 	 */
-	public void setSyncInfo(ResourceSyncInfo info) {
+	public void setSyncInfo(ResourceSyncInfo info, int modificationState) {
 		// ensure that clients are not trying to set sync info on remote handles.
 		Assert.isTrue(false);
 	}

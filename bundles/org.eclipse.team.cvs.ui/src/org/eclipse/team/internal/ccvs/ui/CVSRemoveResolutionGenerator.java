@@ -103,7 +103,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 						if (info.isDeleted()) {
 							MutableResourceSyncInfo deletedInfo = info.cloneMutable();
 							deletedInfo.setDeleted(false);
-							mFile.setSyncInfo(deletedInfo);
+							mFile.setSyncInfo(deletedInfo, ICVSFile.UNKNOWN);
 						}
 					}
 					marker.delete();
@@ -134,7 +134,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 					if (info.isDeleted()) {
 						MutableResourceSyncInfo deletedInfo = info.cloneMutable();
 						deletedInfo.setDeleted(false);
-						mFile.setSyncInfo(deletedInfo);
+						mFile.setSyncInfo(deletedInfo, ICVSFile.UNKNOWN);
 					}
 				}
 				

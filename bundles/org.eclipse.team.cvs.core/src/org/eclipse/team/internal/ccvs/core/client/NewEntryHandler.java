@@ -42,6 +42,6 @@ public class NewEntryHandler extends ResponseHandler {
 		ResourceSyncInfo fileInfo = mFile.getSyncInfo();
 		MutableResourceSyncInfo newInfo = fileInfo.cloneMutable();
 		newInfo.setEntryLine(entryLine);
-		mFile.setSyncInfo(newInfo);
+		mFile.setSyncInfo(newInfo, ICVSFile.UNKNOWN);
 	}
 }

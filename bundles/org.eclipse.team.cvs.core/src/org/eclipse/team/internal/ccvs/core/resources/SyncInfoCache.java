@@ -34,12 +34,9 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	/*package*/ static final byte[][] EMPTY_RESOURCE_SYNC_INFOS = new byte[0][0];
 	
 	/*package*/ static final QualifiedName IS_DIRTY = new QualifiedName(CVSProviderPlugin.ID, "is-dirty"); //$NON-NLS-1$
-	/*package*/ static final QualifiedName CLEAN_UPDATE = new QualifiedName(CVSProviderPlugin.ID, "clean-update"); //$NON-NLS-1$
 	/*package*/ static final String IS_DIRTY_INDICATOR = "d"; //$NON-NLS-1$
 	/*package*/ static final String NOT_DIRTY_INDICATOR = "c"; //$NON-NLS-1$
 	/*package*/ static final String RECOMPUTE_INDICATOR = "r"; //$NON-NLS-1$
-	/*package*/ static final String UPDATED_INDICATOR = "u"; //$NON-NLS-1$
-	
 	
 	/*package*/ static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
 	

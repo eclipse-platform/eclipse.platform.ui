@@ -185,7 +185,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		if(info!=null) {
 			info.setTag(local.getParent().getFolderSyncInfo().getTag());
 		}
-		((ICVSFile)local).setSyncInfo(info);
+		((ICVSFile)local).setSyncInfo(info, ICVSFile.UNKNOWN);
 	}
 	
 	/*

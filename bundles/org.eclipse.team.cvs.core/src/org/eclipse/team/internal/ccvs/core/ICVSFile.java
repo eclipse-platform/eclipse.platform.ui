@@ -40,6 +40,11 @@ public interface ICVSFile extends ICVSResource {
 	public static final int NOTIFY_ON_COMMIT = 4;
 	public static final int NOTIFY_ON_ALL = NOTIFY_ON_EDIT | NOTIFY_ON_UNEDIT | NOTIFY_ON_COMMIT;
 	
+	// Constants used to indicate modification state when setting sync info
+	public static final int UNKNOWN = 0;
+	public static final int CLEAN = 1;
+	public static final int DIRTY = 2;
+	
 	/**
 	 * Answers the size of the file. 
 	 */
@@ -82,18 +87,25 @@ public interface ICVSFile extends ICVSResource {
 	 * clear sync information call <code>unmanage</code>. The sync info will
 	 * become the persisted between workbench sessions.
 	 * 
+	 * Note: This method makes use of a ResourceSyncInfo object which has the parsed 
+	 * contents of the resource sync info. Clients can manipulate the values using
+	 * MutableResourceSyncInfo and then set the sync info using this method.
+	 * 
 	 * @param info the resource synchronization to associate with this resource.
 	 */	
-	public void setSyncInfo(ResourceSyncInfo info) throws CVSException;
+	public void setSyncInfo(ResourceSyncInfo info, int modificationState) throws CVSException;
 		
 	/**
 	 * Called to set the workspace synchronization information for a resource. To
 	 * clear sync information call <code>unmanage</code>. The sync info will
 	 * become the persisted between workbench sessions.
 	 * 
+	 * Note: This method sets the sync info to the bytes provided as-is. It is the caller's
+	 * responsibility to ensure that these bytes are of the proper format. Use with caution.
+	 * 
 	 * @param info the resource synchronization to associate with this resource.
 	 */	
-	public void setSyncBytes(byte[] syncBytes) throws CVSException;
+	public void setSyncBytes(byte[] syncBytes, int modificationState) throws CVSException;
 	
 	/**
 	 * Sets the file to read-only (<code>true</code>) or writable (<code>false</code>).

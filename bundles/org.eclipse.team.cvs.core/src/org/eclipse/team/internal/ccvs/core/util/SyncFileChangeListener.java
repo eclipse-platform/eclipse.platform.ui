@@ -103,7 +103,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						// Inform the synchronizer about folder creations
 						if (kind == IResourceDelta.ADDED) {
 							try {
-								CVSProviderPlugin.getPlugin().getFileModificationManager().created(resource);
+								EclipseSynchronizer.getInstance().created(resource);
 							} catch (CVSException e) {
 								throw new CoreException(e.getStatus());
 							}

@@ -108,14 +108,15 @@ class UpdatedHandler extends ResponseHandler {
 		modTime = mFile.getTimeStamp();
 		MutableResourceSyncInfo newInfoWithTimestamp = info.cloneMutable();
 		newInfoWithTimestamp.setTimeStamp(modTime);
+		int modificationState = ICVSFile.UNKNOWN;
 		if(handlerType==HANDLE_MERGED) {
 			newInfoWithTimestamp.setMerged();
 		} else if (!session.isIgnoringLocalChanges() && (handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED)) {
 			// both these cases result in an unmodified file.
 			// reporting is handled by the FileModificationManager
-			newInfoWithTimestamp.reported();
+			modificationState = ICVSFile.CLEAN;
 			CVSProviderPlugin.getPlugin().getFileModificationManager().updated(mFile);
 		}
-		mFile.setSyncInfo(newInfoWithTimestamp);
+		mFile.setSyncInfo(newInfoWithTimestamp, modificationState);
 	}
 }

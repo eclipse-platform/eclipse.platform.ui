@@ -72,7 +72,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 				byte[] syncBytes = file.getSyncBytes();
 				if (syncBytes != null) {
 					// only update sync info if we have it locally
-					file.setSyncBytes(ResourceSyncInfo.setKeywordMode(syncBytes, ksubstMode));
+					file.setSyncBytes(ResourceSyncInfo.setKeywordMode(syncBytes, ksubstMode), ICVSFile.UNKNOWN);
 				}
 			} catch (CVSException e) {
 				return new CVSStatus(CVSStatus.ERROR,

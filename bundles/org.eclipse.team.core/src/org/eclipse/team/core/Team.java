@@ -233,6 +233,9 @@ public final class Team {
 	 * @param type  the file type
 	 */
 	public static void setAllTypes(String[] extensions, int[] types) {
+		if (pluginTypes == null) {
+			loadTextState();
+		}
 		fileTypes = new Hashtable(11);
 		for (int i = 0; i < extensions.length; i++) {
 			fileTypes.put(extensions[i], new Integer(types[i]));

@@ -568,7 +568,7 @@ public class Session {
 				// of the object, we can simpy reset the info for each moved resource
 				desiredFolder.accept(new ICVSResourceVisitor() {
 					public void visitFile(ICVSFile file) throws CVSException {
-						file.setSyncBytes(file.getSyncBytes());
+						file.setSyncBytes(file.getSyncBytes(), ICVSFile.UNKNOWN);
 					}
 					public void visitFolder(ICVSFolder folder) throws CVSException {
 						folder.setFolderSyncInfo(folder.getFolderSyncInfo());

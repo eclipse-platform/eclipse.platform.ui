@@ -35,6 +35,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -137,7 +138,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				if (ResourceSyncInfo.isAddition(syncBytes)) {
 					mFile.unmanage(null);
 				} else if ( ! ResourceSyncInfo.isDeletion(syncBytes)) {
-					mFile.setSyncBytes(ResourceSyncInfo.convertToDeletion(syncBytes));
+					mFile.setSyncBytes(ResourceSyncInfo.convertToDeletion(syncBytes), ICVSFile.UNKNOWN);
 				}
 			}
 		} catch (CVSException e) {
@@ -151,13 +152,13 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	 */
 	private void handleAddedFile(IFile resource) {
 		try {
-			CVSProviderPlugin.getPlugin().getFileModificationManager().created(resource);	
+			EclipseSynchronizer.getInstance().created(resource);	
 			ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
 			byte[] syncBytes = mFile.getSyncBytes();
 			if (syncBytes != null) {
 				if (ResourceSyncInfo.isDeletion(syncBytes)) {
 					// Handle a replaced deletion
-					mFile.setSyncBytes(ResourceSyncInfo.convertFromDeletion(syncBytes));
+					mFile.setSyncBytes(ResourceSyncInfo.convertFromDeletion(syncBytes), ICVSFile.UNKNOWN);
 					try {
 						IMarker marker = getDeletionMarker(resource);
 						if (marker != null) marker.delete();
@@ -178,7 +179,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	
 	private void handleAddedFolder(IFolder resource) {
 		try {
-			CVSProviderPlugin.getPlugin().getFileModificationManager().created(resource);			
+			EclipseSynchronizer.getInstance().created(resource);		
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(resource);
 			if (mFolder.isManaged()) {
 				ResourceSyncInfo info = mFolder.getSyncInfo();

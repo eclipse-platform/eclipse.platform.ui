@@ -113,7 +113,10 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				project.open(null);				
 			} else {
 				((IFolder)resource).create(false /*don't force*/, true /*make local*/, null);
-				created();
+				// We need to signal the creation to the synchronizer immediately because
+				// we may do additional CVS operations on the folder before the next delta
+				// occurs.
+				EclipseSynchronizer.getInstance().created(getIResource());;
 			}				
 		} catch (CoreException e) {
 			throw CVSException.wrapException(resource, Policy.bind("EclipseFolder_problem_creating", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$
@@ -202,7 +205,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		run(new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				EclipseSynchronizer synchronizer = EclipseSynchronizer.getInstance();
-				FolderSyncInfo oldInfo = synchronizer.getFolderSync((IContainer)resource);
 				synchronizer.setFolderSync((IContainer)resource, folderInfo);
 				// the server won't add directories as sync info, therefore it must be done when
 				// a directory is shared with the repository.
@@ -338,45 +340,48 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 
 		if (!shared) return true;
 		
-		String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(container);
+		int state = EclipseSynchronizer.getInstance().getModificationState(getIResource());
 
-		if (indicator == EclipseSynchronizer.RECOMPUTE_INDICATOR) {
+		boolean modified;
+		if (state == ICVSFile.UNKNOWN) {
 			
 			// We have no cached info for the folder. We'll need to check directly,
 			// caching as go. This will recursively determined the modified state
 			// for all child resources until a modified child is found.
-			indicator = calculateAndSaveChildModificationStates();
+			modified = calculateAndSaveChildModificationStates();
+			setModified(modified);
 			if (Policy.DEBUG_DIRTY_CACHING) {
-				EclipseSynchronizer.debug(resource, indicator, "recomputed dirty state");
+				EclipseSynchronizer.debug(resource, modified, "recomputed dirty state");
 			}
-
+			return modified;
 		} else {
+			modified = state == ICVSFile.DIRTY;
 			if (Policy.DEBUG_DIRTY_CACHING) {
-				EclipseSynchronizer.debug(resource, indicator, "found cached dirty state");
+				EclipseSynchronizer.debug(resource, modified, "found cached dirty state");
 			}
 		}
-		return indicator == EclipseSynchronizer.IS_DIRTY_INDICATOR;
+		return modified;
 	}
 	
-	public boolean handleModification(boolean forAddition) throws CVSException {
+	public void handleModification(boolean forAddition) throws CVSException {
 		// For non-additions, we are only interested in sync info changes
-		if (isIgnored() || !forAddition) return false;
+		if (isIgnored() || !forAddition) return;
 
 		// the folder is an addition.
 		FolderSyncInfo info = getFolderSyncInfo();
 		// if the folder has sync info, it was handled is setFolderInfo
 		// otherwise, flush the ancestors to recalculate
 		if (info == null) {
-			setModified((IContainer)getIResource(), EclipseSynchronizer.IS_DIRTY_INDICATOR);
-			return true;
+			setModified(true);
 		}
-		return false;
 	}
 	
 	/**
-	 * Method determineDirtyCount.
+	 * Determines the modification state of the receiver by examining it's children.
+	 * This method may result in modification state being cached with the children but
+	 * does not cache it for the receiver.
 	 */
-	private String calculateAndSaveChildModificationStates() throws CVSException {
+	private boolean calculateAndSaveChildModificationStates() throws CVSException {
 		IContainer container = (IContainer)getIResource();
 		ICVSResource[] children = members(ALL_UNIGNORED_MEMBERS);
 
@@ -385,17 +390,11 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			if (resource.isModified()) {
 				// if a child resource is dirty consider the parent dirty as well, there
 				// is no need to continue checking other siblings.
-				setModified(container, EclipseSynchronizer.IS_DIRTY_INDICATOR);
-				return EclipseSynchronizer.IS_DIRTY_INDICATOR;
+				return true;
 			}
 		}
-		
-		setModified(container, EclipseSynchronizer.NOT_DIRTY_INDICATOR);	
-		return EclipseSynchronizer.NOT_DIRTY_INDICATOR;
+			
+		return false;
 	}
-	
-	private void setModified(IContainer container, String string) throws CVSException {
-		EclipseSynchronizer.getInstance().setDirtyIndicator(container, 
-			string == EclipseSynchronizer.IS_DIRTY_INDICATOR ? true : false);
-	}
+
 }
