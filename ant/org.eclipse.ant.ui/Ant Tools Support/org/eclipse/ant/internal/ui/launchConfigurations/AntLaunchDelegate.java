@@ -368,5 +368,10 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		for (int i = 0; i < processes.length; i++) {
 			setProcessAttributes(processes[i], idStamp, null);
 		}
+		// refresh resources after process finishes
+		if (RefreshTab.getRefreshScope(configuration) != null) {
+			BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, processes[0]);
+			refresher.startBackgroundRefresh();
+		}				
 	}
 }
