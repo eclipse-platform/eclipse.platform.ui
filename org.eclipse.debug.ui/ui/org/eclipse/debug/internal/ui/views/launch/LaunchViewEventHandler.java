@@ -150,6 +150,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		labelChanged(thread);
 		getLaunchViewer().updateStackFrameIcons(thread);
 		getLaunchView().clearSourceSelection();
+		// fire selection change to update actions
+		getLaunchViewer().setSelection(getLaunchViewer().getSelection());
 	}
 
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
