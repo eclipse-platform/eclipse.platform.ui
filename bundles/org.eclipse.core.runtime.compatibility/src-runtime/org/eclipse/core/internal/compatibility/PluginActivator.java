@@ -47,6 +47,7 @@ public class PluginActivator implements BundleActivator {
 		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getGlobalName());
 		plugin = pd.getPlugin();
 		plugin.startup();
+		plugin.start(context);
 	}
 	private void ensureNormalStartup(BundleContext context) throws BundleException {
 		// TODO look at other ways of doing this to make it faster (getService is not as fast 
