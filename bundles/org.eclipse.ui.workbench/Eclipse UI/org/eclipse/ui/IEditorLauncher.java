@@ -13,7 +13,7 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * An editor launcher is used to launch external editors on an
+ * An editor launcher is used to launch external editors on a
  * file in the local file system.
  * <p>
  * Clients should implement this interface to define a new type of editor
