@@ -203,21 +203,15 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="Plain Text"
-            category="org.eclipse.ui.preferencePages.Languages"
+            category="org.eclipse.ui.preferencePages.Editors"
             class="org.eclipse.ui.internal.editors.text.TextEditorPreferencePage2"
             id="org.eclipse.ui.preferencePages.TextEditor">
       </page>
       <page
-            name="Text Editors"
+            name="General"
             category="org.eclipse.ui.preferencePages.Editors"
             class="org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage"
             id="org.eclipse.ui.preferencePages.GeneralTextEditor">
-      </page>
-      <page
-            name="Text Content Types"
-            category="org.eclipse.ui.preferencePages.Editors"
-            class="org.eclipse.ui.internal.editors.text.LanguageEditorPreferencePage"
-            id="org.eclipse.ui.preferencePages.Languages">
       </page>
       <page
             name="%PreferencePages.Annotations"
