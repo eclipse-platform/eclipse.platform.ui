@@ -9,19 +9,40 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.commands;
 
-import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICategoryEvent;
-
-final class CategoryEvent implements ICategoryEvent {
+/**
+ * <p>
+ * An instance of <code>CategoryEvent</code> describes changes to an instance of 
+ * <code>ICategory</code>. 
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see ICategory
+ * @see ICategoryListener#categoryChanged
+ */
+public final class CategoryEvent implements ICategoryEvent {
 
 	private ICategory category;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
 	private boolean nameChanged;
 
-	CategoryEvent(ICategory category, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param category
+	 * @param definedChanged
+	 * @param descriptionChanged
+	 * @param nameChanged
+	 */
+	public CategoryEvent(ICategory category, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
 		if (category == null)
 			throw new NullPointerException();
 		
@@ -31,18 +52,33 @@ final class CategoryEvent implements ICategoryEvent {
 		this.nameChanged = nameChanged;
 	}
 
+	/**
+	 * Returns the instance of <code>ICategory</code> that has changed.
+	 *
+	 * @return the instance of <code>ICategory</code> that has changed. 
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	public ICategory getCategory() {
 		return category;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasDefinedChanged() {
 		return definedChanged;
 	}	
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}

@@ -17,7 +17,7 @@ import java.util.List;
 
 abstract class AbstractCommandRegistry implements ICommandRegistry {
 
-	private ICommandRegistryEvent commandRegistryEvent;
+	private CommandRegistryEvent commandRegistryEvent;
 	private List commandRegistryListeners;
 	
 	protected List activeKeyConfigurationDefinitions = Collections.EMPTY_LIST;

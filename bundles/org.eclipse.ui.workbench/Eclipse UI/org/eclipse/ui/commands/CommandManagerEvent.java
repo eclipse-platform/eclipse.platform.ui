@@ -9,12 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.commands;
 
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.ICommandManagerEvent;
-
-final class CommandManagerEvent implements ICommandManagerEvent {
+/**
+ * <p>
+ * An instance of <code>ICommandManagerEvent</code> describes changes to an 
+ * instance of <code>ICommandManager</code>. 
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see ICommandManager
+ * @see ICommandManagerListener#commandManagerChanged
+ */
+public final class CommandManagerEvent implements ICommandManagerEvent {
 
 	private boolean activeActivityIdsChanged;
 	private boolean activeKeyConfigurationIdChanged;
@@ -26,7 +39,20 @@ final class CommandManagerEvent implements ICommandManagerEvent {
 	private boolean definedKeyConfigurationIdsChanged;
 	private boolean modeChanged;
 
-	CommandManagerEvent(ICommandManager commandManager, boolean activeActivityIdsChanged, boolean activeKeyConfigurationIdChanged, boolean activeLocaleChanged, boolean activePlatformChanged, boolean definedCategoryIdsChanged, boolean definedCommandIdsChanged, boolean definedKeyConfigurationIdsChanged, boolean modeChanged) {
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param commandManager
+	 * @param activeActivityIdsChanged
+	 * @param activeKeyConfigurationIdChanged
+	 * @param activeLocaleChanged
+	 * @param activePlatformChanged
+	 * @param definedCategoryIdsChanged
+	 * @param definedCommandIdsChanged
+	 * @param definedKeyConfigurationIdsChanged
+	 * @param modeChanged
+	 */
+	public CommandManagerEvent(ICommandManager commandManager, boolean activeActivityIdsChanged, boolean activeKeyConfigurationIdChanged, boolean activeLocaleChanged, boolean activePlatformChanged, boolean definedCategoryIdsChanged, boolean definedCommandIdsChanged, boolean definedKeyConfigurationIdsChanged, boolean modeChanged) {
 		if (commandManager == null)
 			throw new NullPointerException();
 		
@@ -41,38 +67,68 @@ final class CommandManagerEvent implements ICommandManagerEvent {
 		this.modeChanged = modeChanged;
 	}
 
+	/**
+	 * Returns the instance of <code>ICommandManager</code> that has changed.
+	 *
+	 * @return the instance of <code>ICommandManager</code> that has changed. 
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasActiveKeyConfigurationIdChanged() {
 		return activeKeyConfigurationIdChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasActiveLocaleChanged() {
 		return activeLocaleChanged;
 	}
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasActivePlatformChanged() {
 		return activePlatformChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasModeChanged() {
 		return modeChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean haveActiveActivityIdsChanged() {
 		return activeActivityIdsChanged;
 	}	
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean haveDefinedCategoryIdsChanged() {
 		return definedCategoryIdsChanged;
 	}
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean haveDefinedCommandIdsChanged() {
 		return definedCommandIdsChanged;
 	}
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean haveDefinedKeyConfigurationIdsChanged() {
 		return definedKeyConfigurationIdsChanged;
 	}	

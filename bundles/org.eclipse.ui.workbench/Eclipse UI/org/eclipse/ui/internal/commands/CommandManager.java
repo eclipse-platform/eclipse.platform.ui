@@ -29,6 +29,7 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.commands.*;
 import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICategoryEvent;
@@ -155,13 +156,13 @@ public final class CommandManager implements ICommandManager {
 		activePlatform = systemPlatform != null ? systemPlatform : Util.ZERO_LENGTH_STRING;	
 		
 		this.commandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
-			public void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent) {
+			public void commandRegistryChanged(CommandRegistryEvent commandRegistryEvent) {
 				readRegistry();
 			}
 		});
 
 		this.mutableCommandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
-			public void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent) {
+			public void commandRegistryChanged(CommandRegistryEvent commandRegistryEvent) {
 				readRegistry();
 			}
 		});

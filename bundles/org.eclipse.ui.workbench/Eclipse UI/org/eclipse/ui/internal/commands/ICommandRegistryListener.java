@@ -13,5 +13,5 @@ package org.eclipse.ui.internal.commands;
 
 public interface ICommandRegistryListener {
 
-	void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent);
+	void commandRegistryChanged(CommandRegistryEvent commandRegistryEvent);
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
-final class CommandRegistryEvent implements ICommandRegistryEvent {
+final class CommandRegistryEvent {
 
 	private ICommandRegistry commandRegistry;
 

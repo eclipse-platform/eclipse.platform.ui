@@ -8,13 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.ui.commands;
 
-package org.eclipse.ui.internal.commands;
-
-import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.commands.IKeyConfigurationEvent;
-
-final class KeyConfigurationEvent implements IKeyConfigurationEvent {
+/**
+ * <p>
+ * An instance of <code>KeyConfigurationEvent</code> describes changes to an instance of 
+ * <code>IKeyConfiguration</code>. 
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see IKeyConfiguration
+ * @see IKeyConfigurationListener#commandChanged
+ */
+public final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 
 	private boolean activeChanged;
 	private IKeyConfiguration keyConfiguration;
@@ -23,7 +35,17 @@ final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 	private boolean nameChanged;
 	private boolean parentIdChanged;
 
-	KeyConfigurationEvent(IKeyConfiguration keyConfiguration, boolean activeChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged, boolean parentIdChanged) {
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param keyConfiguration
+	 * @param activeChanged
+	 * @param definedChanged
+	 * @param descriptionChanged
+	 * @param nameChanged
+	 * @param parentIdChanged
+	 */
+	public KeyConfigurationEvent(IKeyConfiguration keyConfiguration, boolean activeChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged, boolean parentIdChanged) {
 		if (keyConfiguration == null)
 			throw new NullPointerException();
 		
@@ -35,26 +57,47 @@ final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 		this.parentIdChanged = parentIdChanged;
 	}
 
+	/**
+	 * Returns the instance of <code>IKeyConfiguration</code> that has changed.
+	 *
+	 * @return the instance of <code>IKeyConfiguration</code> that has changed. 
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	public IKeyConfiguration getKeyConfiguration() {
 		return keyConfiguration;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasActiveChanged() {
 		return activeChanged;
 	}
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasDefinedChanged() {
 		return definedChanged;
 	}	
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
 	
+	/**
+	 * TODO javadoc
+	 */	
 	public boolean hasParentIdChanged() {
 		return parentIdChanged;
 	}
