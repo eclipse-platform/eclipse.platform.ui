@@ -55,6 +55,7 @@ public class ExternalProjectImportWizard extends Wizard implements
      */
     public ExternalProjectImportWizard() {
         super();
+        setNeedsProgressMonitor(true);
     }
 
     /* (non-Javadoc)
