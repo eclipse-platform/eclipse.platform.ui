@@ -233,6 +233,24 @@ public static String getString(String key) {
 		return key;
 	}
 }
+
+/**
+ * Returns the resource object with the given key in
+ * JFace's resource bundle upper cased. If there isn't any value under
+ * the given key, the default is returned.
+ *
+ * @param key the resource name
+ * @param default the default value
+ * @return the string
+ */	
+public static String getStringUppercase(String key, String defaultString) {
+	try {
+		return bundle.getString(key).toUpperCase(Locale.getDefault());
+	} catch (MissingResourceException e) {
+		return defaultString.toUpperCase(Locale.getDefault());
+	}
+}
+
 /**
  * Returns a list of string values corresponding to the
  * given list of keys. The lookup is done with <code>getString</code>.

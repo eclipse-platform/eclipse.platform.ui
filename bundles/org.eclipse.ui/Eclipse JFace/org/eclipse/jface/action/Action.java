@@ -93,6 +93,15 @@ public abstract class Action implements IAction {
 	 * Indicates this action is enabled.
 	 */
 	private boolean enabled = true;
+	
+	//The control key
+	private static String CONTROL_KEY;
+	
+	//The alt key
+	private static String ALT_KEY;
+	
+	//The shift key
+	private static String SHIFT_KEY;
 /**
  * Creates a new action with no text and no image.
  * <p>
@@ -234,12 +243,15 @@ public static int findKeyCode(String token) {
  * @see org.eclipse.swt.SWT
  */
 public static int findModifier(String token) {
+	if(CONTROL_KEY == null)
+		initModifiers();
+		
 	token= token.toUpperCase();
-	if (token.equals(JFaceResources.getString("AcceleratorKeys.Control")))//$NON-NLS-1$
+	if (token.equals(CONTROL_KEY))//$NON-NLS-1$
 		return SWT.CTRL;
-	if (token.equals(JFaceResources.getString("AcceleratorKeys.Shift")))//$NON-NLS-1$
+	if (token.equals(SHIFT_KEY))//$NON-NLS-1$
 		return SWT.SHIFT;
-	if (token.equals(JFaceResources.getString("AcceleratorKeys.Alt")))//$NON-NLS-1$
+	if (token.equals(ALT_KEY))//$NON-NLS-1$
 		return SWT.ALT;
 	return 0;
 }
@@ -359,36 +371,46 @@ private static void initKeyCodes() {
 	
 	keyCodes = new HashMap(40);
 
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Backspace"), new Integer(8));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Tab"), new Integer(9));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Return"), new Integer(13));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Enter"), new Integer(13));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Escape"), new Integer(27));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Delete"), new Integer(127));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Backspace","BACKSPACE"), new Integer(8));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Tab","TAB"), new Integer(9));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Return","RETURN"), new Integer(13));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Enter","ENTER"), new Integer(13));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Escape","ESCAPE"), new Integer(27));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Delete","DELETE"), new Integer(127));//$NON-NLS-1$
 
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Space"), new Integer(' '));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.ArrowUp"), new Integer(SWT.ARROW_UP));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.ArrowDown"), new Integer(SWT.ARROW_DOWN));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.ArrowLeft"), new Integer(SWT.ARROW_LEFT));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.ArrowRight"), new Integer(SWT.ARROW_RIGHT));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.PageUp"), new Integer(SWT.PAGE_UP));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.PageDown"), new Integer(SWT.PAGE_DOWN));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Home"), new Integer(SWT.HOME));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.End"), new Integer(SWT.END));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.Insert"), new Integer(SWT.INSERT));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F1"), new Integer(SWT.F1));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F2"), new Integer(SWT.F2));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F3"), new Integer(SWT.F3));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F4"), new Integer(SWT.F4));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F5"), new Integer(SWT.F5));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F6"), new Integer(SWT.F6));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F7"), new Integer(SWT.F7));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F8"), new Integer(SWT.F8));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F9"), new Integer(SWT.F9));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F10"), new Integer(SWT.F10));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F11"), new Integer(SWT.F11));//$NON-NLS-1$
-	keyCodes.put(JFaceResources.getString("AcceleratorKeys.F12"), new Integer(SWT.F12));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Space","SPACE"), new Integer(' '));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.ArrowUp","ARROW_UP"), new Integer(SWT.ARROW_UP));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.ArrowDown","ARROW_DOWN"), new Integer(SWT.ARROW_DOWN));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.ArrowLeft","ARROW_LEFT"), new Integer(SWT.ARROW_LEFT));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.ArrowRight","ARROW_RIGHT"), new Integer(SWT.ARROW_RIGHT));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.PageUp","PAGE_UP"), new Integer(SWT.PAGE_UP));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.PageDown","PAGE_DOWN"), new Integer(SWT.PAGE_DOWN));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Home","HOME"), new Integer(SWT.HOME));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.End","END"), new Integer(SWT.END));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.Insert","INSERT"), new Integer(SWT.INSERT));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F1","F1"), new Integer(SWT.F1));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F2","F2"), new Integer(SWT.F2));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F3","F3"), new Integer(SWT.F3));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F4","F4"), new Integer(SWT.F4));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F5","F5"), new Integer(SWT.F5));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F6","F6"), new Integer(SWT.F6));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F7","F7"), new Integer(SWT.F7));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F8","F8"), new Integer(SWT.F8));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F9","F9"), new Integer(SWT.F9));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F10","F10"), new Integer(SWT.F10));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F11","F11"), new Integer(SWT.F11));//$NON-NLS-1$
+	keyCodes.put(JFaceResources.getStringUppercase("AcceleratorKeys.F12","F12"), new Integer(SWT.F12));//$NON-NLS-1$
 }
+
+/** 
+ * Initializes the modifiers.
+ */
+private static void initModifiers(){
+	CONTROL_KEY = JFaceResources.getStringUppercase("AcceleratorKeys.Control","CTRL");
+	ALT_KEY = JFaceResources.getStringUppercase("AcceleratorKeys.Alt","ALT");
+	SHIFT_KEY = JFaceResources.getStringUppercase("AcceleratorKeys.Shift","SHIFT");
+}
+
 /* (non-Javadoc)
  * Method declared on IAction.
  */
