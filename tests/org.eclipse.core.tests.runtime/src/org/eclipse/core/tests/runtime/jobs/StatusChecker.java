@@ -22,6 +22,7 @@ public class StatusChecker {
 	public static final int STATUS_RUNNING = 3;
 	public static final int STATUS_WAIT_FOR_DONE = 4;
 	public static final int STATUS_DONE = 5;
+	public static final int STATUS_BLOCKED = 5;
 	
 	public static void waitForStatus(int [] location, int index, int status, int timeout) {
 		int i = 0;
