@@ -75,7 +75,7 @@ public abstract class ScriptedCommand implements IOperationListener {
 	 * Applies the changes made to the current configuration.
 	 */
 	public void applyChangesNow() {
-		InstallConfiguration.applyChanges();
+		OperationsManager.applyChangesNow();
 	}
 	
 	/* (non-Javadoc)

@@ -838,16 +838,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		return false;
 	}
 	
-	/**
-	 * To be called when committing the update changes to current configuration
-	 *
-	 */
-	public static void applyChanges() {
-		ConfigurationActivator configurator = ConfigurationActivator.getConfigurator();
-		configurator.installBundles();
-	}
-	
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

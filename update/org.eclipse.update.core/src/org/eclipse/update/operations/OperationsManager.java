@@ -13,7 +13,7 @@ package org.eclipse.update.operations;
 import java.util.*;
 
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.operations.*;
 
 /**
@@ -237,6 +237,8 @@ public class OperationsManager {
 	 * plugin it is safe to do it.
 	 */
 	public static void applyChangesNow() {
-		InstallConfiguration.applyChanges();
+		ConfigurationActivator configurator = ConfigurationActivator.getConfigurator();
+		configurator.installBundles();
+		pendingOperations.clear();
 	}
 }

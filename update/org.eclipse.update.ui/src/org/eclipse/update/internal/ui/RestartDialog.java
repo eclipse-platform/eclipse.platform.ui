@@ -13,7 +13,7 @@ package org.eclipse.update.internal.ui;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.operations.*;
 
 /**
  * A dialog which prompts the user to restart after an update operation
@@ -54,7 +54,7 @@ public class RestartDialog extends MessageDialog {
 		RestartDialog dialog = new RestartDialog(parent, title,	message, restartIsReallyNeeded);
 		int button= dialog.open();
 		if (button == 2)
-			InstallConfiguration.applyChanges();
+			OperationsManager.applyChangesNow();
 		return button == 0; // Yes
 	}
 	
