@@ -23,7 +23,6 @@ public class Configuration implements IConfigurationConstants {
 	private HashMap sites = new HashMap();
 	private Date date;
 	private URL url;
-	private String defaultFeature;
 	private boolean transientConfig;
 	private boolean isDirty;
 	private Configuration linkedConfig; // shared configuration

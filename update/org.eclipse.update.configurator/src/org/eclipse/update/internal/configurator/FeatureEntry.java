@@ -40,7 +40,6 @@ public class FeatureEntry
 	private boolean primary;
 	private String pluginIdentifier;
 	private String url;
-	private String provider;
 	private ArrayList plugins;
 	private AboutInfo branding;
 

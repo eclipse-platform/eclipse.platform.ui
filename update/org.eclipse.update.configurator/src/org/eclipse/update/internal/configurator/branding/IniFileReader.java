@@ -167,7 +167,7 @@ public class IniFileReader {
 	/**
 	 * Returns a array of URL for the given key, or <code>null</code>. The
 	 * property value should be a comma separated list of urls, tokens for
-	 * which pluginDescriptor cannot build an url will have a null entry.
+	 * which bundle cannot build an url will have a null entry.
 	 * 
 	 * @param key name of the property containing the requested urls
 	 * @return a URL for the given key, or <code>null</code>
