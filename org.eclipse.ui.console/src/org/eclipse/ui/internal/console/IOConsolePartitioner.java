@@ -41,7 +41,8 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	private String[] lld;
 	private int highWaterMark = -1;
 	private int lowWaterMark = -1;
-	private IOConsoleOutputStream lastOutputStreamAppended;
+	private ArrayList updatePartitions;
+    private int firstOffset;
 	
 	public IOConsolePartitioner(IOConsoleInputStream inputStream) {
 		this.inputStream = inputStream;
@@ -59,6 +60,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		pendingPartitions = new ArrayList();
 		inputPartitions = new ArrayList();
 		updateJob = new DocumentUpdaterJob();
+		updateJob.setSystem(true);
 	}
 	
 	
@@ -186,9 +188,14 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		
 		if (updateInProgress) {
 			synchronized(partitions) {
-				lastPartition = new IOConsolePartition(lastOutputStreamAppended, event.fText);
-				lastPartition.setOffset(event.fOffset);
-				partitions.add(lastPartition);
+			    for (Iterator i = updatePartitions.iterator(); i.hasNext(); ) {
+			        PendingPartition pp = (PendingPartition) i.next();
+			        IOConsolePartition partition = new IOConsolePartition(pp.stream, pp.text);
+			        partition.setOffset(firstOffset);
+			        firstOffset += partition.getLength();
+			        lastPartition = partition;
+			        partitions.add(partition);
+			    }
 			}
 		} else {// user input.
 			int amountDeleted = event.getLength() - event.getText().length();
@@ -269,7 +276,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	private void setUpdateInProgress(boolean b) {
 		updateInProgress = b;
 	}
-	
+		
 	public void streamAppended(IOConsoleOutputStream stream, String s) {
 		synchronized(pendingPartitions) {
 			PendingPartition last = (PendingPartition) (pendingPartitions.size() > 0 ? pendingPartitions.get(pendingPartitions.size()-1) : null);
@@ -277,7 +284,10 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-				updateJob.schedule();
+				if (!updateJob.scheduled) {
+				    updateJob.scheduled = true;
+				    updateJob.schedule(50);
+				}
 			}
 		}
 	}
@@ -298,40 +308,59 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	
 	private class DocumentUpdaterJob extends Job {
 		
-		DocumentUpdaterJob() {
+		private boolean scheduled = false;
+
+        DocumentUpdaterJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$
 		}
 		
 		protected IStatus run(IProgressMonitor monitor) {
 			Display display = ConsolePlugin.getStandardDisplay();
 			
+			ArrayList pendingCopy = null;
+			StringBuffer buffer = null;
 			while (display != null && pendingPartitions.size() > 0) {
-				ArrayList pendingCopy = null;
 				synchronized(pendingPartitions) {
 					pendingCopy = pendingPartitions;
 					pendingPartitions = new ArrayList();
 				}
 				
+				buffer = new StringBuffer();
 				for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-					final PendingPartition pp = (PendingPartition) i.next();
-					display.asyncExec(new Runnable() {
-						public void run() {    
-							setUpdateInProgress(true);
-							lastOutputStreamAppended = pp.stream;
-							int len = document.getLength();
-							try {
-								document.replace(len, 0, pp.text);
-							} catch (BadLocationException e) {
-							}
-							lastOutputStreamAppended = null;
-							setUpdateInProgress(false);
-						}
-					});
+				    PendingPartition pp = (PendingPartition) i.next();
+				    buffer.append(pp.text);
 				}
+			}
+			
+			scheduled = false;
 				
-			}            
+			final ArrayList finalCopy = pendingCopy;
+			final StringBuffer finalBuffer = buffer;
+			
+			display.asyncExec(new Runnable() {
+			    public void run() {    
+			        setUpdateInProgress(true);
+			        updatePartitions = finalCopy;
+			        firstOffset = document.getLength();
+//			        System.out.println("appending " + finalBuffer.length());
+			        try {
+			            document.replace(firstOffset, 0, finalBuffer.toString());
+			        } catch (BadLocationException e) {
+			        }
+			        updatePartitions = null;
+			        setUpdateInProgress(false);
+			    }
+			});
+			
 			return Status.OK_STATUS;
 		}        
+		
+        /* (non-Javadoc)
+         * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
+         */
+        public boolean shouldSchedule() {
+            return scheduled;
+        }
 	}
 	
 }
