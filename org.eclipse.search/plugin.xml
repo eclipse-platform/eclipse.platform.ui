@@ -49,8 +49,16 @@
 
 
 <extension point="org.eclipse.ui.actionDefinitions">
-	<actionDefinition id="org.eclipse.search.ui.openSearchDialog"/>
-	<actionDefinition id="org.eclipse.search.ui.openFileSearchPage"/>
+	<actionDefinition
+		id="org.eclipse.search.ui.openSearchDialog"
+		name= "%ActionDefinition.openSearchDialog.name"
+		description="%ActionDefinition.openSearchDialog.description"
+	/>
+	<actionDefinition
+		id="org.eclipse.search.ui.openFileSearchPage"
+		name= "%ActionDefinition.openFileSearchPage.name"
+		description="%ActionDefinition.openFileSearchPage.description"
+	/>
 </extension>
 
 <extension point="org.eclipse.ui.acceleratorSets">
