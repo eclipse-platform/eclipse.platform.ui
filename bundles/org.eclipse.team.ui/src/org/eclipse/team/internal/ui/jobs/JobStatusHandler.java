@@ -10,19 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.jobs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 
 /**
  * This class is reponsible for notifying listeners when jobs registered
@@ -145,7 +136,7 @@ public class JobStatusHandler extends JobChangeAdapter {
 		}
 	}
 
-	public JobStatusHandler(QualifiedName jobType) {
+	protected JobStatusHandler(QualifiedName jobType) {
 		super();
 		this.jobType = jobType;
 	}
