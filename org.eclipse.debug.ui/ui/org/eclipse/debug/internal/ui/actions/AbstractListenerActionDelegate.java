@@ -24,13 +24,16 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventSetListener, IActionDelegate2 {
 
+    private boolean fDisposed = false;
+    
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+        fDisposed = true;
 	}
 	
 	/**
@@ -46,10 +49,11 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				Shell windowShell= getWindow().getShell();
-				if (windowShell == null || windowShell.isDisposed()) {
-					return;
-				}
+                synchronized (AbstractListenerActionDelegate.this) {
+                    if (fDisposed) {
+                        return;
+                    }
+                }
 				for (int i = 0; i < events.length; i++) {
 					if (events[i].getSource() != null) {
 						doHandleDebugEvent(events[i]);
