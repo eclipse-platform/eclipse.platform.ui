@@ -102,8 +102,7 @@ public class ContextManager {
 		for (int i = 0; i < extensions.length; i++) {
 			String definingPlugin =
 				extensions[i]
-					.getDeclaringPluginDescriptor()
-					.getUniqueIdentifier();
+					.getNamespace();
 			IConfigurationElement[] contextContributions =
 				extensions[i].getConfigurationElements();
 			for (int j = 0; j < contextContributions.length; j++) {

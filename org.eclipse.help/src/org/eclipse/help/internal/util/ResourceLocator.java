@@ -66,7 +66,7 @@ public class ResourceLocator {
 		}
 		IExtension[] extensions = xp.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			if (extensions[i].getDeclaringPluginDescriptor() != plugin) {
+			if (!extensions[i].getNamespace().equals(plugin.getSymbolicName())) {
 				continue;
 			}
 			IConfigurationElement[] elements =

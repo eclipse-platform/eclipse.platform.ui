@@ -9,28 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
+import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
+
+import org.eclipse.core.runtime.*;
 /**
  * Uses a resource bundle to load images and strings from
  * a property file.
  * This class needs to properly use the desired locale.
  */
 public class HelpUIResources {
-	//*** NOTE: change this to properly load a resource bundle help.properties
-	//***       for a desired locale....
 	private static ResourceBundle resBundle;
-	private static URL imageURL;
 	static {
 		resBundle = ResourceBundle.getBundle(HelpUIResources.class.getName());
-		try {
-			imageURL =
-				new URL(
-					HelpUIPlugin.getDefault().getDescriptor().getInstallURL(),
-					"icons/");
-		} catch (MalformedURLException e) {
-		}
 	}
 	/**
 	 * WorkbenchResources constructor comment.
@@ -42,13 +35,12 @@ public class HelpUIResources {
 	 * Returns a string from a property file
 	 */
 	public static URL getImagePath(String name) {
-		URL imagePathURL = null;
-		try {
-			imagePathURL = new URL(imageURL, name);
-			return imagePathURL;
-		} catch (MalformedURLException e) {
+		IPath path = new Path("icons/").append(name);
+		URL imageURL = Platform.find(HelpUIPlugin.getDefault().getBundle(), path);
+		try{
+			return Platform.asLocalURL(imageURL);
+		}catch(IOException ioe){
 		}
-		//return image;
 		return null;
 	}
 	/**

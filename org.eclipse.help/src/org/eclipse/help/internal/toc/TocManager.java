@@ -81,7 +81,7 @@ public class TocManager {
 	}
 
 	/**
-	 * Returns the list of contributing plugins
+	 * Returns the list of contributing Bundle IDs
 	 */
 	public Collection getContributingPlugins() {
 		return contributingPlugins;
@@ -189,7 +189,7 @@ public class TocManager {
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			contributingPlugins.add(
-				extensions[i].getDeclaringPluginDescriptor());
+				extensions[i].getNamespace());
 			// add to TopicFiles declared in this extension
 			IConfigurationElement[] configElements =
 				extensions[i].getConfigurationElements();
@@ -198,8 +198,7 @@ public class TocManager {
 					String pluginId =
 						configElements[j]
 							.getDeclaringExtension()
-							.getDeclaringPluginDescriptor()
-							.getUniqueIdentifier();
+							.getNamespace();
 					String href = configElements[j].getAttribute("file");
 					boolean isPrimary =
 						"true".equals(
