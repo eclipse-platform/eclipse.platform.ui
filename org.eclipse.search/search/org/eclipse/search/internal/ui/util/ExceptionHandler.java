@@ -39,6 +39,8 @@ public class ExceptionHandler {
 	 * This method appends "title" and "message" to the given resource prefix to fetch the
 	 * title and message parameters for the error dialog.
 	 * Example: resourcePrefix= "org.eclipse.search.ui.error." -> "org.eclipse.search.ui.error.title".
+	 * 
+	 * @deprecated	Use handle(Throwable, String, String) instead
 	 */
 	public static boolean handle(Throwable t, ResourceBundle bundle, String resourcePrefix) {
 		return handle(t, SearchPlugin.getActiveWorkbenchShell(), bundle, resourcePrefix); 
@@ -49,6 +51,8 @@ public class ExceptionHandler {
 	 * This method appends "title" and "message" to the given resource prefix to fetch the
 	 * title and message parameters for the error dialog.
 	 * Example: resourcePrefix= "org.eclipse.search.ui.error." -> "org.eclipse.search.ui.error.title".
+	 * 
+	 * @deprecated	Use handle(Throwable, Shell, String, String) instead 
 	 */
 	public static boolean handle(Throwable t, Shell shell, ResourceBundle bundle, String resourcePrefix) {
 		return handle(t, shell, getResourceString(bundle, resourcePrefix+"title"), getResourceString(bundle, resourcePrefix+"message")); 
@@ -74,6 +78,8 @@ public class ExceptionHandler {
 	 * Logs the given exception using the platforms logging mechanism.
 	 * This method appends "message" to the given resource prefix to fetch the
 	 * message parameter for logging.
+	 * 
+	 * @deprecated	Use log(Throwable, String) instead
 	 */
 	public static void log(Throwable t, ResourceBundle bundle, String prefix) {
 		log(t, getResourceString(bundle, prefix+"message")); 
