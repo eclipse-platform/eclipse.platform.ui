@@ -121,7 +121,7 @@ protected Control createDialogArea(Composite parent) {
 	}
 
 	statusMessage = new Label(parent, SWT.NONE);
-	statusMessage.setLayoutData(new GridData(GridData.FILL_BOTH));
+	statusMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	return dialogArea;
 }
