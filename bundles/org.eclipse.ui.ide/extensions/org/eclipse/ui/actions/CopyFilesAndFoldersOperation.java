@@ -16,7 +16,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -354,9 +353,12 @@ public class CopyFilesAndFoldersOperation {
      * @param destination destination to which resources will be copied
      * @param subMonitor a progress monitor for showing progress and for cancelation
      */
-    protected void copy(IResource[] resources, IPath destination,
+   protected void copy(IResource[] resources, IPath destination,
             IProgressMonitor subMonitor) throws CoreException {
-        for (int i = 0; i < resources.length; i++) {
+    	
+   		subMonitor.beginTask(IDEWorkbenchMessages.getString("CopyFilesAndFoldersOperation.CopyResourcesTask"),resources.length); //$NON-NLS-1$
+   		
+    	for (int i = 0; i < resources.length; i++) {
             IResource source = resources[i];
             IPath destinationPath = destination.append(source.getName());
             IWorkspace workspace = source.getWorkspace();
@@ -367,30 +369,31 @@ public class CopyFilesAndFoldersOperation {
                 // children of the folder.
                 if (homogenousResources(source, existing)) {
                     IResource[] children = ((IContainer) source).members();
-                    copy(children, destinationPath, subMonitor);
+                    copy(children, destinationPath, new SubProgressMonitor(subMonitor, 1));
                 } else {
                     // delete the destination folder, copying a linked folder
                     // over an unlinked one or vice versa. Fixes bug 28772. 
                     delete(existing, new SubProgressMonitor(subMonitor, 0));
                     source.copy(destinationPath, IResource.SHALLOW,
-                            new SubProgressMonitor(subMonitor, 0));
+                            new SubProgressMonitor(subMonitor, 1));
                 }
             } else {
                 if (existing != null) {
                     if (homogenousResources(source, existing))
-                        copyExisting(source, existing, subMonitor);
+                        copyExisting(source, existing,  new SubProgressMonitor(subMonitor, 1));
                     else {
                         // Copying a linked resource over unlinked or vice versa.
                         // Can't use setContents here. Fixes bug 28772.
                         delete(existing, new SubProgressMonitor(subMonitor, 0));
                         source.copy(destinationPath, IResource.SHALLOW,
-                                new SubProgressMonitor(subMonitor, 0));
-                    }
-                } else {
-                    source.copy(destinationPath, IResource.SHALLOW,
-                            new SubProgressMonitor(subMonitor, 0));
-                }
-                subMonitor.worked(1);
+                                new SubProgressMonitor(subMonitor, 1));
+                    }                   
+                   } else{
+                	    source.copy(destinationPath, IResource.SHALLOW,
+                            new SubProgressMonitor(subMonitor, 1));
+                                	
+                	}
+               
                 if (subMonitor.isCanceled()) {
                     throw new OperationCanceledException();
                 }
