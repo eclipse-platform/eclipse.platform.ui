@@ -73,7 +73,7 @@ SPAN {
 	<div id="titleText">&nbsp;<%=WebappResources.getString("Content", request)%></div>
 		
 	<div style="right:5px; top:4px; bottom:3px;position:absolute;">
-	<a  href="#" onclick="parent.showBookshelf(this); this.blur();" ><img  src="images/print_edit.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0"></a>
+	<a  href="#" onclick="parent.showBookshelf(this); this.blur();" ><img  src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0"></a>
 	</div>
 	
 </body>
