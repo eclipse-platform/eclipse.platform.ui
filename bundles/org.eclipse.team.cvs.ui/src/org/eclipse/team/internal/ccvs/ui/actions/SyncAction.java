@@ -65,25 +65,27 @@ public class SyncAction extends WorkspaceAction {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {	
 						subscriber.refresh(new IResource[]{resource}, IResource.DEPTH_ZERO, monitor);
-						final SyncInfo info = subscriber.getSyncInfo(resource);
-						shell.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								if (info.getKind() == SyncInfo.IN_SYNC) {
-									MessageDialog.openInformation(shell, Policy.bind("SyncAction.noChangesTitle"), Policy.bind("SyncAction.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
-								} else {
-									SyncInfoCompareInput input = new SyncInfoCompareInput(subscriber.getName(), info);
-									CompareUI.openCompareEditor(input);
-								}
-							}
-						});
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
+					}
+				}
+			});
+			final SyncInfo info = subscriber.getSyncInfo(resource);
+			shell.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					if (info.getKind() == SyncInfo.IN_SYNC) {
+						MessageDialog.openInformation(shell, Policy.bind("SyncAction.noChangesTitle"), Policy.bind("SyncAction.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						SyncInfoCompareInput input = new SyncInfoCompareInput(subscriber.getName(), info);
+						CompareUI.openCompareEditor(input);
 					}
 				}
 			});
 		} catch (InvocationTargetException e) {
 			Utils.handle(e);
 		} catch (InterruptedException e) {
+		} catch (TeamException e) {
+			Utils.handle(e);
 		}
 	}
 
