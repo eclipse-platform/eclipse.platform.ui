@@ -1764,9 +1764,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
 					ErrorDialog.openError(shell, title, msg, x.getStatus());
 				}
-			} else {
-				markEditorAsDirty();
-			}
+			} 
+			
+//			// disabled because of http://bugs.eclipse.org/bugs/show_bug.cgi?id=15166
+//			else {
+//				markEditorAsDirty();
+//			}
+
 		}
 	}
 
