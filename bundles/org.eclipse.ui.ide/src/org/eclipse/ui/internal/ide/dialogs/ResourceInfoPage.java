@@ -413,8 +413,17 @@ private String getEncoding(IResource resource) {
 
 private String getEncodingFromContent(IFile file) {
 	IContentDescription description = getContentDescription(file);
-	if (description != null)
-		return (String) description.getProperty(IContentDescription.CHARSET);
+	if (description != null) {
+		byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+		if (bom == null)
+			return (String) description.getProperty(IContentDescription.CHARSET);
+		if (bom == IContentDescription.BOM_UTF_8)
+			return IDEWorkbenchMessages.getString("WorkbenchPreference.encoding.BOM_UTF_8"); //$NON-NLS-1$
+		if (bom == IContentDescription.BOM_UTF_16BE)
+			return IDEWorkbenchMessages.getString("WorkbenchPreference.encoding.BOM_UTF_16BE"); //$NON-NLS-1$
+		if (bom == IContentDescription.BOM_UTF_16LE)
+			return IDEWorkbenchMessages.getString("WorkbenchPreference.encoding.BOM_UTF_16LE"); //$NON-NLS-1$
+	}
 	return null;
 }
 
