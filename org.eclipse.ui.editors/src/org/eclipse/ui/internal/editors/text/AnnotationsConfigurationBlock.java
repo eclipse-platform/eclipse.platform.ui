@@ -111,12 +111,10 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		
 		public Image getImage(Object element) {
 			ListItem item= (ListItem) element;
-//			if (item.verticalRulerKey != null && fStore.getBoolean(item.verticalRulerKey))
-			return item.image;
-//			return null; // don't show icon if preference is not to show in vertical ruler
-			// XXX see https://bugs.eclipse.org/bugs/show_bug.cgi?id=80793
-			// returning null does not remove a once set image.
-			// always show the image until then.	
+			if (item.verticalRulerKey != null && fStore.getBoolean(item.verticalRulerKey))
+				return item.image;
+			
+			return null; // don't show icon if preference is not to show in vertical ruler
 		}
 
 
