@@ -415,7 +415,6 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
         part.createControl(getParent());
         part.setContainer(this);
-        part.moveAbove(getPresentation().getControl());
 
         presentationSite.getPresentation().addPart(presentablePart, position);
 
@@ -725,7 +724,9 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
             IPresentablePart presentablePart = part.getPresentablePart();
             StackPresentation presentation = getPresentation();
 
-            if (presentablePart != null && presentation != null) {
+            if (presentablePart != null && presentation != null) {            	
+            	part.moveAbove(getPresentation().getControl());
+            	
                 presentation.selectPart(presentablePart);
             }
         }

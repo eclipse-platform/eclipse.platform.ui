@@ -626,8 +626,8 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		if (current != null) {
 			tabFolder.setSelection(indexOf(current));
-			setControlSize();
-			current.setVisible(true);			
+			current.setVisible(true);
+			setControlSize();		
 		}
 	}
 	
