@@ -67,7 +67,6 @@ public abstract class WorkbenchWindowHandlerDelegate extends
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
      */
     public void selectionChanged(IAction action, ISelection selection) {
-        // TODO Auto-generated method stub
-
+        // Do nothing be default.
     }
 }
