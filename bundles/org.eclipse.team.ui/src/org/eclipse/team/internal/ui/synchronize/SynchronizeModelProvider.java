@@ -157,7 +157,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		// Connect to the sync set which will register us as a listener and give us a reset event
 		// in a background thread
 		getSyncInfoSet().connect(this, monitor);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
 		return getModelRoot();
 	}
 	
@@ -181,7 +181,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	public void dispose() {
 		resourceMap.clear();
 		getSyncInfoSet().removeSyncSetChangedListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	
 	/**
@@ -466,16 +466,12 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 					}
 				}
 				
-				if(property != null) {
-					element.setPropertyToRoot(property, true);				
-				} else {					
-					String hadProperty = hadProblemProperty(element);
-					if(hadProperty != null) {
-						element.setPropertyToRoot(hadProperty, false);
-						ISynchronizeModelElement parent = (ISynchronizeModelElement)element.getParent();
-						if(parent != null) {
-							propagateProblemMarkers(parent, false);
-						}
+				// If it doesn't have a direct change, a parent might
+				boolean recalculateParentDecorations = hadProblemProperty(element, property);
+				if(recalculateParentDecorations) {
+					ISynchronizeModelElement parent = (ISynchronizeModelElement)element.getParent();
+					if(parent != null) {
+						propagateProblemMarkers(parent, false);
 					}
 				}
 			} catch (CoreException e) {
@@ -486,12 +482,52 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		}
 	}
 
-	private String hadProblemProperty(ISynchronizeModelElement element) {
-		if(element.getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY))
-			return ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
-		else if(element.getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY))
-				return ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
-		return null;
+	// none -> error
+	// error -> none
+	// none -> warning
+	// warning -> none
+	// warning -> error
+	// error -> warning
+	private boolean hadProblemProperty(ISynchronizeModelElement element, String property) {
+		boolean hadError = element.getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY);
+		boolean hadWarning = element.getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY);
+		
+		if(hadError) {
+			if(! (property == ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY)) {
+				element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY, false);
+				if(property != null) {
+					// error -> warning
+					element.setPropertyToRoot(property, true);
+				}
+				// error -> none
+				// recalculate parents
+				return true;
+			}	
+			return false;
+		} else if(hadWarning) {
+			if(! (property == ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY)) {
+				element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY, false);
+				if(property != null) {
+					// warning -> error
+					element.setPropertyToRoot(property, true);
+					return false;
+				}
+				// warning ->  none
+				return true;
+			}	
+			return false;		
+		} else {
+			if(property == ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY) {
+				// none -> error
+				element.setPropertyToRoot(property, true);
+				return false;
+			} else if(property == ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY) {
+				// none -> warning
+				element.setPropertyToRoot(property, true);
+				return true;
+			}	
+			return false;
+		}
 	}
 
 	private void updateParentLabels(ISynchronizeModelElement diffNode) {
@@ -517,9 +553,9 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 								String[] markerTypes = getMarkerTypes();
 								boolean refreshNeeded = false;
 								for (int idx = 0; idx < markerTypes.length; idx++) {
-									IMarkerDelta[] markerDeltas = event.findMarkerDeltas(markerTypes[idx], true);
+									IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
 									List changes = new ArrayList(markerDeltas.length);
-									for (int i = 0; idx < markerDeltas.length; idx++) {
+									for (int i = 0; i < markerDeltas.length; i++) {
 										IMarkerDelta delta = markerDeltas[i];
 										int kind = delta.getKind();
 										ISynchronizeModelElement element = getClosestExistingParent(delta.getResource());
