@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * Policy implements NLS convenience methods for the plugin and
@@ -114,4 +115,11 @@ public class Policy {
 		}
 		return monitor;
 	}	
+	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		if (monitor instanceof NullProgressMonitor)
+			return monitor;
+		return new SubProgressMonitor(monitor, ticks);
+	}
 }
