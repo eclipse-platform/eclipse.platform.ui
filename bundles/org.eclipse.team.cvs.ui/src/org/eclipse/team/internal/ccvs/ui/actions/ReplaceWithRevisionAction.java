@@ -35,6 +35,10 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 		
 		public ReplaceCompareDialog(Shell shell, String title, CVSCompareRevisionsInput input) {
 			super(shell, title, input);
+			
+			// Don't allow editing of the merge viewers in the replace
+			input.getCompareConfiguration().setLeftEditable(false);
+			input.getCompareConfiguration().setRightEditable(false);
 		}
 		
 		/**
@@ -51,7 +55,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 					}
 				}
 			);
-			super.createButtonsForButtonBar(parent);
+			// Don't call super because we don't want the OK button to appear
 		}
 		
 		/**

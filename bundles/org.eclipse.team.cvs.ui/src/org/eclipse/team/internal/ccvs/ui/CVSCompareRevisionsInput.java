@@ -317,6 +317,6 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	 */
 	public String getTitle() {
 		String resourceName = resource.getName();	
-		return Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resourceName}); //$NON-NLS-1$
+		return Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resource.getFullPath().toString()}); //$NON-NLS-1$
 	}
 }

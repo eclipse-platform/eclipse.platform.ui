@@ -112,21 +112,19 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (fCompareEditorInput.isSaveNeeded() && MessageDialog.openConfirm(getShell(), Policy.bind("ParticipantCompareDialog.2"), Policy.bind("ParticipantCompareDialog.3"))) {						 //$NON-NLS-1$ //$NON-NLS-2$
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					try {
-						fCompareEditorInput.saveChanges(new NullProgressMonitor());
-					} catch (CoreException e) {
-						Utils.handle(e);
-					}
-				}
-			});		
-		}
+		saveChanges();
 		if(buttonId == IDialogConstants.OK_ID && isRememberParticipant()) {
 			rememberParticipant();
 		} 
 		super.buttonPressed(buttonId);
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.internal.ResizableDialog#close()
+	 */
+	public boolean close() {
+		saveChanges();
+		return super.close();
 	}
 	
 	protected boolean isRememberParticipant() {
@@ -152,6 +150,23 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 			} else {
 				getShell().setText(title);
 			}
+		}
+	}
+	
+	/**
+	 * Save any changes to the compare editor.
+	 */
+	private void saveChanges() {
+		if (fCompareEditorInput.isSaveNeeded() && MessageDialog.openConfirm(getShell(), Policy.bind("ParticipantCompareDialog.2"), Policy.bind("ParticipantCompareDialog.3"))) {						 //$NON-NLS-1$ //$NON-NLS-2$
+			BusyIndicator.showWhile(null, new Runnable() {
+				public void run() {
+					try {
+						fCompareEditorInput.saveChanges(new NullProgressMonitor());
+					} catch (CoreException e) {
+						Utils.handle(e);
+					}
+				}
+			});		
 		}
 	}
 	
