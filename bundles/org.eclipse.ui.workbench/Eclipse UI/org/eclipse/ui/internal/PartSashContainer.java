@@ -661,7 +661,7 @@ public IDropTarget drag(Control currentControl, Object draggedObject,
 				pointlessDrop = true;
 			}
 			
-			if ((sourceContainer == targetPart) && getVisibleChildrenCount(sourceContainer) <= 1) {
+			if ((sourceContainer != null) && (sourceContainer == targetPart) && getVisibleChildrenCount(sourceContainer) <= 1) {
 				pointlessDrop = true;
 			}
 			
@@ -685,7 +685,7 @@ public IDropTarget drag(Control currentControl, Object draggedObject,
 		boolean pointlessDrop = isZoomed();
 		
 		if (isStackType(sourcePart) 
-				|| (isPaneType(sourcePart) && getVisibleChildrenCount(sourcePart.getContainer()) <= 1)) {			
+				|| (sourcePart.getContainer() != null && isPaneType(sourcePart) && getVisibleChildrenCount(sourcePart.getContainer()) <= 1)) {			
 			if (root == null || getVisibleChildrenCount(this) <= 1) {
 				pointlessDrop = true;
 			}
@@ -810,6 +810,11 @@ protected void derefPart(LayoutPart sourcePart) {
 }
 
 protected int getVisibleChildrenCount(ILayoutContainer container) {
+	// Treat null as an empty container
+	if (container == null) {
+		return 0;
+	}
+	
 	LayoutPart[] children = container.getChildren();
 	
 	int count = 0;
