@@ -18,6 +18,7 @@ import org.eclipse.ui.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.views.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author dejan
@@ -121,7 +122,7 @@ public class ConfigurationManagerWindow
 		}
 
 		public String getRegisteredName() {
-			return "Configuration Manager";
+			return "Configuration Manager"; //$NON-NLS-1$
 		}
 
 		public void registerContextMenu(
@@ -171,11 +172,11 @@ public class ConfigurationManagerWindow
 
 	private void addActions() {
 		IMenuManager menuBar = getMenuBarManager();
-		IMenuManager fileMenu = new MenuManager("&File");
+		IMenuManager fileMenu = new MenuManager(UpdateUI.getString("ConfigurationManagerWindow.fileMenu")); //$NON-NLS-1$
 		menuBar.add(fileMenu);
 
 		propertiesAction = new GlobalAction();
-		propertiesAction.setText("&Properties@Alt+Enter");
+		propertiesAction.setText(UpdateUI.getString("ConfigurationManagerWindow.properties")); //$NON-NLS-1$
 		propertiesAction.setEnabled(false);
 
 		fileMenu.add(propertiesAction);
@@ -186,7 +187,7 @@ public class ConfigurationManagerWindow
 				close();
 			}
 		};
-		closeAction.setText("&Close@Alt+F4");
+		closeAction.setText(UpdateUI.getString("ConfigurationManagerWindow.close")); //$NON-NLS-1$
 		fileMenu.add(closeAction);
 	}
 	

@@ -77,7 +77,7 @@ public class BookmarkUtil {
 	}
 
 	private static void processRoot(Node root, Vector bookmarks) {
-		if (root.getNodeName().equals("bookmarks")) {
+		if (root.getNodeName().equals("bookmarks")) { //$NON-NLS-1$
 			NodeList children = root.getChildNodes();
 			processChildren(children, null, bookmarks);
 		}
@@ -91,10 +91,10 @@ public class BookmarkUtil {
 			Node child = children.item(i);
 			NamedModelObject object = null;
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("site")) {
+				if (child.getNodeName().equals("site")) { //$NON-NLS-1$
 					object = createSite(child);
 
-				} else if (child.getNodeName().equals("folder")) {
+				} else if (child.getNodeName().equals("folder")) { //$NON-NLS-1$
 					object = createFolder(child);
 				}
 			}
@@ -110,27 +110,27 @@ public class BookmarkUtil {
 	}
 
 	private static SiteBookmark createSite(Node child) {
-		String name = getAttribute(child, "name");
+		String name = getAttribute(child, "name"); //$NON-NLS-1$
 		URL url = null;
 		try {
-			url = new URL(getAttribute(child, "url"));
+			url = new URL(getAttribute(child, "url")); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 		}
 
-		String web = getAttribute(child, "web");
-		boolean webBookmark = (web != null && web.equals("true"));
+		String web = getAttribute(child, "web"); //$NON-NLS-1$
+		boolean webBookmark = (web != null && web.equals("true")); //$NON-NLS-1$
 
-		String sel = getAttribute(child, "selected");
-		boolean selected = (sel != null && sel.equals("true"));
+		String sel = getAttribute(child, "selected"); //$NON-NLS-1$
+		boolean selected = (sel != null && sel.equals("true")); //$NON-NLS-1$
 
 		SiteBookmark bookmark = new SiteBookmark(name, url, webBookmark, selected);
 
-		String local = getAttribute(child, "local");
-		bookmark.setLocal(local != null && local.equals("true"));
+		String local = getAttribute(child, "local"); //$NON-NLS-1$
+		bookmark.setLocal(local != null && local.equals("true")); //$NON-NLS-1$
 
-		String ign = getAttribute(child, "ignored-categories");
+		String ign = getAttribute(child, "ignored-categories"); //$NON-NLS-1$
 		if (ign != null) {
-			StringTokenizer stok = new StringTokenizer(ign, ",");
+			StringTokenizer stok = new StringTokenizer(ign, ","); //$NON-NLS-1$
 			ArrayList array = new ArrayList();
 			while (stok.hasMoreTokens()) {
 				String tok = stok.nextToken();
@@ -143,7 +143,7 @@ public class BookmarkUtil {
 
 	private static BookmarkFolder createFolder(Node child) {
 		BookmarkFolder folder = new BookmarkFolder();
-		String name = getAttribute(child, "name");
+		String name = getAttribute(child, "name"); //$NON-NLS-1$
 		folder.setName(name);
 		if (child.hasChildNodes()) {
 			NodeList children = child.getChildNodes();
@@ -155,15 +155,15 @@ public class BookmarkUtil {
 	public static void store(String fileName, Vector bookmarks) {
 		try {
 			FileOutputStream fos = new FileOutputStream(fileName);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF8");
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF8"); //$NON-NLS-1$
 			PrintWriter writer = new PrintWriter(osw);
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<bookmarks>");
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+			writer.println("<bookmarks>"); //$NON-NLS-1$
 			for (int i = 0; i < bookmarks.size(); i++) {
 				Object obj = bookmarks.get(i);
-				writeObject("   ", obj, writer);
+				writeObject("   ", obj, writer); //$NON-NLS-1$
 			}
-			writer.println("</bookmarks>");
+			writer.println("</bookmarks>"); //$NON-NLS-1$
 			writer.flush();
 			writer.close();
 			osw.close();
@@ -179,9 +179,9 @@ public class BookmarkUtil {
 			SiteBookmark bookmark = (SiteBookmark) obj;
 			String name = bookmark.getName();
 			String url = bookmark.getURL().toString();
-			String web = bookmark.isWebBookmark()?"true":"false";
-			String sel = bookmark.isSelected()?"true":"false";
-			String local = bookmark.isLocal() ? "true" : "false";
+			String web = bookmark.isWebBookmark()?"true":"false"; //$NON-NLS-1$ //$NON-NLS-2$
+			String sel = bookmark.isSelected()?"true":"false"; //$NON-NLS-1$ //$NON-NLS-2$
+			String local = bookmark.isLocal() ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
 			String [] ign = bookmark.getIgnoredCategories();
 			StringBuffer wign = new StringBuffer();
 			for (int i = 0; i < ign.length; i++) {
@@ -189,20 +189,20 @@ public class BookmarkUtil {
 					wign.append(',');
 				wign.append(ign[i]);
 			}
-			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\" local=\"" + local + "\"");
+			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\" local=\"" + local + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			if (wign.length() > 0)
-				writer.print(" ignored-categories=\""+wign.toString()+"\"");
-			writer.println("/>");
+				writer.print(" ignored-categories=\""+wign.toString()+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println("/>"); //$NON-NLS-1$
 		} else if (obj instanceof BookmarkFolder) {
 			BookmarkFolder folder = (BookmarkFolder) obj;
 			String name = folder.getName();
-			writer.println(indent + "<folder name=\"" + name + "\">");
+			writer.println(indent + "<folder name=\"" + name + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			Object[] children = folder.getChildren(folder);
-			String indent2 = indent + "   ";
+			String indent2 = indent + "   "; //$NON-NLS-1$
 			for (int i = 0; i < children.length; i++) {
 				writeObject(indent2, children[i], writer);
 			}
-			writer.println(indent + "</folder>");
+			writer.println(indent + "</folder>"); //$NON-NLS-1$
 		}
 	}
 
@@ -212,7 +212,7 @@ public class BookmarkUtil {
 		if (att != null) {
 			return att.getNodeValue();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	private static void processFolder(BookmarkFolder folder, ArrayList result) {
 		Object[] children = folder.getChildren(folder);

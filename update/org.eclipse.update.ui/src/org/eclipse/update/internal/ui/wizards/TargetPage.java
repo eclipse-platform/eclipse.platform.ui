@@ -33,35 +33,6 @@ import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 
 public class TargetPage extends BannerPage implements IDynamicPage {
-	// NL keys
-	private static final String KEY_TITLE =
-		"MultiInstallWizard.TargetPage.title";
-	private static final String KEY_DESC = "MultiInstallWizard.TargetPage.desc";
-	private static final String KEY_JOBS_LABEL =
-		"MultiInstallWizard.TargetPage.jobsLabel";
-	private static final String KEY_SITE_LABEL =
-		"MultiInstallWizard.TargetPage.siteLabel";
-	private static final String KEY_NEW = "MultiInstallWizard.TargetPage.new";
-	private static final String KEY_DELETE = "MultiInstallWizard.TargetPage.delete";
-	private static final String KEY_REQUIRED_FREE_SPACE =
-		"MultiInstallWizard.TargetPage.requiredSpace";
-	private static final String KEY_AVAILABLE_FREE_SPACE =
-		"MultiInstallWizard.TargetPage.availableSpace";
-	private static final String KEY_LOCATION_MESSAGE =
-		"MultiInstallWizard.TargetPage.location.message";
-	private static final String KEY_LOCATION_EMPTY =
-		"MultiInstallWizard.TargetPage.location.empty";
-	private static final String KEY_LOCATION_EXISTS =
-		"MultiInstallWizard.TargetPage.location.exists";
-	private static final String KEY_LOCATION_ERROR_TITLE =
-		"MultiInstallWizard.TargetPage.location.error.title";
-	private static final String KEY_LOCATION_ERROR_MESSAGE =
-		"MultiInstallWizard.TargetPage.location.error.message";
-	private static final String KEY_ERROR_REASON =
-		"MultiInstallWizard.TargetPage.location.error.reason";
-	private static final String KEY_SIZE = "MultiInstallWizard.TargetPage.size";
-	private static final String KEY_SIZE_UNKNOWN =
-		"MultiInstallWizard.TargetPage.unknownSize";
 	private TableViewer jobViewer;
 	private TableViewer siteViewer;
 	private IInstallConfiguration config;
@@ -121,7 +92,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			if (obj instanceof IInstallFeatureOperation && col == 0) {
 				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
 				return feature.getLabel()
-					+ " "
+					+ " " //$NON-NLS-1$
 					+ feature.getVersionedIdentifier().getVersion().toString();
 			}
 			if (obj instanceof IConfiguredSite && col == 0) {
@@ -162,9 +133,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	 * Constructor for ReviewPage2
 	 */
 	public TargetPage(IInstallConfiguration config) {
-		super("MultiTarget");
-		setTitle(UpdateUI.getString(KEY_TITLE));
-		setDescription(UpdateUI.getString(KEY_DESC));
+		super("Target"); //$NON-NLS-1$
+		setTitle(UpdateUI.getString("InstallWizard.TargetPage.title")); //$NON-NLS-1$
+		setDescription(UpdateUI.getString("InstallWizard.TargetPage.desc")); //$NON-NLS-1$
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
@@ -190,7 +161,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString(KEY_JOBS_LABEL));
+		label.setText(UpdateUI.getString("InstallWizard.TargetPage.jobsLabel")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -200,7 +171,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		new Label(client, SWT.NULL);
 
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString(KEY_SITE_LABEL));
+		label.setText(UpdateUI.getString("InstallWizard.TargetPage.siteLabel")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -214,7 +185,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
 		addButton = new Button(buttonContainer, SWT.PUSH);
-		addButton.setText(UpdateUI.getString(KEY_NEW));
+		addButton.setText(UpdateUI.getString("InstallWizard.TargetPage.new")); //$NON-NLS-1$
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addTargetLocation();
@@ -225,7 +196,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		SWTUtil.setButtonDimensionHint(addButton);
 		
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
-		deleteButton.setText(UpdateUI.getString(KEY_DELETE));
+		deleteButton.setText(UpdateUI.getString("InstallWizard.TargetPage.delete")); //$NON-NLS-1$
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -249,15 +220,15 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		layout.numColumns = 2;
 		status.setLayout(layout);
 		label = new Label(status, SWT.NULL);
-		label.setText(UpdateUI.getString(KEY_REQUIRED_FREE_SPACE));
+		label.setText(UpdateUI.getString("InstallWizard.TargetPage.requiredSpace")); //$NON-NLS-1$
 		requiredSpaceLabel = new Label(status, SWT.NULL);
 		requiredSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
-		label.setText(UpdateUI.getString(KEY_AVAILABLE_FREE_SPACE));
+		label.setText(UpdateUI.getString("InstallWizard.TargetPage.availableSpace")); //$NON-NLS-1$
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiTargetPage2");
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiTargetPage2"); //$NON-NLS-1$
 		
 		Dialog.applyDialogFont(parent);
 		
@@ -341,7 +312,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
 		if (empty)
-			errorMessage = UpdateUI.getString(KEY_LOCATION_EMPTY);
+			errorMessage = UpdateUI.getString("InstallWizard.TargetPage.location.empty"); //$NON-NLS-1$
 		setErrorMessage(errorMessage);
 		setPageComplete(!empty);
 	}
@@ -359,7 +330,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
 	private void addTargetLocation() {
 		DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
-		dd.setMessage(UpdateUI.getString(KEY_LOCATION_MESSAGE));
+		dd.setMessage(UpdateUI.getString("InstallWizard.TargetPage.location.message")); //$NON-NLS-1$
 		String path = dd.open();
 		if (path != null) {
 			addConfiguredSite(getContainer().getShell(), config, new File(path), false);
@@ -385,9 +356,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				config.addConfiguredSite(csite);
 			} else {
 				if (!ensureUnique(file, config)) {
-					String title = UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
+					String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
 					String message =
-						UpdateUI.getFormattedMessage(KEY_LOCATION_EXISTS, file.getPath());
+						UpdateUI.getFormattedMessage("InstallWizard.TargetPage.location.exists", file.getPath()); //$NON-NLS-1$
 					MessageDialog.openError(shell, title, message);
 					return null;
 				}
@@ -396,16 +367,16 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				if (status.isOK())
 					config.addConfiguredSite(csite);
 				else {
-					String title = UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
+					String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
 					String message =
 						UpdateUI.getFormattedMessage(
-							KEY_LOCATION_ERROR_MESSAGE,
+							"InstallWizard.TargetPage.location.error.message", //$NON-NLS-1$
 							file.getPath());
 					String message2 =
 						UpdateUI.getFormattedMessage(
-							KEY_ERROR_REASON,
+							"InstallWizard.TargetPage.location.error.reason", //$NON-NLS-1$
 							status.getMessage());
-					message += System.getProperty("line.separator") + message2;
+					message += System.getProperty("line.separator") + message2; //$NON-NLS-1$
 					ErrorDialog.openError(shell, title, message, status);
 					return null;
 				}
@@ -419,8 +390,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
 	private void updateStatus(Object element) {
 		if (element == null) {
-			requiredSpaceLabel.setText("");
-			availableSpaceLabel.setText("");
+			requiredSpaceLabel.setText(""); //$NON-NLS-1$
+			availableSpaceLabel.setText(""); //$NON-NLS-1$
 			return;
 		}
 		IConfiguredSite site = (IConfiguredSite) element;
@@ -428,16 +399,16 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		long available = LocalSystemInfo.getFreeSpace(file);
 		long required = computeRequiredSizeFor(site);
 		if (required == -1)
-			requiredSpaceLabel.setText(UpdateUI.getString(KEY_SIZE_UNKNOWN));
+			requiredSpaceLabel.setText(UpdateUI.getString("InstallWizard.TargetPage.unknownSize")); //$NON-NLS-1$
 		else
 			requiredSpaceLabel.setText(
-				UpdateUI.getFormattedMessage(KEY_SIZE, "" + required));
+				UpdateUI.getFormattedMessage("InstallWizard.TargetPage.size", "" + required)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
-			availableSpaceLabel.setText(UpdateUI.getString(KEY_SIZE_UNKNOWN));
+			availableSpaceLabel.setText(UpdateUI.getString("InstallWizard.TargetPage.unknownSize")); //$NON-NLS-1$
 		else
 			availableSpaceLabel.setText(
-				UpdateUI.getFormattedMessage(KEY_SIZE, "" + available));
+				UpdateUI.getFormattedMessage("InstallWizard.TargetPage.size", "" + available)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private long computeRequiredSizeFor(IConfiguredSite site) {
@@ -471,12 +442,11 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 					&& jobSite.targetSite != null
 					&& patchedSite.targetSite != null
 					&& jobSite.targetSite.equals(patchedSite.targetSite) == false) {
-					setErrorMessage(
-						"Patch '"
-							+ feature.getLabel()
-							+ "' must be installed in the same site as '"
-							+ patchedSite.job.getFeature().getLabel()
-							+ "'");
+					UpdateUI.getFormattedMessage(
+						"IntallWizard.TargetPage.patchError", //$NON-NLS-1$
+						new String[] {
+							feature.getLabel(),
+							patchedSite.job.getFeature().getLabel()});
 					setPageComplete(false);
 					return;
 				}
@@ -489,7 +459,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		IConfiguredSite[] sites = config.getConfiguredSites();
 		URL fileURL;
 		try {
-			fileURL = new URL("file:" + file.getPath());
+			fileURL = new URL("file:" + file.getPath()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return true;
 		}

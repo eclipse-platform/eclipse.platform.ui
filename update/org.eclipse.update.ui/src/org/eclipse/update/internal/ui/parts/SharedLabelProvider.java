@@ -99,7 +99,7 @@ public class SharedLabelProvider
 	}
 
 	private String getKey(long hashCode, int flags) {
-		return (""+hashCode) + ":"+flags;
+		return (""+hashCode) + ":"+flags; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private Image createImage(ImageDescriptor baseDesc, int flags) {

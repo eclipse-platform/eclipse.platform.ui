@@ -45,8 +45,8 @@ public class MainPreferencePage
 	private Button enableHttpProxy;
 
 	// these two values are for compatibility with old code
-	public static final String EQUIVALENT_VALUE = "equivalent";
-	public static final String COMPATIBLE_VALUE = "compatible";
+	public static final String EQUIVALENT_VALUE = "equivalent"; //$NON-NLS-1$
+	public static final String COMPATIBLE_VALUE = "compatible"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.
@@ -68,7 +68,7 @@ public class MainPreferencePage
 	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(
 			parent,
-			"org.eclipse.update.ui.MainPreferencePage");
+			"org.eclipse.update.ui.MainPreferencePage"); //$NON-NLS-1$
 
 		Composite mainComposite =
 			new Composite(parent, SWT.NULL);
@@ -80,13 +80,13 @@ public class MainPreferencePage
 		mainComposite.setLayout(layout);
 
 		Label historySizeLabel = new Label(mainComposite, SWT.NONE);
-		historySizeLabel.setText(UpdateUI.getString("MainPreferencePage.historySize"));
+		historySizeLabel.setText(UpdateUI.getString("MainPreferencePage.historySize")); //$NON-NLS-1$
 		historySizeText = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		historySizeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		checkSignatureCheckbox =
 			new Button(mainComposite, SWT.CHECK | SWT.LEFT);
-		checkSignatureCheckbox.setText(UpdateUI.getString("MainPreferencePage.checkSignature"));
+		checkSignatureCheckbox.setText(UpdateUI.getString("MainPreferencePage.checkSignature")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		checkSignatureCheckbox.setLayoutData(gd);
@@ -101,7 +101,7 @@ public class MainPreferencePage
 		createSpacer(mainComposite, 2);
 		
 		Group group = new Group(mainComposite, SWT.NONE);
-		group.setText(UpdateUI.getString("MainPreferencePage.updateVersions"));
+		group.setText(UpdateUI.getString("MainPreferencePage.updateVersions")); //$NON-NLS-1$
 		group.setLayout(new GridLayout());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -109,11 +109,11 @@ public class MainPreferencePage
 
 		equivalentButton = new Button(group, SWT.RADIO);
 		equivalentButton.setText(
-			UpdateUI.getString("MainPreferencePage.updateVersions.equivalent"));
+			UpdateUI.getString("MainPreferencePage.updateVersions.equivalent")); //$NON-NLS-1$
 
 		compatibleButton = new Button(group, SWT.RADIO);
 		compatibleButton.setText(
-			UpdateUI.getString("MainPreferencePage.updateVersions.compatible"));
+			UpdateUI.getString("MainPreferencePage.updateVersions.compatible")); //$NON-NLS-1$
 
 		createSpacer(mainComposite, 2);
 		createHttpProxy(mainComposite, 2);
@@ -135,7 +135,7 @@ public class MainPreferencePage
 
 	protected void createHttpProxy(Composite composite, int columnSpan) {
 		Group group = new Group(composite, SWT.NONE);
-		group.setText(UpdateUI.getString("MainPreferencePage.proxyGroup"));
+		group.setText(UpdateUI.getString("MainPreferencePage.proxyGroup")); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -144,19 +144,19 @@ public class MainPreferencePage
 		group.setLayoutData(gd);
 
 		enableHttpProxy = new Button(group, SWT.CHECK);
-		enableHttpProxy.setText(UpdateUI.getString("MainPreferencePage.enableHttpProxy"));
+		enableHttpProxy.setText(UpdateUI.getString("MainPreferencePage.enableHttpProxy")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		enableHttpProxy.setLayoutData(gd);
 
 		httpProxyHostLabel = new Label(group, SWT.NONE);
-		httpProxyHostLabel.setText(UpdateUI.getString("MainPreferencePage.httpProxyHost"));
+		httpProxyHostLabel.setText(UpdateUI.getString("MainPreferencePage.httpProxyHost")); //$NON-NLS-1$
 
 		httpProxyHostText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		httpProxyHostText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		httpProxyPortLabel = new Label(group, SWT.NONE);
-		httpProxyPortLabel.setText(UpdateUI.getString("MainPreferencePage.httpProxyPort"));
+		httpProxyPortLabel.setText(UpdateUI.getString("MainPreferencePage.httpProxyPort")); //$NON-NLS-1$
 
 		httpProxyPortText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		httpProxyPortText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -265,7 +265,7 @@ public class MainPreferencePage
 	private void warnSignatureCheck(Shell shell) {
 		MessageDialog.openWarning(
 			shell,
-			UpdateUI.getString("MainPreferencePage.digitalSignature.title"),
-			UpdateUI.getString("MainPreferencePage.digitalSignature.message"));
+			UpdateUI.getString("MainPreferencePage.digitalSignature.title"), //$NON-NLS-1$
+			UpdateUI.getString("MainPreferencePage.digitalSignature.message")); //$NON-NLS-1$
 	}
 }

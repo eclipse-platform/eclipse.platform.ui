@@ -18,7 +18,7 @@ import org.eclipse.update.internal.ui.*;
 public class UpdateModel implements IAdaptable {
 	private Vector bookmarks = new Vector();
 	private Vector listeners = new Vector();
-	private static final String BOOKMARK_FILE = "bookmarks.xml";
+	private static final String BOOKMARK_FILE = "bookmarks.xml"; //$NON-NLS-1$
 	
 	public UpdateModel() {
 		reset();

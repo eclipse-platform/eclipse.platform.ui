@@ -40,10 +40,9 @@ import org.eclipse.update.internal.ui.security.*;
  * The main plugin class to be used in the desktop.
  */
 public class UpdateUI extends AbstractUIPlugin {
-	public static final String PLUGIN_ID = "org.eclipse.update.ui";
-	public static final String WEB_APP_ID = "org.eclipse.update";
+	public static final String PLUGIN_ID = "org.eclipse.update.ui"; //$NON-NLS-1$
+	public static final String WEB_APP_ID = "org.eclipse.update"; //$NON-NLS-1$
 
-	public static final String ID_BROWSER = PLUGIN_ID + "WebBrowser";
 	
 	//The shared instance.
 	private static UpdateUI plugin;
@@ -65,7 +64,7 @@ public class UpdateUI extends AbstractUIPlugin {
 		try {
 			resourceBundle =
 				ResourceBundle.getBundle(
-					"org.eclipse.update.internal.ui.UpdateUIPluginResources");
+					"org.eclipse.update.internal.ui.UpdateUIPluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -166,7 +165,7 @@ public class UpdateUI extends AbstractUIPlugin {
 
 		// configure web install handler
 		try {
-			WebappManager.start(WEB_APP_ID, PLUGIN_ID, new Path("webapp"));
+			WebappManager.start(WEB_APP_ID, PLUGIN_ID, new Path("webapp")); //$NON-NLS-1$
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 			return;
@@ -247,7 +246,7 @@ public class UpdateUI extends AbstractUIPlugin {
 					null,
 					status);
 			//ResourcesPlugin.getPlugin().getLog().log(status);
-			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
+			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status); //$NON-NLS-1$
 		} else {
 			MessageDialog.openInformation(
 				getActiveWorkbenchShell(),
@@ -339,7 +338,7 @@ public class UpdateUI extends AbstractUIPlugin {
 
 	public static IInstallConfiguration getBackupConfigurationFor(IFeature feature) {
 		VersionedIdentifier vid = feature.getVersionedIdentifier();
-		String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
+		String key = "@" + vid.getIdentifier() + "_" + vid.getVersion(); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			ILocalSite lsite = SiteManager.getLocalSite();
 			IInstallConfiguration[] configs =
@@ -381,9 +380,9 @@ public class UpdateUI extends AbstractUIPlugin {
 
 	private static IDialogSettings getOriginatingURLSection() {
 		IDialogSettings settings = getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection("originatingURLs");
+		IDialogSettings section = settings.getSection("originatingURLs"); //$NON-NLS-1$
 		if (section == null)
-			section = settings.addNewSection("originatingURLs");
+			section = settings.addNewSection("originatingURLs"); //$NON-NLS-1$
 		return section;
 	}
 
@@ -421,8 +420,8 @@ public class UpdateUI extends AbstractUIPlugin {
 	}
 	
 	public static void requestRestart() {
-		String title = UpdateUI.getString("RestartTitle");
-		String message = UpdateUI.getString("RestartMessage");
+		String title = UpdateUI.getString("RestartTitle"); //$NON-NLS-1$
+		String message = UpdateUI.getString("RestartMessage"); //$NON-NLS-1$
 		boolean restart =
 			MessageDialog.openQuestion(
 				getActiveWorkbenchShell(),
@@ -440,7 +439,7 @@ public class UpdateUI extends AbstractUIPlugin {
 		if (encodeHostAndPort)
 			url = encodeHostAndPort(url);
 
-		if (SWT.getPlatform().equals("win32")) {
+		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
 			Program.launch(url);
 		} else {
 			IBrowser browser = BrowserManager.getInstance().createBrowser();
@@ -456,11 +455,11 @@ public class UpdateUI extends AbstractUIPlugin {
 		String callbackURL = getCallbackURLAsString();
 		if (callbackURL == null)
 			return urlName;
-		String callbackParameter = "updateURL=" + callbackURL;
+		String callbackParameter = "updateURL=" + callbackURL; //$NON-NLS-1$
 		if (urlName.indexOf('?') != -1)
-			return urlName + "&" + callbackParameter;
+			return urlName + "&" + callbackParameter; //$NON-NLS-1$
 		else
-			return urlName + "?" + callbackParameter;
+			return urlName + "?" + callbackParameter; //$NON-NLS-1$
 	}
 	
 	private static String getCallbackURLAsString() {
@@ -470,13 +469,13 @@ public class UpdateUI extends AbstractUIPlugin {
 			return null;
 		else {
 			String value =
-				"http://"
+				"http://" //$NON-NLS-1$
 					+ host
-					+ ":"
+					+ ":" //$NON-NLS-1$
 					+ port
-					+ "/"
+					+ "/" //$NON-NLS-1$
 					+ WEB_APP_ID
-					+ "/install";
+					+ "/install"; //$NON-NLS-1$
 			return URLEncoder.encode(value);
 		}
 	}

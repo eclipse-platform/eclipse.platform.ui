@@ -64,18 +64,18 @@ public class NewExtensionLocationAction extends Action {
 						IStatus.OK,
 						UpdateUI.getPluginId(),
 						IStatus.OK,
-						"",
+						"", //$NON-NLS-1$
 						null);
 				return new Status(
 					IStatus.ERROR,
 					UpdateUI.getPluginId(),
 					IStatus.ERROR,
-					"",
+					"", //$NON-NLS-1$
 					null);
 			}
 		});
-		dialog.setTitle("Extension Location");
-		dialog.setMessage("&Select an extension location:");
+		dialog.setTitle(UpdateUI.getString("NewExtensionLocationAction.extLocation")); //$NON-NLS-1$
+		dialog.setMessage(UpdateUI.getString("NewExtensionLocationAction.selectExtLocation")); //$NON-NLS-1$
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			addExtensionLocation((ExtensionRoot) dialog.getFirstResult());
 		}

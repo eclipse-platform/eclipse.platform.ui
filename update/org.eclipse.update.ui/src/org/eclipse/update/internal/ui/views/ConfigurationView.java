@@ -34,6 +34,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.operations.IUpdateModelChangedListener;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
@@ -48,19 +49,10 @@ public class ConfigurationView
 	private TreeViewer treeViewer;
 	private DrillDownAdapter drillDownAdapter;
 	private Action collapseAllAction;
-	private static final String KEY_CURRENT = "ConfigurationView.current";
-	private static final String KEY_SHOW_UNCONF_FEATURES =
-		"ConfigurationView.showUnconfFeatures";
-	private static final String KEY_SHOW_UNCONF_FEATURES_TOOLTIP =
-		"ConfigurationView.showUnconfFeatures.tooltip";
-	private static final String STATE_SHOW_UNCONF =
-		"ConfigurationView.showUnconf";
-	private static final String STATE_SHOW_SITES =
-		"ConfigurationView.showSites";
+	private static final String STATE_SHOW_UNCONF = "ConfigurationView.showUnconf"; //$NON-NLS-1$
+	private static final String STATE_SHOW_SITES = "ConfigurationView.showSites"; //$NON-NLS-1$
 	private static final String STATE_SHOW_NESTED_FEATURES =
-		"ConfigurationView.showNestedFeatures";
-	private static final String KEY_MISSING_FEATURE =
-		"ConfigurationView.missingFeature";
+		"ConfigurationView.showNestedFeatures"; //$NON-NLS-1$
 
 	private Action showSitesAction;
 	private Action showNestedFeaturesAction;
@@ -209,7 +201,7 @@ public class ConfigurationView
 				String productName = info.getProductName();
 				if (productName != null)
 					return productName;
-				return UpdateUI.getString(KEY_CURRENT);
+				return UpdateUI.getString("ConfigurationView.current"); //$NON-NLS-1$
 			}
 
 			if (obj instanceof IConfiguredSiteAdapter) {
@@ -223,7 +215,7 @@ public class ConfigurationView
 					IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
 					if (feature instanceof MissingFeature) {
 						return UpdateUI.getFormattedMessage(
-							KEY_MISSING_FEATURE,
+							"ConfigurationView.missingFeature", //$NON-NLS-1$
 							feature.getLabel());
 					}
 					String version =
@@ -231,13 +223,13 @@ public class ConfigurationView
 							.getVersionedIdentifier()
 							.getVersion()
 							.toString();
-					String pending = "";
+					String pending = ""; //$NON-NLS-1$
 					if (OperationsManager.findPendingOperation(feature)
 						!= null)
-						pending = " (pending changes)";
-					return feature.getLabel() + " " + version + pending;
+						pending = UpdateUI.getString("ConfigurationView.pending"); //$NON-NLS-1$
+					return feature.getLabel() + " " + version + pending; //$NON-NLS-1$
 				} catch (CoreException e) {
-					return "Error";
+					return UpdateUI.getString("ConfigurationView.error"); //$NON-NLS-1$
 				}
 			}
 			return super.getText(obj);
@@ -396,7 +388,7 @@ public class ConfigurationView
 		OperationsManager.addUpdateModelChangedListener(modelListener);
 		WorkbenchHelp.setHelp(
 			getControl(),
-			"org.eclipse.update.ui.ConfigurationView");
+			"org.eclipse.update.ui.ConfigurationView"); //$NON-NLS-1$
 	}
 
 	private ILocalSite getLocalSite() {
@@ -461,8 +453,8 @@ public class ConfigurationView
 				treeViewer.getControl().setRedraw(true);
 			}
 		};
-		collapseAllAction.setText("Collapse All");
-		collapseAllAction.setToolTipText("Collapse All");
+		collapseAllAction.setText(UpdateUI.getString("ConfigurationView.collapseLabel")); //$NON-NLS-1$
+		collapseAllAction.setToolTipText(UpdateUI.getString("ConfigurationView.collapseTooltip")); //$NON-NLS-1$
 		collapseAllAction.setImageDescriptor(UpdateUIImages.DESC_COLLAPSE_ALL);
 
 		drillDownAdapter = new DrillDownAdapter(treeViewer);
@@ -471,18 +463,18 @@ public class ConfigurationView
 
 		siteStateAction = new SiteStateAction();
 
-		revertAction = new RevertConfigurationAction("Revert...");
+		revertAction = new RevertConfigurationAction(UpdateUI.getString("ConfigurationView.revertLabel")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			revertAction,
-			"org.eclipse.update.ui.CofigurationView_revertAction");
+			"org.eclipse.update.ui.CofigurationView_revertAction"); //$NON-NLS-1$
 
 		installationHistoryAction =
 			new InstallationHistoryAction(
-				"Installation History",
+				UpdateUI.getString("ConfigurationView.installHistory"), //$NON-NLS-1$
 				UpdateUIImages.DESC_HISTORY_OBJ);
 		newExtensionLocationAction =
 			new NewExtensionLocationAction(
-				"Extension Location...",
+				UpdateUI.getString("ConfigurationView.extLocation"), //$NON-NLS-1$
 				UpdateUIImages.DESC_ESITE_OBJ);
 		propertiesAction =
 			new PropertyDialogAction(
@@ -490,19 +482,19 @@ public class ConfigurationView
 				treeViewer);
 		WorkbenchHelp.setHelp(
 			propertiesAction,
-			"org.eclipse.update.ui.CofigurationView_propertiesAction");
+			"org.eclipse.update.ui.CofigurationView_propertiesAction"); //$NON-NLS-1$
 
-		uninstallFeatureAction = new UninstallFeatureAction("Uninstall");
+		uninstallFeatureAction = new UninstallFeatureAction(UpdateUI.getString("ConfigurationView.uninstall")); //$NON-NLS-1$
 
 		installOptFeatureAction =
 			new InstallOptionalFeatureAction(
 				getControl().getShell(),
-				"Install");
+				UpdateUI.getString("ConfigurationView.install")); //$NON-NLS-1$
 
-		swapVersionAction = new SwapVersionAction("&Another Version...");
+		swapVersionAction = new SwapVersionAction(UpdateUI.getString("ConfigurationView.anotherVersion")); //$NON-NLS-1$
 
 		findUpdatesAction =
-			new FindUpdatesAction(getControl().getShell(), "Find Updates...");
+			new FindUpdatesAction(getControl().getShell(), UpdateUI.getString("ConfigurationView.findUpdates")); //$NON-NLS-1$
 
 		makeShowUnconfiguredFeaturesAction();
 		makeShowSitesAction();
@@ -524,7 +516,7 @@ public class ConfigurationView
 					showNestedFeaturesAction.isChecked());
 			}
 		};
-		showNestedFeaturesAction.setText("Show Nested Features");
+		showNestedFeaturesAction.setText(UpdateUI.getString("ConfigurationView.showNestedFeatures")); //$NON-NLS-1$
 		showNestedFeaturesAction.setImageDescriptor(
 			UpdateUIImages.DESC_SHOW_HIERARCHY);
 		showNestedFeaturesAction.setHoverImageDescriptor(
@@ -534,7 +526,7 @@ public class ConfigurationView
 
 		showNestedFeaturesAction.setChecked(
 			pref.getBoolean(STATE_SHOW_NESTED_FEATURES));
-		showNestedFeaturesAction.setToolTipText("Show Nested Features");
+		showNestedFeaturesAction.setToolTipText(UpdateUI.getString("ConfigurationView.showNestedTooltip")); //$NON-NLS-1$
 	}
 
 	private void makeShowSitesAction() {
@@ -547,10 +539,10 @@ public class ConfigurationView
 				UpdateUI.getDefault().savePluginPreferences();
 			}
 		};
-		showSitesAction.setText("Show Install Locations");
+		showSitesAction.setText(UpdateUI.getString("ConfigurationView.showInstall")); //$NON-NLS-1$
 		showSitesAction.setImageDescriptor(UpdateUIImages.DESC_LSITE_OBJ);
 		showSitesAction.setChecked(pref.getBoolean(STATE_SHOW_SITES));
-		showSitesAction.setToolTipText("Show Install Locations");
+		showSitesAction.setToolTipText(UpdateUI.getString("ConfigurationView.showInstallTooltip")); //$NON-NLS-1$
 	}
 
 	private void makeShowUnconfiguredFeaturesAction() {
@@ -567,14 +559,12 @@ public class ConfigurationView
 		};
 		WorkbenchHelp.setHelp(
 			showUnconfFeaturesAction,
-			"org.eclipse.update.ui.CofigurationView_showUnconfFeaturesAction");
-		showUnconfFeaturesAction.setText(
-			UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES));
+			"org.eclipse.update.ui.CofigurationView_showUnconfFeaturesAction"); //$NON-NLS-1$
+		showUnconfFeaturesAction.setText(UpdateUI.getString("ConfigurationView.showDisabled")); //$NON-NLS-1$
 		showUnconfFeaturesAction.setImageDescriptor(
 			UpdateUIImages.DESC_UNCONF_FEATURE_OBJ);
 		showUnconfFeaturesAction.setChecked(pref.getBoolean(STATE_SHOW_UNCONF));
-		showUnconfFeaturesAction.setToolTipText(
-			UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
+		showUnconfFeaturesAction.setToolTipText(UpdateUI.getString("ConfigurationView.showDisabledTooltip")); //$NON-NLS-1$
 	}
 
 	protected void fillActionBars(IActionBars bars) {
@@ -612,13 +602,13 @@ public class ConfigurationView
 		if (obj instanceof ILocalSite
 			|| obj instanceof IConfiguredSiteAdapter) {
 			manager.add(new Separator());
-			MenuManager mgr = new MenuManager("New");
+			MenuManager mgr = new MenuManager(UpdateUI.getString("ConfigurationView.new")); //$NON-NLS-1$
 			mgr.add(newExtensionLocationAction);
 			manager.add(mgr);
 			manager.add(new Separator());
 		} else if (obj instanceof ConfiguredFeatureAdapter) {
 			try {
-				MenuManager mgr = new MenuManager("Replace with");
+				MenuManager mgr = new MenuManager(UpdateUI.getString("ConfigurationView.replaceWith")); //$NON-NLS-1$
 				mgr.add(swapVersionAction);
 				manager.add(mgr);
 
@@ -712,7 +702,7 @@ public class ConfigurationView
 					refs = site.getFeatureReferences();
 				}
 				monitor.beginTask(
-					UpdateUI.getString("ConfigurationView.loading"),
+					UpdateUI.getString("ConfigurationView.loading"), //$NON-NLS-1$
 					refs.length);
 
 				for (int i = 0; i < refs.length; i++) {
@@ -853,7 +843,7 @@ public class ConfigurationView
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(new GroupMarker("additions"));
+				manager.add(new GroupMarker("additions")); //$NON-NLS-1$
 				fillContextMenu(manager);
 			}
 		});
@@ -993,28 +983,28 @@ public class ConfigurationView
 		key = ILocalSite.class;
 		array.add(
 			new PreviewTask(
-				"Revert to Previous",
-				"You can revert to one of the previous configurations if you are having problems with the current one.",
+				UpdateUI.getString("ConfigurationView.revertPreviousLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.revertPreviousDesc"), //$NON-NLS-1$
 				revertAction));
 		array.add(
 			new PreviewTask(
-				"Scan for Updates",
-				"Search for updates for all the installed features.",
+				UpdateUI.getString("ConfigurationView.updateLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.updateDesc"), //$NON-NLS-1$
 				findUpdatesAction));
 		array.add(
 			new PreviewTask(
-				"Link an Extension Location",
-				"Locate and link an extension location to the current configuration.",
+				UpdateUI.getString("ConfigurationView.linkLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.linkDesc"), //$NON-NLS-1$
 				newExtensionLocationAction));
 		array.add(
 			new PreviewTask(
-				"View Installation History",
-				"View all activities since the installation of the product.",
+				UpdateUI.getString("ConfigurationView.installHistLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.installHistDesc"), //$NON-NLS-1$
 				installationHistoryAction));
 		array.add(
 			new PreviewTask(
-				"Show Activities",
-				"View the activities that caused the creation of this configuration.",
+				UpdateUI.getString("ConfigurationView.activitiesLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.activitiesDesc"), //$NON-NLS-1$
 				propertiesAction));
 
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
@@ -1025,17 +1015,17 @@ public class ConfigurationView
 		array.add(
 			new PreviewTask(
 				null,
-				"You can enable or disable an entire install location. Disabling a location is equivalent to disabling every feature in it.",
+				UpdateUI.getString("ConfigurationView.enableLocDesc"), //$NON-NLS-1$
 				siteStateAction));
 		array.add(
 			new PreviewTask(
-				"Add an Extension Location",
-				"Locate and add an extension location to the current configuration.",
+				UpdateUI.getString("ConfigurationView.extLocLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.extLocDesc"), //$NON-NLS-1$
 				newExtensionLocationAction));
 		array.add(
 			new PreviewTask(
-				"Show Properties",
-				"View the properties of the install location.",
+				UpdateUI.getString("ConfigurationView.propertiesLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.installPropDesc"), //$NON-NLS-1$
 				propertiesAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
@@ -1044,33 +1034,33 @@ public class ConfigurationView
 		key = IFeatureAdapter.class;
 		array.add(
 			new PreviewTask(
-				"Replace With Another Version",
-				"Disables the current version of the feature and replaces it with another version from the list of the currently disabled features.",
+				UpdateUI.getString("ConfigurationView.replaceVersionLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.replaceVersionDesc"), //$NON-NLS-1$
 				swapVersionAction));
 		array.add(
 			new PreviewTask(
 				null,
-				"You can enable or disable a feature. Function provided by the feature will be removed but the feature itself will still be present to be enabled later.",
+				UpdateUI.getString("ConfigurationView.enableFeatureDesc"), //$NON-NLS-1$
 				featureStateAction));
 		array.add(
 			new PreviewTask(
-				"Install from Originating Server",
-				"This optional feature was not originally installed. You can install it now by connecting to the originating server of the parent.",
+				UpdateUI.getString("ConfigurationView.installOptionalLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.installOptionalDesc"), //$NON-NLS-1$
 				installOptFeatureAction));
 		array.add(
 			new PreviewTask(
-				"Uninstall",
-				"This feature is currently not used and can be uninstalled from the product.",
+				UpdateUI.getString("ConfigurationView.uninstallLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.uninstallDesc"), //$NON-NLS-1$
 				uninstallFeatureAction));
 		array.add(
 			new PreviewTask(
-				"Scan for Updates",
-				"Search for updates for this feature.",
+				UpdateUI.getString("ConfigurationView.scanLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.scanDesc"), //$NON-NLS-1$
 				findUpdatesAction));
 		array.add(
 			new PreviewTask(
-				"Show Properties",
-				"View properties of the feature such as version, provider name, license agreement etc.",
+				UpdateUI.getString("ConfigurationView.featurePropLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.featurePropDesc"), //$NON-NLS-1$
 				propertiesAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 	}

@@ -29,13 +29,13 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	private Button newFeaturesButton;
 	private UpdateSearchRequest searchRequest;
 	private SearchRunner searchRunner;
-	private static final String SECTION_ID = "ModeSelectionPage";
-	private static final String P_NEW_FEATURES_MODE = "new-features-mode";
+	private static final String SECTION_ID = "ModeSelectionPage"; //$NON-NLS-1$
+	private static final String P_NEW_FEATURES_MODE = "new-features-mode"; //$NON-NLS-1$
 	
 	public ModeSelectionPage(SearchRunner searchRunner) {
-		super("modeSelection");
-		setTitle("Feature Updates");
-		setDescription("Choose the way you want to search for features to install");
+		super("modeSelection"); //$NON-NLS-1$
+		setTitle(UpdateUI.getString("ModeSelectionPage.title")); //$NON-NLS-1$
+		setDescription(UpdateUI.getString("ModeSelectionPage.desc")); //$NON-NLS-1$
 		this.searchRunner = searchRunner;
 	}
 	
@@ -69,7 +69,7 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		updatesButton = new Button(composite, SWT.RADIO);
-		updatesButton.setText("Search for updates of the currently installed features");
+		updatesButton.setText(UpdateUI.getString("ModeSelectionPage.updates")); //$NON-NLS-1$
 		boolean newFeaturesMode = getSettings().getBoolean(P_NEW_FEATURES_MODE);;
 		updatesButton.setSelection(!newFeaturesMode);
 		updatesButton.addSelectionListener(new SelectionAdapter() {
@@ -79,7 +79,7 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		});
 		newFeaturesButton = new Button(composite, SWT.RADIO);
 		newFeaturesButton.setSelection(newFeaturesMode);
-		newFeaturesButton.setText("Search for new features to install");
+		newFeaturesButton.setText(UpdateUI.getString("ModeSelectionPage.newFeatures")); //$NON-NLS-1$
 		newFeaturesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				switchMode();

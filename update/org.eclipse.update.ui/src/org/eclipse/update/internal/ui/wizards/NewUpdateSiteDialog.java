@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author wassimm
@@ -58,7 +59,7 @@ public class NewUpdateSiteDialog extends Dialog {
 		composite.setLayoutData(data);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Name: ");
+		label.setText(UpdateUI.getString("NewUpdateSiteDialog.name")); //$NON-NLS-1$
 		
 		name = new Text(composite, SWT.BORDER);
 		name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -69,7 +70,7 @@ public class NewUpdateSiteDialog extends Dialog {
 		});
 		
 		label = new Label(composite, SWT.NONE);
-		label.setText("URL: ");
+		label.setText(UpdateUI.getString("NewUpdateSiteDialog.url")); //$NON-NLS-1$
 		
 		url = new Text(composite, SWT.BORDER);
 		url.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -85,7 +86,7 @@ public class NewUpdateSiteDialog extends Dialog {
 	}
 	
 	protected void initializeFields() {
-		url.setText("http://");
+		url.setText("http://"); //$NON-NLS-1$
 	}
 	
 	protected void okPressed() {
@@ -115,7 +116,7 @@ public class NewUpdateSiteDialog extends Dialog {
 	
 		try {
 			URL newURL = new URL(URLDecoder.decode(url.getText().trim()));
-			okButton.setEnabled(!newURL.getProtocol().equals("file"));
+			okButton.setEnabled(!newURL.getProtocol().equals("file")); //$NON-NLS-1$
 		} catch (Exception e) {
 			okButton.setEnabled(false);
 		}

@@ -29,15 +29,15 @@ import org.eclipse.update.operations.*;
 public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	// NL keys
 	private static final String KEY_TITLE =
-		"InstallWizard.OptionalFeaturesPage.title";
+		"InstallWizard.OptionalFeaturesPage.title"; //$NON-NLS-1$
 	private static final String KEY_DESC =
-		"InstallWizard.OptionalFeaturesPage.desc";
+		"InstallWizard.OptionalFeaturesPage.desc"; //$NON-NLS-1$
 	private static final String KEY_TREE_LABEL =
-		"InstallWizard.OptionalFeaturesPage.treeLabel";
+		"InstallWizard.OptionalFeaturesPage.treeLabel"; //$NON-NLS-1$
 	private static final String KEY_SELECT_ALL =
-		"InstallWizard.OptionalFeaturesPage.selectAll";
+		"InstallWizard.OptionalFeaturesPage.selectAll"; //$NON-NLS-1$
 	private static final String KEY_DESELECT_ALL =
-		"InstallWizard.OptionalFeaturesPage.deselectAll";
+		"InstallWizard.OptionalFeaturesPage.deselectAll"; //$NON-NLS-1$
 	private CheckboxTreeViewer treeViewer;
 	private IInstallConfiguration config;
 	private JobRoot[] jobRoots;
@@ -84,7 +84,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 			if (obj instanceof JobRoot) {
 				IFeature feature = ((JobRoot) obj).getJob().getFeature();
 				return feature.getLabel()
-					+ " "
+					+ " " //$NON-NLS-1$
 					+ feature.getVersionedIdentifier().getVersion().toString();
 			}
 			if (obj instanceof FeatureHierarchyElement2) {
@@ -105,7 +105,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	 * Constructor for ReviewPage2
 	 */
 	public OptionalFeaturesPage(IInstallConfiguration config) {
-		super("OptionalFeatures");
+		super("OptionalFeatures"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString(KEY_TITLE));
 		setDescription(UpdateUI.getString(KEY_DESC));
 		this.config = config;
@@ -161,7 +161,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
 		deselectAllButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiOptionalFeaturesPage2");
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiOptionalFeaturesPage2"); //$NON-NLS-1$
 		
 		Dialog.applyDialogFont(parent);
 		

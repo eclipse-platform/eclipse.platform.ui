@@ -65,13 +65,13 @@ public class DeltaFeatureAdapter {
 		
 	public String toString() {
 		if (duplicate) {
-			return UpdateUI.getFormattedMessage("DeltaFeatureAdapter.longName",
+			return UpdateUI.getFormattedMessage("DeltaFeatureAdapter.longName", //$NON-NLS-1$
 				new String [] { feature.getLabel(), 
 								feature.getVersionedIdentifier().getVersion().toString(),
 								feature.getSite().getURL().toString()});
 		}
 		else {
-		return UpdateUI.getFormattedMessage("DeltaFeatureAdapter.shortName",
+		return UpdateUI.getFormattedMessage("DeltaFeatureAdapter.shortName", //$NON-NLS-1$
 			new String [] { feature.getLabel(), 
 							feature.getVersionedIdentifier().getVersion().toString() });
 		}

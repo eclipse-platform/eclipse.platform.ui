@@ -19,8 +19,8 @@ import org.eclipse.update.internal.ui.*;
 
 public class SiteBookmark extends NamedModelObject 
 							implements ISiteAdapter {
-	public static final String P_URL="p_url";
-	public static final String P_TYPE="p_type";
+	public static final String P_URL="p_url"; //$NON-NLS-1$
+	public static final String P_TYPE="p_type"; //$NON-NLS-1$
 	
 	private URL url;
 	transient private ISite site;
@@ -109,8 +109,8 @@ public class SiteBookmark extends NamedModelObject
 	
 	public void connect(boolean useCache, IProgressMonitor monitor) throws CoreException {
 		if (monitor==null) monitor = new NullProgressMonitor();
-		monitor.beginTask("", 2);
-		monitor.subTask(UpdateUI.getFormattedMessage("SiteBookmark.connecting", url.toString()));
+		monitor.beginTask("", 2); //$NON-NLS-1$
+		monitor.subTask(UpdateUI.getFormattedMessage("SiteBookmark.connecting", url.toString())); //$NON-NLS-1$
 		site = SiteManager.getSite(url, useCache, new SubProgressMonitor(monitor, 1));
 		if (site!=null) createCatalog(new SubProgressMonitor(monitor, 1));
 		else
@@ -127,7 +127,7 @@ public class SiteBookmark extends NamedModelObject
 		ISiteFeatureReference [] featureRefs;
 		featureRefs = site.getRawFeatureReferences();
 		
-		monitor.beginTask("", featureRefs.length + categories.length);
+		monitor.beginTask("", featureRefs.length + categories.length); //$NON-NLS-1$
 
 		for (int i=0; i<categories.length; i++) {
 			ICategory category = categories[i];

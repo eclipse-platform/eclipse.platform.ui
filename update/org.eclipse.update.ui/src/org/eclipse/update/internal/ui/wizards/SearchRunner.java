@@ -73,8 +73,7 @@ public class SearchRunner {
 					status.getCode()==ISite.SITE_ACCESS_EXCEPTION) {
 					// Just show this but do not throw exception
 					// because there may be results anyway.
-					ErrorDialog.openError(shell,
-						UpdateUI.getString("Connection Error"),
+					ErrorDialog.openError(shell,UpdateUI.getString("SearchRunner.connectionError"), //$NON-NLS-1$
 						null, 
 						status);
 					return;

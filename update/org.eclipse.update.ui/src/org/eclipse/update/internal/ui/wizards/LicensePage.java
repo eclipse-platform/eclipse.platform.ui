@@ -69,7 +69,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		GridLayout layout = new GridLayout();
 		client.setLayout(layout);
 		
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.LicensePage2");
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.LicensePage2"); //$NON-NLS-1$
 
 		if (multiLicenseMode) {
 			layout.numColumns = 3;
@@ -81,7 +81,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 				public void widgetSelected(SelectionEvent e) {
 					if (e.item != null) {
 						Object data = e.item.getData();
-						text.setText((data == null) ? "" : (String) data);
+						text.setText((data == null) ? "" : (String) data); //$NON-NLS-1$
 					}
 				}
 			});
@@ -135,7 +135,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 					item = new TableItem(table, SWT.NONE);
 					String label =
 						feature.getLabel()
-							+ " "
+							+ " " //$NON-NLS-1$
 							+ feature.getVersionedIdentifier().getVersion().toString();
 					item.setText(label);
 					item.setImage(
@@ -169,10 +169,10 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		}
 		TableItem[] selectedItems = table.getSelection();
 		if (selectedItems.length == 0) {
-			text.setText("");
+			text.setText(""); //$NON-NLS-1$
 		} else {
 			Object data = selectedItems[0].getData();
-			text.setText((data == null) ? "" : (String) data);
+			text.setText((data == null) ? "" : (String) data); //$NON-NLS-1$
 		}
 	}
 }

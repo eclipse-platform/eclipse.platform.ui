@@ -91,7 +91,7 @@ public class InstallServlet extends HttpServlet {
 			return;
 		}
 		if (OperationsManager.isInProgress()) {
-			ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.inProgress"), null);
+			ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.inProgress"), null); //$NON-NLS-1$
 			return;
 		}
 //		if (DetailsForm.isInProgress()) {

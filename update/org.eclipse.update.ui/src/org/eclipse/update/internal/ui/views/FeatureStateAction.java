@@ -26,9 +26,9 @@ public class FeatureStateAction extends Action {
 	public void setFeature(ConfiguredFeatureAdapter adapter) {
 		this.adapter = adapter;
 		if (adapter.isConfigured()) {
-			setText("Disable");
+			setText(UpdateUI.getString("FeatureStateAction.disable")); //$NON-NLS-1$
 		} else {
-			setText("Enable");
+			setText(UpdateUI.getString("FeatureStateAction.enable")); //$NON-NLS-1$
 		}
 	}
 
@@ -72,11 +72,11 @@ public class FeatureStateAction extends Action {
 	private boolean confirm(boolean isConfigured) {
 		String message =
 			isConfigured
-				? "Do you want to disable this feature?"
-				: "Do you want to enable this feature?";
+				? UpdateUI.getString("FeatureStateAction.disableQuestion") //$NON-NLS-1$
+				: UpdateUI.getString("FeatureStateAction.EnableQuestion"); //$NON-NLS-1$
 		return MessageDialog.openConfirm(
 			UpdateUI.getActiveWorkbenchShell(),
-			"Update Manager",
+			UpdateUI.getString("FeatureStateAction.dialogTitle"), //$NON-NLS-1$
 			message);
 	}
 

@@ -16,13 +16,13 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
  * @see IWorkbenchWindowActionDelegate
  */
 public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
-	private static final String KEY_TITLE = "NewUpdates.noUpdates.title";
 
 	IWorkbenchWindow window;
 	/**
@@ -52,7 +52,7 @@ public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
 		InstallWizard wizard = new InstallWizard();
 		WizardDialog dialog = new ResizableWizardDialog(window.getShell(), wizard);
 		dialog.create();
-		dialog.getShell().setText(UpdateUI.getString(KEY_TITLE));
+		dialog.getShell().setText(UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
 		if (wizard.isSuccessfulInstall())

@@ -10,6 +10,7 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class FeatureGeneralPropertyPage
 	extends PropertyPage
@@ -51,25 +52,25 @@ public class FeatureGeneralPropertyPage
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 
-		addField(composite, "Name:", feature.getLabel());
+		addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.name"), feature.getLabel()); //$NON-NLS-1$
 		addField(
 			composite,
-			"Identifier:",
+			UpdateUI.getString("FeatureGeneralPropertyPage.id"), //$NON-NLS-1$
 			feature.getVersionedIdentifier().getIdentifier());
 		addField(
 			composite,
-			"Version:",
+			UpdateUI.getString("FeatureGeneralPropertyPage.version"), //$NON-NLS-1$
 			feature.getVersionedIdentifier().getVersion().toString());
-		addField(composite, "Provider:", feature.getProvider());
+		addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.provider"), feature.getProvider()); //$NON-NLS-1$
 		long size = feature.getInstallSize();
 		if (size != ContentEntryModel.UNKNOWN_SIZE)
-			addField(composite, "Size:", new Long(size).toString() + " KB");
+			addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.size"), new Long(size).toString() + " KB"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 	
 	private void addSupportedPlatformsSection(IFeature feature, Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Supported Platforms");
+		group.setText(UpdateUI.getString("FeatureGeneralPropertyPage.platforms")); //$NON-NLS-1$
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -78,16 +79,16 @@ public class FeatureGeneralPropertyPage
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NONE);
-		label.setText("Operating System: " + extractValue(feature.getOS()));
+		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.os") + extractValue(feature.getOS())); //$NON-NLS-1$
 
 		label = new Label(group, SWT.NONE);
-		label.setText("Windowing System: " + extractValue(feature.getWS()));
+		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.ws") + extractValue(feature.getWS())); //$NON-NLS-1$
 
 		label = new Label(group, SWT.NONE);
-		label.setText("CPU Architecture: " + extractValue(feature.getOSArch()));
+		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.arch") + extractValue(feature.getOSArch())); //$NON-NLS-1$
 
 		label = new Label(group, SWT.NONE);
-		label.setText("Languages: " + extractValue(feature.getNL()));
+		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.nl") + extractValue(feature.getNL())); //$NON-NLS-1$
 	}
 
 	private void addField(Composite parent, String property, String value) {
@@ -102,8 +103,8 @@ public class FeatureGeneralPropertyPage
 
 	}
 	private String extractValue(String value) {
-		if (value == null || value.equals("*"))
-			return "all";
+		if (value == null || value.equals("*")) //$NON-NLS-1$
+			return UpdateUI.getString("FeatureGeneralPropertyPage.all"); //$NON-NLS-1$
 		return value;
 	}
 
@@ -113,7 +114,7 @@ public class FeatureGeneralPropertyPage
 			String annotation = description.getAnnotation();
 			if (annotation != null && annotation.length() > 0) {
 				Group group = new Group(parent, SWT.NONE);
-				group.setText("Description");
+				group.setText(UpdateUI.getString("FeatureGeneralPropertyPage.desc")); //$NON-NLS-1$
 				group.setLayout(new GridLayout());
 				group.setLayoutData(new GridData(GridData.FILL_BOTH));
 

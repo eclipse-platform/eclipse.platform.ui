@@ -19,9 +19,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 
 public class SiteCategory extends UIModelObject {
-	private static final String KEY_OTHER_LABEL = "SiteCategory.other.label";
-	private static final String KEY_OTHER_DESCRIPTION =
-		"SiteCategory.other.description";
 
 	Vector children;
 	private ICategory category;
@@ -36,7 +33,7 @@ public class SiteCategory extends UIModelObject {
 		public OtherCategory() {
 			entry = new IURLEntry() {
 				public String getAnnotation() {
-					return UpdateUI.getString(KEY_OTHER_DESCRIPTION);
+					return UpdateUI.getString("SiteCategory.other.description"); //$NON-NLS-1$
 				}
 				public URL getURL() {
 					return null;
@@ -66,7 +63,7 @@ public class SiteCategory extends UIModelObject {
 	public SiteCategory(SiteBookmark bookmark, String name, ICategory category) {
 		this.bookmark = bookmark;
 		if (category == null) {
-			this.name = UpdateUI.getString(KEY_OTHER_LABEL);
+			this.name = UpdateUI.getString("SiteCategory.other.label"); //$NON-NLS-1$
 			this.category = new OtherCategory();
 		} else {
 			this.name = name;
@@ -119,7 +116,7 @@ public class SiteCategory extends UIModelObject {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(
-					UpdateUI.getString("SiteBookmark.downloading"),
+					UpdateUI.getString("SiteBookmark.downloading"), //$NON-NLS-1$
 					featureCount);
 				for (int i = 0; i < children.size(); i++) {
 					Object child = children.get(i);

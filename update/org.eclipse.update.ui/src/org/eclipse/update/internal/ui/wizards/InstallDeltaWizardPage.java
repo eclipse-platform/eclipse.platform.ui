@@ -31,12 +31,6 @@ import org.eclipse.update.internal.ui.parts.*;
  */
 public class InstallDeltaWizardPage extends WizardPage {
 	private ISessionDelta[] deltas;
-	private static final String KEY_TITLE = "InstallDeltaWizard.title";
-	private static final String KEY_DESC = "InstallDeltaWizard.desc";
-	private static final String KEY_LABEL = "InstallDeltaWizard.label";
-	private static final String KEY_DELETE = "InstallDeltaWizard.delete";
-	private static final String KEY_ERRORS = "InstallDeltaWizard.errors";
-	private static final String KEY_MESSAGE = "InstallDeltaWizard.message";
 	private CheckboxTreeViewer deltaViewer;
 	private Button deleteButton;
 	private Button errorsButton;
@@ -91,10 +85,10 @@ public class InstallDeltaWizardPage extends WizardPage {
 	 * @param pageName
 	 */
 	public InstallDeltaWizardPage(ISessionDelta[] deltas) {
-		super("installDeltaPage");
+		super("installDeltaPage"); //$NON-NLS-1$
 		this.deltas = deltas;
-		setTitle(UpdateUI.getString(KEY_TITLE));
-		setDescription(UpdateUI.getString(KEY_DESC));
+		setTitle(UpdateUI.getString("InstallDeltaWizard.title")); //$NON-NLS-1$
+		setDescription(UpdateUI.getString("InstallDeltaWizard.desc")); //$NON-NLS-1$
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -125,7 +119,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getString(KEY_LABEL));
+		label.setText(UpdateUI.getString("InstallDeltaWizard.label")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -163,7 +157,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
 		deleteButton.setEnabled(false);
-		deleteButton.setText(UpdateUI.getString(KEY_DELETE));
+		deleteButton.setText(UpdateUI.getString("InstallDeltaWizard.delete")); //$NON-NLS-1$
 		gd =
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -177,7 +171,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 		errorsButton = new Button(buttonContainer, SWT.PUSH);
 		errorsButton.setEnabled(false);
-		errorsButton.setText(UpdateUI.getString(KEY_ERRORS));
+		errorsButton.setText(UpdateUI.getString("InstallDeltaWizard.errors")); //$NON-NLS-1$
 		gd =
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -196,7 +190,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		dialogChanged();
 		WorkbenchHelp.setHelp(
 			container,
-			"org.eclipse.update.ui.InstallDeltaWizardPage");
+			"org.eclipse.update.ui.InstallDeltaWizardPage"); //$NON-NLS-1$
 		setControl(container);
 	}
 
@@ -302,7 +296,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		setPageComplete(errors == 0 && (nremoved > 0 || nselected > 0));
 		String message = null;
 		if (errors > 0)
-			message = UpdateUI.getString(KEY_MESSAGE);
+			message = UpdateUI.getString("InstallDeltaWizard.message"); //$NON-NLS-1$
 		setErrorMessage(message);
 	}
 

@@ -7,6 +7,7 @@
 package org.eclipse.update.internal.ui;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author Wassim Melhem
@@ -14,13 +15,13 @@ import org.eclipse.jface.action.*;
 public class EditBookmarksAction extends Action {
 
 	public EditBookmarksAction() {
-		setText("Edit Bookmarks...");
+		setText(UpdateUI.getString("EditBookmarksAction.edit")); //$NON-NLS-1$
 	}
 	
 	public void run() {
 		WebBookmarksDialog dialog = new WebBookmarksDialog(UpdateUI.getActiveWorkbenchShell());
 		dialog.create();
-		dialog.getShell().setText("Bookmarks");
+		dialog.getShell().setText(UpdateUI.getString("EditBookmarksAction.title")); //$NON-NLS-1$
 		dialog.getShell().setSize(300,300);
 		dialog.open();
 	}

@@ -26,11 +26,6 @@ import org.eclipse.update.internal.ui.parts.*;
  * 
  */
 public class DuplicateConflictsDialog extends MessageDialog {
-	private static final String KEY_TITLE = "DuplicateConflictsDialog.title";
-	private static final String KEY_MESSAGE =
-		"DuplicateConflictsDialog.message";
-	private static final String KEY_TREE_LABEL =
-		"DuplicateConflictsDialog.treeLabel";
 
 	private TreeViewer treeViewer;
 	private ArrayList conflicts;
@@ -85,9 +80,9 @@ public class DuplicateConflictsDialog extends MessageDialog {
 	public DuplicateConflictsDialog(Shell shell, ArrayList conflicts) {
 		super(
 			shell,
-			UpdateUI.getString(KEY_TITLE),
+			UpdateUI.getString("DuplicateConflictsDialog.title"), //$NON-NLS-1$
 			null,
-			UpdateUI.getString(KEY_MESSAGE),
+			UpdateUI.getString("DuplicateConflictsDialog.message"), //$NON-NLS-1$
 			WARNING,
 			new String[] {
 				IDialogConstants.YES_LABEL,
@@ -109,7 +104,7 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString(KEY_TREE_LABEL));
+		label.setText(UpdateUI.getString("DuplicateConflictsDialog.treeLabel")); //$NON-NLS-1$
 
 		treeViewer = new TreeViewer(client, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);

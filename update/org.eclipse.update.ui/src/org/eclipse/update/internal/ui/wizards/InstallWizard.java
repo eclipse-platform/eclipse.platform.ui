@@ -24,6 +24,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.security.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class InstallWizard
 	extends Wizard
@@ -49,7 +50,7 @@ public class InstallWizard
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUI.getString("MultiInstallWizard.wtitle"));
+		setWindowTitle(UpdateUI.getString("InstallWizard.wtitle")); //$NON-NLS-1$
 	}
 
 	public boolean isSuccessfulInstall() {

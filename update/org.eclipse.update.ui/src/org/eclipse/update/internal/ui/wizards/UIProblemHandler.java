@@ -18,13 +18,12 @@ import org.eclipse.update.internal.ui.*;
  *
  */
 public class UIProblemHandler implements IProblemHandler {
-	private static final String KEY_TITLE = "Revert.ProblemDialog.title";
 
 	/*
 	 * @see IProblemHandler#reportProblem(String)
 	 */
 	public boolean reportProblem(String problemText) {
-		String title = UpdateUI.getString(KEY_TITLE);
+		String title = UpdateUI.getString("Revert.ProblemDialog.title"); //$NON-NLS-1$
 		return MessageDialog.openQuestion(UpdateUI.getActiveWorkbenchShell(), title, problemText);
 	}
 }

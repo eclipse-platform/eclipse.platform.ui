@@ -9,9 +9,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @see PropertyPage
@@ -19,9 +19,6 @@ import org.eclipse.update.operations.*;
 public class FeatureStatusPropertyPage
 	extends PropertyPage
 	implements IWorkbenchPropertyPage {
-	private static final String KEY_MISSING_STATUS = "ConfigurationView.missingStatus";
-	private static final String KEY_MISSING_OPTIONAL_STATUS =
-		"ConfigurationView.missingOptionalStatus";
 	/**
 	 *
 	 */
@@ -51,7 +48,7 @@ public class FeatureStatusPropertyPage
 			IFeature feature = adapter.getFeature(null);
 			
 			if (OperationsManager.findPendingOperation(feature) != null) {
-				message.setText("The feature has pending changes.  Therefore, its status cannot be determined until you restart the workbench.");
+				message.setText(UpdateUI.getString("FeatureStatusPropertyPage.pendingChanges")); //$NON-NLS-1$
 				return composite;
 			}
 			
@@ -73,7 +70,7 @@ public class FeatureStatusPropertyPage
 					comp.setLayoutData(gd);
 
 					Label label = new Label(comp, SWT.NONE);
-					label.setText("Reason:");
+					label.setText(UpdateUI.getString("FeatureStatusPropertyPage.reason")); //$NON-NLS-1$
 
 					Text text =
 						new Text(comp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
@@ -103,8 +100,8 @@ public class FeatureStatusPropertyPage
 			if (message != null && message.length() > 0) {
 				buffer.append(
 					message
-						+ System.getProperty("line.separator")
-						+ System.getProperty("line.separator"));
+						+ System.getProperty("line.separator") //$NON-NLS-1$
+						+ System.getProperty("line.separator")); //$NON-NLS-1$
 			}
 		}
 		return buffer.toString();
@@ -113,13 +110,13 @@ public class FeatureStatusPropertyPage
 	private IStatus getStatus(IFeature feature) throws CoreException {
 		if (feature instanceof MissingFeature) {
 			int severity;
-			String message = "";
+			String message = ""; //$NON-NLS-1$
 			if (((MissingFeature) feature).isOptional()) {
 				severity = IStatus.OK;
-				message = UpdateUI.getString(KEY_MISSING_OPTIONAL_STATUS);
+				message = UpdateUI.getString("FeatureStatusPropertyPage.missingOptional"); //$NON-NLS-1$
 			} else {
 				severity = IStatus.ERROR;
-				message = UpdateUI.getString(KEY_MISSING_STATUS);
+				message = UpdateUI.getString("FeatureStatusPropertyPage.missing"); //$NON-NLS-1$
 			}
 			return new Status(severity, UpdateUI.PLUGIN_ID, IStatus.OK, message, null);
 		}

@@ -53,7 +53,7 @@ public class ExtensionRoot extends UIModelObject implements IWorkbenchAdapter {
 	}
 
 	public static boolean isExtensionRoot(File directory) {
-		File marker = new File(directory, ".eclipseextension");
+		File marker = new File(directory, ".eclipseextension"); //$NON-NLS-1$
 		if (!marker.exists() || marker.isDirectory()) return false;
 		return true;
 	}

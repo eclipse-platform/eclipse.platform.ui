@@ -48,7 +48,7 @@ public class FindUpdatesAction extends Action {
 				InstallWizard wizard = new InstallWizard(searchRequest);
 				WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
 				dialog.create();
-				dialog.getShell().setText("Updates");
+				dialog.getShell().setText(UpdateUI.getString("FindUpdatesAction.updates")); //$NON-NLS-1$
 				dialog.getShell().setSize(600, 500);
 				dialog.open();
 				if (wizard.isSuccessfulInstall())

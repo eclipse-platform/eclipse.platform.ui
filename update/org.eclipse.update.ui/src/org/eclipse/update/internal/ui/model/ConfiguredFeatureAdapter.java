@@ -75,7 +75,7 @@ public class ConfiguredFeatureAdapter
 			if (monitor == null)
 				monitor = new NullProgressMonitor();
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-			subMonitor.beginTask("", included.length);
+			subMonitor.beginTask("", included.length); //$NON-NLS-1$
 
 			for (int i = 0; i < included.length; i++) {
 				IIncludedFeatureReference fref = included[i];

@@ -19,6 +19,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.search.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class SitePage extends BannerPage implements ISearchProvider {
 
@@ -126,9 +127,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	 * @param name
 	 */
 	public SitePage(SearchRunner searchRunner) {
-		super("SitePage");
-		setTitle("Update sites to visit");
-		setDescription("Select update sites to visit while looking for new features.");
+		super("SitePage"); //$NON-NLS-1$
+		setTitle(UpdateUI.getString("SitePage.title")); //$NON-NLS-1$
+		setDescription(UpdateUI.getString("SitePage.desc")); //$NON-NLS-1$
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		searchRequest = new UpdateSearchRequest(new SiteSearchCategory(), new UpdateSearchScope());
 		searchRequest.addFilter(new BackLevelFilter());
@@ -163,7 +164,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		client.setLayout(layout);
 		
 		Label label = new Label(client, SWT.NULL);
-		label.setText("&Sites to include in search:");
+		label.setText(UpdateUI.getString("SitePage.label")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -178,7 +179,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		buttonContainer.setLayout(layout);
 
 		addSiteButton = new Button(buttonContainer, SWT.PUSH);
-		addSiteButton.setText("Add &Update Site...");
+		addSiteButton.setText(UpdateUI.getString("SitePage.addUpdateSite")); //$NON-NLS-1$
 		addSiteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addSiteButton);
 		addSiteButton.addSelectionListener(new SelectionAdapter() {
@@ -188,7 +189,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 
 		addLocalButton = new Button(buttonContainer, SWT.PUSH);
-		addLocalButton.setText("Add &Local Site...");
+		addLocalButton.setText(UpdateUI.getString("SitePage.addLocalSite")); //$NON-NLS-1$
 		addLocalButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addLocalButton);
 		addLocalButton.addSelectionListener(new SelectionAdapter() {
@@ -198,7 +199,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 		
 		editButton = new Button(buttonContainer, SWT.PUSH);
-		editButton.setText("&Edit...");
+		editButton.setText(UpdateUI.getString("SitePage.edit")); //$NON-NLS-1$
 		editButton.setEnabled(false);
 		editButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(editButton);
@@ -209,7 +210,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 
 		removeButton = new Button(buttonContainer, SWT.PUSH);
-		removeButton.setText("&Remove");
+		removeButton.setText(UpdateUI.getString("SitePage.remove")); //$NON-NLS-1$
 		removeButton.setEnabled(false);
 		removeButton.setLayoutData(
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -221,7 +222,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 		
 		envFilterCheck = new Button(client, SWT.CHECK);
-		envFilterCheck.setText("Ignore features not applicable to this environment");
+		envFilterCheck.setText(UpdateUI.getString("SitePage.ignore")); //$NON-NLS-1$
 		envFilterCheck.setSelection(true);
 		toggleEnvFilter(true);
 		envFilterCheck.addSelectionListener(new SelectionAdapter() {
@@ -290,7 +291,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private void handleAddSite() {
 		NewUpdateSiteDialog dialog = new NewUpdateSiteDialog(getShell());
 		dialog.create();
-		dialog.getShell().setText("New Update Site");
+		dialog.getShell().setText(UpdateUI.getString("SitePage.new")); //$NON-NLS-1$
 		dialog.open();
 	}
 
@@ -316,18 +317,18 @@ public class SitePage extends BannerPage implements ISearchProvider {
 						IStatus.OK,
 						UpdateUI.getPluginId(),
 						IStatus.OK,
-						"",
+						"", //$NON-NLS-1$
 						null);
 				return new Status(
 					IStatus.ERROR,
 					UpdateUI.getPluginId(),
 					IStatus.ERROR,
-					"",
+					"", //$NON-NLS-1$
 					null);
 			}
 		});
-		dialog.setTitle("Local Site");
-		dialog.setMessage("&Select a local site:");
+		dialog.setTitle(UpdateUI.getString("SitePage.dialogTitle")); //$NON-NLS-1$
+		dialog.setMessage(UpdateUI.getString("SitePage.dialogMessage")); //$NON-NLS-1$
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			model.addBookmark((SiteBookmark) dialog.getFirstResult());
@@ -355,7 +356,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();		
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
 		dialog.create();
-		String title = bookmark.isLocal() ? "Edit Local Site" : "Edit Update Site";
+		String title = bookmark.isLocal() ? UpdateUI.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.getShell().setText(title);
 		dialog.open();		
 	}
@@ -487,7 +488,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					monitor.beginTask(UpdateUI.getString("UpdatesView.connecting"), 3);
+					monitor.beginTask(UpdateUI.getString("SitePage.connecting"), 3); //$NON-NLS-1$
 					monitor.worked(1);
 
 					if (connect)

@@ -11,9 +11,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 
 public class FeatureLicensePropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
@@ -41,21 +41,21 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 				text.setEditable(false);
 				final URL url = license.getURL();
 				String filename = (url != null) ? url.getFile() : null;
-				if (filename != null && (filename.endsWith(".htm") || url.getFile().endsWith(".html"))) {
+				if (filename != null && (filename.endsWith(".htm") || url.getFile().endsWith(".html"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					Button button = new Button(composite, SWT.PUSH);
-					button.setText("Show in Browser");
+					button.setText(UpdateUI.getString("FeatureLicensePropertyPage.showInBrowser")); //$NON-NLS-1$
 					button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 					SWTUtil.setButtonDimensionHint(button);
 					button.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
-							String urlName = url.getProtocol() + ":" + url.getFile();
+							String urlName = url.getProtocol() + ":" + url.getFile(); //$NON-NLS-1$
 							UpdateUI.showURL(urlName);
 						}
 					});
 				}
 			} else {
 				Label label = new Label(composite, SWT.NULL);
-				label.setText("Feature does not contain a license.");
+				label.setText(UpdateUI.getString("FeatureLicensePropertyPage.noLicense")); //$NON-NLS-1$
 			}
 			
 			Dialog.applyDialogFont(parent);

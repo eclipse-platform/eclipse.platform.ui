@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author Wassim Melhem
@@ -87,7 +88,7 @@ public class WebBookmarksDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText("Current Bookmarks:");
+		label.setText(UpdateUI.getString("WebBookmarksDialog.label")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -133,19 +134,19 @@ public class WebBookmarksDialog extends Dialog {
 		
 
 		addButton = new Button(container, SWT.PUSH);
-		addButton.setText("Add...");
+		addButton.setText(UpdateUI.getString("WebBookmarksDialog.add")); //$NON-NLS-1$
 		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				NewWebSiteDialog dialog = new NewWebSiteDialog(getShell());
 				dialog.create();
-				dialog.getShell().setText("New Bookmark");
+				dialog.getShell().setText(UpdateUI.getString("WebBookmarksDialog.new")); //$NON-NLS-1$
 				dialog.open();
 			}
 		});
 				
 		editButton = new Button(container, SWT.PUSH);
-		editButton.setText("Edit...");
+		editButton.setText(UpdateUI.getString("WebBookmarksDialog.edit")); //$NON-NLS-1$
 		editButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -154,14 +155,14 @@ public class WebBookmarksDialog extends Dialog {
 				SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();		
 				EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
 				dialog.create();
-				dialog.getShell().setText("Edit Bookmark");
+				dialog.getShell().setText(UpdateUI.getString("WebBookmarksDialog.editTitle")); //$NON-NLS-1$
 				dialog.open();
 			}
 		});
 		editButton.setEnabled(false);
 		
 		removeButton = new Button(container, SWT.PUSH);
-		removeButton.setText("Remove");
+		removeButton.setText(UpdateUI.getString("WebBookmarksDialog.remove")); //$NON-NLS-1$
 		removeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

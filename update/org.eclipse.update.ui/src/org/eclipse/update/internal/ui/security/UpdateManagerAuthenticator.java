@@ -129,7 +129,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	 */
 	private Map retrievePasswordAuthentication(final URL resourceUrl, final String realm, final String scheme) {
 		result = new HashMap();
-		if ("Basic".equalsIgnoreCase(scheme)) {
+		if ("Basic".equalsIgnoreCase(scheme)) { //$NON-NLS-1$
 			Display disp = Display.getCurrent();
 			if (disp != null) {
 				result = promptForPassword(resourceUrl, realm);
@@ -231,7 +231,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 			}
 
 		} catch (MalformedURLException e) {
-			IStatus status = Utilities.newCoreException("", e).getStatus();
+			IStatus status = Utilities.newCoreException("", e).getStatus(); //$NON-NLS-1$
 			UpdateUI.log(status, false);
 		}
 		return new PasswordAuthentication("", new char[] { ' ' }); //$NON-NLS-1$

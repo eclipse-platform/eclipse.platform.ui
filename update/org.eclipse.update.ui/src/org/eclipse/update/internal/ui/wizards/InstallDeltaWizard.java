@@ -25,9 +25,6 @@ import org.eclipse.update.internal.ui.parts.*;
 public class InstallDeltaWizard
 	extends Wizard
 	implements IInstallDeltaHandler {
-	private static final String KEY_WTITLE = "InstallDeltaWizard.wtitle";
-	private static final String KEY_PROCESSING =
-		"InstallDeltaWizard.processing";
 	private ISessionDelta[] deltas;
 	private InstallDeltaWizardPage page;
 	private int processed = 0;
@@ -37,7 +34,7 @@ public class InstallDeltaWizard
 	 */
 	public InstallDeltaWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUI.getString(KEY_WTITLE));
+		setWindowTitle(UpdateUI.getString("InstallDeltaWizard.wtitle")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_UPDATE_WIZ);
 	}
 
@@ -95,7 +92,7 @@ public class InstallDeltaWizard
 		analyzeAdapters(adapters, selectedDeltas, removedDeltas);
 			
 		monitor.beginTask(
-			UpdateUI.getString(KEY_PROCESSING),
+			UpdateUI.getString("InstallDeltaWizard.processing"), //$NON-NLS-1$
 			selectedDeltas.size() + removedDeltas.size());
 		processed = 0;
 		for (int i = 0; i < removedDeltas.size(); i++) {

@@ -13,6 +13,7 @@ package org.eclipse.update.internal.ui.model;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @version 	1.0
@@ -42,7 +43,7 @@ public abstract class FeatureAdapter extends UIModelObject implements IFeatureAd
 			return feature.getLabel();
 		}
 		catch (CoreException e) {
-			return "<failure>";
+			return UpdateUI.getString("FeatureAdapter.failure"); //$NON-NLS-1$
 		}
 	}
 	public boolean hasIncludedFeatures(IProgressMonitor monitor) {

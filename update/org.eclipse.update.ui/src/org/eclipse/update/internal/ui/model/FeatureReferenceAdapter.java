@@ -60,7 +60,7 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 		if (included.length == 0) return;
 		IRunnableWithProgress op = new IRunnableWithProgress () {
 			public void run(IProgressMonitor monitor) {
-				monitor.beginTask(UpdateUI.getString("SiteBookmark.downloading"), included.length);
+				monitor.beginTask(UpdateUI.getString("SiteBookmark.downloading"), included.length); //$NON-NLS-1$
 				for (int i=0; i<included.length; i++) {
 					IFeatureReference ref = included[i];
 					try {

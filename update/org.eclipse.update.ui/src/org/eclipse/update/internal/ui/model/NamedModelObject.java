@@ -21,7 +21,7 @@ public class NamedModelObject extends UIModelObject
 	private String name;
 	transient private NamedModelObject parent;
 	
-	public static final String P_NAME="p_name";
+	public static final String P_NAME="p_name"; //$NON-NLS-1$
 	
 	public NamedModelObject() {
 	}

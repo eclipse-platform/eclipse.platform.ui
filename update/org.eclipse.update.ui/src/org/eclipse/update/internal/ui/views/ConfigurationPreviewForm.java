@@ -24,6 +24,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.ui.forms.internal.engine.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class ConfigurationPreviewForm extends WebForm implements IUpdateModelChangedListener {
 	private Control focusControl;
@@ -122,7 +123,7 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		desc = factory.createFormEngine(parent);
 		desc.setHyperlinkSettings(factory.getHyperlinkHandler());
 		desc.registerTextObject(FormEngine.URL_HANDLER_ID, action);
-		desc.load("", false, false);
+		desc.load("", false, false); //$NON-NLS-1$
 		setFocusControl(desc);
 
 		TableData td = new TableData();
@@ -132,8 +133,8 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		
 		taskList = factory.createFormEngine(parent);
 		taskList.setHyperlinkSettings(factory.getHyperlinkHandler());
-		taskList.registerTextObject("task", taskAction);
-		taskList.load("", false, false);
+		taskList.registerTextObject("task", taskAction); //$NON-NLS-1$
+		taskList.load("", false, false); //$NON-NLS-1$
 		//factory.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);	
 
 		td = new TableData();
@@ -141,7 +142,7 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		td.grabHorizontal = true;
 		taskList.setLayoutData(td);
 
-		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SiteForm");
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SiteForm"); //$NON-NLS-1$
 	}
 
 	
@@ -153,7 +154,7 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		String title = getObjectLabel(object);
 		setHeadingText(title);
 		String description = getObjectDescription(object);
-		boolean tags = description.startsWith("<form>");
+		boolean tags = description.startsWith("<form>"); //$NON-NLS-1$
 		desc.load(description, tags, !tags);
 		String taskText = getTasksText();
 		taskList.load(taskText, true, false);
@@ -164,7 +165,7 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 	}
 	
 	private String getObjectLabel(Object object) {
-		if (object==null) return "";
+		if (object==null) return ""; //$NON-NLS-1$
 		TreeViewer viewer = view.getTreeViewer();
 		LabelProvider provider = (LabelProvider)viewer.getLabelProvider();
 		return provider.getText(object);
@@ -175,12 +176,12 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 			return getFeatureDescription((IFeatureAdapter)object);
 		}
 		if (object instanceof IConfiguredSiteAdapter) {
-			return UpdateUI.getString("InstallableSitePage.desc");
+			return UpdateUI.getString("ConfigurationPreviewForm.install"); //$NON-NLS-1$
 		}
 		if (object instanceof ILocalSite) {
-			return "This is the description of the current configuration.";
+			return UpdateUI.getString("ConfigurationPreviewForm.configDescription"); //$NON-NLS-1$
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	private String getFeatureDescription(IFeatureAdapter adapter) {
@@ -193,8 +194,8 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 					URL url = entry.getURL();
 					if (url==null) return text;
 					else {
-						String link = " <a href=\"urlHandler\" arg=\""+url+"\">More info...</a>";
-						String fullText = "<form><p>"+text+link+"</p></form>";
+						String link = " <a href=\"urlHandler\" arg=\""+url+"\">More info...</a>"; //$NON-NLS-1$ //$NON-NLS-2$
+						String fullText = "<form><p>"+text+link+"</p></form>"; //$NON-NLS-1$ //$NON-NLS-2$
 						return fullText;
 					}
 				}
@@ -202,11 +203,11 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		}
 		catch (CoreException e) {
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	private String getTasksText() {
-		if (tasks==null || tasks.length==0) return "<form/>";
+		if (tasks==null || tasks.length==0) return "<form/>"; //$NON-NLS-1$
 		boolean hasEnabledTasks=false;
 		for (int i=0; i<tasks.length; i++) {
 			if (tasks[i].isEnabled()) {
@@ -214,16 +215,16 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 				break;
 			}
 		}
-		if (!hasEnabledTasks) return "<form/>";
+		if (!hasEnabledTasks) return "<form/>"; //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
-		buf.append("<form><p><b>Available Tasks</b></p>");
+		buf.append("<form><p><b>Available Tasks</b></p>"); //$NON-NLS-1$
 		for (int i=0; i<tasks.length; i++) {
 			IPreviewTask task = tasks[i];
 			if (task.isEnabled()==false) continue;
-			buf.append("<li style=\"text\" indent=\"0\"><a href=\"task\" arg=\""+i+"\">"+task.getName()+"</a></li>");
-			buf.append("<li style=\"text\" indent=\"10\" addVerticalSpace=\"false\">"+task.getDescription()+"</li>");
+			buf.append("<li style=\"text\" indent=\"0\"><a href=\"task\" arg=\""+i+"\">"+task.getName()+"</a></li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			buf.append("<li style=\"text\" indent=\"10\" addVerticalSpace=\"false\">"+task.getDescription()+"</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		buf.append("</form>");
+		buf.append("</form>"); //$NON-NLS-1$
 		return buf.toString();
 	}
 }

@@ -17,7 +17,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 
 public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
-	private static final String KEY_LABEL = "MyComputer.label";
 	private Object[] children;
 	public MyComputer() {
 	}
@@ -30,7 +29,7 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	}
 
 	public String getName() {
-		return UpdateUI.getString(KEY_LABEL);
+		return UpdateUI.getString("MyComputer.label"); //$NON-NLS-1$
 	}
 
 	public String toString() {

@@ -15,33 +15,13 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 
 /**
  * @author wassimm
  */
 public class ActivitiesTableViewer{
-	private static final String KEY_CONFIGURE =
-		"InstallConfigurationPage.ActivitySection.action.configure";
-	private static final String KEY_FEATURE_INSTALL =
-		"InstallConfigurationPage.ActivitySection.action.featureInstall";
-	private static final String KEY_FEATURE_REMOVE =
-		"InstallConfigurationPage.ActivitySection.action.featureRemove";
-	private static final String KEY_SITE_INSTALL =
-		"InstallConfigurationPage.ActivitySection.action.siteInstall";
-	private static final String KEY_SITE_REMOVE =
-		"InstallConfigurationPage.ActivitySection.action.siteRemove";
-	private static final String KEY_UNCONFIGURE =
-		"InstallConfigurationPage.ActivitySection.action.unconfigure";
-	private static final String KEY_UNKNOWN =
-		"InstallConfigurationPage.ActivitySection.action.unknown";
-	private static final String KEY_REVERT =
-		"InstallConfigurationPage.ActivitySection.action.revert";
-	private static final String KEY_RECONCILIATION =
-		"InstallConfigurationPage.ActivitySection.action.reconcile";
-	private static final String KEY_ADD_PRESERVED =
-		"InstallConfigurationPage.ActivitySection.action.addpreserved";
-
 
 	static class ActivitiesContentProvider
 		extends DefaultContentProvider
@@ -78,32 +58,30 @@ public class ActivitiesTableViewer{
 				case 3 :
 					return getActionLabel(activity);
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
 		private String getActionLabel(IActivity activity) {
 			int action = activity.getAction();
 			switch (action) {
 				case IActivity.ACTION_CONFIGURE :
-					return UpdateUI.getString(KEY_CONFIGURE);
+					return UpdateUI.getString("ActivitiesTableViewer.enabled"); //$NON-NLS-1$
 				case IActivity.ACTION_FEATURE_INSTALL :
-					return UpdateUI.getString(KEY_FEATURE_INSTALL);
+					return UpdateUI.getString("ActivitiesTableViewer.featureInstalled"); //$NON-NLS-1$
 				case IActivity.ACTION_FEATURE_REMOVE :
-					return UpdateUI.getString(KEY_FEATURE_REMOVE);
+					return UpdateUI.getString("ActivitiesTableViewer.featureRemoved"); //$NON-NLS-1$
 				case IActivity.ACTION_SITE_INSTALL :
-					return UpdateUI.getString(KEY_SITE_INSTALL);
+					return UpdateUI.getString("ActivitiesTableViewer.siteInstalled"); //$NON-NLS-1$
 				case IActivity.ACTION_SITE_REMOVE :
-					return UpdateUI.getString(KEY_SITE_REMOVE);
+					return UpdateUI.getString("ActivitiesTableViewer.siteRemoved"); //$NON-NLS-1$
 				case IActivity.ACTION_UNCONFIGURE :
-					return UpdateUI.getString(KEY_UNCONFIGURE);
+					return UpdateUI.getString("ActivitiesTableViewer.disabled"); //$NON-NLS-1$
 				case IActivity.ACTION_REVERT :
-					return UpdateUI.getString(KEY_REVERT);
+					return UpdateUI.getString("ActivitiesTableViewer.revert"); //$NON-NLS-1$
 				case IActivity.ACTION_RECONCILIATION :
-					return UpdateUI.getString(KEY_RECONCILIATION);
-				case IActivity.ACTION_ADD_PRESERVED :
-					return UpdateUI.getString(KEY_ADD_PRESERVED);
+					return UpdateUI.getString("ActivitiesTableViewer.reconcile"); //$NON-NLS-1$
 				default :
-					return UpdateUI.getString(KEY_UNKNOWN);
+					return UpdateUI.getString("ActivitiesTableViewer.unknown"); //$NON-NLS-1$
 			}
 		}
 	}
@@ -116,13 +94,13 @@ public class ActivitiesTableViewer{
 		TableColumn column = new TableColumn(table, SWT.NONE);
 
 		column = new TableColumn(table, SWT.NONE);
-		column.setText("Date");
+		column.setText(UpdateUI.getString("ActivitiesTableViewer.date")); //$NON-NLS-1$
 
 		column = new TableColumn(table, SWT.NONE);
-		column.setText("Target");
+		column.setText(UpdateUI.getString("ActivitiesTableViewer.target")); //$NON-NLS-1$
 
 		column = new TableColumn(table, SWT.NONE);
-		column.setText("Action");
+		column.setText(UpdateUI.getString("ActivitiesTableViewer.action")); //$NON-NLS-1$
 
 		TableViewer activitiesViewer = new TableViewer(table);
 		activitiesViewer.setLabelProvider(new ActivitiesLabelProvider());

@@ -8,6 +8,7 @@ package org.eclipse.update.internal.ui;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author wassimm
@@ -15,13 +16,13 @@ import org.eclipse.update.internal.ui.wizards.*;
 public class AddBookmarksAction extends Action {
 
 	public AddBookmarksAction() {
-		setText("Add Bookmark...");
+		setText(UpdateUI.getString("AddBookmarksAction.add")); //$NON-NLS-1$
 	}
 
 	public void run() {
 		NewWebSiteDialog dialog = new NewWebSiteDialog(UpdateUI.getActiveWorkbenchShell());
 		dialog.create();
-		dialog.getShell().setText("New Bookmark");
+		dialog.getShell().setText(UpdateUI.getString("AddBookmarksAction.new")); //$NON-NLS-1$
 		if (dialog.open() == NewWebSiteDialog.OK) {
 			UpdateUI.getDefault().getUpdateModel().saveBookmarks();
 		}

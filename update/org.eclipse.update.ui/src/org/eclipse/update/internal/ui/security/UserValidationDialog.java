@@ -85,7 +85,7 @@ public class UserValidationDialog extends Dialog {
 
 		createUsernameFields(main);
 		createPasswordFields(main);
-		WorkbenchHelp.setHelp(main, "org.eclipse.update.ui.UserValidationDialog");
+		WorkbenchHelp.setHelp(main, "org.eclipse.update.ui.UserValidationDialog"); //$NON-NLS-1$
 		return main;
 	}
 	/**

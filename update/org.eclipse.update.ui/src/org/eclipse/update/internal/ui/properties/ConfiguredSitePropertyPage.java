@@ -7,6 +7,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @see PropertyPage
@@ -29,20 +30,20 @@ public class ConfiguredSitePropertyPage extends PropertyPage implements IWorkben
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		addProperty(composite, "Location path: ", csite.getSite().getURL().toString());
-		addProperty(composite, "Location type: ", getLocationType(csite));
-		addProperty(composite, "Enabled: ", csite.isEnabled()?"yes":"no");
+		addProperty(composite, UpdateUI.getString("ConfiguredSitePropertyPage.path"), csite.getSite().getURL().toString()); //$NON-NLS-1$
+		addProperty(composite, UpdateUI.getString("ConfiguredSitePropertyPage.type"), getLocationType(csite)); //$NON-NLS-1$
+		addProperty(composite, UpdateUI.getString("ConfiguredSitePropertyPage.enabled"), csite.isEnabled()?UpdateUI.getString("ConfiguredSitePropertyPage.yes"):UpdateUI.getString("ConfiguredSitePropertyPage.no")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return composite;
 	}
 	
 	private String getLocationType(IConfiguredSite csite) {
 		if (csite.isPrivateSite())
-			return "private";
+			return UpdateUI.getString("ConfiguredSitePropertyPage.private"); //$NON-NLS-1$
 		if (csite.isExtensionSite())
-			return "product extension";
+			return UpdateUI.getString("ConfiguredSitePropertyPage.extension"); //$NON-NLS-1$
 		if (csite.isProductSite())
-			return "product";
-		return "unknown";
+			return UpdateUI.getString("ConfiguredSitePropertyPage.product"); //$NON-NLS-1$
+		return UpdateUI.getString("ConfiguredSitePropertyPage.unknown"); //$NON-NLS-1$
 	}
 	
 	private void addProperty(Composite parent, String key, String value) {

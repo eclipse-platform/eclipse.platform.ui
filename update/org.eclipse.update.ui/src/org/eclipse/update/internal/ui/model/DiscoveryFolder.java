@@ -13,11 +13,11 @@ package org.eclipse.update.internal.ui.model;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class DiscoveryFolder extends BookmarkFolder {
 	public DiscoveryFolder() {
-		super(UpdateUI.getString("DiscoveryFolder"));
+		super(UpdateUI.getString("DiscoveryFolder.name")); //$NON-NLS-1$
 		setModel(UpdateUI.getDefault().getUpdateModel());
 	}
 	public void initialize() {

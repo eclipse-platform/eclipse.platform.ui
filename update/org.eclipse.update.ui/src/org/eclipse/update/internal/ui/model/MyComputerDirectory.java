@@ -136,11 +136,11 @@ public class MyComputerDirectory
 
 	static SiteBookmark createSite(File file, boolean root) {
 		try {
-			File siteXML = new File(file, "site.xml");
+			File siteXML = new File(file, "site.xml"); //$NON-NLS-1$
 			if (siteXML.exists() == false)
 				return null;
 			URL url =
-				new URL("file:" + file.getAbsolutePath() + File.separator);
+				new URL("file:" + file.getAbsolutePath() + File.separator); //$NON-NLS-1$
 			String siteName = root?file.getAbsolutePath():file.getName();
 			SiteBookmark site = new SiteBookmark(siteName, url, false);
 			site.setLocal(true);

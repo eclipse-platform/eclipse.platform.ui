@@ -27,6 +27,7 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class RevertConfigurationWizardPage extends WizardPage {
 
@@ -34,9 +35,9 @@ public class RevertConfigurationWizardPage extends WizardPage {
 	private TableViewer configViewer;
 
 	public RevertConfigurationWizardPage() {
-		super("RevertConfiguration");
-		setTitle("Revert to a Previous Configuration");
-		setDescription("Choose a stable configuration to which you would like to revert");
+		super("RevertConfiguration"); //$NON-NLS-1$
+		setTitle(UpdateUI.getString("RevertConfigurationWizardPage.title")); //$NON-NLS-1$
+		setDescription(UpdateUI.getString("RevertConfigurationWizardPage.desc")); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
@@ -60,7 +61,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		tableContainer.setLayout(layout);
 
 		Label label = new Label(tableContainer, SWT.NONE);
-		label.setText("&Past configurations:");
+		label.setText(UpdateUI.getString("RevertConfigurationWizardPage.label")); //$NON-NLS-1$
 
 		Table table = new Table(tableContainer, SWT.BORDER | SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -157,7 +158,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(
-			"&Activities that caused the creation of this configuration:");
+			UpdateUI.getString("RevertConfigurationWizardPage.activities")); //$NON-NLS-1$
 		activitiesViewer = ActivitiesTableViewer.createViewer(composite);
 
 		TableLayout layout = new TableLayout();
@@ -175,7 +176,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			MessageDialog.openQuestion(
 				shell,
 				shell.getText(),
-				"This operation requires restarting the workbench.  Would you like to proceed?");
+				UpdateUI.getString("RevertConfigurationWizardPage.question")); //$NON-NLS-1$
 		if (!result)
 			return false;
 

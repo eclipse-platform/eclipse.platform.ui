@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
@@ -51,7 +52,7 @@ public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegat
 		}
 		ConfigurationManagerWindow cwindow = new ConfigurationManagerWindow(window.getShell());
 		cwindow.create();
-		cwindow.getShell().setText("Configuration Manager");
+		cwindow.getShell().setText(UpdateUI.getString("ConfigurationManagerAction.title")); //$NON-NLS-1$
 		cwindow.getShell().setSize(800, 600);
 		cwindow.getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {

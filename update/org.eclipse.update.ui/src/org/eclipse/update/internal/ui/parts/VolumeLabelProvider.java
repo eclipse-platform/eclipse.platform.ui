@@ -18,13 +18,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 
 public class VolumeLabelProvider extends LabelProvider {
-	private static final String KEY_VOLUME_CDROM = "VolumeLabelProvider.cdrom";
-	private static final String KEY_VOLUME_FLOPPY_3 =
-		"VolumeLabelProvider.floppy3";
-	private static final String KEY_VOLUME_FLOPPY_5 =
-		"VolumeLabelProvider.floppy5";
-	private static final String KEY_LOCAL_DISK =
-		"VolumeLabelProvider.localDisk";
 	private Image cdImage;
 	private Image vfixedImage;
 	private Image floppyImage;
@@ -58,24 +51,24 @@ public class VolumeLabelProvider extends LabelProvider {
 			switch (type) {
 				case LocalSystemInfo.VOLUME_CDROM :
 					nativeLabel =
-						UpdateUI.getString(KEY_VOLUME_CDROM);
+						UpdateUI.getString("VolumeLabelProvider.cdrom"); //$NON-NLS-1$
 					break;
 				case LocalSystemInfo.VOLUME_FLOPPY_3 :
 					nativeLabel =
-						UpdateUI.getString(KEY_VOLUME_FLOPPY_3);
+						UpdateUI.getString("VolumeLabelProvider.floppy3"); //$NON-NLS-1$
 					break;
 				case LocalSystemInfo.VOLUME_FLOPPY_5 :
 					nativeLabel =
-						UpdateUI.getString(KEY_VOLUME_FLOPPY_5);
+						UpdateUI.getString("VolumeLabelProvider.floppy5"); //$NON-NLS-1$
 					break;
 				case LocalSystemInfo.VOLUME_FIXED:
 					nativeLabel = 
-						UpdateUI.getString(KEY_LOCAL_DISK);
+						UpdateUI.getString("VolumeLabelProvider.localDisk"); //$NON-NLS-1$
 					break;
 			}
 		}
 		if (nativeLabel != null && nativeLabel.length() > 0) {
-			return nativeLabel + " (" + fileName + ")";
+			return nativeLabel + " (" + fileName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			return fileName;
 		}
