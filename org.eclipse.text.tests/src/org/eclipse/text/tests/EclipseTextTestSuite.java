@@ -18,13 +18,14 @@ import junit.framework.TestSuite;
 
 
 /**
+ * Test Suite for org.eclipse.text.
  * 
  * @since 3.0
  */
 public class EclipseTextTestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for for org.eclipse.text"); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("Test Suite for org.eclipse.text"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		suite.addTest(LineTrackerTest4.suite());
 		suite.addTest(DocumentExtensionTest.suite());

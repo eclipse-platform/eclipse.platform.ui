@@ -16,12 +16,14 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test JFace/Text.
+ * Test Suite for org.eclipse.jface.text.
+ * 
+ * @since 3.0
  */
 public class JFaceTextTestSuite extends TestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for for org.eclipse.jface.text"); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("Test Suite for org.eclipse.jface.text"); //$NON-NLS-1$
 		
 		suite.addTest(TextHoverPopupTest.suite());
 		suite.addTest(TextPresentationTest.suite());
