@@ -257,6 +257,9 @@ protected void configureShell(Shell shell) {
 		shell.setMenuBar(menuBarManager.createMenuBar((Decorations)shell));
 	}
 	
+	if (showTopSeperator()) 
+		seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+	
 	createTrimWidgets(shell);
 
 	// we need a special layout
