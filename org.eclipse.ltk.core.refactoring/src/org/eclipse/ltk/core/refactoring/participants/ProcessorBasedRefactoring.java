@@ -117,7 +117,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		}
 		IProgressMonitor sm= new SubProgressMonitor(pm, 2);
 		sm.beginTask("", fParticipants.length); //$NON-NLS-1$
-		for (int i= 0; i < fParticipants.length; i++) {
+		for (int i= 0; i < fParticipants.length && !result.hasFatalError(); i++) {
 			result.merge(fParticipants[i].checkConditions(new SubProgressMonitor(sm, 1), context));
 			if (sm.isCanceled())
 				throw new OperationCanceledException();
