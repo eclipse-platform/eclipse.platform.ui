@@ -24,7 +24,7 @@ abstract class AbstractViewerDecorator implements ILightweightLabelDecorator {
 	 * @param element
 	 */
 	protected void testForDecorationHit(Object element) {
-		if(element.equals(TestTableContentProvider.elements[0]))
+		if(element.equals(TestTableContentProvider.first))
 			DecoratorViewerTest.tableHit = true;
 		if(element.equals(TestTreeContentProvider.root))
 			DecoratorViewerTest.treeHit = true;

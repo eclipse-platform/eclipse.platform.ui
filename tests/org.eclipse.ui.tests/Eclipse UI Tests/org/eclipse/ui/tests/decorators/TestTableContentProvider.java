@@ -18,12 +18,15 @@ import org.eclipse.jface.viewers.Viewer;
  * the decorator testing.
  */
 public class TestTableContentProvider implements IStructuredContentProvider {
-	static TableElement[] elements = new TableElement[100];
+	private static TableElement[] elements = new TableElement[100];
+	public static TableElement first;
 	static {
 
 		for (int i = 0; i < elements.length; i++) {
 			elements[i] = new TableElement(i);
+			
 		}
+		first = elements[0];
 	}
 
 	/*

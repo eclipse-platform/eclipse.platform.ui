@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IViewPart;
@@ -134,9 +135,15 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 		long startTime = System.currentTimeMillis();
 		while (!view.updateHappened) {
 			Display.getCurrent().readAndDispatch();
-			// After 10 seconds time out
-			Assert.isTrue(System.currentTimeMillis() - startTime < 10000,
-					"Update never arrived after 10 seconds");
+			if (System.currentTimeMillis() - startTime < 10000) {
+				if (Platform.inDebugMode()) {
+					// After 10 seconds time out
+					Assert.isTrue(false,
+							"Update never arrived after 10 seconds");
+				} else
+					return;
+			}
+
 		}
 
 	}

@@ -66,7 +66,7 @@ public class DecoratorTableView extends DecoratorTestPart {
 				Object[] elements = event.getElements();
 				for (int i = 0; i < elements.length; i++) {
 					Object object = elements[i];
-					if (object.equals(TestTableContentProvider.elements[0]))
+					if (object.equals(TestTableContentProvider.first))
 						updateHappened = DecoratorViewerTest.treeHit;
 				}
 
