@@ -100,7 +100,9 @@ public void applyEditorValue() {
 	// See if the value changed and if so update
 	Object newValue = editor.getValue();
 	boolean changed = false;
-	if (editValue == null) {
+	if (values.length > 1) {
+		changed = true;
+	} else if (editValue == null) {
 		if (newValue != null)
 			changed = true;
 	} else if (!editValue.equals(newValue)) 
