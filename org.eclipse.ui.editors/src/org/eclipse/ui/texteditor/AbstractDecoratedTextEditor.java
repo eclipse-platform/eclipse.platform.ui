@@ -48,6 +48,7 @@ import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -1034,6 +1035,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected void setDocumentProvider(IEditorInput input) {
 		fImplicitDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
+		IDocumentProvider provider= super.getDocumentProvider();
+		if (provider instanceof ForwardingDocumentProvider) {
+			ForwardingDocumentProvider forwarder= (ForwardingDocumentProvider) provider;
+			forwarder.setParentProvider(fImplicitDocumentProvider);
+		}
 	}
 
 	/*
