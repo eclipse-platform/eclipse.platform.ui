@@ -13,7 +13,6 @@ package org.eclipse.jface.preference;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWTException;
@@ -541,8 +540,6 @@ public class PreferenceConverter {
 		RGB oldValue = getColor(store, name);
 		if (oldValue == null || !oldValue.equals(value)) {
 			store.putValue(name, StringConverter.asString(value));
-			//Clear the cache before updating
-			JFaceColors.clearColor(name);
 			store.firePropertyChangeEvent(name, oldValue, value);
 		}
 	}
