@@ -77,7 +77,7 @@ public WorkbenchWizardElement findWizard(String id) {
 	Object [] wizards = getWizards().getChildren();
 	for (int nX = 0; nX < wizards.length; nX ++) {
 		WizardCollectionElement collection = (WizardCollectionElement)wizards[nX];
-		WorkbenchWizardElement element = collection.findWizard(id);
+		WorkbenchWizardElement element = collection.findWizard(id,true);
 		if (element != null)
 			return element;
 	}

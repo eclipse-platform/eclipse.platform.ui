@@ -276,7 +276,7 @@ protected void selectPreviouslySelectedCategoryAndWizard() {
 	String wizardId = (String)settings.get(STORE_SELECTED_WIZARD_ID);
 	if (wizardId == null)
 		return;
-	WorkbenchWizardElement wizard = category.findWizard(wizardId);
+	WorkbenchWizardElement wizard = category.findWizard(wizardId,false);
 	if (wizard == null)
 		return;				// wizard no longer exists, or has moved
 

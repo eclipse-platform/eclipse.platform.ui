@@ -68,17 +68,24 @@ public WizardCollectionElement findChildCollection(IPath searchPath) {
  * Returns this collection's associated wizard object corresponding to the
  * passed id, or <code>null</code> if such an object could not be found.
  */
-public WorkbenchWizardElement findWizard(String searchId) {
+public WorkbenchWizardElement findWizard(String searchId,boolean recursive) {
 	Object[] wizards = getWizards();
-
 	for (int i = 0; i < wizards.length; ++i) {
 		WorkbenchWizardElement currentWizard = (WorkbenchWizardElement)wizards[i];
 		if (currentWizard.getID().equals(searchId))
 			return currentWizard;
 	}
-	
+	if(!recursive)
+		return null;
+	for (Iterator iterator = children.iterator(); iterator.hasNext();) {
+		WizardCollectionElement child = (WizardCollectionElement) iterator.next();
+		WorkbenchWizardElement result = child.findWizard(searchId,true);
+		if(result != null)
+			return result;
+	}
 	return null;
 }
+
 /**
  * Returns an object which is an instance of the given class
  * associated with this object. Returns <code>null</code> if
