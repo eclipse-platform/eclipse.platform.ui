@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -33,7 +34,6 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -369,7 +369,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				}
 			}
 			final boolean[] result = new boolean[] { false };
-			PlatformUI.getWorkbench().getProgressService().run(false, false, new WorkspaceModifyOperation(null) {
+			final ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(getShell());
+            progressMonitorDialog.run(false, false, new WorkspaceModifyOperation(null) {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						// Create a new repository location with the new information
@@ -391,7 +392,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 							if (projects.size() > 0) {
 								// To do: warn the user
 								DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(
-									getShell(), 
+								    progressMonitorDialog.getShell(), 
 									Policy.bind("CVSRepositoryPropertiesPage.Confirm_Project_Sharing_Changes_1"), //$NON-NLS-1$
 									Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository_2"), //$NON-NLS-1$
 									Policy.bind("CVSRepositoryPropertiesPage.sharedProject", location.toString()), //$NON-NLS-1$
