@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui;
 
  
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -207,12 +208,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    group.setLayoutData(gd);
 	    group.setLayout(new GridLayout(2, false));
 	    
-	    fDefaultEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.getString("CommonTab.2") + defaultEncoding + LaunchConfigurationsMessages.getString("CommonTab.3"));  //$NON-NLS-1$ //$NON-NLS-2$
+	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.getString("CommonTab.2"), new String[]{defaultEncoding})); //$NON-NLS-1$
 	    gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
 	    gd.horizontalSpan = 2;
 	    fDefaultEncodingButton.setLayoutData(gd);
 	    
-	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.getString("CommonTab.4"));  //$NON-NLS-1$
+	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.getString("CommonTab.3"));  //$NON-NLS-1$
 	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	    
 	    fEncodingCombo = new Combo(group, SWT.READ_ONLY);
