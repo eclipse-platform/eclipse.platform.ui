@@ -10,18 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -84,20 +77,7 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	 * label.
 	 */
 	protected String decorateText(String input, Object element) {
-		String contentProvider = null;
-		try {
-			IResource resource = null;			
-			if (element instanceof IResource)
-				resource = (IResource) element;
-			else
-			if (element instanceof IAdaptable)
-				resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
-			if (resource != null)
-				return input + "-" + resource.getSessionProperty(new QualifiedName(null, "contentProvider"));
-		}
-		catch (CoreException e) {
-		}
-		return input; 
+		return input;
 	}
 	/* (non-Javadoc)
 	 * Method declared on IBaseLabelProvider
