@@ -124,7 +124,6 @@ public class LazyReader extends Reader {
 
 	public void reset() {
 		offset = mark;
-		mark = 0;
 	}
 
 	public long skip(long toSkip) throws IOException {

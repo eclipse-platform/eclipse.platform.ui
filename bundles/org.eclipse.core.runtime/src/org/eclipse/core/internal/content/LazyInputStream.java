@@ -124,7 +124,6 @@ public class LazyInputStream extends InputStream {
 
 	public void reset() {
 		offset = mark;
-		mark = 0;
 	}
 
 	public long skip(long toSkip) throws IOException {
