@@ -99,9 +99,10 @@ public class ToolBarManager extends ContributionManager implements
 			toolBar = new ToolBar(parent, itemStyle);
 			toolBar.setMenu(getContextMenuControl());
 			update(false);
+			
+			toolBar.getAccessible().addAccessibleListener(getAccessibleListener());
 		}
 
-		toolBar.getAccessible().addAccessibleListener(getAccessibleListener());
 		return toolBar;
 	}
 
