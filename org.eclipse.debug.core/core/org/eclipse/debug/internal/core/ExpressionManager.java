@@ -120,12 +120,22 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	}
 	
 	/**
-	 * @see IExpressionManager#newWatchExpressionDelegate(String)
+	 * Returns a watch expression delegate specified for the given debug
+	 * model via extension or <code>null</code> if no delegate is available.
+	 * 
+	 * @param debugModel the unique identifier of a debug model
+	 * @return a watch expression delegate associated with the given model
+	 * 		or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public IWatchExpressionDelegate newWatchExpressionDelegate(String debugModel) {
 		try {
 			IConfigurationElement element= (IConfigurationElement) fWatchExpressionDelegates.get(debugModel);
-			return (IWatchExpressionDelegate) element.createExecutableExtension("delegateClass"); //$NON-NLS-1$
+			if (element != null) {
+				return (IWatchExpressionDelegate) element.createExecutableExtension("delegateClass"); //$NON-NLS-1$
+			} else {
+				return null;
+			}
 		} catch (CoreException e) {
 			DebugPlugin.log(e);
 			return null;
