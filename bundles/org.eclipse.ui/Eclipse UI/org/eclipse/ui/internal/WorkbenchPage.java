@@ -159,9 +159,9 @@ public void bringToTop(IWorkbenchPart part) {
 	if (!certifyPart(part))
 		return;
 		
-	// If zoomed unzoom.
+	// If zoomed then ignore.
 	if (isZoomed() && partChangeAffectsZoom(part))
-		zoomOut();
+		return;
 
 	// Move part.
 	boolean broughtToTop = false;
