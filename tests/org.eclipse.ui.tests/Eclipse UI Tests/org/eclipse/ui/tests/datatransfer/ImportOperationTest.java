@@ -1,17 +1,10 @@
 package org.eclipse.ui.tests.datatransfer;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -89,6 +82,7 @@ public class ImportOperationTest
 	private void setUpDirectory() throws IOException {
 		File rootDirectory = new File(localDirectory);
 		rootDirectory.mkdir();
+		localDirectory = rootDirectory.getAbsolutePath(); 
 		for (int i = 0; i < directoryNames.length; i++) {
 			createSubDirectory(localDirectory, directoryNames[i]);
 		}
@@ -173,22 +167,16 @@ public class ImportOperationTest
 
 	private void verifyFiles(int folderCount) {
 		try {
-			IResource[] folders = project.members();
-			IResource[] resources = null;
+			IPath path = new Path(localDirectory);
+			IResource targetFolder = project.findMember(path.makeRelative());
 			
-			assertEquals("Import All failed", 1, folders.length - 1);
-			int i;
-			for (i = 0; i < folders.length; i++) {
-				if (folders[i] instanceof IContainer) {
-					resources = ((IContainer) folders[i]).members();
-					break;					
-				}
-			}
-			assertNotNull("Import All failed", resources);
+			assertTrue("Import All failed", targetFolder instanceof IContainer);
+			
+			IResource[] resources = ((IContainer) targetFolder).members();			
 			assertEquals("Import All failed to import all directories", folderCount, resources.length); 
-			for (i = 0; i < resources.length; i++) {
-				if (resources[i] instanceof IContainer)
-					verifyFolder((IContainer) resources[i]);
+			for (int i = 0; i < resources.length; i++) {
+				assertTrue("Import All failed", resources[i] instanceof IContainer);
+				verifyFolder((IContainer) resources[i]);
 			}
 		}
 		catch (CoreException e) {
