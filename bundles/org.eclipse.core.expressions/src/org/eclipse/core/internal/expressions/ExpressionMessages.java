@@ -21,6 +21,7 @@ public class ExpressionMessages {
 	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private ExpressionMessages() {
+		// no instances
 	}
 
 	public static String getString(String key) {

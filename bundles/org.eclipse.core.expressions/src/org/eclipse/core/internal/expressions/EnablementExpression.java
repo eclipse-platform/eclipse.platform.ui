@@ -19,6 +19,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 public class EnablementExpression extends CompositeExpression {
 
 	public EnablementExpression(IConfigurationElement configElement) {
+		// config element not used yet.
 	}
 	
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {

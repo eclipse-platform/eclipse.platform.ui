@@ -20,9 +20,6 @@ import org.eclipse.core.expressions.ExpressionTagNames;
 
 public class StandardElementHandler extends ElementHandler {
 	
-	public StandardElementHandler() {
-	}
-
 	public Expression create(ExpressionConverter converter, IConfigurationElement element) throws CoreException {
 		String name= element.getName();
 		if (ExpressionTagNames.INSTANCEOF.equals(name)) {

@@ -26,9 +26,6 @@ public abstract class CompositeExpression extends Expression {
 	
 	protected List fExpressions;
 	
-	public CompositeExpression() {
-	}
-
 	public void add(Expression expression) {
 		if (fExpressions == null)
 			fExpressions= new ArrayList(2);
