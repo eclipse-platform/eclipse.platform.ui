@@ -85,6 +85,16 @@ public class PServerSSH2ServerConnection implements IServerConnection {
       }
     }
 
+    int ssh_port=0;
+    if(ssh_host.indexOf('#')!=-1){
+      try{
+	ssh_port=Integer.parseInt(ssh_host.substring(ssh_host.lastIndexOf('#')+1));
+	ssh_host=ssh_host.substring(0, ssh_host.lastIndexOf('#'));
+      }
+      catch(Exception e){
+      }
+    }
+
     int lport=cvs_port;
     String rhost=(cvs_host.equals(ssh_host) ? "localhost" : cvs_host);
     int rport=cvs_port;
@@ -93,7 +103,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
     int retry=1;
     while(true){
       try{
-	session=JSchSession.getSession(ssh_user, "", ssh_host, 0);
+	session=JSchSession.getSession(ssh_user, "", ssh_host, ssh_port);
 	String[] list=session.getPortForwardingL();
 	String name=":"+rhost+":"+rport;
 	boolean done=false;
