@@ -683,21 +683,25 @@ public class OverviewRuler implements IOverviewRuler {
 			
 			line= d.getLineInformation(lineNumbers[lineNumbers.length - 1]);
 			int end= line.getOffset() + line.getLength();
-			
-			Iterator e= new FilterIterator();
-			while (e.hasNext()) {
-				Annotation a= (Annotation) e.next();
+
+			for (int i= fAnnotationsSortedByLayer.size() -1; i >= 0; i--) {
 				
-				if (skip(fAnnotationAccess.getType(a)))
-					continue;
+				Object annotationType= fAnnotationsSortedByLayer.get(i);
 				
-				Position p= fModel.getPosition(a);
-				if (start <= p.getOffset() && p.getOffset() < end) {
-					if (found == null || p.getOffset() < found.getOffset())
-						found= p;
+				Iterator e= new FilterIterator(annotationType);
+				while (e.hasNext() && found == null) {
+					Annotation a= (Annotation) e.next();
+					
+					if (skip(fAnnotationAccess.getType(a)))
+						continue;
+					
+					Position p= fModel.getPosition(a);
+					if (start <= p.getOffset() && p.getOffset() < end) {
+						if (found == null || p.getOffset() < found.getOffset())
+							found= p;
+					}
 				}
-			}
-			
+			}			
 		} catch (BadLocationException x) {
 		}
 		
