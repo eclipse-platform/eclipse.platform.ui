@@ -13,20 +13,37 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.DirectionFilterActionGroup;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePage;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.ShowInContext;
 
 /**
  * Abstract synchronize page that populates the view using a sync info set
@@ -67,8 +84,15 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 			if (modes == null) return;
 			IToolBarManager manager = actionBars.getToolBarManager();
 			IContributionItem group = findGroup(manager, ISynchronizePageConfiguration.MODE_GROUP);
-			if (group != null) {
+			if (manager != null && group != null) {
 				modes.fillToolBar(group.getId(), manager);
+			}
+			IMenuManager viewMenu = actionBars.getMenuManager();
+			group = findGroup(manager, ISynchronizePageConfiguration.MODE_GROUP);
+			if (viewMenu != null && group != null) {
+				MenuManager modesItem = new MenuManager(Policy.bind("action.modes.label")); //$NON-NLS-1$
+				viewMenu.appendToGroup(group.getId(), modesItem);	
+				modes.fillMenu(modesItem);
 			}
 		}
 		private boolean isThreeWay() {

@@ -204,7 +204,7 @@ public interface ISynchronizePageConfiguration {
 	 * by adding new unique group ids to the array. Added groups 
 	 * will appear in the order specified but after the default groups.
 	 */
-	public static final String[] DEFAULT_VIEW_MENU = new String[] { WORKING_SET_GROUP, LAYOUT_GROUP, SYNCHRONIZE_GROUP, PREFERENCES_GROUP };
+	public static final String[] DEFAULT_VIEW_MENU = new String[] { WORKING_SET_GROUP, LAYOUT_GROUP, MODE_GROUP, SYNCHRONIZE_GROUP, PREFERENCES_GROUP };
 
 	/**
 	 * Comparison type contstants

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -161,13 +162,17 @@ public class DirectionFilterActionGroup extends ActionGroup implements IProperty
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-	 */
 	public void fillToolBar(String groupId, IToolBarManager toolBar) {
 		for (Iterator it = actions.iterator(); it.hasNext();) {
 			DirectionFilterAction action = (DirectionFilterAction) it.next();
 				toolBar.appendToGroup(groupId, action);
+		}
+	}
+	
+	public void fillMenu(IContributionManager manager) {
+		for (Iterator it = actions.iterator(); it.hasNext();) {
+			DirectionFilterAction action = (DirectionFilterAction) it.next();
+				manager.add(action);
 		}
 	}
 	
