@@ -1,11 +1,12 @@
 Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Version: 3.1.0
-Bundle-SymbolicName: org.eclipse.core.runtime.compatibility; singleton=true
+Bundle-SymbolicName: org.eclipse.core.runtime.compatibility; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.plugins.CompatibilityActivator
 Bundle-Localization: plugin
-Provide-Package: 
+Export-Package: 
  org.eclipse.core.internal.compatibility,
  org.eclipse.core.internal.boot,
  org.eclipse.core.internal.plugins,
@@ -13,6 +14,6 @@ Provide-Package:
  org.eclipse.core.runtime.model,
  org.eclipse.core.boot
 Require-Bundle: 
- org.eclipse.core.runtime; reprovide=true,
- org.eclipse.update.configurator; reprovide=true
+ org.eclipse.core.runtime; visibility:=reexport,
+ org.eclipse.update.configurator; visibility:=reexport
 Eclipse-AutoStart: true
