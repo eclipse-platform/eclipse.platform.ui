@@ -565,6 +565,7 @@ public final class IDE {
 	 * @return an editor descriptor, appropriate for opening the file
 	 * @throws PartInitException
 	 *             if no editor can be found
+     * @since 3.1
 	 */
 	public static IEditorDescriptor getEditorDescriptor(String name) throws PartInitException {
 		return getEditorDescriptor(name, true);
@@ -632,6 +633,8 @@ public final class IDE {
 	 * @return IEditorDescriptor
 	 * @throws PartInitException
 	 *             if no valid editor can be found
+     *             
+     * @since 3.1
 	 */
 	private static IEditorDescriptor getEditorDescriptor(String name,
 			IEditorRegistry editorReg, IEditorDescriptor defaultDescriptor)

@@ -21,7 +21,11 @@ import org.eclipse.ui.part.FileEditorInput;
 /**
  * Utility class for manipulating resources and determining correspondences 
  * between resources and workbench objects.
- * 
+ * <p>
+ * This class provides all its functionality via static methods.
+ * It is not intended to be instantiated or subclassed.
+ * </p>
+ *
  * @since 3.1
  */
 public final class ResourceUtil {

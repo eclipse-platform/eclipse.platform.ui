@@ -35,12 +35,20 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * IDEEncoding is a utility class for managing encoding information that
  * includes user preferences from the IDE and core resources.
+ * <p>
+ * This class provides all its functionality via static methods.
+ * It is not intended to be instantiated or subclassed.
+ * </p>
  * 
  * @see org.eclipse.ui.WorkbenchEncoding
  * @see org.eclipse.core.resources.ResourcesPlugin
  * @since 3.1
  */
-public class IDEEncoding {
+public final class IDEEncoding {
+	
+	private IDEEncoding () {
+        // prevent instantiation
+	}
 
 	//The preference for the user entered encodings.
 	private static String IDE_ENCODINGS_PREFERENCE = "IDE_ENCODINGS_PREFERENCE"; //$NON-NLS-1$
