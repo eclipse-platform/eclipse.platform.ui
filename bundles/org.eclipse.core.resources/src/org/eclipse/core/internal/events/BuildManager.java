@@ -7,6 +7,7 @@ package org.eclipse.core.internal.events;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -15,13 +16,52 @@ import java.util.*;
 public class BuildManager implements ICoreConstants, IManager {
 	protected Workspace workspace;
 	protected boolean building = false;
+	
+	//the following four fields only apply for the lifetime of 
+	//a single builder invocation.
 	protected ElementTree currentTree;
 	protected ElementTree lastBuiltTree;
 	protected InternalBuilder currentBuilder;
-	protected boolean needNextTree;
-
+	protected DeltaDataTree currentDelta;
+	
 	public static boolean DEBUG_BUILD = false;
 	public static final String OPTION_DEBUG_BUILD = ResourcesPlugin.PI_RESOURCES + "/debug/build";
+	
+	/**
+	 * Cache used to optimize the common case of an autobuild against
+	 * a workspace where only a single project has changed (and hence
+	 * only a single delta is interesting).
+	 */
+	class DeltaCache {
+		private ElementTree oldTree;
+		private ElementTree newTree;
+		private IPath projectPath;
+		private IResourceDelta delta;
+		/**
+		 * Returns the cached resource delta for the given project and trees, or
+		 * null if there is no matching delta in the cache.
+		 */
+		public IResourceDelta getDelta(IPath project, ElementTree oldTree, ElementTree newTree) {
+			if (delta == null)
+				return null;
+			if (projectPath.equals(project) && this.oldTree == oldTree && this.newTree == newTree)
+				return delta;
+			return null;
+		}
+		public void cache(IPath project, ElementTree oldTree, ElementTree newTree, IResourceDelta delta) {
+			this.projectPath = project;
+			this.oldTree = oldTree;
+			this.newTree = newTree;
+			this.delta = delta;
+		}
+		public void flush() {
+			this.projectPath = null;
+			this.oldTree = null;
+			this.newTree = null;
+			this.delta = null;
+		}
+	}
+	final protected DeltaCache deltaCache = new DeltaCache();
 	
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
@@ -31,64 +71,37 @@ public BuildManager(Workspace workspace) {
 	}
 }
 
-void basicBuild(final int trigger, final IncrementalProjectBuilder builder, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
+protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {
 	try {
-		// want to invoke some methods not accessible via IncrementalProjectBuilder
 		currentBuilder = (InternalBuilder) builder;
 		// Figure out which trees are involved based on the trigger and tree availabilty.
-		// Also, grab a pointer to the current state before computing the delta
-		// as this will be the last built state of the builder when we are done.
 		lastBuiltTree = currentBuilder.getLastBuiltTree();
 		boolean fullBuild = (trigger == IncrementalProjectBuilder.FULL_BUILD) || (lastBuiltTree == null);
+		// Grab a pointer to the current state before computing the delta
+		// as this will be the last built state of the builder when we are done.
 		currentTree = fullBuild ? null : workspace.getElementTree();
-		needNextTree = true;
-		// The delta calculation closes the tree, but since we are currently
-		// inside an operation, the tree should be open.
-		workspace.newWorkingTree();
 		try {
+			//short-circuit if none of the projects this builder cares about have changed.
+			if (!fullBuild && !needsBuild(currentBuilder))
+				return;
 			//ResourceStats.startBuild(builder.getClass().getName());
-			ISafeRunnable code = new ISafeRunnable() {
-				public void run() throws Exception {
-					IProject[] builders = currentBuilder.build(trigger, args, monitor);
-					if (builders == null)
-						builders = new IProject[0];
-					currentBuilder.setInterestingProjects((IProject[]) builders.clone());
-				}
-				public void handleException(Throwable e) {
-					if (e instanceof OperationCanceledException)
-						throw (OperationCanceledException) e;
-					//ResourceStats.buildException(e);
-					// don't log the exception....it is already being logged in Workspace#run
-					if (e instanceof CoreException)
-						status.add(((CoreException) e).getStatus());
-					else {
-						String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
-						String message = e.getMessage();
-						if (message == null)
-							message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
-						status.add(new Status(Status.WARNING, pluginId, IResourceStatus.INTERNAL_ERROR, message, e));
-					}
-				}
-			};
-			Platform.run(code);
+			Platform.run(getSafeRunnable(trigger, args, status, monitor));
 		} finally {
 			//ResourceStats.endBuild();
 			// Always remember the current state as the last built state.
-			// If the build went ok, commit it, otherwise abort.  Be sure to clean
-			// up after ourselves.
-			if (needNextTree) {
-				ElementTree lastTree = workspace.getElementTree();
-				lastTree.immutable();
-				currentBuilder.setLastBuiltTree(lastTree);
-			}
+			// Be sure to clean up after ourselves.
+			ElementTree lastTree = workspace.getElementTree();
+			lastTree.immutable();
+			currentBuilder.setLastBuiltTree(lastTree);
 		}
 	} finally {
 		currentBuilder = null;
 		currentTree = null;
 		lastBuiltTree = null;
+		currentDelta = null;
 	}
 }
-void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
+protected void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
 	if (!project.isAccessible())
 		return;
 	final ICommand[] commands = ((Project) project).internalGetDescription().getBuildSpec(false);
@@ -112,7 +125,7 @@ void basicBuild(final IProject project, final int trigger, final MultiStatus sta
 	};
 	Platform.run(code);
 }
-void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
+protected void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
 	IncrementalProjectBuilder builder = null;
 	try {
 		builder = getBuilder(builderName, project);
@@ -139,6 +152,54 @@ void basicBuild(IProject project, int trigger, String builderName, Map args, Mul
 	monitor.subTask(message);
 	basicBuild(trigger, builder, args, status, monitor);
 }
+protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		String message = Policy.bind("events.building.1", project.getFullPath().toString());
+		monitor.beginTask(message, Math.max(1, commands.length));
+		for (int i = 0; i < commands.length; i++) {
+			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
+			BuildCommand command = (BuildCommand) commands[i];
+			basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), status, sub);
+			Policy.checkCanceled(monitor);
+		}
+	} finally {
+		monitor.done();
+	}
+}
+public void build(int trigger, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		monitor.beginTask(Policy.bind("events.building.0"), Policy.totalWork);
+		if (!canRun(trigger))
+			return;
+		try {
+			building = true;
+			IProject[] ordered = workspace.getBuildOrder();
+			IProject[] unordered = null;
+			HashSet leftover = new HashSet(5);
+			leftover.addAll(Arrays.asList(workspace.getRoot().getProjects()));
+			leftover.removeAll(Arrays.asList(ordered));
+			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
+			int num = ordered.length + unordered.length;
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
+			for (int i = 0; i < ordered.length; i++)
+				if (ordered[i].isAccessible())
+					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+			for (int i = 0; i < unordered.length; i++)
+				if (unordered[i].isAccessible())
+					basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+			// if the status is not ok, throw an exception 
+			if (!status.isOK())
+				throw new ResourceException(status);
+		} finally {
+			building = false;
+			deltaCache.flush();
+		}
+	} finally {
+		monitor.done();
+	}
+}
 public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
 	if (!canRun(trigger))
 		return;
@@ -150,6 +211,7 @@ public void build(IProject project, int trigger, IProgressMonitor monitor) throw
 			throw new ResourceException(status);
 	} finally {
 		building = false;
+		deltaCache.flush();
 	}
 }
 public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
@@ -170,9 +232,10 @@ public void build(IProject project, int kind, String builderName, Map args, IPro
 		}
 	} finally {
 		monitor.done();
+		deltaCache.flush();
 	}
 }
-public boolean canRun(int trigger) {
+protected boolean canRun(int trigger) {
 	return !building;
 }
 public void changing(IProject project) {
@@ -219,10 +282,17 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 	}
 	return newInfos;
 }
+protected String debugBuilder() {
+	return currentBuilder == null ? "<no builder>" : currentBuilder.getClass().getName();
+}
+protected String debugProject() {
+	if (currentBuilder== null)
+		return "<no project>";
+	return currentBuilder.getProject().getFullPath().toString();
+}
 public void deleting(IProject project) {
 }
-
-public IncrementalProjectBuilder getBuilder(String builderName, IProject project) throws CoreException {
+protected IncrementalProjectBuilder getBuilder(String builderName, IProject project) throws CoreException {
 	Hashtable builders = getBuilders(project);
 	IncrementalProjectBuilder result = (IncrementalProjectBuilder) builders.get(builderName);
 	if (result != null)
@@ -236,6 +306,15 @@ public IncrementalProjectBuilder getBuilder(String builderName, IProject project
 	return result;
 }
 /**
+ * Returns a hashtable of all instantiated builders for the given project.
+ * This hashtable maps String(builder name) -> Builder.
+ */
+protected Hashtable getBuilders(IProject project) {
+	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, false);
+	Assert.isNotNull(info, Policy.bind("events.noProject", project.getName()));
+	return info.getBuilders();
+}
+/**
  * Returns a Map mapping String(builder name) -> BuilderPersistentInfo.
  * The map includes entries for all builders that are in the builder spec,
  * and that have a last built state, even if they have not been instantiated
@@ -245,56 +324,105 @@ public Map getBuildersPersistentInfo(IProject project) throws CoreException {
 	return (Map) project.getSessionProperty(K_BUILD_MAP);
 }
 /**
- * Returns a hashtable of all instantiated builders for the given project.
- * This hashtable maps String(builder name) -> Builder.
+ * Returns the safe runnable instance for invoking a builder
  */
-private Hashtable getBuilders(IProject project) {
-	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, false);
-	Assert.isNotNull(info, Policy.bind("events.noProject", project.getName()));
-	return info.getBuilders();
+protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
+	return new ISafeRunnable() {
+		public void run() throws Exception {
+			IProject[] builders = currentBuilder.build(trigger, args, monitor);
+			if (builders == null)
+				builders = new IProject[0];
+			currentBuilder.setInterestingProjects((IProject[]) builders.clone());
+		}
+		public void handleException(Throwable e) {
+			if (e instanceof OperationCanceledException)
+				throw (OperationCanceledException) e;
+			//ResourceStats.buildException(e);
+			// don't log the exception....it is already being logged in Workspace#run
+			if (e instanceof CoreException)
+				status.add(((CoreException) e).getStatus());
+			else {
+				String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
+				String message = e.getMessage();
+				if (message == null)
+					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
+				status.add(new Status(Status.WARNING, pluginId, IResourceStatus.INTERNAL_ERROR, message, e));
+			}
+		}
+	};
 }
-public IResourceDelta getDelta(IProject project) {
+protected IResourceDelta getDelta(IProject project) {
 	if (currentTree == null) {
 		if (DEBUG_BUILD) 
 			System.out.println("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]");
 		return null;
 	}
-	IProject interestingProject = getInterestingProject(project);
-	if (interestingProject == null) {
+	//check if this builder has indicated it cares about this project
+	if (!isInterestingProject(project)) {
 		if (DEBUG_BUILD) 
-			System.out.println("Build: project not interesting for delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
+			System.out.println("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 		return null;
 	}
+	//check if this project has changed
+	if (currentDelta != null && currentDelta.findNodeAt(project.getFullPath()) == null) {
+		//just return an empty delta rooted at this project
+		return ResourceDeltaFactory.newEmptyDelta(project);
+	}
 	
-	IResourceDelta result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, interestingProject.getFullPath(), false);
+	//now check against the cache
+	IResourceDelta result = deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
+	if (result != null)
+		return result;
+	
+	result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), false);
+	deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
 	if (DEBUG_BUILD && result == null) 
 		System.out.println("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 	return result;
 }
-
-String debugProject() {
-	if (currentBuilder== null)
-		return "<no project>";
-	return currentBuilder.getProject().getFullPath().toString();
-}
-
-String debugBuilder() {
-	return currentBuilder == null ? "<no builder>" : currentBuilder.getClass().getName();
-}
-
-ResourceDelta getDelta(IProject project, IncrementalProjectBuilder builder, ElementTree currentTree) {
-	return ResourceDeltaFactory.computeDelta(workspace, ((InternalBuilder)builder).getLastBuiltTree(), currentTree, project.getFullPath(), false);
-}
-private IProject getInterestingProject(IProject project) {
+/**
+ * Returns true if the current builder is interested in changes
+ * to the given project, and false otherwise.
+ */
+protected boolean isInterestingProject(IProject project) {
 	if (project.equals(currentBuilder.getProject()))
-		return project;
+		return true;
 	IProject[] interestingProjects = currentBuilder.getInterestingProjects();
 	for (int i = 0; i < interestingProjects.length; i++) {
 		if (interestingProjects[i].equals(project)) {
-			return project;
+			return true;
 		}
 	}
-	return null;
+	return false;
+}
+/**
+ * Returns true if the given builder needs to be invoked, and false
+ * otherwise.
+ * 
+ * The algorithm is to compute the intersection of the set of projects that
+ * have changed since the last build, and the set of projects this builder
+ * cares about.  This is an optimization, under the assumption that computing
+ * the forward delta once (not the resource delta) is more efficient than
+ * computing project deltas and invoking builders for projects that haven't
+ * changed.
+ */
+protected boolean needsBuild(InternalBuilder builder) {
+	//compute the delta since the last built state
+	ElementTree oldTree = builder.getLastBuiltTree();
+	ElementTree newTree = workspace.getElementTree();
+	currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
+	
+	//search for the builder's project
+	if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null)
+		return true;
+	
+	//search for builder's interesting projects
+	IProject[] projects = builder.getInterestingProjects();	
+	for (int i = 0; i < projects.length; i++) {
+		if (currentDelta.findNodeAt(projects[i].getFullPath()) != null)
+			return true;
+	}
+	return false;	
 }
 protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProject project) throws CoreException {
 	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
@@ -341,52 +469,5 @@ public void setBuildersPersistentInfo(IProject project, Map map) throws CoreExce
 public void shutdown(IProgressMonitor monitor) {
 }
 public void startup(IProgressMonitor monitor) {
-}
-void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("events.building.1", project.getFullPath().toString());
-		monitor.beginTask(message, Math.max(1, commands.length));
-		for (int i = 0; i < commands.length; i++) {
-			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
-			BuildCommand command = (BuildCommand) commands[i];
-			basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), status, sub);
-			Policy.checkCanceled(monitor);
-		}
-	} finally {
-		monitor.done();
-	}
-}
-public void build(int trigger, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		monitor.beginTask(Policy.bind("events.building.0"), Policy.totalWork);
-		if (!canRun(trigger))
-			return;
-		try {
-			building = true;
-			IProject[] ordered = workspace.getBuildOrder();
-			IProject[] unordered = null;
-			HashSet leftover = new HashSet(5);
-			leftover.addAll(Arrays.asList(workspace.getRoot().getProjects()));
-			leftover.removeAll(Arrays.asList(ordered));
-			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
-			int num = ordered.length + unordered.length;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
-			for (int i = 0; i < ordered.length; i++)
-				if (ordered[i].isAccessible())
-					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
-			for (int i = 0; i < unordered.length; i++)
-				if (unordered[i].isAccessible())
-					basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
-			// if the status is not ok, throw an exception 
-			if (!status.isOK())
-				throw new ResourceException(status);
-		} finally {
-			building = false;
-		}
-	} finally {
-		monitor.done();
-	}
 }
 }

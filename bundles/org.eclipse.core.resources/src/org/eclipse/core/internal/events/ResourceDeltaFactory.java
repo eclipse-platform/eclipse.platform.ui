@@ -12,6 +12,7 @@ import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.events.ResourceDelta;
 import org.eclipse.core.internal.events.ResourceDeltaInfo;
 import org.eclipse.core.internal.resources.ICoreConstants;
+import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -152,6 +153,26 @@ protected static ResourceDelta createDelta(Workspace workspace, DeltaDataTree de
 		result.setStatus(status |= IResourceDelta.CHANGED);
 
 	// return the delta
+	return result;
+}
+/**
+ * Returns an empty build delta describing the fact that no
+ * changes occurred in the given project.  The returned delta
+ * is not appropriate for use as a notification delta because
+ * it is rooted at a project, and does not contain marker deltas.
+ */
+public static IResourceDelta newEmptyDelta(IProject project) {
+	ResourceDelta result = new ResourceDelta(
+		project.getFullPath(), 
+		new ResourceDeltaInfo(
+			((Workspace)project.getWorkspace()), 
+			null, 
+			ResourceComparator.getComparator(false)));
+	result.setStatus(0);
+	result.setChildren(NO_CHILDREN);
+	ResourceInfo info = ((Project)project).getResourceInfo(true, false);
+	result.setOldInfo(info);
+	result.setNewInfo(info);
 	return result;
 }
 }
