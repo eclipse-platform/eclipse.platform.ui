@@ -52,7 +52,7 @@ public class FeatureModelFactory {
 		FeatureModel featureModel = null;
 		try {
 			featureModel = parser.parse(stream);
-			if (parser.getStatus().getChildren().length > 0) {
+			if (parser.getStatus()!=null) {
 				// some internalError were detected
 				IStatus status = parser.getStatus();
 				throw new CoreException(status);

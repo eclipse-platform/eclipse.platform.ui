@@ -208,8 +208,7 @@ public abstract class FeatureContentProvider
 		INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
-		if ((pluginEntries == null || pluginEntries.length == 0)
-			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
+		if (pluginEntries == null || nonPluginEntries == null){
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 

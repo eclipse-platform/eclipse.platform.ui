@@ -65,7 +65,7 @@ public class SiteModelFactory {
 		try {
 			DefaultSiteParser parser = new DefaultSiteParser(this);
 			result = parser.parse(stream);
-			if (parser.getStatus().getChildren().length > 0) {
+			if (parser.getStatus()!=null) {
 				// some internalError were detected
 				IStatus status = parser.getStatus();
 				throw new CoreException(status);

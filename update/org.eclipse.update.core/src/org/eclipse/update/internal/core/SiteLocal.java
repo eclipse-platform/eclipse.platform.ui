@@ -729,9 +729,14 @@ public class SiteLocal
 				}
 			}
 
-			// new fature found: add as configured
+			// new fature found: add as configured if site is Exclude
+			// otherwise add as unconfigured (bug 13695)
 			if (!newFeatureFound) {
-				newSitePolicy.addConfiguredFeatureReference(currentFeatureRefModel);
+				if (oldSitePolicy.getPolicy()==IPlatformConfiguration.ISitePolicy.USER_EXCLUDE){
+					newSitePolicy.addConfiguredFeatureReference(currentFeatureRefModel);
+				} else {
+					newSitePolicy.addUnconfiguredFeatureReference(currentFeatureRefModel);					
+				}
 			}
 		}
 

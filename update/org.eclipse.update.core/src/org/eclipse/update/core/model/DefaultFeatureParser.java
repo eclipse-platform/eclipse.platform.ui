@@ -129,15 +129,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public MultiStatus getStatus() {
-		if (status == null) {
-			status =
-				new MultiStatus(
-					PLUGIN_ID,
-					Platform.PARSE_PROBLEM,
-					Policy.bind("DefaultFeatureParser.ErrorParsingFeature"),
-					null);
-			//$NON-NLS-1$
-		}
 		return status;
 	}
 
@@ -1193,7 +1184,18 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	private void error(IStatus error) {
 
-		getStatus().add(error);
+
+		if (status==null){
+			status =
+				new MultiStatus(
+					PLUGIN_ID,
+					Platform.PARSE_PROBLEM,
+					Policy.bind("DefaultFeatureParser.ErrorParsingFeature"),
+					null);
+			//$NON-NLS-1$
+		}
+		
+		status.add(error);
 		UpdateManagerPlugin.getPlugin().getLog().log(error);
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			UpdateManagerPlugin.getPlugin().debug(error.toString());
