@@ -1,162 +1,236 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- ========================================================== -->
-<!-- Help System UI plugin                                      -->
-<!-- ========================================================== -->
-
 <plugin
-	name = "%help_system_plugin_name"
-	id = "org.eclipse.help.ui"
-	version = "2.1.0"
-	provider-name = "%providerName"
-	class="org.eclipse.help.ui.internal.WorkbenchHelpPlugin">
+   id="org.eclipse.help.ui"
+   name="%help_system_plugin_name"
+   version="2.1.0"
+   provider-name="%providerName"
+   class="org.eclipse.help.ui.internal.WorkbenchHelpPlugin">
 
-	<requires>
-		<import plugin="org.apache.xerces"/>
-		<import plugin="org.eclipse.core.resources"/>
-		<import plugin="org.eclipse.help"/>
-    	<import plugin="org.eclipse.search"/>
-		<import plugin="org.eclipse.ui"/>
-	</requires>
+   <runtime>
+      <library name="helpworkbench.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.tomcat"/>
+   </requires>
 
-	<runtime>
-		<library name="helpworkbench.jar">
-			<export name="*"/>
-		</library>
-	</runtime>
 
-	<!-- Extension points -->
-	<extension-point id="browser" name="%browser_extention_point_name"/>
+<!-- Extension points -->
+   <extension-point id="browser" name="%browser_extention_point_name"/>
 
-	<!-- Default Help UI  -->
-   	<extension point="org.eclipse.help.support">
-		<config class="org.eclipse.help.ui.internal.DefaultHelp"/>
-	</extension>
-
-	<!-- Preference pages -->
-	<extension
-		point = "org.eclipse.ui.preferencePages">
-		<page id="org.eclipse.help.ui.browsersPreferancePage"
-			name="%help_preferences_page_name"
-			class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
-		/>
-	</extension>
-
-	<!-- Context Help contribution --> 
-	<extension point="org.eclipse.help.contexts"> 
-		<contexts file="contexts.xml"/> 
-	</extension>
-  
-	<!-- Action Sets -->
-	<extension point="org.eclipse.ui.actionSets">
-		<actionSet
-			id="org.eclipse.help.internal.ui.HelpActionSet"
-			label="%help"
-			visible="true">
-			
-			<action id="org.eclipse.help.internal.ui.HelpAction"
-				menubarPath="help/helpEnd"
-				label="%helpcontents"
-				class="org.eclipse.help.ui.internal.HelpContentsAction"
-				icon="icons/view.gif"
-				helpContextId="org.eclipse.help.ui.helpContentsMenu"
-				tooltip="%openhelpcontents"/>
-
-			<menu
-				id="org.eclipse.search.menu"
-				label="%searchMenu.label"
-				path="navigate">
-				<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
-				<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
-				<separator name="contextMenuActionsGroup"/>
-			</menu>
-			<action id="org.eclipse.help.ui.OpenHelpSearchPage"
-				menubarPath="org.eclipse.search.menu/dialogGroup"
-				label="%openHelpSearchPageAction.label"
-				helpContextId="org.eclipse.help.ui.helpSearchMenu"
-	        	icon="icons/search_menu.gif"
-				class="org.eclipse.help.ui.internal.OpenHelpSearchPageAction"/>
-
-		</actionSet>
-	</extension>
-			
-	<!-- Web Browsers -->
-	<extension point="org.eclipse.help.ui.browser">
-		<browser id="org.eclipse.help.ui.mozillaLinux"
-			name="%mozilla_adapter">
-				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-					<parameter name="executable" value="mozilla" />
-					<parameter name="executableName" value="%mozilla" />
-					<parameter name="os" value="Linux" />
-				</factoryclass>
-		</browser>
-		<browser id="org.eclipse.help.ui.netscapeLinux"
-			name="%netscape_adapter">
-				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-					<parameter name="executable" value="netscape" />
-					<parameter name="executableName" value="%netscape" />
-					<parameter name="os" value="Linux" />
-				</factoryclass>
-		</browser>
-		<browser id="org.eclipse.help.ui.netscapeAIX"
-			name="%netscape_adapter">
-				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-					<parameter name="executable" value="netscape" />
-					<parameter name="executableName" value="%netscape" />
-					<parameter name="os" value="AIX" />
-				</factoryclass>
-		</browser>
-		<browser id="org.eclipse.help.ui.netscapeHPUX"
-			name="%netscape_adapter">
-				<factoryclass class="org.eclipse.help.ui.internal.browser.MozillaFactory">
-					<parameter name="executable" value="netscape" />
-					<parameter name="executableName" value="%netscape" />
-					<parameter name="os" value="HP" />
-				</factoryclass>
-		</browser>
-		<browser id="org.eclipse.help.ui.netscapeSolaris"
-			name="%netscape_adapter"
-			factoryclass="org.eclipse.help.ui.internal.browser.solaris.NetscapeFactory" />
-		<browser id="org.eclipse.help.ui.defaultBrowserMacOSX"
-			name="%defaultBrowser"
-			factoryclass="org.eclipse.help.ui.internal.browser.macosx.DefaultBrowserFactory" />
-		<browser id="org.eclipse.help.ui.systembrowser"
-			name="%system_browser"
-			factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory" />
-		<browser id="org.eclipse.help.ui.custombrowser"
-			name="%custom_browser"
-			factoryclass="org.eclipse.help.ui.internal.browser.CustomBrowserFactory" />
-	</extension>
-
-	<!-- Search Page -->
-	<extension point="org.eclipse.search.searchPages">
-	<page label="%help_search_page"
-		class="org.eclipse.help.ui.internal.search.HelpSearchPage"
-		id="org.eclipse.help.ui.searchPage"
-		icon="icons/search_menu.gif"> 
-		</page>
-	</extension>
-   
-	<!-- Markers -->
-	<extension point="org.eclipse.core.resources.markers"
-		id="helpsearchhit"
-		name="%helpsearchhitname">
-		<super type="org.eclipse.search.searchmarker"/>
-		<attribute name="href"/>
-		<attribute name="label"/>   
-		<attribute name="resultfof"/>
-		<attribute name="order"/>
-	</extension>
-   
-	<!-- Search Results Sorter -->
-	<extension point="org.eclipse.search.searchResultSorters"> 
-		<sorter id="org.eclipse.help.ui.helpsearchhitsorter" 
-			pageId="org.eclipse.help.ui.searchPage" 
-			label="%helpsearchhitsorter.label" 
-			tooltip="%helpsearchhitsorter.tooltip" 
-			icon="icons/search_sortmatch.gif" 
-			class="org.eclipse.help.ui.internal.search.HelpSearchSorter"> 
-		</sorter> 
-	</extension> 
+<!-- Default Help UI  -->
+   <extension
+         point="org.eclipse.help.support">
+      <config
+            class="org.eclipse.help.ui.internal.DefaultHelp">
+      </config>
+   </extension>
+<!-- Preference pages -->
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%help_preferences_page_name"
+            class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
+            id="org.eclipse.help.ui.browsersPreferancePage">
+      </page>
+   </extension>
+<!-- Context Help contribution -->
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+<!-- Action Sets -->
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%help"
+            visible="true"
+            id="org.eclipse.help.internal.ui.HelpActionSet">
+         <action
+               label="%helpcontents"
+               icon="icons/view.gif"
+               helpContextId="org.eclipse.help.ui.helpContentsMenu"
+               tooltip="%openhelpcontents"
+               class="org.eclipse.help.ui.internal.HelpContentsAction"
+               menubarPath="help/helpEnd"
+               id="org.eclipse.help.internal.ui.HelpAction">
+         </action>
+         <menu
+               label="%searchMenu.label"
+               path="navigate"
+               id="org.eclipse.search.menu">
+            <groupMarker
+                  name="internalDialogGroup">
+            </groupMarker>
+<!-- not to be used by clients  -->
+            <groupMarker
+                  name="dialogGroup">
+            </groupMarker>
+<!-- to be used by clients      -->
+            <separator
+                  name="contextMenuActionsGroup">
+            </separator>
+         </menu>
+         <action
+               label="%openHelpSearchPageAction.label"
+               icon="icons/search_menu.gif"
+               helpContextId="org.eclipse.help.ui.helpSearchMenu"
+               class="org.eclipse.help.ui.internal.OpenHelpSearchPageAction"
+               menubarPath="org.eclipse.search.menu/dialogGroup"
+               id="org.eclipse.help.ui.OpenHelpSearchPage">
+         </action>
+      </actionSet>
+   </extension>
+<!-- Web Browsers -->
+   <extension
+         point="org.eclipse.help.ui.browser">
+      <browser
+            name="%mozilla_adapter"
+            id="org.eclipse.help.ui.mozillaLinux">
+         <factoryclass
+               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="mozilla">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%mozilla">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="Linux">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            name="%netscape_adapter"
+            id="org.eclipse.help.ui.netscapeLinux">
+         <factoryclass
+               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="netscape">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%netscape">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="Linux">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            name="%netscape_adapter"
+            id="org.eclipse.help.ui.netscapeAIX">
+         <factoryclass
+               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="netscape">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%netscape">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="AIX">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            name="%netscape_adapter"
+            id="org.eclipse.help.ui.netscapeHPUX">
+         <factoryclass
+               class="org.eclipse.help.ui.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="netscape">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%netscape">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="HP">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
+            factoryclass="org.eclipse.help.ui.internal.browser.solaris.NetscapeFactory"
+            name="%netscape_adapter"
+            id="org.eclipse.help.ui.netscapeSolaris">
+      </browser>
+      <browser
+            factoryclass="org.eclipse.help.ui.internal.browser.macosx.DefaultBrowserFactory"
+            name="%defaultBrowser"
+            id="org.eclipse.help.ui.defaultBrowserMacOSX">
+      </browser>
+      <browser
+            factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory"
+            name="%system_browser"
+            id="org.eclipse.help.ui.systembrowser">
+      </browser>
+      <browser
+            factoryclass="org.eclipse.help.ui.internal.browser.CustomBrowserFactory"
+            name="%custom_browser"
+            id="org.eclipse.help.ui.custombrowser">
+      </browser>
+   </extension>
+<!-- Search Page -->
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            label="%help_search_page"
+            icon="icons/search_menu.gif"
+            class="org.eclipse.help.ui.internal.search.HelpSearchPage"
+            id="org.eclipse.help.ui.searchPage">
+      </page>
+   </extension>
+<!-- Markers -->
+   <extension
+         id="helpsearchhit"
+         name="%helpsearchhitname"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.search.searchmarker">
+      </super>
+      <attribute
+            name="href">
+      </attribute>
+      <attribute
+            name="label">
+      </attribute>
+      <attribute
+            name="resultfof">
+      </attribute>
+      <attribute
+            name="order">
+      </attribute>
+   </extension>
+<!-- Search Results Sorter -->
+   <extension
+         point="org.eclipse.search.searchResultSorters">
+      <sorter
+            pageId="org.eclipse.help.ui.searchPage"
+            label="%helpsearchhitsorter.label"
+            icon="icons/search_sortmatch.gif"
+            tooltip="%helpsearchhitsorter.tooltip"
+            class="org.eclipse.help.ui.internal.search.HelpSearchSorter"
+            id="org.eclipse.help.ui.helpsearchhitsorter">
+      </sorter>
+   </extension>
 
 </plugin>

@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.AppServer;
+import org.eclipse.tomcat.AppServer;
 
 /**
  * Help application.

@@ -6,12 +6,12 @@ package org.eclipse.help.internal;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.filter.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
+import org.eclipse.tomcat.*;
 /**
  * The actual implementation of the help system plugin.
  */

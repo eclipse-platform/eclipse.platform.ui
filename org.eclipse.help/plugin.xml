@@ -1,65 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- ================================================= -->
-<!-- Help System plugin                                -->
-<!-- ================================================= -->
-
 <plugin
-	name = "%help_plugin_name"
-	id = "org.eclipse.help"
-	version = "2.1.0"
-	provider-name = "%providerName"
-	class="org.eclipse.help.internal.HelpPlugin">
+   id="org.eclipse.help"
+   name="%help_plugin_name"
+   version="2.1.0"
+   provider-name="%providerName"
+   class="org.eclipse.help.internal.HelpPlugin">
 
-	<requires>
-		<import plugin="org.apache.lucene"/>
-		<import plugin="org.apache.xerces"/>
-	</requires>
+   <runtime>
+      <library name="help.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.apache.lucene"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.tomcat"/>
+   </requires>
 
-	<runtime>
-		<library name="help.jar">
-			<export name="*"/>
-		</library>
-	</runtime>
 
-	<!-- Extension points -->
-	<extension-point id="app-server" name="%app_server" />
-	<extension-point id="contexts" name="%contexts_extention_point_name"/>
-	<extension-point id="luceneAnalyzer" name="%lucene_analyzer" />
-	<extension-point id="prebuiltIndex" name="%prebuilt_index" />
-	<extension-point id="support" name="%support_extention_point_name"/>
-	<extension-point id="toc" name="%toc_extention_point_name"/>
-   
-	<!--  Help URL protocols -->
-	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="help" class="org.eclipse.help.internal.protocols.URLHandler"/> 
-		<handler protocol="search" class="org.eclipse.help.internal.protocols.URLHandler"/> 
-		<handler protocol="links" class="org.eclipse.help.internal.protocols.URLHandler"/> 
-	</extension> 
-	
-	<!-- Stand-alone infocenter application -->
-	<extension point="org.eclipse.core.runtime.applications" id="infocenterApplication">
-		<application> 
-			<run class="org.eclipse.help.internal.HelpApplication">
-				<parameter name="mode" value="infocenter"/> 
-			</run>
-		</application>
-	</extension>
-	<!-- Stand-alone help application -->
-	<extension point="org.eclipse.core.runtime.applications" id="helpApplication">
-		<application> 
-			<run class="org.eclipse.help.internal.HelpApplication">
-				<parameter name="mode" value="standalone"/> 
-			</run>
-		</application>
-	</extension>
+<!-- Extension points -->
+   <extension-point id="app-server" name="%app_server"/>
+   <extension-point id="contexts" name="%contexts_extention_point_name"/>
+   <extension-point id="luceneAnalyzer" name="%lucene_analyzer"/>
+   <extension-point id="prebuiltIndex" name="%prebuilt_index"/>
+   <extension-point id="support" name="%support_extention_point_name"/>
+   <extension-point id="toc" name="%toc_extention_point_name"/>
 
-	<!-- Text Analyzers for search -->
-	<extension point="org.eclipse.help.luceneAnalyzer" id="org.eclipse.help.Analyzer_en">
-		<analyzer locale="en" class="org.eclipse.help.internal.search.Analyzer_en" />
-	</extension>
-	<extension point="org.eclipse.help.luceneAnalyzer" id="org.eclipse.help.Analyzer_de">
-		<analyzer locale="de" class="org.apache.lucene.analysis.de.GermanAnalyzer" />
-	</extension>   
-      
+<!--  Help URL protocols -->
+   <extension
+         point="org.eclipse.core.runtime.urlHandlers">
+      <handler
+            class="org.eclipse.help.internal.protocols.URLHandler"
+            protocol="help">
+      </handler>
+      <handler
+            class="org.eclipse.help.internal.protocols.URLHandler"
+            protocol="search">
+      </handler>
+      <handler
+            class="org.eclipse.help.internal.protocols.URLHandler"
+            protocol="links">
+      </handler>
+   </extension>
+<!-- Stand-alone infocenter application -->
+   <extension
+         id="infocenterApplication"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.help.internal.HelpApplication">
+            <parameter
+                  name="mode"
+                  value="infocenter">
+            </parameter>
+         </run>
+      </application>
+   </extension>
+<!-- Stand-alone help application -->
+   <extension
+         id="helpApplication"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.help.internal.HelpApplication">
+            <parameter
+                  name="mode"
+                  value="standalone">
+            </parameter>
+         </run>
+      </application>
+   </extension>
+<!-- Text Analyzers for search -->
+   <extension
+         id="org.eclipse.help.Analyzer_en"
+         point="org.eclipse.help.luceneAnalyzer">
+      <analyzer
+            locale="en"
+            class="org.eclipse.help.internal.search.Analyzer_en">
+      </analyzer>
+   </extension>
+   <extension
+         id="org.eclipse.help.Analyzer_de"
+         point="org.eclipse.help.luceneAnalyzer">
+      <analyzer
+            locale="de"
+            class="org.apache.lucene.analysis.de.GermanAnalyzer">
+      </analyzer>
+   </extension>
+
 </plugin>

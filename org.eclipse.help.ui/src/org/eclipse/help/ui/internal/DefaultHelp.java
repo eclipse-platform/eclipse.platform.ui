@@ -10,6 +10,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.tomcat.*;
 
 /**
  * This class is an implementation of the pluggable help support.

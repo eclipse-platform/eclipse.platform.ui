@@ -4,9 +4,9 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.AppServer;
 import org.eclipse.help.ui.browser.IBrowser;
 import org.eclipse.help.ui.internal.browser.BrowserManager;
+import org.eclipse.tomcat.AppServer;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -37,9 +37,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		// stop the web app
-		if (AppServer.isRunning()) {
-			AppServer.remove("help", "org.eclipse.help.webapp");
-		}
+		AppServer.remove("help", "org.eclipse.help.webapp");
 		BrowserManager.getInstance().closeAll();
 		super.shutdown();
 	}
