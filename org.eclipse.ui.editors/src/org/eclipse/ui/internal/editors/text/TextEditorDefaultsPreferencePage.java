@@ -68,7 +68,7 @@ import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.Enu
  */
 public class TextEditorDefaultsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	private abstract class Initializer {
+	private static abstract class Initializer {
 
 		protected final Preference fPreference;
 		
