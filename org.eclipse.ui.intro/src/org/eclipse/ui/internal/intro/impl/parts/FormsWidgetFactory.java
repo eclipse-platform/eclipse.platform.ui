@@ -132,8 +132,11 @@ public class FormsWidgetFactory {
     }
 
     private void updateLayoutData(Control c, AbstractIntroElement element) {
+        TableWrapData currentTd = (TableWrapData) c.getLayoutData();
+        if (currentTd != null)
+                return;
         TableWrapData td = new TableWrapData(TableWrapData.FILL,
-                TableWrapData.TOP);
+                TableWrapData.FILL);
         td.grabHorizontal = true;
         td.colspan = styleManager
                 .getColSpan((AbstractBaseIntroElement) element);
@@ -214,10 +217,9 @@ public class FormsWidgetFactory {
             control = container;
         } else {
             ImageHyperlink imageLink = toolkit.createImageHyperlink(parent,
-                    SWT.WRAP | SWT.CENTER);
+                    SWT.WRAP);
             imageLink.setImage(linkImage);
-            TableWrapData td = new TableWrapData(TableWrapData.FILL,
-                    TableWrapData.CENTER);
+            TableWrapData td = new TableWrapData();
             td.grabHorizontal = true;
             imageLink.setLayoutData(td);
             linkControl = imageLink;
@@ -241,8 +243,6 @@ public class FormsWidgetFactory {
         if (text.isFormatted()) {
             FormText formText = toolkit.createFormText(parent, true);
             formText.addHyperlinkListener(hyperlinkAdapter);
-            formText.setLayoutData(new TableWrapData(TableWrapData.FILL,
-                    TableWrapData.FILL));
             formText.setText(generateFormText(text.getText()), true, true);
             return formText;
         } else

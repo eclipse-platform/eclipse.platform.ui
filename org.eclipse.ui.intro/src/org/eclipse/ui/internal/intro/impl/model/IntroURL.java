@@ -167,7 +167,6 @@ public class IntroURL implements IIntroURL {
     private void handleStandbyStateChanged(String partId, String input) {
         // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = getCustomizableIntroPart(true);
-        introPart.getControl().setRedraw(false);
         PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart,
                 true);
         StandbyPart standbyPart = (StandbyPart) introPart
@@ -199,7 +198,6 @@ public class IntroURL implements IIntroURL {
         // we do not have a valid partId or we failed to instantiate part or
         // create the part content, show Context help part.
         standbyPart.setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
-        introPart.getControl().setRedraw(true);
     }
 
     /**
