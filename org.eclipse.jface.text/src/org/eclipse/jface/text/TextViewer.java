@@ -1963,7 +1963,7 @@ public class TextViewer extends Viewer implements
 	protected void selectionChanged(int offset, int length) {
 		if (redraws()) {
 			IRegion r= widgetRange2ModelRange(new Region(offset, length));
-			if (!r.equals(fLastSentSelection))  {
+			if ((r != null && !r.equals(fLastSentSelection)) || r == null)  {
 				fLastSentSelection= r;
 				ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
 				SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
