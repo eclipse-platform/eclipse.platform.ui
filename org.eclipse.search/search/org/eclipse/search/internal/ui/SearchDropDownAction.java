@@ -52,12 +52,13 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 				checkedOne= true;
 			addActionToMenu(menu, action);
 		}
+		new MenuItem(menu, SWT.SEPARATOR);
 		if (iter.hasNext()) {
-			new MenuItem(menu, SWT.SEPARATOR);
 			Action others= new ShowSearchesAction();
 			others.setChecked(!checkedOne);
 			addActionToMenu(menu, others);
 		}
+		addActionToMenu(menu, new RemoveAllSearchesAction());
 		return menu;
 	}
 

@@ -4,28 +4,28 @@
  */
 package org.eclipse.search.internal.ui;
 
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.swt.custom.BusyIndicator;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.swt.custom.BusyIndicator;
 
 class RemoveResultAction extends Action {
 
 	private ISelectionProvider fSelectionProvider;
 
-	public RemoveResultAction(ISelectionProvider provider) {
+	public RemoveResultAction(ISelectionProvider provider, boolean stringsDependOnMatchCount) {
 		fSelectionProvider= provider;
-		if (getSelectedEntriesCount() > 1) {
+		if (!stringsDependOnMatchCount || getSelectedEntriesCount() > 1) {
 			setText(SearchMessages.getString("SearchResultView.removeEntries.text")); //$NON-NLS-1$
 			setToolTipText(SearchMessages.getString("SearchResultView.removeEntries.tooltip")); //$NON-NLS-1$
 		}

@@ -4,18 +4,17 @@
  */
 package org.eclipse.search.internal.ui;
 
-import java.util.Iterator;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.ui.ISearchResultViewEntry;
 
 class RemoveMatchAction extends Action {
 
@@ -23,7 +22,6 @@ class RemoveMatchAction extends Action {
 
 	public RemoveMatchAction(ISelectionProvider provider) {
 		super(SearchMessages.getString("SearchResultView.removeMatch.text")); //$NON-NLS-1$
-		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 		setToolTipText(SearchMessages.getString("SearchResultView.removeMatch.tooltip")); //$NON-NLS-1$
 		fSelectionProvider= provider;
 	}
