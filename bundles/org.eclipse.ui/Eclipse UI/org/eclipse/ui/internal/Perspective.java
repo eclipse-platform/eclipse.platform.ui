@@ -409,7 +409,7 @@ public IViewReference [] getViewReferences() {
 
 	// Copy fast views.
 	int nView = 0;
-	for (int i = 0; i < panes.size(); i ++) {
+	for (int i = 0; i < fastViews.size(); i ++) {
 		ViewSite site = (ViewSite)((IViewPart)fastViews.get(i)).getSite();
 		ViewPane pane = (ViewPane)site.getPane();
 		resultArray[nView] = pane.getViewReference();
