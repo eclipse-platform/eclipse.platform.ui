@@ -445,22 +445,35 @@ public interface IDebugUIConstants {
 	/**
 	 * Launch configuartion attribute - the perspective to
 	 * switch to when a launch configuration is launched in
-	 * run mode (value <code>org.eclipse.debug.ui.launch_run_perspective</code>).
+	 * run mode (value <code>org.eclipse.debug.ui.target_run_perspective</code>).
 	 * Value is a string corresponding to a perspective identifier,
 	 * or <code>null</code> indicating no perspective change.
 	 * 
 	 * @since 2.0
 	 */
-	public static final String ATTR_RUN_PERSPECTIVE = PLUGIN_ID + ".launch_run_perspective";	
+	public static final String ATTR_TARGET_RUN_PERSPECTIVE = PLUGIN_ID + ".target_run_perspective";	
 	
 	/**
 	 * Launch configuartion attribute - the perspective to
 	 * switch to when a launch configuration is launched in
-	 * debug mode (value <code>org.eclipse.debug.ui.launch_run_perspective</code>).
+	 * debug mode (value <code>org.eclipse.debug.ui.target_run_perspective</code>).
 	 * Value is a string corresponding to a perspective identifier,
 	 * or <code>null</code> indicating no perspective change.
 	 * 
 	 * @since 2.0
 	 */
-	public static final String ATTR_DEBUG_PERSPECTIVE = PLUGIN_ID + ".launch_debug_perspective";		
+	public static final String ATTR_TARGET_DEBUG_PERSPECTIVE = PLUGIN_ID + ".target_debug_perspective";		
+	
+	/**
+	 * Launch configuartion attribute - the perspective to
+	 * switch to when a thread suspends
+	 * (value <code>org.eclipse.debug.ui.target_suspend_perspective</code>).
+	 * Value is a string corresponding to a perspective identifier,
+	 * or <code>null</code> indicating no perspective change.
+	 * When there is no perspective change, the a debug view is opened
+	 * in the current perspective.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ATTR_TARGET_SUSPEND_PERSPECTIVE = PLUGIN_ID + ".target_suspend_perspective";	
 }

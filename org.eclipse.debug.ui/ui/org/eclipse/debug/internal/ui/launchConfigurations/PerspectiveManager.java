@@ -6,12 +6,17 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
 
 import java.text.MessageFormat;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
@@ -30,7 +35,7 @@ import org.eclipse.ui.WorkbenchException;
  * @see IDebugUIContants.ATTR_RUN_PERSPECTIVE
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
  */
-public class PerspectiveManager implements ILaunchListener {
+public class PerspectiveManager implements ILaunchListener, IDebugEventListener {
 	
 	/**
 	 * Singleton perspective manager
@@ -56,19 +61,23 @@ public class PerspectiveManager implements ILaunchListener {
 	/**
 	 * Called by the debug ui plug-in on startup.
 	 * The perspective manager starts listening for
-	 * launches to be registered.
+	 * launches to be registered, and for debug events.
 	 */
 	public void startup() {
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin plugin = DebugPlugin.getDefault();
+		plugin.getLaunchManager().addLaunchListener(this);
+		plugin.addDebugEventListener(this);
 	}
 
 	/**
 	 * Called by the debug ui plug-in on shutdown.
 	 * The perspective manager de-registers as a 
-	 * launch listener.	
+	 * launch listener, and debug event listener
 	 */
 	public void shutdown() {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin plugin = DebugPlugin.getDefault();
+		plugin.getLaunchManager().removeLaunchListener(this);
+		plugin.removeDebugEventListener(this);
 	}
 
 	/**
@@ -86,25 +95,18 @@ public class PerspectiveManager implements ILaunchListener {
 	 * @see ILaunchListener#launchRegistered(ILaunch)
 	 */
 	public void launchRegistered(ILaunch launch) {
-		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		final ILaunchConfiguration config = launch.getLaunchConfiguration();
 		if (config != null) {
 			String mode = launch.getLaunchMode();
 			String perspectiveId = null;
 			try {
 				if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-					perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_DEBUG_PERSPECTIVE, null);
+					perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
 				} else {
-					perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_RUN_PERSPECTIVE, null);
+					perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
 				}
-			} catch (CoreException e) {
-				final CoreException ce = e;
-				final ILaunchConfiguration lc = config;
-				async(new Runnable() {
-					public void run() {
-						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", 
-						 MessageFormat.format("Unable to switch perpsectives as specified by launch configuration: {0}", new String[] {lc.getName()}),
-						 ce.getStatus());
-					}});
+			} catch (final CoreException e) {
+				switchFailed(e.getStatus(), config.getName());
 				return;
 			}
 			if (perspectiveId != null) {
@@ -129,7 +131,7 @@ public class PerspectiveManager implements ILaunchListener {
 				async(new Runnable() {
 					public void run() {
 						try {
-							window.openPage(id, null);
+							window.openPage(id, ResourcesPlugin.getWorkspace().getRoot());
 						} catch (WorkbenchException e) {
 							DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
 							"Error", 
@@ -177,12 +179,64 @@ public class PerspectiveManager implements ILaunchListener {
 	}
 	
 	/**
-	 * Utility method to submit an asychronous runnable to the UI
+	 * Utility method to submit an asnychronous runnable to the UI
 	 */
 	protected void async(Runnable r) {
 		Display d = DebugUIPlugin.getDefault().getDisplay();
 		if (d != null) {
 			d.asyncExec(r);
 		}
+	}
+	
+	/**
+	 * Utility method to submit a synchronous runnable to the UI
+	 */
+	protected void sync(Runnable r) {
+		Display d = DebugUIPlugin.getDefault().getDisplay();
+		if (d != null) {
+			d.syncExec(r);
+		}
+	}	
+	
+	/**
+	 * When a thread suspends, switch perspectives as defined by
+	 * the associated lanuch configuration.
+	 * 
+	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 */
+	public void handleDebugEvent(DebugEvent event) {
+		if (event.getKind() == DebugEvent.SUSPEND) {
+			Object source = event.getSource();
+			if (source instanceof IDebugElement) {
+				ILaunch launch = ((IDebugElement)source).getLaunch();
+				if (launch != null) {
+					ILaunchConfiguration config = launch.getLaunchConfiguration();
+					if (config != null) {
+						String perspectiveId = null;
+						try {
+							perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_SUSPEND_PERSPECTIVE, null);
+						} catch (CoreException e) {
+							switchFailed(e.getStatus(), config.getName());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Reports failure to switch perspectives to the user
+	 * 
+	 * @param status exception status describing failure
+	 * @param configName the name of the launch configuration that the
+	 *  failure is associated with
+	 */
+	protected void switchFailed(final IStatus status, final String configName) {
+		sync(new Runnable() {
+			public void run() {
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", 
+				 MessageFormat.format("Unable to switch perpsectives as specified by launch configuration: {0}", new String[] {configName}),
+				 status);
+			}});
 	}
 }
