@@ -45,6 +45,8 @@ import org.eclipse.team.internal.core.subscribers.BatchingLock.ThreadInfo;
  * <li>Change events and event batching (run)
  * <li>Thread-safety
  * </ul>
+ * 
+ * @since 3.0
  */
 public class ThreeWaySynchronizer implements IFlushOperation {
 
