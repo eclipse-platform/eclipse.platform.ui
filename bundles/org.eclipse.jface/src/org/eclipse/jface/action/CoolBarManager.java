@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,14 +24,17 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 
+import org.eclipse.jface.util.Assert;
+
 /**
  * A cool bar manager is a contribution manager which realizes itself and its items
- * in a cool bar control; 
+ * in a cool bar control.
  * <p>
  * This class may be instantiated; it may also be subclassed.
  * </p>
  * 
- * @see ICoolBarManager
+ * @see #ICoolBarManager
+ * @since 3.0
  */
 public class CoolBarManager extends ContributionManager implements ICoolBarManager {
 
@@ -41,14 +44,9 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	private int itemStyle = SWT.NONE;
 	
 	/**
-	 * A user created separator.
+	 * A separator created by the end user.
 	 */
-	public final static String USER_SEPARATOR = "UserSeparator";
-	
-	/**
-	 * Attribute String: The contribution item id.
-	 */
-	public final static String ATT_ITEMID = "itemId";
+	private final static String USER_SEPARATOR = "UserSeparator"; //$NON-NLS-1$
 	
 	/** 
 	 * The cool bar control; <code>null</code> before creation
@@ -57,7 +55,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	private CoolBar coolBar = null;	
 	
 	/** 
-	 * MenuManager for coolbar popup menu.
+	 * MenuManager for cool bar pop-up menu, or null if none.
 	 */
 	private MenuManager contextMenuManager = null;
 	
@@ -67,20 +65,19 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	private ArrayList cbItemsCreationOrder = new ArrayList();
 	
 	/**
-	 * Creates a new cool bar manager with the default SWT button style.
-	 * Use the <code>createControl</code> method to create the 
-	 * cool bar control.
+	 * Creates a new cool bar manager with the default style.
+	 * Equivalent to <code>CoolBarManager(SWT.NONE)</code>.
 	 */
 	public CoolBarManager() {
+		// do nothing
 	}
 	
 	/**
-	 * Creates a cool bar manager with the given SWT button style.
-	 * Use the <code>createControl</code> method to create the 
-	 * cool bar control.
+	 * Creates a cool bar manager with the given SWT style.
+	 * Calling <code>createControl</code> will create the cool bar control.
 	 *
-	 * @param style the cool bar item style
-	 * @see org.eclipse.swt.widgets.CoolBar for valid style bits
+	 * @param style the cool bar item style; see 
+	 * {@link org.eclipse.swt.widgets.CoolBar CoolBar} for for valid style bits
 	 */
 	public CoolBarManager(int style) {
 		itemStyle= style;
@@ -91,17 +88,20 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * This manager becomes responsible for the control, and will
 	 * dispose of it when the manager is disposed.
 	 *
-	 * @param coolbar the tool bar control
+	 * @param coolBar the cool bar control
 	 */
-	public CoolBarManager(CoolBar coolbar) {
+	public CoolBarManager(CoolBar coolBar) {
 		this();
-		this.coolBar = coolbar;
+		Assert.isNotNull(coolBar);
+		this.coolBar = coolBar;
+		itemStyle = coolBar.getStyle();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ICoolBarManager#add(org.eclipse.jface.action.IToolBarManager)
 	 */
 	public void add(IToolBarManager toolBarManager) {
+		Assert.isNotNull(toolBarManager);
 		super.add(new ToolBarContributionItem(toolBarManager));
 	}
 	
@@ -113,7 +113,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * @return the cool bar control
 	 */
 	public CoolBar createControl(Composite parent) {
-		if (!coolBarExist() && parent != null) {
+		Assert.isNotNull(parent);
+		if (!coolBarExist()) {
 			coolBar = new CoolBar(parent, itemStyle);
 			coolBar.setMenu(getContextMenuControl());
 			coolBar.setLocked(false);
@@ -126,19 +127,23 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 		}
 		return coolBar;
 	}
-	/*
-	 * (non-Javadoc)
+	
+	/**
+	 * Subclasses may extend this <code>ContributionManager</code> method, but
+	 * must call <code>super.itemAdded</code>.
+	 * 
 	 * @see org.eclipse.jface.action.ContributionManager#itemAdded(org.eclipse.jface.action.IContributionItem)
 	 */
 	protected void itemAdded(IContributionItem item) {
+		Assert.isNotNull(item);
 		super.itemAdded(item);
 		int insertedAt = indexOf(item);
 		cbItemsCreationOrder.add(Math.min(Math.max(insertedAt, 0), cbItemsCreationOrder.size()),item);
 	}
 	
 	/**
-	 * Restores the canonical order of the cool bar manager. The canonical order is the order
-	 * in which the contribution items where created.
+	 * Restores the canonical order of this cool bar manager. The canonical order
+	 * is the order in which the contribution items where added.
 	 */
 	public void resetLayout() {
 		for (ListIterator iterator=cbItemsCreationOrder.listIterator();iterator.hasNext();) {
@@ -165,8 +170,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 				// If Contribution Item is a toolbar then it will dispose of all the nested
 				// contribution items.
 				items[i].dispose();
-				
-				// @issue: How to delete the CoolItems from CoolBar?
 			}
 			coolBar.dispose();
 			coolBar = null;
@@ -180,11 +183,11 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	}
 	
 	/**
-	 * Returns whether the cool bar control is created
-	 * and not disposed.
+	 * Returns whether the cool bar control has been created
+	 * and not yet disposed.
 	 * 
-	 * @return <code>true</code> if the control is created
-	 *	and not disposed, <code>false</code> otherwise
+	 * @return <code>true</code> if the control has been created
+	 *	and not yet disposed, <code>false</code> otherwise
 	 */
 	private boolean coolBarExist() {
 		return coolBar != null && !coolBar.isDisposed(); 
@@ -193,17 +196,17 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	/**
 	 * Returns the cool bar control for this manager.
 	 *
-	 * @return the cool bar control, or <code>null</code>
-	 *  if none (before creating or after disposal)
+	 * @return the cool bar control, or <code>null</code> if none
 	 */
 	public CoolBar getControl() {
 		return coolBar;
 	}
 	
 	/**
-	 * Finds the cool item that is associated with the given contribution item.
+	 * Finds the cool item associated with the given contribution item.
+	 * 
 	 * @param item the contribution item
-	 * @return the associated cool item if found, <code>null</code> otherwise.
+	 * @return the associated cool item, or <code>null</code> if not found
 	 */
 	private CoolItem findCoolItem(IContributionItem item) {
 		if (coolBar == null) return null;
@@ -218,7 +221,8 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	
 	
 	/**
-	 * Disposes the cool item widget.
+	 * Disposes the given cool item.
+	 * 
 	 * @param item the cool item to dispose
 	 */
 	private void dispose(CoolItem item) {
@@ -236,11 +240,14 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 		}
 	}
 
-	/*
-	 *  (non-Javadoc)
+	/**
+	 * Subclasses may extend this <code>ContributionManager</code> method, but
+	 * must call <code>super.itemRemoved</code>.
+	 * 
 	 * @see org.eclipse.jface.action.ContributionManager#itemRemoved(org.eclipse.jface.action.IContributionItem)
 	 */
 	protected void itemRemoved(IContributionItem item) {
+		Assert.isNotNull(item);
 		super.itemRemoved(item);
 		CoolItem coolItem = findCoolItem(item);
 		if (coolItem != null) {
@@ -408,6 +415,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 		contributionList.add(insertAt,cbItem);
 			
 	}
+	
 	/**
 	 * Positions the list iterator to the end of all the separators. Calling
 	 * <code>next()</code> the iterator should return the immediate object following the last
@@ -466,12 +474,16 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	}
 	
 	/**
-	 * Synchronizes the visual order of the cool items with the internal data structure. This
-	 * method should be called before accessing the internal data structure to make sure that
-	 * the order is correct. It is also important to note that this method differs with 
-	 * <code>update()</code> by transfering code in the opossite direction. Whild <code>update()</code>
-	 * changes the visual order to match the internal structre, <code>refresh</code> changes the 
-	 * internal structre to match the visual order.
+	 * Synchronizes the visual order of the cool items in the control with 
+	 * this manager's internal data structures. This method should be called before 
+	 * requesting the order of the contribution items to ensure that the order is
+	 * accurate.
+	 * <p>
+	 * Note that <code>update()</code> and <code>refresh()</code> are converses:
+	 * <code>update()</code> changes the visual order to match the internal
+	 * structures, and <code>refresh</code> changes the internal structures to
+	 * match the visual order.
+	 * </p>
 	 */
 	public void refresh() {
 		try {
@@ -579,23 +591,26 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	}
 
 	/*
-	 * Used for debuging. Prints all the items in the internal structure
+	 * Used for debuging. Prints all the items in the internal structures.
 	 */
 	private void printContributions(ArrayList contributionList) {
 		int index = 0;
-		System.out.println("----------------------------------\n");
+		System.out.println("----------------------------------\n"); //$NON-NLS-1$
 		for (Iterator i = contributionList.iterator();i.hasNext();index++) {
 			IContributionItem item = (IContributionItem)i.next();
 			if (item.isSeparator()) {
-				System.out.println("Separator");
+				System.out.println("Separator"); //$NON-NLS-1$
 			}else  {
-				System.out.println(index + ". Item id: " + item.getId() + " - is Visible: " + item.isVisible());
+				System.out.println(index + ". Item id: " + item.getId() + " - is Visible: " + item.isVisible());  //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
 	}
 	
 
-	/* (non-Javadoc)
+	/**
+	 * Subclasses may extend this <code>IContributionManager</code> method, but
+	 * must call <code>super.update</code>.
+	 * 
 	 * @see org.eclipse.jface.action.IContributionManager#update(boolean)
 	 */
 	public void update(boolean force) {
@@ -636,7 +651,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 								}
 								// guarantee fillIndex < coolBar.getItemCount()
 								fillIndex = Math.min(fillIndex,coolBar.getItemCount());
-								//@issue: empty contribution item will not be removed
 								contributionItems[i].fill(coolBar,fillIndex);
 								
 								if (prevItemCount >= coolBar.getItemCount()) {
@@ -699,19 +713,17 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 						updateTabOrder();
 					}
 					setDirty(false);
-				}catch (Throwable t) {
-					t.printStackTrace();
-				}finally {
+				} finally {
 					coolBar.setRedraw(true);
 				}
 				
 			} // if (coolBarExist())
 		}// if (isDirty() || force) 
-		
 	}
 	
 	/**
 	 * Returns the number of rows that should be displayed visually.
+	 * 
 	 * @param items the array of contributin items
 	 * @return the number of rows
 	 */
@@ -733,10 +745,11 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	/**
 	 * Returns the control of the Menu Manager. If the menu manager does not have a control
 	 * then one is created.
-	 * @return menu widget associated with manager
+	 * 
+	 * @return menu control associated with manager, or null if none
 	 */
-	public Menu getContextMenuControl() {
-		if ( (contextMenuManager != null) && (coolBar != null) ) {			
+	private Menu getContextMenuControl() {
+		if ((contextMenuManager != null) && (coolBar != null) ) {			
 			Menu menuWidget = contextMenuManager.getMenu();
 			if ((menuWidget == null) || (menuWidget.isDisposed())) {
 				menuWidget = contextMenuManager.createContextMenu(coolBar);
@@ -746,16 +759,14 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 		return null;
 	}
 	
-	/*
-	 *  (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
 	 */
 	public IMenuManager getContextMenuManager() {
 		return contextMenuManager;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ICoolBarManager#setContextMenuManager(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void setContextMenuManager(IMenuManager contextMenuManager) {
@@ -770,7 +781,9 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * @see org.eclipse.jface.action.ICoolBarManager#isLayoutLocked()
 	 */
 	public boolean getLockLayout() {
-		if (!coolBarExist()) return false;
+		if (!coolBarExist()) {
+			return false;
+		}
 		return coolBar.getLocked();
 	}
 	
@@ -779,7 +792,9 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * @see org.eclipse.jface.action.ICoolBarManager#lockLayout(boolean)
 	 */
 	public void setLockLayout(boolean value) {
-		if (!coolBarExist()) return;
+		if (!coolBarExist()) {
+			return;
+		}
 		coolBar.setLocked(value);
 	}
 	

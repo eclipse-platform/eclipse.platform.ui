@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.jface.util.Assert;
+
 /**
  * A <code>SubCoolBarManager</code> monitors the additional and removal of 
  * items from a parent manager so that visibility of the entire set can be changed as a
  * unit.
+ * 
+ * @since 3.0
  */
-public class SubCoolBarManager	extends SubContributionManager implements ICoolBarManager {
+public class SubCoolBarManager extends SubContributionManager implements ICoolBarManager {
 
 	/**
 	 * Constructs a new manager.
@@ -26,12 +30,14 @@ public class SubCoolBarManager	extends SubContributionManager implements ICoolBa
 	 */
 	public SubCoolBarManager(ICoolBarManager mgr) {
 		super(mgr);
+		Assert.isNotNull(mgr);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ICoolBarManager#add(org.eclipse.jface.action.IToolBarManager)
 	 */
 	public void add(IToolBarManager toolBarManager) {
+		Assert.isNotNull(toolBarManager);
 		super.add(new ToolBarContributionItem(toolBarManager));
 	}
 
@@ -45,7 +51,9 @@ public class SubCoolBarManager	extends SubContributionManager implements ICoolBa
 	}
 	
 	/**
-	 * Returns the parent coolbar manager that this sub-manager contributes to.
+	 * Returns the parent cool bar manager that this sub-manager contributes to.
+	 * 
+	 * @return the parent cool bar manager 
 	 */
 	protected final ICoolBarManager getParentCoolBarManager() {
 		// Cast is ok because that's the only
@@ -75,7 +83,9 @@ public class SubCoolBarManager	extends SubContributionManager implements ICoolBa
 	/* (non-Javadoc)
 	 * In SubCoolBarManager we do nothing.
 	 */
-	public void setContextMenuManager(IMenuManager menuManager) {}
+	public void setContextMenuManager(IMenuManager menuManager) {
+		// do nothing
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IContributionManager#update(boolean)
@@ -85,7 +95,6 @@ public class SubCoolBarManager	extends SubContributionManager implements ICoolBa
 		// call <code>setVisible</code> and then force an update.  At that
 		// point we need to update the parent.
 		getParentCoolBarManager().update(force);
-
 	}
 
 }

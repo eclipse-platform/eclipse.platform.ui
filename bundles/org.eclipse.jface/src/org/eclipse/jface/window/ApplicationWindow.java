@@ -92,6 +92,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	 * Cool bar manager, or <code>null</null> if none (default).
 	 * 
 	 * @see #addCoolBar
+	 * 
+	 * @since 3.0
 	 */
 	private CoolBarManager coolBarManager = null;
 	
@@ -246,6 +248,8 @@ protected void addToolBar(int style) {
  * Configures this window to have a cool bar.
  * Does nothing if it already has one.
  * This method must be called before this window's shell is created.
+ * 
+ * @since 3.0
  */
 protected void addCoolBar(int style) {
 	if ((getShell() == null) && (coolBarManager == null) && (coolBarManager == null)) {
@@ -344,6 +348,8 @@ protected ToolBarManager createToolBarManager(int style) {
  * Subclasses may override this method to customize the cool bar manager.
  * </p>
  * @return a cool bar manager
+ * 
+ * @since 3.0
  */
 protected CoolBarManager createCoolBarManager(int style) {
 	return new CoolBarManager(style);
@@ -443,6 +449,8 @@ public ToolBarManager getToolBarManager() {
  * @return the cool bar manager, or <code>null</code> if
  *   this window does not have a cool bar
  * @see #addCoolBar
+ * 
+ * @since 3.0
  */
 public CoolBarManager getCoolBarManager() {
 	return coolBarManager;
@@ -467,6 +475,8 @@ protected Control getToolBarControl() {
  * Subclasses may override this method to customize the cool bar manager.
  * </p>
  * @return a Control
+ * 
+ * @since 3.0
  */
 protected Control getCoolBarControl() {
 	if (coolBarManager == null) return null;
@@ -607,6 +617,8 @@ protected boolean toolBarChildrenExist() {
  * coolbar control.
  * <p>
  * @return boolean true if children exist, false otherwise
+ * 
+ * @since 3.0
  */
 protected boolean coolBarChildrenExist() {
 	Control coolControl = getCoolBarControl();

@@ -38,7 +38,9 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 	private ToolBar toolBar = null;
 	
 	/**
-	 * The menu manager to the context menu associated with the toolbar
+	 * The menu manager to the context menu associated with the toolbar.
+	 * 
+	 * @since 3.0
 	 */
 	private MenuManager contextMenuManager = null;
 	
@@ -312,17 +314,21 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 	}
 	
 	/**
-	 * @return Returns the contextMenuManager.
+	 * Returns the context menu manager for this tool bar manager.
+	 * 	
+	 * @return the context menu manager, or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public MenuManager getContextMenuManager() {
 		return contextMenuManager;
 	}
 	
 	/**
-	 * Sets the tool bar's menu manager to the given menu manager. If the tool bar
-	 * widget is created it also adds the menu widget to the cool bar. If the menu manager 
-	 * hasn't created a menu widget then one is created.
-	 * @param contextMenuManager The contextMenuManager to set.
+	 * Sets the context menu manager for this tool bar manager to the given menu manager.
+	 * If the tool bar control exists, it also adds the menu control to the tool bar.
+	 * 	
+	 * @param contextMenuManager the context menu manager, or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public void setContextMenuManager(MenuManager contextMenuManager) {
 		this.contextMenuManager = contextMenuManager;

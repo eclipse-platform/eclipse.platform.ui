@@ -218,9 +218,11 @@ public int indexOf(String id) {
 
 /**
  * Returns the index of the object in the internal structure. This is different from 
- * <code>indexOf(String id)</code> since some contribution items may not have an id. 
+ * <code>indexOf(String id)</code> since some contribution items may not have an id.
+ *  
  * @param item the contribution item 
- * @return <code>int</code> the index or -1 if the item is not found.
+ * @return the index, or -1 if the item is not found
+ * @since 3.0
  */
 protected int indexOf(IContributionItem item) {
 	return contributions.indexOf(item);
@@ -383,8 +385,9 @@ public void setOverrides(IContributionManagerOverrides newOverrides) {
 
 /**
  * An internal method for setting the order of the contribution items.
- * @param items the array of contribution items to replace the existing one list of 
- * contribution items.
+ * 
+ * @param items the contribution items in the specified order
+ * @since 3.0
  */
 protected void internalSetItems(IContributionItem[] items) {
 	contributions.clear();

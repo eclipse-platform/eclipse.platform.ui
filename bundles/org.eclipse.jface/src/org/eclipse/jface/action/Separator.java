@@ -60,12 +60,12 @@ public void fill(ToolBar toolbar, int index) {
 	else
 		new ToolItem(toolbar, SWT.SEPARATOR);
 }
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- * 
+/*
+ * (non-Javadoc)
+ * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
+ * @since 3.0
  */
 public void fill(CoolBar coolBar, int index) {
-	
 }
 
 /** 

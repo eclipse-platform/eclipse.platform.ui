@@ -31,11 +31,13 @@ import org.eclipse.swt.widgets.ToolItem;
 /**
  * The <code>ToolBarContributionItem</code> class provides a wrapper for tool bar
  * managers when used in cool bar managers. It extends <code>ContributionItem</code>
- * but and provides some additional method calls to customize the size of the cool item
- * and retrieve the internal tool bar manager.
+ * but and provides some additional methods to customize the size of the cool item
+ * and to retrieve the underlying tool bar manager.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * 
+ * @since 3.0
  */
 public class ToolBarContributionItem extends ContributionItem {
 	
@@ -83,22 +85,16 @@ public class ToolBarContributionItem extends ContributionItem {
 	private int currentHeight = -1;
 	
 	/**
-	 * Attributes used when saving the state of this cool item to disk.
-	 */
-	public final static String ATT_MINIMUMITEMS = "Minimum Size";
-	public final static String ATT_CHEVRONSUPPORT = "Add Chevrons";
-	public final static String ATT_CURRENTWIDTH = "Current Width";
-	
-	/**
 	 * The widget created for this item; <code>null</code>
 	 * before creation and after disposal.
 	 */
 	private CoolItem coolItem = null;
 	
 	/**
-	 * Creates a ToolBarContributionItem.
+	 * Creates a tool bar contribution item.
+	 * 
 	 * @param toolBarManager the tool bar manager to wrap
-	 * @param id the id of the contribution item
+	 * @param id the contribution item id, or <code>null</code> if none
 	 */
 	public ToolBarContributionItem(IToolBarManager toolBarManager, String id) {
 		super(id);
@@ -107,15 +103,18 @@ public class ToolBarContributionItem extends ContributionItem {
 	}
 	
 	/**
-	 * Convinience method that is equivalent to ToolBarContributionItem(toolBarManager,null)
-	 * @param toolBarManager the tool bar manager.
+	 * Convenience method equivalent to 
+	 * <code>ToolBarContributionItem(toolBarManager, null)</code>.
+	 * 
+	 * @param toolBarManager the tool bar manager
 	 */
 	public ToolBarContributionItem(IToolBarManager toolBarManager) {
 		this(toolBarManager,null);
 	}
 	
 	/**
-	 * Convinience method that is equivalent to ToolBarContributionItem(new ToolBarManager(),null)
+	 * Convenience method equivalent to
+	 * <code>ToolBarContributionItem(new ToolBarManager(), null)</code>.
 	 */
 	public ToolBarContributionItem() {
 		this(new ToolBarManager(), null);
@@ -123,8 +122,8 @@ public class ToolBarContributionItem extends ContributionItem {
 	
 	/**
 	 * Returns the internal tool bar manager of the contribution item.
-	 * @return the tool bar manager or <code>null</code> if one is not defined.
 	 * 
+	 * @return the tool bar manager, or <code>null</code> if one is not defined.
 	 * @see IToolBarManager
 	 */
 	public IToolBarManager getToolBarManager() {
@@ -132,7 +131,7 @@ public class ToolBarContributionItem extends ContributionItem {
 	}
 
 	/** 
-	 * Return a consistent set of wrap indices.  The return value
+	 * Returns a consistent set of wrap indices. The return value
 	 * will always include at least one entry and the first entry will 
 	 * always be zero.  CoolBar.getWrapIndices() is inconsistent 
 	 * in whether or not it returns an index for the first row.
@@ -305,12 +304,11 @@ public class ToolBarContributionItem extends ContributionItem {
 	}
 	
 	/**
-	 * Updates the cool items preffered, minumum and current size. The minumum size
-	 * can be set by the user using <code>setMinimumSize(Point)</code>. The preferred size
-	 * is calculated based on the tool bar size and extra trim.
-	 * @param changeCurrentSize true if the current size should be changed to the preferred
-	 * size, false to not change the current size.
-	 * @see ToolBarContributionItem#setMinimumSize(Point)
+	 * Updates the cool items' preferred, minimum, and current size. The preferred
+	 * size is calculated based on the tool bar size and extra trim.
+	 * 
+	 * @param changeCurrentSize <code>true</code> if the current size should be changed
+	 * to the preferred size, <code>false</code> to not change the current size
 	 */
 	public void updateSize(boolean changeCurrentSize) {
 		// cannot set size if coolItem is null
@@ -444,10 +442,10 @@ public class ToolBarContributionItem extends ContributionItem {
 
 
 	/**
-	 * Returns the minimum number of tool items to show in the cool item widget. 
-	 * @return the minimum number of tool items to show or <code>SHOWALLITEMS</code> if a value
-	 * was not set by the user.
+	 * Returns the minimum number of tool items to show in the cool item.
 	 * 
+	 * @return the minimum number of tool items to show,
+	 * or <code>SHOW_ALL_ITEMS</code> if a value was not set
 	 * @see #setMinimumItemsToShow(int)
 	 */
 	public int getMinimumItemsToShow() {
@@ -455,11 +453,12 @@ public class ToolBarContributionItem extends ContributionItem {
 	}
 
 	/**
-	 * Sets the minimum number of tool items to show in the cool item widget. If this number is less
+	 * Sets the minimum number of tool items to show in the cool item. If this number is less
 	 * than the total tool items, a chevron will appear and the hidden tool items appear in a 
-	 * drop down menu. By default all the tool items are shown in the cool item widget. 
-	 * @param minimumItemsToShow the minimum number of tool items to show. 
+	 * drop down menu. By default, all the tool items are shown in the cool item.
 	 * 
+	 * @param minimumItemsToShow the minimum number of tool items to show. 
+	 * @see #getMinimumItemsToShow()
 	 * @see #setUseChevron(boolean)
 	 */
 	public void setMinimumItemsToShow(int minimumItemsToShow) {
@@ -467,8 +466,9 @@ public class ToolBarContributionItem extends ContributionItem {
 	}
 	
 	/**
-	 * Enables or disables chevron support for the cool item. By default chevron support is 
+	 * Enables or disables chevron support for the cool item. By default, chevron support is 
 	 * enabled.
+	 * 
 	 * @param value <code>true</code> to enable chevron support, <code>false</code> otherwise.
 	 */
 	public void setUseChevron(boolean value) {
@@ -476,45 +476,50 @@ public class ToolBarContributionItem extends ContributionItem {
 	}
 	
 	/**
-	 * Returns whether there is chevron support enabled.
-	 * @return <code>true</code> if chevron support is enabled, <code>false</code> otherwise.
+	 * Returns whether chevron support is enabled.
+	 * 
+	 * @return <code>true</code> if chevron support is enabled, <code>false</code> otherwise
 	 */
 	public boolean getUseChevron() {
 		return useChevron;
 	}
 
 	/**
-	 * Returns the current width of the cool item.
-	 * @return Returns the currentSize.
+	 * Returns the current width of the corresponding cool item.
+	 * 
+	 * @return the current size
 	 */
 	public int getCurrentWidth() {
 		return currentWidth;
 	}
 	
 	/**
+	 * Returns the current height of the corresponding cool item.
 	 * 
-	 * @return currentHeight
+	 * @return the current height
 	 */
 	public int getCurrentHeight() {
 		return currentHeight;
 	}
 	
 	/**
-	 * @param currentHeight The currentHeight to set.
+	 * Sets the current height of the cool item. 
+	 * Update(SIZE) should be called to adjust the widget.
+	 * 
+	 * @param currentHeight the current height to set
 	 */
 	public void setCurrentHeight(int currentHeight) {
 		this.currentHeight = currentHeight;
 	}
 	
 	/**
-	 * Sets the current width of the cool item. Update(SIZE) should be called to adjust the
-	 * widget.
-	 * @param currentSize The currentSize to set.
+	 * Sets the current width of the cool item. 
+	 * Update(SIZE) should be called to adjust the widget.
+	 * 
+	 * @param currentWidth the current width to set
 	 */
 	public void setCurrentWidth(int currentWidth) {
 		this.currentWidth = currentWidth;
 	}
-
-
 
 }

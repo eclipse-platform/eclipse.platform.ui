@@ -75,6 +75,7 @@ public interface IContributionItem {
 	 * @param parent the parent cool bar
 	 * @param index the index where the controls are inserted,
 	 *   or <code>-1</code> to insert at the end
+	 * @since 3.0
 	 */
 	public void fill(CoolBar parent, int index);
 	/**
@@ -135,8 +136,8 @@ public interface IContributionItem {
 	 */
 	public boolean isVisible();
 	/**
-	 * Saves any state information of the widget(s) owned by this contribution item.
-	 * Usually called before the widget is disposed.
+	 * Saves any state information of the control(s) owned by this contribution item.
+	 * The contribution manager calls this method before disposing of the controls.
 	 * 
 	 * @since 3.0
 	 */
@@ -165,7 +166,7 @@ public interface IContributionItem {
 	 * Updates any SWT controls cached by this contribution item with changes
 	 * for the the given property. 
 	 * 
-	 * @param String id the di of the changed property
+	 * @param id the id of the changed property
 	 * @since 2.0
 	 */
 	public void update(String id);
