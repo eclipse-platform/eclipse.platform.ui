@@ -8,25 +8,22 @@ import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.Status;
  * Content provider for the Ant dialog: it provides the ListViewer with the targets defined in the xml file.
  */
 
-public class AntLaunchDialogContentProvider implements IStructuredContentProvider {
+public class TargetsListContentProvider implements IStructuredContentProvider {
 	
-	private static AntLaunchDialog parent;
-	private static AntLaunchDialogContentProvider instance;
+	private static TargetsListContentProvider instance;
 	
 	static {
-		instance = new AntLaunchDialogContentProvider();
+		instance = new TargetsListContentProvider();
 	}
 	
 	// private to ensure that it remains a singleton
-	private AntLaunchDialogContentProvider() {
+	private TargetsListContentProvider() {
 		super();
 	}
 	
-	public static AntLaunchDialogContentProvider getInstance(AntLaunchDialog theParent) {
-		parent = theParent;
+	public static TargetsListContentProvider getInstance() {
 		return instance;
 	}
-	
 	
 	/**
 	 * Returns the targets found in the xml file after parsing.

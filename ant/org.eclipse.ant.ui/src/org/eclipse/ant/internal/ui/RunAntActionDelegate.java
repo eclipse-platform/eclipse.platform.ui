@@ -1,10 +1,13 @@
 package org.eclipse.ant.internal.ui;
 
-import java.io.File;import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.ProjectHelper;import org.eclipse.swt.widgets.Shell;
+import org.apache.tools.ant.ProjectHelper;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ant.core.AntRunner;
-import org.eclipse.ant.core.EclipseProject;import org.eclipse.core.resources.IFile;
+import org.eclipse.ant.core.EclipseProject;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -15,7 +18,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.jface.wizard.WizardDialog;
 
 
 public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRunnableWithProgress {
@@ -40,7 +43,7 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 			IStatus status = new Status(
 				IStatus.ERROR,
 				AntUIPlugin.PI_ANTUI,
-				31415,
+				IStatus.ERROR,
 				e.getMessage(),
 				e);
 			ErrorDialog.openError(
@@ -98,22 +101,12 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 		EclipseProject project = extractProject(selection);
 		if (project == null)
 			return;
-		
-		Shell shell = getShell();
-		new AntLaunchDialog(shell,project).open();
-		
-/*		try {
-			ProgressMonitorDialog dialog= new ProgressMonitorDialog(shell);
-			dialog.run(true, true, this);
-		} catch (InvocationTargetException e) {
-			Throwable target= e.getTargetException();
-			IStatus s= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.ERROR, target.getMessage(), null);
-			ErrorDialog.openError(getShell(), "Ant", "Exception while running Ant", s);
-		} catch (InterruptedException e) {
-			// do nothing on cancel
-			return;
-		}
-*/
+			
+		AntLaunchWizard wizard = new AntLaunchWizard(project,selection);
+		wizard.setNeedsProgressMonitor(true);
+		WizardDialog dialog = new WizardDialog(getShell(),wizard);
+		dialog.create();
+		dialog.open();
 	}
 	/*
 	 * @see IWorkbenchActionDelegate
