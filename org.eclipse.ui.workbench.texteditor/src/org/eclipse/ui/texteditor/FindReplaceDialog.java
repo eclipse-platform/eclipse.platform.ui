@@ -79,9 +79,6 @@ class FindReplaceDialog extends Dialog {
 	 * Updates the find replace dialog on activation changes.
 	 */
 	class ActivationListener extends ShellAdapter {
-		
-		private boolean findFieldHadFocus;
-
 		/*
 		 * @see ShellListener#shellActivated(ShellEvent)
 		 */
@@ -101,22 +98,42 @@ class FindReplaceDialog extends Dialog {
 				fFindField.setText((String) fFindHistory.get(0));
 			else 
 				fFindField.setText(oldText);
-			if (findFieldHadFocus)
+			if (findFieldHadFocus())
 				fFindField.setSelection(new Point(0, fFindField.getText().length()));
 			fFindField.addModifyListener(fFindModifyListener);
 
 			fActiveShell= (Shell)e.widget;
 			updateButtonState();
 			
-			if (findFieldHadFocus && getShell() == fActiveShell && !fFindField.isDisposed())
+			if (findFieldHadFocus() && getShell() == fActiveShell && !fFindField.isDisposed())
 				fFindField.setFocus();
+		}
+		
+		/**
+		 * Returns <code>true</code> if the find field had focus,
+		 * <code>false</code> if it did not.
+		 * 
+		 * @return <code>true</code> if the find field had focus,
+		 *         <code>false</code> if it did not
+		 */
+		private boolean findFieldHadFocus() {
+			/*
+			 * See bug 45447. Under GTK and Motif, the focus of the find field
+			 * is already gone when shellDeactivated is called. On the other
+			 * hand focus has already been restored when shellActivated is
+			 * called.
+			 * 
+			 * Therefore, we select and give focus if either
+			 * fGiveFocusToFindField is true or the find field has focus.
+			 */
+			return fGiveFocusToFindField || okToUse(fFindField) && fFindField.isFocusControl();
 		}
 		
 		/*
 		 * @see ShellListener#shellDeactivated(ShellEvent)
 		 */
 		public void shellDeactivated(ShellEvent e) {
-			findFieldHadFocus= fFindField.isFocusControl();
+			fGiveFocusToFindField= fFindField.isFocusControl();
 
 			storeSettings();
 
@@ -190,8 +207,8 @@ class FindReplaceDialog extends Dialog {
 	private Shell fParentShell;
 	private Shell fActiveShell;
 
-	private ActivationListener fActivationListener= new ActivationListener();
-	private ModifyListener fFindModifyListener= new FindModifyListener();
+	private final ActivationListener fActivationListener= new ActivationListener();
+	private final ModifyListener fFindModifyListener= new FindModifyListener();
 
 	private Label fReplaceLabel, fStatusLabel;
 	private Button fForwardRadioButton, fGlobalRadioButton, fSelectedRangeRadioButton;
@@ -239,6 +256,13 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private Color fProposalPopupForegroundColor;
+	/**
+	 * <code>true</code> if the find field should receive focus the next time
+	 * the dialog is activated, <code>false</code> otherwise.
+	 * @since 3.0
+	 */
+	private boolean fGiveFocusToFindField= true;
+
 
 	
 	/**
@@ -971,6 +995,10 @@ class FindReplaceDialog extends Dialog {
 	private void handleDialogClose() {
 
 		// remove listeners
+		if (okToUse(fFindField)) {
+			fFindField.removeModifyListener(fFindModifyListener);
+		}
+		
 		if (fParentShell != null) {
 			fParentShell.removeShellListener(fActivationListener);
 			fParentShell= null;
@@ -1617,6 +1645,9 @@ class FindReplaceDialog extends Dialog {
 			initIncrementalBaseLocation();
 			updateButtonState();
 		}
+		
+		// see pr 51073
+		fGiveFocusToFindField= true;
 		
 		setContentAssistsEnablement(isRegExSearchAvailableAndChecked());
 	}
