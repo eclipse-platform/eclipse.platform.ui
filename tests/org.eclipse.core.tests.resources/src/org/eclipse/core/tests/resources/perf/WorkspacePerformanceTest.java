@@ -152,9 +152,10 @@ public class WorkspacePerformanceTest extends CorePerformanceTest {
 	}
 
 	public void testPerformance() {
-		//		String fileName = "c:\\temp\\" + getClassName() + "_" + System.currentTimeMillis() + ".html";
-		//		java.io.File logFile = new java.io.File(fileName);
-		//		LoggingPerformanceTestResult result = new LoggingPerformanceTestResult(logFile);
-		//		new WorkspacePerformanceTest("doTestWorkspaceOperations").run(result);
+		try {
+			doTestWorkspaceOperations();
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
 	}
 }
