@@ -13,11 +13,12 @@ package org.eclipse.ant.internal.ui.debug.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
-import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -113,7 +114,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		if (fName == null) {
 			try {
 				fName= getLaunch().getLaunchConfiguration().getAttribute(IExternalToolConstants.ATTR_LOCATION, DebugModelMessages.getString("AntDebugTarget.0")); //$NON-NLS-1$
-				fName= StringVariableManager.getDefault().performStringSubstitution(fName);
+				fName= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fName);
 			} catch (CoreException e) {
 				fName = DebugModelMessages.getString("AntDebugTarget.0"); //$NON-NLS-1$
 			}
