@@ -246,7 +246,7 @@ protected Text createText(Composite parent, FormWidgetFactory factory, int span)
 public void dispose() {
 	JFaceResources.getFontRegistry().removeListener(this);
 }
-public void doGlobalAction(String actionId) {}
+public boolean  doGlobalAction(String actionId) { return false; }
 public void expandTo(Object object) {}
 public final void fireChangeNotification(int changeType, Object changeObject) {
 	if (sectionManager == null)

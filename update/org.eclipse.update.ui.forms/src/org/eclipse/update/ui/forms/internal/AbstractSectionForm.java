@@ -62,12 +62,12 @@ public void commitChanges(boolean onSave) {
 	}
 }
 
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	Display display = getControl().getDisplay();
 	Control focusControl = display.getFocusControl();
-	if (focusControl==null) return;
+	if (focusControl==null) return false;
 
-	if (canPerformDirectly(actionId, focusControl)) return;
+	if (canPerformDirectly(actionId, focusControl)) return true;
 	Composite parent = focusControl.getParent();
 	FormSection targetSection=null;
 	while (parent!=null) {
@@ -79,8 +79,9 @@ public void doGlobalAction(String actionId) {
 		parent = parent.getParent();
 	}
 	if (targetSection!=null) {
-		targetSection.doGlobalAction(actionId);
+		return targetSection.doGlobalAction(actionId);
 	}
+	return false;
 }
 
 public void dispose() {

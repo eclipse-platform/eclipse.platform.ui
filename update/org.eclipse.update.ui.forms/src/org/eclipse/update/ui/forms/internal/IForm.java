@@ -10,7 +10,7 @@ public interface IForm {
 public void commitChanges(boolean onSave);
 public Control createControl(Composite parent);
 public void dispose();
-public void doGlobalAction(String actionId);
+public boolean doGlobalAction(String actionId);
 public void expandTo(Object object);
 public Control getControl();
 public FormWidgetFactory getFactory();

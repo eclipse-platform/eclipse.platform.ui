@@ -56,7 +56,8 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 	/**
 	 * @see IForm#doGlobalAction(String)
 	 */
-	public void doGlobalAction(String actionId) {
+	public boolean doGlobalAction(String actionId) {
+		return false;
 	}
 
 
