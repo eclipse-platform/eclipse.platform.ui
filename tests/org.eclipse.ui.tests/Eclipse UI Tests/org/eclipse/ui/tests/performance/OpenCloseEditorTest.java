@@ -38,15 +38,15 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
         assertTrue(file.exists());
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
         
-        performanceMeter.start();
         try {            
             for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+                performanceMeter.start();
                 IEditorPart part = IDE.openEditor(activePage, file, true);
                 processEvents();
                 activePage.closeEditor(part, false);
                 processEvents();
+                performanceMeter.stop();
             }
-            performanceMeter.stop();
             performanceMeter.commit();
             Performance.getDefault().assertPerformance(performanceMeter);        
         }

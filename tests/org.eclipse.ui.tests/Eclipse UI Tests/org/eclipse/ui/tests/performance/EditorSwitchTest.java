@@ -31,7 +31,7 @@ public class EditorSwitchTest extends BasicPerformanceTest {
      *            Test's name.
      */
     public EditorSwitchTest(String [] pair) { 
-        super("editorSwitchTest:" + pair[0] + "," + pair[1]);
+        super("testEditorSwitch:" + pair[0] + "," + pair[1]);
         extension1 = pair[0];
         extension2 = pair[1];
     }
@@ -60,12 +60,7 @@ public class EditorSwitchTest extends BasicPerformanceTest {
             IDE.openEditor(activePage, file2, true);
             processEvents();
             performanceMeter.stop();
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            EditorTestHelper.calmDown(500, 30000, 500);
         }
         performanceMeter.commit();
         Performance.getDefault().assertPerformance(performanceMeter);
