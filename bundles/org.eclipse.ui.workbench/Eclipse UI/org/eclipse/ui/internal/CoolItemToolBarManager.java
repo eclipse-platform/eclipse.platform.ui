@@ -26,31 +26,54 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	}
 	/* package */ void addGroup(String groupId, String contributingId) {
 		// Add a new group to the coolitem.  Add the group at the end of the toolbar.
-		addGroupBefore(groupId, contributingId, null);
+		String subGroupId = getSubGroupId(groupId, contributingId);
+		CoolItemGroupSeparator group = new CoolItemGroupSeparator(groupId, contributingId);
+		CoolItemSubGroupMarker subGroup = new CoolItemSubGroupMarker(subGroupId, contributingId);
+		add(group);
+		add(subGroup);
 	}
 	/* package */ void addGroupBefore(String groupId, String contributingId, String beforeGroupId) {
 		// Add a new group to the coolitem.  Add the group before the group with the given id
-		// or at the end of the toolbar if no before group id is specified.
+		// or at the end of the toolbar if no before group id and the contribution is an adjunct
+		// contribution.  If the contribution is a base contribution, add the group at the beginning 
+		// of the toolbar after all other base groups.
 		if (beforeGroupId != null) {
 			IContributionItem item = find(beforeGroupId);
 			if (item == null) beforeGroupId = null;
 		}
-		// Groups are delineated by an ActionSetSeparator.  Within each group,
-		// ActionSetGroupMarkers are used to delineate the items contributed by
+		// Groups are delineated by an CoolItemGroupSeparator.  Within each group,
+		// CoolItemSubGroupMarker are used to delineate the items contributed by
 		// a particular action set.  Groups can have items contributed from 
 		// multiple action sets.  Groups are visually separated by separators.
 		String subGroupId = getSubGroupId(groupId, contributingId);
 		CoolItemGroupSeparator group = new CoolItemGroupSeparator(groupId, contributingId);
 		CoolItemSubGroupMarker subGroup = new CoolItemSubGroupMarker(subGroupId, contributingId);
 		if (beforeGroupId == null) {
-			add(group);
-			add(subGroup);
+			if (contributingId.equals(coolBarItem.getId())) {
+				IContributionItem refItem = findEndOfBaseGroups();
+				if (refItem == null) {
+					add(group);
+					add(subGroup);
+				} else {
+					insertBefore(refItem.getId(), group);
+					insertBefore(refItem.getId(), subGroup);
+				}			
+			} else {
+				add(group);
+				add(subGroup);
+			}
 		} else {
 			insertBefore(beforeGroupId, group);
 			insertBefore(beforeGroupId, subGroup);
 		}
 	}
-	/* package */ void addSubGroup(String groupId, String contributingId) {
+	/* package */ void addGroupMarker(String groupId, String contributingId) {
+		// Add a group marker to the coolitem.  Add the marker at the end of the toolbar.
+		String subGroupId = getSubGroupId(groupId, contributingId);
+		CoolItemSubGroupMarker subGroup = new CoolItemSubGroupMarker(subGroupId, contributingId);
+		add(subGroup);
+	}
+	private void addSubGroup(String groupId, String contributingId) {
 		// Add a sub group to the group identified by groupId.  Add the subGroup
 		// at the end of the group.  Subgroups have an id of their groupId + the
 		// id of the action set that is contributing the subGroup.
@@ -71,7 +94,11 @@ public class CoolItemToolBarManager extends ToolBarManager {
 		CoolItemSubGroupMarker subGroup = (CoolItemSubGroupMarker)find(subGroupId);	
 		if (subGroup == null) {
 			// create the subgroup marker if it does not exist
-			addSubGroup(groupId, contributingId);
+			if (contributingId.equals(coolBarItem.getId())) {
+				prependSubGroup(groupId, contributingId);
+			} else {
+				addSubGroup(groupId, contributingId);
+			}
 		} 
 		// insert the item, add it to the beginning of the subgroup.
 		insertAfter(subGroupId, actionContribution);
@@ -93,31 +120,86 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	protected CoolBarContributionItem getCoolBarItem() {
 		return coolBarItem;
 	}
+	protected IContributionItem findEndOfBaseGroups() {
+		// Return a CoolItemGroupSeparator or null.  Need to ensure
+		// that an id exists for the item.  Use insertBefore after
+		// calling this method.
+		IContributionItem[] items = getItems();
+		int i = 0;
+		String id = coolBarItem.getId();
+		CoolItemGroupSeparator lastGroup = null;
+		while (i < items.length) {
+			IContributionItem item = items[i];
+			if (item instanceof CoolItemGroupSeparator) {
+				CoolItemGroupSeparator sep = (CoolItemGroupSeparator)item;
+				if (sep.getActionSetId().equals(id)) {
+					lastGroup = sep;
+				} else {
+					break;
+				}
+			}
+			++i;
+		}
+		if (lastGroup == null) return null;
+		return findEndOfGroup(lastGroup.getId());
+	}
 	protected IContributionItem findEndOfGroup(String groupId) {
-		// Get items.
+		// Return a CoolItemGroupSeparator or null.  Need to ensure
+		// that an id exists for the item.  Use insertBefore after
+		// calling this method.
 		IContributionItem[] items = getItems();
 		// Find the group item.
-		int insertIndex = 0;
-		while (insertIndex < items.length) {
-			if (groupId.equals(items[insertIndex].getId())) {
-				// the found item will be the ActionSetSeparator for
-				// the group
-				++insertIndex;
-				break;
-			}
-			++insertIndex;
-		}
-		while (insertIndex < items.length) {
-			ContributionItem item = (ContributionItem)items[insertIndex];
+		int i = 0;
+		while (i < items.length) {
+			IContributionItem item = items[i];
 			if (item instanceof CoolItemGroupSeparator) {
-				// when we find another ActionSetSeparator we are
+				if (groupId.equals(item.getId())) {
+					// the found item will be the ActionSetSeparator for
+					// the group
+					break;
+				}
+			}
+			++i;
+		}
+		if (i >= items.length) {
+			return null;
+		}
+		i = i + 1;
+		while (i < items.length) {
+			ContributionItem item = (ContributionItem)items[i];
+			if (item instanceof CoolItemGroupSeparator) {
+				// when we find another CoolItemGroupSeparator we are
 				// at the end of the group
 				break;
 			}
-			++insertIndex;
+			++i;
 		}
-		if (insertIndex >= items.length) return null;
-		else return items[insertIndex];	
+		if (i >= items.length) return null;
+		return items[i];	
+	}
+	protected IContributionItem findStartOfGroup(String groupId) {
+		// Return a CoolItemGroupSeparator or null.  Need to ensure
+		// that an id exists for the item.  Use insertAfter after
+		// calling this method.
+		IContributionItem[] items = getItems();
+		// Find the group item.
+		int i = 0;
+		while (i < items.length) {
+			IContributionItem item = items[i];
+			if (item instanceof CoolItemGroupSeparator) {
+				if (groupId.equals(item.getId())) {
+					// the found item will be the CoolItemGroupSeparator for
+					// the group
+					break;
+				}
+			}
+			++i;
+		}
+		if (i >= items.length) {
+			WorkbenchPlugin.log("Unable to find start of group " + groupId); //$NON-NLS-1$
+			return null;
+		}
+		return items[i];	
 	}
 	/* package */ String getSubGroupId(String groupId, String toolBarId) {
 		return groupId + "-" + toolBarId; //$NON-NLS-1$
@@ -141,6 +223,20 @@ public class CoolItemToolBarManager extends ToolBarManager {
 		super.itemRemoved(item);
 		update(true);
 		parentManager.updateSizeFor(coolBarItem);
+	}
+	/* package */ void prependSubGroup(String groupId, String contributingId) {
+		// Add a sub group to the group identified by groupId.  Add the subGroup
+		// at the beginning of the group.  Subgroups have an id of their groupId + the
+		// id of the action set that is contributing the subGroup.
+		String subGroupId = getSubGroupId(groupId, contributingId);
+		CoolItemSubGroupMarker subGroup = new CoolItemSubGroupMarker(subGroupId, contributingId);
+		IContributionItem refItem = findStartOfGroup(groupId);
+		if (refItem == null) {
+			WorkbenchPlugin.log("Unable to find group for prepending " + groupId); //$NON-NLS-1$
+			return;
+		} else {
+			insertAfter(refItem.getId(), subGroup);
+		}
 	}
 	protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
 		if (oldCount == newCount) return;

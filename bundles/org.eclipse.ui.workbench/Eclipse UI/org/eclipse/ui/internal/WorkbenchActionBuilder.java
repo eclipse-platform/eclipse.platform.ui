@@ -557,14 +557,14 @@ public class WorkbenchActionBuilder {
 		String id = IWorkbenchActionConstants.TOOLBAR_FILE;
 		tBarMgr.addGroup(IWorkbenchActionConstants.NEW_GROUP, id);
 		tBarMgr.add(newWizardDropDownAction);
-		tBarMgr.addSubGroup(IWorkbenchActionConstants.NEW_EXT, id);
+		tBarMgr.addGroupMarker(IWorkbenchActionConstants.NEW_EXT, id);
 		tBarMgr.addGroup(IWorkbenchActionConstants.SAVE_GROUP, id);
 		tBarMgr.add(saveAction);
 		tBarMgr.add(saveAsAction);
-		tBarMgr.addSubGroup(IWorkbenchActionConstants.SAVE_EXT, id);
+		tBarMgr.addGroupMarker(IWorkbenchActionConstants.SAVE_EXT, id);
 		tBarMgr.add(printAction);
 		tBarMgr.addGroup(IWorkbenchActionConstants.BUILD_GROUP, id);
-		tBarMgr.addSubGroup(IWorkbenchActionConstants.BUILD_EXT, id);
+		tBarMgr.addGroupMarker(IWorkbenchActionConstants.BUILD_EXT, id);
 		tBarMgr.addGroup(IWorkbenchActionConstants.MB_ADDITIONS, id);
 		
 		// Only add the manual incremental build if auto build off
