@@ -1868,7 +1868,7 @@
 <!-- raw hex rendering for Memory View -->
    <extension
      id="org.eclipse.debug.ui.rendering.raw_memory"
-     name="Raw Hex Memory Rendering"
+     name="%rawHexMemoryRendering.name"
      point="org.eclipse.debug.core.memoryRenderings">
 	  <rendering
 	        name="%RawHex"
