@@ -119,11 +119,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
     private IDEWorkbenchActivityHelper activityHelper = null;
 
     /**
-     * Signals that the welcome editors and/or intros have been opened.
-     */
-    private boolean editorsAndIntrosOpened = false;
-
-    /**
      * Creates a new workbench advisor instance.
      */
     protected IDEWorkbenchAdvisor() {
