@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
@@ -73,6 +74,18 @@ public IViewReference createView(final String id) throws PartInitException {
  * to getView.
  */
 public IStatus restoreView(final IViewReference ref) {
+	final IStatus result[] = new IStatus[1];
+	BusyIndicator.showWhile(
+		page.getWorkbenchWindow().getShell().getDisplay(),
+		new Runnable() {
+			public void run() {
+				result[0] = busyRestoreView(ref);
+			}
+		}
+	);
+	return result[0];
+}
+public IStatus busyRestoreView(final IViewReference ref) {
 	if(ref.getPart(false) != null)
 		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 		
