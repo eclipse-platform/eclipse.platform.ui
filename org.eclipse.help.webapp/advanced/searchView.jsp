@@ -95,7 +95,7 @@ setTimeout('refresh()', 2000);
 	<td class='score' align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
 	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap>
 		<a id='a<%=topic%>' 
-		   href='<%=data.getTopicHref(topic)%>' 
+		   href="<%=data.getTopicHref(topic)%>" 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
 		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)' 
