@@ -81,6 +81,7 @@ public class Session {
 	private boolean createBackups = true;
 	private List expansions;
 	private Collection /* of ICVSFile */ textTransferOverrideSet = null;
+	private boolean hasBeenConnected = false;
 
 	// a shared buffer used for file transfers
 	private byte[] transferBuffer = null;
@@ -143,6 +144,7 @@ public class Session {
 		monitor.beginTask(null, 100);
 		try {
 			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
+			hasBeenConnected = true;
 			
 			// tell the server the names of the responses we can handle
 			connection.writeLine("Valid-responses " + Request.makeResponseList()); //$NON-NLS-1$
@@ -163,7 +165,13 @@ public class Session {
 	 * @throws IllegalStateException if the Session is not in the OPEN state
 	 */
 	public void close() throws CVSException {
-		if (connection == null) throw new IllegalStateException();
+		if (connection == null) {
+			if (hasBeenConnected) {
+				throw new IllegalStateException();
+			} else {
+				return;
+			}
+		}
 		connection.close();
 		connection = null;
 		validRequests = null;
