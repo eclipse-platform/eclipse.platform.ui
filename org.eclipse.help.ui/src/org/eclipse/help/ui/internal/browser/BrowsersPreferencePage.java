@@ -164,7 +164,7 @@ public class BrowsersPreferencePage
 				d.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Details")); //$NON-NLS-1$
 				String file = d.open();
 				if (file != null) {
-					customBrowserPath.setText(file);
+					customBrowserPath.setText("\""+file+"\" %1");
 				}
 			}
 		});
