@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,24 +13,18 @@ package org.eclipse.ant.internal.ui.editor.outline;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
-/**
- * LocationProvider.java
- */
-public class LocationProvider implements ILocationProvider {
-	private IPath fPath;
-	
-	public LocationProvider() {
-	}
+public class LocationProvider {
+	private IFile fFile;
 	
 	public LocationProvider(IFile file) {
-		setLocationFromFile(file);
-	}
-
-	public void setLocationFromFile(IFile file) {
-		fPath= file != null ? file.getLocation() : null;
+		fFile= file;
 	}
 
 	public IPath getLocation() {
-		return fPath;
+		return fFile != null ? fFile.getLocation() : null;
+	}
+	
+	public IFile getFile() {
+		return fFile;
 	}
 }

@@ -56,7 +56,7 @@ public class AntModel {
 	private XMLCore fCore;
 	private IDocument fDocument;
 	private IProblemRequestor fProblemRequestor;
-	private ILocationProvider fLocationProvider;
+	private LocationProvider fLocationProvider;
 
 	private AntProjectNode fProjectNode;
 	private AntTargetNode fCurrentTargetNode;
@@ -85,7 +85,7 @@ public class AntModel {
     
 	private static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".problem"; //$NON-NLS-1$
 
-	public AntModel(XMLCore core, IDocument document, IProblemRequestor problemRequestor, ILocationProvider locationProvider) {
+	public AntModel(XMLCore core, IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		fCore= core;
 		fDocument= document;
 		fFindReplaceAdapter= new FindReplaceDocumentAdapter(document);
@@ -301,7 +301,7 @@ public class AntModel {
 		}
 	}
 	
-	public ILocationProvider getLocationProvider() {
+	public LocationProvider getLocationProvider() {
 		return fLocationProvider;
 	}
 

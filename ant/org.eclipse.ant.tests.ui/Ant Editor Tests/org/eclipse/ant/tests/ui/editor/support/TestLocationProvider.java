@@ -23,6 +23,7 @@ public class TestLocationProvider extends LocationProvider {
 	private File buildFile;
 	
 	public TestLocationProvider(File buildFile) {
+		super(null);
 		this.buildFile= buildFile;
 	}
 	

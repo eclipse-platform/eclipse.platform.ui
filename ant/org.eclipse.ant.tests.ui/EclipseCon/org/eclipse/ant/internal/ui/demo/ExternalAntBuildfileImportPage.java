@@ -31,7 +31,7 @@ import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.outline.ILocationProvider;
+import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -453,7 +453,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		if (doc == null) {
 			return null;
 		}
-		AntModel model= new AntModel(XMLCore.getDefault(), doc, null, new ILocationProvider() {
+		AntModel model= new AntModel(XMLCore.getDefault(), doc, null, new LocationProvider(null) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
 			 */
