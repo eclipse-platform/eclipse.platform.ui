@@ -46,6 +46,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * code here: sel.getAdapter(IActionFilter.class)
  * As an interim solution, use reflection to access selections
  * implementing ITextSelection
+ * 
+ * @issue several public fields and methods - decide which should be API
  */
 public final class SelectionEnabler {
 	private static final String ATT_NAME = "name";//$NON-NLS-1$
