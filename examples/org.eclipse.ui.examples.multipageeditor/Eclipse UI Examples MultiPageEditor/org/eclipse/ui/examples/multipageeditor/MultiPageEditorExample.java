@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.ide.IMarkerEditorPositioner;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 /**
@@ -39,11 +40,14 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  * <li>page 2 shows the words in page 0 in sorted order
  * </ul>
  */
-public class MultiPageEditorExample extends MultiPageEditorPart {
+public class MultiPageEditorExample extends MultiPageEditorPart implements IMarkerEditorPositioner {
 
 	/** The text editor used in page 0. */
 	private TextEditor editor;
 
+	/** The index of the page containing the text editor */
+	private int editorIndex = 0;
+	
 	/** The font chosen in page 1. */
 	private Font font;
 	
@@ -62,8 +66,8 @@ public MultiPageEditorExample() {
 void createPage0() {
 	try {
 		editor = new TextEditor();
-		int index = addPage(editor, getEditorInput());
-		setPageText(index, MessageUtil.getString("Source")); //$NON-NLS-1$
+		editorIndex = addPage(editor, getEditorInput());
+		setPageText(editorIndex, MessageUtil.getString("Source")); //$NON-NLS-1$
 	}
 	catch (PartInitException e) {
 		ErrorDialog.openError(getSite().getShell(), MessageUtil.getString("ErrorCreatingNestedEditor"), null, e.getStatus()); //$NON-NLS-1$
@@ -134,13 +138,6 @@ public void doSaveAs() {
 	setPageText(0, editor.getTitle());
 	setInput(editor.getEditorInput());
 }
-/* (non-Javadoc)
- * Method declared on IEditorPart
- */
-public void gotoMarker(IMarker marker) {
-	setActivePage(0);
-	getEditor(0).gotoMarker(marker);
-}
 /**
  * The <code>MultiPageEditorExample</code> implementation of this method
  * checks that the input is an instance of <code>IFileEditorInput</code>.
@@ -170,7 +167,7 @@ protected void pageChange(int newPageIndex) {
  */
 void setFont() {
 	FontDialog fontDialog = new FontDialog(getSite().getShell());
-	fontDialog.setFontData(text.getFont().getFontData()[0]);
+	fontDialog.setFontList(text.getFont().getFontData());
 	FontData fontData = fontDialog.open();
 	if (fontData != null) {
 		if (font != null)
@@ -199,5 +196,12 @@ void sortWords() {
 		displayText.write("\n"); //$NON-NLS-1$
 	}
 	text.setText(displayText.toString());
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.ide.IMarkerEditorPositioner#gotoPosition(org.eclipse.core.resources.IMarker)
+ */
+public void gotoPosition(IMarker marker) {
+	setActivePage(editorIndex);
+	editor.gotoMarker(marker);
 }
 }
