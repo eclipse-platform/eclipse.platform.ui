@@ -771,6 +771,7 @@ public class Project extends Container implements IProject {
 				checkExists(flags, true);
 				if (isOpen(flags))
 					return;
+
 				workspace.beginOperation(true);
 				// flush the build order early in case there is a problem
 				workspace.flushBuildOrder();
@@ -778,7 +779,7 @@ public class Project extends Container implements IProject {
 				info.set(M_OPEN);
 				// the M_USED flag is used to indicate the difference between opening a project
 				// for the first time and opening it from a previous close (restoring it from disk)
-				final boolean used = info.isSet(M_USED);
+				boolean used = info.isSet(M_USED);
 				if (used) {
 					workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 				} else {
