@@ -346,8 +346,13 @@ public class ContextAndHandlerManager implements IContextResolver {
 		}
 
 		ContextResolver.getInstance().setContextResolver(this);
-		MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-		menuManager.update(IAction.TEXT);
+		
+		if (workbenchWindow != null) {
+			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+		
+			if (menuManager != null)
+				menuManager.update(IAction.TEXT);
+		}
 
 		/* TODO: coolbars are weird. make this work like it does for menus
 		CoolBarManager coolBarManager = ((WorkbenchWindow) workbenchWindow).getCoolBarManager();
