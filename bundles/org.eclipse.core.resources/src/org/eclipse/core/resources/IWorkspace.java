@@ -1255,10 +1255,11 @@ public IStatus validateNatureSet(String[] natureIds);
  */
 public IStatus validatePath(String path, int typeMask);
 /**
- * Validates the given path as the location of the given project on disk.
- * In addition to the restrictions for
- * paths in general (see <code>IPath.isValidPath</code>),
- * a location path should also obey the following rules:
+ * Validates the given path as the location of the given project on disk.  The
+ * path must be either an absolute file system path, or a relative path whose
+ * first segment is the name of a defined workspace path variable.  In addition
+ * to the restrictions for paths in general (see <code>IPath.
+ * isValidPath</code>), a location path should also obey the following rules:
  * <ul>
  * <li> must not overlap with another open or closed project
  * <li> must not overlap with the platform's working directory

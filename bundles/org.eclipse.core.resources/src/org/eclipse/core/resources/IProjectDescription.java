@@ -44,8 +44,10 @@ public ICommand[] getBuildSpec();
  */
 public String getComment();
 /**
- * Returns the  local file system location for the described project.
- * <code>null</code> is returned if the default location should be used.
+ * Returns the  local file system location for the described project.  The path
+ * will be either an absolute file system path, or a relative path whose first
+ * segment is the name of a workspace path variable. <code>null</code> is
+ * returned if the default location should be used.
  *
  * @return the location for the described project or <code>null</code>
  */
@@ -119,8 +121,10 @@ public void setBuildSpec(ICommand[] buildSpec);
  */
 public void setComment(String comment);
 /**
- * Sets the local file system location for the described project.
- * If <code>null</code> is specified, the default location is used.
+ * Sets the local file system location for the described project.  The path must
+ * be either an absolute file system path, or a relative path whose first
+ * segment is the name of a defined workspace path variable.  If
+ * <code>null</code> is specified, the default location is used.
  * <p>
  * Setting the location on a description for a project which already
  * exists has no effect; the new project location is ignored when the
