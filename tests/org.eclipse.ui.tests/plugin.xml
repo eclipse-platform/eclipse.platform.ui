@@ -507,7 +507,7 @@
 	point="org.eclipse.ui.decorators">
 	<decorator 
         id="org.eclipse.ui.tests.adaptable.decorator" 
-        label="Test Decorator" 
+        label="Old Test Decorator" 
         state="true"
         tooltip="No tip" 
         class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
@@ -516,13 +516,40 @@
     </decorator> 
     <decorator 
         id="org.eclipse.ui.tests.adaptable.nulldecorator" 
-        label="Null Decorator" 
+        label="Null Test Decorator" 
         state="true"
         tooltip="No tip" 
         adaptable="true"
         description="A null test decorator"
         class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
         objectClass="org.eclipse.core.resources.IResource">
+    </decorator>
+    <decorator 
+        id="org.eclipse.ui.tests.navigator.lightweightdecorator" 
+        label="Lightweight Test Decorator" 
+        state="true"
+        tooltip="No tip" 
+        adaptable="true"
+        description="A lightweight test decorator"
+        class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
+        lightweight="true"
+        <enablement>
+        	<objectClass="org.eclipse.core.resources.IResource"/>
+        </enablement>
+    </decorator>
+    <decorator 
+        id="org.eclipse.ui.tests.navigator.declareddecorator" 
+        label="Declared Test Decorator" 
+        state="true"
+        tooltip="No tip" 
+        adaptable="true"
+        description="A declared test decorator"
+        lightweight="true"
+        icon="icons/binary_co.gif"
+        quadrant="TOP_LEFT"
+        <enablement>
+        	<objectClass="org.eclipse.core.resources.IResource"/>
+        </enablement>
     </decorator> 
 </extension>
 
