@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * A listener that makes sure that global key bindings are processed if no
@@ -52,7 +53,10 @@ public class OutOfOrderListener implements Listener {
 	 */
 	public void handleEvent(Event event) {
 		// Always remove myself as a listener.
-		event.widget.removeListener(event.type, this);
+	    Widget widget = event.widget;
+	    if ((widget != null) && (!widget.isDisposed())) { 
+	        widget.removeListener(event.type, this);
+	    }
 
 		/*
 		 * If the event is still up for grabs, then re-route through the global
