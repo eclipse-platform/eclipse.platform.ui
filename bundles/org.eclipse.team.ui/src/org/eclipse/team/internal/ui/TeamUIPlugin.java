@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -26,7 +27,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -159,6 +159,23 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 			if (createdShell) parent.dispose();
 		}
 	}
+	
+	/**
+	 * Creates a progress monitor and runs the specified runnable.
+	 * 
+	 * @param parent the parent Shell for the dialog
+	 * @param cancelable if true, the dialog will support cancelation
+	 * @param runnable the runnable
+	 * 
+	 * @exception InvocationTargetException when an exception is thrown from the runnable
+	 * @exception InterruptedException when the progress monitor is cancelled
+	 */
+	public static void runWithProgressDialog(Shell parent, boolean cancelable,
+		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+			
+		new ProgressMonitorDialog(parent).run(cancelable, cancelable, runnable);
+	}
+	
 	/**
 	 * @see Plugin#startup()
 	 */

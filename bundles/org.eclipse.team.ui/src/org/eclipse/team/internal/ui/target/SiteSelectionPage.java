@@ -1,24 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
-
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -29,21 +30,27 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.target.UrlUtil;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+/**
+ * Wizard page that allows selecting an existing target provider site
+ * or to create a new site.
+ */
 public class SiteSelectionPage extends TargetWizardPage {
 	private TableViewer table;
 	private Button useExistingRepo;
 	private Button useNewRepo;
 	private Site site;
-	private Site initialSiteSelection;
+	private TargetProvider currentProvider;
 	
-	public SiteSelectionPage(String pageName, String title, ImageDescriptor titleImage, Site site) {
+	public SiteSelectionPage(String pageName, String title, ImageDescriptor titleImage, TargetProvider currentProvider) {
 		super(pageName, title, titleImage);
 		setDescription(Policy.bind("SiteSelectionPage.description")); //$NON-NLS-1$
-		initialSiteSelection = site;
+		this.currentProvider = currentProvider;
 	}
 
 	protected TableViewer createTable(Composite parent) {
@@ -73,8 +80,13 @@ public class SiteSelectionPage extends TargetWizardPage {
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider() {
 			protected String decorateText(String input, Object element) {
-				if(element.equals(new SiteElement(initialSiteSelection))) {
-					return Policy.bind("SiteSelectionPage.currentLocation", super.decorateText(input, element)); //$NON-NLS-1$
+				if(currentProvider != null && element.equals(new SiteElement(currentProvider.getSite()))) {
+					IPath mapping = UrlUtil.getTrailingPath(currentProvider.getURL(), currentProvider.getSite().getURL());
+					if(mapping.isEmpty()) {
+						return Policy.bind("SiteSelectionPage.siteLabelCurrent", super.decorateText(input, element)); //$NON-NLS-1$
+					} else {
+						return Policy.bind("SiteSelectionPage.siteLabelCurrentWithMapping", super.decorateText(input, element), mapping.toString()); //$NON-NLS-1$
+					}
 				}
 				return super.decorateText(input, element);
 			}
@@ -121,8 +133,8 @@ public class SiteSelectionPage extends TargetWizardPage {
 			useNewRepo.setSelection(true);	
 		} else {
 			useExistingRepo.setSelection(true);				
-			if(initialSiteSelection != null) {
-				table.setSelection(new StructuredSelection(new SiteElement(initialSiteSelection)));
+			if(currentProvider != null) {
+				table.setSelection(new StructuredSelection(new SiteElement(currentProvider.getSite())));
 			} else {
 				table.setSelection(new StructuredSelection(new SiteElement(sites[0])));
 			}

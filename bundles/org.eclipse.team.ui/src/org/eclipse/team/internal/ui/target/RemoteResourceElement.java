@@ -26,6 +26,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+/**
+ * Used to show IRemoteTargetResource instances in the UI.
+ */
 public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 	final public static int SHOW_FILES = 1;
 	final public static int SHOW_FOLDERS = 2;
@@ -100,5 +103,11 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 	
 	public Object getParent(Object o) {
 		return null;
+	}
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof RemoteResourceElement)) return false;
+		RemoteResourceElement otherElement = ((RemoteResourceElement)obj);
+		return otherElement.getRemoteResource().getURL().equals(getRemoteResource().getURL());
 	}
 }

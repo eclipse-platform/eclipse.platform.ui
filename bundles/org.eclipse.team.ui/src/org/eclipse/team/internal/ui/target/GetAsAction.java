@@ -1,9 +1,14 @@
-package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
+package org.eclipse.team.internal.ui.target;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -23,10 +28,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.core.target.IRemoteTargetResource;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
@@ -34,19 +38,20 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 
 /**
- * Add a remote resource to the workspace. Current implementation:
- * -Works only for remote folders
- * -Does not prompt for project name; uses folder name instead
+ * Action to transfer a remote folder and it's contents into the workspace. If
+ * the remote folder doesn't have a .project then the project creation wizard
+ * is shown to configure a new project, otherwise the a prompt is shown to choose
+ * the project name and location.
+ * 
+ * @see GetAsProjectAction
  */
-public class CheckoutAsAction extends AddToWorkspaceAction {
-	/*
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void execute(IAction action) {
+public class GetAsAction extends GetAsProjectAction {
+	public void run(IAction action) {
 		
-		final ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
+		final IRemoteTargetResource[] folders = getSelectedRemoteFolders();
 		if (folders.length != 1) return;
-		final String name = folders[0].getName();
+		final IRemoteTargetResource remoteFolder = folders[0];
+		final String remoteName = remoteFolder.getName();
 		
 		// Fetch the members of the folder to see if they contain a .project file.
 		final boolean[] hasProjectMetaFile = new boolean[] { false };
@@ -54,37 +59,18 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					folders[0].members(monitor);
+					hasProjectMetaFile[0] = hasProjectMetaFile(remoteFolder, monitor);
 				} catch (TeamException e) {
-					errorOccured[0] = true;
 					throw new InvocationTargetException(e);
 				}
-				// Check for the existance of the .project file
-				try {
-					folders[0].getFile(".project"); //$NON-NLS-1$
-					hasProjectMetaFile[0] = true;
-				} catch (TeamException e) {
-					// We couldn't retrieve the meta file so assume it doesn't exist
-					hasProjectMetaFile[0] = false;
-				}
-				// If the above failed, look for the old .vcm_meta file
-				if (! hasProjectMetaFile[0]) {
-					try {
-						folders[0].getFile(".vcm_meta"); //$NON-NLS-1$
-						hasProjectMetaFile[0] = true;
-					} catch (TeamException e) {
-						// We couldn't retrieve the meta file so assume it doesn't exist
-						hasProjectMetaFile[0] = false;
-					}
-				}
 			}
-		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("GetAs.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 		if (errorOccured[0]) return;
 		
 		// Prompt outside a workspace runnable so that the project creation delta can be heard
 		IProject newProject = null;
 		if ( ! hasProjectMetaFile[0]) {
-			newProject = getNewProject(name);
+			newProject = getNewProject(remoteFolder.getName());
 			if (newProject == null) return;
 		}
 		
@@ -97,9 +83,9 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 						// Prompt for name
 						final Shell shell = getShell();
 						final int[] result = new int[] { Dialog.OK };
-						project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+						project = ResourcesPlugin.getWorkspace().getRoot().getProject(remoteName);
 						final ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(shell, project);
-						dialog.setTitle(Policy.bind("CheckoutAsAction.enterProjectTitle", name)); //$NON-NLS-1$
+						dialog.setTitle(Policy.bind("GetAs.enterProjectTitle", remoteName)); //$NON-NLS-1$
 	
 						shell.getDisplay().syncExec(new Runnable() {
 							public void run() {
@@ -116,11 +102,11 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 						// prompt if the project exists locally
 						project = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
 						PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] { project },
-							getOverwriteLocalAndFileSystemPrompt(), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
+							getOverwriteLocalAndFileSystemPrompt(), Policy.bind("GetAsProject.confirmOverwrite"));//$NON-NLS-1$
 						if (prompt.promptForMultiple().length == 0) return;
 	
 						monitor.beginTask(null, 100);
-						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, newName)); //$NON-NLS-1$
+						monitor.setTaskName(Policy.bind("GetAs.taskname", remoteFolder.getName(), newName)); //$NON-NLS-1$
 	
 						// create the project
 						try {
@@ -135,15 +121,15 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 							}
 							project.open(Policy.subMonitorFor(monitor, 2));
 						} catch (CoreException e) {
-							throw CVSException.wrapException(e);
+							throw new TeamException(e.getStatus());
 						}
 					} else {
 						project = createdProject;
 						monitor.beginTask(null, 95);
-						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, createdProject.getName())); //$NON-NLS-1$
+						monitor.setTaskName(Policy.bind("GetAs.taskname", remoteFolder.getName(), createdProject.getName())); //$NON-NLS-1$
 					}
 
-					CVSProviderPlugin.getProvider().checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 95));
+					get(project, remoteFolder, Policy.subMonitorFor(monitor, 95));
 
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -151,7 +137,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("GetAs.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/*
@@ -172,6 +158,16 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		(new NewProjectAction(PlatformUI.getWorkbench().getActiveWorkbenchWindow())).run();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		return listener.getNewProject();
+	}
+	
+	protected boolean hasProjectMetaFile(IRemoteTargetResource remote, IProgressMonitor monitor) throws TeamException {
+		IRemoteResource[] children = remote.members(monitor);
+		for (int i = 0; i < children.length; i++) {
+			if(children[i].getName().equals(".project")) { //$NON-NLS-1$
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	class NewProjectListener implements IResourceChangeListener {

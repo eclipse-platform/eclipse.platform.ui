@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
@@ -32,7 +31,12 @@ public class SiteExplorerViewLabelProvider extends WorkbenchLabelProvider implem
 					return super.getText(element);
 				case 1 :
 					if(element instanceof RemoteResourceElement) {
-						return Policy.bind("SiteExplorerViewLabelProvider.bytes", new Integer(((RemoteResourceElement)element).getRemoteResource().getSize()).toString()); //$NON-NLS-1$
+						int size = ((RemoteResourceElement)element).getRemoteResource().getSize();
+						int sizeKb = size / 1000;
+						if(sizeKb == 0 && size % 1000 > 0) {
+							sizeKb = 1;
+						}
+         				return Policy.bind("SiteExplorerViewLabelProvider.fileSize", new Integer(sizeKb).toString());						 //$NON-NLS-1$
 					}
 				case 2 :
 					if(element instanceof RemoteResourceElement) {

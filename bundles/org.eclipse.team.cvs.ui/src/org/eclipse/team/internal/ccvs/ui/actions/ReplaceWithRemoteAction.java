@@ -19,9 +19,9 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.ui.IPromptCondition;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
+import org.eclipse.team.internal.ui.IPromptCondition;
+import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -72,6 +72,6 @@ public class ReplaceWithRemoteAction extends CVSAction {
 	 * Note: This method is designed to be overridden by test cases.
 	 */
 	protected IPromptCondition getPromptCondition() {
-		return PromptingDialog.getOverwriteLocalChangesPrompt();
+		return getOverwriteLocalChangesPrompt();
 	}
 }

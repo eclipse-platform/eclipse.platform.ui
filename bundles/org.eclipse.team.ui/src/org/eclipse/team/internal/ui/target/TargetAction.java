@@ -1,0 +1,54 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
+package org.eclipse.team.internal.ui.target;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.IRemoteTargetResource;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.actions.TeamAction;
+
+public abstract class TargetAction extends TeamAction {
+	/**
+	 * Get selected remote target folders
+	 */
+	protected IRemoteTargetResource[] getSelectedRemoteFolders() {
+		ArrayList resources = null;
+		if (!selection.isEmpty()) {
+			resources = new ArrayList();
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				IRemoteTargetResource remote = null;
+				if (next instanceof RemoteResourceElement) {
+					remote = ((RemoteResourceElement)next).getRemoteResource();
+				} else if(next instanceof SiteElement) {
+					try {
+						remote = ((SiteElement)next).getSite().getRemoteResource();
+					} catch (TeamException e) {
+						TeamUIPlugin.log(e.getStatus());
+					}
+				}
+				if(remote != null && remote.isContainer()) {
+					resources.add(remote);
+					continue;
+				}
+			}
+		}
+		if (resources != null && !resources.isEmpty()) {
+			return (IRemoteTargetResource[])resources.toArray(new IRemoteTargetResource[resources.size()]);
+		}
+		return new IRemoteTargetResource[0];
+	}
+}

@@ -12,6 +12,7 @@ package org.eclipse.team.core.target;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 
@@ -30,7 +31,7 @@ public interface IRemoteTargetResource extends IRemoteResource {
 	/**
 	 * Returns the URL of this remote resource.
 	 */
-	public URL getURL() throws TeamException;
+	public URL getURL();
 	
 	/**
 	 * Returns the size of the resource. 
@@ -47,4 +48,53 @@ public interface IRemoteTargetResource extends IRemoteResource {
 	 * remote server.
 	 */
 	public boolean exists() throws TeamException;
+	
+	/**
+	 * Creates the directory named by this URL, including any necessary but non-existant
+	 * parent directories.
+	 */
+	public void mkdirs() throws TeamException;
+	
+	/**
+ 	 * Returns a handle to the remote file identified by the given path in this
+ 	 * folder.
+	 * <p> 
+	 * This is a remote resource handle operation; neither the resource nor
+	 * the result need exist on the server.</p>
+	 * <p>
+	 * The supplied path may be absolute or relative; in either case, it is
+	 * interpreted as relative to this resource and is appended
+	 * to this container's full path to form the full path of the resultant resource.
+	 * A trailing separator is ignored.
+	 * </p>
+	 *
+	 * @param name the path of the remote member file
+	 * @return the (handle of the) remote file
+	 * @see #getFolder
+	 */
+	public IRemoteTargetResource getFile(String name);
+
+	/**
+ 	 * Returns a handle to the remote folder identified by the given path in this
+ 	 * folder.
+	 * <p> 
+	 * This is a remote resource handle operation; neither the resource nor
+	 * the result need exist on the server.</p>
+	 * <p>
+	 * The supplied path may be absolute or relative; in either case, it is
+	 * interpreted as relative to this resource and is appended
+	 * to this container's full path to form the full path of the resultant resource.
+	 * A trailing separator is ignored.
+	 * </p>
+	 *
+	 * @param path the path of the remote member file
+	 * @return the (handle of the) remote file
+	 * @see #getFolder
+	 */
+	public IRemoteTargetResource getFolder(String name);
+	
+	/**
+	 * Return the site where this remote resource exists
+	 */
+	public Site getSite();
 }

@@ -5,30 +5,24 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  * All Rights Reserved.
  */
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
-import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
-import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**

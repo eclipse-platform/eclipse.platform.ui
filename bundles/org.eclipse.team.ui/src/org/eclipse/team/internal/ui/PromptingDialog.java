@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial implementation
  ******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui;
+package org.eclipse.team.internal.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,20 +69,6 @@ public class PromptingDialog {
 			}						
 		}
 		return (IResource[]) targetResources.toArray(new IResource[targetResources.size()]);
-	}
-	
-	/**
-	 * A helper prompt condition for prompting for CVS dirty state.
-	 */
-	public static IPromptCondition getOverwriteLocalChangesPrompt() {
-		return new IPromptCondition() {
-			public boolean needsPrompt(IResource resource) {
-				return CVSDecorator.isDirty(resource);
-			}
-			public String promptMessage(IResource resource) {
-				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());//$NON-NLS-1$
-			}
-		};
 	}
 	
 	/**

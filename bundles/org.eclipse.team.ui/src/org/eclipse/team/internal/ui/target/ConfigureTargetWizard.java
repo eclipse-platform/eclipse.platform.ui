@@ -49,6 +49,8 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	protected IConfigurationWizard wizard;
 	
 	protected ConfigureProjectWizardMainPage mainPage;
+	protected static MappingSelectionPage mappingPage;
+	
 	private String pluginId = UIConstants.PLUGIN_ID;
 	
 	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
@@ -109,19 +111,20 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		setWindowTitle(getWizardWindowTitle());
 		
 		if(sites.length > 0 && project != null) {
-			Site site = null;
 			TargetProvider provider = null;
 			try {
 				provider = TargetManager.getProvider(project);
 			} catch (TeamException e) {
 				TeamUIPlugin.log(e.getStatus());
-			}
-			if(provider != null) {
-				site = provider.getSite();
 			}			
-			siteSelectionPage = new SiteSelectionPage("site-selection-page", Policy.bind("TargetSiteCreationWizard.siteSelectionPage"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), site); //$NON-NLS-1$ //$NON-NLS-2$
+			siteSelectionPage = new SiteSelectionPage("site-selection-page", Policy.bind("TargetSiteCreationWizard.siteSelectionPage"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), provider); //$NON-NLS-1$ //$NON-NLS-2$			
 			addPage(siteSelectionPage);
 		}
+		
+		if(project != null) {
+			mappingPage = new MappingSelectionPage(ConfigureTargetWizard.MAPPING_PAGE_NAME, Policy.bind("webdavMainPage.mappingTitle"), null); //$NON-NLS-1$
+			mappingPage.setWizard(this);	
+		}	
 		
 		try {
 			if(wizards.size() == 1) {
@@ -174,7 +177,6 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		//		}		
 		if(page == siteSelectionPage) {
 			if(siteSelectionPage.getSite() != null) {
-				MappingSelectionPage mappingPage = getMappingPage();
 				mappingPage.setSite(siteSelectionPage.getSite());
 				mappingPage.setPreviousPage(page);
 				return mappingPage;
@@ -190,8 +192,8 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		return super.getNextPage(page);
 	}
 	
-	private MappingSelectionPage getMappingPage() {
-		return (MappingSelectionPage)getPage(MAPPING_PAGE_NAME);
+	public static MappingSelectionPage getMappingPage() {
+		return mappingPage;
 	}
 	
 	public boolean canFinish() {

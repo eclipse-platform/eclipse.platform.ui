@@ -69,11 +69,27 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	abstract public ResourceState newState(IResource resource);
 	
 	/**
+	 * Answers a new state based on an existing local resource and
+	 * an associated existing remote resource.
+	 */
+	abstract public ResourceState newState(IResource resource, IRemoteTargetResource remote);
+	
+	/**
 	 * Get the state descriptor for a given resource.
 	 */
 	public ResourceState getState(IResource resource) {
 		// Create a new resource state with default values.
 		ResourceState state = newState(resource);
+		state.loadState();
+		return state;
+	}
+	
+	/**
+	 * Get the state descriptor for a given resource.
+	 */
+	public ResourceState getState(IResource resource, IRemoteTargetResource remote) {
+		// Create a new resource state with default values.
+		ResourceState state = newState(resource, remote);
 		state.loadState();
 		return state;
 	}
@@ -92,6 +108,22 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 				return new Symmetria().get(state, depth, progress);
 			}
 		}, resources, depth, progress);
+	}
+	
+	/**
+	 * Get the resource from the provider to the workspace, and remember the fetched
+	 * state as the base state of the resource.
+	 * 
+	 * @see ITeamProvider.get(IResource[], int, IProgressMonitor)
+	 */
+	public void get(IResource resource, final IRemoteTargetResource remote, IProgressMonitor progress)
+		throws TeamException {
+		execute(new IIterativeOperation() {
+			public IStatus visit(IResource resource, int depth, IProgressMonitor progress) {
+				ResourceState state = getState(resource, remote);
+				return new Symmetria().get(state, IResource.DEPTH_INFINITE, progress);
+			}
+		}, new IResource[] {resource}, IResource.DEPTH_ZERO, progress);
 	}
 
 

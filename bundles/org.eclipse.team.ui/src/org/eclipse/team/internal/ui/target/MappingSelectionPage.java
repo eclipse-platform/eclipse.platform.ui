@@ -17,24 +17,26 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.internal.core.target.UrlUtil;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class MappingSelectionPage extends TargetWizardPage {
@@ -73,9 +75,52 @@ public class MappingSelectionPage extends TargetWizardPage {
 				updateTextPath();
 			}
 		});
+		Button newFolderButton = new Button(composite, SWT.PUSH);
+		newFolderButton.setText(Policy.bind("MappingSelectionPage.newFolderLabel")); //$NON-NLS-1$
+		newFolderButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent (Event event) {
+				Shell shell = getShell();
+				try {
+					// assume that only one folder is selected in the folder tree
+					IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+					Object currentSelection = selection.getFirstElement();
+					IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection);
+					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder);
+					viewer.refresh(currentSelection);
+					viewer.setExpandedState(currentSelection, true);
+					viewer.setSelection(new StructuredSelection(currentSelection));
+				} catch (TeamException e) {
+					ErrorDialog.openError(shell,
+								Policy.bind("Error"), //$NON-NLS-1$
+								Policy.bind("CreateNewFolderAction.errorCreatingFolder"), //$NON-NLS-1$
+								e.getStatus());
+					return;
+				}
+			}			
+		});
 		setViewerInput();
 		setControl(composite);
 		setPageComplete(true);
+	}
+	
+	private IRemoteTargetResource getSelectedRemoteFolder(IStructuredSelection selection) {		
+		if (!selection.isEmpty()) {
+			final List filesSelection = new ArrayList();
+			Iterator it = selection.iterator();
+			while(it.hasNext()) {
+				Object o = it.next();
+				if(o instanceof RemoteResourceElement) {
+					return ((RemoteResourceElement)o).getRemoteResource();
+				} else if(o instanceof SiteElement) {
+					try {
+						return ((SiteElement)o).getSite().getRemoteResource();
+					} catch (TeamException e) {
+						return null;
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -91,12 +136,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 				if(o instanceof RemoteResourceElement) {
 						RemoteResourceElement element = (RemoteResourceElement) o;
 						URL remoteResourceURL;
-						try {
-							remoteResourceURL = element.getRemoteResource().getURL();
-						} catch(TeamException e) {
-							TeamUIPlugin.handle(e);
-							return;
-						}
+						remoteResourceURL = element.getRemoteResource().getURL();
 						this.path = UrlUtil.getTrailingPath(
 							remoteResourceURL,
 							this.site.getURL());

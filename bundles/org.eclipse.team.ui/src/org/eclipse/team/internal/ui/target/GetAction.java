@@ -28,7 +28,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
  * Action for getting the contents of the selected resources
  */
-public class GetAction extends TeamAction {	public void run(IAction action) {
+public class GetAction extends TeamAction {	
+	public void run(IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {

@@ -128,6 +128,40 @@
 			class="org.eclipse.team.internal.ui.target.TargetProjectAction">
 		</action>
    </objectContribution>
+   
+   <objectContribution
+            objectClass="org.eclipse.team.internal.ui.target.RemoteResourceElement"
+            id="org.eclipse.team.internal.ui.target.RemoteResourceElement">
+         <action
+               label="Get As..."
+               tooltip="Get As..."
+               class="org.eclipse.team.internal.ui.target.GetAsAction"
+               id="org.eclipse.team.internal.ui.target.GetAsAction">
+         </action>
+         <action
+               label="Get As Project"
+               tooltip="Get As Project"
+               class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
+               id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
+         </action>
+   </objectContribution>
+   
+   <objectContribution
+            objectClass="org.eclipse.team.internal.ui.target.SiteElement"
+            id="org.eclipse.team.internal.ui.target.SiteElement">
+         <action
+               label="Get As..."
+               tooltip="Get As..."
+               class="org.eclipse.team.internal.ui.target.GetAsAction"
+               id="org.eclipse.team.internal.ui.target.GetAsAction">
+         </action>
+         <action
+               label="Get As Project"
+               tooltip="Get As Project"
+               class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
+               id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
+         </action>
+   </objectContribution>
 </extension>
 
 <!-- ************** Views ********************** -->

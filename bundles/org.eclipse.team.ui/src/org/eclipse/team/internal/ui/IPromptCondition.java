@@ -8,12 +8,14 @@
  * Contributors:
  * IBM - Initial implementation
  ******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui;
+package org.eclipse.team.internal.ui;
 
 import org.eclipse.core.resources.IResource;
 
 /**
  * Input to a confirm prompt
+ * 
+ * @see PromptingDialog
  */
 public interface IPromptCondition {
 	/**

@@ -10,51 +10,65 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.text.html.parser.TagElement;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.ISiteListener;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+/**
+ * Is a view that allows browsing remote target sites. It is modeled after
+ * a file explorer: a tree of folders is show with a table of the folder's
+ * contents.
+ * 
+ * @see Site
+ * @see IRemoteTargetResource
+ */
 public class SiteExplorerView extends ViewPart implements ISiteListener {
 
 	public static final String VIEW_ID = "org.eclipse.team.ui.target.SiteExplorerView"; //$NON-NLS-1$
@@ -68,6 +82,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 	
 	// The view's actions
 	private Action addSiteAction;
+	private Action newFolderAction;
 
 	/**
 	 * @see IWorkbenchPart#createPartControl(Composite)
@@ -78,7 +93,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 	
 		root = new SiteRootsElement(TargetManager.getSites(), RemoteResourceElement.SHOW_FOLDERS);
 		
-		treeViewer = new TreeViewer(sash, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer = new TreeViewer(sash, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.setContentProvider(new SiteLazyContentProvider());
 		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
 
@@ -93,45 +108,73 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateFileTable();
+				IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+				final IRemoteTargetResource remoteFolder = getSelectedRemoteFolder(selection);
+				updateFileTable(remoteFolder);
+			}
+		});
+		
+		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+				if(selection.size() == 1) {
+					expandInTreeCurrentSelection(selection, true /*toggle expanded*/);
+				}
 			}
 		});
 		
 		treeViewer.setInput(root);
 
 		Table table = new Table(sash, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		TableLayout tlayout = new TableLayout();
+		TableLayout layout = new TableLayout();
 		
 		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(Policy.bind("SiteExplorerView.Name_1")); //$NON-NLS-1$
+		layout.addColumnData(new ColumnWeightData(30, true));
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(Policy.bind("SiteExplorerView.Size_2")); //$NON-NLS-1$
 		tableColumn.setAlignment(SWT.RIGHT);
+		layout.addColumnData(new ColumnWeightData(20, true));
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(Policy.bind("SiteExplorerView.Modified_3")); //$NON-NLS-1$
 		tableColumn = new TableColumn(table, SWT.NULL);
+		layout.addColumnData(new ColumnWeightData(20, true));
 		tableColumn.setText(Policy.bind("SiteExplorerView.URL_4")); //$NON-NLS-1$
 		ColumnLayoutData cLayout = new ColumnPixelData(21);
-		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnPixelData(20);
-		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnWeightData(100, true);
-		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnPixelData(100);
-		tlayout.addColumnData(cLayout);
-		table.setLayout(tlayout);
+		table.setLayout(layout);
 		table.setHeaderVisible(true);
 
 		tableViewer = new TableViewer(table);
 		tableViewer.setContentProvider(new SiteLazyContentProvider());
 		tableViewer.setLabelProvider(new SiteExplorerViewLabelProvider());
 		
+		tableViewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.keyCode == SWT.F5) {
+					refresh();
+				}
+			}
+		});
+		
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
+				if(selection.size() == 1) {
+					final IRemoteTargetResource remote = getSelectedRemoteFolder(selection);
+					if(remote.isContainer()) {
+						IStructuredSelection treeSelection = (IStructuredSelection)treeViewer.getSelection();
+						expandInTreeCurrentSelection(treeSelection, false /*don't toggle*/);
+						treeViewer.setSelection(new StructuredSelection(new RemoteResourceElement(remote)));
+					}
+				}
+			}
+		});
+		
 		TargetManager.addSiteListener(this);
 		initalizeToolbarActions();
 	}
 
-	private IRemoteTargetResource getSelectedRemoteFolder() {
-		IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();		
+	private IRemoteTargetResource getSelectedRemoteFolder(IStructuredSelection selection) {		
 		if (!selection.isEmpty()) {
 			final List filesSelection = new ArrayList();
 			Iterator it = selection.iterator();
@@ -150,15 +193,29 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		}
 		return null;
 	}
+	
+	private void expandInTreeCurrentSelection(IStructuredSelection selection, boolean toggle) {
+		if (!selection.isEmpty()) {
+			Iterator it = selection.iterator();
+			while(it.hasNext()) {
+				Object element = it.next();
+				if(toggle) {
+					treeViewer.setExpandedState(element, !treeViewer.getExpandedState(element));
+				} else {
+					treeViewer.setExpandedState(element, true);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Method updateFileTable.
 	 */
-	private void updateFileTable() {
-		final IRemoteTargetResource remoteFolder = getSelectedRemoteFolder();
+	private void updateFileTable(IRemoteTargetResource remoteFolder) {
 		final Set tags = new HashSet();
 		if(remoteFolder != null) {
-			tableViewer.setInput(new RemoteResourceElement(remoteFolder, RemoteResourceElement.SHOW_FILES));
+			RemoteResourceElement folderElement = new RemoteResourceElement(remoteFolder);
+			tableViewer.setInput(folderElement);
 		}
 	}
 
@@ -167,7 +224,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		// Create actions
 		
 		// Refresh (toolbar)
-		addSiteAction = new Action(Policy.bind("SiteExplorerViewaddSiteAction"), TeamImages.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
+		addSiteAction = new Action(Policy.bind("SiteExplorerView.addSiteAction"), TeamImages.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT)) { //$NON-NLS-1$
 			public void run() {
 				ConfigureTargetWizard wizard = new ConfigureTargetWizard();
 				wizard.init(null, null);
@@ -175,12 +232,60 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 				dialog.open();
 			}
 		};
-		addSiteAction.setToolTipText(Policy.bind("SiteExplorerViewaddSiteActionTooltip")); //$NON-NLS-1$
+		addSiteAction.setToolTipText(Policy.bind("SiteExplorerView.addSiteActionTooltip")); //$NON-NLS-1$
+		
+		newFolderAction = new Action(Policy.bind("SiteExplorerView.newFolderAction"), WorkbenchImages.getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER)) { //$NON-NLS-1$
+			public void run() {
+				Shell shell = treeViewer.getTree().getShell();
+				try {
+					// assume that only one folder is selected in the folder tree
+					IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+					Object currentSelection = selection.getFirstElement();
+					IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection);
+					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder);
+					treeViewer.refresh(currentSelection);
+					expandInTreeCurrentSelection(new StructuredSelection(currentSelection), false);
+					treeViewer.setSelection(new StructuredSelection(currentSelection));
+				} catch (TeamException e) {
+					ErrorDialog.openError(shell,
+								Policy.bind("Error"), //$NON-NLS-1$
+								Policy.bind("CreateNewFolderAction.errorCreatingFolder"), //$NON-NLS-1$
+								e.getStatus());
+					return;
+				}
+			}
+		};
 
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager tbm = bars.getToolBarManager();
 		tbm.add(addSiteAction);
 		tbm.update(false);
+		
+		
+		MenuManager treeMgr = new MenuManager();
+		MenuManager tableMgr = new MenuManager();
+		Tree tree = treeViewer.getTree();
+		Table table = tableViewer.getTable();
+		Menu treeMenu = treeMgr.createContextMenu(tree);
+		Menu tableMenu = tableMgr.createContextMenu(table);
+		IMenuListener menuListener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				// Misc additions
+				MenuManager sub = new MenuManager(Policy.bind("SiteExplorerView.newMenu"), IWorkbenchActionConstants.GROUP_ADD); //$NON-NLS-1$
+				sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+				manager.add(sub);
+				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+				sub.add(newFolderAction)				;
+			}
+		};
+		treeMgr.addMenuListener(menuListener);
+		treeMgr.setRemoveAllWhenShown(true);
+		tableMgr.addMenuListener(menuListener);
+		tableMgr.setRemoveAllWhenShown(true);
+		tree.setMenu(treeMenu);
+		table.setMenu(tableMenu);
+		getSite().registerContextMenu(tableMgr, tableViewer);
+		getSite().registerContextMenu(treeMgr, treeViewer);
 	}
 	
 	/**
@@ -207,6 +312,5 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		root = new SiteRootsElement(TargetManager.getSites(), RemoteResourceElement.SHOW_FOLDERS);
 		treeViewer.setInput(root);
 		treeViewer.refresh();
-		tableViewer.refresh();		
 	}
 }

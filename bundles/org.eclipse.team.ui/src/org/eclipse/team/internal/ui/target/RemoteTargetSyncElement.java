@@ -20,19 +20,30 @@ import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 
+/**
+ * Is a synchronization element that can calculate three-way sync
+ * states based on timestamps. This is useful for synchronizing between
+ * repositories without revision history and thus the base contents is
+ * not available (e.g. non-versioning DAV, FTP...)
+ * 
+ * @see IRemoteSyncElement
+ */
 public class RemoteTargetSyncElement extends RemoteSyncElement {
 
 	private IRemoteTargetResource remote;
-	private LocalTargetSyncElement localSyncElement;
+	private IResource local;
 	private TargetProvider provider;
 
 	public RemoteTargetSyncElement(IResource local, IRemoteTargetResource remote) {
-		this.localSyncElement = new LocalTargetSyncElement(local);
+		this.local = local;
 		this.remote = remote;
 		try {
 			this.provider = TargetManager.getProvider(local.getProject());
-		} catch (TeamException e) {			
+		} catch (TeamException e) {
+			TeamUIPlugin.log(e.getStatus());
+			this.remote = null;		
 		}
 	}
 	
@@ -61,7 +72,7 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 	 * @see LocalSyncElement#create(IResource, IRemoteResource, Object)
 	 */
 	public ILocalSyncElement create(IResource local, IRemoteResource base, Object data) {
-		return localSyncElement.create(local, base, data);
+		return new RemoteTargetSyncElement(local, remote);
 	}
 
 	/**
@@ -96,7 +107,7 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 	 * @see ILocalSyncElement#getLocal()
 	 */
 	public IResource getLocal() {
-		return localSyncElement.getLocal();
+		return local;
 	}
 
 	/**

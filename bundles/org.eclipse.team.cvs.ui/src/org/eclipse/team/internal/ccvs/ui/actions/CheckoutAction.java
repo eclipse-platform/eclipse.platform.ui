@@ -27,9 +27,9 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.IPromptCondition;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
+import org.eclipse.team.internal.ui.IPromptCondition;
+import org.eclipse.team.internal.ui.PromptingDialog;
 
 /**
  * The purpose of the CheckoutAction is to allow the checkout of module aliases into the

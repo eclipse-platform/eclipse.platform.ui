@@ -51,6 +51,27 @@ public abstract class TargetProvider {
 	 * array. 
 	 */
 	public abstract void get(IResource[] resources, IProgressMonitor progress) throws TeamException;
+	
+	/**
+	 * Updates the local resource to have the same content as the given remote
+	 * resource. Where the local resource does not exist, this method will create it.
+	 * <p>
+	 * If the remote resource is a container (e.g. folder or project) this operation is equivalent 
+	 * to getting each non-container member of the remote resource, thereby updating the
+	 * content of existing local members, creating local members to receive new remote resources,
+	 * and deleting local members that no longer have a corresponding remote resource.</p>
+	 * <p>
+	 * Interrupting the method (via the progress monitor) may lead to partial, but consistent, results.</p>
+	 * 
+	 * @param resources an array of local resources to update from the corresponding remote
+	 * resources.
+	 * @param progress a progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
+	 * @throws TeamException if there is a problem getting one or more of the resources.  The
+	 * exception will contain multiple statuses, one for each resource in the <code>resources</code>
+	 * array. 
+	 */
+	public abstract void get(IResource resource, IRemoteTargetResource remote, IProgressMonitor progress) throws TeamException;
 
 	/**
 	 * Transfers the content of the local resource to the corresponding remote resource.
@@ -68,11 +89,7 @@ public abstract class TargetProvider {
 	public abstract void put(IResource[] resources, IProgressMonitor progress) throws TeamException;
 	
 	/**
-	 * Returns a remote resource handle at the path of the given local resource. The remote
-	 * resource handles URL will be:
-	 * <blockquote><pre>
-	 * getURL() + resource.getProjectRelativePath()
-	 * </pre></blockquote>
+	 * Returns a remote resource handle at the path of the given local resource.
 	 * 
 	 * @param resource local resource path to be used to construct the remote handle's path
 	 * @return a handle to a remote resource that may or may not exist
@@ -80,7 +97,7 @@ public abstract class TargetProvider {
 	public abstract IRemoteTargetResource getRemoteResourceFor(IResource resource);
 	
 	/**
-	 *Returns a remote resource handle at the path of this target provider's URL.
+	 * Returns a remote resource handle at the path of this target provider's URL.
 	 * @return a handle to a remote resource that may or may not exist
 	 */
 	public abstract IRemoteTargetResource getRemoteResource();

@@ -39,9 +39,11 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
+import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -311,6 +313,20 @@ abstract public class CVSAction extends TeamAction {
 			return (ICVSRemoteFolder[])resources.toArray(new ICVSRemoteFolder[resources.size()]);
 		}
 		return new ICVSRemoteFolder[0];
+	}
+	
+	/**
+	 * A helper prompt condition for prompting for CVS dirty state.
+	 */
+	public static IPromptCondition getOverwriteLocalChangesPrompt() {
+		return new IPromptCondition() {
+			public boolean needsPrompt(IResource resource) {
+				return CVSDecorator.isDirty(resource);
+			}
+			public String promptMessage(IResource resource) {
+				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());//$NON-NLS-1$
+			}
+		};
 	}
 		
 	/**
