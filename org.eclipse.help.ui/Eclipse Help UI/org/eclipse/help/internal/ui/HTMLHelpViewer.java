@@ -16,12 +16,16 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.server.PluginURL;
+import org.eclipse.help.internal.util.Resources;
 import org.eclipse.help.internal.ui.util.*;
 
 /**
  * Help viewer based on the IE5 ActiveX component.
  */
 public class HTMLHelpViewer implements ISelectionChangedListener {
+	private final static String defaultSplash = 
+		PluginURL.getPrefix()+"/org.eclipse.help/" + Resources.getString("splash_location");
 	private IBrowser webBrowser;
 	/**
 	 * HelpViewer constructor comment.
@@ -111,7 +115,7 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 				InfoSet infoset = (InfoSet) input;
 				String url = infoset.getHref();
 				if (url == null || url.equals(""))
-					return; // no content in this topic
+					url = defaultSplash;
 				Locale locale = Locale.getDefault();
 				url = url.concat("?lang=") + locale.getDefault().toString();
 				if (url.indexOf("http:") == -1) {

@@ -18,7 +18,7 @@ class CSSEmbedProcessor implements OutputProcessor {
 	private static final byte[] headTagBeginCaps = "<HEAD".getBytes();
 	private static final char headTagEnd = '>';
 	private static final String href =
-		"/org.eclipse.help/" + Resources.getString("CSS_location");
+		PluginURL.getPrefix() +"/org.eclipse.help/" + Resources.getString("CSS_location");
 	private static final byte[] cssLink =
 		("\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" + href + "\">")
 			.getBytes();
