@@ -22,6 +22,9 @@ org.eclipse.core.resources/build/delta=false
 # and because of changes in which project.
 org.eclipse.core.resources/build/needbuild=false
 
+# Work in progress: enables auto-build in background thread
+org.eclipse.core.resources/build/background=false
+
 # Reports configuration and deconfiguration of project natures
 org.eclipse.core.resources/natures=false
 
