@@ -53,7 +53,7 @@ public class RemoteAntBuildListener {
 	private int fPort= -1;
 	private PrintWriter fWriter;
 	private BufferedReader fBufferedReader;
-	private boolean fDebug= true;
+	private boolean fDebug= false;
 	private IProcess fProcess;
 	private String fProcessId;
 	private File fBuildFileParent= null;
