@@ -9,6 +9,7 @@ import java.util.*;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.contributions.xml.*;
+import org.eclipse.help.internal.util.*;
 
 /**
  * Builder for the contribution hierarchy using the insert contributions.
@@ -82,6 +83,14 @@ public class InfosetBuilder {
 					return true;
 			}
 			return executeNested();
+		}
+		/**
+		 *  Writes this action to the log
+		 */
+		public void fail() {
+			String fromID = insertNode.getSource();
+			String toID = insertNode.getTarget();
+			Logger.logWarning(Resources.getString("WS03", "from=\""+fromID+"\" to=\""+toID+"\""));
 		}
 
 		private boolean executeNested() {
@@ -225,6 +234,10 @@ public class InfosetBuilder {
 				if (action.execute())
 					unexecutedActions.remove(i--);
 			}
+		}
+		// report unexecuted actions
+		for( int i=0; i<unexecutedActions.size(); i++){
+			((InsertAction)unexecutedActions.get(i)).fail();
 		}
 	}
 	/**
