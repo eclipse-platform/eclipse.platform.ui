@@ -870,7 +870,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		IFeature childFeature = null;		
 		IStatus childStatus;
 		
-		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),featureStatus.getCode(),featureStatus.getMessage(), featureStatus.getException());
+		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),IStatus.OK,null,null);
+		multi.add(featureStatus);
 		
 		for (int i = 0; i < children.length; i++) {
 			try {
@@ -881,8 +882,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			if (childFeature==null){
 				UpdateManagerPlugin.warn("Feature is null for:"+children[i],new Exception());
 			} else {
-				childStatus = getStatus(childFeature);	
-				multi.add(childStatus);
+				childStatus = getFeatureStatus(childFeature);	
+				// do not add the status, add the children status as getFeatureStatus
+				// returns a multiStatus 
+				multi.addAll(childStatus);
 			}
 		}
 		return multi; 
