@@ -90,11 +90,16 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						fView.getViewer().getControl().setRedraw(false);
+						TableViewer viewer = (TableViewer)fView.getViewer(); 
+						viewer.getControl().setRedraw(false);
 						for (int i = 0; i < breakpoints.length; i++) {
-							((TableViewer)fView.getViewer()).refresh(breakpoints[i]);
+							IBreakpoint breakpoint = breakpoints[i];
+							if (breakpoint.getMarker() != null) {
+								// only refresh if still exists
+								viewer.refresh(breakpoint);
+							}
 						}
-						fView.getViewer().getControl().setRedraw(true);
+						viewer.getControl().setRedraw(true);
 						fView.updateObjects();
 					}
 				}
