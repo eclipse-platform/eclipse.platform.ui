@@ -16,7 +16,7 @@ public class TargetMoveUpAction extends Action implements IUpdate {
 	public TargetMoveUpAction(AntView view) {
 		super("Move Up", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_MOVE_UP));
 		setDescription("Move the selected target up in the execution order");
-		setToolTipText("Move Up");
+		setToolTipText("Move the selected target up in the execution order");
 		this.view= view;
 	}
 	

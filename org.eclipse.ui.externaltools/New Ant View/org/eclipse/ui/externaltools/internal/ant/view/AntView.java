@@ -207,6 +207,8 @@ public class AntView extends ViewPart {
 		targetManager.add(moveDownAction);
 		targetManager.add(moveUpAction);
 		targetManager.update(true);
+		
+		updateActions();
 	}
 
 	/**
@@ -255,13 +257,17 @@ public class AntView extends ViewPart {
 		targetViewer.setInput(ResourcesPlugin.getWorkspace());
 		targetViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				Iterator iter = updateActions.iterator();
-				while (iter.hasNext()) {
-					((IUpdate) iter.next()).update();
-				}
+				updateActions();
 			}
 		});
 		createContextMenu(targetViewer);
+	}
+	
+	private void updateActions() {
+		Iterator iter = updateActions.iterator();
+		while (iter.hasNext()) {
+			((IUpdate) iter.next()).update();
+		}
 	}
 
 	/**
