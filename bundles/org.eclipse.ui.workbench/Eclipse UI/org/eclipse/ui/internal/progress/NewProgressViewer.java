@@ -83,6 +83,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	private Color selectedColor;
 	private Cursor handCursor;
 	private Cursor normalCursor;
+	private Image defaultJobIcon;
 	private Font defaultFont= JFaceResources.getDefaultFont();
 	private HashMap map= new HashMap();
     private IJobProgressManagerListener progressManagerListener;
@@ -181,18 +182,24 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				if (job != null) {
 					Object property= job.getProperty(KEEP_PROPERTY);
 					//Boolean modelProperty= (Boolean)job.getProperty(ProgressManager.PROPERTY_IN_DIALOG);
-					if (property instanceof Boolean && ((Boolean)property).booleanValue()) {
-						if (DEBUG) System.err.println("got keep for: " + jobTreeElement);
-						keepItem= true;
-						Composite parent= getParent();
-						if (parent instanceof JobTreeItem) {
-						    if (DEBUG) System.err.println("propagating keep to: " + ((JobTreeItem)parent).jobTreeElement);
-						    ((JobTreeItem)parent).keepItem= true;
-						}
-					}
+					if (property instanceof Boolean && ((Boolean)property).booleanValue())
+						setKeep();
+					IStatus result= job.getResult();
+					if (result != null && result.getSeverity() == IStatus.ERROR)
+						setKeep();
 				}
 			}
 			return keepItem;			
+		}
+		
+		void setKeep() {
+			//if (DEBUG) System.err.println("got keep for: " + jobTreeElement);
+			keepItem= true;
+			Composite parent= getParent();
+			if (parent instanceof JobTreeItem) {
+			    //if (DEBUG) System.err.println("propagating keep to: " + ((JobTreeItem)parent).jobTreeElement);
+			    ((JobTreeItem)parent).keepItem= true;
+			}			
 		}
 		
 		Image checkIcon() {
@@ -216,6 +223,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		abstract boolean refresh();
 		
 		public boolean remove() {
+			if (DEBUG) System.err.println("  JobTreeItem.remove:");
+			
+			refresh();
+			
 			if (!keepItem) {
 			    if (DEBUG) System.err.println("  JobItem.dispose:");
 				dispose();
@@ -315,6 +326,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	    		String message= result.getMessage().trim();
 	    		if (message.length() > 0) {
 	    			if (r.getSeverity() == IStatus.ERROR) {
+	    				setKeep();
+	    				
 	    				lColor= errorColor;
 	    				lColor2= errorColor2;
 	    				setText("Error: " + message);
@@ -456,20 +469,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 						
 			Display display= getDisplay();
 
-			Job job= getJob();
-			if (image != null) {
-				if (job != null) {
-					Object property= job.getProperty(ICON_PROPERTY);
-					if (property instanceof ImageDescriptor) {
-						ImageDescriptor id= (ImageDescriptor) property;
-						image= id.createImage(display);
-					} else if (property instanceof URL) {
-						URL url= (URL) property;
-						ImageDescriptor id= ImageDescriptor.createFromURL(url);
-						image= id.createImage(display);
-					}
-				}
-			}
 			
 			MouseListener ml= new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
@@ -479,6 +478,11 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
 			iconItem= new Label(this, SWT.NONE);
 			iconItem.addMouseListener(ml);
+			image= checkIcon();
+			if (image != null)
+				iconItem.setImage(image);
+			else
+				iconItem.setImage(defaultJobIcon);			
 			
 			nameItem= new Label(this, SWT.NONE);
 			nameItem.setFont(defaultFont);
@@ -550,7 +554,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 //				}
 //			}
 			
-			
 			if (keepItem) {
 				boolean changed= false;
 				if (progressBar != null && !progressBar.isDisposed()) {
@@ -595,8 +598,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		public boolean kill(boolean refresh, boolean broadcast) {
 			if (jobTerminated) {
 				
-				if (broadcast && jobTreeElement instanceof JobInfo)
-				    FinishedJobs.getInstance().remove(NewProgressViewer.this, (JobInfo)jobTreeElement);
+				if (broadcast)
+				    FinishedJobs.getInstance().remove(NewProgressViewer.this, jobTreeElement);
 				
 				dispose();
 				relayout(refresh, refresh);
@@ -861,6 +864,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		handCursor= new Cursor(display, SWT.CURSOR_HAND);
 		normalCursor= new Cursor(display, SWT.CURSOR_ARROW);
 
+		defaultJobIcon= getImage(display, "newprogress_circle.gif");
+		
 		boolean carbon= "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 		int shift= carbon ? -25 : -10; // Mac has different Gamma value
 		lightColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -982,16 +987,24 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			}
 		}
 	    // now add kept finished jobs
-		JobInfo[] infos= FinishedJobs.getInstance().getJobInfos();
+		JobTreeElement[] infos= FinishedJobs.getInstance().getJobInfos();
 		for (int i= 0; i < infos.length; i++) {
 			Object element= infos[i];
-			if (findJobItem(element, false) == null && infos[i].getParent() == null) {
+			JobTreeItem jte= findJobItem(element, true);
+			if (jte != null) {
+				jte.keepItem= true;
+				jte.remove();	// bring to keep mode
+				lastAdded= jte;
 				
-				if (DEBUG) System.err.println("  added2");
+				if (jte instanceof Hyperlink) {
+					JobItem p= (JobItem) jte.getParent();
+					p.keepItem= true;
+					p.remove();
+					lastAdded= p;
+				}
 				
-			    lastAdded= createItem(element);
 				changed= countChanged= true;
-			}			
+			}
 		}
 		
 		relayout(changed, countChanged);
@@ -1010,17 +1023,19 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			Object parent= jte.getParent();
 			if (parent != null) {
 				JobTreeItem parentji= findJobItem(parent, true);
-				if (parentji instanceof JobItem)
-					ji= new Hyperlink((JobItem)parentji, jte);
+				if (parentji instanceof JobItem) {
+					if (findJobItem(jte, false) == null)
+						ji= new Hyperlink((JobItem)parentji, jte);
+				}
 			} else {
-				createItem(jte);
+				ji= createItem(jte);
 			}
 		}
 		return ji;
 	}	
 		
 	public void reveal(JobTreeItem jti) {
-		if (jti != null) {
+		if (jti != null && !jti.isDisposed()) {
 			Rectangle bounds= jti.getBounds();
 			scroller.setOrigin(0, bounds.y);
 		}
@@ -1133,13 +1148,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#finished(org.eclipse.ui.internal.progress.JobInfo)
      */
-    public void finished(JobInfo info) {
+    public void finished(JobTreeElement jte) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#removed(org.eclipse.ui.internal.progress.JobInfo)
      */
-    public void removed(JobInfo info) {
+    public void removed(JobTreeElement info) {
 		final JobTreeItem ji= findJobItem(info, false);
 		if (ji != null) {
 	        ji.getDisplay().asyncExec(new Runnable() {

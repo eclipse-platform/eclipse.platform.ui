@@ -7,11 +7,16 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ListenerList;
 
 
+/**
+ * This singleton remembers all terminated JobTreeElements that 
+ * should be preserved (e.g. because their associated Jobs the "keep"
+ * property set).
+ */
 class FinishedJobs {
     
     static interface KeptJobsListener {
-        void finished(JobInfo info);
-        void removed(JobInfo info);
+        void finished(JobTreeElement jte);
+        void removed(JobTreeElement jte);
         void infoVisited();
     }
 
@@ -78,9 +83,27 @@ class FinishedJobs {
     }
     
     void add(JobInfo info) {
-        if (!keptjobinfos.contains(info)) {
-            keptjobinfos.add(info);
-            timeStamp++;
+    	boolean fire= false;
+    	
+    	synchronized (keptjobinfos) {
+	        if (!keptjobinfos.contains(info)) {
+	            keptjobinfos.add(info);
+	            
+	            Object parent= info.getParent();
+	            if (parent != null) {
+            		//System.err.println("FinishedJobs: added child to group");
+	            	if (!keptjobinfos.contains(parent)) {
+	            		//System.err.println("FinishedJobs: added group");
+	            		keptjobinfos.add(parent);
+	            	}
+	            }
+	            
+	            timeStamp++;
+	            fire= true;
+	        }
+    	}
+            
+        if (fire) {
             if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: added job");
             Object l[]= listeners.getListeners();
 			for (int i= 0; i < l.length; i++) {
@@ -90,14 +113,22 @@ class FinishedJobs {
         }
     }
 
-    void remove(KeptJobsListener sender, JobInfo info) {
-        if (keptjobinfos.remove(info)) {
+    void remove(KeptJobsListener sender, JobTreeElement jte) {
+        if (keptjobinfos.remove(jte)) {
         	if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: sucessfully removed job");
+        	
+        	// delete all children
+        	JobTreeElement jtes[]= (JobTreeElement[]) keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
+        	for (int i= 0; i < jtes.length; i++)
+        		if (jtes[i].getParent() == jte)
+        			keptjobinfos.remove(jtes[i]);
+        			
+        	
             Object l[]= listeners.getListeners();
 			for (int i= 0; i < l.length; i++) {
 			    KeptJobsListener jv= (KeptJobsListener) l[i];
 			    if (jv != sender)
-			        jv.removed(info);
+			        jv.removed(jte);
 			}
         }
     }
@@ -111,8 +142,10 @@ class FinishedJobs {
 		}
     }
 
-    JobInfo[] getJobInfos() {
-        return (JobInfo[]) keptjobinfos.toArray(new JobInfo[keptjobinfos.size()]);
+    JobTreeElement[] getJobInfos() {
+    	synchronized (keptjobinfos) {
+    		return (JobTreeElement[]) keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
+    	}
     }
 
     public long getTimeStamp() {

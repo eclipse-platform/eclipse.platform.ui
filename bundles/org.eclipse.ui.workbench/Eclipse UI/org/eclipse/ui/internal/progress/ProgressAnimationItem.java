@@ -170,17 +170,20 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		}
 	}
 
-    public void removed(JobInfo info) {
+    public void removed(JobTreeElement info) {
         infoVisited();
     }
     
-    public void finished(final JobInfo info) {
+    public void finished(final JobTreeElement jte) {
 	    final Display display= Display.getDefault();
 	    display.asyncExec(new Runnable() {
 	        public void run() {
-	            Job job= info.getJob();
-	            if (job != null)
-	                setStatus(job);
+	        	if (jte instanceof JobInfo) {
+	        		JobInfo ji= (JobInfo) jte;
+	        		Job job= ji.getJob();
+	        		if (job != null)
+	        			setStatus(job);
+	        	}
 	        }
 	    });
     }
