@@ -76,7 +76,8 @@ public class BatchInstallOperation
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
-			monitor.done();
+			if (monitor != null)
+				monitor.done();
 		}
 	}
 }
