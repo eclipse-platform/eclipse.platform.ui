@@ -257,7 +257,9 @@ public static void run(IRunnableWithProgress operation, boolean fork, IProgressM
 				t.start();
 				t.block();
 				Throwable throwable= t.throwable;
-				if (throwable != null) {
+				if (throwable != null
+					&& !(throwable instanceof InterruptedException)
+					&& !(throwable instanceof OperationCanceledException)) {
 					if (debug) {
 						System.err.println("Exception in modal context operation:");//$NON-NLS-1$
 						throwable.printStackTrace();
