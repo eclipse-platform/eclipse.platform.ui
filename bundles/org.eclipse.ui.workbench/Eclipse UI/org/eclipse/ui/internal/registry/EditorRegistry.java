@@ -576,8 +576,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      */
     private boolean readEditors(Map editorTable) {
         //Get the workbench plugin's working directory
-        WorkbenchPlugin workbenchPlugin = WorkbenchPlugin.getDefault();
-        IPath workbenchStatePath = workbenchPlugin.getDataLocation();
+        IPath workbenchStatePath = WorkbenchPlugin.getDefault().getDataLocation();
         if(workbenchStatePath == null)
         	return false;        
         IPreferenceStore store = WorkbenchPlugin.getDefault()
@@ -762,8 +761,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      */
     private boolean readResources(Map editorTable) {
         //Get the workbench plugin's working directory
-        WorkbenchPlugin workbenchPlugin = WorkbenchPlugin.getDefault();
-        IPath workbenchStatePath = workbenchPlugin.getDataLocation();
+        IPath workbenchStatePath = WorkbenchPlugin.getDefault().getDataLocation();
         // XXX: nobody cares about this return value
         if(workbenchStatePath == null) return false;
         IPreferenceStore store = WorkbenchPlugin.getDefault()

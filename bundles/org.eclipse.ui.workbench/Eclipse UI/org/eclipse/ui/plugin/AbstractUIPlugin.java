@@ -379,41 +379,6 @@ public abstract class AbstractUIPlugin extends Plugin {
     protected void initializeImageRegistry(ImageRegistry reg) {
         // spec'ed to do nothing
     }
-    
-    /**
-     * Returns the path to a location in the file system that can be used 
-     * to persist/restore state between workbench invocations.
-     * If the location did not exist prior to this call it will  be created.
-     * Returns <code>null</code> if no such location is available.
-     * 
-     * @return path to a location in the file system where this plug-in can
-     * persist data between sessions, or <code>null</code> if no such
-     * location is available.
-     * @since 3.1
-     */
-    public IPath getDataLocation() {
-		try {
-			return getStateLocation();
-		} catch (IllegalStateException e) {
-            // Don't automatically write to the config location if instance area is unavailable.
-			/* 
-			Location configLocation = Platform.getConfigurationLocation();
-			URL baseUrl;
-			if (configLocation == null || (baseUrl = configLocation.getURL()) == null)
-				return null;
-			try {
-				URL url = new URL(baseUrl, getBundle().getSymbolicName());
-				File dir = new File(url.getFile());
-				if (!dir.exists() && !dir.mkdirs())
-					return null;
-				return new Path(dir.toString());
-			} catch (IOException e2) {				
-				return null;
-			}
-			*/
-			return null;
-		}
-	}
 
     /**
      * Loads the dialog settings for this plug-in.
@@ -431,8 +396,8 @@ public abstract class AbstractUIPlugin extends Plugin {
         dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
 
         // bug 69387: The instance area should not be created (in the call to
-        // #getStateLocation) if -data @none or -data @noDefault was used 
-        IPath dataLocation = getDataLocation();
+        // #getStateLocation) if -data @none or -data @noDefault was used
+        IPath dataLocation = getStateLocationOrNull();
         if (dataLocation != null) {
 	        // try r/w state area in the local file system
 	        String readWritePath = dataLocation.append(FN_DIALOG_SETTINGS)
@@ -527,7 +492,7 @@ public abstract class AbstractUIPlugin extends Plugin {
         }
 
         try {
-        	IPath path = getDataLocation();
+        	IPath path = getStateLocationOrNull();
         	if(path == null) return;
             String readWritePath = path
                     .append(FN_DIALOG_SETTINGS).toOSString();
@@ -708,4 +673,28 @@ public abstract class AbstractUIPlugin extends Plugin {
             return null;
         return ImageDescriptor.createFromURL(fullPathString);
     }
+    
+    /**
+     * FOR INTERNAL WORKBENCH USE ONLY. 
+     * 
+     * Returns the path to a location in the file system that can be used 
+     * to persist/restore state between workbench invocations.
+     * If the location did not exist prior to this call it will  be created.
+     * Returns <code>null</code> if no such location is available.
+     * 
+     * @return path to a location in the file system where this plug-in can
+     * persist data between sessions, or <code>null</code> if no such
+     * location is available.
+     * @since 3.1
+     */
+    private IPath getStateLocationOrNull() {
+        try {
+            return getStateLocation();
+        } catch (IllegalStateException e) {
+            // This occurs if -data=@none is explicitly specified, so ignore this silently.
+            // Is this OK? See bug 85071.
+            return null;
+        }
+    }    
+    
 }

@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -639,14 +640,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * @param aWorkbench the workbench for the receiver.
-     * @deprecated Use <code>PlatformUI.createAndRunWorkbench</code>.
-     */
-    public void setWorkbench(IWorkbench aWorkbench) {
-        // Do nothing
-    }
-
-    /**
      * Get the decorator manager for the receiver
      * @return DecoratorManager the decorator manager
      * for the receiver.
@@ -788,4 +781,28 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public IWizardRegistry getExportWizardRegistry() {
     	return ExportWizardRegistry.getInstance();
     }
+
+    
+    /**
+     * FOR INTERNAL WORKBENCH USE ONLY. 
+     * 
+     * Returns the path to a location in the file system that can be used 
+     * to persist/restore state between workbench invocations.
+     * If the location did not exist prior to this call it will  be created.
+     * Returns <code>null</code> if no such location is available.
+     * 
+     * @return path to a location in the file system where this plug-in can
+     * persist data between sessions, or <code>null</code> if no such
+     * location is available.
+     * @since 3.1
+     */
+    public IPath getDataLocation() {
+        try {
+            return getStateLocation();
+        } catch (IllegalStateException e) {
+            // This occurs if -data=@none is explicitly specified, so ignore this silently.
+            // Is this OK? See bug 85071.
+            return null;
+        }
+    }    
 }
