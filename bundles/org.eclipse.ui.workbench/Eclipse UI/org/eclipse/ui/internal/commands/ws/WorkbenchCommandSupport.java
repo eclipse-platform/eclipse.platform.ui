@@ -419,6 +419,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             final Map contextTree = contextSupport
                         .createFilteredContextTreeFor(contextSupport
                                 .getContextManager().getEnabledContextIds());
+            final boolean dialogOpen = contextTree
+                                .containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG);
 
             for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
                     .iterator(); iterator.hasNext();) {
@@ -449,7 +451,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                     }
 
                     if ((activeShell2 != null) && (activeShell2 != activeShell)
-                            && (activeShell2 != wbWinShell)) continue;
+                            && ((activeShell2 != wbWinShell) || dialogOpen))
+                            continue;
 
                     if (bestHandlerSubmission == null) {
                         bestHandlerSubmission = handlerSubmission;
@@ -466,8 +469,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
                         if ((bestHandlerSubmission.getHandler() instanceof HandlerProxy)
                                 && (currentMatch <= MATCH_PARTIAL)
-                                && (contextTree
-                                        .containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG))) {
+                                && (dialogOpen)) {
                             /*
                              * TODO This is a workaround for the fact that there
                              * is no API to specify the shell for handlers
@@ -494,9 +496,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                             }
                             
                         } else if ((handlerSubmission.getHandler() instanceof HandlerProxy)
-                                && (bestMatch <= MATCH_PARTIAL)
-                                && (contextTree
-                                        .containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG))) {
+                                && (bestMatch <= MATCH_PARTIAL) && (dialogOpen)) {
                             /*
                              * TODO This is a workaround for the fact that there
                              * is no API to specify the shell for handlers

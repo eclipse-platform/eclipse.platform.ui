@@ -472,8 +472,8 @@ final class KeyBindingService implements INestableKeyBindingService {
             // Create the new submission
             IHandler handler = new ActionHandler(action);
             HandlerSubmission handlerSubmission = new HandlerSubmission(null,
-                    null, workbenchPartSite, commandId, handler,
-                    Priority.MEDIUM);
+                    workbenchPartSite.getShell(), workbenchPartSite, commandId,
+                    handler, Priority.MEDIUM);
             handlerSubmissionsByCommandId.put(commandId, handlerSubmission);
 
             // Either submit the new handler myself, or simply re-activate.
