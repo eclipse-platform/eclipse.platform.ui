@@ -472,6 +472,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
+		if (getProjectViewer() != null) {
+			getProjectViewer().getControl().setFocus();
+		}
 	}
 
 	/**
