@@ -12,9 +12,9 @@ package org.eclipse.debug.internal.ui.views.console;
 
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
+import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -32,6 +32,8 @@ public class ConsoleLineNotifier {
 	 */
 	private int fLinesProcessed = 0;
 	
+	private boolean fClosed = false;
+	
 	/**
 	 * Console listeners
 	 */
@@ -41,9 +43,6 @@ public class ConsoleLineNotifier {
 	 * The console this notifier is tracking 
 	 */
 	private IConsole fConsole = null;
-	
-	private boolean fStandardOutClosed= false;
-	private boolean fStandardErrClosed= false;
 	
 	/**
 	 * Connects this notifier to the given console.
@@ -63,13 +62,15 @@ public class ConsoleLineNotifier {
 	 * Disposes this notifier 
 	 */
 	public void disconnect() {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
-			listener.dispose();
+		synchronized (this) {
+			Object[] listeners = fListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
+				listener.dispose();
+			}
+			fListeners = null;
+			fConsole = null;
 		}
-		fListeners = null;
-		fConsole = null;
 	}
 	
 	/**
@@ -80,20 +81,22 @@ public class ConsoleLineNotifier {
 	}
 	
 	/**
-	 * Notification the console's stream has been closed
+	 * Notification the console's streams have been closed
 	 */
-	public void streamClosed(String streamIdentifier) {
-		if (streamIdentifier.equals(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM)) {
-			fStandardOutClosed= true;
-		} else if (streamIdentifier.equals(IDebugUIConstants.ID_STANDARD_ERROR_STREAM)) {
-			fStandardErrClosed= true;
-		}
-		processNewLines();
-		if (fStandardErrClosed && fStandardOutClosed) {
+	public void streamsClosed() {
+		synchronized (this) {
+			if (fConsole == null) {
+				// already disconnected
+				return;
+			}
+			fClosed = true;	
+			processNewLines();		
 			Object[] listeners= fListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
-				IConsoleLineTracker tracker = (IConsoleLineTracker) listeners[i];
-				tracker.consoleClosed();
+				Object obj = listeners[i];
+				if (obj instanceof IConsoleLineTrackerExtension) {
+					((IConsoleLineTrackerExtension)obj).consoleClosed();
+				}
 			}
 		}
 	}
@@ -113,7 +116,7 @@ public class ConsoleLineNotifier {
 				DebugUIPlugin.log(e);
 				return;
 			}
-			if (delimiter == null && !fStandardErrClosed && !fStandardOutClosed) {
+			if (delimiter == null && !fClosed) {
 				// line not complete yet
 				return;
 			}

@@ -62,12 +62,6 @@ public interface IConsoleLineTracker {
 	public void lineAppended(IRegion line);
 	
 	/**
-	 * Notification that the input to the console has been closed. No
-	 * more lines will be appended after this method is called.
-	 */
-	public void consoleClosed();
-	
-	/**
 	 * Disposes this console line tracker. 
 	 */
 	public void dispose();

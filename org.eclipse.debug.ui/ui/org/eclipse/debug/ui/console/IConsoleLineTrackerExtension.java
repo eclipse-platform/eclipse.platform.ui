@@ -8,26 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.core;
-
-
-import org.eclipse.debug.core.model.IStreamMonitor;
+package org.eclipse.debug.ui.console;
 
 /**
- * A stream listener is notified of changes
- * to a stream monitor.
+ * An extension to the console line tracker interface that console line
+ * trackers may implement to be notified when output the console is complete.
  * <p>
  * Clients may implement this interface.
  * </p>
- * @see IStreamMonitor
+ * @since 3.0
  */
-public interface IStreamListener {
+public interface IConsoleLineTrackerExtension extends IConsoleLineTracker {
+	
 	/**
-	 * Notifies this listener that text has been appended to
-	 * the given stream monitor.
-	 *
-	 * @param text the appended text
-	 * @param monitor the stream monitor to which text was appended
+	 * Notification that all output streams connected to the console have been
+	 * closed. No more lines will be appended after this method is called.
 	 */
-	public void streamAppended(String text, IStreamMonitor monitor);
+	public void consoleClosed();
+	
 }

@@ -20,6 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 import org.eclipse.debug.core.model.IProcess;
@@ -50,7 +53,7 @@ import org.eclipse.swt.widgets.Display;
  * Default console document partitioner. Partitions a document into
  * color regions for standard in, out, err.
  */
-public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IPropertyChangeListener, IConsole {
+public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IPropertyChangeListener, IConsole, IDebugEventSetListener {
 
 	private boolean fClosed= false;
 	private boolean fKilled= false;
@@ -95,14 +98,22 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		public String getText() {
 			return fText;
 		}
+		
+		public boolean isClosedEntry() {
+			return false;
+		}
 	}
 	
 	/**
 	 * A stream entry representing stream closure
 	 */
-	class StreamClosedEntry extends StreamEntry {
-		StreamClosedEntry(String streamIdentifier) {
-			super("", streamIdentifier); //$NON-NLS-1$
+	class StreamsClosedEntry extends StreamEntry {
+		StreamsClosedEntry() {
+			super("", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		public boolean isClosedEntry() {
+			return true;
 		}
 	}
 	
@@ -130,7 +141,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		
 		public void streamClosed(IStreamMonitor monitor) {
-			ConsoleDocumentPartitioner.this.streamClosed(fStreamIdentifier);
+			//ConsoleDocumentPartitioner.this.streamClosed(fStreamIdentifier);
 		}
 		
 		public void connect() {
@@ -251,6 +262,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		fColorProvider.disconnect();
 		fDocument.setDocumentPartitioner(null);
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 
 	/**
@@ -485,6 +497,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			fLowWaterMark = -1;
 			fHighWaterMark = -1;
 		}
+		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 
 	public void close() {
@@ -558,13 +571,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			int amount = 0;
 			String[] lds = fDocument.getLegalLineDelimiters();
 			boolean closed= false;
-			while (!fKilled && processed < fQueue.size() && amount < 8096) {
+			while (!fKilled && !closed && processed < fQueue.size() && amount < 8096) {
 				StreamEntry entry = (StreamEntry)fQueue.get(processed);
-				if (entry instanceof StreamClosedEntry) {
-					// Note that the stream has been closed and finish processing previous text
-					closed= true;
-				}
-				if (prev == null || prev.getStreamIdentifier().equals(entry.getStreamIdentifier())) {
+				if (entry.isClosedEntry()) {
+					closed = true;
+					processed++;
+				} else if (prev == null || prev.getStreamIdentifier().equals(entry.getStreamIdentifier())) {
 					String text = entry.getText();
 					if (buffer == null) {
 						buffer = new StringBuffer(text.length());
@@ -602,23 +614,22 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				} else {
 					// change streams - write the contents of the current stream
 					// and start processing the next stream
-					appendToDocument(buffer.toString(), prev.getStreamIdentifier());
-					buffer.setLength(0);
-					prev = null;
+					if (buffer != null) {
+						appendToDocument(buffer.toString(), prev.getStreamIdentifier());
+						buffer.setLength(0);
+						prev = null;
+					}
 				}
 			}
 			if (buffer != null) {
 				appendToDocument(buffer.toString(), prev.getStreamIdentifier());
 			}
 			if (closed) {
-				Display display= DebugUIPlugin.getStandardDisplay();
-				final StreamEntry entry= prev; 
+				Display display= DebugUIPlugin.getStandardDisplay(); 
 				if (display != null) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							if (fLineNotifier != null) {
-								fLineNotifier.streamClosed(entry.getStreamIdentifier());
-							}
+							fLineNotifier.streamsClosed();
 						}
 					});
 				}
@@ -785,12 +796,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 	
 	/**
-	 * The stream with the given identifier has been closed.
+	 * The streams associated with this process have been closed.
 	 * Adds a new "stream closed" entry to the queue.
 	 */
-	protected void streamClosed(String streamIdentifier) {
-		fQueue.add(new StreamClosedEntry(streamIdentifier));
-	}
+	protected void streamsClosed() {
+		fQueue.add(new StreamsClosedEntry());
+	}	
 					
 	/**
 	 * Sets whether a runnable has been submitted to update the console
@@ -933,4 +944,18 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(getProcess())) {
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+				streamsClosed();
+			}
+		}
+
+	}
+
 }
