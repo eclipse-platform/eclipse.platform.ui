@@ -1035,15 +1035,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	}
  	
  	/**
- 	 * Set the enabled state of the buttons that relate to the tree viewer.
- 	 */
- 	protected void setEnableStateTreeButtons(boolean enable) {
- 		getNewButton().setEnabled(enable);
-		getCopyButton().setEnabled(enable);
-		getDeleteButton().setEnabled(enable); 		
- 	}
- 	
- 	/**
  	 * Sets the 'launch' button.
  	 * 
  	 * @param button the 'launch' button.
@@ -1931,8 +1922,25 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	public void updateButtons() {
 		// new, copy, delete buttons
-		boolean empty = getTreeViewer().getSelection().isEmpty();
-		setEnableStateTreeButtons(!empty);
+		IStructuredSelection sel = (IStructuredSelection)getTreeViewer().getSelection();
+		
+ 		getNewButton().setEnabled(sel.size() == 1);
+		getCopyButton().setEnabled(sel.size() == 1 && sel.getFirstElement() instanceof ILaunchConfiguration);
+		
+		if (sel.isEmpty()) {
+			getDeleteButton().setEnabled(false); 		
+		} else {
+			Iterator iter = sel.iterator();
+			boolean enable = true;
+			while (iter.hasNext()) {
+				if (iter.next() instanceof ILaunchConfigurationType) {
+					enable = false;
+				}
+			}
+			getDeleteButton().setEnabled(enable);
+		}
+		
+
 		
 		// save and launch buttons
 		ILaunchConfigurationTab tab = getActiveTab();
