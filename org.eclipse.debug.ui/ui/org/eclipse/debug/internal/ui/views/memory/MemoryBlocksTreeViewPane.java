@@ -27,6 +27,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.renderings.BasicDebugViewContentProvider;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -445,6 +446,33 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			if (obj instanceof IDebugElement)
 				fTreeViewer.setInput(((IDebugElement)obj).getDebugTarget());
 		}
+		
+		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW);
+		IMemoryBlock memoryBlock = getMemoryBlock(selection);
+		
+		if (memoryBlock != null)
+			fTreeViewer.setSelection(new StructuredSelection(memoryBlock));
+	}
+	
+	private IMemoryBlock getMemoryBlock(ISelection selection)
+	{
+		if (!(selection instanceof IStructuredSelection))
+			return null;
+
+		//only single selection of PICLDebugElements is allowed for this action
+		if (selection == null || selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
+		{
+			return null;
+		}
+
+		Object elem = ((IStructuredSelection)selection).getFirstElement();
+		
+		if (elem instanceof IMemoryBlock)
+			return (IMemoryBlock)elem;
+		else if (elem instanceof IMemoryRendering)
+			return ((IMemoryRendering)elem).getMemoryBlock();
+		else
+			return null;
 	}
 
 	protected MenuManager createContextMenuManager() {

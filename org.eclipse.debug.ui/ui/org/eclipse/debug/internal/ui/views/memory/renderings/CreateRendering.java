@@ -213,8 +213,6 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 				addRenderings();
 			}});
 		
-		addButton.setFocus();
-		
 		DebugUITools.getMemoryRenderingManager().addListener(this);
 		
 		return fCanvas;		
@@ -253,6 +251,9 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		if (standardMemRetrieval == null)
 			return;
 		
+		
+		// make a copy of the container, may be diposed when a rendering is added
+		IMemoryRenderingContainer container = fContainer;
 		// add memory renderings to Memory Rendering Manager
 		for (int i=0; i<renderings.length; i++)
 		{	
@@ -262,8 +263,8 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 					IMemoryRendering rendering = ((IMemoryRenderingType)renderings[i]).createRendering();
 					if (rendering != null)
 					{
-						rendering.init(fContainer, getMemoryBlock());
-						fContainer.addMemoryRendering(rendering);
+						rendering.init(container, getMemoryBlock());
+						container.addMemoryRendering(rendering);
 					}
 				} catch (CoreException e) {
 					

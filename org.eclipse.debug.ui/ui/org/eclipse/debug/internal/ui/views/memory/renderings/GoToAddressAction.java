@@ -23,11 +23,13 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
@@ -168,6 +170,7 @@ public class GoToAddressAction extends Action
 	{
 		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 		Object elem = ((IStructuredSelection)selection).getFirstElement();
+		boolean pin = true;
 		
 		if (!(elem instanceof IDebugElement))
 			return;
@@ -175,6 +178,15 @@ public class GoToAddressAction extends Action
 		try {
 			if (retrieval != null)
 			{
+				// save the pin setting in the parent view
+				IMemoryRenderingSite site = fRendering.getMemoryRenderingContainer().getMemoryRenderingSite();
+				if (site instanceof MemoryView)
+				{
+					MemoryView view = (MemoryView)site;
+					pin = view.isPinMBDisplay();
+					view.setPinMBDisplay(false);
+				}
+				
 				IMemoryBlockExtension mbext = retrieval.getExtendedMemoryBlock(expression, elem);
 				if (mbext != null)
 					DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{mbext});
@@ -200,6 +212,15 @@ public class GoToAddressAction extends Action
 			MemoryViewUtil.openError(DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), 
 			DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), e);
 		}
+		finally
+		{
+			// restore setting
+			IMemoryRenderingSite site = fRendering.getMemoryRenderingContainer().getMemoryRenderingSite();
+			if (site instanceof MemoryView)
+			{
+				MemoryView view = (MemoryView)site;
+				view.setPinMBDisplay(pin);
+			}
+		}
 	}
-
 }

@@ -78,9 +78,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 * org.eclipse.debug.ui.MemoryView.RenderingViewPane.2. and so on.
 	 * View pane are created from left to right by the Memory View.
 	 * 
-	 * Note:  Currently, there is only one rendering view pane with id
-	 * org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.  Memory View is
-	 * equipped to host more than one rendering view pane.
 	 */
 	public RenderingViewPane(IViewPart parent) {
 		super(parent);
@@ -101,7 +98,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		{
 			IMemoryBlock memory = memoryBlocks[i];
 		
-			// create a tab folder when there is a new memory block
+			// if there is already and tab folder for this memory block, display it
 			if (fTabFolderForMemoryBlock.containsKey(memory)) {
 				if (fStackLayout.topControl != (TabFolder)fTabFolderForMemoryBlock.get(memory)) {
 					
@@ -125,18 +122,24 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			else {	//otherwise, add a new one
 				TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
 				
-				TabItem newItem = new TabItem(folder, SWT.NULL);
-				
-				CreateRendering rendering = new CreateRendering(this);
-				rendering.init(this, memory);
-				MemoryViewTab createTab = new MemoryViewTab(newItem, rendering, this);
-				
-				folder.setSelection(0);
-				
 				fTabFolderForMemoryBlock.put(memory, folder);
 				fMemoryBlockFromTabFolder.put(folder, memory);
 				fTabFolderForDebugView.put(getMemoryBlockRetrieval(memory), folder);
 				
+				// check renderings, only create if there is no rendering
+				IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memory);
+				
+				MemoryViewTab createTab = null;
+				if (renderings.length == 0)
+				{
+					TabItem newItem = new TabItem(folder, SWT.NULL);
+					CreateRendering rendering = new CreateRendering(this);
+					rendering.init(this, memory);
+					createTab = new MemoryViewTab(newItem, rendering, this);
+					folder.setSelection(0);
+				}
+				
+				// switch to tab folder if display is not pinned
 				if (fParent instanceof MemoryView)
 				{
 					MemoryView mv = (MemoryView)fParent;
@@ -144,13 +147,15 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					if (!mv.isPinMBDisplay() || mbs.length == 1)
 					{
 						setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
-						setRenderingSelection(createTab.getRendering());
+						if (createTab != null)
+							setRenderingSelection(createTab.getRendering());
 					}
 				}
 				else
 				{
 					setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
-					setRenderingSelection(createTab.getRendering());
+					if (createTab != null)
+						setRenderingSelection(createTab.getRendering());
 				}
 				
 				fViewPaneCanvas.layout();
@@ -199,7 +204,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						(TabFolder) fTabFolderForMemoryBlock.get(memory);
 					
 					if (tabFolder == null)
-						return;
+						continue;
 					
 					fTabFolderForMemoryBlock.remove(memory);
 					fMemoryBlockFromTabFolder.remove(tabFolder);
@@ -374,109 +379,94 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	Display.getDefault().syncExec(new Runnable()
 	{
-		public void run()
-		{
-						
-		// don't do anything if the debug target is already terminated
-		if (memBlock.getDebugTarget().isDisconnected() ||
-			memBlock.getDebugTarget().isTerminated())
-			{
-				emptyFolder();
-				return;
-			}
-		
-		// check current memory block
-		TabFolder currentFolder = (TabFolder)fStackLayout.topControl;
-		if (currentFolder != null && !currentFolder.isDisposed())
-		{
-			IMemoryBlock currentBlk = (IMemoryBlock)fMemoryBlockFromTabFolder.get(currentFolder);
-			if (currentBlk != null)
-			{
-				if (currentBlk == memBlock)
+			public void run() {
+
+				// don't do anything if the debug target is already terminated
+				if (memBlock.getDebugTarget().isDisconnected()
+						|| memBlock.getDebugTarget().isTerminated()) {
+					emptyFolder();
 					return;
-			}
-		}
-		
-		if (getTopMemoryTab() != null)
-		{	
-			if (getTopMemoryTab().getRendering().getMemoryBlock() == memBlock)
-			{	
-				return;
-			}
-		}
-		
-		//if we've got a tabfolder to go with the IMemoryBlock, display it
-		if (fTabFolderForMemoryBlock.containsKey(memBlock)) {
-			if (fStackLayout.topControl != (TabFolder)fTabFolderForMemoryBlock.get(memBlock)) {
-				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memBlock));
-				fViewPaneCanvas.layout();
-			}
-		} else {	//otherwise, add a new one
-			TabFolder folder = new TabFolder(fViewPaneCanvas, SWT.NULL);
-			
-			fTabFolderForMemoryBlock.put(memBlock, folder);
-			fMemoryBlockFromTabFolder.put(folder, memBlock);
-			setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memBlock));
-			fViewPaneCanvas.layout();
-		}
-		
-		// remember this memory block for this memory block retrieval
-		fTabFolderForDebugView.put(getMemoryBlockRetrieval(memBlock), fTabFolderForMemoryBlock.get(memBlock));
-		
-		// restore view tabs
-		IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memBlock);
-		TabFolder toDisplay = (TabFolder)fStackLayout.topControl;
-		
-		// remember tab folder for current debug target
-		fTabFolderForDebugView.put(getMemoryBlockRetrieval(memBlock), toDisplay);
-						
-		if (toDisplay.getItemCount() == 0)
-		{
-			restoreViewTabs(renderings);
-		}
-		
-		// disable last view tab as it becomes hidden
-		 IMemoryViewTab newViewTab = getTopMemoryTab();
+				}
 
-		 if (lastViewTab != null && lastViewTab != newViewTab)
-		 {
-			 lastViewTab.setEnabled(false);
-		 }
+				// check current memory block
+				TabFolder currentFolder = (TabFolder) fStackLayout.topControl;
+				if (currentFolder != null && !currentFolder.isDisposed()) {
+					IMemoryBlock currentBlk = (IMemoryBlock) fMemoryBlockFromTabFolder.get(currentFolder);
+					if (currentBlk != null) {
+						if (currentBlk == memBlock)
+							return;
+					}
+				}
 
-		 if (newViewTab != null)
-		 {
-			// if new view tab is not already enabled, enable it
-			if (!newViewTab.isEnabled())
-			{
-				// if the view tab is visible, enable it
-				if (fVisible)
-				{
-					newViewTab.setEnabled(fVisible);
-				}					
+				if (getTopMemoryTab() != null) {
+					if (getTopMemoryTab().getRendering().getMemoryBlock() == memBlock) {
+						return;
+					}
+				}
+
+				// if we've got a tabfolder to go with the IMemoryBlock, display
+				// it
+				if (fTabFolderForMemoryBlock.containsKey(memBlock)) {
+					if (fStackLayout.topControl != (TabFolder) fTabFolderForMemoryBlock.get(memBlock)) {
+						setTabFolder((TabFolder) fTabFolderForMemoryBlock.get(memBlock));
+						fViewPaneCanvas.layout();
+					}
+				} else { // otherwise, add a new one
+					TabFolder folder = new TabFolder(fViewPaneCanvas, SWT.NULL);
+
+					fTabFolderForMemoryBlock.put(memBlock, folder);
+					fMemoryBlockFromTabFolder.put(folder, memBlock);
+					setTabFolder((TabFolder) fTabFolderForMemoryBlock.get(memBlock));
+					fViewPaneCanvas.layout();
+				}
+
+				// restore view tabs
+				IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memBlock);
+				TabFolder toDisplay = (TabFolder) fStackLayout.topControl;
+
+				// remember tab folder for current debug target
+				fTabFolderForDebugView.put(getMemoryBlockRetrieval(memBlock),toDisplay);
+
+				if (toDisplay.getItemCount() == 0) {
+					restoreViewTabs(renderings);
+				}
+
+				// disable last view tab as it becomes hidden
+				IMemoryViewTab newViewTab = getTopMemoryTab();
+
+				if (lastViewTab != null && lastViewTab != newViewTab) {
+					lastViewTab.setEnabled(false);
+				}
+
+				if (newViewTab != null) {
+					// if new view tab is not already enabled, enable it
+					if (!newViewTab.isEnabled()) {
+						// if the view tab is visible, enable it
+						if (fVisible) {
+							newViewTab.setEnabled(fVisible);
+						}
+					}
+				}
+
+				IMemoryViewTab viewTab = getTopMemoryTab();
+				if (viewTab != null)
+					setRenderingSelection(viewTab.getRendering());
+
+				if (viewTab == null) {
+					// do not ever want to put it on the empty folder
+					if (toDisplay != fEmptyTabFolder) {
+						TabItem newItem = new TabItem(toDisplay, SWT.NULL);
+						CreateRendering rendering = new CreateRendering(getInstance());
+						rendering.init(getInstance(), memBlock);
+						MemoryViewTab createTab = new MemoryViewTab(newItem,rendering, getInstance());
+						setRenderingSelection(createTab.getRendering());
+					}
+				}
+
+				//set toolbar actions enabled/disabled
+				updateToolBarActionsEnablement();
 			}
-		 }			
-		 
-		 IMemoryViewTab viewTab = getTopMemoryTab();
-		 if (viewTab != null)
-		 	setRenderingSelection(viewTab.getRendering());
-		 
-		 if (viewTab == null)
-		 {
-			 // do not ever want to put it on the empty folder
-			if (toDisplay != fEmptyTabFolder)
-			{
-				TabItem newItem = new TabItem(toDisplay, SWT.NULL);
-				CreateRendering rendering = new CreateRendering(getInstance());
-				rendering.init(getInstance(), memBlock);
-				MemoryViewTab createTab = new MemoryViewTab(newItem, rendering, getInstance());
-	
-				setRenderingSelection(createTab.getRendering());
-			}
-		 }
-		
-		//set toolbar actions enabled/disabled
-		updateToolBarActionsEnablement();
-					}});
+		});
 	}
 
 	public void memoryBlockRenderingAdded(IMemoryRendering rendering) {
@@ -614,13 +604,19 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				{
 					if (tabFolder != fEmptyTabFolder)
 					{
-						TabItem newItem = new TabItem(tabFolder, SWT.NULL);
-						CreateRendering createRendering = new CreateRendering(getInstance());
-						createRendering.init(getInstance(), memory);
+						IDebugTarget target = memory.getDebugTarget();
 						
-						MemoryViewTab viewTab = new MemoryViewTab(newItem, createRendering, getInstance());
-						tabFolder.setSelection(0);
-						setRenderingSelection(viewTab.getRendering());
+						// do not create if the target is already terminated or if the memory block is removed
+						if (!target.isDisconnected() && !target.isTerminated() && !isMeomryBlockRemoved(memory))
+						{
+							TabItem newItem = new TabItem(tabFolder, SWT.NULL);
+							CreateRendering createRendering = new CreateRendering(getInstance());
+							createRendering.init(getInstance(), memory);
+							
+							MemoryViewTab viewTab = new MemoryViewTab(newItem, createRendering, getInstance());
+							tabFolder.setSelection(0);
+							setRenderingSelection(viewTab.getRendering());
+						}
 					}
 				}
 					
@@ -629,6 +625,26 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		});
 		
 	}
+	
+	/**
+	 * @param memoryBlock
+	 * @return if this memory block is removed
+	 */
+	private boolean isMeomryBlockRemoved(IMemoryBlock memoryBlock)
+	{
+		IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(memoryBlock);
+		IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
+		boolean removed = true;
+		
+		for (int i=0; i<memoryBlocks.length; i++)
+		{
+			if (memoryBlocks[i] == memoryBlock)
+				removed = false;
+		}
+		
+		return removed;
+	}
+	
 	
 	/**
 	 * @param viewTab

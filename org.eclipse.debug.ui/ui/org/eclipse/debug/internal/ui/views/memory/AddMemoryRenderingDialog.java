@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
@@ -340,7 +341,14 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			currentBlock = lastAdded;
 		else
 		{
-			ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW); //$NON-NLS-1$
+			// take Memory View's selection if possible
+			ISelectionProvider selectionProvider = fSite.getSite().getSelectionProvider();
+			ISelection selection = null;
+			
+			if (selectionProvider != null)
+				selection = selectionProvider.getSelection();
+			else // otherwise, take selection from selection service
+				selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW); //$NON-NLS-1$
 			
 			IDebugElement element = getMemoryBlock(selection);
 			
