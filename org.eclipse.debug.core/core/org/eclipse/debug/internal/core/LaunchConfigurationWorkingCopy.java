@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -163,14 +166,10 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 						doSave0();
 					}
 				};
-				
-				IFile file= null;
-				IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
-				if (files.length > 0) {
-					file= files[0];
-				}
-				ResourcesPlugin.getWorkspace().run(wr, file, 0, null);
-
+				// TODO: Fix getSchedulingRule to return container of files
+				//ISchedulingRule rule= getSchedulingRule();
+				//ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
+				ResourcesPlugin.getWorkspace().run(wr, null);
 			} else {
 				//file is persisted in the metadata not the workspace
 				doSave0();
@@ -180,6 +179,33 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 
 		return new LaunchConfiguration(getLocation());
+	}
+
+	/**
+	 * Returns the scheduling rule to be used when saving this launch configuration.
+	 * <code>null</code> is a valid scheduling rule.
+	 * 
+	 * @return the scheduling rule to be used when saving this launch configuration
+	 */
+	private ISchedulingRule getSchedulingRule() {
+		List changedFiles= new ArrayList(2);
+		if (!isLocal()) {
+			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
+			if (files.length > 0) {
+				changedFiles.add(files[0]);
+			}
+		}
+		ILaunchConfiguration original = getOriginal();
+		if (original != null && !original.isLocal()) {
+			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(original.getLocation());
+			if (files.length > 0) {
+				changedFiles.add(files[0]);
+			}
+		}
+		if (changedFiles.isEmpty()) {
+			return null;
+		}
+		return new MultiRule((ISchedulingRule[]) changedFiles.toArray(new ISchedulingRule[changedFiles.size()]));
 	}
 
 	private void doSave0() throws CoreException {
