@@ -322,20 +322,18 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
 		Map args= null;
 		ILaunchConfigurationWorkingCopy workingCopy= null;
-		if (config instanceof ILaunchConfigurationWorkingCopy) {
+		if (isUnmigratedConfig(config)) {
 			workingCopy= ((ILaunchConfigurationWorkingCopy) config);
-			if (workingCopy.getLocation() == null) {
-				// This config represents an old external tool builder that hasn't
-				// been edited. Try to find the old ICommand and reuse the arguments.
-				// The goal here is to not change the storage format of old, unedited builders.
-				ICommand[] commands= getInputProject().getDescription().getBuildSpec();
-				for (int i = 0; i < commands.length; i++) {
-					ICommand projectCommand = commands[i];
-					String name= ExternalToolMigration.getNameFromCommandArgs(projectCommand.getArguments());
-					if (name != null && name.equals(config.getName())) {
-						args= projectCommand.getArguments();
-						break;
-					}
+			// This config represents an old external tool builder that hasn't
+			// been edited. Try to find the old ICommand and reuse the arguments.
+			// The goal here is to not change the storage format of old, unedited builders.
+			ICommand[] commands= getInputProject().getDescription().getBuildSpec();
+			for (int i = 0; i < commands.length; i++) {
+				ICommand projectCommand = commands[i];
+				String name= ExternalToolMigration.getNameFromCommandArgs(projectCommand.getArguments());
+				if (name != null && name.equals(config.getName())) {
+					args= projectCommand.getArguments();
+					break;
 				}
 			}
 		} 
@@ -778,7 +776,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			Object data = selection.getData();
 			if (data instanceof ILaunchConfiguration) {
 				ILaunchConfiguration config= (ILaunchConfiguration) data;
-				if (data instanceof ILaunchConfigurationWorkingCopy) {
+				if (isUnmigratedConfig(config)) {
 					if (!shouldProceedWithMigration()) {
 						return;
 					}
@@ -991,8 +989,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 			Object data = builderTable.getItem(i).getData();
 			if (data instanceof ICommand) {
 			} else if (data instanceof ILaunchConfiguration) {
-				if (data instanceof ILaunchConfigurationWorkingCopy) {
-					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) data);
+				ILaunchConfiguration config= (ILaunchConfiguration) data;
+				if (!isUnmigratedConfig(config)) {
+					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
 					// Save any changes to the config (such as enable/disable)
 					if (workingCopy.isDirty()) {
 						try {
@@ -1006,7 +1005,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				ICommand newCommand = null;
 				try {
 					newCommand = project.getDescription().newCommand();
-					data = toBuildCommand(((ILaunchConfiguration) data), newCommand);
+					data = toBuildCommand(config, newCommand);
 				} catch (CoreException exception) {
 					MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Command_error_13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
@@ -1026,6 +1025,20 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 		}
 		return super.performOk();
+	}
+	
+	/**
+	 * Returns whether the given configuration is an "unmigrated" builder.
+	 * Unmigrated builders are external tools that are stored in an old format
+	 * but have not been migrated by the user. Old format builders are always
+	 * translated into launch config working copies in memory, but they're not
+	 * considered "migrated" until the config has been saved and the project spec
+	 * updated.
+	 * @param config the config to examine
+	 * @return whether the given config represents an unmigrated builder
+	 */
+	private boolean isUnmigratedConfig(ILaunchConfiguration config) {
+		return config instanceof ILaunchConfigurationWorkingCopy && config.getLocation() == null;
 	}
 
 	private void deleteConfigurations() {
