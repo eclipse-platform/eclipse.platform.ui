@@ -104,11 +104,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getDescription()
      */
     public String getDescription() {
-    	IConfigurationElement[] children = configElement.getChildren(TAG_DESCRIPTION);
-        if (children.length >= 1) {
-            return children[0].getValue();
-        }
-        return "";//$NON-NLS-1$
+    	return RegistryReader.getDescription(configElement);
     }
 
     /* (non-Javadoc)

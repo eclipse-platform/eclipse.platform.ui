@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newNewWizard1"
+   name="newNewWizard1 Plug-in"
+   version="1.0.0">
+
+   <runtime>
+      <library name="newIntro1.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.tests"/>
+   </requires>
+   <extension
+         id="testDynamicNewWizardAddition"
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            helpHref="foobar"
+            icon="anything.gif"
+            class="org.eclipse.ui.tests.NewWizard1"
+            category="org.eclipse.newNewWizard1.category"
+            descriptionImage="anything.gif"
+            name="NewWizard1"
+            id="org.eclipse.newNewWizard1.newNewWizard1"/>
+      <category
+            name="Category1"
+            id="org.eclipse.newNewWizard1.category"/>
+   </extension>
+ 
+
+</plugin>

@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,10 +26,13 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
 import org.eclipse.ui.model.WorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Instances represent registered wizards.
@@ -36,12 +40,8 @@ import org.eclipse.ui.model.WorkbenchAdapter;
 public class WorkbenchWizardElement extends WorkbenchAdapter implements
         IAdaptable, IPluginContribution {
     private String id;
-
-    private String name;
-
+    
     private ImageDescriptor imageDescriptor;
-
-    private String description;
 
     private SelectionEnabler selectionEnabler;
 
@@ -49,16 +49,15 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 
     private ImageDescriptor descriptionImage;
 
-    private String helpHref;
-
     /**
      * Create a new instance of this class
      * 
      * @param name
      *            java.lang.String
      */
-    public WorkbenchWizardElement(String name) {
-        this.name = name;
+    public WorkbenchWizardElement(IConfigurationElement configurationElement) {
+        this.configurationElement = configurationElement;
+        id = configurationElement.getAttribute(WizardsRegistryReader.ATT_ID);
     }
 
     /**
@@ -131,7 +130,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * @return java.lang.String
      */
     public String getDescription() {
-        return description;
+        return RegistryReader.getDescription(configurationElement);
     }
 
     /**
@@ -147,6 +146,13 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * Answer the icon of this element.
      */
     public ImageDescriptor getImageDescriptor() {
+    	if (imageDescriptor == null) {
+    		String iconName = configurationElement.getAttribute(WizardsRegistryReader.ATT_ICON);
+	        if (iconName == null) 
+	        	return null;
+            imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+                    configurationElement.getNamespace(), iconName);    
+    	}
         return imageDescriptor;
     }
 
@@ -154,14 +160,14 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * Returns the name of this wizard element.
      */
     public ImageDescriptor getImageDescriptor(Object element) {
-        return imageDescriptor;
+        return getImageDescriptor();
     }
-
+    
     /**
      * Returns the name of this wizard element.
      */
     public String getLabel(Object element) {
-        return name;
+        return configurationElement.getAttribute(WizardsRegistryReader.ATT_NAME);
     }
 
     /**
@@ -172,42 +178,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
             selectionEnabler = new SelectionEnabler(configurationElement);
 
         return selectionEnabler;
-    }
-
-    /**
-     * @param newConfigurationElement
-     *            IConfigurationElement
-     */
-    public void setConfigurationElement(
-            IConfigurationElement newConfigurationElement) {
-        configurationElement = newConfigurationElement;
-    }
-
-    /**
-     * Set the description parameter of this element
-     * 
-     * @param value
-     *            java.lang.String
-     */
-    public void setDescription(String value) {
-        description = value;
-    }
-
-    /**
-     * Set the id parameter of this element
-     * 
-     * @param value
-     *            java.lang.String
-     */
-    public void setID(String value) {
-        id = value;
-    }
-
-    /**
-     * Set the icon of this element.
-     */
-    public void setImageDescriptor(ImageDescriptor value) {
-        imageDescriptor = value;
     }
 
     /**
@@ -272,17 +242,14 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * @since 3.0
      */
     public ImageDescriptor getDescriptionImage() {
+    	if (descriptionImage == null) {
+    		String descImage = configurationElement.getAttribute(NewWizardsRegistryReader.ATT_DESCRIPTION_IMAGE);
+    		if (descImage == null)
+    			return null;
+            descriptionImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+                    configurationElement.getNamespace(), descImage);;
+    	}
         return descriptionImage;
-    }
-
-    /**
-     * Set the descriptive image for this wizard.
-     * 
-     * @param descriptor the descriptive image
-     * @since 3.0
-     */
-    public void setDescriptionImage(ImageDescriptor descriptor) {
-        descriptionImage = descriptor;
     }
 
     /**
@@ -292,16 +259,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * @since 3.0
      */
     public String getHelpHref() {
-        return helpHref;
-    }
-
-    /**
-     * Set the help system href for this wizard.
-     * 
-     * @param href the help system href for this wizard
-     * @since 3.0
-     */
-    public void setHelpHref(String href) {
-        helpHref = href;
+        return configurationElement.getAttribute(NewWizardsRegistryReader.ATT_HELP_HREF);
     }
 }

@@ -116,4 +116,14 @@ public class NewWizardShortcutAction extends Action implements
     public String getPluginId() {
         return wizardElement.getPluginId();
     }
+    
+    /**
+     * Return the wizard element associated with this action.
+     * 
+     * @return the wizard element associated with this action
+     * @since 3.1
+     */
+    public WorkbenchWizardElement getWizardElement() {
+		return wizardElement;
+	}
 }

@@ -15,6 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -32,10 +36,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.NewWizardShortcutAction;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
 
 /**
  * A <code>NewWizardMenu</code> is used to populate a menu manager with
@@ -68,7 +74,28 @@ public class NewWizardMenu extends ContributionItem {
             dirty = true;
         }
     };
-
+    
+    /**
+     * TODO: should this be done with an addition listener?
+     */
+    private IRegistryChangeListener registryListener = new IRegistryChangeListener() {
+		public void registryChanged(IRegistryChangeEvent event) {
+			// reset the reader. 
+			getParent().markDirty();
+			dirty = true;
+			reader = new NewWizardsRegistryReader();
+		}
+    	
+    };
+    
+    private IConfigurationElementRemovalHandler configListener = new IConfigurationElementRemovalHandler() {
+		public void removeInstance(IConfigurationElement source, Object object) {
+			if (object instanceof NewWizardShortcutAction) {
+				actions.values().remove(object);
+			}			
+		}    	
+    };
+	
     /**
      * Create a new wizard shortcut menu.  
      * <p>
@@ -88,16 +115,18 @@ public class NewWizardMenu extends ContributionItem {
     public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window,
             boolean register) {
         this(window);
+        registerListeners();
         fillMenu(innerMgr);
         // Must be done after constructor to ensure field initialization.
     }
 
-    public NewWizardMenu(IWorkbenchWindow window) {
+	public NewWizardMenu(IWorkbenchWindow window) {
         super();
         this.window = window;
         showDlgAction = ActionFactory.NEW.create(window);
         newProjectAction = new NewProjectAction(window);
         newExampleAction = new NewExampleAction(window);
+        registerListeners();
     }
 
     /* (non-Javadoc)
@@ -154,14 +183,16 @@ public class NewWizardMenu extends ContributionItem {
     private IAction getAction(String id) {
         // Keep a cache, rather than creating a new action each time,
         // so that image caching in ActionContributionItem works.
-        IAction action = (IAction) actions.get(id);
+    	IAction action = (IAction) actions.get(id);
         if (action == null) {
             WorkbenchWizardElement element = reader.findWizard(id);
             if (element != null) {
                 action = new NewWizardShortcutAction(window, element);
                 actions.put(id, action);
+                ((WorkbenchWindow)window).getConfigurationElementTracker().registerObject(element.getConfigurationElement(), action);
             }
         }
+        
         return action;
     }
 
@@ -262,4 +293,31 @@ public class NewWizardMenu extends ContributionItem {
         return false;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		unregisterListeners();
+	}
+	
+    /**
+	 * Unregisters listeners.
+	 * 
+	 * @since 3.1
+	 */
+	private void unregisterListeners() {
+		Platform.getExtensionRegistry().removeRegistryChangeListener(registryListener);
+		((WorkbenchWindow)window).getConfigurationElementTracker().unregisterRemovalHandler(configListener);
+	}
+
+	/**
+	 * Registers listeners.
+	 * 
+	 * @since 3.1
+	 */
+	private void registerListeners() {
+		Platform.getExtensionRegistry().addRegistryChangeListener(registryListener);
+        ((WorkbenchWindow)window).getConfigurationElementTracker().registerRemovalHandler(configListener);
+	}
 }

@@ -191,10 +191,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_NEW)) {
-            loadNewWizards(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_EDITOR)) {
             loadEditor(ext);
             return;
@@ -300,25 +296,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         for (Iterator i = decorators.iterator(); i.hasNext();) {
             manager.addDecorator((DecoratorDefinition) i.next());
         }
-    }
-
-    private void loadNewWizards(IExtension ext) {
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
-            reader.readElement(elements[i]);
-        }
-        // We may need to reset this perspective as new wizards are added
-        // to the menu.
-        changeList
-                .add(MessageFormat
-                        .format(
-                                ExtensionEventHandlerMessages
-                                        .getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
-                                new Object[] {
-                                        ext.getNamespace(),
-                                        ExtensionEventHandlerMessages
-                                                .getString("ExtensionEventHandler.newWizards") })); //$NON-NLS-1$ 
     }
 
     private void loadPropertyPages(IExtension ext) {
