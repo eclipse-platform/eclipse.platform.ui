@@ -118,8 +118,11 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
          <attribute name="filterClass" type="string">
             <annotation>
                <documentation>
-                  an optional attribute that specifies the fully qualified path of a Java class that implements the &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt; interface. The testAttribute() method is called with the selected resource and the name/value pair specified by subsequent filter elements. If all return values of all filter elements are true, the shortcut will appear in the contextual launch menu of the selected resource. If the filterClass attribute is not specifies, the shortcut will not appear in the contextual launch menu. If the filterClass is specified, but no filter elements are found, the shortcut will appear in the menu.
+                  an optional attribute that specifies the fully qualified path of a Java class that implements the &lt;samp&gt;org.eclipse.ui.ILaunchFilter&lt;/samp&gt; interface. The testAttribute() method is called with the selected resource and the name/value pair specified by subsequent filter elements. If all return values of all filter elements are true, the shortcut will appear in the contextual launch menu of the selected resource. If the filterClass attribute is not specifies, the shortcut will not appear in the contextual launch menu. If the filterClass is specified, but no filter elements are found, the shortcut will appear in the menu.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchFilter"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

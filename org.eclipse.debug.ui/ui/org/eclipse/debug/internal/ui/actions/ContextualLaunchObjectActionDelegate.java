@@ -15,13 +15,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -33,7 +34,6 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -54,45 +54,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * (run, debug, profile, etc.) in the contextual launch sub-menu. The filterClass
  * is loaded and run over the list of "filter" elements to determine if the
  * shortcut extension item is appropriate for the selected resource.
- * <p>
- * An example is the JDT Java Applet extension, which is only applicable on files
- * of extension "*.java" and being a sub-class of type Applet. Note that it is up
- * to the filterClass to provide attributes and methods to implement the test. In
- * this example, we have extended the AppletShortcut to implement the IActionFilter
- * interface so that it can function as the filterClass, adding only a testAttribute()
- * method.
- * <p>
- * <pre>
- * &lt;shortcut
- *          label="%AppletShortcut.label"
- *           icon="icons/full/ctool16/java_applet.gif"
- *           helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
- *           modes="run, debug"
- *           filterClass="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
- *           class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
- *           id="org.eclipse.jdt.debug.ui.javaAppletShortcut"&gt;
- *        &lt;filter
- *           name="NameMatches"
- *           value="*.java"/&gt;
- *        &lt;filter
- *        	name="ContextualLaunchActionFilter"
- *        	value="supportsContextualLaunch"/&gt;
- *        &lt;contextLabel
- *        	mode="run"
- *        	label="%RunJavaApplet.label"/&gt;
- * 		 &lt;contextLabel
- * 		 	mode="debug"
- * 		 	label="%DebugJavaApplet.label"/&gt;
- * 		  ...
- *   &lt;shortcut&gt;
- * </pre>
+ * </p>
  */
 public class ContextualLaunchObjectActionDelegate
 		implements
 			IObjectActionDelegate,
 			IMenuCreator {
 
-	private ISelection fSelection;
+	private IResource fSelection;
 	
 	/*
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -149,23 +118,25 @@ public class ContextualLaunchObjectActionDelegate
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (((IStructuredSelection) selection).size() != 1)
-			action.setEnabled(false);	// Can only handle one resource at a time
-		else {
-			if (action instanceof Action) {
+		// if the selection is an IResource, save it and enable our action
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			if (ss.size() == 1 && action instanceof Action) {
 				if (delegateAction != action) {
 					delegateAction = (Action) action;
 					delegateAction.setMenuCreator(this);
 				}
-				action.setEnabled(true);
-				fSelection = selection;
-			} else {
-				action.setEnabled(false);
+				Object object = ss.getFirstElement(); // already tested size above
+				if(object instanceof IResource) {
+					fSelection = (IResource)object;
+					action.setEnabled(true);
+					return;
+				}
 			}
 		}
+		action.setEnabled(false);
 	}
 
-	private int fCount = 0;
 	/**
 	 * Fill pull down menu with the pages of the JTabbedPane
 	 */
@@ -207,11 +178,11 @@ public class ContextualLaunchObjectActionDelegate
 		}
 	}
 	
-	private IActionFilter getFilterClassIfLoaded(LaunchShortcutExtension ext) {
+	private ILaunchFilter getFilterClassIfLoaded(LaunchShortcutExtension ext) {
 		IExtension extensionPoint = ext.getConfigurationElement().getDeclaringExtension();
 		IPluginDescriptor pluginDescriptor = extensionPoint.getDeclaringPluginDescriptor();
 		if (pluginDescriptor.isPluginActivated()) {
-			IActionFilter filter = ext.getFilterClass();
+			ILaunchFilter filter = ext.getFilterClass();
 			return filter;
 		} else {
 			return null;
@@ -225,9 +196,9 @@ public class ContextualLaunchObjectActionDelegate
 	private boolean isApplicable(LaunchShortcutExtension ext) {
 		// boolean hasMode = ext.getModes().contains(getMode(launchGroupIdentifier));
 		// return false if there isn't a filter class or there are no filters specified by the shortcut
-		// Only loaded plugins will be used, so the actionFilter is null if the filterClass is not loaded
-		IActionFilter actionFilter = getFilterClassIfLoaded(ext);
-		if (actionFilter == null) {
+		// Only loaded plugins will be used, so the launchFilter is null if the filterClass is not loaded
+		ILaunchFilter launchFilter = getFilterClassIfLoaded(ext);
+		if (launchFilter == null) {
 			return false;
 		}
 		List filters = ext.getFilters();
@@ -239,9 +210,8 @@ public class ContextualLaunchObjectActionDelegate
 			Pair pair = (Pair) iter.next();
 			String name = pair.firstAsString();
 			String value= pair.secondAsString();
-			Object target = fSelection;
 			// any filter that returns false makes the shortcut non-visible
-			if (!actionFilter.testAttribute(target,name,value)) {
+			if (!launchFilter.testAttribute(fSelection,name,value)) {
 				return false;
 			}
 		}
@@ -264,14 +234,7 @@ public class ContextualLaunchObjectActionDelegate
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(menu, -1);
 	}
-	
-	private class FakeAction extends Action {
-		public FakeAction(String name) {
-			super(name);
-		}
-		public void run() {
-		}
-	}
+
 /**
  * Return the ID of the currently active perspective.
  * 
@@ -296,32 +259,7 @@ private String getActivePerspectiveID() {
 * @return launch configuration manager
 */
 private LaunchConfigurationManager getLaunchConfigurationManager() {
-return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-}
-/**
- * Returns the launch group associatd with this action.
- * 
- * @return the launch group associatd with this action
- */
-private LaunchGroupExtension getLaunchGroup(String fLaunchGroupIdentifier) {
-	return getLaunchConfigurationManager().getLaunchGroup(fLaunchGroupIdentifier);
-}
-/**
- * Returns the mode of this action - run or debug 
- * 
- * @return the mode of this action - run or debug
- */
-private String getMode(String fLaunchGroupIdentifier) {
-	return getLaunchGroup(fLaunchGroupIdentifier).getMode();
-}
-
-/**
- * Returns the category of this action - possibly <code>null</code>
- *
- * @return the category of this action - possibly <code>null</code>
- */
-private String getCategory(String fLaunchGroupIdentifier) {
-	return getLaunchGroup(fLaunchGroupIdentifier).getCategory();
+	return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 }
 
 }

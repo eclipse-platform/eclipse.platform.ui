@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,12 +34,26 @@ import org.eclipse.ui.IEditorPart;
  *   &lt;launchShortcut
  *      id="com.example.ExampleLaunchShortcut"
  *      class="com.example.ExampleLaunchShortcutClass"
+ *      filterClass="com.example.ExampleLaunchShortcutFilterClass"
  * 		label="Example Label"
  * 		icon="\icons\exampleshortcut.gif"
  * 		helpContextId="com.example.shortcut_context"
  * 		modes="run, debug"&gt;
- * 		&lt;perspective id="com.example.perspectiveId1"/&gt;
+ *      &lt;perspective id="com.example.perspectiveId1"/&gt;
  *      &lt;perspective id="com.example.perspectiveId2"/&gt;
+ *      &lt;filter
+ *           name="NameMatches"
+ *           value="*.java"/&gt;
+ *      &lt;filter
+ *        	name="ContextualLaunchActionFilter"
+ *        	value="supportsContextualLaunch"/&gt;
+ *      &lt;contextLabel
+ *        	mode="run"
+ *        	label="%RunJavaApplet.label"/&gt;
+ * 	    &lt;contextLabel
+ * 		 	mode="debug"
+ * 		 	label="%DebugJavaApplet.label"/&gt;
+ * 		  ...
  *   &lt;/launchShortcut&gt;
  * &lt;/extension&gt;
  * </pre>
@@ -47,7 +61,9 @@ import org.eclipse.ui.IEditorPart;
  * <ul>
  * <li><code>id</code> specifies a unique identifier for this launch shortcut.</li>
  * <li><code>class</code> specifies a fully qualified name of a Java class
- *  that implements <code>IlaunchShortcut</code>.</li>
+ *  that implements <code>ILaunchShortcut</code>.</li><li>
+ * <code>filterClass</code> optionally specifies a fully qualified name of a Java class
+ *  that implements <code>ILaunchFilter</code> for context menu filtering.</li>
  * <li><code>label</code> specifies a label used to render this shortcut.</li>
  * <li><code>icon</code> specifies a plug-in relative path to an icon used to
  * 	render this shortcut.</li>
@@ -58,6 +74,16 @@ import org.eclipse.ui.IEditorPart;
  * <li><code>perspective</code> one or more perspective entries enumerate the
  * 	perspectives that this shortcut is avilable in, from the run/debug cascade
  * 	menus.</li>
+ * <li><code>filter</code> zero or more filter entries specify the attribute
+ * <code>name</code> and attribute <code>value</code> that will be supplied to
+ * the <code>testAttribute</code> method implemented by the <code>filterClass</code>
+ * Java Class. If all filters in this list return <code>true</code> when applied
+ * to a selection target, the shortcut will be avilable in the run/debug context menu.
+ * 	menu.</li>
+ * <li><code>contextLabel</code> zero or more context menu labels. For
+ * shortcuts that pass their filter tests, the specified label will appear
+ * in the "Run ->" context menu and be bound to a launch action of the
+ * specified mode (e.g. run,debug,profile).</li>
  * </ul>
  * </p>
  * @since 2.0

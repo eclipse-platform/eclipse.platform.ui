@@ -24,10 +24,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
+import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IEditorPart;
 
 
@@ -40,7 +40,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	private List fPerspectives = null;
 	private ILaunchShortcut fDelegate = null;
 	private Set fModes = null;
-	private IActionFilter fActionFilter = null;
+	private ILaunchFilter fLaunchFilter = null;
 	private /* <Pair> */ List fFilters = null;
 	
 	/**
@@ -125,16 +125,23 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	 * @return the filter class of this shortcut., or <code>null</code> if not
 	 *  specified
 	 */
-	public IActionFilter getFilterClass() {
-		if (fActionFilter == null) {
+	public ILaunchFilter getFilterClass() {
+		if (fLaunchFilter == null) {
 			try {
-				fActionFilter = (IActionFilter)fConfig.createExecutableExtension("filterClass"); //$NON-NLS-1$
+				// The underlying code logs an error if the filterClass is missing,
+				// even though the attribute is optional, so check for existence first.
+				if (fConfig.getAttribute("filterClass") != null) { //$NON-NLS-1$
+					Object object = fConfig.createExecutableExtension("filterClass"); //$NON-NLS-1$
+					if (object instanceof ILaunchFilter) {
+						fLaunchFilter = (ILaunchFilter) object;
+					}
+				}
 			} catch (CoreException e) {
 				// silently ignore because filterClass is optional
 				// DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchShortcutExtension.Error_4"), LaunchConfigurationsMessages.getString("LaunchShortcutExtension.Unable_to_use_launch_shortcut_5"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		return fActionFilter;
+		return fLaunchFilter;
 	}
 	/**
 	 * Returns all of the filter elements of this shortcut as a List of String Pairs.
