@@ -17,28 +17,27 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
  * The FontDefinitionReader reads the font definitions in the
  * workspace.
  */
-class FontDefinitionReader extends RegistryReader {
+public class FontDefinitionReader extends RegistryReader {
 
 	//The registry values are the ones read from the registry
-	static Collection values;
+	private Collection values = new ArrayList();
 
-	private static String EXTENSION_ID = "fontDefinitions"; //$NON-NLS-1$
 	private static String ATT_LABEL = "label"; //$NON-NLS-1$
 	private static String ATT_ID = "id"; //$NON-NLS-1$
 	private static String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
 	private static String CHILD_DESCRIPTION = "description"; //$NON-NLS-1$
-
+	
 	/*
 	 * @see RegistryReader#readElement(IConfigurationElement)
 	 */
-	protected boolean readElement(IConfigurationElement element) {
-
+	public boolean readElement(IConfigurationElement element) {		
 		String name = element.getAttribute(ATT_LABEL);
 
 		String id = element.getAttribute(ATT_ID);
@@ -68,10 +67,14 @@ class FontDefinitionReader extends RegistryReader {
 	 * Read the decorator extensions within a registry and set
 	 * up the registry values.
 	 */
-	Collection readRegistry(IPluginRegistry in) {
-		values = new ArrayList();
-		readRegistry(in, PlatformUI.PLUGIN_ID, EXTENSION_ID);
+	public Collection readRegistry(IPluginRegistry in) {
+		values.clear();
+		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_FONT_DEFINITIONS);
+		return getValues();
+	}
+	
+	// for dynamic UI
+	public Collection getValues() {
 		return values;
 	}
-
 }

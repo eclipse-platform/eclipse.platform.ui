@@ -85,6 +85,39 @@ class LightweightDecoratorManager {
 	LightweightDecoratorDefinition[] getDefinitions() {
 		return lightweightDefinitions;
 	}
+	
+	/**
+	 * For dynamic UI
+	 * 
+	 * @param definition the definition to add
+	 * @return whether the definition was added
+	 * @since 3.0
+	 */
+	public boolean addDecorator(LightweightDecoratorDefinition decorator) {
+		if (getLightweightDecoratorDefinition(decorator.getId()) == null) {
+			LightweightDecoratorDefinition [] oldDefs = lightweightDefinitions;
+			lightweightDefinitions = new LightweightDecoratorDefinition[lightweightDefinitions.length + 1];
+			System.arraycopy(oldDefs, 0, lightweightDefinitions, 0, oldDefs.length);
+			lightweightDefinitions[oldDefs.length] = decorator;
+			// no reset - handled in the DecoratorManager
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Get the LightweightDecoratorDefinition with the supplied id
+	 * @return LightweightDecoratorDefinition or <code>null</code> if it is not found
+	 * @param decoratorId String
+	 * @since 3.0
+	 */
+	private LightweightDecoratorDefinition getLightweightDecoratorDefinition(String decoratorId) {
+		for (int i = 0; i < lightweightDefinitions.length; i++) {
+			if (lightweightDefinitions[i].getId().equals(decoratorId))
+				return lightweightDefinitions[i];
+		}
+		return null;
+	}	
 
 	/**
 	 * Return the enabled lightweight decorator definitions.
@@ -106,7 +139,7 @@ class LightweightDecoratorManager {
 	 * Reset any cached values.
 	 */
 	void reset() {
-		cachedLightweightDecorators = new HashMap();
+		cachedLightweightDecorators.clear();
 	}
 
 	/**

@@ -3363,7 +3363,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	//for dynamic UI
 	protected HashMap getStateMap() {
 		return stateMap;
-}
+	}
+
 	//for dynamic UI
 	protected void addPerspective(Perspective persp) {
 		perspList.add(persp);
@@ -3388,17 +3389,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 					IViewPart view = findView(((ViewPane)layoutPart).getViewReference().getId());
 					if (view != null)
 						list.add(view);
-}
+				}
 			}
 			return (IViewPart []) list.toArray(new IViewPart [list.size()]);
 		}
+		
 		return new IViewPart [] {part};
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#createView(java.lang.String)
-	 */
-	public IViewPart createView(String viewId) throws PartInitException {		
-		return showView(viewId);		
-	}	
 }

@@ -56,6 +56,7 @@ import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistryReader;
@@ -476,6 +477,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		initializeFont(JFaceResources.HEADER_FONT, registry, store);
 		initializeFont(JFaceResources.TEXT_FONT, registry, store);
 		
+		store.addPropertyChangeListener(FontDefinition.getPreferenceListener());
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 

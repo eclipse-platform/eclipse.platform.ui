@@ -915,13 +915,23 @@ public final class Workbench implements IWorkbench {
 	 * @since 3.0
 	 */
 	private void initializeApplicationColors() {
-		IPreferenceStore store = getPreferenceStore();
-		ColorRegistry registry = JFaceResources.getColorRegistry();
-
 		//Iterate through the definitions and initialize thier
 		//defaults in the preference store.
 		ColorDefinition[] definitions = ColorDefinition.getDefinitions();
-		
+				
+		initializeApplicationColors(definitions);
+	}
+
+	/**
+	 * For dynamic UI
+	 * 
+	 * @param definitions the color definitions to initialize
+	 * @since 3.0
+	 */
+	public void initializeApplicationColors(ColorDefinition[] definitions) {
+		IPreferenceStore store = getPreferenceStore();
+		ColorRegistry registry = JFaceResources.getColorRegistry();
+	
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
 		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];
@@ -999,12 +1009,21 @@ public final class Workbench implements IWorkbench {
 	 * the color registry.  
 	 */
 	private void initializeFonts() {
-		IPreferenceStore store = getPreferenceStore();
-		FontRegistry registry = JFaceResources.getFontRegistry();
-
 		//Iterate through the definitions and initialize thier
 		//defaults in the preference store.
 		FontDefinition[] definitions = FontDefinition.getDefinitions();
+		initializeFonts(definitions);
+	}
+	
+	/**
+	 * For dynamic UI
+	 * 
+	 * @param definitions the fonts to initialize
+	 * @since 3.0
+	 */
+	public void initializeFonts(FontDefinition[] definitions) {
+		FontRegistry registry = JFaceResources.getFontRegistry();
+		IPreferenceStore store = getPreferenceStore();		
 		ArrayList fontsToSet = new ArrayList();
 
 		for (int i = 0; i < definitions.length; i++) {
@@ -1040,6 +1059,7 @@ public final class Workbench implements IWorkbench {
 			registry.put(update.getId(), registry.getFontData(update.getDefaultsTo()));
 		}
 	}
+
 	/*
 	 * Installs the given font in the font registry.
 	 * 
@@ -2122,7 +2142,9 @@ public final class Workbench implements IWorkbench {
 	 */
 	public IIntroRegistry getIntroRegistry() {
 		return WorkbenchPlugin.getDefault().getIntroRegistry();
-	}	/**
+	}	
+	
+	/**
 	 * The currently active introPart in this workspace, <code>null</code> if none.
 	 */
 	private IIntroPart introPart;
@@ -2131,5 +2153,4 @@ public final class Workbench implements IWorkbench {
 	 * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
 	 */
 	private IntroDescriptor introDescriptor;
-
 }

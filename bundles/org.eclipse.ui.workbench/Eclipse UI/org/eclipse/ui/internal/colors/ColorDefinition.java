@@ -118,6 +118,12 @@ public class ColorDefinition implements IPluginContribution {
 		}
 		return definitions;
 	}
+	
+	// for dynamic UI
+	public static final void clearCache() {
+		definitions = null;		
+	}
+	
 	private String defaultsTo;
 	private String description;
 	private String id;
