@@ -29,8 +29,7 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 		// action has been triggered."
 		addAction();
 		runAction();
-		MockWorkbenchWindowActionDelegate delegate = 
-			MockWorkbenchWindowActionDelegate.lastDelegate;
+		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
 		assert(delegate.callHistory.contains(delegate, "run"));
 	}
@@ -41,8 +40,7 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 		
 		// Load the delegate by running it.
 		testRun();
-		MockWorkbenchWindowActionDelegate delegate = 
-			MockWorkbenchWindowActionDelegate.lastDelegate;
+		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
 		
 		// Now fire a selection.
@@ -65,6 +63,11 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 	 * Fires a selection from the source.  Subclasses should override
 	 */
 	protected abstract void fireSelection() throws Throwable;
+	
+	/**
+	 * Returns the action delegate.  Subclasses should override.
+	 */
+	protected abstract MockActionDelegate getDelegate() throws Throwable;
 
 	/**
 	 * Runs an action identified by a label.

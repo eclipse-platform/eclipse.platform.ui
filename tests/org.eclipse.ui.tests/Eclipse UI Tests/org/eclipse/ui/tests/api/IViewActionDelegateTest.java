@@ -7,12 +7,14 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 /**
  * Tests the lifecycle for a window action delegate.
  */
-public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
+public class IViewActionDelegateTest extends IActionDelegateTest {
+	
+	public static String TEST_VIEW_ID = "org.eclipse.ui.tests.api.ActionExtensionTestView";
 
 	/**
 	 * Constructor for IWorkbenchWindowActionDelegateTest
 	 */
-	public IWorkbenchWindowActionDelegateTest(String testName) {
+	public IViewActionDelegateTest(String testName) {
 		super(testName);
 	}
 
@@ -29,30 +31,12 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 			new String [] {"init", "selectionChanged", "run"}));
 	}
 	
-	public void testDispose() throws Throwable {
-		// From Javadoc: "Disposes this action delegate."
-		
-		// Run the action.
-		testRun();
-		
-		// Get the action.
-		MockActionDelegate delegate = getDelegate();
-		assertNotNull(delegate);
-		delegate.callHistory.clear();
-		
-		// Dispose action.
-		removeAction();
-		
-		// Verify lifecycle.
-		assert(delegate.callHistory.contains(delegate, "dispose"));
-	}
-	
 	/**
 	 * @see IActionDelegateTest#runAction()
 	 */
 	protected void runAction() throws Throwable {
-		WorkbenchWindow win = (WorkbenchWindow)fWindow;
-		IMenuManager mgr = win.getMenuManager();
+		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
+		IMenuManager mgr = view.getViewSite().getActionBars().getMenuManager();
 		runAction(mgr, "Mock Action");
 	}
 
@@ -60,21 +44,15 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	 * @see IActionDelegateTest#addAction()
 	 */
 	protected void addAction() throws Throwable {
-		fPage.showActionSet("org.eclipse.ui.tests.api.MockActionSet");
+		// Open up a view with the specific view action extension.
+		fPage.showView(TEST_VIEW_ID);
 	}
 
-	/**
-	 * Removes the action.
-	 */
-	protected void removeAction() {
-		fPage.hideActionSet("org.eclipse.ui.tests.api.MockActionSet");
-	}
-	
 	/**
 	 * @see IActionDelegateTest#fireSelection()
 	 */
 	protected void fireSelection() throws Throwable {
-		MockViewPart view = (MockViewPart)fPage.showView(MockViewPart.ID);
+		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
 		view.fireSelection();
 	}
 
@@ -82,8 +60,8 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	 * @see IActionDelegateTest#getDelegate()
 	 */
 	protected MockActionDelegate getDelegate() throws Throwable {
-		MockWorkbenchWindowActionDelegate delegate = 
-			MockWorkbenchWindowActionDelegate.lastDelegate;
+		MockViewActionDelegate delegate = 
+			MockViewActionDelegate.lastDelegate;
 		assertNotNull(delegate);
 		return delegate;
 	}

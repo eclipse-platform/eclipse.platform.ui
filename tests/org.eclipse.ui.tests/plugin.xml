@@ -65,12 +65,16 @@
 	   name="Mock View 3"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.MockViewPart"/>
-<view
+	<view
        id="org.eclipse.ui.tests.api.SessionView"
-	   name="SessionView"
+	   name="Session Test View"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.SessionView"/>
-
+	<view
+       id="org.eclipse.ui.tests.api.ActionExtensionTestView"
+	   name="Action Extension Test View"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.MockViewPart"/>
 </extension>
 
 <extension
@@ -89,8 +93,6 @@
     </editor>
 </extension>
 
-
-
 <extension point = "org.eclipse.ui.actionSets"> 
 	<actionSet id="org.eclipse.ui.tests.api.MockActionSet"
 		label="Mock Action Set">
@@ -101,4 +103,17 @@
             </action> 
     </actionSet> 
 </extension> 
+
+<extension point="org.eclipse.ui.viewActions"> 
+	<viewContribution 
+		id="org.eclipse.ui.tests.api.viewAction.1" 
+  		targetID="org.eclipse.ui.tests.api.ActionExtensionTestView"> 
+		<action id="com.xyz.runXYZ" 
+              label="Mock Action" 
+              menubarPath="additions" 
+              class="org.eclipse.ui.tests.api.MockViewActionDelegate"> 
+		</action> 
+	</viewContribution> 
+</extension> 
+
 </plugin>

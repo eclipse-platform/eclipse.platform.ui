@@ -23,5 +23,6 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(IEditorRegistryTest.class));
 		addTest(new TestSuite(IPerspectiveListenerTest.class));
 		addTest(new TestSuite(IWorkbenchWindowActionDelegateTest.class));
+		addTest(new TestSuite(IViewActionDelegateTest.class));
 	}
 }
