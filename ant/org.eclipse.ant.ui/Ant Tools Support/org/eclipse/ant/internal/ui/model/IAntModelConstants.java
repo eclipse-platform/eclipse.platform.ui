@@ -20,6 +20,7 @@ public interface IAntModelConstants {
 	 */
 	public static final String ATTR_NAME= "name"; //$NON-NLS-1$
 	public static final String ATTR_VALUE= "value"; //$NON-NLS-1$
+    public static final String ATTR_LOCATION= "location"; //$NON-NLS-1$
 	public static final String ATTR_DEFAULT= "default"; //$NON-NLS-1$
 	public static final String ATTR_RESOURCE= "resource"; //$NON-NLS-1$
 	public static final String ATTR_ENVIRONMENT= "environment"; //$NON-NLS-1$

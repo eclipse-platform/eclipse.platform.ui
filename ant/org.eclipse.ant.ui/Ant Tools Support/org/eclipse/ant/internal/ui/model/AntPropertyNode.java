@@ -31,6 +31,7 @@ public class AntPropertyNode extends AntTaskNode {
 	
 	private String fValue= null;
 	private String fReferencedName;
+    private String fOccurrencesStartingPoint= IAntModelConstants.ATTR_VALUE;
     
 	/*
 	 * The set of properties defined by this node
@@ -41,9 +42,9 @@ public class AntPropertyNode extends AntTaskNode {
 	public AntPropertyNode(Task task, Attributes attributes) {
 		super(task);
 		 String label = attributes.getValue(IAntModelConstants.ATTR_NAME);
-         if(label == null) {
+         if (label == null) {
 			label = attributes.getValue(IAntModelConstants.ATTR_FILE);
-         	if(label != null) {
+         	if (label != null) {
          		fReferencedName= label;
          		label=  "file="+label; //$NON-NLS-1$
          	} else {	
@@ -53,19 +54,19 @@ public class AntPropertyNode extends AntTaskNode {
          			label= "resource="+label; //$NON-NLS-1$
          		} else {
          			label = attributes.getValue(IAntModelConstants.ATTR_ENVIRONMENT);
-         			if(label != null) {
+         			if (label != null) {
          				label= "environment=" + label; //$NON-NLS-1$
          			}
          		}
          	}
          } else {
          	fValue= attributes.getValue(IAntModelConstants.ATTR_VALUE);
+            if (fValue == null) {
+                fOccurrencesStartingPoint= IAntModelConstants.ATTR_LOCATION;
+                fValue= attributes.getValue(fOccurrencesStartingPoint); //$NON-NLS-1$
+            }
          } 
          setBaseLabel(label);
-	}
-	
-	public String getValue() {
-		return fValue;
 	}
 	
 	public String getProperty(String propertyName) {
@@ -168,7 +169,7 @@ public class AntPropertyNode extends AntTaskNode {
 	public boolean isRegionPotentialReference(IRegion region) {
 		if (super.isRegionPotentialReference(region)) {
 			String textToSearch= getAntModel().getText(getOffset(), getLength());
-			int valueOffset= textToSearch.indexOf("value"); //$NON-NLS-1$
+			int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
 			if (valueOffset > -1) {
 				valueOffset= textToSearch.indexOf('"', valueOffset);
 				if (valueOffset > -1) {			
@@ -198,7 +199,7 @@ public class AntPropertyNode extends AntTaskNode {
             }
         }
         if (fValue != null) {
-            int valueOffset= textToSearch.indexOf("value"); //$NON-NLS-1$
+            int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
             int endOffset= getOffset() + getLength();
             identifier= new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
             while(valueOffset < endOffset) {
