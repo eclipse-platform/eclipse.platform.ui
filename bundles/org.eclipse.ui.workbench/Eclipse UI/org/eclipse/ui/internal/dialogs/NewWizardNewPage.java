@@ -203,7 +203,7 @@ class NewWizardNewPage
 		
 	    Label descLabel = new Label(descParent, SWT.NONE);	
 	    descLabel.setFont(parent.getFont());
-	    descLabel.setText("&Description:");
+	    descLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.descriptionLabel")); //$NON-NLS-1$
 	    
 	    data = new GridData(GridData.FILL_HORIZONTAL);
 	    descLabel.setLayoutData(data);
@@ -247,7 +247,7 @@ class NewWizardNewPage
 			    
 	    Label wizardLabel = new Label(treeParent, SWT.NONE);	
 	    wizardLabel.setFont(parent.getFont());
-	    wizardLabel.setText("&Wizards:");
+	    wizardLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.wizardsLabel")); //$NON-NLS-1$
 	    
 	    data = new GridData(GridData.FILL_HORIZONTAL);
 	    wizardLabel.setLayoutData(data);
