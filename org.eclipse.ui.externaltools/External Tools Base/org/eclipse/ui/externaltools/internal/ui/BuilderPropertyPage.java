@@ -461,6 +461,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		if (newConfig != null) {
 			userHasMadeChanges= true;
 			addConfig(newConfig, true);
+			newConfigList.add(newConfig);
 		}
 	}
 	
