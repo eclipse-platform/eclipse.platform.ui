@@ -50,6 +50,7 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
@@ -423,7 +424,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR, false);			
 		// Allow 'show all' option by default
-		store.setDefault(IWorkbenchPreferences.SHOULD_ALLOW_SHOW_ALL, true);		
+		store.setDefault(IWorkbenchPreferenceConstants.SHOULD_ALLOW_SHOW_ALL, true);		
 		
 		
 		// @issue some of these may be IDE-specific
