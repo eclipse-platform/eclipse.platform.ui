@@ -91,13 +91,6 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#clear()
-	 */
-	public void clear() {
-		fVariables.clear();
-	}
-	
-	/**
 	 * @see ISimpleVariableRegistry#getVariable(String)
 	 */
 	public ISimpleLaunchVariable getVariable(String name) {

@@ -25,12 +25,14 @@ package org.eclipse.debug.core.variables;
 public interface ISimpleVariableRegistry {
 	/**
 	 * Adds the given variables to this variable registry
+	 * 
 	 * @param variables the variables to add
 	 */
 	public void addVariables(ISimpleLaunchVariable[] variables);
 	/**
 	 * Removes the given variables from this registry. Has no effect
 	 * if any of the given variables are not in this registry.
+	 * 
 	 * @param variables the variables to remove
 	 */
 	public void removeVariables(ISimpleLaunchVariable[] variables);
@@ -39,6 +41,7 @@ public interface ISimpleVariableRegistry {
 	 * if no such variable exists. If multiple variables with the given name have
 	 * been added to this registry, returns the most recently added variable
 	 * with that name.
+	 * 
 	 * @param name the name of the variable
 	 * @return the launch configuration variable with the given name or
 	 * <code>null</code> if no such variable exists.
@@ -46,6 +49,7 @@ public interface ISimpleVariableRegistry {
 	public ISimpleLaunchVariable getVariable(String name);
 	/**
 	 * Returns all the variables contained in this registry
+	 * 
 	 * @return the variables in this registry.
 	 */
 	public ISimpleLaunchVariable[] getVariables();
