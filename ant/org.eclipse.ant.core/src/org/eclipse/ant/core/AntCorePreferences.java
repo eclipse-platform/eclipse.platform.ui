@@ -30,6 +30,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 
+
+/**
+ * Represents the Ant Core plug-in's preferences providing utilities for
+ * extracting, changing and updating the underlying preferences.
+ */
 public class AntCorePreferences {
 
 	protected List fDefaultTasks;
@@ -78,7 +83,7 @@ public class AntCorePreferences {
 	}
 
 	protected Task[] extractTasks(Preferences prefs, String[] tasks) {
-		List result = new ArrayList(10);
+		List result = new ArrayList(tasks.length);
 		for (int i = 0; i < tasks.length; i++) {
 			try {
 				String taskName = tasks[i];
@@ -98,7 +103,7 @@ public class AntCorePreferences {
 	}
 
 	protected Type[] extractTypes(Preferences prefs, String[] types) {
-		List result = new ArrayList(10);
+		List result = new ArrayList(types.length);
 		for (int i = 0; i < types.length; i++) {
 			try {
 				String typeName = types[i];
@@ -118,7 +123,7 @@ public class AntCorePreferences {
 	}
 
 	protected URL[] extractURLs(String[] urls) {
-		List result = new ArrayList(10);
+		List result = new ArrayList(urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			try {
 				result.add(new URL(urls[i]));
@@ -131,6 +136,10 @@ public class AntCorePreferences {
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
+	/**
+	 * Returns the array of URLs that is the default set of URLs defining
+	 * the Ant classpath.
+	 * 	 * @return the default set of URLs defining the Ant classpath	 */
 	public URL[] getDefaultCustomURLs() {
 		if (fDefaultCustomURLs == null) {
 			List result = new ArrayList(10);
@@ -284,19 +293,20 @@ public class AntCorePreferences {
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
-	public ClassLoader[] getPluginClassLoaders() {
-		return (ClassLoader[]) fPluginClassLoaders.toArray(
-			new ClassLoader[fPluginClassLoaders.size()]);
+	protected ClassLoader[] getPluginClassLoaders() {
+		return (ClassLoader[]) fPluginClassLoaders.toArray(new ClassLoader[fPluginClassLoaders.size()]);
 	}
 
 	protected void initializePluginClassLoaders() {
-		fPluginClassLoaders = new ArrayList(20);
+		fPluginClassLoaders = new ArrayList(10);
 		// ant.core should always be present
 		fPluginClassLoaders.add(Platform.getPlugin(AntCorePlugin.PI_ANTCORE).getDescriptor().getPluginClassLoader());
 	}
 
 	/**
-	 * Returns default + custom tasks.
+	 * Returns the default and custom tasks.
+	 * 
+	 * @return the list of default and custom tasks.
 	 */
 	public List getTasks() {
 		List result = new ArrayList(10);
@@ -317,6 +327,11 @@ public class AntCorePreferences {
 		return fCustomTypes;
 	}
 
+	/**
+	 * Returns the custom URLs specified for the Ant classpath
+	 * 
+	 * @return the urls defining the Ant classpath
+	 */
 	public URL[] getCustomURLs() {
 		return fCustomURLs;
 	}
@@ -329,12 +344,19 @@ public class AntCorePreferences {
 		fCustomTypes = types;
 	}
 
+	/**
+	 * Sets the custom URLs specified for the Ant classpath
+	 * 
+	 * @param the urls defining the Ant classpath
+	 */
 	public void setCustomURLs(URL[] urls) {
 		fCustomURLs = urls;
 	}
 
 	/**
-	 * Returns default + custom types.
+	 * Returns the default and custom types.
+	 * 
+	 * @return all of the defined types
 	 */
 	public List getTypes() {
 		List result = new ArrayList(10);
@@ -348,14 +370,15 @@ public class AntCorePreferences {
 	}
 
 	/**
-	 * Convert a list of tokens into an array. The list separator has to be specified.
+	 * Convert a list of tokens into an array using "," as the tokenizer.
 	 */
-	public static String[] getArrayFromString(String list, String separator) {
+	protected String[] getArrayFromString(String list) {
+		String separator= ",";
 		if (list == null || list.trim().equals("")) { //$NON-NLS-1$
 			return new String[0];
 		}
 		ArrayList result = new ArrayList();
-		for (StringTokenizer tokens = new StringTokenizer(list, separator);tokens.hasMoreTokens();) {
+		for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			if (!token.equals("")) { //$NON-NLS-1$
 				result.add(token);
@@ -365,12 +388,7 @@ public class AntCorePreferences {
 	}
 
 	/**
-	 * Convert a list of comma-separated tokens into an array
-	 */
-	public static String[] getArrayFromString(String list) {
-		return getArrayFromString(list, ","); //$NON-NLS-1$
-	}
-
+	 * Updates the underlying plugin preferences to the current state.	 */
 	public void updatePluginPreferences() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
 		updateTasks(prefs);
