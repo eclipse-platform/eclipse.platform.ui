@@ -162,7 +162,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * Initializes the <code>outOfOrderKeys</code> member variable using the
 	 * keys defined in the properties file.
 	 */
-	static void initializeOutOfOrderKeys() {
+	private static void initializeOutOfOrderKeys() {
 		// Get the key strokes which should be out of order.
 		String keysText = WorkbenchMessages.getString(OUT_OF_ORDER_KEYS);
 		outOfOrderKeys = KeySequence.getInstance();
@@ -195,7 +195,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * @return <code>true</code> if the key is an out-of-order key; <code>false</code>
 	 *         otherwise.
 	 */
-	static boolean isOutOfOrderKey(List keyStrokes) {
+	private static boolean isOutOfOrderKey(List keyStrokes) {
 		// Compare to see if one of the possible key strokes is out of order.
 		Iterator keyStrokeItr = keyStrokes.iterator();
 		while (keyStrokeItr.hasNext()) {
@@ -380,7 +380,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * @param event
 	 *            The incoming event; must not be <code>null</code>.
 	 */
-	void filterKeySequenceBindings(Event event) {
+	private void filterKeySequenceBindings(Event event) {
 		/*
 		 * Only process key strokes containing natural keys to trigger key
 		 * bindings
@@ -522,7 +522,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * @param event
 	 *            The event to process; must not be <code>null</code>.
 	 */
-	void processKeyEvent(List keyStrokes, Event event) {
+	private void processKeyEvent(List keyStrokes, Event event) {
 		if (press(keyStrokes, event)) {
 			switch (event.type) {
 				case SWT.KeyDown :
@@ -786,7 +786,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	/**
 	 * Updates the text of the mode lines with the current mode.
 	 */
-	void updateModeStatusLines() {
+	private void updateModeStatusLines() {
 		// Format the mode into text.
 		String text = getMode().format();
 
