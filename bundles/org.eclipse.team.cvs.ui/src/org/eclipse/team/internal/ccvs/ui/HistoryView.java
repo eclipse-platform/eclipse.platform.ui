@@ -62,6 +62,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -170,16 +171,18 @@ public class HistoryView extends ViewPart {
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			try {
-				entries = remoteFile.getLogEntries(monitor);
-				final String revisionId = remoteFile.getRevision();
-				tableViewer.getTable().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						if(tableViewer != null && ! tableViewer.getTable().isDisposed()) {
-							tableViewer.add(entries);
+				if(remoteFile != null) {
+					entries = remoteFile.getLogEntries(monitor);
+					final String revisionId = remoteFile.getRevision();
+					Display.getCurrent().asyncExec(new Runnable() {
+						public void run() {
+							if(tableViewer != null && ! tableViewer.getTable().isDisposed()) {
+								tableViewer.add(entries);
 								selectRevision(revisionId);
+							}
 						}
-					}
-				});
+					});
+				}
 				return Status.OK_STATUS;
 			} catch (TeamException e) {
 				return e.getStatus();
