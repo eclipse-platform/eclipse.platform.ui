@@ -33,8 +33,8 @@ public class AntModelContentProvider implements ITreeContentProvider {
 				List children= parentElement.getChildNodes();
 				return children.toArray();
 			} 
-		} else if (parentNode instanceof AntModel) {
-			return new Object[] {((AntModel)parentNode).getProjectNode()};
+		} else if (parentNode instanceof IAntModel) {
+			return new Object[] {((IAntModel)parentNode).getProjectNode()};
 		}
 		return EMPTY_ARRAY;
 	}
@@ -58,8 +58,13 @@ public class AntModelContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof AntModel ) {
-			return ((AntModel) inputElement).getRootElements();
+		if (inputElement instanceof IAntModel ) {
+		    AntProjectNode projectNode= ((IAntModel) inputElement).getProjectNode();
+		    if (projectNode == null) {
+				return new AntElementNode[0];
+			} 
+			
+			return new Object[] {projectNode}; 
 		}
 		
 		if (inputElement instanceof Object[]) {
