@@ -52,7 +52,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionedIdentifier().toString();
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
-			assertTrue("plugin files not installed locally", pluginFile.exists());
+			assertTrue("plugin files not installed locally:"+pluginFile, pluginFile.exists());
 
 			File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
@@ -107,7 +107,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionedIdentifier().toString();
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
-			assertTrue("plugin files not installed locally", pluginFile.exists());
+			assertTrue("plugin files not installed locally:"+pluginFile, pluginFile.exists());
 
 			File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
