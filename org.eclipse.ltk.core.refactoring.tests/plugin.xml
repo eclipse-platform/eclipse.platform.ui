@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.ltk.core.refactoring.tests"
+   name="%pluginName"
+   version="3.0.0"
+   provider-name="%providerName"
+   class="org.eclipse.ltk.core.refactoring.tests.RefactoringCoreTestPlugin">
+
+   <runtime>
+      <library name="refcoretests.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.ltk.core.refactoring,org.eclipse.ltk.internal.core.refactoring"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.ltk.core.refactoring"/>
+   </requires>
+
+</plugin>

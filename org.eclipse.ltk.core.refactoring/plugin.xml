@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.ltk.core.refactoring"
+   name="%pluginName"
+   version="3.0.0"
+   provider-name="%providerName"
+   class="org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin">
+
+   <runtime>
+      <library name="refcore.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.ltk.core.refactoring,org.eclipse.ltk.internal.core.refactoring"/>
+      </library>
+   </runtime>
+   
+   <requires>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+   </requires>
+
+   <extension-point id="renameParticipants" name="%renameParticipantsExtensionPoint"/>
+   <extension-point id="createParticipants" name="%createParticipantsExtensionPoint"/>
+   <extension-point id="deleteParticipants" name="%deleteParticipantsExtensionPoint"/>
+   <extension-point id="moveParticipants" name="%moveParticipantsExtensionPoint"/>
+   <extension-point id="copyParticipants" name="%copyParticipantsExtensionPoint"/>
+
+</plugin>
