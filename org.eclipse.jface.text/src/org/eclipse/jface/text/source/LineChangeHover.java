@@ -205,7 +205,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 		ILineDiffer differ= getDiffer(viewer);
 		if (differ == null)
-			return null;
+			return new Point(-1, -1);
 
 		// backward search
 
