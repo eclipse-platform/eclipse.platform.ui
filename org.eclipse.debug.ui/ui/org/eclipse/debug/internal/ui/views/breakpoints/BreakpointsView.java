@@ -191,7 +191,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			((ShowSupportedBreakpointsAction)action).dispose(); 
 		}
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
 		super.dispose();
 		
 		if (getEventHandler() != null) {
