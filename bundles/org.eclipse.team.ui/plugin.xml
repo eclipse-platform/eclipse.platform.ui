@@ -20,7 +20,7 @@
       <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
       <import plugin="org.eclipse.ui.editors" optional="true"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime.compatibility" optional="true"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.compare"/>
@@ -137,7 +137,6 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%Synchronizing.perspective"
-            label="%Synchronizing.perspective"
             icon="icons/full/cview16/synch_synch.gif"
             class="org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective"
             id="org.eclipse.team.ui.TeamSynchronizingPerspective">
