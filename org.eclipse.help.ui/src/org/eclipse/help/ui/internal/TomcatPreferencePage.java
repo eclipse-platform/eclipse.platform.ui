@@ -94,7 +94,9 @@ public class TomcatPreferencePage
 		textServerPort = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		textServerPort.setTextLimit(5);
 		data = new GridData();
-		data.widthHint = convertWidthInCharsToPixels(8);
+		//data.widthHint = convertWidthInCharsToPixels(8);
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
 		textServerPort.setLayoutData(data);
 
 		label = new Label(mainComposite, SWT.NONE);
