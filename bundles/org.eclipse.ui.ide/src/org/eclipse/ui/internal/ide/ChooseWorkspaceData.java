@@ -52,6 +52,7 @@ public class ChooseWorkspaceData {
 	private static final String PERS_FILENAME = "recentWorkspaces.xml"; //$NON-NLS-1$
 	private static final int PERS_ENCODING_VERSION = 1;
 
+	private boolean showDialog = true;
 	private String initialDefault;
 	private String selection;
 	private String[] recentWorkspaces;
@@ -60,6 +61,8 @@ public class ChooseWorkspaceData {
 	private static interface XML {
 		public static final String PROTOCOL = "protocol"; //$NON-NLS-1$
 		public static final String VERSION = "version"; //$NON-NLS-1$
+		public static final String ALWAYS_ASK = "alwaysAsk"; //$NON-NLS-1$
+		public static final String SHOW_DIALOG = "showDialog"; //$NON-NLS-1$
 		public static final String WORKSPACE = "workspace"; //$NON-NLS-1$
 		public static final String RECENT_WORKSPACES = "recentWorkspaces"; //$NON-NLS-1$
 		public static final String MAX_LENGTH = "maxLength"; //$NON-NLS-1$
@@ -93,6 +96,13 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
+	 * Return the currently selected workspace or null if nothing is selected.
+	 */
+	public boolean getShowDialog() {
+		return showDialog;
+	}
+
+	/**
 	 * Return an array of recent workspaces sorted with the most recently used at
 	 * the start.
 	 */
@@ -108,6 +118,13 @@ public class ChooseWorkspaceData {
 		// this just stores the selection, it is not inserted and persisted
 		// until the workspace is actually selected
 		selection = dir;
+	}
+
+	/**
+	 * Toggle value of the showDialog persistent setting.
+	 */
+	public void toggleShowDialog() {
+		showDialog = !showDialog;
 	}
 
 	/**
@@ -143,6 +160,7 @@ public class ChooseWorkspaceData {
 			// E.g.,
 			//	<launchWorkspaceData>
 			//		<protocol version="1"/>
+			//      <alwaysAsk showDialog="1"/>
 			// 		<recentWorkspaces maxLength="5">
 			//			<workspace path="C:\eclipse\workspace0"/>
 			//			<workspace path="C:\eclipse\workspace1"/>
@@ -153,6 +171,9 @@ public class ChooseWorkspaceData {
 
 			memento.createChild(XML.PROTOCOL)
 				   .putInteger(XML.VERSION, PERS_ENCODING_VERSION);
+
+			memento.createChild(XML.ALWAYS_ASK)
+					.putInteger(XML.SHOW_DIALOG, showDialog ? 1 : 0);
 
 			IMemento recentMemento = memento.createChild(XML.RECENT_WORKSPACES);
 			recentMemento.putInteger(XML.MAX_LENGTH, recentWorkspaces.length);
@@ -181,8 +202,9 @@ public class ChooseWorkspaceData {
 	 * Look for and read data that might have been persisted from some previous
 	 * run. Leave the receiver in a default state if no persistent data is
 	 * found.
+	 * @return true if a file was successfully read and false otherwise
 	 */
-	private void readPersistedData() {
+	private boolean readPersistedData() {
 		URL persUrl = null;
 
 		Location configLoc = Platform.getConfigurationLocation();
@@ -193,11 +215,12 @@ public class ChooseWorkspaceData {
 			// inside try to get the safe default creation in the finally
 			// clause
 			if (persUrl == null)
-				return;
+				return false;
 
 			// E.g.,
 			//	<launchWorkspaceData>
 			//		<protocol version="1"/>
+			//      <alwaysAsk showDialog="1"/>
 			// 		<recentWorkspaces maxLength="5">
 			//			<workspace path="C:\eclipse\workspace0"/>
 			//			<workspace path="C:\eclipse\workspace1"/>
@@ -207,11 +230,15 @@ public class ChooseWorkspaceData {
 			Reader reader = new FileReader(persUrl.getFile());
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			if (memento == null || !compatibleProtocol(memento))
-				return;
+				return false;
+
+			IMemento alwaysAskTag = memento.getChild(XML.ALWAYS_ASK);
+			showDialog = alwaysAskTag == null ? true : alwaysAskTag.getInteger(
+					XML.SHOW_DIALOG).intValue() == 1;
 
 			IMemento recent = memento.getChild(XML.RECENT_WORKSPACES);
 			if(recent == null)
-				return;
+				return false;
 
 			Integer maxLength = recent.getInteger(XML.MAX_LENGTH);
 			int max = RECENT_MAX_LENGTH;
@@ -220,7 +247,7 @@ public class ChooseWorkspaceData {
 
 			IMemento indices[] = recent.getChildren(XML.WORKSPACE);
 			if(indices == null || indices.length <= 0)
-				return;
+				return false;
 
 			// if a user has edited maxLength to be shorter than the listed
 			// indices, accept the list (its tougher for them to retype a long
@@ -234,17 +261,48 @@ public class ChooseWorkspaceData {
 					break;
 				recentWorkspaces[i] = path; 
 			}
-			return;
 		} catch (IOException e) {
-			// do nothing -- cannot log because instance area has not been set
+			// cannot log because instance area has not been set
+			return false;
 		} catch (WorkbenchException e) {
-			// do nothing -- cannot log because instance area has not been set
+			// cannot log because instance area has not been set
+			return false;
 		}
 		finally {
 			// create safe default if needed
-			if(recentWorkspaces == null)
+			if (recentWorkspaces == null)
 				recentWorkspaces = new String[RECENT_MAX_LENGTH];
 		}
+
+		return true;
+	}
+
+	/**
+	 * Return the current (persisted) value of the "showDialog on startup"
+	 * preference. Return the global default if the file cannot be accessed.
+	 */
+	public static boolean getShowDialogValue() {
+		ChooseWorkspaceData data = new ChooseWorkspaceData(""); //$NON-NLS-1$
+
+		// return either the value in the file or true, which is the global
+		// default
+		return data.readPersistedData() ? data.showDialog : true;
+	}
+
+	/**
+	 * Return the current (persisted) value of the "showDialog on startup"
+	 * preference. Return the global default if the file cannot be accessed.
+	 */
+	public static void setShowDialogValue(boolean showDialog) {
+		ChooseWorkspaceData data = new ChooseWorkspaceData(""); //$NON-NLS-1$
+
+		// if the file didn't exist, then don't create a new one
+		if (!data.readPersistedData())
+			return;
+
+		// update the value and write the new settings
+		data.showDialog = showDialog;
+		data.writePersistedData();
 	}
 
 	/**

@@ -196,11 +196,16 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		ChooseWorkspaceData launchData = new ChooseWorkspaceData(
 				initialDefault);
 
+		boolean force = false;
 		while (true) {
-			URL workspaceUrl = promptForWorkspace(shell, launchData);
+			URL workspaceUrl = promptForWorkspace(shell, launchData, force);
 			if (workspaceUrl == null)
 				return false;
 
+			// if there is an error with the first selection, then force the
+			// dialog to open to give the user a chance to correct
+			force = true;
+			
 			try {
 				// the operation will fail if the url is not a valid
 				// instance data area, so other checking is unneeded
@@ -279,16 +284,24 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 * 
 	 * @param shell
 	 * @param launchData
+	 * @param force
+	 *            setting to true makes the dialog open regardless of the
+	 *            showDialog value
 	 * @return An URL storing the selected workspace or null if the user has
 	 *         canceled the launch operation.
 	 */
-	private URL promptForWorkspace(Shell shell, ChooseWorkspaceData launchData) {
+	private URL promptForWorkspace(Shell shell, ChooseWorkspaceData launchData, boolean force) {
 		URL url = null;
 		do {
-			new ChooseWorkspaceDialog(shell, launchData).open();
+			new ChooseWorkspaceDialog(shell, launchData).prompt(force);
 			String instancePath = launchData.getSelection();
 			if (instancePath == null)
 				return null;
+
+			// the dialog is not forced on the first iteration, but is on every
+			// subsequent one -- if there was an error then the user needs to be
+			// allowed to 
+			force = true;
 
 			// create the workspace if it does not already exist
 			File workspace = new File(instancePath);

@@ -50,6 +50,30 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	/**
+	 * Show the dialog to the user (if needed). When this method finishes,
+	 * #getSelection will return the workspace that should be used (whether it
+	 * was just selected by the user or some previous default has been used.
+	 * The parameter can be used to override the users preference.  For example,
+	 * this is important in cases where the default selection is already in use
+	 * and the user is forced to choose a different one.
+	 * 
+	 * @param force
+	 *            true if the dialog should be opened regardless of the value of
+	 *            the show dialog checkbox
+	 */
+	public void prompt(boolean force) {
+		if (force || launchData.getShowDialog()) {
+			open();
+			return;
+		}
+
+		String[] recent = launchData.getRecentWorkspaces();
+		launchData.workspaceSelected(recent != null && recent.length > 0
+				? recent[0]
+				: launchData.getInitialDefault());
+	}
+
+	/**
 	 * Creates and returns the contents of the upper part of this dialog (above
 	 * the button bar).
 	 * <p>
@@ -65,10 +89,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		setTitle(IDEWorkbenchMessages
 				.getString("ChooseWorkspaceDialog.dialogTitle")); //$NON-NLS-1$
 		setMessage(IDEWorkbenchMessages
-				.getString("ChooseWorkspaceDialog.dialogMessage")); //$NON-NLS-1$
+				.format("ChooseWorkspaceDialog.dialogMessage", //$NON-NLS-1$
+						new Object[]{ Platform.getProduct().getName() } ));
 		setTitleImage();
 
 		createWorkspaceBrowseRow(composite);
+		createShowDialogButton(composite);
 		return composite;
 	}
 
@@ -181,6 +207,32 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 				String dir = dialog.open();
 				if (dir != null)
 					text.setText(dir);
+			}
+		});
+	}
+
+	/**
+	 * The show dialog button allows the user to choose to neven be nagged again.
+	 */
+	private void createShowDialogButton(Composite parent) {
+		Composite panel = new Composite(parent, SWT.NONE);
+		panel.setFont(parent.getFont());
+
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		panel.setLayout(layout);
+
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.verticalAlignment = GridData.END;
+		panel.setLayoutData(data);
+
+		Button button = new Button(panel, SWT.CHECK);
+		button.setText(IDEWorkbenchMessages
+				.getString("ChooseWorkspaceDialog.useDefaultMessage")); //$NON-NLS-1$
+		button.setSelection(!launchData.getShowDialog());
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				launchData.toggleShowDialog();
 			}
 		});
 	}
