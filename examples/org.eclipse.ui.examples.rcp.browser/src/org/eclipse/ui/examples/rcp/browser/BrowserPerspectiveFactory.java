@@ -22,9 +22,9 @@ public class BrowserPerspectiveFactory implements IPerspectiveFactory {
 	 * Creates the initial layout of the Browser perspective.
 	 */
 	public void createInitialLayout(IPageLayout layout) {
-		layout.addView(BrowserApp.BROWSER_VIEW_ID, IPageLayout.RIGHT, .25f, IPageLayout.ID_EDITOR_AREA);
-		layout.addPlaceholder(BrowserApp.HISTORY_VIEW_ID, IPageLayout.LEFT, .3f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
-		IViewLayout historyLayout = layout.getViewLayout(BrowserApp.HISTORY_VIEW_ID);
+		layout.addView(IBrowserConstants.BROWSER_VIEW_ID, IPageLayout.RIGHT, .25f, IPageLayout.ID_EDITOR_AREA);
+		layout.addPlaceholder(IBrowserConstants.HISTORY_VIEW_ID, IPageLayout.LEFT, .3f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
+		IViewLayout historyLayout = layout.getViewLayout(IBrowserConstants.HISTORY_VIEW_ID);
 		historyLayout.setCloseable(true);
 		layout.setEditorAreaVisible(false);
 	}

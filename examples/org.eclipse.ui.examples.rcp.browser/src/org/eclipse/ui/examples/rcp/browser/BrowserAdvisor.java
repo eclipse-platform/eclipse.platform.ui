@@ -11,6 +11,7 @@
 package org.eclipse.ui.examples.rcp.browser;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -80,7 +81,7 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */
 	public String getInitialWindowPerspectiveId() {
-		return BrowserApp.BROWSER_PERSPECTIVE_ID;
+		return IBrowserConstants.BROWSER_PERSPECTIVE_ID;
 	}
 		
 	/* (non-Javadoc)
@@ -88,10 +89,13 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
 	 */
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		super.preWindowOpen(configurer);
+		configurer.setInitialSize(new Point(800, 600));
 		
 		// Default window title is the product name, so don't need to set it
 		// explicitly anymore.
 //		configurer.setTitle("Browser Example");
+		
+//		configurer.setShowFastViewBars(true);
 	}
 
 	/* (non-Javadoc)
@@ -115,4 +119,5 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
             builder.dispose();
         }
     }
+    
 }

@@ -53,7 +53,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class BrowserView extends ViewPart {
 	
-	/**
+    /**
 	 * Debug flag.  When true, status and progress messages are sent to the
 	 * console in addition to the status line.
 	 */
@@ -61,7 +61,7 @@ public class BrowserView extends ViewPart {
 	
 	private Browser browser;
 	private Text location;
-	private String initialUrl = "http://eclipse.org"; //$NON-NLS-1$
+	private String initialUrl;
 	
 	private Action backAction = new Action("Back") {
 		public void run() {
@@ -90,16 +90,28 @@ public class BrowserView extends ViewPart {
 	};
 	
 	/**
+	 * The easter egg action.  
+	 * See the corresponding command and key binding in the plugin.xml,
+	 * and how it's registered in createBrowser.
+	 */
+	private Action easterEggAction = new Action() {
+	    { setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "easterEgg"); } //$NON-NLS-1$
+	    public void run() {
+	        browser.execute("window.confirm('You found the easter egg!')");
+	    }
+	};
+	
+	/**
 	 * Constructs a new <code>BrowserView</code>.
 	 */
 	public BrowserView() {
-		// do nothing
+	    initialUrl = BrowserPlugin.getDefault().getPluginPreferences().getString(IBrowserConstants.PREF_HOME_PAGE);
 	}
 	
     public void init(IViewSite site, IMemento memento) throws PartInitException {
         super.init(site);
         if (memento != null) {
-	        String u = memento.getString("url"); //$NON-NLS-1$
+	        String u = memento.getString(IBrowserConstants.MEMENTO_URL);
 	        if (u != null) {
 	            initialUrl = u;
 	        }
@@ -107,7 +119,7 @@ public class BrowserView extends ViewPart {
     }
     
     public void saveState(IMemento memento) {
-        memento.putString("url", browser.getUrl());
+        memento.putString(IBrowserConstants.MEMENTO_URL, browser.getUrl());
     }
     
 	public void createPartControl(Composite parent) {
@@ -198,11 +210,20 @@ public class BrowserView extends ViewPart {
 			}
 		});
 		
+		// Hook the navigation actons as handlers for the retargetable actions
+		// defined in BrowserActionBuilder.
 		actionBars.setGlobalActionHandler("back", backAction); //$NON-NLS-1$
 		actionBars.setGlobalActionHandler("forward", forwardAction); //$NON-NLS-1$
 		actionBars.setGlobalActionHandler("stop", stopAction); //$NON-NLS-1$
 		actionBars.setGlobalActionHandler("refresh", refreshAction); //$NON-NLS-1$
 		
+		// Register the easter egg action with the key binding service,
+		// allowing it to be invoked directly via keypress, 
+		// without requiring the action to be visible in the UI.
+		// Note that the address field needs to have focus for this to work, 
+		// or any control other than the browser widget, due to 
+		// <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69919">bug 69919</a>.
+		getViewSite().getKeyBindingService().registerAction(easterEggAction);
 		return browser;
 	}
 

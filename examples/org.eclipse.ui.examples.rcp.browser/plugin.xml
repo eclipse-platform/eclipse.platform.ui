@@ -4,7 +4,8 @@
    id="org.eclipse.ui.examples.rcp.browser"
    name="%pluginName"
    version="3.0.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.ui.examples.rcp.browser.BrowserPlugin">
 
    <runtime>
       <library name="browser.jar">
@@ -31,7 +32,7 @@
             id="org.eclipse.ui.examples.rcp.browser.browserPerspective"
             name="%perspectives.browser.name"
             class="org.eclipse.ui.examples.rcp.browser.BrowserPerspectiveFactory"
-            fixed="true"/>
+			fixed="false"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -74,6 +75,76 @@
                name="preferenceCustomization"
                value="plugin_customization.ini"/>
       </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Browser"
+            id="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"/>
+      <command
+            categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
+            name="Back"
+            id="org.eclipse.ui.examples.rcp.browser.commands.back"/>
+      <command
+            categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
+            name="Forward"
+            id="org.eclipse.ui.examples.rcp.browser.commands.forward"/>
+      <command
+            categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
+            name="Stop"
+            id="org.eclipse.ui.examples.rcp.browser.commands.stop"/>
+      <command
+            categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
+            name="Refresh"
+            id="org.eclipse.ui.examples.rcp.browser.commands.refresh"/>
+      <command
+            categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
+            name="New Tab"
+            id="org.eclipse.ui.examples.rcp.browser.commands.newTab"/>
+      <command
+            categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
+            name="History"
+            id="org.eclipse.ui.examples.rcp.browser.commands.history"/>
+      <command
+            categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
+            name="Easter Egg"
+            id="org.eclipse.ui.examples.rcp.browser.commands.easterEgg"/>
+      <keyConfiguration
+            name="Browser Keys"
+            id="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <activeKeyConfiguration keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <keyBinding
+            commandId="org.eclipse.ui.examples.rcp.browser.commands.back"
+            keySequence="Alt+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <keyBinding
+            commandId="org.eclipse.ui.examples.rcp.browser.commands.forward"
+            keySequence="Alt+Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <keyBinding
+            commandId="org.eclipse.ui.examples.rcp.browser.commands.stop"
+            keySequence="Esc"
+            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <keyBinding
+            commandId="org.eclipse.ui.examples.rcp.browser.commands.refresh"
+            keySequence="F5"
+            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <keyBinding
+            commandId="org.eclipse.ui.examples.rcp.browser.commands.newTab"
+            keySequence="Ctrl+T"
+            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <keyBinding
+            commandId="org.eclipse.ui.examples.rcp.browser.commands.history"
+            keySequence="Ctrl+H"
+            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <keyBinding
+            commandId="org.eclipse.ui.examples.rcp.browser.commands.easterEgg"
+            keySequence="Ctrl+Shift+E"
+            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.ui.examples.rcp.browser.BrowserPreferenceInitializer"/>
    </extension>
 
 </plugin>
