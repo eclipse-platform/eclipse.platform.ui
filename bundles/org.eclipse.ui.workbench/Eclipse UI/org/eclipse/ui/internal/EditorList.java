@@ -102,7 +102,9 @@ public class EditorList {
 				display.timerExec(TIMER_INTERVAL, new Runnable() {
 					public void run() {
 						counter --;
-						if (counter == 0) {
+						// When closing the workbench the delay may allow the editorTable
+						// to dispose prior to running.						
+						if ((counter == 0) && (editorsTable !=null)){
 							updateItems();
 							notifyEditorListViews();
 						}
