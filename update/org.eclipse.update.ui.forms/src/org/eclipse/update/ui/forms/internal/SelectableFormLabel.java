@@ -96,11 +96,11 @@ public class SelectableFormLabel extends FormLabel {
 			}
 
 			public void getRole(AccessibleControlEvent e) {
-				e.detail = ACC.ROLE_LABEL;
+				e.detail = ACC.ROLE_PUSHBUTTON;
 			}
 
 			public void getState(AccessibleControlEvent e) {
-				e.detail = ACC.STATE_READONLY;
+				e.detail = SelectableFormLabel.this.getSelection()?ACC.STATE_SELECTED:ACC.STATE_NORMAL;
 			}
 		});
 	}
