@@ -68,4 +68,22 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * the failure.</li>
 	 */
 	public String getReferenceTypeName() throws DebugException;
+	
+	/** 
+	 * Returns whether this variable's value has changed since the last suspend event. 
+	 * Implementations may choose whether the last suspend event is the last suspend 
+	 * event in this variable's debug target, or within the thread(s) in which this variable 
+	 * is visible. 
+	 * <p>
+	 * Implementations that choose not to implement this function should always
+	 * return <code>false</code>.
+	 * </p>
+	 * 
+	 * @return whether this variable's value has changed since the last suspend event 
+	 * @exception DebugException if an exception occurrs determining if this variable's 
+	 *   value has changed since the last suspend event 
+	 */ 
+	public boolean hasValueChanged() throws DebugException; 
+
+	
 }

@@ -38,12 +38,6 @@ public class VariablesViewer extends TreeViewer {
 	private HashMap fDisabledImages = new HashMap(10);
 	
 	/**
-	 * Map of previous values for variables. Keys
-	 * are variables, values are values.
-	 */
-	private HashMap fPreviousValues = new HashMap(10);
-
-	/**
 	 * Constructor for VariablesViewer.
 	 * @param parent
 	 */
@@ -97,21 +91,6 @@ public class VariablesViewer extends TreeViewer {
 	}
 	
 	/**
-	 * Resets for a new stack frame.
-	 */
-	protected void reset() {
-		fPreviousValues.clear();
-	}
-	
-	/**
-	 * @see Viewer#inputChanged(Object, Object)
-	 */
-	protected void inputChanged(Object input, Object oldInput) {
-		reset();
-		super.inputChanged(input, oldInput);
-	}
-
-	/**
 	 * Refresh the view, and then do another pass to
 	 * update images for values that have not changed
 	 * since the last refresh. Values that have not
@@ -147,20 +126,14 @@ public class VariablesViewer extends TreeViewer {
 	protected void updateIcons(TreeItem item) {
 		if (item.getData() instanceof IVariable) {
 			IVariable var = (IVariable)item.getData();
-			Object prevValue = fPreviousValues.get(var);
-			Object currentValue = null;
 			try {
-				currentValue = var.getValue();
+				if (!var.hasValueChanged()) {
+					Image disabled = getDisabledImage(item.getImage());
+					item.setImage(disabled);
+				}	
 			} catch (DebugException e) {
 				DebugUIPlugin.log(e);
 			}
-			if (currentValue != null) {
-				fPreviousValues.put(var, currentValue);
-			}
-			if (prevValue != null && prevValue.equals(currentValue)) {
-				Image disabled = getDisabledImage(item.getImage());
-				item.setImage(disabled);
-			}	
 		}
 		TreeItem[] children = item.getItems();
 		for (int i = 0; i < children.length; i++) {
@@ -184,14 +157,9 @@ public class VariablesViewer extends TreeViewer {
 				TreeItem treeItem = (TreeItem)children[i];
 				Object data = treeItem.getData();
 				if (data != null && data instanceof IVariable) {
-					try {
-						fPreviousValues.put(data, ((IVariable)data).getValue());
-						Image image = treeItem.getImage();
-						if (image != null) {
-							treeItem.setImage(getDisabledImage(image));
-						}
-					} catch (DebugException e) {
-						DebugUIPlugin.log(e);
+					Image image = treeItem.getImage();
+					if (image != null) {
+						treeItem.setImage(getDisabledImage(image));
 					}
 				}
 			}
