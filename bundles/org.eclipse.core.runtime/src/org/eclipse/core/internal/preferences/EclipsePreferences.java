@@ -275,6 +275,14 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return create((EclipsePreferences) nodeParent, nodeName, null);
 	}
 
+	protected boolean isLoading() {
+		return loading;
+	}
+
+	protected void setLoading(boolean isLoading) {
+		loading = isLoading;
+	}
+
 	public IEclipsePreferences create(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		EclipsePreferences result = internalCreate(nodeParent, nodeName, context);
 		nodeParent.addChild(nodeName, result);
@@ -289,12 +297,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return result;
 
 		// the result node is a load level
-		if (isAlreadyLoaded(result))
-			return result;
-		if (loading)
+		if (isAlreadyLoaded(result) || result.isLoading())
 			return result;
 		try {
-			loading = true;
+			result.setLoading(true);
 			result.loadLegacy();
 			result.load();
 			result.loaded();
@@ -305,7 +311,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			InternalPlatform.getDefault().log(status);
 		} finally {
-			loading = false;
+			result.setLoading(false);
 		}
 		return result;
 	}
