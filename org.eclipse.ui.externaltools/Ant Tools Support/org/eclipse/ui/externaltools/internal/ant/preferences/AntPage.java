@@ -105,7 +105,7 @@ public abstract class AntPage {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		buttonGroup.setLayout(layout);
-		buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		buttonGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		addButtonsToButtonGroup(buttonGroup);
 	}
@@ -245,6 +245,8 @@ public abstract class AntPage {
 		layout.marginHeight = 2;
 		layout.marginWidth = 2;
 		top.setLayout(layout);
+		
+		top.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createTable(top);
 		createButtonGroup(top);
