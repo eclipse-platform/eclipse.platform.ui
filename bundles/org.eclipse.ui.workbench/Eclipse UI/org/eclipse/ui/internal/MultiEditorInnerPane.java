@@ -31,8 +31,11 @@ public class MultiEditorInnerPane extends EditorPane {
 	 */
 	private void updateGradient() {
 		MultiEditor multiEditor = (MultiEditor)parentPane.getPartReference().getPart(true);
-		if(multiEditor != null)
-			multiEditor.updateGradient((IEditorPart)this.getEditorReference().getPart(true));
+		if(multiEditor != null) {
+			IEditorPart part = (IEditorPart)this.getEditorReference().getPart(true);
+			if(part != null)
+				multiEditor.updateGradient(part);
+		}
 	}
 	/**
  	 * Indicate focus in part.
