@@ -30,7 +30,6 @@ typedef BOOL(WINAPI * P_GDFSE)
 // GLOBAL METHODS
 // ---------------
 
-
 /*
  * calls GetVolumeInformation
  */
@@ -50,7 +49,10 @@ jstring getLabel(char driveLetter[],JNIEnv * jnienv){
 		0);
 	if (err){
 		result = jnienv -> NewStringUTF(buf);
-	}
+	} else {
+		if (DEBUG)
+			printf("Error GetVolumeInformation %i",err);				
+ 	}
 	return result;
 }
 
@@ -108,6 +110,7 @@ int getWindowsVersion(){
 				printf("VERSION UNKNOWN: Maj %i Min %i\n",osvi.dwMajorVersion,osvi.dwMinorVersion);				 	
 			return UNKNOWN;
 	}
+	return UNKNOWN;
 } 
 
 /*
@@ -157,6 +160,8 @@ int getFloppy(char driveLetter[]){
 					if (DEBUG)
 						printf("Found 3 1/2 Drive\n");				 	
 				 	return FLOPPY_3;
+				 default:
+				 	return UNKNOWN;
 				}
 			}
 		}
@@ -167,8 +172,24 @@ int getFloppy(char driveLetter[]){
 /*
  * 
  */
- char[] getRemoteNetworkName(char driveLetter[],JNIEnv * jnienv){
+ jstring getRemoteNetworkName(char driveLetter[],JNIEnv * jnienv){
  	
+ 	unsigned long size =256;
+ 	char buf[256];	
+ 	char drivePath[2];
+ 	DWORD err;
+ 	jstring result = NULL;
+ 	
+	sprintf(drivePath, "%c:", driveLetter[0]); 	
+ 	err = WNetGetConnection(drivePath,buf,&size);
+ 	
+ 	if (err==WN_SUCCESS){
+		result = jnienv -> NewStringUTF(buf);
+	} else {
+		if (DEBUG)
+			printf("Error WNEtGetConnection %i",err);				
+ 	}
+	return result;
  }
 
 
@@ -282,7 +303,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 				// check name of machine and path of remote
 				if (DEBUG)
 					printf("Remote Drive");
-				result = getLabel(driveLetter,jnienv);				
+				result = getRemoteNetworkName(driveLetter,jnienv);				
 				break;
 			default :
 				if (DEBUG)

@@ -3,10 +3,10 @@
   
   <!-- The properties ${eclipse-home} ${jdk-path} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
-  <property name="eclipse-home" value="${basedir}/../.."/>
+  <property name="eclipse-home" value="${basedir}/../../.."/>
   <property name="jdk-path" value="${java.home}"/>  
   <property name="destination" value="${eclipse-home}/org.eclipse.update.core/os/win32/"/>
-  <property name="obj-path" value="${eclipse-home}/org.eclipse.update.core/Native Code/"/>
+  <property name="obj-path" value="${eclipse-home}/org.eclipse.update.core/Native Code/win32/"/>
   <property name="src-path" value="${eclipse-home}/org.eclipse.update.core/Native Code/win32/library/"/>  
   
   <!-- sets the properties -->
