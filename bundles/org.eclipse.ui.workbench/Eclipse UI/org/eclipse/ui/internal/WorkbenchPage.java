@@ -77,10 +77,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
-import org.eclipse.ui.internal.intro.IIntroConstants;
-import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
@@ -151,8 +151,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 	};
 	
-	// a set of perspectives in which intros have already been created.
-	private Set introPerspectives = new HashSet(7);
+	// a set of perspectives in which sticky views have already been created.
+	private Set stickyPerspectives = new HashSet(7);
 	
 	private ActionSwitcher actionSwitcher = new ActionSwitcher();
 	/**
@@ -1185,7 +1185,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		navigationHistory.dispose();
 		
-		introPerspectives.clear();
+		stickyPerspectives.clear();
 	}
 	/**
 	 * Dispose a perspective.
@@ -2724,15 +2724,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (editorPresentation != null)
 			editorPresentation.showVisibleEditor();
 		
-		final Workbench workbench = (Workbench)window.getWorkbench();
-		if (newPersp != null && workbench.getIntroManager().hasIntro()) {
-			if (workbench.getWorkbenchIntroManager().isIntroInWindow(window) && !introPerspectives.contains(newPersp.getDesc())) {
-				try {
-					showView(IIntroConstants.INTRO_VIEW_ID, null,  IWorkbenchPage.VIEW_CREATE);
-				} catch (PartInitException e) {
-					WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_show_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_show_part"), e));	//$NON-NLS-1$ //$NON-NLS-2$
-				}
-				introPerspectives.add(newPersp.getDesc());
+		if (newPersp != null && oldPersp != null ) {
+			if (!stickyPerspectives.contains(newPersp.getDesc())) {
+			    IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
+			    IStickyViewDescriptor [] stickyDescs = viewReg.getStickyViews();
+			    for (int i = 0; i < stickyDescs.length; i++) {
+			        try {
+			            // show a sticky view if it was in the last perspective
+                        if (oldPersp.findView(stickyDescs[i].getId()) != null) {
+                            showView(stickyDescs[i].getId(), null, IWorkbenchPage.VIEW_CREATE);
+                        }
+			        }
+                    catch (PartInitException e) {
+    					WorkbenchPlugin.log("Could not open view :" + stickyDescs[i].getId(), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open view :" + stickyDescs[i].getId(), e));	//$NON-NLS-1$ //$NON-NLS-2$
+    				}
+                }
+				stickyPerspectives.add(newPersp.getDesc());
 			}
 		}
 	}

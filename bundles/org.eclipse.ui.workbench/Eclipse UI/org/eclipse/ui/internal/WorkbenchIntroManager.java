@@ -99,7 +99,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 //				page.getWorkbenchWindow().getShell().setActive();
 //				page.showView(IIntroConstants.INTRO_VIEW_ID);
 			} catch (PartInitException e) {
-				WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_show_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_show_part"), e));	//$NON-NLS-1$ //$NON-NLS-2$
+				WorkbenchPlugin.log("Could not open intro", new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open intro", e));	//$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		setIntroStandby(introPart, standby);

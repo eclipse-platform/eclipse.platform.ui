@@ -32,17 +32,21 @@ public class ViewRegistry extends RegistryManager implements IViewRegistry, IReg
 	private List views;
 	private boolean dirtyViews;
 	private List categories;
+	private List sticky;
 	private boolean dirtyCategories;
+	private boolean dirtySticky;
 	private Category miscCategory;
 	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
 
 	private class ViewRegistryElement {
 		private List viewDescriptors;
 		private List categoryDescriptors;
+		private List stickyDescriptors;
 		
 		public ViewRegistryElement() {
 			viewDescriptors = new ArrayList();
 			categoryDescriptors = new ArrayList();
+			stickyDescriptors = new ArrayList();
 		}
 
 		public void addCategory(Category element) {
@@ -53,12 +57,20 @@ public class ViewRegistry extends RegistryManager implements IViewRegistry, IReg
 			viewDescriptors.add(element);
 		}
 		
+		public void addStickyView(IStickyViewDescriptor id) {
+		    stickyDescriptors.add(id);
+		}
+		
 		public List getCategories() {
 			return categoryDescriptors;
 		}
 		
 		public List getViewDescriptors() {
 			return viewDescriptors;
+		}
+		
+		public List getStickyDescriptors() {
+		    return stickyDescriptors;
 		}
 }
 /**
@@ -70,6 +82,8 @@ public ViewRegistry() {
 	dirtyViews = true;
 	categories = new ArrayList();
 	dirtyCategories = true;
+	sticky = new ArrayList();
+	dirtySticky = true;
 	InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this);
 }
 /**
@@ -94,6 +108,17 @@ public void add(IViewDescriptor desc) {
 	element.addViewDescriptor(desc);
 	add(element, desc.getConfigurationElement().getDeclaringExtension().getNamespace());
 }
+
+/**
+ * Add a sticky descriptor to the registry.
+ */
+public void add(IStickyViewDescriptor desc) {
+    dirtySticky = true;
+    ViewRegistryElement element = new ViewRegistryElement();
+    element.addStickyView(desc);
+    add(element, desc.getNamespace());    
+}
+
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.registry.aaRegistryCacheaa#buildNewCacheObject(org.eclipse.core.runtime.IExtensionDelta)
  */
@@ -106,7 +131,7 @@ public Object buildNewCacheObject(IExtensionDelta delta) {
 	for (int i = 0; i < elements.length; i++) {
 		IConfigurationElement singleton = elements[i];
 		String id = singleton.getAttribute(IWorkbenchConstants.TAG_ID);
-		if (singleton.getName().equals(IWorkbenchConstants.TAG_VIEW)) {
+		if (singleton.getName().equals(ViewRegistryReader.TAG_VIEW)) {
 			// We want to create a view descriptor
 			if (find(id) != null)
 				// This view already exists.  Ignore this new one.
@@ -124,7 +149,7 @@ public Object buildNewCacheObject(IExtensionDelta delta) {
 				// log an error since its not safe to open a dialog here
 				WorkbenchPlugin.log("Unable to create view descriptor." , e.getStatus());//$NON-NLS-1$
 			}
-		} else if (singleton.getName().equals("category")) { //$NON-NLS-1$
+		} else if (singleton.getName().equals(ViewRegistryReader.TAG_CATEGORY)) { //$NON-NLS-1$
 			try {
 				// We want to create a category
 				if (findCategory(id) != null)
@@ -137,15 +162,44 @@ public Object buildNewCacheObject(IExtensionDelta delta) {
 				WorkbenchPlugin.log("Unable to create view category.", e.getStatus());//$NON-NLS-1$
 			}
 		}
+		else if (singleton.getName().equals(ViewRegistryReader.TAG_STICKYVIEW)) { //$NON-NLS-1$
+		    if (findSticky(id) != null) {
+		        continue;
+		    }		    
+            try {
+                StickyViewDescriptor desc = new StickyViewDescriptor(singleton);            
+                regElement.addStickyView(desc);
+    		    dirtySticky = true;
+            } catch (CoreException e) {
+//              log an error since its not safe to open a dialog here
+				WorkbenchPlugin.log("Unable to create sticky view descriptor." , e.getStatus());//$NON-NLS-1$
+			}
+		}
 	}
 	List categories = regElement.getCategories();
 	List views = regElement.getViewDescriptors();
+	List sticky = regElement.getStickyDescriptors();
 	if ((categories == null || categories.size() == 0) && 
-			(views == null || views.size() == 0)) {
+			(views == null || views.size() == 0) &&
+			(sticky == null || sticky.size() == 0)) {
 		return null;
 	}
 	return regElement;
 }
+/**
+ * @param id
+ * @return
+ */
+private IStickyViewDescriptor findSticky(String id) {
+    buildSticky();
+    for (Iterator i = sticky.iterator(); i.hasNext();) {
+            IStickyViewDescriptor desc = (IStickyViewDescriptor) i.next();
+            if (id.equals(desc.getId()))
+                return desc;            
+        }
+    return null;
+}
+
 /**
  * Find a descriptor in the registry.
  */
@@ -184,6 +238,15 @@ public Category [] getCategories() {
 	categories.toArray(retArray);
 	return retArray;
 }
+
+/**
+ * Get the list of sticky views.
+ */
+public IStickyViewDescriptor [] getStickyViews() {
+    buildSticky();
+    return (IStickyViewDescriptor[]) sticky.toArray(new IStickyViewDescriptor[sticky.size()]);
+}
+
 /**
  * Return the view category count.
  */
@@ -300,6 +363,33 @@ private void buildCategories() {
 			}
 		}
 		dirtyCategories = false;
+	}
+}
+
+/**
+ * 
+ */
+private void buildSticky() {
+	if (dirtySticky) {
+		// Build up the categories arraylist
+		sticky = new ArrayList();
+		Object[] regElements = getRegistryObjects();
+		if (regElements == null) {
+		    dirtySticky = false;
+			return;
+		}
+		for (int i = 0; i < regElements.length; i++) {
+			ViewRegistryElement element = (ViewRegistryElement)regElements[i];
+			List tempSticky = element.getStickyDescriptors();
+			if (tempSticky != null && tempSticky.size() != 0) {
+				Iterator iter = tempSticky.iterator();
+				while (iter.hasNext()) {
+					IStickyViewDescriptor desc = (IStickyViewDescriptor)iter.next();
+					sticky.add(desc);
+				}
+			}
+		}
+		dirtySticky = false;
 	}
 }
 public void postChangeProcessing() {

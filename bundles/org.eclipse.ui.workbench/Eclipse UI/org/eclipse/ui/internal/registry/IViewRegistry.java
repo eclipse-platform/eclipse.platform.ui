@@ -45,4 +45,8 @@ public int getViewCount();
  * Return a list of views defined in the registry.
  */
 public IViewDescriptor [] getViews();
+/**
+ * Return a list of sticky views defined in the registry.
+ */
+public IStickyViewDescriptor [] getStickyViews();
 }

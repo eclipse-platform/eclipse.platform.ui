@@ -33,6 +33,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -45,6 +46,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
@@ -557,8 +559,13 @@ private void loadPredefinedPersp(
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
 	layout.setFixed(descriptor.getFixed());
 
-	// add the placeholder for the intro view
-	layout.addPlaceholder(IIntroConstants.INTRO_VIEW_ID, IPageLayout.RIGHT, .75f, IPageLayout.ID_EDITOR_AREA);
+	// add the placeholder for the sticky folder and its contents
+	IPlaceholderFolderLayout stickyFolder = layout.createPlaceholderFolder(IStickyViewDescriptor.STICKY_FOLDER, IPageLayout.RIGHT, .75f, IPageLayout.ID_EDITOR_AREA);
+	IStickyViewDescriptor [] descs = WorkbenchPlugin.getDefault().getViewRegistry().getStickyViews();
+	for (int i = 0; i < descs.length; i++) {
+    	stickyFolder.addPlaceholder(descs[i].getId());
+    }
+
 	// Run layout engine.
 	factory.createInitialLayout(layout);
 	PerspectiveExtensionReader extender = new PerspectiveExtensionReader();

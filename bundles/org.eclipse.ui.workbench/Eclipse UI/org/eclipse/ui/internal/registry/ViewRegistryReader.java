@@ -19,8 +19,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read view extensions from the registry.
  */
 public class ViewRegistryReader extends RegistryReader {
-	private static final String TAG_VIEW="view";//$NON-NLS-1$
-	private static final String TAG_CATEGORY="category";//$NON-NLS-1$
+	public static final String TAG_VIEW="view";//$NON-NLS-1$
+	public static final String TAG_CATEGORY="category";//$NON-NLS-1$
+	public static final String TAG_STICKYVIEW="stickyView";//$NON-NLS-1$
 	private ViewRegistry viewRegistry;
 	
 /**
@@ -54,8 +55,26 @@ protected boolean readElement(IConfigurationElement element) {
 		readElementChildren(element);
 		return true;
 	}
+	if (element.getName().equals(TAG_STICKYVIEW)) {
+	    readSticky(element);	    
+	    return true;
+	}
 	
 	return false;
+}
+/**
+ * Reads the sticky view element.
+ */
+private void readSticky(IConfigurationElement element) {
+    StickyViewDescriptor desc;
+    try {
+        desc = new StickyViewDescriptor(element);
+        viewRegistry.add(desc);
+    } catch (CoreException e) {
+		// log an error since its not safe to open a dialog here
+		WorkbenchPlugin.log("Unable to create sticky view descriptor." , e.getStatus());//$NON-NLS-1$
+
+    }
 }
 /**
  * Reads the view element.
