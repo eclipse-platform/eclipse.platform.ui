@@ -254,8 +254,10 @@ public class PathTest extends RuntimeTest {
 		
 		//should handle slash before the device (see bug 84697)
 		try {
-			assertEquals("3.0", "D:/foo/abc.txt", new Path(new java.io.File("D:\\foo\\abc.txt").toURL().getPath()).toString());
-			assertEquals("3.1", "D:/", new Path(new java.io.File("D:/").toURL().getPath()).toString());
+			if (WINDOWS) {
+				assertEquals("3.0", "D:/foo/abc.txt", new Path(new java.io.File("D:\\foo\\abc.txt").toURL().getPath()).toString());
+				assertEquals("3.1", "D:/", new Path(new java.io.File("D:/").toURL().getPath()).toString());
+			}
 		} catch (MalformedURLException e) {
 			fail("4.99", e);
 		}
