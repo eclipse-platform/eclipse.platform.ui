@@ -85,6 +85,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			// Either the file is unmanaged or has just been added (i.e. doesn't necessarily have a remote)
 			return null;
 		}
+		if (ResourceSyncInfo.isDeletion(syncBytes)) {
+			syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
+		}
 		RemoteFile file = new RemoteFile(parent, syncBytes);
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;

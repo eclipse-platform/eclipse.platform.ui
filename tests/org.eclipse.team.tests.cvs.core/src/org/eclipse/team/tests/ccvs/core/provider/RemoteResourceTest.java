@@ -346,5 +346,30 @@ public class RemoteResourceTest extends EclipseTest {
 	private ICVSRemoteFolder checkoutRemote(ICVSRemoteFolder remote) throws CVSException, InvocationTargetException, InterruptedException {
 		return CheckoutToRemoteFolderOperation.checkoutRemoteFolder(null, remote, DEFAULT_MONITOR);
 	}
+	
+	public void testContentFetchForLocalDeletion() throws TeamException, IOException, CoreException {
+		IProject project = createProject(new String[] { "file1.txt"});
+		String contents = "the file contents";
+		setContentsAndEnsureModified(project.getFile("file1.txt"), contents);
+		commitProject(project);
+		project.getFile("file1.txt").delete(false, null);
+		ICVSRemoteFile remote = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
+		String fetchedContents = asString(remote.getBufferedStorage(DEFAULT_MONITOR).getContents());
+		assertEquals("Contents do not match", contents, fetchedContents);
+	}
+
+	/**
+	 * @param stream
+	 * @return
+	 */
+	private String asString(InputStream stream) throws IOException {
+		StringBuffer buffer = new StringBuffer();
+		int b = stream.read();
+		while (b != -1) {
+			buffer.append((char)b);
+			b = stream.read();
+		}
+		return buffer.toString();
+	}
 }
 
