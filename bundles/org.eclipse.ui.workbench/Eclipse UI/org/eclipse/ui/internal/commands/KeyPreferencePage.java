@@ -943,8 +943,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		if (commandRecord != null) {
 			setScopeId(commandRecord.scopeId);
 			setKeyConfigurationId(commandRecord.keyConfigurationId);				
-
-			// careful here. this triggers a modify event.
 			setKeySequence(commandRecord.keySequence);
 		}
 		
@@ -1268,50 +1266,28 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
 
-			if (difference == DIFFERENCE_CHANGE) {
-				stringBuffer.append(SPACE + "(was: ");
-				String alternateCommandName = null;
+			String alternateCommandName = null;
 				
-				if (alternateCommandId == null) 
-					alternateCommandName = COMMAND_UNDEFINED;
-				else {
-					Command command = (Command) commandsById.get(alternateCommandId);
+			if (alternateCommandId == null) 
+				alternateCommandName = COMMAND_UNDEFINED;
+			else {
+				Command command = (Command) commandsById.get(alternateCommandId);
 					
-					if (command != null)
-						alternateCommandName = command.getName();
-					else
-						alternateCommandName = bracket(alternateCommandId);
-				}
-								
-				stringBuffer.append(alternateCommandName);
-
-				if (alternateCommandConflict)
-					stringBuffer.append(SPACE + COMMAND_CONFLICT);
-
-				stringBuffer.append(')');
-			} else if (difference == DIFFERENCE_MINUS) {
-				stringBuffer.append(" (now: ");
-				
-				String alternateCommandName = null;
-				
-				if (alternateCommandId == null) 
-					alternateCommandName = COMMAND_UNDEFINED;
-				else {
-					Command command = (Command) commandsById.get(alternateCommandId);
-					
-					if (command != null)
-						alternateCommandName = command.getName();
-					else
-						alternateCommandName = bracket(alternateCommandId);
-				}
-								
-				stringBuffer.append(alternateCommandName);
-				
-				if (alternateCommandConflict)
-					stringBuffer.append(SPACE + COMMAND_CONFLICT);
-
-				stringBuffer.append(')');
+				if (command != null)
+					alternateCommandName = command.getName();
+				else
+					alternateCommandName = bracket(alternateCommandId);
 			}
+
+			if (alternateCommandConflict)
+				alternateCommandName += SPACE + COMMAND_CONFLICT;
+
+			stringBuffer.append(SPACE);
+
+			if (difference == DIFFERENCE_CHANGE)
+				stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle, "was"), new Object[] { alternateCommandName })); //$NON-NLS-1$
+			else if (difference == DIFFERENCE_MINUS)
+				stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle, "now"), new Object[] { alternateCommandName })); //$NON-NLS-1$
 
 			tableItem.setText(3, stringBuffer.toString());				
 
@@ -1395,29 +1371,27 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
 
-			if (difference == DIFFERENCE_CHANGE) {
-				stringBuffer.append(SPACE + "(was: ");
-				String alternateCommandName = null;
+			String alternateCommandName = null;
+				
+			if (alternateCommandId == null) 
+				alternateCommandName = COMMAND_UNDEFINED;
+			else {
+				Command command = (Command) commandsById.get(alternateCommandId);
 					
-				if (alternateCommandId == null) 
-					alternateCommandName = COMMAND_UNDEFINED;
-				else {
-					Command command = (Command) commandsById.get(alternateCommandId);
-						
-					if (command != null)
-						alternateCommandName = command.getName();
-					else
-						alternateCommandName = bracket(alternateCommandId);
-				}
-									
-				stringBuffer.append(alternateCommandName);
-	
-				if (alternateCommandConflict)
-					stringBuffer.append(SPACE + COMMAND_CONFLICT);
-	
-				stringBuffer.append(')');
+				if (command != null)
+					alternateCommandName = command.getName();
+				else
+					alternateCommandName = bracket(alternateCommandId);
 			}
-	
+
+			if (alternateCommandConflict)
+				alternateCommandName += SPACE + COMMAND_CONFLICT;
+
+			stringBuffer.append(SPACE);
+			
+			if (difference == DIFFERENCE_CHANGE)
+				stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle, "was"), new Object[] { alternateCommandName })); //$NON-NLS-1$
+
 			tableItem.setText(3, stringBuffer.toString());
 
 			if (difference == DIFFERENCE_MINUS) {
