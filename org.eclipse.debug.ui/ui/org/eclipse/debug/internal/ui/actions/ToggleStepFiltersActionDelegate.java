@@ -62,7 +62,7 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 			if (newValue instanceof Boolean) {
 				getAction().setChecked(((Boolean)(newValue)).booleanValue());
 			} else if (newValue instanceof String) {
-				getAction().setChecked(Boolean.getBoolean((String)(newValue)));
+				getAction().setChecked(Boolean.valueOf((String)newValue).booleanValue());
 			}
 		}
 	}
