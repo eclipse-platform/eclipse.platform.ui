@@ -42,10 +42,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 		}
 		return remoteFeature;
 	}
-	
-	/**
-	 * @see IFeature#testIdentifier()
-	 */
+
 	public void testIdentifier() throws CoreException, MalformedURLException {
 		
 		String id1 = "features/org.eclipse.test.feature_1.0.0.jar";
@@ -70,9 +67,6 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	}
 
 
-	/**
-	 * @see IFeature#testSite()
-	 */
 	public void testSite() throws MalformedURLException, CoreException {
 		String ident1 = "org.eclipse.test.feature_1.0.0.jar";		
 
@@ -86,9 +80,6 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	}
 
 
-	/**
-	 * @see IFeature#testLabel()
-	 */
 	public void testLabel() throws CoreException, MalformedURLException {
 		String label = "dummy label";
 		Feature feature = getFeature();
@@ -96,10 +87,6 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 		assertEquals(label,feature.getLabel());
 	}
 
-
-	/**
-	 * @see IFeature#testUpdateURL()
-	 */
 	public void testUpdateURL() throws CoreException, MalformedURLException {
 		URL url = null;
 		String label = "OTI Site";
@@ -116,9 +103,6 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 
 
 	
-	/**
-	 * @see IFeature#testDiscoveryURLs()
-	 */
 	public void testDiscoveryURLs() throws CoreException, MalformedURLException {
 		IURLEntry[] urlInfo = new URLEntry[2];
 		URL[] url = new URL[2];
@@ -142,9 +126,6 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	}
 
 
-	/**
-	 * @see IFeature#testProvider()
-	 */
 	public void testProvider() throws CoreException, MalformedURLException {
 		String provider = "not so dummy provider";
 		Feature feature = getFeature();
@@ -153,9 +134,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	}
 
 
-	/**
-	 * @see IFeature#testDescription()
-	 */
+
 	public void testDescription() throws CoreException, MalformedURLException {
 		String desc = "pretty long description as a string with \r\n and \t and \n";
 		IURLEntry info = new MyURLEntry(desc,null);
@@ -164,9 +143,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 		assertEquals(desc,feature.getDescription().getAnnotation());
 	}
 	
-	/**
-	 * @see IFeature#testDescription()
-	 */
+
 	public void testDescription1() throws CoreException, MalformedURLException {
 		URL url = null;
 		try {
@@ -178,9 +155,6 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 		assertEquals(url,feature.getDescription().getURL());
 	}	
 	
-	/**
-	 * @see IFeature#testDescription()
-	 */
 	public void testDescription2() throws CoreException, MalformedURLException {
 		
 		URL url = null;

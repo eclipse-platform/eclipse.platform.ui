@@ -217,7 +217,6 @@ public class FeatureHierarchyElement {
 	}
 	/**
 	 * Computes children of this node.
-	 * @return true if some of the children are optional, false otherwise.
 	 */
 	public void computeChildren(
 		boolean update,

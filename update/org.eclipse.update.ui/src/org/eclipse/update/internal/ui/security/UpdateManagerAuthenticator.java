@@ -89,7 +89,6 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	}
 
 	/**
-	 * @see org.eclipse.update.internal.core.net.http.client.IAuthenticator#addProtectionSpace(URL, String)
 	 */
 	public void addProtectionSpace(URL resourceUrl, String realm) {
 		try {
@@ -100,7 +99,6 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	}
 
 	/**
-	 * @see org.eclipse.update.internal.core.net.http.client.IAuthenticator#getProtectionSpace(URL)
 	 */
 	public String getProtectionSpace(URL resourceUrl) {
 		return Platform.getProtectionSpace(resourceUrl);

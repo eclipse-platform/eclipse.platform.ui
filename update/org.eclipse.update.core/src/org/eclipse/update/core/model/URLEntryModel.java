@@ -113,7 +113,7 @@ public class URLEntryModel extends ModelObject {
 	 * Sets the url string
 	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @param url url string
+	 * @param urlString url string
 	 * @since 2.0
 	 */	
 	public void setURLString(String urlString) {
@@ -130,7 +130,7 @@ public class URLEntryModel extends ModelObject {
 	 * resource bundle.
 	 * 
 	 * @param base URL
-	 * @param bundle resource bundle
+	 * @param bundleURL  resource bundle url
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */

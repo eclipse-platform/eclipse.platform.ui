@@ -32,7 +32,6 @@ public class InstallOperation
 
 	/**
 	 * Constructor
-	 * @param config
 	 * @param site
 	 * @param feature
 	 * @param optionalFeatures optional features to install. If null, the operation will install them all (if any)

@@ -351,7 +351,6 @@ public class FeatureReferenceModel extends ModelObject {
 	 * Sets the operating system specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @param os operating system specification as a comma-separated list
 	 * @since 2.1
 	 */
@@ -365,7 +364,6 @@ public class FeatureReferenceModel extends ModelObject {
 	 * Sets the windowing system specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @param ws windowing system specification as a comma-separated list
 	 * @since 2.1
 	 */
@@ -392,7 +390,6 @@ public class FeatureReferenceModel extends ModelObject {
 	 * Sets the system architecture specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @param arch system architecture specification as a comma-separated list
 	 * @since 2.1
 	 */

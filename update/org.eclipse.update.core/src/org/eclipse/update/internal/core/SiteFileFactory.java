@@ -223,7 +223,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * look into each plugin/fragment directory, crack the plugin.xml open (or
 	 * fragment.xml ???) get id and version, calculate URL...
 	 * 
-	 * @return VersionedIdentifier
 	 * @throws CoreException
 	 */
 	private void parseInstalledPlugins(File pluginsDir) throws CoreException {

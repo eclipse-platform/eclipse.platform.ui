@@ -122,8 +122,8 @@ public abstract class ModelObject extends PlatformObject {
 	 * Delegate resolution to referenced model
 	 *
 	 * @param o object to delegate to. Must be of type ModelObject.
-	 * @param base base URL.
-	 * @param bundle resource bundle.
+	 * @param url base URL.
+	 * @param bundleURL resource bundle URL.
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
@@ -137,8 +137,8 @@ public abstract class ModelObject extends PlatformObject {
 	 * Delegate resolution to list of referenced models
 	 *
 	 * @param o object array to delegate to. Each element must be of type ModelObject.
-	 * @param base base URL.
-	 * @param bundle resource bundle.
+	 * @param url base URL.
+	 * @param bundleURL resource bundle URL.
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
@@ -153,8 +153,8 @@ public abstract class ModelObject extends PlatformObject {
 	/**
 	 * Resolve a URL based on context
 	 *
-	 * @param base base URL.
-	 * @param bundle resource bundle.
+	 * @param context base URL.
+	 * @param bundleURL resource bundle URL.
 	 * @param urlString url string from model.
 	 * @return URL, or <code>null</code>.
 	 * @exception MalformedURLException

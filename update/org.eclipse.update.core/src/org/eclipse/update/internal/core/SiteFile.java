@@ -42,7 +42,6 @@ public class SiteFile extends Site {
 	}
 
 	/**
-	 * @see ISite#getDefaultInstallableFeatureType()
 	 */
 	public String getDefaultPackagedFeatureType() {
 		return DEFAULT_INSTALLED_FEATURE_TYPE;

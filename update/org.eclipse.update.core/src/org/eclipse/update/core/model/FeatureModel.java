@@ -861,7 +861,7 @@ public class FeatureModel extends ModelObject {
 	 * resource bundle.
 	 * 
 	 * @param base URL
-	 * @param bundle resource bundle
+	 * @param bundleURL resource bundle url
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */

@@ -21,7 +21,6 @@ import org.eclipse.update.core.*;
 public interface IOperationFactory {
 	/**
 	 * Creates a "configure feature" operation.
-	 * @param config
 	 * @param targetSite
 	 * @param feature
 	 * @return
