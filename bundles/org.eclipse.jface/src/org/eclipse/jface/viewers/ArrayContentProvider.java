@@ -15,7 +15,12 @@ import java.util.Collection;
 
 /**
  * This implementation of <code>IStructuredContentProvider</code> handles
- * the case where the input is an unchanging array or collection of elements.
+ * the case where the viewer input is an unchanging array or collection of elements.
+ * <p>
+ * This class is not intended to be subclassed outside the viewer framework.
+ * </p> 
+ * 
+ * @since 2.1
  */
 public class ArrayContentProvider implements IStructuredContentProvider {
 	
@@ -35,11 +40,13 @@ public class ArrayContentProvider implements IStructuredContentProvider {
 	 * This implementation does nothing.
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		// do nothing.
 	}
 
 	/**
 	 * This implementation does nothing.
 	 */
 	public void dispose() {
+		// do nothing.
 	}
 }
