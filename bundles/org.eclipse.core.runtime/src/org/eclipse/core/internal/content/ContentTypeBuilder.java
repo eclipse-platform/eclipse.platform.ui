@@ -25,9 +25,11 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	private ContentTypeManager catalog;
 	// map content-type-id -> file association configuration element set
 	private Map orphanAssociations = new HashMap();
+
 	public ContentTypeBuilder(ContentTypeManager catalog) {
 		this.catalog = catalog;
 	}
+
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
 		String[] fileNames = ContentType.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		for (int i = 0; i < fileNames.length; i++)
@@ -36,6 +38,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		for (int i = 0; i < fileExtensions.length; i++)
 			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.PRE_DEFINED_SPEC);
 	}
+
 	/**
 	 * Builds all content types found in the extension registry.
 	 */
@@ -51,6 +54,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		}
 		validateCatalog();
 	}
+
 	public ContentType createContentType(IConfigurationElement contentTypeCE) {
 		//TODO: need to ensure the config. element is valid
 		String simpleId = contentTypeCE.getAttributeAsIs("id"); //$NON-NLS-1$
@@ -59,17 +63,20 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		String name = contentTypeCE.getAttribute("name"); //$NON-NLS-1$
 		String[] fileNames = ContentType.parseItems(contentTypeCE.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		String[] fileExtensions = ContentType.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
-		String baseTypeId = getUniqueId(namespace,  contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
+		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
 		String defaultCharset = contentTypeCE.getAttributeAsIs("default-charset"); //$NON-NLS-1$
-		boolean hasDescriberClass = contentTypeCE.getAttributeAsIs("describer-class") != null; //$NON-NLS-1$		
-		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, defaultCharset, hasDescriberClass ? contentTypeCE : null);
+		// only the first one will be taken
+		IConfigurationElement[] describerElements = contentTypeCE.getChildren("describer"); //$NON-NLS-1$		
+		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, defaultCharset, describerElements.length > 0 ? describerElements[0] : null);
 	}
+
 	protected IConfigurationElement[] getConfigurationElements() {
 		IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
 		IExtensionPoint contentTypesXP = registry.getExtensionPoint(IPlatform.PI_RUNTIME, PT_CONTENTTYPES);
 		IConfigurationElement[] allContentTypeCEs = contentTypesXP.getConfigurationElements();
 		return allContentTypeCEs;
 	}
+
 	private byte parsePriority(String priority) {
 		if (priority == null)
 			return ContentType.NORMAL;
@@ -82,6 +89,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		//TODO: should log - INVALID PRIORITY
 		return ContentType.NORMAL;
 	}
+
 	protected void registerContentType(IConfigurationElement contentTypeCE) {
 		//TODO: need to ensure the config. element is valid
 		ContentType contentType = createContentType(contentTypeCE);
@@ -93,6 +101,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		for (Iterator iter = orphans.iterator(); iter.hasNext();)
 			addFileAssociation((IConfigurationElement) iter.next(), contentType);
 	}
+
 	/* Adds extra file associations to existing content types. If the content 
 	 * type has not been added, the file association is ignored.
 	 */
@@ -109,7 +118,8 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 			return;
 		}
 		addFileAssociation(fileAssociationElement, target);
-	}	
+	}
+
 	private static String getUniqueId(String namespace, String baseTypeId) {
 		if (baseTypeId == null)
 			return null;
@@ -118,7 +128,8 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		if (separatorPosition == -1)
 			baseTypeId = namespace + '.' + baseTypeId;
 		return baseTypeId;
-	}	
+	}
+
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] deltas = (event.getExtensionDeltas(IPlatform.PI_RUNTIME, PT_CONTENTTYPES));
 		for (int i = 0; i < deltas.length; i++) {
@@ -138,9 +149,11 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		// ensure there are no orphan types / cycles
 		validateCatalog();
 	}
+
 	public void startup() {
 		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this, IPlatform.PI_RUNTIME);
 	}
+
 	protected void validateCatalog() {
 		catalog.reorganize();
 	}

@@ -32,7 +32,7 @@ public class ContentType implements IContentType {
 	final static byte VALID = 1;
 	private ContentType aliasTarget;
 	private String baseTypeId;
-	private IConfigurationElement configurationElement;
+	private IConfigurationElement describerElement;
 	private String defaultCharset;
 	private boolean failedDescriberCreation;
 	private List fileSpecs;
@@ -42,13 +42,11 @@ public class ContentType implements IContentType {
 	private byte priority;
 	private String simpleId;
 	private byte validation;
+
 	public ContentType(ContentTypeManager manager) {
 		this.manager = manager;
 	}
-	public ContentType(ContentTypeManager manager, IConfigurationElement configurationElement) {
-		this.manager = manager;
-		this.configurationElement = configurationElement;
-	}
+
 	public synchronized void addFileSpec(String fileSpec, int type) {
 		if (aliasTarget != null) {
 			getTarget().addFileSpec(fileSpec, type);
@@ -66,6 +64,7 @@ public class ContentType implements IContentType {
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		contentTypeNode.put(key, toListString(fileSpecs));
 	}
+
 	public IContentType getBaseType() {
 		if (aliasTarget != null)
 			return getTarget().getBaseType();
@@ -73,9 +72,11 @@ public class ContentType implements IContentType {
 			return null;
 		return manager.getContentType(baseTypeId);
 	}
+
 	String getBaseTypeId() {
 		return baseTypeId;
 	}
+
 	/**
 	 * @see IContentType
 	 */
@@ -84,12 +85,13 @@ public class ContentType implements IContentType {
 			return getTarget().getDefaultCharset();
 		return defaultCharset;
 	}
+
 	public IContentDescriber getDescriber() {
 		if (aliasTarget != null)
 			return getTarget().getDescriber();
-		if (!failedDescriberCreation && configurationElement != null)
+		if (!failedDescriberCreation && describerElement != null)
 			try {
-				return (IContentDescriber) configurationElement.createExecutableExtension("describer-class"); //$NON-NLS-1$
+				return (IContentDescriber) describerElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException ce) {
 				// ensure this is logged once during a session
 				failedDescriberCreation = true;
@@ -100,6 +102,7 @@ public class ContentType implements IContentType {
 		ContentType baseType = (ContentType) getBaseType();
 		return baseType == null ? null : baseType.getDescriber();
 	}
+
 	/**
 	 * @see IContentType
 	 */
@@ -121,6 +124,7 @@ public class ContentType implements IContentType {
 		description.markAsImmutable();
 		return description;
 	}
+
 	public String[] getFileSpecs(int typeMask) {
 		if (aliasTarget != null)
 			return getTarget().getFileSpecs(typeMask);
@@ -136,15 +140,19 @@ public class ContentType implements IContentType {
 		}
 		return (String[]) result.toArray(new String[result.size()]);
 	}
+
 	public String getId() {
 		return namespace + '.' + simpleId;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	byte getPriority() {
 		return priority;
 	}
+
 	/*
 	 * Returns the alias target, if one is found, or this object otherwise.
 	 */
@@ -153,9 +161,11 @@ public class ContentType implements IContentType {
 			return this;
 		return aliasTarget.getTarget();
 	}
+
 	byte getValidation() {
 		return validation;
 	}
+
 	/** 
 	 * @param text the file spec string
 	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
@@ -171,6 +181,7 @@ public class ContentType implements IContentType {
 		}
 		return false;
 	}
+
 	void internalAddFileSpec(String fileSpec, int typeMask) {
 		if (aliasTarget != null) {
 			aliasTarget.internalAddFileSpec(fileSpec, typeMask);
@@ -180,6 +191,7 @@ public class ContentType implements IContentType {
 			fileSpecs = new ArrayList(3);
 		fileSpecs.add(createFileSpec(fileSpec, typeMask));
 	}
+
 	void internalRemoveFileSpec(String fileSpec, int typeMask) {
 		if (aliasTarget != null) {
 			aliasTarget.internalAddFileSpec(fileSpec, typeMask);
@@ -195,6 +207,7 @@ public class ContentType implements IContentType {
 			}
 		}
 	}
+
 	public boolean isAssociatedWith(String fileName) {
 		if (aliasTarget != null)
 			return getTarget().isAssociatedWith(fileName);
@@ -206,6 +219,7 @@ public class ContentType implements IContentType {
 		String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		return (fileExtension == null) ? false : hasFileSpec(fileExtension, FILE_EXTENSION_SPEC);
 	}
+
 	public boolean isKindOf(IContentType another) {
 		if (aliasTarget != null)
 			return getTarget().isKindOf(another);
@@ -214,9 +228,11 @@ public class ContentType implements IContentType {
 		IContentType baseType = getBaseType();
 		return baseType != null && baseType.isKindOf(another);
 	}
+
 	boolean isValid() {
 		return validation == VALID;
 	}
+
 	public synchronized void removeFileSpec(String fileSpec, int type) {
 		if (aliasTarget != null) {
 			getTarget().removeFileSpec(fileSpec, type);
@@ -226,19 +242,23 @@ public class ContentType implements IContentType {
 			throw new IllegalArgumentException("Unknown type: " + type); //$NON-NLS-1$
 		internalRemoveFileSpec(fileSpec, type | USER_DEFINED_SPEC);
 	}
+
 	void setAliasTarget(ContentType newTarget) {
 		// when changing the target, it must be cleared first
 		if (aliasTarget != null && newTarget != null)
 			return;
 		aliasTarget = newTarget;
 	}
+
 	void setValidation(byte validation) {
 		this.validation = validation;
 	}
+
 	public String toString() {
 		return getId();
 	}
-	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement element) {
+
+	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement describerElement) {
 		ContentType contentType = new ContentType(manager);
 		contentType.simpleId = simpleId;
 		contentType.namespace = namespace;
@@ -252,13 +272,15 @@ public class ContentType implements IContentType {
 				contentType.fileSpecs.add(createFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | PRE_DEFINED_SPEC));
 		}
 		contentType.defaultCharset = defaultCharset;
-		contentType.configurationElement = element;
+		contentType.describerElement = describerElement;
 		contentType.baseTypeId = baseTypeId;
 		return contentType;
 	}
+
 	static FileSpec createFileSpec(String fileSpec, int type) {
 		return new FileSpec(fileSpec, type);
 	}
+
 	private static String getPreferenceKey(int flags) {
 		if ((flags & FILE_EXTENSION_SPEC) != 0)
 			return CONTENT_TYPE_FILE_EXTENSIONS_PREF;
@@ -266,6 +288,7 @@ public class ContentType implements IContentType {
 			return CONTENT_TYPE_FILE_NAMES_PREF;
 		throw new IllegalArgumentException("Unknown type: " + flags); //$NON-NLS-1$
 	}
+
 	static String[] parseItems(String string) {
 		if (string == null)
 			return new String[0];
@@ -274,7 +297,7 @@ public class ContentType implements IContentType {
 			return new String[0];
 		String first = tokenizer.nextToken();
 		if (!tokenizer.hasMoreTokens())
-			return new String[]{first};
+			return new String[] {first};
 		ArrayList items = new ArrayList();
 		items.add(first);
 		do {
@@ -282,6 +305,7 @@ public class ContentType implements IContentType {
 		} while (tokenizer.hasMoreTokens());
 		return (String[]) items.toArray(new String[items.size()]);
 	}
+
 	static String toListString(List list) {
 		if (list.isEmpty())
 			return ""; //$NON-NLS-1$
@@ -293,6 +317,7 @@ public class ContentType implements IContentType {
 		// ignore last comma
 		return result.substring(0, result.length() - 1);
 	}
+
 	static String toListString(Object[] list) {
 		if (list.length == 0)
 			return ""; //$NON-NLS-1$

@@ -40,8 +40,9 @@
 			base-type="text"
 			priority="high"			
 			file-extensions="xml"
-			default-charset="UTF-8"
-			describer-class="org.eclipse.core.internal.content.XMLContentDescriber"/>
+			default-charset="UTF-8">
+			<describer class="org.eclipse.core.internal.content.XMLContentDescriber"/>
+		</content-type>
 		<!-- temporary - to be contributed by JDT -->			
 		<content-type id="javaProperties" name="%javaPropertiesFileName" 
 			base-type="text"
