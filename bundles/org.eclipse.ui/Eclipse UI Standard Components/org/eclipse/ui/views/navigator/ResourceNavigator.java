@@ -980,7 +980,7 @@ public class ResourceNavigator
 		} 
 		else {
 			ILabelProvider labelProvider = (ILabelProvider) getTreeViewer().getLabelProvider();
-			String inputToolTip = getToolTipText(input);
+			String inputToolTip = getFrameToolTipText(input);
 			
 			setTitle(ResourceNavigatorMessages.format(
 				"ResourceNavigator.title", //$NON-NLS-1$
