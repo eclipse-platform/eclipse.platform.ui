@@ -115,7 +115,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider imple
 	/**
 	 * Process a resource delta.  
 	 */
-	private void processDelta(IResourceDelta delta) {
+	protected void processDelta(IResourceDelta delta) {
 		// This method runs inside a syncExec.  The widget may have been destroyed
 		// by the time this is run.  Check for this and do nothing if so.
 		Control ctrl = viewer.getControl();
