@@ -202,7 +202,8 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
-		fWorkingSet = wizard.getSelection();		
+		fWorkingSet = wizard.getSelection();
+		updateLaunchConfigurationDialog();
 	}
 	
 	/**
@@ -434,7 +435,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	}
 
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		return getErrorMessage() == null;
+		setErrorMessage(null);
+		setMessage(null);
+		if (fWorkingSetButton.getSelection() && fWorkingSet == null) {
+			setErrorMessage("Must select resources to refresh.");
+			return false;
+		}
+		return true;
 	}
 	
 	/**
