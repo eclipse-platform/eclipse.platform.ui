@@ -183,7 +183,7 @@ public final class AntUtil {
 	
 	/**
 	 * Returns the list of all targets for the Ant build file specified by
-	 * the provided IPath, arguments and ILaunchConfiguration, or <code>null</code> if no targets found.
+	 * the provided IPath, arguments and ILaunchConfiguration.
 	 * 
 	 * @param path the location of the Ant build file to get the targets from
 	 * @param arguments command line arguments for the Ant build
