@@ -10,12 +10,13 @@
          source lookup facilities.
       </documentation>
    </annotation>
+
    <element name="extension">
       <complexType>
          <sequence>
             <element ref="sourceContainerType" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-          <attribute name="point" type="string" use="required">
+         <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified identifier of the target extension point
@@ -32,7 +33,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -58,10 +59,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A class that implements ISourceContainerType
+                  A class that implements ISourceContainerTypeDelegate
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -82,7 +83,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-        
+         
       </documentation>
    </annotation>
 
@@ -109,12 +110,12 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-     	&lt;p&gt;
-		&lt;a href="hglegal.htm"&gt;
- 		&lt;img SRC="ngibmcpy.gif"
-   		ALT="Copyright (c) 2003 IBM Corporation and others. All Rights Reserved."
-   		BORDER=0 height=14 width=324&gt;&lt;/a&gt;
-		&lt;/p&gt;   
+         &lt;p&gt;
+  &lt;a href=&quot;hglegal.htm&quot;&gt;
+   &lt;img SRC=&quot;ngibmcpy.gif&quot;
+     ALT=&quot;Copyright (c) 2003 IBM Corporation and others. All Rights Reserved.&quot;
+     BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+  &lt;/p&gt;
       </documentation>
    </annotation>
 

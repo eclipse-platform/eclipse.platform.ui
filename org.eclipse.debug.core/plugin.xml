@@ -102,5 +102,37 @@
             description="%env_var.description">
       </variable>
    </extension>
+   
+<!-- ====================== -->
+<!--  source containers     -->                        					 
+<!-- ====================== -->
+   <extension
+         point="org.eclipse.debug.core.sourceContainerTypes">
+      <sourceContainerType
+            name="%containerName.project"
+            class="org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType"
+            id="org.eclipse.debug.core.containerType.project">
+      </sourceContainerType>
+      <sourceContainerType
+            name="%containerName.folder"
+            class="org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainerType"
+            id="org.eclipse.debug.core.containerType.folder">
+      </sourceContainerType>
+      <sourceContainerType
+            name="%containerName.directory"
+            class="org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainerType"
+            id="org.eclipse.debug.core.containerType.directory">
+      </sourceContainerType>
+      <sourceContainerType
+            name="%containerName.workspace"
+            class="org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType"
+            id="org.eclipse.debug.core.containerType.workspace">
+      </sourceContainerType>      
+      <sourceContainerType
+            name="%containerName.default"
+			class="org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainerType"
+            id="org.eclipse.debug.core.containerType.default">
+      </sourceContainerType>    
+   </extension>
 
 </plugin>

@@ -57,5 +57,10 @@ public interface ISourceLookupParticipant {
 	 */
 	public Object[] findSourceElements(Object object, boolean findDuplicates) throws CoreException;
 
-	
+	/**
+	 * Disposes this source lookup participant. This method is called when
+	 * the source lookup director assocaited with this participant is 
+	 * disposed.
+	 */
+	public void dispose();
 }

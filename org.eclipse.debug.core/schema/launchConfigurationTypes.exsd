@@ -104,6 +104,13 @@ Launch configuration instances of this type will delegate to instances of this c
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="sourceLocatorId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of a sourceLocators extension that is used to create the source locator for sessions launched using launch configurations of this type
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -112,8 +119,7 @@ Launch configuration instances of this type will delegate to instances of this c
          <attribute name="extension" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a file extension that this launch configuration type
-can be used for.
+                  specifies a file extension that this launch configuration type can be used for.
                </documentation>
             </annotation>
          </attribute>

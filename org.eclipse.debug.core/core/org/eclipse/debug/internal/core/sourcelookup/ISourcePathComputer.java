@@ -10,30 +10,23 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.sourcelookup;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * A source path computer computes the default source lookup path (set of source
  * containers that should be considered) for a launch configuration.
- * 
- * Contribution example:
- * <pre>
- * <extension point="org.eclipse.debug.core.sourcePathComputers">
- *	 <sourcePathComputer
- *		id="com.ibm.debug.pdt.PDTSourcePathComputer"
- *		class="com.ibm.debug.pdt.PDTSourcePathComputer">
- *	 </sourcePathComputer>
- * </extension>
- * </pre>
+ * <p>
+ * A source path computer is contributed in plug-in XML via the 
+ * <code>sourcePathComputers</code> extension point, that provides a delegate
+ * to compute the path specific to a launch configuration.
+ * </p>
  * 
  * TODO: Didn't we also want to be able to override the registered computer
  *  with a configuration attribute? 
  * 
  * @since 3.0
  */
-public interface ISourcePathComputer {
+public interface ISourcePathComputer extends ISourcePathComputerDelegate {
 	
 	/**
 	 * Launch configuration attribute to specify a source path computer
@@ -45,17 +38,10 @@ public interface ISourcePathComputer {
 	public static final String ATTR_SOURCE_PATH_COMPUTER_ID = DebugPlugin.getUniqueIdentifier() + ".SOURCE_PATH_COMPUTER_ID"; //$NON-NLS-1$
 
 	/**
-	 * Returns a default collection source containers to be considered for the
-	 * given launch configuration. The collection returned represents the default
-	 * source lookup path for the given configuration.
+	 * Returns the unique identifier for this source path computer.
 	 * 
-	 * @param configuration the launch configuration for which a default source lookup path
-	 *  is to be computed
-	 * @param monitor a progress monitor to be used in case of long operations
-	 * @return a default collection source containers to be considered for the
-	 *  given launch configuration
+	 * @return the unique identifier for this source path computer
 	 */
-	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor);
-
+	public String getId();
 	
 }

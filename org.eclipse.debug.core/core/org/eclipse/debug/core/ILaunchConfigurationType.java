@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
 
 /**
  * Describes and creates instances of a specific type of
@@ -172,5 +173,17 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @since 2.1
 	 */
 	public String getAttribute(String attributeName);	
+	
+	/**
+	 * Returns the registered source path computer that is associated with 
+	 * this launch configuration type or <code>null</code> if unspecified or
+	 * an invalid id was specified.
+	 * <p>
+	 * This method is yet experimental.
+	 * </p>
+	 * @return the registered source path computer, possibly <code>null</code>
+	 * @since 3.0
+	 */
+	public ISourcePathComputer getSourcePathComputer();
 		
 }

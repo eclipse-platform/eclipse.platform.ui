@@ -31,6 +31,8 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * A launch configuration type wrappers a configuration
@@ -144,6 +146,17 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	public String getName() {
 		return getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @see ILaunchConfigurationType#getSourcePathComputer()
+	 */
+	public ISourcePathComputer getSourcePathComputer() {
+		String id = getConfigurationElement().getAttribute("sourcePathComputerId"); //$NON-NLS-1$
+		if (id != null && id.length() > 0) {
+			return SourceLookupUtils.getSourcePathComputer(id);
+		}
+		return null;
 	}
 
 	/**

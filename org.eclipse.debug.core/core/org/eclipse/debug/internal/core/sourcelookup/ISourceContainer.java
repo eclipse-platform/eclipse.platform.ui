@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * A source container is a container of source code. A source container is
@@ -19,6 +18,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * container may be a project or a directory capable of searching for files
  * by name. A source container may be a composite container - i.e. contain
  * other source containers.
+ * <p>
+ * When a source container is created and added to a source director, the
+ * source container's <code>dispose()</code> method is called when the
+ * source director is disposed. Clients creating source containers for other
+ * purposes must dispose of containers themselves.
+ * </p>
  * 
  * @see ISourceLookupParticipant
  * @see ISourceContainerType
@@ -65,7 +70,7 @@ public interface ISourceContainer {
 	 * @return the source containers this container is composed of, possibly
 	 *  an empty collection
 	 */
-	public ISourceContainer[] getSourceContainers(ILaunchConfiguration config);
+	public ISourceContainer[] getSourceContainers();
 
 	/**
 	 * Returns whether this container is a composite container. A composite
@@ -82,5 +87,11 @@ public interface ISourceContainer {
 	 * @return this container's type 
 	 */
 	public ISourceContainerType getType();
+	
+	/**
+	 * Disposes this source container. This method is called when the source
+	 * director associated with this source container is disposed.
+	 */
+	public void dispose();
 	
 }
