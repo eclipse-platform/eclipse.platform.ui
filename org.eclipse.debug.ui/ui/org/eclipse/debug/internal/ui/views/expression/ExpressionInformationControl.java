@@ -184,7 +184,7 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		modelPresentation = DebugUITools.newDebugModelPresentation();
 		viewer.setLabelProvider(modelPresentation);
 		
-		valueDisplay = new StyledText(sashForm, SWT.NO_TRIM);
+		valueDisplay = new StyledText(sashForm, SWT.NO_TRIM | SWT.WRAP | SWT.V_SCROLL);
 		valueDisplay.setEditable(false);
 		
 		tree = viewer.getTree();
