@@ -98,10 +98,8 @@ function setTitle(label)
    </head>
    
    <body style="font: 8pt Tahoma;" leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" bgcolor="#D4D0C8">
-   
  	  
-	  <div id="title" style="position:absolute; top:4; left:24; z-order:20; color:#ffffff;">&nbsp;Bookshelf</div>
-
+	  <div id="title" style="position:absolute; top:4; left:24; z-order:20; color:#ffffff;">&nbsp;<%=WebappResources.getString("Bookshelf", null)%></div>
 
 	  <table width="100%" height="23" cellspacing="0" cellpadding="0" border="0">
 	  	<tr>

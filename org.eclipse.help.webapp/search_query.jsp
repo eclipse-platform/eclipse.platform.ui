@@ -46,7 +46,7 @@ function mouseout(img)
             <input type="text" class="txtInput" name="keyword" maxlength=256 style="margin-left:3px;">
           </td>
           <td>  
-            <input value="Go" type="submit" alt="Search" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" >
+            <input value='<%=WebappResources.getString("Go", null)%>' type="submit" alt='<%=WebappResources.getString("Search", null)%>' src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" >
           </td> 
           <td>
            <!--
