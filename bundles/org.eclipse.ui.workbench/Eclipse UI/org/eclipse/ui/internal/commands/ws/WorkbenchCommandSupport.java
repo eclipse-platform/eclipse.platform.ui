@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -486,11 +485,12 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      * class interacts with.
      * 
      * @param activeContextIds
-     *            The new set of active context identifiers. This should be a
-     *            set of string values. It may be empty, but it should never be
+     *            The new map of active context identifiers -- representing the
+     *            hierarchy of active contexts. This should be a map of string
+     *            values. It may be empty, but it should never be
      *            <code>null</code>.
      */
-    public void setActiveContextIds(SortedSet activeContextIds) {
+    public void setActiveContextIds(Map activeContextIds) {
         mutableCommandManager.setActiveContextIds(activeContextIds);
     }
 }

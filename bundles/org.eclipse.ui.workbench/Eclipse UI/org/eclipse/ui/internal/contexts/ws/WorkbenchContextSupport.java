@@ -65,18 +65,53 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     private static final boolean DEBUG = Policy.DEBUG_CONTEXTS;
 
     /**
-     * Whether the workbench context support should kick into verbose debugging
-     * mode. This causes each context change to print out a bit of the current
-     * stack -- letting you know what caused the context change to occur.
-     */
-    private static final boolean DEBUG_VERBOSE = Policy.DEBUG_CONTEXTS_VERBOSE;
-
-    /**
      * The number of stack trace elements to show when the contexts have
      * changed. This is used for debugging purposes to show what caused a
      * context switch to occur.
      */
     private static final int DEBUG_STACK_LENGTH_TO_SHOW = 5;
+
+    /**
+     * Whether the workbench context support should kick into verbose debugging
+     * mode. This causes each context change to print out a bit of the current
+     * stack -- letting you know what caused the context change to occur.
+     */
+    private static final boolean DEBUG_VERBOSE = Policy.DEBUG_CONTEXTS_VERBOSE;
+    
+    /**
+     * Creates a tree of context identifiers, representing the hierarchical
+     * structure of the given contexts. The tree is structured as a mapping from
+     * child to parent.
+     * 
+     * @param contextIds
+     *            The set of context identifiers to be converted into a tree;
+     *            must not be <code>null</code>.
+     * @return The tree of contexts to use; may be empty, but never
+     *         <code>null</code>. The keys and values are both strings.
+     */
+    public final Map createContextTreeFor(final Set contextIds) {
+        final Map contextTree = new HashMap();
+        final IContextManager contextManager = getContextManager();
+
+        final Iterator contextIdItr = contextIds.iterator();
+        while (contextIdItr.hasNext()) {
+            String childContextId = (String) contextIdItr.next();
+            while (childContextId != null) {
+                final IContext childContext = contextManager
+                        .getContext(childContextId);
+
+                try {
+                    final String parentContextId = childContext.getParentId();
+                    contextTree.put(childContextId, parentContextId);
+                    childContextId = parentContextId;
+                } catch (final NotDefinedException e) {
+                    break; // stop ascending
+                }
+            }
+        }
+
+        return contextTree;
+    }
 
     /**
      * Listens for shell activation events, and updates the list of enabled

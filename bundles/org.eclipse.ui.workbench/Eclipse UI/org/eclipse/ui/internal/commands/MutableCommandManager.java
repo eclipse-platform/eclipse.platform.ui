@@ -107,7 +107,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 				iterator.remove();
 		}
 	}
-	private SortedSet activeContextIds = new TreeSet();
+	private Map activeContextIds = new HashMap();
 	// TODO does this have any use anymore?
 	private String activeKeyConfigurationId = null;
 	private String activeLocale = null;
@@ -198,15 +198,13 @@ public final class MutableCommandManager implements IMutableCommandManager {
      */
 	private void calculateKeySequenceBindings() {
 	    // Get the current state of the system.
-	    final String[] contextIds = (String[]) activeContextIds.toArray(new String[activeContextIds.size()]);
-		final String[] extendedContextIds = extend(contextIds);
         final String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId));
         final String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
         final String[] activePlatforms = extend(getPath(activePlatform,
                 SEPARATOR));
 
         // Transfer this information to the key sequence binding machine.
-        keySequenceBindingMachine.setActiveContextIds(extendedContextIds);
+        keySequenceBindingMachine.setActiveContextIds(activeContextIds);
         keySequenceBindingMachine
                 .setActiveKeyConfigurationIds(activeKeyConfigurationIds);
         keySequenceBindingMachine.setActiveLocales(activeLocales);
@@ -227,7 +225,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 						.commandManagerChanged(commandManagerEvent);
 	}
 	public Set getActiveContextIds() {
-		return Collections.unmodifiableSet(activeContextIds);
+		return activeContextIds.keySet();
 	}
 	public String getActiveKeyConfigurationId() {
 		return activeKeyConfigurationId;
@@ -543,8 +541,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		if (commandManagerListeners != null)
 			commandManagerListeners.remove(commandManagerListener);
 	}
-	public void setActiveContextIds(SortedSet activeContextIds) {
-		activeContextIds = Util.safeCopy(activeContextIds, String.class);
+	public void setActiveContextIds(Map activeContextIds) {
 		boolean commandManagerChanged = false;
 		Map commandEventsByCommandId = null;
 		if (!this.activeContextIds.equals(activeContextIds)) {

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -457,7 +459,7 @@ final class KeySequenceBindingNode {
 
 	static void solve(
 		Map keyStrokeNodeByKeyStrokeMap,
-		String[] contextIds,
+		Map contextIds,
 		String[] keyConfigurationIds,
 		String[] platforms,
 		String[] locales) {
@@ -466,7 +468,7 @@ final class KeySequenceBindingNode {
 			iterator.hasNext();
 			) {
 			KeySequenceBindingNode keySequenceBindingNode =
-				(KeySequenceBindingNode) iterator.next();
+			    (KeySequenceBindingNode) iterator.next();
 			keySequenceBindingNode.solveMatch(
 				contextIds,
 				keyConfigurationIds,
@@ -789,13 +791,13 @@ final class KeySequenceBindingNode {
      * in a parent context.
      * </p>
      * 
-     * @param contextIds
-     *            The context identifiers in the order they should be
-     *            considered. This value must never be <code>null</code>,
-     *            though it may contain <code>null</code> values.
-     *            <code>null</code> values typically indicate "any".
-     *            Currently, this array is expected to be in the depth-sorted
-     *            order (i.e., contexts with more ancestors first).
+     * @param contextTree
+     *            The tree of contexts to consider. The tree is represented as a
+     *            map of child context identifiers to parent context
+     *            identifiers. This value must never be <code>null</code>,
+     *            though it may contain <code>null</code> parents. It should
+     *            never contain <code>null</code> children. It should only
+     *            contain strings.
      * @param keyConfigurationIds
      *            The key configuration identifiers in the order they should be
      *            considered. This value must never be <code>null</code>,
@@ -812,10 +814,14 @@ final class KeySequenceBindingNode {
      *            contain <code>null</code> values. <code>null</code> values
      *            typically indicate "any".
      */
-    private void solveMatch(String[] contextIds, String[] keyConfigurationIds,
-            String[] platforms, String[] locales) {
+    private void solveMatch(Map contextTree,
+            String[] keyConfigurationIds, String[] platforms, String[] locales) {
         // Clear out the current match.
         match = null;
+        
+        // Get an array of context identifiers.
+        final String[] contextIds = (String[]) contextTree.keySet().toArray(
+                new String[contextTree.size()]); 
 
         // Get the maximum indices to consider.
         final int maxContext = (contextIds.length > 0xFF) ? 0xFF
@@ -827,15 +833,25 @@ final class KeySequenceBindingNode {
         final int maxLocale = (locales.length > 0xFF) ? 0xFF : locales.length;
 
         // Peel apart the nested map looking for matches.
+        final Collection contextIdsNotToConsider = new HashSet();
         for (int context = 0; context < maxContext; context++) {
             boolean matchFoundForThisContext = false;
-            final Map keyConfigurationMap = (Map) contextMap
-                    .get(contextIds[context]);
 
+            /*
+             * Check to see if the context identifier has been nixed by a child
+             * context. That is, has a non-null match been found in a child
+             * context?
+             */
+            final String contextId = contextIds[context];
+            if (contextIdsNotToConsider.contains(contextId)) {
+                continue;
+            }
+
+            final Map keyConfigurationMap = (Map) contextMap.get(contextId);
             if (keyConfigurationMap != null)
                     for (int keyConfiguration = 0; keyConfiguration < maxKeyConfiguration
                             && !matchFoundForThisContext; keyConfiguration++) {
-                        Map rankMap = (Map) keyConfigurationMap
+                        final Map rankMap = (Map) keyConfigurationMap
                                 .get(keyConfigurationIds[keyConfiguration]);
 
                         if (rankMap != null) {
@@ -881,13 +897,51 @@ final class KeySequenceBindingNode {
                                                              */
                                                             maxKeyConfiguration = keyConfiguration + 1;
 
-                                                            // Record the match
-                                                            match = new Match(
-                                                                    commandId,
-                                                                    (context << 24)
-                                                                            + (keyConfiguration << 16)
-                                                                            + (platform << 8)
-                                                                            + locale);
+                                                            /*
+                                                             * Make sure we
+                                                             * don't consider
+                                                             * any parents of
+                                                             * this context, if
+                                                             * the command
+                                                             * identifier is not
+                                                             * null.
+                                                             */
+                                                            if (commandId != null) {
+                                                                String parentContext = (String) contextTree
+                                                                        .get(contextId);
+                                                                while (parentContext != null) {
+                                                                    contextIdsNotToConsider
+                                                                            .add(parentContext);
+                                                                    parentContext = (String) contextTree
+                                                                            .get(parentContext);
+                                                                }
+
+                                                                /*
+                                                                 * Check for a
+                                                                 * conflict.
+                                                                 */
+                                                                if ((match != null)
+                                                                        && (!contextIdsNotToConsider
+                                                                                .contains(contextIds[match
+                                                                                        .getValue() >> 24]))) {
+                                                                    WorkbenchPlugin
+                                                                            .log("Conflicting key binding for '" //$NON-NLS-1$
+                                                                                    + commandId
+                                                                                    + "' and '" //$NON-NLS-1$
+                                                                                    + match
+                                                                                            .getCommandId()
+                                                                                    + "'"); //$NON-NLS-1$
+                                                                    match = null;
+
+                                                                } else {
+                                                                    match = new Match(
+                                                                            commandId,
+                                                                            (context << 24)
+                                                                                    + (keyConfiguration << 16)
+                                                                                    + (platform << 8)
+                                                                                    + locale);
+                                                                }
+                                                            }
                                                         }
                                                     }
                                         }

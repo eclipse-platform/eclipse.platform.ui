@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,12 @@ import org.eclipse.ui.keys.KeySequence;
 
 final class KeySequenceBindingMachine {
 
-	private String[] activeContextIds;
+    /**
+     * This is a map of the active context identifiers, to their parents. If the
+     * context does not have a parent, then the mapping will be to
+     * <code>null</code>. Both the keys and the values are strings.
+     */
+	private Map activeContextIdMap;
 	private String[] activeKeyConfigurationIds;
 	private String[] activeLocales;
 	private String[] activePlatforms;
@@ -36,15 +42,15 @@ final class KeySequenceBindingMachine {
 	private SortedMap tree;
 
 	KeySequenceBindingMachine() {
-		activeContextIds = new String[0];
+		activeContextIdMap = new HashMap();
 		activeKeyConfigurationIds = new String[0];
 		activeLocales = new String[0];
 		activePlatforms = new String[0];
 		keySequenceBindings = new List[] { new ArrayList(), new ArrayList()};
 	}
 
-	String[] getActiveContextIds() {
-		return (String[]) activeContextIds.clone();
+	Map getActiveContextIds() {
+		return activeContextIdMap;
 	}
 
 	String[] getActiveKeyConfigurationIds() {
@@ -80,13 +86,14 @@ final class KeySequenceBindingMachine {
 	}
 
 	/**
-	 * Gets all of the active key bindings as a map of <code>KeySequence</code>
-	 * to command identifiers (<code>String</code>).  The map returned is not a
-	 * copy, and is not safe to modify.  <em>Do not modify the return 
-	 * value</em>. 
-	 * @return The active key bindings; never <code>null,/code>.  <em>Do not
-	 * modify the return value</em>.
-	 */
+     * Gets all of the active key bindings as a map of <code>KeySequence</code>
+     * to command identifiers (<code>String</code>). The map returned is not
+     * a copy, and is not safe to modify. <em>Do not modify the return 
+     * value</em>.
+     * 
+     * @return The active key bindings; never <code>null,/code>.  <em>Do not
+     * modify the return value</em>.
+     */
 	Map getMatchesByKeySequence() {
 		if (matchesByKeySequence == null) {
 			validateSolution();
@@ -110,14 +117,24 @@ final class KeySequenceBindingMachine {
 		invalidateSolution();
 	}
 
-	boolean setActiveContextIds(String[] activeContextIds) {
-		if (activeContextIds == null)
+	/**
+     * A mutator for the tree of active contexts. If the tree is different then
+     * the current tree, then the previous key binding map is invalidated.
+     * 
+     * @param activeContextTree
+     *            The map of child to parent context identifiers that are
+     *            currently active. This value must not be <code>null</code>,
+     *            but may be empty. All the keys and values in the map should be
+     *            strings, and only the values can be <code>null</code>.
+     * @return <code>true</code> if the context tree has changed;
+     *         <code>false</code> otherwise.
+     */
+	boolean setActiveContextIds(Map activeContextTree) {
+		if (activeContextTree == null)
 			throw new NullPointerException();
-
-		activeContextIds = (String[]) activeContextIds.clone();
-
-		if (!Arrays.equals(this.activeContextIds, activeContextIds)) {
-			this.activeContextIds = activeContextIds;
+		
+		if (!activeContextTree.equals(this.activeContextIdMap)) { 
+			this.activeContextIdMap = activeContextTree;
 			invalidateSolution();
 			return true;
 		}
@@ -209,7 +226,7 @@ final class KeySequenceBindingMachine {
 			validateTree();
 			KeySequenceBindingNode.solve(
 				tree,
-				activeContextIds,
+				activeContextIdMap,
 				activeKeyConfigurationIds,
 				activePlatforms,
 				activeLocales);

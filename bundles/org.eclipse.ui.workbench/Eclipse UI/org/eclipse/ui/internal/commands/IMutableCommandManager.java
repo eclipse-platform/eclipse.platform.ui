@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.Map;
-import java.util.SortedSet;
 
 import org.eclipse.ui.commands.ICommandManager;
 
@@ -33,16 +32,17 @@ import org.eclipse.ui.commands.ICommandManager;
 public interface IMutableCommandManager extends ICommandManager {
    
 	/**
-     * Sets the set of identifiers to active contexts.  The set must be sorted
-     * so that child contexts always appear before their parents.
+     * Sets the map of identifiers to active contexts. The mapping represents
+     * the hierarchical structure of the contexts.
      * 
      * @param activeContextIds
-     *            the set of identifiers to active contexts. This set may be
-     *            empty, but it must not be <code>null</code>. If this set is
-     *            not empty, it must only contain instances of
+     *            a map of child context identifiers to parent context
+     *            identifiers -- representing the hierarchy of active contexts.
+     *            This tree may be empty, but it must not be <code>null</code>.
+     *            If this tree is not empty, it must only contain instances of
      *            <code>String</code>.
      */
-	void setActiveContextIds(SortedSet activeContextIds);
+	void setActiveContextIds(Map activeContextIds);
     
 	/**
      * Sets the active key configuration.
