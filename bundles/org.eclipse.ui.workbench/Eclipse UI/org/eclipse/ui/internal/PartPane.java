@@ -394,6 +394,9 @@ public void setWorkbenchPage(WorkbenchPage workbenchPage) {
  * Set whether the pane is zoomed or not
  */
 public void setZoomed(boolean isZoomed) {
+	if (this.isZoomed == isZoomed)
+		return; // do nothing if we're already in the right state.
+	
 	this.isZoomed = isZoomed;
 	
 	final Object[] listeners = getPropertyListeners().getListeners();
