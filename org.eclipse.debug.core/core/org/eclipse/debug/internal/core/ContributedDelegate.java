@@ -116,4 +116,30 @@ public class ContributedDelegate {
 	protected String getIdentifier() {
 		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 	}	
+	
+	/**
+	 * Returns the source path computer id specified by this launch delegate 
+	 * or <code>null</code> if none.
+	 * 
+	 * @return the source path computer id specified by this launch delegate 
+	 * or <code>null</code> if none
+	 * 
+	 * @since 3.1
+	 */
+	protected String getSourcePathComputerId() {
+		return getConfigurationElement().getAttribute("sourcePathComputerId"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the source locater id specified by this launch delegate 
+	 * or <code>null</code> if none.
+	 * 
+	 * @return the source locater id specified by this launch delegate 
+	 * or <code>null</code> if none
+	 * 
+	 * @since 3.1
+	 */
+	protected String getSourceLocaterId() {
+		return getConfigurationElement().getAttribute("sourceLocatorId"); //$NON-NLS-1$
+	}
 }

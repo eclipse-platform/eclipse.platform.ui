@@ -80,6 +80,20 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="sourcePathComputerId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of a sourcePathComputer extension that is used to compute a default source lookup path for launch configurations of this type. Since 3.1, this attribute cab be specified in a launchDelegate extension when unspecified in the assocaited launchConfigurationType extension. Only one source path computer can be specified per launch configuration type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="sourceLocatorId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. Since 3.1, this attribute cab be specified in a launchDelegate extension when unspecified in the assocaited launchConfigurationType extension. Only one source locater can be specified per launch configuration type.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

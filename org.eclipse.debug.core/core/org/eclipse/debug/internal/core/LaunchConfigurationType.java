@@ -151,6 +151,17 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	public ISourcePathComputer getSourcePathComputer() {
 		String id = getConfigurationElement().getAttribute("sourcePathComputerId"); //$NON-NLS-1$
+		if (id == null) {
+			// check for specification by mode specific delegate
+			List delegates = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getContributedDelegates();
+			Iterator iterator = delegates.iterator();
+			while (iterator.hasNext() && id == null) {
+				ContributedDelegate delegate = (ContributedDelegate)iterator.next();
+				if (delegate.getLaunchConfigurationType().equals(getIdentifier())) {
+					id = delegate.getSourcePathComputerId();
+				}
+			}
+		}
 		if (id != null && id.length() > 0) {
 			return DebugPlugin.getDefault().getLaunchManager().getSourcePathComputer(id);
 		}
@@ -265,7 +276,19 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSourceLocatorId()
 	 */
 	public String getSourceLocatorId() {
-		return getAttribute("sourceLocatorId"); //$NON-NLS-1$
+		String id = getAttribute("sourceLocatorId"); //$NON-NLS-1$
+		if (id == null) {
+			// check for specification by mode specific delegate
+			List delegates = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getContributedDelegates();
+			Iterator iterator = delegates.iterator();
+			while (iterator.hasNext() && id == null) {
+				ContributedDelegate delegate = (ContributedDelegate)iterator.next();
+				if (delegate.getLaunchConfigurationType().equals(getIdentifier())) {
+					id = delegate.getSourceLocaterId();
+				}
+			}
+		}
+		return id;
 	}
 
 	/* (non-Javadoc)
