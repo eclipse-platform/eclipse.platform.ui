@@ -180,7 +180,6 @@ class LightweightDecoratorManager {
 
 	void getDecorations(
 		Object element,
-		Object adapted,
 		DecorationBuilder decoration) {
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
@@ -192,16 +191,6 @@ class LightweightDecoratorManager {
 			}
 		}
 
-		if (adapted != null) {
-			decorators = getDecoratorsFor(adapted);
-
-			for (int i = 0; i < decorators.length; i++) {
-				if (decorators[i].getEnablement().isEnabledFor(adapted)) {
-					decoration.setCurrentDefinition(decorators[i]);
-					decorate(adapted, decoration, decorators[i]);
-				}
-			}
-		}
 
 	}
 

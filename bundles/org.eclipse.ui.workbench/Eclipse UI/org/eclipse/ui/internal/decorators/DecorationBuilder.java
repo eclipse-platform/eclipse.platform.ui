@@ -82,12 +82,18 @@ class DecorationBuilder implements IDecoration {
 				new ArrayList(suffixes),
 				descriptors);
 
+		return newResult;
+	}
+
+
+	/**
+	 * Clear the contents of the result so it can be reused.
+	 */
+	void clearContents() {
 		this.prefixes.clear();
 		this.suffixes.clear();
 		this.descriptors = new ImageDescriptor[DECORATOR_ARRAY_SIZE];
 		valueSet = false;
-
-		return newResult;
 	}
 
 	/**

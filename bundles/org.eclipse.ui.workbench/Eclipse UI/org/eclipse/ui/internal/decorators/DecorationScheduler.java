@@ -281,18 +281,40 @@ public class DecorationScheduler implements IResourceChangeListener {
 					//Don't decorate if there is already a pending result
 					if (!resultCache.containsKey(reference.getElement())) {
 
+						//Just build for the resource first
+						Object adapted = reference.getAdaptedElement();
+
+						if (adapted != null) {
+							decoratorManager
+								.getLightweightManager()
+								.getDecorations(
+								adapted,
+								cacheResult);
+							if (cacheResult.hasValue()) {
+								resultCache.put(
+									adapted,
+									cacheResult.createResult());
+
+							}
+						}
+
+						//Now add in the results for the main object
+
 						decoratorManager
 							.getLightweightManager()
 							.getDecorations(
 							reference.getElement(),
-							reference.getAdaptedElement(),
 							cacheResult);
 
 						if (cacheResult.hasValue()) {
-							DecorationResult result =
-								cacheResult.createResult();
-							resultCache.put(reference.getElement(), result);
+							resultCache.put(
+								reference.getElement(),
+								cacheResult.createResult());
+
+							//Add an update for only the original element to 
+							//prevent multiple updates and clear the cache.
 							pendingUpdate.add(reference.getElement());
+							cacheResult.clearContents();
 						};
 					}
 
