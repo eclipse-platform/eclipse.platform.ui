@@ -21,32 +21,17 @@ import org.eclipse.ui.PlatformUI;
  * A resolution which inserts a sentence into the readme file 
  */
 public class AddSentenceResolution implements IMarkerResolution {
-	private IMarker marker;
-	/*
-	 * @see IMarkerResolution#init(IMarker)
-	 */
-	public void init(IMarker marker) {
-		this.marker = marker;
-	}
-
-	/*
-	 * @see IMarkerResolution#isAppropriate()
-	 */
-	public boolean isAppropriate() {
-		return true;
-	}
-
-	/*
-	 * @see IMarkerResolution#getLabel()
+	/* (non-Javadoc)
+	 * Method declared on IMarkerResolution.
 	 */
 	public String getLabel() {
 		return MessageUtil.getString("Add_Sentence"); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see IMarkerResolution#run()
+	/* (non-Javadoc)
+	 * Method declared on IMarkerResolution.
 	 */
-	public void run() {
+	public void run(IMarker marker) {
 		// Se if there is an open editor on the file containing the marker
 		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (w == null)

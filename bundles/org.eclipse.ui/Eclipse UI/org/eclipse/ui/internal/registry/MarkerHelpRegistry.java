@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -119,22 +120,23 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 				Map resultsTable = (Map)resolutionQueries.get(query);
 				IConfigurationElement element = (IConfigurationElement)resultsTable.get(result);
 				if (element != null) {
-					IMarkerResolution resolution = null;
+					IMarkerResolutionGenerator generator = null;
 					if (element.getDeclaringExtension().getDeclaringPluginDescriptor().isPluginActivated()) {
 						// The element's plugin is loaded so we instantiate the resolution
 						try {
-							resolution = (IMarkerResolution)element.createExecutableExtension(ATT_CLASS);						
+							generator = (IMarkerResolutionGenerator)element.createExecutableExtension(ATT_CLASS);						
 						} catch (CoreException e) {
-							WorkbenchPlugin.log("Unable to instantiate resolution", e.getStatus()); //$NON-NLS-1$
+							WorkbenchPlugin.log("Unable to instantiate resolution generator", e.getStatus()); //$NON-NLS-1$
 						}
-						if (resolution != null) {
-							resolution.init(marker);
-							if (resolution.isAppropriate())
+						if (generator != null) {
+							IMarkerResolution[] resolutions = generator.getResolutions(marker);
+							if (resolutions.length > 0)
+								// there is at least one resolution
 								return true;
 						}
 					} else {
 						// The element's plugin in not loaded so we assume 
-						// the marker is appropriate
+						// the generator will produce resolutions for the marker
 						return true;
 					}	
 				}
@@ -157,25 +159,18 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 				Map resultsTable = (Map)resolutionQueries.get(query);
 				IConfigurationElement element = (IConfigurationElement)resultsTable.get(result);
 				if (element != null) {
-					IMarkerResolution resolution = null;
-					if (element.getDeclaringExtension().getDeclaringPluginDescriptor().isPluginActivated()) {
-						// The element's plugin is loaded so we instantiate the resolution
-						try {
-							resolution = (IMarkerResolution)element.createExecutableExtension(ATT_CLASS);						
-						} catch (CoreException e) {
-							WorkbenchPlugin.log("Unable to instantiate resolution", e.getStatus()); //$NON-NLS-1$
+					IMarkerResolutionGenerator generator = null;
+					try {
+						generator = (IMarkerResolutionGenerator)element.createExecutableExtension(ATT_CLASS);						
+					} catch (CoreException e) {
+						WorkbenchPlugin.log("Unable to instantiate resolution generator", e.getStatus()); //$NON-NLS-1$
+					}
+					if (generator != null) {
+						IMarkerResolution[] generatedResolutions = generator.getResolutions(marker);
+						for (int i = 0; i < generatedResolutions.length; i++) {
+							resolutions.add(generatedResolutions[i]);	
 						}
-						if (resolution != null) {
-							resolution.init(marker);
-							if (resolution.isAppropriate())
-								resolutions.add(resolution);
-						}
-					} else {
-						// The element's plugin in not loaded so we create a delegate resolution
-						resolution = new MarkerResolutionDelegate(element);
-						resolution.init(marker);
-						resolutions.add(resolution);
-					}	
+					}
 				}
 			}
 		}

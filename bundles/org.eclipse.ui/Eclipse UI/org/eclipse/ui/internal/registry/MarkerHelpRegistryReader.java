@@ -23,7 +23,7 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 	private ArrayList currentAttributeValues;
 
 	private static final    String      TAG_HELP = "markerHelp";//$NON-NLS-1$
-	private static final    String      TAG_RESOLUTION = "markerResolution";//$NON-NLS-1$
+	private static final    String      TAG_RESOLUTION_GENERATOR = "markerResolutionGenerator";//$NON-NLS-1$
 	private static final    String      TAG_ATTRIBUTE = "attribute";//$NON-NLS-1$ 
 	private static final    String      ATT_TYPE = "markerType";//$NON-NLS-1$
 	private static final    String      ATT_NAME = "name";//$NON-NLS-1$
@@ -57,7 +57,7 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 			readHelpElement(element);
 			return true;
 		}
-		if (element.getName().equals(TAG_RESOLUTION)) {
+		if (element.getName().equals(TAG_RESOLUTION_GENERATOR)) {
 			readResolutionElement(element);
 			return true;
 		}

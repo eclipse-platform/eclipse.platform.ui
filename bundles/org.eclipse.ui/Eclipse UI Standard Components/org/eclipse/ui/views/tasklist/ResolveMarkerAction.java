@@ -6,6 +6,7 @@ package org.eclipse.ui.views.tasklist;
  */
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.ui.IMarkerResolution;
@@ -30,35 +31,44 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 	 * Method declared on IAction.
 	 */
 	public boolean isEnabled() {
-		if (getMarker() == null)
+		IMarker marker = getMarker();
+		if (marker == null)
 			return false;
 		IWorkbench workbench = getTaskList().getViewSite().getWorkbenchWindow().getWorkbench();
-		return workbench.getMarkerHelpRegistry().hasResolutions(getMarker());
+		return workbench.getMarkerHelpRegistry().hasResolutions(marker);
 	}
 	
 	/**
 	 * Displays a list of resolutions and performs the selection.
 	 */
 	public void run() {
+		IMarker marker = getMarker();
 		getTaskList().cancelEditing();
-		MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(getShell(), getResolutions());
+		IMarkerResolution[] resolutions = getResolutions(marker);
+		if (resolutions.length == 0) {
+			MessageDialog.openInformation(
+				getShell(),
+				TaskListMessages.getString("Resolve.title"), //$NON-NLS-1 
+				TaskListMessages.getString("Resolve.noResolutionsLabel")); //$NON-NLS-1);
+			return;
+		}	 
+		MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(getShell(), resolutions);
 		if (d.open() != d.OK)
 			return;
 		Object[] result = d.getResult();
 		if (result != null && result.length > 0)
-			((IMarkerResolution)result[0]).run();			
+			((IMarkerResolution)result[0]).run(marker);			
 	}
 	
 	/**
-	 * Returns the resolutions for the selected marker.
+	 * Returns the resolutions for the given marker.
 	 *
+	 * @param the marker for which to obtain resolutions
 	 * @return the resolutions for the selected marker	
 	 */
-	private IMarkerResolution[] getResolutions() {
-		if (getMarker() == null)
-			return new IMarkerResolution[0];
+	private IMarkerResolution[] getResolutions(IMarker marker) {
 		IWorkbench workbench = getTaskList().getViewSite().getWorkbenchWindow().getWorkbench();
-		return workbench.getMarkerHelpRegistry().getResolutions(getMarker());
+		return workbench.getMarkerHelpRegistry().getResolutions(marker);
 	}
 
 	/**
