@@ -108,12 +108,13 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 			!selection.isEmpty()
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.FILE);
 		
-
+	
 		MenuManager newMenu =
 			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new")); //$NON-NLS-1$
 		menu.add(newMenu);
 		new NewWizardMenu(newMenu, navigator.getSite().getWorkbenchWindow(), false);
 		
+		gotoGroup.fillContextMenu(menu);
 		openGroup.fillContextMenu(menu);
 		menu.add(new Separator());
 		
@@ -137,7 +138,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 		menu.add(new Separator());
-
+	
 		if (selection.size() == 1) {
 			propertyDialogAction.selectionChanged(selection);
 			menu.add(propertyDialogAction);
