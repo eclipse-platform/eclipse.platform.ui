@@ -56,45 +56,10 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 	public String getText(Object element) {
 		if (element instanceof AntStackFrame) {
 			AntStackFrame frame= (AntStackFrame) element;
-			String name= frame.getName();
-			if (name != null) {
-				StringBuffer text= new StringBuffer(name);
-				int lineNumber= frame.getLineNumber();
-				String lineNumberString= null;
-				if (lineNumber == 0) {
-				    lineNumberString= DebugModelMessages.getString("AntDebugModelPresentation.0"); //$NON-NLS-1$
-				} else {
-				    lineNumberString= Integer.toString(lineNumber);
-				}
-				text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.1"), new String[]{lineNumberString})); //$NON-NLS-1$
-				return text.toString();
-			}
+			return getStackFrameText(frame);
 		} else if (element instanceof AntThread) {
 			AntThread thread= (AntThread) element;
-			String name= thread.getName();
-			if (name != null) {
-				StringBuffer text= new StringBuffer(name);
-				if (thread.isSuspended()) {
-					IBreakpoint[] breakpoints= thread.getBreakpoints();
-					if (breakpoints.length > 0) {
-						AntLineBreakpoint breakpoint= (AntLineBreakpoint) breakpoints[0];
-						IMarker marker= breakpoint.getMarker();
-						String fileName= marker.getResource().getFullPath().lastSegment();
-						String lineNumber= Integer.toString(marker.getAttribute(IMarker.LINE_NUMBER, -1));
-						String breakpointString= null;
-                        if (breakpoint.isRunToLine()) {
-                            breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.5"), new String[] {lineNumber, fileName}); //$NON-NLS-1$
-                        } else {
-                            breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.2"), new String[]{lineNumber, fileName}); //$NON-NLS-1$                            
-                        }
-						text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.3"), new String[]{breakpointString})); //$NON-NLS-1$
-					} else {
-						text.append(DebugModelMessages.getString("AntDebugModelPresentation.4")); //$NON-NLS-1$
-					}
-				}
-				
-				return text.toString();
-			}
+			return getThreadText(thread);
 		} else if (element instanceof AntProperty) {
 		    AntProperty property= (AntProperty) element;
 		    return property.getText();  
@@ -104,8 +69,55 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 		
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+    private String getThreadText(AntThread thread) {
+        String name= thread.getName();
+        if (name != null) {
+            StringBuffer text= new StringBuffer(name);
+            if (thread.isSuspended()) {
+                IBreakpoint[] breakpoints= thread.getBreakpoints();
+                if (breakpoints.length > 0) {
+                    AntLineBreakpoint breakpoint= (AntLineBreakpoint) breakpoints[0];
+                    IMarker marker= breakpoint.getMarker();
+                    String fileName= marker.getResource().getFullPath().lastSegment();
+                    String lineNumber= Integer.toString(marker.getAttribute(IMarker.LINE_NUMBER, -1));
+                    String breakpointString= null;
+                    if (breakpoint.isRunToLine()) {
+                        breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.5"), new String[] {lineNumber, fileName}); //$NON-NLS-1$
+                    } else {
+                        breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.2"), new String[]{lineNumber, fileName}); //$NON-NLS-1$                            
+                    }
+                    text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.3"), new String[]{breakpointString})); //$NON-NLS-1$
+                } else {
+                    text.append(DebugModelMessages.getString("AntDebugModelPresentation.4")); //$NON-NLS-1$
+                }
+            }
+            
+            return text.toString();
+        }
+        return null;
+    }
+
+    private String getStackFrameText(AntStackFrame frame) {
+        String name= frame.getName();
+        if (name != null) {
+            StringBuffer text= new StringBuffer(name);
+            int lineNumber= frame.getLineNumber();
+            if (lineNumber != -1) { //TODO until targets have locations set properly 
+                String lineNumberString= null;
+                if (lineNumber == 0) {
+                    lineNumberString= DebugModelMessages.getString("AntDebugModelPresentation.0"); //$NON-NLS-1$
+                } else {
+                    lineNumberString= Integer.toString(lineNumber);
+                }
+                text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.1"), new String[]{lineNumberString})); //$NON-NLS-1$
+            }
+            return text.toString();
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
 	public void computeDetail(IValue value, IValueDetailListener listener) {
