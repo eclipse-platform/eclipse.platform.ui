@@ -145,6 +145,10 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				return partitions;
 			}
 		}
+		if (logicalValue == null) {
+			// safeguard against an structure type returning null
+			logicalValue = value;
+		}
 		return logicalValue.getVariables();
 	}
 	
@@ -217,7 +221,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 					try {
 						return type.getLogicalStructure(value);
 					} catch (CoreException e) {
-						DebugUIPlugin.log(e);
+						// unable to display logical structure
 					}
 				}
 			}
