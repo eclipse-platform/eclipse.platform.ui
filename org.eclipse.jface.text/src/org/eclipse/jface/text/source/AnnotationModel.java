@@ -607,7 +607,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			Position p= (Position) fAnnotations.get(annotation);
 			if (p != null) {
 				
-				if (position.getOffset() != p.getOffset() && position.getLength() != p.getLength()) {
+				if (position.getOffset() != p.getOffset() || position.getLength() != p.getLength()) {
 					p.setOffset(position.getOffset());
 					p.setLength(position.getLength());
 				}
