@@ -28,26 +28,28 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
 
     private static final String ATT_MOVEABLE = "moveable"; //$NON-NLS-1$
 
-    private String id;
+	private IConfigurationElement configurationElement;
 
-    private String namespace;
-
-    private int direction = IPageLayout.RIGHT;
-
-    private boolean closeable = true;
-
-    private boolean moveable = true;
+	private String id;
 
     public StickyViewDescriptor(IConfigurationElement singleton)
             throws CoreException {
-        id = singleton.getAttribute(ATT_ID);
+    	this.configurationElement = singleton;
+    	id = configurationElement.getAttribute(ATT_ID);;
         if (id == null)
             throw new CoreException(new Status(IStatus.ERROR, singleton
                     .getDeclaringExtension().getNamespace(), 0,
                     "Invalid extension (missing id) ", null));//$NON-NLS-1$
-        namespace = singleton.getDeclaringExtension().getNamespace();
+    }
+    
+	public IConfigurationElement getConfigurationElement() {
+		return configurationElement;
+	}
 
-        String location = singleton.getAttribute(ATT_LOCATION);
+    public int getLocation() {
+    	int direction = IPageLayout.RIGHT;
+    	
+    	String location = configurationElement.getAttribute(ATT_LOCATION);
         if (location != null) {
             if (location.equalsIgnoreCase("left")) //$NON-NLS-1$
                 direction = IPageLayout.LEFT;
@@ -56,21 +58,7 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
             else if (location.equalsIgnoreCase("bottom")) //$NON-NLS-1$
                 direction = IPageLayout.BOTTOM;
             //no else for right - it is the default value;
-        }
-
-        String closeableString = singleton.getAttribute(ATT_CLOSEABLE);
-        if (closeableString != null) {
-            closeable = !closeableString.equals("false"); //$NON-NLS-1$
-        }
-
-        String moveableString = singleton.getAttribute(ATT_MOVEABLE);
-        if (moveableString != null) {
-            moveable = !moveableString.equals("false"); //$NON-NLS-1$
-        }
-
-    }
-
-    public int getLocation() {
+        }    	
         return direction;
     }
 
@@ -85,13 +73,18 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#getNamespace()
      */
     public String getNamespace() {
-        return namespace;
+        return configurationElement.getNamespace();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#isFixed()
      */
     public boolean isCloseable() {
+    	boolean closeable = true;
+    	String closeableString = configurationElement.getAttribute(ATT_CLOSEABLE);
+        if (closeableString != null) {
+            closeable = !closeableString.equals("false"); //$NON-NLS-1$
+        }
         return closeable;
     }
 
@@ -99,6 +92,11 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#isMoveable()
      */
     public boolean isMoveable() {
+    	boolean moveable = true;
+    	String moveableString = configurationElement.getAttribute(ATT_MOVEABLE);
+        if (moveableString != null) {
+            moveable = !moveableString.equals("false"); //$NON-NLS-1$
+        }    	
         return moveable;
     }
 }

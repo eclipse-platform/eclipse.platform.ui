@@ -14,14 +14,25 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime.compatibility" optional="true"/>
+      <import plugin="org.eclipse.ui.tests"/>
    </requires>
 
    <extension
          point="org.eclipse.ui.views" id="testDynamicViewAddition">
       <view
+            class="org.eclipse.ui.tests.api.MockViewPart"
+            icon="anything.gif"
+            category="org.eclipse.newView1.newCategory1"
             name="NewView1"
-            class="org.eclipse.newView1.newView1"
             id="org.eclipse.newView1.newView1">
      </view>
+      <category
+            name="NewCategory1"
+            id="org.eclipse.newView1.newCategory1"/>
+      <stickyView
+            closeable="false"
+            moveable="false"
+            location="BOTTOM"
+            id="org.eclipse.newView1.newView1"/>
    </extension>
 </plugin>

@@ -34,8 +34,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     private String id;
 
-    private String pluginId;
-
     private ImageDescriptor imageDescriptor;
 
     private static final String ATT_ID = "id"; //$NON-NLS-1$
@@ -54,37 +52,28 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 
     private static final String ATT_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
 
-    private String label;
-
-    private String accelerator;
-
-    private String className;
-
+    private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+    
     private IConfigurationElement configElement;
 
     private String[] categoryPath;
 
-    private String description;
-
     private float fastViewWidthRatio;
-
-    private boolean allowMultiple;
 
     /**
      * Create a new ViewDescriptor for an extension.
      */
-    public ViewDescriptor(IConfigurationElement e, String desc)
+    public ViewDescriptor(IConfigurationElement e)
             throws CoreException {
         configElement = e;
-        description = desc;
         loadFromExtension();
         registerShowViewHandler();
     }
 
     private void registerShowViewHandler() {
-        IHandler showViewHandler = new ShowViewHandler(id);
+        IHandler showViewHandler = new ShowViewHandler(getId());
         HandlerSubmission showViewSubmission = new HandlerSubmission(null,
-                null, null, id, showViewHandler, Priority.MEDIUM);
+                null, null, getId(), showViewHandler, Priority.MEDIUM);
         PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
                 showViewSubmission);
     }
@@ -115,14 +104,18 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getDescription()
      */
     public String getDescription() {
-        return description;
+    	IConfigurationElement[] children = configElement.getChildren(TAG_DESCRIPTION);
+        if (children.length >= 1) {
+            return children[0].getValue();
+        }
+        return "";//$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getID()
      */
     public String getID() {
-        return id;
+        return getId();
     }
 
     /* (non-Javadoc)
@@ -152,43 +145,40 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.IWorkbenchPartDescriptor#getLabel()
      */
     public String getLabel() {
-        return label;
+        return configElement.getAttribute(ATT_NAME);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAccelerator()
      */
     public String getAccelerator() {
-        return accelerator;
+        return configElement.getAttribute(ATT_ACCELERATOR);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getFastViewWidthRatio()
      */
     public float getFastViewWidthRatio() {
+    	configElement.getAttribute(ATT_RATIO); // check to ensure the element is still valid - exception thrown if it isn't
         return fastViewWidthRatio;
     }
 
     /**
      * load a view descriptor from the registry.
      */
-    private void loadFromExtension() throws CoreException {
+    private void loadFromExtension() throws CoreException {    	
         id = configElement.getAttribute(ATT_ID);
-        pluginId = configElement.getDeclaringExtension().getNamespace();
-        label = configElement.getAttribute(ATT_NAME);
-        accelerator = configElement.getAttribute(ATT_ACCELERATOR);
-        className = configElement.getAttribute(ATT_CLASS);
+  
         String category = configElement.getAttribute(ATT_CATEGORY);
-        String ratio = configElement.getAttribute(ATT_RATIO);
-        String mult = configElement.getAttribute(ATT_MULTIPLE);
 
         // Sanity check.
-        if ((label == null) || (className == null)) {
+        if ((configElement.getAttribute(ATT_NAME) == null) || (configElement.getAttribute(ATT_CLASS) == null)) {
             throw new CoreException(new Status(IStatus.ERROR, configElement
                     .getDeclaringExtension().getNamespace(), 0,
                     "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
                     null));
         }
+        
         if (category != null) {
             StringTokenizer stok = new StringTokenizer(category, "/"); //$NON-NLS-1$
             categoryPath = new String[stok.countTokens()];
@@ -197,7 +187,8 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
                 categoryPath[i] = stok.nextToken();
             }
         }
-
+        
+        String ratio = configElement.getAttribute(ATT_RATIO);
         if (ratio != null) {
             try {
                 fastViewWidthRatio = new Float(ratio).floatValue();
@@ -210,8 +201,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
             }
         } else {
             fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
-        }
-        allowMultiple = mult != null && "true".equalsIgnoreCase(mult); //$NON-NLS-1$
+        }        
     }
 
     /**
@@ -228,6 +218,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
+    	String pluginId = configElement.getNamespace();
         return pluginId == null ? "" : pluginId; //$NON-NLS-1$    
     }
 
@@ -237,7 +228,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return id == null ? "" : id; //$NON-NLS-1$	
+        return getId() == null ? "" : getId(); //$NON-NLS-1$	
     }
 
     /*
@@ -253,6 +244,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAllowMultiple()
      */
     public boolean getAllowMultiple() {
-        return allowMultiple;
+    	String string = configElement.getAttribute(ATT_MULTIPLE);    	
+        return string == null ? false : Boolean.valueOf(string).booleanValue();
     }
 }

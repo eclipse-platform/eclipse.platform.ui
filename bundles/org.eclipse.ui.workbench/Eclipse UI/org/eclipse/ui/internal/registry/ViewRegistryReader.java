@@ -74,7 +74,7 @@ public class ViewRegistryReader extends RegistryReader {
     /**
      * Reads the sticky view element.
      */
-    private void readSticky(IConfigurationElement element) {
+    protected void readSticky(IConfigurationElement element) {
         StickyViewDescriptor desc;
         try {
             desc = new StickyViewDescriptor(element);
@@ -92,8 +92,7 @@ public class ViewRegistryReader extends RegistryReader {
      */
     protected void readView(IConfigurationElement element) {
         try {
-            String descText = getDescription(element);
-            ViewDescriptor desc = new ViewDescriptor(element, descText);
+            ViewDescriptor desc = new ViewDescriptor(element);
             viewRegistry.add(desc);
         } catch (CoreException e) {
             // log an error since its not safe to open a dialog here
@@ -105,11 +104,9 @@ public class ViewRegistryReader extends RegistryReader {
     /**
      * Read the view extensions within a registry.
      */
-    public void readViews(IExtensionRegistry in, ViewRegistry out)
-            throws CoreException {
+    public void readViews(IExtensionRegistry in, ViewRegistry out) {
         // this does not seem to really ever be throwing an the exception
         viewRegistry = out;
         readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
-        out.mapViewsToCategories();
     }
 }

@@ -466,57 +466,57 @@ class ExtensionEventHandler implements IRegistryChangeListener {
     }
 
     private void unloadView(IExtension ext) {
-        final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-                IStatus.OK, WorkbenchMessages
-                        .getString("ViewFactory.problemsSavingViews"), null); //$NON-NLS-1$
-        IViewRegistry vReg = WorkbenchPlugin.getDefault().getViewRegistry();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        XMLMemento memento = null;
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                ArrayList viewsRemoved = new ArrayList();
-                IConfigurationElement[] elements = ext
-                        .getConfigurationElements();
-                for (int k = 0; k < elements.length; k++) {
-                    if (!elements[k].getName().equals(
-                            IWorkbenchConstants.TAG_VIEW))
-                        continue;
-                    String id = elements[k]
-                            .getAttribute(IWorkbenchConstants.TAG_ID);
-                    if (id != null) {
-                        ViewFactory viewFactory = ((WorkbenchPage) pages[j])
-                                .getViewFactory();
-                        IViewReference viewRef = viewFactory.getView(id);
-                        if (viewRef != null) {
-                            // don't save view state
-                            //							if (isViewOpen(viewRef, viewFactory)){
-                            //								memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_VIEWS);
-                            //								saveViewState(pages[j], id, viewFactory.saveViewState(memento, viewRef, result));
-                            //								//((WorkbenchPage)pages[j]).getStateMap().put(id, memento);
-                            //							}
-                            ((WorkbenchPage) pages[j]).hideView(viewRef);
-                            ((WorkbenchPage) pages[j]).getViewFactory()
-                                    .releaseView(viewRef);
-                        }
-                        viewsRemoved.add(id);
-                        ((ViewRegistry) vReg).remove(id);
-                    }
-                }
-                Object[] showViewIdsRemoved = findShowViewIdsRemoved(
-                        ((WorkbenchPage) pages[j]).getShowViewActionIds(),
-                        viewsRemoved);
-                if (showViewIdsRemoved.length > 0)
-                    removeViewIdsFromShowViewMenu(window, showViewIdsRemoved);
-            }
-        }
-        if (result.getSeverity() != IStatus.OK) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
-                    result);
-        }
+//        final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
+//                IStatus.OK, WorkbenchMessages
+//                        .getString("ViewFactory.problemsSavingViews"), null); //$NON-NLS-1$
+//        IViewRegistry vReg = WorkbenchPlugin.getDefault().getViewRegistry();
+//        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+//        XMLMemento memento = null;
+//        for (int i = 0; i < windows.length; i++) {
+//            WorkbenchWindow window = (WorkbenchWindow) windows[i];
+//            IWorkbenchPage[] pages = window.getPages();
+//            for (int j = 0; j < pages.length; j++) {
+//                ArrayList viewsRemoved = new ArrayList();
+//                IConfigurationElement[] elements = ext
+//                        .getConfigurationElements();
+//                for (int k = 0; k < elements.length; k++) {
+//                    if (!elements[k].getName().equals(
+//                            IWorkbenchConstants.TAG_VIEW))
+//                        continue;
+//                    String id = elements[k]
+//                            .getAttribute(IWorkbenchConstants.TAG_ID);
+//                    if (id != null) {
+//                        ViewFactory viewFactory = ((WorkbenchPage) pages[j])
+//                                .getViewFactory();
+//                        IViewReference viewRef = viewFactory.getView(id);
+//                        if (viewRef != null) {
+//                            // don't save view state
+//                            //							if (isViewOpen(viewRef, viewFactory)){
+//                            //								memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_VIEWS);
+//                            //								saveViewState(pages[j], id, viewFactory.saveViewState(memento, viewRef, result));
+//                            //								//((WorkbenchPage)pages[j]).getStateMap().put(id, memento);
+//                            //							}
+//                            ((WorkbenchPage) pages[j]).hideView(viewRef);
+//                            ((WorkbenchPage) pages[j]).getViewFactory()
+//                                    .releaseView(viewRef);
+//                        }
+//                        viewsRemoved.add(id);
+//                        ((ViewRegistry) vReg).remove(id);
+//                    }
+//                }
+//                Object[] showViewIdsRemoved = findShowViewIdsRemoved(
+//                        ((WorkbenchPage) pages[j]).getShowViewActionIds(),
+//                        viewsRemoved);
+//                if (showViewIdsRemoved.length > 0)
+//                    removeViewIdsFromShowViewMenu(window, showViewIdsRemoved);
+//            }
+//        }
+//        if (result.getSeverity() != IStatus.OK) {
+//            ErrorDialog.openError((Shell) null, WorkbenchMessages
+//                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
+//                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
+//                    result);
+//        }
     }
 
     private void saveViewState(IWorkbenchPage page, String id, IMemento memento) {

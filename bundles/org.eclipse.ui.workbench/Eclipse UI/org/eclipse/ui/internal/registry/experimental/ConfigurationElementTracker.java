@@ -61,6 +61,8 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 	}
 	
 	public void registerObject(IConfigurationElement element, Object object) {
+		if (element == null ||  object == null)
+			return;
 		Set objectSet = (Set) configElementToObjectSetMap.get(element);
 		if (objectSet == null) {
 			objectSet = new HashSet();
@@ -86,7 +88,7 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
             for (int i = 0; i < len; i++)
                 switch (delta[i].getKind()) {
                 case IExtensionDelta.ADDED:
-                    doAdd(delta[i]);
+                    doAdd(display, delta[i]);
                 	++numDeltas;
                 	break;
                 case IExtensionDelta.REMOVED:
@@ -147,12 +149,17 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 	/**
 	 * @param delta
 	 */
-	private void doAdd(IExtensionDelta delta) {
+	private void doAdd(Display display, IExtensionDelta delta) {
 		IConfigurationElement [] elements = delta.getExtension().getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
+			final IConfigurationElement element = elements[i];
 			for (Iterator j = additionHandlerSet.iterator(); j.hasNext();) {
-				IConfigurationElementAdditionHandler handler = (IConfigurationElementAdditionHandler) j.next();
-				handler.addInstance(this, elements[i]);
+				final IConfigurationElementAdditionHandler handler = (IConfigurationElementAdditionHandler) j.next();
+				display.syncExec(new Runnable() {
+					public void run() { 
+						handler.addInstance(ConfigurationElementTracker.this, element);	
+					}
+				});						
 			}
 		}		
 	}

@@ -504,14 +504,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public IViewRegistry getViewRegistry() {
         if (viewRegistry == null) {
             viewRegistry = new ViewRegistry();
-            try {
-                ViewRegistryReader reader = new ViewRegistryReader();
-                reader.readViews(Platform.getExtensionRegistry(), viewRegistry);
-            } catch (CoreException e) {
-                // cannot safely show a dialog so log it
-                WorkbenchPlugin.log(
-                        "Unable to read view registry.", e.getStatus()); //$NON-NLS-1$
-            }
         }
         return viewRegistry;
     }
