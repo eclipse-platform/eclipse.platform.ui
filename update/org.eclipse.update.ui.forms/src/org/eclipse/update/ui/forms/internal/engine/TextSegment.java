@@ -12,7 +12,6 @@ import java.util.Hashtable;
 import org.eclipse.swt.SWT;
 import java.text.BreakIterator;
 import java.util.Vector;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @version 	1.0

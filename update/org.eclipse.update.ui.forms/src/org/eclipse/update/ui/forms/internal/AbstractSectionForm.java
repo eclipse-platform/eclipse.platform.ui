@@ -182,7 +182,6 @@ public abstract class AbstractSectionForm extends AbstractForm {
 		scroll(scomp, left ? -H_SCROLL_INCREMENT : H_SCROLL_INCREMENT, 0);
 	}
 	public static void scrollPage(ScrolledComposite scomp, boolean up) {
-		Point origin = scomp.getOrigin();
 		Rectangle clientArea = scomp.getClientArea();
 		int increment = up ? -clientArea.height : clientArea.height;
 		scroll(scomp, 0, increment);

@@ -8,8 +8,6 @@ package org.eclipse.update.ui.forms.internal.engine;
 
 import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.update.ui.forms.internal.*;
 import org.apache.xerces.parsers.DOMParser;
 import org.xml.sax.*;

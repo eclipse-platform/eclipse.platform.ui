@@ -5,7 +5,6 @@ package org.eclipse.update.ui.forms.internal;
  */
 
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Label;
 
 public interface IHyperlinkListener {
 

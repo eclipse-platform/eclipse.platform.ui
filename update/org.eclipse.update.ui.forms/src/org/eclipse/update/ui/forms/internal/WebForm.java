@@ -4,17 +4,13 @@ package org.eclipse.update.ui.forms.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import java.util.*;
-import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.*;
 

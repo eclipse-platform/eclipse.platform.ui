@@ -8,9 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 import java.io.InputStream;
-import org.eclipse.swt.program.Program;
 import org.eclipse.update.ui.forms.internal.engine.*;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.StatusLineManager;
@@ -55,7 +53,6 @@ public static void main (String [] args) {
      c.setLayout(layout);
      
      Label label;
-     CLabel clabel;
      Button b;
      TableData td;
 /*     

@@ -6,11 +6,7 @@
  */
 package org.eclipse.update.ui.forms.internal.engine;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @version 	1.0

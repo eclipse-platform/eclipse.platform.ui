@@ -4,7 +4,6 @@ package org.eclipse.update.ui.forms.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
 import java.util.*;
 import org.eclipse.swt.*;

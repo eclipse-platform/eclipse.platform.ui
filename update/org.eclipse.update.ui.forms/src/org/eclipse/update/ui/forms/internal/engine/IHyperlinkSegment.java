@@ -9,7 +9,6 @@ package org.eclipse.update.ui.forms.internal.engine;
 import java.util.Hashtable;
 
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
 
 /**
  * @version 	1.0

@@ -183,7 +183,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 				toggle.setSelection(collapsed);
 				toggle.setBackground(factory.getBackgroundColor());
 				toggle.setActiveDecorationColor(factory.getHyperlinkColor());
-				toggle.setDecorationColor(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+				toggle.setDecorationColor(factory.getColor(FormWidgetFactory.COLOR_COMPOSITE_SEPARATOR));
 				toggle.setActiveCursor(factory.getHyperlinkCursor());
 				toggle.addFocusListener(factory.visibilityHandler);
 				toggle.addKeyListener(factory.keyboardHandler);

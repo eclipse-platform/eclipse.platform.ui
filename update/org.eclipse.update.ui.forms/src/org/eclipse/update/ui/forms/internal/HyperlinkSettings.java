@@ -5,10 +5,7 @@ package org.eclipse.update.ui.forms.internal;
  */
 
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
-import java.util.*;
 import org.eclipse.swt.*;
 
 public class HyperlinkSettings {

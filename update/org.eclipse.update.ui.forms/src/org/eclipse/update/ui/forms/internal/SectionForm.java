@@ -4,15 +4,11 @@ package org.eclipse.update.ui.forms.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import java.util.*;
-import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
@@ -123,7 +119,7 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 			gc.drawText(getHeadingText(), TITLE_HMARGIN, TITLE_VMARGIN, true);
 		} else {
 			gc.setFont(titleFont);
-			gc.setBackground(factory.getColor(factory.DEFAULT_HEADER_COLOR));
+			gc.setBackground(factory.getColor(FormWidgetFactory.DEFAULT_HEADER_COLOR));
 			//gc.fillRectangle(TITLE_HMARGIN, TITLE_VMARGIN, bounds.width-TITLE_HMARGIN*2, height-TITLE_VMARGIN*2);
 			gc.setForeground(factory.getForegroundColor());
 			gc.drawText(getHeadingText(), TITLE_HMARGIN, TITLE_VMARGIN, true);

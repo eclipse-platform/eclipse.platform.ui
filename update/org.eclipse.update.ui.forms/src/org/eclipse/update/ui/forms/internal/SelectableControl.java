@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import java.text.*;
 
 /**
  * FormText is a windowless control that
