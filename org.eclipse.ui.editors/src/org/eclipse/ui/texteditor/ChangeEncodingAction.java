@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -132,6 +134,22 @@ public class ChangeEncodingAction extends TextEditorAction {
 					if (encoding != null)
 						store.setValue(ENCODING_PREF_KEY, encoding);
 				}
+				
+				DialogPage page= new MessageDialogPage((Composite)composite) {
+					public void setErrorMessage(String newMessage) {
+						super.setErrorMessage(newMessage);
+						setButtonEnabledState(IDialogConstants.OK_ID, newMessage == null);
+						setButtonEnabledState(APPLY_ID, newMessage == null);
+					}
+					
+					private void setButtonEnabledState(int id, boolean state) {
+						Button button= getButton(id);
+						if (button != null)
+							button.setEnabled(state);
+					}
+				};
+				
+				fEncodingEditor.setPage(page);
 				fEncodingEditor.load();
 				
 				return composite;
