@@ -241,6 +241,7 @@ public class RetargetAction extends PartEventAction implements
         }
 
         // Set new action.
+		IAction oldHandler = handler;
         handler = newHandler;
         if (handler == null) {
             setEnabled(false);
@@ -254,6 +255,10 @@ public class RetargetAction extends PartEventAction implements
             }
             handler.addPropertyChangeListener(propertyChangeListener);
         }
+		
+		// Notify listeners that the handler has changed.
+        firePropertyChange(SubActionBars.P_ACTION_HANDLERS, oldHandler,
+                newHandler);
     }
 
     /* (non-Javadoc)
