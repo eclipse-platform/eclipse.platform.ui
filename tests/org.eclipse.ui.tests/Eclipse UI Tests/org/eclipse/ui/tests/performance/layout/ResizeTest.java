@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
@@ -54,18 +53,18 @@ public class ResizeTest extends BasicPerformanceTest {
                 
                 processEvents();
                 
-                performanceMeter.start();
+                startMeasuring();
                 
                 widget.setSize(xSize, ySize);
                 // Try to ensure that the resize event wasn't deferred by asking for the bounds
                 widget.getBounds();
                 
-                performanceMeter.stop();
+                stopMeasuring();
             }
         }
         
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
         
         widget.setBounds(initialBounds);
         widgetFactory.done();

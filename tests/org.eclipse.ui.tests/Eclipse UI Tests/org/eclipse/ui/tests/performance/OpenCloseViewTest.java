@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -40,15 +39,15 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         processEvents();
                 
         for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-            performanceMeter.start();
+            startMeasuring();
             view = page.showView(viewId);
             processEvents();
-            performanceMeter.stop();
+            stopMeasuring();
             page.hideView(view);
             processEvents();
         }
         
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
     }
 }

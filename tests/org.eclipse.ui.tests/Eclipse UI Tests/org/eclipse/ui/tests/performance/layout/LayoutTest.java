@@ -15,7 +15,6 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
@@ -61,17 +60,17 @@ public class LayoutTest extends BasicPerformanceTest {
                 newBounds.width = xSize;
                 newBounds.height = ySize;
                 
-                performanceMeter.start();
+                startMeasuring();
                 
                 widget.setBounds(newBounds);
                 widget.layout(flushState);
                 
-                performanceMeter.stop();
+                stopMeasuring();
             }
         }
         
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
         
         widget.setBounds(initialBounds);
         widgetFactory.done();

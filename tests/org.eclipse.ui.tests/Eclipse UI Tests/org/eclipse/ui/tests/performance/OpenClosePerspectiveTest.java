@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.tests.performance;
 
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewReference;
@@ -74,15 +73,15 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             EditorTestHelper.calmDown(500, 30000, 500);
 
             
-            performanceMeter.start();
+            startMeasuring();
             activePage.setPerspective(perspective1);
             processEvents();      
             closePerspective(activePage);
             processEvents(); 
-            performanceMeter.stop();
+            stopMeasuring();
         }
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
     }
 
     /**

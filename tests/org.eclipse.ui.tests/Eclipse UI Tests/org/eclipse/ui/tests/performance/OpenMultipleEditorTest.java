@@ -12,7 +12,6 @@
 package org.eclipse.ui.tests.performance;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
@@ -37,29 +36,24 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
     protected void runTest() throws Throwable {
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
         
-        performanceMeter.start();
-        try {            
-	        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
-	            IFile file = getProject().getFile(i + "." + extension);
-	            IEditorPart part = IDE.openEditor(activePage, file, true);
-	            processEvents();
-	        }
-	        if (closeAll) {
-	            activePage.closeAllEditors(false);
-	        }
-	        else {
-	            IEditorPart [] parts = activePage.getEditors();
-	            for (int i = 0; i < parts.length; i++) {
-                    activePage.closeEditor(parts[i], false);
-                }
-	        }
-	        performanceMeter.stop();
-	        performanceMeter.commit();
-	        Performance.getDefault().assertPerformance(performanceMeter);        
+        startMeasuring();            
+        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+            IFile file = getProject().getFile(i + "." + extension);
+            IEditorPart part = IDE.openEditor(activePage, file, true);
+            processEvents();
         }
-        finally {
-            performanceMeter.dispose();
-        }        
+        if (closeAll) {
+            activePage.closeAllEditors(false);
+        }
+        else {
+            IEditorPart [] parts = activePage.getEditors();
+            for (int i = 0; i < parts.length; i++) {
+                activePage.closeEditor(parts[i], false);
+            }
+        }
+        stopMeasuring();
+        commitMeasurements();
+        assertPerformance();        
     }
 
 }

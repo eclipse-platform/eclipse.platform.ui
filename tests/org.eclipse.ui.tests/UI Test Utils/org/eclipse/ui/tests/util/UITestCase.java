@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -32,7 +31,7 @@ import org.eclipse.ui.WorkbenchException;
  * and pages.  It will also automatically close the test 
  * windows when the tearDown method is called.
  */
-public abstract class UITestCase extends TestCase {
+public abstract class UITestCase extends PerformanceTestCase {
     class TestWindowListener implements IWindowListener {
         private boolean enabled = true;
 
@@ -106,10 +105,12 @@ public abstract class UITestCase extends TestCase {
      * doSetUp() should be overriden instead.
      */
     protected final void setUp() throws Exception {
-        trace("----- " + this.getName()); //$NON-NLS-1$
+    	super.setUp();
+    	trace("----- " + this.getName()); //$NON-NLS-1$
         trace(this.getName() + ": setUp..."); //$NON-NLS-1$
         addWindowListener();
         doSetUp();
+       
     }
 
     /**
@@ -128,6 +129,7 @@ public abstract class UITestCase extends TestCase {
      * doTearDown() should be overriden instead.
      */
     protected final void tearDown() throws Exception {
+        super.tearDown();
         trace(this.getName() + ": tearDown...\n"); //$NON-NLS-1$
         removeWindowListener();
         doTearDown();

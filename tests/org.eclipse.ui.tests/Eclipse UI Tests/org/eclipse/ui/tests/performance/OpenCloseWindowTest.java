@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.tests.performance;
 
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -34,14 +33,14 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
             processEvents();
             EditorTestHelper.calmDown(500, 30000, 500);
             
-            performanceMeter.start();
+            startMeasuring();
             IWorkbenchWindow window = openTestWindow(id);
             processEvents();   
             window.close();
             processEvents(); 
-            performanceMeter.stop();
+            stopMeasuring();
         }
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
     }
 }

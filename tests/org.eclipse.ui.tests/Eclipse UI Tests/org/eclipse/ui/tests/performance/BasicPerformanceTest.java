@@ -14,8 +14,6 @@ package org.eclipse.ui.tests.performance;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -25,8 +23,6 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public abstract class BasicPerformanceTest extends UITestCase {
 
-    protected PerformanceMeter performanceMeter;
-    
     private IProject testProject;
 
     /**
@@ -45,8 +41,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	    fWorkbench.getActiveWorkbenchWindow().getActivePage().setPerspective(
                 fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(
                         UIPerformanceTestSetup.PERSPECTIVE));
-		Performance performance = Performance.getDefault();
-		performanceMeter = performance.createPerformanceMeter(performance.getDefaultScenarioId(this));
 	}
 	
 	/* (non-Javadoc)
@@ -54,7 +48,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	protected void doTearDown() throws Exception {
 	    super.doTearDown();
-		performanceMeter.dispose();
 	}
 	
 	protected IProject getProject() {

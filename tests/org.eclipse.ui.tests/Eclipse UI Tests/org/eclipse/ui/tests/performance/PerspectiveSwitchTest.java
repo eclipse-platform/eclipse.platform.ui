@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.performance;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
@@ -81,17 +81,19 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         activePage.setPerspective(perspective2);
         activePage.resetPerspective();
 
+        tagAsGlobalSummary("Perspective Switch", Dimension.CPU_TIME);
+        
         for (int i = 0; i < 20; i++) {
             processEvents();
             
-            performanceMeter.start();
+            startMeasuring();
             activePage.setPerspective(perspective1);
             processEvents();
             activePage.setPerspective(perspective2);
             processEvents();
-            performanceMeter.stop();
+            stopMeasuring();
         }
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
     }
 }

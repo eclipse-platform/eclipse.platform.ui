@@ -12,7 +12,6 @@ package org.eclipse.ui.tests.performance;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
 
@@ -54,15 +53,15 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 
         // Switch between the two editors one hundred times.
         for (int i = 0; i < 20; i++) {
-            performanceMeter.start();
+            startMeasuring();
             IDE.openEditor(activePage, file1, true);
             processEvents();
             IDE.openEditor(activePage, file2, true);
             processEvents();
-            performanceMeter.stop();
+            stopMeasuring();
             EditorTestHelper.calmDown(500, 30000, 500);
         }
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
    }
 }

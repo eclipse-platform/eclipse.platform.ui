@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
@@ -61,16 +60,16 @@ public class ComputeSizeTest extends BasicPerformanceTest {
             widget.computeSize(100, SWT.DEFAULT, false);
             widget.computeSize(SWT.DEFAULT, 100, false);
             
-            performanceMeter.start();
+            startMeasuring();
             
             widget.computeSize(xHint, yHint, flushState);
             
-            performanceMeter.stop();                
+            stopMeasuring();                
             
         }
         
-        performanceMeter.commit();
-        Performance.getDefault().assertPerformance(performanceMeter);
+        commitMeasurements();
+        assertPerformance();
         widgetFactory.done();
     }
 }

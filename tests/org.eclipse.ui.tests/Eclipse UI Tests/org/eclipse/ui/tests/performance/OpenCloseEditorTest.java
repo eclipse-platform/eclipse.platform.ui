@@ -12,7 +12,6 @@
 package org.eclipse.ui.tests.performance;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
@@ -37,21 +36,16 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
         IFile file = getProject().getFile("1." + extension);
         assertTrue(file.exists());
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-        
-        try {            
-            for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
-                performanceMeter.start();
-                IEditorPart part = IDE.openEditor(activePage, file, true);
-                processEvents();
-                activePage.closeEditor(part, false);
-                processEvents();
-                performanceMeter.stop();
-            }
-            performanceMeter.commit();
-            Performance.getDefault().assertPerformance(performanceMeter);        
+                   
+        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+            startMeasuring();
+            IEditorPart part = IDE.openEditor(activePage, file, true);
+            processEvents();
+            activePage.closeEditor(part, false);
+            processEvents();
+            stopMeasuring();
         }
-        finally {
-            performanceMeter.dispose();
-        }
+        commitMeasurements();
+        assertPerformance();        
     }
 }
