@@ -40,7 +40,6 @@ public class AntRunner implements IPlatformRunnable {
 	protected String[] propertyFiles;
 	protected URL[] customClasspath;
 	protected String antHome;
-	private boolean removeXerces= false;
 
 	/**
 	 * Sets the build file location on the file system.
@@ -493,35 +492,7 @@ public class AntRunner implements IPlatformRunnable {
 			List fullClasspath= new ArrayList();
 			fullClasspath.addAll(Arrays.asList(customClasspath));
 			fullClasspath.addAll(Arrays.asList(preferences.getExtraClasspathURLs()));
-			if (removeXerces) {
-				removeXercesJARs(fullClasspath);
-			}
 			return new AntClassLoader((URL[])fullClasspath.toArray(new URL[fullClasspath.size()]), preferences.getPluginClassLoaders());
-		}
-	}
-	
-	/*
-	 * Removes any Xerces JARs from the URLs that will compose the classpath
-	 * to resolve targets in the Ant buildfile.
-	 * Used for the case when the Ant build will occur in a separate VM (where the Xerces
-	 * JARs are required for runtime but cannot be used at parse time).
-	 */
-	private void removeXercesJARs(List URLs) {
-		String[] suffixes= new String[] {"xercesImpl.jar", "xml-apis.jar", "xmlParserAPIs.jar"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		for (Iterator iter = URLs.iterator(); iter.hasNext();) {
-			String file;
-			Object entry = iter.next();
-			if (entry instanceof URL) {
-				file= ((URL)entry).getFile();
-			} else {
-				file= entry.toString();
-			}
-			for (int i = 0; i < suffixes.length; i++) {
-				String suffix = suffixes[i];
-				if (file.endsWith(suffix)) {
-					iter.remove();
-				}
-			}
 		}
 	}
 	
@@ -574,14 +545,5 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	public static boolean isBuildRunning() {
 		return buildRunning;
-	}
-	
-	/**
-	 * Set whether the classpath to use for resolving the targets for this Ant build
-	 * should not have the Xerces JARs included.
-	 * @param remove Whether to remove the xerces JARs
-	 */
-	public void setRemoveXerces(boolean remove) {
-		removeXerces= remove;
 	}
 }
