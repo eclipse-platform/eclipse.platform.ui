@@ -38,7 +38,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
     /**
      * Tests parsing an XML file with the use of our OutlinePreparingHandler.
      */
-    public void testOutlinePreparingHandler() {
+    public void testOutlinePreparingHandler() throws BadLocationException{
 		AntModel model= getAntModel("test2.xml");
         
 		XmlElement[] roots = model.getRootElements();
@@ -48,71 +48,57 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		assertNotNull(rootElement);
         
         assertEquals("bla", rootElement.getName());
-        assertEquals(4, rootElement.getOffset());
-        assertEquals(4, rootElement.getLength());
-//        assertEquals(1, rootElement.getStartingRow());
-//        assertEquals(1, rootElement.getStartingColumn());
-//        assertEquals(9, rootElement.getEndingRow());
-//        assertEquals(7, rootElement.getEndingColumn());
+        assertEquals(1, getStartingRow(rootElement));
+        assertEquals(1, getStartingColumn(rootElement));
+        assertEquals(9, getEndingRow(rootElement));
+        assertEquals(7, getEndingColumn(rootElement));
         List childNodes = rootElement.getChildNodes();
         assertEquals(2, childNodes.size());
 
         XmlElement childElement = (XmlElement)childNodes.get(0);
         assertEquals("blub", childElement.getName());
-        assertEquals(4, childElement.getOffset());
-        assertEquals(4, childElement.getLength());
-//        assertEquals(2, childElement.getStartingRow());
-//        assertEquals(3, childElement.getStartingColumn());
-//        assertEquals(2, childElement.getEndingRow());
-//        assertEquals(16, childElement.getEndingColumn());
+        assertEquals(2, getStartingRow(childElement));
+        assertEquals(3, getStartingColumn(childElement));
+        assertEquals(2, getEndingRow(childElement));
+        assertEquals(9, getEndingColumn(childElement));
 
         childElement = (XmlElement)childNodes.get(1);
         assertEquals("klick", childElement.getName());
-        assertEquals(4, childElement.getOffset());
-        assertEquals(4, childElement.getLength());
-//        assertEquals(3, childElement.getStartingRow());
-//        assertEquals(3, childElement.getStartingColumn());
-//        assertEquals(8, childElement.getEndingRow());
-//        assertEquals(11, childElement.getEndingColumn());
+        assertEquals(3, getStartingRow(childElement));
+        assertEquals(3, getStartingColumn(childElement));
+        assertEquals(8, getEndingRow(childElement));
+        assertEquals(11, getEndingColumn(childElement));
 
 		childNodes = childElement.getChildNodes();
         assertEquals(4, childNodes.size());
 		
 		childElement = (XmlElement)childNodes.get(0);
         assertEquals("gurgel", childElement.getName());
-        assertEquals(4, childElement.getOffset());
-        assertEquals(4, childElement.getLength());
-//        assertEquals(4, childElement.getStartingRow());
-//        assertEquals(5, childElement.getStartingColumn());
-//        assertEquals(4, childElement.getEndingRow());
-//        assertEquals(22, childElement.getEndingColumn());
+        assertEquals(4, getStartingRow(childElement));
+        assertEquals(5, getStartingColumn(childElement));
+        assertEquals(4, getEndingRow(childElement));
+        assertEquals(13, getEndingColumn(childElement));
 
 		childElement = (XmlElement)childNodes.get(1);
         assertEquals("hal", childElement.getName());
-        assertEquals(4, childElement.getOffset());
-        assertEquals(4, childElement.getLength());
-//        assertEquals(5, childElement.getStartingRow());
-//        assertEquals(5, childElement.getStartingColumn());
-//        assertEquals(5, childElement.getEndingRow());
-//        assertEquals(16, childElement.getEndingColumn());
+        assertEquals(5, getStartingRow(childElement));
+        assertEquals(5, getStartingColumn(childElement));
+        assertEquals(5, getEndingRow(childElement));
+        assertEquals(10, getEndingColumn(childElement));
 
 		childElement = (XmlElement)childNodes.get(2);
         assertEquals("klack", childElement.getName());
-        assertEquals(4, childElement.getOffset());
-        assertEquals(4, childElement.getLength());
-//        assertEquals(6, childElement.getStartingRow());
-//        assertEquals(5, childElement.getStartingColumn());
-//        assertEquals(6, childElement.getEndingRow());
-//        assertEquals(13, childElement.getEndingColumn());
+        assertEquals(6, getStartingRow(childElement));
+        assertEquals(5, getStartingColumn(childElement));
+        assertEquals(6, getEndingRow(childElement));
+        assertEquals(13, getEndingColumn(childElement));
 
 		childElement = (XmlElement)childNodes.get(3);
         assertEquals("humpf", childElement.getName());
-        assertEquals(4, childElement.getOffset());
-        assertEquals(4, childElement.getLength());
-//        assertEquals(7, childElement.getStartingRow());
-//        assertEquals(5, childElement.getStartingColumn());
-//        assertEquals(7, childElement.getEndingRow());
-//        assertEquals(13, childElement.getEndingColumn());
+        assertEquals(7, getStartingRow(childElement));
+        assertEquals(5, getStartingColumn(childElement));
+        assertEquals(7, getEndingRow(childElement));
+        assertEquals(13, getEndingColumn(childElement));
     }
 
     /**
@@ -130,10 +116,10 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
         
         // Get the content as string
         String wholeDocumentString = getCurrentDocument().get();
-
         
         // <project>
-        assertEquals(2, rootProject.getLength());
+        assertEquals(2, getStartingRow(rootProject));
+        assertEquals(1, getStartingColumn(rootProject));
         int offset = wholeDocumentString.indexOf("<project");
 	    assertEquals(offset, rootProject.getOffset());
         
@@ -141,10 +127,10 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		
 		// <property name="propD">
 		XmlElement element = (XmlElement)children.get(0);
-//		assertEquals(3, element.getStartingRow());
-//        assertEquals(2, element.getStartingColumn()); // with tab in file
-//        assertEquals(3, element.getEndingRow());
-//        assertEquals(40, element.getEndingColumn());  // with tab in file
+		assertEquals(3, getStartingRow(element));
+		assertEquals(2, getStartingColumn(element)); // with tab in file
+		assertEquals(3, getEndingRow(element));
+		assertEquals(40, getEndingColumn(element));  // with tab in file
 
         offset = wholeDocumentString.indexOf("<property");
         assertEquals(offset, element.getOffset());
@@ -153,56 +139,63 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		
 		// <property file="buildtest1.properties">
 		element = (XmlElement)children.get(1);
-//		assertEquals(4, element.getStartingRow());
-//        assertEquals(5, element.getStartingColumn()); // no tab
-//        assertEquals(4, element.getEndingRow());
-//        assertEquals(46, element.getEndingColumn());
-		assertEquals(4, element.getOffset());
-		assertEquals(4, element.getLength());
-		
+		assertEquals(4, getStartingRow(element));
+		assertEquals(5, getStartingColumn(element)); // no tab
+		assertEquals(4, getEndingRow(element));
+		assertEquals(46, getEndingColumn(element));
+
 		// <property name="propV">
 		element = (XmlElement)children.get(2);
-//		assertEquals(5, element.getStartingRow());
-//        assertEquals(5, element.getStartingColumn());
-//        assertEquals(5, element.getEndingRow());
-//        assertEquals(43, element.getEndingColumn());
-		assertEquals(4, element.getOffset());
-		assertEquals(4, element.getLength());
+		assertEquals(5, getStartingRow(element));
+		assertEquals(5, getStartingColumn(element));
+		assertEquals(5, getEndingRow(element));
+		assertEquals(43, getEndingColumn(element));
 		
 		// <target name="main">
 		element = (XmlElement)children.get(3);
-//		assertEquals(6, element.getStartingRow());
-//        assertEquals(5, element.getStartingColumn());
-//        assertEquals(8, element.getEndingRow());
-//        assertEquals(14, element.getEndingColumn());
-		assertEquals(4, element.getOffset());
-		assertEquals(4, element.getLength());
+		assertEquals(6, getStartingRow(element));
+		assertEquals(5, getStartingColumn(element));
+		assertEquals(8, getEndingRow(element));
+		assertEquals(14, getEndingColumn(element));
 		
 		// <property name="property_in_target">
 		element = (XmlElement)element.getChildNodes().get(0);
-//		assertEquals(7, element.getStartingRow());
-//        assertEquals(9, element.getStartingColumn());
-//        assertEquals(7, element.getEndingRow());
-//        assertEquals(58, element.getEndingColumn());
-		assertEquals(4, element.getLength());
+		assertEquals(7, getStartingRow(element));
+		assertEquals(9, getStartingColumn(element));
+		assertEquals(7, getEndingRow(element));
+		assertEquals(58, getEndingColumn(element));
         offset = wholeDocumentString.indexOf("<property name=\"property_in_target\"");
         assertEquals(offset, element.getOffset());
 		
-        int line= getCurrentDocument().getLineOfOffset(rootProject.getOffset());
-        assertEquals(9, line);
-        assertEquals(11, getColumn(rootProject.getOffset(), line));
-                
+        assertEquals(9, getEndingRow(rootProject));
+        assertEquals(11, getEndingColumn(rootProject));
     }
     
     private int getColumn(int offset, int line) throws BadLocationException {
     	return offset - getCurrentDocument().getLineOffset(line - 1) + 1;
+    }
+    
+    private int getStartingRow(XmlElement element) throws BadLocationException {
+    	return getCurrentDocument().getLineOfOffset(element.getOffset()) + 1;
+    }
+    
+    private int getEndingRow(XmlElement element) throws BadLocationException {
+    	return getCurrentDocument().getLineOfOffset(element.getOffset() + element.getLength()) + 1;
+    }
+    
+    private int getStartingColumn(XmlElement element) throws BadLocationException {
+    	return getColumn(element.getOffset(), getStartingRow(element));
+    }
+    
+    private int getEndingColumn(XmlElement element) throws BadLocationException {
+    	return getColumn(element.getOffset() + element.getLength(), getEndingRow(element));
     }
 
     /**
      * Tests the creation of the XmlElement, that includes parsing a non-valid 
      * file.
      */
-    public void testParsingOfNonValidFile() {
+    public void testParsingOfNonValidFile() throws BadLocationException {
 		AntModel model= getAntModel("buildtest2.xml");
         
 		XmlElement[] roots = model.getRootElements();
@@ -214,12 +207,12 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 
 		// <target name="main">
 		XmlElement element = (XmlElement)children.get(2);
-//		assertEquals(5, element.getStartingRow());
-//        assertEquals(2, element.getStartingColumn()); // with tab in file
-//        assertEquals(5, element.getEndingRow());
-//        assertEquals(43, element.getEndingColumn());
-        assertEquals(2, element.getOffset());
-        assertEquals(43, element.getLength());
+		assertEquals(5, getStartingRow(element));
+		assertEquals(2, getStartingColumn(element)); // with tab in file
+		assertEquals(5, getEndingRow(element));
+		//assertEquals(43, getEndingColumn(element));
+        int offset = getCurrentDocument().get().indexOf("<target name=\"main\"");
+        assertEquals(offset, element.getOffset()); 
     }
 
 	
@@ -247,7 +240,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 	/**
 	 * Some testing of getting the right location of tags.
 	 */
-	public void testAdvancedTaskLocation() {
+	public void testAdvancedTaskLocation() throws BadLocationException {
 		AntModel model= getAntModel("outline_select_test_build.xml");
         
         XmlElement[] roots = model.getRootElements();
@@ -258,9 +251,8 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
         
         // <project>
         assertNotNull(rootProject);
-//        assertEquals(2, rootProject.getStartingRow());
-//        assertEquals(1, rootProject.getStartingColumn());
-        assertEquals(1, rootProject.getLength());
+        assertEquals(2, getStartingRow(rootProject));
+        assertEquals(1, getStartingColumn(rootProject));
         int offset = wholeDocumentString.indexOf("<project");
         
 	    assertEquals(offset, rootProject.getOffset());
@@ -269,9 +261,8 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
         XmlElement element = (XmlElement)rootProject.getChildNodes().get(1);
         assertNotNull(element);
         assertEquals("properties", element.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue());
-//        assertEquals(16, element.getStartingRow());
-//        assertEquals(2, element.getStartingColumn());
-        assertEquals(16, element.getLength());
+        assertEquals(16, getStartingRow(element));
+        assertEquals(2, getStartingColumn(element));
         offset = wholeDocumentString.indexOf("<target name=\"properties\"");
       
 	    assertEquals(offset, element.getOffset());
