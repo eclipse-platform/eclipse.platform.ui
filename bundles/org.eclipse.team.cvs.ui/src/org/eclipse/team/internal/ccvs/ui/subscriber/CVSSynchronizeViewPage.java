@@ -128,6 +128,8 @@ public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements
 		
 		// Listen for decorator changed to refresh the viewer's labels.
 		CVSUIPlugin.addPropertyChangeListener(this);
+		
+		updateActionEnablement((DiffNode)getViewer().getInput());
 	}
 	
 	private SyncInfoTree getSyncInfoSet() {
@@ -148,6 +150,6 @@ public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements
 	 * @see org.eclipse.team.ui.synchronize.presentation.ISynchronizeModelChangeListener#inputChanged(org.eclipse.team.ui.synchronize.presentation.SynchronizeModelProvider)
 	 */
 	public void modelChanged(SynchronizeModelElement root) {
-		updateActionEnablement(root);		
+		updateActionEnablement(root);
 	}
 }
