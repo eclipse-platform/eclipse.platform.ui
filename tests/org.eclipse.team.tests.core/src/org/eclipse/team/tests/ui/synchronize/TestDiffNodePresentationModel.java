@@ -64,12 +64,9 @@ public class TestDiffNodePresentationModel extends TeamTest {
 	 * 
 	 */
 	private ISynchronizeParticipant getParticipant(String id) throws TeamException {
-		ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
-		for (int i = 0; i < refs.length; i++) {
-			ISynchronizeParticipantReference reference = refs[i];
-			if (reference.getId().equals(id)) {
-				return reference.getParticipant();
-			}
+		ISynchronizeParticipantReference reference = TeamUI.getSynchronizeManager().get(id, null);
+		if (reference != null) {
+			return reference.getParticipant();
 		}
 		return null;
 	}
