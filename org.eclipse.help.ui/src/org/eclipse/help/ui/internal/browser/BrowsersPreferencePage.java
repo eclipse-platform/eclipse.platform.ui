@@ -156,7 +156,6 @@ public class BrowsersPreferencePage extends PreferencePage
 				.getString("CustomBrowserPreferencePage.Browse")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, customBrowserBrowse.computeSize(
 				SWT.DEFAULT, SWT.DEFAULT, true).x);
