@@ -118,7 +118,7 @@ public boolean isApplicableForSelection() {
  *   property pages for the selected element, and <code>false</code> otherwise
  */
 public boolean isApplicableForSelection(IStructuredSelection selection) {
-	return selection.size() == 1 && hasPropertyPagesFor(selection.getFirstElement());
+	return selection.size() == 1;
 }
 
 /**
