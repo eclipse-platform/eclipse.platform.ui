@@ -38,10 +38,6 @@ public interface IWorkbenchConstants {
 	public static final String PL_MARKER_IMAGE_PROVIDER ="markerImageProviders"; //$NON-NLS-1$
 	public static final String PL_MARKER_HELP ="markerHelp"; //$NON-NLS-1$
 	public static final String PL_MARKER_RESOLUTION ="markerResolution"; //$NON-NLS-1$
-	public static final String PL_ACCELERATOR_CONFIGURATIONS ="acceleratorConfigurations"; //$NON-NLS-1$
-	public static final String PL_ACCELERATOR_SCOPES ="acceleratorScopes"; //$NON-NLS-1$
-	public static final String PL_ACCELERATOR_SETS ="acceleratorSets"; //$NON-NLS-1$
-	public static final String PL_ACTION_DEFINITIONS ="actionDefinitions"; //$NON-NLS-1$
 	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
 	
