@@ -48,9 +48,9 @@ public class ReopenEditorMenu extends ContributionItem {
 		int mnemonic = index + 1;
 		sb.append(mnemonic);
 		if (mnemonic <= MAX_MNEMONIC_SIZE) {
-			sb.insert(sb.length() - (mnemonic + "").length(), '&');
+			sb.insert(sb.length() - (mnemonic + "").length(), '&'); //$NON-NLS-1$
 		}
-		sb.append(" ");
+		sb.append(" "); //$NON-NLS-1$
 
 		// If the input text is a path, get the filename from the
 		// path's last segment; otherwise, use the input name.
@@ -69,9 +69,9 @@ public class ReopenEditorMenu extends ContributionItem {
 			// entire item name fits within maximum length
 			sb.append(fileName);
 			if (path.segmentCount() != 0) {
-				sb.append("  [");
+				sb.append("  ["); //$NON-NLS-1$
 				sb.append(pathName);
-				sb.append("]");
+				sb.append("]"); //$NON-NLS-1$
 			}
 		} else {
 			// need to shorten the item name
@@ -79,12 +79,12 @@ public class ReopenEditorMenu extends ContributionItem {
 			if (length > MAX_TEXT_LENGTH) {
 				// file name does not fit within length, truncate it
 				sb.append(fileName.substring(0, MAX_TEXT_LENGTH));
-				sb.append("...");
+				sb.append("..."); //$NON-NLS-1$
 			} else {				
 				sb.append(fileName);
 				int segmentCount = path.segmentCount();
 				if (segmentCount > 0) {
-					sb.append("  [");
+					sb.append("  ["); //$NON-NLS-1$
 				}
 				// Add first n segments that fit
 				int i = 0;
@@ -106,7 +106,7 @@ public class ReopenEditorMenu extends ContributionItem {
 					}
 				}
 				if (segmentCount > 0) {
-					sb.append("...");	
+					sb.append("...");	 //$NON-NLS-1$
 				}			
 				i = segmentCount - 1;
 				if (i > 0) {
@@ -124,7 +124,7 @@ public class ReopenEditorMenu extends ContributionItem {
 					}
 				}
 				if (segmentCount > 0) {
-					sb.append("]");
+					sb.append("]"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -196,7 +196,7 @@ public class ReopenEditorMenu extends ContributionItem {
 					page.openEditor(input, desc.getId());
 				}
 			} catch (PartInitException e2) {
-				String title = WorkbenchMessages.getString("OpenRecent.errorTitle");
+				String title = WorkbenchMessages.getString("OpenRecent.errorTitle"); //$NON-NLS-1$
 				MessageDialog.openWarning(fWindow.getShell(), title, e2.getMessage());
 				history.remove(item.getInput());
 			}

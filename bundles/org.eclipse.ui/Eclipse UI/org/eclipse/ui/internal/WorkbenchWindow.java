@@ -205,7 +205,7 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	addMenuBar();
 	
 	IPreferenceStore store = workbench.getPreferenceStore();
-	if(store.getBoolean("ENABLE_COOL_BARS"))
+	if(store.getBoolean("ENABLE_COOL_BARS")) //$NON-NLS-1$
 		addCoolBar(SWT.FLAT);
 	else
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -225,9 +225,9 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	boolean show = false;
 	String location = null;
 	for (int i = 0; i < args.length; i++) {
-		if ("-showlocation".equals(args[i])) {
+		if ("-showlocation".equals(args[i])) { //$NON-NLS-1$
 			show = true;
-		} else if ("-data".equals(args[i])) {
+		} else if ("-data".equals(args[i])) { //$NON-NLS-1$
 			location = Platform.getLocation().toOSString();
 		}
 		if (show && location != null) {
@@ -1271,7 +1271,7 @@ public void updateTitle() {
 	WorkbenchPage currentPage = getActiveWorkbenchPage();
 	if (currentPage != null) {
 		IPerspectiveDescriptor persp = currentPage.getPerspective();
-		String label = "";
+		String label = ""; //$NON-NLS-1$
 		if (persp != null)
 			label = persp.getLabel();
 		IAdaptable input = currentPage.getInput();

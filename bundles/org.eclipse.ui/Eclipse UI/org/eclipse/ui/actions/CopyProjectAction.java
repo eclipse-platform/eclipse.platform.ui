@@ -182,7 +182,7 @@ boolean performCopy(
 protected Object [] queryDestinationParameters(IProject project) {
 	ProjectLocationSelectionDialog dialog =
 		new ProjectLocationSelectionDialog(shell, project);
-	dialog.setTitle(WorkbenchMessages.getString("CopyProjectAction.copyTitle"));
+	dialog.setTitle(WorkbenchMessages.getString("CopyProjectAction.copyTitle")); //$NON-NLS-1$
 	dialog.open();
 	return dialog.getResult();
 }

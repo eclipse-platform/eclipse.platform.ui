@@ -134,7 +134,7 @@ protected Control createDialogArea(Composite parent) {
 	
 	Button button = new Button(topContainer, SWT.PUSH);
 
-	button.setText(WorkbenchMessages.getString("AboutDialog.pluginInfo"));
+	button.setText(WorkbenchMessages.getString("AboutDialog.pluginInfo")); //$NON-NLS-1$
 	data = new GridData();
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);

@@ -24,12 +24,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * a capability registry.
  */
 public class CapabilityRegistryReader extends RegistryReader{	
-	private static final String TAG_CAPABILITY = "capability";
-	private static final String TAG_CATEGORY = "category";
-	private static final String TAG_HANDLE_UI = "handleUI";
-	private static final String TAG_PERSPECTIVE_CHOICE = "perspectiveChoice";
+	private static final String TAG_CAPABILITY = "capability"; //$NON-NLS-1$
+	private static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
+	private static final String TAG_HANDLE_UI = "handleUI"; //$NON-NLS-1$
+	private static final String TAG_PERSPECTIVE_CHOICE = "perspectiveChoice"; //$NON-NLS-1$
 	
-	private static final String ATT_ID = "id";
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	
 	private CapabilityRegistry capabilityRegistry;
 	private Capability currentCapability;

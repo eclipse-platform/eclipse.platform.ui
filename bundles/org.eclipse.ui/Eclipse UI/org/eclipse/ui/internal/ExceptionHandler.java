@@ -26,7 +26,7 @@ class ExceptionHandler implements Window.IExceptionHandler {
 	private Workbench workbench;
 	
 	//Pre-load all Strings trying to run as light as possible in case of fatal errors.
-	private static String MSG_UNHANDLED_EXCEPTION = WorkbenchMessages.getString("Unhandled_exception");
+	private static String MSG_UNHANDLED_EXCEPTION = WorkbenchMessages.getString("Unhandled_exception"); //$NON-NLS-1$
 	private static String MSG_OutOfMemoryError = WorkbenchMessages.getString("FatalError_OutOfMemoryError"); //$NON-NLS-1$
 	private static String MSG_StackOverflowError = WorkbenchMessages.getString("FatalError_StackOverflowError"); //$NON-NLS-1$
 	private static String MSG_VirtualMachineError = WorkbenchMessages.getString("FatalError_VirtualMachineError"); //$NON-NLS-1$
@@ -139,7 +139,7 @@ private boolean openQuestionDialog(Throwable t) {
 			} 
 			return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg,t,1); //$NON-NLS-1$
 	    }	
-		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,t,1);
+		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,t,1); //$NON-NLS-1$
 	} catch (Throwable th) {
 		/* It may not be possible to show the inform the user about this exception we may not 
 		 * have more memory or OS handles etc. */

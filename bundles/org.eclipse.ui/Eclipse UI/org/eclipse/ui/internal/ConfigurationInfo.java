@@ -33,8 +33,8 @@ public abstract class ConfigurationInfo {
 	private String iniFilename;
 	private String propertiesFilename;
 
-	private static final String KEY_PREFIX = "%";
-	private static final String KEY_DOUBLE_PREFIX = "%%";
+	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
+	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	
 	protected ConfigurationInfo(String ini, String properties) {
 		iniFilename = ini;
@@ -59,7 +59,7 @@ public abstract class ConfigurationInfo {
 			reportINIFailure(null, "Plugin registry is null"); //$NON-NLS-1$
 			return;
 		}
-		int index = configName.lastIndexOf("_");
+		int index = configName.lastIndexOf("_"); //$NON-NLS-1$
 		if (index == -1)
 			this.desc = reg.getPluginDescriptor(configName);
 		else {
@@ -168,7 +168,7 @@ public abstract class ConfigurationInfo {
 		if (s.startsWith(KEY_DOUBLE_PREFIX))
 			return s.substring(1);
 
-		int ix = s.indexOf(" ");
+		int ix = s.indexOf(" "); //$NON-NLS-1$
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
 

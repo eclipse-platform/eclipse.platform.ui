@@ -153,25 +153,25 @@ public class OleEditor extends EditorPart {
 	};
 
 	private static final String FILE_PROMPTER_TITLE =
-		WorkbenchMessages.getString("OleEditor.renameTitle");
+		WorkbenchMessages.getString("OleEditor.renameTitle"); //$NON-NLS-1$
 	//$NON-NLS-1$
 	private static final String FILE_PROMPTER_MESSAGE =
-		WorkbenchMessages.getString("OleEditor.renameMessage");
+		WorkbenchMessages.getString("OleEditor.renameMessage"); //$NON-NLS-1$
 	//$NON-NLS-1$
 	private static final String RENAME_ERROR_TITLE =
-		WorkbenchMessages.getString("OleEditor.errorSaving");
+		WorkbenchMessages.getString("OleEditor.errorSaving"); //$NON-NLS-1$
 	//$NON-NLS-1$
 	private static final String OLE_EXCEPTION_TITLE =
-		WorkbenchMessages.getString("OleEditor.oleExceptionTitle");
+		WorkbenchMessages.getString("OleEditor.oleExceptionTitle"); //$NON-NLS-1$
 	//$NON-NLS-1$
 	private static final String OLE_EXCEPTION_MESSAGE =
-		WorkbenchMessages.getString("OleEditor.oleExceptionMessage");
+		WorkbenchMessages.getString("OleEditor.oleExceptionMessage"); //$NON-NLS-1$
 	//$NON-NLS-1$
 	private static final String SAVE_ERROR_TITLE =
-		WorkbenchMessages.getString("OleEditor.savingTitle");
+		WorkbenchMessages.getString("OleEditor.savingTitle"); //$NON-NLS-1$
 	//$NON-NLS-1$
 	private static final String SAVE_ERROR_MESSAGE =
-		WorkbenchMessages.getString("OleEditor.savingMessage");
+		WorkbenchMessages.getString("OleEditor.savingMessage"); //$NON-NLS-1$
 	//$NON-NLS-1$
 	/**
 	 * Return a new ole editor.
@@ -362,7 +362,7 @@ public class OleEditor extends EditorPart {
 		// Check input.
 		if (!(input instanceof IFileEditorInput))
 			throw new PartInitException(
-				WorkbenchMessages.format("OleEditor.invalidInput", new Object[] { input }));
+				WorkbenchMessages.format("OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
 		//$NON-NLS-1$
 
 		// Save input.
@@ -458,7 +458,7 @@ public class OleEditor extends EditorPart {
 	 */
 	private boolean saveFile(File file) {
 
-		File tempFile = new File(file.getAbsolutePath() + ".tmp");
+		File tempFile = new File(file.getAbsolutePath() + ".tmp"); //$NON-NLS-1$
 		file.renameTo(tempFile);
 		boolean saved = false;
 		if (OLE.isOleFile(file) || usesStorageFiles(clientSite.getProgramID())) {
@@ -550,10 +550,10 @@ public class OleEditor extends EditorPart {
 	*/
 
 	private static boolean usesStorageFiles(String progID) {
-		if (progID.startsWith("Word.", 0)
-			|| progID.startsWith("MSGraph", 0)
-			|| progID.startsWith("PowerPoint", 0)
-			|| progID.startsWith("Excel", 0))
+		if (progID.startsWith("Word.", 0) //$NON-NLS-1$
+			|| progID.startsWith("MSGraph", 0) //$NON-NLS-1$
+			|| progID.startsWith("PowerPoint", 0) //$NON-NLS-1$
+			|| progID.startsWith("Excel", 0)) //$NON-NLS-1$
 			return true;
 
 		return false;

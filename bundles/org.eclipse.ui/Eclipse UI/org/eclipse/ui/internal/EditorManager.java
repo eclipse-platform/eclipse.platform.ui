@@ -334,10 +334,10 @@ public class EditorManager {
 		//if(openNewWhenDirty)
 		//	return null;
 			MessageDialog dialog =
-				new MessageDialog(window.getShell(), WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"), null, // accept the default window icon
-	WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[] { dirtyEditor.getEditorInput().getName()}),
+				new MessageDialog(window.getShell(), WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"), null, // accept the default window icon //$NON-NLS-1$
+	WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[] { dirtyEditor.getEditorInput().getName()}), //$NON-NLS-1$
 		MessageDialog.QUESTION,
-		new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, WorkbenchMessages.getString("EditorManager.openNewEditorLabel")},
+		new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, WorkbenchMessages.getString("EditorManager.openNewEditorLabel")}, //$NON-NLS-1$
 		0);
 		int result = dialog.open();
 		if (result == 0) { //YES
@@ -387,7 +387,7 @@ public class EditorManager {
 	private void openExternalEditor(final EditorDescriptor desc, final Object input) throws PartInitException {
 		// Convert input to file.
 		if (!(input instanceof IFileEditorInput))
-			throw new PartInitException(WorkbenchMessages.format("EditorManager.errorOpeningExternalEditor", new Object[] { desc.getFileName(), desc.getId()}));
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.errorOpeningExternalEditor", new Object[] { desc.getFileName(), desc.getId()})); //$NON-NLS-1$
 		//$NON-NLS-1$
 
 		final IFileEditorInput fileInput = (IFileEditorInput) input;
@@ -769,7 +769,7 @@ public class EditorManager {
 		};
 		
 		// Do the save.
-		return runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp,window);
+		return runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp,window); //$NON-NLS-1$
 	}
 	/**
 	 * Save and close an editor.

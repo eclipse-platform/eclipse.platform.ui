@@ -252,7 +252,7 @@ private void createDefaultMenuItem(Menu menu, final IFile file) {
 	else {
 		menuItem = new MenuItem(menu, SWT.PUSH);
 	}
-	menuItem.setText(WorkbenchMessages.getString("DefaultEditorDescription.name"));
+	menuItem.setText(WorkbenchMessages.getString("DefaultEditorDescription.name")); //$NON-NLS-1$
 	
 	Listener listener = new Listener() {
 		public void handleEvent(Event event) {

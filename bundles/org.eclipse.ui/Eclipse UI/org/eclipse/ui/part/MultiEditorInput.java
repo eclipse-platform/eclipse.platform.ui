@@ -62,9 +62,9 @@ public class MultiEditorInput implements IEditorInput {
 	 * @see IEditorInput#getName()
 	 */
 	public String getName() {
-		String name = "";
+		String name = ""; //$NON-NLS-1$
 		for (int i = 0; i < (input.length - 1); i++) {
-			name = name + input[i].getName() + "/";
+			name = name + input[i].getName() + "/"; //$NON-NLS-1$
 		}
 		name = name + input[input.length - 1].getName();
 		return name;

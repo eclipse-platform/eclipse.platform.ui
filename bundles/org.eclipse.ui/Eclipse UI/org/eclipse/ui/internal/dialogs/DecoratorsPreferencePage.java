@@ -38,7 +38,7 @@ public class DecoratorsPreferencePage
 
 		Label topLabel = new Label(mainComposite, SWT.NONE);
 		topLabel.setText(
-			WorkbenchMessages.getString("DecoratorsPreferencePage.explanation"));
+			WorkbenchMessages.getString("DecoratorsPreferencePage.explanation")); //$NON-NLS-1$
 
 		Composite decoratorsComposite = new Composite(mainComposite, SWT.NONE);
 		decoratorsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -46,7 +46,7 @@ public class DecoratorsPreferencePage
 
 		Label decoratorsLabel = new Label(decoratorsComposite, SWT.NONE);
 		decoratorsLabel.setText(
-			WorkbenchMessages.getString("DecoratorsPreferencePage.decoratorsLabel"));
+			WorkbenchMessages.getString("DecoratorsPreferencePage.decoratorsLabel")); //$NON-NLS-1$
 		
 		// Checkbox tree viewer of capabilities in selected categories
 		checkboxViewer =
@@ -106,7 +106,7 @@ public class DecoratorsPreferencePage
 
 		Label descriptionLabel = new Label(textComposite, SWT.NONE);
 		descriptionLabel.setText(
-			WorkbenchMessages.getString("DecoratorsPreferencePage.description"));
+			WorkbenchMessages.getString("DecoratorsPreferencePage.description")); //$NON-NLS-1$
 
 		descriptionText = new Text(textComposite, SWT.READ_ONLY | SWT.BORDER);
 		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -122,7 +122,7 @@ public class DecoratorsPreferencePage
 		if (text == null || text.length() == 0)
 			descriptionText.setText(
 				WorkbenchMessages.getString(
-					"DecoratorsPreferencePage.noDescription"));
+					"DecoratorsPreferencePage.noDescription")); //$NON-NLS-1$
 		else
 			descriptionText.setText(text);
 	}
@@ -131,7 +131,7 @@ public class DecoratorsPreferencePage
 	 * Clear the selected description in the text.
 	 */
 	private void clearDescription() {
-		descriptionText.setText("");
+		descriptionText.setText(""); //$NON-NLS-1$
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class PlatformInfo extends ConfigurationInfo {
  * Create a new instance of the platform info
  */
 public PlatformInfo() {
-	super("platform.ini", "platform.properties");
+	super("platform.ini", "platform.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 
 /**
@@ -71,7 +71,7 @@ public PlatformInfo() {
  * @return the build id
  */
 public String getBuildID() {
-	return (buildID == null ? "" : buildID);
+	return (buildID == null ? "" : buildID); //$NON-NLS-1$
 }
 /**
  * Returns the copyright notice for this platform.
@@ -82,7 +82,7 @@ public String getBuildID() {
  * @return the copyright notice
  */
 public String getCopyright() {
-	return (copyright == null ? "" : copyright);
+	return (copyright == null ? "" : copyright); //$NON-NLS-1$
 }
 /**
  * Returns the full name of this platform.
@@ -94,7 +94,7 @@ public String getCopyright() {
  * @return the full name of this platform
  */
 public String getDetailedName() {
-	return (detailedName == null ? "" : detailedName);
+	return (detailedName == null ? "" : detailedName); //$NON-NLS-1$
 }
 /**
  * Returns the name of this platform.
@@ -102,7 +102,7 @@ public String getDetailedName() {
  * @return the name of this platform
  */
 public String getName() {
-	return (name == null ? "" : name);
+	return (name == null ? "" : name); //$NON-NLS-1$
 }
 /**
  * Returns the URL for this platform's main page on the world wide web.
@@ -110,7 +110,7 @@ public String getName() {
  * @return the platform URL
  */
 public String getplatformURL() {
-	return (platformURL == null ? "" : platformURL);
+	return (platformURL == null ? "" : platformURL); //$NON-NLS-1$
 }
 /**
  * Returns the version number of this platform.
@@ -123,7 +123,7 @@ public String getplatformURL() {
  * @return the platform version number
  */
 public String getVersion() {
-	return (version == null ? "" : version);
+	return (version == null ? "" : version); //$NON-NLS-1$
 }
 
 

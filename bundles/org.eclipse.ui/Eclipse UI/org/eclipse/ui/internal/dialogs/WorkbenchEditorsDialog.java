@@ -55,11 +55,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private Rectangle bounds;
 	private int columnsWidth[];
 	
-	private static final String SORT = "sort";
-	private static final String HISTORY = "history";
-	private static final String ALLPERSP = "allPersp";
-	private static final String BOUNDS = "bounds";
-	private static final String COLUMNS = "columns";
+	private static final String SORT = "sort"; //$NON-NLS-1$
+	private static final String HISTORY = "history"; //$NON-NLS-1$
+	private static final String ALLPERSP = "allPersp"; //$NON-NLS-1$
+	private static final String BOUNDS = "bounds"; //$NON-NLS-1$
+	private static final String COLUMNS = "columns"; //$NON-NLS-1$
 	
 	private SelectionListener headerListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -158,12 +158,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		//Name column
 		TableColumn tc = new TableColumn(editorsTable,SWT.NONE);
 		tc.setResizable(true);
-		tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.name"));
+		tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.name")); //$NON-NLS-1$
 		tc.addSelectionListener(headerListener);
 		//Full path column
 		tc = new TableColumn(editorsTable,SWT.NONE);
 		tc.setResizable(true);
-		tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.path"));
+		tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.path")); //$NON-NLS-1$
 		tc.addSelectionListener(headerListener);
 		//A composite for save editors and close editors buttons
 		Composite selectionButtons = new Composite(dialogArea,SWT.NULL);
@@ -172,7 +172,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		selectionButtons.setLayout(layout);
 		//Close editors button
 		closeSelected = new Button(selectionButtons,SWT.PUSH);
-		closeSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.closeSelected"));
+		closeSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.closeSelected")); //$NON-NLS-1$
 		closeSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				closeItems(editorsTable.getSelection());
@@ -180,7 +180,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		});
 		//Save editors button
 		saveSelected = new Button(selectionButtons,SWT.PUSH);
-		saveSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.saveSelected"));
+		saveSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.saveSelected")); //$NON-NLS-1$
 		saveSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				saveItems(editorsTable.getItems(),null);
@@ -188,7 +188,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		});
 		//Select clean editors button
 		selectClean = new Button(selectionButtons,SWT.PUSH);
-		selectClean.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.selectClean"));
+		selectClean.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.selectClean")); //$NON-NLS-1$
 		selectClean.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editorsTable.setSelection(selectClean(editorsTable.getItems()));
@@ -197,7 +197,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		});
 		//Invert selection button
 		invertSelection = new Button(selectionButtons,SWT.PUSH);
-		invertSelection.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.invertSelection"));
+		invertSelection.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.invertSelection")); //$NON-NLS-1$
 		invertSelection.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editorsTable.setSelection(invertedSelection(editorsTable.getItems(),editorsTable.getSelection()));
@@ -207,7 +207,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		
 		//Show only active perspective button
 		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
-		showAllPerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showAllPersp"));
+		showAllPerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showAllPersp")); //$NON-NLS-1$
 		showAllPerspButton.setSelection(showAllPersp);
 		showAllPerspButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -492,7 +492,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			text = new String[2];
 			if(editor != null) {	
 				if(editor.isDirty())
-					text[0] = "*" + editor.getTitle();
+					text[0] = "*" + editor.getTitle(); //$NON-NLS-1$
 				else
 					text[0] = editor.getTitle();
 				text[1] = editor.getTitleToolTip();

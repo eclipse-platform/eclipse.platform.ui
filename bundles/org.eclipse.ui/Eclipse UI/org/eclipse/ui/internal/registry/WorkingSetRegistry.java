@@ -15,7 +15,7 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
  */
 public class WorkingSetRegistry {
 	// used in Workbench plugin.xml for default workingSet extension
-	private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage";
+	private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
 	
 	private HashMap workingSetDescriptors = new HashMap();
 

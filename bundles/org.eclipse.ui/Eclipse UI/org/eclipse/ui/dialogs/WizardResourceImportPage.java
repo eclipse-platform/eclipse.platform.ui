@@ -461,7 +461,7 @@ protected final boolean validateDestinationGroup() {
 protected final String getSourceConflictMessage(){
 	return(
 		WorkbenchMessages.getString(
-			"WizardImportPage.importOnReceiver"));
+			"WizardImportPage.importOnReceiver")); //$NON-NLS-1$
 }
 
 

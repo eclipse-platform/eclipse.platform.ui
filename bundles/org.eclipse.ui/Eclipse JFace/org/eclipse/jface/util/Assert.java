@@ -82,7 +82,7 @@ public static boolean isLegal(boolean expression) {
  */
 public static boolean isLegal(boolean expression, String message) {
 	if (!expression)
-		throw new IllegalArgumentException("assertion failed; " + message);
+		throw new IllegalArgumentException("assertion failed; " + message); //$NON-NLS-1$
 	return expression;
 }
 /**

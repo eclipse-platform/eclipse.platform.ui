@@ -124,7 +124,7 @@ public class WWinKeyBindingService {
 						actionSetDefIdToAction.put(action.getActionDefinitionId(),action);
 					} else if(action.getAccelerator() != 0) {
 						reinitScopes = true;
-						String fake = "org.eclipse.ui.fakeDefinitionId" + fakeDefinitionId;
+						String fake = "org.eclipse.ui.fakeDefinitionId" + fakeDefinitionId; //$NON-NLS-1$
 						fakeDefinitionId++;
 						action.setActionDefinitionId(fake);
 						actionSetDefIdToAction.put(fake,action);

@@ -106,10 +106,10 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		AdaptableList input = new AdaptableList();
 		input.add(saveEditors.iterator());
 		ListSelectionDialog dlg =
-			new ListSelectionDialog(getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), WorkbenchMessages.getString("EditorManager.saveResourcesMessage"));
+			new ListSelectionDialog(getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), WorkbenchMessages.getString("EditorManager.saveResourcesMessage")); //$NON-NLS-1$
 
 		dlg.setInitialSelections(saveEditors.toArray(new Object[saveEditors.size()]));
-		dlg.setTitle(WorkbenchMessages.getString("EditorManager.saveResourcesTitle"));
+		dlg.setTitle(WorkbenchMessages.getString("EditorManager.saveResourcesTitle")); //$NON-NLS-1$
 		int result = dlg.open();
 
 		if (result == IDialogConstants.CANCEL_ID)

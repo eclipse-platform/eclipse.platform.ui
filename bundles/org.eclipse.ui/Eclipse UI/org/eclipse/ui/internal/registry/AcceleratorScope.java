@@ -104,7 +104,7 @@ public class AcceleratorScope {
 	public static void resetMode(KeyBindingService service) {
 		currentMode = defaultMode;
 		if(getStatusLineManager(service)!=null)
-			getStatusLineManager(service).setMessage("");	
+			getStatusLineManager(service).setMessage("");	 //$NON-NLS-1$
 	}
 	/**
 	 * Set the current mode and service
@@ -262,7 +262,7 @@ public class AcceleratorScope {
 	 * </p>
 	 */
 	public static class AcceleratorMode extends AcceleratorAction {	
-		private static String previousMessage = "";
+		private static String previousMessage = ""; //$NON-NLS-1$
 			
 		private HashMap acceleratorToAction = new HashMap();
 		
@@ -286,8 +286,8 @@ public class AcceleratorScope {
 				getStatusLineManager(service).setMessage(keyString);
 				previousMessage = keyString;
 			} else {
-				getStatusLineManager(service).setMessage(previousMessage+" "+keyString);
-				previousMessage = previousMessage+" "+keyString;
+				getStatusLineManager(service).setMessage(previousMessage+" "+keyString); //$NON-NLS-1$
+				previousMessage = previousMessage+" "+keyString; //$NON-NLS-1$
 			}		
 		}
 		public AcceleratorAction getAction(int keyCode) {

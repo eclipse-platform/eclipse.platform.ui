@@ -128,14 +128,14 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageTitle() {
-		return WorkbenchMessages.getString("UpdateProjectCapabilityWizard.title");
+		return WorkbenchMessages.getString("UpdateProjectCapabilityWizard.title"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageDescription() {
-		return WorkbenchMessages.getString("WizardProjectConfigurePage.description");
+		return WorkbenchMessages.getString("WizardProjectConfigurePage.description"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -186,14 +186,14 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getReviewPageTitle() {
-		return WorkbenchMessages.getString("UpdateProjectCapabilityWizard.title");
+		return WorkbenchMessages.getString("UpdateProjectCapabilityWizard.title"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getReviewPageDescription() {
-		return WorkbenchMessages.getString("WizardProjectReviewPage.description");
+		return WorkbenchMessages.getString("WizardProjectReviewPage.description"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -251,7 +251,7 @@ public class WizardStepGroup {
 		public String getText(Object element) {
 			if (element instanceof WizardStep) {
 				WizardStep step = (WizardStep) element;
-				return String.valueOf(step.getNumber()) + ". " + step.getLabel();
+				return String.valueOf(step.getNumber()) + ". " + step.getLabel(); //$NON-NLS-1$
 			}
 			
 			return ""; //$NON-NLS-1$

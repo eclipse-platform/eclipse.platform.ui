@@ -34,8 +34,8 @@ public class Accelerator {
 	//he key sequence after being converted to ints.
 	private int accelerators[][];
 	
-	public static final String DEFAULT_LOCALE  = "all";
-	public static final String DEFAULT_PLATFORM = "all";
+	public static final String DEFAULT_LOCALE  = "all"; //$NON-NLS-1$
+	public static final String DEFAULT_PLATFORM = "all"; //$NON-NLS-1$
 	
 	/**
 	 * Create an instance of Accelerator and initializes 
@@ -89,7 +89,7 @@ public class Accelerator {
 					accBuffer.append(' ');
 			}
 			if(i + 1 < acc.length)
-				accBuffer.append(", ");
+				accBuffer.append(", "); //$NON-NLS-1$
 		}
 		text = new String(accBuffer);
 		return text;		
@@ -125,7 +125,7 @@ public class Accelerator {
 	 */
 	private int[][] convertAccelerator() {
 		List accelerators = new ArrayList(1);
-		StringTokenizer orTokenizer = new StringTokenizer(key,"||");
+		StringTokenizer orTokenizer = new StringTokenizer(key,"||"); //$NON-NLS-1$
 		while (orTokenizer.hasMoreTokens()) {
 			List acc = new ArrayList(2);
 			StringTokenizer spaceTokenizer = new StringTokenizer(orTokenizer.nextToken());

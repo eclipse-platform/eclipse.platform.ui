@@ -44,13 +44,13 @@ public class TitleAreaDialog extends Dialog {
 	 * Message type constant used to display an info icon with the message.
 	 * @since 2.0
 	 */
-	public final static String INFO_MESSAGE = "INFO_MESSAGE";
+	public final static String INFO_MESSAGE = "INFO_MESSAGE"; //$NON-NLS-1$
 	
 	/**
 	 * Message type constant used to display a warning icon with the message.
 	 * @since 2.0
 	 */
-	public final static String WARNING_MESSAGE = "WARNING_MESSAGE";
+	public final static String WARNING_MESSAGE = "WARNING_MESSAGE"; //$NON-NLS-1$
 
 	// Space between the top of the title area and the title
 	private static final int H_INDENT_TITLE = 7;
@@ -87,7 +87,7 @@ public class TitleAreaDialog extends Dialog {
 	private Color titleAreaColor;
 	private RGB titleAreaRGB;
 
-	private String message = "";
+	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
 	private Composite messageArea;
 	private Label messageLabel;

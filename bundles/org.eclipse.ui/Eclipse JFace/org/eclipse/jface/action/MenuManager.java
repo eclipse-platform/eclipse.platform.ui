@@ -71,9 +71,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 */
 	private IContributionManagerOverrides overrides;
 
-	private static String OLD_ACCELERATOR = "org.eclipse.jface.action.MenuManager.oldAccelerator";
-	private static String OLD_LABEL = "org.eclipse.jface.action.MenuManager.oldLabel";
-	private static String ACCELERATORS_ALLOWED = "org.eclipse.jface.action.MenuManager.accelerators_allowed";
+	private static String OLD_ACCELERATOR = "org.eclipse.jface.action.MenuManager.oldAccelerator"; //$NON-NLS-1$
+	private static String OLD_LABEL = "org.eclipse.jface.action.MenuManager.oldLabel"; //$NON-NLS-1$
+	private static String ACCELERATORS_ALLOWED = "org.eclipse.jface.action.MenuManager.accelerators_allowed"; //$NON-NLS-1$
 
 	
 /**

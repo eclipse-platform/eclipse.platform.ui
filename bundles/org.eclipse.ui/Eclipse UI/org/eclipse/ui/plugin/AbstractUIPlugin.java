@@ -660,7 +660,7 @@ protected void loadDialogSettings() {
 		InputStream is = null;
 		try {
 			is = dsURL.openStream();
-			InputStreamReader reader = new InputStreamReader(is, "utf-8");
+			InputStreamReader reader = new InputStreamReader(is, "utf-8"); //$NON-NLS-1$
 			dialogSettings.load(reader);
 		} catch (IOException e) {
 			// load failed so ensure we have an empty settings

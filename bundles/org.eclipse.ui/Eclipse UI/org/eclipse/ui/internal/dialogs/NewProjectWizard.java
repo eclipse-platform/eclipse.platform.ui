@@ -126,28 +126,28 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageTitle() {
-		return WorkbenchMessages.getString("NewProjectWizard.title");
+		return WorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageDescription() {
-		return WorkbenchMessages.getString("WizardProjectConfigurePage.description");
+		return WorkbenchMessages.getString("WizardProjectConfigurePage.description"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected  String getReviewPageTitle() {
-		return WorkbenchMessages.getString("NewProjectWizard.title");
+		return WorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getReviewPageDescription() {
-		return WorkbenchMessages.getString("WizardProjectReviewPage.description");
+		return WorkbenchMessages.getString("WizardProjectReviewPage.description"); //$NON-NLS-1$
 	}
 		
 	/* (non-Javadoc)

@@ -54,7 +54,7 @@ public class BuildOrderPreferencePage
 	private static String NOTE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.note"); //$NON-NLS-1$
 	
 	// marks projects with unspecified build orders
-	private static final String MARKER = "*";
+	private static final String MARKER = "*"; //$NON-NLS-1$
 	
 	// the index of the first project with an unspecified build order
 	// the rest of the list consists of projects with unspecified build orders

@@ -21,7 +21,7 @@ public class WorkbenchEditorsAction extends Action {
 	 * @param text
 	 */
 	public WorkbenchEditorsAction(WorkbenchWindow window) {
-		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label"));
+		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
 		this.window = window;
 
 	}

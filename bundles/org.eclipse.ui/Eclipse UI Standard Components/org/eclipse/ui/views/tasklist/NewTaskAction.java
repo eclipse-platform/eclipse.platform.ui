@@ -72,8 +72,8 @@ private void showMarker(final IMarker marker) {
 	else {
 		MessageDialog.openInformation(
 			getShell(),
-			TaskListMessages.getString("NewTask.notShownTitle"),
-			TaskListMessages.getString("NewTask.notShownMsg"));
+			TaskListMessages.getString("NewTask.notShownTitle"), //$NON-NLS-1$
+			TaskListMessages.getString("NewTask.notShownMsg")); //$NON-NLS-1$
 	}
 }
 }

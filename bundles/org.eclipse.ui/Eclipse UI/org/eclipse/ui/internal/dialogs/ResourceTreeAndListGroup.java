@@ -468,7 +468,7 @@ protected String getFullLabel(Object treeElement,String parentLabel) {
 	String parentName = parentLabel;
 	
 	if (parentLabel == null) 
-		parentName = "";
+		parentName = ""; //$NON-NLS-1$
 		
 	if (parentName.length() > 0 && (!parentName.endsWith(File.separator))) {
 		parentName += File.separatorChar;

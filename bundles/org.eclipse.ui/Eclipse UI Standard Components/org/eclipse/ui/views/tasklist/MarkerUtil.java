@@ -128,7 +128,7 @@ public static String getCompleteText(IMarker marker) {
 		else	
 			return TaskListMessages.getString("TaskList.notCompleted"); //$NON-NLS-1$
 	}
-	return "";
+	return ""; //$NON-NLS-1$
 }
 
 /**
@@ -146,7 +146,7 @@ public static String getKindText(IMarker marker) {
 		case IMarker.SEVERITY_INFO:
 			return TaskListMessages.getString("TaskList.info"); //$NON-NLS-1$
 	}
-	return "";
+	return ""; //$NON-NLS-1$
 }
 
 /**

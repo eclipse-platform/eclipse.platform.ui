@@ -214,20 +214,18 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 		// overwrite... checkbox
 		overwriteExistingResourcesCheckbox = new Button(optionsGroup, SWT.CHECK);
 		overwriteExistingResourcesCheckbox.setText(
-			DataTransferMessages.getString("FileImport.overwriteExisting"));
-		//$NON-NLS-1$
+			DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 
 		// create containers radio
 		createContainerStructureButton = new Button(optionsGroup, SWT.RADIO);
 		createContainerStructureButton.setText(
-			DataTransferMessages.getString("FileImport.createComplete"));
-		//$NON-NLS-1$
+			DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
 		createContainerStructureButton.setSelection(false);
 		
 		// create selection only radio
 		createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
 		createOnlySelectedButton.setText(
-			DataTransferMessages.getString("FileImport.createSelectedFolders"));
+			DataTransferMessages.getString("FileImport.createSelectedFolders")); //$NON-NLS-1$
 		createOnlySelectedButton.setSelection(true);
 		
 
@@ -786,7 +784,7 @@ protected void setupSelectionsBasedOnSelectedTypes() {
 	
 	IRunnableWithProgress runnable  = new IRunnableWithProgress() {
 		public void run(final IProgressMonitor monitor) throws InterruptedException{		
-			monitor.beginTask(DataTransferMessages.getString("ImportPage.filterSelections"), IProgressMonitor.UNKNOWN);
+			monitor.beginTask(DataTransferMessages.getString("ImportPage.filterSelections"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 			getSelectedResources(filter,monitor);
 		}
 	};

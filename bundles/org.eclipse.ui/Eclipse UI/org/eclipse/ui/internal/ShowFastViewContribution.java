@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * A dynamic contribution item which supports to switch to other Contexts.
  */
 public class ShowFastViewContribution extends ContributionItem {
-	public static final String FAST_VIEW = "FastView";
+	public static final String FAST_VIEW = "FastView"; //$NON-NLS-1$
 	private IWorkbenchWindow window;
 	/**
 	 * Create a new menu item.

@@ -244,7 +244,7 @@ private boolean selectByAttributes(IMarkerDelta markerDelta) {
 
 	// description applies to all markers
 	if (filterOnDescription) {
-		String desc = markerDelta.getAttribute(IMarker.MESSAGE, "");
+		String desc = markerDelta.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 		if (!checkDescription(desc))
 			return false;
 	}

@@ -186,7 +186,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				if (root.exists(destinationPath)) {
 					IContainer container = (IContainer) root.findMember(destinationPath);
-					monitor.beginTask("", fileNames.length);
+					monitor.beginTask("", fileNames.length); //$NON-NLS-1$
 					for (int k = 0; k < fileNames.length; k++)
 						performFileImport(new SubProgressMonitor(monitor, 1), container, fileNames[k]);
 					monitor.done();	
@@ -315,7 +315,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 		IStatus status= op.getStatus();
 		if (!status.isOK()) {
 			if (errorStatus == null)
-				errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR, ResourceNavigatorMessages.getString("CopyFilesAndFoldersOperation.problemMessage"), null);
+				errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR, ResourceNavigatorMessages.getString("CopyFilesAndFoldersOperation.problemMessage"), null); //$NON-NLS-1$
 			errorStatus.merge(status);
 		}
 	}
@@ -441,7 +441,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 						public void run() {
 							MessageDialog.openError(
 								parentShell,
-								ResourceNavigatorMessages.getString("CopyFilesAndFoldersOperation.overwriteProblemTitle"),
+								ResourceNavigatorMessages.getString("CopyFilesAndFoldersOperation.overwriteProblemTitle"), //$NON-NLS-1$
 								ResourceNavigatorMessages.format("CopyFilesAndFoldersOperation.overwriteProblem", new Object[] {currentPath, currentResource.getFullPath()})); //$NON-NLS-1$
 						}
 					};
@@ -687,7 +687,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 	 */
 	private void recordError(CoreException error) {
 		if (errorStatus == null)
-			errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR, ResourceNavigatorMessages.getString("CopyFilesAndFoldersOperation.problemMessage"), error);
+			errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR, ResourceNavigatorMessages.getString("CopyFilesAndFoldersOperation.problemMessage"), error); //$NON-NLS-1$
 	
 		errorStatus.merge(error.getStatus());
 	}

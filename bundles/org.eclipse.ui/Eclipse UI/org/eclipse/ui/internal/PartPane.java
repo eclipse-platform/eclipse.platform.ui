@@ -430,10 +430,10 @@ protected void addSizeItem(Menu sizeMenu, String labelKey,final Sash sash) {
  */
 protected void addSizeItems(Menu sizeMenu) {
 	Sashes sashes = findSashes();
-	addSizeItem(sizeMenu,"PartPane.sizeLeft",sashes.left);
-	addSizeItem(sizeMenu,"PartPane.sizeRight",sashes.right);
-	addSizeItem(sizeMenu,"PartPane.sizeTop",sashes.top);
-	addSizeItem(sizeMenu,"PartPane.sizeBottom",sashes.bottom);
+	addSizeItem(sizeMenu,"PartPane.sizeLeft",sashes.left); //$NON-NLS-1$
+	addSizeItem(sizeMenu,"PartPane.sizeRight",sashes.right); //$NON-NLS-1$
+	addSizeItem(sizeMenu,"PartPane.sizeTop",sashes.top); //$NON-NLS-1$
+	addSizeItem(sizeMenu,"PartPane.sizeBottom",sashes.bottom); //$NON-NLS-1$
 }
 /**
  * Add the pin menu item on the editor system menu

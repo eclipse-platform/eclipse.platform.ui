@@ -320,7 +320,7 @@ private void updateDialogFromMarker() {
  		severityCombo.clearSelection();
 		severityCombo.select(IMarker.SEVERITY_ERROR - MarkerUtil.getSeverity(marker));
 */		
-		String sev = "";
+		String sev = ""; //$NON-NLS-1$
 		switch (MarkerUtil.getSeverity(marker)) {
 			case IMarker.SEVERITY_ERROR:
 				sev = TaskListMessages.getString("TaskList.error"); //$NON-NLS-1$
@@ -346,7 +346,7 @@ private void updateDialogFromMarker() {
 private void updateDialogForNewMarker() {
 	Map attrs = getInitialAttributes();
 
-	String desc = "";
+	String desc = ""; //$NON-NLS-1$
 	if (attrs != null) {
 		Object o = attrs.get(IMarker.MESSAGE);
 		if (o instanceof String) {
@@ -381,11 +381,11 @@ private void updateDialogForNewMarker() {
 	if (resource != null) {
 		resourceText.setText(resource.getName());
 		IResource parent = resource.getParent();
-		folderText.setText(parent == null ? "" : parent.getFullPath().toString().substring(1));
+		folderText.setText(parent == null ? "" : parent.getFullPath().toString().substring(1)); //$NON-NLS-1$
 	}
 	
 	int line = -1;
-	String loc = "";
+	String loc = ""; //$NON-NLS-1$
 	if (attrs != null) {
 		Object o = attrs.get(IMarker.LINE_NUMBER);
 		if (o instanceof Integer) {

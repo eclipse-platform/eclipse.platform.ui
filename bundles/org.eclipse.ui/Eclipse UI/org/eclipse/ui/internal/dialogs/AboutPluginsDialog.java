@@ -236,7 +236,7 @@ public class AboutPluginsDialog extends Dialog {
 					IStatus.ERROR, 
 					WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0,
-					"Problem reading plugin info", 
+					"Problem reading plugin info",  //$NON-NLS-1$
 					e);
 				WorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel(), iniStatus); //$NON-NLS-1$
 				return false;
@@ -300,7 +300,7 @@ public class AboutPluginsDialog extends Dialog {
 				public void run() {
 					try {
 						if (webBrowserOpened) {
-							Runtime.getRuntime().exec("netscape -remote openURL(" + url.toString() + ")");	//$NON-NLS-1$
+							Runtime.getRuntime().exec("netscape -remote openURL(" + url.toString() + ")");	//$NON-NLS-1$ //$NON-NLS-2$
 						} else {
 							Process p = Runtime.getRuntime().exec("netscape " + url.toString());	//$NON-NLS-1$
 							webBrowserOpened = true;

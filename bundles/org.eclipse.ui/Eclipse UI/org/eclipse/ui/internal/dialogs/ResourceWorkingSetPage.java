@@ -70,7 +70,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.WORKING_SET_RESOURCE_PAGE);		
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(WorkbenchMessages.getString("ResourceWorkingSetPage.message"));
+		label.setText(WorkbenchMessages.getString("ResourceWorkingSetPage.message")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(data);
 
@@ -86,7 +86,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		text.setFocus();
 		
 		label = new Label(composite, SWT.WRAP);
-		label.setText(WorkbenchMessages.getString("ResourceWorkingSetPage.label.tree"));
+		label.setText(WorkbenchMessages.getString("ResourceWorkingSetPage.label.tree")); //$NON-NLS-1$
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(data);
 
@@ -150,7 +150,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			resources = container.members();
 		} catch (CoreException ex) {
 			handleCoreException(ex, getShell(), WorkbenchMessages.getString("ResourceWorkingSetPage.error"), //$NON-NLS-1$
-			WorkbenchMessages.getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-2$ 
+			WorkbenchMessages.getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-1$
 		}
 		for (int i = 0; i < resources.length; i++) {
 			if (tree.getGrayed(resources[i])) {
@@ -205,8 +205,8 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 				if (resource.isAccessible() == false) {
 					MessageDialog.openInformation(
 						getShell(),
-						WorkbenchMessages.getString("ResourceWorkingSetPage.projectClosedDialog.title"),
-						WorkbenchMessages.getString("ResourceWorkingSetPage.projectClosedDialog.message"));
+						WorkbenchMessages.getString("ResourceWorkingSetPage.projectClosedDialog.title"), //$NON-NLS-1$
+						WorkbenchMessages.getString("ResourceWorkingSetPage.projectClosedDialog.message")); //$NON-NLS-1$
 					//$NON-NLS-2$ //$NON-NLS-1$
 					tree.setChecked(resource, false);
 					tree.setGrayed(resource, true);
@@ -235,7 +235,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
 		} else {
-			MessageDialog.openError(shell, WorkbenchMessages.getString("InternalError"), exception.getLocalizedMessage());
+			MessageDialog.openError(shell, WorkbenchMessages.getString("InternalError"), exception.getLocalizedMessage()); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -280,7 +280,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(IWorkingSet)
 	 */
 	public void setSelection(IWorkingSet workingSet) {
-		Assert.isNotNull(workingSet, "Working set must not be null");
+		Assert.isNotNull(workingSet, "Working set must not be null"); //$NON-NLS-1$
 		this.workingSet = workingSet;
 		if (getShell() != null && text != null) {
 			text.setText(workingSet.getName());
@@ -306,7 +306,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			members = container.members();
 		} catch (CoreException ex) {
 			handleCoreException(ex, getShell(), WorkbenchMessages.getString("ResourceWorkingSetPage.error"), //$NON-NLS-1$
-			WorkbenchMessages.getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-2$ 				
+			WorkbenchMessages.getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-1$
 		}
 		for (int i = members.length - 1; i >= 0; i--) {
 			IResource element = members[i];
@@ -339,7 +339,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			members = parent.members();
 		} catch (CoreException ex) {
 			handleCoreException(ex, getShell(), WorkbenchMessages.getString("ResourceWorkingSetPage.error"), //$NON-NLS-1$
-			WorkbenchMessages.getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-2$ 
+			WorkbenchMessages.getString("ResourceWorkingSetPage.error.updateCheckedState")); //$NON-NLS-1$
 		}
 		for (int i = members.length - 1; i >= 0; i--) {
 			if (tree.getChecked(members[i]) || tree.getGrayed(members[i])) {

@@ -20,30 +20,30 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * accelerator configuration or the default accelerator configuration. 
  */
 public class AcceleratorRegistryReader extends RegistryReader{	
-	private static final String TAG_ACCEL_CONFIG = "acceleratorConfiguration";
-	private static final String TAG_ACCEL_SCOPE = "acceleratorScope";
-	private static final String TAG_ACCEL_SET = "acceleratorSet";
-	private static final String TAG_ACCELERATOR = "accelerator";
+	private static final String TAG_ACCEL_CONFIG = "acceleratorConfiguration"; //$NON-NLS-1$
+	private static final String TAG_ACCEL_SCOPE = "acceleratorScope"; //$NON-NLS-1$
+	private static final String TAG_ACCEL_SET = "acceleratorSet"; //$NON-NLS-1$
+	private static final String TAG_ACCELERATOR = "accelerator"; //$NON-NLS-1$
 	
-	private static final String CONFIG_ATT_ID = "id";
-	private static final String CONFIG_ATT_NAME = "name";
-	private static final String CONFIG_ATT_DESCRIPTION = "description";
+	private static final String CONFIG_ATT_ID = "id"; //$NON-NLS-1$
+	private static final String CONFIG_ATT_NAME = "name"; //$NON-NLS-1$
+	private static final String CONFIG_ATT_DESCRIPTION = "description"; //$NON-NLS-1$
 	
-	private static final String SCOPE_ATT_ID = "id";
-	private static final String SCOPE_ATT_NAME = "name";
-	private static final String SCOPE_ATT_DESCRIPTION = "description";
-	private static final String SCOPE_ATT_PARENT_SCOPE = "parentScope";
+	private static final String SCOPE_ATT_ID = "id"; //$NON-NLS-1$
+	private static final String SCOPE_ATT_NAME = "name"; //$NON-NLS-1$
+	private static final String SCOPE_ATT_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String SCOPE_ATT_PARENT_SCOPE = "parentScope"; //$NON-NLS-1$
 	
-	private static final String SET_ATT_CONFIG_ID = "configurationId";
-	private static final String SET_ATT_SCOPE_ID = "scopeId";
+	private static final String SET_ATT_CONFIG_ID = "configurationId"; //$NON-NLS-1$
+	private static final String SET_ATT_SCOPE_ID = "scopeId"; //$NON-NLS-1$
 	
-	private static final String ACCEL_ATT_ID = "id";
-	private static final String ACCEL_ATT_KEY = "key";
-	private static final String ACCEL_ATT_LOCALE = "locale";
-	private static final String ACCEL_ATT_PLATFORM = "platform";
+	private static final String ACCEL_ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ACCEL_ATT_KEY = "key"; //$NON-NLS-1$
+	private static final String ACCEL_ATT_LOCALE = "locale"; //$NON-NLS-1$
+	private static final String ACCEL_ATT_PLATFORM = "platform"; //$NON-NLS-1$
  
  	private static final String PLATFORM = SWT.getPlatform();
- 	private static final String EMPTY = "";
+ 	private static final String EMPTY = ""; //$NON-NLS-1$
  	
 	private AcceleratorRegistry acceleratorRegistry;
 	private AcceleratorSet acceleratorSet;
@@ -216,7 +216,7 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		if(Accelerator.DEFAULT_LOCALE.equals(locale))
 			return localeArray;
 			
-		int index = locale.indexOf("_");
+		int index = locale.indexOf("_"); //$NON-NLS-1$
 		if(index < 0) {
 			localeArray[0] = locale;
 			return localeArray;
@@ -226,7 +226,7 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		if(index + 1 >= locale.length())
 			return localeArray;
 		//Parse country
-		int newIndex = locale.indexOf("_",index + 1);
+		int newIndex = locale.indexOf("_",index + 1); //$NON-NLS-1$
 		if(newIndex < 0) {
 			localeArray[1] = locale.substring(index + 1);
 			return localeArray;
@@ -237,7 +237,7 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		if(index + 1 >= locale.length())
 			return localeArray;
 		//Parse variant
-		newIndex = locale.indexOf("_",index + 1);
+		newIndex = locale.indexOf("_",index + 1); //$NON-NLS-1$
 		if(newIndex < 0) {
 			localeArray[2] = locale.substring(index + 1);
 			return localeArray;

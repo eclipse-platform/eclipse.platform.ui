@@ -40,15 +40,15 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * </p>
  */
 public class Capability extends WorkbenchAdapter implements IAdaptable {
-	private static final String ATT_ID = "id";
-	private static final String ATT_ICON = "icon";
-	private static final String ATT_NATURE_ID = "natureId";
-	private static final String ATT_CATEGORY = "category";
-	private static final String ATT_DESCRIPTION = "description";
-	private static final String ATT_INSTALL_WIZARD = "installWizard";
-	private static final String ATT_INSTALL_DETAILS = "installDetails";
-	private static final String ATT_UNINSTALL_WIZARD = "uninstallWizard";
-	private static final String ATT_UNINSTALL_DETAILS = "uninstallDetails";
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATT_NATURE_ID = "natureId"; //$NON-NLS-1$
+	private static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
+	private static final String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String ATT_INSTALL_WIZARD = "installWizard"; //$NON-NLS-1$
+	private static final String ATT_INSTALL_DETAILS = "installDetails"; //$NON-NLS-1$
+	private static final String ATT_UNINSTALL_WIZARD = "uninstallWizard"; //$NON-NLS-1$
+	private static final String ATT_UNINSTALL_DETAILS = "uninstallDetails"; //$NON-NLS-1$
 	
 	private String id;
 	private String natureId;

@@ -26,31 +26,31 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	
-	private static final String saveActionDefId = "org.eclipse.ui.file.save";
-	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll";
-	private static final String printActionDefId = "org.eclipse.ui.file.print";
-	private static final String closeActionDefId = "org.eclipse.ui.file.close";
-	private static final String closeAllActionDefId = "org.eclipse.ui.file.closeAll";
-	private static final String undoActionDefId = "org.eclipse.ui.edit.undo";
-	private static final String redoActionDefId = "org.eclipse.ui.edit.redo";
-	private static final String cutActionDefId = "org.eclipse.ui.edit.cut";
-	private static final String copyActionDefId = "org.eclipse.ui.edit.copy";
-	private static final String pasteActionDefId = "org.eclipse.ui.edit.paste";
-	private static final String deleteActionDefId = "org.eclipse.ui.edit.delete";
-	private static final String selectAllActionDefId = "org.eclipse.ui.edit.selectAll";
-	private static final String findActionDefId = "org.eclipse.ui.edit.findReplace";
-	private static final String addBookmarkActionDefId = "org.eclipse.ui.edit.addBookmark";
-	private static final String showViewMenuActionDefId = "org.eclipse.ui.window.showViewMenu";
-	private static final String showPartPaneMenuActionDefId = "org.eclipse.ui.window.showSystemMenu";
-	private static final String nextEditorActionDefId = "org.eclipse.ui.window.nextEditor";
-	private static final String prevEditorActionDefId = "org.eclipse.ui.window.previousEditor";
-	private static final String nextPartActionDefId = "org.eclipse.ui.window.nextView";
-	private static final String prevPartActionDefId = "org.eclipse.ui.window.previousView";
-	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor";
-	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	
+	private static final String saveActionDefId = "org.eclipse.ui.file.save"; //$NON-NLS-1$
+	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll"; //$NON-NLS-1$
+	private static final String printActionDefId = "org.eclipse.ui.file.print"; //$NON-NLS-1$
+	private static final String closeActionDefId = "org.eclipse.ui.file.close"; //$NON-NLS-1$
+	private static final String closeAllActionDefId = "org.eclipse.ui.file.closeAll"; //$NON-NLS-1$
+	private static final String undoActionDefId = "org.eclipse.ui.edit.undo"; //$NON-NLS-1$
+	private static final String redoActionDefId = "org.eclipse.ui.edit.redo"; //$NON-NLS-1$
+	private static final String cutActionDefId = "org.eclipse.ui.edit.cut"; //$NON-NLS-1$
+	private static final String copyActionDefId = "org.eclipse.ui.edit.copy"; //$NON-NLS-1$
+	private static final String pasteActionDefId = "org.eclipse.ui.edit.paste"; //$NON-NLS-1$
+	private static final String deleteActionDefId = "org.eclipse.ui.edit.delete"; //$NON-NLS-1$
+	private static final String selectAllActionDefId = "org.eclipse.ui.edit.selectAll"; //$NON-NLS-1$
+	private static final String findActionDefId = "org.eclipse.ui.edit.findReplace"; //$NON-NLS-1$
+	private static final String addBookmarkActionDefId = "org.eclipse.ui.edit.addBookmark"; //$NON-NLS-1$
+	private static final String showViewMenuActionDefId = "org.eclipse.ui.window.showViewMenu"; //$NON-NLS-1$
+	private static final String showPartPaneMenuActionDefId = "org.eclipse.ui.window.showSystemMenu"; //$NON-NLS-1$
+	private static final String nextEditorActionDefId = "org.eclipse.ui.window.nextEditor"; //$NON-NLS-1$
+	private static final String prevEditorActionDefId = "org.eclipse.ui.window.previousEditor"; //$NON-NLS-1$
+	private static final String nextPartActionDefId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
+	private static final String prevPartActionDefId = "org.eclipse.ui.window.previousView"; //$NON-NLS-1$
+	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
+	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
 	
 	//pin editor group in the toolbar
-	private static final String pinEditorGroup = "pinEditorGroup";
+	private static final String pinEditorGroup = "pinEditorGroup"; //$NON-NLS-1$
 	
 	// target
 	private WorkbenchWindow window;
@@ -501,7 +501,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private void addWorkingSetActions(MenuManager menu) {
 		// Temporary option to enable working sets
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean("ENABLE_WORKING_SETS")) {
+		if (store.getBoolean("ENABLE_WORKING_SETS")) { //$NON-NLS-1$
 			menu.add(selectWorkingSetAction);
 			menu.add(clearWorkingSetAction);
 		}
@@ -515,7 +515,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		
 		if (usingMenuReorg) {
 			OpenInNewWindowAction action = new OpenInNewWindowAction(window);
-			action.setText(WorkbenchMessages.getString("Workbench.openNewWindow"));
+			action.setText(WorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
 			menu.add(action);
 			menu.add(new Separator());
 			addPerspectiveActions(menu);
@@ -530,7 +530,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		}
 		else {
 			OpenInNewWindowAction action = new OpenInNewWindowAction(window);
-			action.setText(WorkbenchMessages.getString("Workbench.openNewWindow"));			
+			action.setText(WorkbenchMessages.getString("Workbench.openNewWindow"));			 //$NON-NLS-1$
 			menu.add(action);
 			MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 			launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
@@ -584,7 +584,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		} else if (manager instanceof CoolBarManager) {
 			// Create a CoolBar item for the workbench
 			CoolBarManager cBarMgr = (CoolBarManager)manager;
-			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, "org.eclipse.ui.internal");
+			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, "org.eclipse.ui.internal"); //$NON-NLS-1$
 			coolBarItem.setVisible(true);
 			toolsManager = (IContributionManager)coolBarItem;
 		} else {

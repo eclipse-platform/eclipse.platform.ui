@@ -450,7 +450,7 @@ private boolean loadAssociations() {
 
 	try {
 		FileInputStream stream = new FileInputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8");
+	 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		EditorDescriptor editor;
 		IMemento[] edMementos = memento.getChildren(IWorkbenchConstants.TAG_DESCRIPTOR);
@@ -495,7 +495,7 @@ private boolean loadAssociations() {
 			workbenchStatePath
 				.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
 				.toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8");
+	 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		IMemento[] extMementos = memento.getChildren(IWorkbenchConstants.TAG_INFO);
 		for (int i = 0; i < extMementos.length; i++) {
@@ -651,7 +651,7 @@ public void saveAssociations () {
 	OutputStreamWriter writer = null;
 	try {
 		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8");
+	 	writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
 		memento.save(writer);
 		writer.close();
 	} catch(IOException e) {
@@ -675,7 +675,7 @@ public void saveAssociations () {
 	writer = null;
 	try {
 		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8");
+	 	writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
 		memento.save(writer);
 		writer.close();
 	} catch(IOException e) {

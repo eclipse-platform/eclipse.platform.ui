@@ -60,7 +60,7 @@ public class PreferenceConverter {
 		shell.dispose();
 	}
 	
-	private static final String ENTRY_SEPARATOR = ";";
+	private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
 
 	/**
 	 * The default-default value for <code>FontData</code> preferences.

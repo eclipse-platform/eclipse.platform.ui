@@ -97,7 +97,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 		
 		// Text field to display the step's details
 		detailsField = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
-		detailsField.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // prefill to show 15 lines
+		detailsField.setText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // prefill to show 15 lines //$NON-NLS-1$
 		detailsField.setEditable(false);
 		detailsField.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}

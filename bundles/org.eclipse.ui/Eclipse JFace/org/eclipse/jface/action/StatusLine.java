@@ -467,7 +467,7 @@ protected void updateMessageLabel() {
 		}
 		else {
 			fMessageLabel.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-			fMessageLabel.setText(fMessageText == null ? "" : fMessageText);
+			fMessageLabel.setText(fMessageText == null ? "" : fMessageText); //$NON-NLS-1$
 			fMessageLabel.setImage(fMessageImage);
 		}
 	}

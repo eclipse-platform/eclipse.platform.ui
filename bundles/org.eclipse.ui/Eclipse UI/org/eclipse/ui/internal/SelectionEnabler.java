@@ -174,8 +174,8 @@ private void parseClasses(IConfigurationElement config) {
 	else if (enablesFor.equals("+")) //$NON-NLS-1$
 		mode = ONE_OR_MORE;
 	else if (
-		enablesFor.equals("multiple")
-			|| enablesFor.equals("2+")) //$NON-NLS-2$//$NON-NLS-1$
+		enablesFor.equals("multiple")	//$NON-NLS-1$
+			|| enablesFor.equals("2+")) //$NON-NLS-1$
 		mode = MULTIPLE;
 	else {
 		try {

@@ -182,12 +182,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		});
 		
-		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), groupComposite);
+		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), groupComposite); //$NON-NLS-1$
 		
 		reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 		reuseEditorsThreshold.setPreferencePage(this);
 		reuseEditorsThreshold.setTextLimit(2);
-		reuseEditorsThreshold.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThresholdError"));
+		reuseEditorsThreshold.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThresholdError")); //$NON-NLS-1$
 		reuseEditorsThreshold.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		reuseEditorsThreshold.setValidRange(1, 99);
 		reuseEditorsThreshold.load();
@@ -213,13 +213,13 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		gd.grabExcessHorizontalSpace = true;
 		groupComposite.setLayoutData(gd);	
 		
-		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite);
+		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite); //$NON-NLS-1$
 
 		int recentFilesMax = IPreferenceConstants.MAX_RECENT_FILES_SIZE;
 		recentFilesEditor.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 		recentFilesEditor.setPreferencePage(this);
 		recentFilesEditor.setTextLimit(Integer.toString(recentFilesMax).length());
-		recentFilesEditor.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.recentFilesError", new Object[] { new Integer(recentFilesMax)}));
+		recentFilesEditor.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.recentFilesError", new Object[] { new Integer(recentFilesMax)})); //$NON-NLS-1$
 		recentFilesEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		recentFilesEditor.setValidRange(0, recentFilesMax);
 		recentFilesEditor.load();

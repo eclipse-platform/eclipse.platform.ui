@@ -491,7 +491,7 @@ protected void handleSave() {
 						MessageDialog.openError(
 							getShell(), 
 							JFaceResources.getString("PreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-							JFaceResources.format("PreferenceDialog.saveErrorMessage", new Object[] {page.getTitle(), e.getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
+							JFaceResources.format("PreferenceDialog.saveErrorMessage", new Object[] {page.getTitle(), e.getMessage()})); //$NON-NLS-1$
 					}
 			}
 		}

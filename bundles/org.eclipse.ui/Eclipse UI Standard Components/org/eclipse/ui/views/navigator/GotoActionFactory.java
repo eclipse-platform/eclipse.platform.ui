@@ -49,7 +49,7 @@ public class GotoActionFactory extends ActionFactory {
 		gotoResourceAction =
 			new GotoResourceAction(
 				resourceNavigator,
-				ResourceNavigatorMessages.getString("ResourceNavigator.resourceText"));
+				ResourceNavigatorMessages.getString("ResourceNavigator.resourceText")); //$NON-NLS-1$
 		//$NON-NLS-1$
 	}
 
@@ -74,7 +74,7 @@ public class GotoActionFactory extends ActionFactory {
 			menu.add(goIntoAction);
 		}
 		MenuManager gotoMenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.goto"));
+			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.goto")); //$NON-NLS-1$
 		//$NON-NLS-1$
 		menu.add(gotoMenu);
 		gotoMenu.add(backAction);

@@ -96,7 +96,7 @@ public void run(){
 	for (int i = 0, length = len; i < length; i++) {
 		fileNames[i] = resources[i].getLocation().toOSString();
 		if (i > 0)
-			buf.append("\n");
+			buf.append("\n"); //$NON-NLS-1$
 		buf.append(resources[i].getName());
 	}	
 	

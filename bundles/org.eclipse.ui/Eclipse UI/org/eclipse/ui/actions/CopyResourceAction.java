@@ -609,7 +609,7 @@ private boolean validateNoNameCollisions(
 					public void run() {
 						MessageDialog.openError(
 							getShell(),
-							WorkbenchMessages.getString("CopyResourceAction.overwriteProblemTitle"),
+							WorkbenchMessages.getString("CopyResourceAction.overwriteProblemTitle"), //$NON-NLS-1$
 							WorkbenchMessages.format("CopyResourceAction.overwriteProblem", new Object[] {currentPath, currentResource.getFullPath()})); //$NON-NLS-1$
 					}
 				};

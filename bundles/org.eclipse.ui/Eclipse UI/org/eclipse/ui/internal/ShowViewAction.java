@@ -20,10 +20,10 @@ public class ShowViewAction extends Action {
  * ShowViewAction constructor comment.
  */
 protected ShowViewAction(IWorkbenchWindow window, IViewDescriptor desc) {
-	super("");
+	super(""); //$NON-NLS-1$
 	String accel = desc.getAccelerator();
 	String label = desc.getLabel();
-	setText(accel == null ? label : label + "@" + accel);
+	setText(accel == null ? label : label + "@" + accel); //$NON-NLS-1$
 	setImageDescriptor(desc.getImageDescriptor());
 	setToolTipText(label);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.SHOW_VIEW_ACTION);

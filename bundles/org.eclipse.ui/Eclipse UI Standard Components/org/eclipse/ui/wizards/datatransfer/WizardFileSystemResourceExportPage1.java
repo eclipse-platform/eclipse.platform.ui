@@ -117,13 +117,12 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 		// overwrite... checkbox
 		overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
 		overwriteExistingFilesCheckbox.setText(
-			DataTransferMessages.getString("ExportFile.overwriteExisting"));
-		//$NON-NLS-1$
+			DataTransferMessages.getString(Messages.getString("ExportFile.overwriteExisting_1"))); //$NON-NLS-1$
 
 		// create directory structure radios
 		createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
 		createDirectoryStructureButton.setText(
-			DataTransferMessages.getString("FileExport.createDirectoryStructure"));
+			DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
 		createDirectoryStructureButton.setSelection(false);
 
 		// create directory structure radios
@@ -355,12 +354,12 @@ protected boolean validateDestinationGroup() {
 	
 	String conflictingContainer = getConflictingContainerNameFor(destinationValue);
 	if(conflictingContainer == null)
-		setErrorMessage("");
+		setErrorMessage(""); //$NON-NLS-1$
 	else {
 		setErrorMessage(
 			DataTransferMessages.format(
-				"FileExport.conflictingContainer", 
-				new Object[] {conflictingContainer})); //$NON-NLS-1$
+				"FileExport.conflictingContainer",  //$NON-NLS-1$
+				new Object[] {conflictingContainer}));
 		giveFocusToDestination();
 		return false;
 	}
@@ -381,7 +380,7 @@ protected String getConflictingContainerNameFor(String targetDirectory){
 	IPath testPath = new Path(targetDirectory);
 	
 	if(root.getLocation().isPrefixOf(testPath))
-		return DataTransferMessages.getString("FileExport.rootName");
+		return DataTransferMessages.getString("FileExport.rootName"); //$NON-NLS-1$
 	
 	IProject[] projects = root.getProjects();
 	

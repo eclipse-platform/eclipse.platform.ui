@@ -24,13 +24,13 @@ class DecoratorRegistryReader extends RegistryReader {
 	//The registry values are the ones read from the registry
 	static Collection values;
 
-	private static String EXTENSION_ID = "decorators";
-	private static String ATT_OBJECT_CLASS = "objectClass";
-	private static String ATT_LABEL = "label";
-	private static String ATT_ADAPTABLE = "adaptable";
-	private static String ATT_ID = "id";
-	private static String ATT_DESCRIPTION = "description";
-	private static String P_TRUE = "true";
+	private static String EXTENSION_ID = "decorators"; //$NON-NLS-1$
+	private static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
+	private static String ATT_LABEL = "label"; //$NON-NLS-1$
+	private static String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
+	private static String ATT_ID = "id"; //$NON-NLS-1$
+	private static String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static String P_TRUE = "true"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for DecoratorRegistryReader.
@@ -52,7 +52,7 @@ class DecoratorRegistryReader extends RegistryReader {
 		
 		String description = element.getAttribute(ATT_DESCRIPTION);
 		if(description == null)
-			description = "";
+			description = ""; //$NON-NLS-1$
 
 		boolean adaptable = P_TRUE.equals(element.getAttribute(ATT_ADAPTABLE));
 

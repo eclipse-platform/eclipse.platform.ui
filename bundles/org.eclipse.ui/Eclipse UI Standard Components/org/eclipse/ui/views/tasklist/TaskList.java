@@ -712,8 +712,8 @@ void makeActions() {
 	removeTaskAction.setEnabled(false);
 
 	//mark completed task
-	markCompletedAction = new MarkCompletedAction(this,"markCompleted");
-	markCompletedAction.setText(TaskListMessages.getString("MarkCompleted.text"));
+	markCompletedAction = new MarkCompletedAction(this,"markCompleted"); //$NON-NLS-1$
+	markCompletedAction.setText(TaskListMessages.getString("MarkCompleted.text")); //$NON-NLS-1$
 	markCompletedAction.setToolTipText(TaskListMessages.getString("MarkCompleted.tooltip")); //$NON-NLS-1$
 	markCompletedAction.setEnabled(false);
 	
@@ -1167,7 +1167,7 @@ void updateTitle() {
 	String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 	TaskListContentProvider provider = (TaskListContentProvider) getTableViewer().getContentProvider();
 	String summary = provider.getFilterSummary();
-	if ("".equals(summary)) {
+	if ("".equals(summary)) { //$NON-NLS-1$
 		setTitle(viewName);
 	}
 	else {

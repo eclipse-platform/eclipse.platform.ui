@@ -476,7 +476,7 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 {
 	try {
 		InputStream stream = new FileInputStream(persp.getCustomFile());
-		InputStreamReader reader = new InputStreamReader(stream, "utf-8");
+		InputStreamReader reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
 		restoreState(memento);
@@ -701,7 +701,7 @@ public void restoreState(IMemento memento) {
 			message = WorkbenchMessages.getString("Perspective.couldNotCreateAllViews"); //$NON-NLS-1$
 			s = new MultiStatus(PlatformUI.PLUGIN_ID,0,allErrors,WorkbenchMessages.getString("Perspective.multipleErrorsRestoring"),null); //$NON-NLS-1$
 		}
-		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"),message,s);
+		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"),message,s); //$NON-NLS-1$
 	}
 		
 	// Load the action sets.
@@ -789,7 +789,7 @@ private ViewPane restoreView(final IMemento memento,final String viewID) throws 
 		}
 		public void handleException(Throwable e) {
 			//Execption is already logged.
-			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID});
+			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID}); //$NON-NLS-1$
 			ex[0] = new PartInitException(message);
 		}
 	});
@@ -816,7 +816,7 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
 	try {
 		OutputStream stream = new FileOutputStream(realDesc.getCustomFile());
-		Writer writer = new OutputStreamWriter(stream, "utf-8");
+		Writer writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
 		memento.save(writer);
 		writer.close();
 		descriptor = realDesc;

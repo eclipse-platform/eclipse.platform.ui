@@ -186,10 +186,10 @@ public static int convertAccelerator(String acceleratorText) {
 public static String convertAccelerator(int keyCode) {
 	String modifier = getModifierString(keyCode);
 	String fullKey;
-	if(modifier.equals("")) {
+	if(modifier.equals("")) { //$NON-NLS-1$
 		fullKey = findKeyString(keyCode);
 	} else {
-		fullKey = modifier + "+" + findKeyString(keyCode);	
+		fullKey = modifier + "+" + findKeyString(keyCode);	 //$NON-NLS-1$
 	}
 	return fullKey;
 }
@@ -198,22 +198,22 @@ public static String convertAccelerator(int keyCode) {
  * of the key event.
  */
 private static String getModifierString(int keyCode) {
-	String modString = "";
+	String modString = ""; //$NON-NLS-1$
 	if((keyCode & SWT.CTRL) != 0) {
 		modString = findModifierString(keyCode & SWT.CTRL);
 	}
 	if((keyCode & SWT.ALT) != 0) {
-		if(modString.equals("")) {
+		if(modString.equals("")) { //$NON-NLS-1$
 			modString = findModifierString(keyCode & SWT.ALT);					
 		} else {
-			modString = modString+"+"+findModifierString(keyCode & SWT.ALT);
+			modString = modString+"+"+findModifierString(keyCode & SWT.ALT); //$NON-NLS-1$
 		}
 	}
 	if((keyCode & SWT.SHIFT) != 0) {
-		if(modString.equals("")) {
+		if(modString.equals("")) { //$NON-NLS-1$
 			modString = findModifierString(keyCode & SWT.SHIFT);					
 		} else {
-			modString = modString+"+"+findModifierString(keyCode & SWT.SHIFT);
+			modString = modString+"+"+findModifierString(keyCode & SWT.SHIFT); //$NON-NLS-1$
 		}
 	}
 	return modString;	
@@ -329,11 +329,11 @@ public static int findModifier(String token) {
  */
 public static String findModifierString(int keyCode) {
 	if(keyCode == SWT.CTRL)
-		return JFaceResources.getString("Ctrl");
+		return JFaceResources.getString("Ctrl"); //$NON-NLS-1$
 	if(keyCode == SWT.ALT)
-		return JFaceResources.getString("Alt");
+		return JFaceResources.getString("Alt"); //$NON-NLS-1$
 	if(keyCode == SWT.SHIFT)
-		return JFaceResources.getString("Shift");
+		return JFaceResources.getString("Shift"); //$NON-NLS-1$
 	return null;	
 }
 /**

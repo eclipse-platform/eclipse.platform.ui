@@ -132,7 +132,7 @@ public abstract class PluginAction extends Action
 			Object parentConfig = ((ConfigurationElement) configElement).getParent();
 			String typeName = null;
 			if(parentConfig != null && parentConfig instanceof IConfigurationElement) 
-				typeName = ((IConfigurationElement) parentConfig).getAttribute("objectClass");
+				typeName = ((IConfigurationElement) parentConfig).getAttribute("objectClass"); //$NON-NLS-1$
 			
 			//See if this is typed at all first
 			if(typeName == null){
@@ -190,10 +190,8 @@ public abstract class PluginAction extends Action
 				MessageDialog
 					.openInformation(
 						Display.getDefault().getActiveShell(),
-						WorkbenchMessages.getString("Information"),
-				//$NON-NLS-1$
-				WorkbenchMessages.getString("PluginAction.operationNotAvailableMessage"));
-				//$NON-NLS-1$
+						WorkbenchMessages.getString("Information"), //$NON-NLS-1$
+				WorkbenchMessages.getString("PluginAction.operationNotAvailableMessage")); //$NON-NLS-1$
 				return;
 			}
 		}

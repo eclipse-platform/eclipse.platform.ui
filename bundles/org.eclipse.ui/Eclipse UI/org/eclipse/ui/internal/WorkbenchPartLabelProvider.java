@@ -29,7 +29,7 @@ public String getColumnText(Object element, int columnIndex) {
 		if (path.length() == 0) {
 			return part.getTitle();
 		} else {
-			return part.getTitle() + "  [" + part.getTitleToolTip() + "]";
+			return part.getTitle() + "  [" + part.getTitleToolTip() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	return null;

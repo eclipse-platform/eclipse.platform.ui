@@ -69,7 +69,7 @@ public void addResourceType(String newName, String newExtension) {
 	
 	// Find the index at which to insert the new entry.
 	String newFilename = (newName + (newExtension == null || newExtension.length() == 0 ?
-		 "" : "." + newExtension)).toUpperCase();//$NON-NLS-1$
+		 "" : "." + newExtension)).toUpperCase();//$NON-NLS-1$ //$NON-NLS-2$
 	IFileEditorMapping resourceType;
 	TableItem[] items = resourceTypeTable.getItems();
 	boolean found = false;

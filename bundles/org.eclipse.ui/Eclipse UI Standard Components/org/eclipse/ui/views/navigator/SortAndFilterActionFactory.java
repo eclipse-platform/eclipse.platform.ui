@@ -46,7 +46,7 @@ public class SortAndFilterActionFactory
 		filterAction =
 			new FilterSelectionAction(
 				navigatorPart,
-				ResourceNavigatorMessages.getString("ResourceNavigator.filterText"));
+				ResourceNavigatorMessages.getString("ResourceNavigator.filterText")); //$NON-NLS-1$
 
 	}
 
@@ -61,8 +61,7 @@ public class SortAndFilterActionFactory
 		sortByNameAction.selectionChanged(selection);
 		
 		IMenuManager submenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.sort"));
-		//$NON-NLS-1$
+			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.sort")); //$NON-NLS-1$
 		menu.add(submenu);
 		updateSortActions();
 		submenu.add(sortByNameAction);

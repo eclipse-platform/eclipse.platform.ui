@@ -32,7 +32,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 	 * Creates the action.
 	 */
 	public CopyBookmarkAction(BookmarkNavigator bookmarkNavigator) {
-		super(bookmarkNavigator, BookmarkMessages.getString("CopyBookmark.text"));
+		super(bookmarkNavigator, BookmarkMessages.getString("CopyBookmark.text")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IBookmarkHelpContextIds.COPY_BOOKMARK_ACTION);
 		setEnabled(false);
 		clipboard = new Clipboard(Display.getCurrent());

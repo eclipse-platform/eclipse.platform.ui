@@ -107,7 +107,7 @@ public boolean getBoolean(String key) {
 public double getDouble(String key) throws NumberFormatException {
 	String setting = (String)items.get(key);
 	if(setting == null)
-		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$ //$NON-NLS-2$
 		
 	return new Double(setting).doubleValue();
 }
@@ -117,7 +117,7 @@ public double getDouble(String key) throws NumberFormatException {
 public float getFloat(String key) throws NumberFormatException {
 	String setting = (String)items.get(key);
 	if(setting == null)
-		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$ //$NON-NLS-2$
 		
 	return new Float(setting).floatValue();
 }
@@ -129,7 +129,7 @@ public int getInt(String key) throws NumberFormatException {
 	if(setting == null) {
 		//new Integer(null) will throw a NumberFormatException and meet our spec, but this message
 		//is clearer.
-		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 		
 	return new Integer(setting).intValue();
@@ -142,7 +142,7 @@ public long getLong(String key) throws NumberFormatException {
 	if(setting == null) {
 		//new Long(null) will throw a NumberFormatException and meet our spec, but this message
 		//is clearer.
-		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 		
 	return new Long(setting).longValue();

@@ -22,14 +22,14 @@ public class CoolBarLayout {
 	}
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(20);
-		buffer.append("item wrap ");
+		buffer.append("item wrap "); //$NON-NLS-1$
 		for (int i=0; i<itemWrapIndices.length; i++) {
-			buffer.append(itemWrapIndices[i] + " ");
+			buffer.append(itemWrapIndices[i] + " "); //$NON-NLS-1$
 		}
 		buffer.append('\n');
-		buffer.append("item size ");
+		buffer.append("item size "); //$NON-NLS-1$
 		for (int i=0; i<itemSizes.length; i++) {
-			buffer.append(itemSizes[i] + " ");
+			buffer.append(itemSizes[i] + " "); //$NON-NLS-1$
 		}
 		buffer.append('\n');
 		return buffer.toString();

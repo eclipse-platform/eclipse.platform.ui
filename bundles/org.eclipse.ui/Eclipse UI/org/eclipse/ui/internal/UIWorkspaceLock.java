@@ -24,12 +24,12 @@ public boolean acquire() throws InterruptedException {
 		Thread currentOperation = getCurrentOperationThread();
 		if (currentOperation != null) {
 			if (display.getSyncThread() == currentOperation && isTreeLocked())
-				throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification"));
+				throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
 			// If a syncExec was executed from the current operation, it
 			// has already acquired the lock. So, just return true.
 			if (pendingWork != null && pendingWorkStarted && pendingWork.getOperationThread() == currentOperation) {
 				if (isTreeLocked())
-					throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification"));
+					throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
 				else
 					return true; // we are a nested operation
 			}

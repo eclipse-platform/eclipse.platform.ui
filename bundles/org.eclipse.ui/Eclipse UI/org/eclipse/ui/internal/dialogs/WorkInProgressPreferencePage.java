@@ -61,7 +61,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		if (restartNeeded) {
 			Label label = new Label(composite, SWT.NONE);
 			if(labelText == null)
-				label.setText("Note: This preference will only take effect after restarting.");
+				label.setText(WorkbenchMessages.getString("WorkInProgressPreference.noEffectUntilRestarted")); //$NON-NLS-1$
 			else
 				label.setText(labelText);
 		}
@@ -84,8 +84,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		workingSetsButton =
 			createTempOption(
 				composite,
-				"Enable workbench working sets (adds two items to Window menu)",
-				"ENABLE_WORKING_SETS",
+				WorkbenchMessages.getString("WorkInProgressPreference.enableWorkbenchWorkingSets"), //$NON-NLS-1$
+				"ENABLE_WORKING_SETS", //$NON-NLS-1$
 				true,
 				null);
 
@@ -93,10 +93,10 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		coolBarsButton =
 			createTempOption(
 				composite,
-				"Enable cool bars",
-				"ENABLE_COOL_BARS",
+				WorkbenchMessages.getString("WorkInProgressPreference.enableCoolbars"), //$NON-NLS-1$
+				"ENABLE_COOL_BARS", //$NON-NLS-1$
 				true,
-				"Note: This preference will only take effect on new windows.");
+				WorkbenchMessages.getString("WorkInProgressPreference.onlyAffectsNewWindows")); //$NON-NLS-1$
 							
 /*		// Temporary option to enable the new menu organization
 		newMenusButton = 
@@ -118,14 +118,14 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		buttonComposite.setLayout(layout);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		buttonComposite.setLayoutData(data);
-		buttonComposite.setText("Single Click");
+		buttonComposite.setText(WorkbenchMessages.getString("WorkInProgressPreference.singleClick")); //$NON-NLS-1$
 		
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		singleClickMethod = store.getInt("SINGLE_CLICK_METHOD");
-		createSingleClickButton(buttonComposite,0,"Single click without timer",OpenStrategy.NO_TIMER);
-		createSingleClickButton(buttonComposite,1,"File explorer",OpenStrategy.FILE_EXPLORER);
-		createSingleClickButton(buttonComposite,2,"Active Desktop",OpenStrategy.ACTIVE_DESKTOP);
-		createSingleClickButton(buttonComposite,3,"Double click",OpenStrategy.DOUBLE_CLICK);
+		singleClickMethod = store.getInt("SINGLE_CLICK_METHOD"); //$NON-NLS-1$
+		createSingleClickButton(buttonComposite,0,WorkbenchMessages.getString("WorkInProgressPreference.singleClickNoTimer"),OpenStrategy.NO_TIMER); //$NON-NLS-1$
+		createSingleClickButton(buttonComposite,1,WorkbenchMessages.getString("WorkInProgressPreference.fileExplorer"),OpenStrategy.FILE_EXPLORER); //$NON-NLS-1$
+		createSingleClickButton(buttonComposite,2,WorkbenchMessages.getString("WorkInProgressPreference.activeDesktop"),OpenStrategy.ACTIVE_DESKTOP); //$NON-NLS-1$
+		createSingleClickButton(buttonComposite,3,WorkbenchMessages.getString("WorkInProgressPreference.doubleClick"),OpenStrategy.DOUBLE_CLICK); //$NON-NLS-1$
 	}
 	
 	private void createSingleClickButton(Composite parent,int index,String label,final int method) {
@@ -162,7 +162,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		store.setValue("ENABLE_WORKING_SETS", workingSetsButton.getSelection()); //$NON-NLS-1$
 //		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
 		store.setValue("ENABLE_COOL_BARS", coolBarsButton.getSelection()); //$NON-NLS-1$
-		store.setValue("SINGLE_CLICK_METHOD",singleClickMethod);
+		store.setValue("SINGLE_CLICK_METHOD",singleClickMethod); //$NON-NLS-1$
 		OpenStrategy.setOpenMethod(singleClickMethod);
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformOk(store);

@@ -69,7 +69,7 @@ public class ProductInfo extends ConfigurationInfo {
  * Create a new instance of the product info
  */
 public ProductInfo() {
-	super("product.ini", "product.properties");
+	super("product.ini", "product.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 	
 	
@@ -109,7 +109,7 @@ public String getAppName() {
  * @return the build id
  */
 public String getBuildID() {
-	return (buildID == null ? "" : buildID);
+	return (buildID == null ? "" : buildID); //$NON-NLS-1$
 }
 /**
  * Returns the default preferences obtained from the configuration.
@@ -128,7 +128,7 @@ public Hashtable getConfigurationPreferences() {
  * @return the copyright notice
  */
 public String getCopyright() {
-	return (copyright == null ? "" : copyright);
+	return (copyright == null ? "" : copyright); //$NON-NLS-1$
 }
 /**
  * Returns the default perpective id.  This value will be used
@@ -150,7 +150,7 @@ public String getDefaultPerspective() {
  * @return the full name of this product
  */
 public String getDetailedName() {
-	return (detailedName == null ? "" : detailedName);
+	return (detailedName == null ? "" : detailedName); //$NON-NLS-1$
 }
 /**
  * Returns the base information set identifiers for this product.
@@ -171,7 +171,7 @@ public String getInformationSetIds() {
  * @return the name of this product
  */
 public String getName() {
-	return (name == null ? "" : name);
+	return (name == null ? "" : name); //$NON-NLS-1$
 }
 /**
  * Returns an image descriptor for this product's icon.
@@ -193,7 +193,7 @@ public ImageDescriptor getProductImageDescriptor() {
  * @return the product URL
  */
 public String getProductURL() {
-	return (productURL == null ? "" : productURL);
+	return (productURL == null ? "" : productURL); //$NON-NLS-1$
 }
 /**
  * Returns a new image like the one that would have been shown in a "splash" 
@@ -221,7 +221,7 @@ public Image getSplashImage() {
  * @return the product version number
  */
 public String getVersion() {
-	return (version == null ? "" : version);
+	return (version == null ? "" : version); //$NON-NLS-1$
 }
 /**
  * Returns a <code>URL</code> for the welcome page.

@@ -35,10 +35,10 @@ public class DecoratorManager
 	private static final DecoratorDefinition[] EMPTY_DEF =
 		new DecoratorDefinition[0];
 
-	private final String PREFERENCE_SEPARATOR = ",";
-	private final String VALUE_SEPARATOR = ":";
-	private final String P_TRUE = "true";
-	private final String P_FALSE = "false";
+	private final String PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
+	private final String VALUE_SEPARATOR = ":"; //$NON-NLS-1$
+	private final String P_TRUE = "true"; //$NON-NLS-1$
+	private final String P_FALSE = "false"; //$NON-NLS-1$
 
 	/**
 	 * Create a new instance of the receiver and load the

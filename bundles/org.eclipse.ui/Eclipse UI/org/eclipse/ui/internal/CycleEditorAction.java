@@ -22,12 +22,12 @@ protected CycleEditorAction(IWorkbenchWindow window, boolean forward) {
 protected void setText() {
 	// TBD: Remove text and tooltip when this becomes an invisible action.
 	if (forward) {
-		setText(WorkbenchMessages.getString("CycleEditorAction.next.text"));
-		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.next.toolTip"));
+		setText(WorkbenchMessages.getString("CycleEditorAction.next.text")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.next.toolTip")); //$NON-NLS-1$
 	}
 	else {
-		setText(WorkbenchMessages.getString("CycleEditorAction.prev.text"));
-		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.prev.toolTip"));
+		setText(WorkbenchMessages.getString("CycleEditorAction.prev.text")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.prev.toolTip")); //$NON-NLS-1$
 	}
 }
 
@@ -54,7 +54,7 @@ protected void addItems(Table table,WorkbenchPage page) {
 		if(parts[i] instanceof IEditorPart) {
 			item = new TableItem(table,SWT.NONE);
 			if(parts[i].isDirty())
-				item.setText("*" + parts[i].getTitle());
+				item.setText("*" + parts[i].getTitle()); //$NON-NLS-1$
 			else
 				item.setText(parts[i].getTitle());
 			item.setImage(parts[i].getTitleImage());
@@ -66,6 +66,6 @@ protected void addItems(Table table,WorkbenchPage page) {
  * Returns the string which will be shown in the table header.
  */ 
 protected String getTableHeader() {
-	return WorkbenchMessages.getString("CycleEditorAction.header");
+	return WorkbenchMessages.getString("CycleEditorAction.header"); //$NON-NLS-1$
 }
 }

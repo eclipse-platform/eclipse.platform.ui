@@ -14,15 +14,15 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * Action definitions are stored in an ActionDefinitionRegistry once read.
  */
 public class ActionDefinitionRegistryReader extends RegistryReader {
-	private static final String TAG_ACTION_DEF = "actionDefinition";
-	private static final String ATT_ID = "id";
-	private static final String ATT_LABEL = "label";
-	private static final String ATT_ICON = "icon";
-	private static final String ATT_MENUBAR_PATH = "menubarPath";
-	private static final String ATT_TOOLBAR_PATH = "toolbarPath";
-	private static final String ATT_TOOLTIP = "tooltip";
-	private static final String ATT_HELP_CONTEXT_ID = "helpContextId";
-	private static final String ATT_STATE = "state";
+	private static final String TAG_ACTION_DEF = "actionDefinition"; //$NON-NLS-1$
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ATT_LABEL = "label"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATT_MENUBAR_PATH = "menubarPath"; //$NON-NLS-1$
+	private static final String ATT_TOOLBAR_PATH = "toolbarPath"; //$NON-NLS-1$
+	private static final String ATT_TOOLTIP = "tooltip"; //$NON-NLS-1$
+	private static final String ATT_HELP_CONTEXT_ID = "helpContextId"; //$NON-NLS-1$
+	private static final String ATT_STATE = "state"; //$NON-NLS-1$
 	
 	private ActionDefinitionRegistry actionDefinitions;
 

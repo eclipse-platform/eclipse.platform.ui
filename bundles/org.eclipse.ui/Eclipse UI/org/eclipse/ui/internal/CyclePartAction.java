@@ -34,11 +34,11 @@ protected CyclePartAction(IWorkbenchWindow window, boolean forward) {
 protected void setText() {
 	// TBD: Remove text and tooltip when this becomes an invisible action.
 	if (forward) {
-		setText(WorkbenchMessages.getString("CyclePartAction.next.text"));
-		setToolTipText(WorkbenchMessages.getString("CyclePartAction.next.toolTip"));
+		setText(WorkbenchMessages.getString("CyclePartAction.next.text")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("CyclePartAction.next.toolTip")); //$NON-NLS-1$
 	} else {
-		setText(WorkbenchMessages.getString("CyclePartAction.prev.text"));
-		setToolTipText(WorkbenchMessages.getString("CyclePartAction.prev.toolTip"));
+		setText(WorkbenchMessages.getString("CyclePartAction.prev.text")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("CyclePartAction.prev.toolTip")); //$NON-NLS-1$
 	}
 }
 /**
@@ -170,7 +170,7 @@ private void openDialog(WorkbenchPage page) {
  * Returns the string which will be shown in the table header.
  */ 
 protected String getTableHeader() {
-	return WorkbenchMessages.getString("CyclePartAction.header");
+	return WorkbenchMessages.getString("CyclePartAction.header"); //$NON-NLS-1$
 }
 /**
  * Add all views to the dialog in the activation order
@@ -185,7 +185,7 @@ protected void addItems(Table table,WorkbenchPage page) {
 				if(activeEditor == null)
 					activeEditor = parts[i];
 				TableItem item = new TableItem(table,SWT.NONE);
-				item.setText(WorkbenchMessages.getString("CyclePartAction.editor"));
+				item.setText(WorkbenchMessages.getString("CyclePartAction.editor")); //$NON-NLS-1$
 				item.setImage(activeEditor.getTitleImage());
 				item.setData(activeEditor);
 				includeEditor = false;

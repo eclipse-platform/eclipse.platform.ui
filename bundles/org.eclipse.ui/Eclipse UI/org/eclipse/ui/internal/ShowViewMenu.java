@@ -164,7 +164,7 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 				MessageDialog
 					.openError(
 						window.getShell(),
-						WorkbenchMessages.getString("ShowView.errorTitle"),
+						WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
 				//$NON-NLS-1$
 				e.getMessage());
 			}

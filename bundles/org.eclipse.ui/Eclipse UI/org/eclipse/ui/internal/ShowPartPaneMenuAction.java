@@ -19,7 +19,7 @@ public class ShowPartPaneMenuAction extends PartEventAction {
  * @param text
  */
 public ShowPartPaneMenuAction(WorkbenchWindow window) {
-	super("");
+	super(""); //$NON-NLS-1$
 	initText();
 	window.getPartService().addPartListener(this);
 }
@@ -27,8 +27,8 @@ public ShowPartPaneMenuAction(WorkbenchWindow window) {
  * Initialize the menu text and tooltip.
  */
 protected void initText() {
-	setText(WorkbenchMessages.getString("ShowPartPaneMenuAction.text"));
-	setToolTipText(WorkbenchMessages.getString("ShowPartPaneMenuAction.toolTip"));
+	setText(WorkbenchMessages.getString("ShowPartPaneMenuAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ShowPartPaneMenuAction.toolTip")); //$NON-NLS-1$
 }
 /**
  * Show the pane title menu.

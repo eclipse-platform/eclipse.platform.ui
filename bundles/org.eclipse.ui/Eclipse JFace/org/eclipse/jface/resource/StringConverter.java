@@ -733,15 +733,15 @@ public static String asDisplayableString(FontData value) {
 	boolean bold = (style & SWT.BOLD) == SWT.BOLD;
 	boolean italic = (style & SWT.ITALIC) == SWT.ITALIC;
 	if (bold && italic) {
-		buffer.append(JFaceResources.getString("BoldItalicFont"));
+		buffer.append(JFaceResources.getString("BoldItalicFont")); //$NON-NLS-1$
 	} else
 		if (bold) {
-			buffer.append(JFaceResources.getString("BoldFont"));
+			buffer.append(JFaceResources.getString("BoldFont")); //$NON-NLS-1$
 		} else
 			if (italic) {
-				buffer.append(JFaceResources.getString("ItalicFont"));
+				buffer.append(JFaceResources.getString("ItalicFont")); //$NON-NLS-1$
 			} else {
-				buffer.append(JFaceResources.getString("RegularFont"));
+				buffer.append(JFaceResources.getString("RegularFont")); //$NON-NLS-1$
 			}
 		buffer.append(SEPARATOR);
 	buffer.append(value.getHeight());

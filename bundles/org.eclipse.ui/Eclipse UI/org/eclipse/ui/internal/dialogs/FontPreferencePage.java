@@ -78,7 +78,7 @@ public class FontPreferencePage
 			font = new Font(text.getDisplay(), bestData);
 			text.setFont(font);
 			//Also set the text here
-			text.setText(WorkbenchMessages.getString("FontsPreference.SampleText"));
+			text.setText(WorkbenchMessages.getString("FontsPreference.SampleText")); //$NON-NLS-1$
 		}
 		public int getPreferredHeight() {
 			return 120;
@@ -123,9 +123,8 @@ public class FontPreferencePage
 		
 		createUseDefaultsControl(
 			buttonColumn,
-			WorkbenchMessages.getString("FontsPreference.useSystemFont"));
-		createChangeControl(buttonColumn, JFaceResources.getString("openChange"));
-		//$NON-NLS-1$
+			WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
+		createChangeControl(buttonColumn, JFaceResources.getString("openChange")); //$NON-NLS-1$
 
 		return mainColumn;
 	}
@@ -313,15 +312,15 @@ public class FontPreferencePage
 
 		namesToIds = new Hashtable();
 		namesToIds.put(
-			WorkbenchMessages.getString("FontsPreference.BannerFont"),
+			WorkbenchMessages.getString("FontsPreference.BannerFont"), //$NON-NLS-1$
 			JFaceResources.BANNER_FONT);
 
 		namesToIds.put(
-			WorkbenchMessages.getString("FontsPreference.TextFont"),
+			WorkbenchMessages.getString("FontsPreference.TextFont"), //$NON-NLS-1$
 			JFaceResources.TEXT_FONT);
 
 		namesToIds.put(
-			WorkbenchMessages.getString("FontsPreference.HeaderFont"),
+			WorkbenchMessages.getString("FontsPreference.HeaderFont"), //$NON-NLS-1$
 			JFaceResources.HEADER_FONT);
 
 		//Now set up the fonts

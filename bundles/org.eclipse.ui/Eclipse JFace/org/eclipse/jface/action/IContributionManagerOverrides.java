@@ -22,7 +22,7 @@ public interface IContributionManagerOverrides {
 	 * 
 	 * @since 2.0
 	 */
-	public final static String P_ENABLED = "enabled";
+	public final static String P_ENABLED = "enabled"; //$NON-NLS-1$
 	
 	/**
 	 * Returns <code>Boolean.TRUE</code> if the given contribution item should 

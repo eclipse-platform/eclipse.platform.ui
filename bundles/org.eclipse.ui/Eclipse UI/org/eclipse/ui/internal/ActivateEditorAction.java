@@ -12,7 +12,7 @@ public class ActivateEditorAction extends PageEventAction {
  */
 protected ActivateEditorAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ActivateEditorAction.text"), window); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("ActivateEditorAction.toolTip"));
+	setToolTipText(WorkbenchMessages.getString("ActivateEditorAction.toolTip")); //$NON-NLS-1$
 	window.getPartService().addPartListener(this);
 	updateState();
 }

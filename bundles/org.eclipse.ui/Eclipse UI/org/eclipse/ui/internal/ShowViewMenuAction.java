@@ -17,8 +17,8 @@ public ShowViewMenuAction(WorkbenchWindow window) {
  * Initialize the menu text and tooltip.
  */
 protected void initText() {
-	setText(WorkbenchMessages.getString("ShowViewMenuAction.text"));
-	setToolTipText(WorkbenchMessages.getString("ShowViewMenuAction.toolTip"));
+	setText(WorkbenchMessages.getString("ShowViewMenuAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ShowViewMenuAction.toolTip")); //$NON-NLS-1$
 }
 /**
  * Show the pane title menu.

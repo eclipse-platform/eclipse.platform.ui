@@ -65,7 +65,7 @@ public EditorDescriptor getEditorDescriptor() {
 public IKeyBindingService getKeyBindingService() {
 	if(keyBindingService == null) {
 		keyBindingService = new KeyBindingService(((WorkbenchWindow)getWorkbenchWindow()).getKeyBindingService());
-		keyBindingService.setActiveAcceleratorScopeId("org.eclipse.ui.textEditorScope");
+		keyBindingService.setActiveAcceleratorScopeId("org.eclipse.ui.textEditorScope"); //$NON-NLS-1$
 	}	
 	return keyBindingService;
 }

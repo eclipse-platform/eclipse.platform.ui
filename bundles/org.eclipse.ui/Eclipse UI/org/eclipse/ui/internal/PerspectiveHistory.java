@@ -43,7 +43,7 @@ public class PerspectiveHistory {
 	}
 	
 	public void restoreState(IMemento memento) {
-		IMemento [] children = memento.getChildren("desc");
+		IMemento [] children = memento.getChildren("desc"); //$NON-NLS-1$
 		for (int i = 0; i < children.length && i < DEFAULT_DEPTH; i++) {
 			IPerspectiveDescriptor desc =
 				reg.findPerspectiveWithId(children[i].getID());
@@ -56,7 +56,7 @@ public class PerspectiveHistory {
 		Iterator iter = shortcuts.iterator();
 		while (iter.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)iter.next();
-			memento.createChild("desc", desc.getId());
+			memento.createChild("desc", desc.getId()); //$NON-NLS-1$
 		}
 	}
 

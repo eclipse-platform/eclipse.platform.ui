@@ -182,7 +182,7 @@ public class DecoratorDefinition {
 		//If there is an error then reset the enabling to false
 		MessageDialog.openError(
 			null,
-			WorkbenchMessages.getString("Internal_error"),
+			WorkbenchMessages.getString("Internal_error"), //$NON-NLS-1$
 			exception.getLocalizedMessage());
 		this.enabled = false;
 	}

@@ -58,7 +58,7 @@ public class ResourceNavigator
 	private ResourceWorkingSetFilter workingSetFilter;
 
 	/** Property store constant for sort order. */
-	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE";
+	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE"; //$NON-NLS-1$
 	//$NON-NLS-1$
 
 	/**
@@ -76,8 +76,7 @@ public class ResourceNavigator
 	 * The value must be the same as IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR.]
 	 */
 	private static final String LINK_NAVIGATOR_TO_EDITOR =
-		"LINK_NAVIGATOR_TO_EDITOR";
-	//$NON-NLS-1$
+		"LINK_NAVIGATOR_TO_EDITOR"; //$NON-NLS-1$
 
 	// Persistance tags.
 	private static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
@@ -87,9 +86,9 @@ public class ResourceNavigator
 	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 	private static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
 	private static final String TAG_PATH = "path"; //$NON-NLS-1$
-	private static final String TAG_VERTICAL_POSITION = "verticalPosition";
+	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 	//$NON-NLS-1$
-	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";
+	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 	//$NON-NLS-1$
 
 	//$NON-NLS-1$
@@ -400,15 +399,14 @@ public class ResourceNavigator
 			if (o instanceof IResource) {
 				return ((IResource) o).getFullPath().makeRelative().toString();
 			} else {
-				return ResourceNavigatorMessages.getString("ResourceNavigator.oneItemSelected");
+				return ResourceNavigatorMessages.getString("ResourceNavigator.oneItemSelected"); //$NON-NLS-1$
 				//$NON-NLS-1$
 			}
 		}
 		if (selection.size() > 1) {
 			return ResourceNavigatorMessages.format(
-				"ResourceNavigator.statusLine",
+				"ResourceNavigator.statusLine", //$NON-NLS-1$
 				new Object[] { new Integer(selection.size())});
-			//$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -419,8 +417,7 @@ public class ResourceNavigator
 		if (element instanceof IResource) {
 			IPath path = ((IResource) element).getFullPath();
 			if (path.isRoot()) {
-				return ResourceNavigatorMessages.getString("ResourceManager.toolTip");
-				//$NON-NLS-1$
+				return ResourceNavigatorMessages.getString("ResourceManager.toolTip"); //$NON-NLS-1$
 			} else {
 				return path.makeRelative().toString();
 			}

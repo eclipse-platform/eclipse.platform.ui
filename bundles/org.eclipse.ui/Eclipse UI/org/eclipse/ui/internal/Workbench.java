@@ -508,7 +508,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		int singleClickMethod = store.getInt("SINGLE_CLICK_METHOD");
+		int singleClickMethod = store.getInt("SINGLE_CLICK_METHOD"); //$NON-NLS-1$
 		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
 	/**
@@ -610,7 +610,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
 			public void run() throws Exception {
 				FileInputStream input = new FileInputStream(stateFile);
-				InputStreamReader reader = new InputStreamReader(input, "utf-8");
+				InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
 				// Restore the workbench state.
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
@@ -1102,7 +1102,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		XMLMemento memento = recordWorkbenchState();
 		try {
 			FileOutputStream stream = new FileOutputStream(stateFile);
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");
+			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
 			memento.save(writer);
 			writer.close();
 		} catch (IOException e) {
@@ -1152,7 +1152,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		try {
 			FileInputStream input = new FileInputStream(stateFile);
-			InputStreamReader reader = new InputStreamReader(input, "utf-8");
+			InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
 			// Restore the workbench state.
 			IMemento memento = XMLMemento.createReadRoot(reader);
 			String version = memento.getString(IWorkbenchConstants.TAG_VERSION);

@@ -33,7 +33,7 @@ public interface IPreferenceConstants {
 	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
 	//On/Off option for the preceding option.
-	public static final String REUSE_EDITORS_BOOLEAN = "REUSE_OPEN_EDITORS_BOOLEAN";
+	public static final String REUSE_EDITORS_BOOLEAN = "REUSE_OPEN_EDITORS_BOOLEAN"; //$NON-NLS-1$
 	
 	// (int) N recently viewed files will be listed in the File->Open Recent menu.
 	public static final String RECENT_FILES = "RECENT_FILES"; //$NON-NLS-1$
@@ -46,5 +46,5 @@ public interface IPreferenceConstants {
 	public static final int OVM_FLOAT = 2;
 
 	//Identifier for enabled decorators
-	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS";
+	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS"; //$NON-NLS-1$
 }
