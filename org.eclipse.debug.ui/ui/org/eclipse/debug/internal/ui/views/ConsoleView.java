@@ -96,7 +96,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * associated with the given process.
 	 */
 	public void setViewerInput(IProcess process) {
-		if (getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
+		if (!isAvailable()) {
 			return;
 		}
 		if (getProcess() == process) {
@@ -112,11 +112,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setProcess(process)	;
 		Runnable r = new Runnable() {
 			public void run() {
-				if (getViewer() == null) {
-					return;
-				}
-				Control viewerControl= getViewer().getControl();
-				if (viewerControl == null || viewerControl.isDisposed()) {
+				if (!isAvailable()) {
 					return;
 				}
 				IDocument doc = null;
