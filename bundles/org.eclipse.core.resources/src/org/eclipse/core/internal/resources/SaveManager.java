@@ -417,10 +417,6 @@ protected void removeUnusedTreeFiles() {
 public void requestSnapshot() {
 	snapshotRequested = true;
 }
-protected DataInputStream resetStream(DataInputStream input, IPath location, IPath tempLocation) throws IOException {
-	input.close();
-	return new DataInputStream(new SafeFileInputStream(location.toOSString(), tempLocation.toOSString()));
-}
 /**
  * Restores the contents of this project.  Throw
  * an exception if the project could not be restored.
