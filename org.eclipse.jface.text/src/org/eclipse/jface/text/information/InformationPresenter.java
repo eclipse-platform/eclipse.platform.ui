@@ -210,6 +210,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	private ITextViewer fTextViewer;
 	/** The map of <code>IInformationProvider</code> objects */
 	private Map fProviders;
+	/** The offset to override selection. */
+	private int fOffset= -1;
 	
 	
 	/**
@@ -259,14 +261,24 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		return (IInformationProvider) fProviders.get(contentType);
 	}
 	
+	/**
+	 * Sets a offset to override selection. Setting the value to -1 will disable
+	 * overriding.
+	 */
+	public void setOffset(int offset) {
+		fOffset= offset;
+	}
+	
 	/*
 	 * @see AbstractInformationControlManager#computeInformation()
 	 */
 	protected void computeInformation() {
-		int offset= fTextViewer.getSelectedRange().x;
+		
+		int offset= fOffset < 0 ? fTextViewer.getSelectedRange().x : fOffset;
 		if (offset == -1)
 			return;
-			
+
+		fOffset= -1;			
 			
 		IInformationProvider provider= null;
 		try {

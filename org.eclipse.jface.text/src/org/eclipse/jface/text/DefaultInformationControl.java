@@ -20,7 +20,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -58,6 +62,66 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	};
+
+	private static class BorderFillLayout extends Layout {
+		
+		/** The border widths. */
+		final int fBorderSize;
+
+		/**
+		 * Creates a fill layout with a border.
+		 */
+		public BorderFillLayout(int borderSize) {
+			if (borderSize < 0)
+				throw new IllegalArgumentException();
+			fBorderSize= borderSize;				
+		}
+
+		/**
+		 * Returns the border size.
+		 */		
+		public int getBorderSize() {
+			return fBorderSize;
+		}
+		
+		/*
+		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
+		 */
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
+
+			Control[] children= composite.getChildren();
+			Point minSize= new Point(0, 0);
+
+			if (children != null) {
+				for (int i= 0; i < children.length; i++) {
+					Point size= children[i].computeSize(wHint, hHint, flushCache);
+					minSize.x= Math.max(minSize.x, size.x);
+					minSize.y= Math.max(minSize.y, size.y);					
+				}	
+			}
+									
+			minSize.x += fBorderSize * 2 + RIGHT_MARGIN;
+			minSize.y += fBorderSize * 2;
+
+			return minSize;			
+		}
+		/*
+		 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
+		 */
+		protected void layout(Composite composite, boolean flushCache) {
+
+			Control[] children= composite.getChildren();
+			Point minSize= new Point(composite.getClientArea().width, composite.getClientArea().height);
+
+			if (children != null) {
+				for (int i= 0; i < children.length; i++) {
+					Control child= children[i];
+					child.setSize(minSize.x - fBorderSize * 2, minSize.y - fBorderSize * 2);
+					child.setLocation(fBorderSize, fBorderSize);			
+				}
+			}												
+		}
+	}	
 	
 	
 	/** Border thickness in pixels. */
@@ -87,15 +151,19 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * 
 	 * @param parent the parent shell
 	 * @param presenter the presenter to be used
+	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
 	 */
-	public DefaultInformationControl(Shell parent, int style, IInformationPresenter presenter) {
+	public DefaultInformationControl(Shell parent, int shellStyle, int style, IInformationPresenter presenter) {
 		
-		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
+		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
 		fText= new StyledText(fShell, SWT.MULTI | SWT.READ_ONLY | style);
 		
 		Display display= fShell.getDisplay();
 
+		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER; 
+
+		fShell.setLayout(new BorderFillLayout(border));
 		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		
 		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
@@ -113,6 +181,19 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		
 		fPresenter= presenter;
 	}
+
+	/**
+	 * Creates a default information control with the given shell as parent. The given
+	 * information presenter is used to process the information to be displayed. The given
+	 * styles are applied to the created styled text widget.
+	 * 
+	 * @param parent the parent shell
+	 * @param presenter the presenter to be used
+	 * @param style the additional styles for the styled text widget
+	 */	
+	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter) {
+		this(parent, SWT.NO_TRIM, style, presenter);
+	}	
 	
 	/**
 	 * Creates a default information control with the given shell as parent.
@@ -179,23 +260,16 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 */
 	public void setSize(int width, int height) {
 		fShell.setSize(width, height);
-
-		width -= BORDER * 2;
-		if (width < 0)
-			width= 0;
-
-		height -= BORDER * 2;
-		if (height < 0)
-			height= 0;
-
-		fText.setSize(width, height);
 	}
 	
 	/*
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
-		fText.setLocation(BORDER, BORDER);
+		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
+		Point textLocation= fText.getLocation();				
+		location.x += trim.x - textLocation.x;		
+		location.y += trim.y - textLocation.y;		
 		fShell.setLocation(location);		
 	}
 	
@@ -211,11 +285,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		Point point= fText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		point.x += RIGHT_MARGIN + BORDER * 2;
-		point.y += BORDER * 2;
-
-		return point;
+		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	}
 	
 	/*

@@ -11,6 +11,7 @@ Contributors:
 
 package org.eclipse.jface.text;
 
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Extension interface for <code>ITextViewer</code>. Extends <code>ITextViewer</code> with
@@ -48,4 +49,18 @@ public interface ITextViewerExtension2 {
 	 * @since 2.1
 	 */
 	void setTextHover(ITextHover textViewerHover, String contentType, int stateMask);
+	
+	/**
+	 * Returns the currently displayed text hover if any, <code>null</code>
+	 * otherwise.	 */
+	ITextHover getCurrentTextHover();
+	
+	/**
+	 * Returns the location at which the most recent mouse hover event
+	 * has been issued.
+	 * 
+	 * @return the location of the most recent mouse hover event
+	 */
+	Point getHoverEventLocation();
+	
 }

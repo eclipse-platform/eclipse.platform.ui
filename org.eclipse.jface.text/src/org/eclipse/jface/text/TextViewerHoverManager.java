@@ -38,7 +38,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	private ITextListener fStopper;
 	/** Internal monitor */
 	private Object fMutex= new Object();
-	
+	/** The currently shown text hover. */
+	private volatile ITextHover fTextHover;
 	
 	/**
 	 * Creates a new text viewer hover manager specific for the given text viewer.
@@ -106,6 +107,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 					if (fThread != null) {
 						String information= hover.getHoverInfo(fTextViewer, region);
 						setInformation(information, area);
+						if (information != null && area != null)
+							fTextHover= hover;
 					} else {
 						setInformation(null, null);
 					}
@@ -177,40 +180,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		if (document == null)
 			return -1;		
 		
-		int line= (y + styledText.getTopPixel()) / styledText.getLineHeight();
-		int lineCount= document.getNumberOfLines();
-		
-		if (line > lineCount - 1)
-			line= lineCount - 1;
-		
-		if (line < 0)
-			line= 0;
-		
 		try {
-			
-			IRegion lineInfo= document.getLineInformation(line);
-			int low= lineInfo.getOffset();
-			int high= low + lineInfo.getLength();
-			
-			int lookup= styledText.getLocationAtOffset(low).x;
-			int guess= low;
-			int guessDelta= Math.abs(lookup - x);
-			
-			for (int i= low + 1; i < high; i++) {
-				lookup= styledText.getLocationAtOffset(i).x;
-				int delta= Math.abs(lookup - x);
-				if (delta < guessDelta) {
-					guess= i;
-					guessDelta= delta;
-				}
-			}
-			
-			return guess + fTextViewer.getVisibleRegionOffset();
-		
-		} catch (BadLocationException e) {
+			return styledText.getOffsetAtLocation(new Point(x, y)) + fTextViewer.getVisibleRegionOffset();
+		} catch (IllegalArgumentException e) {
+			return -1;	
 		}
-		
-		return -1;
 	}
 	
 	/**
@@ -270,6 +244,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	protected void hideInformationControl() {
 		try {
+			fTextHover= null;
 			super.hideInformationControl();
 		} finally {
 			if (fTextViewer != null)
@@ -293,8 +268,16 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @see IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
-		super.hideInformationControl();
+		fTextHover= null;
+		super.hideInformationControl();		
 		return true;
 	}
+	
+	/**
+	 * Returns the currently shown text hover, <code>null</code> if no text
+	 * hover is shown.
+	 */
+	protected ITextHover getCurrentTextHover() {
+		return fTextHover;
+	}
 }
-

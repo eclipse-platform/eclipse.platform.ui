@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -976,7 +975,7 @@ public class TextViewer extends Viewer implements
 	 * The text viewer's hovering controller
 	 * @since 2.0
 	 */
-	private AbstractHoverInformationControlManager fTextHoverManager;
+	private TextViewerHoverManager fTextHoverManager;
 	/** The text viewer's viewport guard */
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */ 
@@ -3555,4 +3554,19 @@ public class TextViewer extends Viewer implements
 			fRewriteTarget= new RewriteTarget();
 		return fRewriteTarget;
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension2#getCurrentTextHover()
+	 */
+	public ITextHover getCurrentTextHover() {
+		return fTextHoverManager.getCurrentTextHover();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension2#getHoverEventLocation()
+	 */
+	public Point getHoverEventLocation() {
+		return fTextHoverManager.getHoverEventLocation();
+	}
+
 }
