@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public static Test suite() {
 	suite.addTest(ConfigurationElementModelTest.suite());
 	suite.addTest(IRegistryChangeEventTest.suite());
 //	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
-//	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
+	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
 	return suite;
 }
