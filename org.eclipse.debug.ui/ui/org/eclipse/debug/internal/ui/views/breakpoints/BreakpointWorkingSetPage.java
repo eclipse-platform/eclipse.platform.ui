@@ -18,8 +18,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -58,7 +58,7 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
  */
 public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
-	final private static String PAGE_TITLE= DebugUIMessages.getString("BreakpointWorkingSetPage.0"); //$NON-NLS-1$
+	final private static String PAGE_TITLE= DebugUIViewsMessages.getString("BreakpointWorkingSetPage.0"); //$NON-NLS-1$
 	final private static String PAGE_ID= "breakpointWorkingSetPage"; //$NON-NLS-1$
 	
 	private Text fWorkingSetName;
@@ -117,7 +117,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	 */
 	public BreakpointWorkingSetPage() {
 		super(PAGE_ID, PAGE_TITLE, DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_WIZBAN_DEBUG));
-		setDescription(DebugUIMessages.getString("BreakpointWorkingSetPage.1")); //$NON-NLS-1$
+		setDescription(DebugUIViewsMessages.getString("BreakpointWorkingSetPage.1")); //$NON-NLS-1$
 		fFirstCheck= true;
 	}
 
@@ -133,7 +133,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		setControl(composite);
 
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(DebugUIMessages.getString("BreakpointWorkingSetPage.2")); //$NON-NLS-1$
+		label.setText(DebugUIViewsMessages.getString("BreakpointWorkingSetPage.2")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
@@ -149,7 +149,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		fWorkingSetName.setFocus();
 		
 		label= new Label(composite, SWT.WRAP);
-		label.setText(DebugUIMessages.getString("BreakpointWorkingSetPage.3")); //$NON-NLS-1$
+		label.setText(DebugUIViewsMessages.getString("BreakpointWorkingSetPage.3")); //$NON-NLS-1$
 		gd= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
@@ -221,14 +221,14 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		String newText= fWorkingSetName.getText();
 
 		if (newText.equals(newText.trim()) == false)
-			errorMessage = DebugUIMessages.getString("BreakpointWorkingSetPage.4"); //$NON-NLS-1$
+			errorMessage = DebugUIViewsMessages.getString("BreakpointWorkingSetPage.4"); //$NON-NLS-1$
 		if (newText.equals("")) { //$NON-NLS-1$
 			if (fFirstCheck) {
 				setPageComplete(false);
 				fFirstCheck= false;
 				return;
 			}		
-			errorMessage= DebugUIMessages.getString("BreakpointWorkingSetPage.5"); //$NON-NLS-1$
+			errorMessage= DebugUIViewsMessages.getString("BreakpointWorkingSetPage.5"); //$NON-NLS-1$
 		}
 
 		fFirstCheck= false;
@@ -237,12 +237,12 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 			IWorkingSet[] workingSets= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (int i= 0; i < workingSets.length; i++) {
 				if (newText.equals(workingSets[i].getName())) {
-					errorMessage= DebugUIMessages.getString("BreakpointWorkingSetPage.6"); //$NON-NLS-1$
+					errorMessage= DebugUIViewsMessages.getString("BreakpointWorkingSetPage.6"); //$NON-NLS-1$
 				}
 			}
 		}
 		if (errorMessage == null && !hasCheckedElement())
-			errorMessage= DebugUIMessages.getString("BreakpointWorkingSetPage.7"); //$NON-NLS-1$
+			errorMessage= DebugUIViewsMessages.getString("BreakpointWorkingSetPage.7"); //$NON-NLS-1$
 
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
