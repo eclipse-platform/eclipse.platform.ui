@@ -35,6 +35,7 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 	private ITypedElement fRight;
 	private boolean fDontExpand;
 	private ListenerList fListener;
+	private boolean fSwapSides;
 
 	
 	/**
@@ -178,10 +179,6 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 	 * see ITypedElement.getName
 	 */
 	public String getName() {
-		return internalGetName(false);
-	}
-	
-	String internalGetName(boolean swap) {
 		String right= null;
 		if (fRight != null)
 			right= fRight.getName();
@@ -207,7 +204,7 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 		String s1;
 		String s2;
 		
-		if (swap) {
+		if (fSwapSides) {
 			s1= left;
 			s2= right;
 		} else {
@@ -218,7 +215,11 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 		String fmt= Utilities.getString("DiffNode.nameFormat"); //$NON-NLS-1$
 		return MessageFormat.format(fmt, new String[] { s1, s2 });
 	}
-
+	
+	void swapSides(boolean swap) {
+		fSwapSides= swap;
+	}
+		
 	/* (non Javadoc)
 	 * see ITypedElement.getImage
 	 */

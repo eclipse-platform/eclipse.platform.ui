@@ -277,6 +277,12 @@ public class StructureDiffViewer extends DiffTreeViewer {
 					protected boolean contentsEqual(Object o1, Object o2) {
 						return StructureDiffViewer.this.contentsEqual(o1, o2);
 					}
+					protected Object visit(Object data, int result, Object ancestor, Object left, Object right) {
+						Object o= super.visit(data, result, ancestor, left, right);
+						if (fLeftIsLocal && o instanceof DiffNode)
+							((DiffNode)o).swapSides(fLeftIsLocal);
+						return o;
+					}
 				};
 			
 			fRoot= (IDiffContainer) fDifferencer.findDifferences(fThreeWay, null, null,

@@ -94,9 +94,6 @@ public class DiffTreeViewer extends TreeViewer {
 		
 		public String getText(Object element) {
 			
-			if (element instanceof DiffNode)
-				return ((DiffNode)element).internalGetName(fLeftIsLocal);
-				
 			if (element instanceof IDiffElement)
 				return ((IDiffElement)element).getName();
 						
@@ -138,7 +135,7 @@ public class DiffTreeViewer extends TreeViewer {
 	
 	private ResourceBundle fBundle;
 	private CompareConfiguration fCompareConfiguration;
-	private boolean fLeftIsLocal;
+	/* package */ boolean fLeftIsLocal;
 	private ViewerFilter fViewerFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
 	private IPropertyChangeListener fPreferenceChangeListener;
