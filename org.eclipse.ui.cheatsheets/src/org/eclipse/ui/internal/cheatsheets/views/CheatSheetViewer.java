@@ -790,7 +790,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 					// do nothing
 				}
 			if (bundle != null) {
-				contentURL = Platform.find(bundle, new Path("$nl$").append(element.getContentFile())); //$NON-NLS-1$
+				contentURL = Platform.find(bundle, new Path(element.getContentFile()));
 			}
 	
 			if (contentURL == null) {
