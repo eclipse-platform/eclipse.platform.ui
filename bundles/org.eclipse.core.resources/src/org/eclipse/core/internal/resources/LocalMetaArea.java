@@ -184,8 +184,8 @@ public class LocalMetaArea implements ICoreConstants {
 		return locationFor(target).append(sequenceNumber + F_TREE);
 	}
 
-	public IPath getWorkingLocation(IResource resource, IPluginDescriptor plugin) {
-		return locationFor(resource).append(plugin.getUniqueIdentifier());
+	public IPath getWorkingLocation(IResource resource, String id) {
+		return locationFor(resource).append(id);
 	}
 
 	protected Workspace getWorkspace() {

@@ -353,9 +353,19 @@ public class Project extends Container implements IProject {
 	 * @see IProject#getPluginWorkingLocation(IPluginDescriptor)
 	 */
 	public IPath getPluginWorkingLocation(IPluginDescriptor plugin) {
-		if (!exists())
+		if (plugin == null)
 			return null;
-		IPath result = workspace.getMetaArea().getWorkingLocation(this, plugin);
+		return getWorkingLocation(plugin.getUniqueIdentifier());
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see IProject#getWorkingLocation(String)
+	 */
+	public IPath getWorkingLocation(String id) {
+		if (id == null || !exists())
+			return null;
+		IPath result = workspace.getMetaArea().getWorkingLocation(this, id);
 		result.toFile().mkdirs();
 		return result;
 	}

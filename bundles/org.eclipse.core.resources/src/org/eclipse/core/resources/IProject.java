@@ -375,15 +375,35 @@ public interface IProject extends IContainer, IAdaptable {
 	 * Returns the location in the local file system of the project-specific
 	 * working data area for use by the given plug-in or <code>null</code>
 	 * if the project does not exist.
+	 * <p>
 	 * The content, structure, and management of this area is 
 	 * the responsibility of the plug-in.  This area is deleted when the
 	 * project is deleted.
+	 * </p><p>
 	 * This project needs to exist but does not need to be open.
-	 *
+	 * </p>
 	 * @param plugin the plug-in
 	 * @return a local file system path
+	 * @deprecated Use <code>IProject.getWorkingLocation(plugin.getUniqueIdentifier())</code>.
 	 */
 	public IPath getPluginWorkingLocation(IPluginDescriptor plugin);
+
+	/**
+	 * Returns the location in the local file system of the project-specific
+	 * working data area for use by the bundle/plug-in with the given identifier, 
+	 * or <code>null</code> if the project does not exist.
+	 * <p>
+	 * The content, structure, and management of this area is 
+	 * the responsibility of the bundle/plug-in.  This area is deleted when the
+	 * project is deleted.
+	 * </p><p>
+	 * This project needs to exist but does not need to be open.
+	 * </p>
+	 * @param id the bundle or plug-in's identifier
+	 * @return a local file system path
+	 * @since 3.0
+	 */
+	public IPath getWorkingLocation(String id);
 
 	/**
 	 * Returns the projects referenced by this project. This includes
