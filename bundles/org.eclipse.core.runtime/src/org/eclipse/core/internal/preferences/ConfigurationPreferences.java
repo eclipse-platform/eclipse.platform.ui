@@ -78,7 +78,7 @@ public class ConfigurationPreferences extends EclipsePreferences {
 			return;
 		URL url = InternalPlatform.getDefault().getConfigurationLocation().getURL();
 		if (url != null)
-			location = new Path(url.getFile()).append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).append(DEFAULT_PREFERENCES_FILENAME);
+			location = computeLocation(new Path(url.getFile()), qualifier);
 	}
 
 	/*

@@ -28,8 +28,8 @@ import org.osgi.service.prefs.Preferences;
  */
 public class EclipsePreferences implements IEclipsePreferences, IScope {
 
-	public static final String DEFAULT_PREFERENCES_DIRNAME = ".preferences"; //$NON-NLS-1$
-	public static final String DEFAULT_PREFERENCES_FILENAME = "prefs.ini"; //$NON-NLS-1$
+	public static final String DEFAULT_PREFERENCES_DIRNAME = ".settings"; //$NON-NLS-1$
+	public static final String PREFS_FILE_EXTENSION = "prefs"; //$NON-NLS-1$
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	private static final String FALSE = "false"; //$NON-NLS-1$
 
@@ -57,6 +57,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	protected void log(IStatus status) {
 		InternalPlatform.getDefault().log(status);
+	}
+
+	protected IPath computeLocation(IPath root, String qualifier) {
+		return root == null ? null : root.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION);
 	}
 
 	public void load(IPath location) throws BackingStoreException {

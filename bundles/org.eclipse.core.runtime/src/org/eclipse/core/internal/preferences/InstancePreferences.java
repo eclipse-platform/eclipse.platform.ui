@@ -26,6 +26,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class InstancePreferences extends EclipsePreferences {
 
+	private static final String DEFAULT_PREFERENCES_FILENAME = "prefs.ini"; //$NON-NLS-1$
 	private static final String OLD_EXTENSION = ".old"; //$NON-NLS-1$
 
 	// cached values
