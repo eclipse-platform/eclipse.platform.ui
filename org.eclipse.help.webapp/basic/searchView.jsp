@@ -58,7 +58,7 @@ if (data.isProgressRequest()) {
 	return;
 } else {
 %>
-	<%@ include file="advanced.jsp"%>
+	<%@ include file="advanced.inc"%>
 <%
  	if (data.isSearchRequest()) {
 		if (data.getResultsCount() == 0){
