@@ -299,7 +299,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
 		updateActions();
-		showMarkerForCurrentSelection();
 	}
 
 	/**
@@ -317,7 +316,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void pageActivated(IWorkbenchPage page) {
 		if (page.equals(getSite().getPage())) {
+			setActive(true);
 			updateActions();
+			showMarkerForCurrentSelection();
+			((LaunchViewEventHandler)getEventHandler()).removeTerminatedLaunches(null);
 		}
 	}
 
