@@ -312,6 +312,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		} catch (IOException eIO) {
 		}
 
+		Manager.getInstance().update();
+
 		if (workbench instanceof Workbench) {
 			Workbench workbench = (Workbench) this.workbench;
 			Manager.getInstance().getKeyMachine().setKeyConfiguration(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : ZERO_LENGTH_STRING); //$NON-NLS-1$
@@ -328,7 +330,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}
 		}
 
-		Manager.getInstance().update();
 		return super.performOk();
 	}
 
