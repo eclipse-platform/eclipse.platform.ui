@@ -50,11 +50,13 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 
 			// this could throw a HelpDesktopException
 			webBrowser = factory.createBrowser(parent);
+			/*
 			WorkbenchHelp.setHelp(
 				webBrowser.getControl(),
 				new String[] {
 					IHelpUIConstants.BROWSER,
 					IHelpUIConstants.EMBEDDED_HELP_VIEW});
+			*/
 
 			return webBrowser.getControl();
 		} catch (HelpWorkbenchException e) {
