@@ -55,22 +55,6 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	public ISourceContainerType getType() {
 		return SourceLookupUtils.getSourceContainerType(WorkspaceSourceContainerType.TYPE_ID);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
-	 */
-	public ISourceContainer[] getSourceContainers() {
-		// TODO: cache the result
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		ISourceContainer[] containers = new ISourceContainer[projects.length];
-		for (int i = 0; i < projects.length; i++) {
-			containers[i] = new ProjectSourceContainer(projects[i], false);
-		}
-		for (int i = 0; i < containers.length; i++) {
-			ISourceContainer container = containers[i];
-			container.init(getDirector());
-		}		
-		return containers;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
@@ -79,7 +63,9 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ISourceContainer[] containers = new ISourceContainer[projects.length];
 		for (int i = 0; i < projects.length; i++) {
-			containers[i] = new ProjectSourceContainer(projects[i], false);
+			ISourceContainer container = new ProjectSourceContainer(projects[i], false);
+			container.init(getDirector());
+			containers[i] = container;
 		}
 		return containers;
 	}
