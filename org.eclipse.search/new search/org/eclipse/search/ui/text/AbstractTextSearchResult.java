@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.search.ui.text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,12 +17,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.ui.IEditorPart;
+
+/**
+ * An abstract superclass for text-match based search results. This search
+ * result implementation consists of a list of matches. No assumptions are made about
+ * the kind of elements these matches are reported against. 
+ * @see org.eclipse.search.ui.text.Match
+ * This class has abstract methods to map matches to both editors and files.
+ * If a client implements the methods related to editors, matches will be highlighted
+ * automatically in participating editors. Editors must implement or adapt to ITextEditor,
+ * or they must adapt to IAnnotationModel in order for match highlighting to work.
+ * @see #findContainedMatches(IEditorPart)
+ * @see #isShownInEditor(Match, IEditorPart)
+ * If a client implements the methods related to files, matches will be automatically
+ * updated if the file is changed via the filebuffer infrastructure.
+ * @see org.eclipse.core.filebuffers.FileBuffers
+ * @see #findContainedMatches(IFile)
+ * @see #getFile(Object)
+ */
 public abstract class AbstractTextSearchResult implements ISearchResult {
 	private Map fElementsToMatches;
 	private List fListeners;
@@ -47,6 +67,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			return doGetMatches(element);
 		}
 	}
+	
 	private Match[] doGetMatches(Object element) {
 		List matches= (List) fElementsToMatches.get(element);
 		if (matches != null)
@@ -68,11 +89,17 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fireChange(getSearchResultEvent(match, MatchEvent.ADDED));
 	}
 	
+	/**
+	 * Adds a number of Matches to this search result. This method does nothing for 
+	 * matches that are already present.
+	 * 
+	 * @param match The match to add.
+	 */
 	public void addMatches(Match[] matches) {
 
 		Set reallyAdded= new HashSet();
-		for (int i = 0; i < matches.length; i++) {
-			synchronized (fElementsToMatches) {
+		synchronized (fElementsToMatches) {
+			for (int i = 0; i < matches.length; i++) {
 				if (doAddMatch(matches[i]))
 					reallyAdded.add(matches[i]);
 			}
@@ -81,13 +108,11 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fireChange(getSearchResultEvent(reallyAdded, MatchEvent.ADDED));
 	}
 	
-	private SearchResultEvent getSearchResultEvent(Match match, int eventKind) {
+	private MatchEvent getSearchResultEvent(Match match, int eventKind) {
 		fMatchEvent.setKind(eventKind);
 		fMatchEvent.setMatch(match);
 		return fMatchEvent;
 	}
-		
-
 
 	private MatchEvent getSearchResultEvent(Set matches, int eventKind) {
 		fMatchEvent.setKind(eventKind);

@@ -124,7 +124,7 @@ public class FileSearchQuery implements ISearchQuery {
 		};
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
 		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, collector, new MatchLocator(fSearchString, fSearchOptions));
-		return new Status(IStatus.OK, SearchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS; //$NON-NLS-1$
 	}
 	
 	public boolean canRerun() {
