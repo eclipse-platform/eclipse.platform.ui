@@ -196,8 +196,9 @@ public void createControl(Composite parent) {
 
 	Composite buttonBar= new Composite(content, SWT.NULL);
 	layout= new GridLayout();
-	layout.numColumns= 0; layout.makeColumnsEqualWidth= true;
-	layout.marginHeight= 0; layout.marginWidth= 0;
+	layout.numColumns= 0; 
+	layout.marginHeight= 0; 
+	layout.marginWidth= 0;
 	buttonBar.setLayout(layout);
 	gd= new GridData(); gd.horizontalAlignment= gd.END;
 	buttonBar.setLayoutData(gd);
