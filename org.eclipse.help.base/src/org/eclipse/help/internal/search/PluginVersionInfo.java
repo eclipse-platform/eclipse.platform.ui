@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
+import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
 /**
  * Table of plugins. Records all plugins, their version, corresponding fragments versions
@@ -23,7 +23,7 @@ import org.eclipse.help.internal.base.util.*;
 public class PluginVersionInfo extends HelpProperties {
 	// Separates plugins and versions in value strings
 	static final String SEPARATOR = "\n";
-	Plugin basePlugin = HelpBasePlugin.getDefault();
+	File dir;
 	boolean doComparison = true;
 	boolean hasChanged = false;
 	boolean ignoreSavedVersions;
@@ -40,10 +40,10 @@ public class PluginVersionInfo extends HelpProperties {
 	public PluginVersionInfo(
 		String name,
 		Iterator it,
-		Plugin basePlugin,
+		File dir,
 		boolean ignoreSavedVersions) {
-		super(name, basePlugin);
-		this.basePlugin = basePlugin;
+		super(name, dir);
+		this.dir=dir;
 		this.ignoreSavedVersions = ignoreSavedVersions;
 		if (it == null)
 			return;
@@ -84,7 +84,7 @@ public class PluginVersionInfo extends HelpProperties {
 		if (!doComparison)
 			return hasChanged;
 		// Create table of contributions present before last save()
-		HelpProperties oldContrs = new HelpProperties(this.name, basePlugin);
+		HelpProperties oldContrs = new HelpProperties(this.name, dir);
 		if (!ignoreSavedVersions) {
 			oldContrs.restore();
 		}

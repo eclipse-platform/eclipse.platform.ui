@@ -18,7 +18,7 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 
 /**
- * Properties stored in HelpPlugin work area.
+ * Properties stored in file.
  */
 public class HelpProperties extends Properties {
 	private File file = null;
@@ -29,9 +29,17 @@ public class HelpProperties extends Properties {
 	 * @param plugin the plugin
 	 */
 	public HelpProperties(String name, Plugin plugin) {
+		this(name, plugin.getStateLocation().toFile());
+	}
+	/**
+	 * Creates empty Properties persisted in the specified directory
+	 * @param name name of the file;
+	 * @param dir directory to persist file in
+	 */
+	public HelpProperties(String name, File dir) {
 		super();
 		this.name = name;
-		file = new File(plugin.getStateLocation().toFile().getPath(), name);
+		file = new File(dir, name);
 	}
 
 	/**

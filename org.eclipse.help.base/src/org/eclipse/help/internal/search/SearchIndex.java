@@ -18,6 +18,7 @@ import java.util.zip.*;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
@@ -35,7 +36,6 @@ public class SearchIndex {
 	private String locale;
 	private AnalyzerDescriptor analyzerDescriptor;
 	private PluginVersionInfo docPlugins;
-	private String indexedDocsFile;
 	// table of all document names, used during indexing batches
 	private HelpProperties indexedDocs;
 	private static final String INDEXED_CONTRIBUTION_INFO_FILE =
@@ -44,7 +44,6 @@ public class SearchIndex {
 	private static final String DEPENDENCIES_VERSION_FILENAME =
 		"indexed_dependencies";
 	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene";
-	private String dependenciesVersionFile;
 	private File inconsistencyFile;
 	private HTMLDocParser parser;
 	private IndexSearcher searcher;
@@ -58,12 +57,8 @@ public class SearchIndex {
 		this(
 			locale,
 			analyzerDesc,
-			new File(
-				HelpBasePlugin.getDefault().getStateLocation().toOSString()
-					+ File.separator
-					+ "nl"
-					+ File.separator
-					+ locale));
+			InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".helpIx").append(locale).toFile()
+			);
 	}
 	/**
 	 * Constructor.
@@ -80,14 +75,6 @@ public class SearchIndex {
 		this.analyzerDescriptor = analyzerDesc;
 		inconsistencyFile =
 			new File(indexDir.getParentFile(), locale + ".inconsistent");
-		dependenciesVersionFile =
-			"nl"
-				+ File.separator
-				+ locale
-				+ File.separator
-				+ DEPENDENCIES_VERSION_FILENAME;
-		indexedDocsFile =
-			"nl" + File.separator + locale + File.separator + INDEXED_DOCS_FILE;
 		parser = new HTMLDocParser();
 		if (!exists()) {
 			unzipProductIndex();
@@ -165,8 +152,8 @@ public class SearchIndex {
 			}
 			indexedDocs =
 				new HelpProperties(
-					indexedDocsFile,
-					HelpBasePlugin.getDefault());
+					INDEXED_DOCS_FILE,
+					indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
 			iw =
@@ -193,8 +180,8 @@ public class SearchIndex {
 			}
 			indexedDocs =
 				new HelpProperties(
-					indexedDocsFile,
-					HelpBasePlugin.getDefault());
+					INDEXED_DOCS_FILE,
+					indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
 			ir = IndexReader.open(indexDir);
@@ -336,13 +323,9 @@ public class SearchIndex {
 				HelpPlugin.getTocManager().getContributingPlugins().iterator();
 			docPlugins =
 				new PluginVersionInfo(
-					"nl"
-						+ File.separator
-						+ locale
-						+ File.separator
-						+ INDEXED_CONTRIBUTION_INFO_FILE,
+					INDEXED_CONTRIBUTION_INFO_FILE,
 					docPluginsIterator,
-					HelpBasePlugin.getDefault(),
+					indexDir,
 					!exists());
 		}
 		return docPlugins;
@@ -354,7 +337,7 @@ public class SearchIndex {
 	 */
 	public HelpProperties getIndexedDocs() {
 		HelpProperties indexedDocs =
-			new HelpProperties(indexedDocsFile, HelpBasePlugin.getDefault());
+			new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 		if (exists())
 			indexedDocs.restore();
 		return indexedDocs;
@@ -367,8 +350,8 @@ public class SearchIndex {
 		if (dependencies == null) {
 			dependencies =
 				new HelpProperties(
-					dependenciesVersionFile,
-					HelpBasePlugin.getDefault());
+					DEPENDENCIES_VERSION_FILENAME,
+					indexDir);
 			dependencies.restore();
 		}
 		return dependencies;
@@ -462,13 +445,6 @@ public class SearchIndex {
 		}
 	}
 	/**
-	 * Returns the indexDir.
-	 * @return File
-	 */
-	public File getIndexDir() {
-		return indexDir;
-	}
-	/**
 	 * Finds and unzips prebuild index specified in preferences
 	 */
 	private void unzipProductIndex() {
@@ -487,7 +463,7 @@ public class SearchIndex {
 			return;
 		}
 		byte[] buf = new byte[8192];
-		File destDir = getIndexDir();
+		File destDir = indexDir;
 		ZipInputStream zis = new ZipInputStream(zipIn);
 		FileOutputStream fos = null;
 		try {
