@@ -441,7 +441,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layout.numColumns= 2;
 		changeClasspath.setLayout(layout);
 		changeClasspath.setFont(top.getFont());
 
@@ -455,8 +454,16 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 			}
 
 		});
-		reuseClassLoader = new Button(changeClasspath, SWT.CHECK);
-		reuseClassLoader.setFont(top.getFont());
+		
+		Composite reuse = new Composite(changeClasspath, SWT.NONE);
+		reuse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 20;
+		reuse.setLayout(layout);
+		reuse.setFont(top.getFont());
+		reuseClassLoader = new Button(reuse, SWT.CHECK);
+		reuseClassLoader.setFont(reuse.getFont());
 		reuseClassLoader.setText(AntLaunchConfigurationMessages.getString("AntClasspathTab.Reuse_the_Ant_classloader_for_each_&build_5")); //$NON-NLS-1$
 		reuseClassLoader.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -620,6 +627,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_REUSE_CLASSLOADER, true);
 	}
 
 	/**
