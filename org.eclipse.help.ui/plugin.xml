@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.help.appserver"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 
@@ -60,8 +61,8 @@
                label="%helpcontents"
                icon="icons/view.gif"
                helpContextId="org.eclipse.help.ui.helpContentsMenu"
-               tooltip="%openhelpcontents"
                class="org.eclipse.help.ui.internal.HelpContentsAction"
+               tooltip="%openhelpcontents"
                menubarPath="help/helpEnd"
                id="org.eclipse.help.internal.ui.HelpAction">
          </action>
