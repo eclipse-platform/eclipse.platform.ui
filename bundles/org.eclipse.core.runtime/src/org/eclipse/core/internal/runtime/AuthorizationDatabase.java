@@ -265,7 +265,12 @@ public void save() throws CoreException {
 	try {
 		file.delete();
 		file.createNewFile();
-		save(new FileOutputStream(file));
+		FileOutputStream out = new FileOutputStream(file);
+		try {
+			save(out);
+		} finally {
+			out.close();
+		}
 	} catch (IOException e) {
 		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_WRITE_METADATA,Policy.bind("meta.unableToWriteAuthorization",file.toString()),e));
 	}
