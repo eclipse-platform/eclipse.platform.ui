@@ -60,6 +60,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String SHOW_MORE_INFO= PREFIX + "ShowMoreInfo"; //$NON-NLS-1$
 	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
+	public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
+	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
 	
 	private WorkbenchChainedTextFontFieldEditor fFontEditor;
 	private TextMergeViewer fPreviewViewer;
@@ -80,7 +82,10 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
 		
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
+		
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SPLINES),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
 	};
 	
 	
@@ -91,6 +96,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
 		store.setDefault(SHOW_MORE_INFO, false);
 		store.setDefault(IGNORE_WHITESPACE, false);
+		store.setDefault(USE_SPLINES, false);
+		store.setDefault(USE_SINGLE_LINE, false);
 		
 		Display display= Display.getDefault();
 		Color color= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -219,6 +226,10 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		
 		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
+		
+		addCheckBox(composite, "ComparePreferencePage.useSplines.label", USE_SPLINES, 0);	//$NON-NLS-1$
+
+		addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
 
 		return composite;
 	}

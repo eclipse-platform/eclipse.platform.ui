@@ -148,8 +148,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final int BIRDS_EYE_VIEW_WIDTH= 10;
 	/** Width of birds eye view */
 	private static final int BIRDS_EYE_VIEW_INSET= 1;
-	/** Use splines between diff ranges */
-	private static final boolean USE_SPLINES= false;
+	/** */
+	private static final int RESOLVE_SIZE= 5;
 
 	/** line width of change borders */
 	private static final int LW= 1;
@@ -226,6 +226,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private boolean fHiglightRanges;
 	
 	private boolean fShowPseudoConflicts= false;
+	
+	private boolean fUseSplines= false;
+	private boolean fUseSingleLine= false;
 
 	private ActionContributionItem fNextItem;	// goto next difference
 	private ActionContributionItem fPreviousItem;	// goto previous difference
@@ -248,12 +251,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private Canvas fScrollCanvas;
 	private ScrollBar fVScrollBar;
 	private Canvas fBirdsEyeCanvas;
+	private Label fSummaryLabel;
 		
 	// SWT resources to be disposed
 	private Map fColors;
 	private Font fFont;
 	private Cursor fBirdsEyeCursor;
 					
+	// points for center curves
+	private double[] fBasicCenterCurve;
+	
+	private MenuManager fCenterMenuManager;
+	private Menu fCenterMenu;
 					
 	/**
 	 * The position updater used to adapt the positions representing
@@ -555,6 +564,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
 			fShowMoreInfo= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
+			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
+			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
 		}
 		
 		fDocumentListener= new IDocumentListener() {
@@ -778,6 +789,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fRightCanvas= null;
 		fVScrollBar= null;
 		fBirdsEyeCanvas= null;
+		fSummaryLabel= null;
 
 		unsetDocument(fAncestor);
 		unsetDocument(fLeft);
@@ -821,11 +833,22 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintSides(gc, fAncestor, fAncestorCanvas, false);
 				}
 			};
+			fAncestorCanvas.addMouseListener(
+				new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						setCurrentDiff2(handleMouseInSides(fAncestorCanvas, fAncestor, e.y), false);
+					}
+				}
+			);
 		}
 									
 		fAncestor= createPart(composite);
 		fAncestor.setEditable(false);
-		
+
+		fSummaryLabel= new Label(composite, SWT.NONE);
+		Display d= composite.getDisplay(); // 
+		fSummaryLabel.setBackground(d.getSystemColor(SWT.COLOR_GREEN));
+				
 		// 2nd row
 		if (fMarginWidth > 0) {
 			fLeftCanvas= new BufferedCanvas(composite, SWT.NONE) {
@@ -833,6 +856,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintSides(gc, fLeft, fLeftCanvas, false);
 				}
 			};
+			fLeftCanvas.addMouseListener(
+				new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						setCurrentDiff2(handleMouseInSides(fLeftCanvas, fLeft, e.y), false);
+					}
+				}
+			);
 		}
 		
 		fLeft= createPart(composite);
@@ -849,6 +879,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintSides(gc, fRight, fRightCanvas, fSynchronizedScrolling);
 				}
 			};
+			fRightCanvas.addMouseListener(
+				new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						setCurrentDiff2(handleMouseInSides(fRightCanvas, fRight, e.y), false);
+					}
+				}
+			);
 		}
 		
 		fScrollCanvas= new Canvas(composite, SWT.V_SCROLL);
@@ -875,11 +912,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fBirdsEyeCanvas.addMouseListener(
 			new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
-					Diff diff= handlemouseInBirdsEyeView(fBirdsEyeCanvas, e.y);
-					if (diff != null && diff.fDirection != Differencer.NO_CHANGE) {
-						//fCurrentDiff= null;
-						setCurrentDiff(diff, true);
-					}
+					setCurrentDiff2(handlemouseInBirdsEyeView(fBirdsEyeCanvas, e.y), true);
 				}
 			}
 		);
@@ -902,6 +935,154 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		);
 	}
 	
+	private void setCurrentDiff2(Diff diff, boolean reveal) {
+		if (diff != null && diff.fDirection != Differencer.NO_CHANGE) {
+			//fCurrentDiff= null;
+			setCurrentDiff(diff, reveal);
+		}
+	}
+	
+	private Diff handleMouseInSides(Canvas canvas, MergeSourceViewer tp, int my) {
+
+		int lineHeight= tp.getTextWidget().getLineHeight();
+		int visibleHeight= tp.getViewportHeight();
+
+		if (! fHiglightRanges)
+			return null;
+
+		if (fChangeDiffs != null) {
+			int shift= tp.getVerticalScrollOffset() + (2-LW);
+
+			Point region= new Point(0, 0);
+			Iterator e= fChangeDiffs.iterator();
+			while (e.hasNext()) {
+				Diff diff= (Diff) e.next();
+				if (diff.isDeleted())
+					continue;
+
+				if (fShowCurrentOnly2 && !isCurrentDiff(diff))
+					continue;
+
+				tp.getLineRange(diff.getPosition(tp), region);
+				int y= (region.x * lineHeight) + shift;
+				int h= region.y * lineHeight;
+
+				if (y+h < 0)
+					continue;
+				if (y >= visibleHeight)
+					break;
+					
+				if (my >= y && my < y+h)
+					return diff;
+			}
+		}
+		return null;
+	}
+	
+	private Diff handleMouseInCenter(Canvas canvas, int mx, int my) {
+
+		if (! fSynchronizedScrolling)
+			return null;
+
+		int lineHeight= fLeft.getTextWidget().getLineHeight();
+		int visibleHeight= fRight.getViewportHeight();
+
+		Point size= canvas.getSize();
+		int x= 0;
+		int w= size.x;
+
+		if (! fHiglightRanges)
+			return null;
+
+		if (fChangeDiffs != null) {
+			int lshift= fLeft.getVerticalScrollOffset();
+			int rshift= fRight.getVerticalScrollOffset();
+
+			Point region= new Point(0, 0);
+
+			Iterator e= fChangeDiffs.iterator();
+			while (e.hasNext()) {
+				Diff diff= (Diff) e.next();
+				if (diff.isDeleted())
+					continue;
+
+				if (fShowCurrentOnly2 && !isCurrentDiff(diff))
+					continue;
+
+				fLeft.getLineRange(diff.fLeftPos, region);
+				int ly= (region.x * lineHeight) + lshift;
+				int lh= region.y * lineHeight;
+
+				fRight.getLineRange(diff.fRightPos, region);
+				int ry= (region.x * lineHeight) + rshift;
+				int rh= region.y * lineHeight;
+
+				if (Math.max(ly+lh, ry+rh) < 0)
+					continue;
+				if (Math.min(ly, ry) >= visibleHeight)
+					break;
+
+//				fPts[0]= x;	fPts[1]= ly;	fPts[2]= w;	fPts[3]= ry;
+//				fPts[6]= x;	fPts[7]= ly+lh;	fPts[4]= w;	fPts[5]= ry+rh;
+
+//				if (fUseSingleLine) {
+//					int w2= 3;
+//
+//					g.setBackground(fillColor);
+//					g.fillRectangle(0, ly, w2, lh);		// left
+//					g.fillRectangle(w-w2, ry, w2, rh);	// right
+//
+//					g.setLineWidth(LW);
+//					g.setForeground(strokeColor);
+//					g.drawRectangle(0-1, ly, w2, lh);	// left
+//					g.drawRectangle(w-w2, ry, w2, rh);	// right
+//
+//					if (fUseSplines) {
+//						int[] points= getCenterCurvePoints(w2, ly+lh/2, w-w2, ry+rh/2);
+//						for (int i= 1; i < points.length; i++)
+//							g.drawLine(w2+i-1, points[i-1], w2+i, points[i]);
+//					} else {
+//						g.drawLine(w2, ly+lh/2, w-w2, ry+rh/2);
+//					}
+//				} else {
+//					// two lines
+//					if (fUseSplines) {
+//						g.setBackground(fillColor);
+//
+//						g.setLineWidth(LW);
+//						g.setForeground(strokeColor);
+//
+//						int[] topPoints= getCenterCurvePoints(fPts[0], fPts[1], fPts[2], fPts[3]);
+//						int[] bottomPoints= getCenterCurvePoints(fPts[6], fPts[7], fPts[4], fPts[5]);
+//						g.setForeground(fillColor);
+//						g.drawLine(0, bottomPoints[0], 0, topPoints[0]);
+//						for (int i= 1; i < bottomPoints.length; i++) {
+//							g.setForeground(fillColor);
+//							g.drawLine(i, bottomPoints[i], i, topPoints[i]);
+//							g.setForeground(strokeColor);
+//							g.drawLine(i-1, topPoints[i-1], i, topPoints[i]);
+//							g.drawLine(i-1, bottomPoints[i-1], i, bottomPoints[i]);
+//						}
+//					} else {
+//						g.setBackground(fillColor);
+//						g.fillPolygon(fPts);
+//
+//						g.setLineWidth(LW);
+//						g.setForeground(strokeColor);
+//						g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
+//						g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
+//					}
+//				}
+
+				int cx= (w-RESOLVE_SIZE)/2;
+				int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2; 
+				if (my >= cy && my < cy+RESOLVE_SIZE && mx >= cx && mx < cx+RESOLVE_SIZE)
+					return diff;
+			}
+		}
+		return null;
+	}
+
 	private Diff handlemouseInBirdsEyeView(Canvas canvas, int my) {
 		int yy, hh;
 		
@@ -1030,7 +1211,41 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintCenter(this, gc);
 				}
 			};
-			new Resizer(canvas, HORIZONTAL);
+			//new Resizer(canvas, HORIZONTAL);
+			canvas.addMouseListener(
+				new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						Diff diff= handleMouseInCenter(canvas, e.x, e.y);
+						if (diff != null) {
+							setCurrentDiff2(diff, false);
+							if (e.button == 3) {
+								Point p= canvas.toDisplay(new Point(e.x, e.y));
+								fCenterMenu= fCenterMenuManager.createContextMenu(canvas);
+								if (fCenterMenu != null) {
+									fCenterMenu.setLocation(p.x, p.y);
+									fCenterMenu.setVisible(true);
+								}
+							}
+						}
+					}
+				}
+			);
+			
+			fCenterMenuManager= new MenuManager();
+			fCenterMenuManager.setRemoveAllWhenShown(true);
+			fCenterMenuManager.addMenuListener(
+				new IMenuListener() {
+					public void menuAboutToShow(IMenuManager manager) {
+						updateControls();
+						if (fCopyDiffRightToLeftItem != null)
+							manager.add(fCopyDiffRightToLeftItem.getAction());
+						if (fCopyDiffLeftToRightItem != null)
+							manager.add(fCopyDiffLeftToRightItem.getAction());
+					}
+				}
+			);
+			//canvas.setMenu(fCenterMenuManager.createContextMenu(canvas));
+			
 			return canvas;
 		}
 		return super.createCenter(parent);
@@ -1729,9 +1944,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
   		if (fBirdsEyeCanvas != null) {
+  			fSummaryLabel.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
   			y+= scrollbarHeight;
   			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(3*scrollbarHeight));
-  		}
+   		}
 		
 		// doesn't work since TextEditors don't have their correct size yet.
 		updateVScrollBar(); 
@@ -2275,7 +2491,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		}
 		
-		if (fCopyDiffLeftToRightItem != null)			
+		if (fCopyDiffLeftToRightItem != null)
 			((Action)fCopyDiffLeftToRightItem.getAction()).setEnabled(leftToRight);
 		if (fCopyDiffRightToLeftItem != null)
 			((Action)fCopyDiffRightToLeftItem.getAction()).setEnabled(rightToLeft);
@@ -2500,6 +2716,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			};
 			Utilities.initAction(a, getResourceBundle(), "action.CopyDiffLeftToRight."); //$NON-NLS-1$
 			fCopyDiffLeftToRightItem= new ActionContributionItem(a);
+			fCopyDiffLeftToRightItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffLeftToRightItem); //$NON-NLS-1$
 		}
 		
@@ -2511,6 +2728,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			};
 			Utilities.initAction(a, getResourceBundle(), "action.CopyDiffRightToLeft."); //$NON-NLS-1$
 			fCopyDiffRightToLeftItem= new ActionContributionItem(a);
+			fCopyDiffRightToLeftItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffRightToLeftItem); //$NON-NLS-1$
 		}
 	}
@@ -2537,6 +2755,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			refreshBirdsEyeView();
 			
 			selectFirstDiff();
+			
+		} else if (key.equals(ComparePreferencePage.USE_SPLINES)) {
+			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
+			invalidateLines();
+
+		} else if (key.equals(ComparePreferencePage.USE_SINGLE_LINE)) {
+			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+			fBasicCenterCurve= null;
+			invalidateLines();
 			
 		} else if (key.equals(ComparePreferencePage.TEXT_FONT)) {
 			if (fPreferenceStore != null) {
@@ -2751,49 +2978,92 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fPts[0]= x;	fPts[1]= ly;	fPts[2]= w;	fPts[3]= ry;
 				fPts[6]= x;	fPts[7]= ly+lh;	fPts[4]= w;	fPts[5]= ry+rh;
 				
-				if (USE_SPLINES) {
-					g.setBackground(getColor(display, getFillColor(diff)));
-	 
-	 				g.setLineWidth(LW);
-					g.setForeground(getColor(display, getStrokeColor(diff)));
-					
-					int[] topPoints = getCurvePoints(fPts[0], fPts[1], fPts[2], fPts[3]);
-					int[] bottomPoints = getCurvePoints(fPts[6], fPts[7], fPts[4], fPts[5]);
-					g.setForeground(getColor(display, getFillColor(diff)));
-					g.drawLine(0, bottomPoints[0], 0, topPoints[0]);
-					for (int i = 1; i < bottomPoints.length; i++) {
-						g.setForeground(getColor(display, getFillColor(diff)));
-						g.drawLine(i, bottomPoints[i], i, topPoints[i]);
-						g.setForeground(getColor(display, getStrokeColor(diff)));
-						g.drawLine(i-1, topPoints[i-1], i, topPoints[i]);
-						g.drawLine(i-1, bottomPoints[i-1], i, bottomPoints[i]);
+				Color fillColor= getColor(display, getFillColor(diff));
+				Color strokeColor= getColor(display, getStrokeColor(diff));
+				
+				if (fUseSingleLine) {
+					int w2= 3;
+
+					g.setBackground(fillColor);
+					g.fillRectangle(0, ly, w2, lh);		// left
+					g.fillRectangle(w-w2, ry, w2, rh);	// right
+
+					g.setLineWidth(LW);
+					g.setForeground(strokeColor);
+					g.drawRectangle(0-1, ly, w2, lh);	// left
+					g.drawRectangle(w-w2, ry, w2, rh);	// right
+
+					if (fUseSplines) {
+						int[] points= getCenterCurvePoints(w2, ly+lh/2, w-w2, ry+rh/2);
+						for (int i= 1; i < points.length; i++)
+							g.drawLine(w2+i-1, points[i-1], w2+i, points[i]);
+					} else {
+						g.drawLine(w2, ly+lh/2, w-w2, ry+rh/2);
 					}
 				} else {
-					g.setBackground(getColor(display, getFillColor(diff)));
-					g.fillPolygon(fPts);
-		
-					g.setLineWidth(LW);
-					g.setForeground(getColor(display, getStrokeColor(diff)));
-					g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
-					g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
+					// two lines
+					if (fUseSplines) {
+						g.setBackground(fillColor);
+
+						g.setLineWidth(LW);
+						g.setForeground(strokeColor);
+
+						int[] topPoints= getCenterCurvePoints(fPts[0], fPts[1], fPts[2], fPts[3]);
+						int[] bottomPoints= getCenterCurvePoints(fPts[6], fPts[7], fPts[4], fPts[5]);
+						g.setForeground(fillColor);
+						g.drawLine(0, bottomPoints[0], 0, topPoints[0]);
+						for (int i= 1; i < bottomPoints.length; i++) {
+							g.setForeground(fillColor);
+							g.drawLine(i, bottomPoints[i], i, topPoints[i]);
+							g.setForeground(strokeColor);
+							g.drawLine(i-1, topPoints[i-1], i, topPoints[i]);
+							g.drawLine(i-1, bottomPoints[i-1], i, bottomPoints[i]);
+						}
+					} else {
+						g.setBackground(fillColor);
+						g.fillPolygon(fPts);
+
+						g.setLineWidth(LW);
+						g.setForeground(strokeColor);
+						g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
+						g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
+					}
 				}
+				
+				// draw resolve state
+				int cx= (w-RESOLVE_SIZE)/2;
+				int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
+				
+				Color c= display.getSystemColor(diff.fResolved ? SWT.COLOR_GREEN : SWT.COLOR_RED);
+				g.setBackground(c);
+				g.fillRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
+				
+				g.setForeground(strokeColor);
+				g.drawRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
 			}
 		}
 	}
 	
-	private int[] getCurvePoints(int startx, int starty, int endx, int endy) {
+	private int[] getCenterCurvePoints(int startx, int starty, int endx, int endy) {
+		if (fBasicCenterCurve == null)
+			buildBaseCenterCurve(endx-startx);
 		double height= endy - starty;
 		height= height/2;
-		int width= endx - startx;
-		int lastX= startx;
-		int lastY= starty;
+		int width= endx-startx;
 		int[] points= new int[width];
-		for (int i= 0; i < points.length; i++) {
-			double r= ((double) i) / (double) width;
-			int y= (int) ((-height * Math.cos(Math.PI * r)) + height + starty);
-			points[i]= y;
+		for (int i= 0; i < width; i++) {
+			points[i]= (int) (-height * fBasicCenterCurve[i] + height + starty);
 		}
 		return points;
+	}
+
+	private void buildBaseCenterCurve(int w) {
+		double width= w;
+		fBasicCenterCurve= new double[getCenterWidth()];
+		for (int i= 0; i < getCenterWidth(); i++) {
+			double r= ((double) i) / width;
+			fBasicCenterCurve[i]= Math.cos(Math.PI * r);
+		}
 	}
 
 	private void paintSides(GC g, MergeSourceViewer tp, Canvas canvas, boolean right) {
@@ -2851,16 +3121,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				else
 					g.fillRectangle(x+w2, y, w2, h);
 	
-				g.setBackground(getColor(display, getStrokeColor(diff)));
-				if (right) {
-					g.fillRectangle(x, y-1, w2+1, LW);
-					g.fillRectangle(x+w2, y, LW, h);
-					g.fillRectangle(x, y+h-1, w2, LW);
-				} else {
-					g.fillRectangle(x+w2, y-1, w2, LW);
-					g.fillRectangle(x+w2, y, LW, h);
-					g.fillRectangle(x+w2, y+h-1, w2, LW);
-				}
+				g.setLineWidth(LW);
+				g.setForeground(getColor(display, getStrokeColor(diff)));
+				if (right)
+					g.drawRectangle(x-1, y-1, w2, h);
+				else
+					g.drawRectangle(x+w2, y-1, w2, h);
 			}
 		}
 	}
