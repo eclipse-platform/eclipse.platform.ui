@@ -113,6 +113,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private Object returnCode;
 	private WorkbenchConfigurationInfo configurationInfo;
 	private ListenerList windowListeners = new ListenerList();
+	private String[] commandLineArgs;
 
 	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String P_PRODUCT_INFO = "productInfo"; //$NON-NLS-1$
@@ -491,6 +492,17 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return null;
 	}
 	/**
+	 * Returns the command line arguments, excluding any which were filtered out by the launcher.
+	 */
+	public String[] getCommandLineArgs() {
+		/* This method and instance var are not used by the workbench but are
+		 * used by the junit tests that subclass org.eclipse.ui.internal.Workbench.
+		 * Should create enough API so that the junit tests did not have to 
+		 * subclass this internal class. 
+		 */
+		return commandLineArgs;
+	}	
+	/**
 	 * Returns the editor history.
 	 */
 	public EditorHistory getEditorHistory() {
@@ -649,7 +661,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private boolean init(String[] commandLineArgs) {
 		KeyManager.getInstance();
-
+		
+		this.commandLineArgs = commandLineArgs;
 		isStarting = true;
 
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
