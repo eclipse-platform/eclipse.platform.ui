@@ -653,21 +653,7 @@ public class ResourceNavigator
 	public void setFocus() {
 		getTreeViewer().getTree().setFocus();
 	}
-	/**
-	 * Note: For experimental use only.
-	 * Sets the decorator for the navigator.
-	 *
-	 * @param decorator a label decorator or <code>null</code> for no decorations.
-	 * @deprecated use the decorators extension point instead; see IWorkbench.getDecoratorManager()
-	 */
-	public void setLabelDecorator(ICombinedLabelDecorator decorator) {
-		CombinedDecoratingLabelProvider provider =
-			(CombinedDecoratingLabelProvider) getTreeViewer().getLabelProvider();
-		if(decorator == null)
-			provider.setLabelDecorator(getPlugin().getWorkbench().getCombinedDecoratorManager());
-		else
-			provider.setLabelDecorator(decorator);
-	}
+	
 	/**
 	 * Set the current sorter.
 	 * @since 2.0
