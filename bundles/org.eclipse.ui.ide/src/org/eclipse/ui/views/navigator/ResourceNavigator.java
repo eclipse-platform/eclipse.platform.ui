@@ -26,7 +26,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -61,7 +60,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
@@ -75,14 +73,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.operations.RedoActionHandler;
-import org.eclipse.ui.operations.UndoActionHandler;
+import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -1352,14 +1348,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     protected void createGlobalActionHandlers() {
     	IUndoContext undoContext = getUndoContext();
     	if (undoContext != null) {
-	        // set up action handlers that operate on the current context
-	        IAction action = new UndoActionHandler(this.getSite().getWorkbenchWindow(), undoContext);
-	        IActionBars actionBars = getViewSite().getActionBars();
-	        actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
-	                action);
-	        action = new RedoActionHandler(this.getSite().getWorkbenchWindow(), undoContext);
-	        actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
-	                action);
+	        /* Set up an undo redo action group that operates on the current context.
+			   The last parameter indicates that we want to prune the undo history when there 
+			   is an invalid operation on top.  */
+	        new UndoRedoActionGroup(this.getSite(), undoContext, true);
     	}
     	
     }

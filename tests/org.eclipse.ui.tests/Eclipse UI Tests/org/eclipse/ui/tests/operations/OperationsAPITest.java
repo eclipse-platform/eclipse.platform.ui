@@ -36,10 +36,10 @@ import org.eclipse.core.runtime.Status;
  */
 public class OperationsAPITest extends TestCase {
 
-	ObjectUndoContext c1, c2, c3;
+	ObjectUndoContext contextA, contextB, contextC, contextW;
 	IOperationHistory history;
 
-	IUndoableOperation op1, op2, op3, op4, op5, op6;
+	IUndoableOperation op1, op2, op3, op4, op5, op6, localA, localB, localC;
 	
 	int preExec, postExec, preUndo, postUndo, preRedo, postRedo, add, remove, notOK, changed = 0;
 	IOperationHistoryListener listener;
@@ -57,23 +57,23 @@ public class OperationsAPITest extends TestCase {
 
 	protected void setUp() throws Exception {
 		history = new DefaultOperationHistory();
-		c1 = new ObjectUndoContext("c1");
-		c2 = new ObjectUndoContext("c2");
-		c3 = new ObjectUndoContext("c3");
-		op1 = new TestOperation("op1", "Test Operation 1");
-		op1.addContext(c1);
-		op2 = new TestOperation("op2", "Test Operation 2");
-		op2.addContext(c2);
-		op2.addContext(c3);
-		op3 = new TestOperation("op3", "Test Operation 3");
-		op3.addContext(c3);
-		op4 = new TestOperation("op4", "Test Operation 4");
-		op4.addContext(c1);
-		op5 = new TestOperation("op5", "Test Operation 5");
-		op5.addContext(c2);
-		op6 = new TestOperation("op6", "Test Operation 6");
-		op6.addContext(c3);
-		op6.addContext(c1);
+		contextA = new ObjectUndoContext("A");
+		contextB = new ObjectUndoContext("B");
+		contextC = new ObjectUndoContext("C");
+		op1 = new TestOperation("op1");
+		op1.addContext(contextA);
+		op2 = new TestOperation("op2");
+		op2.addContext(contextB);
+		op2.addContext(contextC);
+		op3 = new TestOperation("op3");
+		op3.addContext(contextC);
+		op4 = new TestOperation("op4");
+		op4.addContext(contextA);
+		op5 = new TestOperation("op5");
+		op5.addContext(contextB);
+		op6 = new TestOperation("op6");
+		op6.addContext(contextC);
+		op6.addContext(contextA);
 		history.execute(op1, null, null);
 		history.execute(op2, null, null);
 		history.execute(op3, null, null);
@@ -127,77 +127,77 @@ public class OperationsAPITest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		history.removeOperationHistoryListener(listener);
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 	}
 
 	public void testContextDispose() throws ExecutionException {
-		assertSame(history.getUndoOperation(c1), op6);
-		assertSame(history.getUndoOperation(c3), op6);
-		history.dispose(c1, true, true);
-		assertSame(history.getUndoOperation(c3), op6);
-		assertFalse(op6.hasContext(c1));
-		history.undo(c3, null, null);
-		history.dispose(c3, true, false);
-		assertFalse(history.canUndo(c3));
-		assertTrue(history.canRedo(c3));
-		history.redo(c3, null, null);
+		assertSame(history.getUndoOperation(contextA), op6);
+		assertSame(history.getUndoOperation(contextC), op6);
+		history.dispose(contextA, true, true, false);
+		assertSame(history.getUndoOperation(contextC), op6);
+		assertFalse(op6.hasContext(contextA));
+		history.undo(contextC, null, null);
+		history.dispose(contextC, true, false, false);
+		assertFalse(history.canUndo(contextC));
+		assertTrue(history.canRedo(contextC));
+		history.redo(contextC, null, null);
 		IUndoableOperation[] ops = history.getUndoHistory(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertEquals(ops.length, 3);
-		ops = history.getUndoHistory(c3);
+		ops = history.getUndoHistory(contextC);
 		assertEquals(ops.length, 1);
-		ops = history.getUndoHistory(c2);
+		ops = history.getUndoHistory(contextB);
 		assertEquals(ops.length, 2);
 	}
 
 	public void testContextHistories() throws ExecutionException {
-		assertSame(history.getUndoOperation(c1), op6);
-		assertSame(history.getUndoOperation(c2), op5);
-		assertSame(history.getUndoOperation(c3), op6);
-		IStatus status = history.undo(c3, null, null);
+		assertSame(history.getUndoOperation(contextA), op6);
+		assertSame(history.getUndoOperation(contextB), op5);
+		assertSame(history.getUndoOperation(contextC), op6);
+		IStatus status = history.undo(contextC, null, null);
 		assertTrue("Status should be ok", status.isOK());
-		assertSame(history.getRedoOperation(c3), op6);
-		assertSame(history.getUndoOperation(c3), op3);
-		assertTrue("Should be able to redo in c3", history.canRedo(c3));
-		assertTrue("Should be able to redo in c1", history.canRedo(c1));
-		history.redo(c1, null, null);
-		assertSame(history.getUndoOperation(c3), op6);
-		assertSame(history.getUndoOperation(c1), op6);
+		assertSame(history.getRedoOperation(contextC), op6);
+		assertSame(history.getUndoOperation(contextC), op3);
+		assertTrue("Should be able to redo in c3", history.canRedo(contextC));
+		assertTrue("Should be able to redo in c1", history.canRedo(contextA));
+		history.redo(contextA, null, null);
+		assertSame(history.getUndoOperation(contextC), op6);
+		assertSame(history.getUndoOperation(contextA), op6);
 	}
 
 	public void testHistoryLimit() throws ExecutionException {
-		history.setLimit(c1, 2);
-		assertTrue(history.getUndoHistory(c1).length == 2);
+		history.setLimit(contextA, 2);
+		assertTrue(history.getUndoHistory(contextA).length == 2);
 		history.add(op1);
-		assertTrue(history.getUndoHistory(c1).length == 2);
-		history.setLimit(c2, 1);
-		assertTrue(history.getUndoHistory(c2).length == 1);
-		assertFalse(op2.hasContext(c2));
-		history.undo(c2, null, null);
-		assertTrue(history.getRedoHistory(c2).length == 1);
-		assertTrue(history.getUndoHistory(c2).length == 0);
-		history.redo(c2, null, null);
-		assertTrue(history.getRedoHistory(c2).length == 0);
-		assertTrue(history.getUndoHistory(c2).length == 1);
+		assertTrue(history.getUndoHistory(contextA).length == 2);
+		history.setLimit(contextB, 1);
+		assertTrue(history.getUndoHistory(contextB).length == 1);
+		assertFalse(op2.hasContext(contextB));
+		history.undo(contextB, null, null);
+		assertTrue(history.getRedoHistory(contextB).length == 1);
+		assertTrue(history.getUndoHistory(contextB).length == 0);
+		history.redo(contextB, null, null);
+		assertTrue(history.getRedoHistory(contextB).length == 0);
+		assertTrue(history.getUndoHistory(contextB).length == 1);
 	}
 	
 	public void testLocalHistoryLimits() throws ExecutionException {
-		history.setLimit(c3, 2);
-		assertTrue(history.getUndoHistory(c3).length == 2);
+		history.setLimit(contextC, 2);
+		assertTrue(history.getUndoHistory(contextC).length == 2);
 		// op2 should have context c3 removed as part of forcing the limit
-		assertFalse(op2.hasContext(c3));
-		assertTrue(history.getUndoHistory(c2).length == 2);
-		history.setLimit(c2, 1);
-		assertTrue(history.getUndoHistory(c2).length == 1);
-		history.undo(c2, null, null);
-		op2.addContext(c3);
+		assertFalse(op2.hasContext(contextC));
+		assertTrue(history.getUndoHistory(contextB).length == 2);
+		history.setLimit(contextB, 1);
+		assertTrue(history.getUndoHistory(contextB).length == 1);
+		history.undo(contextB, null, null);
+		op2.addContext(contextC);
 		history.add(op2);
-		assertSame(history.getUndoOperation(c2), op2);
-		assertTrue(history.getUndoHistory(c2).length == 1);
+		assertSame(history.getUndoOperation(contextB), op2);
+		assertTrue(history.getUndoHistory(contextB).length == 1);
 	}
 	
 	public void testOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		history.openOperation(op1);
 		op1.execute(null, null);
 		op2.execute(null, null);
@@ -208,14 +208,14 @@ public class OperationsAPITest extends TestCase {
 		history.closeOperation(true, true);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("Operation should be batching", op == op1);
-		op.removeContext(c2);
-		assertFalse("Operation should not have context", op.hasContext(c2));
-		assertTrue("Removal of open operation's context should not affect original operation", op2.hasContext(c2));
+		op.removeContext(contextB);
+		assertFalse("Operation should not have context", op.hasContext(contextB));
+		assertTrue("Removal of open operation's context should not affect original operation", op2.hasContext(contextB));
 	}
 	
 	public void testUnsuccessfulOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		history.openOperation(op1);
 		op1.execute(null, null);
 		op2.execute(null, null);
@@ -233,7 +233,7 @@ public class OperationsAPITest extends TestCase {
 	
 	public void testNotAddedOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		history.openOperation(op1);
 		op1.execute(null, null);
 		op2.execute(null, null);
@@ -250,7 +250,7 @@ public class OperationsAPITest extends TestCase {
 	
 	public void testMultipleOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		history.openOperation(op1);
 		op1.execute(null, null);
 		op2.execute(null, null);
@@ -265,12 +265,12 @@ public class OperationsAPITest extends TestCase {
 	}
 	
 	public void testAbortedOpenOperation() throws ExecutionException {
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		history.openOperation(op1);
 		op1.execute(null, null);
 		history.execute(op2, null, null);
 		// flush history while operation is open
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		// op3 should be added as its own op since we flushed while open
 		history.add(op3);
 		// should really have no effect
@@ -281,25 +281,25 @@ public class OperationsAPITest extends TestCase {
 
 	public void testOperationApproval() throws ExecutionException {
 		history.addOperationApprover(new ContextConsultingOperationApprover());
-		c2.setOperationApprover(new LinearUndoEnforcer());
-		c3.setOperationApprover(new LinearUndoEnforcer());
+		contextB.setOperationApprover(new LinearUndoEnforcer());
+		contextC.setOperationApprover(new LinearUndoEnforcer());
 		// the first undo should be fine
-		IStatus status = history.undo(c2, null, null);
+		IStatus status = history.undo(contextB, null, null);
 		assertTrue(status.isOK());
 
-		// the second causes a linear violation on c3
-		assertTrue(history.canUndo(c2));
-		status = history.undo(c2, null, null);
+		// the second causes a linear violation on contextB
+		assertTrue(history.canUndo(contextB));
+		status = history.undo(contextB, null, null);
 		assertFalse(status.isOK());
 
-		// undo the newer c3 items
-		status = history.undo(c3, null, null);
+		// undo the newer contextC items
+		status = history.undo(contextC, null, null);
 		assertTrue(status.isOK());
-		status = history.undo(c3, null, null);
+		status = history.undo(contextC, null, null);
 		assertTrue(status.isOK());
 
-		// now we should be okay in c2
-		status = history.undo(c2, null, null);
+		// now we should be okay in contextB
+		status = history.undo(contextB, null, null);
 		assertTrue(status.isOK());
 
 		history.addOperationApprover(new IOperationApprover() {
@@ -312,11 +312,11 @@ public class OperationsAPITest extends TestCase {
 			}
 		});
 		// everything should fail now
-		assertFalse(history.redo(c2, null, null).isOK());
-		assertFalse(history.redo(c3, null, null).isOK());
-		assertFalse(history.undo(c1, null, null).isOK());
-		assertFalse(history.undo(c2, null, null).isOK());
-		assertFalse(history.undo(c3, null, null).isOK());
+		assertFalse(history.redo(contextB, null, null).isOK());
+		assertFalse(history.redo(contextC, null, null).isOK());
+		assertFalse(history.undo(contextA, null, null).isOK());
+		assertFalse(history.undo(contextB, null, null).isOK());
+		assertFalse(history.undo(contextC, null, null).isOK());
 	}
 
 	public void testOperationFailure() throws ExecutionException {
@@ -335,62 +335,49 @@ public class OperationsAPITest extends TestCase {
 		});
 
 		// should fail but still keep op6 on the stack since it's cancelled
-		IStatus status = history.undo(c3, null, null);
+		IStatus status = history.undo(contextC, null, null);
 		assertFalse(status.isOK());
-		assertSame(history.getUndoOperation(c3), op6);
+		assertSame(history.getUndoOperation(contextC), op6);
 
 		// should fail and remove op5 since it's an error
-		status = history.undo(c2, null, null);
+		status = history.undo(contextB, null, null);
 		assertFalse(status.isOK());
-		assertNotSame("should not match", history.getUndoOperation(c2), op5);
+		assertNotSame("should not match", history.getUndoOperation(contextB), op5);
 
 		// should succeed
-		status = history.undo(c2, null, null);
+		status = history.undo(contextB, null, null);
 		assertTrue(status.isOK());
 	}
 
 	public void testOperationRedo() throws ExecutionException {
-		history.undo(c2, null, null);
-		history.undo(c2, null, null);
-		history.undo(c3, null, null);
-		history.undo(c3, null, null);
-		assertSame(history.getRedoOperation(c2), op2);
-		assertSame(history.getUndoOperation(c1), op4);
-		assertTrue(history.canUndo(c1));
-		assertFalse(history.canUndo(c2));
-		assertFalse(history.canUndo(c3));
+		history.undo(contextB, null, null);
+		history.undo(contextB, null, null);
+		history.undo(contextC, null, null);
+		history.undo(contextC, null, null);
+		assertSame(history.getRedoOperation(contextB), op2);
+		assertSame(history.getUndoOperation(contextA), op4);
+		assertTrue(history.canUndo(contextA));
+		assertFalse(history.canUndo(contextB));
+		assertFalse(history.canUndo(contextC));
 		assertTrue(preUndo == 4);
 		assertTrue(postUndo == 4);
-		history.redo(c2, null, null);
+		history.redo(contextB, null, null);
 		assertTrue(postRedo == 1);
-		assertTrue(history.canUndo(c2));
-		assertTrue(history.canUndo(c3));
-	}
-
-	public void testOperationRemoval() throws ExecutionException {
-		assertSame(history.getUndoOperation(c1), op6);
-		history.remove(op6);
-		assertSame(history.getUndoOperation(c1), op4);
-		assertSame(history.getUndoOperation(c3), op3);
-		history.remove(op4);
-		assertSame(history.getUndoOperation(c1), op1);
-		history.undo(c2, null, null);
-		assertTrue(history.canRedo(c2));
-		history.remove(op5);
-		assertFalse(history.canRedo(c2));
+		assertTrue(history.canUndo(contextB));
+		assertTrue(history.canUndo(contextC));
 	}
 
 	public void testOperationUndo() throws ExecutionException {
-		history.undo(c1, null, null);
-		history.undo(c1, null, null);
-		assertSame(history.getRedoOperation(c1), op4);
-		assertSame(history.getUndoOperation(c1), op1);
-		history.undo(c1, null, null);
+		history.undo(contextA, null, null);
+		history.undo(contextA, null, null);
+		assertSame(history.getRedoOperation(contextA), op4);
+		assertSame(history.getUndoOperation(contextA), op1);
+		history.undo(contextA, null, null);
 		assertTrue(preUndo == 3);
 		assertTrue(postUndo == 3);
-		assertFalse("Shouldn't be able to undo in c1", history.canUndo(c1));
-		assertTrue("Should be able to undo in c2", history.canUndo(c2));
-		assertTrue("Should be able to undo in c3", history.canUndo(c3));
+		assertFalse("Shouldn't be able to undo in c1", history.canUndo(contextA));
+		assertTrue("Should be able to undo in c2", history.canUndo(contextB));
+		assertTrue("Should be able to undo in c3", history.canUndo(contextC));
 	}
 	
 	public void testHistoryFactory() {
@@ -399,9 +386,9 @@ public class OperationsAPITest extends TestCase {
 	}
 	
 	public void testOperationChanged() {
-		history.remove(op1);
 		history.operationChanged(op1);
 		history.operationChanged(op2);
-		assertTrue("should not notify about changes if not in the history", changed == 1);
+		history.operationChanged(new TestOperation("New op"));
+		assertTrue("should not notify about changes if not in the history", changed == 2);
 	}
 }

@@ -20,13 +20,11 @@ import org.eclipse.core.runtime.Status;
  * @since 3.1
  */
 public class TestOperation extends AbstractOperation {
-	private String fDescription = "";
 
 	private int fExecutionCount = 0;
 
-	TestOperation(String label, String description) {
+	TestOperation(String label) {
 		super(label);
-		fDescription = description;
 	}
 
 	public boolean canRedo() {
@@ -42,16 +40,8 @@ public class TestOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 	
-	public String getDescription() {
-		return fDescription;
-	}
-
 	public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 		return execute(monitor, uiInfo);
-	}
-
-	public String toString() {
-		return getLabel();
 	}
 
 	public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {

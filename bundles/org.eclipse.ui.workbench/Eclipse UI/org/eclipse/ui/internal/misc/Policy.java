@@ -70,6 +70,19 @@ public class Policy {
      * workbench.
      */
     public static boolean DEBUG_HANDLERS_VERBOSE = DEFAULT;
+	
+    /**
+     * Whether to print debugging information about unexpected occurrences and
+     * important state changes in the operation history.
+     */
+    public static boolean DEBUG_OPERATIONS = DEFAULT;
+
+    /**
+     * Whether to print out verbose information about the operation histories,
+     * including all notifications sent.
+     */
+    public static boolean DEBUG_OPERATIONS_VERBOSE = DEFAULT;
+
 
     /**
      * Whether or not to show system jobs at all times.
@@ -103,6 +116,8 @@ public class Policy {
             DEBUG_CONTEXTS_VERBOSE = getDebugOption("/trace/contexts.verbose"); //$NON-NLS-1$
             DEBUG_HANDLERS = getDebugOption("/trace/handlers"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
+            DEBUG_OPERATIONS = getDebugOption("/trace/operations"); //$NON-NLS-1$
+            DEBUG_OPERATIONS_VERBOSE = getDebugOption("/trace/operations.verbose"); //$NON-NLS-1$
             DEBUG_SHOW_SYSTEM_JOBS = getDebugOption("/debug/showSystemJobs"); //$NON-NLS-1$
             DEBUG_STALE_JOBS = getDebugOption("/debug/job.stale"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE_COMMAND_ID = Platform

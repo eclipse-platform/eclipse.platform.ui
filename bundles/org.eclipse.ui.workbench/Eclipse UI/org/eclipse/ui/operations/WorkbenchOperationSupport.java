@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.operations;
 
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
@@ -19,6 +20,7 @@ import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.misc.Policy;
 /**
  * <p>
  * Provides operation support for the workbench.
@@ -38,6 +40,15 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 
 	private ObjectUndoContext undoContext;
 	private IOperationApprover approver;
+	
+	// initialize debug options
+	static {
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_UNEXPECTED = Policy.DEBUG_OPERATIONS;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_OPENOPERATION = Policy.DEBUG_OPERATIONS;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_APPROVAL = Policy.DEBUG_OPERATIONS;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_NOTIFICATION = Policy.DEBUG_OPERATIONS && Policy.DEBUG_OPERATIONS_VERBOSE;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_DISPOSE = Policy.DEBUG_OPERATIONS && Policy.DEBUG_OPERATIONS_VERBOSE;
+	}
 
 	/**
 	 * Disposes of anything created by the operation support.
@@ -50,7 +61,7 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 		/*
 		 * dispose of all operations using our context
 		 */
-		getOperationHistory().dispose(getUndoContext(), true, true);
+		getOperationHistory().dispose(getUndoContext(), true, true, true);
 	}
 
 	/**

@@ -19,11 +19,15 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -31,27 +35,26 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <p>
- * OperationHistoryActionHandler provides common behavior for the undo and redo
- * actions. It supports filtering of undo or redo on a particular context. A
- * null context means that there is no undo or redo supported. When a part is
- * activated, the action looks for an adapter for the undo context. If one is
- * supplied, then the action will filter the operations history on that context.
+ * OperationHistoryActionHandler implements common behavior for the undo and redo
+ * actions. It supports filtering of undo or redo on a particular context. (A
+ * null context will cause undo and redo to be disabled.)  
  * </p>
  * <p>
- * OperationHistoryActionHandler provides an adapter for its 
- * org.eclipse.ui.IWorkbenchWindow and its 
- * org.eclipse.swt.widgets.Shell in the info parameter of the IOperationHistory
- * undo and redo methods.
+ * OperationHistoryActionHandler provides an adapter in the info parameter of the
+ * IOperationHistory undo and redo methods that is used to get UI info for prompting
+ * the user during operations or operation approval.  Adapters are provided for
+ * org.eclipse.ui.IWorkbenchWindow, org.eclipse.swt.widgets.Shell, and 
+ * org.eclipse.ui.IWorkbenchPart.
  * </p>
  * <p>
  * OperationHistoryActionHandler assumes a linear undo/redo model. When the
  * handler is run, the operation history is asked to perform the most recent
  * undo for the handler's context. The handler can be configured (using
  * #setPruneHistory(true) to flush the operation undo or redo history for its
- * context when there is no valid operation, to avoid keeping a stale history of
- * invalid operations. By default, pruning does not occur and it is assumed that
- * clients of the particular undo context are pruning the history when
- * necessary.
+ * context when there is no valid operation on top of the history.  This avoids
+ * keeping a stale history of invalid operations.  By default, pruning does not 
+ * occur and it is assumed that clients of the particular undo context are pruning 
+ * the history when necessary.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -67,11 +70,47 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public abstract class OperationHistoryActionHandler extends Action implements
 		ActionFactory.IWorkbenchAction, IAdaptable, IOperationHistoryListener {
 
+	private class PartListener implements IPartListener {
+		/**
+		 * @see IPartListener#partActivated(IWorkbenchPart)
+		 */
+		public void partActivated(IWorkbenchPart part) {
+		}
+
+		/**
+		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+		 */
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+
+		/**
+		 * @see IPartListener#partClosed(IWorkbenchPart)
+		 */
+		public void partClosed(IWorkbenchPart part) {
+			if (part.equals(site.getPart())) {
+				dispose();
+			}
+		}
+
+		/**
+		 * @see IPartListener#partDeactivated(IWorkbenchPart)
+		 */
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+
+		/**
+		 * @see IPartListener#partOpened(IWorkbenchPart)
+		 */
+		public void partOpened(IWorkbenchPart part) {
+		}
+		
+	}
 	protected IUndoContext undoContext = null;
-
 	private boolean pruning = false;
-
+	// temporary
 	protected IWorkbenchWindow workbenchWindow;
+	protected IWorkbenchPartSite site;
+	private IPartListener partListener = new PartListener();
 
 	/**
 	 * Construct an operation history action for the specified workbench window
@@ -81,6 +120,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 *            the workbench window for the action.
 	 * @param context -
 	 *            the undo context to be used
+	 * @deprecated
 	 */
 	public OperationHistoryActionHandler(IWorkbenchWindow window,
 			IUndoContext context) {
@@ -90,12 +130,34 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		undoContext = context;
 		getHistory().addOperationHistoryListener(this);
 	}
+	
+	/**
+	 * Construct an operation history action for the specified workbench window
+	 * with the specified undo context.
+	 * 
+	 * @param site -
+	 *            the workbench part site for the action.
+	 * @param context -
+	 *            the undo context to be used
+	 */
+	public OperationHistoryActionHandler(IWorkbenchPartSite site,
+			IUndoContext context) {
+		// string will be reset inside action
+		super(""); //$NON-NLS-1$
+		this.site = site;
+		undoContext = context;
+		site.getPage().addPartListener(partListener);
+		getHistory().addOperationHistoryListener(this);
+	}
 
 	/**
 	 * Dispose of any resources allocated by this action.
 	 */
 	public void dispose() {
-		// nothing to dispose
+		getHistory().removeOperationHistoryListener(this);
+		site.getPage().removePartListener(partListener);
+		// we do not do anything to the history for our context because it may
+		// be used elsewhere.
 	}
 
 	/*
@@ -112,7 +174,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the operation history we are using.
 	 */
 	protected IOperationHistory getHistory() {
-		return workbenchWindow.getWorkbench().getOperationSupport()
+		return getWorkbenchWindow().getWorkbench().getOperationSupport()
 				.getOperationHistory();
 	}
 
@@ -133,12 +195,33 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(Shell.class)) {
-			return workbenchWindow.getShell();
+			return getWorkbenchWindow().getShell();
 		}
 		if (adapter.equals(IWorkbenchWindow.class)) {
-			return workbenchWindow;
+			return getWorkbenchWindow();
+		}
+		if (adapter.equals(IWorkbenchPart.class)) {
+			return site.getPart();
 		}
 		return null;
+	}
+
+	/*
+	 * Return the progress monitor that should be used for operations
+	 */
+	protected IProgressMonitor getProgressMonitor() {
+		return null;
+	}
+	
+	/*
+	 * Return the workbench window for this action handler
+	 */
+	private IWorkbenchWindow getWorkbenchWindow() {
+		if (site != null) {
+			return site.getWorkbenchWindow();
+		}
+		// temporary
+		return workbenchWindow;
 	}
 
 	/**
@@ -193,7 +276,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			break;
 		case OperationHistoryEvent.OPERATION_CHANGED:
 		case OperationHistoryEvent.OPERATION_NOT_OK:
-			if (event.getOperation() == getOperation()) 
+			if (event.getOperation() == getOperation())
 				update();
 			break;
 		}
@@ -207,8 +290,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
 		if (enabled) {
-			text = MessageFormat.format(
-					"{0} {1}", new Object[] { text, getOperation().getLabel() }); //$NON-NLS-1$
+			text = MessageFormat
+					.format(
+							"{0} {1}", new Object[] { text, getOperation().getLabel() }); //$NON-NLS-1$
 		} else {
 			/*
 			 * if there is nothing to do and we are pruning the history, flush
@@ -220,23 +304,24 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		setText(text.toString());
 		setEnabled(enabled);
 	}
-	
+
 	/*
 	 * Report the specified execution exception to the log and to the user.
 	 */
 	final void reportException(ExecutionException e) {
-			Throwable nestedException = e.getCause();
-			Throwable exception = (nestedException == null) ? e : nestedException;
-			String title = WorkbenchMessages.Error;
-			String message = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
-			String exceptionMessage = exception.getMessage();
-			if (exceptionMessage == null) {
-				exceptionMessage = message;
-			}
-			IStatus status = new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-			WorkbenchPlugin.log(message, status);
-			ErrorDialog.openError(workbenchWindow.getShell(), title, message, status);
+		Throwable nestedException = e.getCause();
+		Throwable exception = (nestedException == null) ? e : nestedException;
+		String title = WorkbenchMessages.Error;
+		String message = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
+		String exceptionMessage = exception.getMessage();
+		if (exceptionMessage == null) {
+			exceptionMessage = message;
 		}
+		IStatus status = new Status(IStatus.ERROR,
+				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		WorkbenchPlugin.log(message, status);
+		ErrorDialog.openError(getWorkbenchWindow().getShell(), title, message,
+				status);
+	}
 
 }

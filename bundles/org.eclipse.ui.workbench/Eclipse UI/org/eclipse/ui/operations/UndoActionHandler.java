@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -41,10 +42,11 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 	 * Construct an action handler that handles the labelling and enabling of
 	 * the undo action for a specified operation context.
 	 * 
-	 * @param window -
+	 * @param window
 	 *            the workbench window that created the action.
-	 * @param context -
-	 *            the context to be used for the undo
+	 * @param context
+	 *            the context to be used for redoing.
+	 * @deprecated
 	 */
 	public UndoActionHandler(IWorkbenchWindow window, IUndoContext context) {
 		super(window, context);
@@ -52,8 +54,24 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
 	}
 
+	
+	/**
+	 * Construct an action handler that handles the labelling and enabling of
+	 * the undo action for a specified operation context.
+	 * 
+	 * @param site -
+	 *            the workbench part site that created the action.
+	 * @param context -
+	 *            the context to be used for the undo
+	 */
+	public UndoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
+		super(site, context);
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+                .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
+	}
+
 	protected void flush() {
-		getHistory().dispose(undoContext, true, false);
+		getHistory().dispose(undoContext, true, false, false);
 	}
 
 	protected String getCommandString() {
@@ -67,7 +85,7 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 
 	public void run() {
 		try {
-			getHistory().undo(undoContext, null, this);
+			getHistory().undo(undoContext, getProgressMonitor(), this);
 		} catch (ExecutionException e) {
 			reportException(e);
 		}

@@ -14,14 +14,15 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * <p>
- * RedoActionHandler provides common behavior for redoing an operation,
- * as well as labeling and enabling the menu item.
+ * RedoActionHandler provides common behavior for redoing an operation, as well
+ * as labeling and enabling the menu item.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -40,20 +41,36 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 	 * Construct an action handler that handles the labelling and enabling of
 	 * the redo action for a specified operation context.
 	 * 
-	 * @param window -
+	 * @param window
 	 *            the workbench window that created the action.
-	 * @param context -
+	 * @param context
 	 *            the context to be used for redoing.
+	 * @deprecated
 	 */
 	public RedoActionHandler(IWorkbenchWindow window, IUndoContext context) {
 		super(window, context);
-	    setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-                .getImageDescriptor(ISharedImages.IMG_TOOL_REDO));  
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+
+	}
+	/**
+	 * Construct an action handler that handles the labelling and enabling of
+	 * the redo action for a specified operation context.
+	 * 
+	 * @param site -
+	 *            the workbench part site that created the action.
+	 * @param context -
+	 *            the context to be used for redoing.
+	 */
+	public RedoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
+		super(site, context);
+		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
 
 	}
 
 	protected void flush() {
-		getHistory().dispose(undoContext, false, true);
+		getHistory().dispose(undoContext, false, true, false);
 	}
 
 	protected String getCommandString() {
@@ -66,9 +83,8 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 
 	public void run() {
 		try {
-			getHistory().redo(undoContext, null, this);
-		}
-		catch (ExecutionException e) {
+			getHistory().redo(undoContext, getProgressMonitor(), this);
+		} catch (ExecutionException e) {
 			reportException(e);
 		}
 	}

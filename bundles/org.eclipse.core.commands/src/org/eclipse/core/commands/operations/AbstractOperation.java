@@ -13,6 +13,7 @@ package org.eclipse.core.commands.operations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.internal.commands.util.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +35,7 @@ import org.eclipse.core.runtime.IStatus;
  * @experimental
  */
 public abstract class AbstractOperation implements IUndoableOperation {
-	private List contexts = new ArrayList();
+	protected List contexts = new ArrayList();
 
 	private String label = ""; //$NON-NLS-1$
 
@@ -100,20 +101,11 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info);
+	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
 
 	public IUndoContext[] getContexts() {
 		return (IUndoContext[]) contexts.toArray(new IUndoContext[contexts
 				.size()]);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#getDescription()
-	 */
-	public String getDescription() {
-		return ""; //$NON-NLS-1$
 	}
 	
 	/*
@@ -157,7 +149,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info);
+	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
 
 	public void removeContext(IUndoContext context) {
 		contexts.remove(context);
@@ -168,6 +160,24 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info);
+	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
 
+	/**
+	 * The string representation of this operation.  Used for debugging purposes only.
+	 * This string should not be shown to an end user.
+	 * 
+	 * @return The string representation.
+	 */
+	public String toString() {
+		final StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(getLabel());
+		stringBuffer.append("("); //$NON-NLS-1$
+		IUndoContext [] contexts = getContexts();
+		for (int i=0; i<contexts.length; i++) {
+			stringBuffer.append(contexts[i].toString());
+			stringBuffer.append(',');
+		}
+		stringBuffer.append(')');
+		return stringBuffer.toString();
+	}
 }

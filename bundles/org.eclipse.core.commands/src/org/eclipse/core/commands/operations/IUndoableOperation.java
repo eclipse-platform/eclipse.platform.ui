@@ -136,15 +136,6 @@ public interface IUndoableOperation {
 	IUndoContext[] getContexts();
 
 	/**
-	 * Return the description that should be used to further describe this
-	 * operation to the user. The description is used in history lists when the
-	 * user requests more information about an operation.
-	 * 
-	 * @return the description
-	 */
-	String getDescription();
-
-	/**
 	 * Return the label that should be used to show the name of the operation to
 	 * the user. This label is typically appended to the "Undo" or "Redo" menu
 	 * entry.

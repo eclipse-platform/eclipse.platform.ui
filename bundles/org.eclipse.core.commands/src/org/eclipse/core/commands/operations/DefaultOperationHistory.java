@@ -39,6 +39,39 @@ import org.eclipse.core.runtime.Status;
  * @since 3.1
  */
 public class DefaultOperationHistory implements IOperationHistory {
+	/**
+	 * This flag can be set to <code>true</code> if the history should print
+	 * information to <code>System.out</code> whenever notifications about changes
+	 * to the history occur.
+	 */
+    public static boolean DEBUG_OPERATION_HISTORY_NOTIFICATION = false;
+	
+	/**
+	 * This flag can be set to <code>true</code> if the history should print
+	 * information to <code>System.out</code> whenever an unexpected condition
+	 * arises.
+	 */
+    public static boolean DEBUG_OPERATION_HISTORY_UNEXPECTED = false;
+	
+	/**
+	 * This flag can be set to <code>true</code> if the history should print
+	 * information to <code>System.out</code> whenever an undo context is disposed.
+	 */
+    public static boolean DEBUG_OPERATION_HISTORY_DISPOSE = false;
+	
+	/**
+	 * This flag can be set to <code>true</code> if the history should print
+	 * information to <code>System.out</code> during the open/close sequence.
+	 */
+    public static boolean DEBUG_OPERATION_HISTORY_OPENOPERATION = false;
+
+	/**
+	 * This flag can be set to <code>true</code> if the history should print
+	 * information to <code>System.out</code> whenever an operation is not
+	 * approved.
+	 */
+    public static boolean DEBUG_OPERATION_HISTORY_APPROVAL = false;
+
 	
 	protected static final int DEFAULT_LIMIT = 20;
 	
@@ -125,15 +158,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 			return;
 		}
 		
+		checkUndoLimit(operation);
+		undoList.add(operation);
+		notifyAdd(operation);
+		
 		// flush redo stack for related contexts
 		IUndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
 			flushRedo(contexts[i]);
 		}
 
-		checkUndoLimit(operation);
-		undoList.add(operation);
-		notifyAdd(operation);
 	}
 
 	/*
@@ -202,20 +236,43 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IOperationHistory#dispose(org.eclipse.core.commands.operations.IUndoContext, boolean, boolean)
+	 * @see org.eclipse.core.commands.operations.IOperationHistory#dispose(org.eclipse.core.commands.operations.IUndoContext, boolean, boolean, boolean)
+	 * @deprecated
 	 */
 	public void dispose(IUndoContext context, boolean flushUndo,
 			boolean flushRedo) {
+		// simulate the old behavior
+		dispose(context, flushUndo, flushRedo, false);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationHistory#dispose(org.eclipse.core.commands.operations.IUndoContext, boolean, boolean, boolean)
+	 */
+	public void dispose(IUndoContext context, boolean flushUndo,
+			boolean flushRedo, boolean flushContext) {
+		// dispose of any limit that was set for the context if it is not to be
+		// used again.
+		if (flushContext) {
+			if (DEBUG_OPERATION_HISTORY_DISPOSE) {
+				System.out.print("OPERATIONHISTORY >>> Flushing context "); //$NON-NLS-1$ 
+				System.out.print(context);
+				System.out.println();
+			}
+			limits.remove(context);
+			flushUndo(context);
+			flushRedo(context);
+			return;
+		}
+		
 		if (flushUndo)
 			flushUndo(context);
 		if (flushRedo)
 			flushRedo(context);
-		// we currently do not dispose of any limit that was set for the
-		// context since it may be used again. 
-		
+
 	}
 
 	/**
@@ -236,9 +293,19 @@ public class DefaultOperationHistory implements IOperationHistory {
 				status = Status.CANCEL_STATUS;
 			} catch (ExecutionException e) {
 				notifyNotOK(operation);
+				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+					System.out.print("OPERATIONHISTORY >>> ExecutionException while redoing "); //$NON-NLS-1$ 
+					System.out.print(operation);
+					System.out.println();
+				}
 				throw e;
 			} catch (Exception e) {
 				notifyNotOK(operation);
+				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+					System.out.print("OPERATIONHISTORY >>> Exception while redoing "); //$NON-NLS-1$ 
+					System.out.print(operation);
+					System.out.println();
+				}
 				throw new ExecutionException(
 						"While redoing the operation, an exception occurred", e); //$NON-NLS-1$
 			}
@@ -287,9 +354,19 @@ public class DefaultOperationHistory implements IOperationHistory {
 				status = Status.CANCEL_STATUS;
 			} catch (ExecutionException e) {
 				notifyNotOK(operation);
+				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+					System.out.print("OPERATIONHISTORY >>> ExecutionException while undoing "); //$NON-NLS-1$ 
+					System.out.print(operation);
+					System.out.println();
+				}
 				throw e;
 			} catch (Exception e) {
 				notifyNotOK(operation);
+				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+					System.out.print("OPERATIONHISTORY >>> Exception while undoing "); //$NON-NLS-1$ 
+					System.out.print(operation);
+					System.out.println();
+				}
 				throw new ExecutionException(
 					"While undoing the operation, an exception occurred", e); //$NON-NLS-1$
 			}
@@ -364,9 +441,19 @@ public class DefaultOperationHistory implements IOperationHistory {
 			status = Status.CANCEL_STATUS;
 		} catch (ExecutionException e) {
 			notifyNotOK(operation);
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				System.out.print("OPERATIONHISTORY >>> ExecutionException while executing "); //$NON-NLS-1$ 
+				System.out.print(operation);
+				System.out.println();
+			}
 			throw e;
 		} catch (Exception e) {
 			notifyNotOK(operation);
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				System.out.print("OPERATIONHISTORY >>> Exception while executing "); //$NON-NLS-1$ 
+				System.out.print(operation);
+				System.out.println();
+			}
 			throw new ExecutionException(
 					"While executing the operation, an exception occurred", e); //$NON-NLS-1$
 		}
@@ -423,6 +510,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Flush the redo stack of all operations that have the given context.
 	 */
 	void flushRedo(IUndoContext context) {
+		if (DEBUG_OPERATION_HISTORY_DISPOSE) {
+			System.out.print("OPERATIONHISTORY >>> Flushing redo history for "); //$NON-NLS-1$ 
+			System.out.print(context);
+			System.out.println();
+		}
+
+		
 		Object[] filtered = filter(redoList, context);
 		for (int i = 0; i < filtered.length; i++) {
 			IUndoableOperation operation = (IUndoableOperation) filtered[i];
@@ -441,6 +535,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Flush the undo stack of all operations that have the given context.
 	 */
 	void flushUndo(IUndoContext context) {
+		if (DEBUG_OPERATION_HISTORY_DISPOSE) {
+			System.out.print("OPERATIONHISTORY >>> Flushing undo history for "); //$NON-NLS-1$ 
+			System.out.print(context);
+			System.out.println();
+		}
+		
 		Object[] filtered = filter(undoList, context);
 		for (int i = 0; i < filtered.length; i++) {
 			IUndoableOperation operation = (IUndoableOperation) filtered[i];
@@ -538,8 +638,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 		for (int i = 0; i < approvers.size(); i++) {
 			IStatus approval = ((IOperationApprover) approvers.get(i))
 					.proceedRedoing(operation, this, info);
-			if (!approval.isOK())
+			if (!approval.isOK()) {
+				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
+					System.out.print("OPERATIONHISTORY >>> Redo not approved for "); //$NON-NLS-1$ 
+					System.out.print(operation);
+					System.out.print(" with status "); //$NON-NLS-1$ 
+					System.out.print(approval);
+					System.out.println();
+				}
 				return approval;
+			}
 		}
 		return Status.OK_STATUS;
 	}
@@ -577,8 +685,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 		for (int i = 0; i < approvers.size(); i++) {
 			IStatus approval = ((IOperationApprover) approvers.get(i))
 					.proceedUndoing(operation, this, info);
-			if (!approval.isOK())
+			if (!approval.isOK()) {
+				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
+					System.out.print("OPERATIONHISTORY >>> Undo not approved for "); //$NON-NLS-1$ 
+					System.out.print(operation);
+					System.out.print(" with status "); //$NON-NLS-1$ 
+					System.out.print(approval);
+					System.out.println();
+				}
 				return approval;
+			}
 		}
 		return Status.OK_STATUS;
 	}
@@ -621,6 +737,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation is about to execute.
 	 */
 	protected void notifyAboutToExecute(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> ABOUT_TO_EXECUTE "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+		
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_EXECUTE, this, operation);
 		preNotifyOperation(operation, event);
@@ -637,6 +759,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation is about to redo.
 	 */
 	protected void notifyAboutToRedo(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> ABOUT_TO_REDO "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_REDO, this, operation);
 		preNotifyOperation(operation, event);
@@ -653,6 +781,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation is about to undo.
 	 */
 	protected void notifyAboutToUndo(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> ABOUT_TO_UNDO "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_UNDO, this, operation);
 		preNotifyOperation(operation, event);
@@ -670,6 +804,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation has been added.
 	 */
 	protected void notifyAdd(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> OPERATION_ADDED "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_ADDED, this, operation);
 		preNotifyOperation(operation, event);
@@ -686,6 +826,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation is done executing.
 	 */
 	protected void notifyDone(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> DONE "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.DONE, this, operation);
 		preNotifyOperation(operation, event);
@@ -703,6 +849,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * an attempt to execute, undo, or redo was made.
 	 */
 	protected void notifyNotOK(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> OPERATION_NOT_OK "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_NOT_OK, this, operation);
 		preNotifyOperation(operation, event);
@@ -719,6 +871,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation was redone.
 	 */
 	protected void notifyRedone(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> REDONE "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.REDONE, this, operation);
 		preNotifyOperation(operation, event);
@@ -736,6 +894,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * history.
 	 */
 	protected void notifyRemoved(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> OPERATION_REMOVED "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_REMOVED, this, operation);
 		preNotifyOperation(operation, event);
@@ -752,6 +916,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Notify listeners that an operation has been undone.
 	 */
 	protected void notifyUndone(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> UNDONE "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.UNDONE, this, operation);
 		preNotifyOperation(operation, event);
@@ -762,13 +932,18 @@ public class DefaultOperationHistory implements IOperationHistory {
 			} catch (Exception e) {
 				handleNotificationException(e);
 			}
-
 	}
 	
 	/*
 	 * Notify listeners that an operation has been undone.
 	 */
 	protected void notifyChanged(IUndoableOperation operation) {
+		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
+			System.out.print("OPERATIONHISTORY >>> OPERATION_CHANGED "); //$NON-NLS-1$ 
+			System.out.print(operation);
+			System.out.println();
+		}
+
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_CHANGED, this, operation);
 		preNotifyOperation(operation, event);
@@ -791,6 +966,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 
 	private void preNotifyOperation(IUndoableOperation operation, OperationHistoryEvent event) {
+
 		if (operation instanceof IHistoryNotificationAwareOperation) {
 			try {
 				((IHistoryNotificationAwareOperation)operation).aboutToNotify(event);
@@ -814,8 +990,15 @@ public class DefaultOperationHistory implements IOperationHistory {
 			return NOTHING_TO_REDO_STATUS;
 
 		// error if operation is invalid
-		if (!operation.canRedo())
+		if (!operation.canRedo()) {
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				System.out.print("OPERATIONHISTORY >>> Redo operation not valid - "); //$NON-NLS-1$ 
+				System.out.print(operation);
+				System.out.println();
+			}
+
 			return OPERATION_INVALID_STATUS;
+		}
 
 		return doRedo(monitor, info, operation, true);
 	}
@@ -835,17 +1018,21 @@ public class DefaultOperationHistory implements IOperationHistory {
 				status = doRedo(monitor, info, operation, false);
 			}
 		} else {
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				System.out.print("OPERATIONHISTORY >>> Redo operation not valid - "); //$NON-NLS-1$ 
+				System.out.print(operation);
+				System.out.println();
+			}
+
 			status = OPERATION_INVALID_STATUS;
 		}
 		return status;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.IOperationHistory#remove(org.eclipse.core.commands.operations.IUndoableOperation)
+	/**
+	 * Remove the specified operation from the undo and redo history
 	 */
-	public void remove(IUndoableOperation operation) {
+	private void remove(IUndoableOperation operation) {
 		if (undoList.contains(operation)) {
 			undoList.remove(operation);
 			internalRemove(operation);
@@ -909,8 +1096,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 			return NOTHING_TO_UNDO_STATUS;
 
 		// error if operation is invalid
-		if (!operation.canUndo())
+		if (!operation.canUndo()) {
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				System.out.print("OPERATIONHISTORY >>> Undo operation not valid - "); //$NON-NLS-1$ 
+				System.out.print(operation);
+				System.out.println();
+			}
 			return OPERATION_INVALID_STATUS;
+		}
 
 		return doUndo(monitor, info, operation, true);
 	}
@@ -929,6 +1122,11 @@ public class DefaultOperationHistory implements IOperationHistory {
 				status = doUndo(monitor, info, operation, false);
 			}
 		} else {
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				System.out.print("OPERATIONHISTORY >>> Undo operation not valid - "); //$NON-NLS-1$ 
+				System.out.print(operation);
+				System.out.println();
+			}
 			status = OPERATION_INVALID_STATUS;
 		}
 		return status;
@@ -943,9 +1141,21 @@ public class DefaultOperationHistory implements IOperationHistory {
 		if (batchingOperation != null) {
 			// unexpected nesting of operations.  The original batching operation
 			// will be closed and will be considered unsuccessful.
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				System.out.print("OPERATIONHISTORY >>> Open operation called while another operation is open.  old: "); //$NON-NLS-1$ 
+				System.out.print(batchingOperation);
+				System.out.print("new:  "); //$NON-NLS-1$
+				System.out.print(operation);
+				System.out.println();
+			}
 			closeOperation(false, false);	
 		} 
 		batchingOperation = operation;
+		if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
+			System.out.print("OPERATIONHISTORY >>> Opening operation "); //$NON-NLS-1$ 
+			System.out.print(batchingOperation);
+			System.out.println();
+		}
 		notifyAboutToExecute(operation);	
 	}
 	
@@ -963,7 +1173,20 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation(boolean, boolean)
 	 */
 	public void closeOperation(boolean operationOK, boolean addToHistory) {
+		if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+			if (batchingOperation == null) {
+				System.out.print("OPERATIONHISTORY >>> Attempted to close operation when none was open "); //$NON-NLS-1$ 
+				System.out.println();
+			}
+		}
 		if (batchingOperation != null) {
+			
+			if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
+				System.out.print("OPERATIONHISTORY >>> Closing operation "); //$NON-NLS-1$ 
+				System.out.print(batchingOperation);
+				System.out.println();
+			}
+			
 			if (operationOK) {
 				notifyDone(batchingOperation);
 				if (addToHistory) add(batchingOperation);
@@ -995,6 +1218,11 @@ public class DefaultOperationHistory implements IOperationHistory {
 			return;
 		// This plug-in is intended to run stand-alone outside of the
 		// platform, so we do not employ standard platform exception logging.
+		if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+			System.out.print("OPERATIONHISTORY >>> Exception during notification callback "); //$NON-NLS-1$ 
+			System.out.print(e);
+			System.out.println();
+		}
 		e.printStackTrace();
 	}
 

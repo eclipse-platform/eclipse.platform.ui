@@ -144,5 +144,16 @@ public class ObjectUndoContext extends UndoContext {
 			return true;
 		return super.matches(context);
 	}
+	
+	/**
+	 * The string representation of this operation.  Used for debugging purposes only.
+	 * This string should not be shown to an end user.
+	 * 
+	 * @return The string representation.
+	 */
+	public String toString() {
+		return getLabel();
+	}
+
 
 }

@@ -28,7 +28,7 @@ import org.eclipse.ui.tests.util.UITestCase;
  * @since 3.1
  */
 public class WorkbenchOperationHistoryTests extends UITestCase {
-	IUndoContext context, c1, c2;
+	IUndoContext context, contextA, contextB;
 
 	IOperationHistory history;
 
@@ -44,22 +44,22 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	protected void doSetUp() throws Exception {
 		history = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
 		context = PlatformUI.getWorkbench().getOperationSupport().getUndoContext();
-		c1 = new ObjectUndoContext("c1");
-		c2 = new ObjectUndoContext("c2");
-		op1 = new TestOperation("op1", "Test Operation 1");
+		contextA = new ObjectUndoContext("A");
+		contextB = new ObjectUndoContext("B");
+		op1 = new TestOperation("op1");
 		op1.addContext(context);
-		op2 = new TestOperation("op2", "Test Operation 2");
+		op2 = new TestOperation("op2");
 		op2.addContext(context);
-		op2.addContext(c1);
-		op3 = new TestOperation("op3", "Test Operation 3");
-		op3.addContext(c2);
-		op4 = new TestOperation("op4", "Test Operation 4");
+		op2.addContext(contextA);
+		op3 = new TestOperation("op3");
+		op3.addContext(contextB);
+		op4 = new TestOperation("op4");
 		op4.addContext(context);
-		op5 = new TestOperation("op5", "Test Operation 5");
-		op5.addContext(c1);
-		op6 = new TestOperation("op6", "Test Operation 6");
+		op5 = new TestOperation("op5");
+		op5.addContext(contextA);
+		op6 = new TestOperation("op6");
 		op6.addContext(context);
-		op6.addContext(c2);
+		op6.addContext(contextB);
 		history.execute(op1, null, null);
 		history.execute(op2, null, null);
 		history.execute(op3, null, null);
@@ -70,20 +70,20 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	}
 
 	protected void doTearDown() throws Exception {
-		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, true);
 	}
 
 	public void testWorkbenchOperationApproval() throws ExecutionException {
 		// Enforcing of linear undo should be in effect for the workbench
 		// context.
 		// The first undo in c1 should be fine
-		IStatus status = history.undo(c1, null, null);
+		IStatus status = history.undo(contextA, null, null);
 		assertTrue(status.isOK());
 
 		// the second undo in c1 causes a linear violation on the workbench
 		// context
-		assertTrue(history.canUndo(c1));
-		status = history.undo(c1, null, null);
+		assertTrue(history.canUndo(contextA));
+		status = history.undo(contextA, null, null);
 		assertFalse(status.isOK());
 
 		// undo the newer context items
@@ -93,7 +93,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 		assertTrue(status.isOK());
 
 		// now we should be ok to undo c1
-		status = history.undo(c1, null, null);
+		status = history.undo(contextA, null, null);
 		assertTrue(status.isOK());
 	}
 	

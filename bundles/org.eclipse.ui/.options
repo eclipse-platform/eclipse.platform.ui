@@ -88,3 +88,9 @@ org.eclipse.ui/trace/handlers.verbose=false
 
 # Restrict the verbose information to a particular command
 org.eclipse.ui/trace/handlers.verbose.commandId=
+
+# Report unexpected (undo) operations history events.
+org.eclipse.ui/trace/operations=false
+
+# Report verbose information about (undo) operations history changes.
+org.eclipse.ui/trace/operations.verbose=false

@@ -197,9 +197,29 @@ public interface IOperationHistory {
 	 * @param flushRedo -
 	 *            <code>true</code> if the context should be flushed from the
 	 *            redo history, <code>false</code> if it should not.
-	 * 
+	 * @deprecated - use dispose(IUndoContext, boolean, boolean, boolean)
 	 */
 	void dispose(IUndoContext context, boolean flushUndo, boolean flushRedo);
+	
+	/**
+	 * Dispose of the specified context in the history. All operations that have
+	 * only the given context will be disposed. References to the context in
+	 * operations that have more than one context will also be removed.
+	 * 
+	 * @param context -
+	 *            the context to be disposed
+	 * @param flushUndo -
+	 *            <code>true</code> if the context should be flushed from the
+	 *            undo history, <code>false</code> if it should not
+	 * @param flushRedo -
+	 *            <code>true</code> if the context should be flushed from the
+	 *            redo history, <code>false</code> if it should not.
+	 * @param flushContext -
+	 *            <code>true</code> if the context is no longer in use and
+	 *            references to it should be flushed.
+	 */
+	void dispose(IUndoContext context, boolean flushUndo, boolean flushRedo,
+			boolean flushContext);
 
 	/**
 	 * Execute the specified operation and add it to the operations history if
@@ -453,16 +473,6 @@ public interface IOperationHistory {
 	IStatus redoOperation(IUndoableOperation operation,
 			IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException;
-
-	/**
-	 * Remove the specified operation from the history. Listeners will be
-	 * notified of the removal of the operation. This method is used by clients
-	 * who want to flush a particular subset of the history.
-	 * 
-	 * @param operation -
-	 *            the operation to be removed from the history
-	 */
-	void remove(IUndoableOperation operation);
 
 	/**
 	 * Remove the specified operation approver from the operation history.
