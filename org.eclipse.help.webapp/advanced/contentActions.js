@@ -117,7 +117,9 @@ function setTitle(label)
 {
 	if( label == null) label = "";
 	var title = document.getElementById("titleText");
-	var text = title.lastChild;
-	text.nodeValue = " "+label;
+	if(title !=null){
+		var text = title.lastChild;
+		text.nodeValue = " "+label;
+	}
 }
 
