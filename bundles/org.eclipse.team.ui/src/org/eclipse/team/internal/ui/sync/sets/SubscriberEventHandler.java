@@ -14,12 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.core.ExceptionCollector;
@@ -94,6 +95,7 @@ public class SubscriberEventHandler {
 			return result;
 		}
 	}
+	
 	/**
 	 * Create a handler. This will initialize all resources for the subscriber associated with
 	 * the set.
@@ -191,17 +193,26 @@ public class SubscriberEventHandler {
 		// the EclipseSynchronizer currently obtains rules which causes
 		// many workers to be created (see bug 41979).
 		eventHandlerJob = new WorkspaceJob(Policy.bind("SubscriberEventHandler.jobName")) {//$NON-NLS-1$	
-		public IStatus runInWorkspace(IProgressMonitor monitor) {
-				return processEvents(monitor);
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
+					return processEvents(monitor);
 			}
 		};
+		eventHandlerJob.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				// Make sure an unhandled event didn't squeak in.
+				if (hasUnprocessedEvents()) {
+					schedule();
+				}
+			}
+		});
 		eventHandlerJob.setPriority(Job.SHORT);
 		eventHandlerJob.setSystem(true);
 	}
+	
 	/**
 	 * Process events from the events queue and dispatch results. 
 	 */
-	private IStatus processEvents(IProgressMonitor monitor) {
+	/* internal use only */ IStatus processEvents(IProgressMonitor monitor) {
 		List resultCache = new ArrayList();
 		Event event;
 		errors.clear();
@@ -240,7 +251,7 @@ public class SubscriberEventHandler {
 					errors.handleException(e);
 				}
 
-				if (awaitingProcessing.isEmpty()
+				if (!hasUnprocessedEvents()
 					|| resultCache.size() > NOTIFICATION_BATCHING_NUMBER) {
 					dispatchEvents(
 						(Event[]) resultCache.toArray(
@@ -267,7 +278,7 @@ public class SubscriberEventHandler {
 		if (resource.getType() != IResource.FILE
 			&& depth != IResource.DEPTH_ZERO) {
 			IResource[] members =
-				set.getSubscriber().members((IContainer) resource);
+				set.getSubscriber().members(resource);
 			for (int i = 0; i < members.length; i++) {
 				collect(
 					members[i],
@@ -354,7 +365,7 @@ public class SubscriberEventHandler {
 			}
 		}
 		set.getSyncSet().endInput();
-	};
+	}
 	/**
 	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
 	 * all synchronization information for the subscriber.
@@ -366,5 +377,9 @@ public class SubscriberEventHandler {
 		for (int i = 0; i < resources.length; i++) {
 			queueEvent(new Event(resources[i], type, IResource.DEPTH_INFINITE));
 		}
+	}
+	
+	/* internal use only */ boolean hasUnprocessedEvents() {
+		return !awaitingProcessing.isEmpty();
 	}
 }
