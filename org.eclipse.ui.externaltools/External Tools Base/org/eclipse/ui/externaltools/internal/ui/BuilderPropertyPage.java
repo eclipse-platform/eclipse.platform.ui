@@ -619,11 +619,15 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	}
 	
 	/**
-	 * The user has pressed the edit button. Open the launch configuration edit
+	 * The user has pressed the edit button or double-clicked. Open the launch configuration edit
 	 * dialog on the selection after migrating the tool if necessary.
 	 */
 	private void handleEditButtonPressed() {
-		TableItem selection= viewer.getTable().getSelection()[0];
+		TableItem[] items= viewer.getTable().getSelection();
+		if (items.length == 0) {
+			return;
+		}
+		TableItem selection= items[0];
 		if (selection != null) {
 			Object data = selection.getData();
 			if (data instanceof ILaunchConfiguration) {
