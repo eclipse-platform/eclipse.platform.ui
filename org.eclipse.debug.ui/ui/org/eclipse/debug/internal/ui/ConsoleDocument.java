@@ -19,12 +19,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 public class ConsoleDocument extends AbstractDocument implements IDebugEventListener {
-	public final static int fgMinimumSize= 500;
-	public final static int fgMinMaxRation= 5;
 
 	private boolean fClosed= false;
-	private int fMinSize= fgMinimumSize;
-	private int fMaxSize= fgMinimumSize * fgMinMaxRation;
 
 	protected IProcess fProcess;
 	private IStreamsProxy fProxy;
@@ -54,7 +50,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	public ConsoleDocument(IProcess process) {
 		super();
 		fProcess= process;
-		setTextStore(new ConsoleOutputTextStore(fMaxSize));
+		setTextStore(new ConsoleOutputTextStore(2500));
 		setLineTracker(new DefaultLineTracker());
 		
 		if (process != null) {
@@ -72,16 +68,6 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		fClosed= true;
 		fStyleRanges= Collections.EMPTY_LIST;
 		set("");
-	}
-
-	/**
-	 * If the buffer is longer than fMaxSize, 
-	 * trim it back to fMinSize.
-	 */
-	protected void ensureSizeConstraints() {
-		if (getLength() > fMaxSize) {
-			replace(0, getLength() - fMinSize, "");
-		}
 	}
 
 	/**
@@ -146,27 +132,12 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 			DebugUIUtils.logError(ble);
 		}
 		
-		if (text != null && text.length() - replaceLength > fMaxSize / 2) {
-			ensureSizeConstraints();
-		}
-	}
-
-
-	public void setBufferSize(int minSize, int maxSize) {
-		fMinSize= (minSize < fgMinimumSize ? fgMinimumSize : minSize);
-		fMaxSize= (maxSize < minSize * fgMinMaxRation ? minSize * fgMinMaxRation : maxSize);
-
-		if (getStore() instanceof ConsoleOutputTextStore)
-			 ((ConsoleOutputTextStore) getStore()).setMinimalBufferSize(fMinSize);
-
-		ensureSizeConstraints();
 	}
 
 	public void set(String text) {
 		fNewStreamWriteEnd= text.length();
 		super.set(text);
 		fLastStreamWriteEnd= fNewStreamWriteEnd;
-		ensureSizeConstraints();
 	}
 
 	protected void startReading() {
