@@ -12,7 +12,6 @@ Contributors:
 package org.eclipse.jface.text;
 
 
-
 /**
  * Manages a set of child documents for given parent documents. 
  * A child document represents a particular range of the parent 
@@ -66,6 +65,9 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 	 */
 	static class ChildPositionUpdater extends DefaultPositionUpdater {
 		
+		/** Cached document event */
+		private DocumentEvent fDocumentEvent;
+
 		/**
 		 * Creates the position updated.
 		 */
@@ -81,18 +83,34 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			return true;
 		}
 		
+		/*
+		 * @see org.eclipse.jface.text.DefaultPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void update(DocumentEvent event) {
+			try {
+				fDocumentEvent= event;
+				super.update(event);
+			} finally {
+				fDocumentEvent= null;
+			}
+		}
+
 		/**
 		 * If an insertion happens at a child document's start offset, the
 		 * position is extended rather than shifted. Also, if something is added 
 		 * right behind the end of the position, the position is extended rather
 		 * than kept stable.
+		 * 
+		 * In auto expand mode the position is always streched to contain the 
+		 * whole area of the change.
 		 */
 		protected void adaptToInsert() {
 
 			int myStart= fPosition.offset;
 			int myEnd=   fPosition.offset + fPosition.length;
+			boolean isAutoExpanding= isAutoExpanding();
 	
-			if (fLength != 0 && fOffset < myEnd) {
+			if (fLength != 0 && fOffset < myEnd && !isAutoExpanding) {
 				super.adaptToInsert();
 				return;
 			}
@@ -101,13 +119,30 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			int yoursEnd=   fOffset + fReplaceLength -1;
 			yoursEnd= Math.max(yoursStart, yoursEnd);
 			
-			if (myEnd < yoursStart)
+			if (myEnd < yoursStart) {
+				if (isAutoExpanding)
+					fPosition.length= yoursEnd - myStart + 1;
 				return;
+			}
 			
 			if (myStart <= yoursStart)
 				fPosition.length += fReplaceLength;
-			else
-				fPosition.offset += fReplaceLength;
+			else { // yoursStart < myStart
+				if (isAutoExpanding) {
+					fPosition.offset= yoursStart;
+					fPosition.length += (myStart - yoursStart + fReplaceLength);
+				} else {
+					fPosition.offset += fReplaceLength;
+				}
+			}
+		}
+	
+		private boolean isAutoExpanding() {
+			if (fPosition instanceof ChildPosition) {
+				ChildPosition position= (ChildPosition) fPosition;
+				return position.fChildDocument.isAutoExpandEvent(fDocumentEvent);
+			}
+			return false;
 		}
 	};
 	
@@ -204,8 +239,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 	
 	
 	/** The position updater shared by all documents which have child documents */
-	private IPositionUpdater fChildPositionUpdater;
-	
+	private IPositionUpdater fChildPositionUpdater;	
 	
 	
 	/**
@@ -340,5 +374,13 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 	 */
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		fireDocumentEvent(true, event);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ISlaveDocumentManager#setAutoExpandMode(org.eclipse.jface.text.IDocument, boolean)
+	 */
+	public void setAutoExpandMode(IDocument slaveDocument, boolean autoExpand) {
+		if (slaveDocument instanceof ChildDocument)
+			((ChildDocument) slaveDocument).setAutoExpandMode(autoExpand);
 	}
 }

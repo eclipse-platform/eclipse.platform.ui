@@ -14,6 +14,7 @@ package org.eclipse.jface.text;
 /**
  * Slave documents are documents that use a text store which is based on a
  * master document.
+ * @since 2.1
  */
 public interface ISlaveDocumentManager {
 	
@@ -54,4 +55,14 @@ public interface ISlaveDocumentManager {
 	 * @return boolean
 	 */
 	boolean isSlaveDocument(IDocument document);
+	
+	/**
+	 * Sets the given document's auto expand mode. In auto expand mode, a
+	 * slave is expanded to include all of the master document affected by
+	 * document changes.
+	 * 
+	 * @param slave the slave whose auto expand mode should be set
+	 * @param autoExpand the mode
+	 */
+	void setAutoExpandMode(IDocument slave, boolean autoExpand);
 }

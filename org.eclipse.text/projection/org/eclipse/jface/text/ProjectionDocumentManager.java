@@ -284,4 +284,11 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 	public boolean isSlaveDocument(IDocument document) {
 		return (document instanceof ProjectionDocument);
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.ISlaveDocumentManager#setAutoExpandMode(org.eclipse.jface.text.IDocument, boolean)
+	 */
+	public void setAutoExpandMode(IDocument slave, boolean autoExpand) {
+		// TODO
+	}
 }

@@ -2673,15 +2673,44 @@ public class TextViewer extends Viewer implements
 		if (!fDocumentCommand.fillEvent(e, modelRange)) {
 			try {
 				fVerifyListener.forward(false);
-				fDocumentCommand.execute(getDocument());
+				
+				if (fSlaveDocumentManager != null) {
+					IDocument visible= getVisibleDocument();
+					try {
+						fSlaveDocumentManager.setAutoExpandMode(visible, true);
+						fDocumentCommand.execute(getDocument());
+					} finally {
+						fSlaveDocumentManager.setAutoExpandMode(visible, false);
+					}
+				} else {
+					fDocumentCommand.execute(getDocument());
+				}
+
 				if (fTextWidget != null) {
+					
 					int documentCaret= fDocumentCommand.caretOffset;
-					// old behaviour of document command
-					if (documentCaret == -1)
+					if (documentCaret == -1) {
+						// old behaviour of document command
 						documentCaret= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length());
+					}
+					
 					int widgetCaret= modelOffset2WidgetOffset(documentCaret);
-					fTextWidget.setCaretOffset(widgetCaret);
+					if (widgetCaret == -1) {
+						// try to move it to the closest spot
+						IRegion region= getModelCoverage();
+						if (documentCaret <= region.getOffset())
+							widgetCaret= 0;
+						else if (documentCaret >= region.getOffset() + region.getLength())
+							widgetCaret= getVisibleRegion().getLength();
+					}
+					
+					if (widgetCaret != -1) {
+						// there is a valid widget caret
+						fTextWidget.setCaretOffset(widgetCaret);
+					}
+					
 					fTextWidget.showSelection();
+					
 				}
 			} catch (BadLocationException x) {
 				if (TRACE_ERRORS)
