@@ -76,10 +76,10 @@ public class WordTokenStream extends TokenStream {
 			int end = boundary.next();
 				end != BreakIterator.DONE;
 				start = end, end = boundary.next()) {
-			// determine if it is a word or characters between
-			// any letter between boundaries means it is a word
+			// determine if it is a word
+			// any letter or digit between boundaries means it is a word
 			for (int i = start; i < end; i++) {
-				if (Character.isLetter(str.charAt(i))) {
+				if (Character.isLetterOrDigit(str.charAt(i))) {
 					// it is a word
 					tokenList.add(new Token(str.substring(start, end), start, end));
 					continue wordsbreak;

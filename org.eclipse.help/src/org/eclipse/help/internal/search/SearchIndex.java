@@ -67,13 +67,18 @@ public class SearchIndex {
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name));
 			HTMLParser parser = new HTMLParser(stream);
-			doc.add(Field.Text("contents", parser.getReader()));
+			
+			ParsedDocument parsed=new ParsedDocument(parser.getReader());
+			
+			doc.add(Field.Text("contents", parsed.newContentReader()));
+			doc.add(Field.Text("exact_contents", parsed.newContentReader()));
 			String title = "";
 			try {
 				title = parser.getTitle();
 			} catch (InterruptedException ie) {
 			}
 			doc.add(Field.UnStored("title", title));
+			doc.add(Field.UnStored("exact_title", title));
 			doc.add(Field.UnIndexed("raw_title", title));
 			// doc.add(Field.UnIndexed("summary", parser.getSummary()));
 			iw.addDocument(doc);

@@ -46,14 +46,14 @@ public class AnalyzerDescriptor {
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}
-
+		
 	}
 	/**
 	 * Gets the analyzer.
 	 * @return Returns a Analyzer
 	 */
 	public Analyzer getAnalyzer() {
-		return luceneAnalyzer;
+		return new SmartAnalyzer(lang, luceneAnalyzer);
 	}
 
 	/**

@@ -34,7 +34,7 @@ public class QueryWordsPhrase extends QueryWordsToken {
 		for (Iterator it = getWords().iterator(); it.hasNext();)
 		{
 			String word = (String) it.next();
-			Term t = new Term(field, word);
+			Term t = new Term("exact_"+field, word);
 			q.add(t);
 			q.setBoost(boost);
 		}

@@ -92,7 +92,7 @@ public class QueryBuilder {
 					if (!highlightWords.contains(token.value))
 						highlightWords.add(token.value);
 				} else {
-					List wordList = analyzeText(analyzer, token.value);
+					List wordList = analyzeText(analyzer, "contents", token.value);
 					
 					// add original word to the list of words to highlight
 					if (wordList.size() > 0 && !highlightWords.contains(token.value))
@@ -115,7 +115,7 @@ public class QueryBuilder {
 				newTokens.add(token);
 			else if (token.type == QueryWordsToken.PHRASE) {
 				QueryWordsPhrase phrase = QueryWordsToken.phrase();
-				List wordList = analyzeText(analyzer, token.value);
+				List wordList = analyzeText(analyzer, "exact_contents", token.value);
 
 				// add original word to the list of words to highlight
 				if (wordList.size() > 0 && !highlightWords.contains(token.value))
@@ -141,10 +141,10 @@ public class QueryBuilder {
 	 * Get a list of tokens corresponding to a search word or phrase
 	 * @return List of String
 	 */
-	private List analyzeText(Analyzer analyzer, String text) {
+	private List analyzeText(Analyzer analyzer, String fieldName, String text) {
 		List words = new ArrayList(1);
 		Reader reader = new StringReader(text);
-		TokenStream tStream = analyzer.tokenStream("contents", reader);
+		TokenStream tStream = analyzer.tokenStream(fieldName, reader);
 		Token tok;
 		try {
 			while (null != (tok = tStream.next())) {

@@ -28,12 +28,13 @@ public class QueryWordsToken {
 	 * Creates a lucene query for a field
 	 */
 	public Query createLuceneQuery(String field, float boost) {
-		Term t = new Term(field, value);
 		Query q;
 		if (value.indexOf('?') >= 0 || value.indexOf('*') >= 0) {
+			Term t = new Term("exact_"+field, value);
 			q = new WildcardQuery(t);
 			((WildcardQuery) q).setBoost(boost);
 		} else {
+			Term t = new Term(field, value);
 			q = new TermQuery(t);
 			((TermQuery) q).setBoost(boost);
 		}
