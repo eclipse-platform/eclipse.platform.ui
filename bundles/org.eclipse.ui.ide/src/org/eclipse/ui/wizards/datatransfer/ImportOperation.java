@@ -250,9 +250,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
                         continue;
                     }
                 }
-                if (provider.isFolder(source))
+                if (provider.isFolder(nextSource))//Recurse into children
                     collectExistingReadonlyFiles(newDestinationPath, provider
-                            .getChildren(source), noOverwrite,
+                            .getChildren(nextSource), noOverwrite,
                             overwriteReadonly, POLICY_FORCE_OVERWRITE);
             } else {
                 IFile file = getFile(newDestination);
