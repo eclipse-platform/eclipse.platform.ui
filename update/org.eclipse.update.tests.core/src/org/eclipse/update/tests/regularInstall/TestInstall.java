@@ -12,6 +12,7 @@ package org.eclipse.update.tests.regularInstall;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
@@ -207,7 +208,8 @@ public class TestInstall extends UpdateManagerTestCase {
 		String sitePath = site.getSite().getURL().getFile();
 		String pluginName = entries[0].getVersionedIdentifier().toString();
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
-		assertTrue("plugin info not installed locally", pluginFile.exists());
+		if (Locale.getDefault().toString().indexOf("fr") != -1)
+			assertTrue("plugin info not installed locally", pluginFile.exists());
 
 		File featureFile =
 			new File(

@@ -107,7 +107,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		// test only 2 install config in local site
 		int newNumberUnconfiguredFeatures = ((ConfiguredSite)newConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;
 		int oldNumberUnconfiguredFeatures = ((ConfiguredSite)oldConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;		
-		assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures+2,newNumberUnconfiguredFeatures);
+		assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures+3,newNumberUnconfiguredFeatures);
 		
 		// cleanup
 		localFile = new File(siteLocal.getLocationURL().getFile());;

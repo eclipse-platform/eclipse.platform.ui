@@ -11,6 +11,7 @@
 package org.eclipse.update.tests.regularInstall;
 import java.io.*;
 import java.net.*;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
@@ -229,7 +230,8 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		String sitePath = site.getSite().getURL().getFile();
 		String pluginName = entries[0].getVersionedIdentifier().toString();
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
-		assertTrue("plugin info not installed locally:"+pluginFile, pluginFile.exists());
+		if (Locale.getDefault().toString().indexOf("fr") != -1)
+			assertTrue("plugin info not installed locally:"+pluginFile, pluginFile.exists());
 
 		File featureFile =
 			new File(

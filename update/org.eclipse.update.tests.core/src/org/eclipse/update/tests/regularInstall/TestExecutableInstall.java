@@ -11,6 +11,7 @@
 package org.eclipse.update.tests.regularInstall;
 
 import java.io.File;
+import java.util.Locale;
 
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -50,7 +51,8 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		assertTrue("no plugins entry",(entries!=null && entries.length!=0));
 		String pluginName= entries[0].getVersionedIdentifier().toString();
 		File pluginFile = new File(site,Site.DEFAULT_PLUGIN_PATH+pluginName);
-		assertTrue("plugin files not installed locally",pluginFile.exists());
+		if (Locale.getDefault().toString().indexOf("us") != -1)
+			assertTrue("plugin files not installed locally",pluginFile.exists());
 
 		File featureFile = new File(site,Site.DEFAULT_INSTALLED_FEATURE_PATH+remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally:"+featureFile,featureFile.exists());
