@@ -49,10 +49,10 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
@@ -79,7 +79,6 @@ public class AntEditor extends TextEditor {
         }
     }
     
-
     /**
      * The page that shows the outline.
      */
@@ -306,7 +305,7 @@ public class AntEditor extends TextEditor {
 			}
 		}
 				
-		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
+		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isPrefOverviewRulerVisible(), styles);
 		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		configureSourceViewerDecorationSupport();
 		
@@ -331,8 +330,8 @@ public class AntEditor extends TextEditor {
 		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
 		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION, AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
 
-		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(TextEditorPreferenceConstants.EDITOR_CURRENT_LINE, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
-		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
+		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
+		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
 		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
 	}
 }
