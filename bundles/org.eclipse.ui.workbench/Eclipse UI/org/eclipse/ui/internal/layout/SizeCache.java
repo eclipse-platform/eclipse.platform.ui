@@ -158,7 +158,7 @@ public class SizeCache {
 
         // No hints given -- find the preferred size
         if (widthHint == SWT.DEFAULT && heightHint == SWT.DEFAULT) {
-            return getPreferredSize();
+            return Geometry.copy(getPreferredSize());
         }
 
         // If the length and width are independent, compute the preferred size
@@ -183,7 +183,7 @@ public class SizeCache {
             if (preferredSize != null) {
                 // If the given width is the preferred width, then return the preferred size
                 if (widthHint == preferredSize.x) {
-                    return preferredSize;
+                    return Geometry.copy(preferredSize);
                 }
             }
 
@@ -191,7 +191,7 @@ public class SizeCache {
             if (cachedHeight != null) {
                 // If this was measured with the same width hint
                 if (cachedHeight.x == widthHint) {
-                    return cachedHeight;
+                    return Geometry.copy(cachedHeight);
                 }
             }
 
@@ -215,7 +215,7 @@ public class SizeCache {
             // it from scratch.
             cachedHeight = computeSize(control, widthHint, heightHint);
 
-            return cachedHeight;
+            return Geometry.copy(cachedHeight);
         }
 
         // Computing a width
@@ -224,7 +224,7 @@ public class SizeCache {
             if (preferredSize != null) {
                 // If the given height is the preferred height, then return the preferred size
                 if (heightHint == preferredSize.y) {
-                    return preferredSize;
+                    return Geometry.copy(preferredSize);
                 }
             }
 
@@ -232,13 +232,13 @@ public class SizeCache {
             if (cachedWidth != null) {
                 // If this was measured with the same height hint
                 if (cachedWidth.y == heightHint) {
-                    return cachedWidth;
+                    return Geometry.copy(cachedWidth);
                 }
             }
 
             cachedWidth = computeSize(control, widthHint, heightHint);
 
-            return cachedWidth;
+            return Geometry.copy(cachedWidth);
         }
 
         return computeSize(control, widthHint, heightHint);
