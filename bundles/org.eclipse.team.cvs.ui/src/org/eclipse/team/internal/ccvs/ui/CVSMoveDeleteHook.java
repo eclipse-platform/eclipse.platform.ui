@@ -127,7 +127,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 						IFolder destFolder = destination.getFolder(resource.getFullPath().removeFirstSegments(source.getFullPath().segmentCount()));
 						destFolder.create(false, true, monitor);
 					}
-					tree.failed(new CVSStatus(IStatus.ERROR, 0, Policy.bind("CVSMoveDeleteHook.folderDeletionFailure", resource.getFullPath().toString()))); //$NON-NLS-1$
+					tree.failed(new CVSStatus(IStatus.ERROR, CVSStatus.FOLDER_NEEDED_FOR_FILE_DELETIONS, Policy.bind("CVSMoveDeleteHook.folderDeletionFailure", resource.getFullPath().toString()))); //$NON-NLS-1$
 				} else if (resource.getType() == IResource.FILE) {
 					fileFound[0] = true;
 					IFile destFile = null;
