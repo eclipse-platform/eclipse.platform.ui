@@ -12,7 +12,16 @@ import java.util.Vector;
 import org.apache.tools.ant.BuildException;
 
 /**
- * 
+ * An Ant regular expression matcher adapted to use the Xerces XML parser.
+ * This implementation is the standard one used when running Ant inside the
+ * Eclipse platform using the <code>AntRunner</code>.
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under 
+ * development and expected to change significantly before reaching stability. 
+ * It is being made available at this early stage to solicit feedback from pioneering 
+ * adopters on the understanding that any code that uses this API will almost 
+ * certainly be broken (repeatedly) as the API evolves.
+ * </p>
  */
 
 public class XercesRegexpMatcher implements RegexpMatcher {

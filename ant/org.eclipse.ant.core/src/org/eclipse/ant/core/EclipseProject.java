@@ -13,29 +13,25 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-public class EclipseProject extends Project {
-public EclipseProject() {
-}
 /**
- * Convienence method to copy a file from a source to a
- * destination specifying if token filtering must be used, if
- * source files may overwrite newer destination files and the
- * last modified time of <code>destFile</code> file should be made equal
- * to the last modified time of <code>sourceFile</code>.
- *
- * @throws IOException 
+ * An Ant project adapted to running inside the Eclipse Platform.  Because of the class
+ * loading structure of the Eclipse platform, the standard techniques for creating instances 
+ * of tasks and datatypes needs to be adapted.
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under 
+ * development and expected to change significantly before reaching stability. 
+ * It is being made available at this early stage to solicit feedback from pioneering 
+ * adopters on the understanding that any code that uses this API will almost 
+ * certainly be broken (repeatedly) as the API evolves.
+ * </p>
  */
-public void copyFileInWorkspace(File sourceFile, File destFile, boolean filtering, boolean overwrite, boolean preserveLastModified) throws IOException {
-	log("Copy: " + sourceFile.getAbsolutePath() + " -> " + destFile.getAbsolutePath(), MSG_VERBOSE);
-	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	String sourcePath = fixSeparators(sourceFile.getPath());
-	IResource source = root.findMember(new Path(fixSeparators(sourceFile.getPath())));
-	IPath destPath = new Path(fixSeparators(destFile.getPath()));
-	try {
-		source.copy(destPath, overwrite, null);
-	} catch (CoreException e) {
-		throw new IOException(e.getMessage());
-	}
+
+public class EclipseProject extends Project {
+
+/**
+ * Creates a new project for use in running Ant inside the Eclipse Platform.
+ */
+public EclipseProject() {
 }
 /**
  * Creates a new instance of the identified datatype  
