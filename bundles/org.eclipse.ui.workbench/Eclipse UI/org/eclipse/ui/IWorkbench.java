@@ -24,6 +24,7 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -441,4 +442,59 @@ public interface IWorkbench {
 	 * @since 3.0
 	 */
 	void setEnabledActivityIds(Set enabledActivityIds);
+	
+	/**
+	 * Close the intro part, if one is open.
+	 * <p>
+	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * @return whether the intro part was closed.
+	 * @since 3.0
+	 */	
+	public boolean closeIntro(IIntroPart part);	
+	
+	/**
+	 * Return the <code>IIntroPart</code> for this <code>IWorkbench</code>, if any.
+	 * <p>
+	 * <em>EXPERIMENTAL</em>
+	 *  
+	 * @return the <code>IIntroPart</code>, if any.
+	 * @since 3.0
+	 */
+	public IIntroPart findIntro();
+	
+	/**
+	 * Show the intro part in the preferred window.  If the intro part is currently being shown in 
+	 * another window, make it the active window.
+	 * <p>
+	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * @param preferredWindow the preferred <code>IWorkbenchWindow</code>.
+	 * @return the intro part, if one was available.
+	 * @since 3.0
+	 */
+	public IIntroPart showIntro(IWorkbenchWindow preferredWindow);
+	
+	/**
+	 * Controls the intro site mode.
+	 * <p>
+	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * @param part the <code>IIntroPart</code> to set.
+	 * @param standby if <code>false</code>, the intro area will be fully visible. 
+	 * Otherwise, it will go into standby mode and only be partially visible to 
+	 * allow users quick return to the starting point.
+	 */	
+	public void setIntroStandby(IIntroPart part, boolean standby);
+	
+	/**
+	 * Returns <code>false</code> if the intro part is full screen, 
+	 * <code>true</code> if it is in stand-by mode.
+	 * <p>
+	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * @param part the <code>IIntroPart</code> to test.
+	 * @return the activity state of the area.
+	 */
+	boolean isIntroStandby(IIntroPart part);	
 }

@@ -96,6 +96,7 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
@@ -1959,5 +1960,39 @@ public final class Workbench implements IWorkbench {
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
 		getActivitySupport().setEnabledActivityIds(enabledActivityIds);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#closeIntro(org.eclipse.ui.intro.IIntroPart)
+	 */
+	public boolean closeIntro(IIntroPart part) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#showIntro(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public IIntroPart showIntro(IWorkbenchWindow preferredWindow) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#setIntroStandby(org.eclipse.ui.intro.IIntroPart, boolean)
+	 */
+	public void setIntroStandby(IIntroPart part, boolean standby) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#isIntroStandby(org.eclipse.ui.intro.IIntroPart)
+	 */
+	public boolean isIntroStandby(IIntroPart part) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#findIntro()
+	 */
+	public IIntroPart findIntro() {
+		return null;
 	}
 }
