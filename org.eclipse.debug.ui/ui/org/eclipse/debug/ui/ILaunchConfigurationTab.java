@@ -17,6 +17,24 @@ import org.eclipse.swt.widgets.Control;
  * configurations are presented in a dialog, with a tab folder.
  * Each tab manipulates one ore more attributes of a launch
  * configuration. 
+ * <p>
+ * The tab's lifecycle begins when <code>setLaunchConfigurationDialog(ILaunchConfigurationDialog)</code>
+ * is called. A tab may then be asked repeatedly to initialize its
+ * controls to display values for a launch configuration (see
+ * <code>initializeFrom(ILaunchConfiguration)</code>), and to
+ * apply its current settings to a launch configuration (see
+ * <code>performApply(ILaunchConfigurationWorkingCopy)</code>).
+ * While a user manipulates a tab's controls, the tab is not
+ * intended to update a launch configuration. Updating a launch
+ * configuration should only be performed when <code>performApply</code>
+ * is called. To end a tab's lifecyle, <code>dispose()</code> will
+ * be called. Note that a tab can be disposed before its control
+ * has been created.
+ * </p>
+ * <p>
+ * To support single-click launching, tabs are required to initialize
+ * default values into launch configurations (possibly when their controls
+ * have not been created). See <code>setDefatul(ILaunchConfigurationWorkingCopy)</code>.
  * </p>
  * <p>
  * A launch configuration tab extension is defined in <code>plugin.xml</code>.
@@ -122,9 +140,6 @@ public interface ILaunchConfigurationTab {
 	 * Notifies this launch configuration page that it has
 	 * been disposed. Marks the end of this page's lifecycle,
 	 * allowing this page to perform any cleanup required.
-	 * This is called once, after <code>createControl</code>
-	 * has been called. SWT resources allocated by this page
-	 * should be disposed.
 	 */
 	public void dispose();
 	
