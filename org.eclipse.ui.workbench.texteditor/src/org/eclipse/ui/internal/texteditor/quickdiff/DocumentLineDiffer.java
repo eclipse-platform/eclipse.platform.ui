@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -529,6 +530,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 							return e.getStatus();
 						}
 					}
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
 				}
 
 				// Getting our own copies of the documents for offline diffing.
