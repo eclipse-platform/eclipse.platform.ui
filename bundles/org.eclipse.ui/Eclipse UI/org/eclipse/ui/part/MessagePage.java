@@ -5,6 +5,7 @@ package org.eclipse.ui.part;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;		
 
 /**
@@ -16,7 +17,8 @@ import org.eclipse.swt.widgets.*;
  * @see PageBookView
  */
 public class MessagePage extends Page {
-	private Text text;
+	private Composite pgComp;
+	private Label msgLabel;
 	private String message = "";//$NON-NLS-1$
 /**
  * Creates a new page. The message is the empty string.
@@ -27,21 +29,27 @@ public MessagePage() {
  * Method declared on IPage.
  */
 public void createControl(Composite parent) {
-	text = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
-	text.setText(message);
-	text.setMenu(new Menu(text));
+	// Message in default page of Outline should have margins
+	pgComp = new Composite(parent, SWT.NULL);
+	pgComp.setLayout(new GridLayout());
+	
+	msgLabel = new Label(pgComp, SWT.LEFT | SWT.WRAP);
+	msgLabel.setText(message);
+	
+	GridData gridData = new GridData(GridData.FILL_BOTH);
+	msgLabel.setLayoutData(gridData);
 }
 /* (non-Javadoc)
  * Method declared on IPage.
  */
-public org.eclipse.swt.widgets.Control getControl() {
-	return text;
+public Control getControl() {
+	return pgComp;
 }
 /**
  * Sets focus to a part in the page.
  */
 public void setFocus() {
-	text.setFocus();
+	msgLabel.setFocus();
 }
 /**
  * Sets the message to the given string.
@@ -50,7 +58,7 @@ public void setFocus() {
  */
 public void setMessage(String message) {
 	this.message = message;
-	if (text != null)
-		text.setText(message);
+	if (msgLabel != null)
+		msgLabel.setText(message);
 }
 }
