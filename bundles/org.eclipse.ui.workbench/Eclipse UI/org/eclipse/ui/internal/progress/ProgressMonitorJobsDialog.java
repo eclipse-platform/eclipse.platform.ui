@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 /**
  * The ProgressMonitorJobsDialog is the progress monitor dialog used by the
  * progress service to allow locks to show the current jobs.
@@ -308,7 +309,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			 * Open the dialog in the ui Thread
 			 */
 			private void openDialog() {
-				getParentShell().getDisplay().syncExec(new Runnable(){
+				if(!PlatformUI.isWorkbenchRunning())
+					return;
+				
+				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable(){
 					/* (non-Javadoc)
 					 * @see java.lang.Runnable#run()
 					 */
