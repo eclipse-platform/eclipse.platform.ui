@@ -32,11 +32,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -837,9 +837,10 @@ public class BasicStackPresentation extends StackPresentation {
         editorList.setInput(this);
         Point size = editorList.computeSizeHint();
         
-        Rectangle bounds = Display.getCurrent().getBounds();
-        if (x + size.x > bounds.width) x = bounds.width - size.x;
-        if (y + size.y > bounds.height) y = bounds.height - size.y;
+        Monitor mon = getTabFolder().getControl().getMonitor();
+        Rectangle bounds = mon.getClientArea();
+        if (x + size.x > bounds.x + bounds.width) x = bounds.x + bounds.width - size.x;
+        if (y + size.y > bounds.y + bounds.height) y = bounds.y + bounds.height - size.y;
         editorList.setLocation(new Point(x, y));
         editorList.setVisible(true);
         editorList.setFocus();
@@ -858,9 +859,24 @@ public class BasicStackPresentation extends StackPresentation {
     protected void showListDefaultLocation() {
     	PaneFolder tabFolder = getTabFolder();
     	Shell shell = tabFolder.getControl().getShell();
-        Rectangle clientArea = tabFolder.getClientArea();
-        Point location = tabFolder.getControl().getDisplay().map(tabFolder.getControl(), null,
-                clientArea.x, clientArea.y);
+    	
+    	// get the last visible item
+    	int numItems = tabFolder.getItemCount();
+    	CTabItem item = null, tempItem = null;
+    	for (int i = 0; i < numItems; i++) {
+    		tempItem = tabFolder.getItem(i);
+			if (tempItem.isShowing())
+				item = tempItem;
+		}
+		
+		// if we have no visible tabs, abort.
+		if (item == null)
+			return;
+    	
+    	Rectangle itemBounds = item.getBounds();
+    	int x = itemBounds.x+itemBounds.width;
+    	int y = itemBounds.y + itemBounds.height;
+    	Point location = item.getDisplay().map(tabFolder.getControl(), null, x, y); 
         showList(shell, location.x, location.y);
     }
     
