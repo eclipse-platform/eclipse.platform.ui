@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -55,7 +53,7 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionListener, ILaunchListener {
+public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionListener {
 
 	protected ClearOutputAction fClearOutputAction= null;
 
@@ -81,10 +79,10 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		
 		// listen to selection changes in the debug view
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		// listen to launches
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
 		setEventHandler(new ConsoleViewEventHandler(this));
+		//initialize the default instance
+		DebugUIPlugin.getConsoleDocumentManager();
 		return cv;
 	}
 	
@@ -93,6 +91,17 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.CONSOLE_VIEW;
+	}
+	
+	/**
+	 * Sets the input to the current process if no debug view is present
+	 * on the current active page.
+	 */
+	public void setViewerInputFromConsoleDocumentManager(IProcess process) {
+		IViewPart debugView= findView(IDebugUIConstants.ID_DEBUG_VIEW);
+		if (debugView == null) {
+			setViewerInput(process);
+		}
 	}
 	
 	/** 
@@ -113,7 +122,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			}			
 			return;
 		}
+		
 		setProcess(process)	;
+		
 		Runnable r = new Runnable() {
 			public void run() {
 				if (!isAvailable()) {
@@ -121,7 +132,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 				}
 				IDocument doc = null;
 				if (getProcess() != null) {
-					doc = DebugUIPlugin.getLaunchConfigurationManager().getConsoleDocument(getProcess());
+					doc = DebugUIPlugin.getConsoleDocumentManager().getConsoleDocument(getProcess());
 				}
 				if (doc == null) {
 					doc = new ConsoleDocument(null);
@@ -288,8 +299,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 
 	protected void updateSelectionDependentActions() {
 		Iterator iterator= fSelectionActions.iterator();
-		while (iterator.hasNext())
+		while (iterator.hasNext()) {
 			updateAction((String)iterator.next());		
+		}
 	}
 
 	protected void updateAction(String actionId) {
@@ -307,7 +319,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		if (fCurrentDocument != null) {
 			fCurrentDocument.removeDocumentListener(this);
 		}
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		super.dispose();
 	}
 	
@@ -344,38 +355,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 */
 	public IProcess getProcess() {
 		return fProcess;
-	}
-	
-	/**
-	 * If a launch is deregistered and there is no debug view
-	 * in this view's page (to provide a 'process context'),
-	 * show the output of the current process.
-	 * 
-	 * @see ILaunchListener#launchRemoved(ILaunch)
-	 */
-	public void launchRemoved(ILaunch launch) {
-		setViewerInput(DebugUITools.getCurrentProcess());
-	}
-
-	/**
-	 * If a launch is registered and there is no debug view
-	 * in this view's page (to provide a 'process context'),
-	 * show the output of the current process.
-	 * 
-	 * @see ILaunchListener#launchAdded(ILaunch)
-	 */
-	public void launchAdded(ILaunch launch) {
-		IViewPart view = findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (view == null) {
-			setViewerInput(DebugUITools.getCurrentProcess());
-		}
-	}
-	
-	/**
-	 * @see ILaunchListener#launchChanged(ILaunch)
-	 */
-	public void launchChanged(ILaunch launch) {
-		launchAdded(launch);
 	}
 	
 	/**

@@ -33,13 +33,9 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
-import org.eclipse.debug.internal.ui.views.console.ConsoleDocument;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.w3c.dom.Element;
@@ -87,12 +83,8 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * The list of most recent launches, independent of mode.
 	 * This list may be empty, but should never be <code>null</code>.
 	 */
-	protected List fLastLaunchList;	/**
-	 * The process that is/can provide output to the console
-	 * view.
-	 */
-	protected IProcess fCurrentProcess= null;
-	
+	protected List fLastLaunchList;	
+		
 	/**
 	 * The list of registered implementors of <code>ILaunchHistoryChangedListener</code>
 	 */
@@ -103,10 +95,6 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * the specified config type will appear in each specified perspective.
 	 */
 	protected Map fLaunchConfigurationShortcuts;
-	/**
-	 * The mappings of processes to their console documents.
-	 */
-	protected Map fConsoleDocuments= new HashMap(3);
 		
 	/**
 	 * The name of the file used to persist the launch history.
@@ -131,7 +119,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		launchManager.addLaunchListener(this);	
 		launchManager.addLaunchConfigurationListener(this);
 
-		//set up the docs for launches already registered
+		//update histories for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
@@ -171,12 +159,6 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	}
 	
 	public void shutdown() throws CoreException {
-		Iterator docs= fConsoleDocuments.values().iterator();
-		while (docs.hasNext()) {
-			ConsoleDocument doc= (ConsoleDocument)docs.next();
-			doc.kill();
-		}
-		
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		launchManager.removeLaunchConfigurationListener(this);
@@ -187,55 +169,14 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchRemoved(final ILaunch launch) {
-		DebugUIPlugin.getDefault().getStandardDisplay().syncExec(new Runnable () {
-			public void run() {
-				IProcess currentProcess= getCurrentProcess();
-				IProcess[] processes= launch.getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					IProcess iProcess = processes[i];
-					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(iProcess);
-					if (doc != null) {
-						doc.close();
-						setConsoleDocument(processes[i], null);
-					}
-					if (iProcess.equals(currentProcess)) {
-						fCurrentProcess= null;
-					}
-				}
-			}
-		});
+	public void launchRemoved(ILaunch launch) {
 	}
 	
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
-	public void launchChanged(final ILaunch launch) {	
-		
-		IProcess newProcess= null;
-		IDebugTarget target= launch.getDebugTarget();
-		if (target != null) {
-			newProcess= target.getProcess();
-		} else {
-			IProcess[] processes= launch.getProcesses();
-			if (processes.length > 0) {
-				newProcess= processes[processes.length - 1];
-			}
-		}
-		setCurrentProcess(newProcess);
-				
-		DebugUIPlugin.getDefault().getStandardDisplay().syncExec(new Runnable () {
-			public void run() {
-				IProcess[] processes= launch.getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					if (getConsoleDocument(processes[i]) == null) {
-						ConsoleDocument doc= new ConsoleDocument(processes[i]);
-						doc.startReading();
-						setConsoleDocument(processes[i], doc);
-					}
-				}
-			}
-		});					
+	public void launchChanged(ILaunch launch) {	
+
 	}
 
 	/**
@@ -245,37 +186,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 */
 	public void launchAdded(final ILaunch launch) {
 		updateHistories(launch);
-		launchChanged(launch);	
 		removeTerminatedLaunches(launch);
-	}
-	
-	public IProcess getCurrentProcess() {
-		return fCurrentProcess;
-	}
-
-	private void setCurrentProcess(IProcess process) {
-		fCurrentProcess= process;
-	}
-
-	/**
-	 * Returns the document for the process, or <code>null</code>
-	 * if none.
-	 */
-	public IDocument getConsoleDocument(IProcess process) {
-		return (IDocument) fConsoleDocuments.get(process);
-	}
-	
-	/**
-	 * Sets the console document for the specified process.
-	 * If the document is <code>null</code> the mapping for the
-	 * process is removed.
-	 */
-	protected void setConsoleDocument(IProcess process, IDocument doc) {
-		if (doc == null) {
-			fConsoleDocuments.remove(process);
-		} else {
-			fConsoleDocuments.put(process, doc);
-		}
 	}
 	
 	protected void removeTerminatedLaunches(ILaunch newLaunch) {

@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.preferences.*;
+import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -217,6 +218,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		PerspectiveManager.getDefault().shutdown();		
 		DebugActionGroupsManager.getDefault().shutdown();
 		LaunchConfigurationManager.getDefault().shutdown();
+		ConsoleDocumentManager.getDefault().shutdown();
 		
 		ColorManager.getDefault().dispose();
 		if (fgPresentation != null) {
@@ -245,7 +247,6 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 				}
 			}
 		);
-		
 	}
 
 	/**
@@ -509,5 +510,8 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), type));
 	}
 
+	public static ConsoleDocumentManager getConsoleDocumentManager() {
+		return ConsoleDocumentManager.getDefault();
+	}
 }
 
