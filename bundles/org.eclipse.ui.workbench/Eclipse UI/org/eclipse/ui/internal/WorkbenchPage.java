@@ -2708,6 +2708,7 @@ public IWorkbenchPartReference getReference(IWorkbenchPart part) {
 			if(refs[i].getPart(false) == part)
 				return refs[i];
 		}
+		return null;
 	}
 	return pane.getPartReference();
 }

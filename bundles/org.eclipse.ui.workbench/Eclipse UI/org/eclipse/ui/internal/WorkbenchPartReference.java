@@ -114,7 +114,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			part.addPropertyListener((IPropertyListener)listeners[i]);
 		}
 		PartSite site = (PartSite)part.getSite();
-		if(site != null) {
+		if(site != null && this.pane != null) {
 			site.setPane(this.pane);
 			this.pane = null;
 		}
