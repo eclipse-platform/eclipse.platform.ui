@@ -19,6 +19,7 @@ import org.eclipse.update.internal.operations.*;
  * Entry point for update manager operations.
  */
 public class OperationsManager {
+	private static IOperationValidator validator;
 	private static IOperationFactory operationFactory;
 	private static Vector listeners = new Vector();
 	private static Vector pendingOperations = new Vector();
@@ -200,5 +201,12 @@ public class OperationsManager {
 	 */
 	public static synchronized boolean isInProgress() {
 		return inProgress;
+	}
+
+	public static IOperationValidator getValidator() {
+		if (validator == null)
+			// in the future this will be pluggable
+			validator = new OperationValidator();
+		return validator;
 	}
 }

@@ -195,7 +195,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			(IInstallConfiguration) ssel.getFirstElement();
 
 		IStatus status =
-			UpdateUtils.getValidator().validatePendingRevert(target);
+			OperationsManager.getValidator().validatePendingRevert(target);
 		if (status != null) {
 			ErrorDialog.openError(
 				UpdateUI.getActiveWorkbenchShell(),

@@ -561,7 +561,7 @@ public class ReviewPage
 	public void validateSelection() {
 		IInstallFeatureOperation[] jobs = getSelectedJobs();
 		validationStatus =
-			UpdateUtils.getValidator().validatePendingChanges(jobs);
+			OperationsManager.getValidator().validatePendingChanges(jobs);
 		setPageComplete(validationStatus == null);
 		String errorMessage = null;
 

@@ -297,7 +297,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			// do not accept updates without a license
 			if (!UpdateUtils.hasLicense(job.getFeature()))
 				continue;
-			IStatus status = UpdateUtils.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
+			IStatus status = OperationsManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
 			if (status == null) {
 				if (hit.isPatch()) {
 					IFeature patch = job.getFeature();

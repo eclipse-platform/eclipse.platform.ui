@@ -34,7 +34,7 @@ public class ConfigOperation
 		throws CoreException {
 
 		IStatus status =
-			UpdateUtils.getValidator().validatePendingConfig(feature);
+			OperationsManager.getValidator().validatePendingConfig(feature);
 		if (status != null) {
 			throw new CoreException(status);
 		}

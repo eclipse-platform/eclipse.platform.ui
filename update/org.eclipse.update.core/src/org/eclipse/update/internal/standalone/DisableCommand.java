@@ -88,7 +88,7 @@ public  class DisableCommand extends ScriptedCommand {
 	public boolean run() {
 		if (isVerifyOnly()) {
 			IStatus status =
-				UpdateUtils.getValidator().validatePendingUnconfig(feature);
+				OperationsManager.getValidator().validatePendingUnconfig(feature);
 			return status == null;
 		}
 		

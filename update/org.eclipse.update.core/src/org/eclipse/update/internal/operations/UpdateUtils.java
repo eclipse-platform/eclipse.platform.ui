@@ -39,7 +39,6 @@ public class UpdateUtils {
 		"org.eclipse.update.internal.operations.UpdateManagerResources";
 	private static ResourceBundle bundle;
 	private static UpdateManagerAuthenticator authenticator;
-	private static IOperationValidator validator;
 	
 	private static final String PREFIX = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
 	public static final String P_UPDATE_POLICY_URL = PREFIX + ".updatePolicyURL";
@@ -546,13 +545,6 @@ public class UpdateUtils {
 		return authenticator;
 	}
 
-	public static IOperationValidator getValidator() {
-		if (validator == null)
-			// in the future this will be pluggable
-			validator = new OperationValidator();
-		return validator;
-	}
-	
 	public static URL getUpdateMapURL() {
 		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
 		String mapFile = pref.getString(UpdateUtils.P_UPDATE_POLICY_URL);

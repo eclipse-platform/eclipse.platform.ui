@@ -34,7 +34,7 @@ public class UnconfigOperation
 		throws CoreException {
 
 		IStatus status =
-			UpdateUtils.getValidator().validatePendingUnconfig(feature);
+			OperationsManager.getValidator().validatePendingUnconfig(feature);
 		if (status != null) {
 			throw new CoreException(status);
 		}

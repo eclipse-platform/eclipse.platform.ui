@@ -17,6 +17,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.operations.*;
 
 /**
  *
@@ -138,7 +139,7 @@ public class DeltaAdapter {
 
 	private void computeStatus() {
 		IFeatureReference[] refs = getSelectedReferences();
-		status = UpdateUtils.getValidator().validateSessionDelta(delta, refs);
+		status = OperationsManager.getValidator().validateSessionDelta(delta, refs);
 		statusComputed = true;
 	}
 

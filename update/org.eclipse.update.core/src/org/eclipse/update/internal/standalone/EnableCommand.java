@@ -88,7 +88,7 @@ public  class EnableCommand extends ScriptedCommand {
 	public boolean run() {
 		if (isVerifyOnly()) {
 			IStatus status =
-				UpdateUtils.getValidator().validatePendingConfig(feature);
+				OperationsManager.getValidator().validatePendingConfig(feature);
 			return status == null;
 		}
 		
