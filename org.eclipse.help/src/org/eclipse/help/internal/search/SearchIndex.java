@@ -224,11 +224,11 @@ public class SearchIndex {
 				queryBuilder.getLuceneQuery(
 					searchQuery.getFieldNames(),
 					searchQuery.isFieldSearch());
-			String analyzedWords = queryBuilder.getAnalyzedWords();
+			String highlightTerms = queryBuilder.gethighlightTerms();
 			if (luceneQuery != null) {
 				Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
 				Hits hits = searcher.search(luceneQuery);
-				collector.addHits(hits, analyzedWords);
+				collector.addHits(hits, highlightTerms);
 				searcher.close();
 			}
 		} catch (Exception e) {

@@ -126,8 +126,8 @@ public class QueryBuilder {
 					phrase.addWord(word);
 					
 					// add analyzed word to the list of words to highlight
-					if (!highlightWords.contains(word))
-						highlightWords.add(word);
+					// if (!highlightWords.contains(word))
+					//	highlightWords.add(word);
 				}
 				// add phrase only if not empty
 				if (phrase.getWords().size() > 0) {
@@ -330,16 +330,17 @@ public class QueryBuilder {
 		return booleanQuery;
 	}
 	/**
-	 * Obtains analyzed words from query as one string.
-	 * Words are separated by space.
+	 * Obtains analyzed terms from query as one string.
+	 * Words are double quoted, and separated by space.
 	 * The analyzed words are needed for highlighting
 	 * word roots.
 	 */
-	public String getAnalyzedWords() {
+	public String gethighlightTerms() {
 		StringBuffer buf = new StringBuffer();
 		for (Iterator it = highlightWords.iterator(); it.hasNext();) {
+			buf.append('"');
 			buf.append(it.next());
-			buf.append(' ');
+			buf.append("\" ");
 		}
 
 		return buf.toString();

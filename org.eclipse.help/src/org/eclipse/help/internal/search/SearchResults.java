@@ -34,8 +34,8 @@ public class SearchResults implements ISearchHitCollector {
 	 * Adds hits to the result
 	 * @param Hits hits
 	 */
-	public void addHits(Hits hits, String analyzedWords) {
-		String urlEncodedWords = URLCoder.encode(analyzedWords);
+	public void addHits(Hits hits, String highlightTerms) {
+		String urlEncodedWords = URLCoder.encode(highlightTerms);
 		List searchHitList = new ArrayList();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
