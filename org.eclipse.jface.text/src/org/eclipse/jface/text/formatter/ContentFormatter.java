@@ -591,7 +591,6 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 */
 	private void formatPartitions(int offset, int length) {
 
-		addPartitioningUpdater();
 		try {
 
 			final TypedPosition[] ranges= getPartitioning(offset, length);
@@ -606,7 +605,6 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		} catch (BadLocationException exception) {
 			// Can not happen
 		}
-		removePartitioningUpdater();
 	}
 	
 	/**
@@ -713,16 +711,10 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		
 		ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length);
 		TypedPosition[] positions= new TypedPosition[regions.length];
-		
-		for (int i= 0; i < regions.length; i++) {
+
+		for (int i= 0; i < regions.length; i++)
 			positions[i]= new TypedPosition(regions[i]);
-			try {
-				fDocument.addPosition(PARTITIONING, positions[i]);
-			} catch (BadPositionCategoryException x) {
-				// should not happen
-			}
-		}
-		
+
 		return positions;
 	}
 	
