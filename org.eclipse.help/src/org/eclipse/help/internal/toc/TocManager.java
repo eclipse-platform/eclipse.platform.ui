@@ -49,7 +49,7 @@ public class TocManager {
 				String id= (String) it.next();
 				idToToc.put(id, HelpSystem.getNavigationManager().getTopics(id));
 			}
-			// eo 1.0 nava support
+			// eo 1.0 nav support
 		} catch (Exception e) {
 			Logger.logError("", e);
 		}
