@@ -278,6 +278,7 @@ public class DeferredTreeContentManager {
 			}
 		};
 		clearJob.setSystem(true);
+		clearJob.schedule();
 	}
 	
 	/** 
