@@ -16,13 +16,6 @@ import org.eclipse.jface.text.IRegion;
 public interface IProblem extends IRegion {
 
 	/**
-	 * Returns the problem code
-	 *
-	 * @return the problem code
-	 */
-	String getCode();
-
-	/**
 	 * Answer a localized, human-readable message string which describes the problem.
 	 *
 	 * @return a localized, human-readable message string which describes the problem
@@ -42,5 +35,11 @@ public interface IProblem extends IRegion {
 	 * @return true if the Error bit is not set for the severity, false otherwise
 	 */
 	boolean isWarning();
-
+	
+	/**
+	 * Returns the line number of this problem.
+	 *
+	 * @return the line number of this problem
+	 */
+	int getLineNumber();
 }

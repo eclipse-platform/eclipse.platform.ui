@@ -44,6 +44,9 @@ import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntModelConstants;
 import org.eclipse.ant.internal.ui.editor.text.PartiallySynchronizedDocument;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -86,12 +89,7 @@ public class AntModel {
 	private boolean fIsDirty= true;
 	private IDocumentListener fListener;
 	private File fEditedFile= null;	
-	
-	//TODO Bug 50302
-	private boolean fValidateFully= false; //AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
-    
-    //TODO bug 37180
-	//private static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".problem"; //$NON-NLS-1$
+	private AntEditorMarkerUpdater fMarkerUpdater= null;
 
 	public AntModel(XMLCore core, IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		fCore= core;
@@ -100,6 +98,8 @@ public class AntModel {
 			((PartiallySynchronizedDocument)document).setAntModel(this);
 		}
 		fProblemRequestor= problemRequestor;
+		fMarkerUpdater= new AntEditorMarkerUpdater();
+		fMarkerUpdater.setModel(this);
 		fLocationProvider= locationProvider;
 	}
 
@@ -180,7 +180,6 @@ public class AntModel {
 			fProperties= null;
 			fNodeBeingResolved= null;
 		}
-		//removeProblems();
 	}
 
 	public synchronized AntElementNode[] getRootElements() {
@@ -352,11 +351,8 @@ public class AntModel {
 
 	private StringBuffer createIncrementalContents(Project project) {
 		int offset= fIncrementalTarget.getOffset();
-		int line= 0;
-		try {
-			line= getLine(offset) - 1;
-		} catch (BadLocationException e) {
-		}
+		int line= getLine(offset) - 1;
+		
 		StringBuffer temp= new StringBuffer("<project");//$NON-NLS-1$
 		String defltTarget= project.getDefaultTarget();
 		if (defltTarget != null) {
@@ -383,11 +379,8 @@ public class AntModel {
 	}
 
 	private void initializeProject(Project project) {
-		ClassLoader loader= getClassLoader();
-		if (fValidateFully) {
-    		project.setCoreLoader(getClassLoader());
-    	}
 		project.init();
+		ClassLoader loader= getClassLoader();
 		setTasks(project, loader);
 		setTypes(project, loader);
 	}
@@ -428,12 +421,12 @@ public class AntModel {
 			AntTaskNode node = (AntTaskNode) iter.next();
 			if (!(node instanceof AntPropertyNode)) {
 				fNodeBeingResolved= node;
-				if (node.configure(fValidateFully)) {
+				if (node.configure(false)) {
 					//resolve any new elements
 					resolveBuildfile();
+				}
 			}
 		}
-	}
 		fNodeBeingResolved= null;
 	}
 
@@ -442,7 +435,7 @@ public class AntModel {
 			Iterator itr= fProperties.iterator();
 			while (itr.hasNext()) {
 				AntPropertyNode node = (AntPropertyNode)itr.next();
-				node.configure(fValidateFully);
+				node.configure(false);
 			}
 		}
 	}
@@ -467,7 +460,7 @@ public class AntModel {
 						length= getProjectNode().getSelectionLength();
 						nonWhitespaceOffset= getProjectNode().getOffset();
 						if (severity == XMLProblem.SEVERTITY_ERROR) {
-							getProjectNode().setIsErrorNode(true);
+						getProjectNode().setIsErrorNode(true);
 						}
 					} else {
 						return;
@@ -486,7 +479,7 @@ public class AntModel {
 		} catch (BadLocationException e1) {
 		}
 	}
-	
+
 	public void handleBuildException(BuildException e, AntElementNode node) {
 		handleBuildException(e, node, XMLProblem.SEVERTITY_ERROR);
 	}
@@ -751,8 +744,12 @@ public class AntModel {
 		return offset;
 	}
 	
-	private int getLine(int offset) throws BadLocationException {
-		return fDocument.getLineOfOffset(offset) + 1;
+	private int getLine(int offset) {
+		try {
+			return fDocument.getLineOfOffset(offset) + 1;
+		} catch (BadLocationException be) {
+			return -1;
+		}
 	}
 	
 	private int getLastCharColumn(int line) throws BadLocationException {
@@ -770,80 +767,27 @@ public class AntModel {
 	}
 	
 	public void acceptProblem(IProblem problem) {
-		if (fProblemRequestor != null) {
-			fProblemRequestor.acceptProblem(problem);
-		}
-		
-		//createMarker(problem);
+		fProblemRequestor.acceptProblem(problem);
+		fMarkerUpdater.acceptProblem(problem);
+	}
+	
+	protected IFile getFile() {
+		IPath location= fLocationProvider.getLocation();
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+		return files[0];
 	}
 
-	//TODO bug 37180
-//	private void createMarker(IProblem problem) {
-//		IFile file = getResource();
-//		int lineNumber= 1;
-//		try {
-//			lineNumber = getLine(problem.getOffset());
-//		} catch (BadLocationException e1) {
-//		}
-//	
-//		try {
-//			IMarker marker = file.createMarker(AntModel.BUILDFILE_PROBLEM_MARKER);
-//		
-//			marker.setAttributes(
-//					new String[] { 
-//							IMarker.MESSAGE, 
-//							IMarker.SEVERITY, 
-//							IMarker.LOCATION,
-//							IMarker.CHAR_START, 
-//							IMarker.CHAR_END, 
-//							IMarker.LINE_NUMBER
-//					},
-//					new Object[] {
-//							problem.getMessage(),
-//							new Integer(IMarker.SEVERITY_ERROR), 
-//							problem.getMessage(),
-//							new Integer(problem.getOffset()),
-//							new Integer(problem.getOffset() + problem.getLength()),
-//							new Integer(lineNumber)
-//					}
-//			);
-//		} catch (CoreException e) {
-//			
-//		} 
-//		
-//	}
-	
-//	private IFile getResource() {
-//		IPath location= fLocationProvider.getLocation();
-//		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
-//		return files[0];
-//	}
-
-//	private void removeProblems() {
-//		IFile file= getResource();
-//		
-//		try {
-//			if (file != null && file.exists())
-//				file.deleteMarkers(AntModel.BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-//		} catch (CoreException e) {
-//			// assume there were no problems
-//		}
-//	}
-
 	private void beginReporting() {
-		if (fProblemRequestor != null) {
-			fProblemRequestor.beginReporting();
-		}
+		fProblemRequestor.beginReporting();
+		fMarkerUpdater.beginReporting();
 	}
 	
 	private void endReporting() {
-		if (fProblemRequestor != null) {
-			fProblemRequestor.endReporting();
-		}
+		fProblemRequestor.endReporting();
 	}
 
 	private IProblem createProblem(Exception exception, int offset, int length,  int severity) {
-		return new XMLProblem(exception.getMessage(), severity, offset, length);
+		return new XMLProblem(exception.getMessage(), severity, offset, length, getLine(offset));
 	}
 
 	protected void notifyProblemRequestor(Exception exception, AntElementNode element, int severity) {
@@ -1081,11 +1025,6 @@ public class AntModel {
 		return null;
 	}
 
-	public void setResolveFully(boolean resolveFully) {
-		fValidateFully= resolveFully;
-		resolveBuildfile();
-	}
-
 	public AntElementNode getReferenceNode(String text) {
 		Object reference= getReferenceObject(text);
 		if (reference == null) {
@@ -1159,10 +1098,12 @@ public class AntModel {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public void setReplaceHasOccurred() {
 		fReplaceHasOccurred= true;
+	}
+	
+	public void updateMarkers() {
+		possiblyWaitForReconcile();
+		fMarkerUpdater.updateMarkers();
 	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -56,7 +57,9 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPage;
@@ -396,10 +399,6 @@ public class AntEditor extends TextEditor {
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		String property= event.getProperty();
-		if (property.equals(AntEditorPreferenceConstants.VALIDATE_BUILDFILES)) {
-			setResolveFully(((Boolean)event.getNewValue()).booleanValue());
-			return;
-		}
 		
 		if (ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
 			Object value= event.getNewValue();
@@ -510,11 +509,6 @@ public class AntEditor extends TextEditor {
 			statusLine.setMessage(true, msg, null);	
 	}
 
-	private void setResolveFully(boolean resolveFully) {
-		getAntModel().setResolveFully(resolveFully);
-		
-	}
-
 	public void openReferenceElement() {
 		ISelection selection= getSelectionProvider().getSelection();
 		String errorMessage= null;
@@ -613,6 +607,7 @@ public class AntEditor extends TextEditor {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
@@ -620,4 +615,35 @@ public class AntEditor extends TextEditor {
 		super.dispose();
 		JFaceResources.getColorRegistry().removeListener(fColorChangeListener);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		super.doSave(monitor);
+		getAntModel().updateMarkers();
+		updateEditorImage();
+	}
+	
+	private void updateEditorImage() {
+		Image titleImage= getTitleImage();
+		if (titleImage == null) {
+			return;
+		}
+		Image newImage= getAntModel().getProjectNode().getImage();
+		if (titleImage != newImage) {
+			postImageChange(newImage);
+		}
+	}
+	
+	private void postImageChange(final Image newImage) {
+		Shell shell= getEditorSite().getShell();
+		if (shell != null && !shell.isDisposed()) {
+			shell.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					setTitleImage(newImage);
+				}
+			});
+		}
+	}	
 }

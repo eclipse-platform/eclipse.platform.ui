@@ -19,16 +19,16 @@ public class XMLProblem extends Region implements IProblem {
 	public static final int SEVERTITY_ERROR= 1;
 	public static final int SEVERTITY_FATAL_ERROR= 2;
 	
-	public static final String CODE= "XML_PROBLEM"; //$NON-NLS-1$
-	
 	private String fMessage;
 	private int fSeverity;
 	private int fAdjustedLength= -1;
+	private int fLineNumber= -1;
 	
-	public XMLProblem(String message, int severity, int offset, int length) {
+	public XMLProblem(String message, int severity, int offset, int length, int lineNumber) {
 		super(offset, length);
 		fMessage= message;
 		fSeverity= severity;
+		fLineNumber= lineNumber;
 	}
 	
 	/* (non-Javadoc)
@@ -70,9 +70,9 @@ public class XMLProblem extends Region implements IProblem {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getCode()
+	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getLineNumber()
 	 */
-	public String getCode() {
-		return CODE;
+	public int getLineNumber() {
+		return fLineNumber;
 	}
 }

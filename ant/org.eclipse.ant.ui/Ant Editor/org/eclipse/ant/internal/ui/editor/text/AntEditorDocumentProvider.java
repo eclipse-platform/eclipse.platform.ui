@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.internal.ui.editor.outline.AntEditorMarkerUpdater;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
 import org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor;
@@ -40,6 +41,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 /*
@@ -67,6 +69,10 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#createMarkerAnnotation(org.eclipse.core.resources.IMarker)
 		 */
 		protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
+			String markerType= MarkerUtilities.getMarkerType(marker);
+			if (AntEditorMarkerUpdater.BUILDFILE_PROBLEM_MARKER.equals(markerType)) {
+				return null;
+			}
 			return new XMLMarkerAnnotation(EditorsUI.getAnnotationTypeLookup().getAnnotationType(marker), marker);
 		}
 
