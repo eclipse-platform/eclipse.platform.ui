@@ -141,4 +141,9 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 			segment.clearCache(fontId);
 		}
 	}
+	public String getTooltipText() {
+		if (segments.size()>0)
+			return ((ParagraphSegment)segments.get(0)).getTooltipText();
+		return super.getTooltipText();
+	}
 }
