@@ -29,6 +29,7 @@ class ImplicitJobs {
 	class ThreadJob extends Job {
 		private ISchedulingRule[] ruleStack;
 		protected boolean running = false;
+		protected boolean queued = false;
 		private int top;
 		ThreadJob(ISchedulingRule rule) {
 			super("Implicit job"); //$NON-NLS-1$
@@ -48,14 +49,15 @@ class ImplicitJobs {
 			Thread blocker = blockingJob == null ? null : blockingJob.getThread();
 			//lock listener decided to grant immediate access
 			if (!manager.getLockManager().aboutToWait(blocker)) {
+				queued = true;
 				schedule();
 				while (!running) {
 					blocker = manager.getBlockingThread(this);
-					if (!manager.getLockManager().aboutToWait(blocker)) {
-						try {
-							wait(200);
-						} catch (InterruptedException e) {
-						}
+					if (manager.getLockManager().aboutToWait(blocker))
+						break;
+					try {
+						wait(200);
+					} catch (InterruptedException e) {
 					}
 				}
 			}
@@ -134,9 +136,9 @@ class ImplicitJobs {
 			threadJob.push(rule);
 		}
 		//join the thread job outside sync block
-		if (join) {
-			threadJob.joinRun();
-		}
+		if (join)
+			if (!manager.runNow(threadJob))
+				threadJob.joinRun();
 	}
 
 	/* (Non-javadoc)
@@ -150,7 +152,7 @@ class ImplicitJobs {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);
 			if (threadJob.running) {
-				threadJob.done(Status.OK_STATUS);
+				manager.endJob(threadJob, Status.OK_STATUS, threadJob.queued);
 				//if this job had a rule, then we are essentially releasing a lock
 				if (threadJob.getRule() != null)
 					manager.getLockManager().removeLockThread(Thread.currentThread());
@@ -162,14 +164,12 @@ class ImplicitJobs {
 	 * Returns a new or reused ThreadJob instance.
 	 */
 	private ThreadJob newThreadJob(ISchedulingRule rule) {
-// TODO: we removed this when trying to track down another problem.
-// can probably be added back now.
-/*		if (jobCache != null) {
+		if (jobCache != null) {
 			ThreadJob job = jobCache;
 			job.setRule(rule);
 			jobCache = null;
 			return job;
-		} */
+		}
 		return new ThreadJob(rule);
 	}
 	/**

@@ -38,6 +38,7 @@ public class JobManager implements IJobManager {
 	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	private static JobManager instance;
 	protected static final long NEVER = Long.MAX_VALUE;
+	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	private final JobListeners jobListeners = new JobListeners();
 
 	/**
@@ -66,11 +67,19 @@ public class JobManager implements IJobManager {
 	 * Should only be modified from changeState
 	 */
 	private final JobQueue sleeping;
-	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	/**
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */
 	private final JobQueue waiting;
+	public static void debug(String msg) {
+		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
+		if (DEBUG_TIMING) {
+			DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
+			msgBuf.append('-');
+		}
+		msgBuf.append('[').append(Thread.currentThread()).append(']').append(msg);
+		System.out.println(msgBuf.toString());
+	}
 
 	public static synchronized JobManager getInstance() {
 		if (instance == null) {
@@ -82,15 +91,6 @@ public class JobManager implements IJobManager {
 		if (instance != null)
 			instance.doShutdown();
 		instance = null;
-	}
-	public static void debug(String msg) {
-		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
-		if (DEBUG_TIMING) {
-			DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
-			msgBuf.append('-');
-		}
-		msgBuf.append('[').append(Thread.currentThread()).append(']').append(msg);
-		System.out.println(msgBuf.toString());
 	}
 	private JobManager() {
 		instance = this;
@@ -240,9 +240,9 @@ public class JobManager implements IJobManager {
 	 */
 	private void doShutdown() {
 		//cancel all running jobs
-		Job[] toCancel= null;
+		Job[] toCancel = null;
 		synchronized (lock) {
-			toCancel = (Job[])running.toArray(new Job[running.size()]);
+			toCancel = (Job[]) running.toArray(new Job[running.size()]);
 			//clean up
 			sleeping.clear();
 			waiting.clear();
@@ -253,13 +253,10 @@ public class JobManager implements IJobManager {
 			cancel(toCancel[i]);
 		pool.shutdown();
 	}
-	public void endRule() {
-		implicitJobs.end();
-	}
 	/**
 	 * Indicates that a job was running, and has now finished.
 	 */
-	protected void endJob(Job job, IStatus result) {
+	protected void endJob(Job job, IStatus result, boolean notify) {
 		InternalJob internalJob = job;
 		InternalJob blocked = null;
 		synchronized (lock) {
@@ -269,7 +266,7 @@ public class JobManager implements IJobManager {
 			//if job is not known then it cannot be done
 			if (internalJob.getState() == Job.NONE)
 				return;
-			if (JobManager.DEBUG)
+			if (JobManager.DEBUG && notify)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			internalJob.setResult(result);
 			changeState(internalJob, Job.NONE);
@@ -289,7 +286,11 @@ public class JobManager implements IJobManager {
 			blocked = previous;
 		}
 		//notify listeners outside sync block
-		jobListeners.done(job, result);
+		if (notify)
+			jobListeners.done(job, result);
+	}
+	public void endRule() {
+		implicitJobs.end();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#find(java.lang.String)
@@ -307,9 +308,6 @@ public class JobManager implements IJobManager {
 	protected InternalJob findBlockingJob(InternalJob waiting) {
 		if (waiting.getRule() == null)
 			return null;
-		// TODO: The javadoc for the "lock" field says not to execute
-		// user code. Re-visit this use of the lock and determine the 
-		// correct course of action. 
 		synchronized (lock) {
 			for (Iterator it = running.iterator(); it.hasNext();) {
 				InternalJob job = (InternalJob) it.next();
@@ -323,8 +321,94 @@ public class JobManager implements IJobManager {
 		}
 		return null;
 	}
+	/**
+	 * Returns the thread that owns the rule that is blocking this job from running, or 
+	 * null if there is none.
+	 */
+	public Thread getBlockingThread(InternalJob job) {
+		synchronized (lock) {
+			if (job.internalGetState() != InternalJob.BLOCKED)
+				return null;
+			//if this job is blocked, then the head of the queue is the job that is blocking it
+			InternalJob next = job.next();
+			while (next.next() != null)
+				next = next.next();
+			return next == null ? null : next.getThread();
+		}
+	}
 	public LockManager getLockManager() {
 		return lockManager;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
+	 */
+	protected void join(InternalJob job) throws InterruptedException {
+		final IJobChangeListener listener;
+		final Semaphore barrier;
+		synchronized (lock) {
+			int state = job.getState();
+			if (state == Job.NONE)
+				return;
+			//the semaphore will be released when the job is done
+			barrier = new Semaphore(null);
+			listener = new JobChangeAdapter() {
+				public void done(IJobChangeEvent event) {
+					barrier.release();
+				}
+			};
+			job.addJobChangeListener(listener);
+			//compute set of all jobs that must run before this one
+			//add a listener that removes jobs from the blocking set when they finish
+		}
+		//wait until listener notifies this thread.
+		try {
+			barrier.acquire(Long.MAX_VALUE);
+		} finally {
+			job.removeJobChangeListener(listener);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see IJobManager#join(String, IProgressMonitor)
+	 */
+	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
+		monitor = Policy.monitorFor(monitor);
+		IJobChangeListener listener = null;
+		final List jobs;
+		final int jobCount;
+		synchronized (lock) {
+			//we never want to join sleeping jobs
+			jobs = Collections.synchronizedList(select(family, Job.WAITING | Job.RUNNING | Job.SLEEPING));
+			jobCount = jobs.size();
+			if (jobCount == 0)
+				return;
+			listener = new JobChangeAdapter() {
+				public void done(IJobChangeEvent event) {
+					jobs.remove(event.getJob());
+				}
+			};
+			addJobChangeListener(listener);
+		}
+		//spin until all jobs are completed
+		try {
+			monitor.beginTask(Policy.bind("jobs.waitForFamily"), jobCount); //$NON-NLS-1$
+			monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobCount))); //$NON-NLS-1$
+			int jobsLeft;
+			int reportedWorkDone = 0;
+			while ((jobsLeft = jobs.size()) > 0) {
+				int actualWorkDone = jobCount - jobsLeft;
+				if (reportedWorkDone < actualWorkDone) {
+					monitor.worked(actualWorkDone - reportedWorkDone);
+					reportedWorkDone = actualWorkDone;
+					monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobsLeft))); //$NON-NLS-1$
+				}
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
+				Thread.sleep(100);
+			}
+		} finally {
+			monitor.done();
+			removeJobChangeListener(listener);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see IJobManager#newLock(java.lang.String)
@@ -371,6 +455,22 @@ public class JobManager implements IJobManager {
 	 */
 	public void removeJobChangeListener(IJobChangeListener listener) {
 		jobListeners.remove(listener);
+	}
+	/**
+	 * Attempts to immediately start a given job.  Returns true if the job was
+	 * successfully started, and false if it could not be started immediately
+	 * due to a currently running job with a conflicting rule.  Listeners will never
+	 * be notified of jobs that are run in this way.
+	 */
+	protected boolean runNow(Job job) {
+		synchronized (lock) {
+			//cannot start if there is a conflicting job
+			if (findBlockingJob(job) != null)
+				return false;
+			changeState(job, Job.RUNNING);
+			job.run(new NullProgressMonitor());
+		}
+		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#schedule(long)
@@ -538,80 +638,9 @@ public class JobManager implements IJobManager {
 			}
 			if (job.getState() != Job.SLEEPING) {
 				//job has been vetoed or canceled, so mark it as done
-				endJob(job, Status.CANCEL_STATUS);
+				endJob(job, Status.CANCEL_STATUS, true);
 				continue;
 			}
-		}
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
-	 */
-	protected void join(InternalJob job) throws InterruptedException {
-		final IJobChangeListener listener;
-		final Semaphore barrier;
-		synchronized (lock) {
-			int state = job.getState();
-			if (state == Job.NONE)
-				return;
-			//the semaphore will be released when the job is done
-			barrier = new Semaphore(null);
-			listener = new JobChangeAdapter() {
-				public void done(IJobChangeEvent event) {
-					barrier.release();
-				}
-			};
-			job.addJobChangeListener(listener);
-			//compute set of all jobs that must run before this one
-			//add a listener that removes jobs from the blocking set when they finish
-		}
-		//wait until listener notifies this thread.
-		try {
-			barrier.acquire(Long.MAX_VALUE);
-		} finally {
-			job.removeJobChangeListener(listener);
-		}
-	}
-	/* (non-Javadoc)
-	 * @see IJobManager#join(String, IProgressMonitor)
-	 */
-	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
-		monitor = Policy.monitorFor(monitor);
-		IJobChangeListener listener = null;
-		final List jobs;
-		final int jobCount;
-		synchronized (lock) {
-			//we never want to join sleeping jobs
-			jobs = Collections.synchronizedList(select(family, Job.WAITING | Job.RUNNING | Job.SLEEPING));
-			jobCount = jobs.size();
-			if (jobCount == 0)
-				return;
-			listener = new JobChangeAdapter() {
-				public void done(IJobChangeEvent event) {
-					jobs.remove(event.getJob());
-				}
-			};
-			addJobChangeListener(listener);
-		}
-		//spin until all jobs are completed
-		try {
-			monitor.beginTask(Policy.bind("jobs.waitForFamily"), jobCount); //$NON-NLS-1$
-			monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobCount))); //$NON-NLS-1$
-			int jobsLeft;
-			int reportedWorkDone = 0;
-			while ((jobsLeft = jobs.size()) > 0) {
-				int actualWorkDone = jobCount - jobsLeft;
-				if (reportedWorkDone < actualWorkDone) {
-					monitor.worked(actualWorkDone - reportedWorkDone);
-					reportedWorkDone = actualWorkDone;
-					monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobsLeft))); //$NON-NLS-1$
-				}
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				Thread.sleep(100);
-			}
-		} finally {
-			monitor.done();
-			removeJobChangeListener(listener);
 		}
 	}
 	/* (non-Javadoc)
@@ -639,20 +668,6 @@ public class JobManager implements IJobManager {
 			wakeUp((InternalJob) it.next());
 		}
 	}
-	/**
-	 * Returns the thread that owns the rule that is blocking this job from running, or 
-	 * null if there is none.
-	 */
-	public Thread getBlockingThread(InternalJob job) {
-		synchronized (lock) {
-			if (job.internalGetState() != InternalJob.BLOCKED)
-				return null;
-			//if this job is blocked, then the head of the queue is the job that is blocking it
-			InternalJob next = job.next();
-			while (next.next() != null)
-				next = next.next();
-			return next == null ? null : next.getThread();
-		}
-	}
+
 
 }

@@ -47,7 +47,7 @@ class WorkerPool {
 
 	protected synchronized void endJob(Job job, IStatus result) {
 		busyThreads--;
-		manager.endJob(job, result);
+		manager.endJob(job, result, true);
 		//remove any locks this thread may be owning
 		manager.getLockManager().removeAllLocks(Thread.currentThread());
 	}
@@ -71,17 +71,14 @@ class WorkerPool {
 		int threadCount = threads.size();
 		//create a thread if all threads are busy and we're under the max size
 		//if the job is high priority, we start a thread no matter what
-// TODO: Re-visit this if stmt logic and find a real fix for this.
-// changed to work around bug: 42202 - JDTUI tests don't finish 
-//		System.out.println("busy threads: " + busyThreads);
-//		if (busyThreads >= threadCount && (threadCount < MAX_THREADS || (job != null && job.getPriority() == Job.INTERACTIVE))) {
+		if (busyThreads >= threadCount && (threadCount < MAX_THREADS || (job != null && job.getPriority() == Job.INTERACTIVE))) {
 			Worker worker = new Worker(this);
 			threads.add(worker);
 			if (JobManager.DEBUG)
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
 			return;
-//		}
+		}
 	}
 	protected synchronized void shutdown() {
 		running = false;
