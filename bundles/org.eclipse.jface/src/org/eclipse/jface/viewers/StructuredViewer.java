@@ -620,6 +620,8 @@ protected void handleOpen(SelectionEvent event) {
  */
 protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
 	updateSelection(newSelection);
+	SelectionChangedEvent event = new SelectionChangedEvent(this, newSelection);
+	firePostSelectionChanged(event);
 }
 /**
  * The <code>StructuredViewer</code> implementation of this <code>ContentViewer</code> method calls <code>update</code>
