@@ -122,8 +122,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "build.xml"); //$NON-NLS-1$
-		String osname= System.getProperty("os.name").toLowerCase(Locale.US); //$NON-NLS-1$
-		if (osname.indexOf("mac") == -1) { //$NON-NLS-1$
+		if (isMacOS()) { //$NON-NLS-1$
 			//the mac does not have a tools.jar Bug 40778
 			prefs.setDefault(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, false);
 		} else {
@@ -190,5 +189,13 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	*/
    public static IWorkbenchWindow getActiveWorkbenchWindow() {
 	   return getDefault().getWorkbench().getActiveWorkbenchWindow();
+   }
+   
+   /**
+	* Returns whether the current OS claims to be Mac
+	*/
+   public static boolean isMacOS() {
+		String osname= System.getProperty("os.name").toLowerCase(Locale.US); //$NON-NLS-1$
+		return osname.indexOf("mac") != -1; //$NON-NLS-1$
    }
 }
