@@ -938,9 +938,18 @@ public abstract class Action implements IAction {
             if (text.charAt(index + 1) == '&') {
                 ++index;
             }
-            sb.append(text.substring(lastIndex, index));
-            // skip the &
-            ++index;
+            
+            //DBCS languages use "(&X)" format
+            if (index > 0 && text.charAt(index - 1) == '(' && text.length() >= index + 3 && text.charAt(index + 2) == ')') {
+            	sb.append(text.substring(lastIndex, index -1));
+            	index += 3;
+            }
+            else{
+            	 sb.append(text.substring(lastIndex, index));
+                 // skip the &
+                 ++index;
+            }           
+           
             lastIndex = index;
             index = text.indexOf('&', index);
         }
