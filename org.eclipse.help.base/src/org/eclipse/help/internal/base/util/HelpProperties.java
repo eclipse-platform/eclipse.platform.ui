@@ -81,7 +81,7 @@ public class HelpProperties extends Properties {
 					"Exception_occured",
 					name,
 					file.getAbsolutePath()),
-				null);
+				ioe00);
 		} finally {
 			try {
 				if (out != null) {
