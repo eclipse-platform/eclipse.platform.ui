@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
+
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
@@ -64,7 +65,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		//accumulate characters and process them when endElement is reached
 		charBuffer.append(chars, offset, length);
 	}
-
 	/**
 	 * End of an element that is part of a build command
 	 */
@@ -93,8 +93,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			projectDescription.setBuildSpec(commandArray);
 		}
 	}
-
-	public void endDictionary(String elementName) {
+	/**
+	 * End of a dictionary element
+	 */
+	private void endDictionary(String elementName) {
 		if (elementName.equals(DICTIONARY)) {
 			// Pick up the value and then key off the stack and add them
 			// to the HashMap which is just below them on the stack.
@@ -106,8 +108,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_BUILD_COMMAND_ARGUMENTS;
 		}
 	}
-
-	public void endDictionaryKey(String elementName) {
+	private void endDictionaryKey(String elementName) {
 		if (elementName.equals(KEY)) {
 			// There is a value place holder on the top of the stack and
 			// a key place holder just below it.
@@ -125,8 +126,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_DICTIONARY;
 		}
 	}
-
-	public void endDictionaryValue(String elementName) {
+	private void endDictionaryValue(String elementName) {
 		if (elementName.equals(VALUE)) {
 			String newValue = charBuffer.toString();
 			// There is a value place holder on the top of the stack
@@ -236,7 +236,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		charBuffer.setLength(0);
 	}
 	/**
-	 * 
 	 * End this group of linked resources and add them to the project description.
 	 */
 	private void endLinkedResourcesElement(String elementName) {
@@ -249,7 +248,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 	}
 	/**
-	 * 
 	 * End a single linked resource and add it to the HashMap.
 	 */
 	private void endLinkElement(String elementName) {
@@ -262,7 +260,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			int type = link.getType();
 			IPath location = link.getLocation();
 			if ((name == null) || name.length() == 0) {
-				parseProblem(Policy.bind("projectDescriptionReader.emptyLinkName", new Integer(type).toString(), location.toString())); //$NON-NLS-1$
+				parseProblem(Policy.bind("projectDescriptionReader.emptyLinkName", Integer.toString(type), location.toString())); //$NON-NLS-1$
 				return;
 			}
 			if (type == -1) {
@@ -270,7 +268,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				return;
 			}
 			if (location.isEmpty()) {
-				parseProblem(Policy.bind("projectDescriptionReader.badLinkLocation", name, new Integer(type).toString())); //$NON-NLS-1$
+				parseProblem(Policy.bind("projectDescriptionReader.badLinkLocation", name, Integer.toString(type))); //$NON-NLS-1$
 				return;
 			}
 
@@ -278,8 +276,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			 ((HashMap) objectStack.peek()).put(link.getName(), link);
 		}
 	}
-
-	public void endLinkLocation(String elementName) {
+	private void endLinkLocation(String elementName) {
 		if (elementName.equals(LOCATION)) {
 			String newLocation = charBuffer.toString();
 			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
@@ -292,8 +289,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_LINK;
 		}
 	}
-
-	public void endLinkName(String elementName) {
+	private void endLinkName(String elementName) {
 		if (elementName.equals(NAME)) {
 			String newName = charBuffer.toString();
 			// objectStack has a LinkDescription on it. Set the name
@@ -307,8 +303,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_LINK;
 		}
 	}
-
-	public void endLinkType(String elementName) {
+	private void endLinkType(String elementName) {
 		if (elementName.equals(TYPE)) {
 			//FIXME we should handle this case by removing the entire link
 			//for now we default to a file link
@@ -454,6 +449,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				return projectDescription;
 		}
 	}
+	/**
+	 * Reads and returns a project description stored at the given location
+	 */
 	public ProjectDescription read(IPath location) throws IOException {
 		BufferedInputStream file = null;
 		try {
@@ -464,6 +462,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				file.close();
 		}
 	}
+	/**
+	 * Reads and returns a project description stored at the given location, or 
+	 * temporary location.
+	 */
 	public ProjectDescription read(IPath location, IPath tempLocation) throws IOException {
 		SafeFileInputStream file = new SafeFileInputStream(location.toOSString(), tempLocation.toOSString());
 		try {
