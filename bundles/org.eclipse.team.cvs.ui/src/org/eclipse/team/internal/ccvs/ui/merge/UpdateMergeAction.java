@@ -95,6 +95,9 @@ public class UpdateMergeAction extends UpdateSyncAction {
 		return nodes;
 	}
 	
+	/*
+	 * If called on a new folder, the folder will become an outgoing addition.
+	 */
 	private void makeRemoteLocal(CVSRemoteSyncElement element, IProgressMonitor monitor) throws CVSException {
 		IRemoteResource remote = element.getRemote();
 		final IResource local = element.getLocal();
@@ -119,8 +122,6 @@ public class UpdateMergeAction extends UpdateSyncAction {
 					if(!local.exists()) {
 						((IFolder)local).create(false /*don't force*/, true /*local*/, monitor);
 					}
-					// XXX This copies the tag from the remote (which is a branch tag)!!!
-					// CVSWorkspaceRoot.getCVSFolderFor((IContainer)local).setFolderSyncInfo(((ICVSFolder)remote).getFolderSyncInfo());
 				} else {
 					monitor.beginTask(null, 200);
 					try {
