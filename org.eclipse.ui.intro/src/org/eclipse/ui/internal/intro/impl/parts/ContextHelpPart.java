@@ -142,12 +142,12 @@ public class ContextHelpPart implements IStandbyContentPart {
         toolkit.paintBordersFor(helpContainer);
 
         Label label = toolkit.createLabel(helpContainer, IntroPlugin
-                .getString("ContextHelpPart.search"));
+                .getString("ContextHelpPart.search")); //$NON-NLS-1$
         label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-        phraseText = toolkit.createText(helpContainer, "");
+        phraseText = toolkit.createText(helpContainer, ""); //$NON-NLS-1$
         phraseText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         final Button button = toolkit.createButton(helpContainer, IntroPlugin
-                .getString("ContextHelpPart.button.go"), SWT.PUSH);
+                .getString("ContextHelpPart.button.go"), SWT.PUSH); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -173,7 +173,7 @@ public class ContextHelpPart implements IStandbyContentPart {
         });
         title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
         title.setText(IntroPlugin
-                .getString("ContextHelpPart.contextHelpArea.Title"));
+                .getString("ContextHelpPart.contextHelpArea.Title")); //$NON-NLS-1$
         title.setFont(JFaceResources.getHeaderFont());
         title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
         text = toolkit.createFormText(form.getBody(), true);
@@ -202,7 +202,7 @@ public class ContextHelpPart implements IStandbyContentPart {
     private void doSearch(String phrase) {
         try {
             String ephrase = URLEncoder.encode(phrase, "UTF-8"); //$NON-NLS-1$
-            String query = "tab=search&searchWord=" + ephrase;
+            String query = "tab=search&searchWord=" + ephrase; //$NON-NLS-1$
             WorkbenchHelp.displayHelpResource(query);
         } catch (UnsupportedEncodingException e) {
             //TODO handle this for real
@@ -219,18 +219,18 @@ public class ContextHelpPart implements IStandbyContentPart {
 
         String partId = part.getSite().getId();
         // Ignore ourselves
-        if (partId.equals("org.eclipse.ui.internal.introview"))
+        if (partId.equals("org.eclipse.ui.internal.introview")) //$NON-NLS-1$
             return;
         if (activated) {
             title.setText(IntroPlugin
-                    .getString("ContextHelpPart.whatIsArea.Title")
-                    + " \"" + part.getSite().getRegisteredName() + "\"?");
+                    .getString("ContextHelpPart.whatIsArea.Title") //$NON-NLS-1$
+                    + " \"" + part.getSite().getRegisteredName() + "\"?"); //$NON-NLS-1$ //$NON-NLS-2$
             String helpText = createContextHelp(part);
-            text.setText(helpText != null ? helpText : "", helpText != null,
+            text.setText(helpText != null ? helpText : "", helpText != null, //$NON-NLS-1$
                     false);
         } else {
             title.setText(IntroPlugin
-                    .getString("ContextHelpPart.contextHelpArea.Title"));
+                    .getString("ContextHelpPart.contextHelpArea.Title")); //$NON-NLS-1$
             text.setText(defaultText, false, false);
         }
         form.getBody().layout();
@@ -267,33 +267,33 @@ public class ContextHelpPart implements IStandbyContentPart {
 
     private String formatHelpContext(IContext context) {
         StringBuffer sbuf = new StringBuffer();
-        sbuf.append("<form>");
-        sbuf.append("<p>");
+        sbuf.append("<form>"); //$NON-NLS-1$
+        sbuf.append("<p>"); //$NON-NLS-1$
         sbuf.append(decodeContextBoldTags(context.getText()));
-        sbuf.append("</p>");
+        sbuf.append("</p>"); //$NON-NLS-1$
         IHelpResource[] links = context.getRelatedTopics();
         if (links.length > 0) {
             for (int i = 0; i < links.length; i++) {
                 IHelpResource link = links[i];
-                sbuf.append("<li style=\"text\" indent=\"2\">");
-                sbuf.append("<img href=\"");
+                sbuf.append("<li style=\"text\" indent=\"2\">"); //$NON-NLS-1$
+                sbuf.append("<img href=\""); //$NON-NLS-1$
                 sbuf.append(ImageUtil.HELP_TOPIC);
-                sbuf.append("\"/> ");
-                sbuf.append("<a href=\"");
+                sbuf.append("\"/> "); //$NON-NLS-1$
+                sbuf.append("<a href=\""); //$NON-NLS-1$
                 sbuf.append(link.getHref());
-                sbuf.append("\">");
+                sbuf.append("\">"); //$NON-NLS-1$
                 sbuf.append(link.getLabel());
-                sbuf.append("</a>");
-                sbuf.append("</li>");
+                sbuf.append("</a>"); //$NON-NLS-1$
+                sbuf.append("</li>"); //$NON-NLS-1$
             }
         }
-        sbuf.append("</form>");
+        sbuf.append("</form>"); //$NON-NLS-1$
         return sbuf.toString();
     }
 
     private String decodeContextBoldTags(String contextString) {
-        String decodedString = contextString.replaceAll("<@#\\$b>", "<b>");
-        decodedString = decodedString.replaceAll("</@#\\$b>", "</b>");
+        String decodedString = contextString.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
+        decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
         return decodedString;
     }
 
