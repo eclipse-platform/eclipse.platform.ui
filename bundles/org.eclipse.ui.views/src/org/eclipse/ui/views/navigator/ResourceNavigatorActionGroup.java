@@ -1,18 +1,26 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+    Sebastian Davids <sdavids@gmx.de> - Images for menu items
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/**********************************************************************
-Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This is the action group for all the resource navigator actions.
@@ -44,12 +52,35 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
 	}
 	
 	/**
+	 * Returns the image descriptor with the given relative path.
+	 */
+	protected ImageDescriptor getImageDescriptor(String relativePath) {
+		String iconPath = "icons/full/"; //$NON-NLS-1$
+		try {
+			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+			URL installURL = plugin.getDescriptor().getInstallURL();
+			URL url = new URL(installURL, iconPath + relativePath);
+			return ImageDescriptor.createFromURL(url);
+		} catch (MalformedURLException e) {
+			// should not happen
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
+	}	
+
+	/**
 	 * Returns the resource navigator.
 	 */
 	public IResourceNavigator getNavigator() {
 		return navigator;
 	}
 	
+	/**
+ 	 * Handles a key pressed event by invoking the appropriate action.
+	 * Does nothing by default.
+ 	 */
+	public void handleKeyPressed(KeyEvent event) {
+	}
+
 	/**
 	 * Makes the actions contained in this action group.
 	 */
@@ -62,13 +93,6 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
 	 * @param selection the current selection
 	 */
 	public void runDefaultAction(IStructuredSelection selection) {
-	}
-
-	/**
- 	 * Handles a key pressed event by invoking the appropriate action.
-	 * Does nothing by default.
- 	 */
-	public void handleKeyPressed(KeyEvent event) {
 	}
 
 }

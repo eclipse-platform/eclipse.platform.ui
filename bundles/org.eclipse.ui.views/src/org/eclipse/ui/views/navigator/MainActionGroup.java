@@ -1,23 +1,19 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+	Sebastian Davids <sdavids@gmx.de> - Collapse all action
+    Sebastian Davids <sdavids@gmx.de> - Images for menu items
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/**********************************************************************
-Copyright (c) 2000, 2002, International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-  Sebastian Davids <sdavids@gmx.de> - Collapse all action
-**********************************************************************/
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,7 +23,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main action group for the navigator.
@@ -65,19 +60,37 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	protected void makeActions() {
 		Shell shell = navigator.getSite().getShell();
 		IWorkbench workbench = navigator.getSite().getWorkbenchWindow().getWorkbench();
+
 		addBookmarkAction = new AddBookmarkAction(shell);
 		addTaskAction = new AddTaskAction(shell);		
 		newWizardAction = new NewWizardAction();
 		propertyDialogAction =
 			new PropertyDialogAction(shell, navigator.getViewer());
+		
 		importAction = new ImportResourcesAction(workbench);
+		importAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/import_wiz.gif")); //$NON-NLS-1$
+		importAction.setImageDescriptor(getImageDescriptor("etool16/import_wiz.gif")); //$NON-NLS-1$		
+		importAction.setHoverImageDescriptor(getImageDescriptor("ctool16/import_wiz.gif")); //$NON-NLS-1$
+
 		exportAction = new ExportResourcesAction(workbench);
-		collapseAllAction = new CollapseAllAction(navigator, ResourceNavigatorMessages.getString("CollapseAllAction.title")); //$NON-NLS-1$
+		exportAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/export_wiz.gif")); //$NON-NLS-1$
+		exportAction.setImageDescriptor(getImageDescriptor("etool16/export_wiz.gif")); //$NON-NLS-1$
+		exportAction.setHoverImageDescriptor(getImageDescriptor("ctool16/export_wiz.gif")); //$NON-NLS-1$
+
+		collapseAllAction = new CollapseAllAction(navigator, ResourceNavigatorMessages.getString("CollapseAllAction.title"));//$NON-NLS-1$
 		collapseAllAction.setToolTipText(ResourceNavigatorMessages.getString("CollapseAllAction.toolTip")); //$NON-NLS-1$
 		collapseAllAction.setImageDescriptor(getImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
-		syncWithEditorAction = new SyncWithEditorAction(navigator, ResourceNavigatorMessages.getString("SyncWithEditorAction.title")); //$NON-NLS-1$
+		//TODO uncomment when image is supplied
+		//collapseAllAction.setHoverImageDescriptor(getImageDescriptor("clcl16/collapseall.gif")); //$NON-NLS-1$
+
+		syncWithEditorAction = new SyncWithEditorAction(navigator, ResourceNavigatorMessages.getString("SyncWithEditorAction.title"));//$NON-NLS-1$
 		syncWithEditorAction.setToolTipText(ResourceNavigatorMessages.getString("SyncWithEditorAction.toolTip")); //$NON-NLS-1$
+		//TODO uncomment when image is supplied
+		//syncWithEditorAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/synced.gif")); //$NON-NLS-1$
 		syncWithEditorAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif")); //$NON-NLS-1$
+		//TODO uncomment when image is supplied
+		//syncWithEditorAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif")); //$NON-NLS-1$
+		
 		navigator.getSite().getWorkbenchWindow().getPartService().addPartListener(syncWithEditorAction);
 	}
 	
@@ -173,22 +186,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		if (selection.size() == 1) {
 			propertyDialogAction.selectionChanged(selection);
 			menu.add(propertyDialogAction);
-		}
-	}
-	
-	/**
-	 * Returns the image descriptor with the given relative path.
-	 */
-	private ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$
-		try {
-			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			URL installURL = plugin.getDescriptor().getInstallURL();
-			URL url = new URL(installURL, iconPath + relativePath);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException e) {
-			// should not happen
-			return ImageDescriptor.getMissingImageDescriptor();
 		}
 	}
 			

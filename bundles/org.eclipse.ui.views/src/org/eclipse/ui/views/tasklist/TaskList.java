@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
+Copyright (c) 2000, 2003 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM Corporation - Initial implementation
 	Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
+    Sebastian Davids <sdavids@gmx.de> - Reordered menu items	
 ***********************************************************************/
 
 package org.eclipse.ui.views.tasklist;
@@ -216,7 +217,7 @@ public class TaskList extends ViewPart {
 		TaskListMessages.getString("TaskList.headerFolder"), //$NON-NLS-1$
 		TaskListMessages.getString("TaskList.headerLocation") //$NON-NLS-1$
 	};
-
+	
 	private ColumnLayoutData columnLayouts[] = {
 		new ColumnPixelData(19, false),
 		new ColumnPixelData(19, false),
@@ -585,9 +586,9 @@ public void edit(IMarker marker) {
 void fillActionBars() {
 	IActionBars actionBars = getViewSite().getActionBars();
 	IMenuManager menu = actionBars.getMenuManager();
-	menu.add(filtersAction);
 	IMenuManager submenu =
 		new MenuManager(TaskListMessages.getString("SortByMenu.text")); //$NON-NLS-1$
+	
 	menu.add(submenu);
 	submenu.add(sortByCategoryAction);
 	submenu.add(sortByCompletedAction);
@@ -600,7 +601,9 @@ void fillActionBars() {
 	submenu.add(new Separator());
 	submenu.add(sortAscendingAction);
 	submenu.add(sortDescendingAction);
-
+	
+	menu.add(filtersAction);
+	
 	IToolBarManager toolBar = actionBars.getToolBarManager();
 	toolBar.add(newTaskAction);
 	toolBar.add(removeTaskAction);

@@ -7,6 +7,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
     IBM - Initial implementation
+    Sebastian Davids <sdavids@gmx.de> - Images for menu items
 ************************************************************************/
 package org.eclipse.ui.views.navigator;
 
@@ -87,6 +88,10 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 		closeProjectAction = new CloseResourceAction(shell);
 		workspace.addResourceChangeListener(closeProjectAction, IResourceChangeEvent.POST_CHANGE);
 		refreshAction = new RefreshAction(shell);
+		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
+		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$
+		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$		
+		
 		buildAction =
 			new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);

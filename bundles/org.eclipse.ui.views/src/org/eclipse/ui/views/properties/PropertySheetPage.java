@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
+Copyright (c) 2000, 2003 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
     IBM Corporation - Initial implementation
+    Sebastian Davids <sdavids@gmx.de> - Remove view menu items
 **********************************************************************/
 
 package org.eclipse.ui.views.properties;
@@ -322,10 +323,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		toolBarManager.add(categoriesAction);
 		toolBarManager.add(filterAction);
 		toolBarManager.add(defaultsAction);
-
-		// add actions to the menu
-		menuManager.add(categoriesAction);
-		menuManager.add(filterAction);
 		
 		// set status line manager into the viewer
 		viewer.setStatusLineManager(statusLineManager);
