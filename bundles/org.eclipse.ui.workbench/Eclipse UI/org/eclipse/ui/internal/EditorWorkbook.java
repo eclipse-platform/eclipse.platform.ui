@@ -348,6 +348,9 @@ private void setEditorListBounds(Shell parent) {
 	int height = Math.min(r.height, MAX_ITEMS * ((Table)editorList.getControl()).getItemHeight());
 	Rectangle bounds = tabFolder.getClientArea();
 	Point point = new Point(bounds.x + bounds.width - width, bounds.y);
+	if (tabLocation == SWT.BOTTOM) {
+		point.y = bounds.y + bounds.height - height - 1;
+	}
 	point = tabFolder.toDisplay(point);
 	point = parent.toControl(point);
 	listComposite.setBounds(listComposite.computeTrim(point.x, point.y, width, height));
