@@ -605,7 +605,7 @@
 			<action
 				id="org.eclipse.team.cvs.ui.ContentAction"
 				state="false"
-				toolbarPath="additions"
+				toolbarPath="Normal/additions"
 				icon="icons/full/ctool16/contents.gif"
 				label="%ContentAction.label"
  	            tooltip="%ContentAction.tooltip"
