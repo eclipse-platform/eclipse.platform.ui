@@ -93,12 +93,17 @@ public boolean testAttribute(Object target, String name, String value) {
 			return false;
 		}
 	} else if (name.equals(RESOURCE_TYPE)) {
-		int desiredType = Integer.parseInt(value);
-		if (!(desiredType == IResource.FILE || 
-			desiredType == IResource.FOLDER || 
-			desiredType == IResource.PROJECT || 
-			desiredType == IResource.ROOT))
-				return false;
+		int desiredType = 0;
+		
+		try {
+			desiredType = Integer.parseInt(value);
+		} catch (NumberFormatException eNumberFormat) {			
+		}
+		
+		if (!(desiredType == IResource.FILE || desiredType == IResource.FOLDER ||  
+			desiredType == IResource.PROJECT || desiredType == IResource.ROOT))
+			return false;
+				
 		return (marker.getResource().getType() & desiredType) > 0;  
 	}
 	return false;
