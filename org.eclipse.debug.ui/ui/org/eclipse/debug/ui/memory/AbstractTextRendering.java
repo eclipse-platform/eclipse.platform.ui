@@ -17,27 +17,37 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 
-
 /**
- * Abstract implementation to a text rendering that renders memory to 
- * text in a table rendering.  Clients should subclass from this class
- * if they wish to provide a table/text rendering with a specific code
- * page.
+ * Abstract implementation of a rendering that translates memory into 
+ * text, displayed in a table.
+ * <p>
+ * Clients should subclass from this class if they wish to provide a table
+ * text rendering with a specific code page.
+ * </p>
+ * @since 3.1
  */
 abstract public class AbstractTextRendering extends AbstractTableRendering { 	
 	
-	String fCodePage;
+	private String fCodePage;
 	
+	/**
+	 * Constructs a text rendering of the specified type on the given
+	 * code page.
+	 * 
+	 * @param renderingId memory rendering type identifier
+	 * @param codePage the name of a supported
+     *  {@link java.nio.charset.Charset </code>charset<code>}, for
+     *  example <code>CP1252</code>
+	 */
 	public AbstractTextRendering(String renderingId, String codePage)
 	{
 		super(renderingId);
-		setCodePage(codePage);
-	}
-	
-	public void setCodePage(String codePage) {
 		fCodePage = codePage;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
+	 */
 	public String getString(String dataType, BigInteger address,  MemoryByte[] data) {
 		try {
 			String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.PREF_PADDED_STR);
@@ -76,6 +86,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 			return "-- error --"; //$NON-NLS-1$
 		}
 	}
+	
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.AbstractTableViewTabLabelProvider#getBytes(java.lang.String)
 	 */
