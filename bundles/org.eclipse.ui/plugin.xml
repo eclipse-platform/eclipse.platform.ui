@@ -628,6 +628,17 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            platform="gtk"
+            keySequence="M1+M2+E"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.window.switchToEditor"
+            platform="gtk"
+            keySequence="ESC M1+E"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.window.showSystemMenu"
             keySequence="Alt+-"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
