@@ -796,8 +796,8 @@ public class RepositoryManager {
 	 * @param string
 	 */
 	public void addComment(String comment) {
-		// Only add the comment if the first entry isn't the same already
-		if (previousComments.length > 0 && previousComments[0].equals(comment)) return;
+		// Only add the comment if its not there already
+		if (containsComment(comment)) return;
 		// Insert the comment as the first element
 		String[] newComments = new String[Math.min(previousComments.length + 1, MAX_COMMENTS)];
 		newComments[0] = comment;
@@ -805,5 +805,14 @@ public class RepositoryManager {
 			newComments[i] = previousComments[i-1];
 		}
 		previousComments = newComments;
+	}
+
+	private boolean containsComment(String comment) {
+		for (int i = 0; i < previousComments.length; i++) {
+			if (previousComments[i].equals(comment)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
