@@ -92,7 +92,14 @@ class NewWizardNewPage
 		categoryTreeViewer = new TreeViewer(tree);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = SIZING_LISTS_WIDTH;
-		data.heightHint = SIZING_LISTS_HEIGHT;
+
+		boolean needsHint = DialogUtil.inRegularFontMode(parent);
+
+		//Only give a height hint if the dialog is going to be too small
+		if (needsHint) {
+			data.heightHint = SIZING_LISTS_HEIGHT;
+		}
+
 		categoryTreeViewer.getTree().setLayoutData(data);
 		categoryTreeViewer.setContentProvider(new WorkbenchContentProvider());
 		categoryTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
@@ -113,7 +120,11 @@ class NewWizardNewPage
 		wizardSelectionViewer = new TableViewer(table);
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = SIZING_LISTS_WIDTH;
-		data.heightHint = SIZING_LISTS_HEIGHT;
+		//Only give a height hint if the dialog is going to be too small
+		if (needsHint) {
+			data.heightHint = SIZING_LISTS_HEIGHT;
+		}
+
 		wizardSelectionViewer.getTable().setLayoutData(data);
 		wizardSelectionViewer.setContentProvider(getWizardProvider());
 		wizardSelectionViewer.setLabelProvider(new WorkbenchLabelProvider());
