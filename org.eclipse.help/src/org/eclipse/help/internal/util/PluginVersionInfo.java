@@ -6,11 +6,16 @@ package org.eclipse.help.internal.util;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.help.internal.HelpPlugin;
 /**
- * Table of plugins. Records all plugins and their version.
+ * Table of plugins. Records all plugins, their version, corresponding fragments versions
+ * The values are String in format:
+ * pluginID\npluginVersion\nfragment1ID\nfragment1Version\nfragment2ID\nfragment2Version
  */
 public class PluginVersionInfo extends HelpProperties {
+	// Separates plugins and versions in value strings
+	static final String SEPARATOR = "\n";
 	Plugin basePlugin = HelpPlugin.getDefault();
 	boolean doComparison = true;
 	boolean hasChanged = false;
@@ -18,7 +23,7 @@ public class PluginVersionInfo extends HelpProperties {
 	Collection added = new ArrayList();
 	Collection removed = new ArrayList();
 	/**
-	 * Creates table of current contributing plugins and their version.
+	 * Creates table of current contributing plugins and their fragments with versions.
 	 * @param name the name of the file to serialize the data to
 	 * @param it iterator of current contributions (IConfigurationElement type)
 	 * @param basePlugin use this plugin's state location to store the data
@@ -38,9 +43,29 @@ public class PluginVersionInfo extends HelpProperties {
 		// create table of current contributions
 		for (; it.hasNext();) {
 			IPluginDescriptor plugin = (IPluginDescriptor) it.next();
+			StringBuffer pluginVersionAndFragments = new StringBuffer();
+			pluginVersionAndFragments.append(plugin.getUniqueIdentifier());
+			pluginVersionAndFragments.append(SEPARATOR);
+			pluginVersionAndFragments.append(
+				plugin.getVersionIdentifier().toString());
+			if (plugin instanceof PluginDescriptorModel) {
+				PluginFragmentModel[] fragmentModels =
+					((PluginDescriptorModel) plugin).getFragments();
+				if (fragmentModels != null) {
+					for (int f = 0; f < fragmentModels.length; f++) {
+						pluginVersionAndFragments.append(SEPARATOR);
+						pluginVersionAndFragments.append(
+							fragmentModels[f].getId());
+						pluginVersionAndFragments.append(SEPARATOR);
+						pluginVersionAndFragments.append(
+							fragmentModels[f].getVersion());
+					}
+				}
+			}
 			this.put(
 				plugin.getUniqueIdentifier(),
-				plugin.getVersionIdentifier().toString());
+				pluginVersionAndFragments.toString());
+
 		}
 	}
 	/**
@@ -58,21 +83,34 @@ public class PluginVersionInfo extends HelpProperties {
 		}
 		// check if contributions changed
 		hasChanged = false;
-		//
 		for (Enumeration keysEnum = this.keys(); keysEnum.hasMoreElements();) {
 			String oneContr = (String) keysEnum.nextElement();
 			if (!oldContrs.containsKey(oneContr)) {
+				// plugin has been added
 				added.add(oneContr);
-			} else if (!this.get(oneContr).equals(oldContrs.get(oneContr))) {
-				added.add(oneContr);
+			} else {
+				String versions = (String) this.get(oneContr);
+				String oldVersions = (String) oldContrs.get(oneContr);
+				if (!compare(versions, oldVersions)) {
+					// plugin version changed or fragments changed
+					added.add(oneContr);
+				}
 			}
 		}
-		for (Enumeration keysEnum = oldContrs.keys(); keysEnum.hasMoreElements();) {
+		for (Enumeration keysEnum = oldContrs.keys();
+			keysEnum.hasMoreElements();
+			) {
 			String oneContr = (String) keysEnum.nextElement();
 			if (!this.containsKey(oneContr)) {
+				// plugin has been removed
 				removed.add(oneContr);
-			} else if (!oldContrs.get(oneContr).equals(this.get(oneContr))) {
-				removed.add(oneContr);
+			} else {
+				String versions = (String) this.get(oneContr);
+				String oldVersions = (String) oldContrs.get(oneContr);
+				if (!compare(versions, oldVersions)) {
+					// plugin version changed or fragments changed
+					added.add(oneContr);
+				}
 			}
 		}
 		hasChanged = added.size() > 0 || removed.size() > 0;
@@ -112,5 +150,34 @@ public class PluginVersionInfo extends HelpProperties {
 			return true;
 		}
 		return false;
+	}
+	/**
+	 * Compares plugins and versions represented as a string for equality
+	 * String have form id1\nverison1\nid2\nversion2
+	 * String are equal of they contain the same set of IDs and their corresponding version equal
+	 * @return true if plugins and versions match
+	 */
+	private boolean compare(String versions, String oldVersions) {
+		Map versionMap = new Hashtable();
+		for (StringTokenizer t =
+			new StringTokenizer(versions, SEPARATOR, false);
+			t.hasMoreTokens();
+			) {
+			String pluginOrFragment = t.nextToken();
+			if (t.hasMoreTokens()) {
+				versionMap.put(pluginOrFragment, t.nextToken());
+			}
+		}
+		Map oldVersionMap = new Hashtable();
+		for (StringTokenizer t =
+			new StringTokenizer(oldVersions, SEPARATOR, false);
+			t.hasMoreTokens();
+			) {
+			String pluginOrFragment = t.nextToken();
+			if (t.hasMoreTokens()) {
+				oldVersionMap.put(pluginOrFragment, t.nextToken());
+			}
+		}
+		return versionMap.equals(oldVersionMap);
 	}
 }
