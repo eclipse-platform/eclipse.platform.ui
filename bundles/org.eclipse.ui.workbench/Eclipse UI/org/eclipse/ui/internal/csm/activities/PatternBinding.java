@@ -18,7 +18,7 @@ final class PatternBinding implements IPatternBinding {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = PatternBinding.class.getName().hashCode();
-
+	
 	private boolean inclusive;
 	private String pattern;
 

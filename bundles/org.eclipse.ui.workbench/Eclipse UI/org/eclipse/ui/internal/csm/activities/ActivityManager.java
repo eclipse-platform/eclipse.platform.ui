@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
@@ -34,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
 public final class ActivityManager implements IActivityManager {
 
 	static boolean isActivityDefinitionChildOf(String ancestor, String id, Map activityDefinitionsById) {
-		Set visited = new HashSet();
+		Collection visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
 			IActivityDefinition activityDefinition = (IActivityDefinition) activityDefinitionsById.get(id);				
@@ -122,12 +121,12 @@ public final class ActivityManager implements IActivityManager {
 	public void setActiveActivityIds(Set activeActivityIds) {
 		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
 		boolean activityManagerChanged = false;
-		SortedSet updatedActivityIds = null;
+		Collection updatedActivityIds = null;
 
 		if (!this.activeActivityIds.equals(activeActivityIds)) {
 			this.activeActivityIds = activeActivityIds;
 			activityManagerChanged = true;	
-			updatedActivityIds = updateActivities(this.definedActivityIds);	
+			updatedActivityIds = updateActivities(activitiesById.keySet());	
 		}
 		
 		if (activityManagerChanged)
@@ -140,7 +139,7 @@ public final class ActivityManager implements IActivityManager {
 	public void setEnabledActivityIds(Set enabledActivityIds) {	
 		enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
 		boolean activityManagerChanged = false;
-		SortedSet updatedActivityIds = null;
+		Collection updatedActivityIds = null;
 
 		if (!this.enabledActivityIds.equals(enabledActivityIds)) {
 			this.enabledActivityIds = enabledActivityIds;
@@ -156,14 +155,13 @@ public final class ActivityManager implements IActivityManager {
 	}	
 	
 	private void fireActivityManagerChanged() {
-		if (activityManagerListeners != null) {
+		if (activityManagerListeners != null)
 			for (int i = 0; i < activityManagerListeners.size(); i++) {
 				if (activityManagerEvent == null)
 					activityManagerEvent = new ActivityManagerEvent(this);
 								
 				((IActivityManagerListener) activityManagerListeners.get(i)).activityManagerChanged(activityManagerEvent);
 			}				
-		}			
 	}
 
 	private void loadPluginActivityRegistry() {
@@ -175,9 +173,7 @@ public final class ActivityManager implements IActivityManager {
 	}
 	
 	private void notifyActivities(Collection activityIds) {	
-		Iterator iterator = activityIds.iterator();
-		
-		while (iterator.hasNext()) {
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {	
 			String activityId = (String) iterator.next();					
 			Activity activity = (Activity) activitiesById.get(activityId);
 			
@@ -187,12 +183,8 @@ public final class ActivityManager implements IActivityManager {
 	}
 
 	private void readRegistry() {
-		List activityDefinitions = new ArrayList();
-		activityDefinitions.addAll(pluginActivityRegistry.getActivityDefinitions());
-		
-		List patternBindingDefinitions = new ArrayList();
-		patternBindingDefinitions.addAll(pluginActivityRegistry.getPatternBindingDefinitions());
-		
+		Collection activityDefinitions = new ArrayList();
+		activityDefinitions.addAll(pluginActivityRegistry.getActivityDefinitions());				
 		Map activityDefinitionsById = new HashMap(ActivityDefinition.activityDefinitionsById(activityDefinitions, false));
 
 		for (Iterator iterator = activityDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -207,16 +199,33 @@ public final class ActivityManager implements IActivityManager {
 			if (!isActivityDefinitionChildOf(null, (String) iterator.next(), activityDefinitionsById))
 				iterator.remove();
 
-		SortedSet definedActivityIds = new TreeSet(activityDefinitionsById.keySet());		
-		boolean activityManagerChanged = false;
+		Collection patternBindingDefinitions = new ArrayList();
+		patternBindingDefinitions.addAll(pluginActivityRegistry.getPatternBindingDefinitions());
+		Map patternBindingDefinitionsByActivityId = new HashMap(PatternBindingDefinition.patternBindingDefinitionsByActivityId(patternBindingDefinitions, false));
 
-		if (!this.definedActivityIds.equals(definedActivityIds)) {
+		for (Iterator iterator = patternBindingDefinitionsByActivityId.values().iterator(); iterator.hasNext();) {
+			IPatternBindingDefinition patternBindingDefinition = (IPatternBindingDefinition) iterator.next();
+			String pattern = patternBindingDefinition.getPattern();
+				
+			if (pattern == null || pattern.length() == 0)
+				iterator.remove();
+		}
+
+		for (Iterator iterator = patternBindingDefinitionsByActivityId.keySet().iterator(); iterator.hasNext();)
+			if (!activityDefinitionsById.containsKey(iterator.next()))
+				iterator.remove();		
+
+		this.activityDefinitionsById = activityDefinitionsById;
+		this.patternBindingDefinitionsByActivityId = patternBindingsByActivityId;			
+		boolean activityManagerChanged = false;			
+		Set definedActivityIds = new TreeSet(activityDefinitionsById.keySet());		
+
+		if (!definedActivityIds.equals(this.definedActivityIds)) {
 			this.definedActivityIds = definedActivityIds;
 			activityManagerChanged = true;	
 		}
 
-		this.activityDefinitionsById = activityDefinitionsById;
-		SortedSet updatedActivityIds = updateActivities(this.definedActivityIds);	
+		Collection updatedActivityIds = updateActivities(activitiesById.keySet());	
 		
 		if (activityManagerChanged)
 			fireActivityManagerChanged();
@@ -239,11 +248,10 @@ public final class ActivityManager implements IActivityManager {
 		return updated;
 	}
 
-	private SortedSet updateActivities(Collection activityIds) {
-		SortedSet updatedIds = new TreeSet();
-		Iterator iterator = activityIds.iterator();
+	private Collection updateActivities(Collection activityIds) {
+		Collection updatedIds = new TreeSet();
 		
-		while (iterator.hasNext()) {
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {		
 			String activityId = (String) iterator.next();					
 			Activity activity = (Activity) activitiesById.get(activityId);
 			

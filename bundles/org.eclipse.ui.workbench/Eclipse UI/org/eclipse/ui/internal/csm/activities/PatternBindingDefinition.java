@@ -11,6 +11,12 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class PatternBindingDefinition implements IPatternBindingDefinition {
@@ -18,6 +24,34 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = PatternBindingDefinition.class.getName().hashCode();
 
+	static Map patternBindingDefinitionsByActivityId(Collection patternBindingDefinitions, boolean allowNullNames) {
+		if (patternBindingDefinitions == null)
+			throw new NullPointerException();
+
+		Map map = new HashMap();			
+		Iterator iterator = patternBindingDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, IPatternBindingDefinition.class);			
+			IPatternBindingDefinition patternBindingDefinition = (IPatternBindingDefinition) object;
+			String activityId = patternBindingDefinition.getActivityId();
+			
+			if (allowNullNames || activityId != null) {
+				Collection patternBindingDefinitions2 = (Collection) map.get(activityId);
+					
+				if (patternBindingDefinitions2 == null) {
+					patternBindingDefinitions2 = new ArrayList();
+					map.put(activityId, patternBindingDefinitions2);					
+				}
+	
+				patternBindingDefinitions2.add(patternBindingDefinition);		
+			}											
+		}				
+	
+		return map;
+	}	
+	
 	private String activityId;
 	private boolean inclusive;
 	private String pattern;

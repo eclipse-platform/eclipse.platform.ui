@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
@@ -59,7 +58,7 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 			String name = activityDefinition.getName();
 			
 			if (allowNullNames || name != null) {
-				Set activityDefinitions2 = (Set) map.get(name);
+				Collection activityDefinitions2 = (Collection) map.get(name);
 					
 				if (activityDefinitions2 == null) {
 					activityDefinitions2 = new HashSet();

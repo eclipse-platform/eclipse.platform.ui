@@ -11,21 +11,7 @@
 
 package org.eclipse.ui.internal.csm.roles;
 
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleEvent;
+public interface IRoleRegistryEvent {
 
-final class RoleEvent implements IRoleEvent {
-
-	private IRole role;
-
-	RoleEvent(IRole role) {
-		if (role == null)
-			throw new NullPointerException();
-		
-		this.role = role;
-	}
-
-	public IRole getRole() {
-		return role;
-	}
+	IRoleRegistry getRoleRegistry();
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.roles;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -68,7 +68,7 @@ public interface IRoleManager {
 	 *         empty, it is guaranteed to only contain instances of 
 	 *         <code>String</code>.
 	 */	
-	SortedSet getDefinedRoleIds();
+	Set getDefinedRoleIds();
 	
 	/**
 	 * Unregisters an instance of <code>IRoleManagerListener</code> listening 
