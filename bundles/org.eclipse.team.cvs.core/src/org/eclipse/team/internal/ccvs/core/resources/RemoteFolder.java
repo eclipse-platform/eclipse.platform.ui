@@ -276,6 +276,8 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		} catch (CVSServerException e) {
 			if ( ! e.isNoTagException() && e.containsErrors())
 				throw e;
+			if (tag == null)
+				throw e;
 			// we now know that this is an exception caused by a cvs bug.
 			// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
 			// workaround: retry the request with no tag to get the directory names (if any)
