@@ -9,6 +9,7 @@
    <runtime>
       <library name="forms.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.update.ui.forms.internal"/>
       </library>
    </runtime>
    <requires>

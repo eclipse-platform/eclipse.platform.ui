@@ -11,6 +11,7 @@
    <runtime>
       <library name="updateui32.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.update.internal.ui.win32"/>
       </library>
    </runtime>
 
@@ -31,6 +32,3 @@
       </view>
    </extension>
 </fragment>
-
-
-
