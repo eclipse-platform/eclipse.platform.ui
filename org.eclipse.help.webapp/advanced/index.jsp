@@ -7,7 +7,7 @@
 <% 
 	LayoutData data = new LayoutData(application,request);
 	String search_jsp = "search.jsp";
-	if (getMode() == RequestData.MODE_INFOCENTER)
+	if (data.getMode() == RequestData.MODE_INFOCENTER)
 		search_jsp = "searchInfocenter.jsp";
 %>
 

@@ -9,6 +9,7 @@ import java.util.*;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.*;
@@ -64,6 +65,18 @@ public class SearchData extends RequestData {
 					}
 				}
 			}
+		}
+
+		// if a working set is defined, set it in the preferences
+		String workingSet = request.getParameter("workingSet");
+		if (workingSet != null
+			&& !workingSet.equals(
+				HelpPlugin.getDefault().getPluginPreferences().getString(
+					HelpSystem.WORKING_SET))) {
+			HelpPlugin.getDefault().getPluginPreferences().setValue(
+				HelpSystem.WORKING_SET,
+				request.getParameter("workingSet"));
+			HelpPlugin.getDefault().savePluginPreferences();
 		}
 	}
 
@@ -147,7 +160,7 @@ public class SearchData extends RequestData {
 			// select all books
 			TocData tocData = new TocData(context, request);
 			books = new String[tocData.getTocCount()];
-			for (int i=0; i<books.length; i++)
+			for (int i = 0; i < books.length; i++)
 				books[i] = tocData.getTocHref(i);
 		}
 		return books;
