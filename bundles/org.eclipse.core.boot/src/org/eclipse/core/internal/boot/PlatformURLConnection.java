@@ -439,22 +439,10 @@ static void startup(String location) {
 	}
 }
 private static boolean verifyLocation(String location) {
-
 	// verify cache directory exists. Create if needed
-	StringTokenizer t = new StringTokenizer(location, File.separator);
-	String cacheName = "";
-	File cacheDir;
-	boolean result = true;
-	while(t.hasMoreElements()) {
-		cacheName += t.nextElement() + File.separator;
-		cacheDir = new File(cacheName);
-		if (!cacheDir.exists()) {
-			if (!cacheDir.mkdir()) {
-				result = false;
-				break;
-			}
-		}
-	}
-	return result;
+	File cacheDir = new File(location);
+	if (cacheDir.exists())
+		return true;
+	return cacheDir.mkdirs();
 }
 }
