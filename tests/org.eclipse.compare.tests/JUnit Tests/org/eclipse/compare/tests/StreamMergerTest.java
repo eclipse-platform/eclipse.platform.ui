@@ -14,7 +14,7 @@ import java.io.UnsupportedEncodingException;
 import junit.framework.TestCase;
 
 import org.eclipse.compare.IStreamMerger;
-import org.eclipse.compare.internal.merge.TextMerger;
+import org.eclipse.compare.internal.merge.TextStreamMerger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
@@ -138,7 +138,7 @@ public class StreamMergerTest extends TestCase {
         
         ByteArrayOutputStream os= new ByteArrayOutputStream();
 
-        IStreamMerger merger= new TextMerger();
+        IStreamMerger merger= new TextStreamMerger();
         IStatus status= merger.merge(os, encoding, ancestor, encoding, target, encoding, other, encoding, (IProgressMonitor)null);
 
         output.append(new String(os.toByteArray(), encoding));

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * A simple merger for streams containing text lines.
  */
-public class TextMerger implements IStreamMerger {
+public class TextStreamMerger implements IStreamMerger {
 
     /*
      * (non-Javadoc)

@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IStatus;
  * <code>org.eclipse.compare.streamMergers</code> extension point.
  * </p>
  * 
- * @see org.eclipse.compare.internal.merge.TextMerger
+ * @see org.eclipse.compare.internal.merge.TextStreamMerger
  * 
  * @since 3.0
  */
