@@ -13,12 +13,8 @@ package org.eclipse.ant.tests.ui.testplugin;
 
 import java.io.File;
 
-import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.core.AntCorePreferences;
-import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFolder;
@@ -61,7 +57,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			createLaunchConfiguration("build");
 			createLaunchConfiguration("bad");
 			createLaunchConfigurationForSeparateVM("echoingSepVM");
-			createLaunchConfigurationForSeparateVM("extraClasspathEntry");
+			createLaunchConfigurationForSeparateVM("extensionPointSepVM");
 		} finally {
 			//do not show the Ant build failed error dialog
 			AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, false);
@@ -84,7 +80,6 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
 		 
 		setVM(config);
-		//setClasspath(config);
 				
 		config.doSave();
 	}
@@ -110,25 +105,5 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		String vmTypeID= vm.getVMInstallType().getId();			
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-	}
-
-	private void setClasspath(ILaunchConfigurationWorkingCopy config) {
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		
-		StringBuffer urlString= new StringBuffer();
-
-		IAntClasspathEntry[] entries= prefs.getDefaultAntHomeEntries();
-		for (int i = 0; i < entries.length; i++) {
-			IAntClasspathEntry entry = entries[i];
-			
-			urlString.append(entry.getLabel());
-			if (i < (entries.length -1)) {
-				urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
-			}
-			
-		}
-		prefs.getRemoteExtraClasspathURLs();
-				
-		config.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.toString());
 	}
 }

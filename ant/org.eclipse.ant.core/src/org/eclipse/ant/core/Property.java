@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ public class Property {
 	private IAntPropertyValueProvider valueProvider;
 	private String pluginLabel;
 	private ClassLoader loader;
+	private boolean eclipseRuntime= true;
 
 	public Property(String name, String value) {
 		this.name= name;
@@ -163,5 +164,20 @@ public class Property {
 		buff.append(getValue());
 		buff.append("\""); //$NON-NLS-1$
 		return buff.toString();
+	}
+	
+	/**
+	 * Returns whether this classpath entry requires the Eclipse runtime to be 
+	 * relevant. Defaults value is <code>true</code>
+	 * 
+	 * @return whether this classpath entry requires the Eclipse runtime
+     * @since 3.0
+	 */
+	public boolean isEclipseRuntimeRequired() {
+		return eclipseRuntime;
+	}
+	
+	public void setEclipseRuntimeRequired(boolean eclipseRuntime) {
+		this.eclipseRuntime= eclipseRuntime;
 	}
 }

@@ -583,19 +583,23 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				continue;
 			}
 			String value = element.getAttribute(AntCorePlugin.VALUE);
+			Property property;
 			if (value != null) {
-				Property property = new Property(name, value);
+				property = new Property(name, value);
 				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
 				property.setPluginLabel(descriptor.getLabel());
-				defaultProperties.add(property);
 			} else {
-				Property property = new Property();
+				property = new Property();
 				property.setName(name);
 				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
 				property.setPluginLabel(descriptor.getLabel());
 				String className = element.getAttribute(AntCorePlugin.CLASS);
 				property.setValueProvider(className, descriptor.getPluginClassLoader());
-				defaultProperties.add(property);
+			}
+			defaultProperties.add(property);
+			String runtime = element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
+			if (runtime != null) {
+				property.setEclipseRuntimeRequired(Boolean.valueOf(runtime).booleanValue());
 			}
 		}
 	}
@@ -978,6 +982,30 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		List result = new ArrayList(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
 			result.addAll(defaultProperties);
+		}
+		if (customProperties != null && customProperties.length != 0) {
+			result.addAll(Arrays.asList(customProperties));
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the default and custom properties that are relavent when there is no
+	 * Eclipse runtime context (Ant build in a separate VM).
+	 * 
+	 * @return the list of default and custom properties.
+	 * @since 3.0
+	 */
+	public List getRemoteAntProperties() {
+		List result = new ArrayList(10);
+		if (defaultProperties != null && !defaultProperties.isEmpty()) {
+			Iterator iter= defaultProperties.iterator();
+			while (iter.hasNext()) {
+				Property property = (Property) iter.next();
+				if (!property.isEclipseRuntimeRequired()) {
+					result.add(property);
+				}
+			}
 		}
 		if (customProperties != null && customProperties.length != 0) {
 			result.addAll(Arrays.asList(customProperties));
