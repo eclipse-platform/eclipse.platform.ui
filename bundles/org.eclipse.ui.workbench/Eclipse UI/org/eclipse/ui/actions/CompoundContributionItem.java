@@ -22,9 +22,6 @@ import org.eclipse.swt.widgets.MenuItem;
 /**
  * A compound contribution is a contribution item consisting of a
  * dynamic list of contribution items.
- * <p>
- * This API is EXPERIMENTAL and may change or be removed between now and the delivery of Eclipse 3.1.
- * </p>
  * 
  * @since 3.1
  */
