@@ -228,9 +228,9 @@ class ImplicitJobs {
 	 * @see IJobManager#beginRule 
 	 */
 	void begin(ISchedulingRule rule, IProgressMonitor monitor) {
+		final Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob;
 		synchronized (this) {
-			Thread currentThread = Thread.currentThread();
 			threadJob = (ThreadJob) threadJobs.get(currentThread);
 			if (threadJob != null) {
 				//nested rule, just push on stack and return
@@ -249,16 +249,23 @@ class ImplicitJobs {
 				threadJob.acquireRule = true;
 			}
 			threadJob.setThread(currentThread);
-			threadJobs.put(currentThread, threadJob);
 			threadJob.push(rule);
 		}
 		//join the thread job outside sync block
-		if (threadJob.acquireRule) {
-			if (manager.runNow(threadJob)) {
+		try {
+			if (threadJob.acquireRule) {
 				//no need to reaquire any locks because the thread did not wait to get this lock
-				manager.getLockManager().addLockThread(Thread.currentThread(), rule);
-			} else {
-				threadJob.joinRun(monitor);
+				if (manager.runNow(threadJob)) 
+					manager.getLockManager().addLockThread(Thread.currentThread(), rule);
+				else
+					threadJob.joinRun(monitor);
+			}
+		} finally {
+			//remember this thread job as the job for this thread - only do this
+			//after the rule is acquired because it is ok for this thread to acquire
+			//and release other rules while waiting.
+			synchronized (this) {
+				threadJobs.put(currentThread, threadJob);
 			}
 		}
 	}
