@@ -427,5 +427,4 @@
 			class="org.eclipse.team.internal.ccvs.ui.CVSAddResolutionGenerator">
 		</markerResolutionGenerator>
 	</extension>
-   </extension>
 </plugin>
