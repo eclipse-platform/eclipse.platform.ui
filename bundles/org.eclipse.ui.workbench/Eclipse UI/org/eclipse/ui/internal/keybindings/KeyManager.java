@@ -312,7 +312,7 @@ public class KeyManager {
 		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 		String preferenceString = preferenceStore.getString("org.eclipse.ui.keys");
 		
-		if (preferenceString != null) {
+		if (preferenceString != null && preferenceString.length() != 0) {
 			StringReader stringReader = new StringReader(preferenceString);
 
 			try {
