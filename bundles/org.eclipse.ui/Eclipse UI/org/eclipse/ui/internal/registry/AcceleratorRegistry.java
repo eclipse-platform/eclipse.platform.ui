@@ -186,6 +186,12 @@ public class AcceleratorRegistry {
 		fakeAccelerators.add(new Accelerator(id,accelerator));
 	}
 	/**
+	 * Remove all actions without definition from this registry.
+	 */
+	public void clearFakeAccelerators() {
+		fakeAccelerators.clear();
+	}
+	/**
 	 * Returns a list of all the configurations in the registry for which
 	 * there are registered accelerator sets.
 	 */
