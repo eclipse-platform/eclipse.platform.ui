@@ -34,10 +34,12 @@ public class ResourceDeltaFactory {
 /**
  * Returns the resource delta representing the changes made between the given old and new trees,
  * starting from the given root element.
+ * @param markerGeneration the start generation for which deltas should be computed, or -1
+ * if marker deltas should not be provided.
  */
-public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTree, ElementTree newTree, IPath root, boolean notification) {
+public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTree, ElementTree newTree, IPath root, long markerGeneration) {
 	//compute the underlying delta tree.
-	ResourceComparator comparator = ResourceComparator.getComparator(notification);
+	ResourceComparator comparator = ResourceComparator.getComparator(markerGeneration>=0);
 	newTree.immutable();
 	DeltaDataTree delta = null;
 	if (Path.ROOT.equals(root))
@@ -51,8 +53,8 @@ public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTre
 
 	// get the marker deltas for the delta info object....if needed
 	Map allMarkerDeltas = null;
-	if (notification)
-		allMarkerDeltas = workspace.getMarkerManager().getMarkerDeltas();
+	if (markerGeneration>=0)
+		allMarkerDeltas = workspace.getMarkerManager().getMarkerDeltas(markerGeneration);
 		
 	//recursively walk the delta and create a tree of ResourceDelta objects.
 	ResourceDeltaInfo deltaInfo = new ResourceDeltaInfo(workspace, allMarkerDeltas, comparator);

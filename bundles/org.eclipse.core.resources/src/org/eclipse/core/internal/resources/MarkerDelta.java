@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 /**
  * @see IMarkerDelta
  */
@@ -111,6 +113,27 @@ public boolean isSubtypeOf(String superType) {
 }
 
 /**
+ * Merge two Maps of (IPath->MarkerSet) representing changes.  Use the old
+ * map to store the result so we don't have to build a new map to return.
+ */
+public static Map merge(Map oldChanges, Map newChanges) {
+	if (oldChanges == null)
+		//don't worry about copying since the new changes are no longer used
+		return newChanges;
+	if (newChanges == null)
+		return oldChanges;
+	for (Iterator it = newChanges.keySet().iterator(); it.hasNext();) {
+		IPath key = (IPath) it.next();
+		MarkerSet oldSet = (MarkerSet) oldChanges.get(key);
+		MarkerSet newSet = (MarkerSet) newChanges.get(key);
+		if (oldSet == null)
+			oldChanges.put(key, newSet);
+		else
+			merge(oldSet, newSet.elements());
+	}
+	return oldChanges;
+}
+/**
  * Merge two sets of marker changes.  Both sets must be on the same resource. Use the original set
  * of changes to store the result so we don't have to build a completely different set to return.
  * 
@@ -124,11 +147,11 @@ public boolean isSubtypeOf(String superType) {
  * change + change = change  (note: info held onto by the marker delta should be that of the oldest change, and not replaced when composed)
  * change + remove = remove (note: info held onto by the marker delta should be that of the oldest change, and not replaced when changed to a remove)
  */
-protected static MarkerSet merge(MarkerSet oldChanges, IMarkerDelta[] newChanges) {
+protected static MarkerSet merge(MarkerSet oldChanges, IMarkerSetElement[] newChanges) {
 	if (oldChanges == null) {
 		MarkerSet result = new MarkerSet(newChanges.length);
 		for (int i = 0; i < newChanges.length; i++)
-			result.add((MarkerDelta) newChanges[i]);
+			result.add(newChanges[i]);
 		return result;
 	}
 	if (newChanges == null)
@@ -178,7 +201,7 @@ protected static MarkerSet merge(MarkerSet oldChanges, IMarkerDelta[] newChanges
 					case IResourceDelta.REMOVED :
 						// change + remove = remove
 						// Change the delta kind.
-						 oldDelta.setKind(IResourceDelta.REMOVED);
+						oldDelta.setKind(IResourceDelta.REMOVED);
 						break;
 					case IResourceDelta.CHANGED :
 						// change + change = change

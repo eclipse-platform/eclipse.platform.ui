@@ -418,6 +418,9 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException {
 public boolean contains(ISchedulingRule rule) {
 	if (this == rule)
 		return true;
+	//must allow notifications to nest in all resource rules
+	if (rule.getClass().equals(WorkManager.NotifyRule.class))
+		return true;
 	if (!(rule instanceof IResource))
 		return false;
 	return path.isPrefixOf(((IResource)rule).getFullPath());
@@ -988,6 +991,9 @@ public boolean isAccessible() {
  * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
  */
 public boolean isConflicting(ISchedulingRule rule) {
+	//must not schedule at same time as notification
+	if (rule.getClass().equals(WorkManager.NotifyRule.class))
+		return true;
 	if (!(rule instanceof IResource))
 		return false;
 	IPath otherPath = ((IResource)rule).getFullPath();

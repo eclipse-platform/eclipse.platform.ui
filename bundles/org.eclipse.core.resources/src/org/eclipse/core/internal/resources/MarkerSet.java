@@ -66,10 +66,8 @@ public IMarkerSetElement[] elements() {
 	int j = 0;
 	for (int i = 0; i < elements.length; i++) {
 		IMarkerSetElement element = elements[i];
-		if (element != null) {
-			result[j] = element;
-			j++;
-		}
+		if (element != null)
+			result[j++] = element;
 	}
 	return result;
 }

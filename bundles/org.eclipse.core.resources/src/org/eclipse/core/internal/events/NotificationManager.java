@@ -10,29 +10,43 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.resources.IManager;
-import org.eclipse.core.internal.resources.Workspace;
+import java.util.Map;
+
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 public class NotificationManager implements IManager, ILifecycleListener {
+	/**
+	 * The marker change stamp that was last used to update the build marker deltas.
+	 */
+	protected long buildMarkerChangeId;
+	/**
+	 * With background autobuild, the marker deltas from POST_CHANGE notifications 
+	 * must be accumulated so that they can be reused for the autobuild notifications.
+	 */
+	protected Map buildMarkerDeltas;
 
 	// if there are no changes between the current tree and the last delta state then we 
 	// can reuse the lastDelta (if any).  If the lastMarkerChangeId is different then the current
 	// one then we have to update that delta with new marker change info
 	protected ResourceDelta lastDelta; // last delta we broadcast
-	protected ElementTree lastDeltaState; // tree the last time we broadcast a change
-	protected long lastMarkerChangeId = 0; // the marker change id the last time we broadcast
+	protected ElementTree lastDeltaState; // tree the last time we computed a delta
+	protected long lastDeltaId;//the marker change Id the last time we computed a delta
+
 	/**
 	 * The state of the workspace at the end of the last POST_BUILD notification
 	 */
-	protected ElementTree lastPostBuild;
+	protected ElementTree lastPostBuildTree;
+	protected long lastPostBuildId = 0; // the marker change id at the end of the last POST_AUTO_BUILD
 	/**
 	 * The state of the workspace at the end of the last POST_CHANGE notification
 	 */
-	protected ElementTree lastPostChange;
+	protected ElementTree lastPostChangeTree;
+	protected long lastPostChangeId = 0; // the marker change id at the end of the last POST_CHANGE
+
 	protected ResourceChangeListenerList listeners;
 	protected Workspace workspace;
 
@@ -53,8 +67,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		// Do the notification if there are listeners for events of the given type.
 		// Be sure to update the state if requested.  This needs to happen regardless of 
 		// whether people are listening.
+		ResourceDelta delta = null;
 		try {
-			IResourceDelta delta = null;
 			if (listeners.hasListenerFor(type))
 				delta = getDelta(lastState, type);
 			// if the delta is empty the root's change is undefined, there is nothing to do
@@ -64,18 +78,25 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			// Remember the current state as the last notified state if requested.
 			// Be sure to clear out the old delta
 		} finally {
+			boolean postChange = type == IResourceChangeEvent.POST_CHANGE;
 			//temporary condition for background build as an option
-			boolean updatePostBuild = Policy.BACKGROUND_BUILD && type==IResourceChangeEvent.POST_AUTO_BUILD;
-			if (type == IResourceChangeEvent.POST_CHANGE || updatePostBuild) {
-				workspace.getMarkerManager().resetMarkerDeltas();
+			//XXX clean up all this code once background build is NOT an option
+			boolean postBuild = Policy.BACKGROUND_BUILD && type == IResourceChangeEvent.POST_AUTO_BUILD;
+			if (postChange || postBuild) {
+				long id = workspace.getMarkerManager().getChangeId();
+				if (Policy.BACKGROUND_BUILD) {
+					id = postChange ? lastPostChangeId = id : (lastPostBuildId = id);
+				} else
+					//keep both ids in sync
+					lastPostBuildId = lastPostChangeId = id;
+				workspace.getMarkerManager().resetMarkerDeltas(Math.min(lastPostBuildId, lastPostChangeId));
 				lastState.immutable();
-				if (updatePostBuild)
-					lastPostBuild = lastState;
+				if (postBuild)
+					lastPostBuildTree = lastState;
 				else
-					lastPostChange = lastState;
+					lastPostChangeTree = lastState;
 				lastDelta = null;
 				lastDeltaState = lastState;
-				lastMarkerChangeId = 0;
 			}
 		}
 	}
@@ -91,21 +112,23 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		long id = workspace.getMarkerManager().getChangeId();
 		// if we have a delta from last time and no resources have changed since then, we
 		// can reuse the delta structure
+		boolean postBuild = Policy.BACKGROUND_BUILD && type != IResourceChangeEvent.POST_CHANGE;
 		if (lastDelta != null && !ElementTree.hasChanges(tree, lastDeltaState, ResourceComparator.getComparator(true), true)) {
 			// Markers may have changed since the delta was generated.  If so, get the new
 			// marker state and insert it in to the delta which is being reused.
-			if (id != lastMarkerChangeId)
-				lastDelta.updateMarkers(workspace.getMarkerManager().getMarkerDeltas());
+			if (id != lastDeltaId) {
+				Map markerDeltas = workspace.getMarkerManager().getMarkerDeltas(lastPostBuildId);
+				lastDelta.updateMarkers(markerDeltas);
+			}
 		} else {
 			// We don't have a delta or something changed so recompute the whole deal.
-			ElementTree oldTree = lastPostChange;
-			if (Policy.BACKGROUND_BUILD && type == IResourceChangeEvent.POST_AUTO_BUILD)
-				oldTree = lastPostBuild;
-			lastDelta = ResourceDeltaFactory.computeDelta(workspace, oldTree, tree, Path.ROOT, true);
+			ElementTree oldTree = postBuild ? lastPostBuildTree : lastPostChangeTree;
+			long markerId = postBuild ? lastPostBuildId : lastPostChangeId;
+			lastDelta = ResourceDeltaFactory.computeDelta(workspace, oldTree, tree, Path.ROOT, markerId+1);
 		}
 		// remember the state of the world when this delta was consistent
-		lastMarkerChangeId = id;
 		lastDeltaState = tree;
+		lastDeltaId = id;
 		return lastDelta;
 	}
 	protected ResourceChangeListenerList.ListenerEntry[] getListeners() {
@@ -177,10 +200,24 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	public void startup(IProgressMonitor monitor) {
 		// get the current state of the workspace as the starting point and
 		// tell the workspace to track changes from there.  This gives the
-		// notificaiton manager an initial basis for comparison.
-		lastPostChange = workspace.getElementTree();
+		// notification manager an initial basis for comparison.
+		lastPostChangeTree = workspace.getElementTree();
 		if (Policy.BACKGROUND_BUILD)
-			lastPostBuild = lastPostChange;
+			lastPostBuildTree = lastPostChangeTree;
 		workspace.addLifecycleListener(this);
+	}
+	/**
+	 * Build delta listeners need to receive marker deltas that are accumulated
+	 * over several post change notifications.  This method keeps the set of marker
+	 * deltas for auto-build deltas up to date.
+	 * @param newDeltas the most recently computed marker deltas
+	 * @param changeId the generation id of this new set of marker deltas
+	 */
+	protected void updateMarkerDeltas(Map newDeltas, long changeId) {
+		//just return if we have already seen these changes
+		if (changeId == buildMarkerChangeId)
+			return;
+		buildMarkerChangeId = changeId;
+		buildMarkerDeltas = MarkerDelta.merge(buildMarkerDeltas, lastDelta.getDeltaInfo().getMarkerDeltas());
 	}
 }

@@ -82,7 +82,7 @@ public void read(DataInputStream input, boolean generateDeltas) throws IOExcepti
 				for (int i = 0; i < infos.length; i++)
 					if (infos[i] != null)
 						deltas.add(new MarkerDelta(IResourceDelta.ADDED, resource, (MarkerInfo) infos[i]));
-				workspace.getMarkerManager().changedMarkers(resource, (IMarkerDelta[]) deltas.toArray(new IMarkerDelta[deltas.size()]));
+				workspace.getMarkerManager().changedMarkers(resource, (IMarkerSetElement[]) deltas.toArray(new IMarkerSetElement[deltas.size()]));
 			}
 		}
 	} catch (EOFException e) {

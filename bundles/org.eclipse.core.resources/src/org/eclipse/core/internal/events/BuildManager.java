@@ -423,7 +423,7 @@ protected IResourceDelta getDelta(IProject project) {
 		startTime = System.currentTimeMillis();
 		Policy.debug(true, "Computing delta for project: " + project.getName()); //$NON-NLS-1$
 	}
-	result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), false);
+	result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), -1);
 	deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
 	if (Policy.DEBUG_BUILD_FAILURE && result == null) 
 		Policy.debug(true, "Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

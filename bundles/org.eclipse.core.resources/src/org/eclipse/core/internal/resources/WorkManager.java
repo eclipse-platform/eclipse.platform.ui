@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -20,7 +21,20 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * This includes prepared and running operation depth, auto-build strategy and
  * cancel state.
  */
-public class WorkManager implements IManager {
+class WorkManager implements IManager {
+	/**
+	 * Scheduling rule for use during resource change notification.  This
+	 * rule must always be allowed to nest within a resource rule of any granularity
+	 * since it is used from within the scope of all resource changing operations.
+	 */
+	class NotifyRule implements ISchedulingRule {
+		public boolean contains(ISchedulingRule rule) {
+			return (rule instanceof IResource) || rule.getClass().equals(NotifyRule.class);
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return contains(rule);
+		}
+	}
 	public static final int OPERATION_EMPTY = 0;
 	public static final int OPERATION_NONE = -1;
 	/**
@@ -30,12 +44,19 @@ public class WorkManager implements IManager {
 	private IJobManager jobManager;
 	private final OrderedLock lock;
 	private int nestedOperations = 0;
+	private NotifyRule notifyRule = new NotifyRule();
 	private boolean operationCanceled = false;
 	private int preparedOperations = 0;
 
 	public WorkManager(Workspace workspace) {
 		this.jobManager = Platform.getJobManager();
 		this.lock = (OrderedLock) jobManager.newLock();
+	}
+	/**
+	 * Begins a resource change notification.
+	 */
+	public void beginNotify() {
+		jobManager.beginRule(notifyRule);
 	}
 	/**
 	 * Releases the workspace lock without changing the nested operation depth.
@@ -84,6 +105,9 @@ public class WorkManager implements IManager {
 	 */
 	private void decrementPreparedOperations() {
 		preparedOperations--;
+	}
+	public void endNotify() {
+		jobManager.endRule();
 	}
 	/**
 	 * Re-acquires the workspace lock that was temporarily released during an

@@ -46,32 +46,33 @@ class AutoBuildJob extends Job {
 		if (state == Job.RUNNING && Platform.getJobManager().currentJob() != this) 
 			workspace.getBuildManager().interrupt();
 	}
-	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			monitor.beginTask(null, Policy.opWork);
-			try {
-				workspace.prepareOperation(null);
-				workspace.beginOperation(true);
-				workspace.broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
-				if (workspace.isAutoBuilding())
-					workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
-				workspace.broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
-			} finally {
-				//building may close the tree, but we are still inside an operation so open it
-				if (workspace.getElementTree().isImmutable())
-					workspace.newWorkingTree();
-				if (Policy.BACKGROUND_BUILD)
-					avoidBuild();
-				workspace.endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
-			}
-		} finally {
-			monitor.done();
-		}
-	}
+   private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
+      monitor = Policy.monitorFor(monitor);
+      try {
+         monitor.beginTask(null, Policy.opWork);
+         try {
+            workspace.prepareOperation(null);
+            workspace.beginOperation(true);
+            workspace.broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
+            if (shouldBuild()) {
+               //clear build flags
+               forceBuild = buildNeeded = false;
+               workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
+            }
+            workspace.broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
+         } finally {
+            //building may close the tree, but we are still inside an operation so open it
+            if (workspace.getElementTree().isImmutable())
+               workspace.newWorkingTree();
+            workspace.endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
+         }
+      } finally {
+         monitor.done();
+      }
+   }
 	public synchronized void endTopLevel(boolean needsBuild) {
 		buildNeeded |= needsBuild;
-		if (Policy.BACKGROUND_BUILD && shouldBuild())
+		if (Policy.BACKGROUND_BUILD)
 			schedule(Policy.AUTO_BUILD_DELAY);
 	}
 	/**
@@ -85,12 +86,10 @@ class AutoBuildJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
 		synchronized (this)  {
-			if (monitor.isCanceled())
+			if (Policy.BACKGROUND_BUILD && monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 		}
 		try {
-			//clear build flags
-			forceBuild = buildNeeded = false;
 			doBuild(monitor);
 			return Status.OK_STATUS;
 		} catch (OperationCanceledException e) {
@@ -101,6 +100,9 @@ class AutoBuildJob extends Job {
 		}
 	}
 	public synchronized boolean shouldBuild() {
+		//if auto-build is off then we never run
+		if (!workspace.isAutoBuilding())
+			return false;
 		//build if the workspace requires a build (description changes)
 		if (forceBuild) {
 			forceBuild = false;
