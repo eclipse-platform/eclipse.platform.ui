@@ -13,9 +13,9 @@ package org.eclipse.ant.internal.ui.model;
 public interface IProblemRequestor {
 
 	/**
-	 * Notification of a XML problem.
+	 * Notification of a Ant buildfile problem.
 	 *
-	 * @param problem IProblem - The discovered Java problem.
+	 * @param problem IProblem - The discovered Ant buildfile problem.
 	 */
 	void acceptProblem(IProblem problem);
 
