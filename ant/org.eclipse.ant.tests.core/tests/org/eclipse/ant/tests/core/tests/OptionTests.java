@@ -260,7 +260,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyTargetAsArg() throws CoreException {
 		run("echoing.xml", new String[]{"echo3"}, false);
-		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+		assertTrue("3 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 3);
 		assertSuccessful();
 	}
 	
@@ -269,7 +269,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyTargetAsArgWithOtherOptions() throws CoreException {
 		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo3"}, false);
-		assertTrue("5 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 5);
+		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
 		List messages= AntTestChecker.getDefault().getMessages();
 		//ensure that echo3 target executed and only that target
 		assertTrue("echo3 target not executed", messages.get(2).equals("echo3"));
@@ -281,7 +281,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyTargetsAsArgWithOtherOptions() throws CoreException {
 		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo2", "echo3"}, false);
-		assertTrue("6 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 6);
+		assertTrue("5 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 5);
 		List messages= AntTestChecker.getDefault().getMessages();
 		//ensure that echo2 target executed
 		assertTrue("echo2 target not executed", messages.get(2).equals("echo2"));
@@ -318,8 +318,10 @@ public class OptionTests extends AbstractAntTest {
 		assertTrue("You must specify a property filename when using the -propertyfile argument", false);
 	}
 	
-	/**	 * A build should succeed when a property file is not found.
-	 * The error is reported and the build continues.	 */
+	/**
+	 * A build should succeed when a property file is not found.
+	 * The error is reported and the build continues.
+	 */
 	public void testPropertyFileFileNotFound() throws CoreException {
 		
 		run("TestForEcho.xml", new String[]{"-propertyfile", "qq.txt"});

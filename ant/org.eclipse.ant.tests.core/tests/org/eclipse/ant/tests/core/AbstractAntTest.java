@@ -166,7 +166,7 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected void assertSuccessful() {
 		List messages= AntTestChecker.getDefault().getMessages();
-		String success= (String)messages.get(messages.size() - 2);
+		String success= (String)messages.get(messages.size() - 1);
 		assertTrue("Build was not flagged as successful: " + success, BUILD_SUCCESSFUL.equals(success));
 	}
 	
