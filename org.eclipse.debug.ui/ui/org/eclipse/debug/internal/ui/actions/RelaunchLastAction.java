@@ -16,7 +16,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -73,8 +72,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		if (dwindow == null) {
 			return;
 		}
-		IStructuredSelection selection= DebugUIPlugin.resolveSelection(dwindow);
-		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), selection, LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));		
+		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));		
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);
 		dialog.open();
 	}

@@ -369,16 +369,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
 	public void refresh() {
-		if (!isInitializingTabs()) {
-			updateWorkingCopyFromPages();
-			boolean dirty = isDirty();
-			getApplyButton().setEnabled(dirty && canSave());
-			getRevertButton().setEnabled(dirty);
+		ILaunchConfigurationTab[] tabs = getTabs();
+		if (!isInitializingTabs() && tabs != null) {
+			// update the working copy from the active tab
+			getActiveTab().performApply(getWorkingCopy());
+			updateButtons();
 			// update error ticks
-			ILaunchConfigurationTab[] tabs = getTabs();
-			if (tabs == null) {
-				return;
-			}
 			TabFolder folder = getTabFolder();
 			for (int i = 0; i < tabs.length; i++) {
 				ILaunchConfigurationTab tab = tabs[i];
@@ -387,6 +383,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				setTabIcon(item, error, tab);
 			}		
 		}
+	}
+
+	private void updateButtons() {
+		boolean dirty = isDirty();
+		getApplyButton().setEnabled(dirty && canSave());
+		getRevertButton().setEnabled(dirty);
 	}
 	
 	/**
@@ -970,6 +972,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification the name field has been modified
 	 */
 	protected void handleNameModified() {
+		getWorkingCopy().rename(getNameWidget().getText().trim());
 		refreshStatus();
 	}		
 	
@@ -982,13 +985,21 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			Text widget = getNameWidget();
 			String name = widget.getText();
 			String trimmed = name.trim();
+
+			// update launch config
+			setInitializingTabs(true);
 			if (!name.equals(trimmed)) {
 				widget.setText(trimmed);
 			}
+			getWorkingCopy().rename(trimmed);
+			getTabGroup().performApply(getWorkingCopy());
+			setInitializingTabs(false);
+			//
+			
 			if (isDirty()) {
 				getWorkingCopy().doSave();
-				refresh();
 			}
+			updateButtons();
 		} catch (CoreException e) {
 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_46"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_saving_launch_configuration_47"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
@@ -1000,16 +1011,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	protected void handleRevertPressed() {
 		inputChanged(getOriginal());
-	}	
-	
-	/**
-	 * Iterate over the pages to update the working copy
-	 */
-	private void updateWorkingCopyFromPages() {
-		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
-		if (getTabGroup() != null) {
-			getTabGroup().performApply(workingCopy);
-		}
 	}	
 	
 	/**

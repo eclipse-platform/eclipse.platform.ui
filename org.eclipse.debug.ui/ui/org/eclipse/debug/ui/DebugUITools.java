@@ -32,7 +32,15 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -310,12 +318,35 @@ public class DebugUITools {
 			dialog.doInitialTreeSelection();
 			return Window.OK;
 		} else {
-			dialog = new LaunchConfigurationsDialog(shell, null, LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier));
+			dialog = new LaunchConfigurationsDialog(shell, LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier));
 			dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
 			dialog.setInitialSelection(selection);
 			return dialog.open();			
 		}
 	}
+	
+	/**
+	 * Open the launch configuration properties dialog on the specified launch
+	 * configuration.
+	 *
+	 * @param shell the parent shell for the launch configuration dialog
+	 * @param configuration the configuration to display
+	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
+	 *  This should be one of the constants defined in <code>ILaunchManager</code>.
+	 * @return the return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 * @since 2.1
+	 */
+	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier) {
+		LaunchGroupExtension group = LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier);
+		if (group != null) {
+			LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group);
+			return dialog.open();
+		} else {
+			return Window.CANCEL;
+		}
+	}
+	
 		
 	/**
 	 * Saves all dirty editors and builds the workspace according to current

@@ -9,7 +9,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -34,8 +33,7 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 		if (dwindow == null) {
 			return;
 		}
-		IStructuredSelection selection= DebugUIPlugin.resolveSelection(dwindow);
-		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), selection, LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));		
+		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));		
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST);
 		dialog.open();
 	}

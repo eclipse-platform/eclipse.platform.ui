@@ -223,8 +223,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected static final Object[] EMPTY_ARRAY = new Object[0];	
 	
-	protected static final String DEFAULT_NEW_CONFIG_NAME = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.New_configuration_1"); //$NON-NLS-1$
-	
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
@@ -272,12 +270,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * parent shell.
 	 * 
 	 * @param shell the parent shell
-	 * @param selection the selection used to initialize this dialog, typically the 
-	 *  current workbench selection
-	 * @param mode one of <code>ILaunchManager.RUN_MODE</code> or 
-	 *  <code>ILaunchManager.DEBUG_MODE</code>
+	 * @param group the group of lanuch configuration to display
 	 */
-	public LaunchConfigurationsDialog(Shell shell, IStructuredSelection selection, LaunchGroupExtension group) {
+	public LaunchConfigurationsDialog(Shell shell, LaunchGroupExtension group) {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setLaunchGroup(group);
@@ -581,8 +576,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Update buttons and message.
 	 */
 	protected void refreshStatus() {
-		updateButtons();
 		updateMessage();
+		updateButtons();
 	}
 			
 	private Display getDisplay() {

@@ -72,8 +72,8 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 */
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
-			getLaunchConfigurationDialog().updateButtons();
 			getLaunchConfigurationDialog().updateMessage();
+			getLaunchConfigurationDialog().updateButtons();
 		}
 	}
 				
