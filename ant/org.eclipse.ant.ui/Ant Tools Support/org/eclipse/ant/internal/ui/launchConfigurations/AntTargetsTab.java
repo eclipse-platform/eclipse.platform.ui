@@ -450,6 +450,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			setMessage(null);
 			
 			final String expandedLocation= validateLocation();
+			if (expandedLocation == null) {
+				return fAllTargets;
+			}
 			final CoreException[] exceptions= new CoreException[1];
 			try {
 				final String[] arguments = AntUtil.parseString(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null), ","); //$NON-NLS-1$
