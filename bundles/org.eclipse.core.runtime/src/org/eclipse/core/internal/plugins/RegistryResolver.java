@@ -689,31 +689,30 @@ private void linkFragments() {
 		PluginDescriptorModel plugin = null;
 		IndexEntry ix = (IndexEntry) idmap.get(fragment.getPluginId());
 		byte matchType = fragment.getMatch();
-		for (Iterator list = ix.versions().iterator(); list.hasNext() && plugin == null;) {
-			PluginDescriptorModel pd = (PluginDescriptorModel) list.next();
-			if (pd.getEnabled()) {
-				// return the highest version that fits the matching criteria
-				switch (matchType) {
-					case PluginFragmentModel.FRAGMENT_MATCH_PERFECT:
-						if (getVersionIdentifier(pd).isPerfect(new PluginVersionIdentifier(fragment.getPluginVersion())))
-							plugin = pd;
-						break;
-					case PluginFragmentModel.FRAGMENT_MATCH_EQUIVALENT:
-						if (getVersionIdentifier(pd).isEquivalentTo(new PluginVersionIdentifier(fragment.getPluginVersion())))
-							plugin = pd;
-						break;
-					case PluginFragmentModel.FRAGMENT_MATCH_COMPATIBLE:
-					case PluginFragmentModel.FRAGMENT_MATCH_UNSPECIFIED:
-						if (getVersionIdentifier(pd).isCompatibleWith(new PluginVersionIdentifier(fragment.getPluginVersion())))
-							plugin = pd;
-						break;
-					case PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL:
-						if (getVersionIdentifier(pd).isGreaterOrEqualTo(new PluginVersionIdentifier(fragment.getPluginVersion())))
-							plugin = pd;
-						break;
-				}
-				if (plugin != null) {
-					break;
+		if (ix != null) {
+			for (Iterator list = ix.versions().iterator(); list.hasNext() && plugin == null;) {
+				PluginDescriptorModel pd = (PluginDescriptorModel) list.next();
+				if (pd.getEnabled()) {
+					// return the highest version that fits the matching criteria
+					switch (matchType) {
+						case PluginFragmentModel.FRAGMENT_MATCH_PERFECT:
+							if (getVersionIdentifier(pd).isPerfect(new PluginVersionIdentifier(fragment.getPluginVersion())))
+								plugin = pd;
+							break;
+						case PluginFragmentModel.FRAGMENT_MATCH_EQUIVALENT:
+							if (getVersionIdentifier(pd).isEquivalentTo(new PluginVersionIdentifier(fragment.getPluginVersion())))
+								plugin = pd;
+							break;
+						case PluginFragmentModel.FRAGMENT_MATCH_COMPATIBLE:
+						case PluginFragmentModel.FRAGMENT_MATCH_UNSPECIFIED:
+							if (getVersionIdentifier(pd).isCompatibleWith(new PluginVersionIdentifier(fragment.getPluginVersion())))
+								plugin = pd;
+							break;
+						case PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL:
+							if (getVersionIdentifier(pd).isGreaterOrEqualTo(new PluginVersionIdentifier(fragment.getPluginVersion())))
+								plugin = pd;
+							break;
+					}
 				}
 			}
 		}
