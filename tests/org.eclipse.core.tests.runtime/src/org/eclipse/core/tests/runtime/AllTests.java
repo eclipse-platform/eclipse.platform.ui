@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * Copyright (c) 2000, 2002 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM Corporation - initial test suite
  ******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
@@ -33,6 +33,7 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.addTest(PathTest.suite());
 	suite.addTest(PlatformTest.suite());
+	suite.addTest(PreferencesTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
 	suite.addTest(ConfigurationElementModelTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());

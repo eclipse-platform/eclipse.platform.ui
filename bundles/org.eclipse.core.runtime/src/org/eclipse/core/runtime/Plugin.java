@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.runtime;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.plugins.DefaultPlugin;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
@@ -11,6 +16,10 @@ import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
+
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Map;
@@ -163,6 +172,36 @@ public abstract class Plugin  {
 	/** The plug-in descriptor.
 	 */
 	private IPluginDescriptor descriptor;
+	
+	/**
+	 * Internal name of the preference storage file (value
+	 * <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
+	 * 
+	 * @since 2.0
+	 */
+	private static final String PREFERENCES_FILE_NAME = "pref_store.ini";//$NON-NLS-1$
+
+	/**
+	 * The name of the file (value <code>"preferences.ini"</code>) in a
+	 * plug-in's (read-only) directory that, when present, contains values that
+	 * override the normal default values for this plug-in's preferences.
+	 * <p>
+	 * The format of the file is as per <code>java.io.Properties</code> where
+	 * the keys are property names and values are strings.
+	 * </p>
+	 * 
+	 * @since 2.0
+	 */
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = "preferences.ini";//$NON-NLS-1$
+
+	/**
+	 * The preference object for this plug-in; initially <code>null</code>
+	 * meaning not yet created and initialized.
+	 * 
+	 * @since 2.0
+	 */
+	private Preferences preferences = null;
+
 /**
  * Creates a new plug-in runtime object for the given plug-in descriptor.
  * <p>
@@ -385,6 +424,241 @@ public final ILog getLog() {
 public final IPath getStateLocation() {
 	return InternalPlatform.getPluginStateLocation(this);
 }
+
+/**
+ * Returns the preference store for this plug-in.
+ * <p>
+ * Note that if an error occurs reading the preference store from disk, an empty 
+ * preference store is quietly created, initialized with defaults, and returned.
+ * </p>
+ * <p>
+ * Calling this method may cause the preference store to be created and
+ * initialized. Subclasses which reimplement the 
+ * <code>initializeDefaultPluginPreferences</code> method have this opportunity
+ * to initialize preference default values, just prior to processing override
+ * default values imposed externally to this plug-in (specified for the product,
+ * or at platform start up).
+ * </p>
+ * <p>
+ * After settings in the preference store are changed (for example, with 
+ * <code>Preferences.setValue</code> or <code>setToDefault</code>),
+ * <code>savePluginPreferences</code> should be called to store the changed
+ * values back to disk. Otherwise the changes will be lost on plug-in
+ * shutdown.
+ * </p>
+ *
+ * @return the preference store
+ * @see #savePluginPreferences
+ * @see Preferences#setValue
+ * @see Preferences#setToDefault
+ * @since 2.0
+ */
+public final Preferences getPluginPreferences() {
+	if (preferences != null) {
+		// N.B. preferences instance field set means already created
+		// and initialized (or in process of being initialized)
+		return preferences;
+	}
+		
+	// lazily create preference store
+	// important: set preferences instance field to prevent re-entry
+	preferences = new Preferences();
+	// load settings into preference store 
+	loadPluginPreferences();
+
+	// 1. fill in defaults supplied by this plug-in
+	initializeDefaultPluginPreferences();
+	// 2. override with defaults stored with plug-in
+	applyInternalPluginDefaultOverrides();
+	// 3. override with defaults from primary feature or command line
+	applyExternalPluginDefaultOverrides();
+	return preferences;
+}
+
+/**
+ * Loads preferences settings for this plug-in from the plug-in preferences
+ * file in the plug-in's state area. This plug-in must have a preference store
+ * object.
+ * 
+ * @see Preferences#load
+ * @since 2.0
+ */
+private void loadPluginPreferences() {
+	// the preferences file is located in the plug-in's state area
+	// at a well-known name
+	File prefFile = getStateLocation().append(PREFERENCES_FILE_NAME).toFile();
+	if (!prefFile.exists()) {
+		// no preference file - that's fine
+		return;
+	}
+	
+	// load preferences from file
+	SafeFileInputStream in = null;
+	try {
+		in = new SafeFileInputStream(prefFile);
+		preferences.load(in);
+	} catch (IOException e) {
+		// problems loading preference store - quietly ignore
+	} finally {
+		if (in != null) {
+			try {
+				in.close();
+			} catch (IOException e) {
+				// ignore problems with close
+			}
+		}
+	}
+}
+
+/**
+ * Saves preferences settings for this plug-in. Does nothing if the preference
+ * store does not need saving.
+ * <p>
+ * Plug-in preferences are <b>not</b> saved automatically on plug-in shutdown.
+ * </p>
+ * 
+ * @see Preferences#save
+ * @see Preferences#needsSaving
+ * @since 2.0
+ */
+public final void savePluginPreferences() {
+	if (preferences == null || !preferences.needsSaving()) {
+		// nothing to save
+		return;
+	}
+
+	// preferences need to be saved
+	// the preferences file is located in the plug-in's state area
+	// at a well-known name (pref_store.ini)
+	File prefFile = getStateLocation().append(PREFERENCES_FILE_NAME).toFile();
+	if (preferences.propertyNames().length == 0) {
+		// there are no preference settings
+		// rather than write an empty file, just delete any existing file
+		if (prefFile.exists()) {
+			boolean success = prefFile.delete();
+			// don't worry if delete unsuccessful
+		}
+		return;
+	}
+	
+	// write file, overwriting an existing one
+	OutputStream out = null;
+	try {
+		// do it as carefully as we know how so that we don't lose/mangle
+		// the setting in times of stress
+		out = new SafeFileOutputStream(prefFile);
+		preferences.store(out, null);
+	} catch (IOException e) {
+		// problems saving preference store - quietly ignore
+	} finally {
+		if (out != null) {
+			try {
+				out.close();
+			} catch (IOException e) {
+				// ignore problems with close
+			}
+		}
+	}
+}
+
+/**
+ * Initializes the default preferences settings for this plug-in.
+ * <p>
+ * This method is called sometime after the preference store for this
+ * plug-in is created. Default values are never stored in preference
+ * stores; they must be filled in each time. This method provides the
+ * opportunity to initialize the default values.
+ * </p>
+ * <p>
+ * The default implementation of this method does nothing. A subclass that needs
+ * to set default values for its preferences must reimplement this method.
+ * Default values set at a later point will override any default override
+ * settings supplied from outside the plug-in (product configuration or
+ * platform start up).
+ * </p>
+ * 
+ * @since 2.0
+ */
+protected void initializeDefaultPluginPreferences() {
+	// default implementation of this method - spec'd to do nothing
+}
+
+/**
+ * Applies external overrides to default preferences for this plug-in. By the
+ * time this method is called, the default settings for the plug-in itself will
+ * have already have been filled in.
+ * 
+ * @since 2.0
+ */
+private void applyExternalPluginDefaultOverrides() {
+	// 1. InternalPlatform is central authority for platform configuration questions
+	InternalPlatform.applyPrimaryFeaturePluginDefaultOverrides(
+		getDescriptor().getUniqueIdentifier(),
+		preferences);
+	// 2. command line overrides take precedence over feature-specified overrides
+	InternalPlatform.applyCommandLinePluginDefaultOverrides(
+		getDescriptor().getUniqueIdentifier(),
+		preferences);
+}
+
+/**
+ * Applies overrides to the default preferences for this plug-in. Looks
+ * for a file in the (read-only) plug-in directory. The default settings will
+ * have already have been applied.
+ * 
+ * @since 2.0
+ */
+private void applyInternalPluginDefaultOverrides() {
+	
+	// use URLs so we can find the file in fragments too
+	URL iniURL;
+	try {
+		// FIXME - ensure that fragments are consulted!
+		URL baseURL = null;
+		try {
+			baseURL = Platform.resolve(getDescriptor().getInstallURL());
+		} catch (IOException ioe) {
+			// fail quietly
+			return;
+		}
+		iniURL = new URL(baseURL, PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME);
+	} catch (MalformedURLException e) {
+		// fail silently
+		return;
+	}
+
+	File iniFile = new File(getFileFromURL(iniURL));
+	if (!iniFile.exists()) {
+		// no preference file - that's fine
+		return;
+	}
+
+	Properties overrides = new Properties();
+	SafeFileInputStream in = null;
+	try {
+		in = new SafeFileInputStream(iniFile);
+		overrides.load(in);
+	} catch (IOException e) {
+		// cannot read ini file - fail silently
+		return;
+	} finally {
+		try {
+			if (in != null) {
+				in.close();
+			}
+		} catch (IOException e) {
+			// ignore problems closing file
+		}
+	}
+
+	for (Iterator it = overrides.entrySet().iterator(); it.hasNext(); ) {
+		Map.Entry entry = (Map.Entry) it.next();
+		String key = (String) entry.getKey();
+		String value = (String) entry.getValue();
+		preferences.setDefault(key, value);
+	}
+}
+
 /**
  * Returns whether this plug-in is in debug mode.
  * By default plug-ins are not in debug mode.  A plug-in can put itself
@@ -462,10 +736,11 @@ public void setDebugging(boolean value) {
  * <b>Clients must never explicitly call this method.</b>
  *
  * @exception CoreException if this method fails to shut down
- *   this plug-in 
+ *   this plug-in
  */
 public void shutdown() throws CoreException {
 }
+
 /**
  * Starts up this plug-in.
  * <p>

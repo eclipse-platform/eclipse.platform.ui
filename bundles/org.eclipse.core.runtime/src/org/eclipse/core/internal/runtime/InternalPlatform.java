@@ -1,16 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.plugins.*;
 import java.io.*;
 import java.io.FileOutputStream;
@@ -48,9 +53,16 @@ public final class InternalPlatform {
 	private static boolean inDevelopmentMode = false;
 	private static boolean splashDown = false;
 	private static boolean cacheRegistry = true;
+	private static String pluginCustomizationFile = null;
 
 	private static File lockFile = null;
 	private static RandomAccessFile lockRAF = null;
+	
+	/**
+	 * Name of the plug-in customization file (value "plugin_customization.ini")
+	 * located in the root of the primary feature plug-in.
+	 */
+	private static final String PLUGIN_CUSTOMIZATION_FILE_NAME = "plugin_customization.ini";
 
 	// default plugin data
 	private static final String PI_XML = "org.apache.xerces";
@@ -58,7 +70,7 @@ public final class InternalPlatform {
 	private static final String XML_VERSION = "1.2.1";
 	private static final String XML_JAR = "xerces.jar";
 	private static final String XML_LOCATION = "plugins/" + PI_XML + "/";
-
+	
 	// execution options
 	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug";
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context";
@@ -74,7 +86,8 @@ public final class InternalPlatform {
 	private static final String DEV = "-dev";
 	private static final String ENDSPLASH = "-endsplash";
 	private static final String NOREGISTRYCACHE = "-noregistrycache";
-
+	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization";
+	
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
@@ -772,6 +785,12 @@ private static String[] processCommandLine(String[] args) {
 			found = true;
 		}
 
+		// look for the plug-in customization file
+		if (args[i - 1].equalsIgnoreCase(PLUGIN_CUSTOMIZATION)) {
+			pluginCustomizationFile = arg;
+			found = true;
+		}
+
 		// done checking for args.  Remember where an arg was found 
 		if (found) {
 			configArgs[configArgIndex++] = i - 1;
@@ -859,4 +878,154 @@ public static Map getRegIndex() {
 public static void clearRegIndex() {
 	regIndex = null;
 }
+
+/**
+ * Applies primary feature-specific overrides to default preferences for the
+ * plug-in with the given id.
+ * <p>
+ * Note that by the time this method is called, the default settings
+ * for the plug-in itself should have already have been filled in.
+ * </p>
+ * 
+ * @param id the unique identifier of the plug-in
+ * @param preferences the preference store for the specified plug-in
+ * 
+ * @since 2.0
+ */
+public static void applyPrimaryFeaturePluginDefaultOverrides(
+	String id,
+	Preferences preferences) {
+
+	// carefully navigate to the plug-in for the primary feature
+	IPlatformConfiguration cfg = BootLoader.getCurrentPlatformConfiguration();
+	if (cfg == null) {
+		// bail if we don't seem to have one for whatever reason (!)
+		return;
+	}
+	String primaryFeaturePluginId = cfg.getPrimaryFeatureIdentifier();
+	if (primaryFeaturePluginId  == null) {
+		// bail if we don't seem to have one of these (!)
+		return;
+	}
+	IPluginDescriptor primaryFeatureDescriptor = getPluginRegistry().getPluginDescriptor(primaryFeaturePluginId);
+	if (primaryFeatureDescriptor  == null) {
+		// bail if primary feature is missing (!)
+		return;
+	}
+	try {
+		// FIXME - ensure that fragments are consulted!
+		URL baseURL = null;
+		try {
+			baseURL = Platform.resolve(primaryFeatureDescriptor.getInstallURL());
+		} catch (IOException ioe) {
+			// fail quietly
+			return;
+		}
+		// locate plug-in customization file within primary feature plug-in (or fragment)
+		URL pluginCustomizationURL = new URL(baseURL, PLUGIN_CUSTOMIZATION_FILE_NAME);
+		// apply any defaults for the given plug-in
+		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
+	} catch (MalformedURLException e) {
+		// fail silently
+		return;
+	}
 }
+
+/**
+ * Applies command line-supplied overrides to default preferences for the
+ * plug-in with the given id.
+ * <p>
+ * Note that by the time this method is called, the default settings
+ * for the plug-in itself should have already have been filled in, along
+ * with any default overrides supplied by the primary feature.
+ * </p>
+ * 
+ * @param id the unique identifier of the plug-in
+ * @param preferences the preference store for the specified plug-in
+ * 
+ * @since 2.0
+ */
+public static void applyCommandLinePluginDefaultOverrides(
+	String id,
+	Preferences preferences) {
+	
+	if (pluginCustomizationFile == null) {
+		// no command line overrides to process
+		return;
+	}
+
+	try {
+		URL pluginCustomizationURL = new File(pluginCustomizationFile).toURL();
+		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
+	} catch (MalformedURLException e) {
+		// fail silently
+		return;
+	}
+}
+
+/**
+ * Applies overrides to default preferences for the plug-in with the given id.
+ * The data is contained in the <code>java.io.Properties</code> style file at 
+ * the given URL. The property names consist of "/'-separated plug-in id and
+ * name of preference; e.g., "com.example.myplugin/mypref".
+ * 
+ * @param propertiesURL the URL of a <code>java.io.Properties</code> style file
+ * @param id the unique identifier of the plug-in
+ * @param preferences the preference store for the specified plug-in
+ * 
+ * @since 2.0
+ */
+private static void applyPluginDefaultOverrides(
+	URL propertiesURL,
+	String id,
+	Preferences preferences) {
+	
+	// read the java.io.Properties file at the given URL
+	Properties overrides = new Properties();
+	SafeFileInputStream in = null;
+		
+	try {
+		File inFile = new File(propertiesURL.getFile());
+		if (!inFile.exists())
+			// We don't have a preferences file to worry about
+			return;
+			
+		in = new SafeFileInputStream(inFile);
+		if (in == null)
+			// fail quietly
+			return;
+		overrides.load(in);
+	} catch (IOException e) {
+		// cannot read ini file - fail silently
+		return;
+	} finally {
+		try {
+			if (in != null) {
+				in.close();
+			}
+		} catch (IOException e) {
+			// ignore problems closing file
+		}
+	}
+
+	for (Iterator it = overrides.entrySet().iterator(); it.hasNext();) {
+		Map.Entry entry = (Map.Entry) it.next();
+		String qualifiedKey = (String) entry.getKey();
+		// Keys consist of "/'-separated plug-in id and name of preference
+		// e.g., "com.example.myplugin/mypref"
+		int s = qualifiedKey.indexOf('/');
+		if (s < 0 || s == 0 || s == qualifiedKey.length() - 1) {
+			// skip mangled entry
+			continue;
+		}
+		// plug-in id is non-empty string before "/" 
+		String pluginId = qualifiedKey.substring(0, s);
+		if (pluginId.equals(id)) {
+			// override property in the given plug-in
+			// plig-in-specified property name is non-empty string after "/" 
+			String propertyName = qualifiedKey.substring(s + 1);
+			String value = (String) entry.getValue();
+			preferences.setDefault(propertyName, value);
+		}
+	}
+}}
