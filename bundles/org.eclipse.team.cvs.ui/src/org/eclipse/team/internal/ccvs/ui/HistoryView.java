@@ -542,6 +542,7 @@ public class HistoryView extends ViewPart {
 			if (teamProvider != null) {
 				this.provider = (CVSTeamProvider)teamProvider;
 				try {
+					// for a file this will return the base
 					ICVSRemoteFile remoteFile = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
 					historyTableProvider.setFile(remoteFile);
 					tableViewer.setInput(remoteFile);
@@ -560,7 +561,7 @@ public class HistoryView extends ViewPart {
 	/**
 	 * Shows the history for the given ICVSRemoteFile in the view.
 	 */
-	public void showHistory(ICVSRemoteFile remoteFile, String currentRevision) {
+	public void showHistory(ICVSRemoteFile remoteFile) {
 		try {
 			if (remoteFile == null) {
 				tableViewer.setInput(null);

@@ -65,7 +65,7 @@ public class ShowHistoryAction extends CVSAction {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
-					view.showHistory(files[0], null /* no current revision */);
+					view.showHistory(files[0]);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);

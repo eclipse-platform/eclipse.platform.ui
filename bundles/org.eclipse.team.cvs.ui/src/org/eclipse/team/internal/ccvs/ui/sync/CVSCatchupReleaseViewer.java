@@ -143,20 +143,23 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			IRemoteSyncElement remoteSyncElement = ((TeamFile)node).getMergeResource().getSyncElement();
 			ICVSRemoteFile remoteFile = (ICVSRemoteFile)remoteSyncElement.getRemote();
 			IResource local = remoteSyncElement.getLocal();
-			ICVSRemoteFile baseFile = (ICVSRemoteFile)remoteSyncElement.getBase();
 			
-			// can only show history if remote exists or local has a base.
-			String currentRevision = null;
-			try {
-				currentRevision = baseFile != null ? baseFile.getRevision(): null;
-			} catch(TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+			ICVSRemoteFile baseFile = (ICVSRemoteFile)remoteSyncElement.getBase();
+			if(baseFile == null) {
+				try {
+					baseFile = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(local);
+				} catch (CVSException e) {
+					baseFile = null;
+				}
 			}
-			if (remoteFile != null) {
-				view.showHistory(remoteFile, currentRevision);
-			} else if (baseFile != null) {
-				view.showHistory(baseFile, currentRevision);
-			}
+			
+			if(local.exists()) {
+				view.showHistory(local);
+			}else if (baseFile != null) {
+				view.showHistory(baseFile);
+			} else if (remoteFile != null) {
+				view.showHistory(remoteFile);
+			} 
 		}
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection = event.getSelection();
