@@ -16,7 +16,7 @@
      </library>
    </runtime>
 
-   <extension-point id="antObjects" name="%objectsName"/>
+   <extension-point id="extraClasspathEntries" name="%classpathName"/>
    <extension-point id="antTasks" name="%tasksName"/>
    <extension-point id="antTypes" name="%typesName"/>
 
@@ -30,14 +30,12 @@
        </run>
     </application>
    </extension>
-   
-   <!-- Objects -->
-   <extension point="org.eclipse.ant.core.antObjects">
-      <antObject
-         name="org.eclipse.ant.internal.core.ant.InternalAntRunner"
-         class="org.eclipse.ant.internal.core.ant.InternalAntRunner"
+
+   <!-- Extra Classpath -->
+   <extension point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
          library="lib/antsupportlib.jar">
-      </antObject>
+      </extraClasspathEntry>
    </extension>
 
 </plugin>

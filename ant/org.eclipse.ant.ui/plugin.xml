@@ -83,15 +83,13 @@
 	  		id="org.eclipse.ant.ui.antDropDownAction" /> 
 	</actionSet>
   </extension>
-  
 
-   <!-- Objects -->
-   <extension point="org.eclipse.ant.core.antObjects">
-      <antObject
-         name="org.eclipse.ant.internal.ui.ant.UIBuildLogger"
-         class="org.eclipse.ant.internal.ui.ant.UIBuildLogger"
+
+   <!-- Extra Classpath -->
+   <extension point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
          library="lib/antuilib.jar">
-      </antObject>
+      </extraClasspathEntry>
    </extension>
 
 </plugin>

@@ -31,12 +31,12 @@ public class AntCorePreferences implements IAntCoreConstants {
 	protected Map defaultObjects;
 	protected List pluginClassLoaders;
 	
-public AntCorePreferences(Map defaultTasks, Map defaultObjects, Map defaultTypes) {
+public AntCorePreferences(Map defaultTasks, Map defaultExtraClasspath, Map defaultTypes) {
 	initializePluginClassLoaders();
 	defaultURLs = new ArrayList(20);
 	this.defaultTasks = computeDefaultTasks(defaultTasks);
 	this.defaultTypes = computeDefaultTypes(defaultTypes);
-	this.defaultObjects = computeDefaultObjects(defaultObjects);
+	computeDefaultExtraClasspathEntries(defaultExtraClasspath);
 	restoreCustomObjects();
 }
 
@@ -192,19 +192,13 @@ protected List computeDefaultTypes(Map types) {
 }
 
 /**
- * It returns the same objects as passed in the arguments. The only difference
- * is that it does extract other useful information.
+ * Computes the extra classpath entries defined plugins and fragments.
  */
-protected Map computeDefaultObjects(Map objects) {
-	for (Iterator iterator = objects.entrySet().iterator(); iterator.hasNext();) {
+protected void computeDefaultExtraClasspathEntries(Map entries) {
+	for (Iterator iterator = entries.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
+		String library = (String) entry.getKey();
 		IConfigurationElement element = (IConfigurationElement) entry.getValue();
-		String library = element.getAttribute(AntCorePlugin.LIBRARY);
-		if (library == null) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", (String) entry.getKey()), null);
-			AntCorePlugin.getPlugin().getLog().log(status);
-			continue;
-		}
 		IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 		try {
 			URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
@@ -217,7 +211,6 @@ protected Map computeDefaultObjects(Map objects) {
 		}
 		addPluginClassLoader(descriptor.getPluginClassLoader());
 	}
-	return objects;
 }
 
 /**

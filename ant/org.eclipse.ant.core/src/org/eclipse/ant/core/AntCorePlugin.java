@@ -30,9 +30,9 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	private Map taskExtensions;
 
 	/**
-	 * Table of Ant objects (IConfigurationElement) added through the objects extension point
+	 * Table of libraries (IConfigurationElement) added through the extraClasspathEntries extension point
 	 */
-	private Map objectExtensions;
+	private Map extraClasspathExtensions;
 
 	/**
 	 * Table of Ant ypes (IConfigurationElement) added through the types extension point
@@ -57,14 +57,14 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	public static final String PT_TASKS = "antTasks";
 
 	/**
-	 * Simple identifier constant (value <code>"antObjects"</code>)
-	 * for the Ant tasks extension point.
+	 * Simple identifier constant (value <code>"extraClasspathEntries"</code>)
+	 * for the extra classpath entries extension point.
 	 */
-	public static final String PT_OBJECTS = "antObjects";
+	public static final String PT_EXTRA_CLASSPATH = "extraClasspathEntries";
 
 	/**
 	 * Simple identifier constant (value <code>"antTypes"</code>)
-	 * for the Ant tasks extension point.
+	 * for the Ant types extension point.
 	 */
 	public static final String PT_TYPES = "antTypes";
 
@@ -92,9 +92,9 @@ public AntCorePlugin(IPluginDescriptor descriptor) {
 }
 
 public void startup() throws CoreException {
-	taskExtensions = extractExtensions(PT_TASKS);
-	objectExtensions = extractExtensions(PT_OBJECTS);
-	typeExtensions = extractExtensions(PT_TYPES);
+	taskExtensions = extractExtensions(PT_TASKS, NAME);
+	typeExtensions = extractExtensions(PT_TYPES, NAME);
+	extraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
 }
 
 public void shutdown() throws CoreException {
@@ -104,14 +104,14 @@ public void shutdown() throws CoreException {
 	savePluginPreferences();
 }
 
-protected Map extractExtensions(String point) {
+protected Map extractExtensions(String point, String key) {
 	IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
 	if (extensionPoint == null)
 		return null;
 	IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
 	Map result = new HashMap(extensions.length);
 	for (int i = 0; i < extensions.length; i++) {
-		String name = extensions[i].getAttribute(NAME);
+		String name = extensions[i].getAttribute(key);
 		result.put(name, extensions[i]);
 	}
 	return result;
@@ -119,7 +119,7 @@ protected Map extractExtensions(String point) {
 
 public AntCorePreferences getPreferences() {
 	if (preferences == null)
-		preferences = new AntCorePreferences(taskExtensions, objectExtensions, typeExtensions);
+		preferences = new AntCorePreferences(taskExtensions, extraClasspathExtensions, typeExtensions);
 	return preferences;
 }
 
