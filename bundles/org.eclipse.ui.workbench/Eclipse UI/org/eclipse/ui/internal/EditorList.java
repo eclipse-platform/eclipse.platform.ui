@@ -205,6 +205,9 @@ public Control createControl(Composite parent) {
 
 	editorsTable.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
+			if ((e.stateMask & SWT.CTRL) == SWT.CTRL || (e.stateMask & SWT.SHIFT) == SWT.SHIFT) {
+				return;
+			}
 			if (e.button != 3) {
 				handleSelectionEvent(true);
 			}

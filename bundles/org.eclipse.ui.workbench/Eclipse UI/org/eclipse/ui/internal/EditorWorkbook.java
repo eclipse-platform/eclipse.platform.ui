@@ -316,6 +316,7 @@ public void openEditorList() {
 	listComposite.moveAbove(null);
 	editorListControl.setVisible(true);
 	editorListControl.setFocus();
+	editorsTable.showSelection();
 
 	editorListControl.addListener(SWT.Deactivate, new Listener() {
 		public void handleEvent(Event event) {
