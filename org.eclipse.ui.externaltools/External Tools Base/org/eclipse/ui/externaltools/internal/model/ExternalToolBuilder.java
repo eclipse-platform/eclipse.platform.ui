@@ -223,6 +223,9 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			case IncrementalProjectBuilder.AUTO_BUILD :
 				buildType = IExternalToolConstants.BUILD_TYPE_AUTO;
 				break;
+            case IncrementalProjectBuilder.CLEAN_BUILD :
+                buildType = IExternalToolConstants.BUILD_TYPE_CLEAN;
+                break;
 			default :
 				buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 				break;
@@ -261,4 +264,15 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		}
 		return false;
 	}
+    
+    protected void clean(IProgressMonitor monitor) throws CoreException {
+        ICommand command= getCommand();
+        ILaunchConfiguration config= BuilderUtils.configFromBuildCommandArgs(getProject(), command.getArguments(), new String[1]);
+        if ((!config.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false))) {
+            //old behavior
+            super.clean(monitor);
+            return;
+        } 
+        launchBuild(IncrementalProjectBuilder.CLEAN_BUILD, config, monitor);
+    }
 }

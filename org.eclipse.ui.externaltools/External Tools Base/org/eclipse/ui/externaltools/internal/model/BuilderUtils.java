@@ -334,6 +334,7 @@ public class BuilderUtils {
     	boolean incremental = false;
     	boolean full = false;
     	boolean auto = false;
+        boolean clean= false;
     
     	StringTokenizer tokenizer = new StringTokenizer(buildTypes, BUILD_TYPE_SEPARATOR);
     	while (tokenizer.hasMoreTokens()) {
@@ -353,7 +354,12 @@ public class BuilderUtils {
     				auto = true;
     				count++;
     			}
-    		}
+    		} else if (IExternalToolConstants.BUILD_TYPE_CLEAN.equals(token)) {
+                if (!clean) {
+                    clean = true;
+                    count++;
+                }
+            }
     	}
     
     	int[] results = new int[count];
@@ -370,6 +376,10 @@ public class BuilderUtils {
     		results[count] = IncrementalProjectBuilder.AUTO_BUILD;
     		count++;
     	}
+        if (clean) {
+            results[count] = IncrementalProjectBuilder.CLEAN_BUILD;
+            count++;
+        }
     
     	return results;
     }

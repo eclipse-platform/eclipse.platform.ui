@@ -53,12 +53,21 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	protected IWorkingSet workingSet; 
 	protected ILaunchConfiguration fConfiguration;
 	
+    private boolean fCreateBuildScheduleComponent= true;
+    
+    public ExternalToolsBuilderTab() {
+    }
+    
+    public ExternalToolsBuilderTab(boolean createBuildScheduleComponent) {
+        fCreateBuildScheduleComponent= createBuildScheduleComponent;
+    }
+    
 	protected SelectionListener selectionListener= new SelectionAdapter() {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
 		public void widgetSelected(SelectionEvent e) {
-			boolean enabled= autoBuildButton.getSelection() || manualBuild.getSelection();
+			boolean enabled= !fCreateBuildScheduleComponent || autoBuildButton.getSelection() || manualBuild.getSelection();
 			workingSetButton.setEnabled(enabled);
 			specifyResources.setEnabled(enabled && workingSetButton.getSelection());
 			updateLaunchConfigurationDialog();
@@ -79,6 +88,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayoutData(gridData);
 		mainComposite.setFont(parent.getFont());
 		createLaunchInBackgroundComposite(mainComposite);
+        createVerticalSpacer(mainComposite, 2);
 		createBuildScheduleComponent(mainComposite);
 		
 	}
@@ -102,15 +112,17 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	protected void createBuildScheduleComponent(Composite parent) {
-		Label label= new Label(parent, SWT.NONE);
-		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Run_this_builder_for__1")); //$NON-NLS-1$
-		label.setFont(parent.getFont());
-		afterClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full"), 2); //$NON-NLS-1$ //$NON-NLS-2$
-		manualBuild= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc"), 2); //$NON-NLS-1$ //$NON-NLS-2$
-		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto"), 2); //$NON-NLS-1$ //$NON-NLS-2$
-		fDuringClean= createButton(parent, selectionListener, "During a Clean", "Runs when a clean has been initiated", 2);
-		
-		createVerticalSpacer(parent, 2);
+        if (fCreateBuildScheduleComponent) {
+    		Label label= new Label(parent, SWT.NONE);
+    		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Run_this_builder_for__1")); //$NON-NLS-1$
+    		label.setFont(parent.getFont());
+    		afterClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+    		manualBuild= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+    		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+    		fDuringClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.0"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.1"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+    		
+    		createVerticalSpacer(parent, 2);
+        }
 		
 		workingSetButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_label"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_tooltip"), 1); //$NON-NLS-1$ //$NON-NLS-2$
 		specifyResources= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.13"), null); //$NON-NLS-1$
@@ -121,6 +133,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 				selectResources();
 			}
 		});
+        Label label= new Label(parent, SWT.NONE);
+        label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.2")); //$NON-NLS-1$
+        label.setFont(parent.getFont());
 	}
 	
 	/*
@@ -130,7 +145,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		Button button= createCheckButton(parent, text);
 		button.setToolTipText(tooltipText);
 		button.addSelectionListener(listener);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = columns;
 		button.setLayoutData(gd);
 		return button;
@@ -154,10 +169,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fConfiguration= configuration;
-		afterClean.setSelection(false);
-		manualBuild.setSelection(false);
-		autoBuildButton.setSelection(false);
-		fDuringClean.setSelection(false);
+        if (fCreateBuildScheduleComponent) {
+            afterClean.setSelection(false);
+            manualBuild.setSelection(false);
+            autoBuildButton.setSelection(false);
+            fDuringClean.setSelection(false);
+        }
 
 		String buildKindString= null;
 		String buildScope= null;
@@ -174,24 +191,30 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			workingSet = RefreshTab.getWorkingSet(buildScope);
 		}
 		
-		int buildTypes[]= BuilderUtils.buildTypesToArray(buildKindString);
-		for (int i = 0; i < buildTypes.length; i++) {
-			switch (buildTypes[i]) {
-				case IncrementalProjectBuilder.FULL_BUILD:
-					afterClean.setSelection(true);
-					break;
-				case IncrementalProjectBuilder.INCREMENTAL_BUILD:
-					manualBuild.setSelection(true);
-					break;
-				case IncrementalProjectBuilder.AUTO_BUILD:
-					autoBuildButton.setSelection(true);
-					break;
-				case IncrementalProjectBuilder.CLEAN_BUILD:
-					fDuringClean.setSelection(true);
-					break;
-			}
+        if (fCreateBuildScheduleComponent) {
+    		int buildTypes[]= BuilderUtils.buildTypesToArray(buildKindString);
+    		for (int i = 0; i < buildTypes.length; i++) {
+    			switch (buildTypes[i]) {
+    				case IncrementalProjectBuilder.FULL_BUILD:
+    					afterClean.setSelection(true);
+    					break;
+    				case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+    					manualBuild.setSelection(true);
+    					break;
+    				case IncrementalProjectBuilder.AUTO_BUILD:
+    					autoBuildButton.setSelection(true);
+    					break;
+    				case IncrementalProjectBuilder.CLEAN_BUILD:
+    					fDuringClean.setSelection(true);
+    					break;
+    			}
+    		}
+        }
+        
+		boolean enabled= true;
+		if (fCreateBuildScheduleComponent) {
+			enabled= autoBuildButton.getSelection() || manualBuild.getSelection();
 		}
-		boolean enabled= autoBuildButton.getSelection() || manualBuild.getSelection();
 		workingSetButton.setEnabled(enabled);
 		specifyResources.setEnabled(enabled && workingSetButton.getSelection());
 		updateRunInBackground(configuration);
@@ -221,22 +244,23 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+        if (fCreateBuildScheduleComponent) {
 		StringBuffer buffer= new StringBuffer();
-		if (afterClean.getSelection()) {
-			buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
-		} 
-		if (manualBuild.getSelection()){
-			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(','); 
-		} 
-		if (autoBuildButton.getSelection()) {
-			buffer.append(IExternalToolConstants.BUILD_TYPE_AUTO).append(',');
-		}
-		
-		if (fDuringClean.getSelection()) {
-			buffer.append(IExternalToolConstants.BUILD_TYPE_CLEAN);
-		}
-		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
-		
+    		if (afterClean.getSelection()) {
+    			buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
+    		} 
+    		if (manualBuild.getSelection()){
+    			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(','); 
+    		} 
+    		if (autoBuildButton.getSelection()) {
+    			buffer.append(IExternalToolConstants.BUILD_TYPE_AUTO).append(',');
+    		}
+    		
+    		if (fDuringClean.getSelection()) {
+    			buffer.append(IExternalToolConstants.BUILD_TYPE_CLEAN);
+    		}
+    		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
+        }
 		if (workingSetButton.getSelection()) {
 			String scope = RefreshTab.getRefreshAttribute(workingSet);
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, scope);
@@ -266,14 +290,16 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		
-		boolean buildKindSelected= afterClean.getSelection() || manualBuild.getSelection() || autoBuildButton.getSelection();
-		if (!buildKindSelected) {
-			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.buildKindError")); //$NON-NLS-1$
-			return false;
-		}
+		if (fCreateBuildScheduleComponent) {
+		    boolean buildKindSelected= afterClean.getSelection() || manualBuild.getSelection() || autoBuildButton.getSelection() || fDuringClean.getSelection();
+    		if (!buildKindSelected) {
+    			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.buildKindError")); //$NON-NLS-1$
+    			return false;
+    		}
+        }
 		if (workingSetButton.getSelection() && (workingSet == null || workingSet.getElements().length == 0)) {
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.16")); //$NON-NLS-1$
+            return false;
 		}
 		
 		return true;
