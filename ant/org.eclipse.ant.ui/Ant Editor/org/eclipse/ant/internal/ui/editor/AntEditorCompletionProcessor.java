@@ -120,6 +120,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	protected final static int PROPOSAL_MODE_ATTRIBUTE_PROPOSAL = 4;
 	protected final static int PROPOSAL_MODE_TASK_PROPOSAL_CLOSING = 5;
 	protected final static int PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL = 6;
+	protected final static int PROPOSAL_MODE_NESTED_ELEMENT_PROPOSAL = 7;
+	protected final static int PROPOSAL_MODE_MACRODEF_PROPOSAL = 8;
 	
 	private final static ICompletionProposal[] NO_PROPOSALS= new ICompletionProposal[0];
 	
@@ -218,7 +220,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return mergeProposals(matchingProposals, matchingTemplateProposals);
     }
 	
-	private ICompletionProposal[] determineTemplateProposals(ITextViewer refViewer, int documentOffset) {
+	protected ICompletionProposal[] determineTemplateProposals(ITextViewer refViewer, int documentOffset) {
+		this.viewer= refViewer;
         String prefix = getCurrentPrefix();
         ICompletionProposal[] matchingTemplateProposals;
         if (prefix.length() == 0) {
@@ -852,6 +855,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			if (parent != null) {
 				IDfm dfm = parent.getDfm();
 				String[] accepts = dfm.getAccepts();
+				if (accepts.length == 0) {
+					currentProposalMode= PROPOSAL_MODE_NONE;
+				}
 				String elementName;
 				for (int i = 0; i < accepts.length; i++) {
 					elementName = accepts[i];
@@ -865,8 +871,10 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 				Class taskClass= getTaskClass(parentName);
 	        	if (taskClass != null) {
 	        		if (taskClass == MacroInstance.class) {
+	        			currentProposalMode= PROPOSAL_MODE_MACRODEF_PROPOSAL;
 	        			addMacroDefElementProposals(parentName, prefix, proposals);
 	        		} else {
+	        			currentProposalMode= PROPOSAL_MODE_NESTED_ELEMENT_PROPOSAL;
 		        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
 		        		if (helper != null) {
 			        		Enumeration nested= helper.getNestedElements();
@@ -1511,11 +1519,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
             	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TaskContextType.TASK_CONTEXT_TYPE);
             case PROPOSAL_MODE_BUILDFILE:
             	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(BuildFileContextType.BUILDFILE_CONTEXT_TYPE);
-			case PROPOSAL_MODE_NONE :
+			case PROPOSAL_MODE_NONE:
             case PROPOSAL_MODE_ATTRIBUTE_PROPOSAL:
             case PROPOSAL_MODE_TASK_PROPOSAL_CLOSING:
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
             case PROPOSAL_MODE_PROPERTY_PROPOSAL:
+            case PROPOSAL_MODE_MACRODEF_PROPOSAL:
+            case PROPOSAL_MODE_NESTED_ELEMENT_PROPOSAL:
             default :
             	return null;
         }
