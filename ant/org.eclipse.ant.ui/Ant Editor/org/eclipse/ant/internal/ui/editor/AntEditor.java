@@ -877,4 +877,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
 		return new ChainedPreferenceStore(new IPreferenceStore[] { antStore, generalTextStore });
 	}
+	
+	public ISourceViewer getViewer() {
+		return getSourceViewer();
+	}
 }
