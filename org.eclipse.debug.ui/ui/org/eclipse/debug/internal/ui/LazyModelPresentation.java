@@ -129,20 +129,6 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 		}
 		fListeners.remove(listener);
 	}
-
-	/** 
-	 * @deprecated
-	 */
-	public Image getLabelImage(Viewer viewer, Object element) {
-		return getPresentation().getImage(element);
-	}
-
-	/** 
-	 * @deprecated
-	 */
-	public String getLabelText(Viewer viewer, Object element) {
-		return getPresentation().getText(element);
-	}
 	
 	/**
 	 * Returns the real presentation, instantiating if required.
