@@ -93,6 +93,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent())); //$NON-NLS-1$
 		}
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntPreferencePage.11"), getFieldEditorParent())); //$NON-NLS-1$
+		
+		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.getString("AntPreferencePage.12"), getFieldEditorParent())); //$NON-NLS-1$
 		new Label(getFieldEditorParent(), SWT.NONE);
 				
 		createColorComposite();

@@ -19,7 +19,9 @@ import java.net.URL;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -59,8 +61,11 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 		
 		createLaunchConfiguration("echoing");
+		//createLaunchConfiguration("bad");
 		createLaunchConfigurationForSeparateVM("echoingSepVM");
 		
+		//do not show the Ant build failed error dialog
+		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, false);
 	}
 	
 	/**

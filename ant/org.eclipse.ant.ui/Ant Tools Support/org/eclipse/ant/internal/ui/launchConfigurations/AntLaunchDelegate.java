@@ -26,6 +26,8 @@ import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.preferences.MessageDialogWithToggle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,7 +45,7 @@ import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.SocketUtil;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 
@@ -202,12 +204,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 				public void run() {
 					try {
 						finalRunner.run(process);
-					} catch (final CoreException e) {
-						AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-							public void run() {
-								ErrorDialog.openError(null, AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Failure"), null, e.getStatus()); //$NON-NLS-1$
-							}
-						});
+					} catch (CoreException e) {
+						handleException(e, AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Failure")); //$NON-NLS-1$
 					}
 					process.terminated();
 				}
@@ -226,7 +224,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 				runner.run(monitor);
 			} catch (CoreException e) {
 				process.terminated();
-				throw e;
+				monitor.done();
+				handleException(e,  AntLaunchConfigurationMessages.getString("AntLaunchDelegate.23")); //$NON-NLS-1$
+				return;
 			}
 			process.terminated();
 			
@@ -235,6 +235,17 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}	
 		
 		monitor.done();	
+	}
+	
+	private void handleException(final CoreException e, final String title) {
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IAntUIPreferenceConstants.ANT_ERROR_DIALOG)) {
+			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+				public void run() {
+					MessageDialogWithToggle.openError(null, title, e.getMessage(), IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntLaunchConfigurationMessages.getString("AntLaunchDelegate.22"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+				}
+			});
+		}
 	}
 
 	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine) {

@@ -31,5 +31,7 @@ public interface IAntUIPreferenceConstants {
 	public static final String ANT_XERCES_JARS_WARNING= "xercesJARs"; //$NON-NLS-1$
 	public static final String ANT_TOOLS_JAR_WARNING= "toolsJAR"; //$NON-NLS-1$
 	
+	public static final String ANT_ERROR_DIALOG= "errorDialog"; //$NON-NLS-1$
+	
 	public static final String ANT_VM_INFORMATION= "antVMInfo";	 //$NON-NLS-1$
 }
