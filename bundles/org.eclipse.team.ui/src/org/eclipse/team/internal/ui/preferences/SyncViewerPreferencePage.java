@@ -30,9 +30,9 @@ import org.eclipse.ui.*;
  */
 public class SyncViewerPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IPreferenceIds {
 	
-	private BooleanFieldEditor compressFolders = null;
 	private BooleanFieldEditor showSyncInLabels = null;
 	private RadioGroupFieldEditor synchronizePerspectiveSwitch = null;
+    private RadioGroupFieldEditor defaultLayout = null;
 	
 	private static class PerspectiveDescriptorComparator implements Comparator {
 		/*
@@ -67,10 +67,18 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
-		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
-		addField(compressFolders);
 		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, Policy.bind("SyncViewerPreferencePage.19"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
-		addField(showSyncInLabels);	
+		addField(showSyncInLabels);
+		
+	    defaultLayout = new RadioGroupFieldEditor(SYNCVIEW_DEFAULT_LAYOUT, 
+	            Policy.bind("SyncViewerPreferencePage.0"), 3,  //$NON-NLS-1$
+	            new String[][] {
+	            	{Policy.bind("SyncViewerPreferencePage.1"), FLAT_LAYOUT}, //$NON-NLS-1$
+	            	{Policy.bind("SyncViewerPreferencePage.2"), TREE_LAYOUT}, //$NON-NLS-1$
+	            	{Policy.bind("SyncViewerPreferencePage.3"), COMPRESSED_LAYOUT} //$NON-NLS-1$
+	    		}, 
+	    		getFieldEditorParent(), true /* use a group */);
+	    addField(defaultLayout);
 
 		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, Policy.bind("SyncViewerPreferencePage.13"), 3,  //$NON-NLS-1$
 				new String[][] {

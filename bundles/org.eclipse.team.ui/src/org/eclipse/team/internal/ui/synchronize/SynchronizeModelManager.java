@@ -107,21 +107,17 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	protected ISynchronizeModelProvider getActiveModelProvider() {
 		return modelProvider;
 	}
-	
-	/**
-	 * Return the default provider Id to be used if there is no explicit selection.
-     * @return the default provider Id 
-     */
-    protected String getDefaultProviderId() {
-        if (getShowCompressedFolders()) {
-        	return CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID;
-        } else {
-        	return HierarchicalModelProvider.HierarchicalModelProviderDescriptor.ID;
-        }
-    }
     
-	private boolean getShowCompressedFolders() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS);
+	protected String getDefaultProviderId() {
+		String defaultLayout = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
+		if (defaultLayout.equals(IPreferenceIds.TREE_LAYOUT)) {
+		    return HierarchicalModelProvider.HierarchicalModelProviderDescriptor.ID;
+		}
+		if (defaultLayout.equals(IPreferenceIds.FLAT_LAYOUT)) {
+		    return FlatModelProvider.FlatModelProviderDescriptor.ID;
+		}
+		// Return compressed folder is the others were not a match
+        return CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID;
 	}
 	
 	/**
@@ -242,7 +238,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		if(modelProvider == null) {
 			String defaultProviderId = getDefaultProviderId(); /* use providers prefered */
 			IDialogSettings pageSettings = configuration.getSite().getPageSettings();
-			if(pageSettings != null) {
+			if(pageSettings != null && pageSettings.get(P_LAST_PROVIDER) != null) {
 				defaultProviderId = pageSettings.get(P_LAST_PROVIDER); 
 			}
 			setInput(defaultProviderId, null);

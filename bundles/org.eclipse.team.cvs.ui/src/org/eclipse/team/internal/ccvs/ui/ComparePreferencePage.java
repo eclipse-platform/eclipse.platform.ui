@@ -59,6 +59,11 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		        Policy.bind("ComparePreferencePage.1"), //$NON-NLS-1$
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
+		addField(new BooleanFieldEditor(
+		        ICVSUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT, 
+		        "Automatically enable commit set grouping in CVS synchronizations",
+				BooleanFieldEditor.DEFAULT, 
+				getFieldEditorParent()));
     }
     
     /* (non-Javadoc)

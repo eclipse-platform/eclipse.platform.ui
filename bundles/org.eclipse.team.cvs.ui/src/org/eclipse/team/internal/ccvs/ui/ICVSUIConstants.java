@@ -88,6 +88,7 @@ public interface ICVSUIConstants {
 	public final String PREF_EXT_CONNECTION_METHOD_PROXY = "pref_ext_connection_method_proxy"; //$NON-NLS-1$
 	public final String PREF_SHOW_COMPARE_REVISION_IN_DIALOG = "pref_show_compare_revision_in_dialog"; //$NON-NLS-1$
 	public final String PREF_SHOW_AUTHOR_IN_EDITOR = "pref_show_author_in_editor"; //$NON-NLS-1$
+	public final String PREF_COMMIT_SET_DEFAULT_ENABLEMENT = "pref_enable_commit_sets"; //$NON-NLS-1$
 	
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$

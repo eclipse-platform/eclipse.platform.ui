@@ -132,7 +132,8 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
         // Load our setting before invoking super since the inherited
         // initialize will create the provider
         IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
-		if(pageSettings != null) {
+        enabled = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT);
+		if(pageSettings != null && pageSettings.get(P_COMMIT_SET_ENABLED) != null) {
 		    enabled = pageSettings.getBoolean(P_COMMIT_SET_ENABLED);
 		}
         super.initialize(configuration);

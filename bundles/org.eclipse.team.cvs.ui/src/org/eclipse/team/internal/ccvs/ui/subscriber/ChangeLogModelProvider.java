@@ -40,6 +40,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
@@ -423,6 +424,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		super(configuration, set);
 		this.tag1 = tag1;
 		this.tag2 = tag2;
+		Assert.isNotNull(id);
         this.id = id;
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, COMMIT_SET_GROUP);
 		if (configuration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY) {
