@@ -976,12 +976,22 @@ void updateFocusResource(ISelection selection) {
 	}
 	
 	if (resource != null && !resource.equals(focusResource)) {
-		// showOwnerProject() handling added by cagatayk@acm.org
-		boolean updateNeeded = showOwnerProject() && 
-				!resource.getProject().equals(
-						focusResource != null ? focusResource.getProject() : null);
+		boolean updateNeeded = false;
+		if (showOwnerProject()) {
+			IProject oldProject = focusResource == null ? null : focusResource.getProject();
+			IProject newProject = resource.getProject();
+			boolean projectsEqual = (oldProject == null ? newProject == null : oldProject.equals(newProject));
+			updateNeeded = !projectsEqual;
+		}
+		else if (showSelections()) {
+			updateNeeded = true;
+		}
+		
+		// remember the focus resource even if update is not needed,
+		// so that we know it if the filter settings change
 		focusResource = resource;
-		if ((showSelections() && !showOwnerProject()) || updateNeeded) {
+		
+		if (updateNeeded) {
 			viewer.refresh();
 			updateStatusMessage();
 			updateTitle();

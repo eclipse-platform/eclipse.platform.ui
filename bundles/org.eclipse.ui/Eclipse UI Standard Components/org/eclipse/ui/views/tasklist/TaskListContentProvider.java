@@ -48,14 +48,18 @@ protected boolean check(IMarkerDelta markerDelta) {
  * Returns whether we are interested in markers on the given resource.
  */
 protected boolean checkResource(IResource resource) {
-	if (taskList.showSelections() && !taskList.showChildrenHierarchy()) {
-		return resource.equals(taskList.getResource());
+	if (!taskList.showSelections()) {
+		return true;
 	}
-	else if (taskList.showOwnerProject()) { // added by cagatayk@acm.org
-		return taskList.getResource().getProject().equals(resource.getProject());
+	if (taskList.showOwnerProject()) {
+		IProject currentProj = taskList.getResource().getProject();
+		return currentProj == null ? true : currentProj.equals(resource.getProject());
+	}
+	if (taskList.showChildrenHierarchy()) {
+		return taskList.getResource().getFullPath().isPrefixOf(resource.getFullPath());
 	}
 	else {
-		return taskList.getResource().getFullPath().isPrefixOf(resource.getFullPath());
+		return resource.equals(taskList.getResource());
 	}
 }
 /**

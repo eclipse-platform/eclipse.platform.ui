@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * be filtered out.
  */
 /* package */ class NewTaskAction extends TaskAction {
+	
 /**
  * Creates the action.
  */
@@ -49,7 +50,7 @@ public void run() {
 		getTaskList().getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				TaskList taskList = getTaskList();
-				IResource resource = taskList.getResource();
+				IResource resource = taskList.getWorkspace().getRoot();
 				IMarker marker = resource.createMarker(IMarker.TASK);
 				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 				marker.setAttribute(IMarker.MESSAGE, TaskListMessages.getString("NewTask.enterDescription")); //$NON-NLS-1$
