@@ -63,7 +63,7 @@ public class UnconfigOperation
 			if (listener != null)
 				listener.afterExecute(this, null);
 
-			restartNeeded = restartNeeded && SiteManager.getLocalSite().save();
+			restartNeeded = SiteManager.getLocalSite().save() && restartNeeded;
 
 			// notify the model
 			OperationsManager.fireObjectChanged(feature, null);

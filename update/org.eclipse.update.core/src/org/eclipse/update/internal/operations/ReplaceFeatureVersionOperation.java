@@ -47,7 +47,7 @@ public class ReplaceFeatureVersionOperation
 		cleaner.dispose();
 		
 		targetSite.configure(anotherFeature);
-		ensureUnique();
+//		ensureUnique();
 
 		try {
 			// Restart not needed
@@ -80,7 +80,7 @@ public class ReplaceFeatureVersionOperation
 			if (listener != null)
 				listener.afterExecute(this, null);
 
-			restartNeeded = restartNeeded && SiteManager.getLocalSite().save();
+			restartNeeded = SiteManager.getLocalSite().save() && restartNeeded;
 
 			// notify the model
 			OperationsManager.fireObjectChanged(feature, null);

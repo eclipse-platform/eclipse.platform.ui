@@ -40,7 +40,7 @@ public class ConfigOperation
 		}
 
 		targetSite.configure(feature);
-		ensureUnique();
+//		ensureUnique();
 
 		try {
 			// Restart not needed
@@ -61,7 +61,7 @@ public class ConfigOperation
 			if (listener != null)
 				listener.afterExecute(this, null);
 
-			restartNeeded = restartNeeded && SiteManager.getLocalSite().save();
+			restartNeeded = SiteManager.getLocalSite().save() && restartNeeded;
 
 			// notify the model
 			OperationsManager.fireObjectChanged(feature, null);

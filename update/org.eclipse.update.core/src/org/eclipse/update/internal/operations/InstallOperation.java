@@ -100,9 +100,9 @@ public class InstallOperation
 				}
 			}
 
-			if (oldFeature == null) {
-				ensureUnique();
-			}
+//			if (oldFeature == null) {
+//				ensureUnique();
+//			}
 		}
 		return true;
 	}
