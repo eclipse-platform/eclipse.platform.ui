@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -135,7 +136,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			StringBuffer buf = new StringBuffer();
 			ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION, buf.toString());
-			workingCopy.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true); 
+			workingCopy.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
+			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
+			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 			return workingCopy.doSave();
 		} catch (CoreException e) {
 			reportError(MessageFormat.format("An exception occurred while creating a default Ant launch configuration for {0}", new String[]{file.toString()}), e);
