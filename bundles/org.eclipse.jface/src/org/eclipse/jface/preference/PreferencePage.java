@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -281,6 +281,7 @@ public abstract class PreferencePage
 			if (buttonBar.getChildren().length < 1)
 				buttonBar.dispose();
 		}
+		Dialog.applyDialogFont(content);
 	}
 	/**
 	 * Creates and returns an SWT label under the given composite.
@@ -310,9 +311,9 @@ public abstract class PreferencePage
 	 */
 	protected Point doComputeSize() {
 		if (descriptionLabel != null && body != null) {
-			Point size = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			Point bodySize = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			GridData gd = (GridData) descriptionLabel.getLayoutData();
-			gd.widthHint = size.x;
+			gd.widthHint = bodySize.x;
 			descriptionLabel.getParent().layout(true);
 		}
 		return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -337,7 +338,7 @@ public abstract class PreferencePage
 	 *   page has yet to be added to a container
 	 */
 	public IPreferencePageContainer getContainer() {
-		return (IPreferencePageContainer) container;
+		return container;
 	}
 	/**
 	 * Returns the preference store of this preference page.
