@@ -7,7 +7,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.InfoSet;
 import org.eclipse.help.internal.HelpSystem;
