@@ -21,8 +21,8 @@ public class FileEditorMapping extends Object
 	
 	// Collection of EditorDescriptor, where the first one
 	// if considered the default one.
-	private List editors = new ArrayList();
-	private List deletedEditors = new ArrayList();
+	private List editors = new ArrayList(1);
+	private List deletedEditors = new ArrayList(1);
 /**
  *  Create an instance of this class.
  *
@@ -68,6 +68,43 @@ public Object clone() {
 		return null;
 	}
 }
+/**
+ * @see java.lang.Object.equals(Object obj)
+ */
+public boolean equals(Object obj) {
+	if(this == obj)
+		return true;
+	if(!(obj instanceof FileEditorMapping))
+		return false;
+	FileEditorMapping mapping = (FileEditorMapping)obj;
+	if(!this.name.equals(mapping.name))
+		return false;
+	if(!this.extension.equals(mapping.extension))
+		return false;
+	
+	if(!compareList(this.editors,mapping.editors))
+		return false;
+	return compareList(this.deletedEditors,mapping.deletedEditors);
+}
+/**
+ * Compare the editor ids from both lists and return true if they
+ * are equals.
+ */
+private boolean compareList(List l1,List l2) {
+	if(l1.size() != l2.size())
+		return false;
+	
+	Iterator i1 = l1.iterator();
+	Iterator i2 = l2.iterator();
+	while(i1.hasNext() && i2.hasNext()) {
+		Object o1 = i1.next();
+		Object o2 = i2.next();
+		if(!(o1 == null ? o2 == null : o1.equals(o2)))
+			return false;
+	}
+	return true;
+}
+
 /* (non-Javadoc)
  * Method declared on IFileEditorMapping.
  */
