@@ -123,6 +123,66 @@ public class FastViewBar implements IWindowTrim {
 
     private Listener menuListener;
 
+    class ViewDropTarget extends AbstractDropTarget {
+        List panes;
+
+        ToolItem position;
+
+        /**
+         * @param panesToDrop the list of ViewPanes to drop at the given position
+         */
+        public ViewDropTarget(List panesToDrop, ToolItem position) {
+            setTarget(panesToDrop, position);
+        }
+        
+        public void setTarget(List panesToDrop, ToolItem position) {
+            panes = panesToDrop;
+            this.position = position;            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
+         */
+        public void drop() {
+            IViewReference view = getViewFor(position);
+
+            Iterator iter = panes.iterator();
+            while (iter.hasNext()) {
+                ViewPane pane = (ViewPane) iter.next();
+                getPage().addFastView(pane.getViewReference());
+                getPage().getActivePerspective().moveFastView(
+                        pane.getViewReference(), view);
+            }
+            update(true);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
+         */
+        public Cursor getCursor() {
+            return DragCursors.getCursor(DragCursors.FASTVIEW);
+        }
+
+        public Rectangle getSnapRectangle() {
+            if (position == null) {
+                // As long as the toolbar is not empty, highlight the place
+                // where this view will appear (we
+                // may have compressed it to save space when empty, so the actual
+                // icon location may not be over the toolbar when it is empty)
+                if (getToolBar().getItemCount() > 0) {
+                    return getLocationOfNextIcon();
+                }
+                // If the toolbar is empty, highlight the entire toolbar 
+                return DragUtil.getDisplayBounds(getControl());
+            } else {
+                return Geometry.toDisplay(getToolBar(), position
+                        .getBounds());
+            }
+        }
+    }
+    
+    ViewDropTarget dropTarget;
+    
     /**
      * Constructs a new fast view bar for the given workbench window.
      * 
@@ -317,60 +377,6 @@ public class FastViewBar implements IWindowTrim {
 
         IDragOverListener fastViewDragTarget = new IDragOverListener() {
 
-            class ViewDropTarget extends AbstractDropTarget {
-                List panes;
-
-                ToolItem position;
-
-                /**
-                 * @param panesToDrop the list of ViewPanes to drop at the given position
-                 */
-                public ViewDropTarget(List panesToDrop, ToolItem position) {
-                    panes = panesToDrop;
-                    this.position = position;
-                }
-
-                /* (non-Javadoc)
-                 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
-                 */
-                public void drop() {
-                    IViewReference view = getViewFor(position);
-
-                    Iterator iter = panes.iterator();
-                    while (iter.hasNext()) {
-                        ViewPane pane = (ViewPane) iter.next();
-                        getPage().addFastView(pane.getViewReference());
-                        getPage().getActivePerspective().moveFastView(
-                                pane.getViewReference(), view);
-                    }
-                    update(true);
-                }
-
-                /* (non-Javadoc)
-                 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
-                 */
-                public Cursor getCursor() {
-                    return DragCursors.getCursor(DragCursors.FASTVIEW);
-                }
-
-                public Rectangle getSnapRectangle() {
-                    if (position == null) {
-                        // As long as the toolbar is not empty, highlight the place
-                        // where this view will appear (we
-                        // may have compressed it to save space when empty, so the actual
-                        // icon location may not be over the toolbar when it is empty)
-                        if (getToolBar().getItemCount() > 0) {
-                            return getLocationOfNextIcon();
-                        }
-                        // If the toolbar is empty, highlight the entire toolbar 
-                        return DragUtil.getDisplayBounds(getControl());
-                    } else {
-                        return Geometry.toDisplay(getToolBar(), position
-                                .getBounds());
-                    }
-                }
-            }
-
             public IDropTarget drag(Control currentControl,
                     Object draggedObject, Point position,
                     Rectangle dragRectangle) {
@@ -386,7 +392,7 @@ public class FastViewBar implements IWindowTrim {
                     List newList = new ArrayList(1);
                     newList.add(draggedObject);
 
-                    return new ViewDropTarget(newList, targetItem);
+                    return createDropTarget(newList, targetItem);
                 }
                 if (draggedObject instanceof ViewStack) {
                     ViewStack folder = (ViewStack) draggedObject;
@@ -404,7 +410,7 @@ public class FastViewBar implements IWindowTrim {
                         }
                     }
 
-                    return new ViewDropTarget(viewList, targetItem);
+                    return createDropTarget(viewList, targetItem);
                 }
 
                 return null;
@@ -429,6 +435,24 @@ public class FastViewBar implements IWindowTrim {
         update(true);
     }
 
+    /**
+     * Creates and returns a drop target with the given properties. To save object allocation,
+     * the same instance is saved and reused wherever possible.
+     * 
+     * @param targetItem
+     * @param viewList
+     * @return
+     * @since 3.1
+     */
+    private IDropTarget createDropTarget(List viewList, ToolItem targetItem) {
+        if (dropTarget == null) {
+            dropTarget = new ViewDropTarget(viewList, targetItem);
+        } else {
+            dropTarget.setTarget(viewList, targetItem);
+        }
+        return dropTarget;
+    }
+    
     /**
      * Begins dragging a particular fast view
      * 

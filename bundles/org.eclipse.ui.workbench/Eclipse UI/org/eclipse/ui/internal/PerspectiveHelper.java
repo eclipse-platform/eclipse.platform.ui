@@ -68,6 +68,8 @@ public class PerspectiveHelper {
 
     private static final int MIN_DETACH_HEIGHT = 250;
 
+    protected ActualDropTarget dropTarget;
+    
     private IDragOverListener dragTarget = new IDragOverListener() {
 
         public IDropTarget drag(Control currentControl, Object draggedObject,
@@ -82,45 +84,108 @@ public class PerspectiveHelper {
                 return null;
             }
 
-            return new AbstractDropTarget() {
-                public void drop() {
-
-                    Window window = part.getWindow();
-                    if (window instanceof DetachedWindow) {
-                        // only one tab folder in a detach window, so do window
-                        // move
-                        if (part instanceof ViewStack) {
-                            window.getShell().setLocation(dragRectangle.x,
-                                    dragRectangle.y);
-                            return;
-                        }
-                        // if only one view in tab folder then do a window move
-                        ILayoutContainer container = part.getContainer();
-                        if (container instanceof ViewStack) {
-                            if (((ViewStack) container).getItemCount() == 1) {
-                                window.getShell().setLocation(dragRectangle.x,
-                                        dragRectangle.y);
-                                return;
-                            }
-                        }
-                    }
-
-                    // If layout is modified always zoom out.
-                    if (isZoomed())
-                        zoomOut();
-                    // do a normal part detach
-                    detach(part, dragRectangle.x, dragRectangle.y);
-                }
-
-                public Cursor getCursor() {
-                    return DragCursors.getCursor(DragCursors.OFFSCREEN);
-                }
-
-            };
+            if (dropTarget == null) {
+                dropTarget = new ActualDropTarget(part, dragRectangle); 
+            } else {
+                dropTarget.setTarget(part, dragRectangle);
+            }
+            
+            return dropTarget;
         }
 
     };
 
+    private final class ActualDropTarget extends AbstractDropTarget {
+        private LayoutPart part;
+
+        private Rectangle dragRectangle;
+
+        private ActualDropTarget(LayoutPart part, Rectangle dragRectangle) {
+            super();
+            setTarget(part, dragRectangle);
+        }
+
+        /**
+         * @param part
+         * @param dragRectangle
+         * @since 3.1
+         */
+        private void setTarget(LayoutPart part, Rectangle dragRectangle) {
+            this.part = part;
+            this.dragRectangle = dragRectangle;
+        }
+
+        public void drop() {
+
+            Window window = part.getWindow();
+            if (window instanceof DetachedWindow) {
+                // only one tab folder in a detach window, so do window
+                // move
+                if (part instanceof ViewStack) {
+                    window.getShell().setLocation(dragRectangle.x,
+                            dragRectangle.y);
+                    return;
+                }
+                // if only one view in tab folder then do a window move
+                ILayoutContainer container = part.getContainer();
+                if (container instanceof ViewStack) {
+                    if (((ViewStack) container).getItemCount() == 1) {
+                        window.getShell().setLocation(dragRectangle.x,
+                                dragRectangle.y);
+                        return;
+                    }
+                }
+            }
+
+            // If layout is modified always zoom out.
+            if (isZoomed())
+                zoomOut();
+            // do a normal part detach
+            detach(part, dragRectangle.x, dragRectangle.y);
+        }
+
+        public Cursor getCursor() {
+            return DragCursors.getCursor(DragCursors.OFFSCREEN);
+        }
+    }
+
+    private class MatchingPart implements Comparable {
+        String pid;
+
+        String sid;
+
+        LayoutPart part;
+
+        boolean hasWildcard;
+
+        int len;
+
+        MatchingPart(String pid, String sid, LayoutPart part) {
+            this.pid = pid;
+            this.sid = sid;
+            this.part = part;
+            this.len = (pid == null ? 0 : pid.length())
+                    + (sid == null ? 0 : sid.length());
+            this.hasWildcard = (pid != null && pid
+                    .indexOf(PartPlaceholder.WILD_CARD) != -1)
+                    || (sid != null && sid.indexOf(PartPlaceholder.WILD_CARD) != -1);
+        }
+
+        public int compareTo(Object a) {
+            // specific ids always outweigh ids with wildcards
+            MatchingPart ma = (MatchingPart) a;
+            if (this.hasWildcard && !ma.hasWildcard) {
+                return -1;
+            }
+            if (!this.hasWildcard && ma.hasWildcard) {
+                return 1;
+            }
+            // if both are specific or both have wildcards, simply compare based on length
+            return ma.len - this.len;
+        }
+    }
+
+    
     /**
      * Constructs a new object.
      */
@@ -757,30 +822,6 @@ public class PerspectiveHelper {
     }
 
     /**
-     * enableDragging.
-     */
-    //	private void enableAllDrop() {
-    //
-    //		Vector dropTargets = new Vector();
-    //		collectDropTargets(dropTargets, mainLayout.getChildren());
-    //
-    //		for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
-    //			DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
-    //			collectDropTargets(dropTargets, window.getChildren());
-    //		}
-    //
-    //		Enumeration enum = dropTargets.elements();
-    //		while (enum.hasMoreElements()) {
-    //			LayoutPart part = (LayoutPart) enum.nextElement();
-    //			enableDrop(part);
-    //		}
-    //	}
-    //	private void enableDrop(LayoutPart part) {
-    //		Control control = part.getControl();
-    //		if (control != null)
-    //			control.setData(part);
-    //	}
-    /**
      * Find the first part with a given ID in the presentation.
      * Wild cards now supported.
      */
@@ -832,42 +873,6 @@ public class PerspectiveHelper {
 
         // Not found.
         return null;
-    }
-
-    private class MatchingPart implements Comparable {
-        String pid;
-
-        String sid;
-
-        LayoutPart part;
-
-        boolean hasWildcard;
-
-        int len;
-
-        MatchingPart(String pid, String sid, LayoutPart part) {
-            this.pid = pid;
-            this.sid = sid;
-            this.part = part;
-            this.len = (pid == null ? 0 : pid.length())
-                    + (sid == null ? 0 : sid.length());
-            this.hasWildcard = (pid != null && pid
-                    .indexOf(PartPlaceholder.WILD_CARD) != -1)
-                    || (sid != null && sid.indexOf(PartPlaceholder.WILD_CARD) != -1);
-        }
-
-        public int compareTo(Object a) {
-            // specific ids always outweigh ids with wildcards
-            MatchingPart ma = (MatchingPart) a;
-            if (this.hasWildcard && !ma.hasWildcard) {
-                return -1;
-            }
-            if (!this.hasWildcard && ma.hasWildcard) {
-                return 1;
-            }
-            // if both are specific or both have wildcards, simply compare based on length
-            return ma.len - this.len;
-        }
     }
 
     /**

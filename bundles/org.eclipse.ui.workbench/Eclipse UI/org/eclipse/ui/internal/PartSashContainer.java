@@ -57,6 +57,8 @@ public abstract class PartSashContainer extends LayoutPart implements
     /* Array of LayoutPart */
     protected ArrayList children = new ArrayList();
 
+    private SashContainerDropTarget dropTarget;
+
     protected static class RelationshipInfo {
         protected LayoutPart part;
 
@@ -103,8 +105,11 @@ public abstract class PartSashContainer extends LayoutPart implements
 
         private LayoutPart sourcePart;
 
-        public SashContainerDropTarget(LayoutPart sourcePart, int side,
-                int cursor, LayoutPart targetPart) {
+        public SashContainerDropTarget(LayoutPart sourcePart, int side, int cursor, LayoutPart targetPart) {
+            this.setTarget(sourcePart, side, cursor, targetPart);
+        }
+        
+        public void setTarget(LayoutPart sourcePart, int side, int cursor, LayoutPart targetPart) {
             this.side = side;
             this.targetPart = targetPart;
             this.sourcePart = sourcePart;
@@ -855,8 +860,7 @@ public abstract class PartSashContainer extends LayoutPart implements
                     cursor = SWT.CENTER;
                 }
 
-                return new SashContainerDropTarget(sourcePart, side, cursor,
-                        targetPart);
+                return createDropTarget(sourcePart, side, cursor, targetPart);
             }
         } else {
 
@@ -880,10 +884,28 @@ public abstract class PartSashContainer extends LayoutPart implements
                 side = SWT.NONE;
             }
 
-            return new SashContainerDropTarget(sourcePart, side, cursor, null);
+            return createDropTarget(sourcePart, side, cursor, null);
         }
 
         return null;
+    }
+
+    /**
+     * @param sourcePart
+     * @param targetPart
+     * @param side
+     * @param cursor
+     * @return
+     * @since 3.1
+     */
+    private SashContainerDropTarget createDropTarget(final LayoutPart sourcePart, int side, int cursor, LayoutPart targetPart) {
+        if (dropTarget == null) {
+            dropTarget = new SashContainerDropTarget(sourcePart, side, cursor,
+                targetPart);
+        } else {
+            dropTarget.setTarget(sourcePart, side, cursor, targetPart);
+        }
+        return dropTarget;
     }
 
     /**

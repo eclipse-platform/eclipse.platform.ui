@@ -32,6 +32,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
@@ -121,6 +122,46 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
     };
 
+    private static final class PartStackDropResult extends AbstractDropTarget {
+        private PartPane pane;
+        private StackDropResult dropResult;
+        private PartStack stack;
+        
+        public void setTarget(PartStack stack, PartPane pane, StackDropResult result) {
+            this.pane = pane;
+            this.dropResult = result;
+            this.stack = stack;
+        }
+        
+        public void drop() {
+            // If we're dragging a pane over itself do nothing
+            //if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return; };
+
+            // Don't worry about reparenting the view if we're
+            // simply rearranging tabs within this folder
+            if (pane.getContainer() != stack) {
+                stack.derefPart(pane);
+                pane.reparent(stack.getParent());
+            } else {
+                stack.remove(pane);
+            }
+
+            stack.add(pane, dropResult.getCookie());
+            stack.setSelection(pane);
+            pane.setFocus();
+        }
+
+        public Cursor getCursor() {
+            return DragCursors.getCursor(DragCursors.CENTER);
+        }
+
+        public Rectangle getSnapRectangle() {
+            return dropResult.getSnapRectangle();
+        }
+    };
+
+    private static final PartStackDropResult dropResult = new PartStackDropResult(); 
+            
     protected abstract boolean isMoveable(IPresentablePart part);
 
     protected abstract boolean isCloseable(IPresentablePart part);
@@ -459,36 +500,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 if (dropResult == null) {
                     return null;
                 }
-
-                return new IDropTarget() {
-
-                    public void drop() {
-
-                        // If we're dragging a pane over itself do nothing
-                        //if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return; };
-
-                        // Don't worry about reparenting the view if we're
-                        // simply rearranging tabs within this folder
-                        if (pane.getContainer() != PartStack.this) {
-                            derefPart(pane);
-                            pane.reparent(getParent());
-                        } else {
-                            remove(pane);
-                        }
-
-                        add(pane, dropResult.getCookie());
-                        setSelection(pane);
-                        pane.setFocus();
-                    }
-
-                    public Cursor getCursor() {
-                        return DragCursors.getCursor(DragCursors.CENTER);
-                    }
-
-                    public Rectangle getSnapRectangle() {
-                        return dropResult.getSnapRectangle();
-                    }
-                };
+                
+                return createDropTarget(pane, dropResult); 
             }
 
         });
@@ -506,6 +519,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         refreshPresentationSelection();
     }
 
+    private IDropTarget createDropTarget(PartPane pane, StackDropResult result) {
+        dropResult.setTarget(this, pane, result);
+        return dropResult;
+    }
+    
     /**
      * Saves the current state of the presentation to savedPresentationState, if the
      * presentation exists.

@@ -27,6 +27,47 @@ import org.eclipse.ui.internal.layout.TrimLayout;
  */
 /*package*/class TrimDropTarget implements IDragOverListener {
 
+    private final class ActualTrimDropTarget extends AbstractDropTarget {
+        private Rectangle dragRectangle;
+
+        private IWindowTrim draggedTrim;
+
+        private int dropSide;
+
+        private ActualTrimDropTarget(Rectangle dragRectangle, IWindowTrim draggedTrim, int dropSide) {
+            super();
+            this.dragRectangle = dragRectangle;
+            this.draggedTrim = draggedTrim;
+            this.dropSide = dropSide;
+        }
+        
+        private void setTarget(Rectangle dragRectangle, IWindowTrim draggedTrim, int dropSide) {
+            this.dragRectangle = dragRectangle;
+            this.draggedTrim = draggedTrim;
+            this.dropSide = dropSide;
+        }
+
+        public void drop() {
+            draggedTrim.dock(dropSide);
+        }
+
+        public Cursor getCursor() {
+            return DragCursors.getCursor(DragCursors
+                    .positionToDragCursor(dropSide));
+        }
+
+        public Rectangle getSnapRectangle() {
+            int smaller = Math.min(dragRectangle.width,
+                    dragRectangle.height);
+
+            return Geometry.toDisplay(
+                    windowComposite, Geometry.getExtrudedEdge(windowComposite.getClientArea(),
+                            smaller, dropSide));
+        }
+    }
+    
+    private ActualTrimDropTarget dropTarget; 
+
     private TrimLayout layout;
 
     private Composite windowComposite;
@@ -80,38 +121,32 @@ import org.eclipse.ui.internal.layout.TrimLayout;
                         final int dropSide = side;
                         final Control insertionPoint = targetTrim;
 
-                        return new AbstractDropTarget() {
-                            public void drop() {
-                                draggedTrim.dock(dropSide);
-                            }
-
-                            public Cursor getCursor() {
-                                return DragCursors.getCursor(DragCursors
-                                        .positionToDragCursor(dropSide));
-                            }
-
-                            public Rectangle getSnapRectangle() {
-
-                                int smaller = Math.min(dragRectangle.width,
-                                        dragRectangle.height);
-
-                                return Geometry
-                                        .toDisplay(
-                                                windowComposite,
-                                                Geometry
-                                                        .getExtrudedEdge(
-                                                                windowComposite
-                                                                        .getClientArea(),
-                                                                smaller,
-                                                                dropSide));
-                            }
-                        };
+                        return createDropResult(dragRectangle, draggedTrim, dropSide);
                     }
                 }
             }
         }
 
         return null;
+    }
+
+    /**
+     * Returns a drop target with the given specifications. As an optimization, the result of this method is cached
+     * and the object is reused in subsequent calls.
+     * 
+     * @param dragRectangle
+     * @param draggedTrim
+     * @param dropSide
+     * @return
+     * @since 3.1
+     */
+    private IDropTarget createDropResult(final Rectangle dragRectangle, final IWindowTrim draggedTrim, final int dropSide) {
+        if (dropTarget == null) {
+            dropTarget = new ActualTrimDropTarget(dragRectangle, draggedTrim, dropSide);
+        } else {
+            dropTarget.setTarget(dragRectangle, draggedTrim, dropSide);
+        }
+        return dropTarget;
     }
 
     private Control getTrimControl(Control searchSource) {
