@@ -169,7 +169,6 @@ public class IEditorRegistryTest extends TestCase {
 		proj = FileUtil.createProject("testProject");		
 		
 		
-		IFileEditorMapping[] mappings = fReg.getFileEditorMappings();
 		ImageDescriptor image1, image2; 
 		String fileName;
 		

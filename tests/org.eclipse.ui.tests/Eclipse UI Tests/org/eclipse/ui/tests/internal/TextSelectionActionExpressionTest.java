@@ -118,7 +118,6 @@ public class TextSelectionActionExpressionTest extends UITestCase
 	 */
 	private ExtendedTextEditor showTextEditor(String fileName) throws Throwable
 	{
-		ExtendedTextEditor editor = null;
 		IProject proj = FileUtil.createProject("TextSelectionActionExpressionTest");
 		IFile file = FileUtil.createFile(fileName, proj);
 		return (ExtendedTextEditor)fPage.openEditor(file);

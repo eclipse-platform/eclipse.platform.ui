@@ -282,7 +282,6 @@ public class VerifyDialog extends TitleAreaDialog {
 		}
 		FailureDialog dialog = new FailureDialog( getShell() );
 		dialog.create();
-		String temp = text.toString();
 		dialog.setText( text.toString() );
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			_failureText = dialog.toString();

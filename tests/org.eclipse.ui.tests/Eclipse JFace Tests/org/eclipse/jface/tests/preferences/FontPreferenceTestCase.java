@@ -43,7 +43,6 @@ public class FontPreferenceTestCase extends UITestCase {
 			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		preferenceStore = plugin.getPreferenceStore();
 
-		FontRegistry registry = JFaceResources.getFontRegistry();
 		//Set up the bogus entry for the bad first test
 		FontData bogusData = new FontData();
 		bogusData.setName("BadData");

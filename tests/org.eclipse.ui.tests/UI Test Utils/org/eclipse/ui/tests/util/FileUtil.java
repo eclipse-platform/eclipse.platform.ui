@@ -55,8 +55,6 @@ public class FileUtil {
 	public static IFile createFile(String name, IProject proj) 
 		throws CoreException
 	{
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = ws.getRoot();
 		IFile file = proj.getFile(name);
 		if (!file.exists()) {
 			String str = " ";

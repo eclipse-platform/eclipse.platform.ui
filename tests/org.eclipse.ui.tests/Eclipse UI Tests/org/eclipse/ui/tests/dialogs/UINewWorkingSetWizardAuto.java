@@ -79,7 +79,6 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		}
 	}
 	public void testEditPage() throws Throwable {
-		final int workingSetTypeIndex = fWorkingSetDescriptors.length - 1;
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		IWizardPage page = fWizardDialog.getCurrentPage();
 		IWizardPage defaultEditPage = registry.getDefaultWorkingSetPage();
@@ -90,7 +89,6 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 			 * Select the default (Resource) working set type
 			 * and advance to edit page.
 			 */
-			WorkingSetTypePage typePage = (WorkingSetTypePage) page;
 			List widgets = getWidgets(fWizardDialog.getShell(), Table.class);
 			Table table = (Table) widgets.get(0);
 			TableItem[] items = table.getItems();

@@ -359,17 +359,7 @@ public class AdaptedResourceNavigator
 		super.init(site, memento);
 		this.memento = memento;
 	}
-	/**
-	 * Adds drag and drop support to the navigator.
-	 */
-	protected void initDragAndDrop() {
-		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers =
-			new Transfer[] {
-				ResourceTransfer.getInstance(),
-				FileTransfer.getInstance(),
-				PluginTransfer.getInstance()};
-	}
+	
 	/**
 	 * Initializes a drill down adapter on the viewer.
 	 */

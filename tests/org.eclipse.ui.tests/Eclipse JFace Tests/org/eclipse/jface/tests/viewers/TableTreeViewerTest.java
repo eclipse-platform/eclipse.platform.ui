@@ -101,7 +101,6 @@ protected StructuredViewer createViewer(Composite parent) {
 	}
 	public void testLabelProviderStateChange() {
 		TableTreeViewer viewer = (TableTreeViewer) fViewer;
-		TableColumn column = viewer.getTableTree().getTable().getColumn(0);
 		TableTreeTestLabelProvider provider =
 			(TableTreeTestLabelProvider) viewer.getLabelProvider();
 		provider.fExtended = true;

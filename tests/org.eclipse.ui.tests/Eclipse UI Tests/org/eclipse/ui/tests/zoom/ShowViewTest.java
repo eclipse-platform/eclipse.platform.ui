@@ -11,7 +11,7 @@ public class ShowViewTest extends ZoomTestCase {
 	// a view is zoomed, a regular view is shown
 	public void test1() {
 		IViewPart view1 = showRegularView(view1Id);
-		IViewPart view2 = showRegularView(view2Id);
+		showRegularView(view2Id);
 		zoom(view1);
 		Assert.assertTrue(isZoomed(view1));
 		showRegularView(view2Id);

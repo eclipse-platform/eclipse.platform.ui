@@ -200,7 +200,7 @@ public class PropertySheetAuto extends UITestCase {
 	 * Supply selection events with a random car selection
 	 */
 	public void testInput() throws Throwable {
-		IWorkbenchPart part = createTestPart(activePage);
+		createTestPart(activePage);
 		createCars();
 		for (int i=0; i < NUMBER_OF_SELECTIONS; i++) {
 			// create the selection

@@ -97,7 +97,6 @@ public void testLabelProvider() {
 }
 public void testLabelProviderStateChange() {
 	TableViewer tableviewer = (TableViewer) fViewer;
-	TableColumn column = tableviewer.getTable().getColumn(0);
 	TableTestLabelProvider provider = (TableTestLabelProvider) tableviewer.getLabelProvider();
 
 	provider.fExtended = true;

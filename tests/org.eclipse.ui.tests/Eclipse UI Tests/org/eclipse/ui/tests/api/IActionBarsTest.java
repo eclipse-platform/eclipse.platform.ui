@@ -127,7 +127,7 @@ public class IActionBarsTest extends UITestCase {
 		
 		// Now create a second view and run the actions again.
 		// Our global actions should not be invoked.
-		IViewPart part2 = fPage.showView(MockViewPart.ID2);
+		fPage.showView(MockViewPart.ID2);
 		cut.hasRun = copy.hasRun = undo.hasRun = false;
 		ActionUtil.runActionUsingPath(this, fWindow, 
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.CUT);

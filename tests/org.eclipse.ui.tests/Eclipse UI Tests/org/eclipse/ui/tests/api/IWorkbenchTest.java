@@ -169,7 +169,7 @@ public class IWorkbenchTest extends UITestCase {
 	
 	public void testOpenPage1() throws Throwable {
 		IWorkbenchWindow win = null;
-		IWorkbenchPage page1, page2;
+		//IWorkbenchPage page1, page2;
 		try {
 /*
  * Commented out until test case can be updated to match new
@@ -218,7 +218,7 @@ public class IWorkbenchTest extends UITestCase {
 
 	public void testOpenPage2() throws Throwable {
 		IWorkbenchWindow win = null;
-		IWorkbenchPage page1, page2;
+		//IWorkbenchPage page1, page2;
 		try {
 /*
  * Commented out until test case can be updated to match new

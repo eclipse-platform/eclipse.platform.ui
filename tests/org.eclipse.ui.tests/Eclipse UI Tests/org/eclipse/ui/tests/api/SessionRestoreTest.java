@@ -24,7 +24,6 @@ public class SessionRestoreTest extends UITestCase {
 	public void testRestoreSession() throws Throwable {
 		IWorkbenchWindow [] windows;
 		IWorkbenchPage [] pages;
-		IWorkbenchPage page;
 		
 		// Get windows.
 		windows = fWorkbench.getWorkbenchWindows();
