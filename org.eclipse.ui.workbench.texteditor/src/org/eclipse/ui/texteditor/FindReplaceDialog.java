@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -58,7 +56,6 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.contentassist.ComboContentAssistSubjectAdapter;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -67,6 +64,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -224,25 +222,15 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private boolean fUseSelectedLines;
 	/**
-	 * The content assistant subject adapter for the find combo.
+	 * The content assist handler for the find combo.
 	 * @since 3.0
 	 */
-	private ComboContentAssistSubjectAdapter fFindFieldContentAssistAdapter;
+	private ContentAssistHandler fFindContentAssistHandler;
 	/**
-	 * The content assistant subject adapter for the replace combo.
+	 * The content assist handler for the replace combo.
 	 * @since 3.0
 	 */
-	private ComboContentAssistSubjectAdapter fReplaceFieldContentAssistAdapter;
-	/**
-	 * The content assistant for the find combo.
-	 * @since 3.0
-	 */
-	private ContentAssistant fFindFieldContentAssistant;
-	/**
-	 * The content assistant for the replace combo.
-	 * @since 3.0
-	 */
-	private ContentAssistant fReplaceFieldContentAssistant;
+	private ContentAssistHandler fReplaceContentAssistHandler;
 	/**
 	 * Content assist's proposal popup background color.
 	 * @since 3.0
@@ -461,30 +449,22 @@ class FindReplaceDialog extends Dialog {
 		return panel;
 	}
 	
-	private void ensureContentAssistantsInstalled() {
-		if (fFindFieldContentAssistant != null)
-			return;
-		
-		fFindFieldContentAssistAdapter= new ComboContentAssistSubjectAdapter(fFindField);
-		fFindFieldContentAssistant= createContentAssistant(fFindField, fFindFieldContentAssistAdapter);
-		fReplaceFieldContentAssistAdapter= new ComboContentAssistSubjectAdapter(fReplaceField);
-		fReplaceFieldContentAssistant= createContentAssistant(fReplaceField, fReplaceFieldContentAssistAdapter);
+	private void setContentAssistsEnablement(boolean enable) {
+		if (enable) {
+			if (fFindContentAssistHandler == null) {
+				fFindContentAssistHandler= ContentAssistHandler.createComboContentAssist(fFindField, createContentAssistant());
+				fReplaceContentAssistHandler= ContentAssistHandler.createComboContentAssist(fReplaceField, createContentAssistant());
+			}
+			fFindContentAssistHandler.setEnabled(true);
+			fReplaceContentAssistHandler.setEnabled(true);
+			
+		} else {
+			if (fFindContentAssistHandler == null)
+				return;
+			fFindContentAssistHandler.setEnabled(false);
+			fReplaceContentAssistHandler.setEnabled(false);
+		}
 	}
-	
-	private void ensureContentAssistantsUninstalled() {
-		if (fFindFieldContentAssistant == null)
-			return;
-		
-		fFindFieldContentAssistant.uninstall();
-		fFindFieldContentAssistant= null;
-		fFindFieldContentAssistAdapter.uninstall();
-		fFindFieldContentAssistAdapter= null;
-		fReplaceFieldContentAssistant.uninstall();
-		fReplaceFieldContentAssistant= null;
-		fReplaceFieldContentAssistAdapter.uninstall();
-		fReplaceFieldContentAssistAdapter= null;
-	}
-
 	
 	/**
 	 * Creates the direction defining part of the options defining section
@@ -747,10 +727,7 @@ class FindReplaceDialog extends Dialog {
 				fWholeWordCheckBox.setEnabled(!newState);
 				updateButtonState();
 				storeSettings();
-				if (newState)
-					ensureContentAssistantsInstalled();
-				else
-					ensureContentAssistantsUninstalled();
+				setContentAssistsEnablement(newState);
 			}
 		});
 		fWholeWordCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
@@ -1009,7 +986,9 @@ class FindReplaceDialog extends Dialog {
 		if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).endSession();
 
-		ensureContentAssistantsUninstalled();
+		setContentAssistsEnablement(false);
+		fFindContentAssistHandler= null;
+		fReplaceContentAssistHandler= null;
 		
 		fProposalPopupBackgroundColor.dispose();
 		fProposalPopupForegroundColor.dispose();
@@ -1642,10 +1621,7 @@ class FindReplaceDialog extends Dialog {
 			updateButtonState();
 		}
 		
-		if (isRegExSearchAvailableAndChecked())
-			ensureContentAssistantsInstalled();
-		else
-			ensureContentAssistantsUninstalled();
+		setContentAssistsEnablement(isRegExSearchAvailableAndChecked());
 	}
 
 	/** 
@@ -1754,7 +1730,12 @@ class FindReplaceDialog extends Dialog {
 	
 	// ------------- content assistant -----------------
 	
-	private ContentAssistant createContentAssistant(final Combo combo, ComboContentAssistSubjectAdapter adapter) {
+	/**
+	 * Create a new regex content assistant
+	 * @return a new configured content assistant
+	 * @since 3.0
+	 */
+	private ContentAssistant createContentAssistant() {
 		final ContentAssistant contentAssistant= new ContentAssistant();
 		
 		contentAssistant.setRestoreCompletionProposalSize(getSettings("FindReplaceDialog.completion_proposal_size")); //$NON-NLS-1$
@@ -1774,39 +1755,7 @@ class FindReplaceDialog extends Dialog {
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent);
 			}});
-
-		combo.addKeyListener(new KeyAdapter() {
-		/*
-		 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-		 */
-		public void keyReleased(KeyEvent e) {
-			if (!isRegExSearchAvailableAndChecked())
-				return;
-			
-			// FIXME: should get key binding from manager but this is either not yet API or net yet implemented 
-//				ICommandManager cm= ((Workbench)PlatformUI.getWorkbench()).getCommandManager();
-//				ICommand command= cm.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-//				command.getKeyBindings();
-//				System.out.println("pressed");
-
-			if (e.character == ' ' && e.stateMask == SWT.CTRL) {
-				int i= combo.getSelection().y;
-				String text= combo.getText();
-				String newText= ""; //$NON-NLS-1$
-				if (i > 0)
-					newText= text.substring(0, i - 1);
-				if (i < text.length())
-					newText= newText + text.substring(i);
-				combo.setText(newText);
-				i= Math.max(0, i - 1);
-				combo.setSelection(new Point(i, i));
-				String errorMessge= contentAssistant.showPossibleCompletions();
-				if (errorMessge != null)
-					statusError(errorMessge);
-			}
-					
-		}});
-		contentAssistant.install(adapter);
+		
 		return contentAssistant;
 	}
 	

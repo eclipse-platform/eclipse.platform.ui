@@ -25,36 +25,28 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 
 import org.eclipse.jface.text.IEventConsumer;
 
@@ -63,6 +55,8 @@ import org.eclipse.jface.text.IEventConsumer;
  * An <code>AbstractControlContentAssistSubjectAdapter</code> delegates assistance requests from a 
  * {@link org.eclipse.jface.text.contentassist.IContentAssistantExtension content assistant}
  * to a <code>Control</code>.
+ * 
+ * A visual affordance can be configured via {@link #setContentAssistCueProvider(ILabelProvider)}.
  * 
  * @since 3.0
  */
@@ -86,23 +80,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 
 	/**
 	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
-	 * 
-	 * @param control the control
 	 **/
-	public AbstractControlContentAssistSubjectAdapter(Control control) {
-		this(control, false);
-	}
-
-	/**
-	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
-	 * 
-	 * @param control the control
-	 * @param showCue show cue on the left side of control
-	 */
-	AbstractControlContentAssistSubjectAdapter(Control control, boolean showCue) {
+	public AbstractControlContentAssistSubjectAdapter() {
 		fVerifyKeyListeners= new ArrayList(1);
 		fKeyListeners= new HashSet(1);
-		setShowContentAssistCue(control, showCue);
 	}
 	
 	/*
@@ -319,582 +300,490 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	}
 	
 	/**
-	 * Uninstalls this control content assist subject adapter.
+	 * Sets the visual affordance provider for content assist.
+	 * The given {@link ILabelProvider} methods are called with
+	 * {@link #getControl()} as argument.
+	 * 
+	 * <ul>
+	 * <li><code>getImage(Object)</code> provides the visual cue image.
+	 * The image can maximally be 5 pixels wide and 8 pixels high.
+	 * If <code>getImage(Object)</code> returns <code>null</code>, a default image is used.
+	 * </li>
+	 * <li><code>getText(Object)</code> provides the hover info text.
+	 * It is shown when hovering over the cue image or the adapted {@link Control}.
+	 * No info text is shown if <code>getText(Object)</code> returns <code>null</code>.
+	 * </li>
+	 * </ul>
+	 * <p>
+	 * The given {@link ILabelProvider} becomes owned by the {@link AbstractControlContentAssistSubjectAdapter},
+	 * i.e. it gets disposed when the adapted {@link Control} is disposed
+	 * or when another {@link ILabelProvider} is set.
+	 * </p>
+	 * 
+	 * @param labelProvider a {@link ILabelProvider}, or <code>null</code>
+	 * 	if the affordance should not be shown
 	 */
-	public void uninstall() {
-		setShowContentAssistCue(getControl(), false);
-	}
-	
-	/**
-	 * Controls visibility of the visual cue for content assist.
-	 *
-	 * @param enable iff <code>true</code>, show cue
-	 */
-	public void enableContentAssistCue(boolean enable) {
+	public void setContentAssistCueProvider(ILabelProvider labelProvider) {
+		SmartFieldController.setSmartCue(getControl(), labelProvider);
 	}
 
 	/**
-	 * Controls visibility of the visual cue for content assist.
-	 *
-	 * @param control the <code>Control</code>
-	 * @param enable iff <code>true</code>, show cue
-	 */
-	private void setShowContentAssistCue(Control control, boolean enable) {
-		SmartFieldController.setSmartCue(control, enable ? "Content Assist Available" : null);
-	}
-	
-	/**
-	 * Sets the given error message in the field message hover.
-	 *
-	 * @param message the message, or <code>null</code> to clear
-	 */
-	public void setErrorMessage(String message) {
-		SmartFieldController.setErrorMessage(getControl(), message);
-	
-	}
-	
-	/**
-	 * The controller for cues and error messages on <code>Text</code> and <code>Combo</code> <code>Control</code>s.
-	 * 
-	 * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
-	 * 
-	 * @since 3.0
+	 * The internal controller for cues and error messages on <code>Text</code> and
+	 * <code>Combo</code> <code>Control</code>s.
 	 */
 	private static class SmartFieldController {
 			
-			class Hover {
-				// info hover metrics
-				private int HD= 10;	// distance of arrow from left side
-				private int HW= 8;	// width of info hover arrow
-				private int HH= 10;  // height of info hover arrow
-				private int MARGIN= 2;
-
-				Shell fHoverShell;
-				String fText= ""; //$NON-NLS-1$
-				
-				Hover(Shell parent) {
-					final Display display= parent.getDisplay();
-					fHoverShell= new Shell(parent, SWT.NO_TRIM | SWT.ON_TOP | SWT.NO_FOCUS);
-					fHoverShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-					fHoverShell.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-					fHoverShell.addPaintListener(new PaintListener() {
-						public void paintControl(PaintEvent pe) {
-							pe.gc.drawString(fText, MARGIN, MARGIN);
-							if (!fgCarbon)
-								pe.gc.drawPolygon(getPolygon(true));
-						}
-					});
-					fHoverShell.addMouseListener(new MouseAdapter() {
-						public void mouseDown(MouseEvent e) {
-							updateHover2(null, null);
-						}
-					});
-				}
-				
-				int[] getPolygon(boolean border) {
-					Point e= getExtent();
-					if (border)
-						return new int[] { 0,0, e.x-1,0, e.x-1,e.y-1, HD+HW,e.y-1, HD+HW/2,e.y+HH-1, HD,e.y-1, 0,e.y-1, 0,0 };
-					return new int[] { 0,0, e.x,0, e.x,e.y, HD+HW,e.y, HD+HW/2,e.y+HH, HD,e.y, 0,e.y, 0,0 };
-				}
-				
-				void dispose() {
-					if (!fHoverShell.isDisposed())
-						fHoverShell.dispose();
-				}
-				
-				void setVisible(boolean visible) {
-					if (visible) {
-						if (!fHoverShell.isVisible())
-							fHoverShell.setVisible(true);
-					} else {
-						if (fHoverShell.isVisible())
-							fHoverShell.setVisible(false);
-					}
-				}
-					
-				void setText(String t) {
-					if (t == null)
-						t= ""; //$NON-NLS-1$
-					if (! t.equals(fText)) {
-						Point oldSize= getExtent();
-						fText= t;
-						fHoverShell.redraw();
-						Point newSize= getExtent();
-						if (!oldSize.equals(newSize)) {
-							Region region= new Region();
-							region.add(getPolygon(false));
-							fHoverShell.setRegion(region);
-						}		
-					}
-				}
-
-				boolean isVisible() {
-					return fHoverShell.isVisible();
-				}
-				
-				void setLocation(Control control) {
-					if (control != null) {
-						int h= getExtent().y;
-						fHoverShell.setLocation(control.toDisplay(-HD+HW/2, -h-HH+1));
-					}
-				}
-				
-				Point getExtent() {
-					GC gc= new GC(fHoverShell);
-					Point e= gc.textExtent(fText);
-					gc.dispose();
-					e.x+= MARGIN*2;
-					e.y+= MARGIN*2;
-					return e;
-				}
-			}
-			
-			class Annotation {
-				
-				private Control fControl;	// put icon relative to this control
-				private Image fImage;		// visual representation of this annotation
-				private int fDx, fDy;		// place icon relative to top-left corner of control
-				private String fText;		// the information shown in hover
-				
-				Annotation(Control control, Image image, int dy, String text) {
-					fControl= control;
-					fImage= image;
-					fText= text;
-					fDx= -5;
-					fDy= dy;
-					if (fgCarbon) {
-						if (control instanceof Text) {
-							fDy+= 3;
-						} else if (control instanceof Combo) {
-							fDx= -9;
-						}
-					} else if (fgWin32) {
-						if (control instanceof Text) {
-							fDx= -7;
-							fDy-= 2;
-						}
-					}
-				}
-				
-				void paintControl(PaintEvent e) {
-					if (!fControl.isDisposed() && !fImage.isDisposed()) {
-						Point global= fControl.toDisplay(fDx, fDy);
-						Point local= ((Control) e.widget).toControl(global);
-						e.gc.drawImage(fImage, local.x, local.y);
-					}
-				}
-				
-				boolean handleEvent(MouseEvent e) {
-					if (!fImage.isDisposed()) {
-						Rectangle r= fImage.getBounds();
-						Point global= fControl.toDisplay(fDx, fDy);
-						Point local= ((Control) e.widget).toControl(global);
-						r.x= local.x;
-						r.y= local.y;
-						if (r.contains(e.x, e.y)) {
-							updateHover2(fControl, fText);
-							return true;
-						}
-					}
-					return false;
-				}
-			}
-			
+		/**
+		 * An info Hover to display a message next to a {@link Control}.
+		 */
+		class Hover {
 			/**
-			 * One AnnotationHandler is registered for a given Control.
+			 * Distance of info hover arrow from left side.
 			 */
-			class AnnotationHandler extends MouseTrackAdapter implements MouseMoveListener, PaintListener  {
-				
-				ArrayList fAnnotations= new ArrayList();
-				
-				public void paintControl(PaintEvent e) {
-					Iterator iter= fAnnotations.iterator();
-					while (iter.hasNext()) {
-						Annotation a= (Annotation) iter.next();
-						a.paintControl(e);
-					}
-				}
-				
-				void add(Annotation a) {
-					fAnnotations.add(a);
-				}
-
-				boolean remove(Annotation a) {
-					fAnnotations.remove(a);
-					return fAnnotations.size() <= 0;
-				}
-
-				public void mouseEnter(MouseEvent e) {
-					if (isTooltipVisible())
-						update(e);
-				}
-				
-				public void mouseHover(MouseEvent e) {
-						update(e);
-				}
-
-				public void mouseMove(MouseEvent e) {
-					if (isTooltipVisible())
-						update(e);
-				}
-				
-				public void mouseExit(MouseEvent e) {
-					if (isTooltipVisible())
-						update(e);
-				}
-				
-				void update(MouseEvent e) {
-					Iterator iter= fAnnotations.iterator();
-					while (iter.hasNext()) {
-						Annotation a= (Annotation) iter.next();
-						if (a.handleEvent(e))
-							return;
-					}
-					Control c= e.widget.getDisplay().getFocusControl();
-					if (c != null)
-						updateHover(c);
-					else
-						updateHover2(c, null);					
-				}
-			}
-			
-			class ErrorAnnotationFocusListener implements FocusListener {
-				public void focusGained(FocusEvent e) {
-					updateHover((Control)e.widget);
-				}
-				public void focusLost(FocusEvent e) {
-					updateHover2((Control)e.widget, null);
-				}
-			}
-			
-			class SmartAnnotationFocusListener implements FocusListener {
-				Control fControl;
-				Annotation fAnnotation;
-				
-				SmartAnnotationFocusListener(Control c, Annotation a) {
-					fControl= c;
-					fAnnotation= a;
-				}
-				
-				public void focusGained(FocusEvent e) {
-					addAnnotation(fControl, fAnnotation);
-				}
-				
-				public void focusLost(FocusEvent e) {
-					removeAnnotation(fControl, fAnnotation);
-				}
-			}
-
-			private static final String FIELDCONTROLLER= "org.eclipse.SmartFieldController"; //$NON-NLS-1$
-			private static final String SMARTFOCUSLISTENER= "org.eclipse.SmartFieldController.smartFocusListener"; //$NON-NLS-1$
-			private static final String ANNOTATIONHANDLER= "org.eclipse.SmartFieldController.Listener"; //$NON-NLS-1$
-			private static final String INFO_ANNOTATION= "org.eclipse.SmartFieldController.InfoAnnotation"; //$NON-NLS-1$
-
-			private static String fgPlatform= SWT.getPlatform();
-			private static boolean fgCarbon= "carbon".equals(fgPlatform); //$NON-NLS-1$
-			private static boolean fgWin32= "win32".equals(fgPlatform); //$NON-NLS-1$
-
-			private Image fBulb;
-			private Shell fShell;
-			private Hover fHover;
-			private Control fHoverControl;
-			private Image fErrorImage;
-			private ErrorAnnotationFocusListener fErrorAnnotationFocusListener= new ErrorAnnotationFocusListener();
-			
-			
+			private int HD= 10;
 			/**
-			 * Shows or clears a message for the given control.
-			 * 
-			 * @param control the control
-			 * @param message the error message
+			 * Width of info hover arrow.
 			 */
-			public static void setErrorMessage(Control control, String message) {
-				getSmartFieldController(control).setInfo(control, message);
-			}
-			
+			private int HW= 8;
 			/**
-			 * Installs or deinstalls a visual cue indicating availability of content assist on the given control.
-			 * 
-			 * @param control the control on which to install or uninstall the cue
-			 * @param message the tool tip message or <code>null</code> to uninstall the cue
+			 * Height of info hover arrow.
 			 */
-			public static void setSmartCue(Control control, String message) {
-				getSmartFieldController(control).setSmartCue2(control, message);
-			}
-
-			//---- private implementation 
+			private int HH= 10;
+			/**
+			 * Margin around info hover text.
+			 */
+			private int LABEL_MARGIN= 2;
+			/**
+			 * This info hover's shell.
+			 */
+			Shell fHoverShell;
+			/**
+			 * The info hover text.
+			 */
+			String fText= ""; //$NON-NLS-1$
 			
-			private SmartFieldController(Shell shell) {
-				fShell= shell;
-				fShell.setData(FIELDCONTROLLER, this);
-				
-				Listener l= new Listener() {
-					public void handleEvent(Event event) {
-						switch (event.type) {
-						case SWT.Resize:
-						case SWT.Move:
-							if (fHover != null)
-								fHover.setLocation(fHoverControl);
-							break;
-						case SWT.Dispose:
-							Object data= fShell.getData(FIELDCONTROLLER);
-							if (data == SmartFieldController.this) {
-								fShell.setData(FIELDCONTROLLER, null);
-								handleDispose();
-							}
-							break;
-						//case SWT.Activate:
-						case SWT.Deactivate:
-						case SWT.Close:
-						case SWT.Iconify:
-						//case SWT.Deiconify:
-							updateHover2(null, null);
-							break;
-						}
+			Hover(Shell parent) {
+				final Display display= parent.getDisplay();
+				fHoverShell= new Shell(parent, SWT.NO_TRIM | SWT.ON_TOP | SWT.NO_FOCUS);
+				fHoverShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+				fHoverShell.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+				fHoverShell.addPaintListener(new PaintListener() {
+					public void paintControl(PaintEvent pe) {
+						pe.gc.drawString(fText, LABEL_MARGIN, LABEL_MARGIN);
+						if (!fgCarbon)
+							pe.gc.drawPolygon(getPolygon(true));
 					}
-				};
-				shell.addListener(SWT.Dispose, l);
-				shell.addListener(SWT.Resize, l);
-				shell.addListener(SWT.Move, l);
-				//shell.addListener(SWT.Activate, l);
-				shell.addListener(SWT.Close, l);
-				shell.addListener(SWT.Deactivate, l);
-				shell.addListener(SWT.Iconify, l);
-				//shell.addListener(SWT.Deiconify, l);
-			}
-			
-		 	private void handleDispose() {
-		  		fShell= null;
-				if (fHover != null) {
-					fHover.dispose();
-					fHover= null;
-				}
-				if (fBulb != null) {
-					fBulb.dispose();
-					fBulb= null;
-				}
-				if (fErrorImage != null) {
-					fErrorImage.dispose();
-					fErrorImage= null;
-				}
-			}
-			
-			private static SmartFieldController getSmartFieldController(Control control) {
-				Shell shell= control.getShell();
-				Object data= shell.getData(FIELDCONTROLLER);
-				if (! (data instanceof SmartFieldController))
-					data= new SmartFieldController(shell);
-				return (SmartFieldController) data;
-			}
-				
-			private void setSmartCue2(final Control control, String message) {
-
-				SmartAnnotationFocusListener focuslistener= null;
-				Object data= control.getData(SMARTFOCUSLISTENER);
-				if (data instanceof SmartAnnotationFocusListener)
-					focuslistener= (SmartAnnotationFocusListener)data;
-				
-				if (message != null) {		
-					// add smart stuff
-					Annotation annotation= null;
-					if (focuslistener == null) {
-						annotation= new Annotation(control, getLightBulb(), 10, message);
-						focuslistener= new SmartAnnotationFocusListener(control, annotation);
-						control.setData(SMARTFOCUSLISTENER, focuslistener);
-						control.addFocusListener(focuslistener);
-					} else {
-						annotation= focuslistener.fAnnotation;
-						annotation.fText= message;
+				});
+				fHoverShell.addMouseListener(new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						showHover(null, null);
 					}
-						
-					if (hasFocus(control))
-						addAnnotation(control, annotation);
+				});
+			}
+			
+			int[] getPolygon(boolean border) {
+				Point e= getExtent();
+				if (border) {
+					return new int[] { 0,0, e.x-1,0, e.x-1,e.y-1, HD+HW,e.y-1, HD+HW/2,e.y+HH-1, HD,e.y-1, 0,e.y-1, 0,0 };
 				} else {
-					// remove smart stuff
-					Annotation annotation= null;
-					if (focuslistener != null) {
-						annotation= focuslistener.fAnnotation;
-						control.removeFocusListener(focuslistener);
-					}
-					control.setData(SMARTFOCUSLISTENER, null);
-						
-					if (hasFocus(control) && annotation != null)
-						removeAnnotation(control, annotation);
+					return new int[] { 0,0, e.x,  0, e.x,  e.y,   HD+HW,e.y,   HD+HW/2,e.y+HH,   HD,e.y,   0,e.y,   0,0 };
 				}
 			}
-
-			private void setInfo(final Control control, String text) {
-				if (text != null) {
-					Annotation a= (Annotation) control.getData(INFO_ANNOTATION);
-					if (a == null) {
-						control.addFocusListener(fErrorAnnotationFocusListener);
-						a= new Annotation(control, getErrorImage(), 0, text);
-						control.setData(INFO_ANNOTATION, a);
-						addAnnotation(control, a);
-					} else {
-						a.fText= text;	
-					}
+			
+			void dispose() {
+				if (!fHoverShell.isDisposed())
+					fHoverShell.dispose();
+			}
+			
+			void setVisible(boolean visible) {
+				if (visible) {
+					if (!fHoverShell.isVisible())
+						fHoverShell.setVisible(true);
 				} else {
-					control.removeFocusListener(fErrorAnnotationFocusListener);
-					Object data= control.getData(INFO_ANNOTATION);
-					if (data instanceof Annotation) {
-						removeAnnotation(control, (Annotation) data);
-						control.setData(INFO_ANNOTATION, null);
-					}
+					if (fHoverShell.isVisible())
+						fHoverShell.setVisible(false);
 				}
+			}
 				
-				if (hasFocus(control))
-					updateHover(control);
+			void setText(String t) {
+				if (t == null)
+					t= ""; //$NON-NLS-1$
+				if (! t.equals(fText)) {
+					Point oldSize= getExtent();
+					fText= t;
+					fHoverShell.redraw();
+					Point newSize= getExtent();
+					if (!oldSize.equals(newSize)) {
+						Region region= new Region();
+						region.add(getPolygon(false));
+						fHoverShell.setRegion(region);
+					}		
+				}
 			}
 
-			private void updateHover(Control control) {
-				String text= null;
-				Annotation a= (Annotation) control.getData(INFO_ANNOTATION);
-				if (a != null)
-					text= a.fText;
-				updateHover2(control, text);
+			boolean isVisible() {
+				return fHoverShell.isVisible();
 			}
-				
-			private void updateHover2(Control control, String text) {
-				if (text != null) {
-					fHoverControl= control;
-					if (fHover == null)
-						fHover= new Hover(fShell);
-					fHover.setText(text);
-					fHover.setLocation(fHoverControl);
-					fHover.setVisible(true);
-				} else {
-					fHoverControl= null;
-					if (fHover != null)
-						fHover.setVisible(false);
+			
+			void setLocation(Control control) {
+				if (control != null) {
+					int h= getExtent().y;
+					fHoverShell.setLocation(control.toDisplay(-HD+HW/2, -h-HH+1));
 				}
 			}
 			
-			private boolean isTooltipVisible() {
-				return fHover != null && fHover.isVisible();
-			}
-			
-			private static boolean hasFocus(Control control) {
-				return control.getDisplay().getFocusControl() == control;
-			}
-			
-			private Image getLightBulb() {
-				if (fBulb == null) {
-					ImageDescriptor bulbID= ImageDescriptor.createFromFile(SmartFieldController.class, "images/content_assist_cue.gif"); //$NON-NLS-1$
-					fBulb= bulbID.createImage(fShell.getDisplay());
-				}
-				return fBulb;
-			}
-			
-			private Image getErrorImage() {
-				if (fErrorImage == null) {
-					ImageDescriptor errorID= ImageDescriptor.createFromFile(SmartFieldController.class, "images/error_small.gif"); //$NON-NLS-1$
-					fErrorImage= errorID.createImage(fShell.getDisplay());
-				}
-				return fErrorImage;
-			}
-			
-			private void addAnnotation(Control control, Annotation a) {
-				for (Control c= control.getParent(); c != null; c= c.getParent()) {
-					AnnotationHandler pl= (AnnotationHandler) c.getData(ANNOTATIONHANDLER);
-					if (pl == null) {
-						pl= new AnnotationHandler();
-						c.addPaintListener(pl);
-						c.addMouseTrackListener(pl);
-						c.addMouseMoveListener(pl);
-						c.setData(ANNOTATIONHANDLER, pl);
-					}
-					pl.add(a);
-					c.redraw();
-				}
-			}
-			
-			private void removeAnnotation(Control control, Annotation a) {
-				for (Control c= control.getParent(); c != null; c= c.getParent()) {
-					AnnotationHandler pl= (AnnotationHandler) c.getData(ANNOTATIONHANDLER);
-					if (pl != null) {
-						if (pl.remove(a)) {
-							c.removePaintListener(pl);
-							c.removeMouseTrackListener(pl);
-							c.removeMouseMoveListener(pl);	
-							c.setData(ANNOTATIONHANDLER, null);
-						}
-					}
-					c.redraw();
-				}
-			}
-			
-			static int fgCount;
-			
-			public static void main(String[] args) {
-				Display display= new Display();
-				Shell shell= new Shell(display);
-				GridLayout gl= new GridLayout(2, false);
-				shell.setLayout(gl);
-				
-				new Label(shell, SWT.NONE).setText("Smart Text:"); //$NON-NLS-1$
-				final Text t= new Text(shell, SWT.BORDER);
-				t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				t.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
-						String tx= t.getText();
-						if (tx.indexOf(' ') >= 0)
-							SmartFieldController.setErrorMessage(t, "spaces not allowed in " + tx); //$NON-NLS-1$
-						else
-							SmartFieldController.setErrorMessage(t, null);					
-					}
-				});
-				SmartFieldController.setSmartCue(t, "Content assist available"); //$NON-NLS-1$
-				
-				new Label(shell, SWT.NONE).setText("Smart Combo:"); //$NON-NLS-1$
-				final Combo c= new Combo(shell, SWT.BORDER);
-				c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				c.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
-						String tx= c.getText();
-						if (tx.indexOf('.') >= 0)
-							SmartFieldController.setErrorMessage(c, "dots not allowed in " + tx); //$NON-NLS-1$
-						else
-							SmartFieldController.setErrorMessage(c, null);					
-					}
-				});
-				SmartFieldController.setSmartCue(c, "Quick assist available"); //$NON-NLS-1$
-
-				new Label(shell, SWT.NONE).setText("Dumb Text:"); //$NON-NLS-1$
-				final Text tt= new Text(shell, SWT.BORDER);
-				tt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				tt.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
-						String tx= tt.getText();
-						if (tx.indexOf(' ') >= 0)
-							SmartFieldController.setErrorMessage(tt, "spaces not allowed in " + tx); //$NON-NLS-1$
-						else
-							SmartFieldController.setErrorMessage(tt, null);					
-					}
-				});
-
-				new Label(shell, SWT.NONE).setText("Be Smart:"); //$NON-NLS-1$
-				final Button b= new Button(shell, SWT.CHECK);
-				b.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						boolean smart= b.getSelection();
-						if (smart)
-							SmartFieldController.setSmartCue(tt, "Content assist available " + fgCount++); //$NON-NLS-1$
-						else
-							SmartFieldController.setSmartCue(tt, null);
-					}
-				});
-				
-				
-				shell.setLocation(200, 200);
-				shell.open();
-				
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
-				display.dispose();
+			Point getExtent() {
+				GC gc= new GC(fHoverShell);
+				Point e= gc.textExtent(fText);
+				gc.dispose();
+				e.x+= LABEL_MARGIN*2;
+				e.y+= LABEL_MARGIN*2;
+				return e;
 			}
 		}
+		
+		/**
+		 * A single plain HoverHandler is registered for the content assist control.
+		 * It handles mouse hover events to show/hide the info hover.
+		 */
+		class HoverHandler extends MouseTrackAdapter {
+			/**
+			 * The managing FieldFocusListener.
+			 */
+			FieldFocusListener fFieldFocusListener;
+			/**
+			 * Create a new HoverHandler.
+			 * 
+			 * @param fieldFocusListener the field focus listener
+			 */
+			HoverHandler(FieldFocusListener fieldFocusListener) {
+				fFieldFocusListener= fieldFocusListener;
+			}
+			/**
+			 * @inheritDoc
+			 */
+			public void mouseHover(MouseEvent e) {
+				handleMouseEvent(e);
+			}
+			/**
+			 * @inheritDoc
+			 */
+			public void mouseExit(MouseEvent e) {
+				if (isHoverVisible())
+					fFieldFocusListener.doHideHover();
+			}
+			/**
+			 * Subclasses may extend or reimplement this method.
+			 * @param e
+			 */
+			void handleMouseEvent(MouseEvent e) {
+				fFieldFocusListener.doShowHover();
+			}
+		}
+		
+		/**
+		 * One CueHandler is registered per ancestor control of the content assist control.
+		 * It paints the visual cue icon and handles mouse hover events to show/hide the info hover.
+		 */
+		class CueHandler extends HoverHandler implements PaintListener  {
+			/**
+			 * Create a new CueHandler.
+			 * 
+			 * @param fieldFocusListener the field focus listener
+			 */
+			CueHandler(FieldFocusListener fieldFocusListener) {
+				super(fieldFocusListener);
+			}
+			/**
+			 * @inheritDoc
+			 */
+			public void paintControl(PaintEvent e) {
+				fFieldFocusListener.paintControl(e);
+			}
+			/**
+			 * Updates the hover.
+			 * 
+			 * @param event the mouse event
+			 */
+			void handleMouseEvent(MouseEvent event) {
+				fFieldFocusListener.updateHoverOnCue(event);
+			}
+		}
+		
+		class FieldFocusListener implements FocusListener {
+			/**
+			 * Put icon relative to this control.
+			 */
+			Control fControl;
+			/**
+			 * The icon's horizontal screen distance from top-left corner of control (in pixels).
+			 */
+			private int fDx;
+			/**
+			 * The icon's vertical screen distance from top-left corner of control (in pixels).
+			 */
+			private int fDy;
+			/**
+			 * The HoverHandler (only when control has focus).
+			 */
+			HoverHandler fHoverHandler;
+			/**
+			 * Create a new FieldFocusListener
+			 * @param control the target control
+			 */
+			FieldFocusListener(Control control) {
+				fControl= control;
+				
+				fDx= -5;
+				fDy= 1;
+				if (fgCarbon) {
+					if (control instanceof Text) {
+						fDy+= 3;
+					} else if (control instanceof Combo) {
+						fDx-= 4;
+					}
+				} else if (fgWin32) {
+					if (control instanceof Text) {
+						fDx-= 2;
+						fDy-= 2;
+					}
+				}
+			}
+			
+			void paintControl(PaintEvent e) {
+				if (fControl.isDisposed())
+					return;
+				Image image= getCueImage(fControl);
+				Point global= fControl.toDisplay(fDx, fDy);
+				Point local= ((Control) e.widget).toControl(global);
+				e.gc.drawImage(image, local.x, local.y);
+			}
+			/**
+			 * Show/hide the hover
+			 * @param e the MouseEvent
+			 */
+			void updateHoverOnCue(MouseEvent e) {
+				Image image= getCueImage(fControl);
+				Rectangle r= image.getBounds();
+				Point global= fControl.toDisplay(fDx, fDy);
+				Point local= ((Control) e.widget).toControl(global);
+				r.x= local.x;
+				r.y= local.y;
+				if (r.contains(e.x, e.y))
+					doShowHover();
+				else
+					doHideHover();
+			}
+			/**
+			 * Hide hover.
+			 */
+			private void doHideHover() {
+				showHover(fControl, null);
+			}
+			/**
+			 * Show hover.
+			 */
+			public void doShowHover() {
+				showHover(fControl, fLabelProvider.getText(fControl));
+			}
+			/**
+			 * @inheritDoc
+			 */
+			public void focusGained(FocusEvent e) {
+				// install a CueHandler on every parent control
+				for (Control c= fControl.getParent(); c != null; c= c.getParent()) {
+					CueHandler cueHandler= new CueHandler(this);
+					c.setData(ANNOTATION_HANDLER, cueHandler);
+					c.addPaintListener(cueHandler);
+					c.addMouseTrackListener(cueHandler);
+					c.redraw();
+				}
+				
+				if (fHoverHandler == null) {
+					fHoverHandler= new HoverHandler(this);
+					fControl.addMouseTrackListener(fHoverHandler);
+				}
+			}
+			
+			/**
+			 * @inheritDoc
+			 */
+			public void focusLost(FocusEvent e) {
+				for (Control c= fControl.getParent(); c != null; c= c.getParent()) {
+					CueHandler cueHandler= (CueHandler) c.getData(ANNOTATION_HANDLER);
+					c.setData(ANNOTATION_HANDLER, null);
+					c.removePaintListener(cueHandler);
+					c.removeMouseTrackListener(cueHandler);
+					c.redraw();
+				}
+				
+				if (fHoverHandler != null) {
+					fControl.removeMouseTrackListener(fHoverHandler);
+				}
+			}
+		}
+
+		private static final String SMART_FIELD_CONTROLLER= "org.eclipse.SmartFieldController"; //$NON-NLS-1$
+		private static final String SMART_FOCUS_LISTENER= "org.eclipse.SmartFieldController.smartFocusListener"; //$NON-NLS-1$
+		private static final String ANNOTATION_HANDLER= "org.eclipse.SmartFieldController.annotationHandler"; //$NON-NLS-1$
+		
+		private static String fgPlatform= SWT.getPlatform();
+		private static boolean fgCarbon= "carbon".equals(fgPlatform); //$NON-NLS-1$
+		private static boolean fgWin32= "win32".equals(fgPlatform); //$NON-NLS-1$
+
+		private Shell fShell;
+		private ILabelProvider fLabelProvider;
+		private Image fCueImage;
+		private Hover fHover;
+		private Control fHoverControl;
+		
+		/**
+		 * Installs or deinstalls a visual cue indicating availability of content assist on the given control.
+		 * At most one cue and one hover info is shown at any point in time.
+		 * 
+		 * @param control the control on which to install or uninstall the cue
+		 * @param labelProvider the label provider or <code>null</code> to uninstall the cue
+		 */
+		public static void setSmartCue(Control control, ILabelProvider labelProvider) {
+			getSmartFieldController(control).internalSetSmartCue(control, labelProvider);
+		}
+
+		//---- private implementation
+		
+		private SmartFieldController(Shell shell) {
+			fShell= shell;
+			fShell.setData(SMART_FIELD_CONTROLLER, this);
+			
+			Listener l= new Listener() {
+				public void handleEvent(Event event) {
+					switch (event.type) {
+					case SWT.Resize:
+					case SWT.Move:
+						if (fHover != null)
+							fHover.setLocation(fHoverControl);
+						break;
+					case SWT.Dispose:
+						Object data= fShell.getData(SMART_FIELD_CONTROLLER);
+						if (data == SmartFieldController.this) {
+							fShell.setData(SMART_FIELD_CONTROLLER, null);
+							handleDispose();
+						}
+						break;
+					//case SWT.Activate:
+					case SWT.Deactivate:
+					case SWT.Close:
+					case SWT.Iconify:
+					//case SWT.Deiconify:
+						showHover(null, null);
+						break;
+					}
+				}
+			};
+			shell.addListener(SWT.Dispose, l);
+			shell.addListener(SWT.Resize, l);
+			shell.addListener(SWT.Move, l);
+			//shell.addListener(SWT.Activate, l);
+			shell.addListener(SWT.Close, l);
+			shell.addListener(SWT.Deactivate, l);
+			shell.addListener(SWT.Iconify, l);
+			//shell.addListener(SWT.Deiconify, l);
+		}
+		
+	 	private void handleDispose() {
+	  		fShell= null;
+			fHoverControl= null;
+			if (fHover != null) {
+				fHover.dispose();
+				fHover= null;
+			}
+			if (fCueImage != null) {
+				fCueImage.dispose();
+				fCueImage= null;
+			}
+			if (fLabelProvider != null) {
+				fLabelProvider.dispose();
+				fLabelProvider= null;
+			}
+		}
+		/**
+		 * Gets the smart field controller from the <code>control</code>'s Shell.
+		 * @param control that target control
+		 * @return <code>control</code>'s shell
+		 */
+		private static SmartFieldController getSmartFieldController(Control control) {
+			Shell shell= control.getShell();
+			Object data= shell.getData(SMART_FIELD_CONTROLLER);
+			if (! (data instanceof SmartFieldController))
+				data= new SmartFieldController(shell);
+			return (SmartFieldController) data;
+		}
+		
+		private void internalSetSmartCue(final Control control, ILabelProvider labelProvider) {
+			if (fLabelProvider != null)
+				fLabelProvider.dispose();
+			
+			fLabelProvider= labelProvider;
+			
+			FieldFocusListener focuslistener= (FieldFocusListener) control.getData(SMART_FOCUS_LISTENER);
+			
+			if (labelProvider != null) {
+				// add smart stuff
+				if (focuslistener == null) {
+					focuslistener= new FieldFocusListener(control);
+					control.setData(SMART_FOCUS_LISTENER, focuslistener);
+					control.addFocusListener(focuslistener);
+				}
+			} else {
+				// remove smart stuff
+				if (focuslistener != null) {
+					control.removeFocusListener(focuslistener);
+					control.setData(SMART_FOCUS_LISTENER, null);
+				}
+				
+				if (fCueImage != null) {
+					fCueImage.dispose();
+					fCueImage= null;
+				}
+			}
+		}
+		/**
+		 * Show or hide hover.
+		 * @param control target control
+		 * @param text a String to show in hover, or <code>null</code> to hide
+		 */
+		private void showHover(Control control, String text) {
+			if (text != null) {
+				fHoverControl= control;
+				if (fHover == null)
+					fHover= new Hover(fShell);
+				fHover.setText(text);
+				fHover.setLocation(fHoverControl);
+				fHover.setVisible(true);
+			} else {
+				fHoverControl= null;
+				if (fHover != null)
+					fHover.setVisible(false);
+			}
+		}
+		
+		private boolean isHoverVisible() {
+			return fHover != null && fHover.isVisible();
+		}
+		
+		private Image getCueImage(Control control) {
+			Image image= null;
+			if (fLabelProvider != null)
+				image= fLabelProvider.getImage(control);
+			
+			return image != null ? image : getCueImage();
+		}
+		
+		private Image getCueImage() {
+			if (fCueImage == null) {
+				ImageDescriptor cueID= ImageDescriptor.createFromFile(SmartFieldController.class, "images/content_assist_cue.gif"); //$NON-NLS-1$
+				fCueImage= cueID.createImage(fShell.getDisplay());
+			}
+			return fCueImage;
+		}
+	}
 }

@@ -83,17 +83,6 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	 * @param text the text to adapt
 	 */
 	public TextContentAssistSubjectAdapter(Text text) {
-		this(text, true);
-	}
-
-	/**
-	 * Creates a content assist subject adapter for the given text.
-	 * 
-	 * @param text the text to adapt
-	 * @param showCue show cue on the left side of control
-	 */
-	public TextContentAssistSubjectAdapter(Text text, boolean showCue) {
-		super(text, showCue);
 		Assert.isNotNull(text);
 		fText= text;
 	}

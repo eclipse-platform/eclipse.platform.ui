@@ -508,6 +508,7 @@
 	  </keyBinding>
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        keySequence="Ctrl+Space">
 	  </keyBinding>

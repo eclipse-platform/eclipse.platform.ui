@@ -1789,4 +1789,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void enablePrefixCompletion(boolean enabled) {
 		fIsPrefixCompletionEnabled= enabled;
 	}
+	
+	/**
+	 * Returns whether the content assistant proposal popup has the focus.
+	 * 
+	 * @return <code>true</code> if the proposal popup has the focus
+	 * @since 3.0
+	 */
+	public boolean hasProposalPopupFocus() {
+		return fProposalPopup.hasFocus();
+	}
 }
