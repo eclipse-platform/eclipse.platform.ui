@@ -86,6 +86,7 @@ public class ProjectNode extends AntNode {
 	 */
 	public void setDefaultTarget(TargetNode target) {
 		defaultTarget= target;
+		defaultTargetName= target.getName();
 	}
 	
 	/**
@@ -118,14 +119,11 @@ public class ProjectNode extends AntNode {
 	 * or <code>null</code> if no default target name has been specified.
 	 * 
 	 * This method is intended to be used by clients who want to access the name of this
-	 * project's default target without parsing the build file.
+	 * project's default target without forcing the build file to be parsed.
 	 *   
 	 * @return String the name of the default target in this project.
 	 */
 	public String getDefaultTargetName() {
-		if (defaultTarget != null) {
-			return defaultTarget.getName();
-		}
 		return defaultTargetName;
 	}
 	

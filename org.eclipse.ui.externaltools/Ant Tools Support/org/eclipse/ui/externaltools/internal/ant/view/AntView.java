@@ -548,11 +548,13 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			projectMemento = memento.createChild(TAG_PROJECT);
 			projectMemento.putString(KEY_PATH, project.getBuildFileName());
 			projectMemento.putString(KEY_NAME, project.getName());
-			TargetNode defaultTarget= project.getDefaultTarget();
+			String defaultTarget= project.getDefaultTargetName();
 			if (project.isErrorNode()) {
 				projectMemento.putString(KEY_ERROR, VALUE_TRUE);
 			} else {
-				projectMemento.putString(KEY_DEFAULT, defaultTarget.getName());
+				if (defaultTarget != null) {
+					projectMemento.putString(KEY_DEFAULT, defaultTarget);
+				}
 				projectMemento.putString(KEY_ERROR, VALUE_FALSE);
 			}
 		}
@@ -572,7 +574,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
-			IPath rootPath= ResourcesPlugin.getWorkspace().getRoot().getLocation();
 			ProjectNode projects[]= projectContentProvider.getRootNode().getProjects();
 			IPath buildFilePath;
 			for (int i = 0; i < projects.length; i++) {
