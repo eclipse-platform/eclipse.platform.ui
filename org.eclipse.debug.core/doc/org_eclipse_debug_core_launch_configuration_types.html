@@ -12,19 +12,20 @@
 
 <p><b><i>Identifier: </i></b>org.eclipse.debug.core.launchConfigurationTypes </p>
 
-<p><b><i>Description: </i></b>This extension point allows tools to define
-types of launch configurations. Each launch configuration type has a name,
+<p><b><i>Description: </i></b>This extension point provides a configurable
+mechanism for launching applications. Each launch configuration type has a name,
 supports one or more modes (run and or debug), and specifies a delegate
-responsible for launching.</p>
+responsible for the implementation of launching an application.</p>
 
 <p><b><i>Configuration Markup:</i></b> </p>
 
 <pre>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT launchConfigurationType (fileExtension?)</tt>&gt;
 <tt>&nbsp;&nbsp; &lt;!ATTLIST launchConfigurationType</tt> 
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delegate CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delegate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
 </pre>
 
 <ul>
@@ -40,6 +41,20 @@ responsible for launching.</p>
   of launch configuration.</li>
 </ul>
 
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ATTLIST fileExtension</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default&nbsp;&nbsp; CDATA (true | false) #IMPLIED</tt>&gt;
+</pre>
+
+<ul>
+ <li><code>extension</code> specifies a file extension that this launch configuration type
+  can be used for.</li>
+ <li><code>default</code> specifies whether this launch configuration type should be
+  the default launch configuration type for the specified file extension. Defaults
+  to false if not specified.</li>
+</ul>
+
 <p><b><i>Examples:</i></b> </p>
 
 <p>The following is an example of a launch configuration type extension point: </p>
@@ -51,11 +66,19 @@ responsible for launching.</p>
       delegate="com.example.ExampleLaunchConfigurationDelegate"
       modes="run, debug"
       name="Example Application"
+      &lt;fileExtension
+         extension="txt"
+         default=true&gt;
+      &lt;fileExtension
+         extension="gif"
+         default=false&gt;
    &lt;/launchConfigurationType&gt;
 &lt;/extension&gt;
 </pre>
 
 <p>In the example above, the specified type of launch configuration supports both run and debug modes.
+The launch configuartion is applicable to txt and gif files, and is the default launch configuration
+for txt files.
 </p>
 
 <p><b><i>API Information: </i></b>Value of the attribute <b>delegate</b> must be a fully
