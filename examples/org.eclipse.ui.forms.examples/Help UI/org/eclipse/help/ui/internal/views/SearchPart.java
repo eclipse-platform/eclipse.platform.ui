@@ -107,10 +107,19 @@ public class SearchPart extends SectionPart implements IHelpPart {
 		HelpSearchQuery query = new HelpSearchQuery(data);
 		startInPlaceSearch(phrase, query);
 	}
+	
+	public void startWorkbenchSearch(String phrase) {
+		SearchQueryData data = new SearchQueryData();
+		data.setSearchWord(phrase);
+		HelpSearchQuery query = new HelpSearchQuery(data);
+		startWorkbenchSearch(query);
+	}
+	
 	private void startWorkbenchSearch(ISearchQuery query) {
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(parent.getRunnableContext(), query);
 	}
+	
 	private void startInPlaceSearch(final String phrase, final ISearchQuery query) {
 		final ISearchResult result = query.getSearchResult();
 		final StringBuffer resultBuffer = new StringBuffer();

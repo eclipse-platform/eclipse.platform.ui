@@ -8,6 +8,8 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.Hashtable;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -19,7 +21,7 @@ import org.eclipse.ui.part.ViewPart;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class HelpView extends ViewPart implements IPartListener2 {
+public class HelpView extends ViewPart implements IPartListener2, ISelectionChangedListener {
 	private FormToolkit toolkit;
 
 	private IMemento memento;
@@ -27,6 +29,7 @@ public class HelpView extends ViewPart implements IPartListener2 {
 	private ReusableHelpPart reusableHelpPart;
 
 	private Hashtable pageRecs;
+	private IWorkbenchPart monitoredPart;
 
 	/**
 	 * 
@@ -41,11 +44,18 @@ public class HelpView extends ViewPart implements IPartListener2 {
 	 */
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-    	toolkit.setBackground(toolkit.getColors().createColor("bg", 245, 250, 255));
+    	//toolkit.setBackground(toolkit.getColors().createColor("bg", 245, 250, 255));
 		reusableHelpPart.createControl(parent, toolkit);
 		reusableHelpPart
 				.setDefaultContextHelpText("Click on any workbench part to show its context help.");
 		reusableHelpPart.showPage(IHelpViewConstants.CONTEXT_HELP_PAGE);
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window==null) return;
+		IWorkbenchPage page = window.getActivePage();
+		if (page==null) return;
+		IWorkbenchPartReference aref = page.getActivePartReference();
+		if (aref!=null)
+			handlePartActivation(aref);
 	}
 
 	public void dispose() {
@@ -92,7 +102,39 @@ public class HelpView extends ViewPart implements IPartListener2 {
 		Display display = part.getSite().getShell().getDisplay();
 		Control c = display.getFocusControl();
 		if (c != null && c.isVisible() && !c.isDisposed()) {
-			reusableHelpPart.update(c);
+			IContextHelpProvider provider = (IContextHelpProvider)part.getAdapter(IContextHelpProvider.class);
+			if (provider!=null) {
+				reusableHelpPart.update(provider, c);
+				if ((provider.getContextHelpChangeMask() & IContextHelpProvider.SELECTION)!=0) {
+					// context help changes with selections
+					part.getSite().getSelectionProvider().addSelectionChangedListener(this);
+					monitoredPart = part;
+				}
+			}
+			else
+				reusableHelpPart.update(c);
+		}
+	}
+	
+	private void updateActivePart() {
+		if (reusableHelpPart == null)
+			return;
+		if (!reusableHelpPart.isMonitoringContextHelp())
+			return;
+		if (monitoredPart==null)
+			return;
+		IContextHelpProvider provider = (IContextHelpProvider)monitoredPart.getAdapter(IContextHelpProvider.class);
+		Control c = monitoredPart.getSite().getShell().getDisplay().getFocusControl();
+		if (c!=null && c.isDisposed()==false && provider!=null) {
+			reusableHelpPart.update(provider, c);
+		}
+	}
+
+	private void handlePartDeactivation(IWorkbenchPartReference ref) {
+		IWorkbenchPart part = ref.getPart(false);
+		if (monitoredPart!=null && part!=null && part.equals(monitoredPart)) {
+			monitoredPart.getSite().getSelectionProvider().removeSelectionChangedListener(this);
+			monitoredPart = null;
 		}
 	}
 
@@ -101,8 +143,12 @@ public class HelpView extends ViewPart implements IPartListener2 {
 	 * 
 	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
-	public void partActivated(IWorkbenchPartReference partRef) {
-		handlePartActivation(partRef);
+	public void partActivated(final IWorkbenchPartReference partRef) {
+		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				handlePartActivation(partRef);
+			}
+		});
 	}
 
 	/*
@@ -119,6 +165,7 @@ public class HelpView extends ViewPart implements IPartListener2 {
 	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partClosed(IWorkbenchPartReference partRef) {
+		handlePartDeactivation(partRef);
 	}
 
 	/*
@@ -127,6 +174,7 @@ public class HelpView extends ViewPart implements IPartListener2 {
 	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partDeactivated(IWorkbenchPartReference partRef) {
+		handlePartDeactivation(partRef);
 	}
 
 	/*
@@ -169,5 +217,15 @@ public class HelpView extends ViewPart implements IPartListener2 {
 	public void setFocus() {
 		if (reusableHelpPart != null)
 			reusableHelpPart.setFocus();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				updateActivePart();
+			}
+		});
 	}
 }

@@ -90,13 +90,30 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public void handleActivation(Control page) {
 		if (text.isDisposed())
 			return;
-		// title.setText("What is" + " \"" + part.getSite().getRegisteredName()
-		// + "\"?"); //$NON-NLS-1$ //$NON-NLS-2$
 		String helpText = createContextHelp(page);
+		updateText(helpText);
+	}
+	
+	public void handleActivation(IContextHelpProvider provider, Control c) {
+		if (text.isDisposed())
+			return;
+		String helpText = createContextHelp(provider, c);
+		updateText(helpText);
+	}
+	
+	private void updateText(String helpText) {
 		text.setText(helpText != null ? helpText : defaultText, helpText != null, //$NON-NLS-1$
 						false);
 		getSection().layout();
-		parent.reflow();
+		parent.reflow();		
+	}
+	
+	private String createContextHelp(IContextHelpProvider provider, Control c) {
+		IContext helpContext = provider.getHelpContext(c);
+		if (helpContext!=null) {
+			return formatHelpContext(helpContext);
+		}
+		return null;
 	}
 
 	private String createContextHelp(Control page) {
@@ -140,10 +157,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			sbuf.append("\">See also:</span></p>");
 			for (int i = 0; i < links.length; i++) {
 				IHelpResource link = links[i];
-				sbuf.append("<li style=\"text\" indent=\"2\">"); //$NON-NLS-1$
-				sbuf.append("<img href=\""); //$NON-NLS-1$
+				sbuf.append("<li style=\"image\" value=\"");
 				sbuf.append(ExamplesPlugin.IMG_HELP_TOPIC);
-				sbuf.append("\"/> "); //$NON-NLS-1$
+				sbuf.append("\" indent=\"15\">"); //$NON-NLS-1$
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
 				sbuf.append("\">"); //$NON-NLS-1$
@@ -177,6 +193,11 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public boolean setFormInput(Object input) {
 		if (input instanceof Control) {
 			handleActivation((Control)input);
+			return true;
+		}
+		if (input instanceof ContextHelpProviderInput) {
+			ContextHelpProviderInput chinput = (ContextHelpProviderInput)input;
+			handleActivation(chinput.getProvider(), chinput.getControl());
 			return true;
 		}
 		return false;

@@ -6,6 +6,8 @@
  */
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.AbstractFormPart;
@@ -21,6 +23,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
+	private Composite container;
 	private ReusableHelpPart parent;
 	private FormText text;
 	private String id;
@@ -30,7 +33,27 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * @param style
 	 */
 	public SeeAlsoPart(Composite parent, FormToolkit toolkit) {
-		text = toolkit.createFormText(parent, true);
+		container = toolkit.createComposite(parent);
+		//TableWrapLayout layout = new TableWrapLayout();
+		//layout.topMargin = layout.bottomMargin = 0;
+		//layout.leftMargin = layout.rightMargin = 0;
+		//layout.verticalSpacing = 0;
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		container.setLayout(layout);
+		Composite sep = toolkit.createCompositeSeparator(container);
+		//TableWrapData td = new TableWrapData(TableWrapData.FILL);
+		//td.heightHint = 1;
+		//sep.setLayoutData(td);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.heightHint = 1;
+		sep.setLayoutData(gd);
+	
+		text = toolkit.createFormText(container, true);
+		//text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));		
 		text.addHyperlinkListener(new HyperlinkAdapter() {
@@ -74,7 +97,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
 	 */
 	public Control getControl() {
-		return text;
+		return container;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
@@ -90,6 +113,6 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		text.setVisible(visible);
+		container.setVisible(visible);
 	}
 }

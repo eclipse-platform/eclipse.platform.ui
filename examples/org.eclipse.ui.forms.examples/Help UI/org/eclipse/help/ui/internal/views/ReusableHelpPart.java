@@ -31,8 +31,9 @@ import org.eclipse.ui.forms.widgets.*;
  */
 public class ReusableHelpPart implements IHelpViewConstants {
 	private ManagedForm mform;
-	private int verticalSpacing = 10;
+	private int verticalSpacing = 15;
 	private int hmargin = 5;
+	private int bmargin = 5;
 	private String defaultContextHelpText;
 
 	private ArrayList pages;
@@ -58,6 +59,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 
 	private class HelpPartPage {
 		private String id;
+		private int vspacing = verticalSpacing;
 
 		private String text;
 		private SubToolBarManager toolBarManager;
@@ -69,6 +71,12 @@ public class ReusableHelpPart implements IHelpViewConstants {
 			this.text = text;
 			partRecs = new ArrayList();
 			toolBarManager = new SubToolBarManager(ReusableHelpPart.this.toolBarManager);
+		}
+		public void setVerticalSpacing(int value) {
+			this.vspacing = value;
+		}
+		public int getVerticalSpacing() {
+			return vspacing;
 		}
 		public IToolBarManager getToolBarManager() {
 			return toolBarManager;
@@ -131,18 +139,21 @@ public class ReusableHelpPart implements IHelpViewConstants {
 			if (currentPage==null)
 				return new Point(0, 0);
 			PartRec[] parts = currentPage.getParts();
+			int innerWhint = wHint!=SWT.DEFAULT?wHint-2*hmargin:wHint;
 			Point result = new Point(0, 0);
 			for (int i=0; i<parts.length; i++) {
 				PartRec partRec = parts[i];
 				if (!partRec.flexible) {
 					Control c = partRec.part.getControl();
-					Point size = c.computeSize(wHint, SWT.DEFAULT, flushCache);
+					Point size = c.computeSize(innerWhint, SWT.DEFAULT, flushCache);
 					result.x = Math.max(result.x, size.x);
 					result.y += size.y;
 				}
-				result.y += verticalSpacing;
+				if (i<parts.length-1)
+					result.y += currentPage.getVerticalSpacing();								
 			}
 			result.x += hmargin * 2;
+			result.y += bmargin; 
 			return result;
 		}
 
@@ -157,16 +168,19 @@ public class ReusableHelpPart implements IHelpViewConstants {
 			Point [] fixedSizes = new Point[nfixedParts];
 			int fixedHeight = 0;
 			int index = 0;
+			int innerWidth = clientArea.width-hmargin*2;
 			for (int i=0; i<parts.length; i++) {
 				PartRec partRec = parts[i];
 				if (!partRec.flexible) {
 					Control c = partRec.part.getControl();
-					Point size = c.computeSize(clientArea.width, SWT.DEFAULT, false);
+					Point size = c.computeSize(innerWidth, SWT.DEFAULT, false);
 					fixedSizes[index++] = size;
 					fixedHeight += size.y;
 				}
-				fixedHeight += verticalSpacing;
+				if (i<parts.length-1)
+					fixedHeight += currentPage.getVerticalSpacing();				
 			}
+			fixedHeight += bmargin;
 			int flexHeight = clientArea.height - fixedHeight;
 			int flexPortion = 0;
 			if (currentPage.getNumberOfFlexibleParts()>0)
@@ -175,19 +189,27 @@ public class ReusableHelpPart implements IHelpViewConstants {
 			int usedFlexHeight = 0;
 			int y = 0;
 			index = 0;
+			int nflexParts = 0;
 			for (int i=0; i<parts.length; i++) {
 				PartRec partRec = parts[i];
 				Control c = partRec.part.getControl();
 				
 				if (partRec.flexible) {
-					c.setBounds(0, y, clientArea.width, flexPortion);
+					int height;
+					if (++nflexParts == currentPage.getNumberOfFlexibleParts())
+						height = flexHeight-usedFlexHeight;
+					else {
+						height = flexPortion;
+						usedFlexHeight += height;
+					}
+					c.setBounds(0, y, clientArea.width, height);
 				}
 				else {
 					Point fixedSize = fixedSizes[index++];
-					c.setLocation(hmargin, y);
-					c.setSize(clientArea.width-hmargin*2, fixedSize.y);
+					c.setBounds(hmargin, y, innerWidth, fixedSize.y);
 				}
-				y += c.getSize().y + verticalSpacing;
+				if (i<parts.length-1)
+					y += c.getSize().y + currentPage.getVerticalSpacing();
 			}
 		}
 	}
@@ -202,24 +224,27 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		// search page
 		HelpPartPage page = new HelpPartPage(SEARCH_PAGE, "Find Help");
 		page.addPart(SEARCH, false);
-		page.addPart(SEARCH_RESULT, false);
+		page.addPart(SEARCH_RESULT, true);
 		page.addPart(SEE_ALSO, false);
 		pages.add(page);
 		// all topics page
 		page = new HelpPartPage(ALL_TOPICS_PAGE, "All Topics");
+		page.setVerticalSpacing(0);
 		page.addPart(TOPIC_TREE, true);
 		page.addPart(SEE_ALSO, false);
 		pages.add(page);
 		// browser page
 		page = new HelpPartPage(BROWSER_PAGE, null);
+		page.setVerticalSpacing(0);
 		page.addPart(BROWSER, true);
 		page.addPart(SEE_ALSO, false);
 		pages.add(page);
 		// context help page
 		page = new HelpPartPage(CONTEXT_HELP_PAGE, "Context Help");
+		//page.setVerticalSpacing(10);
 		page.addPart(CONTEXT_HELP, false);
 		page.addPart(SEARCH, false);
-		page.addPart(SEARCH_RESULT, false);
+		page.addPart(SEARCH_RESULT, true);
 		page.addPart(SEE_ALSO, false);
 		pages.add(page);
 	}
@@ -352,6 +377,10 @@ public class ReusableHelpPart implements IHelpViewConstants {
 
 	public void update(Control control) {
 		mform.setInput(control);
+	}
+	
+	public void update(IContextHelpProvider provider, Control control) {
+		mform.setInput(new ContextHelpProviderInput(provider, control));
 	}
 
 	private IHelpPart createPart(String id) {

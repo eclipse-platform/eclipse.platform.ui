@@ -43,6 +43,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		//toolkit.adapt(stext);
 		resultSorter = new SorterByScore();
 		searchResults = toolkit.createFormText(parent, true);
+		searchResults.marginWidth = 5;
 		//stext.setFormText(searchResults);
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
@@ -53,7 +54,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if (href.toString().equals("_more"))
-					doExternalSearch(phrase);
+					doMoreResults(phrase);
 				else
 					doOpenLink(e.getHref());
 			}
@@ -114,6 +115,19 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			searchResults.setText("", false, false);
 		parent.reflow();
 	}	
+	
+	private void doMoreResults(String phrase) {
+		if (parent.isInWorkbenchWindow())
+			doWorkbenchSearch(phrase);
+		else
+			doExternalSearch(phrase);
+	}
+	
+	private void doWorkbenchSearch(String phrase) {
+		SearchPart part = (SearchPart)parent.findPart(IHelpViewConstants.SEARCH);
+		if (part!=null)
+			part.startWorkbenchSearch(phrase);
+	}
 
 	private void doExternalSearch(String phrase) {
 		try {

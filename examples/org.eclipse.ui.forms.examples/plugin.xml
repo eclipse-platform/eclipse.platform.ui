@@ -25,6 +25,11 @@
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.help.appserver"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.jdt.core"/>
    </requires>
 
 
@@ -125,6 +130,24 @@
                id="org.eclipse.ui.forms.examples.views.FormView">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.help.ui.internal.views.MarkerViewAdapterFactory"
+            adaptableType="org.eclipse.ui.views.markers.internal.MarkerView">
+         <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
+      </factory>
+      <factory
+            class="org.eclipse.help.ui.internal.views.JavaEditorAdapterFactory"
+            adaptableType="org.eclipse.jdt.internal.ui.javaeditor.JavaEditor">
+         <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
+      </factory>
+      <factory
+            class="org.eclipse.help.ui.internal.views.JavaViewAdapterFactory:package_view_context"
+            adaptableType="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
+         <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
+      </factory>
    </extension>
 
 </plugin>
