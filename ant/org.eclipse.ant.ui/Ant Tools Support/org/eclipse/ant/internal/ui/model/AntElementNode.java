@@ -342,7 +342,11 @@ public class AntElementNode implements IAdaptable {
 	
 	private String getElementPath() {
 		if (fElementPath == null) {
-			StringBuffer buffer= new StringBuffer(getProjectNode().getBuildFileName());
+			StringBuffer buffer= new StringBuffer();
+			String buildFileName= getProjectNode().getBuildFileName();
+			if (buildFileName != null) {
+				buffer.append(buildFileName);
+			}
 			buffer.append(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
 			buffer.append('/');
 			buffer.append(getElementIdentifier());

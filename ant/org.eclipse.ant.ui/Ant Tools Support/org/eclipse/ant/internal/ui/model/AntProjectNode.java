@@ -106,7 +106,10 @@ public class AntProjectNode extends AntElementNode {
 
 	public String getBuildFileName() {
 		LocationProvider locationProvider= getAntModel().getLocationProvider();
-		return locationProvider.getFile().getFullPath().toOSString();
+		if (locationProvider != null) {
+			return locationProvider.getFile().getFullPath().toOSString();
+		}
+		return null;
 	}
 	
 	public String getDefaultTargetName() {
