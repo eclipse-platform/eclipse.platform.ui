@@ -125,8 +125,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			}
 		}
 
-		super.setDocument(document);
 		if (document != null) {
+			super.setDocument(document);
 			getTextWidget().setEditable(!document.isReadOnly());
 			updateStyleRanges(document);
 			revealEndOfDocument();
