@@ -205,6 +205,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	    } else {
 	        viewer.setGrayChecked(group, true);
 	    }
+	    if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+	    	viewer.setGrayed(group, true);
+	    }
 	}
 	
 	/**
@@ -283,6 +286,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 						viewer.setGrayChecked(group, true);
 					}
 				}
+			}
+			if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+				viewer.setGrayed(group, true);
 			}
 			viewer.update(breakpoint, null);
 		} catch (CoreException e) {
