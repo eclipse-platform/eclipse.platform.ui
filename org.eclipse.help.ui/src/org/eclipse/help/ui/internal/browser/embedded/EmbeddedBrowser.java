@@ -64,14 +64,10 @@ public class EmbeddedBrowser {
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				// save position
-				store.setValue(BROWSER_X, Integer
-						.toString(shell.getLocation().x));
-				store.setValue(BROWSER_Y, Integer
-						.toString(shell.getLocation().y));
-				store.setValue(BROWSER_WIDTH, Integer
-						.toString(shell.getSize().x));
-				store.setValue(BROWSER_HEIGTH, Integer
-						.toString(shell.getSize().y));
+				store.setValue(BROWSER_X, Integer.toString(x));
+				store.setValue(BROWSER_Y, Integer.toString(y));
+				store.setValue(BROWSER_WIDTH, Integer.toString(w));
+				store.setValue(BROWSER_HEIGTH, Integer.toString(h));
 				store.setValue(BROWSER_MAXIMIZED, (new Boolean(shell
 						.getMaximized()).toString()));
 			}
@@ -93,6 +89,23 @@ public class EmbeddedBrowser {
 		setSafeBounds(shell, x, y, w, h);
 		if (store.getBoolean(BROWSER_MAXIMIZED))
 			shell.setMaximized(true);
+		shell.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+				if (!shell.getMaximized()) {
+					Point location = shell.getLocation();
+					x = location.x;
+					y = location.y;
+				}
+			}
+			public void controlResized(ControlEvent e) {
+				if (!shell.getMaximized()) {
+					Point size = shell.getSize();
+					w = size.x;
+					h = size.y;
+				}
+			}
+		});
+
 		//
 		shell.open();
 		//browser.setUrl("about:blank");
