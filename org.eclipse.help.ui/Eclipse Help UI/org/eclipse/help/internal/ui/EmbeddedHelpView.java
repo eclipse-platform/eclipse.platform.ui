@@ -195,9 +195,6 @@ public class EmbeddedHelpView extends ViewPart {
 			navigationViewer.setSelection(new StructuredSelection(selectedChild));
 		}
 
-		if (infoSet != null)
-			setTitle(infoSet.getLabel());
-
 		// if any errors or parsing errors have occurred, display them in a pop-up
 		Util.displayStatus();
 	}
