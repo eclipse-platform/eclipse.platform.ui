@@ -41,11 +41,11 @@ public class DialogBookmarkFilter extends
         private String doesNotContain = Messages
                 .getString("filtersDialog.doesNotContain"); //$NON-NLS-1$
 
-        public DescriptionGroup(Composite parent) {
+        public DescriptionGroup(Composite parent, MnemonicAssigner mnemonics) {
             descriptionLabel = new Label(parent, SWT.NONE);
             descriptionLabel.setFont(parent.getFont());
-            descriptionLabel.setText(Messages
-                    .getString("filtersDialog.descriptionLabel")); //$NON-NLS-1$
+            descriptionLabel.setText(mnemonics.assign(Messages
+                    .getString("filtersDialog.descriptionLabel"))); //$NON-NLS-1$
 
             combo = new Combo(parent, SWT.READ_ONLY);
             combo.setFont(parent.getFont());
@@ -116,7 +116,7 @@ public class DialogBookmarkFilter extends
     /* (non-Javadoc)
      * @see org.eclipse.ui.views.markerview.FiltersDialog#createAttributesArea(org.eclipse.swt.widgets.Composite)
      */
-    protected void createAttributesArea(Composite parent) {
+    protected void createAttributesArea(Composite parent, MnemonicAssigner mnemonics) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setFont(parent.getFont());
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -124,7 +124,7 @@ public class DialogBookmarkFilter extends
         layout.verticalSpacing = 7;
         composite.setLayout(layout);
 
-        descriptionGroup = new DescriptionGroup(composite);
+        descriptionGroup = new DescriptionGroup(composite, mnemonics);
     }
 
     /* (non-Javadoc)

@@ -23,7 +23,34 @@ import java.util.Set;
  * @since 3.1
  */
 public class MnemonicAssigner {
+    // Stores keys that have already been assigned
     private Set assigned = new HashSet();
+    
+    // List of all possible valid mnemonics
+    private String validHotkeys = new String();
+    
+    // Set of all possible valid mnemonics
+    private Set validKeys = new HashSet();
+    
+    public MnemonicAssigner() {
+        // Initialize the set of valid mnemonic keys
+        addKeys(Messages.getString("MnemonicAssigner.valid_mnemonics")); //$NON-NLS-1$
+    }
+    
+    /**
+     * Adds a set of keys to be considered as potentially valid mnemonics
+     * 
+     * @param keys
+     * @return
+     * @since 3.1
+     */
+    private void addKeys(String keys) {
+        validHotkeys = validHotkeys + keys;
+        
+        for(int idx = 0; idx < validHotkeys.length(); idx++) {
+            validKeys.add(new Character(Character.toLowerCase(keys.charAt(idx))));
+        }
+    }
     
     public boolean isReserved(char toCheck) {
         return assigned.contains(new Character(Character.toLowerCase(toCheck)));
@@ -38,11 +65,16 @@ public class MnemonicAssigner {
      * @since 3.1
      */
     private static int getAmpersandIndex(String inputString) {
-        for(int idx = 0; idx < inputString.length(); idx++) {
+        for(int idx = 0; idx < inputString.length() - 1; idx++) {
             char next = inputString.charAt(idx);
             
             if (next == '&') {
-                return idx;
+                if (inputString.charAt(idx + 1) == '&') {
+                    // If dual-ampersand, skip it
+                    idx++;
+                } else {
+                    return idx;
+                }
             }
         }
         
@@ -71,15 +103,23 @@ public class MnemonicAssigner {
         assigned.add(new Character(Character.toLowerCase(toReserve)));
     }
     
+    /**
+     * Returns the given string without its associated mnemonic
+     * 
+     * @param toRemove
+     * @return
+     * @since 3.1
+     */
     public static String withoutMnemonic(String toRemove) {
-        int idx = getAmpersandIndex(toRemove);
-        String result = toRemove.substring(0, idx);
+        String working = toRemove;
         
-        if (idx < toRemove.length()) {
-            result += toRemove.substring(idx + 1, toRemove.length());
+        int idx = getAmpersandIndex(working);
+        while(idx < working.length()) {
+            working = working.substring(0, idx) + working.substring(idx + 1, working.length());
+            idx = getAmpersandIndex(working);
         }
         
-        return result;
+        return working;
     }
     
     /**
@@ -103,7 +143,18 @@ public class MnemonicAssigner {
      * @since 3.1
      */
     public void reserve(String inputString) {
-       reserve(getMnemonic(inputString)); 
+        reserve(getMnemonic(inputString)); 
+    }
+    
+    /**
+     * Returns true iff the given character could possibly be used as a mnemonic
+     * 
+     * @param next
+     * @return
+     * @since 3.1
+     */
+    public boolean isValidMnemonic(char next) {
+        return validKeys.contains(new Character(Character.toLowerCase(next)));
     }
     
     /**
@@ -121,20 +172,63 @@ public class MnemonicAssigner {
             return inputString;
         }
         
-        // Try to find a suitable mnemonic from the input string. Search left-to-right.
+        // Try to find a suitable mnemonic from the input string.
         String stripped = withoutMnemonic(inputString);
+        
+        // Index of the best mnemonic found so far
+        int bestMnemonic = -1;
+        
+        // Rank of the best mnemonic found so far (whenever a potential mnemonic is
+        // discovered in the string, we heuristically assign it a rank indicating how 
+        // much we'd like this to be the mnemonic. Bigger ranks are preferred over smaller
+        // ones.
+        int mnemonicRank = -1;
+        
+        boolean lastWasWhitespace = true;
         
         for (int idx = 0; idx < stripped.length(); idx++) {
             char next = stripped.charAt(idx);
             
+            if (isValidMnemonic(next) && !isReserved(next)) {
+                int thisRank = 0;
+                
+                // Prefer upper-case characters to lower-case ones
+                if (Character.isUpperCase(next)) {
+                    thisRank += 1;
+                }
+                
+                // Give characters following whitespace the highest priority
+                if (lastWasWhitespace) {
+                    thisRank += 2;
+                }
+                
+                if (thisRank > mnemonicRank) {
+                    bestMnemonic = idx;
+                    mnemonicRank = thisRank;
+                }
+                
+                break;
+            }
+            
+            lastWasWhitespace = (Character.isWhitespace(next));
+        }
+        
+        // If there was a valid mnemonic within the string, return it
+        if (bestMnemonic >= 0) {
+            return stripped.substring(0, bestMnemonic) + '&' 
+            	+ stripped.substring(bestMnemonic, stripped.length()); 
+        }
+        
+        // No valid mnemonics within the string. Try to append one.
+        for (int idx = 0; idx < validHotkeys.length(); idx++) {
+            char next = validHotkeys.charAt(idx);
+            
             if (!isReserved(next)) {
-                return stripped.substring(0, idx) + '&' + stripped.substring(idx, stripped.length());
+                return Messages.format(Messages.getString("MnemonicAssigner.missing_mnemonic_format"), new String[] {stripped, "&" + next}); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         
-        // Currently, if we can't find a unique mnemonic, we just leave the string unmodified.
-        // This may leave the string with a duplicate or unassigned mnemonic... We should really
-        // append a suitable mnemonic from a set of possible mnemonics in the user's locale.
+        // No unique mnemonics remain. Leave the string unmodified
         return inputString;
     }
 }
