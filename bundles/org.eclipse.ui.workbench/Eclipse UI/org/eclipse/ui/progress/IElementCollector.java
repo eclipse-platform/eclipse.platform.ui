@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * IElementCollector is a type that allows for the incremental update of a
  * collection of objects. This used for updating trees incrementally with
- * a progres monitor so that the update can be reported.
+ * a progress monitor so that the update can be reported.
  * 
  * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter
  * @see org.eclipse.ui.progress.DeferredTreeContentManager
