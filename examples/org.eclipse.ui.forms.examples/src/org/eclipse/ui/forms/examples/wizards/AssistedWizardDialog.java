@@ -40,23 +40,34 @@ public class AssistedWizardDialog extends WizardDialog {
     	layout.numColumns = 2;
     	layout.marginWidth = layout.marginHeight = 0;
     	layout.horizontalSpacing = 0;
+    	layout.verticalSpacing = 0;
     	
     	dialogContainer.setLayout(layout);
+     	Control wizardArea = super.createDialogArea(dialogContainer);
+    	GridData gd = new GridData(GridData.FILL_BOTH);
+    	gd.verticalSpan = 3;
+    	wizardArea.setLayoutData(gd);
     	toolkit = new FormToolkit(parent.getDisplay());
     	toolkit.adapt(dialogContainer);
+    	Label sep = new Label(dialogContainer, SWT.SEPARATOR|SWT.HORIZONTAL);
+    	sep.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
     	contextHelpPart.createControl(dialogContainer, toolkit);
     	Control contextHelp = contextHelpPart.getControl();
-    	GridData gd= new GridData(GridData.FILL_VERTICAL);
+       	gd= new GridData(GridData.FILL_VERTICAL);
     	contextHelp.setLayoutData(gd);
-    	Control wizardArea = super.createDialogArea(dialogContainer);
-    	gd = new GridData(GridData.FILL_BOTH);
-    	wizardArea.setLayoutData(gd);
+    	sep = new Label(dialogContainer, SWT.SEPARATOR|SWT.HORIZONTAL);    	
+    	sep.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+    	updateContextHelp();
     	return dialogContainer;
     }
     
     protected void update() {
     	super.update();
-    	IWizardPage page = getCurrentPage();
+    	updateContextHelp();
+ 
+    }
+    private void updateContextHelp() {
+       	IWizardPage page = getCurrentPage();
     	contextHelpPart.update(page!=null?page.getControl():null);
     }
 }

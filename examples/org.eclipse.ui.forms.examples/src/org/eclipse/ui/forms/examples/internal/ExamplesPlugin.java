@@ -61,7 +61,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 		registerImage(registry, IMG_VERTICAL, "th_vertical.gif");
 		registerImage(registry, IMG_SAMPLE, "sample.gif");
 		registerImage(registry, IMG_WIZBAN, "newprj_wiz.gif");
-		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif");
+		registerImage(registry, IMG_HELP_TOPIC, "linkto_help.gif");
 	}
 
 	private void registerImage(ImageRegistry registry, String key,

@@ -48,7 +48,32 @@ public class ContextHelpPart {
 		form.getBody().setLayout(layout);
 		//Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
 		// help container. Has three colums (search, text, go)
-		Composite helpContainer = toolkit.createComposite(form.getBody());
+//		title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
+//		title.setText("Context Help");
+//		title.setFont(JFaceResources.getHeaderFont());
+//		title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR|Section.TWISTIE|Section.EXPANDED);
+		section.setText("About");
+		text = toolkit.createFormText(section, true);
+		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(FormColors.TITLE));
+		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, 
+				ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
+		text.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				openLink(e.getHref());
+			}
+		});
+		section.setClient(text);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL,
+				TableWrapData.FILL));
+		text.setText(defaultText, false, false);
+
+		toolkit.createLabel(form.getBody(), null);
+		section = toolkit.createSection(form.getBody(), Section.TITLE_BAR|Section.TWISTIE|Section.EXPANDED);
+		section.setText("Search");
+		Composite helpContainer = toolkit.createComposite(section);
+		section.setClient(helpContainer);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL));
 		GridLayout glayout = new GridLayout();
 		glayout.numColumns = 3;
 		glayout.marginWidth = glayout.marginHeight = 1;
@@ -84,21 +109,6 @@ public class ContextHelpPart {
 				}
 			}
 		});
-		title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
-		title.setText("Context Help");
-		title.setFont(JFaceResources.getHeaderFont());
-		title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		text = toolkit.createFormText(form.getBody(), true);
-		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, 
-				ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
-		text.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				openLink(e.getHref());
-			}
-		});
-		text.setLayoutData(new TableWrapData(TableWrapData.FILL,
-				TableWrapData.FILL));
-		text.setText(defaultText, false, false);
 		toolkit.paintBordersFor(form.getBody());
 	}
 
@@ -130,7 +140,7 @@ public class ContextHelpPart {
 	private String createContextHelp(Control page) {
 		String text = null;
 		if (page != null) {
-			if (page != null && page.isVisible() && !page.isDisposed()) {
+			if (page != null /*&& page.isVisible() */&& !page.isDisposed()) {
 				IContext helpContext = findHelpContext(page);
 				if (helpContext != null) {
 					text = formatHelpContext(helpContext);
@@ -162,12 +172,15 @@ public class ContextHelpPart {
 		sbuf.append(decodeContextBoldTags(context));
 		sbuf.append("</p>"); //$NON-NLS-1$
 		IHelpResource[] links = context.getRelatedTopics();
-		if (links.length > 0) {
+		if (links!=null && links.length > 0) {
+			sbuf.append("<p><span color=\"");
+			sbuf.append(FormColors.TITLE);
+			sbuf.append("\">See also:</span></p>");
 			for (int i = 0; i < links.length; i++) {
 				IHelpResource link = links[i];
 				sbuf.append("<li style=\"text\" indent=\"2\">"); //$NON-NLS-1$
 				sbuf.append("<img href=\""); //$NON-NLS-1$
-				sbuf.append(ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
+				sbuf.append(ExamplesPlugin.IMG_HELP_TOPIC);
 				sbuf.append("\"/> "); //$NON-NLS-1$
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
