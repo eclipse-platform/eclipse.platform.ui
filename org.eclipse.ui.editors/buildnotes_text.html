@@ -22,22 +22,122 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 ========== Eclipse Build Input April 20th 2004 ==========<br>
 <pre>
 API changes:
-------------
-- package org.eclipse.jface.text.link:
-  - renamed LinkedEnvironment -> LinkedModeModel
-  	- renamed methods correspondingly
-  - renamed LinkedManager -> LinkedModeManager
-  - renamed ILinkedListener -> ILinkedModeListener
-  - renamed LinkedUIControl -> LinkedModeUI
-    - renamed inner types accordingly
-  - removed all createPosition(...) methods in LinkedPositionGroup
-    -> use addPosition() instead
-    
-- package org.eclipse.ui.texteditor:
-  - renamed ExtendedTextEditor -> AbstractDecoratedTextEditor
-  - renamed ExtendedTextEditorPreferenceConstants -> AbstractDecoratedTextEditorPreferenceConstants
-    - the old classes are still there, but deprecated, and will be removed in M9
-    - the constant values remain the same
+
+plug-in: org.eclipse.text 
+
+- pkg: org.eclipse.jface.text
+	- renamed FindReplaceDocumentAdapter.search to FindReplaceDocumentAdapter.find
+	- changed FindReplaceDocumentAdapter.findReplace to private
+	- merged FindReplaceOperationCode into FindReplaceDocumentAdapter, removed FindReplaceOperationCode
+	- deleted deprecated classes whose Javadoc stated that these classes were internal
+		- ChildDocument
+		- ChildDocumentManager
+		- ParentChildMapping
+		- CoordinatesTranslator
+		- Fragment
+		- FragmentUpdater
+		- ProjectionDocument
+		- ProjectionDocumentManager
+		- ProjectionPosition
+		- ProjectionPositionUpdater
+		- ProjectionTextStore
+
+- pkg: org.eclipse.jface.text.link
+	- removed ExclusivePositionUpdater
+	- marked InclusivePositionUpdater as internal class using Javadoc
+	- renamed LinkedEnvironment to LinkedModeModel
+		- renamed methods accordingly
+  	- renamed LinkedManager to LinkedModeManager
+  	- renamed ILinkedListener to ILinkedModeListener
+	- renamed LinkedUIControl to LinkedModeUI
+	- removed LinkedPositionGroup.createPosition methods
+		- use LinkedPositionGroup.addPosition instead
+
+- pkg: org.eclipse.jface.text.templates
+	- renamed ContextType to TemplateContextType
+	- renamed GlobalVariables to GlobalTemplateVariables
+	- renamed SimpleVariableResolver to SimpleTemplateVariableResolver
+
+
+----------------------------------------
+
+plug-in org.eclipse.jface.text
+
+- pkg: org.eclipse.jface.text
+	- renamed IAnnotationHoverExtension.getInformationControlCreator to IAnnotationHoverExtension.getHoverControlCreator
+	- renamed ITextHoverExtension.getInformationControlCreator to ITextHoverExtension.getHoverControlCreator
+
+- pkg: org.eclipse.jface.text.formatter
+	- merged IContentFormatterExtension2 into IContentFormatterExtension
+	- removed IContentFormatterExtension.getPartitioning
+	- changed configuration methods of MultipassContentFormatter: substituted IFormattingStrategy for IFormattingStrategyExtension, added assert statements
+	- deprecated ContentFormatter
+
+- pkg: org.eclipse.jface.text.source
+	- deleted deprecated classes whose Javadoc stated that these classes were internal
+		- OutlinerRulerColumn
+		- ProjectionAnnotation
+		- ProjectionSourceViewer
+
+- pkg: org.eclipse.jface.text.reconciler
+	- deleted DocumentAdapter
+	- renamed AnnotationEvent to VerticalRulerEvent
+	- renamed VerticalRulerEvent.getAnnotation to VerticalRulerEvent.getSelectedAnnotation
+	- renamed VerticalRulerEvent.setAnnotation to VerticalRulerEvent.setSelectedAnnotation
+	- CompositeRuler no longer implements IVerticalRulerListener
+	- renamed CompositeRuler.annotationSelected to CompositeRuler.fireAnnotationSelected
+	- renamed CompositeRuler.annotationDefaultSelected to CompositeRuler.fireAnnotationDefaultSelected
+	- renamed CompositeRuler.annotationContextMenuAboutToShow to CompositeRuler.fireAnnotationContextMenuAboutToShow
+	- changed constructor of AnnotationExpandHover to accept CompositeRuler rather than IVerticalRulerInfo and IVerticalRulerListener
+
+- pkg: org.eclipse.jface.text.contentassist (more changes to come)
+	- moved AbstractControlContentAssistSubjectAdapter to package org.eclipse.jface.contentassist
+	- moved ComboContentAssistSubjectAdapter to package org.eclipse.jface.contentassist
+	- moved ContentAssistant to package org.eclipse.jface.contentassist
+	- moved IContentAssistProcessorExtension to package org.eclipse.jface.contentassist
+	- moved IContentAssistSubject to package org.eclipse.jface.contentassist
+	- moved IContextInformationPresenterExtension to package org.eclipse.jface.contentassist
+	- moved IContextInformationValidatorExtension to package org.eclipse.jface.contentassist
+	- moved TextContentAssistSubjectAdapter to package org.eclipse.jface.contentassist
+
+-----------------------------------------------
+
+plug-in org.eclipse.ui.workbench.texteditor
+
+- pkg: org.eclipse.ui.texteditor.templates
+	- changed EditTemplateDialog to package visible
+	- changed TemplateContentProvider to package visible
+	
+- org.eclipse.ui.texteditor
+	- removed ChainedPreferenceStore (there is a copy in JDT UI)
+	- removed PreferencesAdapter (there is copy in JDT UI)
+	- deprecated InfoForm
+	- renamed SelectMarkerRulerAction2 to SelectAnnotationRulerAction
+	- renamed SmartEnterAction to InsertLineAction
+
+- org.eclipse.ui.texteditor.link
+	- removed EditorTarget
+	- replaced EditorHistoryUpdater with EditorLinkedModeUI
+		- clients no longer configure a LinkedModeUI with the EditorHistoryUpdater but instantiate EditorLinedModeUI
+
+-------------------------------------------------
+
+plug-in org.eclipse.ui.editors
+
+- pkg: org.eclipse.ui.texteditor
+	- moved AnnotationType to package org.eclipse.ui.internal.texteditor
+	- moved AnnotationTypeHierarchy to package org.eclipse.ui.internal.texteditor
+	- moved DelegatingAnnotationPreference to package org.eclipse.ui.internal.texteditor
+	- marked  AnnotationPreferenceLookup.getAnnotationPreferenceFragment as internal method using Javadoc
+	- renamed ExtendedTextEditor to AbstractDecoratedTextEditor
+	- renamed ExtendedTextEditorPreferenceConstants to AbstractDecoratedTextEditorPreferenceConstants
+
+- pkg: org.eclipse.ui.editors.text
+	- removed EditorUI.getAnnotationTypeHierarchy
+	- moved WorkspaceOperationRunner to package org.eclipse.ui.internal.editors.text
+	- moved UISynchronizationContext to package org.eclipse.ui.internal.editors.text
+	
+	
 </pre>
 ========== Eclipse Build Input March 23rd 2004 ==========<br>
 <pre>
