@@ -47,7 +47,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 					//wait until the tester allows this job to run again
 					StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
 					//start the given rule in the manager
-					manager.beginRule(rule);
+					manager.beginRule(rule, null);
 					//set status to RUNNING
 					status[index] = StatusChecker.STATUS_RUNNING;
 
@@ -359,7 +359,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		try {
 			for (int i = 0; i < rules.length - 1; i++) {
 				for (int j = 0; j < RULE_REPEATS; j++) {
-					manager.beginRule(rules[i]);
+					manager.beginRule(rules[i], null);
 				}
 			}
 			for (int i = rules.length - 1; i > 0; i--) {
@@ -374,7 +374,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//adding rules in proper order, then adding a rule from a bypassed branch
 		//trying to end previous rules should not work
 		for (int i = 0; i < rules.length; i++) {
-			manager.beginRule(rules[i]);
+			manager.beginRule(rules[i], null);
 		}
 		try {
 			manager.endRule(rules[2]);
@@ -420,7 +420,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			//should fail
 		}
 		//simple mismatched begin/end
-		manager.beginRule(rule1);
+		manager.beginRule(rule1, null);
 		try {
 			manager.endRule(rule2);
 			fail("1.2");
@@ -431,7 +431,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		manager.endRule(rule1);
 
 		//mismatched begin/end, ending a null rule
-		manager.beginRule(rule1);
+		manager.beginRule(rule1, null);
 		try {
 			manager.endRule(null);
 			fail("1.3");
@@ -446,8 +446,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		ISchedulingRule rule2 = new RuleSetB();
 
 		//ending an outer rule before an inner one
-		manager.beginRule(rule1);
-		manager.beginRule(rule2);
+		manager.beginRule(rule1, null);
+		manager.beginRule(rule2, null);
 		try {
 			manager.endRule(rule1);
 			fail("2.0");
@@ -458,8 +458,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		manager.endRule(rule1);
 
 		//ending a rule that is not open
-		manager.beginRule(rule1);
-		manager.beginRule(rule2);
+		manager.beginRule(rule1, null);
+		manager.beginRule(rule2, null);
 		try {
 			manager.endRule(null);
 			fail("2.1");
@@ -471,10 +471,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 
 		//adding rules starting with null rule
 		try {
-			manager.beginRule(null);
-			manager.beginRule(rule1);
+			manager.beginRule(null, null);
+			manager.beginRule(rule1, null);
 			manager.endRule(rule1);
-			manager.beginRule(rule2);
+			manager.beginRule(rule2, null);
 			manager.endRule(rule2);
 			manager.endRule(null);
 		} catch (RuntimeException e) {
@@ -486,7 +486,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		int NUM_ADDITIONS = 100;
 		try {
 			for (int i = 0; i < NUM_ADDITIONS; i++) {
-				manager.beginRule(rule1);
+				manager.beginRule(rule1, null);
 			}
 			for (int i = 0; i < NUM_ADDITIONS; i++) {
 				manager.endRule(rule1);
@@ -499,9 +499,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//adding numerous instances of the null rule
 		try {
 			for (int i = 0; i < NUM_ADDITIONS; i++) {
-				manager.beginRule(null);
+				manager.beginRule(null, null);
 			}
-			manager.beginRule(rule1);
+			manager.beginRule(rule1, null);
 			manager.endRule(rule1);
 			for (int i = 0; i < NUM_ADDITIONS; i++) {
 				manager.endRule(null);
@@ -551,9 +551,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		rules[3] = new RuleSetD();
 
 		//simple addition of rules in incorrect containment order
-		manager.beginRule(rules[1]);
+		manager.beginRule(rules[1], null);
 		try {
-			manager.beginRule(rules[0]);
+			manager.beginRule(rules[0], null);
 			fail("3.0");
 		} catch (RuntimeException e) {
 			//should fail
@@ -561,10 +561,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		manager.endRule(rules[1]);
 
 		//adding rules in proper order, then adding a rule from different hierarchy
-		manager.beginRule(rules[1]);
-		manager.beginRule(rules[2]);
+		manager.beginRule(rules[1], null);
+		manager.beginRule(rules[2], null);
 		try {
-			manager.beginRule(rules[3]);
+			manager.beginRule(rules[3], null);
 			fail("3.2");
 		} catch (RuntimeException e) {
 			//should fail
@@ -578,7 +578,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//ending a rule started on this thread from another thread
 		ISchedulingRule rule1 = new IdentityRule();
 		Thread endingThread = new Thread(new RuleEnder(rule1));
-		manager.beginRule(rule1);
+		manager.beginRule(rule1, null);
 		endingThread.start();
 
 		//should be able to end the rule from this thread
@@ -592,7 +592,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		rules[2] = new RuleSetC();
 
 		for (int i = 0; i < rules.length; i++) {
-			manager.beginRule(rules[i]);
+			manager.beginRule(rules[i], null);
 			(new Thread(new RuleEnder(rules[i]))).start();
 		}
 
