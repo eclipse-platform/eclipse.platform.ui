@@ -13,18 +13,18 @@ package org.eclipse.core.resources;
 /**
  * Resource change events describe changes to resources.
  * <p>
- * There are currently five different types of resource
- * change events:
+ * There are currently five different types of resource change events:
  * <ul>
  *   <li>
  *    After-the-fact batch reports of arbitrary creations, 
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
- *    <code>PRE_AUTO_BUILD</code>, and <code>getDelta</code> returns
+ *    <code>PRE_WORKSPACE_BUILD</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties immediately before
- *    any auto-building and happen whether or not auto-building is enabled.  The
- *	   workspace is open for change during notification of these events.	 
+ *    any auto-building and happen whether or not auto-building is enabled.  These
+ *    events are also broadcast prior to manual workspace builds, both full and
+ *    incremental. The workspace is open for change during notification of these events.	 
  *    The delta reported in this event cycle is identical across
  *    all listeners registered for this type of event.
  *    Resource changes attempted during a <code>PRE_AUTO_BUILD</code> callback
@@ -37,8 +37,9 @@ package org.eclipse.core.resources;
  *    <code>POST_AUTO_BUILD</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties immediately after
- *    any auto-building and happen whether or not auto-building is enabled.  The
- *	   workspace is open for change during notification of these events.
+ *    any auto-building and happen whether or not auto-building is enabled.  These
+ *    events are also broadcast after manual workspace builds, both full and
+ *    incremental. The workspace is open for change during notification of these events.	 
  *    The delta reported in this event cycle is identical across
  *    all listeners registered for this type of event.
  *    Resource changes attempted during a <code>POST_AUTO_BUILD</code> callback
@@ -114,14 +115,8 @@ public interface IResourceChangeEvent {
 	public static final int PRE_DELETE = 4;
 
 	/**
-	 * Event type constant (bit mask) indicating an after-the-fact 
-	 * report of creations, deletions, and modifications
-	 * to one or more resources expressed as a hierarchical
-	 * resource delta as returned by <code>getDelta</code>.
-	 * See class comments for further details.
-	 *
-	 * @see #getType()
-	 * @see #getResource()
+	 * @deprecated This event type has been renamed to
+	 * <code>PRE_WORKSPACE_BUILD</code>
 	 */
 	public static final int PRE_AUTO_BUILD = 8;
 
@@ -134,8 +129,28 @@ public interface IResourceChangeEvent {
 	 *
 	 * @see #getType()
 	 * @see #getResource()
+	 * @since 3.0
+	 */
+	public static final int PRE_WORKSPACE_BUILD = 8;
+
+	/**
+	 * @deprecated This event type has been renamed to
+	 * <code>POST_WORKSPACE_BUILD</code>
 	 */
 	public static final int POST_AUTO_BUILD = 16;
+
+	/**
+	 * Event type constant (bit mask) indicating an after-the-fact 
+	 * report of creations, deletions, and modifications
+	 * to one or more resources expressed as a hierarchical
+	 * resource delta as returned by <code>getDelta</code>.
+	 * See class comments for further details.
+	 *
+	 * @see #getType()
+	 * @see #getResource()
+	 * @since 3.0
+	 */
+	public static final int POST_WORKSPACE_BUILD = 16;
 
 	/**
 	 * Returns all marker deltas of the specified type that are associated
@@ -187,8 +202,8 @@ public interface IResourceChangeEvent {
 	 *
 	 * @return one of the event type constants
 	 * @see #POST_CHANGE
-	 * @see #POST_AUTO_BUILD
-	 * @see #PRE_AUTO_BUILD
+	 * @see #POST_WORKSPACE_BUILD
+	 * @see #PRE_WORKSPACE_BUILD
 	 * @see #PRE_CLOSE
 	 * @see #PRE_DELETE
 	 */
