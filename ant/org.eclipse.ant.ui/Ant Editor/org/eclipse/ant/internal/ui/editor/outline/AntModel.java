@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.apache.tools.ant.AntTypeDefinition;
@@ -93,6 +94,8 @@ public class AntModel {
 	private IDocumentListener fListener;
 	private File fEditedFile= null;	
 	private AntEditorMarkerUpdater fMarkerUpdater= null;
+	private Set fNamesOfOldDefiningNodes;
+	
 	private Preferences.IPropertyChangeListener fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			AntDefiningTaskNode.setJavaClassPath();
@@ -178,6 +181,7 @@ public class AntModel {
 				parseDocument(fDocument, region);
 				fRemoveLengthOfReplace= 0;
 				fDirtyRegion= null;
+				reconcileTaskAndTypes();
 				//System.out.println(System.currentTimeMillis() - start);
 			} 
 	
@@ -1185,5 +1189,31 @@ public class AntModel {
 	 */
 	public void updateForInitialReconcile() {
 		fMarkerUpdater.updateMarkers();
+	}
+
+	/**
+     * Provides the set of names of the defining nodes that existed from the previous
+     * parse of the build file.
+     */
+	public void setNamesOfOldDefiningNodes(Set set) {
+		fNamesOfOldDefiningNodes= set;
+	}
+	
+	/**
+     * Removes any type definitions that no longer exist in the buildfile
+     */
+	private void reconcileTaskAndTypes() {
+		if (fNamesOfOldDefiningNodes == null) {
+			return;
+		}
+		Iterator iter= fNamesOfOldDefiningNodes.iterator();
+		while (iter.hasNext()) {
+			String nodeLabel = (String) iter.next();
+			if (fProjectNode.getDefininingTaskNode(nodeLabel) == null) {
+				ComponentHelper helper= ComponentHelper.getComponentHelper(fProjectNode.getProject());
+				helper.getAntTypeTable().remove(nodeLabel);
+				iter.remove();
+			}
+		}
 	}
 }

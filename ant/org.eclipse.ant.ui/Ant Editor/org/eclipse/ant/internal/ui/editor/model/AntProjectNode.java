@@ -61,6 +61,7 @@ public class AntProjectNode extends AntElementNode {
 	protected AntModel getAntModel() {
 		return fModel;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#reset()
 	 */
@@ -70,6 +71,9 @@ public class AntProjectNode extends AntElementNode {
 		fProject.setDefault(null);
 		fProject.setDescription(null);
 		fProject.setName(""); //$NON-NLS-1$
+		if (fNameToDefiningNodeMap != null) {
+			getAntModel().setNamesOfOldDefiningNodes(fNameToDefiningNodeMap.keySet());
+		}
 		fNameToDefiningNodeMap= null;
 		setProblemSeverity(XMLProblem.NO_PROBLEM);
 	}
