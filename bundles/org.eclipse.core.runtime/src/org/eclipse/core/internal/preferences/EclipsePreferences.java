@@ -77,12 +77,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (!visitor.visit(this))
 			return;
 		IEclipsePreferences[] toVisit = getChildren();
-		for (int i = 0; i < toVisit.length; i++) {
-			Object next = toVisit[i];
-			if (next instanceof IEclipsePreferences)
-				((IEclipsePreferences) next).accept(visitor);
-		}
+		for (int i = 0; i < toVisit.length; i++)
+			toVisit[i].accept(visitor);
 	}
+
 	protected synchronized void addChild(String name, IEclipsePreferences child) {
 		//Thread safety: synchronize method to protect modification of children field
 		if (children == null)
