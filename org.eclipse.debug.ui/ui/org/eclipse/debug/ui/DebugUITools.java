@@ -683,5 +683,28 @@ public class DebugUITools {
 	public static boolean isPrivate(ILaunchConfiguration configuration) {
 		return !LaunchConfigurationManager.isVisible(configuration);
 	}
+
+	/**
+	 * Sets whether step filters should be applied to step commands. This
+	 * setting is a global option applied to all registered debug targets. 
+	 * 
+	 * @param useStepFilters whether step filters should be applied to step
+	 *  commands
+	 * @since 3.0
+	 * @see org.eclipse.debug.core.model.IStepFilters
+	 */
+	public static void setUseStepFilters(boolean useStepFilters) {
+		DebugUIPlugin.getDefault().getStepFilterManager().setUseStepFilters(useStepFilters);
+	}
 		
+	/**
+	 * Returns whether step filters are applied to step commands.
+	 * 
+	 * @return whether step filters are applied to step commands
+	 * @since 3.0
+	 * @see org.eclipse.debug.core.model.IStepFilters
+	 */
+	public static boolean isUseStepFilters() {
+		return DebugUIPlugin.getDefault().getStepFilterManager().isUseStepFilters();
+	}
 }

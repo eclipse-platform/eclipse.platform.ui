@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -83,7 +84,7 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		DebugUIPlugin.getDefault().getStepFilterManager().setUseStepFilters(action.isChecked());
+		DebugUITools.setUseStepFilters(action.isChecked());
 	}
 	
 	/* (non-Javadoc)
