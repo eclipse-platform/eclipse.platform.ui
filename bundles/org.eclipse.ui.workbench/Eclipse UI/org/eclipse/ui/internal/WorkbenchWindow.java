@@ -33,6 +33,8 @@ import org.eclipse.ui.commands.IHandlerService;
 import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.*;
+import org.eclipse.ui.internal.commands.registry.*;
+import org.eclipse.ui.internal.commands.util.*;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -140,6 +142,7 @@ public class WorkbenchWindow
 			Rectangle clientArea = composite.getClientArea();
 
 			//Layout top seperator
+			/*
 			Point sep1Size =
 				getSeperator1().computeSize(
 					SWT.DEFAULT,
@@ -152,6 +155,7 @@ public class WorkbenchWindow
 				sep1Size.y);
 			clientArea.y += sep1Size.y;
 			clientArea.height -= sep1Size.y;
+			*/
 
 			int toolBarWidth = clientArea.width;
 			//Layout the progress indicator
