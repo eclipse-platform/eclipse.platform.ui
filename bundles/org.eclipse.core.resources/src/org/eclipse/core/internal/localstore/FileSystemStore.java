@@ -171,6 +171,9 @@ protected boolean delete(File root, String filePath, MultiStatus status) {
 	}
 	return !(failedRecursive || failedThis);
 }
+/**
+ * @deprecated
+ */
 public int getEncoding(File target) throws CoreException{
 	InputStream input = null;
 	try {

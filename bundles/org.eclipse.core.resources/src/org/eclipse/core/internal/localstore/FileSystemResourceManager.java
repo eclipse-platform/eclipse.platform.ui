@@ -189,6 +189,9 @@ public IPath getDescriptionLocationFor(IProject target) {
 	IPath projectLocation = locationFor(target);
 	return projectLocation == null ? null : projectLocation.append(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
+/**
+ * @deprecated
+ */
 public int getEncoding(File target) throws CoreException {
 	// thread safety: (the location can be null if the project for this file does not exist)
 	IPath location = locationFor(target);

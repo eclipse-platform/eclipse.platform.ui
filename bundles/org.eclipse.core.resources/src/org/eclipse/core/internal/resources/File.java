@@ -222,6 +222,7 @@ public InputStream getContents(boolean force) throws CoreException {
 }
 /**
  * @see IFile#getEncoding()
+ * @deprecated
  */
 public int getEncoding() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
