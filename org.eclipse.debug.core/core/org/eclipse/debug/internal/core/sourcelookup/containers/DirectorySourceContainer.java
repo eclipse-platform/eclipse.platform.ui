@@ -23,7 +23,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 /**
  * A folder in the local file system. Source elements returned
  * from <code>findSourceElements(...)</code> are instances
- * of <code>java.io.File</code>.
+ * of <code>LocalFileStorage</code>.
  * 
  * @since 3.0
  */
@@ -93,7 +93,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 		File directory = getDirectory();
 		File file = new File(directory, name);
 		if (file.exists() && file.isFile()) {
-			sources.add(file);
+			sources.add(new LocalFileStorage(file));
 		}
 		
 		//check subfolders		
