@@ -256,11 +256,13 @@ public class AddFromHistoryDialog extends ResizableDialog {
 			String title= MessageFormat.format(pattern, new Object[] { file.getName() });
 			fEditionPane.setText(title);
 			
-			if (fEditionTree != null) {			
+			if (fEditionTree != null) {
+				fEditionTree.setRedraw(false);
 				fEditionTree.removeAll();
 				for (int i= 0; i < states.length; i++) {
 					addEdition(new HistoryInput(file, states[i]), h.isSelected(i));
 				}
+				fEditionTree.setRedraw(true);
 			}
 		} else
 			fCurrentFileHistory= null;
