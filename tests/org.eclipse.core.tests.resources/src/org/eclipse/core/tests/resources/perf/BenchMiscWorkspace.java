@@ -57,6 +57,6 @@ public class BenchMiscWorkspace extends ResourceTest {
 					fail("0.0", e);
 				}
 			}
-		}.run(this, 100000, 10);
+		}.run(this, 10, 100000);
 	}
 }

@@ -55,7 +55,7 @@ public class BenchElementTree extends CorePerformanceTest {
 			protected void operation() {
 				createTestTree(false);
 			}
-		}.run(this, 400, 10);
+		}.run(this, 10, 400);
 	}
 
 	/**

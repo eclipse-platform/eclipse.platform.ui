@@ -44,6 +44,6 @@ public class ConcurrencyPerformanceTest extends ResourceTest {
 					fail("1.0", e);
 				}
 			}
-		}.run(this, 50, 10);
+		}.run(this, 10, 50);
 	}
 }

@@ -79,6 +79,6 @@ public class BenchHistoryStoreTest extends ResourceTest {
 					fail("2.0", e);
 				}
 			}
-		}.run(this, 5, 10);
+		}.run(this, 10, 5);
 	}
 }

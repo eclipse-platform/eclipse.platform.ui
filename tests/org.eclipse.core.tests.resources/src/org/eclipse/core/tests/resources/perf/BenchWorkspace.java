@@ -51,7 +51,7 @@ public class BenchWorkspace extends ResourceTest {
 			protected void operation() {
 				workspace.countResources(root.getFullPath(), IResource.DEPTH_INFINITE, true);
 			}
-		}.run(this, 100, 10);
+		}.run(this, 10, 100);
 	}
 
 	public void testCountResourcesDuringOperation() {
