@@ -74,11 +74,16 @@ public class DefaultHelpSupport implements IHelp {
 	public void displayHelpResource(IHelpResource helpResource) {
 		if (helpResource instanceof IToc)
 			displayHelpURL("toc=" + URLEncoder.encode(helpResource.getHref()));
-		else if (helpResource instanceof ITopic)
+		else if (helpResource instanceof ITopic) {
+			String topicURL = getTopicURL(helpResource.getHref());
+			if (getNoframesURL(topicURL) != null) {
+				displayHelpURL(getNoframesURL(topicURL));
+				return;
+			}
 			displayHelpURL(
 				"topic="
-					+ URLEncoder.encode(getTopicURL(helpResource.getHref())));
-		else
+					+ URLEncoder.encode(topicURL));
+		} else
 			displayHelpResource(helpResource.getHref());
 	}
 
@@ -107,7 +112,11 @@ public class DefaultHelpSupport implements IHelp {
 						"contextId="))) { // assume it is a query string
 			displayHelpURL(href);
 		} else // assume this is a topic
-			displayHelpURL("topic=" + URLEncoder.encode(href));
+			if (getNoframesURL(href) != null) {
+				displayHelpURL(getNoframesURL(href));
+				return;
+			}
+		displayHelpURL("topic=" + URLEncoder.encode(href));
 	}
 
 	/**
@@ -165,12 +174,17 @@ public class DefaultHelpSupport implements IHelp {
 	public void displayHelp(IContext context, IHelpResource topic) {
 		if (context == null || topic == null || topic.getHref() == null)
 			return;
+		String topicURL = getTopicURL(topic.getHref());
+		if (getNoframesURL(topicURL) != null) {
+			displayHelpURL(getNoframesURL(topicURL));
+			return;
+		}
 		String url =
 			"tab=links"
 				+ "&contextId="
 				+ URLEncoder.encode(getContextID(context))
 				+ "&topic="
-				+ URLEncoder.encode(getTopicURL(topic.getHref()));
+				+ URLEncoder.encode(topicURL);
 		displayHelpURL(url);
 	}
 	/**
@@ -271,5 +285,32 @@ public class DefaultHelpSupport implements IHelp {
 		}
 		*/
 		return topic;
+	}
+	/**
+	 * If href contains URL parameter noframes=true
+	 * return href with that paramter removed, otherwise returns null
+	 * @param href
+	 * @return String or null
+	 */
+	private String getNoframesURL(String href) {
+		if (href == null) {
+			return null;
+		}
+		int ix = href.indexOf("?noframes=true&");
+		if (ix >= 0) {
+			//remove noframes=true&
+			return href.substring(0, ix + 1)
+				+ href.substring(ix + "?noframes=true&".length());
+
+		}
+		ix = href.indexOf("noframes=true");
+		if (ix > 0) {
+			//remove &noframes=true
+			return href.substring(0, ix - 1)
+				+ href.substring(ix + "noframes=true".length());
+		}
+		// can be displayed in frames
+		return null;
+
 	}
 }
