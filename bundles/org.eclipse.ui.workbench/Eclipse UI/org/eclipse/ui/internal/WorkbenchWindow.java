@@ -842,14 +842,14 @@ public class WorkbenchWindow
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 		
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
-					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
+					Map keySequenceBindingsByCommandId = commandManager.getKeySequenceBindingsByCommandId();
+					SortedSet keySequenceBindings = (SortedSet) keySequenceBindingsByCommandId.get(commandId);
 
-					if (keyBindings != null) {
-						IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindings.first();
+					if (keySequenceBindings != null) {
+						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.first();
 
-						if (keyBinding != null) {
-							KeySequence keySequence = keyBinding.getKeySequence();
+						if (keySequenceBinding != null) {
+							KeySequence keySequence = keySequenceBinding.getKeySequence();
 							List keyStrokes = keySequence.getKeyStrokes();
 
 							if (keyStrokes.size() == 1) {
@@ -882,14 +882,14 @@ public class WorkbenchWindow
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
-					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
+					Map keySequenceBindingsByCommandId = commandManager.getKeySequenceBindingsByCommandId();
+					SortedSet keySequenceBindings = (SortedSet) keySequenceBindingsByCommandId.get(commandId);
 
-					if (keyBindings != null) {
-						IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindings.first();
+					if (keySequenceBindings != null) {
+						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.first();
 
-						if (keyBinding != null)
-							return keyBinding.getKeySequence().format();
+						if (keySequenceBinding != null)
+							return keySequenceBinding.getKeySequence().format();
 					}
 				} else {
 					String acceleratorText = commandManager.getAcceleratorText(commandId);

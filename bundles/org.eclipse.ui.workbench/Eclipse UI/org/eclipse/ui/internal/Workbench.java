@@ -196,8 +196,8 @@ public class Workbench
 	public final void disableKeyFilter() {
 		synchronized (keyFilterMutex) {
 			final Display display = Display.getCurrent();
-			display.removeFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keyBindingFilter);
-			display.removeFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keyBindingFilter);
+			display.removeFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
+			display.removeFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
 			keyFilterDisabled = true;
 		}
 	}
@@ -205,8 +205,8 @@ public class Workbench
 	public final void enableKeyFilter() {
 		synchronized (keyFilterMutex) {
 			final Display display = Display.getCurrent();
-			display.addFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keyBindingFilter);
-			display.addFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keyBindingFilter);
+			display.addFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
+			display.addFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
 			keyFilterDisabled = false;
 		}
 	}
@@ -924,6 +924,8 @@ public class Workbench
 	
 					if (command != null)
 						return command.isDefined() && command.isActive();
+					
+					// TODO something missing here perhaps?
 				}
 
 				return true;
@@ -935,8 +937,8 @@ public class Workbench
 		});
 
 		workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
-		display.addFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keyBindingFilter);
-		display.addFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keyBindingFilter);
+		display.addFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
+		display.addFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
 		display.addFilter(SWT.FocusOut, workbenchActivitiesCommandsAndRoles.modeCleaner);
 		addWindowListener(workbenchActivitiesCommandsAndRoles.windowListener);
 		workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();

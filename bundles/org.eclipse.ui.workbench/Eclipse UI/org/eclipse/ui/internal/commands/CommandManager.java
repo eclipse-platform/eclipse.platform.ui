@@ -28,6 +28,7 @@ import java.util.WeakHashMap;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.api.IAction;
 import org.eclipse.ui.internal.commands.api.ICategory;
 import org.eclipse.ui.internal.commands.api.ICategoryEvent;
 import org.eclipse.ui.internal.commands.api.ICommand;
@@ -297,7 +298,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false, false, false, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, true, false, false, false, false, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);	
@@ -357,7 +358,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true, false, false, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, true, false, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);		
@@ -376,11 +377,39 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true, false, false, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, false, true, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);		
 	}		
+
+	public void setActionsById(Map actionsById) {
+		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);	
+	
+		if (!Util.equals(actionsById, this.actionsById)) {	
+			this.actionsById = actionsById;
+			
+			// TODO begin temporary (?)
+			for (Iterator iterator = this.actionsById.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String commandId = (String) entry.getKey();
+				IAction action = (IAction) entry.getValue();
+				
+				if (commandId != null && action instanceof ActionHandler) {						
+					ActionHandler actionHandler = (ActionHandler) action;
+					org.eclipse.jface.action.IAction jfaceAction = (org.eclipse.jface.action.IAction) actionHandler.getAction();	
+					
+					if (jfaceAction != null) {
+						String actionId = jfaceAction.getId();
+						
+						if (actionId != null)
+							commandIdsByActionIds.put(actionId, commandId);
+					}
+				}				
+			}
+			// TODO end temporary
+		}
+	}	
 	
 	public void setEnabledCommandIds(Set enabledCommandIds) {	
 		enabledCommandIds = Util.safeCopy(enabledCommandIds, String.class);
@@ -607,6 +636,7 @@ public final class CommandManager implements ICommandManager {
 			if (!isKeyConfigurationDefinitionChildOf(null, (String) iterator.next(), keyConfigurationDefinitionsById))
 				iterator.remove();
 
+		// TODO should the active key configuration change if a call to setActivityKeyConfigurationId was explicitly made already?
 		List activeKeyConfigurationDefinitions = new ArrayList();
 		activeKeyConfigurationDefinitions.addAll(commandRegistry.getActiveKeyConfigurationDefinitions());
 		activeKeyConfigurationDefinitions.addAll(mutableCommandRegistry.getActiveKeyConfigurationDefinitions());
@@ -875,37 +905,7 @@ public final class CommandManager implements ICommandManager {
 		return mutableCommandRegistry;
 	}
 	 
-	/*			
-	public void setActionsById(Map actionsById) {
-		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);	
-	
-		if (!Util.equals(actionsById, this.actionsById)) {	
-			this.actionsById = actionsById;
-			
-			// TODO begin temporary (?)
-			for (Iterator iterator = this.actionsById.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String commandId = (String) entry.getKey();
-				IAction action = (IAction) entry.getValue();
-				
-				if (commandId != null && action instanceof ActionHandler) {						
-					ActionHandler actionHandler = (ActionHandler) action;
-					org.eclipse.jface.action.IAction jfaceAction = (org.eclipse.jface.action.IAction) actionHandler.getAction();	
-					
-					if (jfaceAction != null) {
-						String actionId = jfaceAction.getId();
-						
-						if (actionId != null)
-							commandIdsByActionIds.put(actionId, commandId);
-					}
-				}				
-			}
-			// TODO end temporary
-			
-			fireCommandManagerChanged();
-		}
-	}
-
+	/* TODO			
 	private boolean inContext(Collection contextBindings) {
 		if (contextBindings.isEmpty())
 			return true;

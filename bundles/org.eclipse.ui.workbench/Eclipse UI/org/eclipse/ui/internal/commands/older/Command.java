@@ -173,7 +173,7 @@ final class Command implements ICommand {
 		return imageBindings;
 	}
 
-	public SortedSet getKeyBindings()
+	public SortedSet getKeySequenceBindings()
 		throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();

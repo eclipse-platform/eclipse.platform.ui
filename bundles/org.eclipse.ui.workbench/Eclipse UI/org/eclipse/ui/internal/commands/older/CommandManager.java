@@ -53,8 +53,8 @@ import org.eclipse.ui.internal.commands.api.older.ICommand;
 import org.eclipse.ui.internal.commands.api.older.ICommandManager;
 import org.eclipse.ui.internal.commands.api.older.ICommandManagerEvent;
 import org.eclipse.ui.internal.commands.api.older.ICommandManagerListener;
-import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
 import org.eclipse.ui.internal.commands.api.older.IKeyConfiguration;
+import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
@@ -292,11 +292,11 @@ public final class CommandManager implements ICommandManager {
 
 	// TODO remove begin
 
-	public Map getKeyBindingsByCommandId() {
+	public Map getKeySequenceBindingsByCommandId() {
 		return keyBindingMachine.getKeyBindingsByCommandId();
 	}
 	
-	public Map getKeyBindingsByCommandIdForMode() {
+	public Map getKeySequenceBindingsByCommandIdForMode() {
 		return keyBindingMachine.getKeyBindingsByCommandIdForMode();
 	}
 
@@ -332,7 +332,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		*/
 		
-		Map keyBindingsByCommandId = getKeyBindingsByCommandId();				
+		Map keyBindingsByCommandId = getKeySequenceBindingsByCommandId();				
 		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 		
 		if (keyBindings != null) {
@@ -364,7 +364,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		*/
 
-		Map keyBindingsByCommandId = getKeyBindingsByCommandId();				
+		Map keyBindingsByCommandId = getKeySequenceBindingsByCommandId();				
 		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 		
 		if (keyBindings != null) {

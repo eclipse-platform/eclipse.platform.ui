@@ -268,9 +268,9 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	};
 
 	/** The listener that runs key events past the global key bindings. */
-	final Listener keyBindingFilter = new Listener() {
+	final Listener keySequenceBindingFilter = new Listener() {
 		public void handleEvent(Event event) {
-			filterKeyBindings(event);
+			filterKeySequenceBindings(event);
 		}
 	};
 
@@ -378,7 +378,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 *            The incoming event; must not be <code>null</code>.
 	 * @since 3.0
 	 */
-	void filterKeyBindings(Event event) {
+	void filterKeySequenceBindings(Event event) {
 		/*
 		 * Only process key strokes containing natural keys to trigger key
 		 * bindings

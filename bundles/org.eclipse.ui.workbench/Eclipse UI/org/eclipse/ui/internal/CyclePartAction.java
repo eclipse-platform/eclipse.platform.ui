@@ -315,13 +315,13 @@ public class CyclePartAction extends PageEventAction {
 					
 					if (command.isDefined()) {
 						try {
-							SortedSet keyBindings = command.getKeyBindings();
-							Iterator iterator = keyBindings.iterator();
+							SortedSet keySequenceBindings = command.getKeySequenceBindings();
+							Iterator iterator = keySequenceBindings.iterator();
 							
 							while (iterator.hasNext()) {
-								IKeySequenceBinding keyBinding = (IKeySequenceBinding) iterator.next();
+								IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
 								
-								if (keyBinding.getKeySequence().equals(keySequence)) {
+								if (keySequenceBinding.getKeySequence().equals(keySequence)) {
 									acceleratorForward = true;
 									break;
 								}
@@ -336,13 +336,13 @@ public class CyclePartAction extends PageEventAction {
 					
 					if (command.isDefined()) {
 						try {
-							SortedSet keyBindings = command.getKeyBindings();
-							Iterator iterator = keyBindings.iterator();
+							SortedSet keySequenceBindings = command.getKeySequenceBindings();
+							Iterator iterator = keySequenceBindings.iterator();
 								
 							while (iterator.hasNext()) {
-								IKeySequenceBinding keyBinding = (IKeySequenceBinding) iterator.next();
+								IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
 									
-								if (keyBinding.getKeySequence().equals(keySequence)) {
+								if (keySequenceBinding.getKeySequence().equals(keySequence)) {
 									acceleratorBackward = true;
 									break;
 								}

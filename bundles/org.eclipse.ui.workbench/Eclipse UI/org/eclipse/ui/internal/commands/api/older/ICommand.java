@@ -89,7 +89,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	SortedSet getKeyBindings()
+	SortedSet getKeySequenceBindings()
 		throws NotDefinedException;	
 	
 	/**
