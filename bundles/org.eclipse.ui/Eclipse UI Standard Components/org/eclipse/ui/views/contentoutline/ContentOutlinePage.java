@@ -105,8 +105,8 @@ protected TreeViewer getTreeViewer() {
 }
 /**
  * The <code>ContentOutlinePage</code> implementation of this 
- * <code>IPage</code> method registers itself as a selection 
- * provider with the site
+ * <code>IPageBookViewPage</code> method registers itself as a selection 
+ * provider with the site.
  */
 public void init(IPageSite pageSite) {
 	super.init(pageSite);
