@@ -20,6 +20,7 @@
 
 
 	<extension-point id="quickDiffReferenceProvider" name="%ExtPoint.referenceProvider" schema="schema/quickDiffReferenceProvider.exsd"/>
+	<extension-point id="spellingEngine" name="%ExtPoint.spellingEngine" schema="schema/spellingEngine.exsd"/>
 	   
 	   
 	<extension
