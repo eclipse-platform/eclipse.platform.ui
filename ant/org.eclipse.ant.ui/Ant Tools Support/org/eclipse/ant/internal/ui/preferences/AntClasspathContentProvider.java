@@ -171,18 +171,6 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		refresh();
 	}
 
-	public Object[] getGlobalUserClasspathEntries() {
-		return model.getEntries(ClasspathModel.GLOBAL_USER);
-	}
-	
-	public Object[] getUserClasspathEntries() {
-		return model.getEntries(ClasspathModel.GLOBAL_USER);
-	}
-
-	public Object[] getGlobalAntClasspathEntries() {
-		return model.getEntries(ClasspathModel.ANT_HOME);
-	}
-
 	public ClasspathModel getModel() {
 		return model;
 	}

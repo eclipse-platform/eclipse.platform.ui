@@ -98,26 +98,28 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		return newEntry;		
 	}
 	
+	/**
+	 * Returns entries of the specified kind, possibly empty.
+	 * 
+	 * @param entryType kind of entries to retrieve
+	 * @return entries of the specified kind, possibly empty
+	 */
 	public IAntClasspathEntry[] getEntries(int entryType) {
-		IAntClasspathEntry[] classpathEntries= null;
 		switch (entryType) {
 			case ANT_HOME :
 				if (antHomeEntry != null) {
-					classpathEntries= antHomeEntry.getEntries();
+					return antHomeEntry.getEntries();
 				}
 				break;
 			case GLOBAL_USER :
 				if (userGlobalEntry != null) {
-					classpathEntries= userGlobalEntry.getEntries();
+					return userGlobalEntry.getEntries();
 				}
 				break;
 			case USER : 
-				classpathEntries= getUserEntries();
-				break;
-			default :
-				return null;
+				return getUserEntries();
 		}
-		return classpathEntries;
+		return new IAntClasspathEntry[0];
 	}
 	
 	public void remove(Object entry) {
