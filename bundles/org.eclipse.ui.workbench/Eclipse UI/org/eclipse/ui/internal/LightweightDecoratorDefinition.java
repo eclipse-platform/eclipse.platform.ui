@@ -11,35 +11,41 @@ package org.eclipse.ui.internal;
  * IBM - Initial implementation
  ******************************************************************************/
 
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
- * The RunnableDecoratorDefinition is the definition for 
- * decorators that have an ILabelDecorator class to instantiate. */
-
-class RunnableDecoratorDefinition extends DecoratorDefinition {
-
-	private IConfigurationElement definingElement;
-	//A flag that is set if there is an error creating the decorator
-	private boolean decoratorCreationFailed = false;
+ * The DeclarativeDecoratorDefinition is a decorator 
+ * definition that is defined entirely from xml and
+ * will not require the activation of its defining 
+ * plug-in.
+ */
+class LightweightDecoratorDefinition extends DecoratorDefinition {
 
 	/**
-	 * Create a new instance of the receiver with the
-	 * supplied values.
+	 * The DeclarativeDecorator is the internal decorator
+	 * supplied by the decorator definition.
 	 */
+	private ILightweightLabelDecorator decorator;
+	private String quadrant;
+	private String iconLocation;
+	private String decoratorClass;
 
-	RunnableDecoratorDefinition(
+	LightweightDecoratorDefinition(
 		String identifier,
 		String label,
 		String decoratorDescription,
 		ActionExpression expression,
 		boolean isAdaptable,
 		boolean initEnabled,
+		String quadrantValue,
+		String iconPath,
 		IConfigurationElement element) {
 		super(
 			identifier,
@@ -47,9 +53,12 @@ class RunnableDecoratorDefinition extends DecoratorDefinition {
 			decoratorDescription,
 			expression,
 			isAdaptable,
-			initEnabled);
-		this.definingElement = element;
+			initEnabled,
+			element);
+		this.iconLocation = iconPath;
+		this.quadrant = quadrantValue;
 	}
+	
 	/**
 	 * Gets the decorator and creates it if it does
 	 * not exist yet. Throws a CoreException if there is a problem
@@ -58,8 +67,8 @@ class RunnableDecoratorDefinition extends DecoratorDefinition {
 	 * enabled to be true is done first.
 	 * @return Returns a ILabelDecorator
 	 */
-	protected ILabelDecorator internalGetDecorator() throws CoreException {
-		if (decoratorCreationFailed)
+	protected ILightweightLabelDecorator internalGetDecorator() throws CoreException {
+		if (labelProviderCreationFailed)
 			return null;
 
 		final CoreException[] exceptions = new CoreException[1];
@@ -69,9 +78,9 @@ class RunnableDecoratorDefinition extends DecoratorDefinition {
 				public void run() {
 					try {
 						decorator =
-							(ILabelDecorator) WorkbenchPlugin.createExtension(
+							(ILightweightLabelDecorator) WorkbenchPlugin.createExtension(
 								definingElement,
-								WizardsRegistryReader.ATT_CLASS);
+								DecoratorRegistryReader.ATT_DECORATOR_CLASS);
 					} catch (CoreException exception) {
 						exceptions[0] = exception;
 					}
@@ -80,7 +89,7 @@ class RunnableDecoratorDefinition extends DecoratorDefinition {
 		}
 
 		if (decorator == null) {
-			this.decoratorCreationFailed = true;
+			this.labelProviderCreationFailed = true;
 			setEnabled(false);
 		}
 
@@ -88,6 +97,21 @@ class RunnableDecoratorDefinition extends DecoratorDefinition {
 			throw exceptions[0];
 
 		return decorator;
+	}
+
+	/**
+	 * @see org.eclipse.ui.internal.DecoratorDefinition#internalGetLabelProvider()
+	 */
+	protected IBaseLabelProvider internalGetLabelProvider()
+		throws CoreException {
+		return internalGetDecorator();
+	}
+
+	/**
+	 * @see org.eclipse.ui.internal.DecoratorDefinition#isFull()
+	 */
+	public boolean isFull() {
+		return false;
 	}
 
 }

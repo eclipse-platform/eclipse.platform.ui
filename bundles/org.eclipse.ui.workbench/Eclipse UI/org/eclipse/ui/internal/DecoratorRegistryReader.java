@@ -34,10 +34,8 @@ class DecoratorRegistryReader extends RegistryReader {
 	private static String ATT_ENABLED = "state"; //$NON-NLS-1$
 	private static String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
 	private static String P_TRUE = "true"; //$NON-NLS-1$
-	
-	//Kept for backwards compatibility. Will be converted to
-	// an enablement definition.
 	private static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
+	public static String ATT_DECORATOR_CLASS = "decoratorClass"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for DecoratorRegistryReader.
@@ -83,17 +81,17 @@ class DecoratorRegistryReader extends RegistryReader {
 		else
 			enablementExpression = new ActionExpression(enablement[0]);
 			
-		//Declarative or Runnable?
+		//Lightweight or Full?
 		if(element.getAttribute(WizardsRegistryReader.ATT_CLASS) == null){
 			String iconPath = element.getAttribute(ATT_ICON);
 			String quadrant = element.getAttribute(ATT_QUADRANT);
 			values.add(
-				new DeclarativeDecoratorDefinition(
-					id, name, description,enablementExpression,adaptable,enabled,quadrant,iconPath));
+				new LightweightDecoratorDefinition(
+					id, name, description,enablementExpression,adaptable,enabled,quadrant,iconPath,element));
 		}
 		else{
 			values.add(
-				new RunnableDecoratorDefinition(
+				new FullDecoratorDefinition(
 					id, name, description,enablementExpression,adaptable,enabled,element));
 		}
 

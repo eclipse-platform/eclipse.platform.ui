@@ -12,7 +12,7 @@ package org.eclipse.ui.internal;
  ******************************************************************************/
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
@@ -26,12 +26,15 @@ public abstract class DecoratorDefinition {
 
 	private String name;
 	private String description;
-	protected ILabelDecorator decorator;
 	private ActionExpression enablement;
 	private boolean adaptable;
-	private boolean enabled;
+	protected boolean enabled;
 	private boolean defaultEnabled;
 	private String id;
+	protected IConfigurationElement definingElement;
+
+	//A flag that is set if there is an error creating the decorator
+	protected boolean labelProviderCreationFailed = false;
 
 	/**
 	 * Create a new instance of the receiver with the
@@ -44,8 +47,9 @@ public abstract class DecoratorDefinition {
 		String decoratorDescription,
 		ActionExpression expression,
 		boolean isAdaptable,
-		boolean initEnabled) {
-			
+		boolean initEnabled,
+		IConfigurationElement element) {
+
 		this.id = identifier;
 		this.name = label;
 		this.enablement = expression;
@@ -53,6 +57,7 @@ public abstract class DecoratorDefinition {
 		this.description = decoratorDescription;
 		this.enabled = initEnabled;
 		this.defaultEnabled = initEnabled;
+		this.definingElement = element;
 	}
 
 	/**
@@ -72,16 +77,6 @@ public abstract class DecoratorDefinition {
 	}
 
 	/**
-	 * Gets the decorator and creates it if it does
-	 * not exist yet. Throws a CoreException if there is a problem
-	 * creating the decorator.
-	 * This method should not be called unless a check for
-	 * enabled to be true is done first.
-	 * @return Returns a ILabelDecorator
-	 */
-	protected abstract ILabelDecorator internalGetDecorator() throws CoreException;
-
-	/**
 	 * Gets the enabled.
 	 * @return Returns a boolean
 	 */
@@ -94,12 +89,11 @@ public abstract class DecoratorDefinition {
 	 * manager as a listener as appropriate.
 	 * @param enabled The enabled to set
 	 */
-	public void setEnabled(boolean newState) throws CoreException {
+	public void setEnabled(boolean newState) {
 
 		//Only refresh if there has been a change
 		if (this.enabled != newState) {
 			this.enabled = newState;
-			refreshDecorator();
 		}
 	}
 
@@ -111,39 +105,7 @@ public abstract class DecoratorDefinition {
 	 */
 	public void setEnabledWithErrorHandling(boolean newState) {
 
-		try {
-			setEnabled(newState);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-	}
-
-	/**
-	 * Refresh the current decorator based on our enable
-	 * state.
-	 */
-
-	private void refreshDecorator() throws CoreException {
-		DecoratorManager manager =
-			(DecoratorManager) WorkbenchPlugin
-				.getDefault()
-				.getDecoratorManager();
-
-		if (this.enabled) {
-			//Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
-			if (currentDecorator != null)
-				currentDecorator.addListener(manager);
-		} else {
-			if (decorator != null) {
-				ILabelDecorator cached = decorator;
-				cached.removeListener(manager);
-				//Clear the decorator before disposing
-				decorator = null;
-				cached.dispose();
-			}
-		}
-
+		setEnabled(newState);
 	}
 
 	/**
@@ -162,53 +124,20 @@ public abstract class DecoratorDefinition {
 		return id;
 	}
 
-	/** 
-	 * A CoreException has occured. Inform the user and disable
-	 * the receiver.
+	/**
+	 * Return the default value for this type - this value
+	 * is the value read from the element description.
 	 */
-
-	private void handleCoreException(CoreException exception) {
-
-		//If there is an error then reset the enabling to false
-		ErrorDialog.openError(null, WorkbenchMessages.getString("Internal_error"), //$NON-NLS-1$
-		exception.getLocalizedMessage(), exception.getStatus());
-		this.enabled = false;
+	public boolean getDefaultValue() {
+		return defaultEnabled;
 	}
 
 	/**
-	 * Decorate the image provided for the element type.
-	 * This method should not be called unless a check for
-	 * isEnabled() has been done first.
-	 * Return null if there is no image or if an error occurs.
+	 * Returns the enablement.
+	 * @return ActionExpression
 	 */
-	Image decorateImage(Image image, Object element) {
-		try {
-			//Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
-			if (currentDecorator != null)
-				return currentDecorator.decorateImage(image, element);
-
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-		return null;
-	}
-	/**
-	 * Decorate the text provided for the element type.
-	 * This method should not be called unless a check for
-	 * isEnabled() has been done first.
-	 * Return null if there is no text or if there is an exception.
-	 */
-	String decorateText(String text, Object element) {
-		try {
-			//Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
-			if (currentDecorator != null)
-				return currentDecorator.decorateText(text, element);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-		return null;
+	public ActionExpression getEnablement() {
+		return enablement;
 	}
 
 	/**
@@ -220,7 +149,7 @@ public abstract class DecoratorDefinition {
 	void addListener(ILabelProviderListener listener) {
 		try {
 			//Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
+			IBaseLabelProvider currentDecorator = internalGetLabelProvider();
 			if (currentDecorator != null)
 				currentDecorator.addListener(listener);
 		} catch (CoreException exception) {
@@ -237,7 +166,7 @@ public abstract class DecoratorDefinition {
 	*/
 	boolean isLabelProperty(Object element, String property) {
 		try { //Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
+			IBaseLabelProvider currentDecorator = internalGetLabelProvider();
 			if (currentDecorator != null)
 				return currentDecorator.isLabelProperty(element, property);
 		} catch (CoreException exception) {
@@ -248,29 +177,32 @@ public abstract class DecoratorDefinition {
 	}
 
 	/**
-	 * Return the default value for this type - this value
-	 * is the value read from the element description.
-	 */
-	public boolean getDefaultValue() {
-		return defaultEnabled;
-	}
-
-	/**
-	 * Gets the decorator.
+	 * Gets the label provider and creates it if it does not exist yet. 
+	 * Throws a CoreException if there is a problem
+	 * creating the labelProvider.
+	 * This method should not be called unless a check for
+	 * enabled to be true is done first.
 	 * @return Returns a ILabelDecorator
-	 * @throws CoreException. This will be removed and is only
-	 * here for backwards compatability.
 	 */
-	public ILabelDecorator getDecorator() throws CoreException {
-		return decorator;
+	protected abstract IBaseLabelProvider internalGetLabelProvider()
+		throws CoreException;
+
+	/** 
+	* A CoreException has occured. Inform the user and disable
+	* the receiver.
+	*/
+
+	protected void handleCoreException(CoreException exception) {
+
+		//If there is an error then reset the enabling to false
+		ErrorDialog.openError(null, WorkbenchMessages.getString("Internal_error"), //$NON-NLS-1$
+		exception.getLocalizedMessage(), exception.getStatus());
+		this.enabled = false;
 	}
 
 	/**
-	 * Returns the enablement.
-	 * @return ActionExpression
+	 * Return whether or not this is a full or lightweight definition.
 	 */
-	public ActionExpression getEnablement() {
-		return enablement;
-	}
+	public abstract boolean isFull();
 
 }

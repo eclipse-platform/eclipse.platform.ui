@@ -158,7 +158,7 @@ public class DecoratorsPreferencePage
 	 * Populates the list of decorators.
 	 */
 	private void populateDecorators() {
-		DecoratorDefinition[] definitions = getDefinitions();
+		DecoratorDefinition[] definitions = getAllDefinitions();
 		checkboxViewer.setInput(definitions);
 		for (int i = 0; i < definitions.length; i++) {
 			checkboxViewer.setChecked(definitions[i], definitions[i].isEnabled());
@@ -197,7 +197,7 @@ public class DecoratorsPreferencePage
 	protected void performDefaults() {
 		super.performDefaults();
 		DecoratorManager manager = (DecoratorManager) WorkbenchPlugin.getDefault().getDecoratorManager();
-		DecoratorDefinition[] definitions = manager.getDecoratorDefinitions();
+		DecoratorDefinition[] definitions = manager.getAllDecoratorDefinitions();
 		for (int i = 0; i < definitions.length; i++) {
 			checkboxViewer.setChecked(definitions[i],definitions[i].getDefaultValue());
 		}
@@ -209,7 +209,7 @@ public class DecoratorsPreferencePage
 	public boolean performOk() {
 		if (super.performOk()) {
 			DecoratorManager manager = getDecoratorManager();
-			DecoratorDefinition[] definitions = manager.getDecoratorDefinitions();
+			DecoratorDefinition[] definitions = manager.getAllDecoratorDefinitions();
 			for (int i = 0; i < definitions.length; i++) {
 				boolean checked = checkboxViewer.getChecked(definitions[i]);
 				definitions[i].setEnabledWithErrorHandling(checked);
@@ -230,8 +230,8 @@ public class DecoratorsPreferencePage
 	/**
 	 * Get the decorator definitions for the workbench.
 	 */
-	private DecoratorDefinition[] getDefinitions() {
-		return getDecoratorManager().getDecoratorDefinitions();
+	private DecoratorDefinition[] getAllDefinitions() {
+		return getDecoratorManager().getAllDecoratorDefinitions();
 	}
 	
 	/**
