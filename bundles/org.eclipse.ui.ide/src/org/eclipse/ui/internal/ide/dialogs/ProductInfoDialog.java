@@ -11,16 +11,26 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -361,6 +371,26 @@ protected void openLink(String href) {
 		};
 		launcher.start();
 	}
+}
+
+/**
+ * Open a browser with the argument title on the argument url.  If the url refers to a
+ * resource within a bundle, then a temp copy of the file will be extracted and opened.
+ * @see <code>Platform.asLocalUrl</code>
+ * @param url The target url to be displayed, null will be safely ignored
+ * @return true if the url was successfully displayed and false otherwise
+ */
+protected boolean openBrowser(URL url) {
+	if (url != null)
+		try {
+			url = Platform.asLocalURL(url);
+		} catch (IOException e) {
+			return false;
+		}
+	if (url == null)
+		return false;
+	openLink(url.toString());
+	return true;
 }
 
 /**

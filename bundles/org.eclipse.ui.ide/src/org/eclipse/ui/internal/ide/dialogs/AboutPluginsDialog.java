@@ -324,25 +324,13 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	 * 
 	 */
 	private void openMoreInfo(IPluginDescriptor desc) {
-		URL infoURL = desc.find(new Path(PLUGININFO));
-
-        if (infoURL != null) {
-            try {
-                infoURL = Platform.asLocalURL(infoURL);
-            } catch (IOException e) {
-                // do nothing
-            }
-        }
-
-		if (infoURL == null) {
-			MessageDialog.openError(
-				getShell(), 
-				IDEWorkbenchMessages.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-				IDEWorkbenchMessages.format("AboutPluginsDialog.unableToOpenFile", new Object[] {PLUGININFO, desc.getUniqueIdentifier()})); //$NON-NLS-1$
+		if (desc != null && openBrowser(desc.find(new Path(PLUGININFO))))
 			return;
-		}
-
-		openLink(infoURL.toString());
+		MessageDialog.openError(getShell(), IDEWorkbenchMessages
+				.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.format(
+						"AboutPluginsDialog.unableToOpenFile", new Object[]{ //$NON-NLS-1$
+								PLUGININFO, desc.getUniqueIdentifier()}));
 	}
 	
 	/**

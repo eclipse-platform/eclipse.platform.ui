@@ -140,15 +140,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					if (items.length > 0) {
 						AboutInfo info = (AboutInfo) items[0].getData();
 						IFeature feature = getFeatureFor(info);
-						if (feature != null) {
-							IURLEntry entry = feature.getLicense();
-							if (entry != null) {
-								openLink(entry.getURL().toString());
-								return;
-							}
-						}
-						MessageDialog.openInformation(getShell(), IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
-						IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
+						IURLEntry entry = feature == null ? null : feature.getLicense(); 
+						if (feature == null || entry == null
+								|| !openBrowser(entry.getURL()))
+							MessageDialog
+									.openInformation(
+											getShell(),
+											IDEWorkbenchMessages
+													.getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
+											IDEWorkbenchMessages
+													.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
 					}
 					return;
 				}
