@@ -340,7 +340,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see Job.setSystem
 	 */
 	protected void setSystem(boolean value) {
-		Assert.isLegal(getState() == Job.NONE);
+		if (getState() != Job.NONE)
+			throw new IllegalStateException();
 		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;
 	}
 	/* (non-javadoc)
@@ -353,7 +354,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see Job.setUser
 	 */
 	protected void setUser(boolean value) {
-		Assert.isLegal(getState() == Job.NONE);
+		if (getState() != Job.NONE)
+			throw new IllegalStateException();
 		flags = value ? flags | M_USER : flags & ~M_USER;
 	}
 	/* (Non-javadoc)
