@@ -101,7 +101,7 @@ class DocumentInputStream extends InputStream {
 	}
 
 	/** Character sequence */
-	private CharSequence fCharSequence;
+	private volatile CharSequence fCharSequence;
 	
 	/** Document length */
 	private int fLength;
@@ -116,23 +116,35 @@ class DocumentInputStream extends InputStream {
 	private IDocumentListener fDocumentListener= new InternalDocumentListener();
 	
 	/**
-	 * Initialize the stream to read from the given document.
+	 * Initialize the stream to read from the given document. If the
+	 * document implements {@link ISynchronizable}, its lock object will be
+	 * locked during initialization.
 	 * 
 	 * @param document the document
 	 */
 	public DocumentInputStream(IDocument document) {
-		Object lock;
+		Object lock= null;
 		if (document instanceof ISynchronizable)
 			lock= ((ISynchronizable) document).getLockObject();
-		else
-			lock= document;
 		
-		synchronized (lock) {
-			fDocument= document;
-			fDocument.addDocumentListener(fDocumentListener);
-			fCharSequence= new DocumentCharSequence(fDocument);
-			fLength= fCharSequence.length();
-		}
+		if (lock != null)
+			synchronized (lock) {
+				acquireDocument(document);
+			}
+		else
+			acquireDocument(document);
+	}
+
+	/**
+	 * Initialize the stream to read from the given document.
+	 * 
+	 * @param document the document
+	 */
+	private void acquireDocument(IDocument document) {
+		fDocument= document;
+		fDocument.addDocumentListener(fDocumentListener);
+		fCharSequence= new DocumentCharSequence(fDocument);
+		fLength= fCharSequence.length();
 	}
 
 	/*
