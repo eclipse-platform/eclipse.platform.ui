@@ -26,6 +26,35 @@ int NOWIN95 = 1;
 // ---------------
 
 /*
+ *
+ */
+jstring WindowsTojstring( JNIEnv* jnienv, char* buf )
+{
+  jstring rtn = 0;
+  wchar_t* buffer = 0;
+  int bufferLen = strlen(buf);  
+  if( bufferLen == 0 ){
+    rtn = jnienv ->NewStringUTF(buf);
+	if (DEBUG)
+		printf("WindowsToJString Buffer is empty\n");    
+  } else {
+    int length = MultiByteToWideChar( CP_ACP, 0, (LPCSTR)buf, bufferLen, NULL, 0 );
+    buffer = (wchar_t*)malloc( length*2 + 1 );
+    if(int err=MultiByteToWideChar( CP_ACP, 0, (LPCSTR)buf, bufferLen, (LPWSTR)buffer, length ) >0 ){
+      rtn = jnienv->NewString((jchar*)buffer, length );
+    } else {
+		if (DEBUG)
+			printf("MultiByteToWideChar %i\n",err);    
+    }
+  }
+  if( buffer )
+   free( buffer );
+  return rtn;
+}
+
+
+
+/*
  * calls GetVolumeInformation to retrive the label of the volume
  * Returns NULL if an error occurs
  * @param driveLetter path to the drive "c:\\"
@@ -35,6 +64,9 @@ jstring getLabel(TCHAR driveLetter[],JNIEnv * jnienv){
 
 	jstring result = NULL;
 	TCHAR buf[128];	
+	
+	// always return null as UNICODE is not implemented
+	return result;
 	
 	int err = GetVolumeInformation(
 		driveLetter,
@@ -46,10 +78,10 @@ jstring getLabel(TCHAR driveLetter[],JNIEnv * jnienv){
 		NULL,
 		0);
 	if (err){
-		result = jnienv -> NewStringUTF(buf);
+		result = WindowsTojstring(jnienv, buf);
 	} else {
 		if (DEBUG)
-			printf("Error GetVolumeInformation %i",err);				
+			printf("Error GetVolumeInformation %i\n",err);				
  	}
 	return result;
 }
@@ -184,11 +216,14 @@ jlong getFloppy(TCHAR driveLetter[]){
  	DWORD err;
  	jstring result = NULL;
  	
+ 	// always return NULL as UNICODE not implemented
+ 	return result;
+ 	
 	sprintf(drivePath, "%c:", driveLetter[0]); 	
  	err = WNetGetConnection(drivePath,buf,&size);
  	
  	if (err==WN_SUCCESS){
-		result = jnienv -> NewStringUTF(buf);
+		result = WindowsTojstring(jnienv,buf);
 	} else {
 		if (DEBUG)
 			printf("Error WNEtGetConnection %i",err);				

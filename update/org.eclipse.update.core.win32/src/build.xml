@@ -55,7 +55,8 @@
     <apply executable="bcc32" dest="${eclipse-home}/" parallel="false">
       <arg value="-I${src-path}"/>
       <arg value="-I${header-path}"/>      
-      <arg value="-I${header-windows-path}"/>  
+      <arg value="-I${header-windows-path}"/> 
+      <!-- arg value="-DUNICODE" --> 
 	  <arg value="-w-8057"/>           
       <arg value="-WD"/>
 	  <srcfile/>
