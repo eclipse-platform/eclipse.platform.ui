@@ -11,10 +11,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.util.Random;
-
 import junit.framework.Assert;
-
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 /**
  * Abstract superclass of inner classes used for black-box testing
