@@ -55,6 +55,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected final EclipsePreferences parent;
 	protected ObjectMap properties;
 	protected boolean removed = false;
+	private ListenerList nodeChangeListeners;
+	private ListenerList preferenceChangeListeners;
 
 	public EclipsePreferences() {
 		this(null, null);
@@ -107,7 +109,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void addNodeChangeListener(INodeChangeListener listener) {
 		checkRemoved();
-		getNodeChangeListenerRegistry().add(absolutePath(), listener);
+		if (nodeChangeListeners == null)
+			nodeChangeListeners = new ListenerList();
+		nodeChangeListeners.add(listener);
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Added preference node change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -117,17 +121,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
-		getPreferenceChangeListenerRegistry().add(absolutePath(), listener);
+		if (preferenceChangeListeners == null)
+			preferenceChangeListeners = new ListenerList();
+		preferenceChangeListeners.add(listener);
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Added preference property change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	protected ListenerRegistry getNodeChangeListenerRegistry() {
-		return parent.getNodeChangeListenerRegistry();
-	}
-
-	protected ListenerRegistry getPreferenceChangeListenerRegistry() {
-		return parent.getPreferenceChangeListenerRegistry();
 	}
 
 	private IEclipsePreferences calculateRoot() {
@@ -668,7 +666,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	protected void fireNodeEvent(final NodeChangeEvent event, final boolean added) {
-		Object[] listeners = getNodeChangeListenerRegistry().getListeners(absolutePath());
+		if (nodeChangeListeners == null)
+			return;
+		Object[] listeners = nodeChangeListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			final INodeChangeListener listener = (INodeChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
@@ -725,8 +725,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Convenience method for notifying preference change listeners.
 	 */
 	protected void firePreferenceEvent(String key, Object oldValue, Object newValue) {
+		if (preferenceChangeListeners == null)
+			return;
+		Object[] listeners = preferenceChangeListeners.getListeners();
 		final PreferenceChangeEvent event = new PreferenceChangeEvent(this, key, oldValue, newValue);
-		Object[] listeners = getPreferenceChangeListenerRegistry().getListeners(absolutePath());
 		for (int i = 0; i < listeners.length; i++) {
 			final IPreferenceChangeListener listener = (IPreferenceChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
@@ -900,7 +902,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void removeNodeChangeListener(INodeChangeListener listener) {
 		checkRemoved();
-		getNodeChangeListenerRegistry().remove(absolutePath(), listener);
+		if (nodeChangeListeners == null)
+			return;
+		nodeChangeListeners.remove(listener);
+		if (nodeChangeListeners.size() == 0)
+			nodeChangeListeners = null;
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Removed preference node change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -910,7 +916,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
-		getPreferenceChangeListenerRegistry().remove(absolutePath(), listener);
+		if (preferenceChangeListeners == null)
+			return;
+		preferenceChangeListeners.remove(listener);
+		if (preferenceChangeListeners.size() == 0)
+			preferenceChangeListeners = null;
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}

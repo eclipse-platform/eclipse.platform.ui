@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,6 @@ import org.osgi.service.prefs.Preferences;
  * @since 3.0
  */
 public class RootPreferences extends EclipsePreferences {
-
-	ListenerRegistry nodeChangeListeners = new ListenerRegistry();
-	ListenerRegistry preferenceChangeListeners = new ListenerRegistry();
 
 	/**
 	 * Default constructor.
@@ -117,19 +114,5 @@ public class RootPreferences extends EclipsePreferences {
 		}
 		if (exception != null)
 			throw exception;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#getNodeChangeListenerRegistry()
-	 */
-	protected ListenerRegistry getNodeChangeListenerRegistry() {
-		return nodeChangeListeners;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#getPreferenceChangeListenerRegistry()
-	 */
-	protected ListenerRegistry getPreferenceChangeListenerRegistry() {
-		return preferenceChangeListeners;
 	}
 }

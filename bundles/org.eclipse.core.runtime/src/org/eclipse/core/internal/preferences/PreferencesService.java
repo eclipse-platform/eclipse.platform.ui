@@ -275,7 +275,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * importing.
 	 */
 	private IExportedPreferences convertFromProperties(Properties properties) {
-		IExportedPreferences result = ExportedRootPreferences.newRoot();
+		IExportedPreferences result = ExportedPreferences.newRoot();
 		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
 			String path = (String) i.next();
 			String value = properties.getProperty(path);
@@ -789,7 +789,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private IEclipsePreferences mergeTrees(IEclipsePreferences[] trees) throws BackingStoreException {
 		if (trees.length == 1)
 			return trees[0];
-		final IEclipsePreferences result = ExportedRootPreferences.newRoot();
+		final IEclipsePreferences result = ExportedPreferences.newRoot();
 		if (trees.length == 0)
 			return result;
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
@@ -808,7 +808,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * Return a tree which contains only nodes and keys which are applicable to the given filter.
 	 */
 	private IEclipsePreferences trimTree(IEclipsePreferences tree, IPreferenceFilter filter) throws BackingStoreException {
-		IEclipsePreferences result = (IEclipsePreferences) ExportedRootPreferences.newRoot().node(tree.absolutePath());
+		IEclipsePreferences result = (IEclipsePreferences) ExportedPreferences.newRoot().node(tree.absolutePath());
 		String[] scopes = filter.getScopes();
 		if (scopes == null)
 			throw new IllegalArgumentException();
