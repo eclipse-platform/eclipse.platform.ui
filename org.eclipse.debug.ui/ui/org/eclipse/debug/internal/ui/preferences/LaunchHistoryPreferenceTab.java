@@ -16,7 +16,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
@@ -92,6 +91,11 @@ public class LaunchHistoryPreferenceTab {
 	private Image fImage;
 	
 	/**
+	 * The enclosing preference page
+	 */
+	private LaunchHistoryPreferencePage fPreferencePage;
+	
+	/**
 	 * Listener that delegates when a button is pressed
 	 */
 	private SelectionAdapter fButtonListener= new SelectionAdapter() {
@@ -148,8 +152,9 @@ public class LaunchHistoryPreferenceTab {
 	 * Constructs a launch history preference tab for the given launch history
 	 * 
 	 * @param history	 */
-	public LaunchHistoryPreferenceTab(LaunchHistory history) {
+	public LaunchHistoryPreferenceTab(LaunchHistory history, LaunchHistoryPreferencePage page) {
 		fLaunchHistory = history;
+		fPreferencePage= page;
 	}
 	
 	protected LaunchHistory getLaunchHistory() {
@@ -238,11 +243,10 @@ public class LaunchHistoryPreferenceTab {
 	 * Creates and returns a fully configured push button in the given paren with the given label.
 	 */
 	private Button createPushButton(Composite parent, String label) {
-		Button button= SWTUtil.createPushButton(parent, label, null);
-		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		button.setLayoutData(data);
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText(label);
 		button.setFont(parent.getFont());
-		SWTUtil.setButtonDimensionHint(button);
+		fPreferencePage.setButtonLayoutData(button);
 		button.addSelectionListener(fButtonListener);
 		button.setEnabled(false);
 		return button;

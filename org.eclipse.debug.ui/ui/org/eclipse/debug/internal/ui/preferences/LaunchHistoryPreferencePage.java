@@ -28,6 +28,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
@@ -48,6 +49,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	protected LaunchHistoryPreferenceTab[] fTabs;
 		
 	protected Control createContents(Composite parent) {
+		initializeDialogUnits(parent);
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -110,7 +112,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 			image = descriptor.createImage();
 			tab.setImage(image);
 		}
-		LaunchHistoryPreferenceTab prefTab = new LaunchHistoryPreferenceTab(history);
+		LaunchHistoryPreferenceTab prefTab = new LaunchHistoryPreferenceTab(history, this);
 		prefTab.setImage(image);
 		tab.setControl(prefTab.createControl(tabFolder));	
 		return prefTab;	
@@ -173,4 +175,11 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#setButtonLayoutData(org.eclipse.swt.widgets.Button)
+	 */
+	protected GridData setButtonLayoutData(Button button) {
+		//exists here for package visibility
+		return super.setButtonLayoutData(button);
+	}
 }
