@@ -1396,6 +1396,7 @@ public class TextViewer extends Viewer implements
 		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {	
 			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
 			fTextHoverManager.install(this.getTextWidget());
+			fTextHoverManager.setSizeConstraints(60, 10, false, true);
 		}
 	}
 	

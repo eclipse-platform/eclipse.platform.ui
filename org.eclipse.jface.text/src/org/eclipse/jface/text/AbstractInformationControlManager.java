@@ -121,16 +121,16 @@ abstract public class AbstractInformationControlManager {
 	private boolean fTakesFocusWhenVisible= false;
 	
 	/** The information control */
-	private IInformationControl fInformationControl;
+	protected IInformationControl fInformationControl;
 	
 	/** The information control creator */
-	private IInformationControlCreator fInformationControlCreator;
+	protected IInformationControlCreator fInformationControlCreator;
 	
 	/** The information control closer */
-	private IInformationControlCloser fInformationControlCloser;
+	protected IInformationControlCloser fInformationControlCloser;
 	
 	/** Indicates that the information control has been disposed */
-	private boolean fDisposed= false;
+	protected boolean fDisposed= false;
 	
 	/** Indicates the enable state of this manager */
 	private boolean fEnabled= false;

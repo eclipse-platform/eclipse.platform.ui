@@ -13,6 +13,8 @@ package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -40,6 +42,16 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	private Object fMutex= new Object();
 	/** The currently shown text hover. */
 	private volatile ITextHover fTextHover;
+	/**
+	 * The current information control creator.
+	 * @since 3.0
+	 */
+	private volatile IInformationControlCreator fCurrentInformationControlCreator;	
+	/**
+	 * Tells whether a custom information control is in use.
+	 * @since 3.0
+	 */
+	private boolean fIsCustomInformtionControl= false;
 	
 	/**
 	 * Creates a new text viewer hover manager specific for the given text viewer.
@@ -116,6 +128,10 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 							 */
 							information= null;
 						}
+						
+						fCurrentInformationControlCreator= null;
+						if (hover instanceof ITextHoverExtension)
+							fCurrentInformationControlCreator= ((ITextHoverExtension)hover).getInformationControlCreator();	
 						setInformation(information, area);
 						if (information != null && area != null)
 							fTextHover= hover;
@@ -315,5 +331,41 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	protected ITextHover getCurrentTextHover() {
 		return fTextHover;
+	}
+
+	/*
+	 * @see #getInformationControl()
+	 * @since 3.0
+	 */
+	protected IInformationControl getInformationControl() {
+		
+		if (fCurrentInformationControlCreator == null || fDisposed) {
+			if (fIsCustomInformtionControl) {
+				fInformationControl.dispose();
+				fInformationControl= null;
+			}
+			fIsCustomInformtionControl= false;
+			return super.getInformationControl();
+		}
+
+		if ((fCurrentInformationControlCreator instanceof IInformationControlCreatorExtension)
+				&& ((IInformationControlCreatorExtension)fCurrentInformationControlCreator).canBeReused(fInformationControl))
+			return fInformationControl;
+
+		if (fInformationControl != null)
+			fInformationControl.dispose();
+			
+		fInformationControl= fCurrentInformationControlCreator.createInformationControl(getSubjectControl().getShell());
+		fIsCustomInformtionControl= true;
+		fInformationControl.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				handleInformationControlDisposed();
+			}
+		});
+			
+		if (fInformationControlCloser != null)
+			fInformationControlCloser.setInformationControl(fInformationControl);
+
+		return fInformationControl;
 	}
 }
