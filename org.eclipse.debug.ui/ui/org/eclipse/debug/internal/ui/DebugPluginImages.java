@@ -41,15 +41,8 @@ public class DebugPluginImages {
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
 
-	// Determine display depth. If depth > 4 then we use high color images. Otherwise low color
-	// images are used
 	static {
-		String pathSuffix= "icons/basic/"; //$NON-NLS-1$
-		// Don't consider the default display since accessing it throws an SWTException anyway.
-		Display display= Display.getCurrent(); 	
-		
-		if (display != null && display.getIconDepth() > 4)
-			pathSuffix = "icons/full/"; //$NON-NLS-1$
+		String pathSuffix = "icons/full/"; //$NON-NLS-1$
 			
 		try {
 			ICON_BASE_URL= new URL(DebugUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
