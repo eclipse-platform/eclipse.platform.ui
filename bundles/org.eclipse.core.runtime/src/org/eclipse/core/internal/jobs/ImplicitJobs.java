@@ -26,11 +26,33 @@ class ImplicitJobs {
 	 * Captures the implicit job state for a given thread. 
 	 */
 	class ThreadJob extends Job {
+		/**
+		 * Used for diagnosing mismatched begin/end pairs. This field
+		 * is only used when in debug mode, to capture the stack trace
+		 * of the last call to beginRule.
+		 */
 		private RuntimeException lastPush = null;
+		/**
+		 * True if this job was queued for execution, as opposed to being
+		 * executed immediately. A ThreadJob is only queued if it cannot
+		 * run immediately due to a conflicting job that is currently running.
+		 * Once set, this flag remains true for the life-time of the thread job.
+		 */
 		protected boolean queued = false;
+		/**
+		 * The stack of rules that have been begun in this thread, but not yet ended.
+		 */
 		private ISchedulingRule[] ruleStack;
+		/**
+		 * True if this ThreadJob has entered its run method.
+		 */
 		protected boolean running = false;
 		private int top;
+		/**
+		 * The actual job that is running in the thread that this 
+		 * ThreadJob represents.  This will be null if this thread
+		 * job is capturing a rule acquired outside of a job.
+		 */
 		private Job realJob;
 		/**
 		 * Set to true if this thread job is running in a thread that did
@@ -48,6 +70,11 @@ class ImplicitJobs {
 			top = -1;
 		}
 
+		/**
+		 * An endRule was called that did not match the last beginRule in
+		 * the stack.  Report and log a detailed informational message.
+		 * @param rule The rule that was popped
+		 */
 		private void illegalPop(ISchedulingRule rule) {
 			StringBuffer buf = new StringBuffer("Attempted to endRule: "); //$NON-NLS-1$
 			buf.append(rule);
@@ -160,6 +187,11 @@ class ImplicitJobs {
 			return top < 0;
 		}
 
+		/**
+		 * Adds a new scheduling rule to the stack of rules for this thread. Throws
+		 * a runtime exception if the new rule is not compatible with the base
+		 * scheduling rule for this thread.
+		 */
 		void push(final ISchedulingRule rule) {
 			final ISchedulingRule baseRule = getRule();
 			if (++top >= ruleStack.length) {
@@ -195,16 +227,31 @@ class ImplicitJobs {
 			return true;
 		}
 
+		/**
+		 * Report to the progress monitor that this thread is blocked, supplying
+		 * an information message, and if possible the job that is causing the blockage.
+		 * @param monitor The monitor to report blocking to
+		 * @param blockingJob The job that is blocking this thread, or <code>null</code>
+		 */
 		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
 			manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
 			if (!(monitor instanceof IProgressMonitorWithBlocking))
 				return;
-			String msg = (blockingJob == null || blockingJob instanceof ThreadJob) ? Policy.bind("jobs.blocked0") //$NON-NLS-1$
-					: Policy.bind("jobs.blocked1", blockingJob.getName()); //$NON-NLS-1$
-			IStatus reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, msg, null);
+			IStatus reason;
+			if (blockingJob == null || blockingJob instanceof ThreadJob) {
+				reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, Policy.bind("jobs.blocked0"), null);//$NON-NLS-1$
+			} else {
+				String msg = Policy.bind("jobs.blocked1", blockingJob.getName()); //$NON-NLS-1$
+				reason = new JobStatus(IStatus.INFO, (Job) blockingJob, msg);
+			}
 			((IProgressMonitorWithBlocking) monitor).setBlocked(reason);
 		}
 
+		/**
+		 * Reports that this thread was blocked, but is no longer blocked and is able
+		 * to proceed.
+		 * @param monitor The monitor to report unblocking to.
+		 */
 		private void reportUnblocked(IProgressMonitor monitor) {
 			if (running) {
 				manager.getLockManager().addLockThread(Thread.currentThread(), getRule());
@@ -229,6 +276,10 @@ class ImplicitJobs {
 			return Job.ASYNC_FINISH;
 		}
 
+		/**
+		 * Records the job that is actually running in this thread, if any
+		 * @param realJob The running job
+		 */
 		void setRealJob(Job realJob) {
 			this.realJob = realJob;
 		}
