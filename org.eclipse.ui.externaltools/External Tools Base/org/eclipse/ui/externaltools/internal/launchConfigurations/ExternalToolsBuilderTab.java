@@ -67,7 +67,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		createBuildScheduleComponent(mainComposite);
 		
 		workingSetComponent= new WorkingSetComponent();
-		workingSetComponent.createContents(mainComposite, "Working Sets", this);
+		workingSetComponent.createContents(mainComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Working_Sets_1"), this); //$NON-NLS-1$
 	}
 	
 	private void createBuildScheduleComponent(Composite parent) {
@@ -85,7 +85,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		
 		new Label(parent, SWT.NONE);
 		
-		workingSetButton= createButton(parent, listener, "&Run this builder for the indicated working set(s)", "Runs whenever a resource changes that is specified in the working set and a build of the correct type has occurred");
+		workingSetButton= createButton(parent, listener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_label"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_tooltip")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -172,7 +172,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		
 		if (workingSetButton.getSelection()) {
-			String variableTag= ToolUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue());
+			String variableTag= ToolUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
 			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, variableTag);
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
@@ -236,7 +236,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		
 		boolean buildKindSelected= fullBuildButton.getSelection() || incrementalBuildButton.getSelection() || autoBuildButton.getSelection();
 		if (!buildKindSelected) {
-			setErrorMessage("At least one type of build kind must be selected");
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.buildKindError")); //$NON-NLS-1$
 			return false;
 		}
 
