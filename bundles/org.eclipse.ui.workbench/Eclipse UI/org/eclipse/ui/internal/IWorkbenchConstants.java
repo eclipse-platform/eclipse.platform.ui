@@ -132,6 +132,10 @@ public interface IWorkbenchConstants {
 	public static final String TAG_IMAGE = "image"; //$NON-NLS-1$
 	public static final String TAG_LAUNCHER = "launcher"; //$NON-NLS-1$
 	public static final String TAG_PLUGING = "plugin"; //$NON-NLS-1$
+    /** deprecated - use TAG_OPEN_MODE */
+	public static final String TAG_INTERNAL = "internal"; //$NON-NLS-1$
+    /** deprecated - use TAG_OPEN_MODE */
+	public static final String TAG_OPEN_IN_PLACE = "open_in_place"; //$NON-NLS-1$
 	public static final String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$
