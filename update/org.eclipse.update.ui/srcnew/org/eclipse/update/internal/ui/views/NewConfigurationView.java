@@ -76,6 +76,7 @@ public class NewConfigurationView
 	private SashForm splitter;
 	private ConfigurationPreview preview;
 	private Hashtable previewTasks;
+	private String viewName;
 
 	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock = false;
@@ -1007,20 +1008,24 @@ public class NewConfigurationView
 	}
 	
 	void updateTitle(Object newInput) {
-		IConfigurationElement config = getConfigurationElement();
-		if (config == null)
-			return;
-		String viewName = config.getAttribute("name"); //$NON-NLS-1$
 		if (newInput == null || newInput.equals(UpdateUI.getDefault().getUpdateModel())) {
 			// restore old
-			setTitle(viewName);
+			setTitle(getViewName());
 			setTitleToolTip(getTitle());
 		} else {
 			String name =
 				((LabelProvider) treeViewer.getLabelProvider()).getText(newInput);
-			setTitle(viewName + ": " + name); //$NON-NLS-1$
+			setTitle(getViewName() + ": " + name); //$NON-NLS-1$
 			setTitleToolTip(getTitle());
 		}
+	}
+	
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
+	
+	public String getViewName() {
+		return viewName;
 	}
 
 	public void setFocus() {

@@ -193,6 +193,11 @@ public class ConfigurationManagerWindow
 	private void hookGlobalActions() {
 		propertiesAction.setActionHandler(viewBars.getGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES));
 	}
+	
+	public int open() {
+		view.setViewName(getShell().getText());
+		return super.open();
+	}
 
 	protected Control createContents(Composite parent) {
 		view = new NewConfigurationView();
@@ -201,6 +206,12 @@ public class ConfigurationManagerWindow
 		} catch (PartInitException e) {
 			UpdateUI.logException(e);
 		}
+		view.addPropertyListener(new IPropertyListener() {
+			public void propertyChanged(Object source, int id) {
+				if (id==IWorkbenchPart.PROP_TITLE &&view.getTitle()!=null)
+					getShell().setText(view.getTitle());
+			}
+		});
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
