@@ -606,13 +606,13 @@ class NewWizardNewPage
 			getSingleSelection(
 				(IStructuredSelection) selectionEvent.getSelection());
 
-		if (selectedObject instanceof WizardCollectionElement) {
-			updateCategorySelection((WizardCollectionElement) selectedObject);
-		} else if (selectedObject instanceof WorkbenchWizardElement) {
+		if (selectedObject instanceof WorkbenchWizardElement) {
 			updateWizardSelection((WorkbenchWizardElement) selectedObject);
 		}
 		else {
-		    updateDescription(null);
+			selectedElement = null;
+			page.selectWizardNode(null);
+			updateDescription(null);
 		}
 	}
 
@@ -698,15 +698,6 @@ class NewWizardNewPage
         	else // else its a wizard
         		settings.put(STORE_SELECTED_ID, ((WorkbenchWizardElement) selected).getID());
         }
-	}
-
-	/**
-	 * @param selectedCategory
-	 */
-	private void updateCategorySelection(WizardCollectionElement selectedCategory) {
-		selectedElement = null;
-		page.selectWizardNode(null);
-		updateDescription(null);
 	}
 
 	/**
