@@ -1181,7 +1181,8 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 			CVSSyncInfo info = (CVSSyncInfo) ((SyncInfoModelElement) node).getSyncInfo();
 			if (info != null) {
 				ICVSRemoteResource remote = getRemoteResource(info);
-				logs.clearEntriesFor(remote);
+				if(remote != null)
+					logs.clearEntriesFor(remote);
 			}
 		}
 		if (provider.getSyncInfoSet().isEmpty() && provider.getModelRoot() != getModelRoot()) {
