@@ -505,7 +505,7 @@ private boolean loadAssociations() {
 			FileInputStream stream = new FileInputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
 			reader = new BufferedReader(new InputStreamReader(stream, "utf-8")); //$NON-NLS-1$
 		} else {
-			reader = new BufferedReader(new StringReader(xmlString));
+			reader = new StringReader(xmlString);
 		}
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		EditorDescriptor editor;
@@ -562,7 +562,7 @@ private boolean loadAssociations() {
 					.toOSString());
 		 	reader = new BufferedReader(new InputStreamReader(stream, "utf-8")); //$NON-NLS-1$
 		} else {
-			reader = new BufferedReader(new StringReader(xmlString));
+			reader = new StringReader(xmlString);
 		}
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		IMemento[] extMementos = memento.getChildren(IWorkbenchConstants.TAG_INFO);
