@@ -237,7 +237,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		}, Policy.subMonitorFor(monitor, 99));
 	}
 	
-	private static void recursiveUnmanage(IContainer container, IProgressMonitor monitor) throws CVSException {
+	/* private */ static void recursiveUnmanage(IContainer container, IProgressMonitor monitor) throws CVSException {
 		try {
 			monitor.beginTask(null, 10);
 			monitor.subTask(container.getFullPath().toOSString());
@@ -292,6 +292,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	public void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
 		final CVSException[] error = new CVSException[1];
 		try {
+			// Do not use a scheduling rule in the workspace run since one
+			// will be obtained by the EclipseSynchronizer
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
@@ -300,7 +302,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 						error[0] = e; 
 					}
 				}
-			}, getIResource(), monitor);
+			}, null /* no rule */, monitor);
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -321,7 +323,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	public void delete() throws CVSException {
 		if (!exists()) return;
 		if (isCVSFolder()) {
-			EclipseSynchronizer.getInstance().prepareForDeletion((IContainer)getIResource());
+			EclipseSynchronizer.getInstance().prepareForDeletion(getIResource());
 		}
 		super.delete();
 	}
@@ -382,7 +384,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * does not cache it for the receiver.
 	 */
 	private boolean calculateAndSaveChildModificationStates(IProgressMonitor monitor) throws CVSException {
-		IContainer container = (IContainer)getIResource();
 		ICVSResource[] children = members(ALL_UNIGNORED_MEMBERS);
 
 		for (int i = 0; i < children.length; i++) {

@@ -15,19 +15,22 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 public class BatchedTestSetup extends TestSetup {
+	private ISchedulingRule rule;
+
 	public BatchedTestSetup(Test test) {
 		super(test);
 	}
 
 	public void setUp() throws CVSException {
-		EclipseSynchronizer.getInstance().beginBatching(ResourcesPlugin.getWorkspace().getRoot(), null);
+		rule = EclipseSynchronizer.getInstance().beginBatching(ResourcesPlugin.getWorkspace().getRoot(), null);
 	}
 	
 	public void tearDown() throws CVSException {
-		EclipseSynchronizer.getInstance().endBatching(ResourcesPlugin.getWorkspace().getRoot(), null);
+		EclipseSynchronizer.getInstance().endBatching(rule, null);
 	}
 }

@@ -22,8 +22,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -70,13 +72,23 @@ public class ReentrantLock {
 		 * acquire the rule if it is not the workspace root.
 		 * @param resource
 		 */
-		public void pushRule(IResource resource, IProgressMonitor monitor) {
+		public ISchedulingRule pushRule(ISchedulingRule resource, IProgressMonitor monitor) {
 			// The scheduling rule is either the project or the resource's parent
 			ISchedulingRule rule = getRuleForResoure(resource);
 			if (rule != NULL_SCHEDULING_RULE) {
-				Platform.getJobManager().beginRule(rule, monitor);
+				try {
+					Platform.getJobManager().beginRule(rule, monitor);
+				} catch (OperationCanceledException e) {
+					// The begin was cancelled.
+					// Free the scheduling rule and throw the cancel
+					// so the clients of ReentrantLock don't need to
+					// do an endRule when the operation is cancelled.
+					Platform.getJobManager().endRule(rule);
+					throw e;
+				}
 			}
 			addRule(rule);
+			return rule;
 		}
 		/**
 		 * Pop the scheduling rule from the stack and release it if it
@@ -87,29 +99,54 @@ public class ReentrantLock {
 		 * @param monitor
 		 * @throws CVSException
 		 */
-		public void popRule(IResource resource, IProgressMonitor monitor) throws CVSException {
+		public void popRule(ISchedulingRule rule, IProgressMonitor monitor) throws CVSException {
 			try {
 				if (isFlushRequired()) {
 					flush(monitor);
 				}
 			} finally {
-				ISchedulingRule rule = removeRule();
-				ISchedulingRule compareRule = getRuleForResoure(resource);
-				Assert.isTrue(rule.equals(compareRule), "end for resource '" + resource + "' does not match stacked rule '" + rule + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				ISchedulingRule stackedRule = removeRule();
+				if (rule == null) {
+					rule = NULL_SCHEDULING_RULE;
+				}
+				Assert.isTrue(stackedRule.equals(rule), "end for resource '" + rule + "' does not match stacked rule '" + stackedRule + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (rule != NULL_SCHEDULING_RULE) {
 					Platform.getJobManager().endRule(rule);
 				}
 			}
 		}
-		private ISchedulingRule getRuleForResoure(IResource resource) {
+		private ISchedulingRule getRuleForResoure(ISchedulingRule resourceRule) {
 			ISchedulingRule rule;
-			if (resource.getType() == IResource.ROOT) {
-				// Never lock the whole workspace
-				rule = NULL_SCHEDULING_RULE;
-			} else  if (resource.getType() == IResource.PROJECT) {
-				rule = resource;
+			if (resourceRule instanceof IResource) {
+				IResource resource = (IResource)resourceRule;
+				if (resource.getType() == IResource.ROOT) {
+					// Never lock the whole workspace
+					rule = NULL_SCHEDULING_RULE;
+				} else  if (resource.getType() == IResource.PROJECT) {
+					rule = resource;
+				} else {
+					rule = resource.getParent();
+				}
+			} else if (resourceRule instanceof MultiRule) {
+				// Create a MultiRule for all projects from the given rule
+				ISchedulingRule[] rules = ((MultiRule)resourceRule).getChildren();
+				Set projects = new HashSet();
+				for (int i = 0; i < rules.length; i++) {
+					ISchedulingRule childRule = rules[i];
+					if (childRule instanceof IResource) {
+						projects.add(((IResource)childRule).getProject());
+					}
+				}
+				if (projects.isEmpty()) {
+					rule = NULL_SCHEDULING_RULE;
+				} else if (projects.size() == 1) {
+					rule = (ISchedulingRule)projects.iterator().next();
+				} else {
+					rule = new MultiRule((ISchedulingRule[]) projects.toArray(new ISchedulingRule[projects.size()]));
+				}
 			} else {
-				rule = resource.getParent();
+				// Rule is not associated with resources so ignore it
+				rule = NULL_SCHEDULING_RULE;
 			}
 			return rule;
 		}
@@ -213,30 +250,43 @@ public class ReentrantLock {
 		}
 	}
 	
-	public void acquire(IResource resource, IFlushOperation operation, IProgressMonitor monitor) {
+	public ISchedulingRule acquire(ISchedulingRule resourceRule, IFlushOperation operation, IProgressMonitor monitor) {
 		ThreadInfo info = getThreadInfo();
+		boolean added = false;
 		synchronized (infos) {
 			if (info == null) {
 				info = new ThreadInfo(operation);
 				Thread thisThread = Thread.currentThread();
 				infos.put(thisThread, info);
-				if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS lock on " + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$
+				added = true;
+				if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS lock on " + resourceRule); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		info.pushRule(resource, monitor);
+		try {
+			return info.pushRule(resourceRule, monitor);
+		} catch (OperationCanceledException e) {
+			// The operation was cancelled.
+			// If this is the outermost acquire then remove the info that was just added
+			if (added) {
+				synchronized (infos) {
+					infos.remove(Thread.currentThread());
+				}
+			}
+			throw e;
+		}
 	}
 	
 	/**
-	 * Release the lock held on any resources by this thread. Execute the 
-	 * provided runnable if the lock is no longer held (i.e. nesting count is 0).
-	 * On exit, the scheduling rule is held by the lock until after the runnable
-	 * is run.
+	 * Release the lock held on any resources by this thread. The provided rule must
+	 * be identical to the rule returned by the corresponding acquire(). If the rule
+	 * for the release is non-null and all remaining rules held by the lock are null,
+	 * the the flush operation provided in the acquire method will be executed.
 	 */
-	public void release(IResource resource, IProgressMonitor monitor) throws CVSException {
+	public void release(ISchedulingRule rule, IProgressMonitor monitor) throws CVSException {
 		ThreadInfo info = getThreadInfo();
 		Assert.isNotNull(info, "Unmatched acquire/release."); //$NON-NLS-1$
 		Assert.isTrue(info.isNested(), "Unmatched acquire/release."); //$NON-NLS-1$
-		info.popRule(resource, monitor);
+		info.popRule(rule, monitor);
 		synchronized (infos) {
 			if (!info.isNested()) {
 				Thread thisThread = Thread.currentThread();

@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -136,8 +137,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingFolderSync", folder.getFullPath().toString())); //$NON-NLS-1$
 		}
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(folder, null);
+			rule = beginBatching(folder, null);
 			try {
 				beginOperation();
 				// get the old info
@@ -153,7 +155,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(folder, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 	
@@ -184,8 +186,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	public void deleteFolderSync(IContainer folder) throws CVSException {
 		if (folder.getType() == IResource.ROOT || !isValid(folder)) return;
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(folder, null);
+			rule = beginBatching(folder, null);
 			try {
 				beginOperation();
 				// iterate over all children with sync info and prepare notifications
@@ -207,7 +210,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(folder, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 
@@ -234,8 +237,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingResourceSync", resource.getFullPath().toString())); //$NON-NLS-1$
 		}
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(resource, null);
+			rule = beginBatching(resource, null);
 			try {
 				beginOperation();
 				// cache resource sync for siblings, set for self, then notify
@@ -246,7 +250,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(resource, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 	
@@ -311,8 +315,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingResourceSync", resource.getFullPath().toString())); //$NON-NLS-1$
 		}
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(resource, null);
+			rule = beginBatching(resource, null);
 			try {
 				beginOperation();
 				// cache resource sync for siblings, set for self, then notify
@@ -323,7 +328,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(resource, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 		
@@ -336,8 +341,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void deleteResourceSync(IResource resource) throws CVSException {
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) return;
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(resource, null);
+			rule = beginBatching(resource, null);
 			try {
 				beginOperation();
 				// cache resource sync for siblings, delete for self, then notify
@@ -351,7 +357,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(resource, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 
@@ -396,8 +402,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingIgnorePattern", folder.getFullPath().toString())); //$NON-NLS-1$
 		}
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(folder, null);
+			rule = beginBatching(folder, null);
 			try {
 				beginOperation();
 				String[] ignores = SyncFileWriter.readCVSIgnoreEntries(folder);
@@ -424,7 +431,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(folder, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 	
@@ -470,17 +477,19 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	/**
-	 * Begins a batch of operations.
-	 * 
-	 * @param monitor the progress monitor, may be null
+	 * Begins a batch of operations in order to optimize sync file writing. 
+	 * The provided scheduling rule indicates the resources
+	 * that the resources affected by the operation while the returned scheduling rule
+	 * is the rule obtained by the lock. It may differ from the provided rule as it must
+	 * encompass any sync files that may change as a result of the operation.
 	 */
-	public void beginBatching(IResource resource, IProgressMonitor monitor) {
-		resourceLock.acquire(resource, this /* IFlushOperation */, monitor);
+	public ISchedulingRule beginBatching(ISchedulingRule resourceRule, IProgressMonitor monitor) {
+		return resourceLock.acquire(resourceRule, this /* IFlushOperation */, monitor);
 	}
 	
 	/**
-	 * Ends a batch of operations.  Pending changes are committed only when
-	 * the number of calls to endBatching() balances those to beginBatching().
+	 * Ends a batch of operations. The provided rule must be the one that was returned
+	 * by the corresponding call to beginBatching.
 	 * <p>
 	 * Progress cancellation is ignored while writting the cache to disk. This
 	 * is to ensure cache to disk consistency.
@@ -490,8 +499,8 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @exception CVSException with a status with code <code>COMMITTING_SYNC_INFO_FAILED</code>
 	 * if all the CVS sync information could not be written to disk.
 	 */
-	public void endBatching(IResource resource, IProgressMonitor monitor) throws CVSException {
-		resourceLock.release(resource, monitor);
+	public void endBatching(ISchedulingRule rule, IProgressMonitor monitor) throws CVSException {
+		resourceLock.release(rule, monitor);
 	}
 	
 	/* (non-Javadoc)
@@ -552,8 +561,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void flush(IContainer root, boolean deep, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 10);
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(root, Policy.subMonitorFor(monitor, 1));
+			rule = beginBatching(root, Policy.subMonitorFor(monitor, 1));
 			try {
 				beginOperation();
 				try {
@@ -567,7 +577,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(root, Policy.subMonitorFor(monitor, 1));
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 1));
 			monitor.done();
 		}
 	}
@@ -575,8 +585,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void deconfigure(final IProject project, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(project, Policy.subMonitorFor(monitor, 10));
+			rule = beginBatching(project, Policy.subMonitorFor(monitor, 10));
 			// Flush 
 			flush(project, true /* deep */, Policy.subMonitorFor(monitor, 80));
 				
@@ -584,7 +595,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			// a line in the Entry file). As a result the folder is managed but is not a CVS folder.
 			synchronizerCache.purgeCache(project, true);
 		} finally {
-			endBatching(project, Policy.subMonitorFor(monitor, 10));
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 10));
 			monitor.done();
 		}
 	}
@@ -605,9 +616,10 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void ignoreFilesChanged(IContainer[] roots) throws CVSException {
 		for (int i = 0; i < roots.length; i++) {
 			IContainer container = roots[i];
+			ISchedulingRule rule = null;
 			try {
 				Set changed = new HashSet();
-				beginBatching(container, null);
+				rule = beginBatching(container, null);
 				try {
 					beginOperation();
 					changed.addAll(Arrays.asList(
@@ -620,7 +632,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 						(IResource[]) changed.toArray(new IResource[changed.size()]));
 				}
 			} finally {
-				endBatching(container, null);
+				if (rule != null) endBatching(rule, null);
 			}
 		}
 	}
@@ -651,8 +663,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	public void prepareForDeletion(IResource resource) throws CVSException {
 		if (!resource.exists()) return;
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(resource, null);
+			rule = beginBatching(resource, null);
 			try {
 				beginOperation();
 				// Flush the dirty info for the resource and it's ancestors.
@@ -662,7 +675,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 				if (resource.getType() == IResource.FILE) {
 					byte[] syncBytes = getSyncBytes(resource);
 					if (syncBytes != null) {
-						if (!ResourceSyncInfo.isAddition(syncBytes)) {
+						if (ResourceSyncInfo.isAddition(syncBytes)) {
+							deleteResourceSync(resource);
+						} else {
 							syncBytes = convertToDeletion(syncBytes);
 							synchronizerCache.setCachedSyncBytes(resource, syncBytes, true);
 						}
@@ -687,7 +702,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(resource, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 	
@@ -770,7 +785,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 					} else {
 						resource = container.getFile(name);
 					}
-					getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes, false);
+					getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes, canModifyWorkspace);
 				}
 			}
 			getSyncInfoCacheFor(container).setResourceSyncInfoCached(container);
@@ -1211,8 +1226,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void copyFileToBaseDirectory(final IFile file, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(file, Policy.subMonitorFor(monitor, 10));
+			rule = beginBatching(file, Policy.subMonitorFor(monitor, 10));
 			ResourceSyncInfo info = getResourceSync(file);
 			// The file must exist remotely and locally
 			if (info == null || info.isAdded() || info.isDeleted())
@@ -1220,7 +1236,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			SyncFileWriter.writeFileToBaseDirectory(file, Policy.subMonitorFor(monitor, 80));
 			resourceChanged(file);
 		} finally {
-			endBatching(file, Policy.subMonitorFor(monitor, 10));
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 10));
 			monitor.done();
 		}
 	}
@@ -1228,8 +1244,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void restoreFileFromBaseDirectory(final IFile file, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(file, Policy.subMonitorFor(monitor, 10));
+			rule = beginBatching(file, Policy.subMonitorFor(monitor, 10));
 			ResourceSyncInfo info = getResourceSync(file);
 			// The file must exist remotely
 			if (info == null || info.isAdded())
@@ -1237,7 +1254,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			SyncFileWriter.restoreFileFromBaseDirectory(file, Policy.subMonitorFor(monitor, 80));
 			resourceChanged(file);
 		} finally {
-			endBatching(file, Policy.subMonitorFor(monitor, 10));
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 10));
 			monitor.done();
 		}
 	}
@@ -1283,8 +1300,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 		// Cache the sync info for all the folders
 		for (int i = 0; i < folders.length; i++) {
 			IContainer parent = folders[i];
+			ISchedulingRule rule = null;
 			try {
-				beginBatching(parent, null);
+				rule = beginBatching(parent, null);
 				try {
 					beginOperation();
 					cacheResourceSyncForChildren(parent, false);
@@ -1294,7 +1312,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 					endOperation();
 				}
 			} finally {
-				endBatching(parent, null);
+				if (rule != null) endBatching(rule, null);
 			}
 		}
 	}
@@ -1331,26 +1349,33 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	/**
-	 * Obtain the CVS sync lock while running the given ICVSRunnable.
-	 * @param job
+	 * Perform sync info batching within the context of the given resource
+	 * scheduling rule while running the given ICVSRunnable.
+	 * @param runnable
 	 * @param monitor
 	 * @throws CVSException
 	 */
-	public void run(IResource rootResource, ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+	public void run(ISchedulingRule resourceRule, ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
+		ISchedulingRule rule = beginBatching(resourceRule, Policy.subMonitorFor(monitor, 10));
 		try {
-			beginBatching(rootResource, Policy.subMonitorFor(monitor, 10));
-			job.run(Policy.subMonitorFor(monitor, 80));
+			runnable.run(Policy.subMonitorFor(monitor, 80));
 		} finally {
-			endBatching(rootResource, Policy.subMonitorFor(monitor, 10));
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 10));
 			monitor.done();
 		}
 	}
 	
-	public void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+	/**
+	 * This method is invoked from the IMoveDeleteHook to batch the resulting sync file
+	 * changes.
+	 */
+	public void run(ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
+		// Use the root resource as the rule.
+		// Note: This will not lock the workspace due to behavior in ReentrantLock
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		run(root, job, monitor);
+		run(root, runnable, monitor);
 	}
 	
 	/**
@@ -1498,8 +1523,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	public void setTimeStamp(IFile file, long time) throws CVSException {
+		ISchedulingRule rule = null;
 		try {
-			beginBatching(file, null);
+			rule = beginBatching(file, null);
 			try {
 				beginOperation();
 				try {
@@ -1512,7 +1538,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(file, null);
+			if (rule != null) endBatching(rule, null);
 		}
 	}
 	

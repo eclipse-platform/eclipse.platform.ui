@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -41,6 +40,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Request;
@@ -48,6 +48,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -125,9 +126,8 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					result[0] = checkout(folder, getLocalFolder(), isRecursive(), monitor);
-
 				}
-			}, getLocalFolder().getIResource().getProject(), monitor);
+			}, getSchedulingRule(), monitor);
 		} catch (CoreException e) {
 			result[0] = CVSException.wrapException(e).getStatus();
 		}
@@ -137,18 +137,20 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CheckoutOperation#checkout(org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void checkout(ICVSRemoteFolder[] folders, IProgressMonitor monitor) throws CVSException {
-		monitor.beginTask(null, 100);
-		ISchedulingRule rule = getSchedulingRule();
-		try {
-			//	Obtain a scheduling rule on the projects were about to overwrite
-			Platform.getJobManager().beginRule(rule);
-			super.checkout(folders, Policy.subMonitorFor(monitor, 90));
-			refreshRoot(getLocalRoot(getLocalFolder()), Policy.subMonitorFor(monitor, 10));
-		} finally {
-			Platform.getJobManager().endRule(rule);
-			monitor.done();
-		}
+	protected void checkout(final ICVSRemoteFolder[] folders, IProgressMonitor monitor) throws CVSException {
+		// Batch sync info changes with the CVS synchronizer to optimize cache writing
+		EclipseSynchronizer.getInstance().run(getSchedulingRule(), new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				monitor.beginTask(null, 100);
+				try {
+					//	Obtain a scheduling rule on the projects were about to overwrite
+					CheckoutIntoOperation.super.checkout(folders, Policy.subMonitorFor(monitor, 90));
+					refreshRoot(getLocalRoot(getLocalFolder()), Policy.subMonitorFor(monitor, 10));
+				} finally {
+					monitor.done();
+				}
+			}
+		}, Policy.monitorFor(monitor));
 	}
 	
 	/*

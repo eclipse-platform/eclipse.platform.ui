@@ -135,7 +135,11 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 				// ensure that the sync info is not already set to the same thing.
 				// We do this to avoid causing a resource delta when the sync info is 
 				// initially loaded (i.e. the synchronizer has it and so does the Entries file
-				if (oldBytes == null || !Util.equals(syncBytes, oldBytes)) {
+				// Ignore the 
+				if (oldBytes == null 
+						|| !Util.equals(
+								ResourceSyncInfo.convertToDeletion(syncBytes), 
+								ResourceSyncInfo.convertToDeletion(oldBytes))) {
 					checkCanModifyWorkspace(resource, canModifyWorkspace);
 					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 				}
