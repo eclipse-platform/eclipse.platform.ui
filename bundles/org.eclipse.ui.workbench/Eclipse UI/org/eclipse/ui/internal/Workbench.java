@@ -772,7 +772,7 @@ public final class Workbench implements IWorkbench {
 
 		// now that the workbench is sufficiently initialized, let the advisor
 		// have a turn.
-		advisor.basicInitialize(getWorkbenchConfigurer());
+		advisor.internalBasicInitialize(getWorkbenchConfigurer());
 
 		// configure use of color icons in toolbars
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);

@@ -157,7 +157,7 @@ public abstract class WorkbenchAdvisor {
 	 * 
 	 * @param configurer an object for configuring the workbench
 	 */
-	public final void basicInitialize(IWorkbenchConfigurer configurer) {
+	public final void internalBasicInitialize(IWorkbenchConfigurer configurer) {
 	    if (workbenchConfigurer != null) {
 	        throw new IllegalStateException();
 	    }
