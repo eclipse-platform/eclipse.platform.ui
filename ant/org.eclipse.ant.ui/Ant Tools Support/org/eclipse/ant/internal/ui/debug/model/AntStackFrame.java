@@ -37,7 +37,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 * Constructs a stack frame in the given thread with the given id.
 	 * 
 	 * @param thread
-	 * @param id stack frame id (0 is the bottom of the stack)
+	 * @param id stack frame id (0 is the top of the stack)
 	 */
 	public AntStackFrame(AntThread thread, int id, String name, String filePath, int lineNumber) {
 		super((AntDebugTarget) thread.getDebugTarget());
@@ -245,11 +245,11 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	public boolean equals(Object obj) {
 		if (obj instanceof AntStackFrame) {
 			AntStackFrame sf = (AntStackFrame)obj;
-//			if (getSourceName() != null) {
-//				return getSourceName().equals(sf.getSourceName()) &&
-//				sf.getLineNumber() == getLineNumber() &&
-//				sf.fId == fId;
-//			}
+			if (getSourceName() != null) {
+				return getSourceName().equals(sf.getSourceName()) &&
+					sf.getLineNumber() == getLineNumber() &&
+					sf.fId == fId;
+			} 
 			return sf.fId == fId;
 		}
 		return false;
@@ -259,10 +259,10 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		if (getSourceName() != null) {
-			//return getSourceName().hashCode() + fId;
-		}
-		return fId;
+	    if (getSourceName() == null) {
+	        return fId;
+	    }
+	    return getSourceName().hashCode() + fId;
 	}
 	
 	/**

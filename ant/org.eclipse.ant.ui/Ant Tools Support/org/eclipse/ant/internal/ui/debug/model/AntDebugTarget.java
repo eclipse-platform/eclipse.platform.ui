@@ -342,6 +342,11 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 		fTerminated = true;
 		fSuspended = false;
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+		try {
+            getProcess().terminate();
+        } catch (DebugException e) {
+          
+        }
 		fireTerminateEvent();
 	}
 	

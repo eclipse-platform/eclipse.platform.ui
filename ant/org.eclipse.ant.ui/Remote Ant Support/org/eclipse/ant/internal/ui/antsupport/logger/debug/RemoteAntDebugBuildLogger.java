@@ -102,9 +102,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 							}
 							sendRequestResponse(DebugMessageIds.RESUMED + DebugMessageIds.CLIENT_REQUEST);
 						} else if (message.startsWith(DebugMessageIds.TERMINATE)) {
+						    sendRequestResponse(DebugMessageIds.TERMINATED);
 							shutDown();
-							//sendRequestResponse(DebugMessageIds.TERMINATED);
-							System.exit(1);
 						} else if (message.startsWith(DebugMessageIds.STACK)) {
 							marshallStack();
 						} else if (message.startsWith(DebugMessageIds.ADD_BREAKPOINT)) {
