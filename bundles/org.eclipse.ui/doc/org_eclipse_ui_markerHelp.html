@@ -23,6 +23,7 @@ CDATA #OPTIONAL</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; helpContextId&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
+
 <ul type=disc>
 <li>
 <b>markerType</b> - the unique type of the marker for which the help context
@@ -31,6 +32,7 @@ applies.</li>
 <li>
 <b>helpContextId</b> - the unique id of the help context.</li>
 </ul>
+
 <tt>&nbsp;&nbsp; &lt;!ELEMENT attribute EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST attribute</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -38,6 +40,7 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
+
 <ul type=disc>
 <li>
 <b>name</b> - the name of the attribute whose value is being specified.</li>
@@ -45,6 +48,7 @@ CDATA #REQUIRED</tt>
 <li>
 <b>value</b> - the specified value of the attribute.</li>
 </ul>
+
 <b><i>Examples:</i></b>
 <p>The following is an example of a marker help extension (note the subelement
 and the way attributes are used):
@@ -61,6 +65,7 @@ and the way attributes are used):
 <p>In the example above, a help context id is associated with makers of
 type org.eclipse.ui.examples.readmetool.readmemarker whose org.eclipse.ui.examples.readmetool.id
 attribute has a value of 1234.
+
 <p><b><i>API Information: </i></b>It is up to the developer to ensure that
 only a single help context id is supplied for a given marker. If two or
 more help context ids are supplied for a given kind of marker, the workbench
@@ -68,6 +73,8 @@ does not define which will be returned. However the workbench does define
 that the "most specific" context id will always be returned for a given
 marker. That is, a context id associated with three matching attribute
 values will be returned before a context id associated with only two.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
+
 </body>
 </html>
