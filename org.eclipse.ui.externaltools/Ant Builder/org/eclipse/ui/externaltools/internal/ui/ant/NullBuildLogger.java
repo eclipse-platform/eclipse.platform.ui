@@ -149,7 +149,7 @@ public class NullBuildLogger implements BuildLogger {
 		fHandledException= exception;
 		logMessage(
 			ToolMessages.format(
-				"NullBuildLogger.buildException", // $NON-NLS-1$
+				"NullBuildLogger.buildException", //$NON-NLS-1$
 				new String[] { exception.toString()}),
 				LogConsoleDocument.MSG_ERR);	
 	}
