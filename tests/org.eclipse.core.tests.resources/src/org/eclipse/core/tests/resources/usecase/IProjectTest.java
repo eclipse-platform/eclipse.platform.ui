@@ -29,6 +29,7 @@ public class IProjectTest extends IResourceTest {
 	}
 
 	protected void setUp() throws Exception {
+		super.setUp();
 		LOCAL_LOCATION_PATH_STRING_0 = getWorkspace().getRoot().getLocation().append("temp/location0").toOSString();
 	}
 

@@ -82,7 +82,8 @@ public class BuildDeltaVerificationTest extends AbstractBuilderTest {
 	 * Sets up the fixture, for example, open a network connection.
 	 * This method is called before a test is executed.
 	 */
-	protected void setUp() throws CoreException {
+	protected void setUp() throws Exception {
+		super.setUp();
 
 		// Turn auto-building off
 		IWorkspace workspace = getWorkspace();
