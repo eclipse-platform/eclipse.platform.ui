@@ -55,20 +55,7 @@ public class NavigationHistoryEntry {
 	 * restores the location.
 	 */
 	/* package */ void restoreLocation() {
-		if(editorInput == null) {
-			if(memento != null) {
-				restoreEditor(memento);
-				memento = null;
-			} else if(mementoEntry != null) {
-				if(mementoEntry.memento != null) {
-					mementoEntry.restoreEditor(mementoEntry.memento);
-					mementoEntry.memento = null;
-				}
-				editorID = mementoEntry.editorID;
-				editorInput = mementoEntry.editorInput;
-				mementoEntry = null;
-			}
-		}
+		restoreEditor();
 			
 		if (editorInput != null && editorID != null) {
 			try {
@@ -88,6 +75,22 @@ public class NavigationHistoryEntry {
 				}
 			} catch (PartInitException e) {
 				// ignore for now
+			}
+		}
+	}
+	/* package */ void restoreEditor() {
+		if(editorInput == null) {
+			if(memento != null) {
+				restoreEditor(memento);
+				memento = null;
+			} else if(mementoEntry != null) {
+				if(mementoEntry.memento != null) {
+					mementoEntry.restoreEditor(mementoEntry.memento);
+					mementoEntry.memento = null;
+				}
+				editorID = mementoEntry.editorID;
+				editorInput = mementoEntry.editorInput;
+				mementoEntry = null;
 			}
 		}
 	}

@@ -90,6 +90,12 @@ public void clear() {
  * Adds an editor to the editor history without getting its location.
  */	
 public void markEditor(IEditorPart part) {
+	if (ignoreEntries > 0 || part == null)
+		return;
+		
+	NavigationHistoryEntry e = getEntry(activeEntry);
+	if(part.getEditorInput() != e.editorInput)
+		updateEntry(e);
 	addEntry(part,false);
 }
 /*
@@ -210,18 +216,20 @@ private void addEntry(IEditorPart part, boolean markLocation) {
 		
 	NavigationHistoryEntry e= new NavigationHistoryEntry(page, part, location);
 	NavigationHistoryEntry current= getEntry(activeEntry);
+	current.restoreEditor();
 	if (current == null || !e.mergeInto(current)) {
 		add(e);
 	} else {
 		removeForwardEntries();
 	}
-		
+	printEntries("added entry"); //$NON-NLS-1$
 	updateActions();
 }
 /*
  * Prints all the entries in the console. For debug only. */
-private void printEntries() {
+private void printEntries(String label) {
 	if (false) {
+		System.out.println("+++++ " + label + "+++++ "); //$NON-NLS-1$ //$NON-NLS-2$
 		int size= history.size();
 		for (int i= 0; i < size; i++) {
 			String append= activeEntry == i ? ">>" : ""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -255,7 +263,7 @@ private void gotoEntry(NavigationHistoryEntry entry) {
 		ignoreEntries++;
 		entry.restoreLocation();
 		updateActions();
-		printEntries();		
+		printEntries("goto entry");	//$NON-NLS-1$
 	} finally {
 		ignoreEntries--;
 	}
@@ -265,6 +273,7 @@ private void gotoEntry(NavigationHistoryEntry entry) {
 private void updateEntry(NavigationHistoryEntry activeEntry) {
 	if(activeEntry == null || activeEntry.location == null)
 		return;
+	printEntries("updateEntry"); //$NON-NLS-1$
 	activeEntry.location.update();
 }
 	
@@ -299,7 +308,7 @@ private void shiftEntry(boolean forward) {
  * Shift the history to the given entry.
  */
 protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
-	updateEntry(entry);
+	updateEntry(getEntry(activeEntry));
 	activeEntry = history.indexOf(entry);
 	gotoEntry(entry);
 }
