@@ -79,9 +79,9 @@
 &lt;pre&gt;
 	&lt;extension point="org.eclipse.debug.core.processFactories"&gt;
 		&lt;processFactory
-			id="com.example.ExampleIdentifier"
-			class="com.example.ExampleProcessFactory"&gt;
-		&lt;/sourceLocator&gt;
+			    id="com.example.ExampleIdentifier"
+			    class="com.example.ExampleProcessFactory"&gt;
+		&lt;/processFactory&gt;
 	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

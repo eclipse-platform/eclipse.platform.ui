@@ -74,6 +74,13 @@
   to provide a value for a watch expression in the given (stack frame) context. 
   The debug platform provides persistence, enabling, disabling, entering, and 
   editing of watch expressions.</p>
+<h3>Process Factories</h3>
+<p>The debug platform provides an extension point (<code>org.eclipse.debug.core.processFactories</code>) 
+  for contributing process factories. A process factory can be used to override 
+  default process creation for a launch configuration when the debug plug-in (i.e.<code> 
+  org.eclipse.debug.core.DebugPlugin</code>) is consulted to create a new process. 
+  A launch configuration can reference a process factory to use when creating 
+  a process, via the launch configuration attribute <code>DebugPlugin.ATTR_PROCESS_FACTORY_ID</code>.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
