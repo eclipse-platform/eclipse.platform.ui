@@ -156,11 +156,10 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
     public String getLine(int lineIndex) {
         StringBuffer line = new StringBuffer((String) lines.get(lineIndex));
         int index = line.length()-1;
-        while(index > 0 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {	
-            line.setLength(index);
+        while(index > 0 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {
             index--;
         }
-        return line.toString();
+        return line.substring(0, index + 1);
     }
 
     /* (non-Javadoc)
