@@ -473,6 +473,7 @@ public class FilteredList extends Composite {
 		public int getCount();
 		public void cancel();
 		public void updateSelection(int[] indices);
+		public void defaultSelect();
 	}
 
 	private class TableUpdater implements IncrementalRunnable {
@@ -542,16 +543,43 @@ public class FilteredList extends Composite {
 			});
 		}
 
+		/**
+		 * Update the selection for the supplied indices.
+		 */
 		public void updateSelection(final int[] indices) {
 
 			fDisplay.syncExec(new Runnable() {
 				public void run() {
-					fTable.setSelection(indices);
-					fTable.notifyListeners(SWT.Selection, new Event());
+					selectAndNotify(indices);
+				}
+
+			});
+
+		}
+
+		/**
+		 * Select the first element if there is no selection
+		 */
+		public void defaultSelect() {
+
+			fDisplay.syncExec(new Runnable() {
+				public void run() {
+					if (fTable.getSelectionCount() == 0)
+						selectAndNotify(new int[] { 0 });
 				}
 			});
 
 		}
+
+		/**
+		 * Select the supplied indices and notify any listeners
+		 * @param indices
+		 */
+		private void selectAndNotify(int[] indices) {
+			fTable.setSelection(indices);
+			fTable.notifyListeners(SWT.Selection, new Event());
+		}
+
 	}
 
 	private static class UpdateThread extends Thread {
@@ -597,11 +625,10 @@ public class FilteredList extends Composite {
 				fRunnable.run();
 			}
 
-			if (indices == null){
-				if(count > 0)
-					fRunnable.updateSelection(new int[]{0});
-			}				
-			else
+			if (indices == null) {
+				if (count > 0)
+					fRunnable.defaultSelect();
+			} else
 				fRunnable.updateSelection(indices);
 			requestStop();
 
