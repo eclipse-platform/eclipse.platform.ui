@@ -35,10 +35,10 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 public class TextSelectionNavigationLocation extends NavigationLocation {
 	
 	
-	private final static String DELETED= "deleted";
-	private final static String NOT_DELETED= "not_deleted";
+	private final static String DELETED= "deleted"; //$NON-NLS-1$
+	private final static String NOT_DELETED= "not_deleted"; //$NON-NLS-1$
 	
-	private final static String CATEGORY= "__navigation_" + TextSelectionNavigationLocation.class.hashCode();
+	private final static String CATEGORY= "__navigation_" + TextSelectionNavigationLocation.class.hashCode(); //$NON-NLS-1$
 	private static IPositionUpdater fgPositionUpdater= new DefaultPositionUpdater(CATEGORY);
 	
 	private Position fPosition;
@@ -117,7 +117,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 	
 	public String toString() {
-		return "Selection<" + fPosition + ">";
+		return "Selection<" + fPosition + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private boolean equalsLocationOf(ITextEditor part) {

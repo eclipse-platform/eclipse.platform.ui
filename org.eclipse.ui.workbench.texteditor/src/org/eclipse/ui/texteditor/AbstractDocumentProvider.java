@@ -149,13 +149,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Constant for representing an ok status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_OK= new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "OK", null);
+	static final protected IStatus STATUS_OK= new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EditorMessages.getString("AbstractDocumentProvider.ok"), null); //$NON-NLS-1$
 	
 	/**
 	 * Constant for representing an error status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.INFO, "ERROR", null);
+	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.INFO, EditorMessages.getString("AbstractDocumentProvider.error"), null); //$NON-NLS-1$
 	
 	
 	/** Information of all connected elements */

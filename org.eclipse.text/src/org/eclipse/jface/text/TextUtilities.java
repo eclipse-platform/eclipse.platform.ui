@@ -147,7 +147,7 @@ public class TextUtilities {
 		final IDocument document= unprocessedDocument;		
 		int offset= firstEvent.getOffset();
 		int length= firstEvent.getLength();
-		final StringBuffer text= new StringBuffer(firstEvent.getText() == null ? "" : firstEvent.getText());
+		final StringBuffer text= new StringBuffer(firstEvent.getText() == null ? "" : firstEvent.getText()); //$NON-NLS-1$
 
 		while (iterator.hasNext()) {
 
@@ -156,7 +156,7 @@ public class TextUtilities {
 			final DocumentEvent event= (DocumentEvent) iterator.next();
 			final int eventOffset= event.getOffset();
 			final int eventLength= event.getLength();
-			final String eventText= event.getText() == null ? "" : event.getText();
+			final String eventText= event.getText() == null ? "" : event.getText(); //$NON-NLS-1$
 			
 			// event is right from merged event
 			if (eventOffset > offset + length + delta) {

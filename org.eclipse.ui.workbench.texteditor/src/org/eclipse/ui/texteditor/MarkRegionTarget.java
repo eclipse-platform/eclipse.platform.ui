@@ -81,13 +81,13 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 
 		int markPosition= viewerExtension.getMark();		
 		if (markPosition == -1) {
-			fStatusLine.setErrorMessage("mark not set");
+			fStatusLine.setErrorMessage(EditorMessages.getString("MarkRegionTarget.markNotSet")); //$NON-NLS-1$
 			fStatusLine.setMessage(""); //$NON-NLS-1$			
 			return;
 		}
 
 		if (!isVisible(fViewer, markPosition)) {
-			fStatusLine.setErrorMessage("mark not in visible region");
+			fStatusLine.setErrorMessage(EditorMessages.getString("MarkRegionTarget.markNotVisible")); //$NON-NLS-1$
 			fStatusLine.setMessage(""); //$NON-NLS-1$
 			return;
 		}		

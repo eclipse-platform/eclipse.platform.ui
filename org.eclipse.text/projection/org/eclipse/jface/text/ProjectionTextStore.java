@@ -96,7 +96,7 @@ public class ProjectionTextStore implements ITextStore {
 			
 			Fragment[] fragments= fProjectionDocument.getFragmentsOfRange(offset, length);
 			if (fragments == null || fragments.length == 0)
-				return "";
+				return ""; //$NON-NLS-1$
 			
 			StringBuffer buffer= new StringBuffer();
 			for (int i= 0; i < fragments.length; i++) {

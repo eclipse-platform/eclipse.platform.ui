@@ -28,7 +28,7 @@ import java.util.Comparator;
  */
 public final class ProjectionDocument extends AbstractDocument {
 	
-	final public static String FRAGMENT_CATEGORY= "__fragment_category";
+	final public static String FRAGMENT_CATEGORY= "__fragment_category"; //$NON-NLS-1$
 	
 	/** The parent document */
 	private IDocument fParentDocument;

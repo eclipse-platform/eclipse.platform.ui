@@ -1074,7 +1074,7 @@ class FindReplaceDialog extends Dialog {
 		if (fTarget instanceof IFindReplaceTargetExtension2) {
 			IFindReplaceTargetExtension2 extension= (IFindReplaceTargetExtension2) fTarget;
 			if (!extension.validateTargetState()) {
-				statusError("Replace can not be performed because of read only state.");
+				statusError(EditorMessages.getString("FindReplaceDialog.read_only")); //$NON-NLS-1$
 				updateButtonState();
 				return false;
 			}
