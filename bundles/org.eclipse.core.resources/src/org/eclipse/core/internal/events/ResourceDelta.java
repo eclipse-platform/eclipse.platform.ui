@@ -256,7 +256,7 @@ public IResource getResource() {
 	if (cachedResource != null)
 		return cachedResource;
 
-	// if this is a delta for the root then return null
+	// if this is a delta for the root then return the root resource
 	if (path.segmentCount() == 0)
 		return deltaInfo.getWorkspace().getRoot();
 	// if the delta is a remove then we have to look for the old info to find the type
