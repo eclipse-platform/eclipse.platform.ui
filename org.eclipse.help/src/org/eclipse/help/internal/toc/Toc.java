@@ -42,6 +42,9 @@ public class Toc extends TocNode implements IToc {
 			return;
 		this.tocFile = tocFile;
 		this.label = attrs.getValue("label");
+		if(label==null){
+			throw new RuntimeException("toc label==null");
+		}
 		this.link_to = attrs.getValue("link_to");
 		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
 		this.href =

@@ -32,6 +32,9 @@ public class Topic extends TocNode implements ITopic {
 		if (href != null && href.length() > 0)
 			href = HrefUtil.normalizeHref(tocFile.getPluginID(), href);
 		label = attrs.getValue("label");
+		if(label==null){
+			throw new RuntimeException("topic label==null");
+		}
 	}
 	/**
 	 * Implements abstract method.
