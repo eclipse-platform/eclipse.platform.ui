@@ -12,18 +12,26 @@
 package org.eclipse.ui.internal.progress;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.*;
 
-public class AnimatedCanvas {
+public class AnimationItem {
+
+	private IWorkbenchWindow window;
+	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
+	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
+	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_VIEW_NAME =
+		"org.eclipse.ui.views.ProgressView";  //$NON-NLS-1$
 
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;
@@ -34,22 +42,60 @@ public class AnimatedCanvas {
 	private ImageLoader loader = new ImageLoader();
 	private boolean animated = false;
 	private Job animateJob;
-	
+	private IJobChangeListener listener;
+
 	/**
 	 * Create a new instance of the receiver.
 	 * @param animatedPath
 	 * @param disabledPath
 	 */
 
-	public AnimatedCanvas(URL animatedPath, URL disabledPath) {
+	public AnimationItem(IWorkbenchWindow workbenchWindow) {
 
-		animatedData = getImageData(animatedPath);
-		if (animatedData != null)
-			animatedImage = getImage(animatedData[0]);
+		this.window = workbenchWindow;
+		URL iconsRoot =
+			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
+				new Path(PROGRESS_FOLDER));
 
-		disabledData = getImageData(disabledPath);
-		if (disabledData != null)
-			disabledImage = getImage(disabledData[0]);
+		try {
+			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
+			URL backRoot = new URL(iconsRoot, BACKGROUND_ICON);
+			animatedData = getImageData(runningRoot);
+			if (animatedData != null)
+				animatedImage = getImage(animatedData[0]);
+
+			disabledData = getImageData(backRoot);
+			if (disabledData != null)
+				disabledImage = getImage(disabledData[0]);
+
+			listener = getJobListener();
+			Platform.getJobManager().addJobChangeListener(listener);
+		} catch (MalformedURLException exception) {
+			logException(exception);
+		}
+	}
+
+	/**
+	 * Log the exception for debugging.
+	 * @param exception
+	 */
+	private void logException(Throwable exception) {
+		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+			exceptionStatus(exception));
+	}
+
+	/**
+	 * Return a status for the exception.
+	 * @param exception
+	 * @return
+	 */
+	private Status exceptionStatus(Throwable exception) {
+		return new Status(
+			IStatus.ERROR,
+			PlatformUI.PLUGIN_ID,
+			IStatus.ERROR,
+			exception.getMessage(),
+			exception);
 	}
 
 	/**
@@ -74,8 +120,10 @@ public class AnimatedCanvas {
 			stream.close();
 			return result;
 		} catch (FileNotFoundException exception) {
+			logException(exception);
 			return null;
 		} catch (IOException exception) {
+			logException(exception);
 			return null;
 		}
 	}
@@ -84,7 +132,7 @@ public class AnimatedCanvas {
 	 * Create the canvas that will display the image.
 	 * @param parent
 	 */
-	void createCanvas(Composite parent) {
+	public void createControl(Composite parent) {
 
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
@@ -104,8 +152,44 @@ public class AnimatedCanvas {
 			}
 		});
 
+		imageCanvas.addKeyListener(new KeyListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyPressed(KeyEvent arg0) {
+				openProgressView();
+
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyReleased(KeyEvent arg0) {
+
+			}
+		});
+
+		imageCanvas.addMouseListener(new MouseListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseDoubleClick(MouseEvent arg0) {
+				openProgressView();
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseDown(MouseEvent arg0) {
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseUp(MouseEvent arg0) {
+
+			}
+		});
+
 	}
-	
+
 	/**
 	 * Return the current image for the receiver.
 	 * @return Image
@@ -134,7 +218,10 @@ public class AnimatedCanvas {
 	 * @param image The image to display
 	 * @param imageData The array of ImageData. Required to show an animation.
 	 */
-	private void paintImage(PaintEvent event, Image image, ImageData imageData) {
+	private void paintImage(
+		PaintEvent event,
+		Image image,
+		ImageData imageData) {
 
 		Image paintImage = image;
 
@@ -198,6 +285,7 @@ public class AnimatedCanvas {
 	void dispose() {
 		animatedImage.dispose();
 		disabledImage.dispose();
+		Platform.getJobManager().removeJobChangeListener(listener);
 	}
 
 	/**
@@ -210,7 +298,7 @@ public class AnimatedCanvas {
 			//Clear out the old job
 			if (animateJob != null)
 				animateJob.cancel();
-				
+
 			animateJob = new AnimateJob() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -219,20 +307,12 @@ public class AnimatedCanvas {
 					try {
 						animateLoop(monitor);
 						return Status.OK_STATUS;
-					} catch (final SWTException e) {
-						return new Status(
-							IStatus.ERROR,
-							WorkbenchPlugin
-								.getDefault()
-								.getDescriptor()
-								.getUniqueIdentifier(),
-							IStatus.ERROR,
-							ProgressMessages.getString("AnimatedCanvas.JobInvocationError"), //$NON-NLS-1$
-							e);
+					} catch (SWTException exception) {
+						return exceptionStatus(exception);
 					}
 				}
 			};
-			
+
 			animateJob.schedule();
 		}
 	}
@@ -389,5 +469,67 @@ public class AnimatedCanvas {
 	 */
 	public Rectangle getImageBounds() {
 		return disabledImage.getBounds();
+	}
+
+	/**
+	 * Add a listener to the job manager for the receiver.
+	 *
+	 */
+	private IJobChangeListener getJobListener() {
+		return new JobChangeAdapter() {
+
+			int jobCount = 0;
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void aboutToRun(Job job) {
+				incrementJobCount(job);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
+			 */
+			public void done(Job job, IStatus result) {
+				decrementJobCount(job);
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#paused(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void paused(Job job) {
+				decrementJobCount(job);
+
+			}
+
+			private void incrementJobCount(Job job) {
+				//Don't count the animate job itself
+				if (job instanceof AnimateJob)
+					return;
+
+				if (jobCount == 0)
+					setAnimated(true);
+				jobCount++;
+			}
+
+			private void decrementJobCount(Job job) {
+				//Don't count the animate job itself
+				if (job instanceof AnimateJob)
+					return;
+				if (jobCount == 1)
+					setAnimated(false);
+				jobCount--;
+			}
+
+		};
+	}
+
+	/**
+	 * Open a progress view in the current page.
+	 */
+	private void openProgressView() {
+		try {
+			window.getActivePage().showView(PROGRESS_VIEW_NAME);
+		} catch (PartInitException exception) {
+			logException(exception);
+		}
 	}
 }
