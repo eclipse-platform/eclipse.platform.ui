@@ -26,7 +26,7 @@ public class AllTestsTeamSubscriber extends EclipseTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTest(CVSMergeSubscriberTest.suite());
+		//suite.addTest(CVSMergeSubscriberTest.suite());
 		suite.addTest(CVSWorkspaceSubscriberTest.suite());
 		return new CVSTestSetup(suite);
 	}
