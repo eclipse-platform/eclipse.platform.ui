@@ -7,7 +7,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.jface.progress;
+package org.eclipse.ui.progress;
 
 /**
  * The UIJob is a Job that runs within the UI Thread via an
@@ -16,12 +16,13 @@ package org.eclipse.jface.progress;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public abstract class UIJob extends Job {
 	private Display display;
-	
-	private static final String PLUGIN_NAME = "org.eclipse.jface"; //$NON-NLS-1$
 
 	/**
 	 * Create a new instance of the receiver.
@@ -48,7 +49,7 @@ public abstract class UIJob extends Job {
 	public static IStatus errorStatus(Throwable exception) {
 		return new Status(
 			IStatus.ERROR,
-			PLUGIN_NAME,
+			PlatformUI.PLUGIN_ID,
 			IStatus.ERROR,
 			exception.getMessage(),
 			exception);
@@ -64,12 +65,8 @@ public abstract class UIJob extends Job {
 		Display asyncDisplay = getDisplay();
 
 		if (asyncDisplay == null) {
-			return new Status(
-				IStatus.ERROR,
-				PLUGIN_NAME,
-				IStatus.ERROR,
-				JFaceResources.getString("UIJob.displayNotSet"), //$NON-NLS-1$
-				null);
+			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, ProgressMessages.getString("UIJob.displayNotSet"), //$NON-NLS-1$
+			null);
 		}
 		asyncDisplay.asyncExec(new Runnable() {
 			public void run() {
@@ -78,20 +75,19 @@ public abstract class UIJob extends Job {
 					result = runInUIThread(monitor);
 				} finally {
 					if (result == null)
-						result =
-							new Status(
-								IStatus.ERROR,
-								PLUGIN_NAME,
-								1,
-								JFaceResources.getString("Error"), //$NON-NLS-1$
-								null);
+							result = new Status(
+									IStatus.ERROR, 
+									PlatformUI.PLUGIN_ID, 
+									IStatus.ERROR, 
+									ProgressMessages.getString("Error"), //$NON-NLS-1$
+									null);
 					done(result);
 				}
 			}
 		});
 		return Job.ASYNC_FINISH;
 	}
-	
+
 	/**
 	 * Run the job in the UI Thread.
 	 * @param monitor
@@ -111,7 +107,15 @@ public abstract class UIJob extends Job {
 	 * @return Display
 	 */
 	public Display getDisplay() {
-		return display;
+		if (display != null)
+			return display;
+		IWorkbenchWindow windows[] =
+			WorkbenchPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+		if (windows.length == 0)
+			return null;
+		else
+			return windows[0].getShell().getDisplay();
+
 	}
 
 }
