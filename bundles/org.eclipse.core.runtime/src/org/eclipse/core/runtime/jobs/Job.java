@@ -236,11 +236,11 @@ public abstract class Job extends InternalJob {
 	 * system jobs act exactly like other jobs.  If this value is not explicitly set, jobs
 	 * are treated as non-system jobs.
 	 * 
-	 * @returnvalue <code>true</code> if this job should be a system job, and
+	 * @return <code>true</code> if this job is a system job, and
 	 * <code>false</code> otherwise.
 	 * @see setSystem
 	 */
-	public boolean isSystem()  {
+	public final boolean isSystem()  {
 		return super.isSystem();
 	}
 	/**
@@ -259,7 +259,7 @@ public abstract class Job extends InternalJob {
 	 * @exception InterruptedException if this thread is interrupted while waiting
 	 * @see ILock
 	 */
-	public void join() throws InterruptedException  {
+	public final void join() throws InterruptedException  {
 		super.join();
 	}
 	/**
