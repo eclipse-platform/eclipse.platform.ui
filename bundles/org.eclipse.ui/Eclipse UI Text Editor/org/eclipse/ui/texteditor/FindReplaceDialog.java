@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -46,13 +45,11 @@ import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
-import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -977,9 +974,8 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Returns the status line manager of the active editor or <code>null</code> if there is no such editor.
 	 * @return the status line manager of the active editor
-	 * @since 2.0
 	 */
-	private IStatusLineManager getStatusLineManager() {
+	private IEditorStatusLine getStatusLineManager() {
 		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		IWorkbenchWindow window= plugin.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null)
@@ -992,46 +988,39 @@ class FindReplaceDialog extends Dialog {
 		IEditorPart editor= page.getActiveEditor();
 		if (editor == null)
 			return null;
-			
-		IEditorActionBarContributor contributor= editor.getEditorSite().getActionBarContributor();
-		if (contributor instanceof EditorActionBarContributor) {
-			return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
-		}
-		return null;
+
+		return (IEditorStatusLine) editor.getAdapter(IEditorStatusLine.class);
 	}
 
 	/**
 	 * Sets the given error message in the status line.
 	 * @param message the error message
-	 * @since 2.0
 	 */
-	private void statusError(String message) {
+	private void statusMessage(boolean error, String message) {
 		fStatusLabel.setText(message);
 
-		IStatusLineManager manager= getStatusLineManager();
-		if (manager == null)				
-			return;
+		IEditorStatusLine statusLine= getStatusLineManager();
+		if (statusLine != null)
+			statusLine.setMessage(error, message, null);	
 
-		manager.setErrorMessage(message);
-		manager.setMessage(""); //$NON-NLS-1$		
+		if (error)
+			getShell().getDisplay().beep();
+	}
 
-		getShell().getDisplay().beep();
+	/**
+	 * Sets the given error message in the status line.
+	 * @param message the message
+	 */
+	private void statusError(String message) {
+		statusMessage(true, message);
 	}
 
 	/**
 	 * Sets the given message in the status line.
 	 * @param message the message
-	 * @since 2.0
 	 */
 	private void statusMessage(String message) {
-		fStatusLabel.setText(message);
-
-		IStatusLineManager manager= getStatusLineManager();
-		if (manager == null)				
-			return;
-			
-		manager.setErrorMessage(""); //$NON-NLS-1$
-		manager.setMessage(message);
+		statusMessage(false, message);
 	}
 
 	/**

@@ -781,7 +781,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Editor specific selection provider which wraps the source viewer's selection provider.
 	 * 	 */
 	class SelectionProvider implements ISelectionProvider {
-
+	
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
 		 */
@@ -957,6 +957,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private Color fFindScopeHighlightColor;
+
+	/** The editor's status line */
+	private IEditorStatusLine fEditorStatusLine;
 	/** The editor's vertical ruler */
 	private IVerticalRuler fVerticalRuler;
 	/** The editor's context menu id */
@@ -2032,6 +2035,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodes= null;
 		}
 		
+		if (fEditorStatusLine != null)
+			fEditorStatusLine= null;
+		
 		super.setInput(null);		
 		
 		super.dispose();
@@ -3081,6 +3087,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public Object getAdapter(Class required) {
 		
+		if (IEditorStatusLine.class.equals(required)) {
+			if (fEditorStatusLine == null) {
+				IStatusLineManager statusLineManager= getStatusLineManager();
+				ISelectionProvider selectionProvider= getSelectionProvider();
+				if (statusLineManager != null && selectionProvider != null)
+					fEditorStatusLine= new EditorStatusLine(statusLineManager, selectionProvider);
+			}
+			return fEditorStatusLine;
+		}
+		
 		if (IVerticalRulerInfo.class.equals(required)) {
 			if (fVerticalRuler  instanceof IVerticalRulerInfo)
 				return fVerticalRuler;
@@ -3289,7 +3305,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		widget.setRedraw(true);
 	}
 	
-	/**
+	/*
 	 * Writes a check mark of the given situation into the navigation history.
 	 */
 	protected void markInNavigationHistory() {
