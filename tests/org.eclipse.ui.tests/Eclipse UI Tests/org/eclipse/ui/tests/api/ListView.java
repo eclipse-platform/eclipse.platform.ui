@@ -117,7 +117,7 @@ public class ListView extends MockViewPart
 	 */
 	public void menuAboutToShow(IMenuManager menuMgr) {
 		menuMgr.add(addAction);
-		menuMgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	/**
