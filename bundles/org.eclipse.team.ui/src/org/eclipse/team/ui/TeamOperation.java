@@ -103,6 +103,13 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
             }
             return super.getCompletionStatus();
         }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ui.actions.JobRunnableContext#isUser()
+         */
+        protected boolean isUser() {
+            return operation.isUserInitiated();
+        }
 	}
 	
 	/**
@@ -297,6 +304,18 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
      * @since 3.1
      */
     public boolean belongsTo(Object family) {
+        return false;
+    }
+    
+    /**
+     * Indicates whether the operation was user initiated. The 
+     * progress for user initiated jobs may be presented differently
+     * than non-user initiated operations if they are run as jobs.
+     * @return whether the operation is user initiated
+     * @since 3.1
+     */
+    public boolean isUserInitiated() {
+        // TODO Auto-generated method stub
         return false;
     }
     
