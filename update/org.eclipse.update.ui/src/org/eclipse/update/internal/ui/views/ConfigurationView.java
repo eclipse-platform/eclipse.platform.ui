@@ -1025,8 +1025,8 @@ public class ConfigurationView
 				detectedChangesAction));
 		array.add(
 			new PreviewTask(
-				UpdateUI.getString("ConfigurationView.linkLabel"), //$NON-NLS-1$
-				UpdateUI.getString("ConfigurationView.linkDesc"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.extLocLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.extLocDesc"), //$NON-NLS-1$
 				newExtensionLocationAction));
 		array.add(
 			new PreviewTask(
