@@ -22,9 +22,6 @@ public class RepositorySorter extends ViewerSorter {
 		if (element instanceof ICVSRemoteFile) {
 			return 2;
 		}
-		if (element instanceof BranchTag) {
-			return 3;
-		}
 		return 0;
 	}
 
