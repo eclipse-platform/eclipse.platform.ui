@@ -334,6 +334,7 @@ public class WorkbenchKeyboard {
 		if ((multiKeyAssistShell != null) && (!multiKeyAssistShell.isDisposed())) {
 			deregister(multiKeyAssistShell);
 			multiKeyAssistShell.close();
+			multiKeyAssistShell.dispose();
 			multiKeyAssistShell = null;
 		}
 
@@ -528,6 +529,7 @@ public class WorkbenchKeyboard {
 	private void incrementState(KeySequence sequence) {
 		// Record the starting time.
 		startTime = System.currentTimeMillis();
+		final long myStartTime = startTime;
 
 		// Update the state.
 		state.setCurrentSequence(sequence);
@@ -537,12 +539,11 @@ public class WorkbenchKeyboard {
 		final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST)) {
 			final Display display = workbench.getDisplay();
-			display
-				.timerExec(
-					store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME),
-					new Runnable() {
+			final int delay = store.getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME);
+			display.timerExec(delay, new Runnable() {
 				public void run() {
-					if (System.currentTimeMillis() > (startTime - 1000L)) {
+					if ((System.currentTimeMillis() > (myStartTime - delay))
+						&& (startTime == myStartTime)) {
 						openMultiKeyAssistShell(display);
 					}
 				}
