@@ -3,11 +3,14 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal;
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.AppServer;
-import org.eclipse.help.internal.context.ContextManager;
-import org.eclipse.help.internal.search.SearchManager;
-import org.eclipse.help.internal.toc.TocManager;
+import org.eclipse.help.*;
+import org.eclipse.help.internal.context.*;
+import org.eclipse.help.internal.filter.*;
+import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
 /**
  * The actual implementation of the help system plugin.
@@ -21,6 +24,8 @@ public final class HelpSystem {
 	public final static String LINKS_VIEW_KEY = "linksView";
 	public final static String BASE_TOCS_KEY = "baseTOCS";
 	public final static String BOOKMARKS = "bookmarks";
+	public final static String WORKING_SETS = "workingSets";
+	public final static String WORKING_SET = "workingSet";
 	public final static int MODE_WORKBENCH = 0;
 	public final static int MODE_INFOCENTER = 1;
 	public final static int MODE_STANDALONE = 2;
@@ -28,6 +33,7 @@ public final class HelpSystem {
 	protected TocManager tocManager;
 	protected ContextManager contextManager;
 	protected SearchManager searchManager;
+	protected HashMap workingSetManagers;
 	private int mode = MODE_WORKBENCH;
 	private boolean webappStarted = false;
 	private boolean webappRunning = false;
@@ -69,6 +75,21 @@ public final class HelpSystem {
 			getInstance().searchManager = new SearchManager();
 		}
 		return getInstance().searchManager;
+	}
+	/**
+	 * Used to obtain Working Set Manager
+	 * @return instance of WorkingSetManager
+	 */
+	public static WorkingSetManager getWorkingSetManager(String locale) {
+		if (getInstance().workingSetManagers == null) {
+			getInstance().workingSetManagers = new HashMap();
+		}
+		WorkingSetManager wsmgr = (WorkingSetManager)getInstance().workingSetManagers.get(locale);
+		if (wsmgr == null) {
+			wsmgr = new WorkingSetManager(locale);
+			getInstance().workingSetManagers.put(locale, wsmgr);
+		}
+		return wsmgr;
 	}
 	/**
 	 */

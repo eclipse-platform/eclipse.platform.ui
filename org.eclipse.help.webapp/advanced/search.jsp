@@ -7,6 +7,7 @@
 <% 
 	SearchData data = new SearchData(application, request);
 	WebappPreferences prefs = data.getPrefs();
+	WorkingSetManagerData workingSetData = new WorkingSetManagerData(application, request);
 %>
 
 
@@ -72,7 +73,7 @@ INPUT {
 }
 
 
-#advanced {
+#workingSet {
 	text-decoration:underline; 
 	text-align:right;
 	color:#0066FF; 
@@ -96,35 +97,36 @@ INPUT {
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 
-<%
-	String[] selectedBooks = data.getSelectedTocs();
-%>
-// create list of books initilize selectedBooks variable used by advances search
-var selectedBooks = new Array(<%=selectedBooks.length%>);
-<%
-for (int i=0; i<selectedBooks.length; i++) 
+//var workingSet = '<%=workingSetData.getWorkingSetName()%>';
+function setWorkingSet(ws) 
 {
-%>
-	selectedBooks[<%=i%>] = "<%=UrlUtil.JavaScriptEncode(selectedBooks[i])%>";
-<%
-}
-%>
+return;
+//alert("Set " + ws)
 
-var advancedDialog;
-var w = 400;
-var h = 300;
+	workingSet = ws;
+	if (!workingSet)
+		workingSet = '<%=workingSetData.getWorkingSetName()%>';
 
-function saveSelectedBooks(books)
-{
-	selectedBooks = new Array(books.length);
-	for (var i=0; i<selectedBooks.length; i++){
-		selectedBooks[i] = new String(books[i]);
+//return;
+
+	workingSetNode = document.getElementById("workingSet");
+	if (workingSetNode.firstChild){
+		workingSetNode.firstChild.nodeValue = workingSet;	
+	} else {
+		text = document.createTextNode(workingSet);
+		workingSetNode.appendChild(text);
 	}
 }
 
+var advancedDialog;
+var w = 300;
+var h = 300;
+
+
 function openAdvanced()
 {
-	advancedDialog = window.open("advanced.jsp?searchWord="+escape(document.getElementById("searchWord").value), "advancedDialog", "resizeable=no,height="+h+",width="+w );
+	var workingSet = document.getElementById("scope").firstChild.nodeValue;
+	advancedDialog = window.open("workingSetManager.jsp?workingSet="+escape(workingSet), "advancedDialog", "resizeable=no,height="+h+",width="+w );
 	advancedDialog.focus(); 
 }
 
@@ -143,6 +145,8 @@ function closeAdvanced()
  * search page, a query is passed. */
 function doSearch(query)
 {
+	var workingSet = document.getElementById("scope").firstChild.nodeValue;
+
 	if (!query || query == "")
 	{
 		var form = document.forms["searchForm"];
@@ -151,6 +155,8 @@ function doSearch(query)
 		if (!searchWord || searchWord == "")
 			return;
 		query ="searchWord="+escape(searchWord)+"&maxHits="+maxHits;
+		if (workingSet != '<%=WebappResources.getString("All", request)%>')
+			query = query +"&scope="+workingSet+"&workingSet="+workingSet;
 	}
 	query=query+"&encoding=js";
 		
@@ -158,12 +164,6 @@ function doSearch(query)
 	parent.HelpFrame.NavFrame.showView("search");
 	var searchView = parent.HelpFrame.NavFrame.ViewsFrame.search.ViewFrame;
 	searchView.location.replace("searchView.jsp?"+query);
-	/*
-	if (isIE)
-		viewsFrame.document.search.location.replace("searchView.jsp?"+query);
-	else if (isMozilla)
-		viewsFrame.document.getElementById("search").src = "searchView.jsp?"+query; 
-		*/
 }
 
 function fixHeights()
@@ -201,7 +201,11 @@ function onloadHandler(e)
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>' onmouseover="window.status='<%=WebappResources.getString("Advanced", request)%>'; return true;" onmouseout="window.status='';"><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
+					&nbsp;Scope:
+				</td>
+				<td nowrap>
+					<input type="hidden" name="workingSet" value='<%=workingSetData.getWorkingSetName()%>' >
+					<a id="scope" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=workingSetData.getWorkingSetName()%></a>
 				</td>
 			</tr>
 

@@ -10,6 +10,8 @@ import java.util.*;
 import org.apache.lucene.search.Hits;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.filter.*;
+import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.URLCoder;
 
 /**
@@ -18,6 +20,7 @@ import org.eclipse.help.internal.util.URLCoder;
  */
 public class SearchResults implements ISearchHitCollector {
 	private Collection scope;
+	private Collection scopeTocs;
 	private int maxHits;
 	private String locale;
 	protected SearchHit[] searchHits = new SearchHit[0];
@@ -91,9 +94,12 @@ public class SearchResults implements ISearchHitCollector {
 	private IToc findTocForTopic(String href) {
 		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
-			if (scope != null)
-				if (!scope.contains(tocs[i].getHref()))
+			if (scope != null) {
+				Collection scopeTocs = getScopeTocs();
+				if (!scopeTocs.contains(tocs[i]))
 					continue;
+			}
+
 			ITopic topic = tocs[i].getTopic(href);
 			if (topic != null)
 				return tocs[i];
@@ -106,5 +112,34 @@ public class SearchResults implements ISearchHitCollector {
 	 */
 	public SearchHit[] getSearchHits() {
 		return searchHits;
+	}
+	
+	/**
+	 * Returns a collection of TOC's
+	 * @return Collection	 */
+	private Collection getScopeTocs() {
+		if (scopeTocs != null)
+			return scopeTocs;
+			
+		// Note: currently the scope can be a collection of books or working sets
+		if (scope == null) return null;
+		scopeTocs = new ArrayList(scope.size());
+		WorkingSetManager wsmgr = HelpSystem.getWorkingSetManager(locale);
+		TocManager tocmgr = HelpSystem.getTocManager();
+		for (Iterator it=scope.iterator(); it.hasNext(); ) {
+			String s = (String)it.next();
+			WorkingSet ws = wsmgr.getWorkingSet(s);
+			if (ws != null) {
+				IHelpResource[] elements = ws.getElements();
+				for (int i=0; i<elements.length; i++)
+					scopeTocs.add(elements[i]);
+			}
+			else {
+				IToc toc = tocmgr.getToc(s, locale);
+				if (toc != null)
+					scopeTocs.add(toc);
+			}
+		}
+		return scopeTocs;
 	}
 }

@@ -41,7 +41,7 @@ function bookmarkPage(button)
 			title = url;
 
 		/********** HARD CODED VIEW NAME *************/
-		parent.parent.NavFrame.ViewsFrame.bookmarks.ViewFrame.location.replace("bookmarksView.jsp?add="+url+"&title="+escape(title));
+		parent.parent.NavFrame.ViewsFrame.bookmarks.ViewFrame.location.replace("bookmarksView.jsp?operation=add&bookmark="+url+"&title="+escape(title));
 	}catch (e) {}
 	if (isIE && button) button.blur();
 

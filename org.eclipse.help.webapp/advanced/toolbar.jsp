@@ -187,7 +187,7 @@ if (data.getScript() != null) {
 					</table>
 				</td>
 			</tr>
-		</table>
+		</table> 
 	</div>	
 
     <iframe name="liveHelpFrame" style="visibility:hidden" frameborder="no" width="0" height="0" scrolling="no">
