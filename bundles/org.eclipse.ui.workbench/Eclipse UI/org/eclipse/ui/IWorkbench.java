@@ -19,7 +19,6 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
-import org.eclipse.ui.internal.components.framework.IServiceProvider;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
@@ -59,7 +58,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * 
  * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
-public interface IWorkbench extends IServiceProvider {
+public interface IWorkbench extends IAdaptable {
     /**
      * Returns the display for this workbench.
      * <p>

@@ -8,12 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.ui.internal.commands.ILegacyAttributeNames;
 import org.eclipse.ui.internal.misc.Policy;
 
 /**
@@ -160,5 +161,15 @@ public final class LegacyHandlerWrapper implements IHandler {
 			final IHandlerListener handlerListener) {
 		handler.removeHandlerListener(new LegacyHandlerListenerWrapper(this,
 				handlerListener));
+	}
+	
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+
+		buffer.append("LegacyHandlerWrapper(handler="); //$NON-NLS-1$
+		buffer.append(handler);
+		buffer.append(')');
+
+		return buffer.toString();
 	}
 }

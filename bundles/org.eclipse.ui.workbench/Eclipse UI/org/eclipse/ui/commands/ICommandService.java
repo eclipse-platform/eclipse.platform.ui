@@ -15,13 +15,13 @@ import java.util.Collection;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IExecutionListener;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IService;
 
 /**
  * <p>
  * Provides services related to the command architecture within the workbench.
- * This service can be used to access the set of commands and handlers.
+ * This service can be used to access the set of commands and command
+ * categories.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>. The commands architecture is currently under
@@ -32,24 +32,6 @@ import org.eclipse.ui.IService;
  * @since 3.1
  */
 public interface ICommandService extends IService {
-
-	/**
-	 * Activates the given handler within the context of this service. If this
-	 * service was retrieved from the workbench, then this handler will be
-	 * active globally. If the service was retrieved from a nested component,
-	 * then the handler will only be active within that component.
-	 * 
-	 * @param commandId
-	 *            The identifier for the command which this handler handles;
-	 *            must not be <code>null</code>.
-	 * @param handler
-	 *            The handler to activate; must not be <code>null</code>.
-	 * @return A token which can be used to later cancel the activation. Only
-	 *         someone with access to this token can cancel the activation. The
-	 *         activation will automatically be cancelled if the context from
-	 *         which this service was retrieved is destroyed.
-	 */
-	public IHandlerActivation activateHandler(String commandId, IHandler handler);
 
 	/**
 	 * Adds an execution listener to the command service. This listener will be
@@ -108,7 +90,7 @@ public interface ICommandService extends IService {
 	 * registry and preference store.
 	 * </p>
 	 */
-	public void readRegistryAndPreferences();
+	public void readRegistry();
 
 	/**
 	 * Removes an execution listener from the command service.

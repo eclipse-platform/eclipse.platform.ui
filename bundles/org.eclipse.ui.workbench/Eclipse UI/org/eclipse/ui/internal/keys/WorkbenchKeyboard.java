@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -367,14 +366,8 @@ public final class WorkbenchKeyboard {
 	public WorkbenchKeyboard(Workbench associatedWorkbench) {
 		workbench = associatedWorkbench;
 		state = new KeyBindingState(associatedWorkbench);
-		try {
-			bindingService = (IBindingService) workbench
-					.getService(IBindingService.class);
-		} catch (final ComponentException e) {
-			throw new RuntimeException(
-					"Could not get either the binding or the command service from the workbench", //$NON-NLS-1$
-					e);
-		}
+		bindingService = (IBindingService) workbench
+				.getAdapter(IBindingService.class);
 		workbench.addWindowListener(windowListener);
 	}
 

@@ -10,44 +10,25 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.commands.ws;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.commands.CommandManagerFactory;
 import org.eclipse.ui.internal.commands.CommandManagerWrapper;
-import org.eclipse.ui.internal.commands.CommandService;
-import org.eclipse.ui.internal.commands.LegacyHandlerWrapper;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
-import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.internal.handlers.LegacyHandlerSubmissionExpression;
+import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
 
 /**
  * Provides command support in terms of the workbench.
@@ -57,130 +38,11 @@ import org.eclipse.ui.internal.util.Util;
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
 	/**
-	 * Whether the workbench command support should kick into debugging mode.
-	 * This causes the unresolvable handler conflicts to be printed to the
-	 * console.
+	 * The map of activations that have been given to the handler service (<code>IHandlerActivation</code>),
+	 * indexed by the submissions (<code>HandlerSubmission</code>). This map
+	 * should be <code>null</code> if there are no such activations.
 	 */
-	private static final boolean DEBUG = Policy.DEBUG_HANDLERS;
-
-	/**
-	 * Whether the workbench command support should kick into verbose debugging
-	 * mode. This causes the resolvable handler conflicts to be printed to the
-	 * console.
-	 */
-	private static final boolean DEBUG_VERBOSE = Policy.DEBUG_HANDLERS
-			&& Policy.DEBUG_HANDLERS_VERBOSE;
-
-	/**
-	 * The command identifier to which the verbose output should be restricted.
-	 */
-	private static final String DEBUG_VERBOSE_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
-
-	/**
-	 * The least specific way in which a submissions may match another item.
-	 * This means that the submissions will match any value.
-	 */
-	private static final int MATCH_ANY = 0;
-
-	/**
-	 * The submissions specifies a shell, and this shell is not the active
-	 * shell. However, it is the active workbench window's shell. This is
-	 * halfway between matching any and matching specifically.
-	 */
-	private static final int MATCH_PARTIAL = 1;
-
-	/**
-	 * The items match exactly.
-	 */
-	private static final int MATCH_EXACT = 2;
-
-	static {
-		CommandManagerWrapper.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
-				&& Policy.DEBUG_HANDLERS_VERBOSE;
-		CommandManagerWrapper.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
-		CommandManagerWrapper.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
-
-		Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
-		Command.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
-				&& Policy.DEBUG_HANDLERS_VERBOSE;
-		Command.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
-	}
-
-	/**
-	 * Generates an integer value representing the quality of the match between
-	 * <code>shellToMatch</code> and the active shell and workbench window's
-	 * shell. It is assumed that <code>shellToMatch</code> is either
-	 * <code>null</code>,<code>activeShell</code> or the active workbench
-	 * window's shell.
-	 * 
-	 * @param shellToMatch
-	 *            The shell to match; may be <code>null</code>.
-	 * @param activeShell
-	 *            The active shell shell; may be <code>null</code>.
-	 * @return One of <code>MATCH_ANY</code>,<code>MATCH_PARTIAL</code>,
-	 *         or <code>MATCH_EXACT</code>.
-	 */
-	private static final int compareWindows(final Shell shellToMatch,
-			final Shell activeShell) {
-		if (shellToMatch == null) {
-			return MATCH_ANY;
-		} else if (shellToMatch == activeShell) {
-			return MATCH_EXACT;
-		}
-
-		return MATCH_PARTIAL;
-	}
-
-	/**
-	 * Listens for shell activation events, and updates the list of enabled
-	 * handlers appropriately. This is used to keep the enabled handlers
-	 * synchronized with respect to the <code>activeShell</code> condition.
-	 */
-	private Listener activationListener = new Listener() {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
-		public void handleEvent(Event event) {
-			processHandlerSubmissions(false, event.display.getActiveShell());
-		}
-	};
-
-	/**
-	 * The identifier for the currently active part. This value may be
-	 * <code>null</code> if this is no active part, or it the identifier for
-	 * the active part is <code>null</code>.
-	 */
-	private String activePartId;
-
-	/**
-	 * The currently active shell. This value is never <code>null</code>.
-	 */
-	private Shell activeShell;
-
-	/**
-	 * The active workbench site when the handler submissions were last
-	 * processed. This value may be <code>null</code> if no workbench site is
-	 * selected.
-	 */
-	private IWorkbenchSite activeWorkbenchSite;
-
-	/**
-	 * The active workbench window when the handler submissions were last
-	 * processed. This value may be <code>null</code> if Eclipse is not the
-	 * active application.
-	 */
-	private IWorkbenchWindow activeWorkbenchWindow;
-
-	/**
-	 * The map of the handler submissions indexed by command identifier. This
-	 * value is never <code>null</code>, but may be empty. The command
-	 * identifiers are strings, and the handler submissions are instances of
-	 * <code>HandlerSubmission</code>.
-	 */
-	private final Map handlerSubmissionsByCommandId = new HashMap();
+	private Map activationsBySubmission = null;
 
 	/**
 	 * The mutable command manager that should be notified of changes to the
@@ -189,526 +51,112 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	private final CommandManagerWrapper commandManagerWrapper;
 
 	/**
-	 * A listener for changes in the active page. Changes to the active page
-	 * causes the handler submissions to be reprocessed.
-	 */
-	private final IPageListener pageListener = new IPageListener() {
-
-		public void pageActivated(IWorkbenchPage workbenchPage) {
-			processHandlerSubmissions(false);
-		}
-
-		public void pageClosed(IWorkbenchPage workbenchPage) {
-			processHandlerSubmissions(false);
-		}
-
-		public void pageOpened(IWorkbenchPage workbenchPage) {
-			processHandlerSubmissions(false);
-		}
-	};
-
-	/**
-	 * A listener for changes in the active part. Changes to the active part
-	 * causes the handler submissions to be reprocessed.
-	 */
-	private final IPartListener partListener = new IPartListener() {
-
-		public void partActivated(IWorkbenchPart workbenchPart) {
-			processHandlerSubmissions(false);
-		}
-
-		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
-			processHandlerSubmissions(false);
-		}
-
-		public void partClosed(IWorkbenchPart workbenchPart) {
-			processHandlerSubmissions(false);
-		}
-
-		public void partDeactivated(IWorkbenchPart workbenchPart) {
-			processHandlerSubmissions(false);
-		}
-
-		public void partOpened(IWorkbenchPart workbenchPart) {
-			processHandlerSubmissions(false);
-		}
-	};
-
-	/**
-	 * A listener for changes in the active perspective. Changes to the active
-	 * perspective causes the handler submissions to be reprocessed.
-	 */
-	private final IPerspectiveListener perspectiveListener = new IPerspectiveListener() {
-
-		public void perspectiveActivated(IWorkbenchPage workbenchPage,
-				IPerspectiveDescriptor perspectiveDescriptor) {
-			processHandlerSubmissions(false);
-		}
-
-		public void perspectiveChanged(IWorkbenchPage workbenchPage,
-				IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
-			processHandlerSubmissions(false);
-		}
-	};
-
-	/**
-	 * Whether the command support should process handler submissions. If it is
-	 * not processing handler submissions, then it will update the listeners,
-	 * but do no further work. This flag is used to avoid excessive updating
-	 * when the workbench is performing some large change (e.g., opening an
-	 * editor, starting up, shutting down, switching perspectives, etc.)
-	 */
-	private boolean processing = true;
-
-	/**
-	 * The workbench this class is supporting. This value should never be
+	 * The handler service for the workbench. This value is never
 	 * <code>null</code>.
 	 */
-	private final Workbench workbench;
+	private final IHandlerService handlerService;
 
 	/**
 	 * Constructs a new instance of <code>WorkbenchCommandSupport</code>
 	 * 
-	 * @param workbenchToSupport
-	 *            The workbench for which the support should be created; must
-	 *            not be <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager providing support for the command manager;
 	 *            must not be <code>null</code>.
 	 * @param commandManager
-	 *            The command manager providing support for this command
-	 *            manager; must not be <code>null</code>.
+	 *            The command manager for the workbench; must not be
+	 *            <code>null</code>.
 	 * @param contextManager
 	 *            The context manager providing support for the command manager
 	 *            and binding manager; must not be <code>null</code>.
-	 * @param commandService
-	 *            The command service for the workbench; must not be
+	 * @param handlerService
+	 *            The handler service for the workbench; must not be
 	 *            <code>null</code>.
 	 */
-	public WorkbenchCommandSupport(final Workbench workbenchToSupport,
-			final BindingManager bindingManager,
+	public WorkbenchCommandSupport(final BindingManager bindingManager,
 			final CommandManager commandManager,
 			final ContextManager contextManager,
-			final CommandService commandService) {
-		workbench = workbenchToSupport;
+			final IHandlerService handlerService) {
+		if (handlerService == null) {
+			throw new NullPointerException("The handler service cannot be null"); //$NON-NLS-1$
+		}
+
+		this.handlerService = handlerService;
+
 		commandManagerWrapper = CommandManagerFactory.getCommandManagerWrapper(
 				bindingManager, commandManager, contextManager);
+
+		// Initialize the old key formatter settings.
 		org.eclipse.ui.keys.KeyFormatterFactory
 				.setDefault(org.eclipse.ui.keys.SWTKeySupport
 						.getKeyFormatterForPlatform());
-
-		// Attach a hook to latch on to the first workbench window to open.
-		workbenchToSupport.getDisplay().addFilter(SWT.Activate,
-				activationListener);
-
-		final List submissions = new ArrayList();
-		final Map indexedHandlers = commandService.getActiveHandlers();
-		if (indexedHandlers != null) {
-			final Iterator entryItr = indexedHandlers.entrySet().iterator();
-
-			while (entryItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) entryItr.next();
-				final String commandId = (String) entry.getKey();
-				final Collection handlers = (Collection) entry.getValue();
-				final Iterator handlerItr = handlers.iterator();
-				while (handlerItr.hasNext()) {
-					final IHandler handler = (IHandler) handlerItr.next();
-					if (handler instanceof LegacyHandlerWrapper) {
-						final HandlerSubmission submission = new HandlerSubmission(
-								null, null, null, commandId,
-								((LegacyHandlerWrapper) handler)
-										.getWrappedHandler(), Priority.LOW);
-						submissions.add(submission);
-					}
-				}
-			}
-
-			if (!submissions.isEmpty()) {
-				addHandlerSubmissions(submissions);
-			}
-		}
-		// TODO Should these be removed at shutdown? Is life cycle important?
 	}
 
-	public void addHandlerSubmission(HandlerSubmission handlerSubmission) {
-		addHandlerSubmissionReal(handlerSubmission);
-		processHandlerSubmissions(true);
-	}
-
-	/**
-	 * Adds a single handler submission. This method is used by the two API
-	 * methods to actually add a single handler submission.
-	 * 
-	 * @param handlerSubmission
-	 *            The submission to be added; must not be <code>null</code>.
-	 */
-	private final void addHandlerSubmissionReal(
+	public final void addHandlerSubmission(
 			final HandlerSubmission handlerSubmission) {
-		final String commandId = handlerSubmission.getCommandId();
-		List handlerSubmissions2 = (List) handlerSubmissionsByCommandId
-				.get(commandId);
-
-		if (handlerSubmissions2 == null) {
-			handlerSubmissions2 = new ArrayList(1);
-			handlerSubmissionsByCommandId.put(commandId, handlerSubmissions2);
+		/*
+		 * Create the source priorities based on the conditions mentioned in the
+		 * submission.
+		 */
+		int sourcePriorities = 0;
+		if (handlerSubmission.getActivePartId() != null) {
+			sourcePriorities |= ISources.ACTIVE_PART;
+		}
+		if (handlerSubmission.getActiveShell() != null) {
+			sourcePriorities |= (ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW);
+		}
+		if (handlerSubmission.getActiveWorkbenchPartSite() != null) {
+			sourcePriorities |= ISources.ACTIVE_SITE;
+		}
+		if (handlerSubmission.getPriority() == Priority.LEGACY) {
+			sourcePriorities |= ISources.LEGACY_LEGACY;
+		} else if (handlerSubmission.getPriority() == Priority.LOW) {
+			sourcePriorities |= ISources.LEGACY_LOW;
+		} else if (handlerSubmission.getPriority() == Priority.MEDIUM) {
+			sourcePriorities |= ISources.LEGACY_MEDIUM;
 		}
 
-		handlerSubmissions2.add(handlerSubmission);
+		final IHandlerActivation activation = handlerService.activateHandler(
+				handlerSubmission.getCommandId(), new LegacyHandlerWrapper(
+						handlerSubmission.getHandler()),
+				new LegacyHandlerSubmissionExpression(handlerSubmission
+						.getActivePartId(), handlerSubmission.getActiveShell(),
+						handlerSubmission.getActiveWorkbenchPartSite()),
+				sourcePriorities);
+		if (activationsBySubmission == null) {
+			activationsBySubmission = new HashMap();
+		}
+		activationsBySubmission.put(handlerSubmission, activation);
 	}
 
-	public void addHandlerSubmissions(Collection handlerSubmissions) {
+	public final void addHandlerSubmissions(final Collection handlerSubmissions) {
 		final Iterator submissionItr = handlerSubmissions.iterator();
 		while (submissionItr.hasNext()) {
-			addHandlerSubmissionReal((HandlerSubmission) submissionItr.next());
+			addHandlerSubmission((HandlerSubmission) submissionItr.next());
 		}
-
-		processHandlerSubmissions(true);
 	}
 
-	/**
-	 * An accessor for the underlying command manager.
-	 * 
-	 * @return The command manager used by this support class.
-	 */
 	public ICommandManager getCommandManager() {
-		// TODO need to proxy this to prevent casts to IMutableCommandManager
 		return commandManagerWrapper;
 	}
 
-	/**
-	 * Processes incoming handler submissions, and decides which handlers should
-	 * be active. If <code>force</code> is <code>false</code>, then it will
-	 * only reconsider handlers if the state of the workbench has changed.
-	 * 
-	 * @param force
-	 *            Whether to force reprocessing of the handlers -- regardless of
-	 *            whether the workbench has changed.
-	 */
-	private void processHandlerSubmissions(boolean force) {
-		processHandlerSubmissions(force, workbench.getDisplay()
-				.getActiveShell());
-	}
-
-	/**
-	 * @param force
-	 *            Whether to force reprocessing of the handlers -- regardless of
-	 *            whether the workbench has changed.
-	 * @param newActiveShell
-	 *            The shell that is now active. This could be the same as the
-	 *            current active shell, or it could indicate that a new shell
-	 *            has become active. This value can be <code>null</code> if
-	 *            there is no active shell currently (this can happen during
-	 *            shell transitions).
-	 */
-	private void processHandlerSubmissions(boolean force,
-			final Shell newActiveShell) {
-
-		// We do not need to update the listeners until everything is done.
-		if (!processing) {
+	public final void removeHandlerSubmission(
+			final HandlerSubmission handlerSubmission) {
+		if (activationsBySubmission == null) {
 			return;
 		}
 
-		IWorkbenchPartSite newActiveWorkbenchSite = null;
-		String newActivePartId = null;
-		IWorkbenchWindow newWorkbenchWindow = workbench
-				.getActiveWorkbenchWindow();
-		boolean update = false;
-
-		// Update the active shell, and swap the listener.
-		if (activeShell != newActiveShell) {
-			activeShell = newActiveShell;
-			update = true;
-		}
-
-		if (activeWorkbenchWindow != newWorkbenchWindow) {
-			if (activeWorkbenchWindow != null) {
-				activeWorkbenchWindow.removePageListener(pageListener);
-				activeWorkbenchWindow
-						.removePerspectiveListener(perspectiveListener);
-				activeWorkbenchWindow.getPartService().removePartListener(
-						partListener);
-			}
-
-			if (newWorkbenchWindow != null) {
-				newWorkbenchWindow.addPageListener(pageListener);
-				newWorkbenchWindow.addPerspectiveListener(perspectiveListener);
-				newWorkbenchWindow.getPartService().addPartListener(
-						partListener);
-			}
-
-			activeWorkbenchWindow = newWorkbenchWindow;
-
-			update = true;
-		}
-
-		if (newWorkbenchWindow != null) {
-			IWorkbenchPage activeWorkbenchPage = newWorkbenchWindow
-					.getActivePage();
-
-			if (activeWorkbenchPage != null) {
-				IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
-						.getActivePart();
-
-				if (activeWorkbenchPart != null) {
-					newActiveWorkbenchSite = activeWorkbenchPart.getSite();
-					newActivePartId = newActiveWorkbenchSite.getId();
-					if ((activeWorkbenchSite != newActiveWorkbenchSite)
-							|| (!activePartId.equals(newActivePartId))) {
-						activeWorkbenchSite = newActiveWorkbenchSite;
-						activePartId = newActivePartId;
-						update = true;
-					}
-				} else if ((activeWorkbenchSite != null)
-						|| (activePartId != null)) {
-					activeWorkbenchSite = null;
-					activePartId = null;
-					update = true;
-				}
-			} else if ((activeWorkbenchSite != null) || (activePartId != null)) {
-				activeWorkbenchSite = null;
-				activePartId = null;
-				update = true;
-			}
-
-		} else if ((activeWorkbenchSite != null) || (activePartId != null)) {
-			activeWorkbenchSite = null;
-			activePartId = null;
-			update = true;
-		}
-
-		if (force || update) {
-			Map handlersByCommandId = new HashMap();
-			final WorkbenchContextSupport contextSupport = (WorkbenchContextSupport) workbench
-					.getContextSupport();
-			final Map contextTree = contextSupport
-					.createFilteredContextTreeFor(contextSupport
-							.getContextManager().getEnabledContextIds());
-			final boolean dialogOpen = contextTree
-					.containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG);
-
-			for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
-					.iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String commandId = (String) entry.getKey();
-				List handlerSubmissions = (List) entry.getValue();
-				Iterator submissionItr = handlerSubmissions.iterator();
-				HandlerSubmission bestHandlerSubmission = null;
-				boolean conflict = false;
-
-				while (submissionItr.hasNext()) {
-					final HandlerSubmission handlerSubmission = (HandlerSubmission) submissionItr
-							.next();
-
-					// Check if the site matches or is a wildcard.
-					final IWorkbenchSite siteToMatch = handlerSubmission
-							.getActiveWorkbenchPartSite();
-					if (siteToMatch != null
-							&& siteToMatch != newActiveWorkbenchSite)
-						continue;
-
-					// Check if the part matches or is a wildcard.
-					final String partIdToMatch = handlerSubmission
-							.getActivePartId();
-					if ((partIdToMatch != null)
-							&& (!partIdToMatch.equals(activePartId))) {
-						continue;
-					}
-
-					// Check if the shell matches or is a wilcard.
-					final Shell shellToMatch = handlerSubmission
-							.getActiveShell();
-					final Shell wbWinShell;
-					if (activeWorkbenchWindow == null) {
-						wbWinShell = null;
-					} else {
-						wbWinShell = activeWorkbenchWindow.getShell();
-					}
-					if ((shellToMatch != null) && (shellToMatch != activeShell)
-							&& ((shellToMatch != wbWinShell) || dialogOpen))
-						continue;
-
-					if (bestHandlerSubmission == null) {
-						bestHandlerSubmission = handlerSubmission;
-					} else {
-						int compareTo = Util.compareIdentity(siteToMatch,
-								bestHandlerSubmission
-										.getActiveWorkbenchPartSite());
-						final int currentMatch = compareWindows(shellToMatch,
-								activeShell);
-						final Shell bestMatchingShell = bestHandlerSubmission
-								.getActiveShell();
-						final int bestMatch = compareWindows(bestMatchingShell,
-								activeShell);
-
-						if ((bestHandlerSubmission.getHandler() instanceof HandlerProxy)
-								&& (currentMatch <= MATCH_PARTIAL)
-								&& (dialogOpen)) {
-							/*
-							 * TODO This is a workaround for the fact that there
-							 * is no API to specify the shell for handlers
-							 * contributed via XML. This would mean that these
-							 * handlers would always lose to the workbench
-							 * window fallback mechanism.
-							 * 
-							 * This workaround assumes that the handler
-							 * submitted via XML is intended to match more
-							 * closely than the fallback mechanism.
-							 * 
-							 * In the future, this XML-contributed handlers
-							 * should be allowed to specify the level at which
-							 * they are given priority: ANY, PARTIAL or EXACT.
-							 */
-							compareTo = -1;
-
-							if ((DEBUG_VERBOSE)
-									&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
-											.equals(commandId)))) {
-								System.out
-										.println("HANDLERS >>> A handler contributed via XML will win over a less than exact match: " //$NON-NLS-1$
-												+ bestHandlerSubmission
-														.getHandler());
-							}
-
-						} else if ((handlerSubmission.getHandler() instanceof HandlerProxy)
-								&& (bestMatch <= MATCH_PARTIAL) && (dialogOpen)) {
-							/*
-							 * TODO This is a workaround for the fact that there
-							 * is no API to specify the shell for handlers
-							 * contributed via XML. This would mean that these
-							 * handlers would always lose to the workbench
-							 * window fallback mechanism.
-							 * 
-							 * This workaround assumes that the handler
-							 * submitted via XML is intended to match more
-							 * closely than the fallback mechanism.
-							 * 
-							 * In the future, this XML-contributed handlers
-							 * should be allowed to specify the level at which
-							 * they are given priority: ANY, PARTIAL or EXACT.
-							 */
-							compareTo = 1;
-							if ((DEBUG_VERBOSE)
-									&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
-											.equals(commandId)))) {
-								System.out
-										.println("HANDLERS >>> A handler contributed via XML will win over a less than exact match: " //$NON-NLS-1$
-												+ handlerSubmission
-														.getHandler());
-							}
-
-						} else if ((currentMatch > bestMatch)
-								|| (compareTo == 0)) {
-
-							/*
-							 * Compare the two, to see if one is a better match.
-							 */
-							compareTo = currentMatch - bestMatch;
-
-							if (compareTo == 0)
-								compareTo = Util.compare(handlerSubmission
-										.getPriority(), bestHandlerSubmission
-										.getPriority());
-						}
-
-						if (compareTo > 0) {
-							if ((DEBUG_VERBOSE)
-									&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
-											.equals(commandId)))) {
-								System.out
-										.println("HANDLERS >>> Resolved conflict detected between "); //$NON-NLS-1$
-								System.out.println("HANDLERS >>>     win: " //$NON-NLS-1$
-										+ handlerSubmission);
-								System.out.println("HANDLERS >>>    lose: " //$NON-NLS-1$
-										+ bestHandlerSubmission);
-							}
-							conflict = false;
-							bestHandlerSubmission = handlerSubmission;
-						} else if ((compareTo == 0)
-								&& (bestHandlerSubmission.getHandler() != handlerSubmission
-										.getHandler())) {
-							if (DEBUG) {
-								System.out
-										.println("HANDLERS >>> Unresolved conflict detected for " //$NON-NLS-1$
-												+ commandId);
-							}
-							conflict = true;
-						} else if ((DEBUG_VERBOSE)
-								&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
-										.equals(commandId)))) {
-							System.out
-									.println("HANDLERS >>> Resolved conflict detected between "); //$NON-NLS-1$
-							System.out.println("HANDLERS >>>     win: " //$NON-NLS-1$
-									+ bestHandlerSubmission);
-							System.out.println("HANDLERS >>>    lose: " //$NON-NLS-1$
-									+ handlerSubmission);
-						}
-					}
-				}
-
-				if (bestHandlerSubmission != null && !conflict)
-					handlersByCommandId.put(commandId, bestHandlerSubmission
-							.getHandler());
-				else {
-					handlersByCommandId.put(commandId, null);
-				}
-			}
-
-			commandManagerWrapper.setHandlersByCommandId(handlersByCommandId);
+		final Object value = activationsBySubmission.remove(handlerSubmission);
+		if (value instanceof IHandlerActivation) {
+			final IHandlerActivation activation = (IHandlerActivation) value;
+			handlerService.deactivateHandler(activation);
 		}
 	}
 
-	public void removeHandlerSubmission(HandlerSubmission handlerSubmission) {
-		removeHandlerSubmissionReal(handlerSubmission);
-		processHandlerSubmissions(true);
-	}
-
-	/**
-	 * Removes a single handler submission. This method is used by the two API
-	 * methods to actually remove a single handler submission.
-	 * 
-	 * @param handlerSubmission
-	 *            The submission to be removed; must not be <code>null</code>.
-	 */
-	private final void removeHandlerSubmissionReal(
-			final HandlerSubmission handlerSubmission) {
-		final String commandId = handlerSubmission.getCommandId();
-		final List handlerSubmissions2 = (List) handlerSubmissionsByCommandId
-				.get(commandId);
-
-		if (handlerSubmissions2 != null) {
-			handlerSubmissions2.remove(handlerSubmission);
-
-			if (handlerSubmissions2.isEmpty()) {
-				handlerSubmissionsByCommandId.remove(commandId);
-			}
-		}
-	}
-
-	public void removeHandlerSubmissions(Collection handlerSubmissions) {
+	public final void removeHandlerSubmissions(
+			final Collection handlerSubmissions) {
 		final Iterator submissionItr = handlerSubmissions.iterator();
 		while (submissionItr.hasNext()) {
-			removeHandlerSubmissionReal((HandlerSubmission) submissionItr
-					.next());
-		}
-
-		processHandlerSubmissions(true);
-	}
-
-	/**
-	 * Sets whether the workbench's command support should process handler
-	 * submissions. The workbench should not allow the event loop to spin unless
-	 * this value is set to <code>true</code>. If the value changes from
-	 * <code>false</code> to <code>true</code>, this automatically triggers
-	 * a re-processing of the handler submissions.
-	 * 
-	 * @param processing
-	 *            Whether to process handler submissions
-	 */
-	public final void setProcessing(final boolean processing) {
-		final boolean reprocess = !this.processing && processing;
-		this.processing = processing;
-		if (reprocess) {
-			processHandlerSubmissions(true);
+			removeHandlerSubmission((HandlerSubmission) submissionItr.next());
 		}
 	}
 }

@@ -36,6 +36,8 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
+import org.eclipse.ui.internal.keys.SchemeWrapper;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 

@@ -22,7 +22,6 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -46,16 +45,12 @@ public class Bug36537Test extends UITestCase {
 	/**
 	 * Tests that there are no redundant key bindings defined in the
 	 * application.
-	 * 
-	 * @throws ComponentException
-	 *             If the binding service cannot be retrieved from the
-	 *             workbench.
 	 */
-	public void testForRedundantKeySequenceBindings() throws ComponentException {
+	public void testForRedundantKeySequenceBindings() {
 		final IWorkbenchWindow window = openTestWindow();
 		final IWorkbench workbench = window.getWorkbench();
 		final IBindingService bindingService = (IBindingService) workbench
-				.getService(IBindingService.class);
+				.getAdapter(IBindingService.class);
 		final Binding[] bindings = bindingService.getBindings();
 		final int bindingCount = bindings.length;
 		Map keySequenceBindingsByKeySequence = new HashMap();

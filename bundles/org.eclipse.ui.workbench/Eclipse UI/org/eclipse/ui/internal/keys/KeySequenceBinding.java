@@ -9,13 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.keys;
 
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeySequenceBinding implements IKeySequenceBinding {
+public final class KeySequenceBinding implements IKeySequenceBinding {
 
     /**
      * This is the identifier for the default context.  This is used wherever
@@ -40,7 +40,7 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 
     private transient String string;
 
-    KeySequenceBinding(KeySequence keySequence, int match) {
+    public KeySequenceBinding(KeySequence keySequence, int match) {
         if (keySequence == null)
             throw new NullPointerException();
 

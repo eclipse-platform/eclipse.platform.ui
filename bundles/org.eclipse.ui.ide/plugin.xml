@@ -379,7 +379,7 @@
       <page
             name="%PreferencePages.Keys"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.commands.KeysPreferencePage"
+            class="org.eclipse.ui.internal.keys.KeysPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
       <page

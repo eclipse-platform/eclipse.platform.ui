@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.commands;
 
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -47,24 +48,27 @@ public final class Priority implements Comparable {
     private final static int HASH_INITIAL = Priority.class.getName().hashCode();
 
     /**
-     * An instance representing 'legacy' priority.
-     */
-    public final static Priority LEGACY = new Priority(3);
+	 * An instance representing 'legacy' priority.
+	 */
+	public final static Priority LEGACY = new Priority(
+			ISources.LEGACY_LEGACY);
+
+	/**
+	 * An instance representing 'low' priority.
+	 */
+	public final static Priority LOW = new Priority(
+			ISources.LEGACY_LOW);
+
+	/**
+	 * An instance representing 'medium' priority.
+	 */
+	public final static Priority MEDIUM = new Priority(
+			ISources.LEGACY_MEDIUM);
 
     /**
-     * An instance representing 'low' priority.
-     */
-    public final static Priority LOW = new Priority(2);
-
-    /**
-     * An instance representing 'medium' priority.
-     */
-    public final static Priority MEDIUM = new Priority(1);
-
-    /**
-     * The generated hash code.  The hash code is only computed once (lazily).
-     * After that, requests for the hash code simply get this value.
-     */
+	 * The generated hash code. The hash code is only computed once (lazily).
+	 * After that, requests for the hash code simply get this value.
+	 */
     private transient int hashCode;
 
     /**
@@ -102,7 +106,7 @@ public final class Priority implements Comparable {
      */
     public int compareTo(Object object) {
         Priority castedObject = (Priority) object;
-        int compareTo = Util.compare(-value, -castedObject.value);
+        int compareTo = Util.compare(value, castedObject.value);
         return compareTo;
     }
 

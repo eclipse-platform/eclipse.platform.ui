@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.commands.HandlerEvent;
 import org.eclipse.ui.commands.IHandlerListener;
+import org.eclipse.ui.internal.commands.ILegacyAttributeNames;
 
 /**
  * A wrapper so that the new handler listener can work with legacy handlers.

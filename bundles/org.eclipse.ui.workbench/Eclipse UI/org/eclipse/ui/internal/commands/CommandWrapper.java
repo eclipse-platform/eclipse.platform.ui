@@ -26,6 +26,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.internal.keys.KeySequenceBinding;
 import org.eclipse.ui.keys.KeySequence;
 
 /**

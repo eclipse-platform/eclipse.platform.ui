@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.keys;
 
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.ISchemeListener;

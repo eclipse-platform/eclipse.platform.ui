@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.commands;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IExecutionListener;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.commands.IHandlerActivation;
 
 /**
  * <p>
@@ -45,13 +40,6 @@ public final class CommandService implements ICommandService {
 	private final CommandManager commandManager;
 
 	/**
-	 * Handlers registered through the extension points. This value is never
-	 * <code>null</code>, but may be empty. It is a map of command identifier (<code>String</code>)
-	 * to handlers (<code>Collection</code> of <code>IHandler</code>).
-	 */
-	private final Map handlers = new HashMap();
-
-	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command manager.
 	 * 
@@ -66,32 +54,8 @@ public final class CommandService implements ICommandService {
 		this.commandManager = commandManager;
 	}
 
-	public final IHandlerActivation activateHandler(final String commandId,
-			final IHandler handler) {
-		final Object currentValue = handlers.get(commandId);
-		if (currentValue instanceof Collection) {
-			((Collection) currentValue).add(handler);
-		} else {
-			final Collection newValue = new ArrayList(1);
-			newValue.add(handler);
-			handlers.put(commandId, newValue);
-		}
-
-		return new HandlerActivation(commandId, handler);
-	}
-
 	public final void addExecutionListener(final IExecutionListener listener) {
 		commandManager.addExecutionListener(listener);
-	}
-
-	/**
-	 * Returns the current map of handlers.
-	 * 
-	 * @return A map of command identifiers (<code>String</code>) to
-	 *         handlers (<code>Collection</code> of <code>IHandler</code>).
-	 */
-	public Map getActiveHandlers() {
-		return handlers;
 	}
 
 	public final Category getCategory(final String categoryId) {
@@ -118,8 +82,8 @@ public final class CommandService implements ICommandService {
 		return commandManager.getDefinedCommandIds();
 	}
 
-	public final void readRegistryAndPreferences() {
-		CommandPersistence.read(commandManager, this);
+	public final void readRegistry() {
+		CommandPersistence.read(commandManager);
 	}
 
 	public final void removeExecutionListener(final IExecutionListener listener) {

@@ -21,7 +21,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -46,15 +45,12 @@ public class Bug87856Test extends UITestCase {
 	 * Tests whether the workbench command support (or its dependencies) will
 	 * leak handlers when the process loop is run. Basically, we're checking to
 	 * see that removing a handler submission really works.
-	 * 
-	 * @throws ComponentException
-	 *             If the command service cannot be found.
 	 */
-	public final void testHandlerLeak() throws ComponentException {
+	public final void testHandlerLeak() {
 		final IWorkbenchCommandSupport commandSupport = fWorkbench
 				.getCommandSupport();
 		final ICommandService commandService = (ICommandService) fWorkbench
-				.getService(ICommandService.class);
+				.getAdapter(ICommandService.class);
 		final String commandId = Bug87856Test.class.getName();
 		final Command command = commandService.getCommand(commandId);
 
