@@ -31,9 +31,19 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() throws CoreException {
-		AppServer.add("updatetests", "org.eclipse.update.tests.core", "webserver");		
+		boolean result = AppServer.add("org.eclipse.update.tests.core.updatetests", "org.eclipse.update.tests.core", "webserver");		
 		appServerHost = AppServer.getHost();
 		appServerPort = AppServer.getPort();
+		
+		String text = "The webServer ";
+		text += (result)?"did":"didn't";
+		text+= " start ip:"+getWebAppServerHost()+":"+getWebAppServerPort();
+		
+		System.out.println(text);
+		if (!result) {
+			IStatus status = new Status(IStatus.ERROR,"org.eclipse.update.tests.core",IStatus.OK,"WebServer not started. Update Tests results are invalid",null);
+			throw new CoreException(status);
+		}
 	}
 
 	/**
