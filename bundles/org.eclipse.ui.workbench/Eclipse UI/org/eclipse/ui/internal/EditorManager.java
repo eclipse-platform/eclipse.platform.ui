@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -995,7 +996,7 @@ public class EditorManager {
 		// Create save block.
 		// @issue reference to workspace runnable!
 		final List finalEditors = dirtyEditors;
-		final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
+/*		final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask("", finalEditors.size()); //$NON-NLS-1$
 				Iterator enum = finalEditors.iterator();
@@ -1007,12 +1008,25 @@ public class EditorManager {
 				}
 			}
 		};
+*/
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				try {
-					IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
+//				try {
+					// @issue reference to workspace to run runnable
+/*					IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 					ResourcesPlugin.getWorkspace().run(workspaceOp, monitorWrap);
-				} catch (CoreException e) {
+*/
+//--------- This code was in the IWorkspaceRunnable above
+					monitor.beginTask("", finalEditors.size()); //$NON-NLS-1$
+					Iterator enum = finalEditors.iterator();
+					while (enum.hasNext()) {
+						IEditorPart part = (IEditorPart) enum.next();
+						part.doSave(new SubProgressMonitor(monitor, 1));
+						if (monitor.isCanceled())
+							break;
+					}
+//-----------
+/*				} catch (CoreException e) {
 					IStatus status = new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.getString("EditorManager.saveFailed"), e); //$NON-NLS-1$
 					WorkbenchPlugin.log(WorkbenchMessages.getString("EditorManager.saveFailed"), status); //$NON-NLS-1$
 					ErrorDialog.openError(
@@ -1021,6 +1035,7 @@ public class EditorManager {
 						WorkbenchMessages.format("EditorManager.saveFailedMessage", new Object[] { e.getMessage()}), //$NON-NLS-1$
 						e.getStatus());
 				}
+*/
 			}
 		};
 		
