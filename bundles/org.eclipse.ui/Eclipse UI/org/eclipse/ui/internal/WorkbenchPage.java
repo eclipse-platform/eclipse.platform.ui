@@ -1885,7 +1885,7 @@ public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 /**
  * Save the toolbar layout for the given perspective.
  */
-protected void saveToolbarLayout() {
+protected void saveToolBarLayout() {
 	Perspective persp = getActivePerspective(); 
 	if (persp == null) return;
 	IToolBarManager toolsMgr = window.getToolsManager();
@@ -1925,7 +1925,7 @@ public void saveState(IMemento memento) {
 	 	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,getActivePart().getSite().getId());
 
 	// Save the toolbar layout for the current perspective.
-	saveToolbarLayout();
+	saveToolBarLayout();
 	
 	// Save each perspective in opened order
 	Iterator enum = perspList.iterator();
@@ -2018,7 +2018,7 @@ private void setPerspective(Perspective newPersp) {
 	// Save the toolbar layout for the perspective before the
 	// active part is closed, so that any editor-related tool
 	// items are saved as part of the layout.
-	saveToolbarLayout();
+	saveToolBarLayout();
 
 	if(newPersp != null)
 		newPersp.restoreState();	
@@ -2079,7 +2079,7 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Update the Coolbar layout.  Do this after the part is activated,
 	// since the layout may contain items associated to the part.
-	setToolbarLayout();
+	setToolBarLayout();
 }
 /**
  * Sets the perspective.  
@@ -2097,7 +2097,7 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 /**
  * Restore the toolbar layout for the active perspective.
  */
-protected void setToolbarLayout() {
+protected void setToolBarLayout() {
 	Perspective persp = getActivePerspective(); 
 	if (persp == null) return;
 	IToolBarManager mgr = window.getToolsManager();

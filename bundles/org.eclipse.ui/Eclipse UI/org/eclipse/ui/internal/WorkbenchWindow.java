@@ -371,6 +371,17 @@ public boolean close() {
 private boolean isClosing() {
 	return closing || workbench.isClosing();
 }
+/**
+ * Return whether or not the toolbar layout is locked.
+ */
+protected boolean isToolBarLocked() {
+	IToolBarManager toolsMgr = getToolsManager();
+	if (toolsMgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
+		return coolBarMgr.isLayoutLocked();
+	}
+	return false;
+}
 
 /**
  * Close all of the pages.
@@ -964,6 +975,11 @@ public void restoreState(IMemento memento) {
 		getShell().setBounds(x, y, width, height);
 	}
 
+	// Recreate toolbar layout locked state. 
+	Integer locked = memento.getInteger(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+	boolean state = (locked != null) && (locked.intValue() == 1);
+	lockToolBar(state);	
+	
 	// Recreate each page in the window. 
 	IWorkbenchPage newActivePage = null;
 	IMemento [] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
@@ -1063,6 +1079,10 @@ public void saveState(IMemento memento) {
 		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, bounds.height);
 	}
 
+	// Save toolbar lock state.
+	int state = isToolBarLocked() ? 1 : 0;
+	memento.putInteger(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT, state);
+	
 	// Save each page.
 	Iterator enum = pageList.iterator();
 	while (enum.hasNext()) 
@@ -1144,7 +1164,7 @@ public void setActivePage(final IWorkbenchPage in) {
 			updateActionSets();
 			shortcutBar.update(false);
 			if (newPage.getPerspective() != null)
-				newPage.setToolbarLayout();
+				newPage.setToolBarLayout();
 		}
 	});
 }

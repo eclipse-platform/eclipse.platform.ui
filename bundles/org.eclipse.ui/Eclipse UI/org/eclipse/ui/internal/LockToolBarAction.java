@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -26,8 +27,20 @@ public class LockToolBarAction extends Action {
 		setChecked(false);
 		this.window = window;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.LOCK_TOOLBAR_ACTION);
+		// add window listener for updating checked state of this action when
+		// workbench opened
+		window.getWorkbench().addWindowListener(new org.eclipse.ui.IWindowListener() {
+			public void windowActivated(IWorkbenchWindow window){
+			}   
+			public void windowDeactivated(IWorkbenchWindow window) {
+			}   
+			public void windowClosed(IWorkbenchWindow window) {
+			}   
+			public void windowOpened(IWorkbenchWindow window) {
+    			setChecked(((WorkbenchWindow)window).isToolBarLocked());
+			}   
+		});
 	}
-	
 	/* (non-Javadoc)
 	 * Method declared on IAction.
 	 */
