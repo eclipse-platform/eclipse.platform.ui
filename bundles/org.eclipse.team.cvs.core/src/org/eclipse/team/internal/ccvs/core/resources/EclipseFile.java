@@ -52,7 +52,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 		try {
 			((IFile)resource).delete(false /*force*/, true /*keepHistory*/, null);
 		} catch(CoreException e) {
-			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_deleting_resource", resource.getFullPath().toString()), e); //$NON-NLS-1$ //$NON-NLS-2$
+			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_deleting_resource", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -64,7 +64,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
  		try {
 			return getIFile().getContents();
 		} catch (CoreException e) {
- 			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_accessing_resource", resource.getFullPath().toString()), e); //$NON-NLS-1$ //$NON-NLS-2$
+ 			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_accessing_resource", resource.getFullPath().toString(), e.getStatus().getMessage()), e); //$NON-NLS-1$ //$NON-NLS-2$
  		}
  	}
 	
@@ -94,7 +94,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 //						tempFile.move(new Path(file.getName()), true, true, null);
 					}
 				} catch(CoreException e) {
-					throw new IOException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
+					throw new IOException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage(), e.getStatus().getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
 				} finally {
 					super.close();
 				}
@@ -116,7 +116,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
 					}
 				} catch(CoreException e) {
-					throw new IOException(Policy.bind("EclipseFile_Problem_appending_to_resource", e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
+					throw new IOException(Policy.bind("EclipseFile_Problem_appending_to_resource", e.getMessage(), e.getStatus().getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
 				} finally {
 					super.close();
 				}
