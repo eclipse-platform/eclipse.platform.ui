@@ -12,7 +12,10 @@ package org.eclipse.ui.externaltools.internal.ant.antview.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -40,34 +43,63 @@ public class RunAction extends Action {
 	 * @see Action#run()
 	 */
 	public void run() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		IWorkbenchPage page = window.getActivePage();
-		try {
-			if (page != null) {
-				page.showView(IExternalToolConstants.LOG_CONSOLE_VIEW_ID);
+		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
+			AntView view= AntUtil.getAntView();
+			if (view == null) {
+				reportError("An error occurred launching Ant. Could not find ant view.", null);
+				return;
 			}
-		} catch (PartInitException e) {
-			ExternalToolsPlugin.getDefault().getLog().log(e.getStatus());
-		}
-		LogConsoleDocument.getInstance().clearOutput();
-		AntView view= AntUtil.getAntView();
-		
-		if (view == null) {
-			LogConsoleDocument.getInstance().append("An error occurred launching Ant. Could not find ant view.", LogConsoleDocument.MSG_ERR);
-		}
-		AntRunnable runnable= new AntRunnable(view);
-		try {
-			new ProgressMonitorDialog(AntUtil.getAntView().getSite().getShell()).run(true, true, runnable);
-		} catch (InvocationTargetException e) {
-			String message;
-			if (e.getTargetException() instanceof CoreException)
-				message = ((CoreException) e.getTargetException()).getLocalizedMessage();
-			else
-				message = e.getLocalizedMessage();
-			LogConsoleDocument.getInstance().append(message + "\n", LogConsoleDocument.MSG_ERR);
-		} catch (InterruptedException e) {
-			LogConsoleDocument.getInstance().append(ResourceMgr.getString("Error.UserCancel") + "\n", LogConsoleDocument.MSG_ERR);
+			AntRunnable runnable= new AntRunnable(view);
+			try {
+				new ProgressMonitorDialog(AntUtil.getAntView().getSite().getShell()).run(true, true, runnable);
+			} catch (InvocationTargetException e) {
+				String message;
+				if (e.getTargetException() instanceof CoreException)
+					message = ((CoreException) e.getTargetException()).getLocalizedMessage();
+				else
+					message = e.getLocalizedMessage();
+				reportError(message, e.getTargetException());
+			} catch (InterruptedException e) {
+			}			
+		} else {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbenchPage page = window.getActivePage();
+			try {
+				if (page != null) {
+					page.showView(IExternalToolConstants.LOG_CONSOLE_VIEW_ID);
+				}
+			} catch (PartInitException e) {
+				ExternalToolsPlugin.getDefault().getLog().log(e.getStatus());
+			}
+			LogConsoleDocument.getInstance().clearOutput();
+			AntView view= AntUtil.getAntView();
+			
+			if (view == null) {
+				LogConsoleDocument.getInstance().append("An error occurred launching Ant. Could not find ant view.", LogConsoleDocument.MSG_ERR);
+			}
+			AntRunnable runnable= new AntRunnable(view);
+			try {
+				new ProgressMonitorDialog(AntUtil.getAntView().getSite().getShell()).run(true, true, runnable);
+			} catch (InvocationTargetException e) {
+				String message;
+				if (e.getTargetException() instanceof CoreException)
+					message = ((CoreException) e.getTargetException()).getLocalizedMessage();
+				else
+					message = e.getLocalizedMessage();
+				LogConsoleDocument.getInstance().append(message + "\n", LogConsoleDocument.MSG_ERR);
+			} catch (InterruptedException e) {
+				LogConsoleDocument.getInstance().append(ResourceMgr.getString("Error.UserCancel") + "\n", LogConsoleDocument.MSG_ERR);
+			}
 		}
 	}
 
+	private void reportError(String message, Throwable throwable) {
+		IStatus status = null;
+		if (throwable instanceof CoreException) {
+			status = ((CoreException)throwable).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, throwable);
+		}
+		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), "Error", message, status);
+	}
 }
