@@ -26,6 +26,8 @@ public class TemplateVariable {
 
 	/** The type name of the variable */
 	private final String fType;
+	/** The name of the variable. */
+	private final String fName;
 	/** The length of the variable. */
 	private int fLength;
 	/** The offsets of the variable. */
@@ -59,19 +61,30 @@ public class TemplateVariable {
 	 * @param length the length of the variable
 	 */
 	public TemplateVariable(String type, String[] values, int[] offsets, int length) {
+		Assert.isNotNull(type);
 		fType= type;
+		fName= fType;
 		setValues(values);
 		setOffsets(offsets);
 		setUnambiguous(false);
 	}
 
 	/**
-	 * Returns the type name of the variable.
+	 * Returns the type of the variable.
 	 * 
-	 * @return the type name of the variable
+	 * @return the type of the variable
 	 */
 	public String getType() {
 	    return fType;
+	}	
+
+	/**
+	 * Returns the name of the variable.
+	 * 
+	 * @return the name of the variable
+	 */
+	public String getName() {
+	    return fName;
 	}	
 
 	/**
