@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import org.apache.tools.ant.BuildListener;
+import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -29,5 +30,18 @@ public class AntScriptRunner extends ToolScriptRunner {
 	 * Method declared in ToolScriptRunner.
 	 */
 	public void execute(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
+		try {
+			startMonitor(monitor, scriptContext);
+			AntRunner runner = new AntRunner();
+			runner.setArguments(scriptContext.getExpandedArguments());
+			runner.setBuildFileLocation(scriptContext.getExpandedLocation());
+			if (listener != null)
+				runner.addBuildListener(listener.getClass().getName());
+			runner.run();
+		} catch (Exception e) {
+			handleException(e);
+		} finally {
+			monitor.done();
+		}
 	}
 }
