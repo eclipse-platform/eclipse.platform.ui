@@ -127,36 +127,6 @@ public IResource findMember(IPath path);
  */
 public IResource findMember(IPath path, boolean includePhantoms);
 /**
- * Returns a handle to the file with the given name in this container.
- * <p> 
- * This is a resource handle operation; neither the container nor
- * the result need exist in the workspace.
- * The validation check on the resource name/path is not done
- * when the resource handle is constructed; rather, it is done
- * automatically as the resource is created.
- * </p>
- *
- * @param name the string name of the member file
- * @return the (handle of the) member file
- * @see #getFolder
- */
-public IFile getFile(String name);
-/**
- * Returns a handle to the folder with the given name in this container.
- * <p> 
- * This is a resource handle operation; neither the container
- * nor the result need exist in the workspace.
- * The validation check on the resource name/path is not done
- * when the resource handle is constructed; rather, it is done
- * automatically as the resource is created.
- * </p>
- *
- * @param name the string name of the member file
- * @return the (handle of the) member file
- * @see #getFile
- */
-public IFolder getFolder(String name);
-/**
  * Returns a handle to the file identified by the given path in this
  * container.
  * <p> 
