@@ -19,8 +19,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
@@ -37,6 +35,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	
 	public ExternalToolsPreferencePage() {
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
+		setDescription(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.External_tool_project_builders_migration_2")); //$NON-NLS-1$
 	}
 
 	/**
@@ -48,28 +47,13 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		composite.setLayout(layout);
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
-		
-		Group builderGroup= new Group(composite, SWT.BORDER);
-		builderGroup.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Project_builder_migration_1")); //$NON-NLS-1$
-		builderGroup.setFont(font);
-		data= new GridData(GridData.FILL_HORIZONTAL);
-		builderGroup.setLayoutData(data);
-		builderGroup.setLayout(new GridLayout());
-		
-		Label migrationLabel= new Label(builderGroup, SWT.LEFT | SWT.WRAP);
-		migrationLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		migrationLabel.setFont(font);
-		migrationLabel.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.External_tool_project_builders_migration_2")); //$NON-NLS-1$
-		
-		promptForMigrationButton= new Button(builderGroup, SWT.CHECK | SWT.LEFT);
+		composite.setFont(font);
+				
+		promptForMigrationButton= new Button(composite, SWT.CHECK | SWT.LEFT);
+		promptForMigrationButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		promptForMigrationButton.setFont(font);
 		promptForMigrationButton.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Prompt_before_migrating_3")); //$NON-NLS-1$
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
