@@ -162,7 +162,7 @@ public final IProject getProject() {
 /** 
  * Sets initialization data for this builder.
  * <p>
- * This methods is part of the <code>IExecutableExtension</code>
+ * This method is part of the <code>IExecutableExtension</code>
  * interface.
  * </p>
  * <p>
