@@ -195,9 +195,16 @@ public class DecorationScheduler {
 				monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.CalculatingTask"), 100); //$NON-NLS-1$
 				//will block if there are no resources to be decorated
 				DecorationReference reference;
-				monitor.worked(20);
+				monitor.worked(5);
+				int workCount = 5;
 				while ((reference = nextElement()) != null) {
 
+					//Count up to 90 to give the appearance of updating
+					if(workCount < 90){
+						monitor.worked(1);
+						workCount++;
+					}
+					
 					DecorationBuilder cacheResult = new DecorationBuilder();
 
 					monitor.subTask(WorkbenchMessages.format("DecorationScheduler.DecoratingSubtask", new Object[] {reference.getElement().toString()})); //$NON-NLS-1$
@@ -285,7 +292,7 @@ public class DecorationScheduler {
 						decorated();
 					}
 				}
-				monitor.worked(80);
+				monitor.worked(100 - workCount);
 				return Status.OK_STATUS;
 			}
 		};
