@@ -618,7 +618,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    
 	    // Create a parent of the Toolbar, CBanner and perspective switcher bar
 	    topBarParent = new Composite(shell, SWT.NONE);
-	    topBarParent.setLayout(new GridLayout());
+	    GridLayout gd = new GridLayout();
+	    gd.marginHeight = 0;
+	    gd.marginWidth = 0;
+	    topBarParent.setLayout(gd);
 	    
 		topBar = new CBanner(topBarParent, SWT.NONE);
 		
