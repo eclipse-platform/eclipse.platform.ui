@@ -40,7 +40,8 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 */
 	protected final HashMap factories;
 	/** 
-	 * Cache of adapter search paths; <code>null</code> if none. 
+	 * Cache of adapters for a given adaptable class. Maps String  -> Map
+	 * (adaptable class name -> (adapter class name -> factory instance))
 	 */
 	protected HashMap lookup;
 
@@ -207,7 +208,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		// Its not in the cache so we have to build the adapter table for this class.
 		table = computeClassOrder(adaptable);
 		//cache the table and do the lookup again.
-		lookup.put(adaptable, table);
+		lookup.put(adaptable.getName(), table);
 		return (IAdapterFactory) table.get(adapterName);
 	}
 
