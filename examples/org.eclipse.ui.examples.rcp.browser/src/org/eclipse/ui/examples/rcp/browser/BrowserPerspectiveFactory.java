@@ -23,7 +23,7 @@ public class BrowserPerspectiveFactory implements IPerspectiveFactory {
 	 * of the perspective to have a single Browser view and no editor area.
 	 */
 	public void createInitialLayout(IPageLayout layout) {
-		layout.addView(BrowserApp.PLUGIN_ID + ".browserView", IPageLayout.TOP, 1.0f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
+		layout.addStandaloneView(BrowserApp.PLUGIN_ID + ".browserView", true, IPageLayout.RIGHT, .5f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
 		layout.setEditorAreaVisible(false);
 	}
 
