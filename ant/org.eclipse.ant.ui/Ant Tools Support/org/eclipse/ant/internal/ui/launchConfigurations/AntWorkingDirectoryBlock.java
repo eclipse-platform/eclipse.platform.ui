@@ -92,9 +92,7 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			path = path.makeRelative();
 			wd = path.toString();
 		} 
-		if (isSameAsDefault(wd)) {
-			wd= null;
-		}
+		
 		return wd;
 	}
 
