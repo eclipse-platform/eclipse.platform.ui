@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +45,9 @@ import org.eclipse.core.filebuffers.IFileBufferManager;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -68,7 +72,30 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  */
 public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
 	
+	/**
+	 * Opertion created by the document provider and to be executed by the providers runnable context.
+	 */
+	protected static abstract class DocumentProviderOperation implements IRunnableWithProgress {
 		
+		/**
+		 * The actual functionality of this operation.
+		 * 
+		 * @throws CoreException
+		 */
+		protected abstract void execute(IProgressMonitor monitor) throws CoreException;
+		
+		/*
+		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			try {
+				execute(monitor);
+			} catch (CoreException x) {
+				throw new InvocationTargetException(x);
+			}
+		}
+	}
+	
 	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider  {
 		
 		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.INFO, TextEditorMessages.getString("NullProvider.error"), null); //$NON-NLS-1$
@@ -287,6 +314,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	private final IFileBufferListener fFileBufferListener= new FileBufferListener();
 	/** The progress monitor */
 	private IProgressMonitor fProgressMonitor;
+	/** The operation runner */
+	private WorkspaceOperationRunner fOperationRunner;
 	
 	
 	public TextFileDocumentProvider()  {
@@ -322,6 +351,42 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		if (fParentProvider == null)
 			fParentProvider= new StorageDocumentProvider();
 		return fParentProvider;
+	}
+	
+	/**
+	 * Returns the runnable context for this document provider.
+	 * 
+	 * @return the runnable context for this document provider
+	 */
+	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
+		if (fOperationRunner == null)
+			fOperationRunner = new WorkspaceOperationRunner();
+		fOperationRunner.setProgressMonitor(monitor);
+		return fOperationRunner;
+	}
+	
+	/**
+	 * Executes the given operation in the providers runnable context.
+	 * 
+	 * @param operation the operation to be executes
+	 * @param monitor the progress monitor
+	 * @exception CoreException the operation's core exception
+	 */
+	protected void executeOperation(DocumentProviderOperation operation, IProgressMonitor monitor) throws CoreException {
+		try {
+			IRunnableContext runner= getOperationRunner(monitor);
+			if (runner != null)
+				runner.run(false, false, operation);
+			else
+				operation.run(monitor);
+		} catch (InvocationTargetException x) {
+			Throwable e= x.getTargetException();
+			if (e instanceof CoreException)
+				throw (CoreException) e;
+			throw new CoreException(new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e));
+		} catch (InterruptedException x) {
+			throw new CoreException(new Status(IStatus.CANCEL, EditorsPlugin.getPluginId(), IStatus.OK, x.getMessage(), x));
+		}
 	}
 
 	/*
@@ -488,40 +553,84 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 * @see org.eclipse.ui.texteditor.IDocumentProvider#resetDocument(java.lang.Object)
 	 */
 	public void resetDocument(Object element) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)
-			info.fTextFileBuffer.revert(getProgressMonitor());
-		else
-			getParentProvider().resetDocument(element);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#saveDocument(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
-	 */
-	public void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
-			info.fTextFileBuffer.commit(monitor, overwrite);
-			if (info.fModel instanceof AbstractMarkerAnnotationModel) {
-				AbstractMarkerAnnotationModel model= (AbstractMarkerAnnotationModel) info.fModel;
-				model.updateMarkers(info.fTextFileBuffer.getDocument());
-			}
-		} else if (element instanceof IFileEditorInput) {
-			try {
-				monitor.beginTask("Saving", 2000);
-				InputStream stream= new ByteArrayInputStream(document.get().getBytes(getDefaultEncoding()));
-				IFile file= ((IFileEditorInput) element).getFile();
-				ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
-				generator.generateContainer(new SubProgressMonitor(monitor, 1000));
-				file.create(stream, false, new SubProgressMonitor(monitor, 1000));
-			} catch (UnsupportedEncodingException x) {
-				IStatus s= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.OK, x.getMessage(), x);
-				throw new CoreException(s);
-			} finally {
-				monitor.done();
-			}
-		} else
+			DocumentProviderOperation operation= new DocumentProviderOperation() {
+				protected void execute(IProgressMonitor monitor) throws CoreException {
+					info.fTextFileBuffer.revert(monitor);
+				}
+			};
+			executeOperation(operation, getProgressMonitor());
+		} else {
+			getParentProvider().resetDocument(element);
+		}
+	}
+	
+	/*
+	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
+	 */
+	public final void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
+		
+		if (element == null)
+			return;
+		
+		DocumentProviderOperation operation= createSaveOperation(element, document, overwrite);
+		if (operation != null)
+			executeOperation(operation, monitor);
+		else
 			getParentProvider().saveDocument(monitor, element, document, overwrite);
+	}
+	
+	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document, final boolean overwrite) throws CoreException {
+		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		if (info != null) {
+			
+			if (info.fTextFileBuffer.getDocument() != document) {
+				Status status= new Status(IStatus.WARNING, EditorsPlugin.getPluginId(), IStatus.ERROR, "not the same document", null); //$NON-NLS-1$
+				throw new CoreException(status);				
+			}
+			
+			return new DocumentProviderOperation() {
+				public void execute(IProgressMonitor monitor) throws CoreException {
+					commitFileBuffer(monitor, info, overwrite);					
+				}
+			};
+			
+		} else if (element instanceof IFileEditorInput) {
+			
+			final IFile file= ((IFileEditorInput) element).getFile();
+			return new DocumentProviderOperation() {
+				public void execute(IProgressMonitor monitor) throws CoreException {
+					createFileFromDocument(monitor, file, document);
+				}
+			};
+		}
+		
+		return null;
+	}
+	
+	protected void commitFileBuffer(IProgressMonitor monitor, FileInfo info, boolean overwrite) throws CoreException {
+		Assert.isNotNull(info);
+		info.fTextFileBuffer.commit(monitor, overwrite);
+		if (info.fModel instanceof AbstractMarkerAnnotationModel) {
+			AbstractMarkerAnnotationModel model= (AbstractMarkerAnnotationModel) info.fModel;
+			model.updateMarkers(info.fTextFileBuffer.getDocument());
+		}		
+	}
+	
+	protected void createFileFromDocument(IProgressMonitor monitor, IFile file, IDocument document) throws CoreException {
+		try {
+			monitor.beginTask("Saving", 2000);
+			InputStream stream= new ByteArrayInputStream(document.get().getBytes(getDefaultEncoding()));
+			ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
+			generator.generateContainer(new SubProgressMonitor(monitor, 1000));
+			file.create(stream, false, new SubProgressMonitor(monitor, 1000));
+		} catch (UnsupportedEncodingException x) {
+			IStatus s= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.OK, x.getMessage(), x);
+			throw new CoreException(s);
+		} finally {
+			monitor.done();
+		}
 	}
 	
 	/*
@@ -646,11 +755,16 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#validateState(java.lang.Object, java.lang.Object)
 	 */
-	public void validateState(Object element, Object computationContext) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)
-			info.fTextFileBuffer.validateState(getProgressMonitor(), computationContext);
-		else
+	public void validateState(Object element, final Object computationContext) throws CoreException {
+		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		if (info != null) {
+			DocumentProviderOperation operation= new DocumentProviderOperation() {
+				protected void execute(IProgressMonitor monitor) throws CoreException {
+					info.fTextFileBuffer.validateState(monitor, computationContext);
+				}
+			};
+			executeOperation(operation, getProgressMonitor());
+		} else
 			((IDocumentProviderExtension) getParentProvider()).validateState(element, computationContext);
 	}
 
@@ -703,11 +817,17 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(java.lang.Object)
 	 */
 	public void synchronize(Object element) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)
-			info.fTextFileBuffer.revert(getProgressMonitor());
-		else
+		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		if (info != null) {
+			DocumentProviderOperation operation= new DocumentProviderOperation() {
+				protected void execute(IProgressMonitor monitor) throws CoreException {
+					info.fTextFileBuffer.revert(monitor);
+				}
+			};
+			executeOperation(operation, getProgressMonitor());
+		} else {
 			((IDocumentProviderExtension) getParentProvider()).synchronize(element);
+		}
 	}
 
 	/*
