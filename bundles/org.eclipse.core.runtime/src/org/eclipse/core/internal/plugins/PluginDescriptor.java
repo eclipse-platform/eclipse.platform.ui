@@ -120,7 +120,7 @@ public Object createExecutableExtension(String className, Object initData, IConf
 	Class classInstance = null;
 	try {
 		classInstance = getPluginClassLoader(true).loadClass(className);
-	} catch (ClassNotFoundException e1) {
+	} catch (Exception e1) {
 		throwException(Policy.bind("plugin.loadClassError", getId(), className), e1); //$NON-NLS-1$
 	}
 
