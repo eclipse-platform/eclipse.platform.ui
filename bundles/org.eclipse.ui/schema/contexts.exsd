@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="iconcontexts" name="Contexts"/>
+         <meta.schema plugin="org.eclipse.ui" id="contexts" name="Contexts"/>
       </appInfo>
       <documentation>
          &lt;p&gt;
@@ -73,31 +73,7 @@ The &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point is used to 
          <attribute name="parentId" type="string">
             <annotation>
                <documentation>
-                  The unique identifier of the parent of this context. This is an experimental attribute only, and will likely be removed for 3.0.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="contextContextBinding">
-      <annotation>
-         <documentation>
-            This element allows one to bind contexts to contexts. The parent-child relationship can be interpreted as &apos;parent requires child&apos;.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="childContextId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique identifier of the child context to bind.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parentContextId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique identifier of the parent context to bind.
+                  The unique identifier of the parent of this context.
                </documentation>
             </annotation>
          </attribute>
