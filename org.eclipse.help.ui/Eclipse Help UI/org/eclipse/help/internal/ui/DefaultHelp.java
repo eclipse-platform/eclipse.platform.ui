@@ -252,9 +252,6 @@ public class DefaultHelp implements IHelp {
 			return null;
 		} else {
 			try {
-				// workaround for eclipse bug when showing help in an inactive page
-				if (helpPage != workbenchWindow.getActivePage())
-					workbenchWindow.setActivePage(helpPage);
 				EmbeddedHelpView aEmbeddedHelpView =
 					(EmbeddedHelpView) helpPage.showView(EmbeddedHelpView.ID);
 				// check to see if the view was created successfully, with a valid Infoset

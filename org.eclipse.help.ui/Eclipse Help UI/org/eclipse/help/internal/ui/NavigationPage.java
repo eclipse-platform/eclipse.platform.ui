@@ -24,7 +24,7 @@ public abstract class NavigationPage implements ISelectionProvider {
 		tabItem = new CTabItem(workbook.getTabFolder(), SWT.NONE);
 		tabItem.setData(this);
 		tabItem.setText(label);
-		//tabItem.setToolTipText(label);
+		tabItem.setToolTipText(label);
 	}
 	public void activate() {
 		if (tabItem.getControl() == null)
