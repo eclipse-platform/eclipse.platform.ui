@@ -12,14 +12,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -33,15 +36,15 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.printing.PrintDialog;
+import org.eclipse.swt.printing.Printer;
+import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
-
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Shell;
+import org.omg.CORBA.INTERNAL;
 
 
 
@@ -1360,7 +1363,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 						newOffset= startPixel;
 				}
 				
-				fTextWidget.setHorizontalIndex(newOffset / getIncrementInPixels());
+				fTextWidget.setHorizontalIndex(newOffset / getAverageCharWidth());
 				
 			}
 		} catch (BadLocationException e) {
@@ -1368,14 +1371,25 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		}
 	}
 	
-	private int getWidthInPixels(String text) {
+	/**
+	 * Returns the width of the text when being drawed into this viewer's widget.
+	 * 
+	 * @param the string to messure
+	 * @return the width of the presentation of the given string
+	 */
+	final protected int getWidthInPixels(String text) {
 		GC gc= new GC(fTextWidget);
 		Point extent= gc.textExtent(text);
 		gc.dispose();
 		return extent.x;
 	}
 	
-	private int getIncrementInPixels() {
+	/**
+	 * Returns the average character width of this viewer's widget.
+	 * 
+	 * @return the average character width of this viewer's widget
+	 */
+	final protected int getAverageCharWidth() {
 		GC gc= new GC(fTextWidget);
 		int increment= gc.getFontMetrics().getAverageCharWidth();
 		gc.dispose();
@@ -1671,6 +1685,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return fUndoManager != null && fUndoManager.undoable();
 			case REDO:
 				return fUndoManager != null && fUndoManager.redoable();
+			case PRINT:
+				return isPrintable();
 		}
 		
 		return false;
@@ -1729,6 +1745,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				break;
 			case STRIP_PREFIX:
 				shift(true, false);
+				break;
+			case PRINT:
+				print();
 				break;
 		}
 	}
@@ -1957,7 +1976,42 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		}
 	}
 	
+	/**
+	 * Returns whether the shown text can be printed.
+	 *
+	 * @return the viewer's printable mode
+	 */
+	protected boolean isPrintable() {
+		return true;
+	}
 	
+	/**
+	 * This implementation brings up a print dialog, then 
+	 * calls printContents(Printer), which performs the actual print.
+	 *
+	 * Subclasses may override.
+	 */
+	protected void print() {
+		
+		final PrintDialog dialog= new PrintDialog(fTextWidget.getShell(), SWT.NULL);
+		final PrinterData data= dialog.open();
+		
+		if (data != null) {
+			
+			final Printer printer= new Printer(data);
+			final Runnable styledTextPrinter= fTextWidget.print(printer);
+	
+			Thread printingThread= new Thread("Printing") { //$NON-NLS-1$
+				public void run() {
+					styledTextPrinter.run();
+					printer.dispose();
+				}
+			};
+			printingThread.start();
+		}
+    }
+	
+		
 	//------ find support
 	
 	/**

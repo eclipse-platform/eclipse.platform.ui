@@ -32,6 +32,10 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String GROUP_EDIT= "group.edit"; //$NON-NLS-1$
 	/** 
+	 * Context menu group for print related actions. 
+	 */
+	static final String GROUP_PRINT= "group.print"; //$NON-NLS-1$
+	/** 
 	 * Context menu group for find/replace related actions. 
 	 */
 	static final String GROUP_FIND= "group.find"; //$NON-NLS-1$

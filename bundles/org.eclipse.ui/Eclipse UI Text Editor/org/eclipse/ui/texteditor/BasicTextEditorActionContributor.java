@@ -39,7 +39,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.DELETE,
 		ITextEditorActionConstants.SELECT_ALL,
 		ITextEditorActionConstants.FIND,
-		ITextEditorActionConstants.BOOKMARK
+		ITextEditorActionConstants.BOOKMARK,
+		ITextEditorActionConstants.PRINT		
 	};
 	
 	/** The active editor part */

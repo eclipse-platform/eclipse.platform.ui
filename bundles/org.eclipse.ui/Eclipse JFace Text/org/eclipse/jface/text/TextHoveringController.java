@@ -209,26 +209,45 @@ class TextHoveringController extends MouseTrackAdapter {
 	 * @return the graphical extend of the given region
 	 */
 	private Rectangle computeCoveredArea(IRegion region) {
-		
-		// The computed area is too big/small - should be three rectangles and should consider line breaks
-		
-		int offset= fTextViewer.getVisibleRegionOffset();
-		
+				
 		StyledText styledText= fTextViewer.getTextWidget();
-		Point p1= styledText.getLocationAtOffset(region.getOffset() - offset);
-		Point p2= styledText.getLocationAtOffset(region.getOffset() - offset + region.getLength());
-		p2.y += styledText.getLineHeight();
 		
-		int x= Math.min(p1.x, p2.x);
-		int y= p1.y;
-		int width= Math.abs(p1.x - p2.x);
-		int height= p2.y - p1.y;
+		int start= region.getOffset() - fTextViewer.getVisibleRegionOffset();
+		int end= start + region.getLength();
 		
-		return new Rectangle(x, y, width, height);
+		Point upperLeft= styledText.getLocationAtOffset(start);
+		Point lowerRight= new Point(upperLeft.x, upperLeft.y);
+		
+		for (int i= start +1; i < end; i++) {
+			
+			Point p= styledText.getLocationAtOffset(i);
+			
+			if (upperLeft.x > p.x)
+				upperLeft.x= p.x;
+				
+			if (upperLeft.y > p.y)
+				upperLeft.y= p.y;
+				
+			if (lowerRight.x  < p.x)
+				lowerRight.x= p.x;
+				
+			if (lowerRight.y < p.y)
+				lowerRight.y= p.y;
+		}
+
+		lowerRight.x += fTextViewer.getAverageCharWidth();
+		lowerRight.y += styledText.getLineHeight();
+		
+		int width= lowerRight.x - upperLeft.x;
+		int height= lowerRight.y - upperLeft.y;
+		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
 	}
 	
 	/**
 	 * Computes the document offset underlying the given text widget coordinates.
+	 * This method uses a linear search as it cannot make any assumption about
+	 * how the document is actually presented in the widget. (Covers cases such
+	 * as bidi text.)
 	 *
 	 * @param x the x coordinate inside the text widget
 	 * @param y the y coordinate inside the text widget
@@ -253,20 +272,22 @@ class TextHoveringController extends MouseTrackAdapter {
 			
 			IRegion lineInfo= document.getLineInformation(line);
 			int low= lineInfo.getOffset();
-			int high= low + lineInfo.getLength() - 1;
+			int high= low + lineInfo.getLength();
 			
-			while (high > low) {
-				int offset= (low + high) / 2;
-				int lookup= styledText.getLocationAtOffset(offset).x;
-				if (lookup > x)
-					high= offset - 1;
-				else if (lookup < x)
-					low= offset + 1;
-				else
-					low= high= offset;
+			int lookup= styledText.getLocationAtOffset(low).x;
+			int guess= low;
+			int guessDelta= Math.abs(lookup - x);
+			
+			for (int i= low + 1; i < high; i++) {
+				lookup= styledText.getLocationAtOffset(i).x;
+				int delta= Math.abs(lookup - x);
+				if (delta < guessDelta) {
+					guess= i;
+					guessDelta= delta;
+				}
 			}
 			
-			return high + fTextViewer.getVisibleRegionOffset();
+			return guess + fTextViewer.getVisibleRegionOffset();
 		
 		} catch (BadLocationException e) {
 		}
