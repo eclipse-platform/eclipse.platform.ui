@@ -129,6 +129,16 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			String name = DebugUIPlugin.getModelPresentation().getText(launch);
 			switchFailed(e, name);
 		}
+		
+		// don't switch if a private config
+		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+		if (configuration != null) {
+			if (!LaunchConfigurationManager.isVisible(configuration)) {
+				perspectiveId = null;
+			}
+		}
+		
+		// switch
 		if (perspectiveId != null) {
 			switchToPerspective(perspectiveId);
 		}
