@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
