@@ -82,9 +82,9 @@ abstract public class AbstractMemoryAction extends Action
 			
 			if (view instanceof IMemoryView)
 			{
-				IMemoryViewTab topTap = ((IMemoryView)view).getTopMemoryTab();
+				IMemoryViewTab topTab = ((IMemoryView)view).getTopMemoryTab();
 				
-				return topTap;
+				return topTab;
 			}
 			return null;
 		}
