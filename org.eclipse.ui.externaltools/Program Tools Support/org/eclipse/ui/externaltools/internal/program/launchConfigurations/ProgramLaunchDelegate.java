@@ -10,6 +10,8 @@ Contributors:
 **********************************************************************/
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -92,8 +94,19 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 				
 		Process p = DebugPlugin.exec(cmdLine, workingDir);
 		IProcess process = null;
+		
+		// add process type to process attributes
+		Map processAttributes = new HashMap();
+		String programName = location.lastSegment();
+		String extension = location.getFileExtension();
+		if (extension != null) {
+			programName = programName.substring(0, programName.length() - (extension.length() + 1));
+		}
+		programName = programName.toLowerCase();
+		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName);
+		
 		if (p != null) {
-			process = DebugPlugin.newProcess(launch, p, location.toOSString());
+			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 		
