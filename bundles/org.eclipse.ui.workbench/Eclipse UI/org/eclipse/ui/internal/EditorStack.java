@@ -79,6 +79,8 @@ public class EditorStack extends PartStack {
 	 * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
 	 */
 	public boolean supportsState(int state) {
+	    if (page.isFixedLayout())
+	        return false;
 		return state == IStackPresentationSite.STATE_MAXIMIZED || state == IStackPresentationSite.STATE_RESTORED;
 	}
 
