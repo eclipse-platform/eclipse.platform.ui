@@ -35,7 +35,6 @@ public class AntRunner implements IPlatformRunnable {
 	protected String[] arguments;
 	protected String[] propertyFiles;
 	protected URL[] customClasspath;
-	protected boolean reuseClassLoader= true;
 
 	/**
 	 * Sets the build file location on the file system.
@@ -189,7 +188,7 @@ public class AntRunner implements IPlatformRunnable {
 		Class classInternalAntRunner= null;
 		Object runner= null;
 		try {
-			ClassLoader loader = AntCorePlugin.getPlugin().getClassLoader();
+			ClassLoader loader = AntCorePlugin.getPlugin().getNewClassLoader();
 			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			runner = classInternalAntRunner.newInstance();
 			// set build file
@@ -415,11 +414,7 @@ public class AntRunner implements IPlatformRunnable {
 	
 	private ClassLoader getClassLoader() {
 		if (customClasspath == null) {
-			if (reuseClassLoader) {
-				return AntCorePlugin.getPlugin().getClassLoader();
-			} else {
-				return AntCorePlugin.getPlugin().getNewClassLoader();
-			}
+			return AntCorePlugin.getPlugin().getNewClassLoader();
 		} else {
 			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
 			List fullClasspath= new ArrayList();
@@ -457,12 +452,5 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	public void setCustomClasspath(URL[] customClasspath) {
 		this.customClasspath = customClasspath;
-	}
-
-	/**
-	 * Sets whether or not to reuse the cached classloader for this build
-	 */
-	public void setReuseClassLoader(boolean reuseClassLoader) {
-		this.reuseClassLoader = reuseClassLoader;
 	}
 }

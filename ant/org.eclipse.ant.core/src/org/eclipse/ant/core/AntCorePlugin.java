@@ -12,14 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.internal.core.AntClassLoader;
-import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in.
  */
-public class AntCorePlugin extends Plugin implements Preferences.IPropertyChangeListener {
+public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -35,10 +33,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	/**
 	 * The preferences class for this plugin.	 */
 	private AntCorePreferences preferences;
-	
-	/**
-	 * The cached class loader to use when executing Ant builds	 */
-	private ClassLoader classLoader;
 
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
@@ -127,7 +121,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
-		getPluginPreferences().removePropertyChangeListener(this);
 		if (preferences == null) {
 			return;
 		}
@@ -170,17 +163,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	}
 	
 	/**
-	 * Returns the cached class loader to use when executing Ant builds.
-	 * 	 * @return the cached class loader	 */
-	protected ClassLoader getClassLoader() {
-		if (classLoader == null) {
-			classLoader= getNewClassLoader();
-			getPluginPreferences().addPropertyChangeListener(this);
-		}
-		return classLoader;
-	}
-	
-	/**
 	 * Returns a new class loader to use when executing Ant builds.
 	 * 
 	 * @return the new class loader
@@ -190,17 +172,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 		URL[] urls = preferences.getURLs();
 		ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
 		return new AntClassLoader(urls, pluginLoaders);
-	}
-	
-	/**
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_URLS)) {
-			classLoader= null;
-		} else if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_ANT_URLS)) {
-			classLoader= null;
-		}
 	}
 	
 	/**
