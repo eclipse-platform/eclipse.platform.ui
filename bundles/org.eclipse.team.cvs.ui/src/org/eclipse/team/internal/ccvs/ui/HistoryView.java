@@ -354,7 +354,7 @@ public class HistoryView extends ViewPart {
 				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
 				final Object[][] result = new Object[1][];
 				try {
-					new ProgressMonitorDialog(getViewer().getTable().getShell()).run(true, false, new IRunnableWithProgress() {
+					new ProgressMonitorDialog(getViewer().getTable().getShell()).run(true, true, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
 								entries = remoteFile.getLogEntries(monitor);
