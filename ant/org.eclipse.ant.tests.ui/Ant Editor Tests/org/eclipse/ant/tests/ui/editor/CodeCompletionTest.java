@@ -154,7 +154,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	documentText +="</target>\n";
     	documentText += "<target name=\"test2\"></target>\n";
     	documentText += "<target name=\"test3\"></target>\n";
-    	processor.setLineNumber(6);
+    	processor.setLineNumber(5);
     	processor.setColumnNumber(31);
     	ICompletionProposal[] proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 202), "", "depends");
     	assertTrue(proposals.length == 3);
@@ -166,12 +166,10 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	documentText += "<property name=\"prop2\" value=\"val2\" />\n";
     	documentText += "<property name=\"alf\" value=\"horst\" />\n";
     	documentText += "<target name=\"pretest\"></target>\n";
-    	documentText += "<target name=\"test\" depends=\"pretest ,\">\n";
-    	documentText +="<echo>depends</echo>\n";
-    	documentText +="</target>\n";
+    	documentText += "<target name=\"test\" depends=\"pretest ,\"></target>\n";
     	documentText += "<target name=\"test2\"></target>\n";
     	documentText += "<target name=\"test3\"></target>\n";
-    	processor.setLineNumber(6);
+    	processor.setLineNumber(5);
     	processor.setColumnNumber(41);
     	proposals = processor.getTargetAttributeValueProposals(documentText, documentText.substring(0, 210), "te", "depends");
     	assertTrue(proposals.length == 2);
