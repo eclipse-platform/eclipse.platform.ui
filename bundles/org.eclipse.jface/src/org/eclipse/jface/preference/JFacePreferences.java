@@ -7,7 +7,7 @@ package org.eclipse.jface.preference;
 /**
  * 
  * JFacePreferences is a class used to administer the preferences
- * used by JFace pbjects.
+ * used by JFace objects.
  */
 public final class JFacePreferences {
 	
