@@ -481,13 +481,19 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 
-					if (!cvsResource.isManaged()) {
-						if (cvsResource.isIgnored()) {
-							return false;
-						} else {
-							// new resource, show as dirty
-							throw DECORATOR_EXCEPTION;
+					try {
+						if (!cvsResource.isManaged()) {
+							if (cvsResource.isIgnored()) {
+								return false;
+							} else {
+								// new resource, show as dirty
+								throw DECORATOR_EXCEPTION;
+							}
 						}
+					} catch (CVSException e) {
+						// isManaged threw an exception
+						CVSUIPlugin.log(e.getStatus());
+						return false;
 					}
 					if (!cvsResource.isFolder()) {
 						if(isDirty((ICVSFile) cvsResource)) {

@@ -18,13 +18,16 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -352,4 +355,37 @@ abstract public class CVSAction extends TeamAction {
 		} 
 		return okToContinue[0];
 	}
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(final IAction action, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			this.selection = (IStructuredSelection) selection;
+			if (action != null) {
+				try {
+					CVSUIPlugin.runWithRefresh(getShell(), getSelectedResources(), new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								action.setEnabled(CVSAction.this.isEnabled());
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					}, null);
+				} catch (InvocationTargetException e) {
+					action.setEnabled(false);
+					// We should not open a dialog when determining menu enablements so log it instead
+					CVSUIPlugin.log(CVSUIPlugin.asTeamException(e).getStatus());
+				} catch (InterruptedException e) {
+					action.setEnabled(false);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @see TeamAction#isEnabled()
+	 */
+	protected abstract boolean isEnabled() throws TeamException;
+
 }

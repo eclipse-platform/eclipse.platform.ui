@@ -225,7 +225,7 @@ public class Session {
 	/**
 	 * Answer the currently open session
 	 */
-	protected static Session getOpenSession(ICVSResource resource) {
+	protected static Session getOpenSession(ICVSResource resource) throws CVSException {
 		ICVSFolder root;
 		if (resource.isFolder()) {
 			root = (ICVSFolder)resource;
@@ -490,7 +490,7 @@ public class Session {
 		return location;
 	}
 
-	private IContainer getIResourceFor(ICVSFolder cvsFolder) throws CoreException {
+	private IContainer getIResourceFor(ICVSFolder cvsFolder) throws CoreException, CVSException {
 		if (cvsFolder.isManaged()) {
 			return getIResourceFor(cvsFolder.getParent()).getFolder(new Path(cvsFolder.getName()));
 		} else {

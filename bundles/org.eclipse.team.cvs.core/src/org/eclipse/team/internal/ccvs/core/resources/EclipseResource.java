@@ -109,7 +109,7 @@ abstract class EclipseResource implements ICVSResource {
 	/*
 	 * @see ICVSResource#isIgnored()
 	 */
-	public boolean isIgnored() {
+	public boolean isIgnored() throws CVSException {
 		// a managed resource is never ignored
 		if(isManaged() || resource.getType()==IResource.ROOT || resource.getType()==IResource.PROJECT) {
 			return false;
@@ -173,12 +173,8 @@ abstract class EclipseResource implements ICVSResource {
 	/*
 	 * @see ICVSResource#isManaged()
 	 */
-	public boolean isManaged() {
-		try {
-			return getSyncInfo() != null;
-		} catch(CVSException e) {
-			return false;
-		}
+	public boolean isManaged() throws CVSException {
+		return getSyncInfo() != null;
 	}
 			
 	/**

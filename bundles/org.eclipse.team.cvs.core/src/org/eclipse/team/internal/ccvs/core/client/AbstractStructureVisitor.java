@@ -65,7 +65,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	 * is not considered orphaned even if it is not managed by its
 	 * parent.
 	 */
-	protected boolean isOrphanedSubtree(ICVSFolder mFolder) {
+	protected boolean isOrphanedSubtree(ICVSFolder mFolder) throws CVSException {
 		return mFolder.isCVSFolder() && ! mFolder.isManaged() && ! mFolder.equals(session.getLocalRoot()) && mFolder.getParent().isCVSFolder();
 	}
 	

@@ -20,6 +20,7 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
@@ -79,7 +80,12 @@ public class IgnoreAction extends Action {
 		if (node.getKind() != (ITeamNode.OUTGOING | IRemoteSyncElement.ADDITION)) return false;
 		IResource resource = node.getResource();
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		return !cvsResource.isManaged();
+		try {
+			return !cvsResource.isManaged();
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return false;
+		}
 	}
 	public void update() {
 		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();

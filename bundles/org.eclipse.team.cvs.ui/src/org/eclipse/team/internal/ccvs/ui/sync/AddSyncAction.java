@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -106,7 +107,12 @@ public class AddSyncAction extends MergeAction {
 	 * Enabled for folders and files that aren't added.
 	 */
 	protected boolean isEnabled(ITeamNode node) {
-		return new CVSSyncSet(new StructuredSelection(node)).hasNonAddedChanges();
+		try {
+			return new CVSSyncSet(new StructuredSelection(node)).hasNonAddedChanges();
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return false;
+		}
 	}	
 	
 	/**

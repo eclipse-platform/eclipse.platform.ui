@@ -125,7 +125,7 @@ public interface ICVSFolder extends ICVSResource {
 	 * folder is deleted.
 	 * Creating the folder will result in a folder that is mapped to a remote folder.
 	 */
-	public boolean isCVSFolder();
+	public boolean isCVSFolder() throws CVSException;
 	
 	/**
 	 * Runs the given action as an atomic cvs local workspace operation 

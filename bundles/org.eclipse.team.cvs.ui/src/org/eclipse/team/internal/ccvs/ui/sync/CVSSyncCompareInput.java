@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -271,6 +272,9 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	/**
 	 * Wrap the input preparation in a CVS session run so open sessions will be reused and
 	 * file contents under the same remote root folder will be fetched using the same connection.
+	 * 
+	 * Also run with refresh prompting if one of the resources is out of sync with the local
+	 * file system.
 	 */
 	public Object prepareInput(IProgressMonitor pm) throws InterruptedException, InvocationTargetException {
 		final Object[] result = new Object[] { null };
@@ -279,7 +283,11 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 			Session.run(null, null, false, new ICVSRunnable() {
 				public void run(IProgressMonitor monitor) throws CVSException {
 					try {
-						result[0] = CVSSyncCompareInput.super.prepareInput(monitor);
+						CVSUIPlugin.runWithRefresh(getShell(), resources, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								result[0] = CVSSyncCompareInput.super.prepareInput(monitor);
+							}
+						}, monitor);
 					} catch (InterruptedException e) {
 						exception[0] = e;
 					} catch (InvocationTargetException e) {

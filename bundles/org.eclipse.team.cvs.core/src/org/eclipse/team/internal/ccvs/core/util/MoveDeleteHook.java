@@ -160,8 +160,8 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		IProgressMonitor monitor) {
 		
 		final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
-		if (cvsFolder.isManaged()) {
-			try {
+		try {
+			if (cvsFolder.isManaged()) {
 				cvsFolder.run(new ICVSRunnable() {
 					public void run(IProgressMonitor monitor) throws CVSException {
 						try {
@@ -171,10 +171,10 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 						}
 					}
 				}, monitor);
-			} catch (CVSException e) {
-				tree.failed(e.getStatus());
+				return true;
 			}
-			return true;
+		} catch (CVSException e) {
+			tree.failed(e.getStatus());
 		}
 		return false;
 	}
@@ -223,8 +223,8 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		IProgressMonitor monitor) {
 		
 		final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(source);
-		if (cvsFolder.isManaged()) {
-			try {
+		try {
+			if (cvsFolder.isManaged()) {
 				cvsFolder.run(new ICVSRunnable() {
 					public void run(IProgressMonitor monitor) throws CVSException {
 						try {
@@ -234,10 +234,10 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 						}
 					}
 				}, monitor);
-			} catch (CVSException e) {
-				tree.failed(e.getStatus());
+				return true;
 			}
-			return true;
+		} catch (CVSException e) {
+			tree.failed(e.getStatus());
 		}
 			
 		return false;

@@ -9,9 +9,11 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 
@@ -29,7 +31,7 @@ public class CVSSyncSet extends SyncSet {
 		super(nodeSelection);
 	}
 	
-	public boolean hasNonAddedChanges() {
+	public boolean hasNonAddedChanges() throws CVSException {
 		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
 			ITeamNode node = (ITeamNode)it.next();
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
@@ -44,7 +46,7 @@ public class CVSSyncSet extends SyncSet {
 		return false;
 	}
 	
-	public boolean hasCommitableChanges() {
+	public boolean hasCommitableChanges() throws CVSException {
 		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
 			ITeamNode node = (ITeamNode)it.next();
 			// outgoing file that is added is a commit candidate
@@ -60,16 +62,22 @@ public class CVSSyncSet extends SyncSet {
 	
 	public boolean removeNonAddedChanges() {
 		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
-			ITeamNode node = (ITeamNode)it.next();
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
-			if(cvsResource.isFolder()) {
-				if(!((ICVSFolder)cvsResource).isCVSFolder()) {
-					it.remove();
+			try {
+				ITeamNode node = (ITeamNode)it.next();
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
+				if(cvsResource.isFolder()) {
+					if(!((ICVSFolder)cvsResource).isCVSFolder()) {
+						it.remove();
+					}
+				} else {
+					if(!cvsResource.isManaged()) {
+						it.remove();
+					}
 				}
-			} else {
-				if(!cvsResource.isManaged()) {
-					it.remove();
-				}
+			} catch (CVSException e) {
+				// isManaged or isCVSFolder threw an exception
+				// Log it and continue
+				CVSUIPlugin.log(e.getStatus());
 			}
 		}
 		return false;
@@ -77,16 +85,22 @@ public class CVSSyncSet extends SyncSet {
 	
 	public boolean removeAddedChanges() {
 		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
-			ITeamNode node = (ITeamNode)it.next();
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
-			if(cvsResource.isFolder()) {
-				if(((ICVSFolder)cvsResource).isCVSFolder()) {
-					it.remove();
+			try {
+				ITeamNode node = (ITeamNode)it.next();
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
+				if(cvsResource.isFolder()) {
+					if(((ICVSFolder)cvsResource).isCVSFolder()) {
+						it.remove();
+					}
+				} else {
+					if(cvsResource.isManaged()) {
+						it.remove();
+					}
 				}
-			} else {
-				if(cvsResource.isManaged()) {
-					it.remove();
-				}
+			} catch (CVSException e) {
+				// isManaged or isCVSFolder threw an exception
+				// Log it and continue
+				CVSUIPlugin.log(e.getStatus());
 			}
 		}
 		return false;

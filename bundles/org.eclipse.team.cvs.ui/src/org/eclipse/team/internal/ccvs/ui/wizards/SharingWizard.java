@@ -326,7 +326,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		}
 		final boolean[] isCVSFolder = new boolean[] { false };
 		try {
-			CVSUIPlugin.runWithRefresh(shell, project, new IRunnableWithProgress() {
+			CVSUIPlugin.runWithRefresh(shell, new IResource[] { project }, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);

@@ -187,12 +187,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	/*
 	 * @see ICVSFolder#isCVSFolder()
 	 */
-	public boolean isCVSFolder() {
-		try {
-			return EclipseSynchronizer.getInstance().getFolderSync((IContainer)resource) != null;
-		} catch(CVSException e) {
-			return false;
-		}
+	public boolean isCVSFolder() throws CVSException {
+		return EclipseSynchronizer.getInstance().getFolderSync((IContainer)resource) != null;
 	}
 
 	/*
@@ -236,7 +232,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	/*
 	 * @see ICVSResource#isIgnored()
 	 */
-	public boolean isIgnored() {
+	public boolean isIgnored() throws CVSException {
 		if(isCVSFolder()) {
 			return false;
 		}		

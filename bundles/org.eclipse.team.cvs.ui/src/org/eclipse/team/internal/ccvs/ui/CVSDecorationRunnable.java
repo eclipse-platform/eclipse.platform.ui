@@ -120,7 +120,12 @@ public class CVSDecorationRunnable implements Runnable {
 		// if the resource is ignored return an empty decoration. This will 
 		// force a decoration update event and clear the existing CVS decoration.
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		if(cvsResource.isIgnored()) {
+		try {
+			if(cvsResource.isIgnored()) {
+				return new CVSDecoration();
+			}
+		} catch (CVSException e) {
+			// The was an exception in isIgnored. Don't decorate
 			return new CVSDecoration();
 		}
 			

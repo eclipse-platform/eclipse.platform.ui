@@ -209,29 +209,38 @@ public class CVSTeamProvider extends RepositoryProvider {
 				}
 					
 				// Auto-add children
+				final TeamException[] exception = new TeamException[] { null };
 				currentResource.accept(new IResourceVisitor() {
 					public boolean visit(IResource resource) {
-						ICVSResource mResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-						// Add the resource is its not already managed and it was either
-						// added explicitly (is equal currentResource) or is not ignored
-						if (! mResource.isManaged() && (currentResource.equals(resource) || ! mResource.isIgnored())) {
-							String name = resource.getProjectRelativePath().toString();
-							if (resource.getType() == IResource.FILE) {
-								KSubstOption ksubst = KSubstOption.fromFile((IFile) resource);
-								Set set = (Set) files.get(ksubst);
-								if (set == null) {
-									set = new HashSet();
-									files.put(ksubst, set);
+						try {
+							ICVSResource mResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+							// Add the resource is its not already managed and it was either
+							// added explicitly (is equal currentResource) or is not ignored
+							if (! mResource.isManaged() && (currentResource.equals(resource) || ! mResource.isIgnored())) {
+								String name = resource.getProjectRelativePath().toString();
+								if (resource.getType() == IResource.FILE) {
+									KSubstOption ksubst = KSubstOption.fromFile((IFile) resource);
+									Set set = (Set) files.get(ksubst);
+									if (set == null) {
+										set = new HashSet();
+										files.put(ksubst, set);
+									}
+									set.add(name);
+								} else {
+									folders.add(name);
 								}
-								set.add(name);
-							} else {
-								folders.add(name);
 							}
+							// Always return true and let the depth determine if children are visited
+							return true;
+						} catch (CVSException e) {
+							exception[0] = e;
+							return false;
 						}
-						// Always return true and let the depth determine if children are visited
-						return true;
 					}
 				}, depth, false);
+				if (exception[0] != null) {
+					throw exception[0];
+				}
 			} catch (CoreException e) {
 				throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.visitError", new Object[] {resources[i].getFullPath()}), e)); //$NON-NLS-1$
 			}
@@ -360,6 +369,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 											((IFile)resource).delete(false, true, subProgress);
 										}
 									}
+								} catch (TeamException e) {
+									eHolder[0] = e;
 								} catch (CoreException e) {
 									eHolder[0] = wrapException(e);
 									// If there was a problem, don't visit the children
@@ -519,15 +530,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 		} catch(CVSException e) {
 			return false;
 		}
-	}
-	
-	/**
-	 * @see ITeamProvider#isLocallyCheckedOut(IResource)
- 	 * XXX to be removed when sync methods are removed from ITeamProvider
-	 */
-	public boolean isCheckedOut(IResource resource) {
-		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		return cvsResource.isManaged();
 	}
 	
 	/*

@@ -281,8 +281,14 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			IResource local = getLocal();
 			ICVSRemoteFolder remote = (ICVSRemoteFolder)getRemote();
 			ICVSFolder cvsFolder = (ICVSFolder)localSync.getCVSResource();
+			boolean isCVSFolder = false;
+			try {
+				isCVSFolder = cvsFolder.isCVSFolder();
+			} catch (CVSException e) {
+				// Assume the folder is not a CVS folder
+			}
 			if(!local.exists()) {
-				if ( cvsFolder.isCVSFolder()) {
+				if (isCVSFolder) {
 					// We have local information for the folder but it doesn't exist
 					if (remote == null) {
 						// Conflicting deletion. Purge local information
@@ -302,12 +308,12 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				}
 			} else {
 				if(remote == null) {
-					if(cvsFolder.isCVSFolder()) {
+					if(isCVSFolder) {
 						folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.DELETION;
 					} else {
 						folderKind = IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION;
 					}
-				} else if(!cvsFolder.isCVSFolder()) {
+				} else if(!isCVSFolder) {
 					folderKind = IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION;
 				} else {
 					// folder exists both locally and remotely and are considered in sync, however 

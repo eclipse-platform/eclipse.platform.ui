@@ -14,9 +14,8 @@ package org.eclipse.team.internal.ccvs.ui.sync;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 
@@ -31,7 +30,12 @@ public class CommitSyncAction extends ForceCommitSyncAction {
 	protected boolean isEnabled(ITeamNode node) {
 		// The commit action is enabled only for non-conflicting outgoing changes
 		CVSSyncSet set = new CVSSyncSet(new StructuredSelection(node));
-		return set.hasCommitableChanges();
+		try {
+			return set.hasCommitableChanges();
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return false;
+		}
 	}
 	
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {

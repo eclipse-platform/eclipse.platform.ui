@@ -188,8 +188,13 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		if (resource.getType() == IResource.PROJECT) return;
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		// Make sure that unmanaged resources whose parent is a cvs folder have an addition task on them
-		if ( ! cvsResource.isManaged() && ! cvsResource.isIgnored() && cvsResource.getParent().isCVSFolder()) {
-			createAdditonMarker(resource);
+		try {
+			if ( ! cvsResource.isManaged() && ! cvsResource.isIgnored() && cvsResource.getParent().isCVSFolder()) {
+				createAdditonMarker(resource);
+			}
+		} catch (CVSException e) {
+			// If the above fails, just log the exception
+			CVSProviderPlugin.log(e.getStatus());
 		}
 	}
 	
@@ -205,12 +210,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				// Make sure that the project is a CVS folder.
 				if (provider != null) {
 					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
-					if (! folder.isCVSFolder()) {
-						try {
+					try {
+						if (! folder.isCVSFolder()) {
 							Team.removeNatureFromProject(resource.getProject(), CVSProviderPlugin.getTypeId(), null);
-						} catch (TeamException e) {
-							CVSProviderPlugin.log(e.getStatus());
 						}
+					} catch (TeamException e) {
+						CVSProviderPlugin.log(e.getStatus());
 					}
 				}
 				

@@ -270,9 +270,9 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		if (provider == null) return;
 		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
 		ICVSFolder folder = cvsRoot.getLocalRoot();
-		if (!folder.isCVSFolder()) return;
 		
 		try {
+			if (!folder.isCVSFolder()) return;
 			methodLabel.setText(location.getMethod().getName());
 			info = location.getUserInfo(true);
 			userLabel.setText(info.getUsername());

@@ -39,7 +39,7 @@ public interface ICVSResource {
 	 * 
 	 * @return <code>true</code> if the resource is
 	 */
-	public boolean isManaged();
+	public boolean isManaged() throws CVSException;
 
 	/**
 	 * Unmanage the given resource by purging any CVS synchronization associated with the 
@@ -57,7 +57,7 @@ public interface ICVSResource {
 	 * @return <code>true</code> if this resource is listed in one of the ignore
 	 * files maintained by CVS and <code>false</code> otherwise.
 	 */
-	public boolean isIgnored();
+	public boolean isIgnored() throws CVSException;
 	
 	/**
 	 * Add the following file to the parent's ignore list

@@ -11,10 +11,10 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.Hashtable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Hashtable;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -40,14 +41,14 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
@@ -127,12 +128,26 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	}
 	
 	/**
+	 * Extract or convert to a TeamException
+	 */
+	public static TeamException asTeamException(InvocationTargetException e) {
+		Throwable exception = e.getTargetException();
+		if (exception instanceof TeamException) {
+			return (TeamException)exception;
+		} else if (exception instanceof CoreException) {
+			return new TeamException(((CoreException)exception).getStatus());
+		} else {
+			return new TeamException(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), exception)); //$NON-NLS-1$
+		}
+	}
+	
+	/**
 	 * Run an operation involving the given resource. If an exception is thrown
 	 * and the code on the status is IResourceStatus.OUT_OF_SYNC_LOCAL then
 	 * the user will be prompted to refresh and try again. If they agree, then the
 	 * supplied operation will be run again.
 	 */
-	public static void runWithRefresh(Shell parent, IResource resource, 
+	public static void runWithRefresh(Shell parent, IResource[] resources, 
 		IRunnableWithProgress runnable, IProgressMonitor monitor) 
 		throws InvocationTargetException, InterruptedException {
 		boolean firstTime = true;
@@ -151,9 +166,11 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 					throw e;
 				}
 				if (status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-					if (promptToRefresh(parent, resource, status)) {
+					if (promptToRefresh(parent, resources, status)) {
 						try {
-							resource.refreshLocal(IResource.DEPTH_INFINITE, null);
+							for (int i = 0; i < resources.length; i++) {
+								resources[i].refreshLocal(IResource.DEPTH_INFINITE, null);
+							}
 						} catch (CoreException coreEx) {
 							// Throw the original exception to the caller
 							log(coreEx.getStatus());
@@ -172,7 +189,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		}
 	}
 	
-	private static boolean promptToRefresh(final Shell shell, final IResource resource, final IStatus status) {
+	private static boolean promptToRefresh(final Shell shell, final IResource[] resources, final IStatus status) {
 		final boolean[] result = new boolean[] { false};
 		Runnable runnable = new Runnable() {
 			public void run() {
@@ -180,15 +197,16 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 				if (shell == null) {
 					shellToUse = new Shell(Display.getCurrent());
 				}
-				result[0] = MessageDialog.openQuestion(shellToUse, Policy.bind("CVSUIPlugin.refreshTitle"), 
-					Policy.bind("CVSUIPlugin.refreshQuestion", status.getMessage(), resource.getFullPath().toString()));
+				String question;
+				if (resources.length == 1) {
+					question = Policy.bind("CVSUIPlugin.refreshQuestion", status.getMessage(), resources[0].getFullPath().toString());
+				} else {
+					question = Policy.bind("CVSUIPlugin.refreshMultipleQuestion", status.getMessage());
+				}
+				result[0] = MessageDialog.openQuestion(shellToUse, Policy.bind("CVSUIPlugin.refreshTitle"), question);
 			}
 		};
-		if (shell == null) {
-			Display.getDefault().syncExec(runnable);
-		} else {
-			runnable.run();
-		}
+		Display.getDefault().syncExec(runnable);
 		return result[0];
 	}
 	

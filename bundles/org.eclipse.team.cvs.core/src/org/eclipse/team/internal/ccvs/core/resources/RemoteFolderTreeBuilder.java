@@ -703,7 +703,7 @@ public class RemoteFolderTreeBuilder {
 		return tag == null ? folder.getFolderSyncInfo().getTag() : tag;
 	}
 	
-	private boolean isOrphanedSubtree(Session session, ICVSFolder mFolder) {
+	private boolean isOrphanedSubtree(Session session, ICVSFolder mFolder) throws CVSException {
 		return mFolder.isCVSFolder() && ! mFolder.isManaged() && ! mFolder.equals(session.getLocalRoot()) && mFolder.getParent().isCVSFolder();
 	}
 }

@@ -713,7 +713,7 @@ public abstract class Command extends Request {
 		}
 	}
 	
-	protected Session getOpenSession(ICVSResource[] arguments) {
+	protected Session getOpenSession(ICVSResource[] arguments) throws CVSException {
 		// We assume that all the passed resources have the same root
 		Session openSession;
 		if (arguments == null || arguments.length == 0) {

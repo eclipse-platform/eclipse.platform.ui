@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IObjectActionDelegate;
@@ -185,7 +186,8 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 					action.setEnabled(isEnabled());
 				} catch (TeamException e) {
 					action.setEnabled(false);
-					handle(e, null, null);
+					// We should not open a dialog when determining menu enablements so log it instead
+					TeamPlugin.log(e.getStatus());
 				}
 			}
 		}
