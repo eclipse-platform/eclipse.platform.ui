@@ -25,7 +25,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -41,7 +40,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @see org.eclipse.ui.internal.dialogs.PathVariableDialog
  */
 public class LinkedResourcesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private Group variablesGroup;
 	private Label topLabel;
 	private PathVariablesGroup pathVariablesGroup;
 	 
@@ -93,16 +91,9 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 			}
 		});
 
-		//layout the contents
-		variablesGroup = new Group(pageComponent, SWT.NONE);
-		variablesGroup.setText(WorkbenchMessages.getString("LinkedResourcesPreference.variablesGroup"));	//$NON-NLS-1$
-		variablesGroup.setFont(font);
-		layout = new GridLayout();
-		variablesGroup.setLayout(layout);
-		data = new GridData(GridData.FILL_BOTH);
-		variablesGroup.setLayoutData(data);
+		WorkbenchPreferencePage.createSpace(pageComponent);
 		
-		topLabel = new Label(variablesGroup, SWT.NONE);
+		topLabel = new Label(pageComponent, SWT.NONE);
 		topLabel.setText(WorkbenchMessages.getString("LinkedResourcesPreference.explanation")); //$NON-NLS-1$
 		data = new GridData();
 		data.verticalAlignment = GridData.FILL;
@@ -110,7 +101,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 		topLabel.setLayoutData(data);
 		topLabel.setFont(font);
 
-		pathVariablesGroup.createContents(variablesGroup);
+		pathVariablesGroup.createContents(pageComponent);
 
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		boolean enableLinking = !preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING);
@@ -149,7 +140,6 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 	 * @param enableLinking the new widget enabled state
 	 */
 	protected void updateWidgetState(boolean enableLinking) {
-		variablesGroup.setEnabled(enableLinking);
 		topLabel.setEnabled(enableLinking);
 		pathVariablesGroup.setEnabled(enableLinking);
 	}
