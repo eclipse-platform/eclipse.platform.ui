@@ -21,40 +21,50 @@ public class Eclipse extends Thread {
 		super();
 		this.setName("Eclipse");
 		this.dir = Options.getEclipseHome();
+	}
+	private void prepareCommand() {
+		if (Options.useExe()) {
+			prepareEclipseCommand();
+		} else {
+			prepareJavaCommand();
+		}
+	}
+	private void prepareEclipseCommand() {
 		List vmArgs = Options.getVmArgs();
 		List eclipseArgs = Options.getEclipseArgs();
-		if (Options.useExe()) {
-			cmdarray = new String[3 + vmArgs.size() + 1 + eclipseArgs.size()];
-			cmdarray[0] =
-				new File(Options.getEclipseHome(), "eclipse").getAbsolutePath();
-			cmdarray[1] = "-vm";
-			cmdarray[2] = Options.getVm();
-			for (int i = 0; i < eclipseArgs.size(); i++) {
-				cmdarray[3 + i] = (String) eclipseArgs.get(i);
-			}
-			cmdarray[3 + eclipseArgs.size()] = "-vmargs";
-			for (int i = 0; i < vmArgs.size(); i++) {
-				cmdarray[4 + eclipseArgs.size() + i] = (String) vmArgs.get(i);
-			}
-
-		} else {
-			cmdarray = new String[1 + vmArgs.size() + 3 + eclipseArgs.size()];
-			cmdarray[0] = Options.getVm();
-			for (int i = 0; i < vmArgs.size(); i++) {
-				cmdarray[1 + i] = (String) vmArgs.get(i);
-			}
-			cmdarray[1 + vmArgs.size()] = "-cp";
-			cmdarray[2 + vmArgs.size()] = "startup.jar";
-			cmdarray[3 + vmArgs.size()] = "org.eclipse.core.launcher.Main";
-			for (int i = 0; i < eclipseArgs.size(); i++) {
-				cmdarray[4 + vmArgs.size() + i] = (String) eclipseArgs.get(i);
-			}
+		cmdarray = new String[3 + vmArgs.size() + 1 + eclipseArgs.size()];
+		cmdarray[0] =
+			new File(Options.getEclipseHome(), "eclipse").getAbsolutePath();
+		cmdarray[1] = "-vm";
+		cmdarray[2] = Options.getVm();
+		for (int i = 0; i < eclipseArgs.size(); i++) {
+			cmdarray[3 + i] = (String) eclipseArgs.get(i);
+		}
+		cmdarray[3 + eclipseArgs.size()] = "-vmargs";
+		for (int i = 0; i < vmArgs.size(); i++) {
+			cmdarray[4 + eclipseArgs.size() + i] = (String) vmArgs.get(i);
+		}
+	}
+	private void prepareJavaCommand() {
+		List vmArgs = Options.getVmArgs();
+		List eclipseArgs = Options.getEclipseArgs();
+		cmdarray = new String[1 + vmArgs.size() + 3 + eclipseArgs.size()];
+		cmdarray[0] = Options.getVm();
+		for (int i = 0; i < vmArgs.size(); i++) {
+			cmdarray[1 + i] = (String) vmArgs.get(i);
+		}
+		cmdarray[1 + vmArgs.size()] = "-cp";
+		cmdarray[2 + vmArgs.size()] = "startup.jar";
+		cmdarray[3 + vmArgs.size()] = "org.eclipse.core.launcher.Main";
+		for (int i = 0; i < eclipseArgs.size(); i++) {
+			cmdarray[4 + vmArgs.size() + i] = (String) eclipseArgs.get(i);
 		}
 	}
 	/**
 	 * Launches Eclipse process and waits for it.
 	 */
 	public void run() {
+		prepareCommand();
 		try {
 			Process pr =
 				Runtime.getRuntime().exec(cmdarray, (String[]) null, dir);
