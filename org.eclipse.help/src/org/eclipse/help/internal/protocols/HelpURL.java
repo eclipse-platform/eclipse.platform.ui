@@ -11,10 +11,10 @@
 package org.eclipse.help.internal.protocols;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
+import org.eclipse.help.internal.util.*;
 
 /**
  * Manages a help URL.  Note that there is a limitation in handling
@@ -106,7 +106,7 @@ public class HelpURL {
 		else
 			return null;
 		try {
-			return URLDecoder.decode(stringValue, "UTF8");
+			return URLCoder.decode(stringValue);
 		} catch (Exception e) {
 			return null;
 		}

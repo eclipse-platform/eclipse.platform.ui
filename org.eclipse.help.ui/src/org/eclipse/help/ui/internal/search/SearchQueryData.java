@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.util.*;
 import org.eclipse.ui.*;
 
 /**
@@ -131,35 +131,30 @@ public class SearchQueryData {
 	}
 
 	public String toURLQuery() {
-		try {
-			String q =
-				"searchWord="
-					+ URLEncoder.encode(searchQuery.getSearchWord(), "UTF8")
-					+ "&maxHits="
-					+ maxHits
-					+ "&lang="
-					+ (searchQuery.getLocale());
-			if (!searchQuery.getFieldNames().isEmpty())
-				for (Iterator iterator = searchQuery.getFieldNames().iterator();
-					iterator.hasNext();
-					) {
-					String field = (String) iterator.next();
-					q += "&field=" + URLEncoder.encode(field, "UTF8");
-				}
-			if (searchQuery.isFieldSearch())
-				q += "&fieldSearch=true";
-			else
-				q += "&fieldSearch=false";
-			if (bookFiltering) {
-				for (int i = 0; i < workingSets.length; i++) {
-					q += "&scope="
-						+ URLEncoder.encode(workingSets[i].getName(), "UTF8");
-				}
+		String q =
+			"searchWord="
+				+ URLCoder.encode(searchQuery.getSearchWord())
+				+ "&maxHits="
+				+ maxHits
+				+ "&lang="
+				+ (searchQuery.getLocale());
+		if (!searchQuery.getFieldNames().isEmpty())
+			for (Iterator iterator = searchQuery.getFieldNames().iterator();
+				iterator.hasNext();
+				) {
+				String field = (String) iterator.next();
+				q += "&field=" + URLEncoder.encode(field);
 			}
-			return q;
-		} catch (UnsupportedEncodingException uee) {
-			return "";
+		if (searchQuery.isFieldSearch())
+			q += "&fieldSearch=true";
+		else
+			q += "&fieldSearch=false";
+		if (bookFiltering) {
+			for (int i = 0; i < workingSets.length; i++) {
+				q += "&scope=" + URLCoder.encode(workingSets[i].getName());
+			}
 		}
+		return q;
 	}
 	/**
 	 * Gets the searchWord

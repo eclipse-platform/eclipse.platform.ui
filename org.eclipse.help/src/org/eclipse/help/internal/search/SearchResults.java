@@ -11,12 +11,12 @@
 package org.eclipse.help.internal.search;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.apache.lucene.search.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -44,11 +44,7 @@ public class SearchResults implements ISearchHitCollector {
 	 * @param Hits hits
 	 */
 	public void addHits(Hits hits, String highlightTerms) {
-		String urlEncodedWords = "";
-		try {
-			urlEncodedWords = URLEncoder.encode(highlightTerms, "UTF8");
-		} catch (UnsupportedEncodingException uee) {
-		}
+		String urlEncodedWords = URLCoder.encode(highlightTerms);
 		List searchHitList = new ArrayList();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;

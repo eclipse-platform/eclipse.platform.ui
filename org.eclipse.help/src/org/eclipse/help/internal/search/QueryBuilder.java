@@ -13,9 +13,9 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.lucene.analysis.*;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
-import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.*;
 /**
  * Build query acceptable by the search engine.
  */
@@ -44,7 +44,7 @@ public class QueryBuilder {
 			this.locale =
 				new Locale(language.substring(0, 2), language.substring(3, 5));
 		} else {
-			this.locale = new Locale(language.substring(0, 2));
+			this.locale = new Locale(language.substring(0, 2), "");
 		}
 		this.analyzerDesc = analyzerDesc;
 		this.analyzer = analyzerDesc.getAnalyzer();

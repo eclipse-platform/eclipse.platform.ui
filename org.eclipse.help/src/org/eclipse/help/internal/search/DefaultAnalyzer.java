@@ -53,7 +53,7 @@ public class DefaultAnalyzer extends Analyzer {
 		}
 		if (locale == null && userLocale.getCountry().length() > 0) {
 			// Check if at least the language is supported by BreakIterator
-			Locale language = new Locale(userLocale.getLanguage());
+			Locale language = new Locale(userLocale.getLanguage(), "");
 			for (int i = 0; i < availableLocales.length; i++) {
 				if (language.equals(availableLocales[i])) {
 					locale = language;
@@ -91,7 +91,7 @@ public class DefaultAnalyzer extends Analyzer {
 		// break the string into tokens to get the Locale object
 		StringTokenizer locales = new StringTokenizer(clientLocale, "_");
 		if (locales.countTokens() == 1)
-			return new Locale(locales.nextToken());
+			return new Locale(locales.nextToken(), "");
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)
