@@ -1,12 +1,15 @@
 package org.eclipse.ui.tests.api;
 
+import java.net.*;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.junit.util.CallHistory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.jdt.junit.util.*;
 
 public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	IExecutableExtension
@@ -19,6 +22,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	private String title;
 	private MockSelectionProvider selectionProvider;
 	private IConfigurationElement config;
+	private Image titleImage;
 	
 	public MockWorkbenchPart() {		
 		callTrace = new CallHistory(this);
@@ -37,6 +41,19 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		this.config = config;
 		title = (String)config.getAttribute("name");
+
+		// Icon.
+		String strIcon = config.getAttribute("icon");//$NON-NLS-1$
+		if (strIcon != null) {
+			try {
+				IPluginDescriptor pd = config.getDeclaringExtension()
+					.getDeclaringPluginDescriptor();
+				URL fullPathString = new URL(pd.getInstallURL(), strIcon);
+				ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
+				titleImage = imageDesc.createImage();
+			} catch (MalformedURLException e) {
+			}
+		}
 	}
 
 	public IConfigurationElement getConfig() {
@@ -87,7 +104,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 * @see IWorkbenchPart#getTitleImage()
 	 */
 	public Image getTitleImage() {
-		return null;
+		return titleImage;
 	}
 
 	/**
