@@ -1,10 +1,10 @@
 package org.eclipse.ant.internal.ui;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;import java.lang.reflect.InvocationTargetException;
 import org.apache.tools.ant.BuildException;
-import org.eclipse.swt.widgets.Shell;
+import org.apache.tools.ant.ProjectHelper;import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ant.core.AntRunner;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.ant.core.EclipseProject;import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -27,6 +27,34 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 	 */
 	public void dispose() {
 	}
+	protected EclipseProject extractProject(IFile sourceFile) {
+		// create a project and initialize it
+		EclipseProject antProject = new EclipseProject();
+		antProject.init();
+		antProject.setProperty("ant.file",sourceFile.getLocation().toOSString());
+		
+		try {
+			ProjectHelper.configureProject(antProject,new File(sourceFile.getLocation().toOSString()));
+		} catch (Exception e) {
+			// If the document is not well-formated for example
+			IStatus status = new Status(
+				IStatus.ERROR,
+				AntUIPlugin.PI_ANTUI,
+				31415,
+				e.getMessage(),
+				e);
+			ErrorDialog.openError(
+				AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(),
+				"Ant script error",
+				"A problem occurred parsing the Ant file",
+				status);
+				
+			return null;
+		}
+		
+		return antProject;
+	}
+	
 	/**
 	  * Returns the active shell.
 	  */
@@ -67,10 +95,12 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 	 * @see IActionDelegate
 	 */
 	public void run(IAction action) {
-		Shell shell = getShell();
-		new AntLaunchDialog(shell,selection).open();
+		EclipseProject project = extractProject(selection);
+		if (project == null)
+			return;
 		
-		System.out.println("HIT!!!!!");
+		Shell shell = getShell();
+		new AntLaunchDialog(shell,project).open();
 		
 /*		try {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(shell);

@@ -6,7 +6,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class AntLaunchDialog extends Dialog {
-	private IFile antFile;
 	private IStructuredSelection selectedTargets;
 	private CheckboxTableViewer listViewer;
 	private EclipseProject project;
@@ -16,9 +15,9 @@ public class AntLaunchDialog extends Dialog {
 	private final static int SIZING_OUTPUT_HEIGHT = 300;
 	private final static int SIZING_OUTPUT_WIDTH = 500;
 	
-	public AntLaunchDialog(Shell parent,IFile antFile) {
+	public AntLaunchDialog(Shell parent,EclipseProject project) {
 		super(parent);
-		this.antFile = antFile;
+		this.project = project;
 		parent.setText("Execute Ant Script");
 	}
 	
@@ -34,7 +33,7 @@ public class AntLaunchDialog extends Dialog {
 		listViewer.getTable().setLayoutData(data);
 		listViewer.setLabelProvider(AntLaunchDialogLabelProvider.getInstance());
 		listViewer.setContentProvider(AntLaunchDialogContentProvider.getInstance(this));
-		listViewer.setInput(antFile);
+		listViewer.setInput(project);
 		
 		new Label(composite,SWT.NONE).setText("Arguments:");
 		Text argumentsField = new Text(composite,SWT.BORDER);
@@ -51,12 +50,12 @@ public class AntLaunchDialog extends Dialog {
 	}
 	
 	protected void okPressed() {
-		Target targets[] = (Target [])listViewer.getCheckedElements();
+		Object targets[] = listViewer.getCheckedElements();
 
 		// build a vector containing the name of the selected target so that we can run them
 		Vector targetVect  = new Vector(targets.length);
 		for (int i = 0; i < targets.length; i++)
-			targetVect.add(targets[i].getName());
+			targetVect.add(((Target)targets[i]).getName());
 		
 		// Build Listener - TEST
 		//project.addBuildListener(new UIBuildListener(new ProgressMonitorDialog(AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell()).getProgressMonitor(), antFile));
@@ -65,10 +64,6 @@ public class AntLaunchDialog extends Dialog {
 		project.executeTargets(targetVect);
 		
 		close();
-	}
-	
-	protected void setProject(EclipseProject newProject) {
-		project = newProject;
 	}
 	
 }
