@@ -10,6 +10,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.update.internal.ui.*;
@@ -37,6 +38,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 	private Action goAction;
 	private Action backwardAction;
 	private Action forwardAction;
+	private GlobalActionHandler globalActionHandler;
 
 	public WebBrowserView() {
 	}
@@ -131,8 +133,10 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
 		toolBarManager = new ToolBarManager(toolbar);
 		makeActions();
-		IToolBarManager localBar =
-			getViewSite().getActionBars().getToolBarManager();
+		IActionBars bars = getViewSite().getActionBars();
+		IToolBarManager localBar = bars.getToolBarManager();
+		globalActionHandler = new GlobalActionHandler(bars, addressCombo);
+
 		localBar.add(backwardAction);
 		localBar.add(forwardAction);
 	}
@@ -245,6 +249,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 	public void dispose() {
 		if (browser != null)
 			browser.dispose();
+		globalActionHandler.dispose();
 		super.dispose();
 	}
 
