@@ -267,8 +267,17 @@ protected void constrainShellSize() {
 	
 	// move the shell origin as required
 	Point loc = shell.getLocation();
-	int x = Math.max(bounds.x, Math.min(loc.x, bounds.width - size.x));
-	int y = Math.max(bounds.y, Math.min(loc.y, bounds.height - size.y));
+	int x;
+	int y;
+	
+	if(SWT.getPlatform().equals("photon")){
+		 x = Math.max(bounds.x, Math.min(loc.x, bounds.x + bounds.width - size.x));
+	 	 y = Math.max(bounds.y, Math.min(loc.y, bounds.y + bounds.height - size.y));
+	}
+	else{
+	 	x = Math.max(bounds.x, Math.min(loc.x, bounds.width - size.x));
+		y = Math.max(bounds.y, Math.min(loc.y, bounds.height - size.y));
+	}
 	shell.setLocation(x, y);
 }
 /**
