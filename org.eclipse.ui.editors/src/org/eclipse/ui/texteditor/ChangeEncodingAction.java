@@ -14,6 +14,8 @@ package org.eclipse.ui.texteditor;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -21,12 +23,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 
 import org.eclipse.ui.editors.text.IEncodingSupport;
 
+import org.eclipse.ui.ide.dialogs.AbstractEncodingFieldEditor;
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 
@@ -46,6 +50,8 @@ import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
  */
 public class ChangeEncodingAction extends TextEditorAction {
 
+	private static final int APPLY_ID= IDialogConstants.OK_ID + IDialogConstants.CANCEL_ID + 1;
+	
 	private String fDialogTitle;
 	private static final String ENCODING_PREF_KEY= "encoding"; //$NON-NLS-1$
 
@@ -76,88 +82,97 @@ public class ChangeEncodingAction extends TextEditorAction {
 	public void run() {
 		final IResource resource= getResource();
 		final Shell parentShell= getTextEditor().getSite().getShell();
-		if (resource != null) {
-			Dialog dialog= new Dialog(parentShell) {
-				private ResourceEncodingFieldEditor fEncodingEditor;
-				/*
-				 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-				 */
-				protected void configureShell(Shell newShell) {
-					super.configureShell(newShell);
-					newShell.setText(fDialogTitle);
-				}
-				/*
-				 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-				 */
-				protected Control createDialogArea(Composite parent) {
-					Control composite= super.createDialogArea(parent);
-					if (!(composite instanceof Composite)) {
-						composite.dispose();
-						composite= new Composite(parent, SWT.NONE);
-					}
-					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource); //$NON-NLS-1$
-					fEncodingEditor.load();
-					
-					return composite;
-				}
-				/*
-				 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-				 */
-				protected void okPressed() {
-					fEncodingEditor.store();
-					super.okPressed();
-				}
-			};
-			dialog.open();
-		} else {
-			final IEncodingSupport encodingSupport= getEncodingSupport();
-			if (encodingSupport == null) {
-				MessageDialog.openInformation(parentShell, fDialogTitle, "No encoding support installed");
-				return;
+		final IEncodingSupport encodingSupport= getEncodingSupport();
+		if (resource == null && encodingSupport == null) {
+			MessageDialog.openInformation(parentShell, fDialogTitle, "No encoding support installed");
+			return;
+		}
+		
+		Dialog dialog= new Dialog(parentShell) {
+			private AbstractEncodingFieldEditor fEncodingEditor;
+			private IPreferenceStore store= null;
+			
+			/*
+			 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+			 */
+			protected void configureShell(Shell newShell) {
+				super.configureShell(newShell);
+				newShell.setText(fDialogTitle);
 			}
 			
-			final IPreferenceStore store= new PreferenceStore();
-			
-			Dialog dialog= new Dialog(parentShell) {
-				private EncodingFieldEditor fEncodingEditor;
-				/*
-				 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-				 */
-				protected void configureShell(Shell newShell) {
-					super.configureShell(newShell);
-					newShell.setText(fDialogTitle);
+			/*
+			 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+			 */
+			protected Control createDialogArea(Composite parent) {
+				Control composite= super.createDialogArea(parent);
+				if (!(composite instanceof Composite)) {
+					composite.dispose();
+					composite= new Composite(parent, SWT.NONE);
 				}
-				/*
-				 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-				 */
-				protected Control createDialogArea(Composite parent) {
-					Control composite= super.createDialogArea(parent);
-					if (!(composite instanceof Composite)) {
-						composite.dispose();
-						composite= new Composite(parent, SWT.NONE);
-					}
+				
+				GridLayout layout= new GridLayout();
+				layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+				layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+				layout.verticalSpacing= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+				layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+				parent.setLayout(layout);
+				
+				GridData data = new GridData(GridData.FILL_BOTH);
+				composite.setLayoutData(data);
+				composite.setFont(parent.getFont());
+				
+				if (resource != null) {
+					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource); //$NON-NLS-1$
+				} else {
 					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", (Composite)composite); //$NON-NLS-1$
+					store= new PreferenceStore();
 					store.setDefault(ENCODING_PREF_KEY, encodingSupport.getDefaultEncoding());
 					fEncodingEditor.setPreferenceStore(store);
 					String encoding= encodingSupport.getEncoding();
 					if (encoding != null)
 						store.setValue(ENCODING_PREF_KEY, encoding);
-					fEncodingEditor.load();
-					
-					return composite;
 				}
-				/*
-				 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-				 */
-				protected void okPressed() {
-					fEncodingEditor.store();
+				fEncodingEditor.load();
+				
+				return composite;
+			}
+			
+			/*
+			 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+			 */
+			protected void createButtonsForButtonBar(Composite parent) {
+				createButton(parent, APPLY_ID, "Apply", false);
+				super.createButtonsForButtonBar(parent);
+			}
+			
+			/*
+			 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+			 */
+			protected void buttonPressed(int buttonId) {
+				if (buttonId == APPLY_ID)
+					apply();
+				else
+					super.buttonPressed(buttonId);
+			}
+			
+			/*
+			 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+			 */
+			protected void okPressed() {
+				apply();
+				super.okPressed();
+			}
+			
+			private void apply() {
+				fEncodingEditor.store();
+				
+				if (resource == null) {
 					String encoding= fEncodingEditor.getPreferenceStore().getString(fEncodingEditor.getPreferenceName());
 					encodingSupport.setEncoding(encoding);
-					super.okPressed();
 				}
-			};
-			dialog.open();
-		}
+			}
+		};
+		dialog.open();
 	}
 	
 	/*
