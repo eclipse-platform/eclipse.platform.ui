@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
