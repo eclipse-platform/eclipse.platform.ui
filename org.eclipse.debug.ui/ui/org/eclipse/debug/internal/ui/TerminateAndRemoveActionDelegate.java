@@ -34,8 +34,7 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 		if (element instanceof ILaunch) {
 			launch= (ILaunch) element;
 		} else if (element instanceof IDebugElement) {
-			IDebugElement de= (IDebugElement) element;
-			launch= de.getLaunch();
+			launch= ((IDebugElement) element).getLaunch();
 		} else if (element instanceof IProcess) {
 			launch= ((IProcess) element).getLaunch();
 		}

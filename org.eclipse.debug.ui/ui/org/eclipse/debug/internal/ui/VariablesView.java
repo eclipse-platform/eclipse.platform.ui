@@ -5,7 +5,15 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.model.IDebugElement;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.ViewContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -52,24 +60,25 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	}
 
 	protected void setViewerInput(IStructuredSelection ssel) {
-		IDebugElement de= null;
+		IStackFrame frame= null;
 		if (ssel.size() == 1) {
 			Object input= ssel.getFirstElement();
-			if (input != null && input instanceof IDebugElement) {
-				de= ((IDebugElement) input).getStackFrame();
+			if (input != null && input instanceof IStackFrame) {
+				frame= (IStackFrame)input;
 			}
 		}
 
 		Object current= fViewer.getInput();
-		if (current == null && de == null) {
+		if (current == null && frame == null) {
 			return;
 		}
 
-		if (current != null && current.equals(de)) {
+		if (current != null && current.equals(frame)) {
 			return;
 		}
 
-		fViewer.setInput(de);
+		((VariablesContentProvider)fViewer.getContentProvider()).clearCache();
+		fViewer.setInput(frame);
 	}
 	/**
 	 * @see IWorkbenchPart

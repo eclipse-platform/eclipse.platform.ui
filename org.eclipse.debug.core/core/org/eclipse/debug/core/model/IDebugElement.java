@@ -76,21 +76,6 @@ public interface IDebugElement extends IAdaptable {
 	public static final int VALUE= 0x0012;
 	
 	/**
-	 * Returns the children of this debug element, or an empty collection
-	 * if this element has no children.
-	 *
-	 * @return array of debug elements
-	 * @exception DebugException if unable to retrieve this element's children
-	 *   from the target
-	 */
-	IDebugElement[] getChildren() throws DebugException;
-	/**
-	 * Returns the debug target this element originated from.
-	 *
-	 * @return a debug target
-	 */
-	IDebugTarget getDebugTarget();
-	/**
 	 * Returns the type of this element, encoded as an integer - one
 	 * of the constants defined in this interface.
 	 *
@@ -98,76 +83,26 @@ public interface IDebugElement extends IAdaptable {
 	 */
 	int getElementType();
 	/**
-	 * Returns the launch this element originated from, or
-	 * <code>null</code> if this element is not registered with
-	 * a launch. This is a convenience method for
-	 * <code>ILaunchManager.findLaunch(getDebugTarget())</code>.
-	 *
-	 * @return this element's launch, or <code>null</code> if not registered
-	 */
-	ILaunch getLaunch();
-	/**
-	 * Returns the name of this element. Name format is debug model
-	 * specific, and should be specified by a debug model.
-	 *
-	 * @return this element's name
-	 * @exception DebugException if unable to retrieve this element's name from
-	 *    the target
-	 */
-	String getName() throws DebugException;
-	/**
-	 * Returns the parent of this debug element, or <code>null</code>
-	 * if this element has no parent.
-	 *
-	 * @return this element's parent, or <code>null</code> if none
-	 */
-	IDebugElement getParent();
-	/**
-	 * Returns the process associated with this debug element,
-	 * or <code>null</code> if no process is associated with this element.
-	 * This is a convenience method - it returns the process associated with
-	 * this element's debug target, if any.
-	 *
-	 * @return this element's process, or <code>null</code> if none
-	 */
-	IProcess getProcess();
-	/**
-	 * Returns the source locator that can be used to locate source elements
-	 * associated with this element or <code>null</code> if source lookup
-	 * is not supported. This is a convenience method - it
-	 * returns the source locator associated with this element's launch. 
-	 *
-	 * @return this element's source locator, or <code>null</code> if none
-	 */
-	ISourceLocator getSourceLocator();
-	/**
-	 * Returns the stack frame containing this element,
-	 * or <code>null</code> if this element is not contained in a stack frame.
-	 *
-	 * @return this element's stack frame, or <code>null</code> if none
-	 */
-	IStackFrame getStackFrame();
-	/**
-	 * Returns the thread containing this element,
-	 * or <code>null</code> if this element is not contained in a thread.
-	 *
-	 * @return this element's thread, or <code>null</code> if none
-	 */
-	IThread getThread();
-	/**
-	 * Returns whether this element has children.
-	 *
-	 * @return whether this element has children
-	 * @exception DebugException if unable to determine if this element has children
-	 */
-	boolean hasChildren() throws DebugException;
-	/**
 	 * Returns the unique identifier of the plug-in
 	 * this debug element originated from.
 	 *
 	 * @return plug-in identifier
 	 */
 	String getModelIdentifier();
+	/**
+	 * Returns the debug target this element is contained in.
+	 * 
+	 * @return debug target
+	 */
+	IDebugTarget getDebugTarget();
+	/**
+	 * Returns the launch this target is contained in,
+	 * or <code>null</code> if not yet registered with
+	 * a launch.
+	 * 
+	 * @return launch or <code>null</code>
+	 */
+	ILaunch getLaunch();
 }
 
 

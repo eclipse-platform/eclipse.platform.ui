@@ -78,10 +78,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		buffer.append(System.getProperty("line.separator"));
 		if (shouldAppendChildren(e)) {
 			Object[] children= new Object[0];
-			try {
-				children= getChildren(e);
-			} catch (DebugException de) {
-			}
+			children= getChildren(e);
 			for (int i = 0;i < children.length; i++) {
 				Object de= children[i];
 				append(de, buffer, lp, indent + 1);
@@ -93,9 +90,26 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		return IDebugHelpContextIds.COPY_TO_CLIPBOARD_ACTION;
 	}
 	
-	protected Object[] getChildren(Object e) throws DebugException {
-		return ((IDebugElement)e).getChildren();
+	protected Object getParent(Object e) {
+		return ((ITreeContentProvider) fViewer.getContentProvider()).getParent(e);
 	}
+	
+	/**
+	 * Returns the children of the parent after applying the filters
+	 * that are present in the viewer.
+	 */
+	protected Object[] getChildren(Object parent) {
+		Object[] children= ((ITreeContentProvider)fViewer.getContentProvider()).getChildren(parent);
+		ViewerFilter[] filters= ((StructuredViewer)fViewer).getFilters();
+		if (filters != null) {
+			for (int i= 0; i < filters.length; i++) {
+				ViewerFilter f = filters[i];
+				children = f.filter(fViewer, parent, children);
+			}
+		}
+		return children;
+	}
+	
 	/**
 	 * Do the specific action using the current selection.
 	 */
@@ -143,10 +157,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * element is already contained in the collection.
 	 */
 	protected boolean walkHierarchy(Object element, List elements) {
-		Object parent= null;
-		if (element instanceof IDebugElement) {
-			parent= ((IDebugElement)element).getParent();
-		}
+		Object parent= getParent(element);
 		if (parent == null) {
 			return true;
 		}

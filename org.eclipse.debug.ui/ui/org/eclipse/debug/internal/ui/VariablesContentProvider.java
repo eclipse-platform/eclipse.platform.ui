@@ -5,34 +5,42 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.internal.IPreferenceConstants;
 
 /**
  * Provide the contents for a variables viewer.
  */
 public class VariablesContentProvider extends BasicContentProvider implements IDebugEventListener, ITreeContentProvider {
+	
+	protected HashMap fParentCache;
+	
 	/**
 	 * Constructs a new provider
 	 */
 	public VariablesContentProvider() {
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		fParentCache = new HashMap(10);
 	}
 
 	/**
 	 * @see BasicContentProvider#doGetChildren(Object)
 	 */
 	protected Object[] doGetChildren(Object parent) {
+		Object[] children= null;
 		try {
-			if (parent instanceof IStackFrame || parent instanceof IValue) {
-				return ((IDebugElement) parent).getChildren();
+			if (parent instanceof IStackFrame) {
+				children = ((IStackFrame)parent).getVariables();
 			} else if (parent instanceof IVariable) {
-				return ((IVariable)parent).getValue().getChildren();
+				children = ((IVariable)parent).getValue().getVariables();
 			}
+			for (int i = 0; i < children.length; i++) {
+				fParentCache.put(children[i], parent);
+			}
+			return children;
 		} catch (DebugException de) {
 			DebugUIUtils.logError(de);
 		}
@@ -50,14 +58,7 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 	 * @see ITreeContentProvider
 	 */
 	public Object getParent(Object item) {
-		Object parent = null;
-		if (item instanceof IVariable) {
-			parent = ((IVariable) item).getParent();
-		}
-		if (parent instanceof IValue) {
-			parent = ((IValue)parent).getVariable();
-		}
-		return parent;
+		return fParentCache.get(item);
 	}
 
 	/**
@@ -73,27 +74,17 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 	}
 
 	/**
-	 * @see ITreeContentProvider
-	 */
-	public boolean hasChildren(Object item) {
-		try {
-			if (item instanceof IVariable) {
-				return ((IVariable)item).getValue().hasChildren();
-			} else {
-				return ((IDebugElement) item).hasChildren();
-			}
-		} catch (DebugException de) {
-			return false;
-		}
-	}
-
-	/**
 	 * Unregisters this content provider from the debug plugin so that
 	 * this object can be garbage-collected.
 	 */
 	public void dispose() {
 		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+		fParentCache=null;
+	}
+	
+	protected void clearCache() {
+		fParentCache.clear();
 	}
 }
 

@@ -7,6 +7,7 @@ package org.eclipse.debug.internal.ui;
  
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.jface.action.IAction;
@@ -47,57 +48,10 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	}
 	
 	/**
-	 * Returns the children of the parent after applying the filters
-	 * that are present in the viewer.
-	 */
-	protected Object[] getChildren(Object parent) {
-		Object[] children= ((BasicContentProvider)fViewer.getContentProvider()).getChildren(parent);
-		ViewerFilter[] filters= ((StructuredViewer)fViewer).getFilters();
-		if (filters != null) {
-			for (int i= 0; i < filters.length; i++) {
-				ViewerFilter f = filters[i];
-				children = f.filter(fViewer, parent, children);
-			}
-		}
-		return children;
-	}
-	
-	/**
 	 * @see ControlActionDelegate
 	 */
 	public boolean isEnabledFor(Object element) {
 		return element instanceof IDebugElement || element instanceof InspectItem;
-	}
-	
-	/**
-	 * Returns whether the parent of the specified
-	 * element is already contained in the collection.
-	 */
-	protected boolean walkHierarchy(Object element, List elements) {
-		IDebugElement parent= null;
-		if (element instanceof IVariable) {
-			parent= ((IVariable)element).getParent();
-		}
-		if (parent == null || parent.getElementType() == IDebugElement.STACK_FRAME) {
-			return true;
-		}
-		Iterator i= elements.iterator();
-		while (i.hasNext()) {
-			Object o= i.next();
-			try {
-				if (o instanceof IVariable
-					&& ((IVariable)o).getValue().equals(parent)) {
-						return false;
-				}
-				if (o instanceof InspectItem
-					&& ((InspectItem)o).getValue().equals(parent)) {
-						return false;
-				}
-			} catch (DebugException e) {
-			}
-		}
-			
-		return walkHierarchy(((IValue)parent).getVariable(), elements);
 	}
 	
 	/**

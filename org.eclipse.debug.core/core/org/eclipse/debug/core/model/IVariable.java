@@ -44,17 +44,6 @@ import org.eclipse.debug.core.DebugException;
  */
 public interface IVariable extends IDebugElement, IValueModification {
 	/**
-	 * Returns the children of this elemnet. Implementations of
-	 * <code>IVariable</code> return an empty collection.
-	 *
-	 * @return an empty collection
-	 * @see IDebugElement
-	 * @exception DebugException if an unable to retrieve children from
-	 *   the target
-	 */
-	IDebugElement[] getChildren() throws DebugException;
-
-	/**
 	 * Returns the value of this variable.
 	 * 
 	 * @return variable value
@@ -62,7 +51,15 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 *   from the target
 	 */
 	IValue getValue() throws DebugException;
-	
+	/**
+	 * Returns the name of this variable. Name format is debug model
+	 * specific, and should be specified by a debug model.
+	 *
+	 * @return this variable's name
+	 * @exception DebugException if unable to retrieve this element's name from
+	 *    the target
+	 */
+	String getName() throws DebugException;	
 	/**
 	 * Returns a description of the type of data this variable is
 	 * declared to reference. Note that the type of a variable

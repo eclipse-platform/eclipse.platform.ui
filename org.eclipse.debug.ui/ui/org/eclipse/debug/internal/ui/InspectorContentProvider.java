@@ -5,7 +5,11 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.core.model.IVariable;import org.eclipse.jface.viewers.*;
+import java.util.*;
+
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jface.viewers.*;
 
 public class InspectorContentProvider extends BasicContentProvider implements ITreeContentProvider, IDebugEventListener {
 	
@@ -19,10 +23,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	 */
 	 protected RemoveAllFromInspectorAction fRemoveAllFromInspectorAction;
 	 
-	/**
-	 * A table of root values in the inspector
-	 */
-	protected Hashtable fRootValuesTable;
+	protected HashMap fParentCache;
 		
 	/**
 	 * Constructs a new inspector content provider
@@ -30,7 +31,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	public InspectorContentProvider(RemoveAllFromInspectorAction action) {
 		fRemoveAllFromInspectorAction= action;
 		fInspectorList = new InspectorList(3);
-		fRootValuesTable = new Hashtable(3);
+		fParentCache = new HashMap(10);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		enableRemoveAllFromInspectorAction();
 	}
@@ -39,64 +40,42 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	 * @see ITreeContentProvider
 	 */
 	public Object getParent(Object child) {
-		if (fInspectorList == child) {
-			return null;
-		} else if (child instanceof InspectItem) {
+		if (child instanceof InspectItem) {
 			return fInspectorList;
-		} else if (child instanceof IVariable) {
-			Object parent = ((IVariable)child).getParent();
-			if (parent instanceof IValue) {
-				IValue value = (IValue)parent;
-				Object inspectItem = fRootValuesTable.get(value);
-				if (inspectItem != null) {
-					return inspectItem;
-				} else {
-					return value.getVariable();
-				}
-			} else {
-				return null;
-			}
-		} else {
-			return null;
 		}
+		return fParentCache.get(child);
+		
 	}
 
 	/**
 	 * @see BasicContentProvider#doGetChildren(Object)
 	 */
 	protected Object[] doGetChildren(Object parent) {
+		Object[] children= null;
 		if (parent == fInspectorList) {
-			return fInspectorList.getList().toArray();
-		}
-		try {
-			if (parent instanceof IVariable) {
-				return ((IVariable)parent).getValue().getChildren();
-			}
-			if (parent instanceof InspectItem) {
-				return ((InspectItem)parent).getValue().getChildren();
-			}
-		} catch (DebugException de) {
-			DebugUIUtils.logError(de);
-		}
-		return new Object[0];
-	}
+			children = fInspectorList.getList().toArray();
+		} else {	
+			try {
+				if (parent instanceof InspectItem) {
+					children = ((InspectItem)parent).getValue().getVariables();
+				} else if (parent instanceof IVariable) {
+					children = ((IVariable)parent).getValue().getVariables();
+				}
 
-	/**
-	 * @see ITreeContentProvider
-	 */
-	public boolean hasChildren(Object parent) {
-		if (parent == fInspectorList) {
-			return !fInspectorList.isEmpty();
-		} 
-		try {
-			if (parent instanceof InspectItem) {
-				return ((InspectItem)parent).getValue().hasChildren();
-			} else{
-				return ((IVariable)parent).getValue().hasChildren();
+			} catch (DebugException de) {
+				DebugUIUtils.logError(de);
 			}
-		} catch (DebugException de) {
-			return false;
 		}
+		
+		if (children == null) {
+			return new Object[0];
+		}
+			
+		for (int i = 0; i < children.length; i++) {
+			fParentCache.put(children[i], parent);
+		}
+		return children;
+
 	}
 	
 	/**
@@ -113,6 +92,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 		super.dispose();
 		fInspectorList = new InspectorList(0);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+		fParentCache= null;
 	}
 
 	/**
@@ -140,7 +120,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 				}
 				if (!allocated) {
 					itr.remove();
-					fRootValuesTable.remove(item.getValue());
+					clearCache(item);
 				}
 			}
 			refresh();
@@ -206,7 +186,6 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	public void addToInspector(InspectItem item) {
 		List inspectorList = getInspectorList().getList();
 		if (!inspectorList.contains(item)) {
-			fRootValuesTable.put(item.getValue(), item);
 			inspectorList.add(item);
 			insert(item);
 		}
@@ -217,7 +196,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	 */
 	public void removeFromInspector(InspectItem item) {
 		getInspectorList().getList().remove(item);
-		fRootValuesTable.remove(item.getValue());
+		clearCache(item);
 		remove(item);
 	}
 	
@@ -228,5 +207,16 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	public void enableRemoveAllFromInspectorAction() {
 		boolean enable= getInspectorList().isEmpty() ? false : true;
 		fRemoveAllFromInspectorAction.setEnabled(enable);
+	}
+	
+	protected void clearCache(Object parent) {
+		Iterator iter = ((HashMap)fParentCache.clone()).keySet().iterator();
+		while (iter.hasNext()) {
+			Object child = iter.next();
+			if (parent.equals(fParentCache.get(child))) {
+				fParentCache.remove(child);
+				clearCache(child);
+			}			
+		}
 	}
 }

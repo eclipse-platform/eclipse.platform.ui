@@ -111,5 +111,12 @@ public abstract class BasicContentProvider implements IStructuredContentProvider
 	protected abstract void doHandleDebugEvent(DebugEvent event);
 	
 	protected abstract Object[] doGetChildren(Object parent);
+	
+	/**
+	 * @see ITreeContentProvider
+	 */
+	public boolean hasChildren(Object item) {
+		return doGetChildren(item).length > 0;
+	}	
 }
 

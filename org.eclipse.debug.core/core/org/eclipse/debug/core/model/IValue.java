@@ -59,31 +59,7 @@ public interface IValue extends IDebugElement {
 	 *   from the target
 	 */
 	String getValueString() throws DebugException;
-
-	/**
-	 * Returns the name of this element. Implementations of <code>IValue</code>
-	 * return <code>null</code>. Values do not have names.
-	 *
-	 * @return <code>null</code> 
-	 */
-	String getName();
-	
-	/**
-	 * Returns the variable this value is bound to, or <code>null</code>
-	 * if this value is not bound to a variable.
-	 *
-	 * @return a variable, or <code>null</code> if none
-	 */
-	IVariable getVariable();
-	
-	/**
-	 * Returns the parent of this element. Implementations of <code>IVariable</code>
-	 * return <code>null</code>. Values do not have parents.
-	 *
-	 * @return <code>null</code>
-	 */
-	IDebugElement getParent();
-	
+		
 	/**
 	 * Returns whether this value is currently allocated.
 	 * <p>
@@ -96,4 +72,13 @@ public interface IValue extends IDebugElement {
 	 *   allocated on the target
 	 */
 	boolean isAllocated() throws DebugException;
+	/**
+	 * Returns the visible variables in this value. An empty
+	 * collection is returned if there are no visible variables.
+	 * 
+	 * @return collection of visible variables
+	 * @exception DebugException if unable to retrieve variables
+	 * 		from the target
+	 */
+	IVariable[] getVariables() throws DebugException;
 }

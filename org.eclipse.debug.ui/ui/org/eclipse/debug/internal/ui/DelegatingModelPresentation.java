@@ -205,7 +205,18 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	public String getDefaultText(Object element) {
 		if (element instanceof IDebugElement) {
 			try {
-				return ((IDebugElement) element).getName();
+				switch (((IDebugElement) element).getElementType()) {
+					case IDebugElement.DEBUG_TARGET:
+						return ((IDebugTarget)element).getName();
+					case IDebugElement.THREAD:
+						return ((IThread)element).getName();
+					case IDebugElement.STACK_FRAME:
+						return ((IStackFrame)element).getName();
+					case IDebugElement.VARIABLE:
+						return ((IVariable)element).getName();
+					default:
+						return "";
+				}
 			} catch (DebugException de) {
 			}
 		} else

@@ -29,22 +29,22 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	 * @see BasicContentProvider#doGetChildren(Object)
 	 */
 	protected Object[] doGetChildren(Object parent) {
-		if (parent instanceof IDebugElement) {
-			IDebugElement de= (IDebugElement) parent;
-			if (de.getElementType() < IDebugElement.STACK_FRAME) {
-				try {
-					return de.getChildren();
-				} catch (DebugException e) {
-					DebugUIUtils.logError(e);
-				}
+		try {
+			if (parent instanceof IDebugTarget) {
+				return ((IDebugTarget)parent).getThreads();
 			}
-		} else
-			if (parent instanceof ILaunch) {
-				return ((ILaunch)parent).getChildren();
-			} else
-				if (parent instanceof ILaunchManager) {
-					return ((ILaunchManager) parent).getLaunches();
-				}
+			if (parent instanceof IThread) {
+				return ((IThread)parent).getStackFrames();
+			}			
+		} catch (DebugException e) {
+			DebugUIUtils.logError(e);
+		}
+		if (parent instanceof ILaunch) {
+			return ((ILaunch)parent).getChildren();
+		}
+		if (parent instanceof ILaunchManager) {
+			return ((ILaunchManager) parent).getLaunches();
+		}
 		return new Object[0];
 	}
 
@@ -63,20 +63,22 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	 */
 	public Object getParent(Object item) {
 		Object parent= null;
-		if (item instanceof IDebugElement) {
-			IDebugElement de= (IDebugElement) item;
-			parent= de.getParent();
-			if (parent == null) {
-				parent= de.getLaunch();
-			}
-		} else
-			if (item instanceof IProcess) {
-				parent= ((IProcess) item).getLaunch();
-			} else
-				if (item instanceof ILaunch) {
-					parent= DebugPlugin.getDefault().getLaunchManager();
-				}
-		return parent;
+		if (item instanceof IStackFrame) {
+			return ((IStackFrame)item).getThread();
+		}
+		if (item instanceof IThread) {
+			return ((IThread)item).getDebugTarget();
+		}
+		if (item instanceof IDebugTarget) {
+			return ((IDebugElement)item).getLaunch();
+		}
+		if (item instanceof IProcess) {
+			return ((IProcess)item).getLaunch();
+		}
+		if (item instanceof ILaunch) {
+			return DebugPlugin.getDefault().getLaunchManager();
+		}
+		return null;
 	}
 
 	/**
@@ -198,10 +200,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 			// No children shown for IStackFrames in this view (see the variables view instead).
 		} else
 			if (item instanceof IDebugElement) {
-				try {
-					return ((IDebugElement) item).hasChildren();
-				} catch (DebugException de) {
-				}
+				return doGetChildren(item).length > 0;
 			} else
 				if (item instanceof ILaunch) {
 					return true;
@@ -225,9 +224,9 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 					if (targets.length > 0) {
 						IDebugTarget target= targets[targets.length - 1];
 						try {
-							IDebugElement[] threads= target.getChildren();
+							IThread[] threads= target.getThreads();
 							for (int i=0; i < threads.length; i++) {
-								if (((IThread)threads[i]).isSuspended()) {
+								if (threads[i].isSuspended()) {
 									((LaunchesViewer)fViewer).autoExpand(threads[i], false);
 									return;
 								}

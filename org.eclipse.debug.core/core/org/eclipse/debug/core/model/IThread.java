@@ -36,6 +36,18 @@ import org.eclipse.debug.core.DebugException;
 
 public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminate {
 	/**
+	 * Returns the stack frames contained in this thread. An
+	 * empty collection is returned if this thread contains
+	 * no stack frames, or is not currently suspended. Stack frames
+	 * are returned in top down order.
+	 * 
+	 * @return a collection of stack frames
+	 * @exception DebugException
+	 * @exception DebugException if unable to retrieve stack frames
+	 *   from the target
+	 */
+	IStackFrame[] getStackFrames() throws DebugException;
+	/**
 	 * Returns the priority of this thread. The meaning of this
 	 * number is operating-system dependent.
 	 *
@@ -53,4 +65,13 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 *   from the target
 	 */
 	IStackFrame getTopStackFrame() throws DebugException;
+	/**
+	 * Returns the name of this thread. Name format is debug model
+	 * specific, and should be specified by a debug model.
+	 *
+	 * @return this thread's name
+	 * @exception DebugException if unable to retrieve this element's name from
+	 *    the target
+	 */
+	String getName() throws DebugException;
 }

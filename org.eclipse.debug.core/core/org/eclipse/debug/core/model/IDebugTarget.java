@@ -5,6 +5,7 @@ package org.eclipse.debug.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IBreakpointListener;
 
 /**
@@ -45,6 +46,25 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * this debug target.
 	 */
 	IProcess getProcess();
+	/**
+	 * Returns the threads contained in this debug target. An
+	 * empty collection is returned if this debug target contains
+	 * no threads.
+	 * 
+	 * @return a collection of threads
+	 * @exception DebugException if unable to retrieve threads
+	 * 		from the target
+	 */
+	IThread[] getThreads() throws DebugException;
+	/**
+	 * Returns the name of this debug target. Name format is debug model
+	 * specific, and should be specified by a debug model.
+	 *
+	 * @return this target's name
+	 * @exception DebugException if unable to retrieve this element's name from
+	 *    the target
+	 */
+	String getName() throws DebugException;
 }
 
 

@@ -48,6 +48,21 @@ import org.eclipse.debug.core.DebugException;
  */
 public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerminate {
 	/**
+	 * Returns the thread this stack frame is contained in.
+	 * 
+	 * @return thread
+	 */
+	IThread getThread();
+	/**
+	 * Returns the visible variables in this stack frame. An empty
+	 * collection is returned if there are no visible variables.
+	 * 
+	 * @return collection of visible variables
+	 * @exception DebugException if unable to retrieve variables
+	 * 		from the target
+	 */
+	IVariable[] getVariables() throws DebugException;
+	/**
 	 * Returns the line number of the instruction pointer in 
 	 * this stack frame that corresponds to a line in an associated source
 	 * element, or <code>-1</code> if line number information
@@ -58,4 +73,13 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 *   from the target
 	 */
 	int getLineNumber() throws DebugException;
+	/**
+	 * Returns the name of this stack frame. Name format is debug model
+	 * specific, and should be specified by a debug model.
+	 *
+	 * @return this frame's name
+	 * @exception DebugException if unable to retrieve this element's name from
+	 *    the target
+	 */
+	String getName() throws DebugException;
 }

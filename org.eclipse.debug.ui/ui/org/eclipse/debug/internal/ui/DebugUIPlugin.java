@@ -932,7 +932,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 				}
 			} else
 				if (input instanceof IDebugElement) {
-					processInput= ((IDebugElement) input).getProcess();
+					processInput= ((IDebugElement) input).getDebugTarget().getProcess();
 				}
 
 		if ((processInput == null) || (processInput.getLaunch() == null)) {
