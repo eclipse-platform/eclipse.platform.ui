@@ -170,26 +170,11 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private void initializeDefaults() {
 		IPreferenceStore store = getPreferenceStore();
-		cvsRsh.setText(store.getString(ICVSUIConstants.PREF_CVS_RSH));
-		cvsRshParameters.setText(store.getString(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS));
-		cvsServer.setText(store.getString(ICVSUIConstants.PREF_CVS_SERVER));
-		
-		IConnectionMethod[] methods = CVSRepositoryLocation.getPluggedInConnectionMethods();
-		for (int i = 0; i < methods.length; i++) {
-			String name = methods[i].getName();
-			if (!name.equals("ext")) { //$NON-NLS-1$
-				methodType.add(name);
-			}
-		}
+		String rsh = store.getString(ICVSUIConstants.PREF_CVS_RSH);
+		String parameter = store.getString(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS);
+		String server = store.getString(ICVSUIConstants.PREF_CVS_SERVER);
 		String method = store.getString(ICVSUIConstants.PREF_EXT_CONNECTION_METHOD_PROXY);
-		if (method.equals("ext")) { //$NON-NLS-1$
-			methodType.select(0);
-		} else {
-			methodType.select(methodType.indexOf(method));
-		}
-		useExternal.setSelection(method.equals("ext")); //$NON-NLS-1$
-		useInternal.setSelection(!method.equals("ext")); //$NON-NLS-1$
-		updateEnablements();
+		initializeDefaults(rsh, parameter, server, method);
 	}
 	
 	/*
@@ -227,6 +212,41 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return super.performOk();
 	}
+    
+	/* 
+     * @see PreferencePage#performDefaults()
+     */
+    protected void performDefaults() {
+        IPreferenceStore store = getPreferenceStore();
+		String rsh = store.getDefaultString(ICVSUIConstants.PREF_CVS_RSH);
+		String parameter = store.getDefaultString(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS);
+		String server = store.getDefaultString(ICVSUIConstants.PREF_CVS_SERVER);
+		String method = store.getDefaultString(ICVSUIConstants.PREF_EXT_CONNECTION_METHOD_PROXY);
+		initializeDefaults(rsh, parameter, server, method);
+        super.performDefaults();
+    }
+    
+    private void initializeDefaults(String rsh, String parameters, String server, String method) {
+		cvsRsh.setText(rsh);
+		cvsRshParameters.setText(parameters);
+		cvsServer.setText(server);
+		IConnectionMethod[] methods = CVSRepositoryLocation.getPluggedInConnectionMethods();
+		for (int i = 0; i < methods.length; i++) {
+			String name = methods[i].getName();
+			if (!name.equals("ext")) { //$NON-NLS-1$
+				methodType.add(name);
+			}
+		}
+		if (method.equals("ext")) { //$NON-NLS-1$
+			methodType.select(0);
+		} else {
+			methodType.select(methodType.indexOf(method));
+		}
+		useExternal.setSelection(method.equals("ext")); //$NON-NLS-1$
+		useInternal.setSelection(!method.equals("ext")); //$NON-NLS-1$
+		updateEnablements();
+    }
+    
 	/*
 	 * @see PreferencePage#doGetPreferenceStore()
 	 */
