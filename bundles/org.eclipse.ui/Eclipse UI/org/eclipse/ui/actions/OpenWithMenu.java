@@ -177,6 +177,7 @@ public void fill(Menu menu, int index) {
 	if (preferredEditor != null)
 		isPreferred = descriptor.getId().equals(preferredEditor.getId());
 	createMenuItem(menu, descriptor, isPreferred);
+	createDefaultMenuItem(menu,file,registry);
 }
 /**
  * Converts the IAdaptable file to IFile or null.
@@ -219,5 +220,46 @@ private void openEditor(IEditorDescriptor editor) {
 			e.getMessage(),
 			e);
 	}
+}
+
+/**
+ * Creates the menu item for clearing the current selection.
+ *
+ * @param menu the menu to add the item to
+ * @param file the file bing edited
+ * @param registry the editor registry
+ */
+private void createDefaultMenuItem(Menu menu, final IFile file, final IEditorRegistry registry) {
+	MenuItem menuItem;
+	if (registry.getDefaultEditor(file) == null) {
+		menuItem = new MenuItem(menu, SWT.CHECK);
+		menuItem.setSelection(true);
+	}
+	else {
+		menuItem = new MenuItem(menu, SWT.PUSH);
+	}
+	menuItem.setText(WorkbenchMessages.getString("DefaultEditorDescription.name"));
+	
+	Listener listener = new Listener() {
+		public void handleEvent(Event event) {
+			switch (event.type) {
+				case SWT.Selection:
+					registry.setDefaultEditor(file,null);
+					try{
+						page.openEditor(file);
+					}
+					catch (PartInitException e) {
+						DialogUtil.openError(
+							page.getWorkbenchWindow().getShell(),
+							WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
+							e.getMessage(),
+							e);
+					}	
+					break;
+			}
+		}
+	};
+	
+	menuItem.addListener(SWT.Selection, listener);
 }
 }
