@@ -12,6 +12,7 @@ package org.eclipse.core.internal.jobs;
 import java.util.*;
 
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.jobs.*;
 /**
  * Internal implementation class for jobs.
  */
-public abstract class InternalJob implements Comparable {
+public abstract class InternalJob extends PlatformObject implements Comparable {
 	private static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
 	
@@ -70,11 +71,11 @@ public abstract class InternalJob implements Comparable {
 		} else
 			previous.addLast(entry);
 	}
-	public boolean belongsTo(Object family) {
+	protected boolean belongsTo(Object family) {
 		return false;
 	}
 	protected boolean cancel() {
-		return manager.cancel((Job) this);
+		return manager.cancel(this);
 	}
 	public final int compareTo(Object otherJob) {
 		return (int) (((InternalJob) otherJob).startTime - startTime);
