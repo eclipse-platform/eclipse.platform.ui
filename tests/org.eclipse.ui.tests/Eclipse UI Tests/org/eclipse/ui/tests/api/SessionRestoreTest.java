@@ -12,8 +12,8 @@ public class SessionRestoreTest extends AbstractTestCase {
 	/** 
 	 * Construct an instance.
 	 */
-	public SessionRestoreTest() {
-		super("testRestoreSession");
+	public SessionRestoreTest(String arg) {
+		super(arg);
 	}
 		
 	/**

@@ -19,8 +19,8 @@ public class SessionCreateTest extends AbstractTestCase {
 	/** 
 	 * Construct an instance.
 	 */
-	public SessionCreateTest() {
-		super("testSessionCreation");
+	public SessionCreateTest(String arg) {
+		super(arg);
 	}
 		/**
 	 * Generates a session state in the workbench.
