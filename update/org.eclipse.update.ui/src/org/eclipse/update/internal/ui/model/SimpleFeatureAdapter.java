@@ -50,7 +50,7 @@ public class SimpleFeatureAdapter extends FeatureAdapter {
 				new SimpleFeatureAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {
 				result[i] =
-					new SimpleFeatureAdapter(included[i].getFeature(), included[i].isOptional());
+					new SimpleFeatureAdapter(included[i].getFeature(null), included[i].isOptional());
 				result[i].setIncluded(true);
 			}
 			return result;
