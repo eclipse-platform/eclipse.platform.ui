@@ -144,8 +144,8 @@ public class AutomaticUpdatesPreferencePage
 		else 
 			pref.setValue(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_SCHEDULE);
 			
-		pref.setValue(UpdateScheduler.P_DAY, UpdateScheduler.DAYS[dayCombo.getSelectionIndex()]);
-		pref.setValue(UpdateScheduler.P_HOUR, UpdateScheduler.HOURS[hourCombo.getSelectionIndex()]);
+		pref.setValue(UpdateScheduler.P_DAY, dayCombo.getText());
+		pref.setValue(UpdateScheduler.P_HOUR, hourCombo.getText());
 		
 		UpdateScheduler.getDefault().savePluginPreferences();
 		

@@ -281,25 +281,33 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		int current_h = calendar.get(Calendar.HOUR_OF_DAY);
 		int current_m = calendar.get(Calendar.MINUTE);
 		int current_s = calendar.get(Calendar.SECOND);
-		int current_ms = calendar.get(Calendar.MILLISECOND);
-		
+		int current_ms = calendar.get(Calendar.MILLISECOND);		
 
 		long delay = 0L;  // milliseconds
-		
+
 		if (target_d == -1) {
 			// Compute the delay for "every day at x o'clock"
-			if (target_h < current_h) 
-				delay = (((24 - current_h + target_h)*60 + current_m)*60 + current_s)*1000 + current_ms;
-			else 
-				delay = (((target_h - current_h)*60 + current_m)*60 + current_s)*1000 + current_ms;
-	
+			// Is it now ?
+			if (target_h == current_h && current_m == 0 && current_s == 0)
+				return delay;
+				
+			int delta_h = target_h - current_h;
+			if (target_h <= current_h)
+				delta_h += 24;
+			delay = ((delta_h*60 - current_m)*60 - current_s)*1000 - current_ms;
 			return delay;
 		} else {
 			// Compute the delay for "every Xday at x o'clock"
-			if (target_d < current_d) 
-				delay = ((((7-current_d + target_d)*24 + target_h - current_h)*60 + current_m)*60 + current_s)*1000 + current_ms;
-			else
-				delay = ((((target_d - current_d)*24 + target_h - current_h)*60 + current_m)*60 + current_s)*1000 + current_ms;
+			// Is it now ?
+			if (target_d == current_d && target_h == current_h && current_m == 0 && current_s == 0)
+				return delay;
+				
+			int delta_d = target_d - current_d;
+			if (target_d < current_d || target_d == current_d && (target_h < current_h || target_h == current_h && current_m > 0))
+				delta_d += 7;
+			int delta_h = target_h - current_h;
+				
+			delay = (((delta_d*24 + target_h - current_h)*60 - current_m)*60 - current_s)*1000 - current_ms;
 
 			return delay;
 		}
