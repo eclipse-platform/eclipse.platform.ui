@@ -85,10 +85,13 @@ public class CleanDialog extends MessageDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
+		final boolean cleanAll = allButton.getSelection();
+		final boolean buildAll = buildNowButton != null && buildNowButton.getSelection();
+		super.buttonPressed(buttonId);
 		if (buttonId == IDialogConstants.OK_ID) {
 			try {
 				//batching changes ensures that autobuild runs after cleaning
-				final boolean cleanAll = allButton.getSelection();
+				
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
 					new WorkspaceModifyOperation() {
 						protected void execute(IProgressMonitor monitor) throws CoreException {
@@ -96,7 +99,7 @@ public class CleanDialog extends MessageDialog {
 						}
 					});
 				//see if a build was requested
-				if (buildNowButton != null && buildNowButton.getSelection()) {
+				if (buildAll) {
 					//start an immediate workspace build
 					GlobalBuildAction build = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 					build.run();
@@ -110,7 +113,7 @@ public class CleanDialog extends MessageDialog {
 				//cancelation
 			}
 		}
-		super.buttonPressed(buttonId);
+		
 	}
 	protected void createButtonsForButtonBar(Composite parent) {
 		//only need to prompt for immediate build if autobuild is off
