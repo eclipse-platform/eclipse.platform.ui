@@ -680,11 +680,11 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	/**
 	 * Makes this view visible in the active page.
 	 */
-	public static SynchronizeView showInActivePage(IWorkbenchPage activePage) {
+	public static SynchronizeView showInActivePage(IWorkbenchPage activePage, boolean allowSwitchingPerspectives) {
 		IWorkbench workbench= TeamUIPlugin.getPlugin().getWorkbench();
 		IWorkbenchWindow window= workbench.getActiveWorkbenchWindow();
 		
-		if(! TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE).equals(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE_NONE)) {			
+		if(allowSwitchingPerspectives && ! TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE).equals(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE_NONE)) {			
 			try {
 				String pId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
 				activePage = workbench.showPerspective(pId, window);

@@ -28,7 +28,7 @@ public class TeamUI {
 	 * to the view.
 	 */
 	public static ISynchronizeView showSyncViewInActivePage(IWorkbenchPage activePage) {
-		return SynchronizeView.showInActivePage(activePage);		
+		return SynchronizeView.showInActivePage(activePage, true /* allow perspective switch */);		
 	}
 		
 	/**

@@ -81,7 +81,7 @@ public class OpenInCompareAction extends Action {
 			}
 			
 			if(keepFocus) {
-				 SynchronizeView.showInActivePage(viewer.getSite().getPage());
+				 SynchronizeView.showInActivePage(viewer.getSite().getPage(), false /* don't switch perspectives */);
 			}
 			return input;
 		}			

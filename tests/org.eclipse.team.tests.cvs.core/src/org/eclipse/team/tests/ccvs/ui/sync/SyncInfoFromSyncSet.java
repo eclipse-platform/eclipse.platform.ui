@@ -64,7 +64,7 @@ public class SyncInfoFromSyncSet extends SyncInfoSource {
 	
 	private SubscriberInput getInput(TeamSubscriber subscriber) throws AssertionFailedError {
 		// show the sync view
-		SynchronizeView syncView = (SynchronizeView)SynchronizeView.showInActivePage(null);
+		SynchronizeView syncView = (SynchronizeView)SynchronizeView.showInActivePage(null, true);
 		SubscriberInput input = syncView.getInput();
 		if (subscriber != input.getSubscriber()) {
 			// ensure that the CVS subscriber is active
