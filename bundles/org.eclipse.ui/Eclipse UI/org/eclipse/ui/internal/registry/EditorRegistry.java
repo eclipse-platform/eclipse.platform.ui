@@ -12,6 +12,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.widgets.*;
@@ -431,8 +432,44 @@ private void initializeFromStorage () {
 	sortInternalEditors();
 	rebuildInternalEditorMap();
 
+	setProductDefaults();
 	loadAssociations(); //get saved earlier state
 	addExternalEditorsToEditorMap();
+}
+/**
+ * Set the default editors according to the preference store which
+ * can be overwritten in the file properties.ini.
+ */
+private void setProductDefaults() {
+	IWorkbench workbench = PlatformUI.getWorkbench();
+	IPreferenceStore store = workbench.getPreferenceStore();
+	String defaultEditors = store.getString(IPreferenceConstants.DEFAULT_EDITORS);
+	if(defaultEditors == null || defaultEditors.length() == 0)
+		return;
+		
+	StringTokenizer extEditors = new StringTokenizer(defaultEditors,new Character(IPreferenceConstants.SEPARATOR).toString());
+	while(extEditors.hasMoreTokens()) {
+		String extEditor = extEditors.nextToken().trim();
+		int index = extEditor.indexOf(':');
+		if(extEditor.length() < 3 || index <= 0 || index >= (extEditor.length() - 1)) { 
+			//Extension and id must have at least one char.
+			WorkbenchPlugin.log("Error setting default editor. Could not parse '" + extEditor + "'. Default editors should be specified as '*.ext1:editorId1;*.ext2:editorId2'"); //$NON-NLS-1$
+			return;
+		}
+		String ext = extEditor.substring(0,index).trim();
+		String editorId = extEditor.substring(index + 1).trim();
+		FileEditorMapping mapping = getMappingFor(ext);
+		if(mapping == null) {
+			WorkbenchPlugin.log("Error setting default editor. Could not find mapping for '" + ext + "'."); //$NON-NLS-1$
+			continue;
+		}
+		EditorDescriptor editor = (EditorDescriptor)findEditor(editorId);
+		if(editor == null) {
+			WorkbenchPlugin.log("Error setting default editor. Could not find editor: '" + editorId + "'."); //$NON-NLS-1$
+			continue;
+		}
+		mapping.setDefaultEditor(editor);
+	}	
 }
 /**
  * Load the serialized resource associations
