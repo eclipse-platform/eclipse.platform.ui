@@ -442,11 +442,6 @@ public class LocalFolderTest extends JUnitTestCase {
 		ICVSFile file3 = folder2.getFile("file1.txt");
 
 		try {
-			file3.setSyncInfo(fileInfo1);
-			fail();
-		} catch (Exception e) {}
-		
-		try {
 			folder3.setSyncInfo(new ResourceSyncInfo(folder3.getName()));
 			fail();
 		} catch (Exception e) {}

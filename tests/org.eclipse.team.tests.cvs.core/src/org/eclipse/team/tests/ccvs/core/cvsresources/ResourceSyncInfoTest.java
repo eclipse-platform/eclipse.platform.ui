@@ -68,15 +68,18 @@ public class ResourceSyncInfoTest extends EclipseTest {
 			info = new ResourceSyncInfo("/file.java/0/27 Sep 2001 18:00:16/-k/", null, null);
 			assertTrue(info.isAdded());
 			
-			info = new ResourceSyncInfo("/file.java/0/27 Sep 2001 18:00:16/-k/Tv1", null, null);
+			info = new ResourceSyncInfo("/file.java/1.0/27 Sep 2001 18:00:16/-k/Tv1", null, null);
 			assertTrue(info.getTag() != null);
 			
 			String timestamp = "10 Sep 2000 18:00:16";
-			info = new ResourceSyncInfo("/file.java/0/27 Sep 2001 18:00:16/-k/Tv1", null, timestamp);
+			info = new ResourceSyncInfo("/file.java/1.0/27 Sep 2001 18:00:16/-k/Tv1", null, timestamp);
 			assertTrue(info.getTimeStamp().equals(timestamp));
 			
+			info = new ResourceSyncInfo("/file.java/0/27 Sep 2001 18:00:16/-k/", null, timestamp);
+			assertTrue(info.getTimeStamp().equals(ResourceSyncInfo.DUMMY_TIMESTAMP));
+			
 			String permissions = "u=rwx,g=rwx,o=rwx";
-			info = new ResourceSyncInfo("/file.java/0/27 Sep 2001 18:00:16/-k/Tv1", permissions, null);
+			info = new ResourceSyncInfo("/file.java/2.0/27 Sep 2001 18:00:16/-k/Tv1", permissions, null);
 			assertTrue(info.getPermissions().equals(permissions));
 			
 			info = new ResourceSyncInfo("D/file.java////", null, null);
