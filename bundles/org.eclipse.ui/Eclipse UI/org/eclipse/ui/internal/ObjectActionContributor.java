@@ -33,7 +33,7 @@ public class ObjectActionContributor extends PluginActionBuilder
  */
 public ObjectActionContributor(IConfigurationElement config) {
 	this.config = config;
-	this.adaptable = P_TRUE.equals(config.getAttribute(ATT_ADAPTABLE));
+	this.adaptable = P_TRUE.equalsIgnoreCase(config.getAttribute(ATT_ADAPTABLE));
 }
 /**
  * Contributes actions applicable for the current selection.

@@ -114,7 +114,7 @@ private void processPageElement(IConfigurationElement element) {
 			iconName, 
 			filterProperties, 
 			objectClassName, 
-			P_TRUE.equals(adaptable),
+			P_TRUE.equalsIgnoreCase(adaptable),
 			element);
 	registerContributor(objectClassName, contributor);
 }

@@ -79,7 +79,7 @@ public boolean contribute(PropertyPageManager manager, IAdaptable object) {
 	else
 		result = getContributors(object.getClass(),adaptedObject.getClass());
 	
-	if (result == null | result.size() == 0)
+	if (result == null || result.size() == 0)
 		return false;
 	
 	// Sort the results 
