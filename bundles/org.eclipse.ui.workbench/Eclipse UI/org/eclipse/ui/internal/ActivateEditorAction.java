@@ -10,8 +10,9 @@ package org.eclipse.ui.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -43,30 +44,23 @@ public void pageClosed(IWorkbenchPage page) {
 	updateState();
 }
 
-public void partOpened(IWorkbenchPart part) {
-	super.partOpened(part);
-	if (part instanceof IEditorPart) {
-		updateState();
-	}
-}
-
-public void partClosed(IWorkbenchPart part) {
-	super.partClosed(part);
-	if (part instanceof IEditorPart) {
-		updateState();
-	}
-}
 
 /**
  * @see Action#run()
  */
 public void runWithEvent(Event e) {
 	accelerator = e.detail;
-	IWorkbenchPage page = getActivePage();
+	WorkbenchPage page = (WorkbenchPage)getActivePage();
 	if (page != null) {
-		IEditorPart editor = page.getActiveEditor(); // may not actually be active
-		if (editor != null) {
-			page.activate(editor);
+		IEditorPart part = page.getActiveEditor(); // may not actually be active
+		if (part != null) {
+			page.activate(part);
+		} else {
+			IWorkbenchPartReference ref = page.getActivePartReference();
+			if(ref instanceof IViewReference) {
+				if(page.isFastView((IViewReference)ref))
+					page.toggleFastView((IViewReference)ref);
+			}
 		}
 	}
 }
@@ -75,12 +69,8 @@ public void runWithEvent(Event e) {
  * Updates the enabled state.
  */
 public void updateState() {
-	WorkbenchPage page = (WorkbenchPage)getActivePage();
-	if (page == null) {
-		setEnabled(false);
-		return;
-	}
-	setEnabled(page.getSortedEditors().length >= 1);
+	IWorkbenchPage page = getActivePage();
+	setEnabled(page != null);
 }
 
 public int getAccelerator() {
