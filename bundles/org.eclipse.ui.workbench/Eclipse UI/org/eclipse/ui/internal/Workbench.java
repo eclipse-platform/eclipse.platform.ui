@@ -299,6 +299,7 @@ public class Workbench
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
 			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
 		}
 
 		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
