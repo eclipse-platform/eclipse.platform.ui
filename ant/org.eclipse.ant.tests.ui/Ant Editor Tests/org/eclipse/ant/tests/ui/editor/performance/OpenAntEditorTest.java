@@ -22,12 +22,6 @@ import org.eclipse.ui.PartInitException;
 
 public class OpenAntEditorTest extends PerformanceTestCase {
 	
-	public static final String PATH= "buildfiles/performance";
-	
-	public static final String FILE_PREFIX= "build";
-	
-	public static final String FILE_SUFFIX= ".xml";
-	
 	protected void setUp() throws Exception {
 		super.setUp();
 		EditorTestHelper.runEventQueue();
