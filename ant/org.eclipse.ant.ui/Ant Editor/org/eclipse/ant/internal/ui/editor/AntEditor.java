@@ -333,9 +333,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		
 		//TODO the framework does not currently support/listen to the color registry
 		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
-		PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
-		PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
-		PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
+	//	PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
+	//	PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
+	//	PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
     }
 
 
