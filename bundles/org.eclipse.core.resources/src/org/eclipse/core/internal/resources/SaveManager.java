@@ -500,15 +500,16 @@ protected void restoreMasterTable() throws CoreException {
  * project description could not be restored.
  */
 protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
-	if (!project.isOpen())
-		return;
 	ProjectDescription description = null;
 	CoreException failure = null;
 	try {
-		description = workspace.getFileSystemManager().read(project, true);
+		if (project.isOpen())
+			description = workspace.getFileSystemManager().read(project, true);
 	} catch (CoreException e) {
 		failure = e;
-		//create a default description if one couldn't be read
+	}
+	//create a default description if one couldn't be read
+	if (description == null) {
 		description = new ProjectDescription();
 		description.setName(project.getName());
 	}
