@@ -156,11 +156,9 @@ public class ComboFieldEditor extends FieldEditor {
 	 */
 	protected void updateComboForValue(String value) {
 		fValue = value;
-		boolean found = false;
 		for (int i = 0; i < fEntryNamesAndValues.length; i++) {
 			if (value.equals(fEntryNamesAndValues[i][1])) {
 				fCombo.setText(fEntryNamesAndValues[i][0]);
-				found = true;
 				return;
 			}
 		}
@@ -168,5 +166,4 @@ public class ComboFieldEditor extends FieldEditor {
 			fValue = fEntryNamesAndValues[0][1];
 		}
 	}
-	
 }
