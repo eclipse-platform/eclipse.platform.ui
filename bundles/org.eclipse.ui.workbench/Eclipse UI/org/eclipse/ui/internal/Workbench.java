@@ -368,6 +368,18 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	public IContextManager getContextManager() {
 		return contextManager;
 	}
+    
+    public final void disableKeyFilter() {
+        final Display display = Display.getCurrent();
+        display.removeFilter(SWT.KeyDown, listener);
+        display.removeFilter(SWT.Traverse, listener);
+    }
+    
+    public final void enableKeyFilter() {
+        final Display display = Display.getCurrent();
+        display.addFilter(SWT.KeyDown, listener);
+        display.addFilter(SWT.Traverse, listener);
+    }
 
 	public final boolean inContext(final String commandId) {
 		if (commandId != null) {

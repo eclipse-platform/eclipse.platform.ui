@@ -234,10 +234,13 @@ public class CyclePartAction extends PageEventAction {
 			public void helpRequested(HelpEvent event) {
 			}
 		});
-		
+
+        // TODO Bold cast to Workbench
+        final Workbench workbench = (Workbench) page.getWorkbenchWindow().getWorkbench();
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
+            workbench.disableKeyFilter();
 			addKeyListener(table, dialog);
 			
 			while (!dialog.isDisposed())
@@ -246,6 +249,7 @@ public class CyclePartAction extends PageEventAction {
 		} finally {
 			if(!dialog.isDisposed())
 				cancel(dialog);
+            workbench.enableKeyFilter();
 		}
 	}
 	
