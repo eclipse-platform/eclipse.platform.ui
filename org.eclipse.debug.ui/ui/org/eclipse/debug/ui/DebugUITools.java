@@ -739,7 +739,7 @@ public class DebugUITools {
 	 * <code>null</code> if none
 	 * @since 3.0
 	 */
-	public IConsole getConsole(IProcess process) {
+	public static IConsole getConsole(IProcess process) {
 		return DebugUIPlugin.getDefault().getConsoleDocumentManager().getConsole(process);
 	}
 	
@@ -752,7 +752,7 @@ public class DebugUITools {
 	 * <code>null</code> if none
 	 * @since 3.0
 	 */
-	public IConsole getConsole(IDebugElement element) {
+	public static IConsole getConsole(IDebugElement element) {
 		IProcess process = element.getDebugTarget().getProcess();
 		if (process != null) {
 			return getConsole(process);
