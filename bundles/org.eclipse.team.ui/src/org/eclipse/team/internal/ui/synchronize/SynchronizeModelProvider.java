@@ -450,8 +450,10 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			final Object[][] selectedElements = new Object[1][1];
 			viewer.getControl().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					expandedElements[0] = ((AbstractTreeViewer) viewer).getVisibleExpandedElements();
-					selectedElements[0] = ((IStructuredSelection) viewer.getSelection()).toArray();
+					if (viewer != null && !viewer.getControl().isDisposed()) {
+						expandedElements[0] = ((AbstractTreeViewer) viewer).getVisibleExpandedElements();
+						selectedElements[0] = ((IStructuredSelection) viewer.getSelection()).toArray();
+					}
 				}
 			});
 			//

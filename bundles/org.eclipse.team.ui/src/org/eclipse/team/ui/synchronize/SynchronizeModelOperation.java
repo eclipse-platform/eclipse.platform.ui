@@ -15,10 +15,12 @@ import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamOperation;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A subscriber operation provides access to a {@link SyncInfoSet} containing
@@ -35,6 +37,29 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	
 	private IDiffElement[] elements;
 	
+	/*
+	 * Helper method for extacting the part safely from a configuration
+	 */
+	private static IWorkbenchPart getPart(ISynchronizePageConfiguration configuration) {
+		if (configuration != null) {
+			ISynchronizePageSite site = configuration.getSite();
+			if (site != null) {
+				return site.getPart();
+			}
+		}
+		return null;
+	}
+	
+	/*
+	 * Helper method for extacting the runnable context safely from a configuration
+	 */
+	private static IRunnableContext getRunnableContext(ISynchronizePageConfiguration configuration) {
+		if (configuration != null) {
+			return configuration.getRunnableContext();
+		}
+		return null;
+	}
+	
 	/**
 	 * Create an operation that will operate on the given diff elements
 	 * that were obtained from a view populated by a 
@@ -42,7 +67,7 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	 * @param elements
 	 */
 	protected SynchronizeModelOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		super(configuration.getSite().getPart(), configuration.getRunnableContext());
+		super(getPart(configuration), getRunnableContext(configuration));
 		this.elements = elements;
 	}
 
