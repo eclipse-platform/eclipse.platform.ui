@@ -10,7 +10,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.dialogs.*;
@@ -193,14 +192,7 @@ public void createControl(Composite parent) {
 /**
  *	Create the import options specification widgets.
  */
-protected void createOptionsGroup(Composite parent) {
-	// options group
-	Group optionsGroup = new Group(parent, SWT.NONE);
-	GridLayout layout = new GridLayout();
-	optionsGroup.setLayout(layout);
-	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
-
+protected void createOptionsGroupButtons(Group optionsGroup) {
 
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);

@@ -101,14 +101,8 @@ public void createControl(Composite parent) {
 /**
  *	Create the import options specification widgets.
  */
-protected void createOptionsGroup(Composite parent) {
-	// options group
-	Composite optionsGroup = new Composite(parent, SWT.NONE);
-	GridLayout layout = new GridLayout();
-	layout.marginHeight = 0;
-	optionsGroup.setLayout(layout);
-	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-
+protected void createOptionsGroupButtons(Group optionsGroup) {
+	
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
