@@ -62,6 +62,7 @@ public interface IWorkbenchConstants {
 	public static final String WORKBENCH_PROPERTIES_PAGE_INFO = PlatformUI.PLUGIN_ID + ".propertypages.info.file"; //$NON-NLS-1$
 	
 	// Default layout.
+	// @issue IDE-specific perspective
 	public static final String DEFAULT_LAYOUT_ID = PlatformUI.PLUGIN_ID + ".resourcePerspective";       //$NON-NLS-1$
 
 	// Various editor.
