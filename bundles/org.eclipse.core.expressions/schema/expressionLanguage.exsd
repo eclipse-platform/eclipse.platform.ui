@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.core.expressions">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="commonExpression" name="Common Expressions"/>
+         <meta.schema plugin="org.eclipse.core.expressions" id="commonExpression" name="Common Expressions"/>
       </appInfo>
       <documentation>
          

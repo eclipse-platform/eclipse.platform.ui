@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.jdt.ui">
+<schema targetNamespace="org.eclipse.core.expressions">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.jdt.ui" id="propertyTesters" name="Property Testers"/>
+         <meta.schema plugin="org.eclipse.core.expressions" id="propertyTesters" name="Property Testers"/>
       </appInfo>
       <documentation>
          This extension point allows to add properties to an already existing type. Those
