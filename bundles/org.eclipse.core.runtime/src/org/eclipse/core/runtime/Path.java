@@ -28,50 +28,156 @@ import org.eclipse.core.internal.runtime.Assert;
  * @see IPath
  */
 public class Path implements IPath, Cloneable {
-
-	/** The path segments */
-	private String[] segments;
-
-	/** The device id string. May be null if there is no device. */
-	private String device = null;
-
-	/** flags indicating separators (has leading, is UNC, has trailing) */
-	private int separators;
-
 	/** masks for separator values */
 	private static final int HAS_LEADING = 1;
 	private static final int IS_UNC = 2;
 	private static final int HAS_TRAILING = 4;
+
 	private static final int ALL_SEPARATORS = HAS_LEADING | IS_UNC | HAS_TRAILING;
+
+	/** Constant empty string value. */
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String[] EMPTY_STRING_ARRAY = new String[] {};
+
+	/** Constant value indicating no segments */
+	private static final String[] NO_SEGMENTS = new String[0];
+
+	/** Constant value containing the empty path with no device. */
+	public static final Path EMPTY = new Path(EMPTY_STRING);
 
 	/** Mask for all bits that are involved in the hashcode */
 	private static final int HASH_MASK = ~HAS_TRAILING;
 
-	/** Constant value indicating no segments */
-	private static final String[] NO_SEGMENTS = new String[0];
 
 	/** Constant root path string (<code>"/"</code>). */
 	private static final String ROOT_STRING = "/"; //$NON-NLS-1$
 
 	/** Constant value containing the root path with no device. */
 	public static final Path ROOT = new Path(ROOT_STRING);
+	
+	/** Constant value indicating if the current platform is Windows */
+	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
 
-	/** Constant empty string value. */
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private static final String[] EMPTY_STRING_ARRAY = new String[] {};
-
-	/** Constant value containing the empty path with no device. */
-	public static final Path EMPTY = new Path(EMPTY_STRING);
+	/** The device id string. May be null if there is no device. */
+	private String device = null;
 
 	//Private implementation note: the segments and separators 
 	//arrays are never modified, so that they can be shared between 
 	//path instances
 
+	/** The path segments */
+	private String[] segments;
+
+	/** flags indicating separators (has leading, is UNC, has trailing) */
+	private int separators;
+
+	/** 
+	 * Constructs a new path from the given string path.
+	 * The string path must represent a valid file system path
+	 * on the local file system. 
+	 * The path is canonicalized and double slashes are removed
+	 * except at the beginning. (to handle UNC paths). All forward
+	 * slahes ('/') are treated as segment delimiters, and any
+	 * segment and device delimiters for the local file system are
+	 * also respected.
+	 *
+	 * @param pathString the portable string path
+	 * @see IPath#toPortableString()
+	 * @since 3.1
+	 */
+	public static IPath fromOSString(String pathString) {
+		return new Path(pathString);
+	}
+	
+	/** 
+	 * Constructs a new path from the given path string.
+	 * The path string must have been produced by a previous
+	 * call to <code>IPath.toPortableString</code>.
+	 *
+	 * @param pathString the portable path string
+	 * @see IPath#toPortableString()
+	 * @since 3.1
+	 */
+	public static IPath fromPortableString(String pathString) {
+		int firstMatch = pathString.indexOf(DEVICE_SEPARATOR) +1;
+		//no extra work required if no device characters
+		if (firstMatch <= 0)
+			return new Path().initialize(null, pathString);
+		//if we find a single colon, then the path has a device
+		String devicePart = null;
+		int pathLength = pathString.length();
+		if (firstMatch == pathLength || pathString.charAt(firstMatch) != DEVICE_SEPARATOR) {
+			devicePart = pathString.substring(0, firstMatch);
+			pathString = pathString.substring(firstMatch, pathLength);
+		}
+		//optimize for no colon literals
+		if (pathString.indexOf(DEVICE_SEPARATOR) == -1) 
+			return new Path().initialize(devicePart, pathString);
+		//contract colon literals
+		char[] chars = pathString.toCharArray();
+		int readOffset = 0, writeOffset = 0, length = chars.length;
+		while (readOffset < length) {
+			if (chars[readOffset] == DEVICE_SEPARATOR)
+				if (++readOffset >= length)
+					break;
+			chars[writeOffset++] = chars[readOffset++];
+		}
+		return new Path().initialize(devicePart, new String(chars, 0, writeOffset));
+	}
+	
 	/* (Intentionally not included in javadoc)
 	 * Private constructor.
 	 */
 	private Path() {
 		// not allowed
+	}
+
+	/** 
+	 * Constructs a new path from the given string path.
+	 * The string path must represent a valid file system path
+	 * on the local file system. 
+	 * The path is canonicalized and double slashes are removed
+	 * except at the beginning. (to handle UNC paths). All forward
+	 * slahes ('/') are treated as segment delimiters, and any
+	 * segment and device delimiters for the local file system are
+	 * also respected (such as colon (':') and backslash ('\') on some file systems).
+	 *
+	 * @param fullPath the string path
+	 * @see #isValidPath(String)
+	 */
+	public Path(String fullPath) {
+		String deviceString = null;
+		if (WINDOWS) {
+			int i = fullPath.indexOf(DEVICE_SEPARATOR);
+			if (i != -1) {
+				deviceString = fullPath.substring(0, i + 1);
+				fullPath = fullPath.substring(i + 1, fullPath.length());
+			}
+			//convert backslash to forward slash
+			fullPath = fullPath.indexOf('\\') == -1 ? fullPath : fullPath.replace('\\', SEPARATOR);
+		}
+		initialize(deviceString, fullPath);
+	}
+
+	/** 
+	 * Constructs a new path from the given device id and string path.
+	 * The given string path must be valid.
+	 * The path is canonicalized and double slashes are removed except
+	 * at the beginning (to handle UNC paths). All forward
+	 * slahes ('/') are treated as segment delimiters, and any
+	 * segment delimiters for the local file system are
+	 * also respected (such as backslash ('\') on some file systems).
+	 *
+	 * @param device the device id
+	 * @param path the string path
+	 * @see #isValidPath(String)
+	 * @see #setDevice(String)
+	 */
+	public Path(String device, String path) {
+		//convert backslash to forward slash
+		if (WINDOWS)
+			path = path.indexOf('\\') == -1 ? path : path.replace('\\', SEPARATOR);
+		initialize(device, path);
 	}
 
 	/* (Intentionally not included in javadoc)
@@ -83,38 +189,6 @@ public class Path implements IPath, Cloneable {
 		this.device = device;
 		//hashcode is cached in all but the bottom three bits of the separators field
 		this.separators = (computeHashCode() << 3) | (_separators & ALL_SEPARATORS);
-	}
-
-	/** 
-	 * Constructs a new path from the given string path.
-	 * The given string path must be valid.
-	 * The path is canonicalized and double slashes are removed
-	 * except at the beginning. (to handle UNC paths) All backslashes ('\')
-	 * are replaced with forward slashes. ('/')
-	 *
-	 * @param fullPath the string path
-	 * @see #isValidPath(String)
-	 */
-	public Path(String fullPath) {
-		// no segment validations are done for performance reasons 
-		initialize(null, fullPath);
-	}
-
-	/** 
-	 * Constructs a new path from the given device id and string path.
-	 * The given string path must be valid.
-	 * The path is canonicalized and double slashes are removed except
-	 * at the beginning (to handle UNC paths). All backslashes ('\')
-	 * are replaced with forward slashes. ('/')
-	 *
-	 * @param device the device id
-	 * @param path the string path
-	 * @see #isValidPath(String)
-	 * @see #setDevice(String)
-	 */
-	public Path(String device, String path) {
-		// no segment validations are done for performance reasons
-		initialize(device, path);
 	}
 
 	/* (Intentionally not included in javadoc)
@@ -142,6 +216,35 @@ public class Path implements IPath, Cloneable {
 			return new Path(device, segments, HAS_LEADING);
 		}
 		return new Path(device, segments, separators | HAS_TRAILING);
+	}
+
+	/* (Intentionally not included in javadoc)
+	 * @see IPath#append(IPath)
+	 */
+	public IPath append(IPath tail) {
+		//optimize some easy cases
+		if (tail == null || tail.segmentCount() == 0)
+			return this;
+		if (this.isEmpty())
+			return tail.setDevice(device).makeRelative();
+		if (this.isRoot())
+			return tail.setDevice(device).makeAbsolute();
+
+		//concatenate the two segment arrays
+		int myLen = segments.length;
+		int tailLen = tail.segmentCount();
+		String[] newSegments = new String[myLen + tailLen];
+		System.arraycopy(segments, 0, newSegments, 0, myLen);
+		for (int i = 0; i < tailLen; i++) {
+			newSegments[myLen + i] = tail.segment(i);
+		}
+		//use my leading separators and the tail's trailing separator
+		Path result = new Path(device, newSegments, (separators & (HAS_LEADING | IS_UNC)) | (tail.hasTrailingSeparator() ? HAS_TRAILING : 0));
+		String tailFirstSegment = newSegments[myLen];
+		if (tailFirstSegment.equals("..") || tailFirstSegment.equals(".")) { //$NON-NLS-1$ //$NON-NLS-2$
+			result.canonicalize();
+		}
+		return result;
 	}
 
 	/* (Intentionally not included in javadoc)
@@ -173,35 +276,6 @@ public class Path implements IPath, Cloneable {
 
 		//go with easy implementation
 		return append(new Path(tail));
-	}
-
-	/* (Intentionally not included in javadoc)
-	 * @see IPath#append(IPath)
-	 */
-	public IPath append(IPath tail) {
-		//optimize some easy cases
-		if (tail == null || tail.segmentCount() == 0)
-			return this;
-		if (this.isEmpty())
-			return tail.setDevice(device).makeRelative();
-		if (this.isRoot())
-			return tail.setDevice(device).makeAbsolute();
-
-		//concatenate the two segment arrays
-		int myLen = segments.length;
-		int tailLen = tail.segmentCount();
-		String[] newSegments = new String[myLen + tailLen];
-		System.arraycopy(segments, 0, newSegments, 0, myLen);
-		for (int i = 0; i < tailLen; i++) {
-			newSegments[myLen + i] = tail.segment(i);
-		}
-		//use my leading separators and the tail's trailing separator
-		Path result = new Path(device, newSegments, (separators & (HAS_LEADING | IS_UNC)) | (tail.hasTrailingSeparator() ? HAS_TRAILING : 0));
-		String tailFirstSegment = newSegments[myLen];
-		if (tailFirstSegment.equals("..") || tailFirstSegment.equals(".")) { //$NON-NLS-1$ //$NON-NLS-2$
-			result.canonicalize();
-		}
-		return result;
 	}
 
 	/**
@@ -416,6 +490,19 @@ public class Path implements IPath, Cloneable {
 		}
 		return newSegments;
 	}
+	/**
+	 * Returns the platform-neutral encoding of the given segment onto
+	 * the given string buffer. This escapes literal colon characters with double colons.
+	 */
+	private void encodeSegment(String string, StringBuffer buf) {
+		int len = string.length();
+		for (int i = 0; i < len; i++) {
+			char c = string.charAt(i);
+			buf.append(c);
+			if (c == DEVICE_SEPARATOR)
+				buf.append(DEVICE_SEPARATOR);
+		}
+	}
 
 	/* (Intentionally not included in javadoc)
 	 * Compares objects for equality.
@@ -475,7 +562,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#hasTrailingSeparator
+	 * @see IPath#hasTrailingSeparator2
 	 */
 	public boolean hasTrailingSeparator() {
 		return (separators & HAS_TRAILING) != 0;
@@ -484,21 +571,10 @@ public class Path implements IPath, Cloneable {
 	/*
 	 * Initialize the current path with the given string.
 	 */
-	private void initialize(String device, String fullPath) {
-		Assert.isNotNull(fullPath);
-		this.device = device;
+	private IPath initialize(String deviceString, String path) {
+		Assert.isNotNull(path);
+		this.device = deviceString;
 
-		//indexOf is much faster than replace
-		String path = fullPath.indexOf('\\') == -1 ? fullPath : fullPath.replace('\\', SEPARATOR);
-
-		int i = path.indexOf(DEVICE_SEPARATOR);
-		if (i != -1) {
-			// if the specified device is null then set it to
-			// be whatever is defined in the path string
-			if (device == null)
-				this.device = path.substring(0, i + 1);
-			path = path.substring(i + 1, path.length());
-		}
 		path = collapseSlashes(path);
 		int len = path.length();
 
@@ -526,6 +602,7 @@ public class Path implements IPath, Cloneable {
 			//compute hash now because canonicalize didn't need to do it
 			separators = (separators & ALL_SEPARATORS) | (computeHashCode() << 3);
 		}
+		return this;
 	}
 
 	/* (Intentionally not included in javadoc)
@@ -593,16 +670,10 @@ public class Path implements IPath, Cloneable {
 	 * @see IPath#isValidPath
 	 */
 	public boolean isValidPath(String path) {
-		// We allow "//" at the beginning for UNC paths
-		if (path.indexOf("//", 1) > 0) //$NON-NLS-1$
-			return false;
 		Path test = new Path(path);
-		int segmentCount = test.segmentCount();
-		for (int i = 0; i < segmentCount; i++) {
-			if (!test.isValidSegment(test.segment(i))) {
+		for (int i = 0, max = test.segmentCount(); i < max; i++) 
+			if (!isValidSegment(test.segment(i))) 
 				return false;
-			}
-		}
 		return true;
 	}
 
@@ -611,18 +682,11 @@ public class Path implements IPath, Cloneable {
 	 */
 	public boolean isValidSegment(String segment) {
 		int size = segment.length();
-		if (size == 0) {
+		if (size == 0)
 			return false;
-		}
-		if (Character.isWhitespace(segment.charAt(0)) || Character.isWhitespace(segment.charAt(size - 1))) {
-			return false;
-		}
-		for (int i = 0; i < size; i++) {
-			char c = segment.charAt(i);
-			if (c == '/' || c == '\\' || c == ':') {
+		for (int i = 0; i < size; i++)
+			if (segment.charAt(i) == '/')
 				return false;
-			}
-		}
 		return true;
 	}
 
@@ -839,6 +903,33 @@ public class Path implements IPath, Cloneable {
 		if ((separators & HAS_TRAILING) != 0)
 			result[offset++] = FILE_SEPARATOR;
 		return new String(result);
+	}
+
+	/* (Intentionally not included in javadoc)
+	 * @see IPath#toPortableString
+	 */
+	public String toPortableString() {
+		int resultSize = computeLength();
+		if (resultSize <= 0)
+			return EMPTY_STRING;
+		StringBuffer result = new StringBuffer(resultSize);
+		if (device != null)
+			result.append(device);
+		if ((separators & HAS_LEADING) != 0)
+			result.append(SEPARATOR);
+		if ((separators & IS_UNC) != 0)
+			result.append(SEPARATOR);
+		int len = segments.length;
+		//append all segments with separators
+		for (int i = 0; i < len; i++) {
+			if (segments[i].indexOf(DEVICE_SEPARATOR) >= 0)
+				encodeSegment(segments[i], result);
+			else
+				result.append(segments[i]);
+			if (i < len-1 || (separators & HAS_TRAILING) != 0)
+				result.append(SEPARATOR);
+		}
+		return result.toString();
 	}
 
 	/* (Intentionally not included in javadoc)

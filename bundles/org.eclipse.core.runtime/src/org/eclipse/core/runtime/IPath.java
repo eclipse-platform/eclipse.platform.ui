@@ -236,11 +236,13 @@ public interface IPath extends Cloneable {
 
 	/**
 	 * Returns whether the given string is syntactically correct as
-	 * a path.  The device id is the prefix up to and including the first ":";
-	 * the path proper is everything to the right of it, or the entire string
-	 * if there is no ":". The device id is not checked for validity;
-	 * the path proper is correct if each of the segments in its canonicalized
-	 * form is valid.
+	 * a path.  The device id is the prefix up to and including the device
+	 * separator for the local file system; the path proper is everything to 
+	 * the right of it, or the entire string if there is no device separator. 
+	 * When the platform location is a file system with no meaningful defice
+	 * separator, the entire string is treated as the path proper.
+	 * The device id is not checked for validity; the path proper is correct 
+	* if each of the segments in its canonicalized form is valid.
 	 *
 	 * @param path the path to check
 	 * @return <code>true</code> if the given string is a valid path,
@@ -254,17 +256,15 @@ public interface IPath extends Cloneable {
 	 * a path. The rules for valid segments are as follows:
 	 * <ul>
 	 * <li> the empty string is not valid
-	 * <li> any string containing the colon character (":") is not valid
-	 * <li> any string containing the slash character ("/") is not valid
-	 * <li> any string containing the backslash character ("\") is not valid
-	 * <li> any string starting or ending with a whitespace character is not valid
-	 * <li> all other strings are valid
+	 * <li> any string containing the slash character ('/') is not valid
+	 * <li>any string containing segment or device separator characters
+	 * on the local file system, such as the backslash ('\') and colon (':')
+	 * on some file systems.
 	 * </ul>
 	 *
 	 * @param segment the path segment to check
 	 * @return <code>true</code> if the given path segment is valid,
 	 *    and <code>false</code> otherwise
-	 * @see java.lang.Character#isWhitespace(char)
 	 */
 	public boolean isValidSegment(String segment);
 
@@ -441,6 +441,21 @@ public interface IPath extends Cloneable {
 	 * @return a platform-dependent string representation of this path
 	 */
 	public String toOSString();
+
+	/**
+	 * Returns a platform-neutral string representation of this path. The 
+	 * format is not specified, except that the resulting string can be 
+	 * passed back to the <code>Path#fromPortableString(String)</code> 
+	 * constructor to produce the exact same path on any platform.
+	 * <p>
+	 * This string is suitable for passing to <code>Path#fromPortableString(String)</code>.
+	 * </p>
+	 *
+	 * @return a platform-neutral string representation of this path
+	 * @see Path#fromPortableString(String)
+	 * @since 3.1
+	 */
+	public String toPortableString();
 
 	/**
 	 * Returns a string representation of this path, including its
