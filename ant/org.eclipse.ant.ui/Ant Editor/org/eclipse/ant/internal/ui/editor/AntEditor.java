@@ -522,7 +522,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createAnnotationAccess()
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createAnnotationAccess()
 	 */
 	protected IAnnotationAccess createAnnotationAccess() {
 		return new AnnotationAccess();
