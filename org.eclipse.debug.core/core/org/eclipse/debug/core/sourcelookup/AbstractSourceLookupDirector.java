@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -119,10 +120,11 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		public void run() throws Exception {
 			MultiStatus multiStatus = null;
 			CoreException single = null;
-			for(int i=0; i < fParticipants.size(); i++) {
+			ISourceLookupParticipant[] participants = getParticipants();
+			for(int i=0; i < participants.length; i++) {
 				Object[] sourceArray;
 				try {
-					sourceArray = ((ISourceLookupParticipant)fParticipants.get(i)).findSourceElements(fElement);
+					sourceArray = participants[i].findSourceElements(fElement);
 					if (sourceArray !=null && sourceArray.length > 0) {
 						if (isFindDuplicates()) {
 							for(int j=0; j<sourceArray.length; j++)
@@ -255,7 +257,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * 
 	 * @param participant the particiapant to register
 	 */
-	private void addSourceLookupParticipant(ISourceLookupParticipant participant) {
+	private synchronized void addSourceLookupParticipant(ISourceLookupParticipant participant) {
 		if (!fParticipants.contains(participant)) {
 			fParticipants.add(participant);
 			participant.init(this);
@@ -265,7 +267,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getSourceContainers()
 	 */
-	public ISourceContainer[] getSourceContainers() {
+	public synchronized ISourceContainer[] getSourceContainers() {
 		if (fSourceContainers == null) {
 			return new ISourceContainer[0];
 		}
@@ -298,7 +300,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * 
 	 * @param participant the participant to remove
 	 */
-	private void removeSourceLookupParticipant(ISourceLookupParticipant participant) {
+	private synchronized void removeSourceLookupParticipant(ISourceLookupParticipant participant) {
 		if (fParticipants.remove(participant)) {
 			participant.dispose();
 		}
@@ -345,7 +347,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
-	public String getMemento() throws CoreException {
+	public synchronized String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
 		Element rootNode = doc.createElement(DIRECTOR_ROOT_NODE);
 		doc.appendChild(rootNode);
@@ -419,14 +421,16 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @param containers source containers to search
 	 */
 	public void setSourceContainers(ISourceContainer[] containers) {
-		ISourceContainer[] old = getSourceContainers();
-		for (int i = 0; i < old.length; i++) {
-			old[i].dispose();
-		}
-		fSourceContainers = containers;
-		for (int i = 0; i < containers.length; i++) {
-			ISourceContainer container = containers[i];
-			container.init(this);
+		synchronized (this) {
+			ISourceContainer[] old = getSourceContainers();
+			for (int i = 0; i < old.length; i++) {
+				old[i].dispose();
+			}
+			fSourceContainers = containers;
+			for (int i = 0; i < containers.length; i++) {
+				ISourceContainer container = containers[i];
+				container.init(this);
+			}
 		}
 		// clear resolved duplicates
 		fResolvedElements = null;
@@ -579,7 +583,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getParticipants()
 	 */
-	public ISourceLookupParticipant[] getParticipants() {
+	public synchronized ISourceLookupParticipant[] getParticipants() {
 		return (ISourceLookupParticipant[]) fParticipants.toArray(new ISourceLookupParticipant[fParticipants.size()]);
 	}
 	/* (non-Javadoc)
@@ -704,7 +708,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getSourceElement(java.lang.Object)
 	 */
-	public synchronized Object getSourceElement(Object element) {
+	public Object getSourceElement(Object element) {
 		List sources = doSourceLookup(element);
 		if(sources.size() == 1) {
 			return sources.get(0);

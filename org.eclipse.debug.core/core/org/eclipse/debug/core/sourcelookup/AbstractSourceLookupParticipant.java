@@ -112,7 +112,11 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	 * to search for duplicate source elements
 	 */
 	protected boolean isFindDuplicates() {
-		return getDirector().isFindDuplicates();
+		ISourceLookupDirector director = getDirector();
+		if (director != null) {
+			return director.isFindDuplicates();
+		}
+		return false;
 	}	
 	
 	/**
@@ -123,7 +127,11 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	 * source lookup director
 	 */
 	protected ISourceContainer[] getSourceContainers() {
-		return getDirector().getSourceContainers();
+		ISourceLookupDirector director = getDirector();
+		if (director != null) {
+			return director.getSourceContainers();
+		}
+		return new ISourceContainer[0];
 	}
 	
 	/* (non-Javadoc)
