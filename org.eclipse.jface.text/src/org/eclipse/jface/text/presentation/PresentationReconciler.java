@@ -392,7 +392,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 *
 	 * @param document the document on which to work
 	 */
-	private void setDocumentToDamagers(IDocument document) {
+	protected void setDocumentToDamagers(IDocument document) {
 		if (fDamagers != null) {
 			Iterator e= fDamagers.values().iterator();
 			while (e.hasNext()) {
@@ -407,7 +407,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 *
 	 * @param document the document on which to work
 	 */
-	private void setDocumentToRepairers(IDocument document) {
+	protected void setDocumentToRepairers(IDocument document) {
 		if (fRepairers != null) {
 			Iterator e= fRepairers.values().iterator();
 			while (e.hasNext()) {
@@ -426,9 +426,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 *
 	 * @param damage the damage to be repaired
 	 * @param document the document whose presentation must be repaired
-	 * @return the presentation repair descritption as text presentation
+	 * @return the presentation repair description as text presentation
 	 */
-	private TextPresentation createPresentation(IRegion damage, IDocument document) { 
+	protected TextPresentation createPresentation(IRegion damage, IDocument document) { 
 		try {
 			if (fRepairers == null || fRepairers.isEmpty()) {
 				TextPresentation presentation= new TextPresentation(damage, 1);
