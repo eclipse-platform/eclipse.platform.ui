@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import sun.security.x509.X500Name;
 
 /**
  * Result of the service
@@ -223,21 +222,22 @@ public class JarVerificationResult implements IVerificationResult {
 	 * Returns the label String from a X50name
 	 */
 	private String issuerString(Principal principal) {
-		try {
-			if (principal instanceof X500Name) {
-				StringBuffer buf = new StringBuffer();
-				X500Name name = (X500Name) principal;
-				buf.append((name.getDNQualifier() != null) ? name.getDNQualifier() + ", " : "");
-				buf.append(name.getCommonName());
-				buf.append((name.getOrganizationalUnit() != null) ? ", " + name.getOrganizationalUnit() : "");
-				buf.append((name.getOrganization() != null) ? ", " + name.getOrganization() : "");
-				buf.append((name.getLocality() != null) ? ", " + name.getLocality() : "");
-				buf.append((name.getCountry() != null) ? ", " + name.getCountry() : "");
-				return new String(buf);
-			}
-		} catch (Exception e) {
-			UpdateManagerPlugin.warn("Error parsing X500 Certificate",e);
-		}
+// 19902
+//		try {
+//			if (principal instanceof X500Name) {
+//				StringBuffer buf = new StringBuffer();
+//				X500Name name = (X500Name) principal;
+//				buf.append((name.getDNQualifier() != null) ? name.getDNQualifier() + ", " : "");
+//				buf.append(name.getCommonName());
+//				buf.append((name.getOrganizationalUnit() != null) ? ", " + name.getOrganizationalUnit() : "");
+//				buf.append((name.getOrganization() != null) ? ", " + name.getOrganization() : "");
+//				buf.append((name.getLocality() != null) ? ", " + name.getLocality() : "");
+//				buf.append((name.getCountry() != null) ? ", " + name.getCountry() : "");
+//				return new String(buf);
+//			}
+//		} catch (Exception e) {
+//			UpdateManagerPlugin.warn("Error parsing X500 Certificate",e);
+//		}
 		return principal.toString();
 	}
 

@@ -6,6 +6,7 @@ package org.eclipse.update.internal.ui.security;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -267,15 +268,16 @@ public class JarVerificationPage extends BannerPage {
 		// Feature name
 		//---------------
 		Label keyLabel = null;
-		Label valueLabel = null;
+		CLabel valueLabel = null;
 		if (_strFeatureName != null && _strFeatureName.length() > 0) {
 			keyLabel = new Label(compositeInformation, SWT.NULL);
 			keyLabel.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureName"));
 			//$NON-NLS-1$
-			valueLabel = new Label(compositeInformation, SWT.WRAP);
+			valueLabel = new CLabel(compositeInformation, SWT.NULL);
 			valueLabel.setFont(JFaceResources.getBannerFont());
 			valueLabel.setText(_strFeatureName);
+			valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
 		// Feature identifier
 		//---------------------
@@ -284,9 +286,10 @@ public class JarVerificationPage extends BannerPage {
 			keyLabel.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureIdentifier"));
 			//$NON-NLS-1$
-			valueLabel = new Label(compositeInformation, SWT.WRAP);
+			valueLabel = new CLabel(compositeInformation, SWT.NULL);
 			valueLabel.setFont(JFaceResources.getBannerFont());
 			valueLabel.setText(_strId);
+			valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
 		// Provider name
 		//--------------
@@ -295,9 +298,10 @@ public class JarVerificationPage extends BannerPage {
 			keyLabel.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.Provider"));
 			//$NON-NLS-1$
-			valueLabel = new Label(compositeInformation, SWT.WRAP);
+			valueLabel = new CLabel(compositeInformation, SWT.NULL);
 			valueLabel.setFont(JFaceResources.getBannerFont());
 			valueLabel.setText(_strProviderName);
+			valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
 		// Label: File name
 		//-----------------
@@ -305,9 +309,10 @@ public class JarVerificationPage extends BannerPage {
 		keyLabel.setText(
 			UpdateUIPlugin.getResourceString("JarVerificationDialog.FileName"));
 		//$NON-NLS-1$
-		valueLabel = new Label(compositeInformation, SWT.WRAP);
+		valueLabel = new CLabel(compositeInformation, SWT.NULL);
 		valueLabel.setFont(JFaceResources.getBannerFont());
 		valueLabel.setText(_fileName);
+		valueLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	/*
@@ -332,7 +337,7 @@ public class JarVerificationPage extends BannerPage {
 			// Signer
 			//-------------------
 			Label keyLabel = null;
-			Label valueLabel = null;
+			Text valueText = null;
 			//data = new GridData(GridData.FILL_HORIZONTAL);
 			//data.horizontalIndent = 0;
 			//textInformation.setLayoutData(data);			
@@ -341,8 +346,10 @@ public class JarVerificationPage extends BannerPage {
 				keyLabel.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.SubjectCA"));
 				keyLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 				//$NON-NLS-1$
-				valueLabel = new Label(group, SWT.WRAP);
-				valueLabel.setText(_VerificationResult.getSignerInfo());
+				valueText = new Text(group, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
+				valueText.setText(_VerificationResult.getSignerInfo());
+				valueText.setEditable(false);
+				valueText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			}
 			
 			// Authenticator
@@ -352,8 +359,10 @@ public class JarVerificationPage extends BannerPage {
 				keyLabel.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.RootCA"));
 				keyLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));				
 				//$NON-NLS-1$
-				valueLabel = new Label(group, SWT.WRAP);
-				valueLabel.setText(_VerificationResult.getVerifierInfo());
+				valueText = new Text(group, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
+				valueText.setText(_VerificationResult.getVerifierInfo());
+				valueText.setEditable(false);
+				valueText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			}
 		}
 	}
