@@ -121,7 +121,7 @@ import org.eclipse.ui.themes.IThemeManager;
 public final class Workbench implements IWorkbench {
     private static final String LEFT_TO_RIGHT = "ltr"; //$NON-NLS-1$
 	private static final String RIGHT_TO_LEFT = "rtl";//$NON-NLS-1$
-	private static final String ORIENTATION_COMMAND_LINE = "-orientation";//$NON-NLS-1$
+	private static final String ORIENTATION_COMMAND_LINE = "-dir";//$NON-NLS-1$
 	private static final String ORIENTATION_PROPERTY = "eclipse.orientation";//$NON-NLS-1$
     private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 
