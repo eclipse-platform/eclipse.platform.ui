@@ -38,7 +38,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		tooltip = null;
 		title = null;
 		//make sure part has inc. the reference count.
-		part.getTitleImage();
+		if(part != null)
+			part.getTitleImage();
 		ReferenceCounter imageCache = WorkbenchImages.getImageCache();
 		Image image = (Image)imageCache.get(imageDescritor);
 		if(image != null) {
