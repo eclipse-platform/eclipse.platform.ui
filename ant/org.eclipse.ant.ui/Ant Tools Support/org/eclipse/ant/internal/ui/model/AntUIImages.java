@@ -57,7 +57,7 @@ public class AntUIImages {
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
-	private final static String LOCALTOOL= "clcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String LOCALTOOL= "elcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
 	

@@ -90,7 +90,7 @@
       </category>
       <view
             name="%View.antView"
-            icon="icons/full/cview16/ant_view.gif"
+            icon="icons/full/eview16/ant_view.gif"
             category="org.eclipse.ant.ui.views"
             fastViewWidthRatio="0.40"
             class="org.eclipse.ant.internal.ui.views.AntView"
