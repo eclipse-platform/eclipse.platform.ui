@@ -5,23 +5,16 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -31,25 +24,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-
-import org.eclipse.jface.text.Position;
-
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.part.Page;
-
+import org.eclipse.search.internal.ui.CopyToClipboardAction;
+import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchResultEvent;
-
-import org.eclipse.search.internal.ui.CopyToClipboardAction;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.basic.views.INavigate;
@@ -61,6 +43,18 @@ import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowNextResultAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
 
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
 	private static final boolean INITIALLY_FLAT= false;
@@ -142,9 +136,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected abstract void configureViewer(StructuredViewer viewer);
 
-	private static void createStandardGroups(IMenuManager menu) {
-		if (!menu.isEmpty())
-			return;
+	private static void createStandardGroups(IContributionManager menu) {
 		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
@@ -158,7 +150,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 	}
-	
 
 	protected void fillContextMenu(IMenuManager mgr) {
 		mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
@@ -228,6 +219,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			fViewer= new SearchResultsTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		}
 		configureViewer(fViewer);
+
+		IToolBarManager tbm= getSite().getActionBars().getToolBarManager();
+		fillToolbar(tbm);
+		tbm.update(false);
 
 		fViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
@@ -425,21 +420,24 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * {@inheritDoc}
 	 */
-	public void makeContributions(IMenuManager menuManager,	IToolBarManager toolBarManager,	IStatusLineManager statusLineManager) {
-		super.makeContributions(menuManager, toolBarManager, statusLineManager);
-		
-		IToolBarManager tbm= toolBarManager;
-		tbm.appendToGroup("ViewSpecificGroup", fShowNextAction); //$NON-NLS-1$
-		tbm.appendToGroup("ViewSpecificGroup", fShowPreviousAction); //$NON-NLS-1$
-		tbm.appendToGroup("ViewSpecificGroup", fRemoveResultsAction); //$NON-NLS-1$
-		tbm.appendToGroup("ViewSpecificGroup", fRemoveAllResultsAction); //$NON-NLS-1$
+	public void init(IPageSite pageSite) {
+		super.init(pageSite);
+				
+		addLayoutMenu(pageSite.getActionBars().getMenuManager());
+	}
+
+	protected void fillToolbar(IToolBarManager tbm) {
+		tbm.removeAll();
+		createStandardGroups(tbm);
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveResultsAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction); //$NON-NLS-1$
 		IActionBars actionBars= getSite().getActionBars();
 		if (actionBars != null) {
 			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextAction);
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
 		}
-		
-		addLayoutMenu(menuManager);
 	}
 
 	private void addLayoutMenu(IMenuManager menuManager) {

@@ -2,27 +2,13 @@ package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
-
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.part.IPage;
-import org.eclipse.ui.part.IPageBookViewPage;
-import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.part.Page;
-import org.eclipse.ui.part.PageBook;
-import org.eclipse.ui.part.PageBookView;
-
+import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -32,8 +18,21 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
-
-import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
@@ -62,6 +61,21 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private SearchAgainAction fSearchAgainAction;
 	private CancelSearchAction fCancelAction;
 	
+	private static void createStandardGroups(IContributionManager menu) {
+		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
+		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
+		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
+	}
+
 	class DummyPart implements IWorkbenchPart {
 		public void addPropertyListener(IPropertyListener listener) {/*dummy*/}
 		public void createPartControl(Composite parent) {/*dummy*/}
@@ -211,14 +225,16 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	
 	private void updateTitle(ISearchResult search) {
 		String label= SearchMessages.getString("SearchView.title.search"); //$NON-NLS-1$
+		label+= "(";
 		if (search != null) {
 			boolean queryRunning= InternalSearchUI.getInstance().isQueryRunning(search.getQuery());
 			fCancelAction.setEnabled(queryRunning);
 			if (queryRunning) {
 				label= label+SearchMessages.getString("SearchView.title.running"); //$NON-NLS-1$
 			}
-			label= label+" ("+search.getText()+")"; //$NON-NLS-1$ //$NON-NLS-2$
+			label= label+" "+search.getText(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		label+= ")";
 		setTitle(label);
 	}
 	
@@ -245,10 +261,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	private void initializeToolBar() {
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
-		tbm.add(new Separator("ViewSpecificGroup")); //$NON-NLS-1$
-		tbm.add(new Separator("SearchesGroup")); //$NON-NLS-1$
-		tbm.appendToGroup("SearchesGroup", fSearchesDropDownAction); //$NON-NLS-1$
-		tbm.appendToGroup("SearchesGroup", fCancelAction); //$NON-NLS-1$
+		createStandardGroups(tbm);
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fCancelAction); //$NON-NLS-1$
+		tbm.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchesDropDownAction); //$NON-NLS-1$
 		getViewSite().getActionBars().updateActionBars();
 	}
 		

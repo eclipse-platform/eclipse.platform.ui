@@ -88,13 +88,13 @@ public class FileSearchQuery implements ISearchQuery {
 
 	String getSingularLabel() {
 		String[] args= new String[] { fSearchString, fScope.getDescription() };
-		String format= "{0} - 1 match in {1}"; //$NON-NLS-1$
+		String format= "\"{0}\" - 1 match in {1}"; //$NON-NLS-1$
 		return MessageFormat.format(format, args);
 	}
 	
 	String getPluralPattern() {
 		String[] args= new String[] { fSearchString, "{0}", fScope.getDescription() }; //$NON-NLS-1$
-		String format= "{0} - {1} match in {2}"; //$NON-NLS-1$
+		String format= "\"{0}\" - {1} matches in {2}"; //$NON-NLS-1$
 		return MessageFormat.format(format, args);
 	}
 
