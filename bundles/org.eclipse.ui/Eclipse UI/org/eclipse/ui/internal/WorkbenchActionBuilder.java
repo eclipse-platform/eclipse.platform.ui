@@ -76,12 +76,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 	// decorator factory
 	private DecoratorActionFactory decoratorFactory;
+	
 	/**
 	 * WorkbenchActionBuilder constructor comment.
 	 */
 	public WorkbenchActionBuilder() {
-		super();
 	}
+	
 	/**
 	 * Add the manual incremental build action
 	 * to both the menu bar and the tool bar.
@@ -106,8 +107,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			// group not found
 		}
 	}
+	
 	/**
-	 * build the workbench menu
+	 * Build the workbench actions.
 	 */
 	public void buildActions(WorkbenchWindow win) {
 		window = win;
@@ -148,126 +150,154 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			}
 		});
 	}
+	
 	/**
-	 * Create the menu bar.
+	 * Creates the menu bar.
 	 */
 	private void createMenuBar() {
 		// Get main menu.
 		MenuManager menubar = window.getMenuBarManager();
+		menubar.add(createFileMenu());
+		menubar.add(createEditMenu());
+		menubar.add(createPerspectiveMenu());
+		menubar.add(createWorkbenchMenu());
+		// Define section for additions.
+		menubar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		menubar.add(createWindowMenu());
+		menubar.add(createHelpMenu());
+	}
 
-		// Create the file menu.
-		MenuManager popup = new MenuManager(WorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
-		menubar.add(popup);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
+	/**
+	 * Creates and returns the File menu.
+	 */
+	private MenuManager createFileMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
+		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
 		{
 			MenuManager newMenu = new MenuManager(WorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
-			popup.add(newMenu);
+			menu.add(newMenu);
 			this.newWizardMenu = new NewWizardMenu(newMenu, window, true);
 		}
-		popup.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
-		popup.add(new Separator());
-		popup.add(closeAction);
-		popup.add(closeAllAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.CLOSE_EXT));
-		popup.add(new Separator());
-		popup.add(saveAction);
-		popup.add(saveAsAction);
-		popup.add(saveAllAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
-		popup.add(new Separator());
-		popup.add(printAction);
-		popup.add(new Separator());
-		popup.add(importResourcesAction);
-		popup.add(exportResourcesAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.IMPORT_EXT));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
+		menu.add(new Separator());
 		{
 			MenuManager openRecentMenu = new DynamicMenuManager(WorkbenchMessages.getString("Workbench.openRecent")); //$NON-NLS-1$
-			popup.add(openRecentMenu);
-			openRecentMenu.add(new ReopenEditorMenu(window, ((Workbench) (window.getWorkbench())).getEditorHistory(), false));
+			menu.add(openRecentMenu);
+			openRecentMenu.add(new ReopenEditorMenu(window, ((Workbench) window.getWorkbench()).getEditorHistory(), false));
 		}
-		popup.add(new GroupMarker(IWorkbenchActionConstants.MRU));
-		popup.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		popup.add(new Separator());
-		popup.add(new QuitAction(window.getWorkbench()));
-		popup.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
+		menu.add(closeAction);
+		menu.add(closeAllAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.CLOSE_EXT));
+		menu.add(new Separator());
+		menu.add(saveAction);
+		menu.add(saveAsAction);
+		menu.add(saveAllAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
+		menu.add(new Separator());
+		menu.add(printAction);
+		menu.add(new Separator());
+		menu.add(importResourcesAction);
+		menu.add(exportResourcesAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.IMPORT_EXT));
+		// put additions relative to the MRU group at its old location,
+		// next to the additions group
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));  
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator());
+		menu.add(new QuitAction(window.getWorkbench()));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
+		return menu;
+	}
 
-		// Edit menu.
-		popup = new MenuManager(WorkbenchMessages.getString("Workbench.edit"), IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
-		menubar.add(popup);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
-		popup.add(undoAction);
-		popup.add(redoAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.UNDO_EXT));
-		popup.add(new Separator());
-		popup.add(cutAction);
-		popup.add(copyAction);
-		popup.add(pasteAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.CUT_EXT));
-		popup.add(new Separator());
-		popup.add(deleteAction);
-		popup.add(selectAllAction);
-		popup.add(new Separator());
-		popup.add(findAction);
-		popup.add(new Separator());
-		popup.add(addBookmarkAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
-		popup.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	/**
+	 * Creates and returns the Edit menu.
+	 */
+	private MenuManager createEditMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.edit"), IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
+		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
+		menu.add(undoAction);
+		menu.add(redoAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.UNDO_EXT));
+		menu.add(new Separator());
+		menu.add(cutAction);
+		menu.add(copyAction);
+		menu.add(pasteAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.CUT_EXT));
+		menu.add(new Separator());
+		menu.add(deleteAction);
+		menu.add(selectAllAction);
+		menu.add(new Separator());
+		menu.add(findAction);
+		menu.add(new Separator());
+		menu.add(addBookmarkAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		return menu;
+	}
 
-		// Perspective menu.
-		popup = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
-		menubar.add(popup);
+	/**
+	 * Creates and returns the Perspective menu.
+	 */
+	private MenuManager createPerspectiveMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
 		{
 			MenuManager openInSameWindow = new MenuManager(WorkbenchMessages.getString("Workbench.open")); //$NON-NLS-1$
 			openPerspMenu = new WindowPerspectiveMenu(window, ResourcesPlugin.getWorkspace().getRoot());
 			openInSameWindow.add(openPerspMenu);
-			popup.add(openInSameWindow);
+			menu.add(openInSameWindow);
 		}
 		{
 			MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
-			popup.add(subMenu);
+			menu.add(subMenu);
 			new ShowViewMenu(subMenu, window, true);
 		}
-		popup.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));
-		popup.add(cloneAction = new ClonePerspectiveAction(window));
-		popup.add(new Separator());
-		popup.add(savePerspectiveAction = new SavePerspectiveAction(window));
-		popup.add(editActionSetAction = new EditActionSetsAction(window));
-		popup.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
-		popup.add(new Separator());
-		popup.add(closePageAction = new ClosePageAction(window));
-		popup.add(closeAllPagesAction = new CloseAllPagesAction(window));
-		popup.add(new Separator(IWorkbenchActionConstants.VIEW_EXT));
-		popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		popup.add(new Separator());
-		popup.add(new OpenPagesMenu(window, false));
-
-		// Workbench menu
-		popup = new MenuManager(WorkbenchMessages.getString("Workbench.workbench"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
-		menubar.add(popup);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
+		menu.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));
+		menu.add(cloneAction = new ClonePerspectiveAction(window));
+		menu.add(new Separator());
+		menu.add(savePerspectiveAction = new SavePerspectiveAction(window));
+		menu.add(editActionSetAction = new EditActionSetsAction(window));
+		menu.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
+		menu.add(new Separator());
+		menu.add(closePageAction = new ClosePageAction(window));
+		menu.add(closeAllPagesAction = new CloseAllPagesAction(window));
+		menu.add(new Separator(IWorkbenchActionConstants.VIEW_EXT));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator());
+		menu.add(new OpenPagesMenu(window, false));
+		return menu;
+	}
+	
+	
+	/**
+	 * Creates and returns the Workbench menu.
+	 */
+	private MenuManager createWorkbenchMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.workbench"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
+		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding())
-			popup.add(buildAction);
-		popup.add(rebuildAllAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.WB_END));
-		popup.add(new Separator());
-		popup.add(openPreferencesAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+			menu.add(buildAction);
+		menu.add(rebuildAllAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_END));
+		menu.add(new Separator());
+		menu.add(openPreferencesAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		return menu;
+	}
 
-		// Define section for additions.
-		menubar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-
-		// Window menu.
-		popup = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
-		menubar.add(popup);
-		popup.add(new OpenWorkbenchAction(window));
+	/**
+	 * Creates and returns the Window menu.
+	 */
+	private MenuManager createWindowMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
+		menu.add(new OpenWorkbenchAction(window));
 		MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 		launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
-		popup.add(launchWindowMenu);
+		menu.add(launchWindowMenu);
 
-		//Navigation menu
+		//Navigation submenu
 		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
-		popup.add(subMenu);
+		menu.add(subMenu);
 		subMenu.add(activateEditorAction);
 		subMenu.add(showPartPaneMenuAction);
 		subMenu.add(showViewMenuAction);
@@ -276,26 +306,33 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		subMenu.add(nextPartAction);
 		subMenu.add(prevPartAction);
 
-		//Decorators menu
-		decoratorFactory.fillMenu(popup);
+		//Decorators submenu
+		decoratorFactory.fillMenu(menu);
 
-		popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
-		popup.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
-		popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		popup.add(new SwitchToWindowMenu(window, true));
+		menu.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
+		menu.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new SwitchToWindowMenu(window, true));
+		
+		return menu;
+	}
 
-		// Help menu.
-		popup = new MenuManager(WorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
-		menubar.add(popup);
+	/**
+	 * Creates and returns the Help menu.
+	 */
+	private MenuManager createHelpMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
 		// See if a welcome page is specified
 		if (quickStartAction != null)
-			popup.add(quickStartAction);
-		popup.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
-		popup.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
-		popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+			menu.add(quickStartAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		// about should always be at the bottom
-		popup.add(aboutAction);
+		menu.add(aboutAction);
+		return menu;
 	}
+	
 	/**
 	 * Fills the shortcut bar
 	 */
