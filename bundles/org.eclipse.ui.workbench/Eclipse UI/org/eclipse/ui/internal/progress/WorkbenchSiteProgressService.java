@@ -12,29 +12,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.internal.PartSite;
 /**
  * The WorkbenchSiteProgressService is the concrete implementation of the
  * WorkbenchSiteProgressService used by the workbench components.
@@ -70,8 +72,8 @@ public class WorkbenchSiteProgressService
 		}
 		/**
 		 * Get the wait cursor. Initialize it if required.
-		 * 
-		 * @return Cursor
+		 * @param display the display to create the cursor on.
+		 * @return the created cursor
 		 */
 		private Cursor getWaitCursor(Display display) {
 			if (waitCursor == null) {
@@ -122,6 +124,11 @@ public class WorkbenchSiteProgressService
 		updateJob = new SiteUpdateJob();
 		updateJob.setSystem(true);
 	}
+	
+	/**
+	 * Dispose the resources allocated by the receiver.
+	 *
+	 */
 	public void dispose() {
 		if (updateJob != null)
 			updateJob.cancel();
@@ -254,15 +261,7 @@ public class WorkbenchSiteProgressService
 	public void warnOfContentChange() {
 		site.getPane().showHighlight();
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
-	 *      org.eclipse.core.runtime.jobs.Job, boolean)
-	 */
-	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
-		showInDialog(shell, job);
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -290,6 +289,9 @@ public class WorkbenchSiteProgressService
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
 		getWorkbenchProgressService().run(fork, cancelable, runnable);
+	}
+	public void runInUI(IRunnableWithProgress runnable, ISchedulingRule rule) throws InvocationTargetException, InterruptedException {
+		getWorkbenchProgressService().runInUI(runnable, rule);
 	}
 	
 	/* (non-Javadoc)

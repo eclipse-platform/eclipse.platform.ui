@@ -10,6 +10,7 @@
 package org.eclipse.ui.progress;
 
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -45,6 +46,25 @@ public interface IProgressService extends IRunnableContext {
 	 * @see Job#belongsTo(Object)
 	 */
 	public void registerIconForFamily(ImageDescriptor icon, Object family);
+	/**
+	 * Runs the given operation in the UI thread.  The given scheduling rule,
+	 * if any, will be acquired for the duration of the operation. If the rule is not
+	 * available when this method is called, a progress dialog will be displayed that
+	 * gives users control over the background processes that may be blocking
+	 * the runnable from proceeding.
+	 * <p>
+	 * This method can act as a replacement for old uses of <tt>IRunnableContext</tt>
+	 * where the <tt>fork</tt> parameter was <tt>false</tt>.
+	 * 
+	 * @param runnable The operation to run
+	 * @param rule A scheduling rule, or <code>null</code>
+	 * @throws InvocationTargetException wraps any exception or error which occurs 
+	 *  while running the runnable
+	 * @throws InterruptedException propagated by the context if the runnable 
+	 *  acknowledges cancelation by throwing this exception.
+	 */
+	public void runInUI(final IRunnableWithProgress runnable, final ISchedulingRule rule) throws InvocationTargetException, InterruptedException;
+
 	
 	/**
 	 * Get the icon that has been registered for a Job by

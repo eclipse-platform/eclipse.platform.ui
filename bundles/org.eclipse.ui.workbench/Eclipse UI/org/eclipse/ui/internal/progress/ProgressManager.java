@@ -25,15 +25,19 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
@@ -960,6 +964,34 @@ public class ProgressManager extends ProgressProvider
 		}
 
 		busyCursorWhile(runnable);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableWithProgress, org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 */
+	public void runInUI(final IRunnableWithProgress runnable, final ISchedulingRule rule) throws InvocationTargetException, InterruptedException {
+		final IJobManager manager= Platform.getJobManager();
+		final InvocationTargetException[] exception = new InvocationTargetException[1];
+		final InterruptedException[] canceled = new InterruptedException[1];
+		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+			public void run() {
+				try {
+					manager.beginRule(rule, null);
+					runnable.run(null);
+				} catch (InvocationTargetException e) {
+					exception[0] = e;
+				} catch (InterruptedException e) {
+					canceled[0] = e;
+				} catch (OperationCanceledException e) {
+					canceled[0] = new InterruptedException(e.getMessage());
+				} finally {
+					manager.endRule(rule);
+				}
+			}
+		});
+		if (exception[0] != null)
+			throw exception[0];
+		if (canceled[0] != null)
+			throw canceled[0];
 	}
 	/*
 	 * (non-Javadoc)
