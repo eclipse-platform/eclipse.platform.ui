@@ -528,6 +528,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		// Button for adding trapped key strokes
 		buttonAddKey = new Button(groupKeySequence, SWT.CENTER | SWT.ARROW | SWT.DOWN);
+		buttonAddKey.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "buttonAddKey.ToolTipText"));
 		gridData = new GridData();
 		gridData.heightHint = comboCategory.getTextHeight();
 		buttonAddKey.setLayoutData(gridData);
