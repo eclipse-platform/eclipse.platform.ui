@@ -180,7 +180,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						description = CONFLICTING | ADDITION;
 						try {
 							progress.beginTask(null, 60);
-							if (granularity == RemoteSyncElement.GRANULARITY_CONTENTS && 
+							if (isGranularityContents(granularity) && 
 							    compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
 								description |= PSEUDO_CONFLICT;
 							}
@@ -217,7 +217,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 							description = OUTGOING | CHANGE;
 						} else {
 							description = CONFLICTING | CHANGE;
-							if (granularity == RemoteSyncElement.GRANULARITY_CONTENTS && 
+							if (isGranularityContents(granularity) && 
 							    compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
 								description |= PSEUDO_CONFLICT;
 							}
@@ -259,10 +259,13 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		} else {
 			timestampEquals = timestampEquals(e1, e2);
 		}
-		if (!timestampEquals && (granularity == GRANULARITY_CONTENTS)) {
+		if (!timestampEquals && isGranularityContents(granularity)) {
 			try {
 				monitor.beginTask(null, 100);
-				return contentsEqual(getContents(e1, Policy.subMonitorFor(monitor, 50)), getContents(e2, Policy.subMonitorFor(monitor, 50)));
+				return contentsEqual(
+					getContents(e1, Policy.subMonitorFor(monitor, 50)), 
+					getContents(e2, Policy.subMonitorFor(monitor, 50)),
+					granularity == GRANULARITY_CONTENTS_IGNORE_WHITESPACE);
 			} finally {
 				monitor.done();
 			}
@@ -278,10 +281,13 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		} else {
 			timestampEquals = timestampEquals(e1, e2);
 		}
-		if (!timestampEquals && (granularity == GRANULARITY_CONTENTS)) {
+		if (!timestampEquals && isGranularityContents(granularity)) {
 			try {
 				monitor.beginTask(null, 100);
-				return contentsEqual(getContents(e1, Policy.subMonitorFor(monitor, 50)), getContents(e2, Policy.subMonitorFor(monitor, 50)));
+				return contentsEqual(
+					getContents(e1, Policy.subMonitorFor(monitor, 50)), 
+					getContents(e2, Policy.subMonitorFor(monitor, 50)),
+					granularity == GRANULARITY_CONTENTS_IGNORE_WHITESPACE);
 			} finally {
 				monitor.done();
 			}
@@ -292,6 +298,10 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	
 	protected abstract boolean timestampEquals(IResource e1, IRemoteResource e2);
 	protected abstract boolean timestampEquals(IRemoteResource e1, IRemoteResource e2);
+	
+	protected boolean isGranularityContents(int granularity) {
+		return granularity != GRANULARITY_TIMESTAMP;
+	}
 	
 	private InputStream getContents(IResource resource, IProgressMonitor monitor) {
 		try {
@@ -321,7 +331,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * @param input2 second input to contents compare
 	 * @return <code>true</code> if content is equal
 	 */
-	private boolean contentsEqual(InputStream is1, InputStream is2) {
+	private boolean contentsEqual(InputStream is1, InputStream is2, boolean ignoreWhitespace) {
 		if (is1 == is2)
 			return true;
 
@@ -334,7 +344,9 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 
 			while (true) {
 				int c1 = is1.read();
+				while (ignoreWhitespace && isWhitespace(c1)) c1 = is1.read();
 				int c2 = is2.read();
+				while (ignoreWhitespace && isWhitespace(c2)) c2 = is2.read();
 				if (c1 == -1 && c2 == -1)
 					return true;
 				if (c1 != c2)
@@ -358,6 +370,14 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		}
 		return false;
 	}
+
+	/*
+	 * Only skip CRs for now.
+	 */
+	private boolean isWhitespace(int c) {
+		if (c == -1) return false;
+		return Character.isWhitespace((char)c);
+	}
 	
 	/*
 	 * Returns a handle to a non-existing resource.
@@ -372,7 +392,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 			return ((IContainer) parent).getFile(new Path(childName));
 		}
 	}
-	
+		
 	/*
 	 * @see Object#toString()
 	 */

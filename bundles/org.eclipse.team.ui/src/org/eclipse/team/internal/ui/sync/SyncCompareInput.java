@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -78,7 +79,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	 */
 	public SyncCompareInput(int granularity) {
 		super(new CompareConfiguration());
-		this.granularity = granularity;
+		privateSetSyncGranularity(granularity);
 	}
 	
 	/**
@@ -290,10 +291,40 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	}
 	
 	public void setSyncGranularity(int granularity) {
-		this.granularity = granularity;
+		privateSetSyncGranularity(granularity);
 		refresh();
 	}
 
+	private void privateSetSyncGranularity(int granularity) {
+		this.granularity = granularity;
+		if (granularity != IRemoteSyncElement.GRANULARITY_TIMESTAMP) { 
+			if (isIgnoreWhitespace()) {
+				this.granularity = IRemoteSyncElement.GRANULARITY_CONTENTS_IGNORE_WHITESPACE;
+			} else {
+				this.granularity = IRemoteSyncElement.GRANULARITY_CONTENTS;
+			}
+		}
+	}
+	
+	public void setIgnoreWhitespace(boolean ignore) {
+		// Set the ignore whitespace
+		Boolean value = ignore ? Boolean.TRUE : Boolean.FALSE;
+		getCompareConfiguration().setProperty(CompareConfiguration.IGNORE_WHITESPACE, value);
+		// Set the granularity (which queries the ignore whitespace setting)
+		privateSetSyncGranularity(getSyncGranularity());
+		// Refresh if the granularity is file contents
+		if (granularity != IRemoteSyncElement.GRANULARITY_TIMESTAMP) {
+			refresh();
+		}
+	}
+	
+	public boolean isIgnoreWhitespace() {
+		Object o = getCompareConfiguration().getProperty(CompareConfiguration.IGNORE_WHITESPACE);
+		if (o instanceof Boolean) {
+			return ((Boolean)o).booleanValue();
+		}
+		return CompareUIPlugin.getDefault().getPreferenceStore().getBoolean(CompareConfiguration.IGNORE_WHITESPACE);
+	}
 	
 	/**
 	 * Builds a DiffFolder tree under the given root for the given resource.

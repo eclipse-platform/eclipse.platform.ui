@@ -116,6 +116,14 @@ public interface ILocalSyncElement {
 	public static final int GRANULARITY_CONTENTS = 2;
 	
 	/**
+	 * Constant (value 4) indicating to consider file contents (potentially ignoring whitespace)
+	 * when calculating the synchronization kind. This synchronization mode will perform a content 
+	 * comparison only after timestamp operations (isDirty) indicate a change. 
+	 * This mode allows conflicts types to be correctly identified.
+	 */
+	public static final int GRANULARITY_CONTENTS_IGNORE_WHITESPACE = 4;
+	
+	/**
  	 * Answer a string that describes the simple name of the sync node,  which is suitable 
  	 * for display to a user.  The name will be used in UI operations, so it is expected that 
  	 * implementations will cache this value.

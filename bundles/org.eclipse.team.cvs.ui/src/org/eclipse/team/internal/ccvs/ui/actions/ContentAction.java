@@ -75,7 +75,7 @@ public class ContentAction extends ActionDelegate implements IEditorActionDelega
 			if (input instanceof CVSSyncCompareInput) {
 				this.syncInput = (CVSSyncCompareInput)input;
 				action.setEnabled(true);
-				action.setChecked(syncInput.getSyncGranularity() == ILocalSyncElement.GRANULARITY_CONTENTS);
+				action.setChecked(syncInput.getSyncGranularity() != ILocalSyncElement.GRANULARITY_TIMESTAMP);
 				return;
 			}
 		}

@@ -103,6 +103,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		static final int SHOW_INCOMING = 1;
 		static final int SHOW_OUTGOING = 2;
 		static final int SHOW_CONFLICTS = 4;
+		static final int SHOW_PSEUDO_CONFLICTS = 8;
 
 		private int showMask = 0;
 		
@@ -123,6 +124,11 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 				return true;
 			}
 			if (element instanceof ITeamNode) {
+				// Filter out pseudo conflicts if requested
+				int kind = ((ITeamNode)element).getKind();
+				if ((showMask & SHOW_PSEUDO_CONFLICTS) == 0 && (kind & IRemoteSyncElement.PSEUDO_CONFLICT) != 0) {
+					return false;
+				}
 				int change = ((ITeamNode)element).getKind() & IRemoteSyncElement.CHANGE_MASK;
 				int direction = ((ITeamNode)element).getChangeDirection();
 				switch (direction) {
@@ -217,7 +223,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 
 	private Action copyAllRightToLeft;
 
-
+	private boolean compareFileContents = false;
+	
 	/**
 	 * Creates a new catchup/release viewer.
 	 */
@@ -323,10 +330,13 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		image = TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS);
 		toggleGranularity = new Action(Policy.bind("CatchupReleaseViewer.Compare_File_Contents_1"), image) { //$NON-NLS-1$
 			public void run() {
-				diffModel.setSyncGranularity(isChecked() ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
+				compareFileContents = isChecked();
+				diffModel.setSyncGranularity(compareFileContents ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
+				updateFilters();
 			}
 		};
-		toggleGranularity.setChecked(diffModel.getSyncGranularity() == IRemoteSyncElement.GRANULARITY_CONTENTS);
+		compareFileContents = diffModel.getSyncGranularity() != IRemoteSyncElement.GRANULARITY_TIMESTAMP;
+		toggleGranularity.setChecked(compareFileContents);
 		
 		removeFromTree = new RemoveFromTreeAction(Policy.bind("CatchupReleaseViewer.removeFromView"), null);
 		
@@ -386,8 +396,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		image = TeamImages.getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE);
 		ignoreWhiteSpace = new Action(Policy.bind("CatchupReleaseViewer.ignoreWhiteSpace"), image) { //$NON-NLS-1$
 			public void run() {
-				Boolean value = isChecked() ? Boolean.TRUE : Boolean.FALSE;
-				diffModel.getCompareConfiguration().setProperty(CompareConfiguration.IGNORE_WHITESPACE, value);
+				diffModel.setIgnoreWhitespace(isChecked());
 			}
 		};
 		ignoreWhiteSpace.setId("team.ignoreWhiteSpace"); //$NON-NLS-1$
@@ -621,6 +630,11 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 					}
 				}
 				break;
+		}
+		
+		//determine whether to show pseudo conflicts
+		if (!compareFileContents) {
+			filters |= CategoryFilter.SHOW_PSEUDO_CONFLICTS;
 		}
 		setFilters(filters);
 	}
