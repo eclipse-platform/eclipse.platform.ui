@@ -21,6 +21,9 @@ import java.util.*;
  * <p>
  * A property change notification is sent whenever the current page changes.
  * </p>
+ * 
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
  */
 public class FrameList {
 	/** Property name constant for the current frame. */

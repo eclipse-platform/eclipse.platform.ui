@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.views.internal.framelist.FrameList;
+import org.eclipse.ui.views.framelist.FrameList;
 
 /**
  * This interface defines the API for the resource navigator.

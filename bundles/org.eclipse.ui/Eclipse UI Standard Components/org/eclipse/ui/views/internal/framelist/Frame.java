@@ -4,6 +4,10 @@ package org.eclipse.ui.views.internal.framelist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+/**
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
+ */
 public class Frame {
 	private int index = -1;
 	private FrameList parent;

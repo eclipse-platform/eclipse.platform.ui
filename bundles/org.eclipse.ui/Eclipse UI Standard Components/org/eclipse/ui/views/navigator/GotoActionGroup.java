@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.views.internal.framelist.*;
+import org.eclipse.ui.views.framelist.*;
 
 /**
  * This is the action group for the goto actions.

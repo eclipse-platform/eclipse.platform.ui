@@ -11,6 +11,9 @@ package org.eclipse.ui.views.internal.framelist;
  * frame becomes current again.
  *
  * @see FrameList
+ * 
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
  */
 public interface IFrameSource {
 

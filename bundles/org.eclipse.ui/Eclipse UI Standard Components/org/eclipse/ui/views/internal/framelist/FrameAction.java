@@ -19,6 +19,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * Abstract superclass for actions dealing with frames or a frame list.
  * This listens for changes to the frame list and updates itself
  * accordingly.
+ * 
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
  */
 public abstract class FrameAction extends Action {
 	private FrameList frameList;

@@ -8,6 +8,10 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
+ */
 public class TreeFrame extends Frame {
 	private AbstractTreeViewer viewer;
 	private Object input;

@@ -8,6 +8,9 @@ package org.eclipse.ui.views.internal.framelist;
  * Generic "Go Into" action which switches the viewer's input
  * to be the currently selected container.
  * Enabled only when the current selection is a single container.
+ * 
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
  */
 public class GoIntoAction extends FrameAction {
 public GoIntoAction(FrameList frameList) {

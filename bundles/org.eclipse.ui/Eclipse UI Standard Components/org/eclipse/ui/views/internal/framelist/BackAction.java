@@ -7,6 +7,9 @@ package org.eclipse.ui.views.internal.framelist;
 /**
  * Generic "Back" action, which calls <code>back()</code> on the frame list when run.
  * Enabled only when there is a frame after the current frame.
+ * 
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
  */
 public class BackAction extends FrameAction {
 public BackAction(FrameList frameList) {

@@ -10,6 +10,10 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+/**
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
+ */
 public class TreeViewerFrameSource implements IFrameSource {
 	protected AbstractTreeViewer viewer;
 public TreeViewerFrameSource(AbstractTreeViewer viewer) {

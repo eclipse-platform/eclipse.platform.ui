@@ -10,6 +10,9 @@ import java.util.ResourceBundle;
 
 /**
  * Utility class which helps managing messages
+ * 
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
  */
 class FrameListMessages {
 	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.views.internal.framelist.messages";//$NON-NLS-1$

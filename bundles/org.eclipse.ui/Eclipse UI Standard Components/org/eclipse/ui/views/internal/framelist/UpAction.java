@@ -8,6 +8,9 @@ package org.eclipse.ui.views.internal.framelist;
  * Generic "Up" action which switches the viewer's input
  * to be the parent of the current input.
  * Enabled only when the current input has a parent.
+ *
+ * @deprecated This has been promoted to API and will be removed for 2.0.  
+ *   Use the corresponding class in package org.eclipse.ui.views.framelist instead.
  */
 public class UpAction extends FrameAction {
 public UpAction(FrameList frameList) {

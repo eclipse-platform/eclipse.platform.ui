@@ -11,7 +11,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.views.internal.framelist.FrameList;
+import org.eclipse.ui.views.framelist.FrameList;
 
 /**
  * Factory to create actions for the resource navigator

@@ -8,7 +8,7 @@ package org.eclipse.ui.views.navigator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.views.internal.framelist.*;
+import org.eclipse.ui.views.framelist.*;
 import org.eclipse.ui.views.navigator.*;
 
 /**

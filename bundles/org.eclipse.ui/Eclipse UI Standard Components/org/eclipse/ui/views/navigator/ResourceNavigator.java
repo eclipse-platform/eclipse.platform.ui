@@ -30,7 +30,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.internal.framelist.FrameList;
+import org.eclipse.ui.views.framelist.FrameList;
 
 /**
  * Implements the Resource Navigator view.
