@@ -26,7 +26,7 @@ public class AntCorePreferences {
 
 	protected List defaultTasks;
 	protected List defaultTypes;
-	protected List defaultURLs;
+	protected List extraClasspathURLs;
 	protected URL[] defaultAntURLs;
 	
 	protected Task[] customTasks;
@@ -45,7 +45,7 @@ public class AntCorePreferences {
 	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, boolean headless) {
 		runningHeadless= headless;
 		initializePluginClassLoaders();
-		defaultURLs = new ArrayList(20);
+		extraClasspathURLs = new ArrayList(20);
 		this.defaultTasks = computeDefaultTasks(defaultTasks);
 		this.defaultTypes = computeDefaultTypes(defaultTypes);
 		computeDefaultExtraClasspathEntries(defaultExtraClasspath);
@@ -231,8 +231,8 @@ public class AntCorePreferences {
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				task.setLibrary(url);
-				if (!defaultURLs.contains(url)) {
-					defaultURLs.add(url);
+				if (!extraClasspathURLs.contains(url)) {
+					extraClasspathURLs.add(url);
 				}
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
@@ -273,8 +273,8 @@ public class AntCorePreferences {
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				type.setLibrary(url);
-				if (!defaultURLs.contains(url)) {
-					defaultURLs.add(url);
+				if (!extraClasspathURLs.contains(url)) {
+					extraClasspathURLs.add(url);
 				}
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
@@ -307,8 +307,8 @@ public class AntCorePreferences {
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
-				if (!defaultURLs.contains(url)) {
-					defaultURLs.add(url);
+				if (!extraClasspathURLs.contains(url)) {
+					extraClasspathURLs.add(url);
 				}
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
@@ -374,20 +374,20 @@ public class AntCorePreferences {
 	 * 
 	 * @return URL[]
 	 */
-	public URL[] getDefaultURLs() {
-		return (URL[])defaultURLs.toArray(new URL[defaultURLs.size()]);
+	public URL[] getExtraClasspathURLs() {
+		return (URL[])extraClasspathURLs.toArray(new URL[extraClasspathURLs.size()]);
 	}
 	
 	public URL[] getURLs() {
 		List result = new ArrayList(10);
-		if (defaultURLs != null) {
-			result.addAll(defaultURLs);
-		}
 		if (antURLs != null) {
 			result.addAll(Arrays.asList(antURLs));
 		}
 		if (customURLs != null) {
 			result.addAll(Arrays.asList(customURLs));
+		}
+		if (extraClasspathURLs != null) {
+			result.addAll(extraClasspathURLs);
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
