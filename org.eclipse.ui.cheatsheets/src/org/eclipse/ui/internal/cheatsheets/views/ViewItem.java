@@ -25,7 +25,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
-import org.eclipse.ui.cheatsheets.ICheatSheetItemExtensionElement;
+import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 
 public abstract class ViewItem {
@@ -166,7 +166,7 @@ public abstract class ViewItem {
 		ArrayList al = contentItem.getItemExtensions();
 		if (al != null)
 			for (int g = 0; g < al.size(); g++) {
-				ICheatSheetItemExtensionElement[] eea = (ICheatSheetItemExtensionElement[]) al.get(g);
+				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) al.get(g);
 				number += eea.length;
 			}
 
@@ -217,7 +217,7 @@ public abstract class ViewItem {
 		ArrayList itemExts = contentItem.getItemExtensions();
 		if (itemExts != null)
 			for (int x = 0; x < itemExts.size(); x++) {
-				ICheatSheetItemExtensionElement[] xe = (ICheatSheetItemExtensionElement[]) itemExts.get(x);
+				AbstractItemExtensionElement[] xe = (AbstractItemExtensionElement[]) itemExts.get(x);
 				for (int g = 0; g < xe.length; g++) {
 					xe[g].createControl(titleComposite, itemColor);
 				}

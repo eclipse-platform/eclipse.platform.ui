@@ -12,7 +12,6 @@ import java.util.*;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.cheatsheets.*;
-import org.eclipse.ui.cheatsheets.events.*;
 
 /**
  * Cheat sheet manager class.  Manages cheat sheet data,
@@ -23,7 +22,6 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 	private String cheatsheetID;
 	private Hashtable listenerMap = new Hashtable(20);
-	private Hashtable itemListenerMap = new Hashtable(20);
 	private Hashtable viewListenerMap = new Hashtable(20);
 	private Hashtable dataTable = null;
 	private CheatSheetView csview;
@@ -45,13 +43,13 @@ public class CheatSheetManager implements ICheatSheetManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#getItemWithID(java.lang.String)
 	 */
-	public IAbstractItem getItem(String id) {
+	public AbstractItem getItem(String id) {
 		try {
 			//Check to see if that item with that id is dynamic.
 			//If it is not dynamic, return null for it cannot be modified.
 			ArrayList contentItems = csview.getListOfContentItems();
 			for (int i = 0; i < contentItems.size(); i++) {
-				IAbstractItem contentItem = (IAbstractItem) contentItems.get(i);
+				AbstractItem contentItem = (AbstractItem) contentItems.get(i);
 				if (contentItem.getID().equals(id)) {
 					//return contentItem;
 					if (contentItem instanceof IContainsContent) {
@@ -69,17 +67,17 @@ public class CheatSheetManager implements ICheatSheetManager {
 		}
 	}
 
-	public IItemWithSubItems convertToIItemWithSubItems(IAbstractItem ai) {
-		if (ai instanceof IItemWithSubItems)
-					return (IItemWithSubItems)ai;
-		if (!(ai instanceof IItem))
+	public ContentItemWithSubItems convertToIItemWithSubItems(AbstractItem ai) {
+		if (ai instanceof ContentItemWithSubItems)
+					return (ContentItemWithSubItems)ai;
+		if (!(ai instanceof ActionItem))
 			return null;
 		String id = ai.getID();
 		ArrayList contentItems = csview.getListOfContentItems();
 		for (int i = 0; i < contentItems.size(); i++) {
-			IAbstractItem contentItem = (IAbstractItem) contentItems.get(i);
+			AbstractItem contentItem = (AbstractItem) contentItems.get(i);
 			if (contentItem.getID().equals(id)) {
-				ContentItemWithSubItems itemws = convertThisIItem((IItem) contentItem);
+				ContentItemWithSubItems itemws = convertThisIItem((ContentItem) contentItem);
 				//replace item in list with new item.
 				contentItems.set(i, itemws);
 				//replace coreItem's contentItem with our new one.
@@ -95,7 +93,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return null;
 	}
 
-	private ContentItemWithSubItems convertThisIItem(IItem item) {
+	private ContentItemWithSubItems convertThisIItem(ContentItem item) {
 		if (!(item instanceof ContentItem))
 			return null;
 		else {
@@ -114,14 +112,9 @@ public class CheatSheetManager implements ICheatSheetManager {
 			ArrayList itemList = new ArrayList(20);
 			ArrayList viewList = new ArrayList(20);
 			for (int i = 0; i < newList.size(); i++) {
-				ICheatSheetListener c = (ICheatSheetListener) newList.get(i);
-				if (c instanceof ICheatSheetItemListener)
-					itemList.add(c);
-				if (c instanceof ICheatSheetViewListener)
-					viewList.add(newList.get(i));
+				CheatSheetListener c = (CheatSheetListener) newList.get(i);
+				viewList.add(newList.get(i));
 			}
-			if (itemList.size() > 0)
-				itemListenerMap.put(cheatsheetID, itemList);
 			if (viewList.size() > 0)
 				viewListenerMap.put(cheatsheetID, viewList);
 		}
@@ -141,84 +134,20 @@ public class CheatSheetManager implements ICheatSheetManager {
 		if (list == null)
 			fillListenerMaps(cheatsheetID);
 
-		if (e instanceof CheatSheetViewEvent)
-			notifyViewListeners((CheatSheetViewEvent) e, cheatsheetID);
-		else if (e instanceof CheatSheetItemEvent)
-			notifyItemListeners((CheatSheetItemEvent) e, cheatsheetID);
+		notifyListeners(e, cheatsheetID);
 	}
 
 	/**
-	 * Notifies all Item listeners registered of events.
+	 * Notifies all listeners registered of events.
 	 */
-	private void notifyItemListeners(CheatSheetItemEvent e, String cheatsheetID) {
-		ArrayList listeners = (ArrayList) itemListenerMap.get(cheatsheetID);
-		if (listeners == null)
-			return;
-
-		switch (e.getCheatSheetEventType()) {
-			case ICheatSheetItemEvent.ITEM_ACTIVATED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetItemListener) listeners.get(i)).itemActivated(e);
-				}
-				break;
-			case ICheatSheetItemEvent.ITEM_COMPLETED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetItemListener) listeners.get(i)).itemCompleted(e);
-				}
-				break;
-			case ICheatSheetItemEvent.ITEM_DEACTIVATED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetItemListener) listeners.get(i)).itemDeactivated(e);
-				}
-				break;
-			case ICheatSheetItemEvent.ITEM_PERFORMED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetItemListener) listeners.get(i)).itemPerformed(e);
-				}
-				break;
-			case ICheatSheetItemEvent.ITEM_SKIPPED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetItemListener) listeners.get(i)).itemSkipped(e);
-				}
-				break;
-		}
-	}
-
-	/**
-	 * Notifies all View listeners registered of events.
-	 */
-	private void notifyViewListeners(CheatSheetViewEvent e, String cheatsheetID) {
+	private void notifyListeners(ICheatSheetEvent e, String cheatsheetID) {
 		//		System.out.println("Inside manager notifyViewListeners!");
 		ArrayList listeners = (ArrayList) viewListenerMap.get(cheatsheetID);
 		if (listeners == null)
 			return;
 
-		switch (e.getCheatSheetEventType()) {
-			case ICheatSheetViewEvent.CHEATSHEET_OPENED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetViewListener) listeners.get(i)).cheatSheetOpened(e);
-				}
-				break;
-			case ICheatSheetViewEvent.CHEATSHEET_CLOSED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetViewListener) listeners.get(i)).cheatSheetClosed(e);
-				}
-				break;
-			case ICheatSheetViewEvent.CHEATSHEET_END_REACHED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetViewListener) listeners.get(i)).cheatSheetEndReached(e);
-				}
-				break;
-			case ICheatSheetViewEvent.CHEATSHEET_RESTARTED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetViewListener) listeners.get(i)).cheatSheetRestarted(e);
-				}
-				break;
-			case ICheatSheetViewEvent.CHEATSHEET_STARTED :
-				for (int i = 0; i < listeners.size(); i++) {
-					((ICheatSheetViewListener) listeners.get(i)).cheatSheetStarted(e);
-				}
-				break;
+		for (int i = 0; i < listeners.size(); i++) {
+			((CheatSheetListener) listeners.get(i)).cheatSheetEvent(e);
 		}
 	}
 
@@ -268,6 +197,33 @@ public class CheatSheetManager implements ICheatSheetManager {
 	/*PACKAGE*/ boolean removeAllData(){
 		dataTable = new Hashtable(30);
 		return true;	
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#setData(java.lang.String, java.lang.String)
+	 */
+	public void setData(String key, String data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#addCheatSheetListener(org.eclipse.ui.cheatsheets.CheatSheetListener)
+	 */
+	public void addCheatSheetListener(CheatSheetListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#removeCheatSheetListener(org.eclipse.ui.cheatsheets.CheatSheetListener)
+	 */
+	public void removeCheatSheetListener(CheatSheetListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

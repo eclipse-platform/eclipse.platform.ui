@@ -26,7 +26,6 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
-import org.eclipse.ui.cheatsheets.ISubItem;
 import org.eclipse.ui.internal.cheatsheets.views.*;
 
 public class CheatSheetXMLSaveHelper {
@@ -374,10 +373,10 @@ public class CheatSheetXMLSaveHelper {
 					} else if (c instanceof ContentItemWithSubItems) {
 						ContentItemWithSubItems ciws = (ContentItemWithSubItems) c;
 						String itemid = ciws.getID();
-						ISubItem[] subs = ciws.getSubItems();
+						SubContentItem[] subs = ciws.getSubItems();
 						if (subs != null)
 							for (int j = 0; j < subs.length; j++) {
-								ISubItem s = subs[j];
+								SubContentItem s = subs[j];
 								String subitemid = s.getID();
 								Element dynamicTag = doc.createElement(IParserTags.DYNAMICSUBITEMDATA);
 								dynamicTag.setAttribute(IParserTags.ITEM, itemid);

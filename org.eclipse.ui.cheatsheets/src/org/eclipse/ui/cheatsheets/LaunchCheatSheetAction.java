@@ -28,11 +28,6 @@ public class LaunchCheatSheetAction extends Action {
 	CheatSheetElement element;
 	URL csURL;
 
-
-	public LaunchCheatSheetAction(CheatSheetElement element) {
-		this.element = element;
-	}
-
 	/**
 	 * Constructor.  The id of passed to this constructor must match the id
 	 * of a cheat sheet specified in a client's implementation of the cheatsheetContent extension point.

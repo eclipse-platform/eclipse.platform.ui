@@ -292,20 +292,10 @@ public class CheatSheetMenu extends ContributionItem {
 	 * Runs an action to launch the cheatsheet.
 	 *
 	 * @param element the selected cheatsheet
-	 */
-	protected void run(CheatSheetElement element) {
-		new LaunchCheatSheetAction(element).run(); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Runs an action to launch the cheatsheet.
-	 *
-	 * @param element the selected cheatsheet
 	 * @param event SelectionEvent - the event send along with the selection callback
 	 */
 	protected void run(CheatSheetElement element, SelectionEvent event) {
-		//Do a run without the event by default
-		run(element);
+		new LaunchCheatSheetAction(element.getID()).run();
 	}
 
 	/* (non-Javadoc)

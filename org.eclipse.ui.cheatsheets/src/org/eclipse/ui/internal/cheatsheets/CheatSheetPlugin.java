@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.*;
-import org.eclipse.ui.cheatsheets.events.ICheatSheetListener;
+import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
@@ -328,7 +328,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 				Class c = loadClass(el.getListenerClass(), el.getListenerClassPluginID());
 				if (c != null) {
 					try {
-						ICheatSheetListener l = (ICheatSheetListener) c.newInstance();
+						CheatSheetListener l = (CheatSheetListener) c.newInstance();
 						returnList.add(l);
 					} catch (Exception e) {
 						//return VIEWITEM_DONOT_ADVANCE;

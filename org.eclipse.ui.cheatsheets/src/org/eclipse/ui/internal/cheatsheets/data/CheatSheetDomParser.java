@@ -21,8 +21,7 @@ import org.xml.sax.*;
 
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
-import org.eclipse.ui.cheatsheets.ICheatSheetItemExtensionElement;
-import org.eclipse.ui.cheatsheets.ISubItem;
+import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 
 /**
  * Parser for the cheatsheet content files.
@@ -349,7 +348,7 @@ public class CheatSheetDomParser {
 					} else if (attName.equals(IParserTags.ACTIONPHRASE)) {
 						actionPhrase = item.getNodeValue();
 					} else {
-						ICheatSheetItemExtensionElement[] ie = handleUnknownItemAttribute(item);
+						AbstractItemExtensionElement[] ie = handleUnknownItemAttribute(item);
 						if (ie != null)
 							itemExtensionElements.add(ie);
 					}
@@ -399,7 +398,7 @@ public class CheatSheetDomParser {
 				ArrayList subs = parseSubItems(subItemArrayList);
 				if (subs == null || subs.size() <=1 )
 					return null;
-				itemtoadd.addSubItems((ISubItem[]) subs.toArray(new ISubItem[subs.size()]));
+				itemtoadd.addSubItems((SubContentItem[]) subs.toArray(new SubContentItem[subs.size()]));
 
 				if (itemExtensionElements != null)
 					itemtoadd.setItemExtensions(itemExtensionElements);
@@ -412,13 +411,13 @@ public class CheatSheetDomParser {
 		return localList;
 	}
 
-	private ICheatSheetItemExtensionElement[] handleUnknownItemAttribute(Node item) {
+	private AbstractItemExtensionElement[] handleUnknownItemAttribute(Node item) {
 		ArrayList al = new ArrayList();
 		if (itemExtensionContainerList == null)
 			return null;
 
 		for (int i = 0; i < itemExtensionContainerList.size(); i++) {
-			ICheatSheetItemExtensionElement itemElement = (ICheatSheetItemExtensionElement) itemExtensionContainerList.get(i);
+			AbstractItemExtensionElement itemElement = (AbstractItemExtensionElement) itemExtensionContainerList.get(i);
 			String itemExtensionAtt = itemElement.getAttributeName();
 
 			if (itemExtensionAtt.equals(item.getNodeName())) {
@@ -427,7 +426,7 @@ public class CheatSheetDomParser {
 			}
 		}
 
-		return (ICheatSheetItemExtensionElement[])al.toArray(new ICheatSheetItemExtensionElement[al.size()]);
+		return (AbstractItemExtensionElement[])al.toArray(new AbstractItemExtensionElement[al.size()]);
 	}
 
 	//Returns an array list full of SubContentItems.

@@ -11,8 +11,8 @@ import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.cheatsheets.ICheatSheetItemExtensionElement;
 import org.eclipse.ui.model.AdaptableList;
+import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.registry.Category;
 
 import org.eclipse.ui.internal.cheatsheets.*;
@@ -479,7 +479,7 @@ public class CheatSheetRegistryReader extends RegistryReader {
 			return;
 
 		Class extClass = null;
-		ICheatSheetItemExtensionElement extElement = null;
+		AbstractItemExtensionElement extElement = null;
 		IPluginDescriptor desc = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 
 		try {
@@ -490,7 +490,7 @@ public class CheatSheetRegistryReader extends RegistryReader {
 		}
 		try {
 			if (extClass != null)
-				extElement = (ICheatSheetItemExtensionElement) extClass.newInstance();
+				extElement = (AbstractItemExtensionElement) extClass.newInstance();
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);

@@ -7,11 +7,41 @@
 
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 
-public class CheatSheetEvent extends Event {
-	int fCheatsheetEventType;
-	String fCheatsheetID;
+public class CheatSheetEvent implements ICheatSheetEvent {
+	int type;
+	String cheatsheetID;
 	ICheatSheetManager csm;
+
+
+	public CheatSheetEvent(int eventType, String id, ICheatSheetManager csm) {
+		super();
+		this.csm = csm;
+		this.type = eventType;
+		this.cheatsheetID = id;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getEventType() {
+		return type;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getCheatSheetID() {
+		return cheatsheetID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.cheatsheets.events.ICheatSheetEvent#getCheatSheetManager()
+	 */
+	public ICheatSheetManager getCheatSheetManager() {
+		return csm;
+	}
+
 }

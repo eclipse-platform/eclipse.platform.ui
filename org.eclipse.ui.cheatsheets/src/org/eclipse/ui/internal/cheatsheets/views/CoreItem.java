@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.*;
 
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
-import org.eclipse.ui.cheatsheets.ISubItem;
 
 public class CoreItem extends ViewItem {
 	protected Composite bodyWrapperComposite;
@@ -209,7 +208,7 @@ public class CoreItem extends ViewItem {
 		//Instantiate the list to store the sub item composites.
 		listOfSubItemCompositeHolders = new ArrayList(20);
 
-		ISubItem[] sublist = ((ContentItemWithSubItems) contentItem).getSubItems();
+		SubContentItem[] sublist = ((ContentItemWithSubItems) contentItem).getSubItems();
 		
 		if(sublist.length<=1)
 			throw new Exception(ICheatSheetResource.LESS_THAN_2_SUBITEMS);
@@ -232,7 +231,7 @@ public class CoreItem extends ViewItem {
 		for (int i = 0; i < sublist.length; i++) {
 			int added = 0;
 			//Get the sub item to add.
-			ISubItem sub = (ISubItem) sublist[i];
+			SubContentItem sub = (SubContentItem) sublist[i];
 
 			//composite added.
 			Composite b = new Composite(buttonComposite, SWT.NULL);
