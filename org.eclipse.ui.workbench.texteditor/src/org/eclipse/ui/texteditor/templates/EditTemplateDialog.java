@@ -293,30 +293,30 @@ class EditTemplateDialog extends StatusDialog {
 			fSuppressError= false;
 			updateButtons();			
 		} else if (w == fContextCombo) {
-			String name= fContextCombo.getText();
-			String contextId= getContextId(name);
+			String contextId= getContextId();
 			fTemplateProcessor.setContextType(fContextTypeRegistry.getContextType(contextId));
 		} else if (w == fDescriptionText) {
 			// oh, nothing
 		}	
 	}
 	
-	private String getContextId(String name) {
-		if (name == null)
-			return name;
-		
-		for (int i= 0; i < fContextTypes.length; i++) {
-			if (name.equals(fContextTypes[i][1])) {
-				return fContextTypes[i][0];	
+	private String getContextId() {
+		if (fContextCombo != null && !fContextCombo.isDisposed()) {
+			String name= fContextCombo.getText();
+			for (int i= 0; i < fContextTypes.length; i++) {
+				if (name.equals(fContextTypes[i][1])) {
+					return fContextTypes[i][0];	
+				}
 			}
 		}
-		return name;
+		
+		return fOriginalTemplate.getContextTypeId();
 	}
 
 	private void doSourceChanged(IDocument document) {
 		String text= document.get();
 		fValidationStatus.setOK();
-		TemplateContextType contextType= fContextTypeRegistry.getContextType(getContextId(fContextCombo.getText()));
+		TemplateContextType contextType= fContextTypeRegistry.getContextType(getContextId());
 		if (contextType != null) {
 			try {
 				contextType.validate(text);
@@ -542,7 +542,8 @@ class EditTemplateDialog extends StatusDialog {
 	}
 	
 	protected void okPressed() {
-		fNewTemplate= new Template(fNameText.getText(), fDescriptionText.getText(), getContextId(fContextCombo.getText()), fPatternEditor.getDocument().get());
+		String name= fNameText == null ? fOriginalTemplate.getName() : fNameText.getText();
+		fNewTemplate= new Template(name, fDescriptionText.getText(), getContextId(), fPatternEditor.getDocument().get());
 		super.okPressed();
 	}
 
