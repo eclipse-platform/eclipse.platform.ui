@@ -228,7 +228,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns= 1;
 		composite.setLayout(layout);
 		
-		
 			// background color
 			Composite backgroundComposite= new Composite(composite, SWT.NULL);
 			layout= new GridLayout();
@@ -238,7 +237,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			backgroundComposite.setLayout(new RowLayout());
 	
 			Label label= new Label(backgroundComposite, SWT.NULL);
-			label.setText("Bac&kground Color:");
+			label.setText(Utilities.getString("ComparePreferencePage.backgroundColor1.label"));	//$NON-NLS-1$
 	
 			SelectionListener backgroundSelectionListener= new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {				
@@ -250,11 +249,11 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			};
 	
 			fBackgroundDefaultRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-			fBackgroundDefaultRadioButton.setText("S&ystem Default");
+			fBackgroundDefaultRadioButton.setText(Utilities.getString("ComparePreferencePage.backgroundColor2.label"));	//$NON-NLS-1$
 			fBackgroundDefaultRadioButton.addSelectionListener(backgroundSelectionListener);
 	
 			fBackgroundCustomRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-			fBackgroundCustomRadioButton.setText("C&ustom");
+			fBackgroundCustomRadioButton.setText(Utilities.getString("ComparePreferencePage.backgroundColor3.label"));	//$NON-NLS-1$
 			fBackgroundCustomRadioButton.addSelectionListener(backgroundSelectionListener);
 	
 			fBackgroundColorEditor= new ColorEditor(backgroundComposite);
