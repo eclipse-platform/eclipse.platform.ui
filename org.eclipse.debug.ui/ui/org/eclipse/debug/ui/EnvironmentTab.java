@@ -1,4 +1,3 @@
-package org.eclipse.debug.ui;
 /*******************************************************************************
  * Copyright (c) 2000, 2003 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials 
@@ -10,6 +9,7 @@ package org.eclipse.debug.ui;
  *     Keith Seitz (keiths@redhat.com) - initial implementation
  *     IBM Corporation - integration and code cleanup
  *******************************************************************************/
+package org.eclipse.debug.ui;
 
 import java.util.HashMap;
 import java.util.Map;
