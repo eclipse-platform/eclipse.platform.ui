@@ -16,7 +16,6 @@ package org.eclipse.ant.tests.ui.editor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,9 +24,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.tests.ui.editor.support.TestTextCompletionProcessor;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.jface.text.BadLocationException;
@@ -531,31 +527,5 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(0, mode);
 		mode= processor.determineProposalMode("<project default=\"hey\"><target name=", 37, "name=");
 		assertEquals(0, mode);
-	}
-	
-	public void testPropertiesWithWholeDocString() {
-		// test with not valid whole document string
-		Project antProject = new Project();
-		antProject.init();
-		File file= getBuildFile("empty.xml");
-		antProject.setUserProperty("ant.file", file.getAbsolutePath());
-		StringBuffer buff = new StringBuffer();
-		buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		buff.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
-		buff.append("<property name=\"propA\" value=\"valA\" />\n");
-		buff.append("<property file=\"buildtest1.properties\" />\n");
-		buff.append("<target name=\"main\" depends=\"properties\">\n");
-	   try {
-	   		ProjectHelper projectHelper= new ProjectHelper();
-	   		projectHelper.setBuildFile(file);
-	   		projectHelper.parse(antProject, buff.toString());  // File will be parsed here
-	   }
-	   catch (BuildException e) {
-		   	//ignore a build exception on purpose
-	   		//as the document does not start and end within the same entity
-	   }    
-	   Map map = antProject.getProperties();
-	   assertEquals("valA", map.get("propA"));
-	   assertEquals("val2", map.get("prop2"));
 	}
 }

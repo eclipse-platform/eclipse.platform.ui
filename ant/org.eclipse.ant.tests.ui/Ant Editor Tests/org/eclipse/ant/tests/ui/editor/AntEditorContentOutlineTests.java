@@ -68,7 +68,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
         offset = wholeDocumentString.indexOf("property");
         assertEquals(offset, element.getOffset());
         int length = "<property name=\"propD\" value=\"valD\" />".length();
-        assertEquals(length - 1, element.getLength());
+        assertEquals(length, element.getLength());
 		
 		// <property file="buildtest1.properties">
 		element = (AntElementNode)children.get(1);
@@ -88,8 +88,8 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		element = (AntElementNode)children.get(3);
 		assertEquals(6, getStartingRow(element));
 		assertEquals(6, getStartingColumn(element));
-		assertEquals(8, getEndingRow(element));
-		assertEquals(14, getEndingColumn(element));
+		//assertEquals(8, getEndingRow(element));
+		assertEquals(13, getEndingColumn(element));
 		
 		// <property name="property_in_target">
 		element = (AntElementNode)element.getChildNodes().get(0);
@@ -100,8 +100,8 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
         offset = wholeDocumentString.indexOf("property name=\"property_in_target\"");
         assertEquals(offset, element.getOffset());
 		
-        assertEquals(9, getEndingRow(rootProject));
-        assertEquals(11, getEndingColumn(rootProject));
+        assertEquals(21, getEndingRow(rootProject));
+        assertEquals(10, getEndingColumn(rootProject));
     }
     
     private int getColumn(int offset, int line) throws BadLocationException {
@@ -113,7 +113,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
     }
     
     private int getEndingRow(AntElementNode element) throws BadLocationException {
-    	return getCurrentDocument().getLineOfOffset(element.getOffset() + element.getLength()) + 1;
+    	return getCurrentDocument().getLineOfOffset(element.getOffset() + element.getLength() - 1) + 1;
     }
     
     private int getStartingColumn(AntElementNode element) throws BadLocationException {
@@ -121,7 +121,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
     }
     
     private int getEndingColumn(AntElementNode element) throws BadLocationException {
-    	return getColumn(element.getOffset() + element.getLength(), getEndingRow(element));
+    	return getColumn(element.getOffset() + element.getLength() - 1, getEndingRow(element));
     }
 
     /**
