@@ -33,14 +33,13 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	
 	protected void fillContextMenu(IMenuManager manager) {
 		super.fillContextMenu(manager);
+		manager.add(new Separator());
 		int syncMode = getSyncMode();
-		if (syncMode == SyncView.SYNC_OUTGOING) {
-			manager.add(new Separator());
+		if (syncMode == SyncView.SYNC_OUTGOING || syncMode == SyncView.SYNC_BOTH) {
 			commitAction.update();
 			manager.add(commitAction);
 		}
-		if (syncMode == SyncView.SYNC_INCOMING) {
-			manager.add(new Separator());
+		if (syncMode == SyncView.SYNC_INCOMING || syncMode == SyncView.SYNC_BOTH) {
 			getAction.update();
 			manager.add(getAction);
 		}
