@@ -47,7 +47,7 @@ public class CVSStatus extends Status {
 	}
 	
 	public CVSStatus(int severity, String message, Throwable t) {
-		this(severity, message);
+		this(severity, 0, message, t);
 	}
 	
 	public CVSStatus(int severity, String message) {
