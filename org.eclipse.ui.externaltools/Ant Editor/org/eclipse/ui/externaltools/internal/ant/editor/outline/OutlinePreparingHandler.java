@@ -54,7 +54,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
      * The locator that tells us the location of the currently parsed element 
      * in the parsed document.
      */
-    protected Locator locator;
+	private Locator locator;
 
 
     /**
@@ -62,15 +62,18 @@ public class OutlinePreparingHandler extends DefaultHandler {
      * <P>
      * On top of the stack is the innermost element.
      */
-    protected Stack stillOpenElements = new Stack();
+	private Stack stillOpenElements = new Stack();
 
 
     /**
      * The root element of the DOM Tree that we create while parsing.
      */
-    protected XmlElement rootElement;
+	private XmlElement rootElement;
     
-    protected File mainFile;
+    /**
+     * Used as a helper for resolving external relative entries.
+     */
+    private File mainFile;
 
 
     /**
@@ -414,5 +417,4 @@ public class OutlinePreparingHandler extends DefaultHandler {
 					
 		return super.resolveEntity(publicId, systemId);
 	}
-
 }
