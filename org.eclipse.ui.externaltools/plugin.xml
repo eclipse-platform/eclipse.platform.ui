@@ -191,6 +191,29 @@
 		</objectContribution>			
 	</extension>
 
+	<extension point="org.eclipse.ui.popupMenus">
+		<viewerContribution
+			targetID="org.eclipse.ui.externaltools.internal.ant.editor.AntEditor.RulerContext"
+            id="org.eclipse.ui.externaltools.internal.ant.editor.AntEditor.RulerContext">
+			<action
+				label="%AddTask.label"
+				helpContextId="org.eclipse.ui.AddTask_action_context"
+				tooltip="%AddTask.tooltip"
+				class="org.eclipse.ui.texteditor.TaskRulerAction"
+				menubarPath="additions"
+				id="org.eclipse.ui.texteditor.TaskRulerAction">
+			</action>
+			<action
+				label="%AddBookmark.label"
+				helpContextId="org.eclipse.ui.bookmark_action_context"
+				tooltip="%AddBookmark.tooltip"
+				class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+				menubarPath="additions"
+				id="org.eclipse.ui.texteditor.BookmarkRulerAction">
+			</action>
+		</viewerContribution>
+	</extension>
+
 	<extension point="org.eclipse.ui.propertyPages">
 		<page
 			id="org.eclipse.ui.externaltools.propertypages.BuilderPropertyPage"

@@ -110,6 +110,7 @@ public class PlantyEditor extends TextEditor {
         // That is where the assistant and its processor is defined
 		setSourceViewerConfiguration(new PlantySourceViewerConfiguration(this));
 		setRangeIndicator(new DefaultRangeIndicator());
+		setCompatibilityMode(false);
     }
    
 	/* (non-Javadoc)
