@@ -324,7 +324,7 @@ public void dispose() {
 	if (tabFolder != null)
 		tabFolder.dispose();
 	tabFolder = null;
-	
+	current = null;
 	active = false;
 }
 /**
@@ -642,30 +642,25 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 	// remove old child from display
 	if (active) {
 		Iterator keys = mapTabToPart.keySet().iterator();
+		CTabItem tab = null;
+		LayoutPart nextPart = null;
+		boolean partIsActive = false;
 		while (keys.hasNext()) {
 			CTabItem key = (CTabItem)keys.next();
 			LayoutPart part = (LayoutPart)mapTabToPart.get(key);
 			if (part == oldChild) {
-				boolean partIsActive = (current == oldChild);
-				TabInfo info = new TabInfo();
-				info.part = newChild;
-				info.tabText = key.getText();
-				removeTab(key);
-				int index = 0;
-				if (invisibleChildren != null)
-					index = invisibleChildren.length;
-				invisibleChildren = arrayAdd(invisibleChildren, info, index);
-				oldChild.setBounds(new Rectangle(0, 0, 0, 0));
-				oldChild.setContainer(null);
-				newChild.setContainer(this);
-				if (tabFolder.getItemCount() > 0 && !partIsActive) {
-					setControlSize(current);
-				}
-				if(partIsActive)
-					current = null;
-				break;
+				partIsActive = (current == oldChild);
+				tab = key;
+			} else {
+				nextPart = part;
 			}
+			if(tab != null && nextPart != null)
+				break;
 		}
+		if(tab != null)
+			replaceChild(oldChild, newChild, tab, partIsActive);
+		if(partIsActive && nextPart != null)
+			current = nextPart;
 	} else if (invisibleChildren != null) {
 		for (int i = 0, length = invisibleChildren.length; i < length; i++){
 			if (invisibleChildren[i].part == oldChild) {
@@ -674,6 +669,22 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 		}
 	}
 
+}
+private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild, CTabItem key, boolean partIsActive) {
+	TabInfo info = new TabInfo();
+	info.part = newChild;
+	info.tabText = key.getText();
+	removeTab(key);
+	int index = 0;
+	if (invisibleChildren != null)
+		index = invisibleChildren.length;
+	invisibleChildren = arrayAdd(invisibleChildren, info, index);
+	oldChild.setBounds(new Rectangle(0, 0, 0, 0));
+	oldChild.setContainer(null);
+	newChild.setContainer(this);
+	if (tabFolder.getItemCount() > 0 && !partIsActive) {
+		setControlSize(current);
+	}
 }
 private void replaceChild(PartPlaceholder oldChild, LayoutPart newChild) {
 	if (invisibleChildren == null) return;
