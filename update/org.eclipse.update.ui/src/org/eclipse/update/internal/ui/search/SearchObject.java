@@ -42,6 +42,8 @@ public class SearchObject extends NamedModelObject {
 	private String categoryId;
 	private boolean categoryFixed;
 	private Hashtable settings = new Hashtable();
+	private boolean persistent=true;
+	private boolean instantSearch=false;
 
 	class SearchAdapter extends MonitorAdapter {
 		public void done() {
@@ -68,6 +70,22 @@ public class SearchObject extends NamedModelObject {
 
 	public boolean isCategoryFixed() {
 		return categoryFixed;
+	}
+	
+	public boolean isPersistent() {
+		return persistent;
+	}
+	
+	public void setPersistent(boolean value) {
+		this.persistent = value;
+	}
+	
+	public boolean isInstantSearch() {
+		return instantSearch;
+	}
+	
+	public void setInstantSearch(boolean value) {
+		this.instantSearch = value;
 	}
 
 	public String getCategoryId() {
@@ -230,6 +248,8 @@ public class SearchObject extends NamedModelObject {
 				searchOneSite((ISiteAdapter) source, query, monitor);
 				monitor.worked(1);
 			}
+			if (monitor.isCanceled())
+				break;
 		}
 		searchInProgress = false;
 		monitor.done();

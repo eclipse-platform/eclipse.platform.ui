@@ -37,7 +37,7 @@ public interface ISearchCategory {
 /**
  * Load the category settings from the provided object.
  */	
-	public void load(Map settings);
+	public void load(Map settings, boolean editable);
 /**
  * Save the category settings into the provided object.
  */

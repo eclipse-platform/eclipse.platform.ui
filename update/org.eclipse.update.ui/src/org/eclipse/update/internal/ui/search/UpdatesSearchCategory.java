@@ -103,7 +103,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 		Composite container = factory.createComposite(parent);
 		setControl(container);
 	}
-	public void load(Map map) {
+	public void load(Map map, boolean editable) {
 	}
 	public void store(Map map) {
 	}

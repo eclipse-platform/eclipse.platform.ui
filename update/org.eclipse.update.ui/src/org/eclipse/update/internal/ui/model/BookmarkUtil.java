@@ -36,28 +36,28 @@ public class BookmarkUtil {
 		}
 		return (SiteBookmark[]) result.toArray(new SiteBookmark[result.size()]);
 	}
-	
+
 	public static BookmarkFolder getFolder(Vector bookmarks, IPath path) {
 		NamedModelObject object = find(bookmarks, path);
-		if (object!=null && object instanceof BookmarkFolder) 
-			return (BookmarkFolder)object;
+		if (object != null && object instanceof BookmarkFolder)
+			return (BookmarkFolder) object;
 		return null;
 	}
-	
+
 	public static NamedModelObject find(Vector bookmarks, IPath path) {
-		Object [] array = bookmarks.toArray();
+		Object[] array = bookmarks.toArray();
 		return find(array, path);
 	}
-	
+
 	private static NamedModelObject find(Object[] array, IPath path) {
 		String name = path.segment(0);
-		for (int i=0; i<array.length; i++) {
-			NamedModelObject obj = (NamedModelObject)array[i];
+		for (int i = 0; i < array.length; i++) {
+			NamedModelObject obj = (NamedModelObject) array[i];
 			if (obj.getName().equals(name)) {
 				if (obj instanceof BookmarkFolder) {
-					if (path.segmentCount()>1) {
+					if (path.segmentCount() > 1) {
 						IPath childPath = path.removeFirstSegments(1);
-						BookmarkFolder folder = (BookmarkFolder)obj;
+						BookmarkFolder folder = (BookmarkFolder) obj;
 						return find(folder.getChildren(null), childPath);
 					}
 				}
@@ -184,6 +184,8 @@ public class BookmarkUtil {
 			writer.println(indent + "</folder>");
 		} else if (obj instanceof SearchObject) {
 			SearchObject search = (SearchObject) obj;
+			if (search.isPersistent() == false)
+				return;
 			String name = search.getName();
 			String categoryId = search.getCategoryId();
 			String fixed = search.isCategoryFixed() ? "true" : "false";

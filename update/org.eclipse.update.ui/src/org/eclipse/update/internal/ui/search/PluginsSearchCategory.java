@@ -106,14 +106,14 @@ public class PluginsSearchCategory extends SearchCategory {
 		factory.paintBordersFor(container);
 		setControl(container);
 	}
-	public void load(Map map) {
+	public void load(Map map, boolean editable) {
 		String key = "imports";
 		String value = (String) map.get(key);
 		imports = new ArrayList();
 		if (value != null)
 			decodeImports(value, imports);
 		tableViewer.refresh();
-
+		newButton.setEnabled(editable);
 	}
 	public void store(Map map) {
 		String value = encodeImports(imports);

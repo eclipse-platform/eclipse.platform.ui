@@ -102,6 +102,7 @@ public class SearchForm extends UpdateWebForm {
 		public void done() {
 			super.done();
 			updateButtonText();
+			searchButton.setEnabled(true);
 			Date date = new Date();
 			String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
 			String text = UpdateUIPlugin.getFormattedMessage(pattern, date.toString());
@@ -373,7 +374,7 @@ public class SearchForm extends UpdateWebForm {
 			if (category.getId().equals(obj.getCategoryId())) {
 				categoryCombo.select(i);
 				switchTo(category);
-				category.load(obj.getSettings());
+				category.load(obj.getSettings(), !obj.isCategoryFixed());
 				searchResultSection.setSearchString(category.getCurrentSearch());
 				categoryCombo.setEnabled(!obj.isCategoryFixed());
 				break;
@@ -475,6 +476,7 @@ public class SearchForm extends UpdateWebForm {
 	}
 
 	private void stopSearch() {
+		searchButton.setEnabled(false);
 		searchObject.stopSearch();
 	}
 
@@ -503,7 +505,8 @@ public class SearchForm extends UpdateWebForm {
 					if (searchObject == obj)
 						return;
 					if (currentCategory != null) {
-						currentCategory.store(searchObject.getSettings());
+						if (!searchObject.isCategoryFixed())
+							currentCategory.store(searchObject.getSettings());
 						searchObject.setCategoryId(currentCategory.getId());
 					}
 					detachFrom(searchObject);
@@ -515,6 +518,14 @@ public class SearchForm extends UpdateWebForm {
 				if (searchObject.isSearchInProgress()) {
 					// sync up with the search
 					catchUp();
+				}
+				else if (searchObject.isInstantSearch()) {
+					searchObject.setInstantSearch(false);
+					getControl().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							performSearch();
+						}
+					});
 				}
 			}
 		});

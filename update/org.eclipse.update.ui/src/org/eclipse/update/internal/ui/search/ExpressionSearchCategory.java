@@ -28,6 +28,7 @@ public class ExpressionSearchCategory extends SearchCategory {
 	private boolean searchProvider = false;
 	private boolean searchDesc = false;
 	private String expression="";
+	private String noCaseExpression;
 	
 	public ExpressionSearchCategory() {
 	}
@@ -53,7 +54,7 @@ public class ExpressionSearchCategory extends SearchCategory {
 		descriptionCheck = factory.createButton(container, UpdateUIPlugin.getResourceString(KEY_DESCRIPTION), SWT.CHECK);
 		fillHorizontal(descriptionCheck, 10);
 		factory.paintBordersFor(container);
-		initializeWidgets();
+		initializeWidgets(false);
 		setControl(container);
 	}
 	private void fillHorizontal(Control control, int indent) {
@@ -85,13 +86,20 @@ public class ExpressionSearchCategory extends SearchCategory {
 		searchProvider = providerCheck.getSelection();
 		searchDesc = descriptionCheck.getSelection();
 		expression = expressionText.getText().trim();
+		noCaseExpression = expression.toLowerCase();
 	}
-	private void initializeWidgets() {
+	private void initializeWidgets(boolean editable) {
 		caseCheck.setSelection(caseSensitive);
 		nameCheck.setSelection(searchName);
 		providerCheck.setSelection(searchProvider);
 		descriptionCheck.setSelection(searchDesc);
 		expressionText.setText(expression);
+
+		caseCheck.setEnabled(editable);
+		nameCheck.setEnabled(editable);
+		providerCheck.setEnabled(editable);
+		descriptionCheck.setEnabled(editable);
+		expressionText.setEnabled(editable);
 	}
 	
 	public String getCurrentSearch() {
@@ -115,16 +123,20 @@ public class ExpressionSearchCategory extends SearchCategory {
 		return false;
 	}
 	private boolean matches(String text) {
+		if (!caseSensitive) {
+			String noCaseText = text.toLowerCase();
+			return noCaseText.indexOf(noCaseExpression)!= -1;
+		}
 		return text.indexOf(expression)!= -1;
 	}
-	public void load(Map map) {
+	public void load(Map map, boolean editable) {
 		caseSensitive = getBoolean("case", map);
 		searchName = getBoolean("name", map);
 		searchProvider = getBoolean("provider", map);
 		searchDesc = getBoolean("desc", map);
 		expression = getString("expression", map);
 		if (caseCheck!=null)
-			initializeWidgets();
+			initializeWidgets(editable);
 	}
 
 	public void store(Map map) {

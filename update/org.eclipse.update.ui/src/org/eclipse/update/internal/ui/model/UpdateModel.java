@@ -67,6 +67,17 @@ public class UpdateModel implements IAdaptable {
 		}
 		return null;
 	}
+
+	public PendingChange findRelatedPendingChange(IFeature feature) {
+		for (int i=0; i<changes.size(); i++) {
+			PendingChange job = (PendingChange)changes.elementAt(i);
+			
+			String jobId = job.getFeature().getVersionedIdentifier().getIdentifier();
+			String id = feature.getVersionedIdentifier().getIdentifier();
+			if (id.equals(jobId)) return job;
+		}
+		return null;
+	}
 			
 	
 	public boolean isPending(IFeature feature) {
