@@ -165,13 +165,16 @@ will not appear in the tool bar.</li>
 represent the action in its context. If it is omitted and the action should
 appear in the toolbar, the workbench will use a place holder icon. The
 path is relative to the location of the plugin.xml file of the contributing
-plug-in.</li>
+plug-in. The icon will appear in toolbars but not in menus. Enabled actions
+will be represented in menus by the hoverIcon.</li>
 
 <li>
 <b>disabledIcon</b> - a relative path of an icon that will be used to visually
 represent the action in its context when the action is disabled. If it
 is omitted the normal icon will simply appear greyed out. The path is relative
-to the location of the plugin.xml file of the contributing plug-in.</li>
+to the location of the plugin.xml file of the contributing plug-in. The disabled
+icon will appear in toolbars but not in menus. Icons for disabled actions
+in menus will be supplied by the OS.</li>
 
 <li>
 <b>hoverIcon</b> - a relative path of an icon that will be used to visually
