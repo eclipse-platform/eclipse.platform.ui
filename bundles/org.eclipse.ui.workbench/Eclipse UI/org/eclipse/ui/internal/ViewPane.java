@@ -14,16 +14,43 @@ package org.eclipse.ui.internal;
 **********************************************************************/
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.SafeRunnable;
+
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 
@@ -880,6 +907,13 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	void setTheme(String theme) {
 		this.theme = theme;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#setImage(org.eclipse.swt.widgets.TabItem, org.eclipse.swt.graphics.Image)
+	 */
+	void setImage(CTabItem item, Image image) {
+		titleLabel.setImage(image);
 	}
 
 }

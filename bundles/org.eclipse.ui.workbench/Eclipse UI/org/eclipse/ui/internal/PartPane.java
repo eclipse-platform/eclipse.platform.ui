@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -25,6 +26,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -35,6 +37,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -572,5 +575,16 @@ public IJobChangeListener getJobChangeListener(){
 				folder.showBusy(PartPane.this);
 		}
 	};
+	
 }
+	
+	/**
+	 * Set the image to image. item is used for future work where 
+	 * the tab item may be updated.
+	 * @param item
+	 * @param image
+	 */
+	void setImage(CTabItem item, Image image){
+		//Do nothing by default
+	}
 }
