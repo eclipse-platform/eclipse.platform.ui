@@ -158,6 +158,12 @@ public final class MarkerUtilities {
 	/**
 	 * Returns the specified attribute of the given marker as an integer.
 	 * Returns the given default if the attribute value is not an integer.
+	 * 
+	 * @param marker		the marker
+	 * @param attributeName	the name of the attribute
+	 * @param defaultValue	the default value
+	 * @return 				the attribute's value or the default value
+	 * 							if the attribute does not exist or isn't an int
 	 */
 	private static int getIntAttribute(IMarker marker, String attributeName, int defaultValue) {
 		if (marker.exists())
@@ -205,6 +211,8 @@ public final class MarkerUtilities {
 	
 	/**
 	 * Handles a core exception which occurs when accessing marker attributes.
+	 * 
+	 * @param e the core exception
 	 */
 	private static void handleCoreException(CoreException e) {
 		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(e.getStatus());
@@ -370,7 +378,7 @@ public final class MarkerUtilities {
 	 *   value type: <code>Object</code>)
 	 * @param markerType the type of marker
 	 * @exception CoreException if this method fails
-	 * @see IResource#createMarker
+	 * @see IResource#createMarker(java.lang.String)
 	 */
 	public static void createMarker(final IResource resource, final Map attributes, final String markerType) throws CoreException {
 		
@@ -389,6 +397,7 @@ public final class MarkerUtilities {
 	 * The list is a depth first list and maintains the sequence in which
 	 * the super types are listed in the marker specification.
 	 * 
+	 * @param markerType the marker's type
 	 * @return a depth-first list of all super types of the given marker type
 	 */
 	public static String[] getSuperTypes(String markerType) {
