@@ -3,10 +3,10 @@ package org.eclipse.help.internal.ui.util;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.help.internal.util.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.help.internal.util.*;
 /**
  * Utiliy class for common error displaying tasks.
  */
@@ -18,8 +18,14 @@ public class ErrorUtil {
 	 */
 	public static void displayErrorDialog(String msg) {
 		String title = WorkbenchResources.getString("Help_Error");
-		Shell parent = getActiveWorkbenchWindow().getShell();
-		MessageDialog.openError(parent, title, msg);
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+		Shell shell;
+		if (workbenchWindow != null) {
+			shell = workbenchWindow.getShell();
+		} else {
+			shell = new Shell();
+		}
+		MessageDialog.openError(shell, title, msg);
 		Logger.logError(msg, null);
 	}
 	/**
@@ -30,8 +36,14 @@ public class ErrorUtil {
 	 */
 	public static void displayErrorDialog(String msg, Throwable ex) {
 		String title = WorkbenchResources.getString("Help_Error");
-		Shell parent = getActiveWorkbenchWindow().getShell();
-		MessageDialog.openError(parent, title, msg);
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+		Shell shell;
+		if (workbenchWindow != null) {
+			shell = workbenchWindow.getShell();
+		} else {
+			shell = new Shell();
+		}
+		MessageDialog.openError(shell, title, msg);
 		Logger.logError(msg, ex);
 	}
 	/**
@@ -41,8 +53,14 @@ public class ErrorUtil {
 	 */
 	public static void displayInfoDialog(String msg) {
 		String title = WorkbenchResources.getString("Help_Info");
-		Shell parent = getActiveWorkbenchWindow().getShell();
-		MessageDialog.openInformation(parent, title, msg);
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+		Shell shell;
+		if (workbenchWindow != null) {
+			shell = workbenchWindow.getShell();
+		} else {
+			shell = new Shell();
+		}
+		MessageDialog.openInformation(shell, title, msg);
 		Logger.logInfo(msg);
 	}
 	/**
@@ -52,8 +70,14 @@ public class ErrorUtil {
 	 */
 	public static boolean displayQuestionDialog(String msg) {
 		String title = WorkbenchResources.getString("Help_Question");
-		Shell parent = getActiveWorkbenchWindow().getShell();
-		return MessageDialog.openQuestion(parent, title, msg);
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+		Shell shell;
+		if (workbenchWindow != null) {
+			shell = workbenchWindow.getShell();
+		} else {
+			shell = new Shell();
+		}
+		return MessageDialog.openQuestion(shell, title, msg);
 	}
 	/**
 	 * Display all errors in the Help Status object. If no errors occurred,
