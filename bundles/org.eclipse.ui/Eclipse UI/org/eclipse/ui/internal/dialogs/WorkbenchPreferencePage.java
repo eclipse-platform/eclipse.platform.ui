@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
  
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
@@ -399,14 +400,14 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	protected void performDefaults() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
+		autoBuildButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.AUTO_BUILD));
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditorsThreshold.loadDefault();
-		
+
 		recentFilesEditor.loadDefault();
 		
 //		acceleratorPerformDefaults(store);
@@ -447,8 +448,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		description.setAutoBuilding(newAutoBuildSetting);
 		try {
 			ResourcesPlugin.getWorkspace().setDescription(description);
-		} catch (org.eclipse.core.runtime.CoreException e) {
-			// handle the exception here (could not save the new description to disk)
+		} catch (CoreException e) {
+			WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus());
 		}
 		if (oldAutoBuildSetting != newAutoBuildSetting) {
 			// fire off a property change notification so interested

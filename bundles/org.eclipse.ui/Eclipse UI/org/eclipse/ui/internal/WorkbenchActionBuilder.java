@@ -948,8 +948,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// auto build setting is off.
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (event.getProperty() == IPreferenceConstants.AUTO_BUILD) {
-			//Auto build is store in core. It is not in the preference store.
-			boolean autoBuildOn = ((Boolean) event.getNewValue()).booleanValue();
+			// Auto build is stored in core. It is not in the preference store.
+			boolean autoBuildOn = ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 			if (autoBuildOn)
 				removeManualIncrementalBuildAction();
 			else
