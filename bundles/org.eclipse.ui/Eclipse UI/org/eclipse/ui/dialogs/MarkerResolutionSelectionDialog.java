@@ -64,7 +64,14 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 		setTitle(WorkbenchMessages.getString("MarkerResolutionSelectionDialog.title"));	//$NON-NLS-1$
 		setMessage(WorkbenchMessages.getString("MarkerResolutionSelectionDialog.messageLabel")); //$NON-NLS-1$
 		setInitialSelections(new Object[]{markerResolutions[0]});
-		WorkbenchHelp.setHelp(shell, IHelpContextIds.MARKER_RESOLUTION_SELECTION_DIALOG);
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on Window.
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.MARKER_RESOLUTION_SELECTION_DIALOG);
 	}
 	
 	/* (non-Javadoc)

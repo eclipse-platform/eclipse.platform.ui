@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.misc.Assert;
 
@@ -62,6 +63,14 @@ public class WelcomePageSelectionDialog extends SelectionDialog {
 		setTitle(WorkbenchMessages.getString("WelcomePageSelectionDialog.title"));	//$NON-NLS-1$
 		setMessage(WorkbenchMessages.getString("WelcomePageSelectionDialog.message")); //$NON-NLS-1$
 		setInitialSelections(new Object[]{features[0]});
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on Window.
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
 	}
 	
 	/* (non-Javadoc)

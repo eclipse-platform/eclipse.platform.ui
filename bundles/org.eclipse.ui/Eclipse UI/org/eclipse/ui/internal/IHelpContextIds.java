@@ -113,10 +113,10 @@ public interface IHelpContextIds {
 	public static final String GOTO_LINE_DIALOG = PREFIX + "goto_line_dialog_context"; //$NON-NLS-1$	
 	public static final String WORKING_SET_SELECTION_DIALOG = PREFIX + "working_set_selection_dialog_context" ; //$NON-NLS-1$
 	public static final String DELETE_PROJECT_DIALOG = PREFIX + "delete_project_dialog_context"; //$NON-NLS-1$
-	public static final String INTERNAL_ERROR_DIALOG = PREFIX + "internal_error_dialog_context"; //$NON-NLS-1$
 	public static final String FILTER_DIALOG = PREFIX + "filter_dialog_context"; //$NON-NLS-1$
 	public static final String MARKER_RESOLUTION_SELECTION_DIALOG = PREFIX + "marker_resolution_selection_dialog_context"; //$NON-NLS-1$
 	public static final String WORKBENCH_EDITORS_DIALOG = PREFIX + "workbench_editors_dialog"; //$NON-NLS-1$
+	public static final String WELCOME_PAGE_SELECTION_DIALOG = PREFIX + "welcome_page_selection_dialog"; //$NON-NLS-1$
 	
 	// Editors
 	public static final String WELCOME_EDITOR = PREFIX + "welcome_editor_context"; //$NON-NLS-1$

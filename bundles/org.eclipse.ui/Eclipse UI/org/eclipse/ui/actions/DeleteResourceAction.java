@@ -52,7 +52,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
 				0); 	// yes is the default
 			this.projects = projects;
-			WorkbenchHelp.setHelp(parentShell, IHelpContextIds.DELETE_PROJECT_DIALOG);
 		}
 		
 		static String getTitle(List projects) {
@@ -71,7 +70,15 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				return WorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.size()) });  //$NON-NLS-1$
 			}
 		}
-		
+
+		/* (non-Javadoc)
+		 * Method declared on Window.
+		 */
+		protected void configureShell(Shell newShell) {
+			super.configureShell(newShell);
+			WorkbenchHelp.setHelp(newShell, IHelpContextIds.DELETE_PROJECT_DIALOG);
+		}
+	
 		protected Control createCustomArea(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NONE);
 			composite.setLayout(new GridLayout());
