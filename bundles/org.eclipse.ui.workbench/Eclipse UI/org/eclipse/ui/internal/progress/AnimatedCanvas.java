@@ -16,7 +16,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.*;
@@ -229,22 +228,6 @@ public class AnimatedCanvas {
 				}
 			};
 			
-			animateJob.addJobChangeListener(new JobChangeAdapter(){
-				/* (non-Javadoc)
-				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.Job)
-				 */
-				 
-				public void aboutToRun(Job job) {
-					System.out.println("Starting");
-				}
-				
-				/* (non-Javadoc)
-				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.Job, org.eclipse.core.runtime.IStatus)
-				 */
-				public void done(Job job, IStatus result) {
-					System.out.println("Done");
-				}
-			});
 			animateJob.schedule();
 		}
 	}
