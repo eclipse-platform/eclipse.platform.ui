@@ -262,20 +262,20 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		final String key= fMarkerType + fSeverity;
 		
 		Object descriptor= fgType2Descriptor.get(key);
-		if (descriptor == NO_DESCRIPTOR)
-			fImage= getImage(fImageName);
-		else if (descriptor != null)
-			fImage= getImage(display, (ImageDescriptor)descriptor);
-		
-		if (fImage != null)
+		if (descriptor != null) {
+			if (descriptor == NO_DESCRIPTOR)
+				fImage= getImage(fImageName);
+			else
+				fImage= getImage(display, (ImageDescriptor)descriptor);
 			return fImage;
+		}
 
 		// XXX: hack since I cannot get the image for a marker type
-		WorkspaceModifyOperation r= new WorkspaceModifyOperation() {
+		WorkspaceModifyOperation r= new WorkspaceModifyOperation(null) {
 			/*
-			 * @see WorkspaceModifyOperation
+			 * @see WorkspaceModifyOperation#execute(IProgressMonitor)
 			 */
-			public void execute(IProgressMonitor monitor) throws CoreException,InvocationTargetException, InterruptedException {
+			public void execute(IProgressMonitor monitor) throws CoreException {
 				IMarker tempMarker= ResourcesPlugin.getWorkspace().getRoot().createMarker(fMarkerType);
 				tempMarker.setAttribute(IMarker.SEVERITY, fSeverity);
 				if (tempMarker.exists()) {
@@ -295,12 +295,12 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		};
 		try {
 			r.run(null);
-		} catch (InvocationTargetException ex) {
+		} catch (InvocationTargetException e) {
 			fgType2Descriptor.put(key, NO_DESCRIPTOR);
-		} catch (InterruptedException ex) {
+		} catch (InterruptedException e) {
 			fgType2Descriptor.put(key, NO_DESCRIPTOR);
 		}
-		
+		 
 		if (fImage == null)
 			fImage= getImage(fImageName);
 

@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -251,6 +252,6 @@ public final class MarkerUtilities {
 			}
 		};
 			
-		resource.getWorkspace().run(r, null);
+		resource.getWorkspace().run(r, null,IWorkspace.AVOID_UPDATE, null);
 	}
 }
