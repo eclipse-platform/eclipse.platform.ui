@@ -55,16 +55,6 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 				}
 			};
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ILazyContentProvider#invalidateElements(int,
-			 *      int)
-			 */
-			public void invalidateElements(int start, int length) {
-				// Do nothing
-
-			}
 
 			/*
 			 * (non-Javadoc)
@@ -72,8 +62,10 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 			 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElements(int,
 			 *      int)
 			 */
-			public void updateElements(int start, int length) {
+			public void updateElement(int index) {
 
+				int start = index;
+				int length = 1;
 				int endIndex = start + length;
 				
 				int begin = Math.max(0,start - 50);

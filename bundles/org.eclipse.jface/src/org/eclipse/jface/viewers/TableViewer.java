@@ -14,6 +14,7 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
@@ -28,8 +29,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete viewer based on a SWT <code>Table</code> control.
@@ -66,6 +65,7 @@ import org.eclipse.jface.util.Assert;
 public class TableViewer extends StructuredViewer {
 		
 	private class VirtualManager{
+
 		/**
 		 * The currently invisible elements as provided 
 		 * by the content provider or by addition.
@@ -102,7 +102,7 @@ public class TableViewer extends StructuredViewer {
 						//If we are building lazily then request lookup now
 						if(contentProvider instanceof ILazyContentProvider){
 							((ILazyContentProvider) contentProvider).
-								updateElements(index, 1);
+								updateElement(index);
 							return;
 						}	
 					}
@@ -113,7 +113,6 @@ public class TableViewer extends StructuredViewer {
 				}
 
 			});
-
 		}
 		
 		/**
@@ -150,7 +149,6 @@ public class TableViewer extends StructuredViewer {
 			
 			
 			cachedElements[index] = element;
-			
 			
 		}
 		
@@ -209,7 +207,7 @@ public class TableViewer extends StructuredViewer {
 		}	
 		
 	}
-
+	
 	/**
 	 * Internal table viewer implementation.
 	 */
@@ -229,7 +227,7 @@ public class TableViewer extends StructuredViewer {
 	 * The color and font collector for the cells.
 	 */
 	private TableColorAndFontCollector tableColorAndFont = new TableColorAndFontCollector();
-
+	
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
 	 * parent. The table control is created using the SWT style bits
@@ -730,16 +728,14 @@ public class TableViewer extends StructuredViewer {
 		IContentProvider contentProvider = getContentProvider();
 		
 		//Invalidate for lazy
-		if(contentProvider instanceof ILazyContentProvider)
-			((ILazyContentProvider)contentProvider).invalidateElements(0, getTable().getItemCount());
-		
-		else{ //Don't cache if the root is null but cache if it is not lazy.
+		if(!(contentProvider instanceof ILazyContentProvider) 
+				&& (contentProvider instanceof IStructuredContentProvider)) {
+			//Don't cache if the root is null but cache if it is not lazy.
 			if(root != null)
 				virtualManager.cachedElements = 
 					((IStructuredContentProvider) getContentProvider()).getElements(root);
 		}
 		getTable().clearAll();
-		
 	}
 
 	/**
@@ -998,32 +994,32 @@ public class TableViewer extends StructuredViewer {
 	 * @param count the new table size.
 	 */
 	public void setItemCount(int count){
-		getTable().setItemCount(count);	
+		getTable().setItemCount(count);
+		getTable().redraw();
 	}
 	
 	/**
 	 * Replace the entries starting at index with elements.
 	 * This method assumes all of these values are correct
 	 * and will not call the content provider to verify.
-	 * <strong>
-	 * This API is experimental and is subject to change 
-	 * before Eclipse 3.1 is released.
-	 * Note that this method will create a TableItem
+	 * <strong>Note that this method will create a TableItem
 	 * for all of the elements provided</strong>.
-	 * 
 	 * @param elements
 	 * @param index
 	 * @see ILazyContentProvider
 	 */
-	public void replace(Object[] elements, int index){
-	
-		for (int i = 0; i < elements.length; i++) {
-			Object object = elements[i];
-			TableItem item = getTable().getItem(index + i);
-			refreshItem(item, object);
-		}
+	public void replace(Object element, int index){
+		TableItem item = getTable().getItem(index);
+		refreshItem(item, element);
 	}
 
+	public void clear(int index) {
+		TableItem item = getTable().getItem(index);
+		if (item.getData() != null) {
+			disassociate(item);
+		}
+		table.clear(index);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getRawChildren(java.lang.Object)
@@ -1042,5 +1038,6 @@ public class TableViewer extends StructuredViewer {
 		Assert.isTrue(provider instanceof IStructuredContentProvider ||
 				provider instanceof ILazyContentProvider);
 	}
+	
 	
 }

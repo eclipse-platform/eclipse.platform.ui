@@ -11,35 +11,23 @@
 package org.eclipse.jface.viewers;
 
 /**
- * The IVirtualTableContentProvider is the content provider
+ * The ILazyContentProvider is the content provider
  * for table viewers created using the SWT.VIRTUAL flag that
  * only wish to return thier contents as they are queried.
  * <strong>Note: This API is experimental and may be changed
  * before Eclipse 3.1 is released.</strong>
  */
 public interface ILazyContentProvider extends IContentProvider {
-	
-
 	/**
-	 * Update the elements from the start index up to the 
-	 * finish index.
-	 * @param start The beginning index to populate.
-	 * @param length The number of items to populate.
-	 * @see TableViewer#replace(Object[], int) for details
-	 * on how to insert the updated elements back into the
-	 * TableViewer.
-	 */
-	public void updateElements(int start, int length);
-	
-
-	/**
-	 * The elements from start to finish are no longer 
-	 * valid. Should they require updating later 
-	 * #updateElements(int, int) will be called.
+	 * Called when a previously-blank item becomes visible in the
+	 * TableViewer. If the content provider knows the element
+	 * at this row, it should respond by calling 
+	 * TableViewer#replace(Object, int)
+	 * 
 	 * @param start The beginning index to invalidate.
 	 * @param length The number of items to invalidate.
-	 * @see #updateElements(int, int)
+	 * @see #prioritizeRange(int, int)
 	 */
-	public void invalidateElements(int start, int length);
+	public void updateElement(int element);
 	
 }

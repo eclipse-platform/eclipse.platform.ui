@@ -24,6 +24,7 @@ public class AllTests extends TestSuite {
 	}
 
 	public AllTests() {
+		addTestSuite(LazySortedCollectionTest.class);
 		addTestSuite(TreeViewerTest.class);
 		addTestSuite(TableViewerTest.class);
 		addTestSuite(TreeViewerColumnTest.class);

@@ -34,23 +34,10 @@ public class LazyVirtualTableView extends VirtualTableView {
 		return new ILazyContentProvider() {
 			
 			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ILazyContentProvider#invalidateElements(int, int)
-			 */
-			public void invalidateElements(int start, int length) {
-				//Do nothing
-
-			}
-			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElements(int, int)
 			 */
-			public void updateElements(int start, int length) {
-				String[] elements = new String[length];
-				for (int i = 0; i < length; i++) {
-					elements[i] = "Element " + String.valueOf(i + start);
-				}
-		        viewer.replace(elements, start);
-
-
+			public void updateElement(int index) {
+		        viewer.replace("Element " + String.valueOf(index), index);
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()

@@ -11,6 +11,7 @@
 package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -19,7 +20,7 @@ import org.eclipse.jface.viewers.Viewer;
  * The TestLazyModelContentProvider is the lazy version
  * of the model content provider.
  */
-public class TestLazyModelContentProvider extends TestModelContentProvider implements ILazyContentProvider {
+public class TestLazyModelContentProvider extends TestModelContentProvider implements ILazyContentProvider, IContentProvider {
 	
 	TableViewerTest test;
 	TestElement input;
@@ -29,27 +30,15 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILazyContentProvider#invalidateElements(int, int)
-	 */
-	public void invalidateElements(int start, int length) {
-		updateElements(start,length);
-
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElements(int, int)
 	 */
-	public void updateElements(int start, int length) {
+	public void updateElement(int index) {
 
 		if(input == null)
 			return; //Nothing to update yet
 		
-		TestElement[] children = new TestElement[length];
-        for (int i = 0; i < length; i++)
-            children[i] = input.getChildAt(i + start);
-        ((TableViewer) test.fViewer).replace(children, start);
+        ((TableViewer) test.fViewer).replace(input.getChildAt(index), index);
 
-	
 	}
 
 	/* (non-Javadoc)

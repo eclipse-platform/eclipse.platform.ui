@@ -231,6 +231,12 @@
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.StickyViewRight2">
       </view>
+      <view
+            class="org.eclipse.jface.tests.viewers.interactive.ConcurrentTableTestView"
+            name="Concurrent Table Test View"
+            id="org.eclipse.ui.tests.concurrentTableTest"/>      
+      
+      
       <stickyView
             id="org.eclipse.ui.tests.api.StickyViewRight1"
             location="RIGHT"
