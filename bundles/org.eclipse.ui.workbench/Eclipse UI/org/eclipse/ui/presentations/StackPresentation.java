@@ -120,15 +120,16 @@ public abstract class StackPresentation {
 	public abstract Control getControl();	
 	
 	/**
-	 * Adds the given part to the stack.
+	 * Adds the given part to the stack. The presentations' interpretation of the
+	 * part order must be consistent. For example,
+	 * {addPart(a, null); addPart(b, null); addPart(c, null);} should have exactly 
+	 * the same effect as {addPart(c, null); addPart(a, c); addPart(b, c);}; 
 	 * 
 	 * @param newPart the new part to add (not null)
 	 * @param position the position to insert the part. The new part will
 	 * occupy the tab location currently occupied by the "position" part, and the
-	 * "position" part will be moved to a new location. May be null if the caller
-	 * does not care where the newly added part is inserted into the tab folder.
-	 * @param isFixed true iff the part is considered "fixed" in this presentation.
-	 * That is, the part cannot be dragged or closed.
+	 * "position" part will be moved to a new location. If null, the tab should be
+	 * last position.
 	 */
 	public abstract void addPart(IPresentablePart newPart, IPresentablePart position);
 	
