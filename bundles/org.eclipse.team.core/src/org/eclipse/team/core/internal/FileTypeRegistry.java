@@ -1,7 +1,7 @@
 package org.eclipse.team.core.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -12,12 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -31,16 +28,16 @@ import org.eclipse.team.core.TeamPlugin;
  */
 public class FileTypeRegistry implements IFileTypeRegistry {
 	// Constant for the saved state file name
-	private static final String STATE_FILE = ".fileTypeState";
-	
-	// The registry hash table
-	private Hashtable registry;
+	private static final String STATE_FILE = ".fileTypes";
+
+	// Keys: file extensions. Values: Integers
+	private Hashtable table;
 	
 	/**
 	 * Create a new FileTypeRegistry.
 	 */
 	public FileTypeRegistry() {
-		this.registry = new Hashtable(11);
+		this.table = new Hashtable(11);
 	}
 
 	/**
@@ -58,39 +55,33 @@ public class FileTypeRegistry implements IFileTypeRegistry {
 	}
 	
 	/**
-	 * @see IFileTypeRegistry#getValue(String, String)
+	 * @see IFileTypeRegistry#getType
 	 */	
-	public String getValue(String extension, String key) {
-		Hashtable keyTable = (Hashtable)registry.get(extension);
-		if (keyTable == null) return null;
-		return (String)keyTable.get(key);
+	public int getType(String extension) {
+		Integer integer = (Integer)table.get(extension);
+		if (integer == null) return UNKNOWN;
+		return integer.intValue();
 	}
+	
 	/**
 	 * @see IFileTypeRegistry#getExtensions
 	 */	
-	public String[] getExtensions(String key) {
-		String[] result = new String[registry.size()];
-		registry.keySet().toArray(result);
-		return result;
+	public String[] getExtensions() {
+		return (String[])table.keySet().toArray(new String[0]);
 	}
+	
 	/**
 	 * @see IFileTypeRegistry#setValue
 	 */	
-	public void setValue(String extension, String key, String value) {
-		Hashtable keyTable = (Hashtable)registry.get(extension);
-		if (keyTable == null) {
-			keyTable = new Hashtable();
-			registry.put(extension, keyTable);
-		}
-		keyTable.put(key, value);
+	public void setValue(String extension, int type) {
+		table.put(extension, new Integer(type));
 	}
+	
 	/**
 	 * @see IFileTypeRegistry#containsKey
 	 */	
-	public boolean containsKey(String extension, String key) {
-		Hashtable keyTable = (Hashtable)registry.get(extension);
-		if (keyTable == null) return false;
-		return ((Hashtable)keyTable).containsKey(key);
+	public boolean containsExtension(String extension) {
+		return table.containsKey(extension);
 	}
 
 	/**
@@ -107,11 +98,14 @@ public class FileTypeRegistry implements IFileTypeRegistry {
 					for (int j = 0; j < configElements.length; j++) {
 						String ext = configElements[j].getAttribute("extension");
 						if (ext != null) {
-							String key = configElements[j].getAttribute("key");
-							String value = configElements[j].getAttribute("value");
-							// if this pattern doesn't already exist, add it to the registry
-							if (!containsKey(ext, key)) {
-								setValue(ext, key, value);
+							String type = configElements[j].getAttribute("type");
+							// If the extension doesn't already exist, add it.
+							if (!containsExtension(ext)) {
+								if (type.equals("text")) {
+									setValue(ext, TEXT);
+								} else if (type.equals("binary")) {
+									setValue(ext, BINARY);
+								}
 							}
 						}
 					}
@@ -127,7 +121,7 @@ public class FileTypeRegistry implements IFileTypeRegistry {
 	 * @throws IOException if an I/O problem occurs
 	 */
 	private void readState(DataInputStream dis) throws IOException {
-		registry = new Hashtable(11);
+		table = new Hashtable(11);
 		int extensionCount = 0;
 		try {
 			extensionCount = dis.readInt();
@@ -138,34 +132,24 @@ public class FileTypeRegistry implements IFileTypeRegistry {
 		}
 		for (int i = 0; i < extensionCount; i++) {
 			String extension = dis.readUTF();
-			int keyCount = dis.readInt();
-			for (int j = 0; j < keyCount; j++) {
-				String key = dis.readUTF();
-				String value = dis.readUTF();
-				setValue(extension, key, value);
-			}
+			int type = dis.readInt();
+			setValue(extension, type);
 		}
 	}
 	/**
-	 * Write the currentstate to the given output stream.
+	 * Write the current state to the given output stream.
 	 * 
 	 * @param dos  the output stream to write the saved state to
 	 * @throws IOException if an I/O problem occurs
 	 */
 	private void writeState(DataOutputStream dos) throws IOException {
-		dos.writeInt(registry.size());
-		Iterator it = registry.keySet().iterator();
+		dos.writeInt(table.size());
+		Iterator it = table.keySet().iterator();
 		while (it.hasNext()) {
 			String extension = (String)it.next();
 			dos.writeUTF(extension);
-			Hashtable keyTable = (Hashtable)registry.get(extension);
-			dos.writeInt(keyTable.size());
-			Iterator keyIt = keyTable.keySet().iterator();
-			while (keyIt.hasNext()) {
-				String key = (String)keyIt.next();
-				dos.writeUTF(key);
-				dos.writeUTF((String)keyTable.get(key));
-			}
+			Integer integer = (Integer)table.get(extension);
+			dos.writeInt(integer.intValue());
 		}
 	}
 	/**

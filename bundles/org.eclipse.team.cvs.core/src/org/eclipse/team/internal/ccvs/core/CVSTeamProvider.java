@@ -208,10 +208,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 							String name = resource.getProjectRelativePath().toString();
 							if (resource.getType() == IResource.FILE) {
 								String extension = resource.getFileExtension();
-								if ((extension != null) && ("true".equals(registry.getValue(extension, "isText"))))   //$NON-NLS-1$ //$NON-NLS-2$
+								if ((extension != null) && (registry.getType(extension) == IFileTypeRegistry.TEXT)) {
 									textfiles.add(name);
-								else
+								} else {
 									binaryfiles.add(name);
+								}
 							} else
 								folders.add(name);
 						}

@@ -25,10 +25,10 @@
      by other plugins later. -->
      
 <extension point="org.eclipse.team.core.fileTypes">
-  <fileTypes extension="txt" key="isText" value="true"/>
-  <fileTypes extension="java" key="isText" value="true"/>
-  <fileTypes extension="properties" key="isText" value="true"/>
-  <fileTypes extension="xml" key="isText" value="true"/>
+  <fileTypes extension="txt" type="text"/>
+  <fileTypes extension="java" type="text"/>
+  <fileTypes extension="properties" type="text"/>
+  <fileTypes extension="xml" type="text"/>
 </extension>
 
 <!-- **************** PREFERENCES ******************* -->

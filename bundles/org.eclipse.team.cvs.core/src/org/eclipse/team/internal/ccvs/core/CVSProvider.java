@@ -337,33 +337,6 @@ public class CVSProvider implements ICVSProvider {
 		return repositories.get(location) != null;
 	}
 	
-	/*
-	 * Returns all patterns in the given project that should be treated as binary
-	 */
-	private String[] getBinaryFilePatterns(IProject project) throws TeamException {
-		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
-		final Set result = new HashSet();
-		try {
-			project.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) {
-					if (resource.getType() == IResource.FILE) {
-						String extension = resource.getFileExtension();
-						if (extension == null) {
-							result.add(resource.getName());
-						} else if (!("true".equals(registry.getValue(extension, "isText")))) { //$NON-NLS-1$ //$NON-NLS-2$
-							result.add("*." + extension); //$NON-NLS-1$
-						}
-					}
-					// Always return true and let the depth determine if children are visited
-					return true;
-				}
-			}, IResource.DEPTH_INFINITE, false);
-		} catch (CoreException e) {
-			throw wrapException(e);
-		}
-		return (String[])result.toArray(new String[result.size()]);
-	}
-	
 	public static GlobalOption[] getDefaultGlobalOptions() {
 		QuietOption option = CVSProviderPlugin.getPlugin().getQuietness();
 		if (option == null)
@@ -525,7 +498,7 @@ public class CVSProvider implements ICVSProvider {
 		// Assume files with no extension are binary
 		if (lastDot == -1) return false;
 		String extension = filename.substring(lastDot + 1);
-		return ((extension != null) && ("true".equals(registry.getValue(extension, "isText")))); //$NON-NLS-1$ //$NON-NLS-2$
+		return (extension != null) && (registry.getType(extension) == IFileTypeRegistry.TEXT);
 	}
 	
 	private void removeFromCache(ICVSRepositoryLocation repository) {

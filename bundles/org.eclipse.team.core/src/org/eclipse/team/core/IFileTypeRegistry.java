@@ -1,7 +1,7 @@
 package org.eclipse.team.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -11,50 +11,46 @@ package org.eclipse.team.core;
  * File extensions should be considered without the usual "*." prefix.
  */
 public interface IFileTypeRegistry {
+	public static final int UNKNOWN = 0;
+	public static final int TEXT = 1;
+	public static final int BINARY = 2;
 	/**
-	 * Return the value of the given key for the given file extension.
-	 * <p>
-	 * Example:
-	 * <p>
-	 * String value = getValue("txt", "isText");
+	 * Return the type of files with the given file extension.
+	 * 
+	 * Valid return values are:
+	 * IFileTypeRegistry.TEXT
+	 * IFileTypeRegistry.BINARY
+	 * IFileTypeRegistry.UNKNOWN
 	 * 
 	 * @param extension  the extension
-	 * @param key  the key
-	 * @return the value for the given extension and key
+	 * @return whether files with the given extension are TEXT, BINARY, or UNKNOWN
 	 */
-	public String getValue(String extension, String key);
+	public int getType(String extension);
 	/**
-	 * Return all extensions for which the given key is defined.
-	 * <p>
-	 * Example:
-	 * <p>
-	 * String[] extensions = getValue("isText");
+	 * Return all extensions in the registry.
 	 * 
-	 * @param key  the key
-	 * @return the extensions for which the given key is defined
+	 * @return the extensions in the registry
 	 */
-	public String[] getExtensions(String key);
+	public String[] getExtensions();
 	
 	/**
-	 * Set the value of the given key, for files of type extension.
-	 * <p>
-	 * Example:
-	 * <p>
-	 * setValue("txt", "isText", "true"); 
+	 * Set the file type for the give extension to the given type.
 	 *
+	 * Valid types are:
+	 * IFileTypeRegistry.TEXT
+	 * IFileTypeRegistry.BINARY
+	 * IFileTypeRegistry.UNKNOWN
+	 * 
 	 * @param extension  the file extension
-	 * @param key  the key
-	 * @param value  the value
+	 * @param type  the file type
 	 */
-	public void setValue(String extension, String key, String value);
+	public void setValue(String extension, int type);
 	
 	/**
 	 * Return whether the registry contains a value for the specified 
-	 * extension and key.
+	 * extension.
 	 * 
 	 * @param extension  the file extension
-	 * @param key  the key
-	 * @return the value for the extension and key, if applicable
 	 */
-	public boolean containsKey(String extension, String key);
+	public boolean containsExtension(String extension);
 }
