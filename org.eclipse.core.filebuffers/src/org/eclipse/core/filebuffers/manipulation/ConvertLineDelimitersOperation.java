@@ -47,7 +47,7 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 	 * @param lineDelimiter the target line delimiter
 	 */
 	public ConvertLineDelimitersOperation(String lineDelimiter) {
-		super(Messages.getString("ConvertLineDelimitersOperation.name")); //$NON-NLS-1$
+		super(FileBuffersMessages.getString("ConvertLineDelimitersOperation.name")); //$NON-NLS-1$
 		fLineDelimiter= lineDelimiter;
 	}
 	
@@ -59,10 +59,10 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 		int lineCount= document.getNumberOfLines();
 		
 		progressMonitor= Progress.getMonitor(progressMonitor);
-		progressMonitor.beginTask(Messages.getString("ConvertLineDelimitersOperation.task.generatingChanges"), lineCount); //$NON-NLS-1$
+		progressMonitor.beginTask(FileBuffersMessages.getString("ConvertLineDelimitersOperation.task.generatingChanges"), lineCount); //$NON-NLS-1$
 		try {
 			
-			MultiTextEditWithProgress multiEdit= new MultiTextEditWithProgress(Messages.getString("ConvertLineDelimitersOperation.task.applyingChanges")); //$NON-NLS-1$
+			MultiTextEditWithProgress multiEdit= new MultiTextEditWithProgress(FileBuffersMessages.getString("ConvertLineDelimitersOperation.task.applyingChanges")); //$NON-NLS-1$
 			
 			for (int i= 0; i < lineCount; i++) {
 				if (progressMonitor.isCanceled())
