@@ -1588,6 +1588,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void handleDeletePressed() {
 		IStructuredSelection selection = getTreeViewerSelection();
+		// The 'Delete' button is disabled if the selection contains anything other than configurations (no types)
+		ILaunchConfiguration firstSelectedConfig = (ILaunchConfiguration) selection.getFirstElement();
+		ILaunchConfigurationType firstSelectedConfigType = null;
+		try {
+			firstSelectedConfigType = firstSelectedConfig.getType();
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);						
+		}
 		Iterator iterator = selection.iterator();
 		while (iterator.hasNext()) {
 			clearLaunchConfiguration();
@@ -1596,9 +1604,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				try {
 					((ILaunchConfiguration)selectedElement).delete();
 				} catch (CoreException ce) {
-					DebugUIPlugin.log(ce);				
+					DebugUIPlugin.log(ce);			
 				}
 			}
+		}
+		
+		// Reset selection to the config type of the first selected configuration
+		if (firstSelectedConfigType != null) {
+			IStructuredSelection newSelection = new StructuredSelection(firstSelectedConfigType);
+			getTreeViewer().setSelection(newSelection);
 		}
 	}	
 	
