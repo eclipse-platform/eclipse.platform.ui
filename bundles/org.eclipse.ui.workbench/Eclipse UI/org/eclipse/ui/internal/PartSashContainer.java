@@ -80,7 +80,7 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 
 		if (child == null)
 			return;
-
+		
 		RelationshipInfo info = new RelationshipInfo();
 		info.part = child;
 		if (root != null) {
@@ -112,6 +112,16 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 	}
 	private void addChild(RelationshipInfo info) {
 		LayoutPart child = info.part;
+		
+		// Nasty hack: ensure that all views end up inside a tab folder.
+		// Since the view title is provided by the tab folder, this ensures
+		// that views don't get created without a title tab.
+		if (child instanceof ViewPane) {
+			PartTabFolder folder = new PartTabFolder();
+			folder.add(child);
+			child = folder;
+		}
+		
 		children.add(child);
 
 		if (root == null) {
@@ -411,6 +421,15 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 		if (!isChild(oldChild))
 			return;
 
+		// Nasty hack: ensure that all views end up inside a tab folder.
+		// Since the view title is provided by the tab folder, this ensures
+		// that views don't get created without a title tab.
+		if (newChild instanceof ViewPane) {
+			PartTabFolder folder = new PartTabFolder();
+			folder.add(newChild);
+			newChild = folder;
+		}
+		
 		children.remove(oldChild);
 		children.add(newChild);
 
