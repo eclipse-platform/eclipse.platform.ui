@@ -69,10 +69,10 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	 * Returns a content provider for the given process.
 	 *  	 * @param process	 * @return IConsoleContentProvider	 */
 	protected IConsoleContentProvider getContentProvider(IProcess process) {
-		String identifier = process.getAttribute(IConsoleContentProvider.ATTR_CONSOLE_CONTENT_PROVIDER);
+		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		IConsoleContentProvider contentProvider = null;
-		if (identifier != null) {
-			contentProvider = ConsoleDocumentManager.getDefault().getContentProvider(identifier);
+		if (type != null) {
+			contentProvider = ConsoleDocumentManager.getDefault().getContentProvider(type);
 		}
 		if (contentProvider == null) {
 			contentProvider = new ConsoleContentProvider();

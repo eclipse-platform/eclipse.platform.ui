@@ -19,11 +19,6 @@ import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 public class AntConsoleContentProvider extends ConsoleContentProvider {
 	
 	/**
-	 * Identifier of ant console content provider
-	 */
-	public static final String ID_ANT_CONSOLE_CONTNET_PROVIDER = "org.eclipse.ant.consoleContentProvider"; //$NON-NLS-1$
-
-	/**
 	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleContentProvider#getColor(java.lang.String)
 	 */
 	public Color getColor(String streamIdentifer) {

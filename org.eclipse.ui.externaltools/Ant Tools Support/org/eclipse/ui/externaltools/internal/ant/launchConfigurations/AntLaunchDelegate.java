@@ -20,9 +20,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
-import org.eclipse.debug.ui.console.IConsoleContentProvider;
-import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
+import org.eclipse.debug.core.model.IProcess;
+import org
+	.eclipse
+	.ui
+	.externaltools
+	.internal
+	.program
+	.launchConfigurations
+	.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
 /**
@@ -134,7 +142,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		// link the process to its build logger via a timestamp
 		Map attributes = new HashMap();
-		attributes.put(IConsoleContentProvider.ATTR_CONSOLE_CONTENT_PROVIDER, AntConsoleContentProvider.ID_ANT_CONSOLE_CONTNET_PROVIDER);
+		attributes.put(IProcess.ATTR_PROCESS_TYPE, IExternalToolConstants.ID_ANT_PROCESS_TYPE);
 		attributes.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
 		

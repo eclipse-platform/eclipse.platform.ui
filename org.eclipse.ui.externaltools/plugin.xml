@@ -142,7 +142,8 @@
 	<extension point="org.eclipse.debug.ui.consoleContentProviders">
 		<consoleContentProvider 
 			id="org.eclipse.ant.consoleContentProvider" 
-			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntConsoleContentProvider">
+			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntConsoleContentProvider"
+			processType="ant">
 		</consoleContentProvider>
 	</extension>  	
     

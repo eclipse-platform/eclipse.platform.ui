@@ -344,5 +344,13 @@ public interface IExternalToolConstants {
 	 * <code>null</code> which indicates that no additional property files
 	 * will be defined. Format is a comma separated listing of property files.
 	 */
-	public static final String ATTR_ANT_PROPERTY_FILES = PLUGIN_ID + ".ATTR_ANT_PROPERTY_FILES"; //$NON-NLS-1$										
+	public static final String ATTR_ANT_PROPERTY_FILES = PLUGIN_ID + ".ATTR_ANT_PROPERTY_FILES"; //$NON-NLS-1$
+	
+	// -------- Process ID ----------
+	/**
+	 * Identifier for ant processes (value <code>ant</code>). This identifier is
+	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
+	 * attribute in processes create by the ant launch delegate.
+	 */
+	public static final String ID_ANT_PROCESS_TYPE = "ant"; //$NON-NLS-1$									
 }

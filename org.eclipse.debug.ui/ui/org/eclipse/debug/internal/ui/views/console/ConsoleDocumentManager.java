@@ -307,10 +307,10 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns a new console document content provider extension with the
-	 * given identifier, or <code>null</code> if none.
-	 * 	 * @param identifier	 * @return IConsoleContentProvider	 */
-	public IConsoleContentProvider getContentProvider(String identifier) {
+	 * Returns a new console document content provider extension for the given
+	 * process type, or <code>null</code> if none.
+	 * 	 * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>	 * @return IConsoleContentProvider	 */
+	public IConsoleContentProvider getContentProvider(String type) {
 		if (fContentProviders == null) {
 			fContentProviders = new HashMap();
 			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
@@ -318,10 +318,10 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
-				fContentProviders.put(extension.getAttributeAsIs("id"), extension);
+				fContentProviders.put(extension.getAttributeAsIs("processType"), extension);
 			}
 		}
-		IConfigurationElement extension = (IConfigurationElement)fContentProviders.get(identifier);
+		IConfigurationElement extension = (IConfigurationElement)fContentProviders.get(type);
 		if (extension != null) {
 			try {
 				Object contentProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$

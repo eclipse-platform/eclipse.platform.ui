@@ -33,7 +33,17 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * 
 	 * @since 2.1
 	 */
-	public final static String ATTR_CMDLINE= DebugPlugin.getUniqueIdentifier() + ".ATTR_CMDLINE"; //$NON-NLS-1$	
+	public final static String ATTR_CMDLINE= DebugPlugin.getUniqueIdentifier() + ".ATTR_CMDLINE"; //$NON-NLS-1$
+	
+	/**
+	 * Attribute key for a common, optional, process property. The value of this
+	 * attribute is an identifier for the type of this process. Process types
+	 * are client defined - whoever creates a process may define its type. For
+	 * example, a process type could be "java", "javadoc", or "ant".
+	 *
+	 * @since 2.1
+	 */
+	public final static String ATTR_PROCESS_TYPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_TYPE"; //$NON-NLS-1$		
 
 	/**
 	 * Returns a human-readable label for this process.
