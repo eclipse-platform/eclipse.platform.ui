@@ -55,6 +55,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	private String description;
 	private IResource resource;
 	private long timestamp;
+	private boolean isSaving = false;
 
 	/*
 	 * This class exists so that we can force the text merge viewers to update by
@@ -117,7 +118,8 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			((IContentChangeNotifier) te).addContentChangeListener(new IContentChangeListener() {
 				public void contentChanged(IContentChangeNotifier source) {
 					try {
-						saveChanges(new NullProgressMonitor());
+						if(! isSaving)
+							saveChanges(new NullProgressMonitor());
 					} catch (CoreException e) {
 					}
 				}
@@ -225,15 +227,18 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
-		if(checkUpdateConflict()) return;
-		super.saveChanges(pm);
-		if (node != null) {
-			try {
+		if (checkUpdateConflict())
+			return;
+		try {
+			isSaving = true;
+			super.saveChanges(pm);
+			if (node != null) {
 				commit(pm, node);
-			} finally {
-				node.fireChange();
-				setDirty(false);
 			}
+		} finally {
+			node.fireChange();
+			setDirty(false);
+			isSaving = false;
 		}
 	}
 
@@ -257,14 +262,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 					return true;
 			}
 		}
-		timestamp = resource.getLocalTimeStamp();
 		return false;
 	}
 	
 	private void updateNode() {
 		node.update(node.getSyncInfo());
 		timestamp = resource.getLocalTimeStamp();
-		setDirty(false);
 	}
 	
 	private static void commit(IProgressMonitor pm, DiffNode node) throws CoreException {
