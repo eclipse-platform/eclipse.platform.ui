@@ -24,17 +24,17 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -101,6 +101,11 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
 	private File mainFileContainer;
 	
 	private IDocument editorDocument;
+	
+	/**
+	 * The find replace adapter for the document
+	 */
+	private FindReplaceDocumentAdapter findReplaceAdapter;
 
     /**
      * Creates an AntEditorSaxDefaultHandler, with the specified parameters.
@@ -119,6 +124,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         this.columnOfCursorPosition = columnOfCursorPosition;
         this.mainFileContainer= fileContainer;
         this.editorDocument= document;
+        findReplaceAdapter= new FindReplaceDocumentAdapter(document);
         initialize();
     }
 
@@ -128,65 +134,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     protected void initialize() throws ParserConfigurationException {
         DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         document = documentBuilder.newDocument();
-    }
-
-    /**
-     * Checks whether the parent element, that we are searching for can be or
-     * has already been determined.
-     * <P>
-     * This will be done by comparing the current parsing position with the
-     * cursor position. If we just passed the cursor position and the parent
-     * element has not been set yet, it will be set.
-     * 
-     * @return <code>true</code> if the parent element is known otherwise
-     * <code>false</code>
-     */
-    protected boolean checkForParentElement2() {
-        if(parentElement == null) {
-            if(locator != null) {
-
-                /*
-                 * The locator's numbers are 1-based though, we do everything
-                 * 0-based.
-                 */
-
-                int lineNum = locator.getLineNumber();
-                int columnNum = locator.getColumnNumber() - 1;
-                if (columnNum < 0) { 
-                	try {
-	                	int lineOffset= getOffset(lineNum, 1);
-	                	
-	                	String endDelimiter= ">"; //$NON-NLS-1$
-	                	int offset= editorDocument.search(lineOffset, endDelimiter, true, true, false); //$NON-NLS-1$
-	                	if (offset < 0 || getLine(offset) != lineNum) {
-	                		offset= lineOffset;
-	                		columnNum= 1;
-	                	} else {
-	                		offset++;
-	                		columnNum= getColumn(offset, lineNum);
-	                	}
-                	} catch (BadLocationException e) {
-                	}
-                }
-                lineNum= lineNum - 1;
-                if(lineNum > rowOfCursorPosition ||
-                    (lineNum == rowOfCursorPosition && columnNum > columnOfCursorPosition) && !stillOpenElements.isEmpty()) {
-                        parentElement = (Element)stillOpenElements.peek();
-                        if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
-							AntUIPlugin.log("AntEditorSaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
-                        }
-                        return true;
-                    }
-            }
-            return false;
-        }
-        
-        // Parent element has been set already before
-        return true;
-    }
-    
-    private int getLine(int offset) throws BadLocationException {
-    	return editorDocument.getLineOfOffset(offset) + 1;
     }
     
     /**
@@ -203,30 +150,27 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     protected boolean checkForParentElement(String tagName) {
     	if(parentElement == null) {
     		if(locator != null) {
-
-    			/*
-    			 * The locator's numbers are 1-based though, we do everything
-    			 * 0-based.
-    			 */
-
+    			//The locator's numbers are 1-based though, we do everything
+    			//0-based.
     			int lineNum = locator.getLineNumber();
     			int columnNum = locator.getColumnNumber() - 1;
     			if (columnNum < 0) {
-    				int offset;
+    				
     				try {
-    					offset = getOffset(lineNum, getLastCharColumn(lineNum));
-    					offset= editorDocument.search(offset, "<" + tagName, false, false, false); //$NON-NLS-1$
-    					columnNum= getColumn(offset, lineNum);
+    					int offset = getOffset(lineNum, getLastCharColumn(lineNum));
+    					IRegion result= findReplaceAdapter.search(offset, tagName, false, false, false, false); //$NON-NLS-1$
+    					if (result != null) {
+    						offset= result.getOffset();
+    						columnNum= getColumn(offset, lineNum);
+    					}
     				} catch (BadLocationException e) {
     				}
     			}
     			lineNum= lineNum - 1;
-    			if(lineNum > rowOfCursorPosition ||
-    					(lineNum == rowOfCursorPosition && columnNum > columnOfCursorPosition) && !stillOpenElements.isEmpty()) {
+    			if(lineNum > rowOfCursorPosition
+    					|| (lineNum == rowOfCursorPosition && columnNum > columnOfCursorPosition)
+    					&& !stillOpenElements.isEmpty()) {
     				parentElement = (Element)stillOpenElements.peek();
-    				if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
-    					AntUIPlugin.log("AntEditorSaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
-    				}
     				return true;
     			}
     		}
@@ -254,7 +198,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
-    public void startElement(String uri, String localName, String qualifiedName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qualifiedName, Attributes attributes) {
        
         if(parsingFinished) {
             return;
@@ -268,19 +212,17 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
             throw new AntEditorException(AntEditorMessages.getString("AntEditorSaxDefaultHandler.Error_parsing")); //$NON-NLS-1$
         }
         
-        
         // Checks whether we know the parent for sure
-        checkForParentElement(tagName);
+        checkForParentElement('<' + tagName); //$NON-NLS-1$
         
-//        Create a Dom Element
+        // Create a Dom Element
         Element element = document.createElement(tagName);
         stillOpenElements.push(element);
         
         // This code added to determine root element in a rational way
         if (rootElementName == null) {
         	rootElementName = tagName;
-        }
-        
+        }  
     }
 
     /* (non-Javadoc)
@@ -288,17 +230,13 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      */
     public void endElement(String aUri, String aLocalName, String aQualifiedName) {
 
-		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
-			AntUIPlugin.log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}
-
-        if(parsingFinished) {
+		if(parsingFinished) {
             return;
         }        
         
         String tagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
         // Checks whether we know the parent for sure
-        boolean parentKnown = checkForParentElement2();
+        boolean parentKnown = checkForParentElement('/' + tagName);
         
 		if(!stillOpenElements.isEmpty()) {        
 	        Element lastStillOpenElement = (Element)stillOpenElements.peek(); 
@@ -321,7 +259,6 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      */
     public void setDocumentLocator(Locator aLocator) {
         locator = aLocator;
-        super.setDocumentLocator(aLocator);
     }
 
     /**
@@ -352,19 +289,13 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     /**
      * We have to handle fatal errors.
      * <P>
-     * They come up whenever we parse a not valid file, what we do all the time.
+     * Fatal errors come up whenever we parse a not valid file, which we do all the time.
      * Therefore a fatal error is nothing special for us.
      * <P>
-     * Actually, we ignore all fatal errors for now.
      * 
      * @see org.xml.sax.ErrorHandler#fatalError(SAXParseException)
      */
     public void fatalError(SAXParseException anException) {
-        if(locator != null) {
-          //  int tempLineNr = locator.getLineNumber() -1;
-          //  int tempColumnNr = locator.getColumnNumber() -1;
-          //  super.fatalError(anException);
-        }
     }
     
 	/**
