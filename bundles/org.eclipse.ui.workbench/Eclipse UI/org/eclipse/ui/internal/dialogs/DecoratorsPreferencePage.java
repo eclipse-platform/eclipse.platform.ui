@@ -177,7 +177,7 @@ public class DecoratorsPreferencePage
 		if (text == null || text.length() == 0)
 			descriptionText.setText(
 				WorkbenchMessages.getString(
-					"DecoratorsPreferencePage.noDescription")); //$NON-NLS-1$
+					"PreferencePage.noDescription")); //$NON-NLS-1$
 		else
 			descriptionText.setText(text);
 	}

@@ -791,16 +791,37 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		//Iterate through the definitions and initialize thier
 		//defaults in the preference store.
 		FontDefinition[] definitions = FontDefinition.getDefinitions();
+		ArrayList fontsToSet = new ArrayList();
 		for (int i = 0; i < definitions.length; i++) {
 			FontDefinition definition = definitions[i];
-			initializeFont(definition.getId(), registry, store);
+			String fontKey = definition.getId();
+			initializeFont(fontKey, registry, store);
 			String defaultsTo = definitions[i].getDefaultsTo();
-			if (defaultsTo != null)
+			if (defaultsTo != null){
 				PreferenceConverter.setDefault(
 					store,
 					definition.getId(),
 					PreferenceConverter.
 						getDefaultFontDataArray(store,defaultsTo));
+				
+				//If there is no value in the registry pass though the mapping
+				if(!registry.hasValueFor(fontKey))
+					fontsToSet.add(definition);
+			}
+		}
+		
+		
+		/**
+		 * Now that all of the font have been initialized anything
+		 * that is still at its defaults and has a defaults to
+		 * needs to have its value set in the registry.
+		 * Post process to be sure that all of the fonts have the correct
+		 * setting before there is an update.
+		 */		
+		Iterator updateIterator = fontsToSet.iterator();
+		while(updateIterator.hasNext()){
+			FontDefinition update = (FontDefinition) updateIterator.next();
+			registry.put(update.getId(),registry.getFontData(update.getDefaultsTo()));
 		}
 	}
 	/*

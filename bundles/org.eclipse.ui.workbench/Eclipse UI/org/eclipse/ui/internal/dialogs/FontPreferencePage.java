@@ -395,7 +395,7 @@ public class FontPreferencePage
 				valueControl = null;
 			}
 		});
-		
+
 		applyDialogFont(valueControl);
 
 		GridData gd =
@@ -417,7 +417,12 @@ public class FontPreferencePage
 
 		valueControl.setText(StringConverter.asString(font[0]));
 		previewer.setFont(font);
-		descriptionText.setText(definition.getDescription());
+
+		String text = definition.getDescription();
+		if (text == null || text.length() == 0)
+			descriptionText.setText(WorkbenchMessages.getString("PreferencePage.noDescription")); //$NON-NLS-1$
+		else
+			descriptionText.setText(text);
 	}
 
 	/**
@@ -587,7 +592,7 @@ public class FontPreferencePage
 		getApplyButton().setFont(appliedDialogFont);
 		getDefaultsButton().setFont(appliedDialogFont);
 
-		if(oldFont != null)
+		if (oldFont != null)
 			oldFont.dispose();
 
 	}
