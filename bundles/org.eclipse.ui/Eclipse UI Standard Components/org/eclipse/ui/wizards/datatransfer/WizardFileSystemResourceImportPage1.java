@@ -9,10 +9,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.*;
-import org.eclipse.ui.wizards.datatransfer.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
@@ -693,7 +693,7 @@ private Map getFilteredElements(){
 	IRunnableWithProgress runnable  = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor) throws InterruptedException{
 
-			monitor.beginTask("Filtering selection", IProgressMonitor.UNKNOWN);
+			monitor.beginTask(WorkbenchMessages.getString("WizardImportPage.filterSelections"), IProgressMonitor.UNKNOWN);
 
 			List files = getSelectedResources(monitor);
 			if(files == null){
