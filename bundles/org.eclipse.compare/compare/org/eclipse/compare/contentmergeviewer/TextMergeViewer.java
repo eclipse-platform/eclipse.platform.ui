@@ -1208,36 +1208,45 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (!fUseResolveUI) {
 				new Resizer(canvas, HORIZONTAL);
 			} else {
-				canvas.addMouseListener(
-					new MouseAdapter() {
-						public void mouseDown(MouseEvent e) {
-							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, null);
-							if (diff != null) {
-								setCurrentDiff2(diff, false);
-								if (e.button == 3) {
-									Point p= canvas.toDisplay(new Point(e.x, e.y));
-									fCenterMenu= fCenterMenuManager.createContextMenu(canvas);
-									if (fCenterMenu != null) {
-										fCenterMenu.setLocation(p.x, p.y);
-										fCenterMenu.setVisible(true);
-									}
-								}
-							}
-						}
-					}
-				);
+//				canvas.addMouseListener(
+//					new MouseAdapter() {
+//						public void mouseDown(MouseEvent e) {
+//							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, null);
+//							if (diff != null) {
+//								setCurrentDiff2(diff, false);
+//								if (e.button == 3) {
+//									Point p= canvas.toDisplay(new Point(e.x, e.y));
+//									fCenterMenu= fCenterMenuManager.createContextMenu(canvas);
+//									if (fCenterMenu != null) {
+//										fCenterMenu.setLocation(p.x, p.y);
+//										fCenterMenu.setVisible(true);
+//									}
+//								}
+//							}
+//						}
+//					}
+//				);
 				canvas.addMouseMoveListener(
 					new MouseMoveListener() {
 						public void mouseMove(MouseEvent e) {
 							Rectangle r= new Rectangle(0, 0, 0, 0);
 							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, r);
-							if (diff != null && !diff.isUnresolvedIncomingOrConflicting())
+							if (diff != null && diff.isResolved()/*!diff.isUnresolvedIncomingOrConflicting()*/ )
 								diff= null;
 							if (diff != fCurrentDiff) {
 								setCurrentDiff(diff, false);
 								if (diff != null) {
-									fCenterButton.setBounds(r);
-									fCenterButton.setVisible(true);
+									if (fLeft.isEditable() && diff.isUnresolvedIncoming()) {
+										fCenterButton.setText("<");
+										fCenterButton.setToolTipText("Copy to left");
+										fCenterButton.setBounds(r);
+										fCenterButton.setVisible(true);
+									} else if (fRight.isEditable()) {
+										fCenterButton.setText(">");
+										fCenterButton.setToolTipText("Copy to right");
+										fCenterButton.setBounds(r);
+										fCenterButton.setVisible(true);										
+									}
 								} else {
 									fCenterButton.setVisible(false);
 								}
@@ -1245,8 +1254,22 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						}
 					}
 				);
+				canvas.addMouseTrackListener(
+					new MouseTrackAdapter() {
+						public void mouseEnter(MouseEvent e) {
+							System.out.println("enter");
+							if (fCenterButton != null)
+								fCenterButton.setVisible(false);
+						}
+						public void mouseExit(MouseEvent e) {
+							System.out.println("exit");
+							if (fCenterButton != null)
+								fCenterButton.setVisible(false);
+						}
+					}
+				);
 				
-				fCenterButton= new Button(canvas, SWT.FLAT);
+				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);
 				fCenterButton.setText("<");
 				fCenterButton.pack();
 				fCenterButton.setVisible(false);
@@ -1255,7 +1278,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						public void widgetSelected(SelectionEvent e) {
 							fCenterButton.setVisible(false);
 							copy(fCurrentDiff, false, fCurrentDiff.fDirection == RangeDifference.CONFLICT, false);
-							//copyDiffRightToLeft();
 						}
 					}
 				);
@@ -2189,7 +2211,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				lDoc, lRegion, lRegion.getOffset()+lRegion.getLength(), lDoc.getLength(),
 				rDoc, rRegion, rRegion.getOffset()+rRegion.getLength(), rDoc.getLength());
 			fAllDiffs.add(diff);
-		}
+		}		
 	}
 	
 	private Diff findDiff(char type, int pos) {
@@ -3605,24 +3627,36 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	void copyAllUnresolved(boolean leftToRight) {
 		if (fChangeDiffs != null && isThreeWay() && !fIgnoreAncestor) {
-			fLeft.getRewriteTarget().beginCompoundChange();
+			IRewriteTarget target= leftToRight ? fRight.getRewriteTarget() : fLeft.getRewriteTarget();
+			boolean compoundChangeStarted= false;
 			Iterator e= fChangeDiffs.iterator();
 			while (e.hasNext()) {
 				Diff diff= (Diff) e.next();
 				switch (diff.fDirection) {
 				case RangeDifference.LEFT:
-					if (leftToRight)
+					if (leftToRight) {
+						if (!compoundChangeStarted) {
+							target.beginCompoundChange();
+							compoundChangeStarted= true;
+						}
 						copy(diff, leftToRight, false);
+					}
 					break;
 				case RangeDifference.RIGHT:
-					if (!leftToRight)
+					if (!leftToRight) {
+						if (!compoundChangeStarted) {
+							target.beginCompoundChange();
+							compoundChangeStarted= true;
+						}
 						copy(diff, leftToRight, false);
+					}
 					break;
 				default:
 					continue;
 				}
 			}
-			fLeft.getRewriteTarget().endCompoundChange();
+			if (compoundChangeStarted)
+				target.endCompoundChange();
 		}
 	}
 	
