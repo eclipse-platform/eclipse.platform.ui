@@ -137,7 +137,9 @@ public class OutlinePreparingHandler extends DefaultHandler {
         else {
             throw new PlantyException(AntOutlineMessages.getString("OutlinePreparingHandler.Error_Name")); //$NON-NLS-1$
         }
+        String elementType= null;
         if(tempElementName.equalsIgnoreCase("target")) { //$NON-NLS-1$
+        	elementType= IAntEditorConstants.TYPE_TARGET;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
                     XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
@@ -153,6 +155,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
                 }
         	};
         } else if (tempElementName.equalsIgnoreCase("project")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_PROJECT;
 			tempElement = new XmlElement(tempElementName) {
 				public String getDisplayName() {
 					XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
@@ -163,6 +166,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
 				}
 			};
         } else if(tempElementName.equalsIgnoreCase("property")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_PROPERTY;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
                     XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
@@ -186,6 +190,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	};
         }	
         else if(tempElementName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_ANTCALL;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "antcall "; //$NON-NLS-1$
@@ -198,6 +203,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	};
         }	
         else if(tempElementName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_MKDIR;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "mkdir "; //$NON-NLS-1$
@@ -210,6 +216,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	};
         }	
         else if(tempElementName.equalsIgnoreCase("copy")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_COPY;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "copy "; //$NON-NLS-1$
@@ -225,6 +232,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	|| tempElementName.equalsIgnoreCase("jar") //$NON-NLS-1$
         	|| tempElementName.equalsIgnoreCase("war") //$NON-NLS-1$
         	|| tempElementName.equalsIgnoreCase("zip")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_ARCHIVE;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
@@ -242,6 +250,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	|| tempElementName.equalsIgnoreCase("gunzip") //$NON-NLS-1$
         	|| tempElementName.equalsIgnoreCase("bunzip2") //$NON-NLS-1$
         	|| tempElementName.equalsIgnoreCase("unzip")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_DECOMPRESS;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
@@ -255,6 +264,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         }	
         else if(tempElementName.equalsIgnoreCase("gzip")  //$NON-NLS-1$
         		|| tempElementName.equalsIgnoreCase("bzip2")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_COMPRESS;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
@@ -267,6 +277,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	};
         }	
         else if(tempElementName.equalsIgnoreCase("exec")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_EXEC;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "exec "; //$NON-NLS-1$
@@ -283,6 +294,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	};
         }	
         else if(tempElementName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
+			elementType= IAntEditorConstants.TYPE_DELETE;
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "delete "; //$NON-NLS-1$
@@ -299,6 +311,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	};
         }	
         else {
+			elementType= IAntEditorConstants.TYPE_UNKNOWN;
 	        tempElement = new XmlElement(tempElementName);
         }
 
@@ -311,6 +324,8 @@ public class OutlinePreparingHandler extends DefaultHandler {
 			String tempAttrValue = anAttributes.getValue(i);
 			tempElement.addAttribute(new XmlAttribute(tempAttrName, tempAttrValue));				
 		}
+		// Add the type attribute
+		tempElement.addAttribute(new XmlAttribute(IAntEditorConstants.ATTR_TYPE, elementType));
          
         return tempElement;
     }
@@ -420,26 +435,27 @@ public class OutlinePreparingHandler extends DefaultHandler {
 				//remove file:
 				systemId= systemId.substring(index+1, systemId.length());
 			}
-			File relativeFile= null;
+			File resolvedFile= null;
 			IPath filePath= new Path(systemId);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-			if (file == null) {
+			if (file == null || !file.exists()) {
 				//relative path
 				try {
 					//this call is ok if mainFileContainer is null
-					relativeFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
+					resolvedFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
 				} catch (BuildException be) {
 					return null;
 				}
+			} else {
+				resolvedFile= file.getLocation().toFile();
 			}
 		
-			if (relativeFile.exists()) {
+			if (resolvedFile != null && resolvedFile.exists()) {
 				try {
-					return new InputSource(new FileReader(relativeFile));
+					return new InputSource(new FileReader(resolvedFile));
 				} catch (FileNotFoundException e) {
 					return null;
 				}
-				
 			}
 					
 		return super.resolveEntity(publicId, systemId);
