@@ -116,7 +116,7 @@ public class TargetManager {
 			ISynchronizer s = ResourcesPlugin.getWorkspace().getSynchronizer();
 			byte[] mappingBytes = s.getSyncInfo(TARGET_MAPPINGS, project);
 			if (mappingBytes == null) {
-				throw new TeamException(Policy.bind("TargetManager.unableToUnmap", project.getName()), null); //$NON-NLS-1$
+				throw new TeamException(Policy.bind("TargetManager.unableToUnmap", project.getName())); //$NON-NLS-1$
 			} else {
 				TargetProvider provider = getProvider(project);
 				provider.deregister(project);

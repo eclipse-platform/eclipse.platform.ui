@@ -180,7 +180,7 @@ public class DiscardSiteAction extends TargetAction {
 			IProject project = projects[i];
 			TargetProvider target = TargetManager.getProvider(project);
 			for (int j = 0; j < sites.length; j++) {
-				if(target != null && target.getSite().equals(sites[0])) {
+				if(target != null && target.getSite().equals(sites[j])) {
 					mappedProjects.add(project);	
 				}
 			}
