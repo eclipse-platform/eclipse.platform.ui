@@ -100,4 +100,15 @@ public abstract class AbstractPresentationFactory {
     public Control createStatusLineControl(IStatusLineManager statusLine, Composite parent) {
         return ((StatusLineManager) statusLine).createControl(parent, SWT.NONE);
     }
+    
+    /**
+     * Returns a globally unique identifier for this type of presentation factory. This is used
+     * to ensure that one presentation is not restored from mementos saved by a different
+     * presentation.
+     * 
+     * @return a globally unique identifier for this type of presentation factory.
+     */
+	public String getId() {
+		return this.getClass().getName();
+	}
 }

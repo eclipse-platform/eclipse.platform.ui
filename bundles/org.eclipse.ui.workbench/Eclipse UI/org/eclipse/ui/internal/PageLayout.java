@@ -26,6 +26,7 @@ import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -310,8 +311,16 @@ public class PageLayout implements IPageLayout {
 				addPlaceholder(viewId, relationship, ratio, refId);
 				LayoutHelper.addViewActivator(this, viewId);
 			} else {
-				ViewStack newFolder = new ViewStack(rootLayoutContainer.page);
-				newFolder.setStandalone(standalone, showTitle);
+				int appearance = PresentationFactoryUtil.ROLE_VIEW;
+				if (standalone) {
+					if (showTitle) {
+						appearance = PresentationFactoryUtil.ROLE_STANDALONE;
+					} else {
+						appearance = PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE;
+					}
+				}
+				
+				ViewStack newFolder = new ViewStack(rootLayoutContainer.page, true, appearance);
 				newFolder.add(newPart);
 				setFolderPart(viewId, newFolder);
 				addPart(newFolder, viewId, relationship, ratio, refId);

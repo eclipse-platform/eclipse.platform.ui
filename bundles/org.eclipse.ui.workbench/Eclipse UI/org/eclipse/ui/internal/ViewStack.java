@@ -11,16 +11,12 @@ package org.eclipse.ui.internal;
  * not use height ratios
  ******************************************************************************/
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IMemento;
+import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
-import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Manages a set of ViewPanes that are docked into the workbench window. The container for a ViewStack
@@ -42,8 +38,6 @@ public class ViewStack extends PartStack {
     
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
     private SystemMenuFastView fastViewAction;
-    private boolean standalone = false;
-    private boolean showTitle = true;
     
 	public void addSystemActions(IMenuManager menuManager) {
 		appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
@@ -56,7 +50,12 @@ public class ViewStack extends PartStack {
     }
     
     public ViewStack(WorkbenchPage page, boolean allowsStateChanges) {
-
+    	this(page, allowsStateChanges, PresentationFactoryUtil.ROLE_VIEW);
+    }
+    
+    public ViewStack(WorkbenchPage page, boolean allowsStateChanges, int appearance) {
+    	super(appearance);
+    	
     	this.page = page;
         setID(this.toString());
         // Each folder has a unique ID so relative positioning is unambiguous.
@@ -79,24 +78,6 @@ public class ViewStack extends PartStack {
         }        	
     	
         return !perspective.isFixedLayout();    	
-    }
-
-    public void createControl(Composite parent) {
-    	if (!isDisposed()) {
-    		return;
-    	}
-    	
-        AbstractPresentationFactory factory = ((WorkbenchWindow) page
-                .getWorkbenchWindow()).getWindowConfigurer()
-                .getPresentationFactory();
-        StackPresentation presentation;
-        if (isStandalone()) {
-            presentation = factory.createStandaloneViewPresentation(parent, getPresentationSite(), getShowTitle());
-        }
-        else {
-            presentation = factory.createViewPresentation(parent, getPresentationSite());
-        }
-        super.createControl(parent, presentation);
     }
 
     protected void updateActions() {
@@ -157,51 +138,5 @@ public class ViewStack extends PartStack {
 	protected boolean allowsDrop(PartPane part) {
 		return part instanceof ViewPane;
 	}
-
-    /**
-     * Sets whether this represents a standalone folder.
-     * A standalone folder contains a single part that cannot be docked with others.
-     * It can optionally hide the part's title.
-     * 
-     * @param standalone whether this is a standalone folder
-     * @param showTitle whether to show the title (applies only if standalone is <code>true</code>)
-     */
-    public void setStandalone(boolean standalone, boolean showTitle) {
-        this.standalone = standalone;
-        this.showTitle = standalone ? showTitle : true;
-    }
-    
-    /**
-     * Returns <code>true</code> iff this is a standalone folder.
-     */
-    private boolean isStandalone() {
-        return standalone;
-    }
-
-    /**
-     * Returns <code>true</code> iff the title should be shown in the presentation.
-     * Applies only to standalone views.
-     */
-    private boolean getShowTitle() {
-        return showTitle;
-    }
-    
-    public IStatus saveState(IMemento memento) {
-        IStatus status = super.saveState(memento);
-        if (isStandalone()) {
-            memento.putString(IWorkbenchConstants.TAG_STANDALONE, IWorkbenchConstants.TRUE);
-            memento.putString(IWorkbenchConstants.TAG_SHOW_TITLE, Boolean.toString(getShowTitle()));
-        }
-        return status;
-    }
-
-    public IStatus restoreState(IMemento memento) {
-        IStatus status = super.restoreState(memento);
-        // restore the standalone and showViewState, defaulting to (false, true) if absent
-        if (IWorkbenchConstants.TRUE.equals(memento.getString(IWorkbenchConstants.TAG_STANDALONE))) {
-            boolean showTitle = !IWorkbenchConstants.FALSE.equals(memento.getString(IWorkbenchConstants.TAG_SHOW_TITLE));
-            setStandalone(true, showTitle);
-        }
-        return status;
-    }
+        
 }

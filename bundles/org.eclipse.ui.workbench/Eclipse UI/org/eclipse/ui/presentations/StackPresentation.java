@@ -13,6 +13,7 @@ package org.eclipse.ui.presentations;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.misc.Assert;
 
 
@@ -144,18 +145,18 @@ public abstract class StackPresentation {
 	public abstract Control getControl();	
 	
 	/**
-	 * Adds the given part to the stack. The presentations' interpretation of the
-	 * part order must be consistent. For example,
-	 * {addPart(a, null); addPart(b, null); addPart(c, null);} should have exactly 
-	 * the same effect as {addPart(c, null); addPart(a, c); addPart(b, c);}; 
+	 * Adds the given part to the stack. The presentation is free to determine
+	 * where the part should be inserted. If the part is being inserted as the
+	 * result of a drag/drop operation, it will be given a cookie
+	 * identifying the drop location. Has no effect if an identical part is
+	 * already in the presentation.
 	 * 
 	 * @param newPart the new part to add (not null)
-	 * @param position the position to insert the part. The new part will
-	 * occupy the tab location currently occupied by the "position" part, and the
-	 * "position" part will be moved to a new location. If null, the tab should be
-	 * last position.
+	 * @param cookie an identifier for a drop location, or null. When the presentation
+	 * attaches a cookie to a StackDropResult, that cookie is passed back into
+	 * addPart when a part is actually dropped in that location.
 	 */
-	public abstract void addPart(IPresentablePart newPart, IPresentablePart position);
+	public abstract void addPart(IPresentablePart newPart, Object cookie);
 	
 	/**
 	 * Removes the given part from the stack.
@@ -200,6 +201,28 @@ public abstract class StackPresentation {
 	 * allow the user to change the selection using the keyboard.
 	 */
 	public void showPartList() {
+		
+	}
+	
+	/**
+	 * Saves the state of this presentation to the given memento.
+	 * 
+	 * @param context object that can be used to generate unique IDs for IPresentableParts (this
+	 * may be a temporary object - the presentation should not keep any references to it)
+	 * @param memento memento where the data will be saved
+	 */
+	public void saveState(IPresentationSerializer context, IMemento memento) {
+		
+	}
+
+	/**
+	 * Restores the state of this presentation to a previously saved state.
+	 * 
+	 * @param context object that can be used to find IPresentableParts given string IDs (this
+	 * may be a temporary object - the presentation should not keep any references to it)
+	 * @param memento memento where the data will be saved
+	 */
+	public void restoreState(IPresentationSerializer context, IMemento memento) {
 		
 	}
 	

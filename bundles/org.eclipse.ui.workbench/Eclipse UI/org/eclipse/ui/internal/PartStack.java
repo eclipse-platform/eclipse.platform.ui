@@ -30,9 +30,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
+import org.eclipse.ui.internal.presentations.PresentationSerializer;
+import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
@@ -47,12 +52,15 @@ import org.eclipse.ui.presentations.StackPresentation;
 public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     private List children = new ArrayList(3);
+    private int appearance = PresentationFactoryUtil.ROLE_VIEW;
 
     // inactiveCurrent is only used when restoring the persisted state of
     // perspective on startup.
     private LayoutPart current;
     
     private boolean ignoreSelectionChanges = false;
+    
+    private IMemento savedPresentationState = null;
 
     private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 
@@ -121,8 +129,15 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	}
     }
     
-    public PartStack() {
+    /**
+     * Creates a new PartStack, given a constant determining which presentation to use
+     * 
+     * @param appearance one of the PresentationFactoryUtil.ROLE_* constants
+     */
+    public PartStack(int appearance) {
         super("PartStack"); //$NON-NLS-1$
+        
+        this.appearance = appearance;
     }
 
     /**
@@ -158,17 +173,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     /**
      * Add a part at a particular position
      */
-    protected void add(LayoutPart newChild, IPresentablePart position) {
-        LayoutPart targetPart = getPaneFor(position);
-        int childIdx = children.indexOf(targetPart);
+    protected void add(LayoutPart newChild, Object cookie) {
+        children.add(newChild);
 
-        if (childIdx == -1) {
-            children.add(newChild);
-        } else {
-            children.add(childIdx, newChild);
-        }
-
-        showPart(newChild, position);
+        showPart(newChild, cookie);
     }
 
     /*
@@ -196,7 +204,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			close(part);
 		}
 	}
-
     
     /**
      * @param part
@@ -215,6 +222,29 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     public boolean isDisposed() {
     	return getPresentation() == null;
+    }
+
+    private AbstractPresentationFactory getFactory() {
+        AbstractPresentationFactory factory = ((WorkbenchWindow) getPage()
+                .getWorkbenchWindow()).getWindowConfigurer()
+                .getPresentationFactory();
+
+        return factory;
+    }
+    
+    public void createControl(Composite parent) {
+    	if (!isDisposed()) {
+    		return;
+    	}
+    	
+    	AbstractPresentationFactory factory = getFactory();
+        
+        PresentationSerializer serializer = new PresentationSerializer(getPresentableParts());
+        
+        StackPresentation presentation = PresentationFactoryUtil.createPresentation(factory,
+        		appearance, parent, presentationSite, serializer, savedPresentationState);
+
+        createControl(parent, presentation);
     }
     
     public void createControl(Composite parent, StackPresentation presentation) {
@@ -278,7 +308,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                     public void drop() {
                     	
                         // If we're dragging a pane over itself do nothing
-                    	if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return; };
+                    	//if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return; };
                     	
                         // Don't worry about reparenting the view if we're
                         // simply rearranging tabs within this folder
@@ -289,7 +319,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                             remove(pane);
                         }
 
-                        add(pane, dropResult.getInsertionPoint());
+                        add(pane, dropResult.getCookie());
                         setSelection(pane);
                         pane.setFocus();
                     }
@@ -318,12 +348,36 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     }
 
     /**
+     * Saves the current state of the presentation to savedPresentationState, if the
+     * presentation exists.
+     */
+    private void savePresentationState() {
+    	if (isDisposed()) {
+    		return;
+    	}
+    	
+        {// Save the presentation's state before disposing it
+	        XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_PRESENTATION);
+	        memento.putString(IWorkbenchConstants.TAG_ID, getFactory().getId());
+	        
+	        PresentationSerializer serializer = new PresentationSerializer(getPresentableParts());
+	        
+	        getPresentation().saveState(serializer, memento);
+	      
+	        // Store the memento in savedPresentationState
+	        savedPresentationState = memento;
+        }
+    }
+    
+    /**
      * See LayoutPart#dispose
      */
     public void dispose() {
 
         if (isDisposed()) return;
 
+        savePresentationState();
+        
         presentationSite.dispose();
 
         Iterator iter = children.iterator();
@@ -331,7 +385,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             LayoutPart next = (LayoutPart) iter.next();
 
             next.setContainer(null);
-        }
+        }        
     }
     
     public void findSashes(LayoutPart part, PartPane.Sashes sashes) {
@@ -602,6 +656,26 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
                 : IStackPresentationSite.STATE_MINIMIZED);
 
+        Integer appearance = memento.getInteger(IWorkbenchConstants.TAG_APPEARANCE);
+        if (appearance != null) {
+        	this.appearance = appearance.intValue();
+        }
+        
+        // Determine if the presentation has saved any info here
+        savedPresentationState = null;
+        IMemento[] presentationMementos = memento.getChildren(IWorkbenchConstants.TAG_PRESENTATION);
+        
+        for (int idx = 0; idx < presentationMementos.length; idx++) {
+        	IMemento child = presentationMementos[idx];
+        	
+        	String id = child.getString(IWorkbenchConstants.TAG_ID);
+        	
+        	if (Util.equals(id, getFactory().getId())) {
+        		savedPresentationState = child;
+        		break;
+        	}
+        }
+        
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 
@@ -637,6 +711,16 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                         (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_MINIMIZED
                                 : IStackPresentationSite.STATE_RESTORED);
 
+        memento.putInteger(IWorkbenchConstants.TAG_APPEARANCE, appearance);
+        
+        savePresentationState();
+        
+        if (savedPresentationState != null) {
+        	IMemento presentationState = memento.createChild(IWorkbenchConstants.TAG_PRESENTATION);
+        	presentationState.putString(IWorkbenchConstants.TAG_ID, current.getID());
+        	presentationState.putMemento(savedPresentationState);
+        }
+        
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 
@@ -769,7 +853,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * 
      * @param presentablePart
      */
-    private void showPart(LayoutPart part, IPresentablePart position) {
+    private void showPart(LayoutPart part, Object cookie) {
 
     	if (isDisposed()) {
     		return;
@@ -781,7 +865,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         if (presentablePart == null) { return; }
 
-        presentationSite.getPresentation().addPart(presentablePart, position);
+        presentationSite.getPresentation().addPart(presentablePart, cookie);
     }
 
     /**

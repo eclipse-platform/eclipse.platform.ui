@@ -21,20 +21,20 @@ import org.eclipse.swt.graphics.Rectangle;
 public final class StackDropResult {
 	
 	private Rectangle snapRectangle;
-	private IPresentablePart insertBefore;
+	private Object cookie;
 	
 	/**
-	 * Creates a drag status object
+	 * Creates a drop result
 	 * 
 	 * @param snapRectangle region that should be highlighted by the tracking
 	 * rectangle (display coordinates) 
-	 * @param insertBefore indicates the position where the drop will occur.
-	 * The dragged part will be inserted before the indicated part. Null if
-	 * the dragged part should be inserted at the end.
+	 * @param cookie the presentation may attach an object to this drop result 
+	 * in order to identify the drop location. This object will be passed back into the
+	 * presentation's add method.
 	 */
-	public StackDropResult(Rectangle snapRectangle, IPresentablePart insertBefore) {
+	public StackDropResult(Rectangle snapRectangle, Object cookie) {
 		this.snapRectangle = snapRectangle;
-		this.insertBefore = insertBefore;
+		this.cookie = cookie;
 	}
 	
 	/**
@@ -49,13 +49,14 @@ public final class StackDropResult {
 	}
 	
 	/**
-	 * Returns the insertion position for this drop, or null if the drop will
-	 * occur at the end. That is, the newly inserted part will be inserted
-	 * before the returned part.
+	 * Returns the cookie for this drop result. This object provided by the presentation,
+	 * but is remembered by the workbench. It will be given back to the presentation's add
+	 * method to indicate that a part is being added as a result of a drop operation.
 	 * 
-	 * @return the insertion position, or null if at the end
+	 * @return the drop cookie for this drop result
 	 */
-	public IPresentablePart getInsertionPoint() {
-		return insertBefore;
-	}	
+	public Object getCookie() {
+		return cookie;
+	}
+	
 }

@@ -156,6 +156,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$
 	public static final String TAG_CLOSEABLE = "closeable";//$NON-NLS-1$
 	public static final String TAG_MOVEABLE = "moveable";//$NON-NLS-1$
+	public static final String TAG_APPEARANCE = "appearance"; //$NON-NLS-1$
+	public static final String TAG_PRESENTATION = "presentation"; //$NON-NLS-1$
 	public static final String TAG_STANDALONE = "standalone";//$NON-NLS-1$
 	public static final String TAG_SHOW_TITLE = "showTitle";//$NON-NLS-1$
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$

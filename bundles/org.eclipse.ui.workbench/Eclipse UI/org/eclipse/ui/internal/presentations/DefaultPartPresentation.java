@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.GroupMarker;
@@ -50,8 +51,10 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -60,6 +63,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSerializer;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.PresentationUtil;
 import org.eclipse.ui.presentations.StackDropResult;
@@ -80,7 +84,6 @@ public class DefaultPartPresentation extends StackPresentation {
 	private MenuManager systemMenuManager = new MenuManager();
 	private Label titleLabel;
 	private Listener dragListener;
-	private Point minimumSize = new Point(0,0);
 	
 	/**
 	 * While we are dragging a tab from this folder, this holdes index of the tab
@@ -332,15 +335,52 @@ public class DefaultPartPresentation extends StackPresentation {
 	}
 
 	/**
+	 * Restores a presentation from a previously stored state
+	 * 
+	 * @param serializer (not null)
+	 * @param savedState (not null)
+	 */
+	public void restoreState(IPresentationSerializer serializer, IMemento savedState) {
+		IMemento[] parts = savedState.getChildren(IWorkbenchConstants.TAG_PART);
+		
+		for (int idx = 0; idx < parts.length; idx++) {
+			String id = parts[idx].getString(IWorkbenchConstants.TAG_ID);
+			
+			if (id != null) {
+				IPresentablePart part = serializer.getPart(id);
+				
+				if (part != null) {
+					addPart(part, tabFolder.getItemCount());
+				}
+			} 
+		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#saveState(org.eclipse.ui.presentations.IPresentationSerializer, org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IPresentationSerializer context, IMemento memento) {
+		super.saveState(context, memento);
+		
+		List parts = getPresentableParts();
+		
+		Iterator iter = parts.iterator();
+		while (iter.hasNext()) {
+			IPresentablePart next = (IPresentablePart)iter.next();
+			
+			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_PART);
+			childMem.putString(IWorkbenchConstants.TAG_ID, context.getId(next));
+		}
+	}
+	
+	/**
 	 * This method performs initialization that must be done after the object is created. Subclasses
 	 * must call this method exactly once on the last line of any public constructor.
 	 */
 	public void init() {
 		updateGradient();
 		setTitleAttributes();
-		
-		// Recompute the minimum size now that everything's ready to go
-		minimumSize = tabFolder.computeMinimumSize();
 	}
 	
     /**
@@ -740,10 +780,33 @@ public class DefaultPartPresentation extends StackPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#addPart(org.eclipse.ui.internal.skins.IPresentablePart, org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
-	public void addPart(IPresentablePart newPart, IPresentablePart position) {
-		int idx = indexOf(position);
+	public void addPart(IPresentablePart newPart, Object cookie) {
 		
-		createPartTab(newPart, idx);
+		int idx;
+		
+		if (cookie instanceof Integer) {
+			idx = ((Integer)cookie).intValue();
+		} else {
+			// Select a location for newly inserted parts
+			idx = tabFolder.getItemCount();
+		}
+		
+		addPart(newPart, idx);
+	}
+	
+	/**
+	 * Adds the given presentable part to this presentation at the given index.
+	 * Does nothing if a tab already exists for the given part. 
+	 *
+	 * @param newPart
+	 * @param index
+	 */
+	public void addPart(IPresentablePart newPart, int index) {
+		// If we already have a tab for this part, do nothing
+		if (getTab(newPart) != null) {
+			return;
+		}
+		createPartTab(newPart, index);
 		
 		setControlSize();
 	}
@@ -802,7 +865,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#computeMinimumSize()
 	 */
 	public Point computeMinimumSize() {
-		return minimumSize;		
+		return tabFolder.computeMinimumSize();		
 	}
 	
 	/* (non-Javadoc)
@@ -854,58 +917,43 @@ public class DefaultPartPresentation extends StackPresentation {
 		// Determine which tab we're currently dragging over
 		Point localPos = tabFolder.getControl().toControl(location);
 		
-		final CTabItem tabUnderPointer = tabFolder.getItem(localPos);
+		CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 		
 		// This drop target only deals with tabs... if we're not dragging over
 		// a tab, exit.
 		if (tabUnderPointer == null) {
+			Rectangle titleArea = tabFolder.getTitleArea();
+			
 			// If we're dragging over the title area, treat this as a drop in the last
 			// tab position.
-			Rectangle titleArea = tabFolder.getTitleArea();
 			if (titleArea.contains(localPos)) {
-				
+				int dragOverIndex = tabFolder.getItemCount();
+				if (dragStart >= 0) {
+					dragOverIndex--;
+					CTabItem  affordanceTab = tabFolder.getItem(dragOverIndex);
+					if (affordanceTab.isShowing()) {
+						return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(), 
+								affordanceTab.getBounds()), 
+							new Integer(dragOverIndex));
+					}					
+				}
+
 				// Make the drag-over rectangle look like a tab at the end of the tab region.
 				// We don't actually know how wide the tab will be when it's dropped, so just
 				// make it 3 times wider than it is tall.
 				Rectangle dropRectangle = Geometry.toDisplay(tabFolder.getControl(), titleArea);
-
+		
 				dropRectangle.width = 3 * dropRectangle.height;
 				
-				// Try to make a rectangle around the area where the tab will be dropped. If we're
-				// dragging a tab from the same folder, this will be in the location currently
-				// occupied by the last tab rather than the area to the right of the tab.
-				if (dragStart >= 0) {
-					int itemCount = tabFolder.getItemCount();
-					
-					if (itemCount > 0) {
-						CTabItem lastItem = tabFolder.getItem(tabFolder.getItemCount() - 1);
-						if (lastItem.isShowing()) {
-							dropRectangle = Geometry.toDisplay(tabFolder.getControl(), lastItem.getBounds());
-						}
-					}
-				}
+				return new StackDropResult(dropRectangle, new Integer(dragOverIndex));
 				
-				return new StackDropResult(dropRectangle, null);
+			} else {
+				return null;
 			}
-			
-			return null;
 		}
 		
-		int dragOverIndex = tabFolder.indexOf(tabUnderPointer); 
-		
-		IPresentablePart position = null;
-		boolean dropNext = dragStart >= 0 && dragStart < dragOverIndex;
-		if (dropNext) {
-			int idx = dragOverIndex + 1;
-			if (idx < tabFolder.getItemCount()) {
-				position = getPartForTab(tabFolder.getItem(idx));
-			}
-		} else {
-			position = getPartForTab(tabUnderPointer);
-		}
-		
-		return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(), tabUnderPointer.getBounds()),
-			position);
+		return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(), tabUnderPointer.getBounds()), 
+				new Integer(tabFolder.indexOf(tabUnderPointer)));
 	}
 		
 	/**
