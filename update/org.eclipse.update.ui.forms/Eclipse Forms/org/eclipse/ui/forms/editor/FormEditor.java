@@ -69,22 +69,24 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * @param page
 	 *            the page to add
 	 */
-	protected void addPage(IFormPage page) {
+	public int addPage(IFormPage page) {
 		int i = addPage(page.getPartControl());
-		setPageText(i, page.getTitle());
-		setPageImage(i, page.getTitleImage());
-		page.setIndex(i);
-		registerPage(page);
+		configurePage(i, page);
+		return i;
 	}
 	public int addPage(IEditorPart editor, IEditorInput input)
 			throws PartInitException {
 		int index = super.addPage(editor, input);
 		if (editor instanceof IFormPage) {
-			IFormPage page = (IFormPage) editor;
-			page.setIndex(index);
-			registerPage(page);
+			configurePage(index, (IFormPage) editor);
 		}
 		return index;
+	}
+	protected void configurePage(int index, IFormPage page) {
+		setPageText(index, page.getTitle());
+		//setPageImage(index, page.getTitleImage());
+		page.setIndex(index);
+		registerPage(page);
 	}
 	/**
 	 * Disposes the pages and the toolkit after disposing the editor itself.
@@ -252,10 +254,12 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	private void registerPage(IFormPage page) {
 		if (!pages.contains(page))
 			pages.add(page);
-		try {
-			page.init(getEditorSite(), getEditorInput());
-		} catch (PartInitException e) {
-			FormsPlugin.logException(e);
+		if (page.isSource() == false) {
+			try {
+				page.init(getEditorSite(), getEditorInput());
+			} catch (PartInitException e) {
+				FormsPlugin.logException(e);
+			}
 		}
 	}
 	/**
