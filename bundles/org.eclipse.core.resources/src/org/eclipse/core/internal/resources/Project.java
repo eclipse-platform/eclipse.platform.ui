@@ -456,11 +456,6 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			}
 			monitor.worked(Policy.opWork * 10 / 100);
 
-			//clear instantiated builders and natures because they reference the project handle
-			ProjectInfo info = (ProjectInfo) destProject.getResourceInfo(false, true);
-			info.setBuilders(null);
-			info.clearNatures();
-
 			// refresh local
 			monitor.subTask(Policy.bind("resources.updating"));
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
@@ -483,6 +478,15 @@ protected void internalCopyProjectOnly(IResource destination, IProgressMonitor m
 	// copy the tree and properties
 	workspace.copyTree(this, destination.getFullPath(), IResource.DEPTH_ZERO, false, false);
 	getPropertyManager().copy(this, destination, IResource.DEPTH_ZERO);
+	
+	//clear instantiated builders and natures because they reference the project handle
+	ProjectInfo info = (ProjectInfo) ((Resource)destination).getResourceInfo(false, true);
+	info.setBuilders(null);
+	info.clearNatures();
+	
+	//clear session properties and markers for the new project, because they shouldn't be copied.
+	info.setMarkers(null);
+	info.clearSessionProperties();
 }
 
 /**
