@@ -9,8 +9,8 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModelFactory;
+import org.eclipse.update.core.model.URLEntryModel;
 import org.xml.sax.SAXException;
-import org.eclipse.update.internal.core.Policy;
 
 public class FeaturePackagedFactory extends BaseFeatureFactory {
 
@@ -27,6 +27,18 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			ContentReference manifest = contentProvider.getFeatureManifestReference(null/*IProgressMonitor*/);
 			featureStream = manifest.getInputStream();
 			feature = (Feature)parseFeature(featureStream);
+			
+			// if there is no update URL for the Feature
+			// use the Site URL
+			if (feature.getUpdateSiteEntry()==null){
+				URLEntryModel entryModel = createURLEntryModel();
+				URL siteUrl = site.getURL();
+				if (siteUrl!=null){
+					entryModel.setURLString(siteUrl.toExternalForm());
+					entryModel.resolve(siteUrl,null);
+					feature.setUpdateSiteEntryModel(entryModel);
+				}
+			}			
 			feature.setFeatureContentProvider(contentProvider);
 			feature.setSite(site);						
 			URL baseUrl = null;

@@ -58,8 +58,7 @@ public abstract class ModelObject {
 	 * @see #isReadOnly
 	 */
 	public void markReadOnly() {
-		// FIXME: temporarily disabled
-		// readOnly = true;
+		readOnly = true;
 	}
 	
 	/**
