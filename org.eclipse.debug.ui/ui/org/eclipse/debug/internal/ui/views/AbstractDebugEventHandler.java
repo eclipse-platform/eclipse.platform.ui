@@ -85,6 +85,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 		// a parent can be null for a debug target or process that has not yet been associated
 		// with a launch
 		if (parent != null) {
+			getView().showViewer();
 			getTreeViewer().add(parent, element);
 		}
 	}
@@ -93,6 +94,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Helper method to remove the given element - must be called in UI thread.
 	 */
 	protected void remove(Object element) {
+		 getView().showViewer();
 		getTreeViewer().remove(element);
 	}
 
@@ -100,6 +102,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Helper method to update the label of the given element - must be called in UI thread
 	 */
 	protected void labelChanged(Object element) {
+		getView().showViewer();
 		getTreeViewer().update(element, new String[] {IBasicPropertyConstants.P_TEXT});
 	}
 
@@ -108,6 +111,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 */
 	protected void refresh(Object element) {
 		if (getTreeViewer() != null) {
+			 getView().showViewer();
 			 getTreeViewer().refresh(element);
 		}
 	}
@@ -117,6 +121,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 */
 	protected void refresh() {
 		if (getTreeViewer() != null) {
+			 getView().showViewer();
 			 getTreeViewer().refresh();
 		}
 	}	

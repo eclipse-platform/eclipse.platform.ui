@@ -76,6 +76,10 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  *		<li><code>BREAKPOINT</code> - a breakpoint has been hit</li>
  *		<li><code>CLIENT_REQUEST</code> - a client request has caused the thread to suspend
  * 			(i.e. an explicit call to <code>suspend()</code>)</li>
+ * 		<li><code>EVALUATION</code> - an expression evaluation has ended that may
+ * 			have had side effects in the debug target.</li>
+ * 		<li><code>EVALUATION_READ_ONLY</code> - an expression evaluation has ended that
+ * 			had no side effects in the debug target.</li>
  * 		<li><code>UNSPECIFIED</code> - the reason for the suspend is not specified</li>
  *		</ul>
  *	</li>
@@ -86,6 +90,10 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * 		<li><code>STEP_RETURN</code> - a thread is being resumed because of a request to step return</li>
  *		<li><code>CLIENT_REQUEST</code> - a client request has caused the thread to be resumed
  * 			(i.e. an explicit call to <code>resume()</code>)</li>
+ * 		<li><code>EVALUATION</code> - an expression evaluation has started that may
+ * 			have side effects in the debug target.</li>
+ * 		<li><code>EVALUATION_READ_ONLY</code> - an expression evaluation has started that
+ * 			will have no side effects in the debug target.</li>
  * 		<li><code>UNSPECIFIED</code> - The reason for the resume is not specified</li>
  *		</ul>
  *	</li>
@@ -185,6 +193,25 @@ public final class DebugEvent extends EventObject {
 	public static final int CLIENT_REQUEST= 0x0020;
 	
 	/**
+	 * Evaluation detail. Indicates that a thread was resumed or
+	 * suspended to perform an expression evaluation.
+	 * 
+	 * @since 2.0
+	 */
+	public static final int EVALUATION = 0x0040;
+	
+	/**
+	 * Evaluation detail. Indicates that a thread was resumed or
+	 * suspended to perform an expression evaluation that has no
+	 * update side effects. Clients may use this detail event
+	 * for efficiency when it is known that an evaluation had 
+	 * no side effects.
+	 * 
+	 * @since 2.0
+	 */
+	public static final int EVALUATION_READ_ONLY = 0x0080;
+		
+	/**
 	 * Constant indicating that the kind or detail of a debug
 	 * event is unspecified.
 	 */
@@ -226,7 +253,7 @@ public final class DebugEvent extends EventObject {
 		super(eventSource);
 		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_kind")); //$NON-NLS-1$
-		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST)) == 0)
+		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_READ_ONLY)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_detail")); //$NON-NLS-1$
 		fKind= kind;
 		fDetail= detail;
@@ -265,6 +292,18 @@ public final class DebugEvent extends EventObject {
 	public boolean isStepStart() {
 		return (getDetail() & (STEP_INTO | STEP_OVER | STEP_RETURN)) > 0;
 	}
+	
+	/**
+	 * Returns whether this event's detail indicates an
+	 * evaluation. This event's detail is one
+	 * of <code>EVALUATION</code>, or <code>EVALUATION_READ_ONLY</code>.
+	 * 
+	 * @return whether this event's detail indicates an evaluation.
+	 * @since 2.0
+	 */
+	public boolean isEvaluation() {
+		return (getDetail() & (EVALUATION | EVALUATION_READ_ONLY)) > 0;
+	}	
 	
 	/**
 	 * @see java.lang.Object#toString()
@@ -317,6 +356,12 @@ public final class DebugEvent extends EventObject {
 			case STEP_RETURN:
 				buf.append("STEP_RETURN"); //$NON-NLS-1$
 				break;
+			case EVALUATION:
+				buf.append("EVALUATION"); //$NON-NLS-1$
+				break;
+			case EVALUATION_READ_ONLY:
+				buf.append("EVALUATION_READ_ONLY"); //$NON-NLS-1$
+				break;								
 			case UNSPECIFIED:
 				buf.append("UNSPECIFIED"); //$NON-NLS-1$
 				break;

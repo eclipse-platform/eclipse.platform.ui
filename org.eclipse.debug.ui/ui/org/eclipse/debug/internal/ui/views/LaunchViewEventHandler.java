@@ -78,7 +78,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				doHandleResumeEvent(event, element);
 				break;
 			case DebugEvent.SUSPEND :
-				doHandleSuspendEvent(element);
+				doHandleSuspendEvent(element, event);
 				break;
 			case DebugEvent.CHANGE :
 				refresh(element);
@@ -88,6 +88,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 		
 	protected void doHandleResumeEvent(DebugEvent event, Object element) {
+		if (event.isEvaluation()) {
+			// do nothing when an evaluation begins
+			return;
+		}
 		if (element instanceof ISuspendResume) {
 			if (((ISuspendResume)element).isSuspended()) {
 				IThread thread = getThread(element);
@@ -121,13 +125,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		fStackFrameCountByThread.put(thread, new Integer(0));
 	}
 
-	protected void doHandleSuspendEvent(Object element) {
+	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
 		if (element instanceof IThread) {
-			doHandleSuspendThreadEvent((IThread)element);
-		} else {
-			refresh(element);
-			updateButtons();
-		}
+			IThread thread = (IThread)element;
+			if (!event.isEvaluation()) {
+				doHandleSuspendThreadEvent((IThread)element);
+				return;
+			}
+		} 
+		refresh(element);
+		updateButtons();
 	}
 	
 	// This method exists to provide some optimization for refreshing suspended

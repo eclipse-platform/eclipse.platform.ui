@@ -51,10 +51,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		Object[] children= null;
 		try {
 			if (parent instanceof IStackFrame) {
-				IStackFrame sf= (IStackFrame)parent;
-				if (sf.isSuspended()) {
-					children = sf.getVariables();
-				}
+				children = ((IStackFrame)parent).getVariables();
 			} else if (parent instanceof IVariable) {
 				children = ((IVariable)parent).getValue().getVariables();
 			}

@@ -56,6 +56,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -143,6 +144,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);	
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		getDetailDocument().removeDocumentListener(getDetailDocumentListener());
+		Viewer viewer = getViewer();
+		if (viewer != null) {
+			((VariablesViewer)viewer).dispose();
+		}
 		super.dispose();
 	}
 
@@ -181,7 +186,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 		showViewer();
 		getViewer().setInput(frame);
-		
 	}
 	
 	/**
@@ -213,10 +217,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
-		if (!propertyName.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION)) {
-			return;
+		if (propertyName.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION)) {
+			setDetailPaneOrientation((String)event.getNewValue());
+		} else if (propertyName.equals(IDebugUIConstants.PREF_SHOW_VARIABLE_VALUE_CHANGES)) {
+			getEventHandler().refresh();
 		}
-		setDetailPaneOrientation((String)event.getNewValue());
 	}
 	
 	/**
@@ -233,7 +238,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setDetailPaneOrientation(orientString);
 		
 		// add tree viewer
-		TreeViewer vv = new TreeViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		TreeViewer vv = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		vv.setContentProvider(createContentProvider());
 		vv.setLabelProvider(getModelPresentation());
 		vv.setUseHashlookup(true);

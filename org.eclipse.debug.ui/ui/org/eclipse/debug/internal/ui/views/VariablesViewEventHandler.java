@@ -29,31 +29,18 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	/**
 	 * @see BasicContentProvider#doHandleDebug(Event)
 	 */
-	protected void doHandleDebugEvent(DebugEvent event) {
-		// if the stack frame which is an input to this view
-		// is no longer valid (i.e. its thread has resumed), do
-		// not update (bug 6518)
-		Object input = getViewer().getInput();
-		if (input instanceof IStackFrame) {
-			if (!((IStackFrame)input).isSuspended()) {
-				return;
-			}
-		}
-		
+	protected void doHandleDebugEvent(DebugEvent event) {		
 		switch (event.getKind()) {
 			case DebugEvent.SUSPEND:
-			case DebugEvent.CHANGE:
-				refresh();
-
-				// We have to be careful NOT to populate the detail pane in the
-				// variables view on any CHANGE DebugEvent, since the very act of 
-				// populating the detail pane does an evaluation, which queues up
-				// a CHANGE DebugEvent, which would lead to an infinite loop.  It's
-				// probably safer to add invidual event details here as needed,
-				// rather than try to exclude the ones we think are problematic.
+				if (event.getDetail() != DebugEvent.EVALUATION_READ_ONLY) {
+					refresh();
+				}
 				if (event.getDetail() == DebugEvent.STEP_END) {
 					getVariablesView().populateDetailPane();
 				}
+				break;
+			case DebugEvent.CHANGE:
+				refresh();
 				break;
 		}
 	}
