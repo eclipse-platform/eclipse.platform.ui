@@ -17,17 +17,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -217,14 +217,34 @@ public class DetachedWindow extends Window   {
 		return folder.getControl();
 	}
 	
+	/**
+	 * 
+	 * Returns true iff the given rectangle is located in the client area of any
+	 * monitor.
+	 * 
+	 * @param someRectangle a rectangle in display coordinates (not null)
+	 * @return true iff the given point can be seen on any monitor
+	 */
+	private static boolean intersectsAnyMonitor(Display display, Rectangle someRectangle) {
+		Monitor[] monitors = display.getMonitors();
+		
+		for (int idx = 0; idx < monitors.length; idx++) {
+			Monitor mon = monitors[idx];
+			
+			if (mon.getClientArea().intersects(someRectangle)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getConstrainedShellSize(org.eclipse.swt.graphics.Rectangle)
 	 */
 	protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
-		Rectangle displayBounds = getShell().getDisplay().getBounds();
-		
 		// As long as the initial position is somewhere on the display, don't mess with it.
-		if (displayBounds.intersects(preferredSize)) {
+		if (intersectsAnyMonitor(getShell().getDisplay(), preferredSize)) {
 			return preferredSize;
 		}
 		
