@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
+
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -26,6 +27,7 @@ public class TocManager {
 	 * Map of ITocNavNode[] by String
 	 */
 	private Map tocsByLang;
+
 	private Collection contributingPlugins;
 
 	/**
@@ -158,7 +160,8 @@ public class TocManager {
 				}
 			}
 		} catch (Exception e) {
-			HelpPlugin.logError(HelpResources.getString("E039"), e); //$NON-NLS-1$
+			HelpPlugin.logError(
+					"Problems occurred reading plug-in preferences.", e); //$NON-NLS-1$
 		}
 		return orderedTocs;
 	}

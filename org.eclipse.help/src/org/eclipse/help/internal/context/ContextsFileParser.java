@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
+
 import java.io.*;
 import java.text.*;
 
@@ -18,21 +19,29 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+
 /**
  * Parser for xml file
  */
 public class ContextsFileParser extends DefaultHandler {
 	protected FastStack stack = new FastStack();
+
 	StringBuffer buffer = new StringBuffer();
+
 	boolean seenDescription = false;
+
 	ContextsFile contextsFile;
+
 	private ContextsBuilder builder;
+
 	private final static SAXParserFactory factory = SAXParserFactory
 			.newInstance();
+
 	public ContextsFileParser(ContextsBuilder builder) {
 		super();
 		this.builder = builder;
 	}
+
 	/**
 	 * Receive notification of character data.
 	 */
@@ -47,6 +56,7 @@ public class ContextsFileParser extends DefaultHandler {
 									.toString());
 		}
 	}
+
 	/**
 	 * Receive notification of the end of an element.
 	 */
@@ -67,34 +77,33 @@ public class ContextsFileParser extends DefaultHandler {
 			node.build(builder);
 		}
 	}
+
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException ex) {
-		String message = getMessage("E001", ex); //$NON-NLS-1$
-		HelpPlugin.logError(message, null);
-		RuntimeHelpStatus.getInstance()
-				.addParseError(message, ex.getSystemId());
+		HelpPlugin.logError("Error parsing " + getErrorDetails(ex), null); //$NON-NLS-1$
 	}
+
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
 	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
-		String message = getMessage("E002", ex); //$NON-NLS-1$
-		HelpPlugin.logError(message, ex);
-		RuntimeHelpStatus.getInstance()
-				.addParseError(message, ex.getSystemId());
+		HelpPlugin.logError("Failed to parse " + getErrorDetails(ex), ex); //$NON-NLS-1$
 	}
-	public String getMessage(String messageID, SAXParseException ex) {
+
+	public String getErrorDetails(SAXParseException ex) {
 		String param0 = ex.getSystemId();
 		Integer param1 = new Integer(ex.getLineNumber());
 		Integer param2 = new Integer(ex.getColumnNumber());
 		String param3 = ex.getMessage();
-		String message = MessageFormat.format(HelpResources
-				.getString(messageID), new Object[]{param0, param1, param2,
-				param3});
+		String message = MessageFormat
+				.format(
+						"URL: {0} at line: {1,number,integer}, column: {2,number,integer}.\r\n{3}", //$NON-NLS-1$
+						new Object[] { param0, param1, param2, param3 });
 		return message;
 	}
+
 	/**
 	 * Receive notification of the beginning of an element.
 	 */
@@ -130,10 +139,11 @@ public class ContextsFileParser extends DefaultHandler {
 			stack.push(e);
 		}
 	}
+
 	public void warning(SAXParseException ex) {
-		String message = getMessage("E003", ex); //$NON-NLS-1$
-		HelpPlugin.logWarning(message);
+		HelpPlugin.logWarning("Warning parsing " + getErrorDetails(ex)); //$NON-NLS-1$
 	}
+
 	public void parse(ContextsFile contextsFile) {
 		this.contextsFile = contextsFile;
 		InputStream is = contextsFile.getInputStream();
@@ -147,16 +157,12 @@ public class ContextsFileParser extends DefaultHandler {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(inputSource, this);
 		} catch (ParserConfigurationException pce) {
-			HelpPlugin.logError(HelpResources
-					.getString("ContextsFileParser.PCE"), pce); //$NON-NLS-1$
+			HelpPlugin.logError(
+					"SAXParser implementation could not be loaded.", pce); //$NON-NLS-1$
 		} catch (SAXException se) {
 			HelpPlugin.logError("", se); //$NON-NLS-1$
 		} catch (IOException ioe) {
-			String msg = HelpResources.getString("E009", file); //$NON-NLS-1$
-			HelpPlugin.logError(msg, ioe);
-			// now pass it to the RuntimeHelpStatus object explicitly because we
-			// still need to display errors even if Logging is turned off.
-			RuntimeHelpStatus.getInstance().addParseError(msg, file);
+			HelpPlugin.logError("Error loading file " + file + ".", ioe); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			if (is != null) {
 				try {
@@ -166,6 +172,7 @@ public class ContextsFileParser extends DefaultHandler {
 			}
 		}
 	}
+
 	/**
 	 * @see EntityResolver This method implementation prevents loading external
 	 *      entities instead of calling

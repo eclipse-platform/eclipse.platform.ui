@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.toc;
 
 import java.util.*;
@@ -17,11 +15,14 @@ import org.eclipse.help.internal.*;
 public class TocBuilder {
 	// list of all toc files
 	protected Collection contributedTocFiles;
+
 	// list of unprocessed toc files
 	protected Collection unprocessedTocFiles;
+
 	// list of unprocessed toc (the target of attach_to was not available at the
 	// time)
 	protected List unprocessedTocs;
+
 	/**
 	 * Constructor.
 	 */
@@ -29,6 +30,7 @@ public class TocBuilder {
 		unprocessedTocFiles = new ArrayList();
 		unprocessedTocs = new ArrayList();
 	}
+
 	public Collection getBuiltTocs() {
 		// returns the list of root Toc trees
 		Collection tocCol = new ArrayList(contributedTocFiles.size());
@@ -41,6 +43,7 @@ public class TocBuilder {
 		}
 		return tocCol;
 	}
+
 	/**
 	 */
 	public void build(Collection contributedTocFiles) {
@@ -63,20 +66,23 @@ public class TocBuilder {
 			buildToc(toc);
 		}
 	}
+
 	public void buildTocFile(TocFile tocFile) {
 		try {
 			unprocessedTocFiles.remove(tocFile);
 			TocFileParser parser = new TocFileParser(this);
 			parser.parse(tocFile);
 		} catch (Exception e) {
-			String msg = HelpResources.getString("E033", tocFile.getHref()); //$NON-NLS-1$
+			String msg = "Error occurred processing file " + tocFile.getHref() + "."; //$NON-NLS-1$ //$NON-NLS-2$
 			HelpPlugin.logError(msg, e);
 		}
 	}
+
 	public void buildAnchor(Anchor anchor) {
 		// cache the anchor in the toc file
 		anchor.getTocFile().addAnchor(anchor);
 	}
+
 	public void buildLink(Link link) {
 		// parse the linked file
 		String linkedToc = link.getToc();
@@ -89,9 +95,11 @@ public class TocBuilder {
 		// link the two Toc objects
 		link.addChild(toc);
 	}
+
 	public void buildTopic(Topic topic) {
 		// nothing to do
 	}
+
 	public void buildToc(Toc toc) {
 		// link toc if so specified
 		String href = toc.getLink_to();
@@ -108,6 +116,7 @@ public class TocBuilder {
 		// link the two toc objects
 		anchor.addChild(toc);
 	}
+
 	private TocFile getTocFile(String href) {
 		String plugin = HrefUtil.getPluginIDFromHref(href);
 		if (plugin == null)
@@ -130,6 +139,7 @@ public class TocBuilder {
 			buildTocFile(tocFile);
 		return tocFile;
 	}
+
 	/**
 	 * Checks if navigation element has been integrated into another TOC.
 	 */

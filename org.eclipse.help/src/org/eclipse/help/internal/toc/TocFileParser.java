@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
+
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -19,15 +20,21 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+
 /**
  * Used to create TocFile's Toc object from contributed toc xml file.
  */
 class TocFileParser extends DefaultHandler {
 	protected TocBuilder builder;
+
 	protected FastStack elementStack;
+
 	protected TocFile tocFile;
+
 	static SAXParserFactory factory = SAXParserFactory.newInstance();
+
 	private static XMLParserPool parserPool = new XMLParserPool();
+
 	/**
 	 * Constructor
 	 */
@@ -35,38 +42,35 @@ class TocFileParser extends DefaultHandler {
 		super();
 		this.builder = builder;
 	}
+
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException ex) throws SAXException {
-		String message = getMessage("E024", ex); //$NON-NLS-1$
-		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
-		HelpPlugin.logError(message, null);
-		RuntimeHelpStatus.getInstance()
-				.addParseError(message, ex.getSystemId());
+		HelpPlugin.logError("Error parsing Table of Contents file, " //$NON-NLS-1$
+				+ getErrorDetails(ex), null);
 	}
+
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
 	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
-		// create message string from exception
-		String message = getMessage("E025", ex); //$NON-NLS-1$
-		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3
-		// %4
-		HelpPlugin.logError(message, ex);
-		RuntimeHelpStatus.getInstance()
-				.addParseError(message, ex.getSystemId());
+		HelpPlugin.logError("Failed to parse Table of Contents file, " //$NON-NLS-1$
+				+ getErrorDetails(ex), ex);
 	}
-	protected String getMessage(String messageID, SAXParseException ex) {
+
+	protected String getErrorDetails(SAXParseException ex) {
 		String param0 = ex.getSystemId();
 		Integer param1 = new Integer(ex.getLineNumber());
 		Integer param2 = new Integer(ex.getColumnNumber());
 		String param3 = ex.getMessage();
-		String message = MessageFormat.format(HelpResources
-				.getString(messageID), new Object[]{param0, param1, param2,
-				param3});
+		String message = MessageFormat
+				.format(
+						"URL: {0} at line: {1,number,integer}, column: {2,number,integer}.\r\n{3}", //$NON-NLS-1$
+						new Object[] { param0, param1, param2, param3 });
 		return message;
 	}
+
 	/**
 	 * Gets the toc
 	 */
@@ -88,22 +92,17 @@ class TocFileParser extends DefaultHandler {
 				parserPool.releaseParser(parser);
 			}
 		} catch (ParserConfigurationException pce) {
-			String msg = HelpResources.getString("TocFileParser.PCE"); //$NON-NLS-1$
-			//SAXParser implementation could not be loaded.
-			HelpPlugin.logError(msg, pce);
+			HelpPlugin.logError(
+					"SAXParser implementation could not be loaded.", pce); //$NON-NLS-1$
 		} catch (SAXException se) {
-			String msg = HelpResources.getString("E026", file); //$NON-NLS-1$
-			//Error loading Table of Contents file %1.
-			HelpPlugin.logError(msg, se);
+			HelpPlugin.logError("Error loading Table of Contents file " + file //$NON-NLS-1$
+					+ ".", se); //$NON-NLS-1$
 		} catch (IOException ioe) {
-			String msg = HelpResources.getString("E026", file); //$NON-NLS-1$
-			//Error loading Table of Contents file %1.
-			HelpPlugin.logError(msg, ioe);
-			// now pass it to the RuntimeHelpStatus object explicitly because we
-			// still need to display errors even if Logging is turned off.
-			RuntimeHelpStatus.getInstance().addParseError(msg, file);
+			HelpPlugin.logError("Error loading Table of Contents file " + file //$NON-NLS-1$
+					+ ".", ioe); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
@@ -127,6 +126,7 @@ class TocFileParser extends DefaultHandler {
 		// do any builder specific actions in the node
 		node.build(builder);
 	}
+
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
@@ -154,6 +154,7 @@ class TocFileParser extends DefaultHandler {
 	 */
 	static class XMLParserPool {
 		private ArrayList pool = new ArrayList();
+
 		SAXParser obtainParser() throws ParserConfigurationException,
 				SAXException {
 			SAXParser p;
@@ -165,6 +166,7 @@ class TocFileParser extends DefaultHandler {
 			}
 			return p;
 		}
+
 		void releaseParser(SAXParser parser) {
 			pool.add(parser);
 		}

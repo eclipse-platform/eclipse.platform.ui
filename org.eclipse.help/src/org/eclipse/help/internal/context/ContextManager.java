@@ -120,9 +120,10 @@ public class ContextManager implements IRegistryChangeListener {
 				if (fileName == null)
 					fileName = contextContributions[j].getAttribute("name"); //$NON-NLS-1$
 				if (fileName == null) {
-					String msg = HelpResources.getString(
-							"ContextManager.FileAttribute", //$NON-NLS-1$
-							CONTEXTS_XP_FULLNAME, definingPlugin);
+					String msg = "\"context\" element in extension of " //$NON-NLS-1$
+							+ CONTEXTS_XP_FULLNAME
+							+ ", contributed in plug-in " + definingPlugin //$NON-NLS-1$
+							+ ", is missing required \"file\" attribute."; //$NON-NLS-1$
 					HelpPlugin.logError(msg, null);
 					continue;
 				}

@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.util;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -17,14 +16,20 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.osgi.framework.*;
+
 public class ResourceLocator {
 	public static final String CONTENTPRODUCER_XP_NAME = "contentProducer"; //$NON-NLS-1$
+
 	public static final String CONTENTPRODUCER_XP_FULLNAME = HelpPlugin.PLUGIN_ID
 			+ "." + CONTENTPRODUCER_XP_NAME; //$NON-NLS-1$
+
 	private static Hashtable zipCache = new Hashtable();
+
 	private static final Object ZIP_NOT_FOUND = new Object();
+
 	// Indicates there is no dynamic content provider for a particular plugin
 	private static final Object STATIC_DOCS_ONLY = ZIP_NOT_FOUND;
+
 	// Map of document content providers by plug-in ID;
 	private static Map contentProducers = new HashMap(2, 0.5f);
 	static {
@@ -50,6 +55,7 @@ public class ResourceLocator {
 					}
 				});
 	}
+
 	/**
 	 * Obtains content proivider for a documentation plug-in, creates one if
 	 * necessary.
@@ -76,6 +82,7 @@ public class ResourceLocator {
 			}
 		}
 	}
+
 	/**
 	 * Creates content proivider for a documentation plug-in
 	 * 
@@ -106,13 +113,15 @@ public class ResourceLocator {
 						return (IHelpContentProducer) o;
 					}
 				} catch (CoreException ce) {
-					HelpPlugin.logError(HelpResources.getString(
-							"E044", pluginId), ce); //$NON-NLS-1$
+					HelpPlugin
+							.logError(
+									"Exception occurred creating help content producer for plug-in " + pluginId + ".", ce); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
 		return null;
 	}
+
 	/**
 	 * Opens an input stream to a file contained in a plugin. This includes NL
 	 * lookup.
@@ -137,6 +146,7 @@ public class ResourceLocator {
 		}
 		return producer.getInputStream(pluginDesc.getSymbolicName(), file, l);
 	}
+
 	/**
 	 * Opens an input stream to a file contained in a plugin. This includes NL
 	 * lookup.
@@ -149,6 +159,7 @@ public class ResourceLocator {
 		else
 			return null;
 	}
+
 	/**
 	 * Opens an input stream to a file contained in a zip in a plugin. This
 	 * includes NL lookup.
@@ -162,6 +173,7 @@ public class ResourceLocator {
 			is = doOpenFromZip(pluginDesc, zip, file, locale);
 		return is;
 	}
+
 	/**
 	 * Opens an input stream to a file contained in a plugin. This includes NL
 	 * lookup.
@@ -174,6 +186,7 @@ public class ResourceLocator {
 			is = doOpenFromPlugin(pluginDesc, file, locale);
 		return is;
 	}
+
 	/**
 	 * Opens an input stream to a file contained in doc.zip in a plugin
 	 */
@@ -193,6 +206,7 @@ public class ResourceLocator {
 			return null;
 		}
 	}
+
 	/**
 	 * Opens an input stream to a file contained in a plugin
 	 */
@@ -210,6 +224,7 @@ public class ResourceLocator {
 			}
 		return null;
 	}
+
 	/**
 	 * @param pluginDesc
 	 * @param zip
@@ -248,6 +263,7 @@ public class ResourceLocator {
 		}
 		return (String) cached;
 	}
+
 	public static void clearZipCache() {
 		zipCache = new Hashtable();
 	}

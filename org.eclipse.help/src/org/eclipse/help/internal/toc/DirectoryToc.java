@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -18,28 +19,34 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.osgi.framework.*;
+
 /**
  * Toc created from files in a extra directory in a plugin.
  */
 public class DirectoryToc {
 	private String dir;
+
 	/**
 	 * Map of ITopic by href String;
 	 */
 	private Map extraTopics;
+
 	private String locale;
+
 	/**
 	 * Constructor.
 	 */
 	protected DirectoryToc(TocFile tocFile) {
 		this(tocFile.getPluginID(), tocFile.getLocale(), tocFile.getExtraDir());
 	}
+
 	private DirectoryToc(String pluginID, String locale, String directory) {
 		this.locale = locale;
 		// Obtain extra search directory if provided
 		this.dir = HrefUtil.normalizeDirectoryHref(pluginID, directory);
 
 	}
+
 	/**
 	 * This public method is to be used after the build of TOCs is finished.
 	 * With assumption that TOC model is not modifiable after the build, this
@@ -57,6 +64,7 @@ public class DirectoryToc {
 
 		return extraTopics;
 	}
+
 	/**
 	 * Obtains URLs of all documents inside given directory.
 	 * 
@@ -105,6 +113,7 @@ public class DirectoryToc {
 		return ret;
 
 	}
+
 	/**
 	 * @param directory
 	 *            path in the form "segment1/segment2...", "" will return names
@@ -118,9 +127,8 @@ public class DirectoryToc {
 		try {
 			realZipURL = Platform.asLocalURL(Platform.resolve(url));
 		} catch (IOException ioe) {
-			HelpPlugin.logError(
-					HelpResources.getString("E036", url.toString()), //$NON-NLS-1$
-					ioe);
+			HelpPlugin.logError("IOException occurred, when resolving URL " //$NON-NLS-1$
+					+ url.toString() + ".", ioe); //$NON-NLS-1$
 			return new HashMap(0);
 		}
 		ZipFile zipFile;
@@ -129,9 +137,10 @@ public class DirectoryToc {
 			ret = createExtraTopicsFromZipFile(pluginID, zipFile, directory);
 			zipFile.close();
 		} catch (IOException ioe) {
-			HelpPlugin.logError(HelpResources.getString(
-					"E037", realZipURL.getFile()), //$NON-NLS-1$
-					ioe);
+			HelpPlugin.logError(
+					"IOException occurred, when accessing Zip file " //$NON-NLS-1$
+							+ realZipURL.getFile()
+							+ ".  File might not be locally available.", ioe); //$NON-NLS-1$
 			return new HashMap(0);
 		}
 
@@ -167,6 +176,7 @@ public class DirectoryToc {
 		}
 		return ret;
 	}
+
 	/**
 	 * @param directory
 	 *            path in the form "segment1/segment2...", "" will return names
@@ -180,9 +190,8 @@ public class DirectoryToc {
 		try {
 			realURL = Platform.asLocalURL(Platform.resolve(url));
 		} catch (IOException ioe) {
-			HelpPlugin.logError(
-					HelpResources.getString("E038", url.toString()), //$NON-NLS-1$
-					ioe);
+			HelpPlugin.logError("IOException occurred, when resolving URL " //$NON-NLS-1$
+					+ url.toString() + ".", ioe); //$NON-NLS-1$
 			return m;
 		}
 		File dirFile = new File(realURL.getFile());
@@ -198,6 +207,7 @@ public class DirectoryToc {
 		return m;
 
 	}
+
 	/**
 	 * @prefix /pluginID/segment1/segment2
 	 * @return Map of ITopic by href String
@@ -215,8 +225,10 @@ public class DirectoryToc {
 		}
 		return m;
 	}
+
 	class ExtraTopic implements ITopic {
 		private String topicHref;
+
 		public ExtraTopic(String href) {
 			this.topicHref = href;
 		}
@@ -224,9 +236,11 @@ public class DirectoryToc {
 		public String getHref() {
 			return topicHref;
 		}
+
 		public String getLabel() {
 			return topicHref;
 		}
+
 		public ITopic[] getSubtopics() {
 			return new ITopic[0];
 		}
