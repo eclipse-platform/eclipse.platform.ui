@@ -14,7 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title><%=WebappResources.getString("Search", request)%></title>
+<title><%=ServletResources.getString("Search", request)%></title>
      
 <style type="text/css">
 /* need this one for Mozilla */
@@ -144,7 +144,7 @@ function doSearch(query)
 		if (!searchWord || searchWord == "")
 			return;
 		query ="searchWord="+escape(searchWord)+"&maxHits="+maxHits;
-		if (workingSet != '<%=WebappResources.getString("All", request)%>')
+		if (workingSet != '<%=ServletResources.getString("All", request)%>')
 			query = query +"&scope="+workingSet;//+"&workingSet="+workingSet;
 	}
 	query=query+"&encoding=js";
@@ -180,17 +180,17 @@ function onloadHandler(e)
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
 				<td>
-					&nbsp;<%=WebappResources.getString("Search", request)%>:
+					&nbsp;<%=ServletResources.getString("Search", request)%>:
 				</td>
 				<td>
-					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt='<%=ServletResources.getString("SearchExpression", request)%>'>
 				</td>
 				<td >
-					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("GO", request)%>' id="go" alt='<%=WebappResources.getString("GO", request)%>'>
+					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=ServletResources.getString("GO", request)%>' id="go" alt='<%=ServletResources.getString("GO", request)%>'>
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=WebappResources.getString("selectWorkingSet", request)%>' alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=WebappResources.getString("Scope", request)%>:</a>
+					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=ServletResources.getString("selectWorkingSet", request)%>' alt='<%=ServletResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=ServletResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getString("Scope", request)%>:</a>
 				</td>
 				<td nowrap>
 					<input type="hidden" name="workingSet" value='<%=data.getScope()%>' >

@@ -12,7 +12,7 @@
 
 <html>
 <head>
-<title><%=WebappResources.getString("NewWorkingSet", request)%></title>
+<title><%=ServletResources.getString("NewWorkingSet", request)%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -300,11 +300,11 @@ function keyDownHandler(folderId, key, target)
 <body>
 
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
-		<tr><td style="padding:5px 10px 0px 10px;"><%=WebappResources.getString("WorkingSetName", request)%>:
+		<tr><td style="padding:5px 10px 0px 10px;"><%=ServletResources.getString("WorkingSetName", request)%>:
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=WebappResources.getString("WorkingSetName", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>'>
         </td></tr>
-        <tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=WebappResources.getString("Select", request)%></div>
+        <tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=ServletResources.getString("Select", request)%></div>
 		</td></tr>
     </table>
  
@@ -360,10 +360,10 @@ for (int i=0; i<data.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input id="searchButton" class='button'  type="button" onclick="doSubmit()" value='<%=WebappResources.getString("OK", request)%>'  id="ok" alt='<%=WebappResources.getString("OK", request)%>'>
+						<input id="searchButton" class='button'  type="button" onclick="doSubmit()" value='<%=ServletResources.getString("OK", request)%>'  id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel" alt='<%=WebappResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>
