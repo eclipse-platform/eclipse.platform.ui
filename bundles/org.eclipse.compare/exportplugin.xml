@@ -1,12 +1,16 @@
-<!-- build script to create a plugin from org.eclipse.jdt.ui -->
 <project name="org.eclipse.compare" default="export" basedir=".">
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../../plugin-export" />
-		<property name="dest"  value="${destdir}/org.eclipse.compare" />
+		<property name="plugin"  value="org.eclipse.compare" />
+		<property name="dest"  value="${destdir}/${plugin}" />
 	</target>
 
-	<target name="export" depends="init">
+	<target name="build" depends="init">
+    	<incremental project="${plugin}" kind="incr"/>
+	</target>
+
+	<target name="export" depends="build">
 		<mkdir dir="${destdir}" />
 		<delete dir="${dest}" />
 		<mkdir dir="${dest}" />
