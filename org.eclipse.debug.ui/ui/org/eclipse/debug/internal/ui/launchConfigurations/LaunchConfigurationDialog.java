@@ -169,6 +169,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private ILaunchConfiguration fUnderlyingConfig;
 	
 	/**
+	 * Clients of this dialog may set an 'initial configuration type', which means that when
+	 * the dialog is opened, a configuration of that type will be created, initialized, and
+	 * saved.  Note that the initial config type is ignored if single-click launching is enabled.
+	 */
+	private ILaunchConfigurationType fInitialConfigType;
+	
+	/**
 	 * The current tab group being displayed
 	 */
 	private ILaunchConfigurationTabGroup fTabGroup;
@@ -380,6 +387,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					doLaunch(fFirstConfig);
 					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;					
 				}
+			} else if (getInitialConfigType() != null) {
+				fFirstConfig = createConfigOfType(getInitialConfigType());
 			} else {
 				String memento = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION);
 				if (memento == null) {
@@ -502,7 +511,16 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (configType == null) {
 			return null;
 		}
-		
+		return createConfigOfType(configType);
+	}
+	
+	/**
+	 * Create and return a launch configuration working copy of the specified type.
+	 * This method is intended to be called before the UI has been realized, such as in
+	 * the case of single-click launching or creating a config for an initial configuration
+	 * type.
+	 */
+	protected ILaunchConfiguration createConfigOfType(ILaunchConfigurationType configType) {		
 		ILaunchConfigurationWorkingCopy workingCopy = null;
 		try {
 			workingCopy = configType.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
@@ -532,7 +550,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return null;
 		}
 		
-		return config;
+		return config;		
 	}
 	
 	/**
@@ -1515,7 +1533,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		
-		constructNewConfig();		
+		// Retrieve the config type from the current selection and construct a config from it
+		try {
+			ILaunchConfigurationType configType = null;
+			Object obj = getTreeViewerFirstSelectedElement();
+			if (obj instanceof ILaunchConfiguration) {
+				configType = ((ILaunchConfiguration)obj).getType();
+			} else {
+				configType = (ILaunchConfigurationType)obj;
+			}
+			constructNewConfig(configType);
+		} catch(CoreException ce) {
+			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception getting configuration type for new launch configuration.", ce.getStatus());
+ 			clearLaunchConfiguration();
+		}		
 	}	
 	
 	/** 
@@ -1524,17 +1555,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * same type as the selected config.
 	 * protected void constructNewConfig() {
 	 */
-	protected void constructNewConfig() {	
+	protected void constructNewConfig(ILaunchConfigurationType configType) {	
 		try {
-			ILaunchConfigurationType type = null;
-
-			Object obj = getTreeViewerFirstSelectedElement();
-			if (obj instanceof ILaunchConfiguration) {
-				type = ((ILaunchConfiguration)obj).getType();
-			} else {
-				type = (ILaunchConfigurationType)obj;
-			}
-			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
 			setLastSavedName(null);
 			setLaunchConfiguration(wc, true);
 			doSave();
@@ -2268,6 +2291,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	public void setSingleClickLaunch(boolean enabled) {
 		fTrySingleClick = enabled;
+	}
+	
+	/**
+	 * Returns the initial launch configuration type, or <code>null</code> if none has been set.
+	 */
+	protected ILaunchConfigurationType getInitialConfigType() {
+		return fInitialConfigType;
+	}
+	
+	/**
+	 * Sets the initial launch configuration type to be used when this dialog is opened.
+	 */
+	public void setInitialConfigType(ILaunchConfigurationType configType) {
+		fInitialConfigType = configType;
 	}
 }
 

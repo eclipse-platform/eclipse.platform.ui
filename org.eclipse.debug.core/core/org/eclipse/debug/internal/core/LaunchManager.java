@@ -964,7 +964,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @param config the launch configuration that was added
 	 */
 	protected void launchConfigurationAdded(ILaunchConfiguration config) throws CoreException {
-		getAllLaunchConfigurations().add(config);
+		List allConfigs = getAllLaunchConfigurations();
+		if (!allConfigs.contains(config)) {
+			allConfigs.add(config);
+		}
 		if (fLaunchConfigurationListeners.size() > 0) {
 			Object[] listeners = fLaunchConfigurationListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {

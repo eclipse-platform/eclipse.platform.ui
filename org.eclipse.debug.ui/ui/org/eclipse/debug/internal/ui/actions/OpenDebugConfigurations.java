@@ -1,5 +1,6 @@
 package org.eclipse.debug.internal.ui.actions;
 
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 
 /*
@@ -12,14 +13,10 @@ import org.eclipse.debug.core.ILaunchManager;
  */
 public class OpenDebugConfigurations extends OpenLaunchConfigurationsAction {
 
-	/**
-	 * Creates a new action to open the launch configurations
-	 * dialog in debug mode.
-	 */
-	public OpenDebugConfigurations() {
-		super("D&ebug Configurations...");
+	public OpenDebugConfigurations(ILaunchConfigurationType configType) {
+		super(configType);
 	}
-
+	
 	/**
 	 * @see OpenLaunchConfigurationsAction#getMode()
 	 */

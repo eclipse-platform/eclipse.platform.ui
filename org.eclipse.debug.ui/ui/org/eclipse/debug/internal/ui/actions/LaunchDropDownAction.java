@@ -78,6 +78,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 
 	protected Menu createMenu(Menu menu) {
 		
+		// Add any favorites at the top of the menu
 		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();
 		int total = 0;
 		for (int i = 0; i < favoriteList.length; i++) {
@@ -87,11 +88,13 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			total++;
 		}		
 		
+		// Separator between favorites and history
 		LaunchConfigurationHistoryElement[] historyList= getHistory();
 		if (favoriteList.length > 0 && historyList.length > 0) {
 			new MenuItem(menu, SWT.SEPARATOR);
 		}		
 		
+		// Add history launches next
 		for (int i = 0; i < historyList.length; i++) {
 			LaunchConfigurationHistoryElement launch= historyList[i];
 			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
@@ -99,23 +102,20 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			total++;
 		}
 		
+		// Add the actions to bring up the dialog 
 		if (getLaunchAction() != null) {
 			//used in the tool bar drop down for the cascade launch with menu
 			if (historyList.length > 0 || (historyList.length == 0 && (total > 0))) {
 				new MenuItem(menu, SWT.SEPARATOR);
 			}
 		
+			// Old-style launcher support
 			createMenuForAction(menu, new LaunchWithAction(getMode()), -1);
 			
-			if (DebugUIPlugin.getDefault().usingConfigurationStyleLaunching()) {	
-				IAction openAction = null;
-				if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-					openAction = new OpenDebugConfigurations();
-				} else {
-					openAction = new OpenRunConfigurations();
-				}
-				createMenuForAction(menu, openAction, -1);
-			}
+			// Launch configuration support
+			if (DebugUIPlugin.getDefault().usingConfigurationStyleLaunching()) {				
+				createMenuForAction(menu, new LaunchWithConfigurationAction(getMode()), -1);
+			}			
 		}
 
 		return menu;

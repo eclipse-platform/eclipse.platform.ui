@@ -38,6 +38,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -168,6 +169,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * histories in synch with resource deletions.
 	 */
 	protected static ResourceDeletedVisitor fgDeletedVisitor;
+	
+	/**
+	 * The mapping of launch configuration type IDs to lists of perspectives.
+	 * A shortcut for bringing up the launch configuration dialog initialized to
+	 * the specified config type will appear in each specified perspective.
+	 */
+	protected Map fLaunchConfigurationShortcuts;
 	
 	/**
 	 * Visitor for handling resource deltas
@@ -429,12 +437,44 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
 		
+		loadLaunchConfigurationShortcuts();
+
 		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
 					createImageRegistry();
 				}
-			});
+			}
+		);
+		
+	}
+	
+	/**
+	 * Load all registered extensions of the 'launch configuration shortcut' extension point.
+	 */
+	private void loadLaunchConfigurationShortcuts() {
+		// Get the configuration elements
+		IPluginDescriptor descriptor= getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_SHORTCUTS);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+
+		// Load the configuration elements into a Map 
+		fLaunchConfigurationShortcuts = new HashMap(infos.length);
+		for (int i = 0; i < infos.length; i++) {
+			IConfigurationElement configElement = infos[i];
+			String configTypeID = configElement.getAttribute("configTypeID");
+			IConfigurationElement[] children = configElement.getChildren("perspective");
+			List perspChildren = new ArrayList(children.length);
+			for (int j = 0; j < children.length; j++) {
+				String perspID = children[j].getAttribute("id");
+				perspChildren.add(perspID);
+			}
+			fLaunchConfigurationShortcuts.put(configTypeID, perspChildren);
+		}
+	}
+	
+	public Map getLaunchConfigurationShortcuts() {
+		return fLaunchConfigurationShortcuts;
 	}
 
 	/**

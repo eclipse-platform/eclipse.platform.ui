@@ -23,6 +23,7 @@
 
 <!-- Extension points -->
 <extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
+<extension-point id="launchConfigurationShortcuts" name="%LaunchConfigurationShortcutName"/>
 <extension-point id="launchConfigurationTabGroups" name="%LaunchConfigurationTabGroupExtensionName"/>
 <extension-point id="launchConfigurationTabs" name="%LaunchConfigurationTabExtensionName"/>
 <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName"/>
@@ -237,18 +238,6 @@
     		menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction">
-      </action>
-      <action
-            label="%RunConfigurations.label"
-            class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
-      </action>      
-      <action
-            label="%DebugConfigurations.label"
-            class="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
       </action>
       <action
             label="%RunHistoryMenuAction.label"

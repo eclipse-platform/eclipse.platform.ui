@@ -5,7 +5,9 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
@@ -25,13 +27,18 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * Abstract action for opening the launch configuration
  * dialog in run or debug mode.
  */
-public abstract class OpenLaunchConfigurationsAction extends Action implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
+public abstract class OpenLaunchConfigurationsAction extends Action {
+	
+	/**
+	 * The launch configuration type this action will cause to be created in the launch 
+	 * configuration dialog.
+	 */
+	private ILaunchConfigurationType fConfigType;
 	
 	/**
 	 * Action when a delegate, otherwise <code>null</code>
 	 */
 	private IAction fAction;
-
 
 	/**
 	 * @see Action#Action()
@@ -41,34 +48,34 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 	}
 
 	/**
-	 * @see Action#Action(String)
+	 * Initialize this action from the specified <code>ILaunchConfigurationType</code>.
 	 */
-	protected OpenLaunchConfigurationsAction(String text) {
-		super(text);
+	protected OpenLaunchConfigurationsAction(ILaunchConfigurationType configType) {
+		setConfigType(configType);
+		setText(configType.getName());
+
+		ImageDescriptor descriptor = DebugPluginImages.getImageDescriptor(configType.getIdentifier());
+		if (descriptor == null) {
+			if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
+			} else {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
+			}
+		}
+
+		if (descriptor != null) {
+			setImageDescriptor(descriptor);
+		}
 	}
 
-
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-	}
-
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-	}
-
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
-		run();
+	protected void setConfigType(ILaunchConfigurationType configType) {
+		fConfigType = configType;
 	}
 	
+	protected ILaunchConfigurationType getConfigType() {
+		return fConfigType;
+	}
+
 	/**
 	 * @see IAction#run()
 	 */
@@ -84,16 +91,9 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 			}
 			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(window.getShell(), ss, getMode());
 			dialog.setSingleClickLaunch(false);
+			dialog.setInitialConfigType(getConfigType());
 			dialog.open();
 		}		
-	}
-
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		fAction = action;
-		update();
 	}
 
 	/**
@@ -106,24 +106,4 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 	 */
 	protected abstract String getMode();
 	
-	/**
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IDebugPreferenceConstants.LAUNCHING_STYLE)) {
-			update();
-		}
-	}
-
-	/**
-	 * Update enabled state based on debug plug-in setting
-	 * for using launch configs/launchers.
-	 */
-	protected void update() {
-		IAction action = fAction;
-		if (action == null) {
-			action = this;
-		}
-		action.setEnabled(DebugUIPlugin.getDefault().usingConfigurationStyleLaunching());
-	}
 }
