@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IContributorResourceAdapter;
 
@@ -71,7 +73,7 @@ public abstract class ObjectContributorManager {
 
 	/**
 	 * Returns <code>IResource.class</code> or <code>null</code> if the
-	 * resources plug-in is not present.
+	 * class is not available.
 	 * 
 	 * @return <code>IResource.class</code> or <code>null</code> if class
 	 * not available
@@ -87,14 +89,33 @@ public abstract class ObjectContributorManager {
 			return null;
 		}
 		
-		// use Java reflection to avoid dependence on IResource (which is not
-		// part of generic workbench and many not even be present)
+		// resource plug-in is not on prereq chain of generic wb plug-in
+		// hence: IResource.class won't compile
+		// and Class.forName("org.eclipse.core.resources.IResource") won't find it
+		// need to be trickier...
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.resources"); //$NON-NLS-1$
+		if (desc == null) {
+			// resources plug-in is not around
+			// assume that it will never be around
+			resourcesPossible = false;
+			return null;
+		}
+		// resources plug-in is around
+		// it's not our job to activate the plug-in
+		if (!desc.isPluginActivated()) {
+			// assume it might come alive later
+			resourcesPossible = true;
+			return null;
+		}
+		ClassLoader rcl = desc.getPluginClassLoader();
 		try {
-			// @issue generic wb plug-in class loader will NEVER find org.eclipse.core.resources.IResource (not on prereq chain)
-			iresourceClass = Class.forName("org.eclipse.core.resources.IResource"); //$NON-NLS-1$
+			Class c = rcl.loadClass("org.eclipse.core.resources.IResource"); //$NON-NLS-1$
+			// remember for next time
+			iresourceClass = c;
 			return iresourceClass;
 		} catch (ClassNotFoundException e) {
-			// IResource is not around
+			// unable to load IResource - sounds pretty serious
+            // treat as if resources plug-in were unavailable
 			resourcesPossible = false;
 			return null;
 		}
@@ -369,7 +390,6 @@ public abstract class ObjectContributorManager {
 	 * 
 	 * @param object Object 
 	 * @return an <code>IResource</code> or null
-	 * @issue revised return type from IResource to Object
 	 */
 	protected Object getAdaptedResource(Object object) {
 		Class resourceClass = getResourceClass();
