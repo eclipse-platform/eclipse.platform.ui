@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.Platform;
  * A lock listener is notified whenever a thread is about to wait
  * on a lock, and when a thread is about to release a lock.
  * <p>
- * This interface is for internal use by the platform-related plug-ins.
- * Clients should not reference or subclass this class.
+ * This class is for internal use by the platform-related plug-ins.
+ * Clients outside of the base platform should not reference or subclass this class.
  * </p>
  * 
  * @see IJobManager.setLockListener
