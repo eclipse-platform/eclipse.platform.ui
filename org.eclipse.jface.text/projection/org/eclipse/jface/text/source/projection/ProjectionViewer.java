@@ -870,7 +870,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					setRedraw(false);
 					try {
 						
-						executeProjectionCommands(commandQueue, false);
+						try {
+							executeProjectionCommands(commandQueue, false);
+						} catch (IllegalArgumentException x) {
+							reinitializeProjection();
+						}
 						
 					} finally {
 						setRedraw(true, topIndex);
@@ -886,9 +890,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 							textWidget.setRedraw(false);
 						
 						boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
-						boolean visibleDocumentReplaced= executeProjectionCommands(commandQueue, fireRedraw);
-						if (!visibleDocumentReplaced && !fireRedraw)
-							invalidateTextPresentation();
+						try {
+							boolean visibleDocumentReplaced= executeProjectionCommands(commandQueue, fireRedraw);
+							if (!visibleDocumentReplaced && !fireRedraw)
+								invalidateTextPresentation();
+						} catch (IllegalArgumentException x) {
+							reinitializeProjection();
+						}
 						
 					} finally {
 						
