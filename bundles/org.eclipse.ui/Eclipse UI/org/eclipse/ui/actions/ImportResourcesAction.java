@@ -47,30 +47,6 @@ public ImportResourcesAction(IWorkbench aWorkbench) {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.IMPORT_ACTION);
 	this.workbench = aWorkbench;
 }
-/*
- * @see SelectionListenerAction.updateSelection()
- */
-protected boolean updateSelection(IStructuredSelection selection) {
-	
-	if(!super.updateSelection(selection))
-		return false;
-	
-	List resources = getSelectedResources();
-	if (resources.isEmpty()) {
-		return true;
-	}
-	if (resources.size() != 1) {
-		return false;
-	}
-	IResource resource = (IResource) resources.get(0);
-	switch (resource.getType()) {
-		case IResource.PROJECT:
-			return ((IProject) resource).isOpen();
-		case IResource.FOLDER:
-			return resource.getProject().isOpen();
-	}
-	return false;
-}
 
 
 /**

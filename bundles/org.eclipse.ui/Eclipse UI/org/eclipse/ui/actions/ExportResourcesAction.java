@@ -45,33 +45,7 @@ public ExportResourcesAction(IWorkbench aWorkbench) {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
 	this.workbench = aWorkbench;
 }
-/*
- * @see SelectionListenerAction.updateSelection()
- */
-protected boolean updateSelection(IStructuredSelection selection) {
-	
-	if(!super.updateSelection(selection))
-		return false;
-		
-	if (selection.isEmpty()) 
-		return false;
-	
-	if (selectionIsOfType(IResource.PROJECT)) {
-		List projects = getSelectedResources();
-		if (projects != null) {	
-			Iterator iterator = projects.iterator();
-			boolean found = false;
-			while (iterator.hasNext() && !found) {
-				found = ((IProject)iterator.next()).isOpen();
-			}
-			if (!found) {
-				return false;
-			}
-		}
-	}
-	
-	return getSelectedResources() != null;
-}
+
 
 /**
  * Invoke the Export wizards selection Wizard.
