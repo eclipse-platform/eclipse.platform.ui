@@ -476,7 +476,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Returns a description for this file's current contents. Returns 
 	 * <code>null</code> if a description cannot be obtained.
 	 * <p>
-	 * This method produces the same observable effect as calling
+	 * Calling this method produces a similar effect as calling
 	 * <code>getDescriptionFor(getContents(), getName(), IContentDescription.ALL)</code> 
 	 * on <code>IContentTypeManager</code>, but provides better 
 	 * opportunities for improved performance. Therefore, when manipulating 
@@ -486,9 +486,16 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *  
 	 * @return a description for this file's current contents, or 
 	 * <code>null</code>
-	 * @throws CoreException
+	 * @throws CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system.</li>
+	 * <li> This resource is not local.</li>
+	 * </ul> 
 	 * @see IContentDescription
-	 * @see IContentTypeManager#getDescriptionFor(InputStream, QualifiedName[])
+	 * @see IContentTypeManager#getDescriptionFor(InputStream, String, QualifiedName[])
 	 * @since 3.0
 	 */
 	public IContentDescription getContentDescription() throws CoreException;
