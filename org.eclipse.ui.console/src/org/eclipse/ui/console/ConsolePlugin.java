@@ -15,9 +15,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.console.ConsoleManager;
+import org.eclipse.ui.internal.console.ConsolePluginImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -135,4 +138,28 @@ public class ConsolePlugin extends AbstractUIPlugin {
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
+    
+    /**
+     * Returns the <code>Image<code> identified by the given key,
+     * or <code>null</code> if it does not exist.
+     * 
+     * @return the <code>Image<code> identified by the given key,
+     * or <code>null</code> if it does not exist
+     * @since 3.1
+     */
+    public static Image getImage(String key) {
+        return ConsolePluginImages.getImage(key);
+    }
+    
+    /**
+     * Returns the <code>ImageDescriptor<code> identified by the given key,
+     * or <code>null</code> if it does not exist.
+     * 
+     * @return the <code>ImageDescriptor<code> identified by the given key,
+     * or <code>null</code> if it does not exist
+     * @since 3.1
+     */
+    public static ImageDescriptor getImageDescriptor(String key) {
+        return ConsolePluginImages.getImageDescriptor(key);
+    }    
 }
