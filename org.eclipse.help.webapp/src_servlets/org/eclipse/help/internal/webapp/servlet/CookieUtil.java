@@ -15,6 +15,7 @@ import java.io.*;
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.webapp.*;
+import org.eclipse.help.internal.webapp.data.*;
 
 /**
  * Utilities for working with cookies
@@ -93,7 +94,9 @@ public class CookieUtil {
 		int len = data.length();
 		int n = len / MAX_COOKIE_PAYLOAD;
 		if (n > maxCookies) {
-			throw new IOException("Too may cookies required to store data.");
+			throw new IOException(WebappResources.getString(
+					"CookieUtil.tooManyCookiesNeeded", UrlUtil.getLocaleObj( //$NON-NLS-1$
+							request, response)));
 		}
 		for (int i = 1; i <= n; i++) {
 			if (i == 1) {
