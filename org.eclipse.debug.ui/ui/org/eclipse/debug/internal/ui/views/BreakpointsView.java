@@ -186,12 +186,8 @@ public class BreakpointsView extends AbstractDebugView {
 	protected void createActions() {
 		
 		setAction(REMOVE_ACTION, new RemoveBreakpointAction(getViewer()));
-			
-		IAction action = new RemoveAllBreakpointsAction();
-		action.setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
-		setAction("RemoveAll", action); //$NON-NLS-1$
 		
-		action = new OpenBreakpointMarkerAction(getViewer());
+		IAction action = new OpenBreakpointMarkerAction(getViewer());
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getStructuredViewer(),this)); //$NON-NLS-1$
@@ -210,7 +206,6 @@ public class BreakpointsView extends AbstractDebugView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
 		menu.add(getAction(REMOVE_ACTION));
-		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
@@ -221,9 +216,9 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
+		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
 		tbm.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		tbm.add(getAction(REMOVE_ACTION));
-		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
 		tbm.add(getAction("GotoMarker")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}

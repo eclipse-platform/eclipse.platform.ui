@@ -14,7 +14,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
-public class DisconnectActionDelegate extends ListenerActionDelegate {
+public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
 
 	/**
 	 * @see ControlActionDelegate#doAction(Object)

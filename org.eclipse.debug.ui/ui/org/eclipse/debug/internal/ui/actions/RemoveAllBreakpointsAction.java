@@ -15,22 +15,14 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Removes all breakpoints from the source (markers) and remove all
  * breakpoints from processes
  */
-public class RemoveAllBreakpointsAction extends AbstractRemoveAllAction implements IUpdate {
-	
-	public RemoveAllBreakpointsAction() {
-		super(ActionMessages.getString("RemoveAllBreakpointsAction.Remove_&All_1"), ActionMessages.getString("RemoveAllBreakpointsAction.Remove_All_Breakpoints_2")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate {
 
-	/**
-	 * @see IAction
-	 */
-	public void run() {
+	protected void doAction() {
 		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		final IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
 		final MultiStatus ms= new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("RemoveAllBreakpointsAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
@@ -55,11 +47,14 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllAction implemen
 		}
 	}
 	
+	protected void update() {
+		getAction().setEnabled(
+			DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
+	}	
 	/**
-	 * @see IUpdate#update()
+	 * @see AbstractDebugActionDelegate#getToolTipText()
 	 */
-	public void update() {
-		setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
+	protected String getToolTipText() {
+		return null;
 	}
-	
 }

@@ -14,7 +14,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
-public class TerminateActionDelegate extends ListenerActionDelegate {
+public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 
 	/**
 	 * @see ControlActionDelegate#doAction(Object)

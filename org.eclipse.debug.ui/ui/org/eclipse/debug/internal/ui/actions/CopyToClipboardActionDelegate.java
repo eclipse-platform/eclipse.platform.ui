@@ -31,7 +31,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 
-public class CopyToClipboardActionDelegate extends ControlActionDelegate {
+public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	
 	private ContentViewer fViewer;
 	

@@ -9,7 +9,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStep;
 
-public abstract class StepActionDelegate extends ListenerActionDelegate {
+public abstract class StepActionDelegate extends AbstractListenerActionDelegate {
 	
 	/**
 	 * @see ControlActionDelegate#doAction(Object)

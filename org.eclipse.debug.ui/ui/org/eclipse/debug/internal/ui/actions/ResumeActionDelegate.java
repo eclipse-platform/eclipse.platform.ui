@@ -15,7 +15,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-public class ResumeActionDelegate extends ListenerActionDelegate {
+public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 
 	/**
 	 * @see ControlActionDelegate#doAction(Object)

@@ -18,7 +18,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHis
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
-public class RelaunchActionDelegate extends ControlActionDelegate {
+public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
 	/**
 	 * @see ControlActionDelegate#doAction(Object)

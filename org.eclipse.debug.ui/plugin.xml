@@ -266,9 +266,9 @@
 			toolbarPath = "threadGroup"
 			icon = "icons/full/clcl16/rem_all_co.gif"
 			helpContextId = "remove_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveTerminatedAction"
-			tooltip="%RemoveTerminatedAction.tooltip"
-			label="%RemoveTerminatedAction.label">
+			class = "org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
+			tooltip="%RemoveAllTerminatedAction.tooltip"
+			label="%RemoveAllTerminatedAction.label">
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
@@ -335,7 +335,7 @@
 			label="%StepIntoAction.label">
 		</action>		
 	</viewContribution>
-	<!-- Contributions to Console View Toolbar -->
+<!-- Contributions to Console View Toolbar -->
 	<viewContribution
 		id = "org.eclipse.debug.ui.consoleview.toolbar"
 		targetID = "org.eclipse.debug.ui.ConsoleView">
@@ -347,6 +347,34 @@
 			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
 			tooltip="%TerminateAction.tooltip"
 			label="%TerminateAction.label">
+		</action>
+	</viewContribution>
+<!-- Contributions to Breakpoints View Toolbar -->
+	<viewContribution
+		id = "org.eclipse.debug.ui.breakpointsview.toolbar"
+		targetID = "org.eclipse.debug.ui.BreakpointView">
+		<action
+			id = "org.eclipse.debug.ui.breakpointsView.toolbar.removeAll"
+			icon = "icons/full/clcl16/rem_all_co.gif"
+			helpContextId = "remove_action_context"
+			toolbarPath = "breakpointGroup"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction"
+			tooltip="%RemoveAllBreakpointsAction.tooltip"
+			label="%RemoveAllAction.label">
+		</action>
+	</viewContribution>
+<!-- Contributions to Expression View Toolbar -->
+	<viewContribution
+		id = "org.eclipse.debug.ui.expressionsView.toolbar"
+		targetID = "org.eclipse.debug.ui.ExpressionView">
+		<action
+			id = "org.eclipse.debug.ui.expresssionsView.toolbar.removeAll"
+			icon = "icons/full/clcl16/rem_all_co.gif"
+			helpContextId = "remove_action_context"
+			toolbarPath = "expressionGroup"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
+			tooltip="%RemoveAllExpressionsAction.tooltip"
+			label="%RemoveAllAction.label">
 		</action>
 	</viewContribution>
 </extension>
@@ -385,8 +413,8 @@
 			menubarPath = "launchGroup"
 			icon = "icons/full/clcl16/rem_all_co.gif"
 			helpContextId = "remove_action_context"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveTerminatedAction"
-			label="%RemoveTerminatedAction.label">
+			class = "org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
+			label="%RemoveAllTerminatedAction.label">
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.disconnect"
@@ -464,6 +492,12 @@
 			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
 			enablesFor="2+">
 		</action>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.RemoveAllBreakpoints"
+			label="%RemoveAllAction.label"
+			menubarPath="breakpointGroup"
+			class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction">
+		</action>
 	</viewerContribution>
 <!-- Contributions to Variables View Popup Menu -->	
 	<viewerContribution
@@ -489,6 +523,12 @@
 			helpContextId = "copy_variables_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.removeAllExpressionsAction"
+			menubarPath = "expressionGroup"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
+			label="%RemoveAllAction.label">
 		</action>
 	</viewerContribution>
 <!-- Contributions to Console View popup menu -->

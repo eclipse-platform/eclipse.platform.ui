@@ -25,7 +25,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionChangedListener {
+public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionChangedListener {
 	
 	/**
 	 * The underlying action for this delegate
@@ -52,7 +52,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
 	 */
-	public ControlActionDelegate() {
+	public AbstractDebugActionDelegate() {
 	}
 	
 	/**

@@ -18,7 +18,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
-public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
+public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegate {
 
 	/**
 	 * @see ControlActionDelegate#doAction(Object)

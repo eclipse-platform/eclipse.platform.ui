@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public abstract class ListenerActionDelegate extends ControlActionDelegate implements IDebugEventListener, IPartListener, IPageListener {
+public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventListener, IPartListener, IPageListener {
 
 	/**
 	 * The window associated with this action delegate
