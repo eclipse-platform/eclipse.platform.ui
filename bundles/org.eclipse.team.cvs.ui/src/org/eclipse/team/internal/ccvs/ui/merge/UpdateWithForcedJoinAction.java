@@ -77,5 +77,6 @@ public class UpdateWithForcedJoinAction extends UpdateMergeAction {
 	 */	
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
 		set.removeOutgoingNodes();
+		set.removeIncomingNodes();
 	}
 }

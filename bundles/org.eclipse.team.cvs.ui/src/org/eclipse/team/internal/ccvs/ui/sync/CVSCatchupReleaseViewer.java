@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.merge.OverrideUpdateMergeAction;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateMergeAction;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateWithForcedJoinAction;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
@@ -55,6 +56,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private UpdateWithForcedJoinAction updateWithJoinAction;
 	private IgnoreAction ignoreAction;
 	private HistoryAction showInHistory;
+	private OverrideUpdateMergeAction forceUpdateMergeAction;
 	
 	class DiffImage extends CompositeImageDescriptor {
 		private static final int HEIGHT= 16;
@@ -220,10 +222,10 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				break;
 			case SyncView.SYNC_MERGE:
 				updateMergeAction.update(SyncView.SYNC_INCOMING);
-				forceUpdateAction.update(SyncView.SYNC_INCOMING);
+				forceUpdateMergeAction.update(SyncView.SYNC_INCOMING);
 				updateWithJoinAction.update(SyncView.SYNC_INCOMING);
 				manager.add(updateMergeAction);
-				manager.add(forceUpdateAction);
+				manager.add(forceUpdateMergeAction);
 				manager.add(updateWithJoinAction);
 				break;
 		}
@@ -241,6 +243,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		updateMergeAction = new UpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
 		ignoreAction = new IgnoreAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.ignore"), shell);
 		updateWithJoinAction = new UpdateWithForcedJoinAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.mergeUpdate"), shell);
+		forceUpdateMergeAction = new OverrideUpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceUpdate"), shell);
 		
 		// Show in history view
 		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory"));
