@@ -82,7 +82,7 @@ INPUT {
 </style>
 
 <script language="JavaScript">
-var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 var extraStyle = "";
 if (isIE)

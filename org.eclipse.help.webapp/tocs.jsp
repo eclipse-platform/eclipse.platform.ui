@@ -76,8 +76,8 @@ DIV.active {
 </style>
   
 <script language="JavaScript">
-var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
-var isIE50 = navigator.userAgent.toLowerCase().indexOf('msie 5.0') != -1;
+var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+var isIE50 = navigator.userAgent.indexOf('MSIE 5.0') != -1;
 
 var extraStyle = "";
 if (isMozilla)

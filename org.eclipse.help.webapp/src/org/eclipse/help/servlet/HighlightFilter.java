@@ -95,7 +95,7 @@ public class HighlightFilter implements IFilter {
 		Collection words = new HashSet(); // to eliminate duplicate words
 		for (Iterator it = tokens.iterator(); it.hasNext();) {
 			String token = (String) it.next();
-			String tokenLowerCase = token.toLowerCase();
+			String tokenLowerCase = token.toLowerCase(Locale.US);
 			if (!tokenLowerCase.equals("\"")
 				&& !tokenLowerCase.equals("and")
 				&& !tokenLowerCase.equals("or")

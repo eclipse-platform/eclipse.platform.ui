@@ -1,6 +1,6 @@
-<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.Locale" contentType="text/html; charset=UTF-8"%>
 <%
-	String agent=request.getHeader("User-Agent").toLowerCase();
+	String agent=request.getHeader("User-Agent").toLowerCase(Locale.US);
 	boolean ie   = (agent.indexOf("msie") != -1);
 	boolean mozilla  = (!ie && (agent.indexOf("mozilla/5")!=-1));
 %>

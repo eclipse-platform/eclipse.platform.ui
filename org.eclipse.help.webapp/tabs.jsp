@@ -85,7 +85,7 @@ IMG {
 </style>
  
  <script language="JavaScript">
- var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+ var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
  var extraStyle = "";
   if (isMozilla)
   	 extraStyle = "<style type='text/css'>BODY { height:21px;} </style>";

@@ -6,7 +6,7 @@ package org.eclipse.help.servlet;
 
 import java.io.*;
 import java.net.*;
-import java.util.Enumeration;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
@@ -161,7 +161,7 @@ public class EclipseConnector {
 	 */
 	private IFilter[] getFilters(HttpServletRequest req) {
 		String uri = req.getRequestURI();
-		String agent = req.getHeader("User-Agent").toLowerCase();
+		String agent = req.getHeader("User-Agent").toLowerCase(Locale.US);
 		boolean ie = (agent.indexOf("msie") != -1);
 		// we only insert css for ie
 		if (ie) {

@@ -5,8 +5,8 @@
  
 // Common scripts for IE and Mozilla.
 
-var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
-var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 
 /**
