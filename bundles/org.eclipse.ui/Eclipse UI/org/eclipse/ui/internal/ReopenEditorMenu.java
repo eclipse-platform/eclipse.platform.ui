@@ -49,6 +49,9 @@ private String calcText(int index, EditorHistoryItem item) {
  * menu items for all windows.
  */
 public void fill(Menu menu, int index) {
+	if(fWindow.getActivePage() == null)
+		return;
+	
 	// Get items.
 	EditorHistoryItem [] array = history.getItems();
 
