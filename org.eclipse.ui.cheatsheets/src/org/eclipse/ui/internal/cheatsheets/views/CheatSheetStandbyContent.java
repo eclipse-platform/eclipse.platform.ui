@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
-import org.eclipse.ui.internal.cheatsheets.views.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.internal.parts.*;
 
