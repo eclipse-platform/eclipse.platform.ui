@@ -347,8 +347,9 @@ public class AntJRETab extends JavaJRETab {
 		super.initializeFrom(configuration);
 		fVMArgumentsBlock.initializeFrom(configuration);
 		fWorkingDirectoryBlock.initializeFrom(configuration);
-		fWorkingDirectoryBlock.setEnabled(!fJREBlock.isDefaultJRE());
-		fVMArgumentsBlock.setEnabled(!fJREBlock.isDefaultJRE());
+		boolean separateVM= !fJREBlock.isDefaultJRE();
+		fWorkingDirectoryBlock.setEnabled(separateVM);
+		fVMArgumentsBlock.setEnabled(separateVM);
 	}
 	
 	/* (non-Javadoc)
@@ -394,6 +395,7 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	protected void handleSelectedJREChanged() {
 		if (fIsInitializing) {
+			super.handleSelectedJREChanged();
 			return;
 		}
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING);
