@@ -26,10 +26,16 @@ public class Atom implements IAtom {
 		fName = name.intern();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.IAtom#getName()
+	 */
 	public String getName() {
 		return fName;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		return fName;
 	}
