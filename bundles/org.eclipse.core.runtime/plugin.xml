@@ -47,8 +47,6 @@
 			priority="high"				
 			file-extensions="properties"
 			default-charset="ISO-8859-1"/>
-		<!-- temporary - to be contributed by Core Resources -->
-		<file-association content-type="xml" file-names=".project"/>
 		<!-- temporary - to be contributed by JDT Core -->
 		<file-association content-type="xml" file-names=".classpath"/>		
 	</extension>		 

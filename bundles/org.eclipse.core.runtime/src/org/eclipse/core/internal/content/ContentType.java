@@ -140,12 +140,8 @@ public class ContentType implements IContentType {
 		}
 		if (type != FILE_EXTENSION_SPEC && type != FILE_NAME_SPEC)
 			throw new IllegalArgumentException("Unknown type: " + type); //$NON-NLS-1$		
-		// ensure we don't have it already		
-		if (hasFileSpec(fileSpec, type))
+		if (!internalAddFileSpec(fileSpec, type | USER_DEFINED_SPEC))
 			return;
-		if (fileSpecs == null)
-			fileSpecs = new ArrayList(3);
-		internalAddFileSpec(fileSpec, type | USER_DEFINED_SPEC);
 		String key = getPreferenceKey(type);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		contentTypeNode.put(key, toListString(fileSpecs));
@@ -229,7 +225,7 @@ public class ContentType implements IContentType {
 				} catch (CoreException ce) {
 					// the content type definition was invalid. Ensure we don't try again, and this content type does not accept any contents					
 					return invalidateDescriber(ce);
-				}				
+				}
 		}
 		ContentType baseType = (ContentType) getBaseType();
 		return baseType == null ? null : baseType.getDescriber();
@@ -316,14 +312,15 @@ public class ContentType implements IContentType {
 		return false;
 	}
 
-	void internalAddFileSpec(String fileSpec, int typeMask) {
-		if (aliasTarget != null) {
-			aliasTarget.internalAddFileSpec(fileSpec, typeMask);
-			return;
-		}
+	boolean internalAddFileSpec(String fileSpec, int typeMask) {
+		if (hasFileSpec(fileSpec, typeMask))
+			return false;
+		if (aliasTarget != null)
+			return aliasTarget.internalAddFileSpec(fileSpec, typeMask);
 		if (fileSpecs == null)
 			fileSpecs = new ArrayList(3);
 		fileSpecs.add(createFileSpec(fileSpec, typeMask));
+		return true;
 	}
 
 	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) throws IOException {
