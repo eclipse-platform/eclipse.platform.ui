@@ -29,7 +29,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	private RLog rlog = new RLog();
 	private Map entries = new HashMap();
 	
-	protected RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources) {
+	public RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources) {
 		super(part, remoteResources);
 	}
 	

@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.*;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -29,7 +28,7 @@ public abstract class RepositoryLocationOperation extends RemoteOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
+	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
 		Map table = getLocationMapping(getRemoteResources());
 		Set keySet = table.keySet();
 		monitor.beginTask(null, keySet.size() * 100);
@@ -37,7 +36,7 @@ public abstract class RepositoryLocationOperation extends RemoteOperation {
 		while (iterator.hasNext()) {
 			ICVSRepositoryLocation location = (ICVSRepositoryLocation)iterator.next();
 			List list = (List)table.get(location);
-			ICVSRemoteResource[] remoteResources = (ICVSRemoteResource[])list.toArray(new IResource[list.size()]);
+			ICVSRemoteResource[] remoteResources = (ICVSRemoteResource[])list.toArray(new ICVSRemoteResource[list.size()]);
 			execute(location, remoteResources, Policy.subMonitorFor(monitor, 100));
 		}
 	}
