@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 class EditBookmarkAction extends BookmarkAction {
 
     protected EditBookmarkAction(BookmarkNavigator view) {
-        super(view, BookmarkMessages.getString("Properties.text")); //$NON-NLS-1$
+        super(view, BookmarkMessages.Properties_text);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.BOOKMARK_PROPERTIES_ACTION);
         setEnabled(false);

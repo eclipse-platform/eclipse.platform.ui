@@ -32,8 +32,8 @@ class RemoveBookmarkAction extends BookmarkAction {
      * @param view the view
      */
     public RemoveBookmarkAction(BookmarkNavigator view) {
-        super(view, BookmarkMessages.getString("RemoveBookmark.text")); //$NON-NLS-1$
-        setToolTipText(BookmarkMessages.getString("RemoveBookmark.toolTip")); //$NON-NLS-1$
+        super(view, BookmarkMessages.RemoveBookmark_text);
+        setToolTipText(BookmarkMessages.RemoveBookmark_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.REMOVE_BOOKMARK_ACTION);
         setEnabled(false);
@@ -62,8 +62,7 @@ class RemoveBookmarkAction extends BookmarkAction {
             ErrorDialog
                     .openError(
                             getView().getShell(),
-                            BookmarkMessages
-                                    .getString("RemoveBookmark.errorTitle"), null, e.getStatus()); //$NON-NLS-1$
+                            BookmarkMessages.RemoveBookmark_errorTitle, null, e.getStatus());
         }
     }
 

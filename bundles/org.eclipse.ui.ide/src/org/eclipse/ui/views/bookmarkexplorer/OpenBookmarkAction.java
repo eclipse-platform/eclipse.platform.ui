@@ -36,8 +36,8 @@ class OpenBookmarkAction extends BookmarkAction {
      * @param view the view
      */
     public OpenBookmarkAction(BookmarkNavigator view) {
-        super(view, BookmarkMessages.getString("OpenBookmark.text")); //$NON-NLS-1$
-        setToolTipText(BookmarkMessages.getString("OpenBookmark.toolTip")); //$NON-NLS-1$
+        super(view, BookmarkMessages.OpenBookmark_text);
+        setToolTipText(BookmarkMessages.OpenBookmark_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.OPEN_BOOKMARK_ACTION);
         setEnabled(false);
@@ -65,15 +65,13 @@ class OpenBookmarkAction extends BookmarkAction {
                     // Open an error dialog and include the extra
                     // status information from the nested CoreException
                     ErrorDialog.openError(getView().getShell(),
-                            BookmarkMessages
-                                    .getString("OpenBookmark.errorTitle"), //$NON-NLS-1$
+                            BookmarkMessages.OpenBookmark_errorTitle,
                             e.getMessage(), nestedException.getStatus());
                 } else {
                     // Open a regular error dialog since there is no
                     // extra information to display
                     MessageDialog.openError(getView().getShell(),
-                            BookmarkMessages
-                                    .getString("OpenBookmark.errorTitle"), //$NON-NLS-1$
+                            BookmarkMessages.OpenBookmark_errorTitle,
                             e.getMessage());
                 }
             }

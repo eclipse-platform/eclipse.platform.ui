@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -169,8 +170,7 @@ class BookmarkPropertiesDialog extends Dialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (title == null)
-            newShell.setText(BookmarkMessages
-                    .getString("PropertiesDialogTitle.text")); //$NON-NLS-1$
+            newShell.setText(BookmarkMessages.PropertiesDialogTitle_text);
         else
             newShell.setText(title);
     }
@@ -206,7 +206,7 @@ class BookmarkPropertiesDialog extends Dialog {
      * @param composite
      */
     private void createCreationTimeArea(Composite parent) {
-        String creation = BookmarkMessages.getString("MarkerCreationTime.text");//$NON-NLS-1$
+        String creation = BookmarkMessages.MarkerCreationTime_text;
 
         Font font = parent.getFont();
         Composite composite = new Composite(parent, SWT.NONE);
@@ -242,8 +242,7 @@ class BookmarkPropertiesDialog extends Dialog {
         layout.numColumns = 2;
         composite.setLayout(layout);
         Label label = new Label(composite, SWT.NONE);
-        label.setText(BookmarkMessages
-                .getString("ColumnDescription.dialogText")); //$NON-NLS-1$
+        label.setText(BookmarkMessages.ColumnDescription_dialogText);
         label.setFont(font);
         int style = SWT.SINGLE | SWT.BORDER;
         descriptionText = new Text(composite, style);
@@ -272,8 +271,7 @@ class BookmarkPropertiesDialog extends Dialog {
         composite.setLayout(layout);
 
         Label resourceLabel = new Label(composite, SWT.NONE);
-        resourceLabel.setText(BookmarkMessages
-                .getString("ColumnResource.dialogText")); //$NON-NLS-1$
+        resourceLabel.setText(BookmarkMessages.ColumnResource_dialogText);
         resourceLabel.setFont(font);
         resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
@@ -282,8 +280,7 @@ class BookmarkPropertiesDialog extends Dialog {
         resourceText.setFont(font);
 
         Label folderLabel = new Label(composite, SWT.NONE);
-        folderLabel.setText(BookmarkMessages
-                .getString("ColumnFolder.dialogText")); //$NON-NLS-1$
+        folderLabel.setText(BookmarkMessages.ColumnFolder_dialogText);
         folderLabel.setFont(font);
         folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
                 | SWT.BORDER);
@@ -292,8 +289,7 @@ class BookmarkPropertiesDialog extends Dialog {
         folderText.setFont(font);
 
         Label locationLabel = new Label(composite, SWT.NONE);
-        locationLabel.setText(BookmarkMessages
-                .getString("ColumnLocation.dialogText")); //$NON-NLS-1$
+        locationLabel.setText(BookmarkMessages.ColumnLocation_dialogText);
         locationLabel.setFont(font);
         locationText = new Text(composite, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
@@ -322,10 +318,7 @@ class BookmarkPropertiesDialog extends Dialog {
             if (line < 0)
                 locationText.setText(""); //$NON-NLS-1$
             else
-                locationText
-                        .setText(BookmarkMessages
-                                .format(
-                                        "LineIndicator.text", new String[] { String.valueOf(line) })); //$NON-NLS-1$
+                locationText.setText(NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line)));
         }
 
         descriptionText.selectAll();
@@ -362,10 +355,7 @@ class BookmarkPropertiesDialog extends Dialog {
 
             Object line = initialAttributes.get(IMarker.LINE_NUMBER);
             if (line != null && line instanceof Integer)
-                locationText
-                        .setText(BookmarkMessages
-                                .format(
-                                        "LineIndicator.text", new String[] { line.toString() })); //$NON-NLS-1$
+                locationText.setText(NLS.bind(BookmarkMessages.LineIndicator_text, line));
         }
     }
 
@@ -401,8 +391,7 @@ class BookmarkPropertiesDialog extends Dialog {
                 }
             }, null);
         } catch (CoreException e) {
-            ErrorDialog.openError(getShell(), BookmarkMessages
-                    .getString("Error"), null, e.getStatus()); //$NON-NLS-1$
+            ErrorDialog.openError(getShell(), BookmarkMessages.Error_text, null, e.getStatus());
             return;
         }
     }

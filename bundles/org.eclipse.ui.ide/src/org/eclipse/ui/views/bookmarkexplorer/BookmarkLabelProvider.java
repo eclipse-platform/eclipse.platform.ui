@@ -17,6 +17,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -76,9 +77,7 @@ class BookmarkLabelProvider extends LabelProvider implements
             int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
             if (line == -1)
                 return ""; //$NON-NLS-1$
-            return BookmarkMessages
-                    .format(
-                            "LineIndicator.text", new String[] { String.valueOf(line) });//$NON-NLS-1$
+            return NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line));
         }
         }
         return ""; //$NON-NLS-1$ 

@@ -37,7 +37,7 @@ class PasteBookmarkAction extends BookmarkAction {
      * @param view the view
      */
     public PasteBookmarkAction(BookmarkNavigator view) {
-        super(view, BookmarkMessages.getString("PasteBookmark.text"));//$NON-NLS-1$
+        super(view, BookmarkMessages.PasteBookmark_text);
         this.view = view;
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.PASTE_BOOKMARK_ACTION);
@@ -77,8 +77,7 @@ class PasteBookmarkAction extends BookmarkAction {
                 }
             }, null);
         } catch (CoreException e) {
-            ErrorDialog.openError(view.getShell(), BookmarkMessages
-                    .getString("PasteBookmark.errorTitle"), //$NON-NLS-1$
+            ErrorDialog.openError(view.getShell(), BookmarkMessages.PasteBookmark_errorTitle,
                     null, e.getStatus());
             return;
         }

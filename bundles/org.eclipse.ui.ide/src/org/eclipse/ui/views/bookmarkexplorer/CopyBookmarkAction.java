@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -35,8 +36,7 @@ class CopyBookmarkAction extends BookmarkAction {
      * @param bookmarkNavigator the view
      */
     public CopyBookmarkAction(BookmarkNavigator bookmarkNavigator) {
-        super(bookmarkNavigator, BookmarkMessages
-                .getString("CopyBookmark.text")); //$NON-NLS-1$
+        super(bookmarkNavigator, BookmarkMessages.CopyBookmark_text);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.COPY_BOOKMARK_ACTION);
         setEnabled(false);
@@ -83,8 +83,7 @@ class CopyBookmarkAction extends BookmarkAction {
             if (MessageDialog
                     .openQuestion(
                             getView().getShell(),
-                            BookmarkMessages
-                                    .getString("CopyToClipboardProblemDialog.title"), BookmarkMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+                            BookmarkMessages.CopyToClipboardProblemDialog_title, BookmarkMessages.CopyToClipboardProblemDialog_message))
                 setClipboard(markers, markerReport);
         }
     }
@@ -93,10 +92,10 @@ class CopyBookmarkAction extends BookmarkAction {
         String report = ""; //$NON-NLS-1$
 
         //write header
-        report += BookmarkMessages.getString("ColumnDescription.header") + '\t'; //$NON-NLS-1$
-        report += BookmarkMessages.getString("ColumnResource.header") + '\t'; //$NON-NLS-1$
-        report += BookmarkMessages.getString("ColumnFolder.header") + '\t'; //$NON-NLS-1$
-        report += BookmarkMessages.getString("ColumnLocation.header"); //$NON-NLS-1$
+        report += BookmarkMessages.ColumnDescription_header + '\t';
+        report += BookmarkMessages.ColumnResource_header + '\t';
+        report += BookmarkMessages.ColumnFolder_header + '\t';
+        report += BookmarkMessages.ColumnLocation_header;
         report += System.getProperty("line.separator"); //$NON-NLS-1$
 
         //write markers
@@ -105,9 +104,7 @@ class CopyBookmarkAction extends BookmarkAction {
             report += MarkerUtil.getResourceName(markers[i]) + '\t';
             report += MarkerUtil.getContainerName(markers[i]) + '\t';
             int line = MarkerUtil.getLineNumber(markers[i]);
-            report += BookmarkMessages
-                    .format(
-                            "LineIndicator.text", new String[] { String.valueOf(line) });//$NON-NLS-1$
+            report += NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line));
             report += System.getProperty("line.separator"); //$NON-NLS-1$
         }
 

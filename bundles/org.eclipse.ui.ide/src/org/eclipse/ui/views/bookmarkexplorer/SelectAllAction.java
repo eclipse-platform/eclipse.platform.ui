@@ -27,8 +27,8 @@ class SelectAllAction extends BookmarkAction {
      * @param view the view
      */
     public SelectAllAction(BookmarkNavigator view) {
-        super(view, BookmarkMessages.getString("SelectAll.text")); //$NON-NLS-1$
-        setToolTipText(BookmarkMessages.getString("SelectAll.toolTip")); //$NON-NLS-1$
+        super(view, BookmarkMessages.SelectAll_text);
+        setToolTipText(BookmarkMessages.SelectAll_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 IBookmarkHelpContextIds.SELECT_ALL_BOOKMARK_ACTION);
         setEnabled(true);

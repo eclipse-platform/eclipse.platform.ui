@@ -1,59 +1,84 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ui.views.bookmarkexplorer;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * Utility class which helps managing messages
- */
-class BookmarkMessages {
+public class BookmarkMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.ui.views.bookmarkexplorer.messages";//$NON-NLS-1$
+	//
+	// Copyright (c) 2000, 2003 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
 
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.views.bookmarkexplorer.messages";//$NON-NLS-1$
+	// package: org.eclipse.ui.views.bookmarkexplorer
 
-    private static ResourceBundle bundle = ResourceBundle
-            .getBundle(RESOURCE_BUNDLE);
 
-    private BookmarkMessages() {
-        // prevent instantiation of class
-    }
+	public static String CopyBookmark_text;
 
-    /**
-     * Returns the formatted message for the given key in
-     * the resource bundle. 
-     *
-     * @param key the resource name
-     * @param args the message arguments
-     * @return the string
-     */
-    public static String format(String key, Object[] args) {
-        return MessageFormat.format(getString(key), args);
-    }
+	public static String PasteBookmark_text;
+	public static String PasteBookmark_errorTitle;
 
-    /**
-     * Returns the resource object with the given key in
-     * the resource bundle. If there isn't any value under
-     * the given key, the key is returned.
-     *
-     * @param key the resource name
-     * @return the string
-     */
-    public static String getString(String key) {
-        try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
-            return key;
-        }
-    }
+	public static String OpenBookmark_text;
+	public static String OpenBookmark_toolTip;
+	public static String OpenBookmark_errorTitle;
+
+	public static String RemoveBookmark_text;
+	public static String RemoveBookmark_toolTip;
+	public static String RemoveBookmark_errorTitle;
+
+	public static String SelectAll_text;
+	public static String SelectAll_toolTip;
+
+	public static String Properties_text;
+
+	public static String ColumnDescription_text;
+	public static String ColumnResource_text;
+	public static String ColumnFolder_text;
+	public static String ColumnLocation_text;
+	public static String ColumnCreationTime_text;
+	
+	public static String Error_text;
+
+	public static String LineIndicator_text;
+
+	public static String ColumnIcon_header;
+	public static String ColumnDescription_header;
+	public static String ColumnResource_header;
+	public static String ColumnFolder_header;
+	public static String ColumnLocation_header;
+
+	public static String ColumnDescription_dialogText;
+	public static String ColumnResource_dialogText;
+	public static String ColumnFolder_dialogText;
+	public static String ColumnLocation_dialogText;
+
+	public static String SortMenuGroup_text;
+	public static String SortDirectionAscending_text;
+	public static String SortDirectionDescending_text;
+
+	public static String PropertiesDialogTitle_text;
+	public static String MarkerCreationTime_text;
+
+	public static String CopyToClipboardProblemDialog_title;
+	public static String CopyToClipboardProblemDialog_message;
+
+
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, BookmarkMessages.class);
+	}
 }
