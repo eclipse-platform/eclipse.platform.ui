@@ -97,6 +97,8 @@ public class LocalHelpPage extends RootScopePage{
       
         if (workingSet == null)
             searchAll.setSelection(true);
+        else
+            searchSelected.setSelection(true);
         
         Label label = new Label(composite, SWT.WRAP);
         label.setFont(font);
@@ -317,12 +319,12 @@ public class LocalHelpPage extends RootScopePage{
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
-        if (searchSelected.isEnabled()) {
+        if (searchSelected.isEnabled())
             BaseHelpSystem.getWorkingSetManager().addWorkingSet(getWorkingSet());
-            getPreferenceStore().setValue(getEngineId(), getScopeSetName());
-        } else {
+        else 
             BaseHelpSystem.getWorkingSetManager().removeWorkingSet(getWorkingSet());
-        }
+        
+        getPreferenceStore().setValue(getEngineId(), getScopeSetName());
         return super.performOk();
     }
 }
