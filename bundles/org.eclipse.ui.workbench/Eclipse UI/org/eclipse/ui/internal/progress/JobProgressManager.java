@@ -195,6 +195,7 @@ public class JobProgressManager
 	JobProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
 		Platform.getJobManager().addJobChangeListener(this);
+		addListener(new StatusLineProgressListener());
 		URL iconsRoot =
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
 				new Path(JobProgressManager.PROGRESS_FOLDER));
