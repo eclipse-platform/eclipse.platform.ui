@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.newresource;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
@@ -50,9 +49,9 @@ public BasicNewFileResourceWizard() {
  */
 public void addPages() {
 	super.addPages();
-	mainPage = new WizardNewFileCreationPage("newFilePage1",  getSelection());
-	mainPage.setTitle("File");
-	mainPage.setDescription("Create a new file resource.");
+	mainPage = new WizardNewFileCreationPage("newFilePage1",  getSelection());//$NON-NLS-1$
+	mainPage.setTitle(ResourceMessages.getString("FileResource.pageTitle")); //$NON-NLS-1$
+	mainPage.setDescription(ResourceMessages.getString("FileResource.description")); //$NON-NLS-1$
 	addPage(mainPage);
 }
 /* (non-Javadoc)
@@ -60,7 +59,7 @@ public void addPages() {
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	super.init(workbench, currentSelection);
-	setWindowTitle("New File");
+	setWindowTitle(ResourceMessages.getString("FileResource.shellTitle")); //$NON-NLS-1$
 	setNeedsProgressMonitor(true);
 }
 /* (non-Javadoc)
@@ -69,13 +68,13 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 protected void initializeDefaultPageImageDescriptor() {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	try {
 		URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath + "wizban/newfile_wiz.gif");
+		URL url = new URL(installURL, iconPath + "wizban/newfile_wiz.gif");//$NON-NLS-1$
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		setDefaultPageImageDescriptor(desc);
 	}
@@ -102,7 +101,7 @@ public boolean performFinish() {
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			dw.getShell(),
-			"Problems Opening Editor",
+			ResourceMessages.getString("FileResource.errorMessage"), //$NON-NLS-1$
 			e.getMessage(),
 			e);
 	}

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -37,7 +36,8 @@ public class EditorWorkbook extends LayoutPart
 	private boolean ignoreTabFocusHide = false;
 	private boolean handleTabSelection = true;
 	private boolean mouseDownListenerAdded = false;
-	
+
+	private boolean isZoomed = false;
 	private Composite parent;
 	private CTabFolder tabFolder;
 	private EditorArea editorArea;
@@ -50,7 +50,7 @@ public class EditorWorkbook extends LayoutPart
  * EditorWorkbook constructor comment.
  */
 public EditorWorkbook(EditorArea editorArea) {
-	super("editor workbook");
+	super("editor workbook");//$NON-NLS-1$
 	this.editorArea = editorArea;
 	// Each workbook has a unique ID so
 	// relative positioning is unambiguous.
@@ -59,7 +59,7 @@ public EditorWorkbook(EditorArea editorArea) {
 	// Get tab location preference.
 	if (tabLocation == -1)
 		tabLocation = getPreferenceStore().getInt(
-			IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
+			IPreferenceConstants.EDITOR_TAB_POSITION);
 }
 /**
  * See ILayoutContainer::add
@@ -342,6 +342,16 @@ public EditorPane getVisibleEditor() {
  */
 public boolean isActiveWorkbook() {
 	return getEditorArea().isActiveWorkbook(this);
+}
+/**
+ *	Allow the layout part to determine if they are in
+ * an acceptable state to start a drag & drop operation.
+ */
+public boolean isDragAllowed() {
+	if (isZoomed)
+		return false;
+	else
+		return true;
 }
 /**
  * Returns true if this part is visible.  A part is visible if it has a control.
@@ -658,11 +668,12 @@ public LayoutPart targetPartFor(LayoutPart dragSource) {
 public void updateEditorTab(IEditorPart editor) {
 	// Get tab.
 	CTabItem tab = getTab(editor);
+	if(tab == null) return;
 	
 	// Update title.
 	String title = editor.getTitle();
 	if (editor.isDirty())
-		title = "*" + title;
+		title = "*" + title;//$NON-NLS-1$
 	tab.setText(title);
 
 	// Update the tab image
@@ -696,6 +707,10 @@ public void updateEditorTab(IEditorPart editor) {
  * Zoom in on the active part.
  */
 public void zoomIn() {
+	if (isZoomed)
+		return;
+	isZoomed = true;
+	
 	// Remove each tab but the active.
 	if (tabFolder != null) {
 		// Get active editor.
@@ -716,6 +731,10 @@ public void zoomIn() {
  * Zoom out and show all editors.
  */
 public void zoomOut() {
+	if (!isZoomed)
+		return;
+	isZoomed = false;
+	
 	// Create a tab for each inactive editor.
 	if (tabFolder != null) {
 		int count = 0;

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 /**
  * <code>Assert</code> is useful for for embedding runtime sanity checks
@@ -32,7 +31,7 @@ private Assert() {
  * @exception IllegalArgumentException if the legality test failed
  */
 public static boolean isLegal(boolean expression) {
-	return isLegal(expression, "");
+	return isLegal(expression, "");//$NON-NLS-1$
 }
 /** Asserts that an argument is legal. If the given boolean is
  * not <code>true</code>, an <code>IllegalArgumentException</code>
@@ -57,7 +56,7 @@ public static boolean isLegal(boolean expression, String message) {
  * @exception IllegalArgumentException if the object is <code>null</code>
  */
 public static void isNotNull(Object object) {
-	isNotNull(object, "");
+	isNotNull(object, "");//$NON-NLS-1$
 }
 /** Asserts that the given object is not <code>null</code>. If this
  * is not the case, some kind of unchecked exception is thrown.
@@ -69,7 +68,7 @@ public static void isNotNull(Object object) {
  */
 public static void isNotNull(Object object, String message) {
 	if (object == null)
-		throw new AssertionFailedException("null argument;" + message);
+		throw new AssertionFailedException("null argument;" + message);//$NON-NLS-1$
 }
 /** Asserts that the given boolean is <code>true</code>. If this
  * is not the case, some kind of unchecked exception is thrown.
@@ -79,7 +78,7 @@ public static void isNotNull(Object object, String message) {
  *    if the check fails)
  */
 public static boolean isTrue(boolean expression) {
-	return isTrue(expression, "");
+	return isTrue(expression, "");//$NON-NLS-1$
 }
 /** Asserts that the given boolean is <code>true</code>. If this
  * is not the case, some kind of unchecked exception is thrown.
@@ -92,7 +91,7 @@ public static boolean isTrue(boolean expression) {
  */
 public static boolean isTrue(boolean expression, String message) {
 	if (!expression)
-		throw new AssertionFailedException("assertion failed; "+message);
+		throw new AssertionFailedException("assertion failed; "+message);//$NON-NLS-1$
 	return expression;
 }
 }

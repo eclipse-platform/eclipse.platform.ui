@@ -1,13 +1,13 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * For creating non-existing folder resources along a given workspace path.
@@ -86,7 +86,7 @@ private IFolder createFolderHandle(IContainer container, String folderName) {
  */
 private IProject createProject(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 	try {
-		monitor.beginTask("",2000);
+		monitor.beginTask("",2000);//$NON-NLS-1$
 	
 		projectHandle.create(new SubProgressMonitor(monitor, 1000));
 		if (monitor.isCanceled())
@@ -131,7 +131,7 @@ private IProject createProjectHandle(IWorkspaceRoot root, String projectName) {
 public IContainer generateContainer(IProgressMonitor monitor) throws CoreException {
 	WorkbenchPlugin.getPluginWorkspace().run(new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
-			monitor.beginTask("Generate Folder", 1000 * containerFullPath.segmentCount());
+			monitor.beginTask(WorkbenchMessages.getString("ContainerGenerator.progressMessage"), 1000 * containerFullPath.segmentCount()); //$NON-NLS-1$
 			if (container != null)
 				return;
 

@@ -1,16 +1,13 @@
 package org.eclipse.ui.views.navigator;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.util.*;
 
 /**
  * A string pattern matcher, suppporting * and ? wildcards.
- * Note: code copied from org.eclipse.jdt.internal.core.util.StringMatcher on April 3, 2001
- * (version 0.1 - 010901H18 [rename jbl]).
  */
 /* package */ class StringMatcher {
 	protected String fPattern;
@@ -225,9 +222,9 @@ import java.util.*;
 	 * @param p, a String object that is a simple regular expression with ‘*’ and/or ‘?’
 	 */
 	private void parseWildCards() {
-		if(fPattern.startsWith("*"))
+		if(fPattern.startsWith("*"))//$NON-NLS-1$
 			fHasLeadingStar = true;
-		if(fPattern.endsWith("*")) {
+		if(fPattern.endsWith("*")) {//$NON-NLS-1$
 			/* make sure it's not an escaped wildcard */
 			if (fLength > 1 && fPattern.charAt(fLength - 2) != '\\') {
 				fHasTrailingStar = true;

@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
@@ -184,7 +183,8 @@ protected void exportChildren(IResource[] children,IPath currentPath) throws Int
  *  @param file org.eclipse.core.resources.IFile
  *  @param location org.eclipse.core.runtime.IPath
  */
-protected void exportFile(IFile file,IPath location) throws InterruptedException {
+protected void exportFile(IFile file, IPath location)
+	throws InterruptedException {
 	IPath fullPath = location.append(file.getName());
 	monitor.subTask(file.getFullPath().toString());
 	String properPathString = fullPath.toOSString();
@@ -192,23 +192,23 @@ protected void exportFile(IFile file,IPath location) throws InterruptedException
 
 	if (targetFile.exists()) {
 		if (!targetFile.canWrite()) {
-			errorTable.add(
-				new Status(
+			errorTable
+				.add(new Status(
 					IStatus.ERROR,
 					PlatformUI.PLUGIN_ID,
 					0,
-					"Cannot overwrite file: " + targetFile.getAbsolutePath(),
-					null));
+					DataTransferMessages.format("DataTransfer.cannotOverwrite", //$NON-NLS-1$
+			new Object[] { targetFile.getAbsolutePath()}), null));
 			monitor.worked(1);
 			return;
 		}
-		
+
 		if (!overwriteFiles) {
 			String overwriteAnswer = overwriteCallback.queryOverwrite(properPathString);
 
 			if (overwriteAnswer.equals(IOverwriteQuery.CANCEL))
 				throw new InterruptedException();
-				
+
 			if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
 				monitor.worked(1);
 				return;
@@ -220,25 +220,29 @@ protected void exportFile(IFile file,IPath location) throws InterruptedException
 	}
 
 	try {
-		exporter.write(file,fullPath);
+		exporter.write(file, fullPath);
 	} catch (IOException e) {
-		errorTable.add(
-			new Status(
+		errorTable
+			.add(new Status(
 				IStatus.ERROR,
 				PlatformUI.PLUGIN_ID,
 				0,
-				"Error exporting " + fullPath,
-				e));
+				DataTransferMessages.format(
+					"DataTransfer.errorExporting", //$NON-NLS-1$
+					new Object[] { fullPath }),
+		e));
 	} catch (CoreException e) {
-		errorTable.add(
-			new Status(
+		errorTable
+			.add(new Status(
 				IStatus.ERROR,
 				PlatformUI.PLUGIN_ID,
 				0,
-				"Error exporting " + fullPath, 
-				e));
+				DataTransferMessages.format(
+					"DataTransfer.errorExporting", //$NON-NLS-1$
+					new Object[] { fullPath }),
+		e));
 	}
-	
+
 	monitor.worked(1);
 	ModalContext.checkCanceled(monitor);
 }
@@ -310,7 +314,7 @@ public IStatus getStatus() {
 		PlatformUI.PLUGIN_ID, 
 		IStatus.OK, 
 		errors,
-		"Problems were encountered during export:", 
+		DataTransferMessages.getString("FileSystemExportOperation.problemsExporting"),  //$NON-NLS-1$
 		null);
 }
 /**
@@ -361,7 +365,7 @@ public void run(IProgressMonitor monitor) throws InterruptedException {
 			// Should not happen
 			errorTable.add(e.getStatus());
 		}
-		monitor.beginTask("Exporting:", totalWork);
+		monitor.beginTask(DataTransferMessages.getString("DataTransfer.exportingTitle"), totalWork); //$NON-NLS-1$
 		if (resourcesToExport == null) {
 			exportAllResources();
 		} else {

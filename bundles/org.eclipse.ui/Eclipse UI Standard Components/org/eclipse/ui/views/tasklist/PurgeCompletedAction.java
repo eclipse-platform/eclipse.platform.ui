@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,8 +30,8 @@ public void run() {
 	if (!MessageDialog
 		.openConfirm(
 			getShell(), 
-			"Question", 
-			"Do you want to permanently discard all completed tasks?"
+			TaskListMessages.getString("PurgeCompleted.question"),  //$NON-NLS-1$
+			TaskListMessages.getString("PurgeCompleted.permanent") //$NON-NLS-1$
 			))
 		return;
 
@@ -54,7 +53,7 @@ public void run() {
 		completed.toArray(toDelete);
 		getTaskList().getWorkspace().deleteMarkers(toDelete);
 	} catch (CoreException e) {
-		ErrorDialog.openError(getShell(), "Error discarding completed tasks", null, e.getStatus());
+		ErrorDialog.openError(getShell(), TaskListMessages.getString("PurgeCompleted.errorMessage"), null, e.getStatus()); //$NON-NLS-1$
 	}
 }
 }

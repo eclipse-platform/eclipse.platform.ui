@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.navigator;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.resources.IResource;

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -387,12 +386,33 @@ private void derefPart(LayoutPart part) {
 	} 
 	else if (oldWindow instanceof DetachedWindow) 
 	{
-		if (children == null || children.length == 0){
+		if (children == null || children.length == 0) {
 			// There are no more children in this container, so get rid of it
 			// Turn on redraw again just in case it was off.
 			oldWindow.getShell().setRedraw(true);
 			oldWindow.close();
 			detachedWindowList.remove(oldWindow);
+		} else {
+			// There are children.  If none are visible hide detached window.
+			boolean allInvisible = true;
+			for (int i = 0, length = children.length; i < length; i++){
+				if (!(children[i] instanceof PartPlaceholder)) {
+					allInvisible = false;
+					break;
+				}
+			}
+			if (allInvisible) {
+				DetachedPlaceHolder placeholder = new DetachedPlaceHolder("", //$NON-NLS-1$
+					oldWindow.getShell().getBounds());
+				for (int i = 0, length = children.length; i < length; i++){
+					oldContainer.remove(children[i]);
+					children[i].setContainer(placeholder);
+					placeholder.add(children[i]);
+				}
+				detachedPlaceHolderList.add(placeholder);
+				oldWindow.close();
+				detachedWindowList.remove(oldWindow);
+			}
 		}
 	}
 }
@@ -875,10 +895,6 @@ private void onPartDrop(PartDropEvent e) {
 	if (e.relativePosition == PartDragDrop.INVALID)
 		return;
 		
-	// If layout is modified always zoom out.
-	if (isZoomed())
-		zoomOut();
-		
 	switch (e.relativePosition) {
 		case PartDragDrop.OFFSCREEN:
 			Window window = e.dragSource.getWindow();
@@ -898,10 +914,16 @@ private void onPartDrop(PartDropEvent e) {
 				}
 			}
 
+			// If layout is modified always zoom out.
+			if (isZoomed())
+				zoomOut();
 			// do a normal part detach
 			detach(e.dragSource, e.x, e.y);
 			break;
 		case PartDragDrop.CENTER:
+			// If layout is modified always zoom out.
+			if (isZoomed())
+				zoomOut();
 			if (e.dropTarget instanceof ShortcutBarPart) {
 				makeFast(e.dragSource);
 				break;
@@ -918,6 +940,9 @@ private void onPartDrop(PartDropEvent e) {
 		case PartDragDrop.RIGHT:
 		case PartDragDrop.TOP:
 		case PartDragDrop.BOTTOM:
+			// If layout is modified always zoom out.
+			if (isZoomed())
+				zoomOut();
 			movePart(e.dragSource, e.relativePosition, e.dropTarget);
 			break;
 	}
@@ -990,7 +1015,7 @@ public void removePart(LayoutPart part) {
 					placeholder.setRealContainer(container);
 					parentContainer.replace(cPart, placeholder);
 				} else if (oldWindow instanceof DetachedWindow) {
-					DetachedPlaceHolder placeholder = new DetachedPlaceHolder("",oldWindow.getShell().getBounds());
+					DetachedPlaceHolder placeholder = new DetachedPlaceHolder("",oldWindow.getShell().getBounds());//$NON-NLS-1$
 					for (int i = 0, length = children.length; i < length; i++){
 						children[i].getContainer().remove(children[i]);
 						children[i].setContainer(placeholder);
@@ -1060,7 +1085,7 @@ public void restoreState(IMemento memento)
 		}
 		IMemento childrenMem[] = memento.getChildren(IWorkbenchConstants.TAG_HIDDEN_WINDOW);
 		for (int i = 0, length = childrenMem.length; i < length; i++){
-			DetachedPlaceHolder holder = new DetachedPlaceHolder("",new Rectangle(0,0,0,0));
+			DetachedPlaceHolder holder = new DetachedPlaceHolder("",new Rectangle(0,0,0,0));//$NON-NLS-1$
 			holder.restoreState(childrenMem[i]);
 			detachedPlaceHolderList.add(holder);
 		}
@@ -1159,6 +1184,7 @@ public void zoomIn(LayoutPart part) {
 	if (part instanceof ViewPane) {
 		parentWidget.setRedraw(false);
 		mainLayout.zoomIn(part);
+		((PartPane)zoomPart).setZoomed(true);
 		parentWidget.setRedraw(true);
 	}
 
@@ -1170,6 +1196,7 @@ public void zoomIn(LayoutPart part) {
 		mainLayout.zoomIn(ea);
 		ea.zoomIn(wb);
 		wb.zoomIn();
+		((PartPane)zoomPart).setZoomed(true);
 		parentWidget.setRedraw(true);
 	}
 	
@@ -1191,6 +1218,7 @@ public void zoomOut() {
 	if (zoomPart instanceof ViewPane) {
 		parentWidget.setRedraw(false);
 		mainLayout.zoomOut();
+		((PartPane)zoomPart).setZoomed(false);
 		parentWidget.setRedraw(true);
 	}
 	
@@ -1202,6 +1230,7 @@ public void zoomOut() {
 		wb.zoomOut();
 		ea.zoomOut();
 		mainLayout.zoomOut();
+		((PartPane)zoomPart).setZoomed(false);
 		parentWidget.setRedraw(true);
 	}
 

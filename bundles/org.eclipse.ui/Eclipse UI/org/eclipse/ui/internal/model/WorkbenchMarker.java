@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.model;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.*;
@@ -32,7 +36,7 @@ public ImageDescriptor getImageDescriptor(Object o) {
  */
 public String getLabel(Object o) {
 	IMarker marker = (IMarker) o;
-	return marker.getAttribute(IMarker.MESSAGE, "");
+	return marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 }
 /**
  * Returns the logical parent of the given object in its tree.
@@ -82,7 +86,7 @@ public boolean testAttribute(Object target, String name, String value) {
 			Boolean done = (Boolean)marker.getAttribute(IMarker.DONE);
 			if (done == null)
 				return false;
-			return (done.booleanValue() == value.equals("true"));
+			return (done.booleanValue() == value.equals("true"));//$NON-NLS-1$
 		} catch (CoreException e) {
 			return false;
 		}

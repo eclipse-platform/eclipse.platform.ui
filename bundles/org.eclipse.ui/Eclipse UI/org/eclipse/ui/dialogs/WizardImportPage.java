@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -11,6 +10,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -102,12 +102,12 @@ public void createControl(Composite parent) {
 
 	createSpacer(composite);
 
-	createBoldLabel(composite, "Where do you want the imported resources to go?");	
+	createBoldLabel(composite, WorkbenchMessages.getString("WizardImportPage.destinationLabel"));	 //$NON-NLS-1$
 	createDestinationGroup(composite);
 
 	createSpacer(composite);
 
-	createBoldLabel(composite, "Options:");
+	createBoldLabel(composite, WorkbenchMessages.getString("WizardImportPage.options")); //$NON-NLS-1$
 	createOptionsGroup(composite);
 
 	restoreWidgetValues();
@@ -132,7 +132,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container label
 	Label resourcesLabel = new Label(containerGroup,SWT.NONE);
-	resourcesLabel.setText("Folder:");
+	resourcesLabel.setText(WorkbenchMessages.getString("WizardImportPage.folder")); //$NON-NLS-1$
 
 	// container name entry field
 	containerNameField = new Text(containerGroup,SWT.SINGLE|SWT.BORDER);
@@ -143,7 +143,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container browse button
 	containerBrowseButton = new Button(containerGroup,SWT.PUSH);
-	containerBrowseButton.setText("Browse...");
+	containerBrowseButton.setText(WorkbenchMessages.getString("WizardImportPage.browseLabel")); //$NON-NLS-1$
 	containerBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	containerBrowseButton.addListener(SWT.Selection,this);
 
@@ -164,7 +164,7 @@ protected abstract void createSourceGroup(Composite parent);
  * @param message the error message
  */
 protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(),"Import Problems",message);
+	MessageDialog.openError(getContainer().getShell(),WorkbenchMessages.getString("WizardImportPage.errorDialogTitle"),message); //$NON-NLS-1$
 }
 /**
  * Returns the path of the container resource specified in the container
@@ -221,7 +221,7 @@ protected IContainer getSpecifiedContainer() {
  */
 protected void handleContainerBrowseButtonPressed() {
 	// see if the user wishes to modify this container selection
-	IPath containerPath = queryForContainer(getSpecifiedContainer(), "Select a folder to import into.");
+	IPath containerPath = queryForContainer(getSpecifiedContainer(), WorkbenchMessages.getString("WizardImportPage.selectFolderLabel")); //$NON-NLS-1$
 
 	// if a container was selected then put its name in the container name field
 	if (containerPath != null)			// null means user cancelled
@@ -273,7 +273,7 @@ protected final boolean validateDestinationGroup() {
 	IContainer container = getSpecifiedContainer();
 	if (container != null) {
 		if (!container.isAccessible()) {
-			setErrorMessage("Folder must be accessible.");
+			setErrorMessage(WorkbenchMessages.getString("WizardImportPage.folderMustExist")); //$NON-NLS-1$
 			return false;
 		}
 	}

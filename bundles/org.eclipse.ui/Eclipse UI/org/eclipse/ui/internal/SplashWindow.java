@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -65,7 +69,7 @@ public void paintControl(PaintEvent event) {
 	if (image != null) {
 		event.gc.drawImage(image, 0, 0);
 	} else {
-		event.gc.drawText(title + ": Splash screen image is not found", 0, 0);
+		event.gc.drawText(title + ": Splash screen image is not found", 0, 0);//$NON-NLS-1$
 	}
 }
 }

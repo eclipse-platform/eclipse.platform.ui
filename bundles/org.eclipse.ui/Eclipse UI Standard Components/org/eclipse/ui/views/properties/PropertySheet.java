@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -55,7 +54,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
 	 * Help context id used for the property sheet view
 	 * (value <code>"org.eclipse.ui.general_help_context"</code>).
 	 */
-	public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = "org.eclipse.ui.general_help_context";
+	public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = "org.eclipse.ui.general_help_context";//$NON-NLS-1$
 
 	/**
 	 * Register the adapters for the standard properties.

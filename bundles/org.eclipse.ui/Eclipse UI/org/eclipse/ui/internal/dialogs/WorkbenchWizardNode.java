@@ -1,23 +1,21 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.util.*;
-
-import org.eclipse.ui.internal.misc.UIHackFinder;
 
 /**
  * A wizard node represents a "potential" wizard. Wizard nodes
@@ -117,11 +115,11 @@ public IWizard getWizard() {
 	});
 
 	if (ex[0] != null) {
-		parentWizardPage.setErrorMessage("The selected wizard could not be started.");
+		parentWizardPage.setErrorMessage(WorkbenchMessages.getString("WorkbenchWizard.errorMessage")); //$NON-NLS-1$
 		ErrorDialog.openError(
 			parentWizardPage.getShell(),
-			"Problem Opening Wizard",
-			"The selected wizard could not be started.",
+			WorkbenchMessages.getString("WorkbenchWizard.errorTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("WorkbenchWizard.errorMessage"), //$NON-NLS-1$
 			ex[0].getStatus());
 		return null;
 	}

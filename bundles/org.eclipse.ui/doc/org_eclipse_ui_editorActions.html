@@ -11,7 +11,7 @@
 <center>
 <h1>
 Editor Menus, Toolbars and Actions</h1></center>
-<b><i>Identifier: </i></b>org.eclipse.ui.editoractions
+<b><i>Identifier: </i></b>org.eclipse.ui.editorActions
 <p><b><i>Description: </i></b>This extension point is used to add actions
 to the menu and toolbar for editors registered by other plug-ins.
 <p>The initial contribution set for an editor is defined by another extension
@@ -42,7 +42,7 @@ of this contribution</li>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</tt>
+CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
@@ -133,7 +133,7 @@ plug-in.</li>
 it is ignored.</li>
 
 <li>
-<b>contextHelpId</b> - a unique identifier indicating the help context
+<b>helpContextId -</b> a unique identifier indicating the help context
 id for this action. If the action appears as a menu item, then pressing
 F1 while the menu item is highlighted will display help for the given context
 id.</li>
@@ -205,7 +205,7 @@ using the ‘+’ sign as the delimiter (as in <tt>@Ctrl+Shift+S</tt>).</li>
 </ol>
 <b><i>Examples:</i></b>
 <p>The following is an example of an editor action extension point:
-<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.editoractions"></tt>
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.editorActions"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;editorContribution</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.xyzContribution"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; targetID="com.ibm.XMLEditor"></tt>

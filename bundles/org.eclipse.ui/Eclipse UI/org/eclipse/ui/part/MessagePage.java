@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;		
@@ -18,7 +17,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class MessagePage extends Page {
 	private Text text;
-	private String message = "";
+	private String message = "";//$NON-NLS-1$
 /**
  * Creates a new page. The message is the empty string.
  */
@@ -30,6 +29,7 @@ public MessagePage() {
 public void createControl(Composite parent) {
 	text = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
 	text.setText(message);
+	text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	text.setMenu(new Menu(text));
 }
 /* (non-Javadoc)

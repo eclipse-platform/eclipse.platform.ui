@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -20,11 +19,11 @@ import java.util.*;
 public class ViewDescriptor implements IViewDescriptor {
 	private String id;
 	private ImageDescriptor imageDescriptor;
-	private static final String ATT_ID="id";
-	private static final String ATT_NAME="name";
-	private static final String ATT_ICON="icon";
-	private static final String ATT_CATEGORY="category";
-	private static final String ATT_CLASS="class";
+	private static final String ATT_ID="id";//$NON-NLS-1$
+	private static final String ATT_NAME="name";//$NON-NLS-1$
+	private static final String ATT_ICON="icon";//$NON-NLS-1$
+	private static final String ATT_CATEGORY="category";//$NON-NLS-1$
+	private static final String ATT_CLASS="class";//$NON-NLS-1$
 	private String label;
 	private String className;
 	private IConfigurationElement configElement;
@@ -87,11 +86,11 @@ private void loadFromExtension() throws CoreException {
 				IStatus.ERROR, 
 				configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 
 				0, 
-				"Invalid extension (missing label or class name): " + id, 
+				"Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
 				null)); 
 	}
 	if (category != null) {
-		StringTokenizer stok = new StringTokenizer(category, "/");
+		StringTokenizer stok = new StringTokenizer(category, "/");//$NON-NLS-1$
 		categoryPath = new String[stok.countTokens()];
 		// Parse the path tokens and store them
 		for (int i = 0; stok.hasMoreTokens(); i++) {
@@ -104,6 +103,6 @@ private void loadFromExtension() throws CoreException {
  * debugging purposes only.
  */
 public String toString() {
-	return "View(" + getID() + ")";
+	return "View(" + getID() + ")";//$NON-NLS-2$//$NON-NLS-1$
 }
 }

@@ -1,5 +1,9 @@
 package org.eclipse.ui.wizards.datatransfer;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.ModalContext;
@@ -55,7 +59,7 @@ private void populateElement(
 public void run(IProgressMonitor monitor) throws InterruptedException {
 	try {
 		this.monitor = monitor;
-		monitor.beginTask("Scanning for children...",IProgressMonitor.UNKNOWN);
+		monitor.beginTask(DataTransferMessages.getString("DataTransfer.scanningChildren"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		MinimizedFileSystemElement element = (MinimizedFileSystemElement) root;
 		populateElement(element,monitor);
 		

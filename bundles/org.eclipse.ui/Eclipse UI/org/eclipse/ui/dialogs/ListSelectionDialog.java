@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
@@ -12,6 +11,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import java.util.Iterator;
 import java.util.ArrayList;
 
@@ -70,14 +70,14 @@ public ListSelectionDialog(
 		ILabelProvider labelProvider,
 		String message) {
 	super(parentShell);
-	setTitle("Selection Needed");
+	setTitle(WorkbenchMessages.getString("ListSelection.title")); //$NON-NLS-1$
 	inputElement = input;
 	this.contentProvider = contentProvider;
 	this.labelProvider = labelProvider;
 	if (message != null)
 		setMessage(message);
 	else
-		setMessage("Select the items:");
+		setMessage(WorkbenchMessages.getString("ListSelection.message")); //$NON-NLS-1$
 }
 /**
  * Add the selection and deselection buttons to the dialog.

@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -21,6 +20,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
+import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -61,15 +63,19 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	private List selectedTypes = new ArrayList();
 
 	// widgets
-	private CheckboxTreeAndListGroup	resourceGroup;
-	private Button						typesToExportEditButton;
+	private ResourceTreeAndListGroup resourceGroup;
+	private Button typesToExportEditButton;
 
-	private final static int 	SIZING_SELECTION_WIDGET_WIDTH = 400;
-	private final static int	SIZING_SELECTION_WIDGET_HEIGHT = 150;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH = 400;
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 150;
+	// dialog store id constants
+	private static final String STORE_SELECTED_TYPES_ID =
+		"WizardFileSystemExportPage1.STORE_SELECTED_TYPES_ID."; //$NON-NLS-1$
 
-	private final static String SELECT_TYPES_TITLE = "Select Types...";
-	private static String SELECT_ALL_TITLE = "Select All";
-	private static String DESELECT_ALL_TITLE = "Deselect All";
+	private final static String SELECT_TYPES_TITLE = WorkbenchMessages.getString("WizardTransferPage.selectTypes"); //$NON-NLS-1$
+	private final static String SELECT_ALL_TITLE = WorkbenchMessages.getString("WizardTransferPage.selectAll"); //$NON-NLS-1$
+	private final static String DESELECT_ALL_TITLE = WorkbenchMessages.getString("WizardTransferPage.deselectAll"); //$NON-NLS-1$
+
 /**
  * Creates an export wizard page. If the current resource selection 
  * is not empty then it will be used as the initial collection of resources
@@ -150,6 +156,8 @@ protected final void createButtonsGroup(Composite parent) {
 	buttonComposite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
+	int buttonWidth =  convertWidthInCharsToPixels(getLargestButtonWidth());
+	
 	// types edit button
 	Button selectTypesButton =
 		createButton(
@@ -157,6 +165,12 @@ protected final void createButtonsGroup(Composite parent) {
 			IDialogConstants.SELECT_TYPES_ID,
 			SELECT_TYPES_TITLE,
 			false);
+
+	//Use a data to set the size of the buttons.
+	GridData buttonData = new GridData();
+	buttonData.widthHint = buttonWidth;
+	selectTypesButton.setLayoutData(buttonData);
+	
 	SelectionListener listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			handleTypesEditButtonPressed();
@@ -171,6 +185,11 @@ protected final void createButtonsGroup(Composite parent) {
 			SELECT_ALL_TITLE,
 			false);
 
+	//Use a data to set the size of the buttons.
+	buttonData = new GridData();
+	buttonData.widthHint = buttonWidth;
+	selectButton.setLayoutData(buttonData);
+
 	listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			resourceGroup.setAllSelections(true);
@@ -184,6 +203,11 @@ protected final void createButtonsGroup(Composite parent) {
 			IDialogConstants.DESELECT_ALL_ID,
 			DESELECT_ALL_TITLE,
 			false);
+
+	//Use a data to set the size of the buttons.
+	buttonData = new GridData();
+	buttonData.widthHint = buttonWidth;
+	deselectButton.setLayoutData(buttonData);
 
 	listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -205,14 +229,14 @@ public void createControl(Composite parent) {
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	createPlainLabel(composite, "What resources do you want to export?");
+	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.whatLabel")); //$NON-NLS-1$
 	createResourcesGroup(composite);
 	createButtonsGroup(composite);
 	
-	createPlainLabel(composite, "Where do you want to export resources to?");
+	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.whereLabel"));  //$NON-NLS-1$
 	createDestinationGroup(composite);
 	
-	createPlainLabel(composite, "Options:");	
+	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
 	createOptionsGroup(composite);
 
 	restoreResourceSpecificationWidgetValues();		// ie.- local
@@ -245,11 +269,13 @@ protected final void createResourcesGroup(Composite parent) {
 	//as its only child
 	List input = new ArrayList();
 	IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-	for(int i = 0; i < projects.length; i ++)
-		input.add(projects[i]);
+	for (int i = 0; i < projects.length; i++) {
+		if (projects[i].isOpen())
+			input.add(projects[i]);
+	}
 
 	this.resourceGroup =
-		new CheckboxTreeAndListGroup(
+		new ResourceTreeAndListGroup(
 			parent,
 			input,
 			getResourceProvider(IResource.FOLDER | IResource.PROJECT),
@@ -267,7 +293,7 @@ protected final void createResourcesGroup(Composite parent) {
  * @param message the error message
  */
 protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(),"Export Problems",message);
+	MessageDialog.openError(getContainer().getShell(),"Export Problems",message); //$NON-NLS-1$
 }
 /**
  * Ensures that all resources have local contents.  Retrieves server contents 
@@ -290,28 +316,15 @@ protected boolean ensureResourcesLocal(List resources) {
 		return true;
 
 	final Vector errors = new Vector();
-	
+
 	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		protected void execute(IProgressMonitor monitor) {
-
-			UIHackFinder.fixPR();
-			// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-			monitor.beginTask("Retrieving content:", nonLocalResources.size() * 1000);
+			monitor.beginTask(WorkbenchMessages.getString("WizardExportPage.progressMessage"), nonLocalResources.size() * 1000); //$NON-NLS-1$
 			Iterator resourcesEnum = nonLocalResources.iterator();
-			UIHackFinder.fixPR(); //1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
-
 			try {
 				while (resourcesEnum.hasNext()) {
-					IResource resource = (IResource)resourcesEnum.next();
-/*
-					try {
-						UIHackFinder.fixPR();
-						// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-						resource.ensureLocal(IResource.DEPTH_INFINITE,new SubProgressMonitor(monitor,1000));
-					} catch (CoreException e) {
-						errors.addElement(e.getStatus());
-					}
-*/
+					IResource resource = (IResource) resourcesEnum.next();
+
 					if (monitor.isCanceled())
 						throw new OperationCanceledException();
 				}
@@ -325,21 +338,27 @@ protected boolean ensureResourcesLocal(List resources) {
 		getContainer().run(true, true, op);
 	} catch (InterruptedException e) {
 		return false;
+
 	} catch (InvocationTargetException e) {
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".ensureResourcesLocal(): " + e.getTargetException());
-		MessageDialog.openError(getContainer().getShell(), "Internal error", "Internal error: " + e.getTargetException().getMessage());
+		WorkbenchPlugin.log(e.getTargetException().getMessage());
+		MessageDialog.openError(
+			getContainer().getShell(),
+			WorkbenchMessages.getString("WizardExportPage.internalError"), //$NON-NLS-1$
+			WorkbenchMessages.format("BuildAction.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 	}
 
 	if (errors.isEmpty())
 		return true;
 
 	// If errors occurred, open an Error dialog
-	ErrorDialog.openError(getContainer().getShell(),
-		"Content Retrieval Problems",
-		null,   // no special message
-		StatusUtil.newStatus(errors,	// make a multi status
+	ErrorDialog.openError(
+		getContainer().getShell(),
+		WorkbenchMessages.getString("WizardExportPage.contentRetreival"), //$NON-NLS-1$
+		null,
+		StatusUtil.newStatus(
+			errors,
 			null,
-			"Problems occurred retrieving content for the selected resources.",
+			WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblemsMessage"), //$NON-NLS-1$
 			null));
 
 	return false;
@@ -364,6 +383,18 @@ protected List extractNonLocalResources(List originalList) {
 	}
 
 	return result;
+}
+/**
+ * Get the number of characters in the largest button.
+ * @return int
+ */
+private int getLargestButtonWidth() {
+	int largest = SELECT_ALL_TITLE.length();
+	if (SELECT_TYPES_TITLE.length() > largest)
+		largest = SELECT_TYPES_TITLE.length();
+	if (DESELECT_ALL_TITLE.length() > largest)
+		largest = DESELECT_ALL_TITLE.length();
+	return largest;
 }
 /**
  * Returns a content provider for <code>IResource</code>s that returns 
@@ -410,7 +441,7 @@ private ITreeContentProvider getResourceProvider(final int resourceType) {
  * for export (element type: <code>IResource</code>)
  */
 protected List getSelectedResources() {
-	Iterator resourcesToExportIterator = getSelectedResourcesIterator();
+	Iterator resourcesToExportIterator = this.getSelectedResourcesIterator();
 	List resourcesToExport = new ArrayList();
 	while (resourcesToExportIterator.hasNext())
 		resourcesToExport.add(resourcesToExportIterator.next());
@@ -422,10 +453,11 @@ protected List getSelectedResources() {
  * subclasses.
  *
  * @return an iterator over the collection of resources currently selected 
- * for export (element type: <code>IResource</code>)
+ * for export (element type: <code>IResource</code>). This will include
+ * white checked folders and individually checked files.
  */
 protected Iterator getSelectedResourcesIterator() {
-	return this.resourceGroup.getAllCheckedListItems();
+	return this.resourceGroup.getAllCheckedListItems().iterator();
 }
 /**
  * Returns the resource extensions currently specified to be exported.
@@ -438,6 +470,18 @@ protected List getTypesToExport() {
 	return selectedTypes;
 }
 /**
+ * Returns this page's collection of currently-specified resources to be 
+ * exported. This returns both folders and files - for just the files use
+ * getSelectedResources.
+ *
+ * @return a collection of resources currently selected 
+ * for export (element type: <code>IResource</code>)
+ */
+protected List getWhiteCheckedResources() {
+	
+	return this.resourceGroup.getAllWhiteCheckedItems();
+}
+/**
  * Queries the user for the types of resources to be exported and selects
  * them in the checkbox group.
  */
@@ -446,11 +490,12 @@ protected void handleTypesEditButtonPressed() {
 
 	if (newSelectedTypes != null) { // ie.- did not press Cancel
 		this.selectedTypes = new ArrayList(newSelectedTypes.length);
-		for (int i = 0; i < newSelectedTypes.length; i++)
-			this.selectedTypes.add(((IFileEditorMapping) newSelectedTypes[i]).getExtension());
+		for(int i = 0; i < newSelectedTypes.length; i ++){
+			this.selectedTypes.add(newSelectedTypes[i]);
+		}
+		setupSelectionsBasedOnSelectedTypes();
 	}
 
-	setupSelectionsBasedOnSelectedTypes();
 }
 /**
  * Returns whether the extension of the given resource name is an extension that
@@ -464,7 +509,7 @@ protected boolean hasExportableExtension(String resourceName) {
 	if (selectedTypes == null)	// ie.- all extensions are acceptable
 		return true;
 		
-	int separatorIndex = resourceName.lastIndexOf(".");
+	int separatorIndex = resourceName.lastIndexOf(".");//$NON-NLS-1$
 	if (separatorIndex == -1)
 		return false;
 	
@@ -479,6 +524,16 @@ protected boolean hasExportableExtension(String resourceName) {
 	return false;
 }
 /**
+ * Persists additional setting that are to be restored in the next instance of
+ * this page.
+ * <p> 
+ * The <code>WizardImportPage</code> implementation of this method does
+ * nothing. Subclasses may extend to persist additional settings.
+ * </p>
+ */
+protected void internalSaveWidgetValues() {
+}
+/**
  * Queries the user for the resource types that are to be exported and returns
  * these types as an array.
  *
@@ -487,29 +542,10 @@ protected boolean hasExportableExtension(String resourceName) {
  *   selection
  */
 protected Object[] queryResourceTypesToExport() {
-	IFileEditorMapping editorMappings[] =
-		WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 
-	int mappingsSize = editorMappings.length;
-	List selectedTypes = getTypesToExport();
-	List initialSelections = new ArrayList(selectedTypes.size());
-	
-	for (int i = 0; i < mappingsSize; i++) {
-		IFileEditorMapping currentMapping = editorMappings[i];
-		if (selectedTypes.contains(currentMapping.getExtension()))
-			initialSelections.add(currentMapping);
-	}
+	TypeFilteringDialog dialog =
+		new TypeFilteringDialog(getContainer().getShell(), getTypesToExport());
 
-	ListSelectionDialog dialog =
-		new ListSelectionDialog(
-			getContainer().getShell(),
-			editorMappings,
-			FileEditorMappingContentProvider.INSTANCE,
-			FileEditorMappingLabelProvider.INSTANCE,
-			"Select the resource types to export.");
-
-	dialog.setInitialSelections(initialSelections.toArray());
-	dialog.setTitle("Resource Type Selection");
 	dialog.open();
 
 	return dialog.getResult();
@@ -520,6 +556,18 @@ protected Object[] queryResourceTypesToExport() {
  * persisted values for their controls may extend.
  */
 protected void restoreResourceSpecificationWidgetValues() {
+}
+/**
+ * Persists resource specification control setting that are to be restored
+ * in the next instance of this page. Subclasses wishing to persist additional
+ * setting for their controls should extend hook method 
+ * <code>internalSaveWidgetValues</code>.
+ */
+protected void saveWidgetValues() {
+
+	// allow subclasses to save values
+	internalSaveWidgetValues();
+
 }
 /**
  * Set the initial selections in the resource group.

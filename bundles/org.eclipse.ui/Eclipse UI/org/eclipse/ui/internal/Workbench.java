@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
@@ -26,6 +25,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.core.internal.boot.LaunchInfo;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -39,10 +39,10 @@ import java.util.*;
 public class Workbench implements IWorkbench, 
 	IPlatformRunnable, IExecutableExtension
 {
-	private static final String VERSION_STRING = "0.046";
-	private static final String P_PRODUCT_INFO = "productInfo";
-	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini";
-	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";
+	private static final String VERSION_STRING = "0.046";//$NON-NLS-1$
+	private static final String P_PRODUCT_INFO = "productInfo";//$NON-NLS-1$
+	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini";//$NON-NLS-1$
+	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";//$NON-NLS-1$
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
 	private boolean runEventLoop;
@@ -52,7 +52,6 @@ public class Workbench implements IWorkbench,
 	private String productInfoFilename;
 	private ProductInfo productInfo;
 	private String[] commandLineArgs;
-	private SplashWindow splashWindow;
 /**
  * Workbench constructor comment.
  */
@@ -82,20 +81,20 @@ private boolean busyClose() {
 			saveWorkbenchState(mem);
 		}
 		public void handleException(Throwable e) {
-			message = "An error has occurred";
-			if (e != null && e.getMessage() != null)
-				message += ": " + e.getMessage();
-			if (!message.endsWith("."))
-				message += ".";
-			message += " See error log for more details. Do you want to exit?";
-			if(!MessageDialog.openQuestion(null, "Error", message))
+			if (e.getMessage() == null) {
+				message = WorkbenchMessages.getString("ErrorClosingNoArg"); //$NON-NLS-1$
+			} else {
+				message = WorkbenchMessages.format("ErrorClosingOneArg", new Object[] {e.getMessage()}); //$NON-NLS-1$
+			}
+	
+			if(!MessageDialog.openQuestion(null, WorkbenchMessages.getString("Error"), message)) //$NON-NLS-1$
 				isClosing = false;
 		}
 	});
 	if(!isClosing)
 		return false;
 		
-	Platform.run(new SafeRunnableAdapter("An error has occurred when closing the workbench") {
+	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 		public void run() {
 			isClosing = windowManager.close();
 		}
@@ -131,6 +130,22 @@ private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable inpu
 
 	return newWindow;
 }
+private void checkInstallErrors() {
+	if(!LaunchInfo.getCurrent().hasStatus())
+		return;
+		
+	LaunchInfo.Status installStatus[] = LaunchInfo.getCurrent().getStatus();
+	if(installStatus != null) {
+		MultiStatus ms = new MultiStatus(
+			PlatformUI.PLUGIN_ID,0,
+			WorkbenchMessages.getString("Workbench.instalationError"),//$NON-NLS-1$
+			null);
+		for (int i = 0; i < installStatus.length; i++){
+			ms.add(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,installStatus[i].getMessage(),installStatus[i].getException()));
+		}
+		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"), null, ms);//$NON-NLS-1$
+	}
+}
 /**
  * Closes the workbench.
  */
@@ -142,15 +157,6 @@ public boolean close() {
 		}
 	});
 	return ret[0];
-}
-/*
- * Close the splash window
- */
-private void closeSplashWindow() {
-	if (splashWindow != null) {
-		splashWindow.close();
-		splashWindow = null;
-	}
 }
 /**
  * Connect to the core workspace.
@@ -164,7 +170,7 @@ private void connectToWorkspace() {
 private void disconnectFromWorkspace() {
 	//Save the workbench.
 	final MultiStatus status = new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, 1,
-		"Problems occurred while trying to save the state of the workbench.", null);
+		WorkbenchMessages.getString("ProblemSavingWorkbench"), null); //$NON-NLS-1$
 	IRunnableWithProgress runnable = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor) {
 			try {
@@ -177,17 +183,17 @@ private void disconnectFromWorkspace() {
 	try {
 		new ProgressMonitorDialog(null).run(false, false, runnable);
 	} catch (InvocationTargetException e) {
-		status.merge(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, "Internal Error", e.getTargetException()));
+		status.merge(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("InternalError"), e.getTargetException())); //$NON-NLS-1$
 	} catch (InterruptedException e) {
-		status.merge(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, "Internal Error", e));
+		status.merge(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("InternalError"), e)); //$NON-NLS-1$
 	}
 	ErrorDialog.openError(null,
-		"Problems saving workspace",
+		WorkbenchMessages.getString("ProblemsSavingWorkspace"), //$NON-NLS-1$
 		null,
 		status,
 		IStatus.ERROR | IStatus.WARNING);
 	if (!status.isOK()) {
-		WorkbenchPlugin.log("Problems saving workspace", status);
+		WorkbenchPlugin.log(WorkbenchMessages.getString("ProblemsSavingWorkspace"), status); //$NON-NLS-1$
 	}
 }
 /**
@@ -336,33 +342,31 @@ public IWorkbenchWindow [] getWorkbenchWindows() {
 private void handleExceptionInEventLoop(Throwable e) {
 	// For the status object, use the exception's message, or the exception name if no message.
 	String msg = e.getMessage() == null ? e.toString() : e.getMessage();
-	WorkbenchPlugin.log("Unhandled exception caught in event loop.", new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, e));
+	WorkbenchPlugin.log(WorkbenchMessages.getString("Unhandled_exception"), new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, e)); //$NON-NLS-1$
 	if (WorkbenchPlugin.DEBUG) {
 		e.printStackTrace();
 	}
 	// Open an error dialog, but don't reveal the internal exception name.
-	msg = "An internal error has occurred";
-	if (e.getMessage() != null)
-		msg += ": " + e.getMessage();
-	if (!msg.endsWith("."))
-		msg += ".";
-	msg += "  See error log for more details.";
-	MessageDialog.openError(null, "Internal error", msg);
+	if (e.getMessage() == null) {
+		msg = WorkbenchMessages.getString("InternalErrorNoArg");  //$NON-NLS-1$
+	} else {
+		msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {e.getMessage()}); //$NON-NLS-1$
+	} 
+	MessageDialog.openError(null, WorkbenchMessages.getString("Internal_error"), msg); //$NON-NLS-1$
 }
 /**
  * Initializes the workbench.
+ *
+ * @return true if init succeeded.
  */
-private void init(String[] commandLineArgs) {
+private boolean init(String[] commandLineArgs) {
 	isStarting = true;
 
 	this.commandLineArgs = commandLineArgs;
-	String debugOption = Platform.getDebugOption(IWorkbenchConstants.PLUGIN_ID + "/debug");
-	if ("true".equalsIgnoreCase(debugOption)) {
+	if (WorkbenchPlugin.getDefault().isDebugging()) {
 		WorkbenchPlugin.DEBUG = true;
 		ModalContext.setDebugMode(true);
 	}
-	readProductInfo();
-	openSplashWindow();
 	initializeProductImage();
 	connectToWorkspace();
 	addAdapters();
@@ -372,7 +376,7 @@ private void init(String[] commandLineArgs) {
 	// deadlock code
 	boolean avoidDeadlock = true;
 	for (int i = 0; i < commandLineArgs.length; i++) {
-		if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock"))
+		if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock"))//$NON-NLS-1$
 			avoidDeadlock = false;
 	}
 	if (avoidDeadlock) {
@@ -390,6 +394,7 @@ private void init(String[] commandLineArgs) {
 	openWelcomeDialog();
 	
 	isStarting = false;
+	return true;
 }
 /**
  * Initialize the product image obtained from the product info file
@@ -400,7 +405,7 @@ private void initializeProductImage() {
 		// if none was supplied we use a default
 		URL path = null;
 		try {
-			path = new URL(WorkbenchPlugin.getDefault().getDescriptor().getInstallURL(),WorkbenchImages.ICONS_PATH + "obj16/prod.gif");
+			path = new URL(WorkbenchPlugin.getDefault().getDescriptor().getInstallURL(),WorkbenchImages.ICONS_PATH + "obj16/prod.gif");//$NON-NLS-1$
 		} catch (MalformedURLException e) {};
 		descriptor = ImageDescriptor.createFromURL(path);
 	}
@@ -437,7 +442,7 @@ private void openFirstTimeWindow() {
 		IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 		newWindow.openPage(getPerspectiveRegistry().getDefaultPerspective(), root);
 	} catch (WorkbenchException e) {
-		MessageDialog.openError(newWindow.getShell(), "Problems Opening Page",
+		MessageDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 			e.getMessage());
 	}
 	newWindow.open();
@@ -453,7 +458,7 @@ private boolean openPreviousWorkbenchState() {
 		return false;
 
 	final boolean result[] = {true};
-	Platform.run(new SafeRunnableAdapter("Unable to read workbench state. workbench.xml will be deleted") {
+	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
 		public void run() throws Exception {
 			FileInputStream input = new FileInputStream(stateFile);
 			InputStreamReader reader = new InputStreamReader(input);
@@ -463,8 +468,8 @@ private boolean openPreviousWorkbenchState() {
 			if((version == null) || (!version.equals(VERSION_STRING))) {
 				reader.close();
 				MessageDialog.openError((Shell)null, 
-					"Restoring Problems", 
-					"Invalid workbench state version. workbench.xml will be deleted");
+					WorkbenchMessages.getString("Restoring_Problems"),  //$NON-NLS-1$
+					WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
 				stateFile.delete();		
 				result[0] = false;
 				return;
@@ -481,28 +486,30 @@ private boolean openPreviousWorkbenchState() {
 	});
 	return result[0];	
 }
-/*
- * Open the splash window
- */
-private void openSplashWindow() {
-	splashWindow = new SplashWindow(getProductInfo().getName(), 
-		getProductInfo().getSplashImage());
-	splashWindow.open();
-}
 /**
  * Open the Welcome dialog
  */
 private void openWelcomeDialog() {
-	
-	// Show the quick start wizard.
-	if (WorkbenchPlugin.getDefault().getPreferenceStore().
-		getBoolean(IWorkbenchPreferenceConstants.WELCOME_DIALOG)) 
-	{
-		// 1FVKH62: ITPUI:WINNT - quick start should be available on file menu
+	// See if a welcome page is specified
+	ProductInfo info = ((Workbench)PlatformUI.getWorkbench()).getProductInfo();
+	URL url = info.getWelcomePageURL();
+	if (url == null)
+		return;
+		
+	// Show the quick start wizard the first time the workbench opens.
+	if (WorkbenchPlugin
+		.getDefault()
+		.getPreferenceStore()
+		.getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
 		QuickStartAction action = new QuickStartAction(this);
-		action.openQuickStart(getActiveWorkbenchWindow().getShell(), false);
-	}	
-	
+		action.run();
+		// Don't show it again
+		WorkbenchPlugin
+		.getDefault()
+		.getPreferenceStore()
+		.setValue(IPreferenceConstants.WELCOME_DIALOG, false);
+	}
+
 }
 /*
  * Open the workbench UI. 
@@ -510,9 +517,6 @@ private void openWelcomeDialog() {
 private void openWindows() {
 	if (!openPreviousWorkbenchState())
 		openFirstTimeWindow();
-
-	// Close splash.
-	closeSplashWindow();
 }
 /**
  * Opens a new workbench window and page with a specific perspective.
@@ -536,7 +540,7 @@ public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptab
 	else if (result[0] instanceof WorkbenchException)
 		throw (WorkbenchException)result[0];
 	else
-		throw new WorkbenchException("Abnormal Workbench Condition");
+		throw new WorkbenchException(WorkbenchMessages.getString("Abnormal_Workbench_Conditi")); //$NON-NLS-1$
 }
 /**
  * Opens a new window and page with the default perspective.
@@ -552,28 +556,23 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
  * The product info contains the product name, product images,
  * copyright etc.
  *
+ * @return true if the method succeeds
  */
-private void readProductInfo() {
+private boolean readProductInfo() {
 	productInfo = new ProductInfo();
 	URL configURL= null;
 	IInstallInfo ii= BootLoader.getInstallationInfo();
 	String configName= ii.getApplicationConfigurationIdentifier();
-	if (configName != null) {
-		configURL = ii.getConfigurationInstallURLFor(configName);
-	} else {
-		//if there is no configuration, use the workbench
-		configURL= WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
-	}
-	
+	if (configName == null)
+		return false;
+	configURL = ii.getConfigurationInstallURLFor(configName);
+			
 	try {	
 		productInfo.readINIFile(configURL);
+		return true;
 	} catch (CoreException e) {
-		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		Shell shell = null;
-		if (window != null) {
-			shell = window.getShell();
-		}
-//		ErrorDialog.openError(shell, null, "Error reading product info file", e.getStatus());
+		WorkbenchPlugin.log("Error reading product info file", e.getStatus());
+		return false;
 	}
 }
 /**
@@ -608,9 +607,23 @@ public Object run(Object arg) {
 	String[] commandLineArgs = new String[0];
 	if (arg != null && arg instanceof String[])
 		commandLineArgs = (String[]) arg;
-	init(commandLineArgs);
-	runEventLoop();
-	shutdown();
+	if (!readProductInfo())
+		return null;
+	if (getProductInfo().getAppName() != null)
+		Display.setAppName(getProductInfo().getAppName());
+	Display display = new Display();
+	try {
+		boolean initOK = init(commandLineArgs);
+		Platform.endSplash();
+		checkInstallErrors();
+		if (initOK) {
+			runEventLoop();
+		}
+		shutdown();
+	} finally {
+		if (!display.isDisposed())
+		  display.dispose();
+	}
 	return null;
 }
 /**
@@ -668,8 +681,8 @@ private boolean saveWorkbenchState(XMLMemento memento) {
 	} catch (IOException e) {
 		stateFile.delete();		
 		MessageDialog.openError((Shell)null, 
-			"Saving Problems", 
-			"Unable to store workbench state.");
+			WorkbenchMessages.getString("SavingProblem"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("ProblemSavingState")); //$NON-NLS-1$
 		return false;
 	}
 
@@ -688,10 +701,6 @@ public void setInitializationData(IConfigurationElement configElement, String pr
  */
 private void shutdown() {
 	WorkbenchColors.shutdown();
-	Display display = Display.getCurrent();
-	if (display != null) {
-		display.dispose();
-	}
 }
 /*
  * Answer true if the state file is good.
@@ -731,8 +740,8 @@ private boolean testStateFile() {
 	} else {
 		stateFile.delete();		
 		MessageDialog.openError((Shell)null, 
-			"Restoring Problem", 
-			"Unable to read workbench state.");
+			WorkbenchMessages.getString("Restoring_Problem"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("ErrorReadingWorkbenchState")); //$NON-NLS-1$
 		return false;
 	}
 }

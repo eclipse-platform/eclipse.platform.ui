@@ -1,9 +1,8 @@
 package org.eclipse.jface.text.source;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -42,20 +41,47 @@ public abstract class Annotation {
 	 * @param align the alignment of the image to be drawn
 	 */
 	protected static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {
+		drawImage(image, gc, canvas, r, align, SWT.CENTER);
+	}
+	/**
+	 * Convenience method for drawing an image aligned inside a rectangle.
+	 *
+	 * @param image the image to be drawn
+	 * @param GC the drawing GC
+	 * @param canvas the canvas on which to draw
+	 * @param r the clipping rectangle
+	 * @param halign the horizontal alignment of the image to be drawn
+	 * @param valign the vertical alignment of the image to be drawn
+	 */
+	protected static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int halign, int valign) {
 		if (image != null) {
+			
 			Rectangle bounds= image.getBounds();
+			
 			int x= 0;
-			switch(align) {
-			case SWT.LEFT:
-				break;
-			case SWT.CENTER:
-				x= (r.width - bounds.width) / 2;
-				break;
-			case SWT.RIGHT:
-				x= r.width - bounds.width;
-				break;
+			switch(halign) {
+				case SWT.LEFT:
+					break;
+				case SWT.CENTER:
+					x= (r.width - bounds.width) / 2;
+					break;
+				case SWT.RIGHT:
+					x= r.width - bounds.width;
+					break;
 			}
-			int y= (r.height - bounds.height) / 2;
+			
+			int y= 0;
+			switch (valign) {
+				case SWT.TOP:
+					break;
+				case SWT.CENTER:
+					y= (r.height - bounds.height) / 2;
+					break;
+				case SWT.BOTTOM:
+					y= r.height - bounds.height;
+					break;
+			}
+			
 			gc.drawImage(image, r.x+x, r.y+y);
 		}
 	}

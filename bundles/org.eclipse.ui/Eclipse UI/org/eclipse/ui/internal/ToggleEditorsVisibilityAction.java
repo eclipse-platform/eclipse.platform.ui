@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.*;
@@ -18,8 +17,9 @@ public class ToggleEditorsVisibilityAction extends Action {
  * Creates a new <code>ToggleEditorsVisibilityAction</code>
  */
 public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
-	super("Hide Editors");
-	setToolTipText("Toggle editor area visibility");
+	super(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ToggleEditor.toolTip")); //$NON-NLS-1$
+	setEnabled(false);
 	this.workbenchWindow = window;
 
 	// Once the API on IWorkbenchPage to hide/show
@@ -28,16 +28,16 @@ public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
 	window.addPerspectiveListener(new org.eclipse.ui.IPerspectiveListener() {
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			if (page.isEditorAreaVisible())
-				setText("Hide Editors");
+				setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
 			else
-				setText("Show Editors");
+				setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
 		}			
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			if (changeId == page.CHANGE_RESET || changeId == page.CHANGE_EDITOR_AREA_HIDE || changeId == page.CHANGE_EDITOR_AREA_SHOW) {
 				if (page.isEditorAreaVisible())
-					setText("Hide Editors");
+					setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
 				else
-					setText("Show Editors");
+					setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
 			}
 		}			
 	});
@@ -49,11 +49,11 @@ public void run() {
 	boolean visible = workbenchWindow.getActivePage().isEditorAreaVisible();
 	if (visible) {
 		workbenchWindow.getActivePage().setEditorAreaVisible(false);
-		setText("Show Editors");
+		setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
 	}
 	else {
 		workbenchWindow.getActivePage().setEditorAreaVisible(true);
-		setText("Hide Editors");
+		setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
 	}
 }
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.internal.*;
@@ -133,34 +132,34 @@ private void createActions() {
 		return;
 
 	// Home.	
-	homeAction = new Action("Go Home") {
+	homeAction = new Action(WorkbenchMessages.getString("GoHome.text")) { //$NON-NLS-1$
 		public void run() {
 			goHome();
 		}
 	};
-	homeAction.setToolTipText("Home");
+	homeAction.setToolTipText(WorkbenchMessages.getString("GoHome.toolTip")); //$NON-NLS-1$
 	ImageDescriptor image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV);
 	homeAction.setImageDescriptor(image);
 	homeAction.setHoverImageDescriptor(image);
 
 	// Back.
-	backAction = new Action("Go Back") {
+	backAction = new Action(WorkbenchMessages.getString("GoBack.text")) { //$NON-NLS-1$
 		public void run() {
 			goBack();
 		}
 	};
-	backAction.setToolTipText("Back");
+	backAction.setToolTipText(WorkbenchMessages.getString("GoBack.toolTip")); //$NON-NLS-1$
 	image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV);
 	backAction.setImageDescriptor(image);
 	backAction.setHoverImageDescriptor(image);
 
 	// Forward.
-	forwardAction = new Action("Go Into") {
+	forwardAction = new Action(WorkbenchMessages.getString("GoInto.text")) { //$NON-NLS-1$
 		public void run() {
 			goInto();
 		}
 	};
-	forwardAction.setToolTipText("Go Into");
+	forwardAction.setToolTipText(WorkbenchMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
 	image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV);
 	forwardAction.setImageDescriptor(image);
 	forwardAction.setHoverImageDescriptor(image);
@@ -263,7 +262,7 @@ public void goInto(IAdaptable newInput) {
 		// Save the old state.
 		IAdaptable oldInput = (IAdaptable)fChildTree.getInput();
 		List expandedList = getExpanded();
-		fDrillStack.add(new DrillFrame(oldInput, "null", expandedList));
+		fDrillStack.add(new DrillFrame(oldInput, "null", expandedList));//$NON-NLS-1$
 		
 		// Install the new state.
 		fChildTree.setInput(newInput);

@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.tasklist;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.IMemento;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -10,7 +14,7 @@ import java.util.HashSet;
 
 /* package */ class TasksFilter extends ViewerFilter implements Cloneable {
 
-	static final String[] ROOT_TYPES = new String[] { IMarker.PROBLEM, IMarker.TASK };
+	public static final String[] ROOT_TYPES = new String[] { IMarker.PROBLEM, IMarker.TASK };
 
 	// Filter on resource constants
 	static final int ON_ANY_RESOURCE = 0;
@@ -144,21 +148,29 @@ public boolean select(Viewer viewer, Object parentElement, Object element) {
 
 	// types and resource settings are handled by the content provider
 
-	if (filterOnSeverity) {
+	// severity filter applies only to problems
+	if (filterOnSeverity && MarkerUtil.isMarkerType(marker, IMarker.PROBLEM)) {
 		int bit = 1 << MarkerUtil.getSeverity(marker);
 		if ((severityFilter & bit) == 0)
 			return false;
 	}
-	if (filterOnPriority) {
-		int bit = 1 << MarkerUtil.getPriority(marker);
-		if ((priorityFilter & bit) == 0)
-			return false;
+
+	// priority and completion filters apply only to tasks
+	// avoid doing type check more than once
+	if ((filterOnPriority || filterOnCompletion) && MarkerUtil.isMarkerType(marker, IMarker.TASK)) {
+		if (filterOnPriority) {
+			int bit = 1 << MarkerUtil.getPriority(marker);
+			if ((priorityFilter & bit) == 0)
+				return false;
+		}
+		if (filterOnCompletion) {
+			int bit = MarkerUtil.isComplete(marker) ? 2 : 1;
+			if ((completionFilter & bit) == 0)
+				return false;
+		}
 	}
-	if (filterOnCompletion) {
-		int bit = MarkerUtil.isComplete(marker) ? 2 : 1;
-		if ((completionFilter & bit) == 0)
-			return false;
-	}
+
+	// description applies to all markers
 	if (filterOnDescription) {
 		if (!checkDescription(marker))
 			return false;

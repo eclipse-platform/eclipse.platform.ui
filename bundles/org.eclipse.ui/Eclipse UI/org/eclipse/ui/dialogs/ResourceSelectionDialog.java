@@ -1,15 +1,15 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.ControlEvent;
@@ -55,12 +55,12 @@ public class ResourceSelectionDialog extends SelectionDialog {
  */
 public ResourceSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
 	super(parentShell);
-	setTitle("Resource Selection");
+	setTitle(WorkbenchMessages.getString("ResourceSelectionDialog.title")); //$NON-NLS-1$
 	root = rootElement;
 	if (message != null)
 		setMessage(message);
 	else
-		setMessage("Select the resources:");
+		setMessage(WorkbenchMessages.getString("ResourceSelectionDialog.message")); //$NON-NLS-1$
 	setShellStyle(SWT.RESIZE);
 }
 /**

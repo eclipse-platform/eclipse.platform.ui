@@ -1,9 +1,8 @@
 package org.eclipse.jface.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.Assert;
@@ -21,6 +20,19 @@ import java.lang.reflect.InvocationTargetException;
  * <p>
  * This concete dialog class can be instantiated as is, 
  * or further subclassed as required.
+ * </p>
+ * <p>
+ * Typical usage is:
+ * <pre>
+ * try {
+ *    IRunnableWithProgress op = ...;
+ *    new ProgressMonitorDialog(activeShell).run(true, true, op);
+ * } catch (InvocationTargetException e) {
+ *    // handle exception
+ * } catch (InterruptedException e) {
+ *    // handle cancelation
+ * }
+ * </pre>
  * </p>
  */
 public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
@@ -204,11 +216,16 @@ private void asyncSetOperationCancelButtonEnabled(final boolean b) {
  */
 public boolean close() {
 	if (runningRunnables <= 0) {
-		cancel.setCursor(null);
-		getShell().setCursor(null);
-		if(arrowCursor != null)
+		if (cancel != null && !cancel.isDisposed()) {
+			cancel.setCursor(null);
+		}
+		Shell shell = getShell();
+		if (shell != null && !shell.isDisposed()) {
+			shell.setCursor(null);
+		}
+		if (arrowCursor != null)
 			arrowCursor.dispose();
-		if(waitCursor != null)
+		if (waitCursor != null)
 			waitCursor.dispose();
 		arrowCursor = null;
 		waitCursor = null;

@@ -1,9 +1,8 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
@@ -253,14 +252,19 @@ public void setInput(Object input) {
  * @param labelProvider the label provider, or <code>null</code> if none
  */
 public void setLabelProvider(IBaseLabelProvider labelProvider) {
-	if (this.labelProvider != null) {
-		this.labelProvider.removeListener(this.labelProviderListener);
-		this.labelProvider.dispose();
+	IBaseLabelProvider oldProvider = this.labelProvider;
+	if (oldProvider != null) {
+		oldProvider.removeListener(this.labelProviderListener);
 	}
 	this.labelProvider = labelProvider;
 	if (labelProvider != null) {
 		labelProvider.addListener(this.labelProviderListener);
 	}
 	refresh();
+
+	// Dispose old provider after refresh, so that items never refer to stale images.
+	if (oldProvider != null) {
+		oldProvider.dispose();
+	}
 }
 }

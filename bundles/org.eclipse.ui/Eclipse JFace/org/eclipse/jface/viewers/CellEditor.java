@@ -1,12 +1,11 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.*;
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -35,6 +34,11 @@ public abstract class CellEditor {
 	 * List of cell editor listeners (element type: <code>ICellEditorListener</code>).
 	 */
 	private ListenerList listeners = new ListenerList(3);
+	/**
+	 * List of cell editor property change listeners 
+	 * (element type: <code>IPropertyChangeListener</code>).
+	 */
+	private ListenerList propertyChangeListeners = new ListenerList(3);
 	
 	/**
 	 * Indicates whether this cell editor's current value is valid.
@@ -83,6 +87,46 @@ public abstract class CellEditor {
 		 */
 		public int minimumWidth = 50;
 	}
+
+	/**
+	 * Property name for the copy action
+	 */
+	public static final String COPY = "copy"; //$NON-NLS-1$
+
+	/**
+	 * Property name for the cut action
+	 */
+	public static final String CUT = "cut"; //$NON-NLS-1$
+	
+	/**
+	 * Property name for the delete action
+	 */
+	public static final String DELETE = "delete"; //$NON-NLS-1$
+
+	/**
+	 * Property name for the find action
+	 */
+	public static final String FIND = "find"; //$NON-NLS-1$
+
+	/**
+	 * Property name for the paste action
+	 */
+	public static final String PASTE = "paste"; //$NON-NLS-1$
+
+	/**
+	 * Property name for the redo action
+	 */
+	public static final String REDO = "redo"; //$NON-NLS-1$
+
+	/**
+	 * Property name for the select all action
+	 */
+	public static final String SELECT_ALL = "selectall"; //$NON-NLS-1$
+
+	/**
+	 * Property name for the undo action
+	 */
+	public static final String UNDO = "undo"; //$NON-NLS-1$
 /**
  * Creates a new cell editor under the given parent control.
  * The cell editor has no cell validator.
@@ -116,6 +160,16 @@ public void activate() {
  */
 public void addListener(ICellEditorListener listener) {
 	listeners.add(listener);
+}
+/**
+ * Adds a property change listener to this cell editor.
+ * Has no effect if an identical property change listener 
+ * is already registered.
+ *
+ * @param listener a property change listener
+ */
+public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	propertyChangeListeners.add(listener);
 }
 /**
  * Creates the control for this cell editor under the given parent control.
@@ -213,6 +267,18 @@ protected void fireEditorValueChanged(boolean oldValidState, boolean newValidSta
 	}
 }
 /**
+ * Notifies all registered property listeners
+ * of an enablement change.
+ *
+ * @param actionId the id indicating what action's enablement has changed.
+ */
+protected void fireEnablementChanged(String actionId) {
+	Object[] listeners = propertyChangeListeners.getListeners();
+	for (int i = 0; i < listeners.length; ++i) {
+		((IPropertyChangeListener) listeners[i]).propertyChange(new PropertyChangeEvent(this, actionId, null, null));
+	}
+}
+/**
  * Returns the control used to implement this cell editor.
  *
  * @return the control, or <code>null</code> if this cell editor has no control
@@ -279,6 +345,22 @@ public boolean isActivated() {
 	return control != null && control.isVisible();
 }
 /**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the copy action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if copy is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isCopyEnabled() {
+	return false;
+}
+/**
  * Returns whether the given value is valid for this cell editor.
  * This cell editor's validator (if any) makes the actual determination.
  *
@@ -294,6 +376,38 @@ protected boolean isCorrect(Object value) {
 	return (errorMessage == null || errorMessage.equals(""));//$NON-NLS-1$
 }
 /**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the cut action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if cut is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isCutEnabled() {
+	return false;
+}
+/**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the delete action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if delete is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isDeleteEnabled() {
+	return false;
+}
+/**
  * Returns whether the value of this cell editor has changed since the
  * last call to <code>setValue</code>.
  *
@@ -302,6 +416,86 @@ protected boolean isCorrect(Object value) {
  */
 public boolean isDirty() {
 	return dirty;
+}
+/**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the find action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if find is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isFindEnabled() {
+	return false;
+}
+/**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the paste action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if paste is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isPasteEnabled() {
+	return false;
+}
+/**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the redo action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if redo is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isRedoEnabled() {
+	return false;
+}
+/**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the select all action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if select all is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isSelectAllEnabled() {
+	return false;
+}
+/**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the undo action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if undo is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isUndoEnabled() {
+	return false;
 }
 /**
  * Returns whether this cell editor has a valid value.
@@ -352,6 +546,15 @@ public void performCopy() {
  * </p>
  */
 public void performCut() {
+}
+/**
+ * Performs the delete action.
+ * This default implementation does nothing.
+ * <p>
+ * Subclasses may override
+ * </p>
+ */
+public void performDelete() {
 }
 /**
  * Performs the find action.
@@ -406,6 +609,16 @@ public void performUndo() {
  */
 public void removeListener(ICellEditorListener listener) {
 	listeners.remove(listener);
+}
+/**
+ * Removes the given property change listener from this cell editor.
+ * Has no affect if an identical property change listener is not 
+ * registered.
+ *
+ * @param listener a property change listener
+ */
+public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	propertyChangeListeners.remove(listener);
 }
 /**
  * Sets or clears the current error message for this cell editor.

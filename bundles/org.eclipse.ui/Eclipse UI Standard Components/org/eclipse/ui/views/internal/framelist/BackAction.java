@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.internal.framelist;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 /**
  * Generic "Back" action, which calls <code>back()</code> on the frame list when run.
  * Enabled only when there is a frame after the current frame.
@@ -7,10 +11,10 @@ package org.eclipse.ui.views.internal.framelist;
 public class BackAction extends FrameAction {
 public BackAction(FrameList frameList) {
 	super(frameList);
-	setText("&Back");
-	setHoverImageDescriptor(getImageDescriptor("clcl16/backward_nav.gif"));
-	setImageDescriptor(getImageDescriptor("elcl16/backward_nav.gif"));
-	setDisabledImageDescriptor(getImageDescriptor("dlcl16/backward_nav.gif"));
+	setText(FrameListMessages.getString("Back.text")); //$NON-NLS-1$
+	setHoverImageDescriptor(getImageDescriptor("clcl16/backward_nav.gif"));//$NON-NLS-1$
+	setImageDescriptor(getImageDescriptor("elcl16/backward_nav.gif"));//$NON-NLS-1$
+	setDisabledImageDescriptor(getImageDescriptor("dlcl16/backward_nav.gif"));//$NON-NLS-1$
 	update();
 }
 Frame getPreviousFrame() {
@@ -21,10 +25,10 @@ String getToolTipText(Frame previousFrame) {
 	if (previousFrame != null) {
 		String text = previousFrame.getToolTipText();
 		if (text != null && text.length() > 0) {
-			return "Back to " + text;
+			return FrameListMessages.format("Back.toolTipOneArg", new Object[] {text}); //$NON-NLS-1$
 		}
 	}
-	return "Back";
+	return FrameListMessages.getString("Back.toolTip"); //$NON-NLS-1$
 }
 /**
  * Calls <code>back()</code> on the frame list.
@@ -47,10 +51,10 @@ protected void updateToolTip() {
 	if (frame != null) {
 		String text = frame.getToolTipText();
 		if (text != null && text.length() > 0) {
-			setToolTipText("Back to " + text);
+			setToolTipText(FrameListMessages.format("Back.toolTipOneArg", new Object[] {text})); //$NON-NLS-1$
 			return;
 		}
 	}
-	setToolTipText("Back");
+	setToolTipText(FrameListMessages.getString("Back.toolTip")); //$NON-NLS-1$
 }
 }

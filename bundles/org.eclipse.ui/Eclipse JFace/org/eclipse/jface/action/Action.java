@@ -1,11 +1,9 @@
 package org.eclipse.jface.action;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.events.*;
@@ -376,7 +374,7 @@ private static void initKeyCodes() {
 	keyCodes.put("PAGE_UP", new Integer(SWT.PAGE_UP));//$NON-NLS-1$
 	keyCodes.put("PAGE_DOWN", new Integer(SWT.PAGE_DOWN));//$NON-NLS-1$
 	keyCodes.put("HOME", new Integer(SWT.HOME));//$NON-NLS-1$
-	keyCodes.put("END", new Integer(SWT.HOME));//$NON-NLS-1$
+	keyCodes.put("END", new Integer(SWT.END));//$NON-NLS-1$
 	keyCodes.put("INSERT", new Integer(SWT.INSERT));//$NON-NLS-1$
 	keyCodes.put("F1", new Integer(SWT.F1));//$NON-NLS-1$
 	keyCodes.put("F2", new Integer(SWT.F2));//$NON-NLS-1$

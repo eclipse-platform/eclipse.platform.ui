@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -11,6 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,7 +29,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".AddBookmarkAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".AddBookmarkAction";//$NON-NLS-1$
 	
 	/**
 	 * The shell in which to show any dialogs.
@@ -41,11 +41,11 @@ public class AddBookmarkAction extends SelectionListenerAction {
  * @param shell the shell for any dialogs
  */
 public AddBookmarkAction(Shell shell) {
-	super("Add Boo&kmark");
+	super(WorkbenchMessages.getString("AddBookmarkLabel")); //$NON-NLS-1$
 	setId(ID);
 	Assert.isNotNull(shell);
 	this.shell = shell;
-	setToolTipText("Add a bookmark");
+	setToolTipText(WorkbenchMessages.getString("AddBookmarkToolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.ADD_BOOKMARK_ACTION});
 }
 /**

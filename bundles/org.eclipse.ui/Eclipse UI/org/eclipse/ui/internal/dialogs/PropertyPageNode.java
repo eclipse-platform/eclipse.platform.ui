@@ -1,15 +1,14 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -43,11 +42,12 @@ public void createPage() {
 	try {
 		page = contributor.createPage(element);
 	} catch (CoreException e) {
-		UIHackFinder.fixPR(); //need to use a null shell - 1FTVRKN: JFUIF:ALL - IPreferencePage getPreferencePage() does not handle errors
-		ErrorDialog.openError((Shell) null, 
-			"Property Page Creation Problems", 
-			"Unable to create the selected property page.", 
-			e.getStatus());
+		// Just inform the user about the error. The details are
+		// written to the log by now.
+		MessageDialog.openError(
+			(Shell)null, 
+			WorkbenchMessages.getString("PropertyPageNode.errorTitle"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("PropertyPageNode.errorMessage"));  //$NON-NLS-1$
 		page = new EmptyPropertyPage();
 	}
 	setPage(page);

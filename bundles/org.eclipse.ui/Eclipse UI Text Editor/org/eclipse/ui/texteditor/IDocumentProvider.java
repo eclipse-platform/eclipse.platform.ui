@@ -1,9 +1,8 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -114,6 +113,28 @@ public interface IDocumentProvider {
 	 */
 	IDocument getDocument(Object element);
 	/**
+	 * Returns the modification stamp of the given element.
+	 * 
+	 * @param element the element
+	 * @return the modification stamp of the given element
+	 */
+	long getModificationStamp(Object element);
+	/**
+	 * Returns the time stamp of the last synchronization of
+	 * the given element and it's provided document.
+	 * 
+	 * @param element the element
+	 * @return the sysnchronization stamp of the given element
+	 */
+	long getSynchronizationStamp(Object element);
+	/**
+	 * Returns whether the given element has been deleted.
+	 * 
+	 * @param element the element
+	 * @return <code>true</code> if the element has been deleted
+	 */
+	boolean isDeleted(Object element);
+	/**
 	 * Returns whether the document provided for the given element must be saved.
 	 *
 	 * @param element the element, or <code>null</code>
@@ -142,7 +163,9 @@ public interface IDocumentProvider {
 	 * @param monitor a progress monitor to report progress and request cancelation
 	 * @param element the element, or <code>null</code>
 	 * @param document the document
+	 * @param overwrite indicates whether overwrite should be performed 
+	 * 			while saving the given element if necessary
 	 * @exception CoreException if document could not be stored to the given element
 	 */
-	void saveDocument(IProgressMonitor monitor, Object element, IDocument document) throws CoreException;
+	void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
 }

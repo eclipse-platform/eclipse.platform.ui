@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.navigator;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.resources.IMarker;
@@ -34,10 +33,10 @@ import java.util.List;
 public class ShowInNavigatorAction extends SelectionProviderAction {
 	private IWorkbenchPage page;
 	public ShowInNavigatorAction(IWorkbenchPage page, ISelectionProvider viewer) {
-		super(viewer, "Show in &Navigator");
+		super(viewer, ResourceNavigatorMessages.getString("ShowInNavigator.text")); //$NON-NLS-1$
 		Assert.isNotNull(page);
 		this.page = page;
-		setDescription("Show the selected objects in the navigator view");
+		setDescription(ResourceNavigatorMessages.getString("ShowInNavigator.toolTip")); //$NON-NLS-1$
 	}
 /**
  * Returns the resources in the given selection.
@@ -83,7 +82,7 @@ public void run() {
 	} catch (PartInitException e) {
 		MessageDialog.openError(
 			page.getWorkbenchWindow().getShell(),
-			"Can't open navigator",
+			ResourceNavigatorMessages.getString("ShowInNavigator.errorMessage"), //$NON-NLS-1$
 			e.getMessage());
 	}
 }

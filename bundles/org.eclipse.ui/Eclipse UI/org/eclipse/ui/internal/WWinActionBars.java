@@ -1,13 +1,13 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.IActionBars;
 
-/**
- * Insert the type's description here.
- * Creation date: (2/8/01 5:38:56 PM)
- * @author: Kevin Haaland
- */
 public class WWinActionBars implements IActionBars {
 	private WorkbenchWindow window;
 /**

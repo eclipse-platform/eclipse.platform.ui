@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.registry.*;
@@ -35,7 +34,7 @@ public class Perspective
 	private ArrayList fastViews;
 	private IViewPart activeFastView;
 	protected PerspectivePresentation presentation;
-	final static private String VERSION_STRING = "0.016";
+	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 
 	// resize listener to update fast view height when
 	// window resized.
@@ -170,7 +169,7 @@ private void createInitialActionSets(List stringList) {
 		if (desc != null)
 			visibleActionSets.add(desc);
 		else
-			WorkbenchPlugin.log("Unable to find Action Set: " + id);
+			WorkbenchPlugin.log("Unable to find Action Set: " + id);//$NON-NLS-1$
 	}
 }
 /**
@@ -422,8 +421,8 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 	} catch (IOException e) {
 		persp.deleteCustomFile();
 		MessageDialog.openError((Shell)null, 
-			"Restoring Problems", 
-			"Unable to read workbench state.");
+			WorkbenchMessages.getString("Perspective.problemRestoringTitle"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("Perspective.errorReadingState")); //$NON-NLS-1$
 		return;
 	}
 }
@@ -440,8 +439,7 @@ private void loadPredefinedPersp(
 	try {
 		factory = persp.createFactory();
 	} catch (CoreException e) {
-		throw new WorkbenchException("Unable to instantiate layout with persp ID: " + 
-			persp.getId());
+		throw new WorkbenchException(WorkbenchMessages.format("Perspective.unableToLoad", new Object[] {persp.getId()})); //$NON-NLS-1$
 	}
 
 	// Create layout factory.
@@ -600,10 +598,10 @@ public void restoreState(IMemento memento) {
 	}
 
 	if(errors > 0) {
-		String message = "Errors have occurred while restoring the workbench: See error log for more details.";
+		String message = WorkbenchMessages.getString("Perspectiver.multipleErrorsRestoring"); //$NON-NLS-1$
 		if(errors == 1)
-			message = "An error has occurred while restoring the workbench: See error log for more details.";
-		MessageDialog.openError(null, "Error", message);
+			message = WorkbenchMessages.getString("Perspective.oneErrorRestoring"); //$NON-NLS-1$
+		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 	}
 		
 	// Load the action sets.
@@ -679,7 +677,7 @@ public void saveDesc() {
  */
 public void saveDescAs(IPerspectiveDescriptor desc) {		
 	// Capture the layout state.	
-	XMLMemento memento = XMLMemento.createWriteRoot("perspective");
+	XMLMemento memento = XMLMemento.createWriteRoot("perspective");//$NON-NLS-1$
 	saveState(memento,(PerspectiveDescriptor)desc);
 
 	// Save it to a file.
@@ -693,8 +691,8 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 	} catch (IOException e) {
 		realDesc.deleteCustomFile();
 		MessageDialog.openError((Shell)null, 
-			"Saving Problems", 
-			"Unable to store layout state.");
+			WorkbenchMessages.getString("Perspective.problemSavingTitle"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("Perspective.problemSavingMessage")); //$NON-NLS-1$
 	}
 }
 /**
@@ -779,10 +777,10 @@ private void saveState(IMemento memento,PerspectiveDescriptor p) {
 		}
 	}
 	if(errors > 0) {
-		String message = "Errors have occurred while saving the workbench: See error log for more details.";
+		String message = WorkbenchMessages.getString("Perspective.multipleErrors"); //$NON-NLS-1$
 		if(errors == 1)
-			message = "An error has occurred while saving the workbench: See error log for more details.";
-		MessageDialog.openError(null, "Error", message);
+			message = WorkbenchMessages.getString("Perspective.oneError"); //$NON-NLS-1$
+		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 	}
 	
 	// Save the layout.

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,9 +23,9 @@ import java.util.*;
  */
 public class SelectionEnabler {
 	public static final int ONE_OR_MORE = -1;
-	private static final String ATT_NAME = "name";
-	private static final String ATT_CLASS = "class";
-	private static final String TAG_SELECTION = "selection";
+	private static final String ATT_NAME = "name";//$NON-NLS-1$
+	private static final String ATT_CLASS = "class";//$NON-NLS-1$
+	private static final String TAG_SELECTION = "selection";//$NON-NLS-1$
 	public static final int UNKNOWN = 0;
 	public static final int MULTIPLE = -5;
 	public static final int ANY_NUMBER =  -2;
@@ -88,20 +87,20 @@ public boolean isEnabledForSelection(ISelection selection) {
 private void parseClasses(IConfigurationElement config) {
 	String enablesFor = config.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR);
 	if (enablesFor == null)
-		enablesFor = "*";
-	if (enablesFor.equals("*"))
+		enablesFor = "*";//$NON-NLS-1$
+	if (enablesFor.equals("*"))//$NON-NLS-1$
 		mode = ANY_NUMBER;
 	else
-		if (enablesFor.equals("?"))
+		if (enablesFor.equals("?"))//$NON-NLS-1$
 			mode = NONE_OR_ONE;
 		else
-			if (enablesFor.equals("!"))
+			if (enablesFor.equals("!"))//$NON-NLS-1$
 				mode = NONE;
 			else
-				if (enablesFor.equals("+"))
+				if (enablesFor.equals("+"))//$NON-NLS-1$
 					mode = ONE_OR_MORE;
 				else
-					if (enablesFor.equals("multiple") || enablesFor.equals("2+"))
+					if (enablesFor.equals("multiple") || enablesFor.equals("2+"))//$NON-NLS-2$//$NON-NLS-1$
 						mode = MULTIPLE;
 					else {
 						try {

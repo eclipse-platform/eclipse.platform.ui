@@ -1,9 +1,8 @@
 package org.eclipse.jface.text;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -29,7 +28,7 @@ public final class ChildDocumentManager implements IDocumentListener {
 	 * Name of the position categories used to keep track of the child
 	 * documents offset ranges into the parent document.
 	 */
-	private final static String CHILDDOCUMENTS= "__childdocuments";
+	public final static String CHILDDOCUMENTS= "__childdocuments";
 	
 	
 	/**

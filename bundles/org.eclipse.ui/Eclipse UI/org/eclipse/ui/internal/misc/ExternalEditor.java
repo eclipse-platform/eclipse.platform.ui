@@ -1,14 +1,14 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.plugins.*;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.swt.program.Program;
@@ -35,8 +35,16 @@ public void open() throws CoreException {
 	Program program = this.descriptor.getProgram();
 	if (program == null)
 		openWithUserDefinedProgram();
-	else
-		program.launch(file.getLocation().toOSString());
+	else {
+		String path = file.getLocation().toOSString();
+		if (!program.execute(path)) 
+			throw new CoreException(new Status(
+				Status.ERROR, 
+				WorkbenchPlugin.PI_WORKBENCH, 
+				0, 
+				WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {path}), //$NON-NLS-1$
+				null));
+	}
 }
 /**
  * open the editor.
@@ -81,7 +89,7 @@ public void openWithUserDefinedProgram() throws CoreException {
 			Status.ERROR, 
 			WorkbenchPlugin.PI_WORKBENCH, 
 			oCommand.getRetCode(), 
-			"Error opening external editor ("+path+").",
+			WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {path}), //$NON-NLS-1$
 			oCommand.getException()));
 }
 }

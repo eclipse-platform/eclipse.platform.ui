@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -36,10 +35,10 @@ public class ResourceAndContainerGroup implements Listener {
 	private boolean allowExistingResources = false;
 
 	// resource type (file, folder, project)
-	private String resourceType = "resource";
+	private String resourceType = WorkbenchMessages.getString("ResourceGroup.resource"); //$NON-NLS-1$
 	
 	// problem indicator
-	private String problemMessage = "";
+	private String problemMessage = "";//$NON-NLS-1$
 	private int problemType = PROBLEM_NONE;
 
 	// widgets
@@ -208,14 +207,14 @@ protected boolean validateContainer() {
 	IPath path = containerGroup.getContainerFullPath();
 	if (path == null) {
 		problemType = PROBLEM_CONTAINER_EMPTY;
-		problemMessage = "The folder is empty.";
+		problemMessage = WorkbenchMessages.getString("ResourceGroup.folderEmpty"); //$NON-NLS-1$
 		return false;
 	}
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	String projectName = path.segment(0);
 	if (projectName == null || !workspace.getRoot().getProject(projectName).exists()) {
 		problemType = PROBLEM_PROJECT_DOES_NOT_EXIST;
-		problemMessage = "The specified project does not exist.";
+		problemMessage = WorkbenchMessages.getString("ResourceGroup.noProject"); //$NON-NLS-1$
 		return false;
 	}
 	return true;
@@ -232,7 +231,7 @@ protected boolean validateControls() {
 		return false;
 	}
 	problemType = PROBLEM_NONE;
-	problemMessage = "";
+	problemMessage = "";//$NON-NLS-1$
 
 	if (!validateContainer() || !validateResourceName())
 		return false;
@@ -261,7 +260,7 @@ protected boolean validateFullResourcePath(IPath resourcePath) {
 
 	if (!allowExistingResources && (workspace.getRoot().getFolder(resourcePath).exists() || workspace.getRoot().getFile(resourcePath).exists())) {
 		problemType = PROBLEM_RESOURCE_EXIST;
-		problemMessage = "The same name already exists.";
+		problemMessage = WorkbenchMessages.getString("ResourceGroup.nameExists"); //$NON-NLS-1$
 		return false;
 	} 
 	return true;
@@ -276,15 +275,15 @@ protected boolean validateFullResourcePath(IPath resourcePath) {
 protected boolean validateResourceName() {
 	String resourceName = resourceNameField.getText();
 
-	if (resourceName.equals("")) {
+	if (resourceName.equals("")) {//$NON-NLS-1$
 		problemType = PROBLEM_RESOURCE_EMPTY;
-		problemMessage = "The " + resourceType + " name is empty.";
+		problemMessage = WorkbenchMessages.format("ResourceGroup.emptyName", new Object[] {resourceType}); //$NON-NLS-1$
 		return false;
 	}
 
 	if (resourceName.indexOf(IPath.SEPARATOR) != -1) {
 		problemType = PROBLEM_RESOURCE_CONTAINS_SEPARATOR;
-		problemMessage = "The " + resourceType + " name contains a separator.";
+		problemMessage = WorkbenchMessages.format("ResourceGroup.containsSeparator", new Object[] {resourceType}); //$NON-NLS-1$
 		return false;
 	}
 

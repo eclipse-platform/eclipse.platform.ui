@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -158,7 +157,7 @@ IContainer createContainersFor(IPath path) throws CoreException {
 	} else {
 		// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
 		IProgressMonitor localMonitor = new SubProgressMonitor(monitor, segmentCount);
-		localMonitor.beginTask("Creating folder:", segmentCount);
+		localMonitor.beginTask(DataTransferMessages.getString("ImportOperation.creatingFolder"), segmentCount); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < segmentCount; i++) {
 				currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
@@ -222,7 +221,7 @@ protected void execute(IProgressMonitor progressMonitor) {
 	try {
 		if (selectedFiles == null) {
 			//Set the amount to 1000 as we have no idea of how long this will take
-			monitor.beginTask("Importing:",1000);
+			monitor.beginTask(DataTransferMessages.getString("DataTransfer.importTask"),1000); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destinationPath);
 			monitor.worked(50);
 			destinationContainer = generator.generateContainer(new SubProgressMonitor(monitor, 50));
@@ -232,7 +231,7 @@ protected void execute(IProgressMonitor progressMonitor) {
 		} else {
 			// Choose twice the selected files size to take folders into account
 			int creationCount = selectedFiles.size() * 2;
-			monitor.beginTask("Importing:",creationCount + 100);
+			monitor.beginTask(DataTransferMessages.getString("DataTransfer.importTask"),creationCount + 100); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destinationPath);
 			monitor.worked(50);
 			destinationContainer = generator.generateContainer(new SubProgressMonitor(monitor, 50));
@@ -285,7 +284,7 @@ public IStatus getStatus() {
 		PlatformUI.PLUGIN_ID, 
 		IStatus.OK, 
 		errors,
-		"Problems were encountered during import:", 
+		DataTransferMessages.getString("ImportOperation.importProblems"),  //$NON-NLS-1$
 		null);
 }
 /**
@@ -323,7 +322,7 @@ void importFile(Object fileObject, int policy) {
 				IStatus.ERROR,
 				PlatformUI.PLUGIN_ID,
 				0,
-				"Error opening input stream for " + fileObjectPath,
+				DataTransferMessages.format("ImportOperation.openStreamError", new Object [] {fileObjectPath}), //$NON-NLS-1$
 				null));
 		return;
 	}
@@ -344,7 +343,7 @@ void importFile(Object fileObject, int policy) {
 					IStatus.ERROR,
 					PlatformUI.PLUGIN_ID,
 					0,
-					"Could not close input stream for " + fileObjectPath, 
+					DataTransferMessages.format("ImportOperation.closeStreamError", new Object [] {fileObjectPath}),  //$NON-NLS-1$
 					e));
 		}
 	}
@@ -374,7 +373,7 @@ void importFileSystemObjects(List filesToImport) {
 						IStatus.INFO,
 						PlatformUI.PLUGIN_ID,
 						0,
-						"Can not copy root file system.",
+						DataTransferMessages.getString("ImportOperation.cannotCopy"), //$NON-NLS-1$
 						null));
 				continue;
 			}
@@ -475,7 +474,7 @@ boolean queryOverwrite(IPath resourcePath) throws OperationCanceledException {
 	String overwriteAnswer = overwriteCallback.queryOverwrite(resourcePath.makeRelative().toString());
 
 	if (overwriteAnswer.equals(IOverwriteQuery.CANCEL))
-		throw new OperationCanceledException("");
+		throw new OperationCanceledException(DataTransferMessages.getString("DataTransfer.emptyString")); //$NON-NLS-1$
 				
 	if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
 		return false;

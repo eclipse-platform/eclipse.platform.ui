@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IWorkbench;
@@ -50,9 +49,9 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
 public ZipFileExportWizard() {
 	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 	IDialogSettings workbenchSettings = plugin.getDialogSettings();
-	IDialogSettings section = workbenchSettings.getSection("ZipFileExportWizard");
+	IDialogSettings section = workbenchSettings.getSection("ZipFileExportWizard");//$NON-NLS-1$
 	if(section == null)
-		section = workbenchSettings.addNewSection("ZipFileExportWizard");
+		section = workbenchSettings.addNewSection("ZipFileExportWizard");//$NON-NLS-1$
 	setDialogSettings(section);
 }
 /* (non-Javadoc)
@@ -69,9 +68,9 @@ public void addPages() {
 private ImageDescriptor getImageDescriptor(String relativePath) {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	try {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
@@ -91,8 +90,8 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.workbench = workbench;
 	selection = currentSelection;
 
-	setWindowTitle("Export");
-	setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportzip_wiz.gif"));
+	setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
+	setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportzip_wiz.gif"));//$NON-NLS-1$
 	setNeedsProgressMonitor(true);
 }
 /* (non-Javadoc)

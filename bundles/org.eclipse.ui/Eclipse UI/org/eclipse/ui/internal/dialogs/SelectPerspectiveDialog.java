@@ -1,8 +1,13 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -44,7 +49,7 @@ protected void cancelPressed() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText("Select Perspective");
+	shell.setText(WorkbenchMessages.getString("SelectPerspective.shellTitle")); //$NON-NLS-1$
 }
 /**
  * Adds buttons to this dialog's button bar.
@@ -78,6 +83,7 @@ protected Control createDialogArea(Composite parent) {
 	list = new ListViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
+	list.setSorter(new ViewerSorter() {});
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
 	list.addDoubleClickListener(new IDoubleClickListener() {

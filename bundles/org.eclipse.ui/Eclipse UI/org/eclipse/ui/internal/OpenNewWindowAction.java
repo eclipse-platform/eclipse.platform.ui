@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.*;
@@ -21,8 +20,8 @@ public class OpenNewWindowAction  extends Action {
  * 
  */
 public OpenNewWindowAction(IWorkbenchWindow window) {
-	super("Open In New Window");
-	setToolTipText("Open In New Window");
+	super(WorkbenchMessages.getString("OpenNewWindowAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("OpenNewWindowAction.toolTip")); //$NON-NLS-1$
 	this.window = window;
 }
 /**
@@ -34,7 +33,7 @@ public void run() {
 		IWorkbench wb = window.getWorkbench();
 		wb.openWorkbenchWindow(element);
 	} catch (WorkbenchException e) {
-		MessageDialog.openError(window.getShell(), "Problems Opening Window",
+		MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("OpenNewWindow.dialogTitle"), //$NON-NLS-1$
 			e.getMessage());
 	}
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
@@ -62,27 +61,27 @@ public /*final*/ class WorkbenchImages {
 	public final static String ICONS_PATH;
 	static {
 		if(Display.getCurrent().getIconDepth() > 4)
-			ICONS_PATH = "icons/full/";
+			ICONS_PATH = "icons/full/";//$NON-NLS-1$
 		else
-			ICONS_PATH = "icons/basic/";
+			ICONS_PATH = "icons/basic/";//$NON-NLS-1$
 	}
 	
-	private final static String PATH_CTOOL = ICONS_PATH+"ctool16/"; //Colored toolbar icons - hover.
-	private final static String PATH_ETOOL = ICONS_PATH+"etool16/"; //Enabled toolbar icons.
-	private final static String PATH_DTOOL = ICONS_PATH+"dtool16/"; //Disabled toolbar icons.
+	private final static String PATH_CTOOL = ICONS_PATH+"ctool16/"; //Colored toolbar icons - hover.//$NON-NLS-1$
+	private final static String PATH_ETOOL = ICONS_PATH+"etool16/"; //Enabled toolbar icons.//$NON-NLS-1$
+	private final static String PATH_DTOOL = ICONS_PATH+"dtool16/"; //Disabled toolbar icons.//$NON-NLS-1$
 	
-	private final static String PATH_CLOCALTOOL = ICONS_PATH+"clcl16/"; //Colored local toolbar icons - hover.
-	private final static String PATH_ELOCALTOOL = ICONS_PATH+"elcl16/"; //Enabled local toolbar icons.
-	private final static String PATH_DLOCALTOOL = ICONS_PATH+"dlcl16/"; //Disabled local toolbar icons.
+	private final static String PATH_CLOCALTOOL = ICONS_PATH+"clcl16/"; //Colored local toolbar icons - hover.//$NON-NLS-1$
+	private final static String PATH_ELOCALTOOL = ICONS_PATH+"elcl16/"; //Enabled local toolbar icons.//$NON-NLS-1$
+	private final static String PATH_DLOCALTOOL = ICONS_PATH+"dlcl16/"; //Disabled local toolbar icons.//$NON-NLS-1$
 	
-	private final static String PATH_CVIEW = ICONS_PATH+"cview16/"; //Colored view icons.
-	private final static String PATH_EVIEW = ICONS_PATH+"eview16/"; //View icons
+	private final static String PATH_CVIEW = ICONS_PATH+"cview16/"; //Colored view icons.//$NON-NLS-1$
+	private final static String PATH_EVIEW = ICONS_PATH+"eview16/"; //View icons//$NON-NLS-1$
 
 	
 	//private final static String PATH_PROD = ICONS_PATH+"prod/";	//Product images
-	private final static String PATH_OBJECT = ICONS_PATH+"obj16/"; //Model object icons
-	private final static String PATH_DND = ICONS_PATH+"dnd/";  //DND icons
-	private final static String PATH_WIZBAN = ICONS_PATH+"wizban/"; //Wizard icons
+	private final static String PATH_OBJECT = ICONS_PATH+"obj16/"; //Model object icons//$NON-NLS-1$
+	private final static String PATH_DND = ICONS_PATH+"dnd/";  //DND icons//$NON-NLS-1$
+	private final static String PATH_WIZBAN = ICONS_PATH+"wizban/"; //Wizard icons//$NON-NLS-1$
 	
 	//private final static String PATH_STAT = ICONS_PATH+"stat/";
 	//private final static String PATH_MISC = ICONS_PATH+"misc/";
@@ -110,66 +109,66 @@ private final static void declareImages() {
 
 							
 	// toolbar buttons for wizards
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ, PATH_ETOOL+"new_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER, PATH_CTOOL+"new_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED, PATH_DTOOL+"new_wiz.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ, PATH_ETOOL+"new_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER, PATH_CTOOL+"new_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED, PATH_DTOOL+"new_wiz.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ, PATH_CTOOL+"import_wiz.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ, PATH_CTOOL+"import_wiz.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_HOVER, PATH_CTOOL+"import_wiz.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED, PATH_DTOOL+"import_wiz.gif");
 	
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ, PATH_CTOOL+"export_wiz.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ, PATH_CTOOL+"export_wiz.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER, PATH_CTOOL+"export_wiz.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED, PATH_DTOOL+"export_wiz.gif");
 
 	// other toolbar buttons
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC, PATH_ETOOL+"build_exec.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER, PATH_CTOOL+"build_exec.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED, PATH_DTOOL+"build_exec.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC, PATH_ETOOL+"build_exec.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER, PATH_CTOOL+"build_exec.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED, PATH_DTOOL+"build_exec.gif");//$NON-NLS-1$
 
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CLOSE_EDIT, PATH_CTOOL+"close_edit.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CLOSE_EDIT_HOVER, PATH_CTOOL+"close_edit.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CLOSE_EDIT_DISABLED, PATH_DTOOL+"close_edit.gif");
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT, PATH_ETOOL+"save_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER, PATH_CTOOL+"save_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED, PATH_DTOOL+"save_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT, PATH_ETOOL+"save_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER, PATH_CTOOL+"save_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED, PATH_DTOOL+"save_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT, PATH_ETOOL+"saveas_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_HOVER, PATH_CTOOL+"saveas_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED, PATH_DTOOL+"saveas_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT, PATH_ETOOL+"saveas_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_HOVER, PATH_CTOOL+"saveas_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED, PATH_DTOOL+"saveas_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT, PATH_ETOOL+"saveall_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_HOVER, PATH_CTOOL+"saveall_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL+"saveall_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT, PATH_ETOOL+"saveall_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_HOVER, PATH_CTOOL+"saveall_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL+"saveall_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT, PATH_ETOOL+"undo_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER, PATH_CTOOL+"undo_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED, PATH_DTOOL+"undo_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT, PATH_ETOOL+"undo_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER, PATH_CTOOL+"undo_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED, PATH_DTOOL+"undo_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT, PATH_ETOOL+"redo_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER, PATH_CTOOL+"redo_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED, PATH_DTOOL+"redo_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT, PATH_ETOOL+"redo_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER, PATH_CTOOL+"redo_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED, PATH_DTOOL+"redo_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT, PATH_ETOOL+"cut_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER, PATH_CTOOL+"cut_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED, PATH_DTOOL+"cut_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT, PATH_ETOOL+"cut_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER, PATH_CTOOL+"cut_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED, PATH_DTOOL+"cut_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT, PATH_ETOOL+"copy_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER, PATH_CTOOL+"copy_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED, PATH_DTOOL+"copy_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT, PATH_ETOOL+"copy_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER, PATH_CTOOL+"copy_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED, PATH_DTOOL+"copy_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT, PATH_ETOOL+"paste_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER, PATH_CTOOL+"paste_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED, PATH_DTOOL+"paste_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT, PATH_ETOOL+"paste_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER, PATH_CTOOL+"paste_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED, PATH_DTOOL+"paste_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT, PATH_ETOOL+"delete_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_HOVER, PATH_CTOOL+"delete_edit.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_DISABLED, PATH_DTOOL+"delete_edit.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT, PATH_ETOOL+"delete_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_HOVER, PATH_CTOOL+"delete_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_DISABLED, PATH_DTOOL+"delete_edit.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC, PATH_ETOOL+"search_src.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER, PATH_CTOOL+"search_src.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED, PATH_DTOOL+"search_src.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC, PATH_ETOOL+"search_src.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER, PATH_CTOOL+"search_src.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED, PATH_DTOOL+"search_src.gif");//$NON-NLS-1$
 
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REFRESH_NAV, PATH_CTOOL+"refresh_nav.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_REFRESH_NAV_HOVER, PATH_CTOOL+"refresh_nav.gif");
@@ -179,20 +178,20 @@ private final static void declareImages() {
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_STOP_NAV_HOVER, PATH_CTOOL+"stop_nav.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_STOP_NAV_DISABLED, PATH_DTOOL+"stop_nav.gif");
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV, PATH_CLOCALTOOL+"forward_nav.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV, PATH_CLOCALTOOL+"forward_nav.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV_HOVER, PATH_CTOOL+"forward_nav.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV_DISABLED, PATH_DTOOL+"forward_nav.gif");
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV, PATH_CLOCALTOOL+"backward_nav.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV, PATH_CLOCALTOOL+"backward_nav.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV_HOVER, PATH_CTOOL+"backward_nav.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV_DISABLED, PATH_DTOOL+"backward_nav.gif");
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV, PATH_CLOCALTOOL+"home_nav.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV, PATH_CLOCALTOOL+"home_nav.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV_HOVER, PATH_CLOCALTOOL+"home_nav.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV_DISABLED, PATH_DLOCALTOOL+"home_nav.gif");
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE, PATH_CTOOL+"new_page.gif");
-//	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER, PATH_CTOOL+"new_page.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE, PATH_EVIEW+"new_persp.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER, PATH_CVIEW+"new_persp.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_DISABLED, PATH_DTOOL+"new_page.gif");
 
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SET_PAGE, PATH_CTOOL+"set_page.gif");
@@ -203,8 +202,8 @@ private final static void declareImages() {
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WND_HOVER, PATH_CTOOL+"new_wnd.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WND_DISABLED, PATH_DTOOL+"new_wnd.gif");
 
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE,PATH_EVIEW+"default_persp.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER,PATH_CVIEW+"default_persp.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE,PATH_EVIEW+"default_persp.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER,PATH_CVIEW+"default_persp.gif");//$NON-NLS-1$
 	
 	// *TASKLIST* View icons are in the view code now.
 	//declareImage(IWorkbenchGraphicConstants.IMG_LCL_GOTOOBJ_TSK, PATH_LOCALTOOL+"gotoobj_tsk.gif");
@@ -223,52 +222,54 @@ private final static void declareImages() {
 	//declareImage(IWorkbenchGraphicConstants.IMG_LCL_SHOWSYNC_RN, PATH_LOCALTOOL+"showsync_rn.gif");
 
 	// view images
-	declareImage(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC, PATH_CVIEW+"defaultview_misc.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC, PATH_CVIEW+"defaultview_misc.gif");//$NON-NLS-1$
 
 	// wizard images
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN+"new_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN+"newprj_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEWFOLDER_WIZ, PATH_WIZBAN+"newfolder_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEWFILE_WIZ, PATH_WIZBAN+"newfile_wiz.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN+"new_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN+"newprj_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEWFOLDER_WIZ, PATH_WIZBAN+"newfolder_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEWFILE_WIZ, PATH_WIZBAN+"newfile_wiz.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN+"import_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORTDIR_WIZ, PATH_WIZBAN+"importdir_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORTZIP_WIZ, PATH_WIZBAN+"importzip_wiz.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN+"import_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORTDIR_WIZ, PATH_WIZBAN+"importdir_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORTZIP_WIZ, PATH_WIZBAN+"importzip_wiz.gif");//$NON-NLS-1$
 
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN+"export_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORTDIR_WIZ, PATH_WIZBAN+"exportdir_wiz.gif");
-	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORTZIP_WIZ, PATH_WIZBAN+"exportzip_wiz.gif");
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN+"export_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORTDIR_WIZ, PATH_WIZBAN+"exportdir_wiz.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORTZIP_WIZ, PATH_WIZBAN+"exportzip_wiz.gif");//$NON-NLS-1$
 
 	/* Cache the commonly used ones */
 	
 	// object images -- these are also shared images.
-	declareRegistryImage(ISharedImages.IMG_OBJ_FILE, PATH_OBJECT+"file_obj.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJ_FOLDER, PATH_OBJECT+"fldr_obj.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJ_PROJECT, PATH_OBJECT+"prj_obj.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT+"cprj_obj.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJ_ELEMENT, PATH_OBJECT+"elements_obj.gif");
-	declareRegistryImage(ISharedImages.IMG_OPEN_MARKER, PATH_CLOCALTOOL+"gotoobj_tsk.gif");
-	declareRegistryImage(ISharedImages.IMG_DEF_VIEW, PATH_CVIEW+"defaultview_misc.gif");
+	declareRegistryImage(ISharedImages.IMG_OBJ_FILE, PATH_OBJECT+"file_obj.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OBJ_FOLDER, PATH_OBJECT+"fldr_obj.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OBJ_PROJECT, PATH_OBJECT+"prj_obj.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT+"cprj_obj.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OBJ_ELEMENT, PATH_OBJECT+"elements_obj.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OPEN_MARKER, PATH_CLOCALTOOL+"gotoobj_tsk.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_DEF_VIEW, PATH_CVIEW+"defaultview_misc.gif");//$NON-NLS-1$
 
 	// view toolbar images
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW, PATH_CLOCALTOOL+"close_view.gif");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW, PATH_CLOCALTOOL+"pin_view.gif");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW, PATH_CLOCALTOOL+"min_view.gif");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_CLOCALTOOL+"view_menu.gif");
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW, PATH_CLOCALTOOL+"close_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW, PATH_CLOCALTOOL+"pin_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW, PATH_CLOCALTOOL+"min_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_CLOCALTOOL+"view_menu.gif");//$NON-NLS-1$
 	
 	// task objects
 	//declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_HPRIO_TSK, PATH_OBJECT+"hprio_tsk.gif");
 	//declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_MPRIO_TSK, PATH_OBJECT+"mprio_tsk.gif");
 	//declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_LPRIO_TSK, PATH_OBJECT+"lprio_tsk.gif");
 
-	declareRegistryImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT+"error_tsk.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT+"warn_tsk.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT+"info_tsk.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJS_TASK_TSK, PATH_OBJECT+"taskmrk_tsk.gif");
+	declareRegistryImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT+"error_tsk.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT+"warn_tsk.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT+"info_tsk.gif");//$NON-NLS-1$
+	declareRegistryImage(ISharedImages.IMG_OBJS_TASK_TSK, PATH_OBJECT+"taskmrk_tsk.gif");//$NON-NLS-1$
 	//declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_BRKPT_TSK, PATH_OBJECT+"brkptmrk_tsk.gif");
-	declareRegistryImage(ISharedImages.IMG_OBJS_BKMRK_TSK, PATH_OBJECT+"bkmrk_tsk.gif");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_COMPLETE_TSK, PATH_OBJECT+"complete_tsk.gif");   
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_INCOMPLETE_TSK, PATH_OBJECT+"incomplete_tsk.gif");
+	declareRegistryImage(ISharedImages.IMG_OBJS_BKMRK_TSK, PATH_OBJECT+"bkmrk_tsk.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_COMPLETE_TSK, PATH_OBJECT+"complete_tsk.gif");   //$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_INCOMPLETE_TSK, PATH_OBJECT+"incomplete_tsk.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_ITEM, PATH_OBJECT+"welcome_item.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_BANNER, PATH_OBJECT+"welcome_banner.gif");//$NON-NLS-1$
 
 	// synchronization indicator objects
 	//declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_WBET_STAT, PATH_OVERLAY+"wbet_stat.gif");
@@ -281,20 +282,20 @@ private final static void declareImages() {
 	//declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_FILLLOCAL_STAT, PATH_STAT+"filllocal_stat.gif");
 	
 	// cursor icons for direct manipulation in PartPresentation
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_SOURCE, PATH_DND+"left_source.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_MASK, PATH_DND+"left_mask.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_RIGHT_SOURCE, PATH_DND+"right_source.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_RIGHT_MASK, PATH_DND+"right_mask.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOP_SOURCE, PATH_DND+"top_source.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOP_MASK, PATH_DND+"top_mask.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_BOTTOM_SOURCE, PATH_DND+"bottom_source.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_BOTTOM_MASK, PATH_DND+"bottom_mask.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_INVALID_SOURCE, PATH_DND+"invalid_source.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_INVALID_MASK, PATH_DND+"invalid_mask.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_STACK_SOURCE, PATH_DND+"stack_source.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_STACK_MASK, PATH_DND+"stack_mask.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_DND+"offscreen_source.bmp");
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_DND+"offscreen_mask.bmp");
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_SOURCE, PATH_DND+"left_source.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_MASK, PATH_DND+"left_mask.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_RIGHT_SOURCE, PATH_DND+"right_source.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_RIGHT_MASK, PATH_DND+"right_mask.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOP_SOURCE, PATH_DND+"top_source.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOP_MASK, PATH_DND+"top_mask.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_BOTTOM_SOURCE, PATH_DND+"bottom_source.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_BOTTOM_MASK, PATH_DND+"bottom_mask.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_INVALID_SOURCE, PATH_DND+"invalid_source.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_INVALID_MASK, PATH_DND+"invalid_mask.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_STACK_SOURCE, PATH_DND+"stack_source.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_STACK_MASK, PATH_DND+"stack_mask.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_DND+"offscreen_source.bmp");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_DND+"offscreen_mask.bmp");//$NON-NLS-1$
 }
 /**
  * Declare an Image in the registry table.
@@ -436,7 +437,7 @@ public static ImageDescriptor getImageDescriptorFromPluginID(String pluginID, St
  */
 
 public static ImageDescriptor getImageDescriptorFromProgram(String filename, int offset) {
-	String key = filename + "*" + Integer.toString(offset); //use * as it is not a valid filename character
+	String key = filename + "*" + Integer.toString(offset); //use * as it is not a valid filename character//$NON-NLS-1$
 	ImageDescriptor desc = getImageDescriptor(key);
 	if (desc == null) {
 		desc = new ProgramImageDescriptor(filename,offset);

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.model;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -20,7 +19,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @see IElementFactory
  */
 public class WorkspaceFactory implements IElementFactory, IPersistableElement {
-	private static final String FACTORY_ID = "org.eclipse.ui.internal.model.WorkspaceFactory";
+	private static final String FACTORY_ID = "org.eclipse.ui.internal.model.WorkspaceFactory";//$NON-NLS-1$
 /**
  * Create a ResourceFactory.  This constructor is typically used
  * for our IElementFactory side.

@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.navigator;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -12,10 +16,8 @@ import java.io.StringWriter;
  * The FilterAction is the class that adds the filter views to a ResourceNavigator.
  */
 /* package */ class FilterSelectionAction extends ResourceNavigatorAction {
-
-	private static final String FILTER_ERROR_MESSAGE = "Unable to create filter.";
-	private static final String FILTER_TOOL_TIP = "Apply the defined filters";
-	private static final String FILTER_SELECTION_MESSAGE = "Select filters to apply";
+	private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.getString("FilterSelection.toolTip"); //$NON-NLS-1$
+	private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.getString("FilterSelection.message"); //$NON-NLS-1$
 	
 	private Shell shell;
 /**

@@ -1,7 +1,12 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.*;
@@ -157,11 +162,11 @@ protected void handle(InvocationTargetException e) {
 	} else {
 		String msg = target.getMessage();
 		if (msg == null)
-			msg = "Internal error";
+			msg = "Internal error";//$NON-NLS-1$
 		error = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, msg, target);
 	}
-	ErrorDialog.openError(getControl().getShell(), "Problems Occurred", null, error);
-	WorkbenchPlugin.log("Error in ProjectReferencePage.doOk", error);
+	ErrorDialog.openError(getControl().getShell(), "Problems Occurred", null, error);//$NON-NLS-1$
+	WorkbenchPlugin.log("Error in ProjectReferencePage.doOk", error);//$NON-NLS-1$
 }
 /**
  * Initializes a ProjectReferencePage.
@@ -169,13 +174,7 @@ protected void handle(InvocationTargetException e) {
 private void initialize() {
 	project = (IProject) getElement().getAdapter(IResource.class);
 	noDefaultAndApplyButton();
-	StringBuffer buf = new StringBuffer();
-		buf.append("Projects may refer to other projects in the workspace. Use\n");
-		buf.append("this page to specify what other projects are referenced by\n");
-		buf.append("project ");
-		buf.append(project.getName());
-		buf.append(".");
-	setDescription(buf.toString());
+	setDescription(WorkbenchMessages.format("ProjectReferencesPage.label", new Object[] {project.getName()}));//$NON-NLS-1$
 }
 /**
  * @see PreferencePage#performOk

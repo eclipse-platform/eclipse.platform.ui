@@ -1,11 +1,9 @@
 package org.eclipse.jface.text.rules;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.Assert;
@@ -49,19 +47,15 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	 */
 	public int read() {
 		
-		try {
-			
-			if (fOffset >= fRangeEnd)
-				return EOF;
-				
-			if (fOffset == fEnd)
-				shiftBuffer(fEnd);
-				
-			return fBuffer[fOffset - fStart];
-			
-		} finally {
+		if (fOffset >= fRangeEnd) {
 			++ fOffset;
+			return EOF;
 		}
+				
+		if (fOffset == fEnd)
+			shiftBuffer(fEnd);
+			
+		return fBuffer[fOffset++ - fStart];			
 	}
 	/**
 	 * Sets the buffer to the given number of characters.

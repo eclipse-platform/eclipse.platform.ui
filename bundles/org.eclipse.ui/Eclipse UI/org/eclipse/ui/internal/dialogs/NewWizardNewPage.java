@@ -1,11 +1,11 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.misc.Workbook;
 import org.eclipse.ui.internal.misc.WorkbookPage;
@@ -41,11 +41,11 @@ class NewWizardNewPage implements ISelectionChangedListener, IDoubleClickListene
 
 	// id constants
 	private final static String STORE_SELECTED_CATEGORY_ID = 
-		"NewWizardSelectionPage.STORE_SELECTED_CATEGORY_ID"; 
+		"NewWizardSelectionPage.STORE_SELECTED_CATEGORY_ID"; //$NON-NLS-1$
 	private final static String STORE_EXPANDED_CATEGORIES_ID = 
-		"NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID"; 
+		"NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 	private final static String STORE_SELECTED_WIZARD_ID = 
-		"NewWizardSelectionPage.STORE_SELECTED_WIZARD_ID"; 
+		"NewWizardSelectionPage.STORE_SELECTED_WIZARD_ID"; //$NON-NLS-1$
 /**
  *  Create an instance of this class
  */
@@ -55,7 +55,7 @@ public NewWizardNewPage(NewWizardSelectionPage mainPage, IWorkbench aWorkbench, 
 	this.wizardCategories = wizardCategories;
 }
 public void activate() {
-	page.setDescription("The following resource creation wizards are available.");
+	page.setDescription(WorkbenchMessages.getString("NewWizardNewPage.description")); //$NON-NLS-1$
 	
 	selectionChanged(
 		new SelectionChangedEvent(

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -282,6 +281,11 @@ public void mouseMove(MouseEvent e) {
 	if (Math.abs(dx) < HYSTERESIS && Math.abs(dy) < HYSTERESIS)
 		return;
 
+	// If the source part is not in a state to allow drag & drop
+	// operation to start, ignore the move
+	if (!sourcePart.isDragAllowed())
+		return;
+		
 	// Create a tracker.  This is just an XOR rect on the screen.
 	// As it moves we notify the drag listeners.
 	final Display display= dragControl.getDisplay();	 						 	

@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.views.properties.*;
@@ -17,14 +16,13 @@ import java.util.*;
  * A Resource property source.
  */
 public class ResourcePropertySource implements IPropertySource {
-
-	protected static String NOT_LOCAL_TEXT = "<not local>";
+	protected static String NOT_LOCAL_TEXT = PropertiesMessages.getString("PropertySource.notLocal"); //$NON-NLS-1$
 	
 	// The element for the property source
 	protected IResource element;
 
 	// Error message when setting a property incorrectly
-	protected String errorMessage = "Read only";
+	protected String errorMessage = PropertiesMessages.getString("PropertySource.readOnly"); //$NON-NLS-1$
 
 	// Property Descriptors
 	static protected IPropertyDescriptor[] propertyDescriptors =
@@ -119,9 +117,9 @@ public Object getPropertyValue(Object name) {
 	}
 	if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
 		if (element.isReadOnly())
-			return "false";
+			return "false";//$NON-NLS-1$
 		else
-			return "true";
+			return "true";//$NON-NLS-1$
 	}
 	return null;
 }

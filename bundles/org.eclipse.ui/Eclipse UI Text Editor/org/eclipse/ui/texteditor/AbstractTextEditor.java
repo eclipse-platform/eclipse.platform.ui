@@ -1,9 +1,8 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -24,8 +23,10 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -71,6 +72,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -136,7 +139,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementDeleted(Object deletedElement) {
 			if (deletedElement != null && deletedElement.equals(getEditorInput()))
-				close(false);		
+				close(false);
 		}
 		
 		/*
@@ -146,8 +149,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (originalElement != null && 
 					originalElement.equals(getEditorInput()) &&
 					(movedElement == null || movedElement instanceof IEditorInput)) {
-				ITextSelection s= (ITextSelection) getSelectionProvider().getSelection();
+				
+				ITextSelection s= null;
+				ISelectionProvider p= getSelectionProvider();
+				if (p != null)
+					s= (ITextSelection) p.getSelection();
+					
+				IDocumentProvider d= getDocumentProvider();
+				IDocument changed= null;
+				if (isDirty())
+					changed= d.getDocument(getEditorInput());
+					
 				setInput((IEditorInput) movedElement);
+				
+				if (changed != null)
+					d.getDocument(getEditorInput()).set(changed.get());
+					
 				restoreSelection(s);
 			}
 		}
@@ -207,6 +224,112 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	};
 	
+	/**
+	 * Internal key verify listener for triggering action activation codes.
+	 */
+	class ActivationCodeTrigger implements VerifyKeyListener {
+		
+		public boolean fIsInstalled= false;
+		
+		/**
+		 * @see VerifyKeyListener#verifyKey(VerifyEvent)
+		 */
+		public void verifyKey(VerifyEvent event) {
+			ActionActivationCode code= null;
+			int size= fActivationCodes.size();
+			for (int i= 0; i < size; i++) {
+				code= (ActionActivationCode) fActivationCodes.get(i);
+				if (code.matches(event)) {
+					IAction action= getAction(code.fActionId);
+					if (action != null) {
+						
+						if (action instanceof IUpdate)
+							((IUpdate) action).update();
+						
+						if (action.isEnabled()) {
+							event.doit= false;
+							action.run();
+							return;
+						}
+					}
+				}
+			}	
+		}		
+	};
+	
+	/**
+	 * Representation of action activation codes.
+	 */
+	class ActionActivationCode {
+		
+		public String fActionId;
+		public char fCharacter;
+		public int fKeyCode;
+		public int fStateMask;
+		
+		public ActionActivationCode(String actionId) {
+			fActionId= actionId;
+		}
+		
+		public boolean matches(VerifyEvent event) {
+			return (event.character == fCharacter &&
+						event.keyCode == fKeyCode &&
+						event.stateMask == fStateMask);
+		}		
+	};
+	
+	/**
+	 * Internal part activation listener
+	 */
+	class PartListener implements IPartListener {
+		
+		private long fModificationStamp= -1;
+		
+		/**
+		 * @see IPartListener#partActivated(IWorkbenchPart)
+		 */
+		public void partActivated(IWorkbenchPart part) {
+			if (part == AbstractTextEditor.this) {
+				
+				IDocumentProvider p= getDocumentProvider();
+				
+				if (fModificationStamp == -1) 
+					fModificationStamp= p.getSynchronizationStamp(getEditorInput());
+					
+				long stamp= p.getModificationStamp(getEditorInput());
+				if (stamp != fModificationStamp) {
+					fModificationStamp= stamp;
+					if (stamp != p.getSynchronizationStamp(getEditorInput()))
+						handleEditorInputChanged();
+				}
+			}
+		}
+	
+		/**
+		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+		 */
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+	
+		/**
+		 * @see IPartListener#partClosed(IWorkbenchPart)
+		 */
+		public void partClosed(IWorkbenchPart part) {
+		}
+	
+		/**
+		 * @see IPartListener#partDeactivated(IWorkbenchPart)
+		 */
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+	
+		/**
+		 * @see IPartListener#partOpened(IWorkbenchPart)
+		 */
+		public void partOpened(IWorkbenchPart part) {
+		}
+	
+	};
 	
 	/** Key used to look up font preference */
 	public final static String PREFERENCE_FONT= "AbstractTextEditor.Font";
@@ -250,6 +373,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private List fSelectionActions= new ArrayList(5);
 	/** The actions marked as content dependent */
 	private List fContentActions= new ArrayList(5);
+	/** The editor's action activation codes */
+	private List fActivationCodes= new ArrayList(2);
+	/** The verify key listener for activation code triggering */
+	private ActivationCodeTrigger fActivationCodeTrigger= new ActivationCodeTrigger();
 	/** Context menu listener */
 	private IMenuListener fMenuListener;
 	/** Vertical ruler mouse listener */
@@ -268,6 +395,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ITextListener fTextListener= new TextListener();
 	/** The editor's property change listener */
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
+	/** The editor's part listener */
+	private IPartListener fPartListener= new PartListener();
+	
 	
 	/**
 	 * Creates a new text editor. It initializes the editor and ruler context
@@ -341,7 +471,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		Display display= getSite().getShell().getDisplay();
 		
-		display.syncExec(new Runnable() {
+		display.asyncExec(new Runnable() {
 			public void run() {
 				getSite().getPage().closeEditor(AbstractTextEditor.this, save);
 			}
@@ -365,7 +495,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setAction(ITextEditorActionConstants.SELECT_ALL, new TextOperationAction(getResourceBundle(), "SelectAll.", this, ITextOperationTarget.SELECT_ALL));
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, new TextOperationAction(getResourceBundle(), "ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT));
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, new TextOperationAction(getResourceBundle(), "ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT));
-		setAction(ITextEditorActionConstants.FIND, new FindReplaceAction(getResourceBundle(), "FindReplace.", getSite().getWorkbenchWindow()));
+		setAction(ITextEditorActionConstants.FIND, new FindReplaceAction(getResourceBundle(), "FindReplace.", this));
 		setAction(ITextEditorActionConstants.BOOKMARK, new AddMarkerAction(getResourceBundle(), "AddBookmark.", this, IMarker.BOOKMARK, true));
 		setAction(ITextEditorActionConstants.ADD_TASK, new AddMarkerAction(getResourceBundle(), "AddTask.", this, IMarker.TASK, true));
 		setAction(ITextEditorActionConstants.SAVE, new SaveAction(getResourceBundle(), "Save.", this));
@@ -384,6 +514,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
+		
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, /* SWT.SHIFT */ SWT.CTRL);
 	}
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
@@ -433,6 +566,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		initializeSourceViewer(getEditorInput());
 	}
 	/**
+	 * Creates a workspace modify operation which saves the content of the editor
+	 * to the editor's input element. <code>overwrite</code> indicates whether
+	 * the editor input element may be overwritten if necessary. Clients may
+	 * reimplement this method.
+	 * 
+	 * @param overwrite indicates whether or not overwrititng is allowed
+	 * @return the save operation
+	 */
+	protected WorkspaceModifyOperation createSaveOperation(final boolean overwrite) {
+		return new WorkspaceModifyOperation() {
+			public void execute(final IProgressMonitor monitor) throws CoreException {
+				getDocumentProvider().saveDocument(monitor, getEditorInput(), getDocumentProvider().getDocument(getEditorInput()), overwrite);
+			}
+		};
+	}
+	/**
 	 * Creates the source viewer to be used by this editor.
 	 * Subclasses may re-implement this method.
 	 *
@@ -459,6 +608,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Subclasses must call <code>super.dispose()</code>.
 	 */
 	public void dispose() {
+		
+		if (fPartListener != null) {
+			getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
+			fPartListener= null;
+		}
 		
 		if (fTitleImage != null) {
 			fTitleImage.dispose();
@@ -512,6 +666,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fRulerContextMenu= null;
 		}
 		
+		if (fActions != null) {
+			fActions.clear();
+			fActions= null;
+		}
+		
+		if (fActivationCodes != null) {
+			fActivationCodeTrigger= null;
+			fActivationCodes.clear();
+			fActivationCodes= null;
+		}		
+		
 		super.dispose();
 	}
 	/**
@@ -552,35 +717,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IDocumentProvider p= getDocumentProvider();
 		if (p == null)
 			return;
-		
-		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
-			public void execute(final IProgressMonitor monitor) throws CoreException {
-				getDocumentProvider().saveDocument(monitor, getEditorInput(), getDocumentProvider().getDocument(getEditorInput()));
-			}
-		};
-		
-		try {
 			
-			p.aboutToChange(getEditorInput());
-			operation.run(progressMonitor);
+		if (p.isDeleted(getEditorInput())) {
 			
-		} catch (InterruptedException x) {
-		} catch (InvocationTargetException x) {
+			if (isSaveAsAllowed()) {
+				
+				doSaveAs();
 			
-			Shell shell= getSite().getShell();
-			String title= getResourceString("Error.save.title");
-			String msg= getResourceString("Error.save.message");
-			
-			Throwable t= x.getTargetException();
-			if (t instanceof CoreException) {
-				CoreException cx= (CoreException) t;
-				ErrorDialog.openError(shell, title, msg, cx.getStatus());
 			} else {
-				MessageDialog.openError(shell, title, msg + t.getMessage());
+				
+				Shell shell= getSite().getShell();
+				String title= getResourceString("Error.save.deleted.title");
+				String msg= getResourceString("Error.save.deleted.message");
+				MessageDialog.openError(shell, title, msg);
 			}
 			
-		} finally {
-			p.changed(getEditorInput());
+		} else {	
+		
+			performSaveOperation(createSaveOperation(false), progressMonitor);
 		}
 	}
 	/**
@@ -673,6 +827,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
+	}
+	/**
+	 * Returns the activation code registered for the specified action.
+	 * 
+	 * @param actionID the action id
+	 * @return the registered activation code or <code>null</code> if no
+	 * 			code has been installed
+	 */
+	private ActionActivationCode findActionActivationCode(String actionID) {
+		int size= fActivationCodes.size();
+		for (int i= 0; i < size; i++) {
+			ActionActivationCode code= (ActionActivationCode) fActivationCodes.get(i);
+			if (actionID.equals(code.fActionId))
+				return code;
+		}
+		return null;
 	}
 	/*
 	 * @see EditorPart#firePropertyChange
@@ -941,6 +1111,71 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 	/**
+	 * Handles an external change of the editor's input element.
+	 */
+	protected void handleEditorInputChanged() {
+		
+		String title;
+		String msg;
+		Shell shell= getSite().getShell();
+		
+		if (getDocumentProvider().isDeleted(getEditorInput())) {
+			
+			title= getResourceString("Error.activated.deleted.title");
+			msg= getResourceString("Error.activated.deleted.message");
+				
+			if (MessageDialog.openQuestion(shell, title, msg))
+				doSaveAs();
+			else
+				close(false);
+			
+		} else {
+			
+			title= getResourceString("Error.activated.outofsync.title");
+			msg= getResourceString("Error.activated.outofsync.message");
+				
+			if (MessageDialog.openQuestion(shell, title, msg)) {
+				try {
+					doSetInput(getEditorInput());
+				} catch (CoreException x) {
+					title= getResourceString("Error.refresh.outofsync.title");
+					msg= getResourceString("Error.refresh.outofsync.message");
+					ErrorDialog.openError(shell, title, msg, x.getStatus());
+				}
+			}
+		}
+	}
+	/**
+	 * Handles the given exception. If the exception reports a out-of-sync
+	 * situation, this is reported to the user. Otherwise, the exception
+	 * is generically reported.
+	 * 
+	 * @param exception the exception to handle
+	 * @param progressMonitor the progress monitor
+	 */
+	protected void handleExceptionOnSave(CoreException exception, IProgressMonitor progressMonitor) {
+		
+		Shell shell= getSite().getShell();
+		
+		IDocumentProvider p= getDocumentProvider();
+		long modifiedStamp= p.getModificationStamp(getEditorInput());
+		long synchStamp= p.getSynchronizationStamp(getEditorInput());
+		
+		if (modifiedStamp != synchStamp) {
+			
+			String title= getResourceString("Error.save.outofsync.title");
+			String msg= getResourceString("Error.save.outofsync.message");
+			
+			if (MessageDialog.openQuestion(shell, title, msg))
+				performSaveOperation(createSaveOperation(true), progressMonitor);
+		
+		} else {
+			String title= getResourceString("Error.save.title");
+			String msg= getResourceString("Error.save.message");
+			ErrorDialog.openError(shell, title, msg, exception.getStatus());
+		}
+	}
+	/**
 	 * Handles a property change event describing a change
 	 * of the editor's preference store and updates the preference
 	 * related editor properties.
@@ -967,6 +1202,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} catch (CoreException x) {
 			throw new PartInitException(x.getMessage());
 		}
+		
+		getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);
 	}
 	/**
 	 * Initializes the editor's source viewer based on the given editor input.
@@ -1098,6 +1335,50 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} else
 			fSelectionActions.remove(actionId);
 	}
+	/**
+	 * Performs the given save operation and handles errors appropriatly.
+	 * 
+	 * @param operation the operation to be performed
+	 * @param progressMonitor the monitor in which to run the operation
+	 */
+	protected void performSaveOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
+		
+		IDocumentProvider provider= getDocumentProvider();
+		
+		try {
+		
+			provider.aboutToChange(getEditorInput());
+			operation.run(progressMonitor);
+		
+		} catch (InterruptedException x) {
+		} catch (InvocationTargetException x) {
+			
+			Throwable t= x.getTargetException();
+			if (t instanceof CoreException)
+				handleExceptionOnSave((CoreException) t, progressMonitor);
+			else {
+				Shell shell= getSite().getShell();
+				String title= getResourceString("Error.save.title");
+				String msg= getResourceString("Error.save.message");
+				MessageDialog.openError(shell, title, msg + t.getMessage());
+			}
+		
+		} finally {
+			provider.changed(getEditorInput());
+		}
+	}
+	/*
+	 * @see ITextEditor#removeActionActivationCode(String)
+	 */
+	public void removeActionActivationCode(String actionID) {
+		Assert.isNotNull(actionID);
+		
+		ActionActivationCode code= findActionActivationCode(actionID);
+		if (code != null) {
+			fActivationCodes.remove(code);
+			setupActionActivationCodes();
+		}
+	}
 	/*
 	 * @see ITextEditor#resetHighlightRange	 
 	 */
@@ -1132,10 +1413,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 		
-		adjustHighlightRange(start, length);
+		
+		StyledText widget= fSourceViewer.getTextWidget();
+		widget.setRedraw(false);
+		{
+			adjustHighlightRange(start, length);
 			
-		fSourceViewer.revealRange(start, length);
-		fSourceViewer.setSelectedRange(start, length);
+			fSourceViewer.revealRange(start, length);
+			fSourceViewer.setSelectedRange(start, length);
+		}
+		widget.setRedraw(true);
 	}
 	/*
 	 * @see ITextEditor#setAction
@@ -1146,6 +1433,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActions.remove(actionID);
 		else
 			fActions.put(actionID, action);
+	}
+	/*
+	 * @see ITextEditor#setActionActivationCode(String, char, int, int)
+	 */
+	public void setActionActivationCode(String actionID, char activationCharacter, int activationKeyCode, int activationStateMask) {
+		
+		Assert.isNotNull(actionID);
+		
+		ActionActivationCode found= findActionActivationCode(actionID);
+		if (found == null) {
+			found= new ActionActivationCode(actionID);
+			fActivationCodes.add(found);
+		}
+		
+		found.fCharacter= activationCharacter;
+		found.fKeyCode= activationKeyCode;
+		found.fStateMask= activationStateMask;
+		
+		setupActionActivationCodes();
 	}
 	/**
 	 * Sets this editor's document provider. This method must be 
@@ -1180,9 +1486,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 			
-		if (fShowHighlightRangeOnly && moveCursor)
-			fSourceViewer.setVisibleRegion(start, length);
-		else
+		if (fShowHighlightRangeOnly) {
+			if (moveCursor)
+				fSourceViewer.setVisibleRegion(start, length);
+		} else
 			fSourceViewer.setRangeIndication(start, length, moveCursor);
 	}
 	/*
@@ -1247,6 +1554,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Assert.isNotNull(configuration);
 		fConfiguration= configuration;
 	}
+	/**
+	 * Deals with the installation/deinstallation of a 
+	 * key verify listener depending on the number of 
+	 * registered action activation codes.
+	 */
+	private void setupActionActivationCodes() {
+		if (fActivationCodes.isEmpty() && fActivationCodeTrigger.fIsInstalled) {
+			StyledText text= fSourceViewer.getTextWidget();
+			text.removeVerifyKeyListener(fActivationCodeTrigger);
+			fActivationCodeTrigger.fIsInstalled= false;
+		} else if (!fActivationCodes.isEmpty() && !fActivationCodeTrigger.fIsInstalled) {
+			StyledText text= fSourceViewer.getTextWidget();
+			text.addVerifyKeyListener(fActivationCodeTrigger);
+			fActivationCodeTrigger.fIsInstalled= true;
+		}
+	}
 	/*
 	 * @see ITextEditor#showHighlightRangeOnly
 	 */
@@ -1267,17 +1590,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private void updateAction(String actionId) {
 		Assert.isNotNull(actionId);
-		IAction action= (IAction) fActions.get(actionId);
-		if (action instanceof IUpdate)
-			((IUpdate) action).update();
+		if (fActions != null) {
+			IAction action= (IAction) fActions.get(actionId);
+			if (action instanceof IUpdate)
+				((IUpdate) action).update();
+		}
 	}
 	/**
 	 * Updates all content dependent actions.
 	 */
 	protected void updateContentDependentActions() {
-		Iterator e= fContentActions.iterator();
-		while (e.hasNext())
-			updateAction((String) e.next());
+		if (fContentActions != null) {
+			Iterator e= fContentActions.iterator();
+			while (e.hasNext())
+				updateAction((String) e.next());
+		}
 	}
 	/**
 	 * If there is no implicit document provider set, the external one is
@@ -1299,8 +1626,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Updates all selection dependent actions.
 	 */
 	protected void updateSelectionDependentActions() {
-		Iterator e= fSelectionActions.iterator();
-		while (e.hasNext())
-			updateAction((String) e.next());
+		if (fSelectionActions != null) {
+			Iterator e= fSelectionActions.iterator();
+			while (e.hasNext())
+				updateAction((String) e.next());
+		}
 	}
 }

@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -191,7 +195,7 @@ public void fill(ToolBar parent, int index) {
  * parent widget.
  */
 private ContributorImageCache getImageCache() {
-	String key = "resourceImageCache";
+	String key = "resourceImageCache";//$NON-NLS-1$
 	ContributorImageCache cache = (ContributorImageCache) parentWidget.getData(key);
 	if (cache == null) {
 		cache = new ContributorImageCache();

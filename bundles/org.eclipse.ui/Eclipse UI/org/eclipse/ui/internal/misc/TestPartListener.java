@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.misc;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.*;
 
 /**
@@ -19,7 +23,7 @@ public TestPartListener() {
  * @see IPerspective#activate
  */
 public void partActivated(IWorkbenchPart part) {
-	System.out.println("partActivated(" + part + ")");
+	System.out.println("partActivated(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Notifies this listener that the given part has been brought to the top.
@@ -35,7 +39,7 @@ public void partActivated(IWorkbenchPart part) {
  * @see IPerspective#bringToTop
  */
 public void partBroughtToTop(IWorkbenchPart part) {
-	System.out.println("partBroughtToTop(" + part + ")");
+	System.out.println("partBroughtToTop(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Notifies this listener that the given part has been closed.
@@ -44,7 +48,7 @@ public void partBroughtToTop(IWorkbenchPart part) {
  * @see IPerspective#close
  */
 public void partClosed(IWorkbenchPart part) {
-	System.out.println("partClosed(" + part + ")");
+	System.out.println("partClosed(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Notifies this listener that the given part has been deactivated.
@@ -53,7 +57,7 @@ public void partClosed(IWorkbenchPart part) {
  * @see IPerspective#activate
  */
 public void partDeactivated(IWorkbenchPart part) {
-	System.out.println("partDeactivated(" + part + ")");
+	System.out.println("partDeactivated(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Notifies this listener that the given part has been opened.
@@ -61,6 +65,6 @@ public void partDeactivated(IWorkbenchPart part) {
  * @param part the part that was opened
  */
 public void partOpened(IWorkbenchPart part) {
-	System.out.println("partOpened(" + part + ")");
+	System.out.println("partOpened(" + part + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 }

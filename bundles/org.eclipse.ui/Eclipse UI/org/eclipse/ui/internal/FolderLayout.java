@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
@@ -39,7 +38,7 @@ public void addPlaceholder(String newID)
 	IViewDescriptor desc = reg.find(newID);
 	if (desc == null) {
 		// cannot safely open the dialog so log the problem
-		WorkbenchPlugin.log("Unable to find view label: " + newID);
+		WorkbenchPlugin.log("Unable to find view label: " + newID);//$NON-NLS-1$
 		return;
 	}
 

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -18,22 +17,22 @@ import org.eclipse.ui.internal.misc.*;
 public class PerspectiveExtensionReader extends RegistryReader {
 	private String targetID;
 	private PageLayout pageLayout;
-	private static final String TAG_EXTENSION="perspectiveExtension";
-	private static final String TAG_ACTION_SET="actionSet";
-	private static final String TAG_WIZARD_SHORTCUT="newWizardShortcut";
-	private static final String TAG_VIEW_SHORTCUT="viewShortcut";
-	private static final String TAG_PERSP_SHORTCUT="perspectiveShortcut";
-	private static final String TAG_VIEW="view";
-	private static final String ATT_ID="id";
-	private static final String ATT_TARGET_ID="targetID";
-	private static final String ATT_RELATIVE="relative";
-	private static final String ATT_RELATIONSHIP="relationship";
-	private static final String ATT_RATIO="ratio";
-	private static final String VAL_LEFT="left";
-	private static final String VAL_RIGHT="right";
-	private static final String VAL_TOP="top";
-	private static final String VAL_BOTTOM="bottom";
-	private static final String VAL_STACK="stack";
+	private static final String TAG_EXTENSION="perspectiveExtension";//$NON-NLS-1$
+	private static final String TAG_ACTION_SET="actionSet";//$NON-NLS-1$
+	private static final String TAG_WIZARD_SHORTCUT="newWizardShortcut";//$NON-NLS-1$
+	private static final String TAG_VIEW_SHORTCUT="viewShortcut";//$NON-NLS-1$
+	private static final String TAG_PERSP_SHORTCUT="perspectiveShortcut";//$NON-NLS-1$
+	private static final String TAG_VIEW="view";//$NON-NLS-1$
+	private static final String ATT_ID="id";//$NON-NLS-1$
+	private static final String ATT_TARGET_ID="targetID";//$NON-NLS-1$
+	private static final String ATT_RELATIVE="relative";//$NON-NLS-1$
+	private static final String ATT_RELATIONSHIP="relationship";//$NON-NLS-1$
+	private static final String ATT_RATIO="ratio";//$NON-NLS-1$
+	private static final String VAL_LEFT="left";//$NON-NLS-1$
+	private static final String VAL_RIGHT="right";//$NON-NLS-1$
+	private static final String VAL_TOP="top";//$NON-NLS-1$
+	private static final String VAL_BOTTOM="bottom";//$NON-NLS-1$
+	private static final String VAL_STACK="stack";//$NON-NLS-1$
 /**
  * RegistryViewReader constructor comment.
  */
@@ -81,9 +80,9 @@ private boolean processExtension(IConfigurationElement element) {
 		else if (type.equals(TAG_PERSP_SHORTCUT))
 			result = processPerspectiveShortcut(child);
 		if (!result) {
-			WorkbenchPlugin.log("Unable to process element: " +
+			WorkbenchPlugin.log("Unable to process element: " +//$NON-NLS-1$
 				type +
-				" in perspective extension: " +
+				" in perspective extension: " +//$NON-NLS-1$
 				element.getDeclaringExtension().getUniqueIdentifier());
 		}
 	}

@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.internal.framelist;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -20,7 +24,7 @@ import java.util.*;
  */
 public class FrameList {
 	/** Property name constant for the current frame. */
-	public static final String P_CURRENT_FRAME = "currentFrame";
+	public static final String P_CURRENT_FRAME = "currentFrame";//$NON-NLS-1$
 
 	private IFrameSource source;
 	private List frames;

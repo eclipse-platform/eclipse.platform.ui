@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.resources.IMarker;
@@ -70,16 +69,20 @@ import java.util.HashMap;
 
 		CheckboxEnumGroup(Composite parent, String text, EnumType type) {
 			this.type = type;
-			enableButton = new Button(parent, SWT.CHECK);
+			// although not needed for layout, this composite is needed to get the tab order right
+			Composite enableComposite = new Composite(parent, SWT.NONE);
+			enableComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			enableComposite.setLayout(new FillLayout());
+			enableButton = new Button(enableComposite, SWT.CHECK);
 			enableButton.addSelectionListener(selectionListener);
 			enableButton.setText(text);
-			Composite group = new Composite(parent, SWT.NONE);
-			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			group.setLayout(new FillLayout());
+			Composite valueComposite = new Composite(parent, SWT.NONE);
+			valueComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			valueComposite.setLayout(new FillLayout());
 			EnumValue[] values = type.getValues();
 			valueButtons = new Button[values.length];
 			for (int i = 0; i < values.length; ++i) {
-				Button valueButton = new Button(group, SWT.CHECK);
+				Button valueButton = new Button(valueComposite, SWT.CHECK);
 				valueButton.setText(values[i].getText());
 //				valueButton.setImage(values[i].getImage());
 				valueButtons[i] = valueButton;
@@ -130,21 +133,6 @@ import java.util.HashMap;
 		}
 	}
 
-	private class LabelComboPair {
-		Label label;
-		Combo combo;
-
-		LabelComboPair(Composite parent, String text, String[] items, int selectionIndex) {
-			label = new Label(parent, SWT.NONE);
-			label.setText(text);
-			combo = createCombo(parent, items, selectionIndex);
-		}
-
-		void setEnabled(boolean enabled) {
-			label.setEnabled(enabled);
-			combo.setEnabled(enabled);
-		}
-	}
 
 	private class LabelComboTextGroup {
 		Label label;
@@ -223,7 +211,7 @@ public void checkStateChanged(CheckStateChangedEvent event) {
  */
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
-	newShell.setText("Filter Tasks");
+	newShell.setText(TaskListMessages.getString("TaskList.filter")); //$NON-NLS-1$
 }
 /**
  * Creates the area showing filtering criteria on attribute values.
@@ -236,18 +224,18 @@ void createAttributesArea(Composite parent) {
 	layout.numColumns = 2;
 	composite.setLayout(layout);
 
-	String[] filters = {"contains", "does not contain"};
-	descriptionGroup = new LabelComboTextGroup(composite, "Where &description", filters, "", 200);
-	severityGroup = new CheckboxEnumGroup(composite, "Where problem &severity is:", severityType);
-	priorityGroup = new CheckboxEnumGroup(composite, "Where task &priority is:", priorityType);
-	completionGroup = new CheckboxEnumGroup(composite, "Where task stat&us is:", completionType);
+	String[] filters = {TaskListMessages.getString("TaskList.contains"), TaskListMessages.getString("TaskList.doesNotContain")}; //$NON-NLS-2$ //$NON-NLS-1$
+	descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.getString("TaskList.whereDescription"), filters, "", 200);//$NON-NLS-2$ //$NON-NLS-1$
+	severityGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.severity"), severityType); //$NON-NLS-1$
+	priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.priority"), priorityType); //$NON-NLS-1$
+	completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.getString("TaskList.status"), completionType); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	super.createButtonsForButtonBar(parent);
-	createButton(parent, RESET_ID, "&Reset", false);
+	createButton(parent, RESET_ID, TaskListMessages.getString("TaskList.resetText"), false); //$NON-NLS-1$
 }
 /**
  * Creates a check box button with the given parent and text.
@@ -318,9 +306,9 @@ void createResourceArea(Composite parent) {
 	Composite group = new Composite(parent, SWT.NONE);
 	group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	group.setLayout(new GridLayout());
-	anyResourceButton = createRadioButton(group, "On any r&esource");
-	selectedResourceButton = createRadioButton(group, "On selected resource &only");
-	selectedResourceAndChildrenButton = createRadioButton(group, "On selected resource and its &children");
+	anyResourceButton = createRadioButton(group, TaskListMessages.getString("TaskList.anyResource")); //$NON-NLS-1$
+	selectedResourceButton = createRadioButton(group, TaskListMessages.getString("TaskList.selectedResource")); //$NON-NLS-1$
+	selectedResourceAndChildrenButton = createRadioButton(group, TaskListMessages.getString("TaskList.selectedAndChildren")); //$NON-NLS-1$
 }
 /**
  * Creates the area showing which marker types should be included.
@@ -334,7 +322,7 @@ void createTypesArea(Composite parent) {
 	composite.setLayout(layout);
 
 	Label label = new Label(composite, SWT.NONE);
-	label.setText("Show entries of &type:");
+	label.setText(TaskListMessages.getString("TaskList.showEntriesOfType")); //$NON-NLS-1$
 
 	typesViewer = new CheckboxTreeViewer(composite);
 	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -483,24 +471,24 @@ int getTypeIndex(String markerType) {
 void initTypes() {
 	severityType = new EnumType(
 		new EnumValue[] {
-			new EnumValue(IMarker.SEVERITY_ERROR, "Error", MarkerUtil.getImage("error")),
-			new EnumValue(IMarker.SEVERITY_WARNING, "Warning", MarkerUtil.getImage("warn")),
-			new EnumValue(IMarker.SEVERITY_INFO, "Info", MarkerUtil.getImage("info"))
+			new EnumValue(IMarker.SEVERITY_ERROR, TaskListMessages.getString("TaskList.error"), MarkerUtil.getImage("error")),//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.SEVERITY_WARNING, TaskListMessages.getString("TaskList.warning"), MarkerUtil.getImage("warn")),//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.SEVERITY_INFO, TaskListMessages.getString("TaskList.info"), MarkerUtil.getImage("info"))//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	);
 	
 	priorityType = new EnumType(
 		new EnumValue[] {
-			new EnumValue(IMarker.PRIORITY_HIGH, "High", MarkerUtil.getImage("hprio")),
-			new EnumValue(IMarker.PRIORITY_NORMAL, "Normal", null),
-			new EnumValue(IMarker.PRIORITY_LOW, "Low", MarkerUtil.getImage("lprio"))
+			new EnumValue(IMarker.PRIORITY_HIGH, TaskListMessages.getString("TaskList.high"), MarkerUtil.getImage("hprio")),//$NON-NLS-2$ //$NON-NLS-1$
+			new EnumValue(IMarker.PRIORITY_NORMAL, TaskListMessages.getString("TaskList.normal"), null), //$NON-NLS-1$
+			new EnumValue(IMarker.PRIORITY_LOW, TaskListMessages.getString("TaskList.low"), MarkerUtil.getImage("lprio"))//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	);
 
 	completionType = new EnumType(
 		new EnumValue[] {
-			new EnumValue(1, "Completed", null),
-			new EnumValue(0, "Not Completed", null)
+			new EnumValue(1, TaskListMessages.getString("TaskList.completed"), null), //$NON-NLS-1$
+			new EnumValue(0, TaskListMessages.getString("TaskList.notCompleted"), null) //$NON-NLS-1$
 		}
 	);
 }
@@ -590,7 +578,7 @@ void updateFilterFromUI(TasksFilter filter) {
 
 	filter.descriptionFilterKind = descriptionGroup.combo.getSelectionIndex();
 	filter.descriptionFilter = descriptionGroup.text.getText();
-	filter.filterOnDescription = !filter.descriptionFilter.equals("");
+	filter.filterOnDescription = !filter.descriptionFilter.equals("");//$NON-NLS-1$
 	
 	filter.filterOnSeverity = severityGroup.getSelection();
 	filter.severityFilter = severityGroup.getValueMask();

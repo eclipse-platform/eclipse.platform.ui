@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
@@ -42,7 +41,7 @@ public class ResourceTransfer extends ByteArrayTransfer {
 	
 	// Create a unique ID to make sure that different Eclipse
 	// applications use different "types" of <code>ResourceTransfer</code>
-	private static final String TYPE_NAME = "resource-transfer-format:" + System.currentTimeMillis() + ":" + instance.hashCode();
+	private static final String TYPE_NAME = "resource-transfer-format:" + System.currentTimeMillis() + ":" + instance.hashCode();//$NON-NLS-2$//$NON-NLS-1$
 	
 	private static final int TYPEID = registerType(TYPE_NAME);
 		
@@ -166,7 +165,7 @@ private IResource readResource(DataInputStream dataIn) throws IOException {
 		case IResource.FILE :
 			return workspace.getRoot().getFile(new Path(path));
 	}
-	Assert.isTrue(false, "Unknown resource type in ResourceTransfer.readResource");
+	Assert.isTrue(false, "Unknown resource type in ResourceTransfer.readResource");//$NON-NLS-1$
 	return null;
 }
 /**

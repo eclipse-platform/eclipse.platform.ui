@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -17,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import java.util.Vector;
 import java.util.List;
 import java.util.Arrays;
@@ -199,9 +199,9 @@ public String queryOverwrite(String pathString) {
 	final MessageDialog dialog = 
 		new MessageDialog(
 			getContainer().getShell(),
-			"Question", 
+			WorkbenchMessages.getString("Question"),  //$NON-NLS-1$
 			null, 
-			pathString + " already exists.  Would you like to overwrite it?", 
+			WorkbenchMessages.format("WizardDataTransfer.existsQuestion", new Object[] {pathString}),  //$NON-NLS-1$
 			MessageDialog.QUESTION, 
 			new String[] {
 				IDialogConstants.YES_LABEL, 
@@ -230,7 +230,7 @@ public String queryOverwrite(String pathString) {
 protected boolean queryYesNoQuestion(String message) {
 	MessageDialog dialog = new MessageDialog(
 		getContainer().getShell(),
-		"Question",
+		WorkbenchMessages.getString("Question"), //$NON-NLS-1$
 		(Image)null,
 		message,
 		MessageDialog.NONE,

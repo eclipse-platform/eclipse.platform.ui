@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.internal.dialogs.*;
@@ -19,6 +18,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
 import java.util.*;
+import java.net.*;
 
 //debug
 import org.eclipse.ui.internal.misc.UIHackFinder;
@@ -150,11 +150,11 @@ private void createMenuBar() {
 	MenuManager menubar = window.getMenuBarManager();
 
 	// Create the file menu.
-	MenuManager popup = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
+	MenuManager popup = new MenuManager(WorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
 	menubar.add(popup);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
 	{
-		MenuManager newMenu = new MenuManager("&New");
+		MenuManager newMenu = new MenuManager(WorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
 		popup.add(newMenu);
 		this.newWizardMenu = new NewWizardMenu(newMenu, window, true);
 	}
@@ -178,12 +178,13 @@ private void createMenuBar() {
 			((Workbench) (window.getWorkbench())).getEditorHistory(),
 			true));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MRU));
+	popup.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	popup.add(new Separator());
 	popup.add(new QuitAction(window.getWorkbench()));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
 
 	// Edit menu.
-	popup = new MenuManager("&Edit", IWorkbenchActionConstants.M_EDIT);
+	popup = new MenuManager(WorkbenchMessages.getString("Workbench.edit"), IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
 	menubar.add(popup);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
 	popup.add(undoAction);
@@ -202,19 +203,20 @@ private void createMenuBar() {
 	popup.add(new Separator());
 	popup.add(addBookmarkAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
+	popup.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 	// View menu.
-	popup = new MenuManager("&Perspective", IWorkbenchActionConstants.M_VIEW);
+	popup = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
 	menubar.add(popup);
 	{
-		MenuManager openInSameWindow = new MenuManager("&Open");
+		MenuManager openInSameWindow = new MenuManager(WorkbenchMessages.getString("Workbench.open")); //$NON-NLS-1$
 		openPerspMenu = 
 			new OpenPerspectiveMenu(window, ResourcesPlugin.getWorkspace().getRoot());
 		openInSameWindow.add(openPerspMenu);
 		popup.add(openInSameWindow);
 	}
 	{
-		MenuManager subMenu = new MenuManager("&Show View");
+		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
 		popup.add(subMenu);
 		new ShowViewMenu(subMenu, window, true);
 	}
@@ -224,15 +226,16 @@ private void createMenuBar() {
 	popup.add(editActionSetAction = new EditActionSetsAction(window));
 	popup.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
 	popup.add(new Separator());
-	popup.add(new NextPageAction("Previous@ALT+UP", -1, window));
-	popup.add(new NextPageAction("Next@ALT+DOWN", 1, window));
+	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.previous"), -1, window)); //$NON-NLS-1$
+	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.next"), 1, window)); //$NON-NLS-1$
 	popup.add(new Separator());
 	popup.add(closePageAction = new ClosePageAction(window));
 	popup.add(closeAllPagesAction = new CloseAllPagesAction(window));
 	popup.add(new Separator(IWorkbenchActionConstants.VIEW_EXT));
+	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
 	// Workbench menu
-	popup = new MenuManager("P&roject", IWorkbenchActionConstants.M_WORKBENCH);
+	popup = new MenuManager(WorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
 	menubar.add(popup);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
 	// Only add the manual incremental build if auto build off
@@ -240,27 +243,33 @@ private void createMenuBar() {
 		popup.add(buildAction);
 	popup.add(rebuildAllAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.WB_END));
+	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
 	// Define section for additions.
 	menubar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
 	// Window menu.
-	popup = new MenuManager("&Window", IWorkbenchActionConstants.M_WINDOW);
+	popup = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 	menubar.add(popup);
 	MenuManager launchWindowMenu =
-		new MenuManager("&Launch", IWorkbenchActionConstants.M_LAUNCH);
+		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
+	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	popup.add(new Separator());
 	popup.add(openPreferencesAction);
 	popup.add(new SwitchToWindowMenu(window, true));
 
 	// Help menu.
-	popup = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
+	popup = new MenuManager(WorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
 	menubar.add(popup);
+	// See if a welcome page is specified
+	if (quickStartAction != null)
+		popup.add(quickStartAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
+	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	// about should always be at the bottom
 	popup.add(aboutAction);
 }
@@ -292,6 +301,7 @@ private void createToolBar() {
 		toolbar.add(buildAction);
 	}
 	toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
+	toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 }
 /**
  * Remove the property change listener
@@ -377,47 +387,47 @@ private void makeActions() {
 	saveAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED));
 	partService.addPartListener(saveAllAction);
 	
-	undoAction = new LabelRetargetAction(IWorkbenchActionConstants.UNDO, "&Undo@Ctrl+Z");
-	undoAction.setToolTipText("Undo the last action");
+	undoAction = new LabelRetargetAction(IWorkbenchActionConstants.UNDO, WorkbenchMessages.getString("Workbench.undo")); //$NON-NLS-1$
+	undoAction.setToolTipText(WorkbenchMessages.getString("Workbench.undoToolTip")); //$NON-NLS-1$
 	undoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT));
 	undoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER));
 	undoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED));
 	partService.addPartListener(undoAction);
 
-	redoAction = new LabelRetargetAction(IWorkbenchActionConstants.REDO, "&Redo@Ctrl+Y");
-	redoAction.setToolTipText("Redo the last action");
+	redoAction = new LabelRetargetAction(IWorkbenchActionConstants.REDO, WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$
+	redoAction.setToolTipText(WorkbenchMessages.getString("Workbench.redoToolTip")); //$NON-NLS-1$
 	redoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT));
 	redoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER));
 	redoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED));
 	partService.addPartListener(redoAction);
 
-	cutAction = new RetargetAction(IWorkbenchActionConstants.CUT, "Cu&t@Ctrl+X");
-	cutAction.setToolTipText("Cut the selection to the clipboard");
+	cutAction = new RetargetAction(IWorkbenchActionConstants.CUT, WorkbenchMessages.getString("Workbench.cut")); //$NON-NLS-1$
+	cutAction.setToolTipText(WorkbenchMessages.getString("Workbench.cutToolTip")); //$NON-NLS-1$
 	cutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT));
 	cutAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER));
 	cutAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED));
 	partService.addPartListener(cutAction);
 
-	copyAction = new RetargetAction(IWorkbenchActionConstants.COPY, "&Copy@Ctrl+C");
-	copyAction.setToolTipText("Copy the selection to the clipboard");
+	copyAction = new RetargetAction(IWorkbenchActionConstants.COPY, WorkbenchMessages.getString("Workbench.copy")); //$NON-NLS-1$
+	copyAction.setToolTipText(WorkbenchMessages.getString("Workbench.copyToolTip")); //$NON-NLS-1$
 	copyAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT));
 	copyAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER));
 	copyAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED));
 	partService.addPartListener(copyAction);
 
-	pasteAction = new RetargetAction(IWorkbenchActionConstants.PASTE, "&Paste@Ctrl+V");
-	pasteAction.setToolTipText("Paste from the clipboard");
+	pasteAction = new RetargetAction(IWorkbenchActionConstants.PASTE, WorkbenchMessages.getString("Workbench.paste")); //$NON-NLS-1$
+	pasteAction.setToolTipText(WorkbenchMessages.getString("Workbench.pasteToolTip")); //$NON-NLS-1$
 	pasteAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT));
 	pasteAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER));
 	pasteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
 	partService.addPartListener(pasteAction);
 
-	selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, "Select &All@Ctrl+A");
-	selectAllAction.setToolTipText("Select the entire contents");
+	selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$
+	selectAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
 	partService.addPartListener(selectAllAction);
 
-	findAction = new RetargetAction(IWorkbenchActionConstants.FIND, "&Find/Replace...@Ctrl+F");
-	findAction.setToolTipText("Open a find and replace dialog");
+	findAction = new RetargetAction(IWorkbenchActionConstants.FIND, WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
+	findAction.setToolTipText(WorkbenchMessages.getString("Workbench.findReplaceToolTip")); //$NON-NLS-1$
 	findAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
 	findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
 	findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
@@ -434,18 +444,19 @@ private void makeActions() {
 
 	openPreferencesAction = new OpenPreferencesAction(window);
 
-	addBookmarkAction = new RetargetAction(IWorkbenchActionConstants.BOOKMARK, "Add Bookmar&k");
-	addBookmarkAction.setToolTipText("Bookmark the selection");
+	addBookmarkAction = new RetargetAction(IWorkbenchActionConstants.BOOKMARK, WorkbenchMessages.getString("Workbench.addBookMark")); //$NON-NLS-1$
+	addBookmarkAction.setToolTipText(WorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
 	partService.addPartListener(addBookmarkAction);
 	
-	deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, "&Delete@Delete");
-	deleteAction.setToolTipText("Delete the selection");
+	deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
+	deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
 	deleteAction.enableAccelerator(false);
 	WorkbenchHelp.setHelp(deleteAction, new Object[] {IHelpContextIds.DELETE_RETARGET_ACTION});
 	partService.addPartListener(deleteAction);
 
-	// 1FVKH62: ITPUI:WINNT - quick start should be available on file menu
-	quickStartAction = new QuickStartAction(workbench);
+	// See if a welcome page is specified
+	if (((Workbench)PlatformUI.getWorkbench()).getProductInfo().getWelcomePageURL() != null)
+		quickStartAction = new QuickStartAction(workbench);
 }
 /**
  * Update the menubar and toolbar when
@@ -454,7 +465,7 @@ private void makeActions() {
 public void propertyChange(PropertyChangeEvent event) {
 	// Allow manual incremental build only if the
 	// auto build setting is off.
-	if (event.getProperty() == IWorkbenchPreferenceConstants.AUTO_BUILD) {
+	if (event.getProperty() == IPreferenceConstants.AUTO_BUILD) {
 		boolean autoBuildOn = ((Boolean) event.getNewValue()).booleanValue();
 		if (autoBuildOn)
 			removeManualIncrementalBuildAction();

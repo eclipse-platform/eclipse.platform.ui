@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
@@ -33,6 +32,18 @@ public EditorActionBars(IActionBars parent, String type) {
  */
 public void addRef() {
 	++ refCount;
+}
+/* (non-Javadoc)
+ * Method declared on SubActionBars.
+ */
+protected SubMenuManager createSubMenuManager(IMenuManager parent) {
+	return new EditorMenuManager(parent);
+}
+/* (non-Javadoc)
+ * Method declared on SubActionBars.
+ */
+protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
+	return new EditorToolBarManager(parent);
 }
 /**
  * Gets the editor contributor

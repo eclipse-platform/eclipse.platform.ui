@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -317,6 +316,7 @@ public void move(LayoutPart child, int relationship, LayoutPart relative) {
 	if((parent != null) && !(child instanceof PartPlaceholder))
 		sash.createControl(parent);
 	root = root.insert(child,left,sash,relative);
+	root.updateSashes(parent);
 	if(recomputeRatio)
 		root.recomputeRatio();
 		
@@ -334,6 +334,8 @@ public void remove(LayoutPart child) {
 
 	children.remove(child); 
 	root = root.remove(child);
+	if(root != null)
+		root.updateSashes(parent);
 	childRemoved(child);
 	
 	if (active){

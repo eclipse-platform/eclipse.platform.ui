@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -37,14 +36,14 @@ public class GlobalBuildAction extends Action {
  */
 public GlobalBuildAction(IWorkbench aWorkbench, int type) {
 	if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
-		setText("&Build@Ctrl+B");
-		setToolTipText("Global incremental build of modified resources");
+		setText(WorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.BUILD);
 		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION});
 	}
 	else {
-		setText("Rebuild &All");
-		setToolTipText("Global full build of all resources");
+		setText(WorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.REBUILD_ALL);
 		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.GLOBAL_FULL_BUILD_ACTION});
 	}
@@ -78,14 +77,14 @@ public void doBuild() {
  */
 protected void doBuildOperation() {
 	// Perform the build on all the projects
-	status = new MultiStatus(PlatformUI.PLUGIN_ID, 0, "Build problems", null);
+	status = new MultiStatus(PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.getString("GlobalBuildAction.buildProblems"), null); //$NON-NLS-1$
 	startBuildOperation();
 	
 	// If errors occurred, open an Error dialog
 	if (!status.isOK()) {
 		ErrorDialog.openError(
 			this.workbench.getActiveWorkbenchWindow().getShell(),
-			"Build Problems",
+			WorkbenchMessages.getString("GlobalBuildAction.problemTitle"), //$NON-NLS-1$
 			null,	// no special message
 			status);
 	}
@@ -153,8 +152,8 @@ protected void startBuildOperation() {
 	}
 	catch (InvocationTargetException e) {
 		// CoreExceptions are collected in build(), but unexpected runtime exceptions and errors may still occur.
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e.getTargetException());
-		MessageDialog.openError(shell, "Build problems", "Internal error: " + e.getTargetException().getMessage());
+		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e.getTargetException());//$NON-NLS-2$//$NON-NLS-1$
+		MessageDialog.openError(shell, WorkbenchMessages.getString("GlobalBuildAction.buildProblems"), WorkbenchMessages.format("GlobalBuildAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 /**
@@ -170,18 +169,18 @@ protected boolean verifyBuildersAvailable(IProject[] roots) {
 		}
 	}
 	catch (CoreException e) {
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e);
+		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e);//$NON-NLS-2$//$NON-NLS-1$
 		MessageDialog.openError(
 			this.workbench.getActiveWorkbenchWindow().getShell(),
-			"Build problems",
-			"Internal error: " + e.getMessage());
+			WorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
+			WorkbenchMessages.format("GlobalBuildAction.internalError", new Object[] {e.getMessage()})); //$NON-NLS-1$
 		return false;
 	}
 	
 	MessageDialog.openWarning(
 		this.workbench.getActiveWorkbenchWindow().getShell(),
-		"Warning",
-		"None of the projects have registered builders."
+		WorkbenchMessages.getString("GlobalBuildAction.warning"), //$NON-NLS-1$
+		WorkbenchMessages.getString("GlobalBuildAction.noBuilders") //$NON-NLS-1$
 	);
 	
 	return false;

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -150,7 +149,7 @@ void setPart(LayoutPart part) {
  * Returns a string representation of this object.
  */
 public String toString() {
-	return "(" + part.toString() + ")";
+	return "(" + part.toString() + ")";//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Create the sashes if the children are visible

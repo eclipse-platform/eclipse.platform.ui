@@ -1,13 +1,13 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.operation.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -136,9 +136,9 @@ protected void exportResource(IResource resource) throws InterruptedException {
 		try {
 			exporter.write((IFile)resource,destinationName);
 		} catch (IOException e) {
-			addError("Error exporting " + resource.getFullPath(),e);
+			addError(WorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			addError("Error exporting " + resource.getFullPath(),e);
+			addError(WorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
 		}
 		
 		monitor.worked(1);
@@ -150,7 +150,7 @@ protected void exportResource(IResource resource) throws InterruptedException {
 			children = ((IContainer)resource).members();
 		} catch (CoreException e) {
 			// this should never happen because an #isAccessible check is done before #members is invoked
-			addError("Error exporting " + resource.getFullPath(),e);
+			addError(WorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
 		}
 
 		for (int i = 0; i<children.length; i++) 
@@ -195,7 +195,7 @@ public IStatus getStatus() {
 		PlatformUI.PLUGIN_ID, 
 		IStatus.OK, 
 		errors,
-		"Problems were encountered during export:", 
+		WorkbenchMessages.getString("ZipExport.problemEncountered"),  //$NON-NLS-1$
 		null);
 }
 /**
@@ -206,8 +206,8 @@ public IStatus getStatus() {
 protected void initialize() throws IOException {
 	exporter = new ZipFileResourceExporter(destinationFilename,useCompression,generateManifestFile);
 
-	if (resource == null) 	// ie.- no parent resource was specified
-		leadupStartDepth = 2;
+	if (resource == null) 	// ie.- no parent resource was specified so just strip out projects
+		leadupStartDepth = 1;
 	else {
 		leadupStartDepth = resource.getFullPath().segmentCount();
 
@@ -215,7 +215,7 @@ protected void initialize() throws IOException {
 			leadupStartDepth--;
 			
 		if (createLeadupStructure)
-			leadupStartDepth = Math.min(2,leadupStartDepth);
+			leadupStartDepth = Math.min(1,leadupStartDepth);
 	}
 }
 /**
@@ -246,7 +246,7 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 	try {
 		initialize();
 	} catch (IOException e) {
-		throw new InvocationTargetException(e, "Unable to open destination file: " + e.getMessage());
+		throw new InvocationTargetException(e, WorkbenchMessages.getString("ZipExport.unableToOpen") + e.getMessage()); //$NON-NLS-1$
 	}
 
 	try {
@@ -261,7 +261,7 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 		catch (CoreException e) {
 			// Should not happen
 		}
-		monitor.beginTask("Exporting:", totalWork);
+		monitor.beginTask(WorkbenchMessages.getString("ZipExport.progress"), totalWork); //$NON-NLS-1$
 		if (resourcesToExport == null) {
 			exportResource(resource);
 		}
@@ -273,7 +273,7 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 		try {
 			exporter.finished();
 		} catch (IOException e) {
-			throw new InvocationTargetException(e, "Unable to close destination file: " + e.getMessage());
+			throw new InvocationTargetException(e, WorkbenchMessages.getString("ZipExport.unableToClose") + e.getMessage()); //$NON-NLS-1$
 		}
 	} finally {
 		monitor.done();

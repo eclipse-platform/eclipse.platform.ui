@@ -1,15 +1,15 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.SelectionProviderAction;
@@ -57,10 +57,10 @@ public class PropertyDialogAction extends SelectionProviderAction {
  *   will describe
  */
 public PropertyDialogAction(Shell shell, ISelectionProvider provider) {
-	super(provider, "P&roperties");
+	super(provider, WorkbenchMessages.getString("PropertyDialog.text")); //$NON-NLS-1$
 	Assert.isNotNull(shell);
 	this.shell = shell;
-	setToolTipText("Open the properties dialog for the resource");
+	setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.PROPERTY_DIALOG_ACTION});
 }
 /**
@@ -74,7 +74,7 @@ private String getName(IAdaptable element) {
 	if (adapter != null) {
 		return adapter.getLabel(element);
 	} else {
-		return "";
+		return "";//$NON-NLS-1$
 	}
 }
 /**
@@ -120,7 +120,7 @@ public boolean isApplicableForSelection() {
  */
 public void run() {
 	PropertyPageManager pageManager = new PropertyPageManager();
-	String title = "";
+	String title = "";//$NON-NLS-1$
 
 	// get selection
 	IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
@@ -137,11 +137,11 @@ public void run() {
 	if (!pages.hasNext()) {
 		MessageDialog.openInformation(
 			shell,
-			"Property Pages",
-			"No property pages for " + name + ".");
+			WorkbenchMessages.getString("PropertyDialog.messageTitle"), //$NON-NLS-1$
+			WorkbenchMessages.format("PropertyDialog.noPropertyMessage", new Object[] {name})); //$NON-NLS-1$
 		return;
 	} else
-		title = "Properties for " + name;
+		title = WorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
 
 	// TBD: don't use old selection; should be getSimpleSelection(), though we assume structured selection above.
 	PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager, getStructuredSelection()); 

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.UIHackFinder;
@@ -81,7 +80,7 @@ public class ViewPane extends PartPane
 	 */
 	public class PaneMenuManager extends MenuManager {
 		public PaneMenuManager() {
-			super("View Local Menu");
+			super("View Local Menu");//$NON-NLS-1$
 		}
 		protected void update(boolean force, boolean recursive) {
 			super.update(force, recursive);
@@ -131,7 +130,7 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 			text = new Text(parent,SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
 			text.setForeground(text.getDisplay().getSystemColor(SWT.COLOR_RED));
 			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			text.setText("An error has occurred when creating this view");
+			text.setText(WorkbenchMessages.getString("ViewPane.errorMessage")); //$NON-NLS-1$
 		}
 		public void setFocus() {
 			if (text != null) text.setFocus();
@@ -154,8 +153,9 @@ private void createFastButtons() {
 		pinButton = new ToolItem(systemBar, SWT.PUSH, systemBar.getItemCount() - 1);
 		Image img = WorkbenchImages.getImage(
 			IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
+		pinButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
 		pinButton.setImage(img);
-		pinButton.setToolTipText("Pin");
+		pinButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
 		pinButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doPin();
@@ -166,8 +166,9 @@ private void createFastButtons() {
 		minimizeButton = new ToolItem(systemBar, SWT.PUSH, systemBar.getItemCount() - 1);
 		Image img = WorkbenchImages.getImage(
 			IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
+		minimizeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
 		minimizeButton.setImage(img);
-		minimizeButton.setToolTipText("Minimize");
+		minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
 		minimizeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doMinimize();
@@ -185,8 +186,9 @@ private void createPulldownButton() {
 		pullDownButton = new ToolItem(systemBar, SWT.PUSH, 0);
 		Image img = WorkbenchImages.getImage(
 			IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+		pullDownButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
 		pullDownButton.setImage(img);
-		pullDownButton.setToolTipText("Menu");
+		pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
 		pullDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showViewMenu();
@@ -253,8 +255,9 @@ protected void createTitleBar() {
 	});
 	closeButton= new ToolItem(systemBar, SWT.PUSH);
 	Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
+	closeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
 	closeButton.setImage(img);
-	closeButton.setToolTipText("Close");
+	closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
 	closeButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			doHide();
@@ -406,7 +409,7 @@ private void showTitleLabelMenu(MouseEvent e) {
 
 	// add restore item
 	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText("&Restore");
+	item.setText(WorkbenchMessages.getString("ViewPane.restore")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (isZoomed)
@@ -419,7 +422,7 @@ private void showTitleLabelMenu(MouseEvent e) {
 
 	// add fast view item
 	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText("&Fast View");
+	item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			doMakeFast();
@@ -429,7 +432,7 @@ private void showTitleLabelMenu(MouseEvent e) {
 
 	// add maximize item
 	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText("Ma&ximize");
+	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			doZoom();
@@ -441,7 +444,7 @@ private void showTitleLabelMenu(MouseEvent e) {
 	
 	// add close item
 	item = new MenuItem(aMenu, SWT.CASCADE);
-	item.setText("&Close");
+	item.setText(WorkbenchMessages.getString("ViewPane.close")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			doHide();
@@ -469,6 +472,12 @@ private void showViewMenu() {
  * @see IPartDropTarget::targetPartFor
  */
 public LayoutPart targetPartFor(LayoutPart dragSource) {
+	// When zoomed, its like we are not part of the
+	// tab folder so return the view.
+	if (isZoomed())
+		return this;
+
+	// Make use of the container if a tab folder
 	ILayoutContainer container = getContainer();
 	if (container instanceof PartTabFolder)
 		return (PartTabFolder) container;
@@ -476,12 +485,12 @@ public LayoutPart targetPartFor(LayoutPart dragSource) {
 		return this;
 }
 public String toString() {
-	String label = "disposed";
+	String label = "disposed";//$NON-NLS-1$
 	if((titleLabel != null) && (!titleLabel.isDisposed()))
 		label = titleLabel.getText();
 	
-	return getClass().getName() + "@" + Integer.toHexString(hashCode()) + 
-	"(" + label + ")";
+	return getClass().getName() + "@" + Integer.toHexString(hashCode()) + //$NON-NLS-1$
+	"(" + label + ")";//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * @see ViewActionBars
@@ -499,7 +508,7 @@ public void updateTitles() {
 	IViewPart view = getViewPart();
 	String text = view.getTitle();
 	if (text == null)
-		text = "";
+		text = "";//$NON-NLS-1$
 	Image image = view.getTitleImage();
 	// only update and relayout if text or image has changed
 	if (!text.equals(titleLabel.getText()) || image != titleLabel.getImage()) {

@@ -1,27 +1,16 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.registry.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
 
 /**
- * The base class for all shortcut menus.  A shortcut menu changes to reflect the
- * action sets for the active perspective.
+ * A <code>ShortcutMenu</code> is used to populate a menu manager with
+ * actions.  The visible actions are determined by the active perspective
+ * within the workbench window.  
  */
 public abstract class ShortcutMenu {
 	private IWorkbenchWindow window;
@@ -57,6 +46,14 @@ public ShortcutMenu(IMenuManager innerMgr, IWorkbenchWindow window) {
 }
 /**
  * Create a shortcut menu.
+ * <p>
+ * If the menu will appear on a semi-permanent basis, for instance within
+ * a toolbar or menubar, the value passed for <code>register</code> should be true.
+ * If set, the menu will listen to perspective activation and update itself
+ * to suit.  In this case clients are expected to call <code>deregister</code> 
+ * when the menu is no longer needed.  This will unhook any perspective
+ * listeners.
+ * </p>
  *
  * @param innerMgr the location for the shortcut menu contents
  * @param window the window containing the menu
@@ -75,7 +72,7 @@ public ShortcutMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean regi
  * Removes all listeners from the containing workbench window.
  * <p>
  * This method should only be called if the shortcut menu is created
- * with <code>registery = true</code>.
+ * with <code>register = true</code>.
  * </p>
  */
 public void deregisterListeners() {
@@ -91,7 +88,9 @@ public void deregisterListeners() {
  */
 protected abstract void fillMenu();
 /**
- * Returns the current perspective descriptor, or null if none.
+ * Returns the current perspective descriptor.
+ *
+ * @return the current perspective or <code>null if none
  */
 protected IPerspectiveDescriptor getCurrentPerspective() {
 	IWorkbenchPage page = window.getActivePage();
@@ -101,18 +100,24 @@ protected IPerspectiveDescriptor getCurrentPerspective() {
 }
 /**
  * Returns the menu manager.
+ *
+ * @return the menu manager
  */
 protected IMenuManager getMenuManager() {
 	return innerMgr;
 }
 /**
  * Returns the window.
+ *
+ * @return the window
  */
 protected IWorkbenchWindow getWindow() {
 	return window;
 }
 /**
- * Updates the menu if the perspective has changed.
+ * Updates the menu.  This method will only be called
+ * to initialize the menu, or if the active perspective within the
+ * window has changed.
  */
 protected void updateMenu() {
 	// contribute the sub menu items

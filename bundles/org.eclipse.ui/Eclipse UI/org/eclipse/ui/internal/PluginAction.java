@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.registry.*;
@@ -38,12 +37,18 @@ public class PluginAction extends Action
 	private IStructuredSelection selection;
 	private IConfigurationElement configElement;
 	private String runAttribute;
+	private static int actionCount = 0;
 /**
  * PluginAction constructor.
  */
 public PluginAction(IConfigurationElement actionElement, String runAttribute) {
-	super("");
+	super();
 
+	// Create unique action id.
+	setId("PluginAction." + Integer.toString(actionCount));//$NON-NLS-1$
+	++ actionCount;
+	
+	// Store arguments.
 	this.configElement = actionElement;
 	this.runAttribute = runAttribute;
 	if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR)!=null)
@@ -69,7 +74,7 @@ protected IActionDelegate createDelegate() {
 			return null;
 	} catch (CoreException e) {
 		// cannot safely open dialog so log the problem
-		WorkbenchPlugin.log("Could not create action.", e.getStatus());
+		WorkbenchPlugin.log("Could not create action.", e.getStatus());//$NON-NLS-1$
 		return null;
 	}
 }
@@ -112,8 +117,8 @@ public void run() {
 		selectionChanged(selection);
 		if (isEnabled() == false) {
 			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
-			"Information", 
-			"The chosen operation is not currently available.");
+			WorkbenchMessages.getString("Information"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("PluginActino.operationNotAvailableMessage")); //$NON-NLS-1$
 			return;
 		}
 	}

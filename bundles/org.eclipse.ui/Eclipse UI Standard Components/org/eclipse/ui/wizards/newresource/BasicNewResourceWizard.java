@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.newresource;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
@@ -80,13 +79,13 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 protected void initializeDefaultPageImageDescriptor() {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	try {
 		URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath + "wizban/new_wiz.gif");
+		URL url = new URL(installURL, iconPath + "wizban/new_wiz.gif");//$NON-NLS-1$
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		setDefaultPageImageDescriptor(desc);
 	}

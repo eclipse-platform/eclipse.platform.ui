@@ -1,9 +1,8 @@
 package org.eclipse.jface.preference;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
@@ -267,7 +266,7 @@ public Composite getButtonBoxControl(Composite parent) {
  */
 public List getListControl(Composite parent) {
 	if (list == null) {
-		list = new List(parent, SWT.BORDER | SWT.SINGLE);
+		list = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
 		list.addSelectionListener(getSelectionListener());
 		list.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {

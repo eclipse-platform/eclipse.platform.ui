@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -20,7 +19,9 @@ import java.util.*;
 	private ZipFileExporter		exporter;
 	private String				destinationFilename;
 	private IProgressMonitor	monitor;
-	private	int					leadupStartDepth = 0;
+
+	//By default we don't export projects
+	private	int					leadupStartDepth = 1;
 	private List				resourcesToExport;
 	private IResource			resource;
 	private List				errorTable = new ArrayList(1);  //IStatus
@@ -128,30 +129,34 @@ protected int countSelectedResources() throws CoreException {
 protected void exportResource(IResource resource) throws InterruptedException {
 	if (!resource.isAccessible())
 		return;
-		
+
 	if (resource.getType() == IResource.FILE) {
-		String destinationName = resource.getFullPath().removeFirstSegments(leadupStartDepth).toString();
+		String destinationName =
+			resource.getFullPath().removeFirstSegments(leadupStartDepth).toString();
 		monitor.subTask(destinationName);
 
 		try {
-			exporter.write((IFile)resource,destinationName);
+			exporter.write((IFile) resource, destinationName);
 		} catch (IOException e) {
-			addError("Error exporting " + resource.getFullPath(),e);
+			addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] {resource.getFullPath()}), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			addError("Error exporting " + resource.getFullPath(),e);
+			addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] {resource.getFullPath()}), e); //$NON-NLS-1$
 		}
-		
+
 		monitor.worked(1);
 		ModalContext.checkCanceled(monitor);
 	} else {
 		IResource[] children = null;
-		
+
 		try {
-			children = ((IContainer)resource).members();
+			children = ((IContainer) resource).members();
 		} catch (CoreException e) {
 			// this should never happen because an #isAccessible check is done before #members is invoked
-			addError("Error exporting " + resource.getFullPath(),e);
+			addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] {resource.getFullPath()}), e); //$NON-NLS-1$
 		}
+
+		for (int i = 0; i<children.length; i++) 
+			exportResource(children[i]);
 
 	}
 }
@@ -193,7 +198,7 @@ public IStatus getStatus() {
 		PlatformUI.PLUGIN_ID, 
 		IStatus.OK, 
 		errors,
-		"Problems were encountered during export:", 
+		DataTransferMessages.getString("FileSystemExportOperation.problemsExporting"),  //$NON-NLS-1$
 		null);
 }
 /**
@@ -205,7 +210,7 @@ protected void initialize() throws IOException {
 	exporter = new ZipFileExporter(destinationFilename,useCompression,generateManifestFile);
 
 	if (resource == null) 	// ie.- no parent resource was specified
-		leadupStartDepth = 0;
+		leadupStartDepth = 1;
 	else {
 		leadupStartDepth = resource.getFullPath().segmentCount();
 
@@ -213,7 +218,7 @@ protected void initialize() throws IOException {
 			leadupStartDepth--;
 			
 		if (createLeadupStructure)
-			leadupStartDepth = Math.min(0,leadupStartDepth);
+			leadupStartDepth = Math.min(1,leadupStartDepth);
 	}
 }
 /**
@@ -244,7 +249,9 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 	try {
 		initialize();
 	} catch (IOException e) {
-		throw new InvocationTargetException(e, "Unable to open destination file: " + e.getMessage());
+		throw new InvocationTargetException(
+			e, 
+			DataTransferMessages.format("ZipExport.cannotOpen", new Object[] { e.getMessage()})); //$NON-NLS-1$
 	}
 
 	try {
@@ -259,7 +266,7 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 		catch (CoreException e) {
 			// Should not happen
 		}
-		monitor.beginTask("Exporting:", totalWork);
+		monitor.beginTask(DataTransferMessages.getString("DataTransfer.exportingTitle"), totalWork); //$NON-NLS-1$
 		if (resourcesToExport == null) {
 			exportResource(resource);
 		}
@@ -271,7 +278,9 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 		try {
 			exporter.finished();
 		} catch (IOException e) {
-			throw new InvocationTargetException(e, "Unable to close destination file: " + e.getMessage());
+			throw new InvocationTargetException(
+				e, 
+				DataTransferMessages.format("ZipExport.cannotClose", new Object[] {e.getMessage()})); //$NON-NLS-1$
 		}
 	} finally {
 		monitor.done();

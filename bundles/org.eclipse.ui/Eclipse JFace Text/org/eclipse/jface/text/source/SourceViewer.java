@@ -1,9 +1,8 @@
 package org.eclipse.jface.text.source;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -141,8 +140,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		if (operation == CONTENTASSIST_PROPOSALS || operation == CONTENTASSIST_CONTEXT_INFORMATION)
 			return fContentAssistant != null;
 		
-		if (operation == FORMAT)
-			return fContentFormatter != null;
+		if (operation == FORMAT) {
+			Point p= getSelectedRange();
+			int length= (p == null ? -1 : p.y);
+			return (fContentFormatter != null && (length == 0 || isBlockSelected()));
+		}
 		
 		return super.canDoOperation(operation);
 	}
@@ -230,7 +232,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				return;
 			case FORMAT: {
 				Point s= getSelectedRange();
-				Region r= (s.y == 0 ? new Region(0, getDocument().getLength()) : new Region(s.x, s.y));
+				IRegion r= (s.y == 0 ? getVisibleRegion() : new Region(s.x, s.y));
 				fContentFormatter.format(getDocument(), r);
 				return;
 			}

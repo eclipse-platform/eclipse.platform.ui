@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.navigator;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -47,8 +46,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget {
 	private BuildAction rebuildAllAction;
 	private CloseResourceAction closeResourceAction;
 	private CopyResourceAction copyResourceAction;
-	private CreateFolderAction createFolderAction;
-	private CreateFileAction createFileAction;
 	private DeleteResourceAction deleteResourceAction;
 	private OpenFileAction openFileAction;
 	private OpenResourceAction openResourceAction;
@@ -72,12 +69,12 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget {
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
 
 	/** Property store constant for sort order. */
-	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE";
+	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE";//$NON-NLS-1$
 
 	/**
 	 * Help context id used for the resource navigator view.
 	 */
-	public static final String NAVIGATOR_VIEW_HELP_ID = "org.eclipse.ui.general_help_context";
+	public static final String NAVIGATOR_VIEW_HELP_ID = "org.eclipse.ui.general_help_context";//$NON-NLS-1$
 
 	/**
 	 * Preference name constant for linking editor switching to navigator selection.
@@ -87,20 +84,20 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget {
 	 * preference page with this preference on it, instead of on the Workbench's.
 	 * The value must be the same as IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR.]
 	 */
-	private static final String LINK_NAVIGATOR_TO_EDITOR = "LINK_NAVIGATOR_TO_EDITOR";
+	private static final String LINK_NAVIGATOR_TO_EDITOR = "LINK_NAVIGATOR_TO_EDITOR";//$NON-NLS-1$
 
 	// Persistance tags.
-	private static final String TAG_SORTER = "sorter";
-	private static final String TAG_FILTERS = "filters";
-	private static final String TAG_FILTER = "filter";
-	private static final String TAG_SELECTION = "selection";
-	private static final String TAG_EXPANDED = "expanded";
-	private static final String TAG_ELEMENT = "element";
-	private static final String TAG_PATH = "path";
-	private static final String TAG_VERTICAL_POSITION = "verticalPosition";
-	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";
+	private static final String TAG_SORTER = "sorter";//$NON-NLS-1$
+	private static final String TAG_FILTERS = "filters";//$NON-NLS-1$
+	private static final String TAG_FILTER = "filter";//$NON-NLS-1$
+	private static final String TAG_SELECTION = "selection";//$NON-NLS-1$
+	private static final String TAG_EXPANDED = "expanded";//$NON-NLS-1$
+	private static final String TAG_ELEMENT = "element";//$NON-NLS-1$
+	private static final String TAG_PATH = "path";//$NON-NLS-1$
+	private static final String TAG_VERTICAL_POSITION = "verticalPosition";//$NON-NLS-1$
+	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";//$NON-NLS-1$
 
-	private static final String SELECT_FILTERS_LABEL = "&Filters...";
+	private static final String SELECT_FILTERS_LABEL = ResourceNavigatorMessages.getString("ResourceNavigator.filterText"); //$NON-NLS-1$
 	private FilterSelectionAction filterAction;
 
 	private IPartListener partListener = new IPartListener() {
@@ -118,9 +115,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget {
  */
 public ResourceNavigator() {
 	IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
-	settings = workbenchSettings.getSection("ResourceNavigator");
+	settings = workbenchSettings.getSection("ResourceNavigator");//$NON-NLS-1$
 	if(settings == null)
-		settings = workbenchSettings.addNewSection("ResourceNavigator");
+		settings = workbenchSettings.addNewSection("ResourceNavigator");//$NON-NLS-1$
 }
 /**
  * Converts the given selection into a form usable by the viewer,
@@ -156,7 +153,7 @@ public void createPartControl(Composite parent) {
 //	initDrillDownAdapter(viewer);
 	viewer.setUseHashlookup(true);
 	viewer.setContentProvider(new WorkbenchContentProvider());
-	viewer.setLabelProvider(new WorkbenchLabelProvider());
+	viewer.setLabelProvider(new DecoratingLabelProvider(new WorkbenchLabelProvider(), null));
 	viewer.addFilter(this.patternFilter);
 	if(memento != null) restoreFilters();
 	initResourceSorter();
@@ -166,7 +163,7 @@ public void createPartControl(Composite parent) {
 	initRefreshKey();
 	updateTitle();
 	
-	MenuManager menuMgr = new MenuManager("#PopupMenu");
+	MenuManager menuMgr = new MenuManager("#PopupMenu");//$NON-NLS-1$
 	menuMgr.setRemoveAllWhenShown(true);
 	menuMgr.addMenuListener(new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
@@ -243,7 +240,7 @@ void fillActionBars() {
 	actionBars.updateActionBars();
 
 	IMenuManager menu = actionBars.getMenuManager();
-	MenuManager submenu = new MenuManager("&Sort");
+	MenuManager submenu = new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.sort")); //$NON-NLS-1$
 	menu.add(submenu);
 	updateSortActions();
 	submenu.add(sortByNameAction);
@@ -260,7 +257,7 @@ void fillContextMenu(IMenuManager menu) {
 	
 	fillFileMenu(menu, selection);
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));
+	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
 	menu.add(new Separator());
 
 	if (propertyDialogAction.isApplicableForSelection())
@@ -277,14 +274,14 @@ void fillFileMenu(IMenuManager menu, IStructuredSelection selection) {
 	boolean onlyFoldersOrFilesSelected = !selection.isEmpty() && SelectionUtil.allResourcesAreOfType(selection, IResource.FOLDER | IResource.FILE);
 	boolean onlyProjectsSelected = !selection.isEmpty() && SelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
 
-	MenuManager newMenu = new MenuManager("Ne&w");
+	MenuManager newMenu = new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new")); //$NON-NLS-1$
 	menu.add(newMenu);
-	new org.eclipse.ui.internal.NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
+	new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
 	
 	if (selection.size() == 1 && SelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER)) {
 		menu.add(goIntoAction);
 	}
-	MenuManager gotoMenu = new MenuManager("G&o To");
+	MenuManager gotoMenu = new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.goto")); //$NON-NLS-1$
 	menu.add(gotoMenu);
 	gotoMenu.add(backAction);
 	gotoMenu.add(forwardAction);
@@ -342,7 +339,7 @@ void fillOpenToMenu(IMenuManager menu, IStructuredSelection selection)
 		return;
 
 	// Create a menu flyout.
-	MenuManager submenu = new MenuManager("Open Perspective");
+	MenuManager submenu = new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.openPerspective")); //$NON-NLS-1$
 	submenu.add(new OpenPerspectiveMenu(getSite().getWorkbenchWindow(), element));
 	menu.add(submenu);
 
@@ -364,7 +361,7 @@ void fillOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
 		return;
 
 	// Create a menu flyout.
-	MenuManager submenu = new MenuManager("Open Wit&h");
+	MenuManager submenu = new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.openWith")); //$NON-NLS-1$
 	submenu.add(new OpenWithMenu(getSite().getPage(), (IFile) element));
 		
 	// Add the submenu.
@@ -416,13 +413,13 @@ String getStatusLineMessage(IStructuredSelection selection) {
 			return ((IResource) o).getFullPath().makeRelative().toString();
 		}
 		else {
-			return "1 item selected";
+			return ResourceNavigatorMessages.getString("ResourceNavigator.oneItemSelected"); //$NON-NLS-1$
 		}
 	}
 	if (selection.size() > 1) {
-		return selection.size() + " items selected";
+		return ResourceNavigatorMessages.format("ResourceNavigator.statusLine",new Object[] {new Integer(selection.size())}); //$NON-NLS-1$
 	}
-	return "";
+	return "";//$NON-NLS-1$
 }
 /**
  * Returns the tool tip text for the given element.
@@ -431,7 +428,7 @@ String getToolTipText(Object element) {
 	if (element instanceof IResource) {
 		IPath path = ((IResource) element).getFullPath();
 		if (path.isRoot()) {
-			return "Workspace";
+			return ResourceNavigatorMessages.getString("ResourceManager.toolTip"); //$NON-NLS-1$
 		}
 		else {
 			return path.makeRelative().toString();
@@ -522,11 +519,14 @@ void initFrameList() {
 private void initRefreshKey() {
 
 	getResourceViewer().getControl().addKeyListener(new KeyAdapter() {
-		public void keyPressed(KeyEvent event) {
+		// Listen on key released instead of pressed just in case some
+		// menu bar item sets up an accelerator on F5.
+		public void keyReleased(KeyEvent event) {
 			if (event.keyCode == SWT.F5) {
+				localRefreshAction.selectionChanged(StructuredSelection.EMPTY);
+				localRefreshAction.run();
 				localRefreshAction.selectionChanged(
 					(IStructuredSelection) getResourceViewer().getSelection());
-				localRefreshAction.run();
 			}
 		}
 	});
@@ -603,18 +603,11 @@ void makeActions() {
 	addBookmarkAction = new AddBookmarkAction(shell);
 	propertyDialogAction = new PropertyDialogAction(getShell(), getResourceViewer());
 	newWizardAction = new NewWizardAction();
+	goIntoAction = new GoIntoAction(frameList);
 	backAction = new BackAction(frameList);
 	forwardAction = new ForwardAction(frameList);
-	goIntoAction = new GoIntoAction(frameList);
 	upAction = new UpAction(frameList);
-
-	gotoResourceAction = new GotoResourceAction(this, "&Resource");
-	
-	//we know these will be in a sub-folder called "New" so we can shorten the name
-	createFolderAction = new CreateFolderAction(shell);
-	createFolderAction.setText("&Folder");
-	createFileAction = new CreateFileAction(shell);
-	createFileAction.setText("Fil&e");
+	gotoResourceAction = new GotoResourceAction(this, ResourceNavigatorMessages.getString("ResourceNavigator.resourceText")); //$NON-NLS-1$
 
 	IActionBars actionBars = getViewSite().getActionBars();
 	actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteResourceAction);
@@ -747,13 +740,8 @@ public void setFocus() {
  * @param decorator a label decorator or <code>null</code> for no decorations.
  */
 public void setLabelDecorator(ILabelDecorator decorator) {
-	
-	if (decorator == null) {
-		getResourceViewer().setLabelProvider(new WorkbenchLabelProvider());
-	}
-	else {
-		getResourceViewer().setLabelProvider(new DecoratingLabelProvider(new WorkbenchLabelProvider(), decorator));
-	}
+	DecoratingLabelProvider provider = (DecoratingLabelProvider) getResourceViewer().getLabelProvider();
+	provider.setLabelDecorator(decorator);
 }
 /**
  * Set the current sorter.
@@ -777,8 +765,6 @@ void updateActions(IStructuredSelection selection) {
 	rebuildAllAction.selectionChanged(selection);
 	closeResourceAction.selectionChanged(selection);
 	copyResourceAction.selectionChanged(selection);
-	createFolderAction.selectionChanged(selection);
-	createFileAction.selectionChanged(selection);
 	localRefreshAction.selectionChanged(selection);
 	moveResourceAction.selectionChanged(selection);
 	openResourceAction.selectionChanged(selection);
@@ -838,15 +824,15 @@ void updateStatusLine(IStructuredSelection selection) {
  */ 
 void updateTitle() {
 	Object input = getResourceViewer().getInput();
-	String viewName = getConfigurationElement().getAttribute("name");
+	String viewName = getConfigurationElement().getAttribute("name");//$NON-NLS-1$
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	if (input == null || input.equals(workspace) || input.equals(workspace.getRoot())) {
 		setTitle(viewName);
-		setTitleToolTip("");
+		setTitleToolTip("");//$NON-NLS-1$
 	}
 	else {
 		ILabelProvider labelProvider = (ILabelProvider) getResourceViewer().getLabelProvider();
-		setTitle(viewName + " : " + labelProvider.getText(input));
+		setTitle(ResourceNavigatorMessages.format("ResourceNavigator.title", new Object[] {viewName, labelProvider.getText(input)})); //$NON-NLS-1$
 		setTitleToolTip(getToolTipText(input));
 	}
 }

@@ -1,12 +1,13 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
-import org.eclipse.ui.internal.dialogs.WelcomeDialog;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.*;
@@ -15,39 +16,46 @@ import org.eclipse.swt.widgets.*;
 
 /**
  * Launch the quick start action.
- * 1FVKH62: ITPUI:WINNT - quick start should be available on file menu
  */
 public class QuickStartAction extends PartEventAction {
+	private static final String EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor";  //$NON-NLS-1$
+	
 	private IWorkbench workbench;
 	
 /**
  *	Create an instance of this class
  */
 public QuickStartAction(IWorkbench aWorkbench) {
-	super("&Quick Start");
-	setToolTipText("Open the Quick Start dialog");
+	super(WorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
 	this.workbench = aWorkbench;
-}
-/**
- *	Open the quick start window.
- */
-public void openQuickStart(Shell parent, boolean force) {
-
-	// get a vector of QuickStartElements from the extension point
-	WizardsRegistryReader reader = new WizardsRegistryReader(IWorkbenchConstants.PL_WELCOME);
-	AdaptableList wizardElements = reader.getWizards();		
-
-	// if the vector is not empty (i.e. there are elements registered), open the dialog
-	if (force || wizardElements.getChildren().length > 0) {
-		WelcomeDialog welcome = new WelcomeDialog(parent, this.workbench, wizardElements);
-		welcome.setBlockOnOpen(true);
-		welcome.open();
-	}
 }
 /**
  *	The user has invoked this action
  */
 public void run() {
-	openQuickStart(this.workbench.getActiveWorkbenchWindow().getShell(), true);
+	WorkbenchPage page = (WorkbenchPage)workbench.getActiveWorkbenchWindow().getActivePage();
+	page.setEditorAreaVisible(true);
+
+	// see if we already have a welcome editor
+	IEditorPart[] editors = page.getEditors();
+	for (int i = 0; i < editors.length; i++){
+		if (editors[i] instanceof WelcomeEditor) {
+			page.bringToTop(editors[i]);
+			return;
+		}
+	}
+
+	try {
+		page.openEditor(new WelcomeEditorInput(), EDITOR_ID);
+	} catch (PartInitException e) {
+		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
+		ErrorDialog.openError(
+			workbench.getActiveWorkbenchWindow().getShell(),
+			WorkbenchMessages.getString("QuickStartAction.errorDialogTitle"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("QuickStartAction.errorDialogMessage"),  //$NON-NLS-1$
+			status);
+	}
+
 }
 }

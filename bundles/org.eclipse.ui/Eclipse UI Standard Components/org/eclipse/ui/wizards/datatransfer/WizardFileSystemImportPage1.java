@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.IContainer;
@@ -45,14 +44,14 @@ import java.util.List;
 	private static final int	SIZING_TEXT_FIELD_WIDTH = 250;
 	private static final int	SIZING_LIST_HEIGHT = 150;
 	private static final int	COMBO_HISTORY_LENGTH = 5;
-	private static final String TYPE_DELIMITER = ",";
+	private static final String TYPE_DELIMITER = DataTransferMessages.getString("DataTransfer.typeDelimiter"); //$NON-NLS-1$
 
 	// dialog store id constants
-	private final static String STORE_SOURCE_NAMES_ID = "WizardFileSystemImportPage1.STORE_SOURCE_NAMES_ID";
-	private final static String STORE_IMPORT_ALL_RESOURCES_ID = "WizardFileSystemImportPage1.STORE_IMPORT_ALL_FILES_ID";
-	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardFileSystemImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";
-	private final static String STORE_CREATE_CONTAINER_STRUCTURE_ID = "WizardFileSystemImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID";
-	private final static String STORE_SELECTED_TYPES_ID = "WizardFileSystemImportPage1.STORE_SELECTED_TYPES_ID";
+	private final static String STORE_SOURCE_NAMES_ID = "WizardFileSystemImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
+	private final static String STORE_IMPORT_ALL_RESOURCES_ID = "WizardFileSystemImportPage1.STORE_IMPORT_ALL_FILES_ID";//$NON-NLS-1$
+	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardFileSystemImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";//$NON-NLS-1$
+	private final static String STORE_CREATE_CONTAINER_STRUCTURE_ID = "WizardFileSystemImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID";//$NON-NLS-1$
+	private final static String STORE_SELECTED_TYPES_ID = "WizardFileSystemImportPage1.STORE_SELECTED_TYPES_ID";//$NON-NLS-1$
 /**
  *	Creates an instance of this class
  */
@@ -64,9 +63,9 @@ protected WizardFileSystemImportPage1(String name, IWorkbench aWorkbench, IStruc
  *	Creates an instance of this class
  */
 public WizardFileSystemImportPage1(IWorkbench aWorkbench, IStructuredSelection selection) {
-	this("fileSystemImportPage1", aWorkbench, selection);
-	setTitle("File system");
-	setDescription("Import resources from the local file system.");
+	this("fileSystemImportPage1", aWorkbench, selection);//$NON-NLS-1$
+	setTitle(DataTransferMessages.getString("DataTransfer.fileSystemTitle")); //$NON-NLS-1$
+	setDescription(DataTransferMessages.getString("FileImport.importFileSystem")); //$NON-NLS-1$
 }
 /**
  * Adds the recursive contents of the passed file system element to this
@@ -98,11 +97,11 @@ protected void createOptionsGroup(Composite parent) {
 
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
-	overwriteExistingResourcesCheckbox.setText("Overwrite existing resources without warning");
+	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 
 	// create containers checkbox
 	createContainerStructureCheckbox = new Button(optionsGroup,SWT.CHECK);
-	createContainerStructureCheckbox.setText("Create complete folder structure");
+	createContainerStructureCheckbox.setText(DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
 }
 /**
  *	Create the import source specification widgets
@@ -127,12 +126,12 @@ protected void createSourceGroup(Composite parent) {
 
 	// source browse button
 	sourceBrowseButton = new Button(sourceContainerGroup,SWT.PUSH);
-	sourceBrowseButton.setText("Browse...");
+	sourceBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	sourceBrowseButton.addListener(SWT.Selection,this);
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
 	createSpacer(parent);
-	Label label = createBoldLabel(parent, "What type of files do you want to import?");
+	Label label = createBoldLabel(parent,DataTransferMessages.getString("FileImport.whichTypesImport")); //$NON-NLS-1$
 
 	// source types group
 	Composite sourceTypesGroup = new Composite(parent,SWT.NONE);
@@ -144,7 +143,7 @@ protected void createSourceGroup(Composite parent) {
 
 	// all types radio
 	importAllResourcesRadio = new Button(sourceTypesGroup,SWT.RADIO);
-	importAllResourcesRadio.setText("All types");
+	importAllResourcesRadio.setText(DataTransferMessages.getString("DataTransfer.allTypes")); //$NON-NLS-1$
 	importAllResourcesRadio.addListener(SWT.Selection,this);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.horizontalSpan = 3;
@@ -152,7 +151,7 @@ protected void createSourceGroup(Composite parent) {
 
 	// import specific types radio
 	importTypedResourcesRadio = new Button(sourceTypesGroup,SWT.RADIO);
-	importTypedResourcesRadio.setText("Files of type:");
+	importTypedResourcesRadio.setText(DataTransferMessages.getString("FileImport.filesofType")); //$NON-NLS-1$
 	importTypedResourcesRadio.addListener(SWT.Selection,this);
 
 	// types combo
@@ -164,7 +163,7 @@ protected void createSourceGroup(Composite parent) {
 
 	// types edit button
 	typesToImportEditButton = new Button(sourceTypesGroup, SWT.PUSH);
-	typesToImportEditButton.setText("Edit...");
+	typesToImportEditButton.setText(DataTransferMessages.getString("FileImport.edit")); //$NON-NLS-1$
 	typesToImportEditButton.setLayoutData(new GridData(
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_END));
 	typesToImportEditButton.addListener(SWT.Selection, this);
@@ -178,7 +177,7 @@ protected void createSourceGroup(Composite parent) {
 
 	// details button
 	detailsButton = new Button(fileDetailsGroup,SWT.PUSH);
-	detailsButton.setText("Details...");
+	detailsButton.setText(DataTransferMessages.getString("DataTransfer.details")); //$NON-NLS-1$
 	detailsButton.addListener(SWT.Selection,this);
 
 	// details label
@@ -199,9 +198,10 @@ protected void createSourceGroup(Composite parent) {
  */
 protected void displaySelectedCount(int selectedFileCount) {
 	if (selectedFileCount == 1)
-		detailsDescriptionLabel.setText("1 file selected");
+		detailsDescriptionLabel.setText(
+			DataTransferMessages.getString("DataTransfer.oneSelected"));  //$NON-NLS-1$
 	else
-		detailsDescriptionLabel.setText(selectedFileCount + " files selected");
+		detailsDescriptionLabel.setText(DataTransferMessages.format("FileImport.filesSelected",new Object[] {String.valueOf(selectedFileCount)})); //$NON-NLS-1$
 }
 /**
  *	Answer a boolean indicating whether the specified source currently exists
@@ -211,7 +211,7 @@ protected boolean ensureSourceIsValid() {
 	if (new File(getSourceDirectoryName()).isDirectory())
 		return true;
 
-	displayErrorDialog("Source directory is not valid or has not been specified.");
+	displayErrorDialog(DataTransferMessages.getString("FileImport.invalidSource")); //$NON-NLS-1$
 	sourceNameField.setFocus();
 	return false;
 }
@@ -233,7 +233,7 @@ protected boolean executeImportOperation(ImportOperation op) {
 	IStatus status = op.getStatus();
 	if (!status.isOK()) {
 		ErrorDialog.openError(getContainer().getShell(),
-			"Import Problems",
+			DataTransferMessages.getString("FileImport.importProblems"), //$NON-NLS-1$
 			null,		// no special message
 			status);
 		return false;
@@ -277,8 +277,8 @@ public boolean finish() {
 
 		MessageDialog.openInformation(
 			getContainer().getShell(),
-			"Information",
-			"There are no resources currently selected for import.");
+			DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
+			DataTransferMessages.getString("FileImport.noneSelected")); //$NON-NLS-1$
 		
 		return false;
 	}
@@ -317,7 +317,7 @@ protected List getSelectedResources() {
 protected File getSourceDirectory() {
 	File sourceDirectory = new File(getSourceDirectoryName());
 	if (!sourceDirectory.exists() || !sourceDirectory.isDirectory()) {
-		displayErrorDialog("Source directory is not valid or has not been specified.");
+		displayErrorDialog(DataTransferMessages.getString("FileImport.invalidSource")); //$NON-NLS-1$
 		sourceNameField.setFocus();
 		return null;
 	}
@@ -343,7 +343,7 @@ private String getSourceDirectoryName() {
  *	Answer the string to display as the label for the source specification field
  */
 protected String getSourceLabel() {
-	return "Directory:";
+	return DataTransferMessages.getString("FileImport.sourceTitle"); //$NON-NLS-1$
 }
 /**
  * Returns a collection of the currently-specified resource types,
@@ -358,7 +358,7 @@ protected List getTypesToImport() {
 	
 	while (tokenizer.hasMoreTokens()) {
 		String currentExtension = tokenizer.nextToken().trim();
-		if (!currentExtension.equals(""))
+		if (!currentExtension.equals(""))//$NON-NLS-1$
 			result.add(currentExtension);
 	}
 		
@@ -423,7 +423,7 @@ public void handleEvent(Event e) {
  */
 protected void handleSourceBrowseButtonPressed() {
 	DirectoryDialog dialog = new DirectoryDialog(sourceNameField.getShell(),SWT.SAVE);
-	dialog.setMessage("Select the source directory.");
+	dialog.setMessage(DataTransferMessages.getString("FileImport.selectSource")); //$NON-NLS-1$
 	dialog.setFilterPath(getSourceDirectoryName());
 	
 	String selectedDirectory = dialog.open();
@@ -456,10 +456,10 @@ protected void handleTypesEditButtonPressed() {
 			editorMappings,
 			FileEditorMappingContentProvider.INSTANCE,
 			FileEditorMappingLabelProvider.INSTANCE,
-			"Select the types to import.");
+			DataTransferMessages.getString("FileImport.selectTypes")); //$NON-NLS-1$
 
 	dialog.setInitialSelections(initialSelections.toArray());
-	dialog.setTitle("Type Selection");
+	dialog.setTitle(DataTransferMessages.getString("FileImport.typeSelectionTitle")); //$NON-NLS-1$
 	dialog.open();
 
 	Object[] newSelectedTypes = dialog.getResult();
@@ -507,7 +507,7 @@ protected void initializeOperation(ImportOperation op) {
  * by the user, or <code>null</code> if the dialog was canceled.
  */
 protected List queryResourcesToImport(FileSystemElement rootElement) {
-	FileSelectionDialog dialog = new FileSelectionDialog(getContainer().getShell(), rootElement, "Select the resources to import.");
+	FileSelectionDialog dialog = new FileSelectionDialog(getContainer().getShell(), rootElement, DataTransferMessages.getString("FileImport.selectResources")); //$NON-NLS-1$
 	dialog.setInitialSelections(selectedResources.toArray());
 	dialog.setExpandAllOnOpen(true);
 	dialog.open();
@@ -520,7 +520,7 @@ protected List queryResourcesToImport(FileSystemElement rootElement) {
  *	Reset the selected resources collection and update the ui appropriately
  */
 protected void resetSelection() {
-	detailsDescriptionLabel.setText("All files matching this criteria");
+	detailsDescriptionLabel.setText(DataTransferMessages.getString("DataTransfer.allFiles")); //$NON-NLS-1$
 	selectedResources = null;
 	root = null;
 }
@@ -656,7 +656,7 @@ protected void setTypesToImport(List types) {
 	for (int i = 0; i < types.size(); ++i) {
 		if (i != 0) {
 			result.append(TYPE_DELIMITER);
-			result.append(" ");
+			result.append(" ");//$NON-NLS-1$
 		}
 		result.append(types.get(i));
 	}
@@ -674,6 +674,6 @@ protected void updateWidgetEnablements() {
  *	widgets currently all contain valid values.
  */
 protected boolean validateSourceGroup() {
-	return !getSourceDirectoryName().equals("");
+	return !getSourceDirectoryName().equals("");//$NON-NLS-1$
 }
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.*;
@@ -36,10 +35,10 @@ import java.util.List;
 	protected static final int	COMBO_HISTORY_LENGTH = 5;
 	
 	// dialog store id constants
-	private final static String	STORE_DESTINATION_NAMES_ID = "WizardZipFileExportPage1.STORE_DESTINATION_NAMES_ID";
-	private final static String	STORE_OVERWRITE_EXISTING_FILE_ID = "WizardZipFileExportPage1.STORE_OVERWRITE_EXISTING_FILE_ID";
-	private final static String	STORE_CREATE_STRUCTURE_ID = "WizardZipFileExportPage1.STORE_CREATE_STRUCTURE_ID";
-	private final static String	STORE_COMPRESS_CONTENTS_ID = "WizardZipFileExportPage1.STORE_COMPRESS_CONTENTS_ID";
+	private final static String	STORE_DESTINATION_NAMES_ID = "WizardZipFileExportPage1.STORE_DESTINATION_NAMES_ID";//$NON-NLS-1$
+	private final static String	STORE_OVERWRITE_EXISTING_FILE_ID = "WizardZipFileExportPage1.STORE_OVERWRITE_EXISTING_FILE_ID";//$NON-NLS-1$
+	private final static String	STORE_CREATE_STRUCTURE_ID = "WizardZipFileExportPage1.STORE_CREATE_STRUCTURE_ID";//$NON-NLS-1$
+	private final static String	STORE_COMPRESS_CONTENTS_ID = "WizardZipFileExportPage1.STORE_COMPRESS_CONTENTS_ID";//$NON-NLS-1$
 /**
  *	Create an instance of this class.  Note that this constructor
  *	is here primarily to keep the JarFileExportPage1 subclass happy
@@ -53,9 +52,9 @@ protected WizardZipFileExportPage1(String name, IStructuredSelection selection) 
  *	Create an instance of this class
  */
 public WizardZipFileExportPage1(IStructuredSelection selection) {
-	this("zipFileExportPage1", selection);
-	setTitle("Zip file");
-	setDescription("Export resources to a Zip file on the local file system.");
+	this("zipFileExportPage1", selection);//$NON-NLS-1$
+	setTitle(DataTransferMessages.getString("ZipExport.exportTitle")); //$NON-NLS-1$
+	setDescription(DataTransferMessages.getString("ZipExport.description")); //$NON-NLS-1$
 }
 /**
  *	Create the export options specification widgets.
@@ -72,15 +71,15 @@ protected void createOptionsGroup(Composite parent) {
 
 	// overwrite... checkbox
 	overwriteExistingFileCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-	overwriteExistingFileCheckbox.setText("Overwrite existing file without warning");
+	overwriteExistingFileCheckbox.setText(DataTransferMessages.getString("ZipExport.overwriteFile")); //$NON-NLS-1$
 
 	// create directory structure checkbox
 	createDirectoryStructureCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-	createDirectoryStructureCheckbox.setText("Create directory structure");
+	createDirectoryStructureCheckbox.setText(DataTransferMessages.getString("ExportFile.createDirectoryStructure")); //$NON-NLS-1$
 
 	// compress... checkbox
 	compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-	compressContentsCheckbox.setText("Compress the contents of the file");
+	compressContentsCheckbox.setText(DataTransferMessages.getString("ZipExport.compressContents")); //$NON-NLS-1$
 
 	// initial setup
 	createDirectoryStructureCheckbox.setSelection(true);
@@ -108,19 +107,19 @@ protected boolean ensureTargetDirectoryIsValid(String fullPathname) {
  */
 protected boolean ensureTargetFileIsValid(File targetFile) {
 	if (targetFile.exists() && targetFile.isDirectory()) {
-		displayErrorDialog("Export destination must be a file, not a directory.");
+		displayErrorDialog(DataTransferMessages.getString("ZipExport.mustBeFile")); //$NON-NLS-1$
 		giveFocusToDestination();
 		return false;
 	}
 
 	if (targetFile.exists()) {
 		if (!overwriteExistingFileCheckbox.getSelection() && targetFile.canWrite()) {
-			if (!queryYesNoQuestion("Target file already exists.  Would you like to overwrite it?"))
+			if (!queryYesNoQuestion(DataTransferMessages.getString("ZipExport.alreadyExists"))) //$NON-NLS-1$
 				return false;
 		}
 
 		if (!targetFile.canWrite()) {
-			displayErrorDialog("Export destination already exists and cannot be overwritten.");
+			displayErrorDialog(DataTransferMessages.getString("ZipExport.alreadyExistsError")); //$NON-NLS-1$
 			giveFocusToDestination();
 			return false;
 		}
@@ -167,7 +166,7 @@ protected boolean executeExportOperation(ZipFileExportOperation op) {
 	IStatus status = op.getStatus();
 	if (!status.isOK()) {
 		ErrorDialog.openError(getContainer().getShell(),
-			"Export Problems",
+			DataTransferMessages.getString("DataTransfer.exportProblems"), //$NON-NLS-1$
 			null,   // no special message
 			status);
 		return false;
@@ -202,8 +201,8 @@ public boolean finish() {
 
 	MessageDialog.openInformation(
 		getContainer().getShell(),
-		"Information",
-		"There are no resources currently selected for export.");
+		DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
+		DataTransferMessages.getString("FileExport.noneSelected")); //$NON-NLS-1$
 
 	return false;
 }
@@ -213,7 +212,7 @@ public boolean finish() {
  *	@return java.lang.String
  */
 protected String getDestinationLabel() {
-	return "Zip file:";
+	return DataTransferMessages.getString("ZipExport.destinationLabel"); //$NON-NLS-1$
 }
 /**
  *	Answer the contents of self's destination specification widget.  If this
@@ -238,7 +237,7 @@ protected String getDestinationValue() {
  *	@return java.lang.String
  */
 protected String getOutputSuffix() {
-	return ".zip";
+	return ".zip";//$NON-NLS-1$
 }
 /**
  *	Open an appropriate destination browser so that the user can specify a source
@@ -246,7 +245,7 @@ protected String getOutputSuffix() {
  */
 protected void handleDestinationBrowseButtonPressed() {
 	FileDialog dialog = new FileDialog(getContainer().getShell(),SWT.SAVE);
-	dialog.setFilterExtensions(new String[] {"*.jar;*.zip"});
+	dialog.setFilterExtensions(new String[] {"*.jar;*.zip"});//$NON-NLS-1$
 	
 	String currentSourceString = getDestinationValue();
 	int lastSeparatorIndex = currentSourceString.lastIndexOf(File.separator);

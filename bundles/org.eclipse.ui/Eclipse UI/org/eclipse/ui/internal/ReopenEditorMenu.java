@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -28,7 +27,7 @@ public class ReopenEditorMenu extends ContributionItem {
 public ReopenEditorMenu(WorkbenchWindow window, EditorHistory history,
 	boolean showSeparator) 
 {
-	super("Reopen Editor");
+	super("Reopen Editor");//$NON-NLS-1$
 	fWindow = window;
 	this.history = history;
 	this.showSeparator = showSeparator;
@@ -38,10 +37,10 @@ public ReopenEditorMenu(WorkbenchWindow window, EditorHistory history,
  * within the MAX_TEXT_LENGTH.
  */
 private String calcText(int index, EditorHistoryItem item) {
-	String prefix = "&" + Integer.toString(index + 1) + " ";
+	String prefix = "&" + Integer.toString(index + 1) + " ";//$NON-NLS-2$//$NON-NLS-1$
 	String suffix = item.input.getToolTipText();
 	if (suffix.length() > MAX_TEXT_LENGTH) {
-		suffix = "..." + suffix.substring(suffix.length() - MAX_TEXT_LENGTH);
+		suffix = "..." + suffix.substring(suffix.length() - MAX_TEXT_LENGTH);//$NON-NLS-1$
 	}
 	return prefix + suffix;
 }
@@ -66,7 +65,7 @@ public void fill(Menu menu, int index) {
 	// Add one item for each item.
 	for (int i = 0; i < array.length; i++) {
 		final EditorHistoryItem item = array[i];
-		MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
+		MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
 		++ index;
 		mi.setText(calcText(i, item));
 		mi.addSelectionListener(new SelectionAdapter() {

@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.model;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -23,7 +27,7 @@ public Object[] getChildren(Object o) {
  */
 public static String getElementLabel(IAdaptable a) {
 	if (a == null) {
-		return "";
+		return "";//$NON-NLS-1$
 	}
 	IWorkbenchAdapter adapter = (IWorkbenchAdapter)a.getAdapter(IWorkbenchAdapter.class);
 	if (adapter != null) {
@@ -42,7 +46,7 @@ public ImageDescriptor getImageDescriptor(Object object) {
  * @see IWorkbenchAdapter#getLabel
  */
 public String getLabel(Object o) {
-	return o == null ? "" : o.toString();
+	return o == null ? "" : o.toString();//$NON-NLS-1$
 }
 /**
  * @see IWorkbenchAdapter#getParent

@@ -1,12 +1,12 @@
 package org.eclipse.ui.internal.model;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import java.util.*;
@@ -34,6 +34,6 @@ public ImageDescriptor getImageDescriptor(Object object) {
  */
 public String getLabel(Object o) {
 	//workspaces don't have a name
-	return "Workspace";
+	return WorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
 }
 }

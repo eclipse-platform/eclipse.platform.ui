@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -24,13 +23,13 @@ import java.util.zip.*;
 	private boolean				useCompression = true;
 
 	// constants
-	private static final String newline = "\r\n";			// is this platform dependent?
-	private static final String	manifestMagic = "Manifest-Version: 1.0" + newline + newline;
-	private static final String	nameLabel = "Name: ";
-	private static final String	digestsLabel = "Digest-Algorithms: SHA MD5" + newline;
-	private static final String shaLabel = "SHA-Digest: ";
-	private static final String md5Label = "MD5-Digest: ";
-	private static final String	manifestPath = "meta-inf/Manifest.mf";
+	private static final String newline = "\r\n";			// is this platform dependent?//$NON-NLS-1$
+	private static final String	manifestMagic = "Manifest-Version: 1.0" + newline + newline;//$NON-NLS-1$
+	private static final String	nameLabel = "Name: ";//$NON-NLS-1$
+	private static final String	digestsLabel = "Digest-Algorithms: SHA MD5" + newline;//$NON-NLS-1$
+	private static final String shaLabel = "SHA-Digest: ";//$NON-NLS-1$
+	private static final String md5Label = "MD5-Digest: ";//$NON-NLS-1$
+	private static final String	manifestPath = "meta-inf/Manifest.mf";//$NON-NLS-1$
 /**
  *	Create an instance of this class.
  *
@@ -80,11 +79,11 @@ protected void appendToManifest(String pathname, IFile file) throws IOException,
 	fileContents = buffer.toString().getBytes();
 	
 	try {
-		byte[] hashValue = MessageDigest.getInstance("SHA").digest(fileContents);
+		byte[] hashValue = MessageDigest.getInstance("SHA").digest(fileContents);//$NON-NLS-1$
 		manifestEntry.append(Base64Encoder.encode(hashValue));
 		manifestEntry.append(newline);
 		manifestEntry.append(md5Label);
-		hashValue = MessageDigest.getInstance("MD5").digest(fileContents);
+		hashValue = MessageDigest.getInstance("MD5").digest(fileContents);//$NON-NLS-1$
 		manifestEntry.append(Base64Encoder.encode(hashValue));
 		manifestEntry.append(newline + newline);
 	} catch (NoSuchAlgorithmException e) {

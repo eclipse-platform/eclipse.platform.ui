@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
@@ -96,7 +95,7 @@ private void checkInitialSelections() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText("Customize Perspective");
+	shell.setText(WorkbenchMessages.getString("ActionSetSelection.customize")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.ACTION_SET_SELECTION_DIALOG});
 }
 /* (non-Javadoc)
@@ -110,7 +109,7 @@ protected Control createDialogArea(Composite parent) {
 
 	// description
 	Label descLabel = new Label(composite, SWT.WRAP);
-	descLabel.setText("Select the visible action sets for the current perspective (" + perspective.getDesc().getLabel() + ").");
+	descLabel.setText(WorkbenchMessages.format("ActionSetSelection.selectLabel", new Object[] {perspective.getDesc().getLabel()})); //$NON-NLS-1$
 	descLabel.setFont(parent.getFont());
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	data.horizontalSpan = 2;
@@ -128,7 +127,7 @@ protected Control createDialogArea(Composite parent) {
 	
 	// ...second the label
 	Label selectionLabel = new Label(actionSetGroup,SWT.NONE);
-	selectionLabel.setText("Available Action Sets:");
+	selectionLabel.setText(WorkbenchMessages.getString("ActionSetSelection.available")); //$NON-NLS-1$
 	selectionLabel.setFont(parent.getFont());
 
 	// ...third the checkbox list
@@ -150,9 +149,9 @@ protected Control createDialogArea(Composite parent) {
 					actionSet = (IActionSetDescriptor)sel.getFirstElement();
 				if (actionSet != actionViewer.getInput()) {
 					if (actionSet == null)
-						actionLabel.setText("");
+						actionLabel.setText("");//$NON-NLS-1$
 					else
-						actionLabel.setText(actionSet.getLabel() + ":");
+						actionLabel.setText(WorkbenchMessages.format("ActionSetSelection.actionLabel", new Object[] {actionSet.getLabel()})); //$NON-NLS-1$
 					actionLabel.getParent().layout();
 					actionViewer.setInput(actionSet);
 				}
@@ -176,7 +175,7 @@ protected Control createDialogArea(Composite parent) {
 	
 	// ...second the label
 	actionLabel = new Label(actionGroup, SWT.NONE);
-	actionLabel.setText("");
+	actionLabel.setText("");//$NON-NLS-1$
 
 	// ...third the list of actions
 	actionViewer = new TableViewer(actionGroup, SWT.BORDER);

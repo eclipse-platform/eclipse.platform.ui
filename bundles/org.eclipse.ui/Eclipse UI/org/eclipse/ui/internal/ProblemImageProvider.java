@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -33,18 +32,18 @@ public ProblemImageProvider() {
 public String getImagePath(IMarker marker) {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	if (isMarkerType(marker, IMarker.PROBLEM)) {
 		switch (marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING)) {
 			case IMarker.SEVERITY_ERROR:
-				return iconPath + "obj16/error_tsk.gif";
+				return iconPath + "obj16/error_tsk.gif";//$NON-NLS-1$
 			case IMarker.SEVERITY_WARNING:
-				return iconPath + "obj16/warn_tsk.gif";
+				return iconPath + "obj16/warn_tsk.gif";//$NON-NLS-1$
 			case IMarker.SEVERITY_INFO:
-				return iconPath + "obj16/info_tsk.gif";
+				return iconPath + "obj16/info_tsk.gif";//$NON-NLS-1$
 		}
 	}
 	return null;

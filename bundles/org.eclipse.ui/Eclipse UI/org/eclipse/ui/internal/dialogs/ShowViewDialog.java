@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.*;
@@ -27,9 +31,9 @@ public class ShowViewDialog extends org.eclipse.jface.dialogs.Dialog
 	private static final int LIST_WIDTH = 200;
 	private static final int LIST_HEIGHT = 200;
 
-	private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog";
+	private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog";//$NON-NLS-1$
 	private static final String STORE_EXPANDED_CATEGORIES_ID =
-		DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_CATEGORIES_ID";
+		DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_CATEGORIES_ID";//$NON-NLS-1$
 /**
  * PerspectiveDialog constructor comment.
  */
@@ -57,7 +61,7 @@ protected void cancelPressed() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText("Show View");
+	shell.setText(WorkbenchMessages.getString("ShowView.shellTitle")); //$NON-NLS-1$
 }
 /**
  * Adds buttons to this dialog's button bar.

@@ -1,9 +1,8 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -121,7 +120,7 @@ class FindReplaceDialog extends Dialog {
 
 		readConfiguration();
 		
-		setShellStyle(SWT.CLOSE | SWT.MODELESS);
+		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
 		setBlockOnOpen(false);
 	}
 	/*

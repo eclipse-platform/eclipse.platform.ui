@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.registry.*;
@@ -32,7 +31,7 @@ public class SubActionBars implements IActionBars
 	private boolean actionHandlersChanged;
 
 	/** Property constant for changes to action handlers. */
-	public static final String P_ACTION_HANDLERS = "org.eclipse.ui.internal.actionHandlers";
+	public static final String P_ACTION_HANDLERS = "org.eclipse.ui.internal.actionHandlers";//$NON-NLS-1$
 /**
  * Construct a new PartActionBars object.
  */
@@ -62,6 +61,24 @@ public void clearGlobalActionHandlers() {
 		actionHandlers.clear();
 		actionHandlersChanged = true;
 	}
+}
+/**
+ * Returns a new sub menu manager.
+ *
+ * @param parent the parent menu manager
+ * @return the menu manager
+ */
+protected SubMenuManager createSubMenuManager(IMenuManager parent) {
+	return new SubMenuManager(parent);
+}
+/**
+ * Returns a new sub tool bar manager.
+ *
+ * @param parent the parent tool bar manager
+ * @return the tool bar manager
+ */
+protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
+	return new SubToolBarManager(parent);
 }
 /**
  * Deactivate the contributions.
@@ -123,7 +140,7 @@ public Map getGlobalActionHandlers() {
  */
 public IMenuManager getMenuManager() {
 	if (menuMgr == null) {
-		menuMgr = new SubMenuManager(parent.getMenuManager());
+		menuMgr = createSubMenuManager(parent.getMenuManager());
 		menuMgr.setVisible(active);
 	}
 	return menuMgr;
@@ -149,7 +166,7 @@ public IStatusLineManager getStatusLineManager() {
  */
 public IToolBarManager getToolBarManager() {
 	if (toolBarMgr == null) {
-		toolBarMgr = new SubToolBarManager(parent.getToolBarManager());
+		toolBarMgr = createSubToolBarManager(parent.getToolBarManager());
 		toolBarMgr.setVisible(active);
 	}
 	return toolBarMgr;

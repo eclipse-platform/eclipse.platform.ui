@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -30,12 +29,7 @@ public SafeRunnableAdapter(String message) {
  */
 public void handleException(Throwable e) {
 	if(message == null)
-		message = "An error has occurred";
-	if (e != null && e.getMessage() != null)
-		message += ": " + e.getMessage();
-	if (!message.endsWith("."))
-		message += ".";
-	message += "  See error log for more details.";
-	MessageDialog.openError(null, "Error", message);
+		message = WorkbenchMessages.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
+	MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 }
 }

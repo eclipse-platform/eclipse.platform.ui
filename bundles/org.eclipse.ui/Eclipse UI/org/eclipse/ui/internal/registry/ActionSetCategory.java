@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import java.util.ArrayList;
@@ -12,13 +11,15 @@ import java.util.ArrayList;
  *
  */
 public class ActionSetCategory {
+	private String id;
 	private String label;
 	private ArrayList actionSets;
 /**
  * ActionSetCategory constructor comment.
  */
-public ActionSetCategory(String label) {
+public ActionSetCategory(String id, String label) {
 	super();
+	this.id = id;
 	this.label = label;
 }
 /**
@@ -28,6 +29,7 @@ public void addActionSet(IActionSetDescriptor desc) {
 	if (actionSets == null)
 		actionSets = new ArrayList(5);
 	actionSets.add(desc);
+	desc.setCategory(id);
 }
 /**
  * Returns the action sets for this category.
@@ -35,6 +37,12 @@ public void addActionSet(IActionSetDescriptor desc) {
  */
 public ArrayList getActionSets() {
 	return actionSets;
+}
+/**
+ * Returns category id.
+ */
+public String getId() {
+	return id;
 }
 /**
  * Returns category name.

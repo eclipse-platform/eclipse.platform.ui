@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.navigator;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.views.internal.framelist.TreeFrame;
 import org.eclipse.ui.views.internal.framelist.TreeViewerFrameSource;
 

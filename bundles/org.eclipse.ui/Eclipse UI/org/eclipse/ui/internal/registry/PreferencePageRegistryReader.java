@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
@@ -21,13 +20,13 @@ import org.eclipse.ui.internal.misc.UIHackFinder;
  *  to determine the contributed preference pages
  */
 public class PreferencePageRegistryReader extends RegistryReader {
-	public static final String ATT_CATEGORY = "category";
-	public static final String ATT_CLASS = "class";
-	public static final String ATT_NAME = "name";
-	public static final String ATT_ID = "id";
-	public static final String TAG_PAGE = "page";
-	public static final String ATT_ICON = "icon";
-	public static final String PREFERENCE_SEPARATOR = "/";
+	public static final String ATT_CATEGORY = "category";//$NON-NLS-1$
+	public static final String ATT_CLASS = "class";//$NON-NLS-1$
+	public static final String ATT_NAME = "name";//$NON-NLS-1$
+	public static final String ATT_ID = "id";//$NON-NLS-1$
+	public static final String TAG_PAGE = "page";//$NON-NLS-1$
+	public static final String ATT_ICON = "icon";//$NON-NLS-1$
+	public static final String PREFERENCE_SEPARATOR = "/";//$NON-NLS-1$
 	private List nodes;
 	private IWorkbench workbench;
 
@@ -170,7 +169,7 @@ public List getPreferenceContributions(IPluginRegistry registry) {
 		//We must create a page for the workbench node (unlikely to occur but just in case)
 		workbenchNode = new WorkbenchPreferenceNode(
 			IWorkbenchConstants.WORKBENCH_PREFERENCE_CATEGORY_ID,
-			"Workbench",
+			"Workbench",//$NON-NLS-1$
 			null,
 			null,
 			new EmptyPreferencePage());
@@ -214,7 +213,7 @@ public List getPreferenceContributions(IPluginRegistry registry) {
 		}
 		else {
 			//Could not find the parent - log
-			WorkbenchPlugin.log("Invalid preference page path: "+categoryNode.getFlatCategory());
+			WorkbenchPlugin.log("Invalid preference page path: "+categoryNode.getFlatCategory());//$NON-NLS-1$
 			contributions.add(node);
 		}
 	}

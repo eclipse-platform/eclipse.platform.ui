@@ -1,16 +1,15 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog; // disambiguate from SWT
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,7 +54,7 @@ public SaveAsDialog(Shell parentShell) {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText("Save As...");
+	shell.setText(WorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
 }
 public void create() {
 	super.create();
@@ -63,7 +62,7 @@ public void create() {
 	initializeControls();
 	validatePage();
 	resourceGroup.setFocus();
-	setTitle("Save File As...");
+	setTitle(WorkbenchMessages.getString("SaveAsDialog.title")); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -96,7 +95,7 @@ protected Control createDialogArea(Composite parent) {
 		}
 	};
 
-	resourceGroup = new ResourceAndContainerGroup(composite, listener, "File name:", "file");
+	resourceGroup = new ResourceAndContainerGroup(composite, listener, WorkbenchMessages.getString("SaveAsDialog.fileLabel"), WorkbenchMessages.getString("SaveAsDialog.file")); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(true);
 
 	return parentComposite;
@@ -128,7 +127,43 @@ private void initializeControls() {
  * Method declared on Dialog.
  */
 protected void okPressed() {
-	result = resourceGroup.getContainerFullPath().append(resourceGroup.getResource());
+	// Get new path.
+	IPath path = resourceGroup.getContainerFullPath().append(resourceGroup.getResource());
+
+	// If the path already exists then confirm overwrite.
+	IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+	if (file.exists()) {
+		String [] buttons= new String[] { 
+			IDialogConstants.YES_LABEL,
+			IDialogConstants.NO_LABEL,
+			IDialogConstants.CANCEL_LABEL
+		};
+		String question = WorkbenchMessages.format("SaveAsDialog.overwriteQuestion", //$NON-NLS-1$
+			new Object[] { path.toOSString() } );
+		MessageDialog d= new MessageDialog(
+			getShell(),
+			WorkbenchMessages.getString("Question"), //$NON-NLS-1$
+			null,
+			question,
+			MessageDialog.QUESTION,
+			buttons,
+			0
+		);
+		int overwrite = d.open();
+		switch (overwrite) {
+			case 0: // Yes
+				break;
+			case 1: // No
+				return;
+			case 2: // Cancel
+			default:
+				cancelPressed();
+				return;
+		}
+	}
+
+	// Store path and close.
+	result = path;
 	close();
 }
 /**
@@ -158,7 +193,7 @@ private boolean validatePage() {
 	setErrorMessage(null);
 
 	if (!resourceGroup.areAllValuesValid()) {
-		if (!resourceGroup.getResource().equals(""))	// if blank name then fail silently
+		if (!resourceGroup.getResource().equals(""))	// if blank name then fail silently//$NON-NLS-1$
 			setErrorMessage(resourceGroup.getProblemMessage());
 		return false;
 	}

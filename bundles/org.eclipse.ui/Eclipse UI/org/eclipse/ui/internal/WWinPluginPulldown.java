@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IMenuCreator;
@@ -50,7 +54,7 @@ protected IActionDelegate createDelegate() {
 		return delegate;
 	} else {
 		WorkbenchPlugin.log(
-			"Action should implement IWorkbenchWindowPluginDelegate: " + getText());
+			"Action should implement IWorkbenchWindowPluginDelegate: " + getText());//$NON-NLS-1$
 		return null;
 	}
 }

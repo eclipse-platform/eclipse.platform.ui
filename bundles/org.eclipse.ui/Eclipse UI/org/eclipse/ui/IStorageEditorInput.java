@@ -1,13 +1,12 @@
 package org.eclipse.ui;
 
-import org.eclipse.core.resources.IStorage;
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IStorage;
 
 /**
  * Interface for a <code>IStorage</code> input to an editor.

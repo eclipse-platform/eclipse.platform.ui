@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
@@ -62,7 +61,7 @@ public OpenNewPageMenu(IWorkbenchWindow window) {
  * @param input the page input
  */
 public OpenNewPageMenu(IWorkbenchWindow window, IAdaptable input) {
-	super(window, "Open New Page Menu");
+	super(window, "Open New Page Menu");//$NON-NLS-1$
 	this.pageInput = input;
 }
 /* (non-Javadoc)
@@ -71,8 +70,8 @@ public OpenNewPageMenu(IWorkbenchWindow window, IAdaptable input) {
 protected void run(IPerspectiveDescriptor desc) {
 	// Verify page input.
 	if (pageInput == null) {
-		MessageDialog.openError(getWindow().getShell(), "Problems Opening Page",
-			"Unknown Page Input");
+		MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.getString("OpenNewPageMenu.dialogTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("OpenNewPageMenu.unknownPageInput")); //$NON-NLS-1$
 		return;
 	}
 
@@ -80,7 +79,7 @@ protected void run(IPerspectiveDescriptor desc) {
 	try {
 		getWindow().openPage(desc.getId(), pageInput);
 	} catch (WorkbenchException e) {
-		MessageDialog.openError(getWindow().getShell(), "Problems Opening Page",
+		MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.getString("OpenNewPageMenu.dialogTitle"), //$NON-NLS-1$
 			e.getMessage());
 	}
 }

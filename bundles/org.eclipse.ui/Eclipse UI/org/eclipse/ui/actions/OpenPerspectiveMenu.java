@@ -1,5 +1,9 @@
 package org.eclipse.ui.actions;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
@@ -8,8 +12,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.*;
 
 /**
@@ -38,10 +42,10 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	private IWorkbenchWindow window;
 	private IPerspectiveRegistry reg;
 
-	private static String PAGE_PROBLEMS_TITLE = "Problems Opening Page";
-	private static String PAGE_PROBLEMS_MESSAGE = "Unknown Page Input";
-	private static String WINDOW_PROBLEMS_TITLE = "Problems Opening Window";
-	private static String WINDOW_PROBLEMS_MESSAGE = "Unknown Window Input";
+	private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.getString("OpenPerspectiveMenu.pageProblem"); //$NON-NLS-1$
+	private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages.getString("OpenPerspectiveMenu.errorUnknownInput"); //$NON-NLS-1$
+	private static String WINDOW_PROBLEMS_TITLE = WorkbenchMessages.getString("OpenPerspectiveMenu.dialogTitle"); //$NON-NLS-1$
+	private static String WINDOW_PROBLEMS_MESSAGE = WorkbenchMessages.getString("OpenPerspectiveMenu.unknownInput"); //$NON-NLS-1$
 /**
  * Constructs a new menu.
  */
@@ -74,8 +78,19 @@ public OpenPerspectiveMenu(IWorkbenchWindow window) {
  * @param input the page input
  */
 public OpenPerspectiveMenu(IWorkbenchWindow window, IAdaptable input) {
-	super(window, "Open New Page Menu");
+	super(window, "Open New Page Menu");//$NON-NLS-1$
 	this.pageInput = input;
+}
+/**
+ * Return the alternate mask for this platform. It is control on win32 and
+ * shift alt on other platforms.
+ * @return int
+ */
+private int alternateMask() {
+	if (SWT.getPlatform().equals("win32"))//$NON-NLS-1$
+		return SWT.CONTROL;
+	else
+		return SWT.ALT & SWT.SHIFT;
 }
 /**
  * Return whether or not the menu can be run. Answer true unless the current perspective
@@ -117,14 +132,14 @@ protected void run(IPerspectiveDescriptor desc) {
  * @param event SelectionEvent - the event send along with the selection callback
  */
 protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
-	
+
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	String perspectiveSetting =
 		store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 
-	if ((event.stateMask & SWT.ALT) > 0)
+	if ((event.stateMask & alternateMask()) > 0)
 		perspectiveSetting =
-			store.getString(IWorkbenchPreferenceConstants.ALT_OPEN_NEW_PERSPECTIVE);
+			store.getString(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE);
 	else {
 		if ((event.stateMask & SWT.SHIFT) > 0)
 			perspectiveSetting =

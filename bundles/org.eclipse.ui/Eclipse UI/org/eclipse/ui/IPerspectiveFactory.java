@@ -1,9 +1,8 @@
 package org.eclipse.ui;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -44,17 +43,17 @@ package org.eclipse.ui;
  *		// Top left: Resource Navigator view and Bookmarks view placeholder
  *		IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f,
  *			editorArea);
- *		topLeft.add(ILayout.ID_RES_NAV);
+ *		topLeft.addView(IPageLayout.ID_RES_NAV);
  *		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
  *
  *		// Bottom left: Outline view and Property Sheet view
  *		IFolderLayout bottomLeft = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.50f,
  *			"topLeft");
- *		bottomLeft.add(IPageLayout.ID_OUTLINE);
- *		bottomLeft.add(IPageLayout.ID_PROP_SHEET);
+ *		bottomLeft.addView(IPageLayout.ID_OUTLINE);
+ *		bottomLeft.addView(IPageLayout.ID_PROP_SHEET);
  *
  *		// Bottom right: Task List view
- *		layout.add(IPageLayout.ID_TASK_LIST, IPageLayout.BOTTOM, 0.66f, editorArea);
+ *		layout.addView(IPageLayout.ID_TASK_LIST, IPageLayout.BOTTOM, 0.66f, editorArea);
  *	}
  * </pre>
  * </p><p>

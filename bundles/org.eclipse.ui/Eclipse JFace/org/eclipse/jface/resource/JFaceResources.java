@@ -1,9 +1,8 @@
 package org.eclipse.jface.resource;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.resource.FontRegistry;
@@ -34,7 +33,7 @@ public class JFaceResources {
 	 * The JFace resource bundle; eagerly initialized.
 	 */
 	private static final ResourceBundle bundle=
-		ResourceBundle.getBundle("org.eclipse.jface.jface_nls");//$NON-NLS-1$
+		ResourceBundle.getBundle("org.eclipse.jface.messages");//$NON-NLS-1$
 		
 	/**
 	 * The JFace font registry; <code>null</code> until

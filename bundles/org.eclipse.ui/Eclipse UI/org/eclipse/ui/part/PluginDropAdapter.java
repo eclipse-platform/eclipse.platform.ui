@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -23,7 +22,7 @@ public class PluginDropAdapter extends ViewerDropAdapter  {
 	/**
 	 * The extension point attribute that defines the drop action class.
 	 */
-	public static final String ATT_CLASS = "class";
+	public static final String ATT_CLASS = "class";//$NON-NLS-1$
 
 	/**
 	 * The current transfer data, or <code>null</code> if none.
@@ -53,7 +52,7 @@ public void drop(DropTargetEvent event) {
 			super.drop(event);
 		}
 	} catch (CoreException e) {
-		WorkbenchPlugin.log("Drop Failed", e.getStatus());
+		WorkbenchPlugin.log("Drop Failed", e.getStatus());//$NON-NLS-1$
 	}
 }
 /**
@@ -79,7 +78,7 @@ protected static IDropActionDelegate getPluginAdapter(PluginTransferData data) t
 	for (int i = 0; i < extensions.length; i++) {
 		IConfigurationElement[] configs = extensions[i].getConfigurationElements();
 		if (configs != null && configs.length > 0) {
-			String id = configs[0].getAttribute("id");
+			String id = configs[0].getAttribute("id");//$NON-NLS-1$
 			if (id != null && id.equals(adapterName)) {
 				return (IDropActionDelegate)WorkbenchPlugin.createExtension(
 					configs[0], ATT_CLASS);

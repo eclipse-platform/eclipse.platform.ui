@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -38,9 +37,9 @@ private MarkerUtil() {
 static ImageDescriptor createImageDescriptor(String relativePath) {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	try {
 		URL URL_BASIC = TaskList.getPlugin().getDescriptor().getInstallURL();
@@ -55,44 +54,44 @@ static ImageDescriptor createImageDescriptor(String relativePath) {
  * Creates the map of image descriptors.
  */
 static void createImageDescriptors() {
-	String CTOOL = "ctool16/";
-	String LOCAL = "clcl16/";
-	String LOCAL_GREY = "elcl16/";
-	String LOCAL_DISABLED = "dlcl16/";
-	String OBJ = "obj16/";
+	String CTOOL = "ctool16/";//$NON-NLS-1$
+	String LOCAL = "clcl16/";//$NON-NLS-1$
+	String LOCAL_GREY = "elcl16/";//$NON-NLS-1$
+	String LOCAL_DISABLED = "dlcl16/";//$NON-NLS-1$
+	String OBJ = "obj16/";//$NON-NLS-1$
 	
 	imageDescriptors = new HashMap(51);
-	imageDescriptors.put("task", 			createImageDescriptor(OBJ + "taskmrk_tsk.gif"));
-	imageDescriptors.put("error", 			createImageDescriptor(OBJ + "error_tsk.gif"));
-	imageDescriptors.put("warn", 			createImageDescriptor(OBJ + "warn_tsk.gif"));
-	imageDescriptors.put("info", 			createImageDescriptor(OBJ + "info_tsk.gif"));
-	imageDescriptors.put("hprio", 			createImageDescriptor(OBJ + "hprio_tsk.gif"));
-	imageDescriptors.put("lprio", 			createImageDescriptor(OBJ + "lprio_tsk.gif"));
-	imageDescriptors.put("complete_tsk", 	createImageDescriptor(OBJ + "complete_tsk.gif"));
-	imageDescriptors.put("incomplete_tsk",	createImageDescriptor(OBJ + "incomplete_tsk.gif"));
-	imageDescriptors.put("gotoobj", 		createImageDescriptor(LOCAL + "gotoobj_tsk.gif"));
-	imageDescriptors.put("gotoobj_grey", 	createImageDescriptor(LOCAL_GREY + "gotoobj_tsk.gif"));
-	imageDescriptors.put("addtsk", 			createImageDescriptor(LOCAL + "addtsk_tsk.gif"));
-	imageDescriptors.put("addtsk_grey", 	createImageDescriptor(LOCAL_GREY + "addtsk_tsk.gif"));
-	imageDescriptors.put("addtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "addtsk_tsk.gif"));
-	imageDescriptors.put("remtsk", 			createImageDescriptor(LOCAL + "remtsk_tsk.gif"));
-	imageDescriptors.put("remtsk_grey", 	createImageDescriptor(LOCAL_GREY + "remtsk_tsk.gif"));
-	imageDescriptors.put("remtsk_disabled",	createImageDescriptor(LOCAL_DISABLED + "remtsk_tsk.gif"));
-	imageDescriptors.put("showcomplete", 	createImageDescriptor(LOCAL + "showcomplete_tsk.gif"));
-	imageDescriptors.put("selected_mode", 	createImageDescriptor(LOCAL + "selected_mode.gif"));
-	imageDescriptors.put("selected_mode_grey", createImageDescriptor(LOCAL_GREY + "selected_mode.gif"));
-	imageDescriptors.put("selected_mode_disabled", createImageDescriptor(LOCAL_DISABLED + "selected_mode.gif"));
-	imageDescriptors.put("showchild_mode",	createImageDescriptor(LOCAL + "showchild_mode.gif"));
-	imageDescriptors.put("showchild_mode_grey", createImageDescriptor(LOCAL_GREY + "showchild_mode.gif"));
-	imageDescriptors.put("showchild_mode_disabled",	createImageDescriptor(LOCAL_DISABLED + "showchild_mode.gif"));
-	imageDescriptors.put("showerr_grey", 	createImageDescriptor(LOCAL_GREY + "showerr_tsk.gif"));
-	imageDescriptors.put("showerr_disabled", createImageDescriptor(LOCAL_DISABLED + "showerr_tsk.gif"));
-	imageDescriptors.put("showwarn_grey", 	createImageDescriptor(LOCAL_GREY + "showwarn_tsk.gif"));
-	imageDescriptors.put("showwarn_disabled", createImageDescriptor(LOCAL_DISABLED + "showwarn_tsk.gif"));
-	imageDescriptors.put("showtsk_grey",	createImageDescriptor(LOCAL_GREY + "showtsk_tsk.gif"));
-	imageDescriptors.put("showtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "showtsk_tsk.gif"));
-	imageDescriptors.put("delete_edit", 	createImageDescriptor(CTOOL + "delete_edit.gif"));
-	imageDescriptors.put("filter", 			createImageDescriptor(LOCAL + "filter_ps.gif"));
+	imageDescriptors.put("task", 			createImageDescriptor(OBJ + "taskmrk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("error", 			createImageDescriptor(OBJ + "error_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("warn", 			createImageDescriptor(OBJ + "warn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("info", 			createImageDescriptor(OBJ + "info_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("hprio", 			createImageDescriptor(OBJ + "hprio_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("lprio", 			createImageDescriptor(OBJ + "lprio_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("complete_tsk", 	createImageDescriptor(OBJ + "complete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("incomplete_tsk",	createImageDescriptor(OBJ + "incomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("gotoobj", 		createImageDescriptor(LOCAL + "gotoobj_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("gotoobj_grey", 	createImageDescriptor(LOCAL_GREY + "gotoobj_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("addtsk", 			createImageDescriptor(LOCAL + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("addtsk_grey", 	createImageDescriptor(LOCAL_GREY + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("addtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("remtsk", 			createImageDescriptor(LOCAL + "remtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("remtsk_grey", 	createImageDescriptor(LOCAL_GREY + "remtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("remtsk_disabled",	createImageDescriptor(LOCAL_DISABLED + "remtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showcomplete", 	createImageDescriptor(LOCAL + "showcomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("selected_mode", 	createImageDescriptor(LOCAL + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("selected_mode_grey", createImageDescriptor(LOCAL_GREY + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("selected_mode_disabled", createImageDescriptor(LOCAL_DISABLED + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showchild_mode",	createImageDescriptor(LOCAL + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showchild_mode_grey", createImageDescriptor(LOCAL_GREY + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showchild_mode_disabled",	createImageDescriptor(LOCAL_DISABLED + "showchild_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showerr_grey", 	createImageDescriptor(LOCAL_GREY + "showerr_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showerr_disabled", createImageDescriptor(LOCAL_DISABLED + "showerr_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showwarn_grey", 	createImageDescriptor(LOCAL_GREY + "showwarn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showwarn_disabled", createImageDescriptor(LOCAL_DISABLED + "showwarn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showtsk_grey",	createImageDescriptor(LOCAL_GREY + "showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("showtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("delete_edit", 	createImageDescriptor(CTOOL + "delete_edit.gif"));//$NON-NLS-2$//$NON-NLS-1$
+	imageDescriptors.put("filter", 			createImageDescriptor(LOCAL + "filter_ps.gif"));//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Returns the ending character offset of the given marker.
@@ -114,9 +113,9 @@ public static int getCharStart(IMarker marker) {
 public static Image getCompleteImage(IMarker marker) {
 	if (isMarkerType(marker, IMarker.TASK)) {
 		if (isComplete(marker))
-			return getImage("complete_tsk");
+			return getImage("complete_tsk");//$NON-NLS-1$
 		else
-			return getImage("incomplete_tsk");
+			return getImage("incomplete_tsk");//$NON-NLS-1$
 	}
 	return null;
 }
@@ -126,7 +125,7 @@ public static Image getCompleteImage(IMarker marker) {
 public static String getContainerName(IMarker marker) {
 	IResource container = marker.getResource().getParent();
 	if (container == null) 
-		return "";
+		return "";//$NON-NLS-1$
 	return container.getFullPath().makeRelative().toString();
 }
 /**
@@ -139,7 +138,7 @@ static Image getImage(String key) {
 		if (desc != null) {
 			image = desc.createImage(false);
 			if (image == null) {
-				System.err.println("TaskList: Error creating image for " + key);
+				System.err.println("TaskList: Error creating image for " + key);//$NON-NLS-1$
 			}
 			imageRegistry.put(key, image);
 		}
@@ -154,15 +153,15 @@ static public Image getImage(IMarker marker) {
 	if (isMarkerType(marker, IMarker.PROBLEM)) {
 		switch (getSeverity(marker)) {
 			case IMarker.SEVERITY_ERROR:
-				return getImage("error");
+				return getImage("error");//$NON-NLS-1$
 			case IMarker.SEVERITY_WARNING:
-				return getImage("warn");
+				return getImage("warn");//$NON-NLS-1$
 			case IMarker.SEVERITY_INFO:
-				return getImage("info");
+				return getImage("info");//$NON-NLS-1$
 		}
 	}
 	else if (isMarkerType(marker, IMarker.TASK)) {
-		return getImage("task");
+		return getImage("task");//$NON-NLS-1$
 	}
 	return null;
 }
@@ -172,7 +171,7 @@ static public Image getImage(IMarker marker) {
 static ImageDescriptor getImageDescriptor(String key) {
 	ImageDescriptor desc = (ImageDescriptor) imageDescriptors.get(key);
 	if (desc == null) {
-		System.err.println("TaskList: No image descriptor for " + key); 
+		System.err.println("TaskList: No image descriptor for " + key); //$NON-NLS-1$
 	}
 	return desc;
 }
@@ -183,15 +182,15 @@ public static String getLineAndLocation(IMarker marker) {
 	int lineNumber = getLineNumber(marker);
 	String location = getLocation(marker);
 	if (lineNumber == -1) {
-		if (location.equals("")) {
-			return "";
+		if (location.equals("")) {//$NON-NLS-1$
+			return "";//$NON-NLS-1$
 		}
 		else {
 			return location;
 		}
 	}
 	else {
-		if (location.equals("")) {
+		if (location.equals("")) {//$NON-NLS-1$
 			return "line " + lineNumber;
 		}
 		else {
@@ -215,14 +214,14 @@ public static int getLineNumber(IMarker marker) {
  * Returns the text for the location field.
  */
 public static String getLocation(IMarker marker) {
-	return marker.getAttribute(IMarker.LOCATION, "");
+	return marker.getAttribute(IMarker.LOCATION, "");//$NON-NLS-1$
 }
 /**
  * Returns the message attribute of the given marker,
  * or the empty string if the message attribute is not defined.
  */
 public static String getMessage(IMarker marker) {
-	return marker.getAttribute(IMarker.MESSAGE, "");
+	return marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 }
 /**
  * Returns the numeric value of the given string, which is assumed to represent a numeric value.
@@ -270,11 +269,11 @@ public static int getPriority(IMarker marker) {
 public static Image getPriorityImage(IMarker marker) {
 	switch (getPriority(marker)) {
 		case IMarker.PRIORITY_HIGH:
-			return getImage("hprio");
+			return getImage("hprio");//$NON-NLS-1$
 		case IMarker.PRIORITY_NORMAL:
 			return null;
 		case IMarker.PRIORITY_LOW:
-			return getImage("lprio");
+			return getImage("lprio");//$NON-NLS-1$
 	}
 	return null;
 }

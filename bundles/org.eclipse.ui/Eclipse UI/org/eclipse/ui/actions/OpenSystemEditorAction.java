@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -12,6 +11,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
@@ -31,7 +31,7 @@ public class OpenSystemEditorAction extends SelectionListenerAction  {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenSystemEditorAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenSystemEditorAction";//$NON-NLS-1$
 	
 	/**
 	 * The workbench page to open the editor in.
@@ -44,8 +44,8 @@ public class OpenSystemEditorAction extends SelectionListenerAction  {
  * @param page the workbench page in which to open the editor
  */
 public OpenSystemEditorAction(IWorkbenchPage page) {
-	super("&System Editor");
-	setToolTipText("Edit the file with the system editor");
+	super(WorkbenchMessages.getString("OpenSystemEditorAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION});
 	Assert.isNotNull(page);
@@ -66,8 +66,8 @@ IWorkbenchPage getWorkbenchPage() {
  */
 void openFile(IFile file) {
 	if (getWorkbenchPage() == null) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, "Workbench page must be supplied to OpenSystemEditorAction", null);
-		WorkbenchPlugin.log("Error in OpenSystemEditorAction.openFile", status);
+		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("OpenSystemEditorAction.pageError"), null); //$NON-NLS-1$
+		WorkbenchPlugin.log(WorkbenchMessages.getString("OpenSystemEditorAction.logTitle"), status); //$NON-NLS-1$
 		return;
 	}
 	try {
@@ -75,7 +75,7 @@ void openFile(IFile file) {
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			getWorkbenchPage().getWorkbenchWindow().getShell(),
-			"Problems Opening System Editor",
+			WorkbenchMessages.getString("OpenSystemEditorAction.dialogTitle"), //$NON-NLS-1$
 			e.getMessage(),
 			e);
 	}

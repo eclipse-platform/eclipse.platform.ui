@@ -1,19 +1,20 @@
 package org.eclipse.ui.views.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -21,7 +22,6 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
-
 
 /**
  * The standard implementation of property sheet page which presents
@@ -55,7 +55,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 * Help context id 
 	 * (value <code>"org.eclipse.ui.property_sheet_page_help_context"</code>).
 	 */
-	public static final String HELP_CONTEXT_PROPERTY_SHEET_PAGE = "org.eclipse.ui.property_sheet_page_help_context";
+	public static final String HELP_CONTEXT_PROPERTY_SHEET_PAGE = "org.eclipse.ui.property_sheet_page_help_context"; //$NON-NLS-1$
 	
 	private PropertySheetViewer viewer;
 	private IPropertySheetEntry rootEntry;
@@ -64,6 +64,10 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	private DefaultsAction defaultsAction;
 	private FilterAction filterAction;
 	private CategoriesAction categoriesAction;
+
+	private IActionBars actionBars;
+	private ICellEditorActivationListener cellEditorActivationListener;
+	private CellEditorActionHandler	cellEditorActionHandler;
 /**
  * Creates a new property sheet page.
  */
@@ -87,9 +91,28 @@ public void createControl(Composite parent) {
 		rootEntry = root;
 	}
 	viewer.setRootEntry(rootEntry);
+	viewer.addActivationListener(getCellEditorActivationListener());
 
 	// add a help listener
 	WorkbenchHelp.setHelp(viewer.getControl(), new PropertySheetPageContextComputer(viewer, HELP_CONTEXT_PROPERTY_SHEET_PAGE));
+}
+/**
+ * Returns the cell editor activation listener for this page
+ */
+private ICellEditorActivationListener getCellEditorActivationListener() {
+	if (cellEditorActivationListener == null) {
+		cellEditorActivationListener = new ICellEditorActivationListener() {
+			public void cellEditorActivated(CellEditor cellEditor) {
+				if (cellEditorActionHandler != null) 
+					cellEditorActionHandler.addCellEditor(cellEditor);
+			}
+			public void cellEditorDeactivated(CellEditor cellEditor) {
+				if (cellEditorActionHandler != null) 
+					cellEditorActionHandler.removeCellEditor(cellEditor);
+			}
+		};
+	}
+	return cellEditorActivationListener;
 }
 /* (non-Javadoc)
  * Method declared on IPage (and Page).
@@ -105,9 +128,9 @@ public Control getControl() {
 private ImageDescriptor getImageDescriptor(String relativePath) {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	try {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
@@ -125,26 +148,26 @@ private ImageDescriptor getImageDescriptor(String relativePath) {
  */
 private void makeActions() {
 	// Default values
-	defaultsAction = new DefaultsAction(viewer, "defaults");
-	defaultsAction.setToolTipText("Restore default values");
-	defaultsAction.setImageDescriptor(getImageDescriptor("elcl16/defaults_ps.gif"));
-	defaultsAction.setHoverImageDescriptor(getImageDescriptor("clcl16/defaults_ps.gif"));
-	defaultsAction.setText("Defaults");
+	defaultsAction = new DefaultsAction(viewer, "defaults");//$NON-NLS-1$
+	defaultsAction.setToolTipText(PropertiesMessages.getString("Page.defaultToolTip")); //$NON-NLS-1$
+	defaultsAction.setImageDescriptor(getImageDescriptor("elcl16/defaults_ps.gif"));//$NON-NLS-1$
+	defaultsAction.setHoverImageDescriptor(getImageDescriptor("clcl16/defaults_ps.gif"));//$NON-NLS-1$
+	defaultsAction.setText(PropertiesMessages.getString("Page.defaultText")); //$NON-NLS-1$
 
 	// Filter (expert)
-	filterAction = new FilterAction(viewer, "filter");
-	filterAction.setToolTipText("Filter properties");
-	filterAction.setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif"));
-	filterAction.setHoverImageDescriptor(getImageDescriptor("clcl16/filter_ps.gif"));
-	filterAction.setText("Filter");
+	filterAction = new FilterAction(viewer, "filter");//$NON-NLS-1$
+	filterAction.setToolTipText(PropertiesMessages.getString("Page.filterToolTip")); //$NON-NLS-1$
+	filterAction.setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif"));//$NON-NLS-1$
+	filterAction.setHoverImageDescriptor(getImageDescriptor("clcl16/filter_ps.gif"));//$NON-NLS-1$
+	filterAction.setText(PropertiesMessages.getString("Page.filterText")); //$NON-NLS-1$
 	filterAction.setChecked(false);
 
 	// Categories
-	categoriesAction = new CategoriesAction(viewer, "categories");
-	categoriesAction.setToolTipText("Show/Hide categories");
-	categoriesAction.setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif"));
-	categoriesAction.setHoverImageDescriptor(getImageDescriptor("clcl16/tree_mode.gif"));
-	categoriesAction.setText("Categories");
+	categoriesAction = new CategoriesAction(viewer, "categories");//$NON-NLS-1$
+	categoriesAction.setToolTipText(PropertiesMessages.getString("Page.categoriesToolTip")); //$NON-NLS-1$
+	categoriesAction.setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif"));//$NON-NLS-1$
+	categoriesAction.setHoverImageDescriptor(getImageDescriptor("clcl16/tree_mode.gif"));//$NON-NLS-1$
+	categoriesAction.setText(PropertiesMessages.getString("Page.categoriesText")); //$NON-NLS-1$
 	categoriesAction.setChecked(false);
 }
 /* (non-Javadoc)
@@ -195,6 +218,18 @@ public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 	if (selection instanceof IStructuredSelection) {
 		viewer.setInput(((IStructuredSelection)selection).toArray());
 	}
+}
+/**
+ * The <code>PropertySheetPage</code> implementation of this <code>IPage</code> method
+ * calls <code>makeContributions</code> for backwards compatibility with
+ * previous versions of <code>IPage</code>. 
+ * <p>
+ * Subclasses may reimplement.
+ * </p>
+ */
+public void setActionBars(IActionBars actionBars) {
+	super.setActionBars(actionBars);
+	cellEditorActionHandler = new CellEditorActionHandler(actionBars);
 }
 /**
  * Sets focus to a part in the page.

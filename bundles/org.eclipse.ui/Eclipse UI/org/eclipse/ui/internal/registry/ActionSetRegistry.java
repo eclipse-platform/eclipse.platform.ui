@@ -1,9 +1,14 @@
 package org.eclipse.ui.internal.registry;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import java.util.*;
 
 /**
@@ -11,7 +16,7 @@ import java.util.*;
  */
 public class ActionSetRegistry extends Object
 {
-	private static final String OTHER_CATEGORY = "Other";
+	public static final String OTHER_CATEGORY = "org.eclipse.ui.actionSetCategory";//$NON-NLS-1$
 	private ArrayList children = new ArrayList(10);
 	private ArrayList categories = new ArrayList();
 /**
@@ -44,23 +49,16 @@ public IActionSetDescriptor findActionSet(String id) {
 	return null;
 }
 /**
- * Find a category with a given name.
+ * Find a category with a given id.
  */
-public ActionSetCategory findCategory(String name) {
-	String catName = OTHER_CATEGORY;
-	if (name != null)
-		catName = name;
-
+public ActionSetCategory findCategory(String id) {
 	Iterator enum = categories.iterator();
 	while (enum.hasNext()) {
 		ActionSetCategory cat = (ActionSetCategory) enum.next();
-		if (catName.equals(cat.getLabel()))
+		if (id.equals(cat.getId()))
 			return cat;
 	}
-
-	ActionSetCategory cat = new ActionSetCategory(catName);
-	categories.add(cat);
-	return cat;
+	return null;
 }
 /**
  * Returns a list of the action sets known to the workbench.
@@ -90,14 +88,18 @@ public ActionSetCategory[] getCategories() {
 }
 /**
  * Adds each action set in the registry to a particular category.
- * The category may be defined in xml.  If not, the action set is
- * added to the "other" category.
+ * For now, everything goes into the OTHER_CATEGORY.
  */
 public void mapActionSetsToCategories() {
+	// Create "other" category.
+	ActionSetCategory cat = new ActionSetCategory(OTHER_CATEGORY,
+		WorkbenchMessages.getString("ActionSetRegistry.otherCategory")); //$NON-NLS-1$
+	categories.add(cat);
+
+	// Add everything to it.
 	Iterator enum = children.iterator();
 	while (enum.hasNext()) {
 		IActionSetDescriptor desc = (IActionSetDescriptor) enum.next();
-		ActionSetCategory cat = findCategory(desc.getCategory());
 		cat.addActionSet(desc);
 	}
 }

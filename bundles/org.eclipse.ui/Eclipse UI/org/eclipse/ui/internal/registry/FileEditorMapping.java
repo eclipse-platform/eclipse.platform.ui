@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.*;
@@ -17,7 +16,7 @@ import java.util.*;
 public class FileEditorMapping extends Object 
 	implements IFileEditorMapping, Cloneable 
 {
-	private String name = "*";
+	private String name = "*";//$NON-NLS-1$
 	private String extension;
 	
 	// Collection of EditorDescriptor, where the first one
@@ -30,7 +29,7 @@ public class FileEditorMapping extends Object
  *  @param mimeType java.lang.String
  */
 public FileEditorMapping(String extension) {
-	this("*", extension);
+	this("*", extension);//$NON-NLS-1$
 }
 /**
  *  Create an instance of this class.
@@ -41,7 +40,7 @@ public FileEditorMapping(String extension) {
 public FileEditorMapping(String name, String extension) {
 	super();
 	if (name == null || name.length() < 1)
-		setName("*");
+		setName("*");//$NON-NLS-1$
 	else
 		setName(name);
 	setExtension(extension);
@@ -102,7 +101,7 @@ public ImageDescriptor getImageDescriptor() {
  * Method declared on IFileEditorMapping.
  */
 public String getLabel() { 
-	return name + "." + extension;
+	return name + "." + extension;//$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on IFileEditorMapping.

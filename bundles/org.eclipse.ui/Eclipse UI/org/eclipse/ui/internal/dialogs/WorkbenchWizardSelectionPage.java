@@ -1,12 +1,11 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.viewers.*;
@@ -34,7 +33,7 @@ public WorkbenchWizardSelectionPage(String name, IWorkbench aWorkbench, IStructu
 	this.wizardElements = elements;
 	this.currentResourceSelection = currentSelection;
 	this.workbench = aWorkbench;
-	setTitle("Select");
+	setTitle(WorkbenchMessages.getString("Select")); //$NON-NLS-1$
 }
 /**
  *	Answer the wizard object corresponding to the passed id, or null

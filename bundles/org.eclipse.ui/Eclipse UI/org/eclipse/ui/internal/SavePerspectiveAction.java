@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -22,8 +21,9 @@ public class SavePerspectiveAction extends Action {
  *	Create an instance of this class
  */
 public SavePerspectiveAction(IWorkbenchWindow window) {
-	super("&Save As...");
-	setToolTipText("Save the current perspective layout");
+	super(WorkbenchMessages.getString("SavePerspective.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("SavePerspective.toolTip")); //$NON-NLS-1$
+	setEnabled(false);
 	this.window = window;
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_PERSPECTIVE_ACTION});
 }
@@ -48,8 +48,8 @@ public void run() {
 		String name = dlg.getPerspName();
 		desc = reg.createPerspective(name,(PerspectiveDescriptor)description);
 		if (desc == null) {
-			MessageDialog.openError(dlg.getShell(), "Cannot Save Perspective",
-				"Invalid Perspective Descriptor");
+			MessageDialog.openError(dlg.getShell(), WorkbenchMessages.getString("SavePerspective.errorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("SavePerspective.errorMessage")); //$NON-NLS-1$
 			return;
 		}
 	}

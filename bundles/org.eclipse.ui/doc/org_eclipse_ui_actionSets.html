@@ -22,8 +22,8 @@ appear within the workbench window by user preference.
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp; CDATA
 #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp; CDATA #REQUIRED</tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;
-CDATA #REQUIRED</font></tt>
+<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; visible (</font>true
+| false) #IMPLIED</tt>
 <br><tt><font color="#000000">&nbsp;</font>&nbsp;&nbsp; ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
 <ul>
@@ -35,9 +35,9 @@ CDATA #REQUIRED</font></tt>
 menu to represent this action set.</li>
 
 <li>
-<b>visible</b> - determines the initial visibility of the action set. If
-true, the action set is initially visible in the workbench window.&nbsp;
-The user may override this option from the "Action Sets Dialog".</li>
+<b>visible</b> - an optional attribute indicating whether the action set
+should be initially visible in the workbench window.&nbsp; The user may
+override this option from the "Action Sets Dialog".</li>
 
 <li>
 <b>description</b> - an optional subelement whose body should contain text
@@ -48,7 +48,7 @@ providing short description of the action set.</li>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</tt>
+CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
@@ -142,7 +142,7 @@ plug-in.</li>
 in the toolbar. Otherwise, it is ignored.</li>
 
 <li>
-<b>contextHelpId</b> - a unique identifier indicating the help context
+<b>helpContextId</b> - a unique identifier indicating the help context
 id for this action. If the action appears as a menu item, then pressing
 F1 while the menu item is highlighted will display help for the given context
 id.</li>
@@ -164,8 +164,8 @@ This attribute is mutually exclusive with <tt>state</tt>.</li>
 
 <li>
 <b>class</b> - a fully qualified name of a class which implements <tt>org.eclipse.ui.IWorkbenchWindowActionDelegate</tt>
-or <tt>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</tt>.&nbsp;
-The latter should be implemented in cases where <tt>pulldown</tt> is true.</li>
+or <tt>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</tt>.&nbsp; The
+latter should be implemented in cases where <tt>pulldown</tt> is true.</li>
 
 <li>
 <b>enablesFor</b> - a value indicating the selection count which must be
@@ -234,7 +234,11 @@ label="My Actions"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 visible="true"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;menu id="com.xyz.xyzMenu" path="additions"></tt>
+&lt;menu id="com.xyz.xyzMenu"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label="XYZ Menu"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+path="additions"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;separator name="group1"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -270,8 +274,8 @@ the selection must implement the specified interface (<tt>IFile</tt>) and
 must be a Java file.
 <p><b><i>API Information: </i></b>The value of the <tt>class</tt> attribute
 must be the fully qualified name of a class that implements <tt>org.eclipse.ui.IWorkbenchWindowActionDelegate</tt>
-or <tt>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</tt>.&nbsp;
-The latter should be implemented in cases where <tt>pulldown</tt> is true.&nbsp;
+or <tt>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</tt>.&nbsp; The
+latter should be implemented in cases where <tt>pulldown</tt> is true.&nbsp;
 This class is loaded as late as possible to avoid loading the entire plug-in
 before it is really needed.
 <p><b><i>Supplied Implementation:</i></b> Plug-ins may use this extension

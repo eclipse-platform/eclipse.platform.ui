@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.resources.IMarker;
@@ -53,11 +52,11 @@ public MarkerType[] getTypes() {
  */
 String getWellKnownLabel(String type) {
 	if (type.equals(IMarker.PROBLEM))
-		return "Problem";
+		return "Problem";//$NON-NLS-1$
 	if (type.equals(IMarker.TASK))
-		return "Task";
-	if (type.equals("org.eclipse.jdt.core.problem"))
-		return "Java Problem";
+		return "Task";//$NON-NLS-1$
+	if (type.equals("org.eclipse.jdt.core.problem"))//$NON-NLS-1$
+		return "Java Problem";//$NON-NLS-1$
 	return type;
 }
 /**
@@ -73,15 +72,15 @@ HashMap readTypes() {
 			IExtension ext = extensions[i];
 			String id = ext.getUniqueIdentifier();
 			String label = ext.getLabel();
-			if (label.equals("")) {
+			if (label.equals("")) {//$NON-NLS-1$
 				label = getWellKnownLabel(id);
 			}
 			ArrayList supersList = new ArrayList();
 			IConfigurationElement[] configElements = ext.getConfigurationElements();
 			for (int j = 0; j < configElements.length; ++j) {
 				IConfigurationElement elt = configElements[j];
-				if (elt.getName().equalsIgnoreCase("super")) {
-					String sup = elt.getAttribute("type");
+				if (elt.getName().equalsIgnoreCase("super")) {//$NON-NLS-1$
+					String sup = elt.getAttribute("type");//$NON-NLS-1$
 					if (sup != null) {
 						supersList.add(sup);
 					}

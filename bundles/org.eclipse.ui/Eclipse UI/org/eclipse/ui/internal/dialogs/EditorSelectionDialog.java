@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.program.*;
 import org.eclipse.ui.internal.registry.*;
@@ -37,9 +36,9 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Table editorTable;
 	private Button browseExternalEditorsButton;
 	private Button internalButton;
-	private static final String EditorSelectionDialog = "FileSystemExportPage1.CreateDirectoriesForSelectedContainers";
-	private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";
-	private String message = "Choose an editor:";
+	private static final String EditorSelectionDialog = "FileSystemExportPage1.CreateDirectoriesForSelectedContainers";//$NON-NLS-1$
+	private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
+	private String message = WorkbenchMessages.getString("EditorSelection.chooseAnEditor"); //$NON-NLS-1$
 	// collection of IEditorDescriptor
 	private IEditorDescriptor[] externalEditors;
 	private IEditorDescriptor[] internalEditors;
@@ -47,10 +46,10 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Image[] internalEditorImages;
 	private static final String Executable_Filter;
 	static {
-		if(SWT.getPlatform().equals("win32")) {
-			Executable_Filter = "*.exe";
+		if(SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
+			Executable_Filter = "*.exe";//$NON-NLS-1$
 		} else {
-			Executable_Filter = "*";	
+			Executable_Filter = "*";	//$NON-NLS-1$
 		}
 	}
 public EditorSelectionDialog(Shell parentShell) {
@@ -95,7 +94,7 @@ public boolean close() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText("Editor Selection");
+	shell.setText(WorkbenchMessages.getString("EditorSelection.title")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.EDITOR_SELECTION_DIALOG});
 }
 /**
@@ -121,7 +120,7 @@ protected Control createDialogArea(Composite parent) {
 	textLabel.setFont(parent.getFont());
 
 	internalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
-	internalButton.setText("Internal Editors");
+	internalButton.setText(WorkbenchMessages.getString("EditorSelection.internal")); //$NON-NLS-1$
 	internalButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalSpan = 1;
@@ -129,7 +128,7 @@ protected Control createDialogArea(Composite parent) {
 	internalButton.setFont(parent.getFont());
 
 	externalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
-	externalButton.setText("External Programs");
+	externalButton.setText(WorkbenchMessages.getString("EditorSelection.external")); //$NON-NLS-1$
 	externalButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalSpan = 1;
@@ -149,7 +148,7 @@ protected Control createDialogArea(Composite parent) {
 	data.heightHint = editorTable.getItemHeight()*12;
 	
 	browseExternalEditorsButton = new Button(contents, SWT.PUSH);
-	browseExternalEditorsButton.setText("&Browse...");
+	browseExternalEditorsButton.setText(WorkbenchMessages.getString("EditorSelection.browse")); //$NON-NLS-1$
 	browseExternalEditorsButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -194,9 +193,9 @@ protected void fillEditorTable() {
  
 protected IDialogSettings getDialogSettings() {
 	IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-	IDialogSettings section = workbenchSettings.getSection("EditorSelectionDialog");
+	IDialogSettings section = workbenchSettings.getSection("EditorSelectionDialog");//$NON-NLS-1$
 	if(section == null)
-		section = workbenchSettings.addNewSection("EditorSelectionDialog");
+		section = workbenchSettings.addNewSection("EditorSelectionDialog");//$NON-NLS-1$
 	return section;
 }
 /**

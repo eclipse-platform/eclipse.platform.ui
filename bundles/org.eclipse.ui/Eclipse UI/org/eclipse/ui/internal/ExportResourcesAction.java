@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
@@ -29,8 +28,8 @@ public class ExportResourcesAction extends Action {
  *	Create a new instance of this class
  */
 public ExportResourcesAction(IWorkbench aWorkbench) {
-	super("&Export...");
-	setToolTipText("Export the selected resources");
+	super(WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.EXPORT);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.EXPORT_ACTION});
 	this.workbench = aWorkbench;
@@ -50,9 +49,9 @@ public void run() {
 		selectionToPass = StructuredSelection.EMPTY;
 	wizard.init(workbench, selectionToPass);
 	IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-	IDialogSettings wizardSettings = workbenchSettings.getSection("ExportResourcesAction");
+	IDialogSettings wizardSettings = workbenchSettings.getSection("ExportResourcesAction");//$NON-NLS-1$
 	if(wizardSettings==null)
-		wizardSettings = workbenchSettings.addNewSection("ExportResourcesAction");
+		wizardSettings = workbenchSettings.addNewSection("ExportResourcesAction");//$NON-NLS-1$
 	wizard.setDialogSettings(wizardSettings);
 	wizard.setForcePreviousAndNextButtons(true);
 

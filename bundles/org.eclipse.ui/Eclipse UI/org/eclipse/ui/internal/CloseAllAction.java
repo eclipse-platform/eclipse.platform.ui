@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -20,9 +19,9 @@ public class CloseAllAction extends PartEventAction implements IPageListener {
  *	Create an instance of this class
  */
 public CloseAllAction(IWorkbenchWindow aWorkbench) {
-	super("Cl&ose All@Ctrl+Shift+F4");
+	super(WorkbenchMessages.getString("CloseAllAction.text")); //$NON-NLS-1$
 	this.workbench = aWorkbench;
-	setToolTipText("Close all the open editors");
+	setToolTipText(WorkbenchMessages.getString("CloseAllAction.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
 	setId(IWorkbenchActionConstants.CLOSE_ALL);
 	updateState();

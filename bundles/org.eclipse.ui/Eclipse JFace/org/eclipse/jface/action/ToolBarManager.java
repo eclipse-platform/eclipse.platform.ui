@@ -1,9 +1,8 @@
 package org.eclipse.jface.action;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -156,17 +155,35 @@ public void update(boolean force) {
 //			if (DEBUG) {
 //				System.out.println("   Time needed to build clean vector: " + ((new Date()).getTime() - cleanStartTime));
 //			}
-			
-			// remove obsolete (removed or non active)
+
+			// determine obsolete items (removed or non active)
 			Item[] mi= toolBar.getItems();
+			ArrayList toRemove = new ArrayList(mi.length);
 			for (int i= 0; i < mi.length; i++) {
 				Object data= mi[i].getData();
 				if (data == null || !clean.contains(data) ||
-						(data instanceof IContributionItem && ((IContributionItem)data).isDynamic()))
-					mi[i].dispose();
+						(data instanceof IContributionItem && ((IContributionItem)data).isDynamic())) {
+					toRemove.add(mi[i]);
+				}
 			}
 
-			// add new
+			// Turn redraw off if the number of items to be added 
+			// is above a certain threshold, to minimize flicker,
+			// otherwise the toolbar can be seen to redraw after each item.
+			// Do this before any modifications are made.
+			// We assume each contribution item will contribute at least one toolbar item.
+			boolean useRedraw = (clean.size() - (mi.length - toRemove.size())) >= 3;
+			if (useRedraw) {
+				toolBar.setRedraw(false);
+			}
+
+			// remove obsolete items
+			for (int i = toRemove.size(); --i >= 0;) {
+				Item item = (Item) toRemove.get(i);
+				item.dispose();
+			}
+
+			// add new items
 			IContributionItem src, dest;
 			mi= toolBar.getItems();
 			int srcIx= 0;
@@ -206,6 +223,11 @@ public void update(boolean force) {
 			
 			int newCount= toolBar.getItemCount();
 			relayout(toolBar, oldCount, newCount);
+
+			// turn redraw back on if we turned it off above
+			if (useRedraw) {
+				toolBar.setRedraw(true);
+			}
 		}
 	}
 	

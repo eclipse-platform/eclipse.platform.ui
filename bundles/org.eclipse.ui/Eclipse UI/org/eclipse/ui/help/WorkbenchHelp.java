@@ -1,9 +1,8 @@
 package org.eclipse.ui.help;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
@@ -50,10 +49,10 @@ public class WorkbenchHelp {
 	 *
 	 * @see org.eclipse.swt.Widget.getData(java.lang.String)
 	 */	
-	private static final String HELP_KEY = "org.eclipse.ui.help";
+	private static final String HELP_KEY = "org.eclipse.ui.help";//$NON-NLS-1$
 
-	private static final String HELP_SYSTEM_EXTENSION_ID = "org.eclipse.help.support";
-	private static final String HELP_SYSTEM_CLASS_ATTRIBUTE = "class";
+	private static final String HELP_SYSTEM_EXTENSION_ID = "org.eclipse.help.support";//$NON-NLS-1$
+	private static final String HELP_SYSTEM_CLASS_ATTRIBUTE = "class";//$NON-NLS-1$
 	private static IHelp helpSupport;
 	private static boolean isIntialized = false;
 	private static HelpListener helpListener = null;
@@ -230,7 +229,7 @@ private static void initializeHelpSupport() {
 				helpSupport = (IHelp)WorkbenchPlugin.createExtension(elements[0],
 					HELP_SYSTEM_CLASS_ATTRIBUTE);
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Unable to instantiate help support system" + e.getStatus());
+				WorkbenchPlugin.log("Unable to instantiate help support system" + e.getStatus());//$NON-NLS-1$
 			}
 		}
 	});

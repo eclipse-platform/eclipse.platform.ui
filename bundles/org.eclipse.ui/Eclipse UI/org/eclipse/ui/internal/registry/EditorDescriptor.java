@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,7 +36,7 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	private boolean internal = false;
 	private boolean openInPlace = false;
 	private transient IConfigurationElement configurationElement;
-	private static String ATT_EDITOR_CONTRIBUTOR="contributorClass";
+	private static String ATT_EDITOR_CONTRIBUTOR="contributorClass";//$NON-NLS-1$
 
 	// Single descriptor instance to represent the system editor
 	private static EditorDescriptor systemEditorDescriptor;	
@@ -56,7 +55,7 @@ public IEditorActionBarContributor createActionBarContributor() {
 		contributor = (IEditorActionBarContributor)WorkbenchPlugin.createExtension(
 			configurationElement, ATT_EDITOR_CONTRIBUTOR);
 	} catch (CoreException e) {
-		WorkbenchPlugin.log("Unable to create editor contributor: " + 
+		WorkbenchPlugin.log("Unable to create editor contributor: " + //$NON-NLS-1$
 			id, e.getStatus());
 	}
 	return contributor;
@@ -159,7 +158,7 @@ public static EditorDescriptor getSystemEditorDescriptor() {
 	if (systemEditorDescriptor == null) {
 		systemEditorDescriptor = new EditorDescriptor();
 		systemEditorDescriptor.setID(IWorkbenchConstants.SYSTEM_EDITOR_ID);
-		systemEditorDescriptor.setName("&System Editor");
+		systemEditorDescriptor.setName("&System Editor");//$NON-NLS-1$
 	}
 	return systemEditorDescriptor;
 }
@@ -295,6 +294,6 @@ public void setProgram(Program newProgram) {
  * For debugging purposes only.
  */
 public String toString() {
-	return "ResourceEditorDescriptor(" + editorName + ")";
+	return "ResourceEditorDescriptor(" + editorName + ")";//$NON-NLS-2$//$NON-NLS-1$
 }
 }

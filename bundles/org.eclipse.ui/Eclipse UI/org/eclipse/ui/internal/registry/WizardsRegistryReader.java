@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
@@ -23,13 +22,13 @@ public class WizardsRegistryReader extends RegistryReader {
 	protected AdaptableList wizards;
 	private String pluginPoint;
 
-	protected final static String TAG_WIZARD = "wizard";
+	protected final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
 
-	protected final static String ATT_NAME = "name";
-	public final static String ATT_CLASS = "class";
-	protected final static String ATT_ICON = "icon";
-	protected final static String ATT_ID = "id";
-	protected final static String trueString = "TRUE";
+	protected final static String ATT_NAME = "name";//$NON-NLS-1$
+	public final static String ATT_CLASS = "class";//$NON-NLS-1$
+	protected final static String ATT_ICON = "icon";//$NON-NLS-1$
+	protected final static String ATT_ID = "id";//$NON-NLS-1$
+	protected final static String trueString = "TRUE";//$NON-NLS-1$
 /**
  *	Create an instance of this class.
  *

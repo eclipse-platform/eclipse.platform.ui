@@ -1,9 +1,8 @@
 package org.eclipse.jface.window;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.util.*;
 import java.util.List; // to make unambiguous

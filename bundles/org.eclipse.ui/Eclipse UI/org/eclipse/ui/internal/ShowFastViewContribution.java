@@ -1,12 +1,11 @@
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.internal.misc.*;
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.misc.*;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -24,7 +23,7 @@ public class ShowFastViewContribution extends ContributionItem {
  * Create a new menu item.
  */
 public ShowFastViewContribution(IWorkbenchWindow window) {
-	super("showFastViewContr");
+	super("showFastViewContr");//$NON-NLS-1$
 	this.window = window;
 }
 /**

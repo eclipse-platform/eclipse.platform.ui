@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
@@ -87,8 +86,8 @@ public class TextActionHandler {
 	
 	private class CutActionHandler extends Action {
 		protected CutActionHandler() {
-			super("Cut");
-			setId("TextCellEditorCutActionHandler");
+			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
+			setId("TextCellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
 		public void run() {
@@ -115,8 +114,8 @@ public class TextActionHandler {
 	
 	private class CopyActionHandler extends Action {
 		protected CopyActionHandler() {
-			super("Copy");
-			setId("TextCellEditorCopyActionHandler");
+			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
+			setId("TextCellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
 		public void run() {
@@ -143,8 +142,8 @@ public class TextActionHandler {
 	
 	private class PasteActionHandler extends Action {
 		protected PasteActionHandler() {
-			super("Paste");
-			setId("TextCellEditorPasteActionHandler");
+			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
+			setId("TextCellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
 		public void run() {
@@ -171,8 +170,8 @@ public class TextActionHandler {
 	
 	private class SelectAllActionHandler extends Action {
 		protected SelectAllActionHandler() {
-			super("Select All");
-			setId("TextCellEditorSelectAllActionHandler");
+			super(WorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
+			setId("TextCellEditorSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
 		public void run() {

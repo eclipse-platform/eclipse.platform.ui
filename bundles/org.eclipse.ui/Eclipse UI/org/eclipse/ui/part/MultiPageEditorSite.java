@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.MenuManager;
@@ -80,7 +79,7 @@ public IEditorPart getEditor() {
  * nested editor is not created from the registry.
  */
 public String getId() {
-	return "";
+	return "";//$NON-NLS-1$
 }
 /**
  * Returns the multi-page editor.
@@ -104,7 +103,7 @@ public IWorkbenchPage getPage() {
  * nested editor is not created from the registry. 
  */
 public String getPluginId() {
-	return "";
+	return "";//$NON-NLS-1$
 }
 /**
  * The <code>MultiPageEditorSite</code> implementation of this 
@@ -112,7 +111,7 @@ public String getPluginId() {
  * nested editor is not created from the registry. 
  */
 public String getRegisteredName() {
-	return "";
+	return "";//$NON-NLS-1$
 }
 /**
  * Returns the selection changed listener which listens to the nested editor's selection

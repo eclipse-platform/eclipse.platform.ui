@@ -1,11 +1,9 @@
 package org.eclipse.ui;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
 /**
  * A view is a visual component within a workbench page.  It is typically used to
  * navigate a hierarchy of information (like the workspace), open an editor,  

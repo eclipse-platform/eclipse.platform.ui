@@ -1,9 +1,13 @@
 package org.eclipse.ui.views.internal.framelist;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 public class Frame {
 	private int index = -1;
 	private FrameList parent;
-	private String name = "";
+	private String name = "";//$NON-NLS-1$
 	private String toolTipText;
 public Frame() {
 	super();

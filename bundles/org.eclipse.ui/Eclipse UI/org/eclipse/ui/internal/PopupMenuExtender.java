@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.registry.*;
@@ -22,6 +21,7 @@ public class PopupMenuExtender implements IMenuListener
 	private ISelectionProvider selProvider;
 	private IWorkbenchPart part;
 	private List staticItems;
+	private ViewerActionBuilder staticActionBuilder;
 /**
  * Construct a new menu extender.
  */
@@ -48,32 +48,8 @@ private void addObjectActions() {
  * Adds static items to the context menu.
  */
 private void addStaticActions() {
-	if (staticItems == null)
-		return;
-	for (int i = 0; i < staticItems.size(); i++) {
-		Object obj = staticItems.get(i);
-		if (obj instanceof IConfigurationElement) {
-			IConfigurationElement menuElement = (IConfigurationElement) obj;
-			PluginActionBuilder.processMenu(menuElement, menu, true);
-		} else
-			if (obj instanceof ActionDescriptor) {
-				ActionDescriptor ad = (ActionDescriptor) obj;
-				IMenuManager parent = menu;
-				String mpath = ad.getMenuPath();
-				String mgroup = ad.getMenuGroup();
-				if (mgroup != null) {
-					if (mpath != null)
-						parent = parent.findMenuUsingPath(mpath);
-					if (parent != null) {
-						IContributionItem sep = parent.find(mgroup);
-						if (sep == null || !(sep instanceof Separator)) {
-							parent.add(new Separator(mgroup));
-						}
-						parent.insertAfter(mgroup, ad.getAction());
-					}
-				}
-			}
-	}
+	if (staticActionBuilder != null)
+		staticActionBuilder.contribute(menu, null, true);
 }
 /**
  * Notifies the listener that the menu is about to be shown.
@@ -87,8 +63,9 @@ public void menuAboutToShow(IMenuManager mgr) {
  * Read static items for the context menu.
  */
 private void readStaticActions() {
-	ViewerActionBuilder builder = new ViewerActionBuilder();
-	staticItems = builder.readViewerContributions(menuID, selProvider, part);
+	staticActionBuilder = new ViewerActionBuilder();
+	if (!staticActionBuilder.readViewerContributions(menuID, selProvider, part))
+		staticActionBuilder = null;
 }
 /**
  * Checks for the existance of an MB_ADDITIONS group.
@@ -96,10 +73,10 @@ private void readStaticActions() {
 private void testForAdditions() {
 	IContributionItem item = menu.find(IWorkbenchActionConstants.MB_ADDITIONS);
 	if (item == null) {
-		WorkbenchPlugin.log("Context menu does not contain standard group for "
-			+ "additions ("
+		WorkbenchPlugin.log("Context menu does not contain standard group for "//$NON-NLS-1$
+			+ "additions ("//$NON-NLS-1$
 			+ IWorkbenchActionConstants.MB_ADDITIONS 
-			+ ")");
+			+ ")");//$NON-NLS-1$
 	}
 }
 }

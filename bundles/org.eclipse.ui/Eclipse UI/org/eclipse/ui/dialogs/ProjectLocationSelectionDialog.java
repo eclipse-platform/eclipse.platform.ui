@@ -1,13 +1,20 @@
 package org.eclipse.ui.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -18,16 +25,17 @@ public class ProjectLocationSelectionDialog extends SelectionDialog {
 	// widgets
 	private Text projectNameField;
 	private Text locationPathField;
+	private Label locationLabel;
 	private IProject project;
 	private Label statusMessageLabel;
 	private Button browseButton;
 
-	private static String PROJECT_NAME_LABEL = "Project name:";
-	private static String LOCATION_LABEL = "Location:";
-	private static String BROWSE_LABEL = "Browse...";
-	private static String DIRECTORY_DIALOG_LABEL = "Select the location directory.";
-	private static String INVALID_LOCATION_MESSAGE = "Invalid location path";
-	private static String PROJECT_LOCATION_SELECTION_TITLE = "Project";
+	private static String PROJECT_NAME_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.nameLabel"); //$NON-NLS-1$
+	private static String LOCATION_LABEL = WorkbenchMessages.getString("ProjectLocationSelectonDialog.locationLabel"); //$NON-NLS-1$
+	private static String BROWSE_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.browseLabel"); //$NON-NLS-1$
+	private static String DIRECTORY_DIALOG_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.directoryLabel"); //$NON-NLS-1$
+	private static String INVALID_LOCATION_MESSAGE = WorkbenchMessages.getString("ProjectLocationSelectionDialog.locationError"); //$NON-NLS-1$
+	private static String PROJECT_LOCATION_SELECTION_TITLE = WorkbenchMessages.getString("ProjectLocationSelectionDialog.selectionTitle"); //$NON-NLS-1$
 
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
@@ -60,7 +68,7 @@ public ProjectLocationSelectionDialog(
 private void applyValidationResult(String errorMsg) {
 
 	if (errorMsg == null) {
-		statusMessageLabel.setText("");
+		statusMessageLabel.setText("");//$NON-NLS-1$
 		getOkButton().setEnabled(true);
 	} else {
 		statusMessageLabel.setForeground(
@@ -80,8 +88,8 @@ private String checkValidLocation() {
 		return null;
 	else {
 		String locationFieldContents = locationPathField.getText();
-		if (!locationFieldContents.equals("")) {
-			IPath path = new Path("");
+		if (!locationFieldContents.equals("")) {//$NON-NLS-1$
+			IPath path = new Path("");//$NON-NLS-1$
 			if (!path.isValidPath(locationFieldContents)) {
 				return INVALID_LOCATION_MESSAGE;
 			}
@@ -105,14 +113,25 @@ private String checkValidLocation() {
  */
 private String checkValidName() {
 
-	IStatus nameStatus =
-		this.project.getWorkspace().validateName(
-			this.projectNameField.getText(),
-			IResource.PROJECT);
+	String name = this.projectNameField.getText();
+	IWorkspace workspace = getProject().getWorkspace();
+	IStatus nameStatus = workspace.validateName(name, IResource.PROJECT);
 	if (!nameStatus.isOK())
 		return nameStatus.getMessage();
+	IProject newProject = workspace.getRoot().getProject(name);
+	if (newProject.exists()) {
+		return WorkbenchMessages.format("CopyProjectAction.alreadyExists", new Object[] { name });
+	}
 
 	return null;
+}
+/* (non-Javadoc)
+ * Method declared on Dialog.
+ */
+protected Control createContents(Composite parent) {
+	Control contents = super.createContents(parent);
+	projectNameField.setFocus();
+	return contents;
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
@@ -126,7 +145,6 @@ protected Control createDialogArea(Composite parent) {
 
 	createProjectNameGroup(composite);
 	createProjectLocationGroup(composite);
-	projectNameField.setFocus();
 
 	//Add in a label for status messages if required
 	statusMessageLabel = new Label(composite, SWT.NONE);
@@ -179,7 +197,7 @@ private final void createProjectLocationGroup(Composite parent) {
 
 	final Button useDefaultsButton =
 		new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
-	useDefaultsButton.setText("Use default location");
+	useDefaultsButton.setText(WorkbenchMessages.getString("ProjectLocationSelectionDialog.useDefaultLabel")); //$NON-NLS-1$
 	useDefaultsButton.setSelection(this.useDefaults);
 	GridData buttonData = new GridData();
 	buttonData.horizontalSpan = 3;
@@ -192,7 +210,10 @@ private final void createProjectLocationGroup(Composite parent) {
 			useDefaults = useDefaultsButton.getSelection();
 			browseButton.setEnabled(!useDefaults);
 			locationPathField.setEnabled(!useDefaults);
+			locationLabel.setEnabled(!useDefaults);
 			setLocationForSelection();
+			if (!useDefaults)
+				locationPathField.setText("");
 		}
 	};
 	useDefaultsButton.addSelectionListener(listener);
@@ -223,8 +244,9 @@ private void createProjectNameGroup(Composite parent) {
 	
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.
-	projectNameField.setText(getProject().getName());
-
+	projectNameField.setText(getCopyNameFor(getProject().getName()));
+	projectNameField.selectAll();
+	
 	createNameListener();
 	
 }
@@ -240,7 +262,7 @@ private Composite createUserSpecifiedProjectLocationGroup(
 	boolean enabled) {
 
 	// location label
-	Label locationLabel = new Label(projectGroup, SWT.NONE);
+	locationLabel = new Label(projectGroup, SWT.NONE);
 	locationLabel.setText(LOCATION_LABEL);
 	locationLabel.setFont(projectGroup.getFont());
 	locationLabel.setEnabled(enabled);
@@ -280,6 +302,32 @@ private Composite createUserSpecifiedProjectLocationGroup(
 
 }
 /**
+ * Generates a new name for the project that does not have any collisions.
+ */
+private String getCopyNameFor(String projectName) {
+
+	IWorkspace workspace = getProject().getWorkspace();
+	if (!workspace.getRoot().getProject(projectName).exists())
+		return projectName;
+
+	int counter = 1;
+	while (true) {
+		String nameSegment;
+		if (counter > 1) {
+			nameSegment = WorkbenchMessages.format(WorkbenchMessages.getString("CopyProjectAction.copyNameTwoArgs"), new Object[] {new Integer(counter), projectName}); //$NON-NLS-1$
+		}
+		else {
+			nameSegment = WorkbenchMessages.format(WorkbenchMessages.getString("CopyProjectAction.copyNameOneArg"), new Object[] {projectName}); //$NON-NLS-1$
+		}
+	
+		if (!workspace.getRoot().getProject(nameSegment).exists())
+			return nameSegment;
+
+		counter++;
+	}
+
+}
+/**
  * Get the project being manipulated.
  */
 private IProject getProject() {
@@ -291,7 +339,13 @@ private IProject getProject() {
 private void handleLocationBrowseButtonPressed() {
 	DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
 	dialog.setMessage(DIRECTORY_DIALOG_LABEL);
-	dialog.setFilterPath(locationPathField.getText());
+	
+	String dirName = locationPathField.getText();
+	if (!dirName.equals("")) {//$NON-NLS-1$
+		File path = new File(dirName);
+		if (path.exists())
+			dialog.setFilterPath(dirName);
+	}
 
 	String selectedDirectory = dialog.open();
 	if (selectedDirectory != null)
@@ -319,7 +373,7 @@ protected void okPressed() {
 private void setLocationForSelection() {
 	if (useDefaults) {
 		IPath defaultPath = Platform.getLocation().append(projectNameField.getText());
-		locationPathField.setText(defaultPath.toString());
+		locationPathField.setText(defaultPath.toOSString());
 	}
 }
 }

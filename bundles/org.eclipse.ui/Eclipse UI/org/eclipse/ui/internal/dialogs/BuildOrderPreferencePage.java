@@ -1,10 +1,15 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -21,18 +26,18 @@ import java.util.TreeSet;
 public class BuildOrderPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
-
+		
 	private Button defaultOrderButton;
 	private List buildList;
 	private Composite buttonComposite;
 
-	private static String UP_LABEL = "Up";
-	private static String DOWN_LABEL = "Down";
-	private static String ADD_LABEL = "Add";
-	private static String REMOVE_LABEL = "Remove";
-	private static String UNSELECTED_PROJECTS = "Select a Project";
-	private static String PROJECT_SELECTION_MESSAGE = "Projects Not In Build Path";
-	private static String DEFAULTS_LABEL = "Use Defaults";
+	private static String UP_LABEL = WorkbenchMessages.getString("Up"); //$NON-NLS-1$
+	private static String DOWN_LABEL = WorkbenchMessages.getString("Down"); //$NON-NLS-1$
+	private static String ADD_LABEL = WorkbenchMessages.getString("Add"); //$NON-NLS-1$
+	private static String REMOVE_LABEL = WorkbenchMessages.getString("Remove"); //$NON-NLS-1$
+	private static String UNSELECTED_PROJECTS = WorkbenchMessages.getString("BuildOrderPreference.selectProject"); //$NON-NLS-1$
+	private static String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
+	private static String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
 /**
  * Add another project to the list at the end.
  */

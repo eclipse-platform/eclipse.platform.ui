@@ -1,14 +1,14 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -21,7 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
-
+import java.text.MessageFormat;
 /**
  * Standard main page for a wizard that creates a folder resource.
  * <p>
@@ -51,9 +51,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
  * @param selection the current resource selection
  */
 public WizardNewFolderMainPage(String pageName, IStructuredSelection selection) {
-	super("newFolderPage1");
+	super("newFolderPage1");//$NON-NLS-1$
 	setTitle(pageName);
-	setDescription("Create a new folder resource.");
+	setDescription(WorkbenchMessages.getString("WizardNewFolderMainPage.description")); //$NON-NLS-1$
 	this.currentSelection = selection;
 }
 /** (non-Javadoc)
@@ -66,7 +66,7 @@ public void createControl(Composite parent) {
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	resourceGroup = new ResourceAndContainerGroup(composite,this,"Folder name:", "folder");
+	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel")); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initializePage();
 	validatePage();
@@ -80,8 +80,18 @@ public void createControl(Composite parent) {
  * @exception CoreException if the operation fails
  * @exception OperationCanceledException if the operation is canceled
  */
-protected void createFolder(IFolder folderHandle,IProgressMonitor monitor) throws CoreException {
-	folderHandle.create(false,true,monitor);
+protected void createFolder(IFolder folderHandle, IProgressMonitor monitor) throws CoreException {
+	try {
+		// Create the folder resource in the workspace
+		folderHandle.create(false, true, new SubProgressMonitor(monitor, 500));
+	}
+	catch (CoreException e) {
+		// If the folder already existed locally, just refresh to get contents
+		if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
+			folderHandle.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 500));
+		else
+			throw e;
+	}
 
 	if (monitor.isCanceled())
 		throw new OperationCanceledException();
@@ -132,7 +142,7 @@ public IFolder createNewFolder() {
 	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
-				monitor.beginTask("Creating", 2000);
+				monitor.beginTask(WorkbenchMessages.getString("WizardNewFolderCreationPage.progress"), 2000); //$NON-NLS-1$
 				ContainerGenerator generator = new ContainerGenerator(containerPath);
 				generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 				createFolder(newFolderHandle, new SubProgressMonitor(monitor, 1000));
@@ -150,14 +160,15 @@ public IFolder createNewFolder() {
 		if (e.getTargetException() instanceof CoreException) {
 			ErrorDialog.openError(
 				getContainer().getShell(), // Was Utilities.getFocusShell()
-				"Creation Problems", 
+				WorkbenchMessages.getString("WizardNewFolderCreationPage.errorTitle"),  //$NON-NLS-1$
 				null,	// no special message
 				((CoreException) e.getTargetException()).getStatus());
 		}
 		else {
 			// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-			WorkbenchPlugin.log("Exception in " + getClass().getName() + ".getNewFolder(): " + e.getTargetException());
-			MessageDialog.openError(getContainer().getShell(), "Creation problems", "Internal error: " + e.getTargetException().getMessage());
+			
+			WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.getNewFolder(): {1}", new Object[] {getClass().getName(),e.getTargetException()}));//$NON-NLS-1$
+			MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFolderCreationPage.internalErrorTitle"), WorkbenchMessages.format("WizardNewFolder.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		return null;	// ie.- one of the steps resulted in a core exception
 	}

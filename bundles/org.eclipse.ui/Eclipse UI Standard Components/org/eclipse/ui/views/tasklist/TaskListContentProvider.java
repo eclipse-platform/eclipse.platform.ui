@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -21,9 +20,10 @@ import java.util.*;
  */
 /* package */ class TaskListContentProvider implements IStructuredContentProvider, IResourceChangeListener {
 	private TaskList taskList;
-	private Viewer viewer;
+	private TableViewer viewer;
 	private IResource input;
 	private String summary;
+	private String titleSummary;
 /**
  * The constructor.
  */
@@ -61,6 +61,50 @@ protected boolean checkType(IMarkerDelta markerDelta) {
 	return false;
 }
 /**
+ * Clears any cached summary info.
+ */
+void clearSummary() {
+	summary = null;
+	titleSummary = null;
+}
+/**
+ * Computes a one-line summary of the number of tasks and problems being displayed.
+ */
+void computeSummary() {
+	try {
+		TasksFilter filter = (TasksFilter) taskList.getFilter();
+		IMarker[] markers = getMarkers();
+		String summaryFmt = "{0} item(s): {1}";
+		String unfilteredTitleFmt1 = "({0} item)";
+		String unfilteredTitleFmtN = "({0} items)";
+		String filteredTitleFmt = "(Filter showing {0} of {1} items)";
+		if (filter.showAll()) {
+			summary = MessageFormat.format(summaryFmt, new Object[] {
+				new Integer(markers.length),
+				getSummary(Arrays.asList(markers))
+			});
+			String titleFmt = markers.length == 1 ? unfilteredTitleFmt1 : unfilteredTitleFmtN;
+			titleSummary = MessageFormat.format(titleFmt, new Object[] {
+				new Integer(markers.length)
+			});
+		}
+		else {
+			Object[] filtered = filter.filter(null, null, markers);
+			summary = MessageFormat.format(summaryFmt, new Object[] {
+				new Integer(filtered.length),
+				getSummary(Arrays.asList(filtered))
+			});
+			titleSummary = MessageFormat.format(filteredTitleFmt, new Object[] {
+				new Integer(filtered.length),
+				new Integer(getTotalMarkerCount())
+			});
+		}
+	}
+	catch (CoreException e) {
+		summary = titleSummary = "";
+	}
+}
+/**
  * The visual part that is using this content provider is about
  * to be disposed. Deallocate all allocated SWT resources.
  */
@@ -77,7 +121,7 @@ public void dispose() {
 
 public Object[] getElements(Object parent) {
 	try {
-		summary = null;
+		clearSummary();
 		return getMarkers();
 	} catch (CoreException e) {
 		return new IMarker[0];
@@ -136,32 +180,71 @@ IMarker[] getMarkers() throws CoreException {
 }
 /**
  * Returns a one-line string containing a summary of the number
- * of tasks and problems being displayed.
+ * of tasks and problems being displayed, for display in the status line.
  */
 public String getSummary() {
 	// cache summary message since computing it takes time
 	if (summary == null)
-		summary = getSummary0();
+		computeSummary();
 	return summary;
 }
 /**
  * Returns a one-line string containing a summary of the number
- * of tasks and problems being displayed.
+ * of tasks and problems in the given array of markers.
  */
-private String getSummary0() {
-	try {
-		IMarker[] markers = getMarkers();
-		Object[] filtered = taskList.getFilter().filter(null, null, markers);
-		String fmt = "{0} item(s): {1}";
-		Object[] args = new Object[] {
-			new Integer(filtered.length),
-			taskList.getSummary(Arrays.asList(filtered))
-		};
-		return MessageFormat.format(fmt, args);
+String getSummary(List markers) throws CoreException {
+	int numTasks = 0;
+	int numErrors = 0, numWarnings = 0, numInfos = 0;
+	for (Iterator i = markers.iterator(); i.hasNext();) {
+		IMarker marker = (IMarker) i.next();
+		if (marker.isSubtypeOf(IMarker.TASK)) {
+			++numTasks;
+		}
+		else if (marker.isSubtypeOf(IMarker.PROBLEM)) {
+			switch (MarkerUtil.getSeverity(marker)) {
+				case IMarker.SEVERITY_ERROR:
+					++numErrors;
+					break;
+				case IMarker.SEVERITY_WARNING:
+					++numWarnings;
+					break;
+				case IMarker.SEVERITY_INFO:
+					++numInfos;
+					break;
+			}
+		}
 	}
-	catch (CoreException e) {
-		return "";
+	String fmt = "{0} tasks, {1} errors, {2} warnings, {3} infos";
+	Object[] args = new Object[] {
+		new Integer(numTasks),
+		new Integer(numErrors), 
+		new Integer(numWarnings), 
+		new Integer(numInfos)};
+	return MessageFormat.format(fmt, args);
+}
+/**
+ * Returns a one-line string containing a summary of the number items,
+ * for display in the title bar.
+ */
+public String getTitleSummary() {
+	// cache summary message since computing it takes time
+	if (titleSummary == null)
+		computeSummary();
+	return titleSummary;
+}
+/**
+ * Returns the count of all markers in the workspace which can be shown in the task list.
+ */
+int getTotalMarkerCount() throws CoreException {
+	IResource root = taskList.getWorkspace().getRoot();
+	String[] types = TasksFilter.ROOT_TYPES;
+	// code below assumes root types, and their subtypes, are non-overlapping
+	int count = 0;
+	for (int i = 0; i < types.length; ++i) {
+		IMarker[] markers = root.findMarkers(types[i], true, IResource.DEPTH_INFINITE);
+		count += markers.length;
 	}
+	return count;
 }
 public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	if (this.input != null) {
@@ -169,9 +252,10 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 	this.input = (IResource) newInput;
 	if (this.input != null) {
-		this.input.getWorkspace().addResourceChangeListener(this);
+		this.input.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
-	this.viewer = viewer;
+	this.viewer = (TableViewer) viewer;
+	clearSummary();
 }
 /**
  * The workbench has changed.  Process the delta and issue updates to the viewer,
@@ -180,10 +264,6 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
  * @see IResourceChangeListener#resourceChanged
  */
 public void resourceChanged(final IResourceChangeEvent event) {
-	// we only care about changes that have already happened.
-	if (event.getType() != IResourceChangeEvent.POST_CHANGE) {
-		return;
-	}
 
 	// gather all marker changes from the delta.
 	// be sure to do this in the calling thread, 
@@ -198,39 +278,48 @@ public void resourceChanged(final IResourceChangeEvent event) {
 		return;
 	}
 
-	// clear cached summary
-	summary = null;
+	clearSummary();
 	
 	// do the required viewer updates in the UI thread
 	// need to use syncExec; see 1G95PU8: ITPUI:WIN2000 - Changing task description flashes old description
 	viewer.getControl().getDisplay().syncExec(new Runnable() {
 		public void run() {
-			// This method runs inside an asyncExec.  The widget may have been destroyed
-			// by the time this is run.  Check for this and do nothing if so.
-			Control ctrl = viewer.getControl();
-			if (ctrl == null || ctrl.isDisposed())
-				return;
-				
-			//update the viewer based on the marker changes.
-			if (removals.size() > 0) {
-				((TableViewer) viewer).remove(removals.toArray());
-			}
-			if (additions.size() > 0) {
-				((TableViewer) viewer).add(additions.toArray());
-			}
-			if (changes.size() > 0) {
-				((TableViewer) viewer).update(changes.toArray(), null);
-			}
-
-			// Update the task list's status message.
-			// XXX: Quick and dirty solution here.  
-			// Would be better to have a separate model for the tasks and
-			// have both the content provider and the task list register for updates.
-			// XXX: Do this inside the asyncExec, since talking to status line widget.
-			taskList.updateStatusMessage();
-			
+			updateViewer(additions, removals, changes);
 		}
 	});
 	
+}
+/**
+ * Updates the viewer given the lists of added, removed, and changes markers.
+ */
+void updateViewer(List additions, List removals, List changes) {
+
+	// The widget may have been destroyed by the time this is run.  
+	// Check for this and do nothing if so.
+	Control ctrl = viewer.getControl();
+	if (ctrl == null || ctrl.isDisposed())
+		return;
+
+	//update the viewer based on the marker changes.
+	//process removals before additions, to avoid multiple equal elements in the viewer
+	if (removals.size() > 0) {
+		// Cancel any open cell editor.  We assume that the one being edited is the one being removed.
+		viewer.cancelEditing();
+		viewer.remove(removals.toArray());
+	}
+	if (additions.size() > 0) {
+		viewer.add(additions.toArray());
+	}
+	if (changes.size() > 0) {
+		viewer.update(changes.toArray(), null);
+	}
+
+	// Update the task list's status message.
+	// XXX: Quick and dirty solution here.  
+	// Would be better to have a separate model for the tasks and
+	// have both the content provider and the task list register for updates.
+	// XXX: Do this inside the asyncExec, since we're talking to status line widget.
+	taskList.markersChanged();
+
 }
 }

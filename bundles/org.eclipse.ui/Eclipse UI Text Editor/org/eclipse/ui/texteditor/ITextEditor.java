@@ -1,9 +1,8 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -82,6 +81,14 @@ public interface ITextEditor extends IEditorPart {
 	 */
 	boolean isEditable();
 	/**
+	 * Removes any installed activation code for the specified action.
+	 * If no activation code is installed, this method does not have
+	 * any effect.
+	 * 
+	 * @param actionId the action id
+	 */
+	void removeActionActivationCode(String actionId);
+	/**
 	 * Resets the highlighted range of this text editor.
 	 */
 	void resetHighlightRange();
@@ -100,6 +107,23 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #getAction
 	 */
 	void setAction(String actionID, IAction action);
+	/**
+	 * Sets the given activation code for the specified action. If
+	 * there is an activation code already registered, it is replaced.
+	 * The activation code consists of the same information as 
+	 * a <code>KeyEvent</code>. If the activation code is triggered
+	 * and the associated action is enabled, the action is performed
+	 * and the triggering <code>KeyEvent</code> is considered consumed.
+	 * If the action is disabled, the <code>KeyEvent</code> is passed
+	 * on unmodified. Thus, action activation codes and action accelerators
+	 * differ in their model of event consumption.
+	 * 
+	 * @param actionId the action id
+	 * @param character the activation code character
+	 * @param keyCode the activation code key code
+	 * @param stateMask the activation code state mask
+	 */
+	void setActionActivationCode(String actionId, char activationCharacter, int activationKeyCode, int activationStateMask);
 	/**
 	 * Sets the highlighted range of this text editor to the specified region.
 	 *

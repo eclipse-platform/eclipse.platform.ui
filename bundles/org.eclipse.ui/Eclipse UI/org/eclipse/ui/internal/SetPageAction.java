@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -16,12 +15,11 @@ import org.eclipse.jface.resource.*;
  */
 public class SetPageAction extends Action {
 	private WorkbenchPage page;
-	
 /**
  *	Create an instance of this class
  */
 public SetPageAction(WorkbenchPage page) {
-	super("&Switch To Page:");
+	super(WorkbenchMessages.getString("SwitchPage.text")); //$NON-NLS-1$
 	setChecked(false);
 	this.page = page;
 	update();

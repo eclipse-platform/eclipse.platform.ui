@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -21,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import java.lang.reflect.InvocationTargetException;
+import java.io.File;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -47,6 +47,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	// widgets
 	private Text projectNameField;
 	private Text locationPathField;
+	private Label locationLabel;
 	private Button browseButton;
 
 	private Listener nameModifyListener = new Listener() {
@@ -89,6 +90,7 @@ public void createControl(Composite parent) {
 	createProjectNameGroup(composite);
 	createProjectLocationGroup(composite);
 	projectNameField.setFocus();
+	validatePage();
 	
 	setControl(composite);
 }
@@ -107,7 +109,7 @@ private final void createProjectLocationGroup(Composite parent) {
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
-	useDefaultsButton.setText("Use default location");
+	useDefaultsButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
 	useDefaultsButton.setSelection(this.useDefaults);
 
 	GridData buttonData = new GridData();
@@ -121,7 +123,10 @@ private final void createProjectLocationGroup(Composite parent) {
 			useDefaults = useDefaultsButton.getSelection();
 			browseButton.setEnabled(!useDefaults);
 			locationPathField.setEnabled(!useDefaults);
+			locationLabel.setEnabled(!useDefaults);
 			setLocationForSelection();
+			if (!useDefaults)
+				locationPathField.setText("");
 		}
 	};
 	useDefaultsButton.addSelectionListener(listener);
@@ -141,7 +146,7 @@ private final void createProjectNameGroup(Composite parent) {
 
 	// new project label
 	Label projectLabel = new Label(projectGroup,SWT.NONE);
-	projectLabel.setText("Project name:");
+	projectLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.nameLabel")); //$NON-NLS-1$
 
 	// new project name entry field
 	projectNameField = new Text(projectGroup, SWT.BORDER);
@@ -164,8 +169,9 @@ private final void createProjectNameGroup(Composite parent) {
 private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boolean enabled) {
 
 	// location label
-	Label locationLabel = new Label(projectGroup,SWT.NONE);
-	locationLabel.setText("Location:");
+	locationLabel = new Label(projectGroup,SWT.NONE);
+	locationLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.locationLabel")); //$NON-NLS-1$
+	locationLabel.setEnabled(enabled);
 
 	// project location entry field
 	locationPathField = new Text(projectGroup, SWT.BORDER);
@@ -176,7 +182,7 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
 
 	// browse button
 	browseButton = new Button(projectGroup, SWT.PUSH);
-	browseButton.setText("Browse...");
+	browseButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.browseLabel")); //$NON-NLS-1$
 	browseButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			handleLocationBrowseButtonPressed();
@@ -234,8 +240,14 @@ public String getProjectName() {
  */
 private void handleLocationBrowseButtonPressed() {
 	DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
-	dialog.setMessage("Select the location directory.");
-	dialog.setFilterPath(locationPathField.getText());
+	dialog.setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.directoryLabel")); //$NON-NLS-1$
+	
+	String dirName = locationPathField.getText();
+	if (!dirName.equals("")) {//$NON-NLS-1$
+		File path = new File(dirName);
+		if (path.exists())
+			dialog.setFilterPath(dirName);
+	}
 	
 	String selectedDirectory = dialog.open();
 	if (selectedDirectory != null)
@@ -247,7 +259,7 @@ private void handleLocationBrowseButtonPressed() {
 private void setLocationForSelection() {
 	if (useDefaults) {
 		IPath defaultPath = Platform.getLocation().append(projectNameField.getText());
-		locationPathField.setText(defaultPath.toString());
+		locationPathField.setText(defaultPath.toOSString());
 	}
 }
 /**
@@ -261,6 +273,12 @@ private boolean validatePage() {
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 
 	String projectFieldContents = projectNameField.getText();
+	if (projectFieldContents.equals("")) {
+		setErrorMessage(null);
+		setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectNameEmpty"));
+		return false;
+	}
+	
 	IStatus nameStatus =
 		workspace.validateName(projectFieldContents, IResource.PROJECT);
 	if (!nameStatus.isOK()) {
@@ -270,21 +288,25 @@ private boolean validatePage() {
 
 	String locationFieldContents = locationPathField.getText();
 	
-	if (!locationFieldContents.equals("")) {
-		IPath path = new Path("");
+	if (!locationFieldContents.equals("")) {//$NON-NLS-1$
+		IPath path = new Path("");//$NON-NLS-1$
 		if (!path.isValidPath(locationFieldContents)) {
-			setErrorMessage("Invalid location path");
+			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.locationError")); //$NON-NLS-1$
+			return false;
+		}
+		if (!useDefaults && Platform.getLocation().isPrefixOf(new Path(locationFieldContents))) {
+			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.defaultLocationError")); //$NON-NLS-1$
 			return false;
 		}
 	}
 
-
 	if (getProjectHandle().exists()) {
-		setErrorMessage("Project already exists.");
+		setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectExistsMessage")); //$NON-NLS-1$
 		return false;
 	}
 
 	setErrorMessage(null);
+	setMessage(null);
 	return true;
 }
 }

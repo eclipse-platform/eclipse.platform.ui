@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -33,7 +32,7 @@ import java.io.*;
  */
 public class MarkerTransfer extends ByteArrayTransfer {
 	
-	private static final String TYPE_NAME = "marker-transfer-format";
+	private static final String TYPE_NAME = "marker-transfer-format";//$NON-NLS-1$
 	private static final int TYPEID = registerType(TYPE_NAME);
 	private static final String rootString = Path.ROOT.toString();
 	private IWorkspace workspace;

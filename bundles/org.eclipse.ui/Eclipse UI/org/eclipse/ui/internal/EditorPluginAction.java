@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.*;
@@ -41,7 +40,7 @@ protected IActionDelegate createDelegate() {
 	if (delegate instanceof IEditorActionDelegate) {
 		IEditorActionDelegate editorDelegate = (IEditorActionDelegate) delegate;
 	} else {
-		WorkbenchPlugin.log("Action should implement IEditorActionDelegate: " + getText());
+		WorkbenchPlugin.log("Action should implement IEditorActionDelegate: " + getText());//$NON-NLS-1$
 		return null;
 	}
 	return delegate;

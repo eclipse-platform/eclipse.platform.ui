@@ -1,9 +1,8 @@
 package org.eclipse.jface.wizard;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.*;
@@ -95,7 +94,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	private int pageHeight = SWT.DEFAULT;
 
 	private static int PROGRESS_INDICATOR_HEIGHT = 12;
-	private static final String FOCUS_CONTROL = "focusControl";
+	private static final String FOCUS_CONTROL = "focusControl";//$NON-NLS-1$
 
 		
 	/**
@@ -1052,7 +1051,7 @@ public void updateTitleBar() {
 
 	String s = currentPage.getTitle();
 	if (s == null)
-		s = "";
+		s = "";//$NON-NLS-1$
 	setTitle(s);
 
 	setTitleImage(currentPage.getImage());

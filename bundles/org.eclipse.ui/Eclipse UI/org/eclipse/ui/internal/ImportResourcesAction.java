@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
@@ -29,8 +28,8 @@ public class ImportResourcesAction extends Action {
  *	Create a new instance of this class
  */
 public ImportResourcesAction(IWorkbench aWorkbench) {
-	super("&Import...");
-	setToolTipText("Import to the selected resources");
+	super(WorkbenchMessages.getString("ImportResourcesAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ImportResourcesAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.IMPORT);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.IMPORT_ACTION});
 	this.workbench = aWorkbench;
@@ -50,9 +49,9 @@ public void run() {
 		selectionToPass = StructuredSelection.EMPTY;
 	wizard.init(workbench, selectionToPass);
 	IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-	IDialogSettings wizardSettings = workbenchSettings.getSection("ImportResourcesAction");
+	IDialogSettings wizardSettings = workbenchSettings.getSection("ImportResourcesAction");//$NON-NLS-1$
 	if(wizardSettings==null)
-		wizardSettings = workbenchSettings.addNewSection("ImportResourcesAction");
+		wizardSettings = workbenchSettings.addNewSection("ImportResourcesAction");//$NON-NLS-1$
 	wizard.setDialogSettings(wizardSettings);
 	wizard.setForcePreviousAndNextButtons(true);
 	

@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.internal.framelist;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 /**
  * Generic "Forward" action, which calls <code>forward()</code> on the frame list when run.
  * Enabled only when there is a frame after the current frame.
@@ -7,10 +11,10 @@ package org.eclipse.ui.views.internal.framelist;
 public class ForwardAction extends FrameAction {
 public ForwardAction(FrameList frameList) {
 	super(frameList);
-	setText("&Forward");
-	setHoverImageDescriptor(getImageDescriptor("clcl16/forward_nav.gif"));
-	setImageDescriptor(getImageDescriptor("elcl16/forward_nav.gif"));
-	setDisabledImageDescriptor(getImageDescriptor("dlcl16/forward_nav.gif"));
+	setText(FrameListMessages.getString("Forward.text")); //$NON-NLS-1$
+	setHoverImageDescriptor(getImageDescriptor("clcl16/forward_nav.gif"));//$NON-NLS-1$
+	setImageDescriptor(getImageDescriptor("elcl16/forward_nav.gif"));//$NON-NLS-1$
+	setDisabledImageDescriptor(getImageDescriptor("dlcl16/forward_nav.gif"));//$NON-NLS-1$
 	update();
 }
 Frame getNextFrame() {
@@ -21,10 +25,10 @@ String getToolTipText(Frame nextFrame) {
 	if (nextFrame != null) {
 		String text = nextFrame.getToolTipText();
 		if (text != null && text.length() > 0) {
-			return "Forward to " + text;
+			return FrameListMessages.format("Forward.toolTipOneArg", new Object[] {text}); //$NON-NLS-1$
 		}
 	}
-	return "Forward";
+	return FrameListMessages.getString("Forward.toolTip"); //$NON-NLS-1$
 }
 /**
  * Calls <code>forward()</code> on the frame list.

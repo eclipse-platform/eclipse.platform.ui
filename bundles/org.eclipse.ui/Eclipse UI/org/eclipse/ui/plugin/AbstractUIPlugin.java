@@ -1,9 +1,8 @@
 package org.eclipse.ui.plugin;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -88,18 +87,18 @@ public abstract class AbstractUIPlugin extends Plugin
 	 * The name of the preference storage file (value
 	 * <code>"pref_store.ini"</code>).
 	 */
-	private static final String FN_PREF_STORE= "pref_store.ini";
+	private static final String FN_PREF_STORE= "pref_store.ini";//$NON-NLS-1$
 	/**
 	 * The name of the default preference settings file (value
 	 * <code>"preferences.ini"</code>).
 	 */
-	private static final String FN_DEFAULT_PREFERENCES= "preferences.ini";
+	private static final String FN_DEFAULT_PREFERENCES= "preferences.ini";//$NON-NLS-1$
 
 	/**
 	 * The name of the dialog settings file (value 
 	 * <code>"dialog_settings.xml"</code>).
 	 */
-	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml";
+	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml";//$NON-NLS-1$
 
 	
 	/**
@@ -337,17 +336,17 @@ protected void loadDialogSettings() {
 		pathName = getDescriptor().getInstallURL().getFile() + FN_DIALOG_SETTINGS;
 		settingsFile = new File(pathName);
 		if (!settingsFile.exists()) {
-			dialogSettings = new DialogSettings("Workbench");  //force it to write to the r/w area
+			dialogSettings = new DialogSettings("Workbench");  //force it to write to the r/w area//$NON-NLS-1$
 			return;
 		}
 	}
 	// pathName is either the r/w or the install area
 		
-	dialogSettings = new DialogSettings("Workbench");
+	dialogSettings = new DialogSettings("Workbench");//$NON-NLS-1$
 	try {
 		dialogSettings.load(pathName);
 	} catch (IOException e) {
-		dialogSettings = new DialogSettings("Workbench");  // load failed so ensure we have an empty settings
+		dialogSettings = new DialogSettings("Workbench");  // load failed so ensure we have an empty settings//$NON-NLS-1$
 	}
 }
 /**

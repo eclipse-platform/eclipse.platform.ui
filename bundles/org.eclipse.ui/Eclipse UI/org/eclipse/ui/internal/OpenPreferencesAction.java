@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -21,9 +20,9 @@ public class OpenPreferencesAction extends Action {
  * from the given resource bundle.
  */
 public OpenPreferencesAction(IWorkbenchWindow window) {
-	super("&Preferences");
+	super(WorkbenchMessages.getString("OpenPreferences.text")); //$NON-NLS-1$
 	this.window = window;
-	setToolTipText("Open the preferences dialog");
+	setToolTipText(WorkbenchMessages.getString("OpenPreferences.toolTip")); //$NON-NLS-1$
 }
 /**
  * Perform the action: open the preference dialog.

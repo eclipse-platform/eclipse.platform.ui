@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
@@ -58,13 +57,13 @@ public class PartTabFolder extends LayoutPart
  * PartTabFolder constructor comment.
  */
 public PartTabFolder() {
-	super("PartTabFolder");
+	super("PartTabFolder");//$NON-NLS-1$
 	setID(this.toString());	// Each folder has a unique ID so relative positioning is unambiguous.
 
 	// Get the location of the tabs from the preferences
 	if (tabLocation == -1)
 		tabLocation = getPreferenceStore().getInt(
-			IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+			IPreferenceConstants.VIEW_TAB_POSITION);
 		
 }
 /**
@@ -90,10 +89,8 @@ public void add(String name, int index, LayoutPart part)
  * See IVisualContainer#add
  */
 public void add(LayoutPart child) {
-	int index = 0;
-	if (mapTabToPart != null)
-		index = mapTabToPart.size();
-	String label = "";
+	int index = getItemCount();
+	String label = "";//$NON-NLS-1$
 	if (child instanceof PartPane)
 		label = ((PartPane)child).getPart().getSite().getRegisteredName();
 	add(label, index, child);
@@ -268,7 +265,7 @@ public void disableDrag(LayoutPart part) {
 		partDragDrop = (PartDragDrop)mapPartToDragMonitor.get(this);
 		if (partDragDrop != null) {
 			partDragDrop.dispose();
-			mapPartToDragMonitor.remove(part);
+			mapPartToDragMonitor.remove(this);
 		}
 	}
 }
@@ -741,7 +738,7 @@ public void saveState(IMemento memento)
 					}
 				}
 				if(!found) {
-					childMem.putString(IWorkbenchConstants.TAG_LABEL,"LabelNotFound");
+					childMem.putString(IWorkbenchConstants.TAG_LABEL,"LabelNotFound");//$NON-NLS-1$
 				}
 			}
 		}
@@ -804,7 +801,7 @@ private void setSelection(LayoutPart part) {
 	Window window = getWindow();
 	if (window instanceof DetachedWindow) {
 		if (current == null || !(current instanceof PartPane))
-			window.getShell().setText("");
+			window.getShell().setText("");//$NON-NLS-1$
 		else
 			window.getShell().setText(((PartPane)current).getPart().getTitle());
 	}

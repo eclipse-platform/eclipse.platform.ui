@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
@@ -57,8 +56,8 @@ public void run() {
 	} catch (CoreException e) {
 		ErrorDialog.openError(
 			workbench.getActiveWorkbenchWindow().getShell(),
-			"Problem Opening Wizard",
-			"The selected wizard could not be started.",
+			WorkbenchMessages.getString("NewWizardShortcutAction.errorTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("NewWizardShortcutAction.errorMessage"), //$NON-NLS-1$
 			e.getStatus());
 		return;
 	}

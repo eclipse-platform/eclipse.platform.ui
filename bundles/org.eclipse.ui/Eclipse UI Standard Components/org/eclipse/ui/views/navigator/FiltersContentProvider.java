@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.navigator;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -87,11 +91,11 @@ private static void readFilters() {
 			for(int i = 0; i < extensions.length; i++){
 				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
 				for(int j = 0; j < configElements.length; j++){
-					String pattern = configElements[j].getAttribute("pattern");
+					String pattern = configElements[j].getAttribute("pattern");//$NON-NLS-1$
 					if (pattern != null)
 						definedFilters.add(pattern);
-					String selected = configElements[j].getAttribute("selected");
-					if (selected != null && selected.equalsIgnoreCase("true"))
+					String selected = configElements[j].getAttribute("selected");//$NON-NLS-1$
+					if (selected != null && selected.equalsIgnoreCase("true"))//$NON-NLS-1$
 						defaultFilters.add(pattern);
 				}
 			}

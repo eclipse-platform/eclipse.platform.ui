@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IWorkbench;
@@ -51,9 +50,9 @@ public class FileSystemImportWizard extends Wizard implements IImportWizard {
 public FileSystemImportWizard() {
 	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 	IDialogSettings workbenchSettings = plugin.getDialogSettings();
-	IDialogSettings section = workbenchSettings.getSection("FileSystemImportWizard");
+	IDialogSettings section = workbenchSettings.getSection("FileSystemImportWizard");//$NON-NLS-1$
 	if(section == null)
-		section = workbenchSettings.addNewSection("FileSystemImportWizard");
+		section = workbenchSettings.addNewSection("FileSystemImportWizard");//$NON-NLS-1$
 	setDialogSettings(section);
 }
 /* (non-Javadoc)
@@ -70,9 +69,9 @@ public void addPages() {
 private ImageDescriptor getImageDescriptor(String relativePath) {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	try {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
@@ -92,8 +91,8 @@ public void init(IWorkbench workbench,IStructuredSelection currentSelection) {
 	this.workbench = workbench;
 	selection = currentSelection;
 
-	setWindowTitle("Import");
-	setDefaultPageImageDescriptor(getImageDescriptor("wizban/importdir_wiz.gif"));
+	setWindowTitle(DataTransferMessages.getString("DataTransfer.importTitle")); //$NON-NLS-1$
+	setDefaultPageImageDescriptor(getImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
 	setNeedsProgressMonitor(true);
 }
 /* (non-Javadoc)

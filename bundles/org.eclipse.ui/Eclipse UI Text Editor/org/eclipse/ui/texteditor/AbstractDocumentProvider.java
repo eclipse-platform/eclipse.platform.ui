@@ -1,9 +1,8 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -92,7 +91,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 			 */
 			public void documentChanged(DocumentEvent event) {
 				fCanBeSaved= true;
-				fDocument.removeDocumentListener(this);
+				removeUnchangedElementListeners(fElement, this);
 				fireElementDirtyStateChanged(fElement, fCanBeSaved);
 			}
 			
@@ -102,6 +101,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
 		};
+	
 	
 	/** Information of all connected elements */
 	private Map fElementInfoMap= new HashMap();
@@ -128,6 +128,21 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		Assert.isNotNull(listener);
 		if (!fElementStateListeners.contains(listener))
 			fElementStateListeners.add(listener);
+	}
+	/**
+	 * Called on initial creation and when the dirty state of the element
+	 * changes to <code>false</code>. Adds all listeners which must be 
+	 * active as long as the element is not dirty. This method is called
+	 * before <code>fireElementDirtyStateChanged</code> or <code>
+	 * fireElementContentReplaced</code> is called.
+	 * Subclasses may extend.
+	 * 
+	 * @param element the element
+	 * @param info the element info object
+	 */
+	protected void addUnchangedElementListeners(Object element, ElementInfo info) {
+		if (info.fDocument != null)
+			info.fDocument.addDocumentListener(info);
 	}
 	/*
 	 * @see IDocumentProvider#canSaveDocument(Object)
@@ -160,8 +175,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 			
 			info.fElement= element;
 			
-			if (info.fDocument != null)
-				info.fDocument.addDocumentListener(info);
+			addUnchangedElementListeners(element, info);
 			
 			fElementInfoMap.put(element, info);
 		}	
@@ -213,8 +227,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		
 		if (info.fCount == 1) {
 			
-			if (info.fDocument != null)
-				info.fDocument.removeDocumentListener(info);
+			removeUnchangedElementListeners(element, info);
 			
 			disposeElementInfo(element, info);
 			
@@ -242,9 +255,10 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 	 * @param monitor a progress monitor to report progress and request cancelation
 	 * @param element the element
 	 * @param document the document
+	 * @param overwrite indicates whether an overwrite should happen if necessary
 	 * @exception CoreException if document could not be stored to the given element
 	 */
-	protected abstract void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document) throws CoreException;
+	protected abstract void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
 	/**
 	 * Informs all registered element state listeners about an impending 
 	 * replace of the given element's content.
@@ -377,6 +391,20 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		Assert.isNotNull(listener);
 		fElementStateListeners.remove(listener);
 	}
+	/**
+	 * Called when the given element gets dirty. Removes all listeners
+	 * which must be active only when the element is not dirty. This 
+	 * method is called before <code>fireElementDirtyStateChanged</code>
+	 * or <code>fireElementContentReplaced</code> is called.
+	 * Subclasses may extend.
+	 * 
+	 * @param element the element
+	 * @param info the element info object
+	 */
+	protected void removeUnchangedElementListeners(Object element, ElementInfo info) {
+		if (info.fDocument != null)
+			info.fDocument.removeDocumentListener(info);
+	}
 	/*
 	 * @see IDocumentProvider#resetDocument(Object)
 	 */
@@ -391,15 +419,15 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 				fireElementContentAboutToBeReplaced(element);
 				info.fDocument.set(original.get());
 				info.fCanBeSaved= false;
-				info.fDocument.addDocumentListener(info);
+				addUnchangedElementListeners(element, info);
 				fireElementContentReplaced(element);
 			}
 		}
 	}
 	/*
-	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument)
+	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
-	public void saveDocument(IProgressMonitor monitor, Object element, IDocument document) throws CoreException {
+	public void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 		
 		if (element == null)
 			return;
@@ -407,14 +435,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info != null) {
 			Assert.isTrue(info.fDocument == document);
-			doSaveDocument(monitor, element, document);
+			doSaveDocument(monitor, element, document, overwrite);
 			info.fCanBeSaved= false;
-			info.fDocument.addDocumentListener(info);
-			
+			addUnchangedElementListeners(element, info);
 			fireElementDirtyStateChanged(element, false);
 			
 		} else {
-			doSaveDocument(monitor, element, document);
+			doSaveDocument(monitor, element, document, overwrite);
 		}	
 	}
 }

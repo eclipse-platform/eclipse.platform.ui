@@ -1,11 +1,9 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -192,7 +190,7 @@ public class MarkerAnnotation extends Annotation {
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
 		if (image != null)
-			drawImage(image, gc, canvas, r, SWT.CENTER);
+			drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
 	}
 	/**
 	 * Sets the marker image to the given image.

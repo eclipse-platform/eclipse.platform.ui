@@ -1,26 +1,29 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.WizardDataTransferPage;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
+import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
+import org.eclipse.ui.model.*;
+import java.util.*;
 
 /**
  * The abstract superclass for a typical import wizard's main page.
@@ -52,15 +55,20 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
 	// initial value stores
 	private String initialContainerFieldValue;
+	protected java.util.List selectedTypes = new ArrayList();
 
 	// widgets
 	private Text containerNameField;
 	private Button containerBrowseButton;
+	protected ResourceTreeAndListGroup selectionGroup;
+
+	private final static int SIZING_SELECTION_WIDGET_WIDTH = 400;
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 150;
+
 
 	//messages
-	private static final String EMPTY_FOLDER_MESSAGE = "Folder must be specified.";
-	private static final String INACCESSABLE_FOLDER_MESSAGE =
-		"Folder must be accessible.";
+	private static final String EMPTY_FOLDER_MESSAGE = WorkbenchMessages.getString("WizardImportPage.specifyFolder"); //$NON-NLS-1$
+	private static final String INACCESSABLE_FOLDER_MESSAGE = WorkbenchMessages.getString("WizardImportPage.folderMustExist"); //$NON-NLS-1$
 
 /**
  * Creates an import wizard page. If the initial resource selection 
@@ -112,12 +120,12 @@ public void createControl(Composite parent) {
 
 	createSpacer(composite);
 
-	createPlainLabel(composite, "Where do you want the imported resources to go?");	
+	createPlainLabel(composite, WorkbenchMessages.getString("WizardImportPage.destinationLabel")); //$NON-NLS-1$
 	createDestinationGroup(composite);
 
 	createSpacer(composite);
 
-	createPlainLabel(composite, "Options:");
+	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
 	createOptionsGroup(composite);
 
 	restoreWidgetValues();
@@ -142,7 +150,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container label
 	Label resourcesLabel = new Label(containerGroup,SWT.NONE);
-	resourcesLabel.setText("Folder:");
+	resourcesLabel.setText(WorkbenchMessages.getString("WizardExportPage.folder")); //$NON-NLS-1$
 
 	// container name entry field
 	containerNameField = new Text(containerGroup,SWT.SINGLE|SWT.BORDER);
@@ -153,11 +161,41 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container browse button
 	containerBrowseButton = new Button(containerGroup,SWT.PUSH);
-	containerBrowseButton.setText("Browse...");
+	containerBrowseButton.setText(WorkbenchMessages.getString("WizardImportPage.browse2")); //$NON-NLS-1$
 	containerBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	containerBrowseButton.addListener(SWT.Selection,this);
 
 	initialPopulateContainerField();
+}
+/**
+ *	Create the import source selection widget
+ */
+protected void createFileSelectionGroup(Composite parent) {
+
+	//Just create with a dummy root.
+	this.selectionGroup =
+		new ResourceTreeAndListGroup(
+			parent,
+			new FileSystemElement("Dummy", null, true),//$NON-NLS-1$
+			getFolderProvider(),
+			new WorkbenchLabelProvider(),
+			getFileProvider(),
+			new WorkbenchLabelProvider(),
+			SWT.NONE,
+			SIZING_SELECTION_WIDGET_WIDTH,
+			SIZING_SELECTION_WIDGET_HEIGHT);
+
+	ICheckStateListener listener = new ICheckStateListener() {
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			updateWidgetEnablements();
+		}
+	};
+
+	WorkbenchViewerSorter sorter = new WorkbenchViewerSorter();
+	this.selectionGroup.setTreeSorter(sorter);
+	this.selectionGroup.setListSorter(sorter);
+	this.selectionGroup.addCheckStateListener(listener);
+
 }
 /**
  * Creates the import source specification controls.
@@ -174,7 +212,7 @@ protected abstract void createSourceGroup(Composite parent);
  * @param message the error message
  */
 protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(),"Import Problems",message);
+	MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardImportPage.errorDialogTitle"), message); //$NON-NLS-1$
 }
 /**
  * Returns the path of the container resource specified in the container
@@ -204,11 +242,32 @@ protected IPath getContainerFullPath() {
 	return null;
 }
 /**
+ * Returns a content provider for <code>FileSystemElement</code>s that returns 
+ * only files as children.
+ */
+protected abstract ITreeContentProvider getFileProvider();
+/**
+ * Returns a content provider for <code>FileSystemElement</code>s that returns 
+ * only folders as children.
+ */
+protected abstract ITreeContentProvider getFolderProvider();
+/**
  * Return the path for the resource field.
  * @return IPath
  */
 protected IPath getResourcePath() {
 	return getPathFromText(this.containerNameField);
+}
+/**
+ * Returns this page's list of currently-specified resources to be 
+ * imported. This is the primary resource selection facility accessor for 
+ * subclasses.
+ *
+ * @return a list of resources currently selected 
+ * for export (element type: <code>IResource</code>)
+ */
+protected java.util.List getSelectedResources() {
+	return this.selectionGroup.getAllCheckedListItems();
 }
 /**
  * Returns the container resource specified in the container name entry field,
@@ -226,13 +285,21 @@ protected IContainer getSpecifiedContainer() {
 	return null;
 }
 /**
+ * Returns a collection of the currently-specified resource types for
+ * use by the type selection dialog.
+ */
+protected java.util.List getTypesToImport() {
+
+	return selectedTypes;
+}
+/**
  * Opens a container selection dialog and displays the user's subsequent
  * container resource selection in this page's container name field.
  */
 protected void handleContainerBrowseButtonPressed() {
 	// see if the user wishes to modify this container selection
 	IPath containerPath =
-		queryForContainer(getSpecifiedContainer(), "Select a folder to import into.");
+		queryForContainer(getSpecifiedContainer(), WorkbenchMessages.getString("WizardImportPage.selectFolderLabel")); //$NON-NLS-1$
 
 	// if a container was selected then put its name in the container name field
 	if (containerPath != null) { // null means user cancelled
@@ -252,11 +319,28 @@ public void handleEvent(Event event) {
 	if (source == containerBrowseButton)
 		handleContainerBrowseButtonPressed();
 
-	boolean pageComplete = determinePageCompletion();
-	setPageComplete(pageComplete);
-	if (pageComplete)
-		setMessage(null);
 	updateWidgetEnablements();
+}
+/**
+ *	Open a registered type selection dialog and note the selections
+ *	in the receivers types-to-export field
+ */
+protected void handleTypesEditButtonPressed() {
+
+	TypeFilteringDialog dialog =
+		new TypeFilteringDialog(getContainer().getShell(), getTypesToImport());
+
+	dialog.open();
+
+	Object[] newSelectedTypes = dialog.getResult();
+	if (newSelectedTypes != null) { // ie.- did not press Cancel
+		this.selectedTypes = new ArrayList(newSelectedTypes.length);
+		for (int i = 0; i < newSelectedTypes.length; i++)
+			this.selectedTypes.add(newSelectedTypes[i]);
+
+		setupSelectionsBasedOnSelectedTypes();
+	}
+
 }
 /**
  * Sets the initial contents of the container name field.
@@ -266,6 +350,13 @@ protected final void initialPopulateContainerField() {
 		containerNameField.setText(initialContainerFieldValue);
 	else if (currentResourceSelection != null)
 		containerNameField.setText(currentResourceSelection.getFullPath().makeRelative().toString());
+}
+/**
+ * Set all of the selections in the selection group to value
+ * @param value boolean
+ */
+protected void setAllSelections(boolean value) {
+	selectionGroup.setAllSelections(value);
 }
 /**
  * Sets the value of this page's container resource field, or stores
@@ -279,18 +370,57 @@ public void setContainerFieldValue(String value) {
 	else
 		containerNameField.setText(value);
 }
+/**
+ * Update the tree to only select those elements that match the selected types.
+ * Do nothing by default.
+ */
+protected void setupSelectionsBasedOnSelectedTypes() {
+}
+/**
+ * Update the selections with those in map .
+ * @param map Map - key tree elements, values Lists of list elements
+ */
+protected void updateSelections(Map map) {
+	selectionGroup.updateSelections(map);
+}
+/**
+ * Check if widgets are enabled or disabled by a change in the dialog.
+ * @param event Event
+ */
+protected void updateWidgetEnablements() {
+
+	boolean pageComplete = determinePageCompletion();
+	setPageComplete(pageComplete);
+	if (pageComplete)
+		setMessage(null);
+	super.updateWidgetEnablements();
+}
 /* (non-Javadoc)
  * Method declared on WizardDataTransferPage.
  */
 protected final boolean validateDestinationGroup() {
-	if (getContainerFullPath() == null) {
+
+	IPath containerPath = getContainerFullPath();
+	if (containerPath == null) {
 		setMessage(EMPTY_FOLDER_MESSAGE);
 		return false;
 	}
 
 	// If the container exist, validate it
 	IContainer container = getSpecifiedContainer();
-	if (container != null) {
+	if (container == null) {
+		//if it is does not exist be sure the project does
+		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IPath projectPath =
+			containerPath.removeLastSegments(containerPath.segmentCount() - 1);
+
+		if (workspace.getRoot().exists(projectPath))
+			return true;
+		else {
+			setErrorMessage(WorkbenchMessages.getString("WizardImportPage.projectNotExist")); //$NON-NLS-1$
+			return false;
+		}
+	} else {
 		if (!container.isAccessible()) {
 			setErrorMessage(INACCESSABLE_FOLDER_MESSAGE);
 			return false;

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -17,8 +16,8 @@ public class SaveAsAction extends BaseSaveAction {
  *	Create an instance of this class
  */
 public SaveAsAction(IWorkbenchWindow window) {
-	super("Save &As...", window);
-	setToolTipText("Save to another location");
+	super(WorkbenchMessages.getString("SaveAs.text"), window); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("SaveAs.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_AS);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_AS_ACTION});
 }
@@ -34,14 +33,12 @@ public void run() {
 protected void updateState() {
 	IEditorPart editor = getActiveEditor();
 	if (editor != null) {
-		// This is not good NL style.
-		org.eclipse.ui.internal.misc.UIHackFinder.fixUI();
 		String title = editor.getTitle();
-		String label = "Save " + title + " &As...";
+		String label = WorkbenchMessages.format("SaveAs.textOneArg", new Object[] {title}); //$NON-NLS-1$
 		setText(label);
 		setEnabled(editor.isSaveAsAllowed());
 	} else {
-		setText("Save &As...");
+		setText(WorkbenchMessages.getString("SaveAs.text")); //$NON-NLS-1$
 		setEnabled(false);
 	}
 }

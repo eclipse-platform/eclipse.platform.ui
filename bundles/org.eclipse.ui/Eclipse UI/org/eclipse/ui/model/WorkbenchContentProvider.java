@@ -1,9 +1,8 @@
 package org.eclipse.ui.model;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.core.resources.*;
@@ -100,7 +99,7 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			oldWorkspace.removeResourceChangeListener(this);
 		}
 		if (newWorkspace != null) {
-			newWorkspace.addResourceChangeListener(this);
+			newWorkspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		}
 	}
 }
@@ -113,27 +112,52 @@ protected void processDelta(IResourceDelta delta) {
 	Control ctrl = viewer.getControl();
 	if (ctrl == null || ctrl.isDisposed())
 		return;
-		
+
 	// Get the affected resource
 	IResource resource = delta.getResource();
-	
+
+	// If any children have changed type, just do a full refresh of this parent,
+	// since a simple update on such children won't work, 
+	// and trying to map the change to a remove and add is too dicey.
+	// The case is: folder A renamed to existing file B, answering yes to overwrite B.
+	IResourceDelta[] affectedChildren =
+		delta.getAffectedChildren(IResourceDelta.CHANGED);
+	for (int i = 0; i < affectedChildren.length; i++) {
+		if ((affectedChildren[i].getFlags() & IResourceDelta.TYPE) != 0) {
+			((StructuredViewer) viewer).refresh(resource);
+			return;
+		}
+	}
+
 	// Check the flags for changes the Navigator cares about.
 	// See ResourceLabelProvider for the aspects it cares about.
 	// Notice we don't care about F_CONTENT or F_MARKERS currently.
 	int changeFlags = delta.getFlags();
-	if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC | IResourceDelta.TYPE)) != 0) {
+	if ((changeFlags
+		& (IResourceDelta.OPEN | IResourceDelta.SYNC))
+		!= 0) {
 		((StructuredViewer) viewer).update(resource, null);
-	}
-	if ((changeFlags & IResourceDelta.CONTENT) != 0 && resource instanceof IProject) {
-		//we care about content changes on projects only, because project reference
-		//changes show up this way.
-		((StructuredViewer)viewer).update(resource, null);
 	}
 
 	// Handle changed children .
-	IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED);
-	for (int i = 0; i < affectedChildren.length; i++) 
+	for (int i = 0; i < affectedChildren.length; i++) {
 		processDelta(affectedChildren[i]);
+	}
+
+	// Process removals before additions, to avoid multiple equal elements in the viewer.
+
+	// Handle removed children. Issue one update for all removals.
+	affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
+	if (affectedChildren.length > 0) {
+		Object[] affected = new Object[affectedChildren.length];
+		for (int i = 0; i < affectedChildren.length; i++)
+			affected[i] = affectedChildren[i].getResource();
+		if (viewer instanceof AbstractTreeViewer) {
+			((AbstractTreeViewer) viewer).remove(affected);
+		} else {
+			((StructuredViewer) viewer).refresh(resource);
+		}
+	}
 
 	// Handle added children. Issue one update for all insertions.
 	affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
@@ -148,20 +172,6 @@ protected void processDelta(IResourceDelta delta) {
 			((StructuredViewer) viewer).refresh(resource);
 		}
 	}
-	
-	// Handle removed children. Issue one update for all removals.
-	affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
-	if (affectedChildren.length > 0) {
-		Object[] affected = new Object[affectedChildren.length];
-		for (int i = 0; i < affectedChildren.length; i++)
-			affected[i] = affectedChildren[i].getResource();
-		if (viewer instanceof AbstractTreeViewer) {
-			((AbstractTreeViewer) viewer).remove(affected);
-		}
-		else {
-			((StructuredViewer) viewer).refresh(resource);
-		}
-	}
 }
 /**
  * The workbench has changed.  Process the delta and issue updates to the viewer,
@@ -170,10 +180,6 @@ protected void processDelta(IResourceDelta delta) {
  * @see IResourceChangeListener#resourceChanged
  */
 public void resourceChanged(final IResourceChangeEvent event) {
-	// we only care about changes that have already happened.
-	if (event.getType() != IResourceChangeEvent.POST_CHANGE) {
-		return;
-	}
 	final IResourceDelta delta = event.getDelta();
 	Control ctrl = viewer.getControl();
 	if (ctrl != null && !ctrl.isDisposed()) {

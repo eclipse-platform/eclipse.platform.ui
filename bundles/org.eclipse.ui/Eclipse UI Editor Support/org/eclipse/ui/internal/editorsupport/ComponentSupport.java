@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.editorsupport;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.*;
@@ -21,7 +20,7 @@ public final class ComponentSupport {
  * @see ComponentSupport
  */
 public static IEditorPart getComponentEditor() {
-	if (SWT.getPlatform().equals("win32")) {
+	if (SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
 		return getOleEditor();
 	}
 	return null;
@@ -35,7 +34,7 @@ public static IEditorPart getComponentEditor() {
  * @see ComponentSupport
  */
 public static IEditorPart getComponentEditor(IFile input) {
-	if ((SWT.getPlatform().equals("win32")) && testForOleEditor(input)) {
+	if ((SWT.getPlatform().equals("win32")) && testForOleEditor(input)) {//$NON-NLS-1$
 		return getOleEditor();
 	}
 	return null;

@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.newresource;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -12,7 +11,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
-import org.eclipse.ui.internal.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -57,17 +55,17 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	 */
 	private IConfigurationElement configElement;
 
-	private static String PAGE_PROBLEMS_TITLE = "Problems Opening Page";
-	private static String WINDOW_PROBLEMS_TITLE = "Problems Opening Window";
+	private static String PAGE_PROBLEMS_TITLE = ResourceMessages.getString("NewProject.errorOpeningPage"); //$NON-NLS-1$
+	private static String WINDOW_PROBLEMS_TITLE = ResourceMessages.getString("NewProject.errorOpeningWindow"); //$NON-NLS-1$
 /**
  * Creates a wizard for creating a new project resource in the workspace.
  */
 public BasicNewProjectResourceWizard() {
 	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 	IDialogSettings workbenchSettings = plugin.getDialogSettings();
-	IDialogSettings section = workbenchSettings.getSection("BasicNewProjectResourceWizard");
+	IDialogSettings section = workbenchSettings.getSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
 	if(section == null)
-		section = workbenchSettings.addNewSection("BasicNewProjectResourceWizard");
+		section = workbenchSettings.addNewSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
 	setDialogSettings(section);
 }
 /* (non-Javadoc)
@@ -76,16 +74,16 @@ public BasicNewProjectResourceWizard() {
 public void addPages() {
 	super.addPages();
 	
-	mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");
-	mainPage.setTitle("Project");
-	mainPage.setDescription("Create a new project resource.");
+	mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");//$NON-NLS-1$
+	mainPage.setTitle(ResourceMessages.getString("NewProject.title")); //$NON-NLS-1$
+	mainPage.setDescription(ResourceMessages.getString("NewProject.description")); //$NON-NLS-1$
 	this.addPage(mainPage);
 	
 	// only add page if there are already projects in the workspace
 	if (ResourcesPlugin.getWorkspace().getRoot().getProjects().length > 0) {
-		referencePage = new WizardNewProjectReferencePage("basicReferenceProjectPage");
-		referencePage.setTitle("Project");
-		referencePage.setDescription("Select referenced projects.");
+		referencePage = new WizardNewProjectReferencePage("basicReferenceProjectPage");//$NON-NLS-1$
+		referencePage.setTitle(ResourceMessages.getString("NewProject.refeerenceTitle")); //$NON-NLS-1$
+		referencePage.setDescription(ResourceMessages.getString("NewProject.referenceDescription")); //$NON-NLS-1$
 		this.addPage(referencePage);
 	}
 }
@@ -148,7 +146,7 @@ private IProject createNewProject() {
 		if (t instanceof CoreException) {
 			ErrorDialog.openError(
 				getShell(), 
-				"Creation Problems", 
+				ResourceMessages.getString("NewProject.errorMessage"),  //$NON-NLS-1$
 				null, // no special message
 			 	((CoreException) t).getStatus());
 		} else {
@@ -162,8 +160,8 @@ private IProject createNewProject() {
 					t));
 			MessageDialog.openError(
 				getShell(),
-				"Creation problems",
-				"Internal error: " + t.getMessage());
+				ResourceMessages.getString("NewProject.errorMessage"),  //$NON-NLS-1$
+				ResourceMessages.format("NewProject.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -184,7 +182,7 @@ private IProject createNewProject() {
  */
 private void createProject(IProjectDescription description, IProject projectHandle, IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 	try {
-		monitor.beginTask("",2000);
+		monitor.beginTask("",2000);//$NON-NLS-1$
 
 		projectHandle.create(description, new SubProgressMonitor(monitor,1000));
 
@@ -211,7 +209,7 @@ public IProject getNewProject() {
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	super.init(workbench, currentSelection);
-	setWindowTitle("New Project");
+	setWindowTitle(ResourceMessages.getString("NewProject.windowTitle")); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on BasicNewResourceWizard.
@@ -219,13 +217,13 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 protected void initializeDefaultPageImageDescriptor() {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 		
 	try {
 		URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");
+		URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		setDefaultPageImageDescriptor(desc);
 	}
@@ -327,7 +325,7 @@ protected void updatePerspective() {
 		return;
 
 	// Read final persp from config.
-	String perspID = configElement.getAttribute("finalPerspective");
+	String perspID = configElement.getAttribute("finalPerspective");//$NON-NLS-1$
 	if (perspID == null)
 		return;
 	// Map persp id to descriptor.

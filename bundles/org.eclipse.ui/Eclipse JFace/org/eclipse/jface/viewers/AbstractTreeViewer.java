@@ -1,9 +1,8 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
@@ -841,8 +840,8 @@ private void internalRefresh(Widget widget, Object element, boolean doStruct) {
 	}
 
 	if (doStruct) {
-		Object[] children= getSortedChildren(element);
-		updateChildren(widget, element, children);
+		// pass null for children, to allow updateChildren to get them only if needed
+		updateChildren(widget, element, null);
 	}
 	// recurse
 	Item[] children= getChildren(widget);
@@ -1150,11 +1149,12 @@ protected void setSelectionToWidget(List v, boolean reveal) {
  */
 protected abstract void showItem(Item item);
 /**
- * Handles adds and removes of children for the given parent.
+ * Updates the tree items to correspond to the child elements of the given parent element.
+ * If null is passed for the children, this method obtains them (only if needed).
  *
  * @param widget the widget
  * @param parent the parent element
- * @param elementChildren the child elements
+ * @param elementChildren the child elements, or null
  */
 protected void updateChildren(Widget widget, Object parent, Object[] elementChildren) {
 	// optimization! prune collapsed subtrees
@@ -1189,6 +1189,11 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		}
 	}
 
+	// If the children weren't passed in, get them now since they're needed below.
+	if (elementChildren == null) {
+		elementChildren = getSortedChildren(parent);
+	}
+	
 	Control tree = getControl();
 	
 	// WORKAROUND

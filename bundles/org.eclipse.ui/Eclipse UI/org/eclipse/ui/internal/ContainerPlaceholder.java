@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 public class ContainerPlaceholder extends PartPlaceholder
@@ -17,7 +16,7 @@ public class ContainerPlaceholder extends PartPlaceholder
  * @param label java.lang.String
  */
 public ContainerPlaceholder(String id) {
-	super(((id == null)?"Container Placeholder "+nextId++:id));
+	super(((id == null)?"Container Placeholder "+nextId++:id));//$NON-NLS-1$
 }
 /**
  * add method comment.

@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -19,7 +18,7 @@ package org.eclipse.ui.views.properties;
  */
 public DefaultsAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
-	setToolTipText("Reset the properties to their default values");
+	setToolTipText(PropertiesMessages.getString("DefaultAction.toolTip")); //$NON-NLS-1$
 }
 /**
  * Reset the properties to their default values.

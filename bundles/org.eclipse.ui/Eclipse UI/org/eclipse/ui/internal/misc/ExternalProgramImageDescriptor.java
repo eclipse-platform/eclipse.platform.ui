@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.misc;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.ISharedImages;

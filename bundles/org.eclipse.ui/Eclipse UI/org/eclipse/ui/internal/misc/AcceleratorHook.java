@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.misc;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -83,7 +87,7 @@ public void add(IAction action) {
  * @see org.eclipse.jface.action.Action
  */
 public void add(IAction action, String strAccel) {
-	Action fakeAction = new FakeAction("Fake\t"+strAccel);
+	Action fakeAction = new FakeAction("Fake\t"+strAccel);//$NON-NLS-1$
 	if (fakeAction.getAccelerator() == 0)
 		return;
 	actionList.add(new ActionItem(fakeAction.getAccelerator(), action));

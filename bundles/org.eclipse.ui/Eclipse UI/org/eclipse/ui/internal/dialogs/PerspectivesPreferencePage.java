@@ -1,15 +1,15 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -48,7 +48,7 @@ protected Control createContents(Composite parent) {
 
 	// Add the label
 	Label label = new Label(pageComponent, SWT.LEFT);
-	label.setText("Available perspectives:");
+	label.setText(WorkbenchMessages.getString("PerspectivesPreference.available")); //$NON-NLS-1$
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.horizontalSpan = 2;
@@ -148,9 +148,9 @@ protected Control createVerticalButtonBar(Composite parent) {
 	composite.setLayout(layout);
 
 	// Add the buttons to the button bar.
-	setDefaultButton = createVerticalButton(composite, "Set Default", false);
-	revertButton = createVerticalButton(composite, "Undo Changes", false);
-	deleteButton = createVerticalButton(composite, "Delete", false);
+	setDefaultButton = createVerticalButton(composite, WorkbenchMessages.getString("PerspectivesPreference.setDefault"), false); //$NON-NLS-1$
+	revertButton = createVerticalButton(composite, WorkbenchMessages.getString("PerspectivesPreference.undoChanges"), false); //$NON-NLS-1$
+	deleteButton = createVerticalButton(composite, WorkbenchMessages.getString("Delete"), false); //$NON-NLS-1$
 	updateButtons();
 
 	return composite;
@@ -214,7 +214,7 @@ protected void updateList() {
 		IPerspectiveDescriptor desc = (IPerspectiveDescriptor) perspectives.get(i);
 		String label = desc.getLabel();
 		if (desc.getId().equals(defaultPerspectiveId))
-			label += " (default)";
+			label = WorkbenchMessages.format("PerspectivesPreference.defaultLabel", new Object[] {label}); //$NON-NLS-1$
 		list.add(label, i);
 	}
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.model.AdaptableList;
@@ -114,7 +113,7 @@ public Object getParent(Object o) {
  */
 public IPath getPath() {
 	if (parent == null)
-		return new Path("");
+		return new Path("");//$NON-NLS-1$
 		
 	return parent.getPath().append(name);
 }
@@ -123,6 +122,12 @@ public IPath getPath() {
  */
 public Object[] getWizards() {
 	return wizards.getChildren();
+}
+/**
+ * Returns true if this element has no children and no wizards.
+ */
+public boolean isEmpty() {
+	return size() == 0 && wizards.size() == 0;
 }
 /**
  * Sets this collection's unique id.
@@ -140,11 +145,11 @@ public void setWizards(AdaptableList value) {
  * For debugging purposes.
  */
 public String toString() {
-	StringBuffer buf = new StringBuffer("WizardCollection, ");
+	StringBuffer buf = new StringBuffer("WizardCollection, ");//$NON-NLS-1$
 	buf.append(children.size());
-	buf.append(" children, ");
+	buf.append(" children, ");//$NON-NLS-1$
 	buf.append(wizards.size());
-	buf.append(" wizards");
+	buf.append(" wizards");//$NON-NLS-1$
 	return buf.toString();
 }
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -172,13 +171,13 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	configElement = cfig;
 
 	// Title.
-	title = cfig.getAttribute("name");
+	title = cfig.getAttribute("name");//$NON-NLS-1$
 	if (title == null) {
-		title = "Unknown";
+		title = "Unknown";//$NON-NLS-1$
 	}
 
 	// Icon.
-	String strIcon = cfig.getAttribute("icon");
+	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
 	if (strIcon != null) {
 		try {
 			IPluginDescriptor pd = cfig.getDeclaringExtension()

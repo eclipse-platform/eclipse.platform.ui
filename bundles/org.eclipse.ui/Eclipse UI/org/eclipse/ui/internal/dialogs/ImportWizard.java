@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
@@ -46,7 +45,7 @@ public void addPages() {
 			this.workbench, 
 			this.selection, 
 			getAvailableImportWizards(), 
-			"Select import source:")); 
+			WorkbenchMessages.getString("ImportWizard.selectSource")));  //$NON-NLS-1$
 }
 /**
  * Returns the import wizards that are available for invocation.
@@ -61,7 +60,7 @@ public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
 	this.workbench = aWorkbench;
 	this.selection = currentSelection;
 	
-	setWindowTitle("Import");
+	setWindowTitle(WorkbenchMessages.getString("ImportWizard.title")); //$NON-NLS-1$
 	setDefaultPageImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
 	setNeedsProgressMonitor(true);
 }

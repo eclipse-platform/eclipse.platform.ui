@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.UIHackFinder;
@@ -36,30 +35,28 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 		private Text text;
 		public void doSave(IProgressMonitor monitor) {}
 		public void doSaveAs() {}
-		public void gotoMarker(IMarker marker){}
-		public void init(IEditorSite site, IEditorInput input) {}
+		public void gotoMarker(IMarker marker) {}
+		public void init(IEditorSite site, IEditorInput input) {
+			setSite(site);
+			setInput(input);
+		}
 		public boolean isDirty() {return false;}
 		public boolean isSaveAsAllowed() {return false;}
 		public void createPartControl(Composite parent) {
 			text = new Text(parent,SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
 			text.setForeground(text.getDisplay().getSystemColor(SWT.COLOR_RED));
 			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			text.setText("An error has occurred when creating this editor");
+			text.setText(WorkbenchMessages.getString("EditorPane.errorMessage")); //$NON-NLS-1$
 		}
-		//public void dispose() {
-			//if (text != null) text.dispose();
-		//}
 		public void setFocus() {
 			if (text != null) text.setFocus();
 		}
-		public void setSite(IWorkbenchPartSite site) {
-			super.setSite(site);
-		}
-	}	
+	}
+	IEditorPart oldEditorPart = (IEditorPart)oldPart;
+	EditorSite oldEditorSite = (EditorSite)oldEditorPart.getEditorSite();
 	ErrorEditorPart newPart = new ErrorEditorPart();
-	PartSite site = (PartSite)oldPart.getSite();
-	newPart.setSite(site);
-	site.setPart(newPart);
+	oldEditorSite.setPart(newPart);
+	newPart.init(oldEditorSite, oldEditorPart.getEditorInput());
 	return newPart;
 }
 /**

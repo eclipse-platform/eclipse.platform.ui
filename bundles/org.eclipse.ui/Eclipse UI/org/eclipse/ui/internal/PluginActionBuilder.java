@@ -1,10 +1,8 @@
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.*;
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -23,152 +21,66 @@ public abstract class PluginActionBuilder extends RegistryReader {
 	protected String targetContributionTag;
 	protected List cache;
 	
-	public static final String TAG_MENU="menu";
-	public static final String TAG_ACTION="action";
-	public static final String TAG_SEPARATOR="separator";
-	public static final String TAG_FILTER="filter";
+	public static final String TAG_MENU="menu";//$NON-NLS-1$
+	public static final String TAG_ACTION="action";//$NON-NLS-1$
+	public static final String TAG_SEPARATOR="separator";//$NON-NLS-1$
+	public static final String TAG_FILTER="filter";//$NON-NLS-1$
 	
-	public static final String ATT_TARGET_ID = "targetID";
-	public static final String ATT_ID="id";
-	public static final String ATT_LABEL="label";
-	public static final String ATT_ENABLES_FOR="enablesFor";
-	public static final String ATT_NAME="name";
-	public static final String ATT_PATH="path";
+	public static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
+	public static final String ATT_ID="id";//$NON-NLS-1$
+	public static final String ATT_LABEL="label";//$NON-NLS-1$
+	public static final String ATT_ENABLES_FOR="enablesFor";//$NON-NLS-1$
+	public static final String ATT_NAME="name";//$NON-NLS-1$
+	public static final String ATT_PATH="path";//$NON-NLS-1$
 /**
  * The default constructor.
  */
 public PluginActionBuilder() {
 }
 /**
+ * Adds a group to a contribution manager.
+ * Subclasses may override.
+ */
+protected void addGroup(IContributionManager mgr, String name) {
+	mgr.add(new Separator(name));
+}
+/**
  * Contributes submenus and/or actions into the provided menu and tool bar managers.
  */
-protected void contribute(IMenuManager menu, IToolBarManager toolbar, boolean appendIfMissing) {
+public void contribute(IMenuManager menu, IToolBarManager toolbar, boolean appendIfMissing) {
+	if (cache == null)
+		return;
 	for (int i = 0; i < cache.size(); i++) {
 		Object obj = cache.get(i);
 		if (obj instanceof IConfigurationElement) {
-			IConfigurationElement menuElement = (IConfigurationElement) obj;
-			processMenu(menuElement, menu, appendIfMissing);
+			if (menu != null) {
+				IConfigurationElement menuElement = (IConfigurationElement) obj;
+				contributeMenu(menuElement, menu, appendIfMissing);
+			}
 		} else if (obj instanceof ActionDescriptor) {
 			ActionDescriptor ad = (ActionDescriptor) obj;
-			contributeMenuAction(ad, menu, appendIfMissing);
-			contributeToolbarAction(ad, toolbar, appendIfMissing);
+			if (menu != null)
+				contributeMenuAction(ad, menu, appendIfMissing);
+			if (toolbar != null)
+				contributeToolbarAction(ad, toolbar, appendIfMissing);
 		}
 	}
 }
 /**
- * Contributes action from action descriptor into the provided menu manager.
- */
-protected static void contributeMenuAction(ActionDescriptor ad, IMenuManager menu, boolean appendIfMissing) {
-	// Get config data.
-	String mpath = ad.getMenuPath();
-	String mgroup = ad.getMenuGroup();
-	if (mpath == null && mgroup == null)
-		return;
-
-	// Find parent menu.
-	IMenuManager parent = menu;
-	if (mpath != null) {
-		parent = parent.findMenuUsingPath(mpath);
-		if (parent == null) {
-			WorkbenchPlugin.log("Invalid Menu Extension (Path is invalid): " + ad.getId());
-			return;
-		}
-	}
-
-	// Find reference group.
-	if (mgroup == null)
-		mgroup = IWorkbenchActionConstants.MB_ADDITIONS;
-	IContributionItem sep = parent.find(mgroup);
-	if (sep == null) {
-		if (appendIfMissing)
-			parent.add(new Separator(mgroup));
-		else {
-			WorkbenchPlugin.log("Invalid Menu Extension (Group is invalid): " + ad.getId());
-			return;
-		}
-	}
-
-	// Add action.
-	try {
-		parent.insertAfter(mgroup, ad.getAction());
-	} catch (IllegalArgumentException e) {
-		WorkbenchPlugin.log("Invalid Menu Extension (Group is missing): " + ad.getId());
-	}
-}
-/**
- * Creates a named menu separator from the information in the configuration element.
- * If the separator already exists do not create a second.
- */
-protected static void contributeSeparator(IMenuManager menu, IConfigurationElement element) {
-	String id = element.getAttribute(ATT_NAME);
-	if (id == null || id.length() <= 0)
-		return;
-	IContributionItem sep = menu.find(id);
-	if (sep != null)
-		return;
-	menu.add(new Separator(id));
-}
-/**
- * Contributes action from the action descriptor into the provided tool bar manager.
- */
-protected static void contributeToolbarAction(ActionDescriptor ad, IToolBarManager toolbar, boolean appendIfMissing) {
-	// Get config data.
-	String tpath = ad.getToolbarPath();
-	String tgroup = ad.getToolbarGroup();
-	if (tpath == null && tgroup == null)
-		return;
-
-	// Find reference group.
-	if (tgroup == null)
-		tgroup = IWorkbenchActionConstants.MB_ADDITIONS;
-	IContributionItem sep = toolbar.find(tgroup);
-	if (sep == null) {
-		if (appendIfMissing)
-			toolbar.add(new Separator(tgroup));
-		else {
-			WorkbenchPlugin.log("Invalid Toolbar Extension (Group is invalid): " + ad.getId());
-			return;
-		}
-	}
-	
-	// Add action to tool bar.
-	try {
-		toolbar.insertAfter(tgroup, ad.getAction());
-	} catch (IllegalArgumentException e) {
-		WorkbenchPlugin.log("Invalid Toolbar Extension (Group is missing): " + ad.getId());
-	}
-}
-/**
- * This factory method returns a new ActionDescriptor for the
- * configuration element.  It should be implemented by subclasses.
- */
-protected abstract ActionDescriptor createActionDescriptor(IConfigurationElement element);
-/**
- * Returns the name of the part ID attribute that is expected
- * in the target extension.
- */
-protected String getTargetID(IConfigurationElement element) {
-	String value=element.getAttribute(ATT_TARGET_ID);
-	return value!=null? value : "???";
-}
-/**
- * Creates the menu from the information in the menu configuration element and
- * adds it into the provided menu manager. Target menu path must exist.
- */
-public static void processMenu(IConfigurationElement menuElement, IMenuManager mng) {
-	processMenu(menuElement, mng, false);
-}
-/**
- * Creates the menu from the information in the menu configuration element and
+ * Creates a menu from the information in the menu configuration element and
  * adds it into the provided menu manager. If 'appendIfMissing' is true, and
  * menu path slot is not found, it will be created and menu will be added
  * into it. Otherwise, add operation will fail.
  */
-public static void processMenu(IConfigurationElement menuElement, IMenuManager mng, boolean appendIfMissing) {
+protected void contributeMenu(IConfigurationElement menuElement, IMenuManager mng, boolean appendIfMissing) {
 	// Get config data.
 	String id = menuElement.getAttribute(ATT_ID);
 	String label = menuElement.getAttribute(ATT_LABEL);
 	String path = menuElement.getAttribute(ATT_PATH);
+	if (label == null) {
+		WorkbenchPlugin.log("Invalid Menu Extension (label == null): " + id); //$NON-NLS-1$
+		return;
+	}
 	
 	// Calculate menu path and group.
 	String group = null;
@@ -191,7 +103,7 @@ public static void processMenu(IConfigurationElement menuElement, IMenuManager m
 	if (path != null) {
 		parent = mng.findMenuUsingPath(path);
 		if (parent == null) {
-			WorkbenchPlugin.log("Invalid Menu Extension (Path is invalid): " + id);
+			WorkbenchPlugin.log("Invalid Menu Extension (Path is invalid): " + id);//$NON-NLS-1$
 			return;
 		}
 	}
@@ -202,9 +114,9 @@ public static void processMenu(IConfigurationElement menuElement, IMenuManager m
 	IContributionItem sep = parent.find(group);
 	if (sep==null) {
 		if (appendIfMissing)
-			parent.add(new Separator(group));
+			addGroup(parent, group);
 		else {
-			WorkbenchPlugin.log("Invalid Menu Extension (Group is invalid): " + id);
+			WorkbenchPlugin.log("Invalid Menu Extension (Group is invalid): " + id);//$NON-NLS-1$
 			return;
 		}
 	}
@@ -222,16 +134,130 @@ public static void processMenu(IConfigurationElement menuElement, IMenuManager m
 
 	// Add new menu
 	try {
-		parent.insertAfter(group, newMenu);
+		insertAfter(parent, group, newMenu);
 	} catch (IllegalArgumentException e) {
-		WorkbenchPlugin.log("Invalid Menu Extension (Group is missing): " + id);
+		WorkbenchPlugin.log("Invalid Menu Extension (Group is missing): " + id);//$NON-NLS-1$
 	}
+}
+/**
+ * Contributes action from action descriptor into the provided menu manager.
+ */
+protected void contributeMenuAction(ActionDescriptor ad, IMenuManager menu, boolean appendIfMissing) {
+	// Get config data.
+	String mpath = ad.getMenuPath();
+	String mgroup = ad.getMenuGroup();
+	if (mpath == null && mgroup == null)
+		return;
+
+	// Find parent menu.
+	IMenuManager parent = menu;
+	if (mpath != null) {
+		parent = parent.findMenuUsingPath(mpath);
+		if (parent == null) {
+			WorkbenchPlugin.log("Invalid Menu Extension (Path is invalid): " + ad.getId());//$NON-NLS-1$
+			return;
+		}
+	}
+
+	// Find reference group.
+	if (mgroup == null)
+		mgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+	IContributionItem sep = parent.find(mgroup);
+	if (sep == null) {
+		if (appendIfMissing)
+			addGroup(parent, mgroup);
+		else {
+			WorkbenchPlugin.log("Invalid Menu Extension (Group is invalid): " + ad.getId());//$NON-NLS-1$
+			return;
+		}
+	}
+
+	// Add action.
+	try {
+		insertAfter(parent, mgroup, ad.getAction());
+	} catch (IllegalArgumentException e) {
+		WorkbenchPlugin.log("Invalid Menu Extension (Group is missing): " + ad.getId());//$NON-NLS-1$
+	}
+}
+/**
+ * Creates a named menu separator from the information in the configuration element.
+ * If the separator already exists do not create a second.
+ */
+protected void contributeSeparator(IMenuManager menu, IConfigurationElement element) {
+	String id = element.getAttribute(ATT_NAME);
+	if (id == null || id.length() <= 0)
+		return;
+	IContributionItem sep = menu.find(id);
+	if (sep != null)
+		return;
+	menu.add(new Separator(id));
+}
+/**
+ * Contributes action from the action descriptor into the provided tool bar manager.
+ */
+protected void contributeToolbarAction(ActionDescriptor ad, IToolBarManager toolbar, boolean appendIfMissing) {
+	// Get config data.
+	String tpath = ad.getToolbarPath();
+	String tgroup = ad.getToolbarGroup();
+	if (tpath == null && tgroup == null)
+		return;
+
+	// Find reference group.
+	if (tgroup == null)
+		tgroup = IWorkbenchActionConstants.MB_ADDITIONS;
+	IContributionItem sep = toolbar.find(tgroup);
+	if (sep == null) {
+		if (appendIfMissing)
+			addGroup(toolbar, tgroup);
+		else {
+			WorkbenchPlugin.log("Invalid Toolbar Extension (Group is invalid): " + ad.getId());//$NON-NLS-1$
+			return;
+		}
+	}
+	
+	// Add action to tool bar.
+	try {
+		insertAfter(toolbar, tgroup, ad.getAction());
+	} catch (IllegalArgumentException e) {
+		WorkbenchPlugin.log("Invalid Toolbar Extension (Group is missing): " + ad.getId());//$NON-NLS-1$
+	}
+}
+/**
+ * This factory method returns a new ActionDescriptor for the
+ * configuration element.  It should be implemented by subclasses.
+ */
+protected abstract ActionDescriptor createActionDescriptor(IConfigurationElement element);
+/**
+ * Returns the name of the part ID attribute that is expected
+ * in the target extension.
+ */
+protected String getTargetID(IConfigurationElement element) {
+	String value=element.getAttribute(ATT_TARGET_ID);
+	return value!=null? value : "???";//$NON-NLS-1$
+}
+/**
+ * Inserts an action after another named contribution item.
+ * Subclasses may override.
+ */
+protected void insertAfter(IContributionManager mgr, String refId, 
+	IAction action) 
+{
+	insertAfter(mgr, refId, new ActionContributionItem(action));
+}
+/**
+ * Inserts a contribution item after another named contribution item.
+ * Subclasses may override.
+ */
+protected void insertAfter(IContributionManager mgr, String refId, 
+	IContributionItem item) 
+{
+	mgr.insertAfter(refId, item);
 }
 /**
  * Reads the contributions from the registry for the provided workbench
  * part and the provided extension point ID.
  */
-public void readContributions(String id, String tag, String extensionPoint) {
+protected void readContributions(String id, String tag, String extensionPoint) {
 	cache = null;
 	targetID = id;
 	targetContributionTag = tag;

@@ -1,9 +1,8 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
@@ -402,9 +401,13 @@ public ViewerSorter getSorter() {
  * @param event the SWT selection event
  */
 protected void handleDoubleSelect(SelectionEvent event) {
-	ISelection selection = getSelection();
-	updateSelection(selection);
-	fireDoubleClick(new DoubleClickEvent(this, selection));
+	// handle case where an earlier selection listener disposed the control.
+	Control control = getControl();
+	if (control != null && !control.isDisposed()) {
+		ISelection selection = getSelection();
+		updateSelection(selection);
+		fireDoubleClick(new DoubleClickEvent(this, selection));
+	}
 }
 /**
  * Handles an invalid selection.
@@ -450,7 +453,11 @@ protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
  * @param event the SWT selection event
  */
 protected void handleSelect(SelectionEvent event) {
-	updateSelection(getSelection());
+	// handle case where an earlier selection listener disposed the control.
+	Control control = getControl();
+	if (control != null && !control.isDisposed()) {
+		updateSelection(getSelection());
+	}
 }
 /**
  * Returns whether this viewer has any filters.

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -163,6 +162,10 @@ public interface IWorkbenchGraphicConstants {
 		
 	// product
 	public final static String IMG_OBJS_DEFAULT_PROD = "IMG_OBJS_DEFAULT_PROD";
+
+	// welcome
+	public final static String IMG_OBJS_WELCOME_ITEM = "IMG_OBJS_WELCOME_ITEM";
+	public final static String IMG_OBJS_WELCOME_BANNER = "IMG_OBJS_WELCOME_BANNER";
 
 	// synchronization indicator objects
 	public final static String IMG_OBJS_WBET_STAT = "IMG_OBJS_WBET_STAT";

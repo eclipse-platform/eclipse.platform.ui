@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -16,11 +20,14 @@ public class OpenNewAction extends Action {
  * @param workbenchWindow the window being used as a parent
  */
 public OpenNewAction(IWorkbenchWindow workbenchWindow) {
-	super("Open");
-	setToolTipText("Open Perspective");
+	super(WorkbenchMessages.getString("Open")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("OpenNewAction.toolTip")); //$NON-NLS-1$
 	setImageDescriptor(
 		WorkbenchImages.getImageDescriptor(
 			IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE));
+	setHoverImageDescriptor(
+		WorkbenchImages.getImageDescriptor(
+			IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER));
 	this.window = workbenchWindow;
 
 }
@@ -33,7 +40,7 @@ public void openPerspectiveInNewPage() {
 		IContainer element = ResourcesPlugin.getWorkspace().getRoot();
 		window.openPage(element);
 	} catch (WorkbenchException e) {
-		MessageDialog.openError(window.getShell(), "Problems Opening Perspective",
+		MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("OpenNewAction.errorTitle"), //$NON-NLS-1$
 			e.getMessage());
 	}
 }
@@ -46,7 +53,7 @@ public void openPerspectiveInNewWindow() {
 		IWorkbench wb = window.getWorkbench();
 		wb.openWorkbenchWindow(element);
 	} catch (WorkbenchException e) {
-		MessageDialog.openError(window.getShell(), "Problems Opening Window",
+		MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("OpenNewWindowMenu.dialogTitle"), //$NON-NLS-1$
 			e.getMessage());
 	}
 }

@@ -1,10 +1,10 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;
@@ -56,12 +56,12 @@ public class FileSelectionDialog extends SelectionDialog {
  */
 public FileSelectionDialog(Shell parentShell, FileSystemElement fileSystemElement, String message) {
 	super(parentShell);
-	setTitle("File Selection");
+	setTitle(WorkbenchMessages.getString("FileSelectionDialog.title")); //$NON-NLS-1$
 	root = fileSystemElement;
 	if (message != null)
 		setMessage(message);
 	else
-		setMessage("Select the files:");
+		setMessage(WorkbenchMessages.getString("FileSelectionDialog.message")); //$NON-NLS-1$
 }
 /**
  * Add the selection and deselection buttons to the dialog.
@@ -126,7 +126,7 @@ protected Control createDialogArea(Composite parent) {
 	createMessageArea(composite);
 
 	//create a fake parent of the root to be the dialog input element
-	FileSystemElement input = new FileSystemElement("Dummy", null, true);
+	FileSystemElement input = new FileSystemElement("Dummy", null, true);//$NON-NLS-1$
 	input.addChild(root);
 	root.setParent(input);
 

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.*;
@@ -35,8 +34,8 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
  */
 public NewWizardSelectionPage(IWorkbench aWorkbench , IStructuredSelection currentSelection, WizardCollectionElement elements) {
 	// override what superclass does with elements
-	super("newWizardSelectionPage", aWorkbench, currentSelection, null);
-	setDescription("Select a wizard");
+	super("newWizardSelectionPage", aWorkbench, currentSelection, null);//$NON-NLS-1$
+	setDescription(WorkbenchMessages.getString("NewWizardSelectionPage.description")); //$NON-NLS-1$
 	wizardCategories = elements;	
 }
 /**

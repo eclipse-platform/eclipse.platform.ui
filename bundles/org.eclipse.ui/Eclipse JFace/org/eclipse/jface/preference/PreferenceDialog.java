@@ -1,9 +1,8 @@
 package org.eclipse.jface.preference;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog; // disambiguate from SWT Dialog
@@ -28,12 +27,12 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	/**
 	 * Title area fields
 	 */
-	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image";
-	public static final String PREF_DLG_IMG_TITLE_ERROR = "preference_dialog_title_error_image";
+	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image";//$NON-NLS-1$
+	public static final String PREF_DLG_IMG_TITLE_ERROR = "preference_dialog_title_error_image";//$NON-NLS-1$
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));
-		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/title_error.gif"));
+		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
+		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/title_error.gif"));//$NON-NLS-1$
 	}
 	 
 	private static final RGB ERROR_BACKGROUND_RGB = new RGB(230, 226, 221);
@@ -331,7 +330,7 @@ private Composite createTitleArea(Composite parent) {
 	// Message label
 	messageLabel = new CLabel(titleArea, SWT.LEFT);
 	messageLabel.setBackground(bg);
-	messageLabel.setText(" ");
+	messageLabel.setText(" ");//$NON-NLS-1$
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	messageLabel.setLayoutData(gd);
 
@@ -576,7 +575,7 @@ public void setHelpAvailable(boolean b) {
 public void setMessage(String newMessage) {
 	message = newMessage;
 	if (message == null)
-		message = "";
+		message = "";//$NON-NLS-1$
 	if (messageLabel.getImage() == null) 
 		// we are not showing an error
 		messageLabel.setText(message);

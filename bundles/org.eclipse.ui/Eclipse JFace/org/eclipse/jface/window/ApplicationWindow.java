@@ -1,9 +1,8 @@
 package org.eclipse.jface.window;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -159,7 +158,7 @@ public ApplicationWindow(Shell parentShell) {
  */
 protected void addMenuBar() {
 	if ((getShell() == null) && (menuBarManager == null)) {
-		menuBarManager = new MenuManager();
+		menuBarManager = createMenuManager();
 	}
 }
 /**
@@ -169,7 +168,7 @@ protected void addMenuBar() {
  */
 protected void addStatusLine() {
 	if ((getShell() == null) && (statusLineManager == null)) {
-		statusLineManager = new StatusLineManager();
+		statusLineManager = createStatusLineManager();
 	}
 }
 /**
@@ -179,7 +178,7 @@ protected void addStatusLine() {
  */
 protected void addToolBar(int style) {
 	if ((getShell() == null) && (toolBarManager == null)) {
-		toolBarManager = new ToolBarManager(style);
+		toolBarManager = createToolBarManager(style);
 	}
 }
 /* (non-Javadoc)
@@ -225,6 +224,36 @@ protected void configureShell(Shell shell) {
 		Control control = statusLineManager.createControl(shell);
 		control.setFont(font);
 	}
+}
+/**
+ * Returns a new menu manager for the window.
+ * <p>
+ * Subclasses may override this method to customize the menu manager.
+ * </p>
+ * @return a menu manager
+ */
+protected MenuManager createMenuManager() {
+	return new MenuManager();
+}
+/**
+ * Returns a new status line manager for the window.
+ * <p>
+ * Subclasses may override this method to customize the status line manager.
+ * </p>
+ * @return a status line manager
+ */
+protected StatusLineManager createStatusLineManager() {
+	return new StatusLineManager();
+}
+/**
+ * Returns a new tool bar manager for the window.
+ * <p>
+ * Subclasses may override this method to customize the tool bar manager.
+ * </p>
+ * @return a tool bar manager
+ */
+protected ToolBarManager createToolBarManager(int style) {
+	return new ToolBarManager(style);
 }
 /**
  * Returns the default font used for this window.

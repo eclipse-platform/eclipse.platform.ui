@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.internal.registry.*;
@@ -30,7 +34,7 @@ public void run() {
 		try {
 			page.showView(desc.getID());
 		} catch (PartInitException e) {
-			MessageDialog.openError(window.getShell(), "Problems Showing View",
+			MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
 				e.getMessage());
 		}
 	}

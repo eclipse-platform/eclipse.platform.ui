@@ -1,5 +1,9 @@
 package org.eclipse.ui.wizards.datatransfer;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.dialogs.FileSystemElement;

@@ -1,9 +1,8 @@
 package org.eclipse.jface.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
@@ -325,8 +324,10 @@ public void setMessage(String newMessage) {
 public void setTitle(String title) {
 	this.title = title;
 }
-/* (non-Javadoc)
- * Method declared on IDialogPage.
+/**
+ * The <code>DialogPage</code> implementation of this <code>IDialogPage</code>
+ * method sets the control to the given visibility state.
+ * Subclasses may extend.
  */
 public void setVisible(boolean visible) {
 	control.setVisible(visible);

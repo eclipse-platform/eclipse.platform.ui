@@ -1,9 +1,8 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
  
 import org.eclipse.swt.SWT;
@@ -100,6 +99,8 @@ public void applyEditorValue() {
 		if (t != null && !t.isDisposed()) {
 			saveEditorValue(c, t);
 		}
+		setEditor(null, null, 0);
+		c.removeListener(cellEditorListener);
 		c.deactivate();
 	}
 }
@@ -119,14 +120,15 @@ public void cancelEditing() {
  * Start editing the given element. 
  */
 public void editElement(Object element, int column) {
+	if (cellEditor != null)
+		applyEditorValue();
+
 	setSelection(new StructuredSelection(element), true);
 	Item[] selection = getSelection();
 	if (selection.length != 1)
 		return;
 
 	tableItem = selection[0];
-	if (cellEditor != null)
-		applyEditorValue();
 
 	// Make sure selection is visible
 	showSelection();

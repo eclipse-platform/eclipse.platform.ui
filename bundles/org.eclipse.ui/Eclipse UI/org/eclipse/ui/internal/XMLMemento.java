@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.io.*;
 import java.util.*;
@@ -120,7 +119,7 @@ public IMemento [] getChildren(String type) {
 	NodeList nodes = element.getChildNodes();
 	int size = nodes.getLength();
 	if (size == 0)
-		return null;
+		return new IMemento[0];
 
 	// Extract each node with given type.
 	ArrayList list = new ArrayList(size);
@@ -158,8 +157,8 @@ public Float getFloat(String key) {
 	try {
 		return new Float(strValue);
 	} catch (NumberFormatException e) {
-		WorkbenchPlugin.log("Memento problem - Invalid float for key: " 
-			+ key + " value: " + strValue);
+		WorkbenchPlugin.log("Memento problem - Invalid float for key: " //$NON-NLS-1$
+			+ key + " value: " + strValue);//$NON-NLS-1$
 		return null;
 	}
 }
@@ -180,8 +179,8 @@ public Integer getInteger(String key) {
 	try {
 		return new Integer(strValue);
 	} catch (NumberFormatException e) {
-		WorkbenchPlugin.log("Memento problem - invalid integer for key: " + key 
-			+ " value: " + strValue);
+		WorkbenchPlugin.log("Memento problem - invalid integer for key: " + key //$NON-NLS-1$
+			+ " value: " + strValue);//$NON-NLS-1$
 		return null;
 	}
 }
@@ -246,7 +245,7 @@ public void putString(String key, String value) {
  */
 public void save(Writer writer) throws IOException {
 	OutputFormat format = new OutputFormat();
-	Serializer serializer = SerializerFactory.getSerializerFactory("xml").makeSerializer(writer, format);
+	Serializer serializer = SerializerFactory.getSerializerFactory("xml").makeSerializer(writer, format);//$NON-NLS-1$
 	serializer.asDOMSerializer().serialize(factory);
 }
 }

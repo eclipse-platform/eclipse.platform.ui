@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.util.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -23,8 +22,8 @@ public class AboutAction extends Action {
  * Creates a new <code>AboutAction</code> with the given label
  */
 public AboutAction(IWorkbenchWindow window) {
-	super("&About " + ((Workbench)PlatformUI.getWorkbench()).getProductInfo().getName());
-	setToolTipText("About " + ((Workbench)PlatformUI.getWorkbench()).getProductInfo().getName());
+	super(WorkbenchMessages.format("AboutAction.text", new Object[] {((Workbench)PlatformUI.getWorkbench()).getProductInfo().getName()})); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.format("AboutAction.toolTip", new Object[] {((Workbench)PlatformUI.getWorkbench()).getProductInfo().getName()})); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.ABOUT);
 	this.workbenchWindow = window;
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.ABOUT_ACTION});

@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -13,6 +12,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,7 +32,7 @@ public class CreateFolderAction extends SelectionListenerAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".CreateFolderAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CreateFolderAction";//$NON-NLS-1$
 	
 	/**
 	 * The shell in which to show any dialogs.
@@ -44,11 +44,11 @@ public class CreateFolderAction extends SelectionListenerAction {
  * @param shell the shell for any dialogs
  */
 public CreateFolderAction(Shell shell) {
-	super("New F&older");
+	super(WorkbenchMessages.getString("CreateFolderAction.text")); //$NON-NLS-1$
 	Assert.isNotNull(shell);
 	this.shell = shell;
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
-	setToolTipText("Create a new folder");
+	setToolTipText(WorkbenchMessages.getString("CreateFolderAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CREATE_FOLDER_ACTION});
 }
@@ -63,7 +63,7 @@ public void run() {
 	wizard.setNeedsProgressMonitor(true);
 	WizardDialog dialog = new WizardDialog(shell, wizard);
 	dialog.create();
-	dialog.getShell().setText("New");
+	dialog.getShell().setText(WorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
 	dialog.open();
 
 }

@@ -1,10 +1,15 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.*;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,7 +47,7 @@ public Image getImage(Object element) {
 	return null;
 }
 public String getText(Object element) {
-	String label = "Unknown";
+	String label = WorkbenchMessages.getString("ViewLabel.unknown"); //$NON-NLS-1$
 	if (element instanceof ICategory)
 		label = ((ICategory)element).getLabel();
 	else if (element instanceof IViewDescriptor)

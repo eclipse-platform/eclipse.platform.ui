@@ -1,11 +1,16 @@
 package org.eclipse.ui.actions;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.dialogs.*;
@@ -22,21 +27,17 @@ import java.util.List;
  * manipulated. This should be disabled for multi select or no selection.
  */
 public class CopyProjectAction extends SelectionListenerAction {
-	private static String COPY_TOOL_TIP = "Copy the project";
-	private static String COPY_TITLE = "&Copy";
-	private static String COPY_PROGRESS_TITLE = "Copying:";
-	private static String COPY_PREFIX = "Copy ";
-	private static String OPEN_BRACKET = "(";
-	private static String CLOSE_BRACKET = ")";
-	private static String EXISTING_NAME_PREFIX = "of ";
+	private static String COPY_TOOL_TIP = WorkbenchMessages.getString("CopyProjectAction.toolTip"); //$NON-NLS-1$
+	private static String COPY_TITLE = WorkbenchMessages.getString("CopyProjectAction.title"); //$NON-NLS-1$
+	private static String COPY_PROGRESS_TITLE = WorkbenchMessages.getString("CopyProjectAction.progressTitle"); //$NON-NLS-1$
 	private static String COPY_PROJECT_FAILED_MESSAGE =
-		"Problems occurred copying the project.";
-	private static String PROBLEMS_TITLE = "Copy Problems";
+		WorkbenchMessages.getString("CopyProjectAction.copyFailedMessage"); //$NON-NLS-1$
+	private static String PROBLEMS_TITLE = WorkbenchMessages.getString("CopyProjectAction.copyFailedTitle"); //$NON-NLS-1$
 
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyProjectAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyProjectAction";//$NON-NLS-1$
 
 	/**
 	 * The shell in which to show any dialogs.
@@ -110,34 +111,6 @@ void displayError(String message) {
 	MessageDialog.openError(this.shell,getErrorsTitle(), message);
 }
 /**
- * Generate a new name for the project that does not have any collisions.
- * @return String
- * @param projectName String
- * @param workspace IWorkspace
- */
-private String getCopyNameFor(String projectName, IWorkspace workspace) {
-
-	IWorkspaceRoot root = workspace.getRoot();
-	if (root.getProject(projectName) != null)
-		return projectName;
-
-	int counter = 1;
-	while (true) {
-		String nameSegment = COPY_PREFIX;
-
-		if (counter > 1)
-			nameSegment += OPEN_BRACKET + counter + CLOSE_BRACKET;
-
-		nameSegment += EXISTING_NAME_PREFIX + projectName;
-
-		if (workspace.getRoot().getProject(nameSegment) == null)
-			return nameSegment;
-
-		counter++;
-	}
-
-}
-/**
  * Return the title of the errors dialog.
  * @return java.lang.String
  */
@@ -194,7 +167,7 @@ boolean performCopy(
 	} catch (InterruptedException e) {
 		return false;
 	} catch (InvocationTargetException e) {
-		displayError("Internal error: " + e.getTargetException().getMessage());
+		displayError(WorkbenchMessages.format("CopyProjectAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
 		return false;
 	}
 
@@ -233,13 +206,10 @@ public void run() {
 	if (destinationPaths == null)
 		return;
 
-	String projectName = (String) destinationPaths[0];
+	String newName = (String) destinationPaths[0];
 	IPath newLocation = new Path((String) destinationPaths[1]);
 
-	String copyName =
-		getCopyNameFor(projectName, WorkbenchPlugin.getPluginWorkspace());
-
-	boolean completed = performCopy(project, copyName, newLocation);
+	boolean completed = performCopy(project, newName, newLocation);
 
 	if (!completed) // ie.- canceled
 		return; // not appropriate to show errors

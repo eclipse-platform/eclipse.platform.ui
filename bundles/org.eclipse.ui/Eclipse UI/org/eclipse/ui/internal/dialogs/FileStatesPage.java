@@ -1,28 +1,32 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
-
+import java.text.MessageFormat;
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.
  */
 public class FileStatesPage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage,Listener {
-
-	private static final String LONGEVITY_TITLE = "Days To Keep Files";
-	private static final String MAX_FILE_STATES_TITLE = "Entries Per File";
-	private static final String MAX_FILE_STATE_SIZE_TITLE = "Disk Space To Use (MB)";
-	private static final String POSITIVE_MESSAGE = "Values must be positive";
-	private static final String INVALID_VALUE_MESSAGE = "Invalid Value: ";
-	private static final String SAVE_ERROR_MESSAGE = "Exception saving local history ";
+	private static final String LONGEVITY_TITLE = WorkbenchMessages.getString("FileHistory.longevity"); //$NON-NLS-1$
+	private static final String MAX_FILE_STATES_TITLE = WorkbenchMessages.getString("FileHistory.entries"); //$NON-NLS-1$
+	private static final String MAX_FILE_STATE_SIZE_TITLE = WorkbenchMessages.getString("FileHistory.diskSpace"); //$NON-NLS-1$
+	private static final String POSITIVE_MESSAGE = WorkbenchMessages.getString("FileHistory.mustBePositive"); //$NON-NLS-1$
+	private static final String INVALID_VALUE_MESSAGE = WorkbenchMessages.getString("FileHistory.invalid"); //$NON-NLS-1$
+	private static final String SAVE_ERROR_MESSAGE = WorkbenchMessages.getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
 
 	private static final int FAILED_VALUE = -1;
 
@@ -186,7 +190,7 @@ private int validateIntegerTextEntry(Text text) {
 		value = Integer.parseInt(text.getText());
 		
 	} catch (NumberFormatException exception) {
-		setErrorMessage(INVALID_VALUE_MESSAGE + exception.getLocalizedMessage());
+		setErrorMessage(MessageFormat.format(INVALID_VALUE_MESSAGE, new Object[] {exception.getLocalizedMessage()}));
 		return FAILED_VALUE;
 	}
 
@@ -211,7 +215,7 @@ private long validateLongTextEntry(Text text) {
 		value = Long.parseLong(text.getText());
 		
 	} catch (NumberFormatException exception) {
-		setErrorMessage(INVALID_VALUE_MESSAGE + exception.getLocalizedMessage());
+		setErrorMessage(MessageFormat.format(INVALID_VALUE_MESSAGE, new Object[] {exception.getLocalizedMessage()}));
 		return FAILED_VALUE;
 	}
 

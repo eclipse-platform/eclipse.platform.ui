@@ -1,15 +1,15 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -36,7 +36,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenFileAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenFileAction";//$NON-NLS-1$
 
 	/**
 	 * The editor to open.
@@ -60,9 +60,9 @@ public OpenFileAction(IWorkbenchPage page) {
  */
 public OpenFileAction(IWorkbenchPage page, IEditorDescriptor descriptor) {
 	super(page);
-	setText(descriptor == null ? "&Open" : descriptor.getLabel());
+	setText(descriptor == null ? WorkbenchMessages.getString("OpenFileAction.text") : descriptor.getLabel()); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_FILE_ACTION});
-	setToolTipText("Edit the file");
+	setToolTipText(WorkbenchMessages.getString("OpenFileAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	this.editorDescriptor = descriptor;
 }
@@ -87,8 +87,8 @@ boolean ensureFileLocal(final IFile file) {
  */
 void openFile(IFile file) {
 	if (getWorkbenchPage() == null) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, "Workbench page must be supplied to OpenFileAction", null);
-		WorkbenchPlugin.log("Error in OpenFileAction.openFile", status);
+		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("OpenFileAction.openFileError"), null); //$NON-NLS-1$
+		WorkbenchPlugin.log(WorkbenchMessages.getString("OpenFileAction.openFileErrorTitle"), status); //$NON-NLS-1$
 		return;
 	}
 	try {
@@ -101,7 +101,7 @@ void openFile(IFile file) {
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			getWorkbenchPage().getWorkbenchWindow().getShell(),
-			"Problems Opening Editor",
+			WorkbenchMessages.getString("OpenFileAction.openFileShellTitle"), //$NON-NLS-1$
 			e.getMessage(),
 			e);
 	}

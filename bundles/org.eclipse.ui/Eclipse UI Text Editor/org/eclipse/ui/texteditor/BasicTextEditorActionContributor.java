@@ -1,16 +1,19 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
+import java.util.ResourceBundle;
+
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 
@@ -25,7 +28,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * <p>
  * Subclasses may override the following methods:
  * <ul>
- *   <li><code>contributeToMenu</code> - reimplement to contribute to menu</li>
+ *   <li><code>contributeToMenu</code> - extend to contribute to menu</li>
  *   <li><code>contributeToToolBar</code> - reimplement to contribute to toolbar</li>
  *   <li><code>contributeToStatusLine</code> - reimplement to contribute to status line</li>
  *   <li><code>setActiveEditor</code> - extend to react to editor changes</li>
@@ -48,7 +51,11 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	};
 	
 	/** The active editor part */
-	private IEditorPart fActiveEditorPart= null;
+	private IEditorPart fActiveEditorPart;
+	/** The go to line action */
+	private RetargetTextEditorAction fGotoLine;
+	/** The contributor's resource bundle */
+	private ResourceBundle fResourceBundle;
 	
 	
 	/**
@@ -58,6 +65,16 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @see org.eclipse.ui.IEditorActionBarContributor#init
 	 */
 	public BasicTextEditorActionContributor() {
+		fGotoLine= new RetargetTextEditorAction(getResourceBundle(), "GotoLine.");
+	}
+	/**
+	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
+	 */
+	public void contributeToMenu(IMenuManager menu) {
+		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+		if (editMenu != null) {
+			editMenu.add(fGotoLine);
+		}
 	}
 	/**
 	 * Returns the action registered with the given text editor.
@@ -77,6 +94,16 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	protected final IEditorPart getActiveEditorPart() {
 		return fActiveEditorPart;
 	}
+	/** 
+	 * Returns the contributor's resource bundle.
+	 *
+	 * @return the contributor's resource bundle
+	 */
+	private ResourceBundle getResourceBundle() {
+		if (fResourceBundle == null)
+			fResourceBundle= ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
+		return fResourceBundle;
+	}
 	/**
 	 * The <code>BasicTextEditorActionContributor</code> implementation of this 
 	 * <code>IEditorActionBarContributor</code> method installs the global 
@@ -88,12 +115,14 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			return;
 			
 		fActiveEditorPart= part;
+		ITextEditor editor= (part instanceof ITextEditor) ? (ITextEditor) part : null;
 		
 		IActionBars actionBars= getActionBars();
 		if (actionBars != null) {
-			ITextEditor editor= (part instanceof ITextEditor) ? (ITextEditor) part : null;
 			for (int i= 0; i < ACTIONS.length; i++)
 				actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 		}
+		
+		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 	}
 }

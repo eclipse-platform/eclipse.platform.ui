@@ -1,7 +1,12 @@
 package org.eclipse.ui.internal.model;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -30,6 +35,6 @@ public ImageDescriptor getImageDescriptor(Object object) {
  */
 public String getLabel(Object o) {
 	//root resource has no name
-	return "Workspace";
+	return WorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
 }
 }

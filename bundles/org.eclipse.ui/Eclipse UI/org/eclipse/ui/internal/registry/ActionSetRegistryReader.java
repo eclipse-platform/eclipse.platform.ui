@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
@@ -14,7 +13,7 @@ import org.eclipse.ui.internal.misc.UIHackFinder;
  * A strategy to read view extensions from the registry.
  */
 public class ActionSetRegistryReader extends RegistryReader {
-	private static final String TAG_SET="actionSet";
+	private static final String TAG_SET="actionSet";//$NON-NLS-1$
 	private ActionSetRegistry registry;
 	
 /**
@@ -33,7 +32,7 @@ protected boolean readElement(IConfigurationElement element) {
 			registry.addActionSet(desc);
 		} catch (CoreException e) {
 			// log an error since its not safe to open a dialog here
-			WorkbenchPlugin.log("Unable to create action set descriptor.",e.getStatus());
+			WorkbenchPlugin.log("Unable to create action set descriptor.",e.getStatus());//$NON-NLS-1$
 		}
 		return true;
 	} else {

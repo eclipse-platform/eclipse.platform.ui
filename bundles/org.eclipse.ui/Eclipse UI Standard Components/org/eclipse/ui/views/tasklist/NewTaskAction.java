@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -51,7 +50,7 @@ public void run() {
 				IResource resource = taskList.getResource();
 				IMarker marker = resource.createMarker(IMarker.TASK);
 				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-				marker.setAttribute(IMarker.MESSAGE, "Enter task description");
+				marker.setAttribute(IMarker.MESSAGE, TaskListMessages.getString("NewTask.enterDescription")); //$NON-NLS-1$
 				taskList.setNewlyCreatedTaskInstance(marker);
 				result[0] = marker;
 			}
@@ -59,7 +58,7 @@ public void run() {
 	} catch (CoreException e) {
 		ErrorDialog.openError(
 			getShell(),
-			"Error creating task",
+			TaskListMessages.getString("NewTask.errorMessage"), //$NON-NLS-1$
 			null,
 			e.getStatus());
 		return;

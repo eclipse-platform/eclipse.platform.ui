@@ -1,15 +1,15 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -37,8 +37,8 @@ public abstract class SelectionDialog extends Dialog {
 	// message to show user
 	private String message;
 
-	static String SELECT_ALL_TITLE = "Select All";
-	static String DESELECT_ALL_TITLE = "Deselect All";
+	static String SELECT_ALL_TITLE = WorkbenchMessages.getString("SelectionDialog.selectLabel"); //$NON-NLS-1$
+	static String DESELECT_ALL_TITLE = WorkbenchMessages.getString("SelectionDialog.deselectLabel"); //$NON-NLS-1$
 /**
  * Creates a dialog instance.
  * Note that the dialog will have no visual representation (no widgets)

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -26,8 +25,9 @@ public class EditActionSetsAction  extends Action {
  * 
  */
 public EditActionSetsAction(IWorkbenchWindow window) {
-	super("Customize...");
-	setToolTipText("Customize the current perspective...");
+	super(WorkbenchMessages.getString("EditorActionSetsAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("EditorActionSetsAction.toolTip")); //$NON-NLS-1$
+	setEnabled(false);
 	this.window = window;
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.EDIT_ACTION_SETS_ACTION});
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -12,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import java.util.Iterator;
@@ -31,35 +31,35 @@ public class OpenResourceAction extends WorkspaceAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenResourceAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenResourceAction";//$NON-NLS-1$
 /**
  * Creates a new action.
  *
  * @param shell the shell for any dialogs
  */
 public OpenResourceAction(Shell shell) {
-	super(shell, "&Open Project");
+	super(shell, WorkbenchMessages.getString("OpenResourceAction.text")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_RESOURCE_ACTION});
-	setToolTipText("Open Project");
+	setToolTipText(WorkbenchMessages.getString("OpenResourceAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return "";
+	return "";//$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return "Problems occurred opening the selected resources.";
+	return WorkbenchMessages.getString("OpenResourceAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return "Open Problems";
+	return WorkbenchMessages.getString("OpenResourceAction.dialogTitle"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
@@ -46,7 +45,7 @@ public boolean close() {
  */
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
-	newShell.setText("About " + info.getName());
+	newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] {info.getName()})); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(newShell, new Object[] {IHelpContextIds.ABOUT_DIALOG});
 }
 /**
@@ -120,12 +119,10 @@ protected Control createDialogArea(Composite parent) {
  * Answer the text to show on the right side of the dialog.
  */ 
 protected String text() {
-	return
-		info.getDetailedName()
-		+ "\n"
-		+ "\nVersion: " + info.getVersion()
-		+ (info.getBuildID().length() == 0 ? "" : "\nBuild: " + info.getBuildID())
-		+ "\n\n"
-		+ info.getCopyright();
+	if (info.getBuildID().length() == 0) {
+		return WorkbenchMessages.format("AboutText.withoutBuildNumber", new Object[] {info.getDetailedName(),info.getVersion(),info.getCopyright()}); //$NON-NLS-1$
+	} else {
+		return WorkbenchMessages.format("AboutText.withBuildNumber", new Object[] {info.getDetailedName(),info.getVersion(),info.getBuildID(),info.getCopyright()}); //$NON-NLS-1$
+	}
 }
 }

@@ -1,13 +1,13 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,15 +25,15 @@ public class ScrubLocalAction extends WorkspaceAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = "org.eclipse.ui.ScrubLocalAction";
+	public static final String ID = "org.eclipse.ui.ScrubLocalAction";//$NON-NLS-1$
 /**
  * Creates a new action.
  *
  * @param shell the shell for any dialogs
  */
 public ScrubLocalAction(Shell shell) {
-	super(shell, "Discard &Local Copy");
-	setToolTipText("Discard the local contents of the resource");
+	super(shell, WorkbenchMessages.getString("ScrubLocalAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SCRUB_LOCAL_ACTION});
 }
@@ -41,25 +41,25 @@ public ScrubLocalAction(Shell shell) {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return "Discarding content:";
+	return WorkbenchMessages.getString("ScrubLocalAction.progress"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return "Problems occurred removing the local contents of the selected resources.";
+	return WorkbenchMessages.getString("ScrubLocalAction.problemsMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return "Content Removal Problems";
+	return WorkbenchMessages.getString("ScrubLocalAction.problemsTitle"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
-	resource.setLocal(false, IResource.DEPTH_INFINITE);
+	resource.setLocal(false, IResource.DEPTH_INFINITE,monitor);
 }
 /**
  * The <code>ScrubLocalAction</code> implementation of this

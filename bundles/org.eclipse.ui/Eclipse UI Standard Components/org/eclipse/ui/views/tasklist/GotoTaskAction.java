@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.IWorkbenchPage;
@@ -34,17 +33,17 @@ public void run() {
 		return;
 	IMarker marker = (IMarker) o;
 	IResource resource = marker.getResource();
-	if (!(resource instanceof IFile))
-		return;
-	IWorkbenchPage page = getTaskList().getSite().getPage();
-	try {
-		page.openEditor(marker);
-	} catch (PartInitException e) {
-		DialogUtil.openError(
-			page.getWorkbenchWindow().getShell(),
-			"Problems Opening Editor",
-			e.getMessage(),
-			e);
+	if (marker.exists() && resource instanceof IFile) {
+		IWorkbenchPage page = getTaskList().getSite().getPage();
+		try {
+			page.openEditor(marker);
+		} catch (PartInitException e) {
+			DialogUtil.openError(
+				page.getWorkbenchWindow().getShell(),
+				TaskListMessages.getString("GoToTask.errorMessage"), //$NON-NLS-1$
+				e.getMessage(),
+				e);
+		}
 	}
 }
 }

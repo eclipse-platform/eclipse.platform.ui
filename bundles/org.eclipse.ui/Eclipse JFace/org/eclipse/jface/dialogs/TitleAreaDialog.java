@@ -1,9 +1,8 @@
 package org.eclipse.jface.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
@@ -21,7 +20,12 @@ public class TitleAreaDialog extends Dialog {
 	/**
 	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
 	 */
-	public static final String DLG_IMG_TITLE_ERROR = "dialog_title_error_image";
+	public static final String DLG_IMG_TITLE_ERROR = "dialog_title_error_image";//$NON-NLS-1$
+
+	/**
+	 * Image registry key for banner image (value <code>"dialog_title_banner_image"</code>).
+	 */
+	public static final String DLG_IMG_TITLE_BANNER = "dialog_title_banner_image";//$NON-NLS-1$
 
 	// Space between the top of the title area and the title
 	private static final int H_INDENT_TITLE = 7;
@@ -42,7 +46,8 @@ public class TitleAreaDialog extends Dialog {
 
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_error.gif"));
+		reg.put(DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_error.gif"));//$NON-NLS-1$
+		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_banner.gif"));//$NON-NLS-1$
 	}
 
 	// Title area fields
@@ -80,7 +85,7 @@ public class TitleAreaDialog extends Dialog {
 
 			// get the message size
 			String temp = messageLabel.getText();
-			messageLabel.setText(" \n ");
+			messageLabel.setText(" \n ");//$NON-NLS-1$
 			Point messageSize = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			messageLabel.setText(temp);
 	
@@ -138,7 +143,7 @@ public class TitleAreaDialog extends Dialog {
 
 			// layout the message
 			String temp = messageLabel.getText();
-			messageLabel.setText(" \n ");  // 2 line limit
+			messageLabel.setText(" \n ");  // 2 line limit//$NON-NLS-1$
 			int labelHeight = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 			messageLabel.setText(temp);
 			messageLabel.setBounds(currentXBegin, V_INDENT_MSG, currentXEnd - currentXBegin, 
@@ -227,7 +232,7 @@ private Composite createTitleArea(Composite parent) {
 	titleLabel = new Label(titleArea, SWT.LEFT);
 	titleLabel.setBackground(bg);
 	titleLabel.setFont(JFaceResources.getBannerFont());
-	titleLabel.setText(" ");
+	titleLabel.setText(" ");//$NON-NLS-1$
 
 	// Composite to hold message label & icon
 	// Need it to draw background color box when error msg
@@ -258,12 +263,13 @@ private Composite createTitleArea(Composite parent) {
 	// Message label @ bottom, center
 	messageLabel = new Label(messageArea, SWT.WRAP);
 	messageLabel.setBackground(bg);
-	messageLabel.setText(" \n "); // two lines
+	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 	messageLabel.setFont(parent.getFont());
 
 	// Dialog image @ right
 	titleImage = new Label(titleArea, SWT.CENTER);
 	titleImage.setBackground(bg);
+	titleImage.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
 	GridData gd = new GridData(); 
 	gd.horizontalAlignment = gd.END;
 	titleImage.setLayoutData(gd);
@@ -337,7 +343,7 @@ public void setErrorMessage(String errorMessage) {
 public void setMessage(String newMessage) {
 	message = newMessage;
 	if (message == null)
-		message = "";
+		message = "";//$NON-NLS-1$
 	if (!messageImage.getVisible()) 
 		// we are not showing an error
 		messageLabel.setText(message);
@@ -352,7 +358,7 @@ public void setTitle(String newTitle) {
 		return;
 	String title = newTitle;
 	if (title == null)
-		title = "";
+		title = "";//$NON-NLS-1$
 	titleLabel.setText(title);
 }
 /**

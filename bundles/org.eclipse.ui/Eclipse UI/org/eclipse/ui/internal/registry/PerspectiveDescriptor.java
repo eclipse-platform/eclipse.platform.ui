@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.registry;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.core.runtime.*;
@@ -30,11 +34,11 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	private IConfigurationElement configElement;
 	private File customFile;
 	
-	private static final String ATT_ID="id";
-	private static final String ATT_DEFAULT = "default";
-	private static final String ATT_NAME="name";
-	private static final String ATT_ICON="icon";
-	private static final String ATT_CLASS="class";
+	private static final String ATT_ID="id";//$NON-NLS-1$
+	private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
+	private static final String ATT_NAME="name";//$NON-NLS-1$
+	private static final String ATT_ICON="icon";//$NON-NLS-1$
+	private static final String ATT_CLASS="class";//$NON-NLS-1$
 /**
  * Create a descriptor from a file.
  */
@@ -85,7 +89,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement)
 	if ((label == null) || (className == null)) {
 		throw new CoreException(new Status(IStatus.ERROR,
 			WorkbenchPlugin.PI_WORKBENCH, 0,
-			"Invalid extension (missing label or class name): " + id,
+			"Invalid extension (missing label or class name): " + id,//$NON-NLS-1$
 			null));
 	}
 
@@ -160,7 +164,7 @@ public boolean hasDefaultFlag() {
 	String str = configElement.getAttribute(ATT_DEFAULT);
 	if (str == null)
 		return false;
-	return str.equals("true");
+	return str.equals("true");//$NON-NLS-1$
 }
 /**
  * Returns true if this perspective is predefined by an extension.

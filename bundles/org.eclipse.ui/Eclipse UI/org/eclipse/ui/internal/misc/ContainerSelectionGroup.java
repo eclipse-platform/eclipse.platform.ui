@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -41,8 +40,8 @@ public class ContainerSelectionGroup extends Composite {
 
 
 	// the message to display at the top of this dialog
-	private static final String DEFAULT_MSG_NEW_ALLOWED = "Enter or select the folder:";
-	private static final String DEFAULT_MSG_SELECT_ONLY = "Select the folder:";
+	private static final String DEFAULT_MSG_NEW_ALLOWED = WorkbenchMessages.getString("ContainerGroup.message"); //$NON-NLS-1$
+	private static final String DEFAULT_MSG_SELECT_ONLY = WorkbenchMessages.getString("ContainerGroup.selectFolder"); //$NON-NLS-1$
 
 	// sizing constants
 	private static final int SIZING_SELECTION_PANE_HEIGHT = 125;
@@ -91,7 +90,7 @@ public void containerSelectionChanged(IContainer container) {
 	
 	if (allowNewContainerName) {
 		if (container == null)
-			containerNameField.setText("");
+			containerNameField.setText("");//$NON-NLS-1$
 		else
 			containerNameField.setText(container.getFullPath().makeRelative().toString());
 	}

@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
@@ -37,26 +36,26 @@ class WizardZipFileResourceImportPage1
 
 	// constants
 	private static final int COMBO_HISTORY_LENGTH = 5;
-	private static final String FILE_IMPORT_MASK = "*.jar;*.zip";
+	private static final String FILE_IMPORT_MASK = "*.jar;*.zip";//$NON-NLS-1$
 
 	// dialog store id constants
 	private final static String STORE_SOURCE_NAMES_ID =
-		"WizardZipFileImportPage1.STORE_SOURCE_NAMES_ID";
+		"WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
 	private final static String STORE_IMPORT_ALL_RESOURCES_ID =
-		"WizardZipFileImportPage1.STORE_IMPORT_ALL_ENTRIES_ID";
+		"WizardZipFileResourceImportPage1.STORE_IMPORT_ALL_ENTRIES_ID";//$NON-NLS-1$
 	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID =
-		"WizardZipFileImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";
+		"WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";//$NON-NLS-1$
 	private final static String STORE_SELECTED_TYPES_ID =
-		"WizardZipFileImportPage1.STORE_SELECTED_TYPES_ID";
+		"WizardZipFileResourceImportPage1.STORE_SELECTED_TYPES_ID";//$NON-NLS-1$
 /**
  *	Creates an instance of this class
  * @param aWorkbench IWorkbench
  * @param selection IStructuredSelection
  */
 public WizardZipFileResourceImportPage1(IWorkbench aWorkbench, IStructuredSelection selection) {
-	super("zipFileImportPage1", aWorkbench, selection);
-	setTitle("Zip file");
-	setDescription("Import the contents of a Zip file from the local file system.");
+	super("zipFileImportPage1", aWorkbench, selection);//$NON-NLS-1$
+	setTitle(DataTransferMessages.getString("ZipExport.exportTitle")); //$NON-NLS-1$
+	setDescription(DataTransferMessages.getString("ZipImport.description")); //$NON-NLS-1$
 }
 /**
  * Called when the user presses the Cancel button. Return a boolean
@@ -85,7 +84,7 @@ protected boolean closeZipFile(ZipFile file) {
 	try {
 		file.close();
 	} catch (IOException e) {
-		displayErrorDialog("Could not close file " + file.getName());
+		displayErrorDialog(DataTransferMessages.format("ZipImport.couldNotClose", new Object[] {file.getName()})); //$NON-NLS-1$
 		return false;
 	}
 
@@ -104,7 +103,7 @@ protected void createOptionsGroup(Composite parent) {
 
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
-	overwriteExistingResourcesCheckbox.setText("Overwrite existing resources without warning");
+	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 }
 /**
  *	Answer a boolean indicating whether the specified source currently exists
@@ -154,14 +153,17 @@ protected ITreeContentProvider getFileProvider() {
  *	currently defined then create and return it.
  */
 protected MinimizedFileSystemElement getFileSystemTree() {
-	
+
 	ZipFile sourceFile = getSpecifiedSourceFile();
-	if (sourceFile == null)
+	if (sourceFile == null) {
+		//Clear out the provider as well
+		this.currentProvider = null;
 		return null;
+	}
 
 	ZipFileStructureProvider provider = getStructureProvider(sourceFile);
 	this.currentProvider = provider;
-	return selectFiles(provider.getRoot(),provider);
+	return selectFiles(provider.getRoot(), provider);
 }
 /**
  * Returns a content provider for <code>FileSystemElement</code>s that returns 
@@ -195,22 +197,29 @@ protected ITreeContentProvider getFolderProvider() {
  *	Answer the string to display as the label for the source specification field
  */
 protected String getSourceLabel() {
-	return "Zip file:";
+	return DataTransferMessages.getString("ZipExport.destinationLabel"); //$NON-NLS-1$
 }
 /**
  *	Answer a handle to the zip file currently specified as being the source.
  *	Return null if this file does not exist or is not of valid format.
  */
 protected ZipFile getSpecifiedSourceFile() {
-	if(sourceNameField.getText().length() == 0)
+	return getSpecifiedSourceFile(sourceNameField.getText());
+}
+/**
+ *	Answer a handle to the zip file currently specified as being the source.
+ *	Return null if this file does not exist or is not of valid format.
+ */
+private ZipFile getSpecifiedSourceFile(String fileName) {
+	if(fileName.length() == 0)
 		return null;
 		
 	try {
-		return new ZipFile(sourceNameField.getText());
+		return new ZipFile(fileName);
 	} catch (ZipException e) {
-		displayErrorDialog("Source file is not of proper format.");
+		displayErrorDialog(DataTransferMessages.getString("ZipImport.badFormat")); //$NON-NLS-1$
 	} catch (IOException e) {
-		displayErrorDialog("Source file could not be read.");
+		displayErrorDialog(DataTransferMessages.getString("ZipImport.couldNotRead")); //$NON-NLS-1$
 	}
 	
 	sourceNameField.setFocus();
@@ -239,8 +248,13 @@ protected void handleSourceBrowseButtonPressed() {
 
 	if (selectedFile != null) {
 		if (!selectedFile.equals(sourceNameField.getText())) {
-			sourceNameField.setText(selectedFile);
-			resetSelection();
+			//Be sure it is valid before we go setting any names
+			ZipFile sourceFile = getSpecifiedSourceFile(selectedFile);
+			if (sourceFile != null) {
+				closeZipFile(sourceFile);
+				setSourceName(selectedFile);
+				setAllSelections(true);
+			}
 		}
 	}
 }
@@ -248,15 +262,22 @@ protected void handleSourceBrowseButtonPressed() {
  *  Import the resources with extensions as specified by the user
  */
 protected boolean importResources(List fileSystemObjects) {
-	ZipFileStructureProvider structureProvider = getStructureProvider(getSpecifiedSourceFile());
-	
-	return executeImportOperation(
-		new ImportOperation(
-			getContainerFullPath(),
-			structureProvider.getRoot(),
-			structureProvider,
-			this,
-			fileSystemObjects));
+
+	ZipFile zipFile = getSpecifiedSourceFile();
+	ZipFileStructureProvider structureProvider = getStructureProvider(zipFile);
+
+	boolean result =
+		executeImportOperation(
+			new ImportOperation(
+				getContainerFullPath(),
+				structureProvider.getRoot(),
+				structureProvider,
+				this,
+				fileSystemObjects));
+
+	closeZipFile(zipFile);
+
+	return result;
 }
 /**
  * Initializes the specified operation appropriately.
@@ -291,7 +312,6 @@ protected void restoreWidgetValues() {
 			return;		// ie.- no settings stored
 		
 		// set filenames history
-		sourceNameField.setText(sourceNames[0]); 
 		for (int i = 0; i < sourceNames.length; i++)
 			sourceNameField.add(sourceNames[i]);
 			
@@ -328,6 +348,22 @@ protected void saveWidgetValues() {
 		settings.put(
 			STORE_OVERWRITE_EXISTING_RESOURCES_ID,
 			overwriteExistingResourcesCheckbox.getSelection());	
+	}
+}
+/**
+ *	Answer a boolean indicating whether self's source specification
+ *	widgets currently all contain valid values.
+ */
+protected boolean validateSourceGroup() {
+
+	//If there is nothing being provided to the input then there is a problem
+	if (this.currentProvider == null) {
+		setMessage(SOURCE_EMPTY_MESSAGE);
+		enableButtonGroup(false);
+		return false;
+	} else {
+		enableButtonGroup(true);
+		return true;
 	}
 }
 }

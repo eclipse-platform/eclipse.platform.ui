@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -20,6 +19,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.text.MessageFormat;
 import java.util.Date;
 
 /**
@@ -28,22 +28,22 @@ import java.util.Date;
  * we don't handle multiple selection in a meaningful way.
  */
 public class ResourceInfoPage extends PropertyPage {
-
+	
 	private Button editableBox;
 	private boolean readOnlyValue;
-	private static String READ_ONLY = "Read Only";
-	private static String NAME_TITLE = "Name:";
-	private static String TYPE_TITLE = "Type:";
-	private static String LOCATION_TITLE = "Location:";
-	private static String SIZE_TITLE = "Size:";
-	private static String BYTES_LABEL = " bytes";
-	private static String FILE_LABEL = "File";
-	private static String FOLDER_LABEL = "Folder";
-	private static String PROJECT_LABEL = "Project";
-	private static String UNKNOWN_LABEL = "Unknown";
-	private static String NOT_LOCAL_TEXT = "<file contents not local>";
-	private static String PATH_TITLE = "Path: ";
-	private static String TIMESTAMP_TITLE = "Last Modified:";
+	private static String READ_ONLY = WorkbenchMessages.getString("ResourceInfo.readONly"); //$NON-NLS-1$
+	private static String NAME_TITLE = WorkbenchMessages.getString("ResourceInfo.name"); //$NON-NLS-1$
+	private static String TYPE_TITLE = WorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
+	private static String LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.location"); //$NON-NLS-1$
+	private static String SIZE_TITLE = WorkbenchMessages.getString("ResourceInfo.size"); //$NON-NLS-1$
+	private static String BYTES_LABEL = WorkbenchMessages.getString("ResourceInfo.bytes"); //$NON-NLS-1$
+	private static String FILE_LABEL = WorkbenchMessages.getString("ResourceInfo.file"); //$NON-NLS-1$
+	private static String FOLDER_LABEL = WorkbenchMessages.getString("ResourceInfo.folder"); //$NON-NLS-1$
+	private static String PROJECT_LABEL = WorkbenchMessages.getString("ResourceInfo.project"); //$NON-NLS-1$
+	private static String UNKNOWN_LABEL = WorkbenchMessages.getString("ResourceInfo.unknown"); //$NON-NLS-1$
+	private static String NOT_LOCAL_TEXT = WorkbenchMessages.getString("ResourceInfo.notLocal"); //$NON-NLS-1$
+	private static String PATH_TITLE = WorkbenchMessages.getString("ResourceInfo.path"); //$NON-NLS-1$
+	private static String TIMESTAMP_TITLE = WorkbenchMessages.getString("ResourceInfo.lastModified"); //$NON-NLS-1$
 
 	//Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
@@ -103,7 +103,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 		Label sizeTitle = new Label(basicInfoComposite, SWT.LEFT);
 		sizeTitle.setText(SIZE_TITLE);
 		Label sizeValue = new Label(basicInfoComposite, SWT.LEFT);
-		sizeValue.setText(getSizeString((IFile) resource) + BYTES_LABEL);
+		sizeValue.setText(MessageFormat.format(BYTES_LABEL, new Object[] {getSizeString((IFile) resource)}));
 	}
 
 	return basicInfoComposite;

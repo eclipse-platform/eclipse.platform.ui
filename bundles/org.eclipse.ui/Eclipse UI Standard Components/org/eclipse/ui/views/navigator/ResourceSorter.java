@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.navigator;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -168,6 +167,6 @@ public int getCriteria() {
  */
 protected String getExtensionFor(IResource resource) {
 	String ext = resource.getFileExtension();
-	return ext == null ? "" : ext;
+	return ext == null ? "" : ext;//$NON-NLS-1$
 }
 }

@@ -1,5 +1,11 @@
 package org.eclipse.jface.text.rules;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
+ 
 /**
  * Standard implementation of <code>IToken</code>.
  */

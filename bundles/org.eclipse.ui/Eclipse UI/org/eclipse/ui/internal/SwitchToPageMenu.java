@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -25,7 +24,7 @@ public class SwitchToPageMenu extends ContributionItem {
  * which maintains the list of all browsers.
  */
 public SwitchToPageMenu(WorkbenchWindow window, boolean showSeparator) {
-	super("Switch To Page");
+	super("Switch To Page");//$NON-NLS-1$
 	fWindow = window;
 	this.showSeparator = showSeparator;
 }

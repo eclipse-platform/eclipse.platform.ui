@@ -1,9 +1,8 @@
 package org.eclipse.ui.texteditor;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -94,13 +93,15 @@ public class AddMarkerAction extends TextEditorAction {
 	protected boolean askForLabel(Map attributes) {
 		
 		Object o= attributes.get("message");
-		String label= (o instanceof String) ? (String) o : "";
-		if (label == null)
-			label= "";
+		String proposal= (o instanceof String) ? (String) o : "";
+		if (proposal == null)
+			proposal= "";
 			
 		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title");
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message");
-		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, label, null);
+		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, null);
+		
+		String label= null;
 		if (dialog.open() != Window.CANCEL)
 			label= dialog.getValue();
 			
@@ -158,8 +159,15 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @return the label proposal
 	 */
 	protected String getLabelProposal(IDocument document, int offset, int length) {
+		
+		
 		try {
-
+			
+			
+			if (length > 0)
+				return document.get(offset, length);
+				
+			
 			char ch;
 
 			// Get the first white char before the selection.

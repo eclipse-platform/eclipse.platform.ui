@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.*;
@@ -30,11 +29,10 @@ import org.eclipse.ui.internal.misc.UIHackFinder;
  */
 public abstract class WorkbenchWizardListSelectionPage extends WorkbenchWizardSelectionPage 
 	implements ISelectionChangedListener, IDoubleClickListener {
-
 	private String message;
 
 	// id constants
-	private static final String STORE_SELECTED_WIZARD_ID = "WizardListSelectionPage.STORE_SELECTED_WIZARD_ID";
+	private static final String STORE_SELECTED_WIZARD_ID = "WizardListSelectionPage.STORE_SELECTED_WIZARD_ID";//$NON-NLS-1$
 	private final static int SIZING_LISTS_HEIGHT = 200;
 	private final static int SIZING_LISTS_WIDTH = 150;
 /**
@@ -46,8 +44,8 @@ public abstract class WorkbenchWizardListSelectionPage extends WorkbenchWizardSe
  * @param message the message to display above the selection list
  */
 protected WorkbenchWizardListSelectionPage(IWorkbench aWorkbench, IStructuredSelection currentSelection, AdaptableList wizardElements, String message) {
-	super("singleWizardSelectionPage", aWorkbench, currentSelection, wizardElements);
-	setDescription("The following wizards are available.");
+	super("singleWizardSelectionPage", aWorkbench, currentSelection, wizardElements);//$NON-NLS-1$
+	setDescription(WorkbenchMessages.getString("WizardList.description")); //$NON-NLS-1$
 	this.message = message;
 }
 /** (non-Javadoc)

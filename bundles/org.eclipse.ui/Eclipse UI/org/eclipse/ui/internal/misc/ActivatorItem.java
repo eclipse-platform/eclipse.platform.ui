@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.internal.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -348,7 +347,7 @@ static private void removeInstance() {
 	 */
 	public void setText(String text) {
 		if (text == null)
-			text= "";
+			text= "";//$NON-NLS-1$
 		if (!text.equals(fText)) {
 			fText= text;
 		}
@@ -362,7 +361,7 @@ static private void removeInstance() {
 	 * Override if you need a different strategy.
 	 */
 	protected String shortenText(GC gc, String t, int width) {
-		String ellipsis= "...";
+		String ellipsis= "...";//$NON-NLS-1$
 		int w= gc.textExtent(ellipsis).x;
 		int l= t.length();
 		int pivot= l/2;

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -18,7 +17,7 @@ import java.util.*;
  * 'editorActions' extension point.
  */
 public class EditorActionBuilder extends PluginActionBuilder {
-	private static final String TAG_CONTRIBUTION_TYPE = "editorContribution";
+	private static final String TAG_CONTRIBUTION_TYPE = "editorContribution";//$NON-NLS-1$
 	public class ExternalContributor implements IEditorActionBarContributor {
 		private List cache;
 		public ExternalContributor(List cache) {
@@ -34,7 +33,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
 				Object obj = cache.get(i);
 				if (obj instanceof IConfigurationElement) {
 					IConfigurationElement menuElement = (IConfigurationElement) obj;
-					PluginActionBuilder.processMenu(menuElement, menu, false);
+					contributeMenu(menuElement, menu, false);
 				} else
 					if (obj instanceof ActionDescriptor) {
 						ActionDescriptor ad = (ActionDescriptor) obj;

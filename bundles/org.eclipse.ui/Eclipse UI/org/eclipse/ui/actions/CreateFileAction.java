@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -12,6 +11,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
@@ -32,7 +32,7 @@ public class CreateFileAction extends SelectionListenerAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".CreateFileAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CreateFileAction";//$NON-NLS-1$
 	
 	/**
 	 * The shell in which to show any dialogs.
@@ -44,10 +44,10 @@ public class CreateFileAction extends SelectionListenerAction {
  * @param shell the shell for any dialogs
  */
 public CreateFileAction(Shell shell) {
-	super("New &File");
+	super(WorkbenchMessages.getString("CreateFileAction.text")); //$NON-NLS-1$
 	Assert.isNotNull(shell);
 	this.shell = shell;
-	setToolTipText("Create a new file");
+	setToolTipText(WorkbenchMessages.getString("CreateFileAction.toolTip")); //$NON-NLS-1$
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 	setId(ID);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CREATE_FILE_ACTION});
@@ -63,7 +63,7 @@ public void run() {
 	wizard.setNeedsProgressMonitor(true);
 	WizardDialog dialog = new WizardDialog(shell, wizard);
 	dialog.create();
-	dialog.getShell().setText("New");
+	dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
 	dialog.open();
 }
 /**

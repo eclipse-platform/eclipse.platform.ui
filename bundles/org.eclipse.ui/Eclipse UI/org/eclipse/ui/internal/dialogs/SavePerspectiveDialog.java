@@ -1,8 +1,13 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -43,7 +48,7 @@ public SavePerspectiveDialog(Shell parentShell, PerspectiveRegistry perspReg) {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText("Save Perspective As...");
+	shell.setText(WorkbenchMessages.getString("SavePerspective.shellTitle")); //$NON-NLS-1$
 }
 /**
  * Add buttons to the dialog's button bar.
@@ -69,7 +74,7 @@ protected Control createDialogArea(Composite parent) {
 
 	// description
 	Label descLabel = new Label(composite, SWT.WRAP);
-	descLabel.setText("Enter or select a name to save the\ncurrent perspective as.");
+	descLabel.setText(WorkbenchMessages.getString("SavePerspectiveDialog.description")); //$NON-NLS-1$
 	descLabel.setFont(parent.getFont());
 	
 	// Spacer.
@@ -88,7 +93,7 @@ protected Control createDialogArea(Composite parent) {
 
 	// Create name label.
 	label = new Label(nameGroup, SWT.NONE);
-	label.setText("Name:");
+	label.setText(WorkbenchMessages.getString("SavePerspective.name")); //$NON-NLS-1$
 	label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	label.setFont(parent.getFont());
 
@@ -108,7 +113,7 @@ protected Control createDialogArea(Composite parent) {
 		
 	// Another label.
 	label = new Label(composite, SWT.NONE);
-	label.setText("Existing Perspectives:");
+	label.setText(WorkbenchMessages.getString("SavePerspective.existing")); //$NON-NLS-1$
 	label.setFont(parent.getFont());
 
 	// Add perspective list.
@@ -183,7 +188,7 @@ protected void okPressed() {
 	persp = perspReg.findPerspectiveWithLabel(perspName);
 	if (persp != null) {
 		// Confirm ok to overwrite
-		String message = "A perpective with the name '" + perspName +"' already exist. Do you want to overwrite?";
+		String message = WorkbenchMessages.format("SavePerspective.overwriteQuestion", new Object[] {perspName}); //$NON-NLS-1$
 		String [] buttons= new String[] { 
 			IDialogConstants.YES_LABEL,
 			IDialogConstants.NO_LABEL,
@@ -191,7 +196,7 @@ protected void okPressed() {
 		};
 		MessageDialog d= new MessageDialog(
 			this.getShell(),
-			"Overwrite Perspective",
+			WorkbenchMessages.getString("SavePerspective.overwriteTitle"), //$NON-NLS-1$
 			null,
 			message,
 			MessageDialog.QUESTION,

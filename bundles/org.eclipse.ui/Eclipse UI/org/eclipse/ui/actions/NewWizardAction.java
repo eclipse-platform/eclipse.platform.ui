@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
@@ -40,11 +39,11 @@ public class NewWizardAction extends Action {
  *	Create a new instance of this class
  */
 public NewWizardAction() {
-	super("&Other...");
+	super(WorkbenchMessages.getString("NewWizardAction.text")); //$NON-NLS-1$
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ));
 	setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
 	setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
-	setToolTipText("Open the New wizard");	
+	setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip"));	 //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.NEW_ACTION});
 }
 /* (non-Javadoc)
@@ -61,9 +60,9 @@ public void run() {
 		selectionToPass = StructuredSelection.EMPTY;
 	wizard.init(workbench, selectionToPass);
 	IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-	IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction");
+	IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction");//$NON-NLS-1$
 	if(wizardSettings==null)
-		wizardSettings = workbenchSettings.addNewSection("NewWizardAction");
+		wizardSettings = workbenchSettings.addNewSection("NewWizardAction");//$NON-NLS-1$
 	wizard.setDialogSettings(wizardSettings);
 	wizard.setForcePreviousAndNextButtons(true);
 	

@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.*;
@@ -37,13 +36,17 @@ import java.util.List;
 	private static final int	COMBO_HISTORY_LENGTH = 5;
 
 	// dialog store id constants
-	private static final String	STORE_DESTINATION_NAMES_ID = "WizardFileSystemExportPage1.STORE_DESTINATION_NAMES_ID";
-	private static final String	STORE_OVERWRITE_EXISTING_FILES_ID = "WizardFileSystemExportPage1.STORE_OVERWRITE_EXISTING_FILES_ID";
-	private static final String	STORE_CREATE_STRUCTURE_ID = "WizardFileSystemExportPage1.STORE_CREATE_STRUCTURE_ID";
-
+	private static final String STORE_DESTINATION_NAMES_ID =
+		"WizardFileSystemResourceExportPage1.STORE_DESTINATION_NAMES_ID";//$NON-NLS-1$
+	private static final String STORE_OVERWRITE_EXISTING_FILES_ID =
+		"WizardFileSystemResourceExportPage1.STORE_OVERWRITE_EXISTING_FILES_ID";//$NON-NLS-1$
+	private static final String STORE_CREATE_STRUCTURE_ID =
+		"WizardFileSystemResourceExportPage1.STORE_CREATE_STRUCTURE_ID";//$NON-NLS-1$
+	private static final String STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID =
+		"WizardFileSystemResourceExportPage1.STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID";//$NON-NLS-1$
 	//messages
-	private static final String DESTINATION_EMPTY_MESSAGE = "Destination must not be empty.";
-	private static final String SELECT_DESTINATION_MESSAGE ="Select the destination directory.";
+	private static final String DESTINATION_EMPTY_MESSAGE = DataTransferMessages.getString("FileExport.destinationEmpty"); //$NON-NLS-1$
+	private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.getString("DataTransfer.selectDestination"); //$NON-NLS-1$
 /**
  *	Create an instance of this class
  */
@@ -54,9 +57,9 @@ protected WizardFileSystemResourceExportPage1(String name, IStructuredSelection 
  *	Create an instance of this class
  */
 public WizardFileSystemResourceExportPage1(IStructuredSelection selection) {
-	this("fileSystemExportPage1", selection);
-	setTitle("File system");
-	setDescription("Export resources to the local file system.");
+	this("fileSystemExportPage1", selection);//$NON-NLS-1$
+	setTitle(DataTransferMessages.getString("DataTransfer.fileSystemTitle")); //$NON-NLS-1$
+	setDescription(DataTransferMessages.getString("FileExport.exportLocalFileSystem")); //$NON-NLS-1$
 }
 /**
  *	Add the passed value to self's destination widget's history
@@ -98,7 +101,7 @@ protected void createDestinationGroup(Composite parent) {
 
 	// destination browse button
 	destinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH);
-	destinationBrowseButton.setText("Browse...");
+	destinationBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	destinationBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	destinationBrowseButton.addListener(SWT.Selection, this);
 
@@ -119,15 +122,15 @@ protected void createOptionsGroup(Composite parent) {
 
 	// overwrite... checkbox
 	overwriteExistingFilesCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
-	overwriteExistingFilesCheckbox.setText("Overwrite existing files without warning");
+	overwriteExistingFilesCheckbox.setText(DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
 
 	// create directory structure checkbox
 	createDirectoryStructureCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
-	createDirectoryStructureCheckbox.setText("Create directory structure for files");
+	createDirectoryStructureCheckbox.setText(DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
 	createDirectoryStructureCheckbox.addListener(SWT.Selection,this);
 
 		// initial setup
-	createDirectoryStructureCheckbox.setSelection(true);
+	createDirectoryStructureCheckbox.setSelection(false);
 }
 /**
  * Attempts to ensure that the specified directory exists on the local file system.
@@ -138,11 +141,11 @@ protected void createOptionsGroup(Composite parent) {
  */
 protected boolean ensureDirectoryExists(File directory) {
 	if (!directory.exists()) {
-		if (!queryYesNoQuestion("Target directory does not exist.  Would you like to create it?"))
+		if (!queryYesNoQuestion(DataTransferMessages.getString("DataTransfer.createTargetDirectory"))) //$NON-NLS-1$
 			return false;
 
 		if (!directory.mkdirs()) {
-			displayErrorDialog("Target directory could not be created.");
+			displayErrorDialog(DataTransferMessages.getString("DataTransfer.directoryCreationError")); //$NON-NLS-1$
 			giveFocusToDestination();
 			return false;
 		}
@@ -159,7 +162,7 @@ protected boolean ensureDirectoryExists(File directory) {
  */
 protected boolean ensureTargetIsValid(File targetDirectory) {
 	if (targetDirectory.exists() && !targetDirectory.isDirectory()) {
-		displayErrorDialog("Target directory already exists as a file.");
+		displayErrorDialog(DataTransferMessages.getString("FileExport.directoryExists")); //$NON-NLS-1$
 		giveFocusToDestination();
 		return false;
 	}
@@ -187,7 +190,7 @@ protected boolean executeExportOperation(FileSystemExportOperation op) {
 	IStatus status = op.getStatus();
 	if (!status.isOK()) {
 		ErrorDialog.openError(getContainer().getShell(),
-			"Export Problems",
+			DataTransferMessages.getString("DataTransfer.exportProblems"), //$NON-NLS-1$
 			null,   // no special message
 			status);
 		return false;
@@ -206,10 +209,13 @@ public boolean finish() {
 	if (!ensureTargetIsValid(new File(getDestinationValue())))
 		return false;
 
-	List resourcesToExport = getSelectedResources();
+	List resourcesToExport = getWhiteCheckedResources();
 
 	if (!ensureResourcesLocal(resourcesToExport))
 		return false;
+
+	// about to invoke the operation so save our state
+	saveWidgetValues();
 
 	if (resourcesToExport.size() > 0)
 		return executeExportOperation(
@@ -221,8 +227,8 @@ public boolean finish() {
 
 	MessageDialog.openInformation(
 		getContainer().getShell(),
-		"Information",
-		"There are no resources currently selected for export.");
+		DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
+		DataTransferMessages.getString("FileExport.noneSelected")); //$NON-NLS-1$
 
 	return false;
 }
@@ -232,7 +238,7 @@ public boolean finish() {
  *	@return java.lang.String
  */
 protected String getDestinationLabel() {
-	return "Directory:";
+	return DataTransferMessages.getString("DataTransfer.directory"); //$NON-NLS-1$
 }
 /**
  *	Answer the contents of self's destination specification widget
@@ -283,15 +289,13 @@ public void handleEvent(Event e) {
 protected void internalSaveWidgetValues() {
 	// update directory names history
 	IDialogSettings settings = getDialogSettings();
-	if(settings != null) {
+	if (settings != null) {
 		String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
 		if (directoryNames == null)
 			directoryNames = new String[0];
 
-		directoryNames = addToHistory(directoryNames,getDestinationValue());
-		settings.put(
-			STORE_DESTINATION_NAMES_ID,
-			directoryNames);
+		directoryNames = addToHistory(directoryNames, getDestinationValue());
+		settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
 
 		// options
 		settings.put(
@@ -310,10 +314,10 @@ protected void internalSaveWidgetValues() {
  */
 protected void restoreWidgetValues() {
 	IDialogSettings settings = getDialogSettings();
-	if(settings != null) {
+	if (settings != null) {
 		String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
 		if (directoryNames == null)
-			return;		// ie.- no settings stored
+			return; // ie.- no settings stored
 
 		// destination
 		setDestinationValue(directoryNames[0]);
@@ -326,8 +330,7 @@ protected void restoreWidgetValues() {
 
 		createDirectoryStructureCheckbox.setSelection(
 			settings.getBoolean(STORE_CREATE_STRUCTURE_ID));
-
-	} 
+	}
 }
 /**
  *	Set the contents of the receivers destination specification widget to

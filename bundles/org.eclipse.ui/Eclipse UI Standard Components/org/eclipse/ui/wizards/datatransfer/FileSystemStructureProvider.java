@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.io.*;
 import java.util.*;
@@ -58,7 +57,14 @@ public String getFullPath(Object element) {
  * Method declared on IImportStructureProvider
  */
 public String getLabel(Object element) {
-	return ((File)element).getName();
+
+	//Get the name - if it is empty then return the path as it is a file root
+	File file = (File) element;
+	String name = file.getName();
+	if (name.length() == 0)
+		return file.getPath();
+	else
+		return name;
 }
 /* (non-Javadoc)
  * Method declared on IImportStructureProvider

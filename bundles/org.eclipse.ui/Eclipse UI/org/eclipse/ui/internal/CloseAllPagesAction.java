@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.*;
@@ -21,17 +20,15 @@ public class CloseAllPagesAction  extends Action {
  * 
  */
 public CloseAllPagesAction(IWorkbenchWindow window) {
-	super("Close All");
-	setToolTipText("Close All");
+	super(WorkbenchMessages.getString("CloseAllPages.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("CloseAllPages.toolTip")); //$NON-NLS-1$
+	setEnabled(false);
 	this.window = window;
 }
 /**
  * Close all of the open pages
  */
 public void run() {
-	IWorkbenchPage[] pages = window.getPages();
-	for (int i = 0; i < pages.length; i++) {
-		pages[i].close();
-	}
+	((WorkbenchWindow)window).closeAllPages(true);
 }
 }

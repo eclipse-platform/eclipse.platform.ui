@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -35,7 +34,7 @@ import java.io.*;
  */
 public class PluginTransfer extends ByteArrayTransfer {
 
-	private static final String TYPE_NAME = "pluggable-transfer-format";
+	private static final String TYPE_NAME = "pluggable-transfer-format";//$NON-NLS-1$
 	private static final int TYPEID = registerType(TYPE_NAME);
 
 	/**

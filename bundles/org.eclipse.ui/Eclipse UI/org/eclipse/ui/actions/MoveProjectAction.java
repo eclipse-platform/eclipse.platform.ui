@@ -1,31 +1,37 @@
 package org.eclipse.ui.actions;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
 import java.lang.reflect.InvocationTargetException;
-
+import java.text.MessageFormat;
 /**
  * The MoveProjectAction is the action designed to move projects specifically
  * as they have different semantics from other resources.
  */
 public class MoveProjectAction extends CopyProjectAction {
-	private static String MOVE_TOOL_TIP = "Move the project";
-	private static String MOVE_TITLE = "Mo&ve";
-	private static String PROBLEMS_TITLE = "Move Problems";
-	private static String MOVE_PROGRESS_TITLE = "Moving:";
+	private static String MOVE_TOOL_TIP = WorkbenchMessages.getString("MoveProjectAction.toolTip"); //$NON-NLS-1$
+	private static String MOVE_TITLE = WorkbenchMessages.getString("MoveProjectAction.text"); //$NON-NLS-1$
+	private static String PROBLEMS_TITLE = WorkbenchMessages.getString("MoveProjectAction.dialogTitle"); //$NON-NLS-1$
+	private static String MOVE_PROGRESS_TITLE = WorkbenchMessages.getString("MoveProjectAction.progressMessage"); //$NON-NLS-1$
 
 	
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".MoveProjectAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".MoveProjectAction";//$NON-NLS-1$
 
 /**
  * Creates a new project move action with the given text.
@@ -92,11 +98,8 @@ boolean performMove(
 	} catch (InvocationTargetException e) {
 		// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
 		WorkbenchPlugin.log(
-			"Exception in "
-				+ getClass().getName()
-				+ ".performMove(): "
-				+ e.getTargetException());
-		displayError("Internal error: " + e.getTargetException().getMessage());
+			MessageFormat.format("Exception in {0}.performMove(): {1}", new Object[] {getClass().getName(),e.getTargetException()}));//$NON-NLS-1$
+		displayError(WorkbenchMessages.format("MoveProjectAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
 		return false;
 	}
 

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.*;
@@ -16,8 +15,8 @@ public class ViewRegistry implements IViewRegistry {
 	private List views;
 	private List categories;
 	private Category miscCategory;
-	private final static String MISC_NAME = "Other";
-	private final static String MISC_ID = "org.eclipse.ui.internal.otherCategory";
+	private final static String MISC_NAME = "Other";//$NON-NLS-1$
+	private final static String MISC_ID = "org.eclipse.ui.internal.otherCategory";//$NON-NLS-1$
 /**
  * Create a new ViewRegistry.
  */

@@ -1,14 +1,14 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.UIHackFinder;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -82,7 +82,7 @@ protected WorkspaceAction(Shell shell, String text) {
  */
 void displayError(String message) {
 	if (message == null) {
-		message = "Internal error.";
+		message = WorkbenchMessages.getString("WorkbenchAction.internalError"); //$NON-NLS-1$
 	}
 	MessageDialog.openError(shell, getProblemsTitle(), message);
 }
@@ -147,7 +147,7 @@ abstract String getOperationMessage();
  * @return the problems message
  */
 String getProblemsMessage() {
-	return "The following problems occurred.";
+	return WorkbenchMessages.getString("WorkbenchAction.problemsMessage"); //$NON-NLS-1$
 }
 /**
  * Returns the title for this action's problems dialog.
@@ -160,7 +160,7 @@ String getProblemsMessage() {
  * @return the problems dialog title
  */
 String getProblemsTitle() {
-	return "Problems";
+	return WorkbenchMessages.getString("WorkspaceAction.problemsTitle"); //$NON-NLS-1$
 }
 /**
  * Returns the shell for this action. This shell is used for the modal progress
@@ -276,7 +276,7 @@ public void run() {
 		return;
 	} catch (InvocationTargetException e) {
 		// we catch CoreException in execute(), but unexpected runtime exceptions or errors may still occur
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e.getTargetException());
+		WorkbenchPlugin.log(WorkbenchMessages.format("WorkspaceAction.logTitle", new Object[] {getClass().getName(), e.getTargetException()})); //$NON-NLS-1$
 		displayError(e.getTargetException().getMessage());
 	}
 

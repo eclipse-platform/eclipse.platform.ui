@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -42,9 +41,9 @@ protected TaskList getTaskList() {
 protected void storeValue() {
 	// TBD: Don't refer to global WorkbenchPlugin
 	IDialogSettings workbenchSettings = TaskList.getPlugin().getDialogSettings();
-	IDialogSettings settings = workbenchSettings.getSection("TaskAction");
+	IDialogSettings settings = workbenchSettings.getSection("TaskAction");//$NON-NLS-1$
 	if(settings == null)
-		settings = workbenchSettings.addNewSection("TaskAction");
+		settings = workbenchSettings.addNewSection("TaskAction");//$NON-NLS-1$
 	settings.put(getId(), isChecked());
 }
 }

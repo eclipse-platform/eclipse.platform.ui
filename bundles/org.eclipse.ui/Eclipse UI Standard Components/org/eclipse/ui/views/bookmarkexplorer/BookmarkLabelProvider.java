@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.bookmarkexplorer;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.*;
@@ -17,7 +21,7 @@ import java.net.*;
  * BookmarkLabelProvider constructor comment.
  */
 public BookmarkLabelProvider(BookmarkNavigator view) {
-	ImageDescriptor desc = view.getImageDescriptor("obj16/bkmrk_tsk.gif");
+	ImageDescriptor desc = view.getImageDescriptor("obj16/bkmrk_tsk.gif");//$NON-NLS-1$
 	image = desc.createImage();
 }
 /* (non-Javadoc)
@@ -42,11 +46,14 @@ public String getText(Object element) {
 	IMarker marker = (IMarker) element;
 	IResource resource = marker.getResource();
 	IResource container = resource.getParent();
-	String msg = marker.getAttribute(IMarker.MESSAGE, "");
-	String resourceMsg = "on " + resource.getName();
+	String msg = marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 	if (container != null) {
-		resourceMsg += " in " + container.getFullPath().makeRelative();
+		return BookmarkMessages.format("BookmarkLabel.textHasContainer", new Object[] {msg,resource.getName(),container.getFullPath().makeRelative()});//$NON-NLS-1$
+	} else {
+		return BookmarkMessages.format("BookmarkLabel.textNoContainer", new Object[] {msg,resource.getName()});//$NON-NLS-1$
 	}
-	return msg + " (" + resourceMsg + ")";
 }
+
+
+
 }

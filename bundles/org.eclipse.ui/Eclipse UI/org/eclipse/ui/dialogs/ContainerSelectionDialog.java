@@ -1,14 +1,14 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.internal.misc.ContainerSelectionGroup;
 import org.eclipse.jface.viewers.*;
@@ -70,14 +70,14 @@ public class ContainerSelectionDialog extends SelectionDialog {
  */
 public ContainerSelectionDialog(Shell parentShell, IContainer initialRoot, boolean allowNewContainerName, String message) {
 	super(parentShell);
-	setTitle("Folder Selection");
+	setTitle(WorkbenchMessages.getString("ContainerSelectionDialog.title")); //$NON-NLS-1$
 	this.initialSelection = initialRoot;
 	this.validator = validator;
 	this.allowNewContainerName = allowNewContainerName;
 	if (message != null)
 		setMessage(message);
 	else
-		setMessage("Enter or select the folder:");
+		setMessage(WorkbenchMessages.getString("ContainerSelectionDialog.message")); //$NON-NLS-1$
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
 /* (non-Javadoc)
@@ -91,8 +91,8 @@ protected Control createDialogArea(Composite parent) {
 		public void handleEvent (Event event) {
 			if (statusMessage != null && validator != null) {
 				String errorMsg = validator.isValid(group.getContainerFullPath());
-				if (errorMsg == null || errorMsg.equals("")) {
-					statusMessage.setText("");
+				if (errorMsg == null || errorMsg.equals("")) {//$NON-NLS-1$
+					statusMessage.setText("");//$NON-NLS-1$
 					getOkButton().setEnabled(true);
 				} else {
 					statusMessage.setForeground(statusMessage.getDisplay().getSystemColor(SWT.COLOR_RED));

@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.registry;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -21,11 +25,10 @@ public class ActionSetDescriptor extends WorkbenchAdapter
 	private String description;
 	private String className;
 	private IConfigurationElement configElement;
-	private static final String ATT_ID="id";
-	private static final String ATT_LABEL="label";
-	private static final String ATT_VISIBLE="visible";
-	private static final String ATT_DESC="description";
-	private static final String ATT_CATEGORY="category";
+	private static final String ATT_ID="id";//$NON-NLS-1$
+	private static final String ATT_LABEL="label";//$NON-NLS-1$
+	private static final String ATT_VISIBLE="visible";//$NON-NLS-1$
+	private static final String ATT_DESC="description";//$NON-NLS-1$
 /**
  * Create a descriptor from a config element.
  */
@@ -36,17 +39,16 @@ public ActionSetDescriptor(IConfigurationElement configElement)
 	this.configElement = configElement;
 	id = configElement.getAttribute(ATT_ID);
 	label = configElement.getAttribute(ATT_LABEL);
-	category = configElement.getAttribute(ATT_CATEGORY);
 	description = configElement.getAttribute(ATT_DESC);
 	String str = configElement.getAttribute(ATT_VISIBLE);
-	if (str != null && str.equals("true"))
+	if (str != null && str.equals("true"))//$NON-NLS-1$
 		visible = true;
 
 	// Sanity check.
 	if (label == null) {
 		throw new CoreException(new Status(IStatus.ERROR,
 			WorkbenchPlugin.PI_WORKBENCH, 0,
-			"Invalid extension (missing label): " + id,
+			"Invalid extension (missing label): " + id,//$NON-NLS-1$
 			null));
 	}
 }
@@ -72,7 +74,6 @@ public Object getAdapter(Class adapter) {
 }
 /**
  * Returns the category of this action set.
- * This is the value of its <code>"category"</code> attribute.
  *
  * @return a non-empty category name or <cod>null</code> if none specified
  */
@@ -128,12 +129,20 @@ public String getLabel() {
 public String getLabel(Object o) {
 	if (o == this)
 		return getLabel();
-	return "Unknown Label";
+	return "Unknown Label";//$NON-NLS-1$
 }
 /**
  * Returns whether this action set is initially visible.
  */
 public boolean isInitiallyVisible() {
 	return visible;
+}
+/**
+ * Sets the category of this action set.
+ *
+ * @param cat a non-empty category id
+ */
+public void setCategory(String id) {
+	category = id;
 }
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.runtime.Platform;
@@ -26,7 +25,7 @@ public final class PlatformUI {
 	/**
 	 * Identifies the workbench plugin.
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.ui";
+	public static final String PLUGIN_ID = "org.eclipse.ui";//$NON-NLS-1$
 	
 	private static IWorkbench instance; 
 /**

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.UIHackFinder;
@@ -27,6 +26,7 @@ import org.eclipse.ui.part.*;
 public abstract class PartPane extends LayoutPart
 	implements Listener
 {
+	private boolean isZoomed = false;
 	protected IWorkbenchPart part;
 	protected WorkbenchPage page;
 	protected ViewForm control;
@@ -48,20 +48,26 @@ public PartPane(IWorkbenchPart part, WorkbenchPage workbenchPage) {
  * Factory method for creating the SWT Control hierarchy for this Pane's child.
  */
 protected void createChildControl(final Composite parent) {
-	String error = "Unable to create part: " + part.getTitle();
+	String error = WorkbenchMessages.format("PartPane.unableToCreate", new Object[] {part.getTitle()}); //$NON-NLS-1$
 	Platform.run(new SafeRunnableAdapter(error) {
 		public void run() {	
 			part.createPartControl(parent);
 		}
 		public void handleException(Throwable e) {
+			// Log error.
 			Workbench wb = (Workbench)WorkbenchPlugin.getDefault().getWorkbench();
 			if (!wb.isStarting())
 				super.handleException(e);
-			IWorkbenchPart newPart = createErrorPart((WorkbenchPart)part);
+
+			// Dispose old part.
 			Control children[] = parent.getChildren();
 			for (int i = 0; i < children.length; i++){
 				children[i].dispose();
 			}
+			
+			// Create new part.
+			IWorkbenchPart newPart = createErrorPart((WorkbenchPart)part);
+			part.getSite().setSelectionProvider(null);
 			newPart.createPartControl(parent);
 			part = newPart;
 		}
@@ -177,10 +183,26 @@ public void hookFocus(Control ctrl) {
 	ctrl.addMouseListener(mouseListener);
 }
 /**
+ *	Allow the layout part to determine if they are in
+ * an acceptable state to start a drag & drop operation.
+ */
+public boolean isDragAllowed() {
+	if (isZoomed())
+		return false;
+	else
+		return true;
+}
+/**
  * Returns true if this part is visible.  A part is visible if it has a control.
  */
 public boolean isVisible() {
 	return (getControl() != null);
+}
+/**
+ * Return whether the pane is zoomed or not
+ */
+public boolean isZoomed() {
+	return isZoomed;
 }
 /**
  * Move the control over another one.
@@ -220,6 +242,12 @@ public void setFocus() {
  */
 public void setWorkbenchPage(WorkbenchPage workbenchPage) {
 	this.page = workbenchPage;
+}
+/**
+ * Set whether the pane is zoomed or not
+ */
+public void setZoomed(boolean isZoomed) {
+	this.isZoomed = isZoomed;
 }
 /**
  * Indicate focus in part.

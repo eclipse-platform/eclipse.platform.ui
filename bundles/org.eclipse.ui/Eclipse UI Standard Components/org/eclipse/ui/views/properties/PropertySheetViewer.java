@@ -1,15 +1,14 @@
 package org.eclipse.ui.views.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.jface.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -42,8 +41,8 @@ import java.util.List;  // otherwise ambiguous
 	// SWT widgets
 	private TableTree tableTree;
 	private TableTreeEditor tableTreeEditor;
-	private static String[] columnLabels = {"Property", "Value"};
-	private static String MISCELLANEOUS_CATEGORY_NAME = "Misc";
+	private static String[] columnLabels = {PropertiesMessages.getString("PropertyViewer.property"), PropertiesMessages.getString("PropertyViewer.value")}; //$NON-NLS-2$ //$NON-NLS-1$
+	private static String MISCELLANEOUS_CATEGORY_NAME = "Misc";//$NON-NLS-1$
 
 	// Cell editor support.
 	private int columnToEdit = 1;
@@ -58,6 +57,9 @@ import java.util.List;  // otherwise ambiguous
 
 	// The status line manager for showing messages
 	private IStatusLineManager statusLineManager;
+
+	// Cell editor activation listeners
+	private ListenerList activationListeners = new ListenerList(3);
 /**
  * Creates a property sheet viewer on a newly-created table tree control
  * under the given parent. The viewer has no input, and no root entry.
@@ -132,6 +134,19 @@ private void activateCellEditor(TableTreeItem item) {
 	
 	// give focus to the cell editor
 	cellEditor.setFocus();
+
+	// notify of activation	
+	fireCellEditorActivated(cellEditor);
+}
+/**
+ * Adds a cell editor activation listener.
+ * Has no effect if an identical activation listener 
+ * is already registered.
+ *
+ * @param listener a cell editor activation listener
+ */
+/*package*/ void addActivationListener(ICellEditorActivationListener listener) {
+	activationListeners.add(listener);
 }
 /**
  * Add columns to the table tree and 
@@ -288,6 +303,7 @@ private void createItem(Object node, Widget parent, int i) {
 	tableTreeEditor.setEditor(null, null, columnToEdit);
 	if (cellEditor != null) {
 		cellEditor.deactivate();
+		fireCellEditorDeactivated(cellEditor);
 		cellEditor.removeListener(editorListener);
 		cellEditor = null;
 	}
@@ -334,6 +350,30 @@ private TableTreeItem findItem(IPropertySheetEntry entry, TableTreeItem item) {
 			return findItem;
 	}
 	return null;
+}
+/**
+ * Notifies all registered cell editor activation listeners
+ * of a cell editor activation.
+ *
+ * @param cellEditor the activated cell editor
+ */
+private void fireCellEditorActivated(CellEditor cellEditor) {
+	Object[] listeners = activationListeners.getListeners();
+	for (int i = 0; i < listeners.length; ++i) {
+		((ICellEditorActivationListener) listeners[i]).cellEditorActivated(cellEditor);
+	}
+}
+/**
+ * Notifies all registered cell editor activation listeners
+ * of a cell editor deactivation.
+ *
+ * @param cellEditor the deactivated cell editor
+ */
+private void fireCellEditorDeactivated(CellEditor cellEditor) {
+	Object[] listeners = activationListeners.getListeners();
+	for (int i = 0; i < listeners.length; ++i) {
+		((ICellEditorActivationListener) listeners[i]).cellEditorDeactivated(cellEditor);
+	}
 }
 /**
  * Returns the active cell editor of this property sheet viewer
@@ -592,6 +632,17 @@ public void refresh() {
 	}
 }
 /**
+ * Removes the given cell editor activation listener 
+ * from this viewer.
+ * Has no effect if an identical activation listener 
+ * is not registered.
+ *
+ * @param listener a cell editor activation listener
+ */
+/*package*/ void removeActivationListener(ICellEditorActivationListener listener) {
+	activationListeners.remove(listener);
+}
+/**
  * Remove the given item from the table tree.
  * Remove our listener if the item's user data is a
  * an entry then set the user data to null
@@ -801,7 +852,7 @@ private void updateCategory(PropertySheetCategory category, TableTreeItem item) 
 	
 	// Update the name and value columns
 	item.setText(0, category.getCategoryName());
-	item.setText(1, "");
+	item.setText(1, "");//$NON-NLS-1$
 
 	// update the "+" icon	
 	updatePlus(category, item);

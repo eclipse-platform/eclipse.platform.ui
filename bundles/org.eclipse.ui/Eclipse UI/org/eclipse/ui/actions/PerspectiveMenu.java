@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
@@ -13,10 +12,12 @@ import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -58,11 +59,25 @@ void createMenuItem(Menu menu, int index,
 	final IPerspectiveDescriptor desc, int nAccelerator, boolean bCheck) 
 {
 	MenuItem mi = new MenuItem(menu, bCheck ? SWT.RADIO : SWT.PUSH, index);
-	if (nAccelerator < 10)
-		mi.setText("&" + nAccelerator + "  " + desc.getLabel());
-	else
-		mi.setText(desc.getLabel());
+
+	ImageDescriptor imageDescriptor = desc.getImageDescriptor();
+	if (imageDescriptor == null) {
+		imageDescriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE);
+	}
+	mi.setText(desc.getLabel());
+	mi.setImage(imageDescriptor.createImage());
 	mi.setSelection(bCheck);
+	mi.addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			Item item;
+			Image itemImage;
+			if ((item = (Item) e.getSource()) != null) {
+			if ((itemImage = item.getImage()) != null) {
+				itemImage.dispose();
+			}
+		}
+	}
+	});
 	mi.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			run(desc,e);
@@ -75,7 +90,7 @@ void createMenuItem(Menu menu, int index,
 void createOtherItem(Menu menu, int index) 
 {
 	MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
-	mi.setText("&Other...");
+	mi.setText(WorkbenchMessages.getString("PerspectiveMenu.otherItem")); //$NON-NLS-1$
 	mi.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			runOther(e);

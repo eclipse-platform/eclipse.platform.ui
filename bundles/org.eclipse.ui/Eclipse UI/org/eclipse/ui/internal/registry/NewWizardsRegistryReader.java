@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,22 +22,31 @@ import java.util.*;
  */
 public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	
-	protected WizardCollectionElement projectWizards;
-	protected WizardCollectionElement projectCategory;
+	private boolean projectsOnly;
 	
 	// constants
-	public final static String		BASE_CATEGORY = "Base";
-	private final static String		TAG_CATEGORY = "category";	
-	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";
-	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other";
-	private final static String		CATEGORY_SEPARATOR = "/";
-	private final static String		ATT_CATEGORY = "category";
-	private final static String ATT_PROJECT = "project";
-	private final static String STR_TRUE = "true";
+	public final static String		BASE_CATEGORY = "Base";//$NON-NLS-1$
+	private final static String		TAG_CATEGORY = "category";	//$NON-NLS-1$
+	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
+	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other";//$NON-NLS-1$
+	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
+	private final static String		ATT_CATEGORY = "category";//$NON-NLS-1$
+	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
+	private final static String STR_TRUE = "true";//$NON-NLS-1$
+/**
+ * Constructs a new reader.  All wizards are read, including projects.
+ */
 public NewWizardsRegistryReader() {
+	this(false);
+}
+/**
+ * Constructs a new reader.
+ *
+ * @param projectsOnly if true, only projects are read.
+ */
+public NewWizardsRegistryReader(boolean projectsOnly) {
 	super(IWorkbenchConstants.PL_NEW);
-	projectWizards = new WizardCollectionElement("projects", "projects", null);
-	projectCategory = createCollectionElement(projectWizards, "projects", "All Projects");
+	this.projectsOnly = projectsOnly;
 }
 /**
  *	Insert the passed wizard element into the wizard collection appropriately
@@ -93,7 +101,7 @@ protected WizardCollectionElement createCollectionElement(WizardCollectionElemen
  * initial elements, if needed.
  */
 protected AdaptableList createEmptyWizardCollection() {
-	return new WizardCollectionElement("root", "root", null);
+	return new WizardCollectionElement("root", "root", null);//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Returns a new WorkbenchWizardElement configured according to the parameters
@@ -103,14 +111,12 @@ protected AdaptableList createEmptyWizardCollection() {
  * an adequate wizard
  */
 protected WorkbenchWizardElement createWizardElement(IConfigurationElement element) {
-	WorkbenchWizardElement wizard = super.createWizardElement(element);
-	if (wizard != null) {
+	if (projectsOnly) {
 		String flag = element.getAttribute(ATT_PROJECT);
-		if (flag != null && flag.equalsIgnoreCase(STR_TRUE)) {
-			projectCategory.add(wizard);
-		}
+		if (flag == null || !flag.equalsIgnoreCase(STR_TRUE))
+			return null;
 	}
-	return wizard;
+	return super.createWizardElement(element);
 }
 /**
  *	Return the appropriate category (tree location) for this Wizard.
@@ -141,16 +147,6 @@ protected WizardCollectionElement getChildWithID(WizardCollectionElement parent,
 	return null;
 }
 /**
- * Returns a list of project wizards.
- *
- * The return value for this method is cached since computing its value
- * requires non-trivial work.  
- */
-public AdaptableList getProjectWizards() {
-	readWizards();
-	return projectWizards;
-}
-/**
  *	Moves given element to "Other" category, previously creating one if missing.
  */
 protected void moveElementToUncategorizedCategory(WizardCollectionElement root, WorkbenchWizardElement element) {
@@ -171,7 +167,7 @@ private void processCategory(IConfigurationElement config) {
 	try {
 		category = new Category(config);
 	} catch (CoreException e) {
-		WorkbenchPlugin.log("Cannot create category: ", e.getStatus());
+		WorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
 		return;
 	}
 	
@@ -193,6 +189,18 @@ private void processCategory(IConfigurationElement config) {
 		createCollectionElement(element, category.getID(), category.getLabel());
 }
 /**
+ * Removes the empty categories from a wizard collection. 
+ */
+private void pruneEmptyCategories(WizardCollectionElement parent) {
+	Object [] children = parent.getChildren();
+	for (int nX = 0; nX < children.length; nX ++) {
+		WizardCollectionElement child = (WizardCollectionElement)children[nX];
+		pruneEmptyCategories(child);
+		if (child.isEmpty())
+			parent.remove(child);
+	}
+}
+/**
  * Implement this method to read element attributes.
  */
 protected boolean readElement(IConfigurationElement element) {
@@ -201,6 +209,16 @@ protected boolean readElement(IConfigurationElement element) {
 		return true;
 	} else {
 		return super.readElement(element);
+	}
+}
+/**
+ * Reads the wizards in a registry.  
+ */
+protected void readWizards() {
+	super.readWizards();
+	if (projectsOnly && wizards != null) {
+		WizardCollectionElement parent = (WizardCollectionElement)wizards;
+		pruneEmptyCategories(parent);
 	}
 }
 }

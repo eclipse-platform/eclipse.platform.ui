@@ -1,9 +1,8 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.text.MessageFormat;
 import org.eclipse.swt.SWT;
@@ -231,7 +230,7 @@ protected void updateContents(Object value) {
 	if (defaultLabel == null)
 		return;
 		
-	String text = "";
+	String text = "";//$NON-NLS-1$
 	if (value != null)
 		text = value.toString(); 
 	defaultLabel.setText(text);

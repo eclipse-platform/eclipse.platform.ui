@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.core.runtime.*;
@@ -19,9 +18,9 @@ public class Category implements ICategory {
 	private String [] parentCategoryPath;
 	private ArrayList views;
 	private IConfigurationElement config;
-	public static final String ATT_ID="id";
-	public static final String ATT_CATEGORY="parentCategory";
-	public static final String ATT_NAME="name";
+	public static final String ATT_ID="id";//$NON-NLS-1$
+	public static final String ATT_CATEGORY="parentCategory";//$NON-NLS-1$
+	public static final String ATT_NAME="name";//$NON-NLS-1$
 /**
  * A constructor.
  */
@@ -40,7 +39,7 @@ public Category(IConfigurationElement aConfig) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, 
 			WorkbenchPlugin.PI_WORKBENCH,
 			0,
-			"Invalid extension: " + id, 
+			"Invalid extension: " + id, //$NON-NLS-1$
 			null));
 	}
 }
@@ -74,7 +73,7 @@ public String[] getParentCategoryPath() {
 	if (config != null) {
 		String category = config.getAttribute(ATT_CATEGORY);
 		if (category==null) return null;
-		StringTokenizer stok = new StringTokenizer(category, "/");
+		StringTokenizer stok = new StringTokenizer(category, "/");//$NON-NLS-1$
 		parentCategoryPath = new String [stok.countTokens()];
 		for (int i=0; stok.hasMoreTokens(); i++) {
 			parentCategoryPath[i]=stok.nextToken();

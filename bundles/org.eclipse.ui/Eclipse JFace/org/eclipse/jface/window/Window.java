@@ -1,9 +1,8 @@
 package org.eclipse.jface.window;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
@@ -422,7 +421,7 @@ private void handleExceptionInEventLoop(Throwable e) {
 	// the exception name if no message.
 	ILog log = Platform.getPlugin(Platform.PI_RUNTIME).getLog();
 	
-	String msg = "Unhandled exception caught in event loop.";
+	String msg = JFaceResources.getString("Unhandled_exception"); //$NON-NLS-1$
 	log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, e));
 
 	msg = e.getMessage() == null ? e.toString() : e.getMessage();
@@ -432,13 +431,12 @@ private void handleExceptionInEventLoop(Throwable e) {
 	//e.printStackTrace();
 	
 	// Open an error dialog, but don't reveal the internal exception name.
-	msg = "An internal error has occurred";
-	if (e.getMessage() != null)
-		msg += ": " + e.getMessage();
-	if (!msg.endsWith("."))
-		msg += ".";
-	msg += "  See error log for more details.";
-	MessageDialog.openError(null, "Internal error", msg);
+	if (e.getMessage() == null) {
+		msg = JFaceResources.getString("InternalErrorNoArg"); //$NON-NLS-1$
+	} else {
+		msg = JFaceResources.format("InternalErrorOneArg",  new Object[] {e.getMessage()}); //$NON-NLS-1$
+	}
+	MessageDialog.openError(null, JFaceResources.getString("Internal_error"), msg); //$NON-NLS-1$
 }
 /**
  * Notifies of a font property change.
@@ -550,6 +548,7 @@ private void runEventLoop(Shell shell) {
 			handleExceptionInEventLoop(e);
 		}
 	}
+	display.update();
 }
 /**
  * Sets whether the <code>open</code> method should block
@@ -618,7 +617,6 @@ public void setWindowManager(WindowManager manager) {
 			if (windows[i] == this)
 				return;
 		}
-		System.out.println("Unexpected useage of setWindowManager(). Use WindowManager.add()");
 		manager.add(this);
 	}
 }

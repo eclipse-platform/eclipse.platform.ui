@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -18,8 +17,8 @@ public class SaveAction extends BaseSaveAction {
  *	Create an instance of this class
  */
 public SaveAction(IWorkbenchWindow window) {
-	super("&Save@Ctrl+S", window);
-	setToolTipText("Save the open editor contents");
+	super(WorkbenchMessages.getString("SaveAction.text"), window); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
 }
@@ -37,14 +36,12 @@ public void run() {
 protected void updateState() {
 	IEditorPart editor = getActiveEditor();
 	if (editor != null) {
-		// This is not good NL style.
-		org.eclipse.ui.internal.misc.UIHackFinder.fixUI();
 		String title = editor.getTitle();
-		String label = "&Save " + title + "@Ctrl+S";
+		String label = WorkbenchMessages.format("SaveAction.textOneArg", new Object[] {title}); //$NON-NLS-1$
 		setText(label);
 		setEnabled(editor.isDirty());
 	} else {
-		setText("&Save@Ctrl+S");
+		setText(WorkbenchMessages.getString("SaveAction.text")); //$NON-NLS-1$
 		setEnabled(false);
 	}
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IWorkspace;
@@ -21,7 +20,7 @@ public UIWorkspaceLock(IWorkspace workspace, Display display) throws CoreExcepti
 public boolean acquire() throws InterruptedException {
 	if (isUI()) {
 		if (getCurrentOperationThread() != null && display.getSyncThread() == getCurrentOperationThread())
-			throw new RuntimeException("The resource tree cannot be modified during delta or lifecycle notification.");
+			throw new RuntimeException("The resource tree cannot be modified during delta or lifecycle notification.");//$NON-NLS-1$
 		ui = Thread.currentThread();
 		doPendingWork();
 	}

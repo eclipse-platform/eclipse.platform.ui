@@ -1,9 +1,8 @@
 package org.eclipse.ui.part;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
@@ -25,12 +24,12 @@ public class FileEditorInputFactory implements IElementFactory {
 	 * with the "org.eclipse.ui.elementFactories" extension point.
 	 */
 	private static final String ID_FACTORY = 
-		"org.eclipse.ui.part.FileEditorInputFactory";
+		"org.eclipse.ui.part.FileEditorInputFactory";//$NON-NLS-1$
 
 	/**
 	 * Tag for the IFile.fullPath of the file resource.
 	 */
-	private static final String TAG_PATH = "path";
+	private static final String TAG_PATH = "path";//$NON-NLS-1$
 /**
  * Creates a new factory.
  */

@@ -1,15 +1,15 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,35 +26,35 @@ public class CloseResourceAction extends WorkspaceAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseResourceAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseResourceAction";//$NON-NLS-1$
 /**
  * Creates a new action.
  *
  * @param shell the shell for any dialogs
  */
 public CloseResourceAction(Shell shell) {
-	super(shell, "&Close Project");
+	super(shell, WorkbenchMessages.getString("CloseResourceAction.text")); //$NON-NLS-1$
 	setId(ID);
-	setToolTipText("Close Project");
+	setToolTipText(WorkbenchMessages.getString("CloseResourceAction.toolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CLOSE_RESOURCE_ACTION});
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return "";
+	return WorkbenchMessages.getString("CloseResourceAction.operationMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return "Problems occurred closing the selected resources.";
+	return WorkbenchMessages.getString("CloseResourceAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return "Close Problems";
+	return WorkbenchMessages.getString("CloseResourceAction.title"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.

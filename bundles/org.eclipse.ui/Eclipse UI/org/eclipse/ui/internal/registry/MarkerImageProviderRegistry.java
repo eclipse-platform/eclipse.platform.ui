@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -19,12 +18,12 @@ import java.net.*;
  * a marker type to a provider or to a static image.
  */
 public class MarkerImageProviderRegistry {
-	private static final String ATT_PROVIDER_CLASS = "class";
-	private static final String ATT_ICON = "icon";
-	private static final String ATT_MARKER_TYPE = "markertype";
-	private static final String ATT_ID = "id";
-	private static final String MARKER_ATT_KEY = "org.eclipse.ui.internal.registry.MarkerImageProviderRegistry";
-	private static final String TAG_PROVIDER = "imageprovider";
+	private static final String ATT_PROVIDER_CLASS = "class";//$NON-NLS-1$
+	private static final String ATT_ICON = "icon";//$NON-NLS-1$
+	private static final String ATT_MARKER_TYPE = "markertype";//$NON-NLS-1$
+	private static final String ATT_ID = "id";//$NON-NLS-1$
+	private static final String MARKER_ATT_KEY = "org.eclipse.ui.internal.registry.MarkerImageProviderRegistry";//$NON-NLS-1$
+	private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
 
 	private ArrayList descriptors = new ArrayList();
 
@@ -101,7 +100,6 @@ public ImageDescriptor getImageDescriptor(IMarker marker) {
 						String path = desc.provider.getImagePath(marker);
 						if(path != desc.imagePath) {
 							desc.imagePath = path;
-							marker.setAttribute(MARKER_ATT_KEY,path);
 							desc.imageDescriptor = getImageDescriptor(desc);
 							return desc.imageDescriptor;
 						}
@@ -122,7 +120,7 @@ public ImageDescriptor getImageDescriptor(IMarker marker) {
 			WorkbenchPlugin.getDefault().getLog().log(
 				new Status(
 					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-					"Exception creating image descriptor for: " +  desc.markerType,
+					"Exception creating image descriptor for: " +  desc.markerType,//$NON-NLS-1$
 					e));
 			return null;
 		}

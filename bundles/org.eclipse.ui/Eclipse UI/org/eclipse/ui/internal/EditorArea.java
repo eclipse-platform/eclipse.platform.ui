@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import java.util.*;
@@ -26,7 +25,7 @@ import org.eclipse.ui.internal.misc.UIHackFinder;
  * Note no views are allowed within this container.
  */
 public class EditorArea extends PartSashContainer {
-	private static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";
+	private static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";//$NON-NLS-1$
 	private IPartDropListener partDropListener;
 	private ArrayList editorWorkbooks = new ArrayList(3);
 	private EditorWorkbook activeEditorWorkbook;
@@ -225,7 +224,7 @@ public void restoreState(IMemento memento) {
 			if (refPart != null) {
 				add(workbook, relationship, ratio, refPart);	
 			} else {
-				WorkbenchPlugin.log("Unable to find part for ID: " + relativeID);
+				WorkbenchPlugin.log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
 			}
 		}
 		mapIDtoPart.put(partID, workbook);

@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 
@@ -15,7 +19,7 @@ public class ShortcutBarPart extends LayoutPart {
  * @param id java.lang.String
  */
 public ShortcutBarPart(ToolBarManager tbm) {
-	super("ShortcutBarPart");
+	super("ShortcutBarPart");//$NON-NLS-1$
 	this.tbm = tbm;
 	this.toolbar = tbm.getControl();
 	toolbar.setData((IPartDropTarget)this);

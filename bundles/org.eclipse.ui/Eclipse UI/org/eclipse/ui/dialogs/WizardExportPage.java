@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -13,6 +12,7 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // disambiguate from SWT
 import java.lang.reflect.InvocationTargetException;
-
+import java.text.MessageFormat;
 /**
  * Abstract superclass for a typical export wizard's main page.
  * <p>
@@ -77,12 +77,12 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 	private String				initialTypesFieldValue;
 
 	// constants
-	private static final String	CURRENT_SELECTION = "<current selection>";
-	private static final String TYPE_DELIMITER = ",";
+	private static final String	CURRENT_SELECTION = "<current selection>";//$NON-NLS-1$
+	private static final String TYPE_DELIMITER = ",";//$NON-NLS-1$
 
 	// dialog store id constants
-	private	static final String	STORE_SELECTED_TYPES_ID = "WizardFileSystemExportPage1.STORE_SELECTED_TYPES_ID.";
-	private static final String	STORE_EXPORT_ALL_RESOURCES_ID = "WizardFileSystemExportPage1.STORE_EXPORT_ALL_RESOURCES_ID.";
+	private	static final String	STORE_SELECTED_TYPES_ID = "WizardFileSystemExportPage1.STORE_SELECTED_TYPES_ID.";//$NON-NLS-1$
+	private static final String	STORE_EXPORT_ALL_RESOURCES_ID = "WizardFileSystemExportPage1.STORE_EXPORT_ALL_RESOURCES_ID.";//$NON-NLS-1$
 /**
  * Creates an export wizard page. If the current resource selection 
  * is not empty then it will be used as the initial collection of resources
@@ -112,17 +112,17 @@ public void createControl(Composite parent) {
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	createBoldLabel(composite, "What resources do you want to export?");
+	createBoldLabel(composite, WorkbenchMessages.getString("WizardExportPage.whatLabel")); //$NON-NLS-1$
 	createSourceGroup(composite);
 
 	createSpacer(composite);
 	
-	createBoldLabel(composite, "Where do you want to export resources to?");
+	createBoldLabel(composite, WorkbenchMessages.getString("WizardExportPage.whereLabel")); //$NON-NLS-1$
 	createDestinationGroup(composite);
 
 	createSpacer(composite);
 	
-	createBoldLabel(composite, "Options:");	
+	createBoldLabel(composite, WorkbenchMessages.getString("WizardExportPage.options"));	 //$NON-NLS-1$
 	createOptionsGroup(composite);
 
 	restoreResourceSpecificationWidgetValues();		// ie.- local
@@ -158,7 +158,7 @@ protected final void createSourceGroup(Composite parent) {
 	sourceGroup.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 	// resource label
-	new Label(sourceGroup, SWT.NONE).setText("Folder:");
+	new Label(sourceGroup, SWT.NONE).setText(WorkbenchMessages.getString("WizardExportPage.folder")); //$NON-NLS-1$
 
 	// resource name entry field
 	resourceNameField = new Text(sourceGroup, SWT.SINGLE | SWT.BORDER);
@@ -169,13 +169,13 @@ protected final void createSourceGroup(Composite parent) {
 
 	// resource browse button
 	resourceBrowseButton = new Button(sourceGroup, SWT.PUSH);
-	resourceBrowseButton.setText("Browse...");
+	resourceBrowseButton.setText(WorkbenchMessages.getString("WizardExportPage.browse")); //$NON-NLS-1$
 	resourceBrowseButton.addListener(SWT.Selection, this);
 	resourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// export all types radio	
 	exportAllTypesRadio = new Button(sourceGroup, SWT.RADIO);
-	exportAllTypesRadio.setText("All types");
+	exportAllTypesRadio.setText(WorkbenchMessages.getString("WizardExportPage.allTypes")); //$NON-NLS-1$
 	exportAllTypesRadio.addListener(SWT.Selection, this);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.horizontalSpan = 3;
@@ -183,7 +183,7 @@ protected final void createSourceGroup(Composite parent) {
 
 	// export specific types radio
 	exportSpecifiedTypesRadio = new Button(sourceGroup, SWT.RADIO);
-	exportSpecifiedTypesRadio.setText("Specific types:");
+	exportSpecifiedTypesRadio.setText(WorkbenchMessages.getString("WizardExportPage.specificTypes")); //$NON-NLS-1$
 	exportSpecifiedTypesRadio.addListener(SWT.Selection, this);
 
 	// types combo
@@ -195,14 +195,14 @@ protected final void createSourceGroup(Composite parent) {
 
 	// types edit button
 	typesToExportEditButton = new Button(sourceGroup, SWT.PUSH);
-	typesToExportEditButton.setText("Edit...");
+	typesToExportEditButton.setText(WorkbenchMessages.getString("WizardExportPage.edit")); //$NON-NLS-1$
 	typesToExportEditButton.setLayoutData(new GridData(
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 	typesToExportEditButton.addListener(SWT.Selection, this);
 
 	// details button
 	resourceDetailsButton = new Button(sourceGroup, SWT.PUSH);
-	resourceDetailsButton.setText("Details...");
+	resourceDetailsButton.setText(WorkbenchMessages.getString("WizardExportPage.details")); //$NON-NLS-1$
 	resourceDetailsButton.addListener(SWT.Selection,this);
 
 	// details label
@@ -229,7 +229,7 @@ protected final void createSourceGroup(Composite parent) {
  * @param message the error message
  */
 protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(),"Export Problems",message);
+	MessageDialog.openError(getContainer().getShell(),WorkbenchMessages.getString("WizardExportPage.errorDialogTitle"),message); //$NON-NLS-1$
 }
 /**
  * Displays a description message that indicates a selection of resources
@@ -239,9 +239,9 @@ protected void displayErrorDialog(String message) {
  */
 protected void displayResourcesSelectedCount(int selectedResourceCount) {
 	if (selectedResourceCount == 1)
-		resourceDetailsDescription.setText("1 resource selected");
+		resourceDetailsDescription.setText(WorkbenchMessages.getString("WizardExportPage.oneResourceSelected")); //$NON-NLS-1$
 	else
-		resourceDetailsDescription.setText(selectedResourceCount + " resources selected");
+		resourceDetailsDescription.setText(WorkbenchMessages.format("WizardExportPage.resourceCountMessage", new Object[] {new Integer(selectedResourceCount)})); //$NON-NLS-1$
 }
 /**
  * Ensures that all resources have local contents.  Retrieves server contents 
@@ -270,7 +270,7 @@ protected boolean ensureResourcesLocal(List resources) {
 
 			UIHackFinder.fixPR();
 			// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-			monitor.beginTask("Retrieving content:", nonLocalResources.size() * 1000);
+			monitor.beginTask(WorkbenchMessages.getString("WizardExportPage.progressMessage"), nonLocalResources.size() * 1000); //$NON-NLS-1$
 			Iterator resourcesEnum = nonLocalResources.iterator();
 			UIHackFinder.fixPR(); //1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
 
@@ -300,8 +300,8 @@ protected boolean ensureResourcesLocal(List resources) {
 	} catch (InterruptedException e) {
 		return false;
 	} catch (InvocationTargetException e) {
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".ensureResourcesLocal(): " + e.getTargetException());
-		MessageDialog.openError(getContainer().getShell(), "Internal error", "Internal error: " + e.getTargetException().getMessage());
+		WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.ensureResourcesLocal(): {1}", new Object[] {getClass().getName(), e.getTargetException()}));//$NON-NLS-1$
+		MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardExportPage.internalErrorTitle"), WorkbenchMessages.format("WizardExportPage.internalErrorMessage", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	if (errors.isEmpty())
@@ -309,11 +309,11 @@ protected boolean ensureResourcesLocal(List resources) {
 
 	// If errors occurred, open an Error dialog
 	ErrorDialog.openError(getContainer().getShell(),
-		"Content Retrieval Problems",
+		WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblems"), //$NON-NLS-1$
 		null,   // no special message
 		StatusUtil.newStatus(errors,	// make a multi status
 			null,
-			"Problems occurred retrieving content for the selected resources.",
+			WorkbenchMessages.getString("WizardExportPage.contentRetrievalProblemsMessage"), //$NON-NLS-1$
 			null));
 
 	return false;
@@ -438,7 +438,7 @@ protected List getTypesToExport() {
 	
 	while (tokenizer.hasMoreTokens()) {
 		String currentExtension = tokenizer.nextToken().trim();
-		if (!currentExtension.equals(""))
+		if (!currentExtension.equals(""))//$NON-NLS-1$
 			result.add(currentExtension);
 	}
 		
@@ -477,7 +477,7 @@ protected void handleResourceBrowseButtonPressed() {
 		currentFolder = currentFolder.getParent();
 
 	IPath containerPath =
-		queryForContainer((IContainer) currentFolder, "Select the resource to export.");
+		queryForContainer((IContainer) currentFolder, WorkbenchMessages.getString("WizardExportPage.selectResourcesToExport")); //$NON-NLS-1$
 	if (containerPath != null) { // null means user cancelled
 		String relativePath = containerPath.makeRelative().toString();
 		if (!relativePath.toString().equals(resourceNameField.getText())) {
@@ -537,7 +537,7 @@ protected boolean hasExportableExtension(String resourceName) {
 	if (selectedTypes == null)	// ie.- all extensions are acceptable
 		return true;
 		
-	int separatorIndex = resourceName.lastIndexOf(".");
+	int separatorIndex = resourceName.lastIndexOf(".");//$NON-NLS-1$
 	if (separatorIndex == -1)
 		return false;
 	
@@ -578,7 +578,7 @@ protected void internalSaveWidgetValues() {
  */
 protected Object[] queryIndividualResourcesToExport(IAdaptable rootResource) {
 	ResourceSelectionDialog dialog =
-		new ResourceSelectionDialog(getContainer().getShell(), rootResource,"Select the resources to export.");
+		new ResourceSelectionDialog(getContainer().getShell(), rootResource,WorkbenchMessages.getString("WizardExportPage.selectResourcesTitle")); //$NON-NLS-1$
 	dialog.setInitialSelections(selectedResources.toArray(new Object[selectedResources.size()]));
 	dialog.open();
 	return dialog.getResult();
@@ -611,10 +611,10 @@ protected Object[] queryResourceTypesToExport() {
 			editorMappings,
 			FileEditorMappingContentProvider.INSTANCE,
 			FileEditorMappingLabelProvider.INSTANCE,
-			"Select the resource types to export.");
+			WorkbenchMessages.getString("WizardExportPage.selectionDialogMessage")); //$NON-NLS-1$
 
 	
-	dialog.setTitle("Resource Type Selection");
+	dialog.setTitle(WorkbenchMessages.getString("WizardExportPage.resourceTypeDialog")); //$NON-NLS-1$
 	dialog.open();
 
 	return dialog.getResult();
@@ -624,7 +624,7 @@ protected Object[] queryResourceTypesToExport() {
  * accordingly.
  */
 protected void resetSelectedResources() {
-	resourceDetailsDescription.setText("All file resources matching this criteria");
+	resourceDetailsDescription.setText(WorkbenchMessages.getString("WizardExportPage.detailsMessage")); //$NON-NLS-1$
 	selectedResources = null;
 
 	if (exportCurrentSelection) {
@@ -634,7 +634,7 @@ protected void resetSelectedResources() {
 			resourceNameField.setText(
 				resourceNameField.getText().substring(CURRENT_SELECTION.length()));		
 		else
-			resourceNameField.setText("");
+			resourceNameField.setText("");//$NON-NLS-1$
 	}
 }
 /**
@@ -815,7 +815,7 @@ protected void setTypesToExport(List typeStrings) {
 	while (typesEnum.hasNext()) {
 		result.append(typesEnum.next());
 		result.append(TYPE_DELIMITER);
-		result.append(" ");
+		result.append(" ");//$NON-NLS-1$
 	}
 
 	typesToExportField.setText(result.toString());
@@ -885,7 +885,7 @@ protected final boolean validateSourceGroup() {
 		return true;
 		
 	String sourceString = resourceNameField.getText();
-	if (sourceString.equals("")) {
+	if (sourceString.equals("")) {//$NON-NLS-1$
 		setErrorMessage(null);
 		return false;
 	}
@@ -893,12 +893,12 @@ protected final boolean validateSourceGroup() {
 	IResource resource = getSourceResource();
 		
 	if (resource == null) {
-		setErrorMessage("Resource must exist.");
+		setErrorMessage(WorkbenchMessages.getString("WizardExportPage.mustExistMessage")); //$NON-NLS-1$
 		return false;
 	}
 
 	if (!resource.isAccessible()) {
-		setErrorMessage("Resource must be accessible.");
+		setErrorMessage(WorkbenchMessages.getString("WizardExportPage.mustBeAccessibleMessage")); //$NON-NLS-1$
 		return false;
 	}
 

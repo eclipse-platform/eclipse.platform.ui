@@ -1,13 +1,13 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -28,6 +28,13 @@ public class TextCellEditor extends CellEditor {
 	protected Text text;
 
 	private ModifyListener modifyListener;
+
+	/**
+	 * State information for updating action enablement
+	 */
+	private boolean isSelection = false;
+	private boolean isDeleteable = false;
+	private boolean isSelectable = false;
 /**
  * Creates a new text string cell editor parented under the given control.
  * The cell editor value is the string itself, which is initially the empty string. 
@@ -37,6 +44,42 @@ public class TextCellEditor extends CellEditor {
  */
 public TextCellEditor(Composite parent) {
 	super(parent);
+}
+/**
+ * Checks to see if the "deleteable" state (can delete/
+ * nothing to delete) has changed and if so fire an
+ * enablement changed notification.
+ */
+private void checkDeleteable() {
+	boolean oldIsDeleteable = isDeleteable;
+	isDeleteable = isDeleteEnabled();
+	if (oldIsDeleteable != isDeleteable) {
+		fireEnablementChanged(DELETE);
+	}
+}
+/**
+ * Checks to see if the "selectable" state (can select)
+ * has changed and if so fire an enablement changed notification.
+ */
+private void checkSelectable() {
+	boolean oldIsSelectable = isSelectable;
+	isSelectable = isSelectAllEnabled();
+	if (oldIsSelectable != isSelectable) {
+		fireEnablementChanged(SELECT_ALL);
+	}
+}
+/**
+ * Checks to see if the selection state (selection /
+ * no selection) has changed and if so fire an
+ * enablement changed notification.
+ */
+private void checkSelection() {
+	boolean oldIsSelection = isSelection;
+	isSelection = text.getSelectionCount() > 0;
+	if (oldIsSelection != isSelection) {
+		fireEnablementChanged(COPY);
+		fireEnablementChanged(CUT);
+	}
 }
 /* (non-Javadoc)
  * Method declared on CellEditor.
@@ -48,6 +91,9 @@ protected Control createControl(Composite parent) {
 	text.addKeyListener(new KeyAdapter() {
 		public void keyReleased(KeyEvent e) {
 			keyReleaseOccured(e);
+			checkSelection(); // see explaination below
+			checkDeleteable();
+			checkSelectable();
 		}
 	});
 	text.addTraverseListener(new TraverseListener() {
@@ -57,7 +103,16 @@ protected Control createControl(Composite parent) {
 			}
 		}
 	});
-	
+	// We really want a selection listener but it is not supported so we
+	// use a key listener and a mouse listener to know when selection changes
+	// may have occured
+	text.addMouseListener(new MouseAdapter() {
+		public void mouseUp(MouseEvent e) {
+			checkSelection();
+			checkDeleteable();
+			checkSelectable();
+		}
+	});
 	text.setFont(parent.getFont());
 	text.setBackground(parent.getBackground());
 	text.setText("");//$NON-NLS-1$
@@ -81,6 +136,9 @@ protected void doSetFocus() {
 	if (text != null) {
 		text.selectAll();
 		text.setFocus();
+		checkSelection();
+		checkDeleteable();
+		checkSelectable();
 	}
 }
 /**
@@ -141,6 +199,61 @@ private ModifyListener getModifyListener() {
 	return modifyListener;
 }
 /**
+ * The <code>TextCellEditor</code>  implementation of this 
+ * <code>CellEditor</code> method returns <code>true</code> if 
+ * the current selection is not empty.
+ */
+public boolean isCopyEnabled() {
+	return text.getSelectionCount() > 0;
+}
+/**
+ * The <code>TextCellEditor</code>  implementation of this 
+ * <code>CellEditor</code> method returns <code>true</code> if 
+ * the current selection is not empty.
+ */
+public boolean isCutEnabled() {
+	return text.getSelectionCount() > 0;
+}
+/**
+ * The <code>TextCellEditor</code>  implementation of this 
+ * <code>CellEditor</code> method returns <code>true</code>
+ * if there is a selection or if the caret is not positioned 
+ * at the end of the text.
+ */
+public boolean isDeleteEnabled() {
+	return text.getSelectionCount() > 0 || text.getCaretPosition() < text.getCharCount();
+}
+/**
+ * The <code>TextCellEditor</code>  implementation of this 
+ * <code>CellEditor</code> method always returns <code>true</code>.
+ */
+public boolean isPasteEnabled() {
+	return true;
+}
+/**
+ * The <code>TextCellEditor</code>  implementation of this 
+ * <code>CellEditor</code> method always returns <code>true</code>.
+ */
+public boolean isSaveAllEnabled() {
+	return true;
+}
+/**
+ * Returns <code>true</code> if this cell editor is
+ * able to perform the select all action.
+ * <p>
+ * This default implementation always returns 
+ * <code>false</code>.
+ * </p>
+ * <p>
+ * Subclasses may override
+ * </p>
+ * @return <code>true</code> if select all is possible,
+ *  <code>false</code> otherwise
+ */
+public boolean isSelectAllEnabled() {
+	return text.getText().length() > 0;
+}
+/**
  * The <code>TextCellEditor</code> implementation of this
  * <code>CellEditor</code> method copies the
  * current selection to the clipboard. 
@@ -155,6 +268,31 @@ public void performCopy() {
  */
 public void performCut() {
 	text.cut();
+	checkSelection(); 
+	checkDeleteable();
+	checkSelectable();
+}
+/**
+ * The <code>TextCellEditor</code> implementation of this
+ * <code>CellEditor</code> method deletes the
+ * current selection or, if there is no selection,
+ * the character next character from the current position. 
+ */
+public void performDelete() {
+	if (text.getSelectionCount() > 0)
+		// remove the contents of the current selection
+		text.insert("");
+	else {
+		// remove the next character
+		int pos = text.getCaretPosition();
+		if (pos < text.getCharCount()) {
+			text.setSelection(pos, pos + 1);
+			text.insert("");
+		}
+	}
+	checkSelection(); 
+	checkDeleteable();
+	checkSelectable();
 }
 /**
  * The <code>TextCellEditor</code> implementation of this
@@ -163,6 +301,9 @@ public void performCut() {
  */
 public void performPaste() {
 	text.paste();
+	checkSelection(); 
+	checkDeleteable();
+	checkSelectable();
 }
 /**
  * The <code>TextCellEditor</code> implementation of this
@@ -171,5 +312,7 @@ public void performPaste() {
  */
 public void performSelectAll() {
 	text.selectAll();
+	checkSelection(); 
+	checkDeleteable();
 }
 }

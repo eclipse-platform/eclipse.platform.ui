@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.contentoutline;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
@@ -52,12 +51,13 @@ public class ContentOutline extends PageBookView implements ISelectionProvider, 
 	 * Help context id used for the content outline view
 	 * (value <code>"org.eclipse.ui.general_help_context"</code>).
 	 */
-	public static final String CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID = "org.eclipse.ui.general_help_context";
+	private static java.util.ResourceBundle resoutline_nls = java.util.ResourceBundle.getBundle("org.eclipse.ui.views.contentoutline.messages");  //$NON-NLS-1$
+	public static final String CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID = "org.eclipse.ui.general_help_context";//$NON-NLS-1$
 
 	/**
 	 * Message to show on the default page.
 	 */
-	private String defaultText = "An outline is not available";
+	private String defaultText = resoutline_nls.getString("ContentOutline.noOutline"); //$NON-NLS-1$
 
 	/**
 	 * Selection change listeners.

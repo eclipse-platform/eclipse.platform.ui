@@ -1,22 +1,21 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,12 +29,12 @@ public class BuildAction extends WorkspaceAction {
 	/**
 	 * The id of an incremental build action.
 	 */
-	public static final String ID_BUILD = PlatformUI.PLUGIN_ID + ".BuildAction";
+	public static final String ID_BUILD = PlatformUI.PLUGIN_ID + ".BuildAction";//$NON-NLS-1$
 	
 	/**
 	 * The id of a rebuild all action.
 	 */
-	public static final String ID_REBUILD_ALL = PlatformUI.PLUGIN_ID + ".RebuildAllAction";
+	public static final String ID_REBUILD_ALL = PlatformUI.PLUGIN_ID + ".RebuildAllAction";//$NON-NLS-1$
 
 	private int	buildType;
 /**
@@ -49,17 +48,17 @@ public class BuildAction extends WorkspaceAction {
  *  <code>BaseBuilder.FULL_BUILD</code>
  */
 public BuildAction(Shell shell, int type) {
-	super(shell, "");
+	super(shell, "");//$NON-NLS-1$
 
 	if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
-		setText("&Build");
-		setToolTipText("Incremental build of modified selected resources");
+		setText(WorkbenchMessages.getString("BuildAction.text")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("BuildAction.toolTip")); //$NON-NLS-1$
 		setId(ID_BUILD);
 		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.INCREMENTAL_BUILD_ACTION});
 	}
 	else {
-		setText("Rebuild &All");
-		setToolTipText("Full build of all selected resources");
+		setText(WorkbenchMessages.getString("RebuildAction.text")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("RebuildAction.tooltip")); //$NON-NLS-1$
 		setId(ID_REBUILD_ALL);
 		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.FULL_BUILD_ACTION});
 	}
@@ -70,19 +69,19 @@ public BuildAction(Shell shell, int type) {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return "Building:";
+	return WorkbenchMessages.getString("BuildAction.operationMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return "Problems occurred building the selected resources.";
+	return WorkbenchMessages.getString("BuildAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return "Build Problems";
+	return WorkbenchMessages.getString("BuildAction.problemTitle"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
@@ -98,7 +97,45 @@ void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreEx
  */
 public static boolean isSaveAllSet() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	return store.getBoolean(IWorkbenchPreferenceConstants.SAVE_ALL_BEFORE_BUILD);
+	return store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD);
+}
+/* (non-Javadoc)
+ * Method declared on WorkspaceAction.
+ *
+ * Change the order of the resources so that
+ * it matches the build order. Closed and
+ * non existant projects are eliminated. Also,
+ * any projects in cycles are eliminated.
+ */
+List pruneResources(List resourceCollection) {
+	// Optimize...
+	if (resourceCollection.size() < 2)
+		return resourceCollection;
+
+	// Try the workspace's description build order if specified
+	String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
+	if (orderedNames != null) {
+		List orderedProjects = new ArrayList(resourceCollection.size());
+		for (int i = 0; i < orderedNames.length; i++) {
+			String projectName = orderedNames[i];
+			for (int j = 0; j < resourceCollection.size(); j++) {
+				IProject project = (IProject) resourceCollection.get(j);
+				if (project.getName().equals(projectName)) {
+					orderedProjects.add(project);
+					break;
+				}
+			}
+		}
+		return orderedProjects;
+	}
+
+	// Try the project prerequisite order then
+	IProject[] projects = new IProject[resourceCollection.size()];
+	projects = (IProject[]) resourceCollection.toArray(projects);
+	IProject[][] prereqs = ResourcesPlugin.getWorkspace().computePrerequisiteOrder(projects);
+	List ordered = Arrays.asList(prereqs[0]);
+	ordered.addAll(Arrays.asList(prereqs[1]));
+	return ordered;
 }
 /* (non-Javadoc)
  * Method declared on IAction; overrides method on WorkspaceAction.
@@ -153,7 +190,7 @@ void saveAllResources() {
  * Method declared on WorkspaceAction.
  */
 boolean shouldPerformResourcePruning() {
-	return false;
+	return true;
 }
 /**
  * The <code>BuildAction</code> implementation of this
@@ -184,18 +221,18 @@ boolean verifyBuildersAvailable() {
 		}
 	}
 	catch (CoreException e) {
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e);
+		WorkbenchPlugin.log(WorkbenchMessages.format("BuildAction.verifyExceptionMessage", new Object[] {getClass().getName(), e}));//$NON-NLS-1$
 		MessageDialog.openError(
 			getShell(),
-			"Build problems",
-			"Internal error: " + e.getMessage());
+			WorkbenchMessages.getString("BuildAction.buildProblems"), //$NON-NLS-1$
+			WorkbenchMessages.format("BuildAction.internalError", new Object[] {e.getMessage()})); //$NON-NLS-1$
 		return false;
 	}
 	
 	MessageDialog.openWarning(
 		getShell(),
-		"Warning",
-		"None of the selected projects have registered builders."
+		WorkbenchMessages.getString("BuildAction.warning"), //$NON-NLS-1$
+		WorkbenchMessages.getString("BuildAction.noBuilders") //$NON-NLS-1$
 	);
 	
 	return false;

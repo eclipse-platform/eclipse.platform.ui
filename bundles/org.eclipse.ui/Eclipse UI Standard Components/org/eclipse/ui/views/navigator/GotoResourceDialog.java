@@ -1,10 +1,8 @@
 package org.eclipse.ui.views.navigator;
 
-
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
@@ -72,7 +70,7 @@ import org.eclipse.ui.model.*;
  */
 protected GotoResourceDialog(Shell parentShell,IResource resources[]) {
 	super(parentShell);
-	setTitle("Goto Resource");
+	setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 
 	initDescriptors(resources);
@@ -95,12 +93,12 @@ protected Control createDialogArea(Composite parent) {
 	Composite dialogArea = (Composite)super.createDialogArea(parent);
 
 	Label l = new Label(dialogArea,SWT.NONE);
-	l.setText("Choose a resource:");
+	l.setText(ResourceNavigatorMessages.getString("Goto.label")); //$NON-NLS-1$
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 	
 	l = new Label(dialogArea,SWT.NONE);
-	l.setText("Pattern (? = any character, * = any string)");
+	l.setText(ResourceNavigatorMessages.getString("Goto.pattern")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 
@@ -108,7 +106,7 @@ protected Control createDialogArea(Composite parent) {
 	pattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	l = new Label(dialogArea,SWT.NONE);
-	l.setText("Matching Resources:");
+	l.setText(ResourceNavigatorMessages.getString("Goto.matching")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 
@@ -118,12 +116,13 @@ protected Control createDialogArea(Composite parent) {
 	resourceNames.setLayoutData(data);
 	
 	l = new Label(dialogArea,SWT.NONE);
-	l.setText("In Folders:");
+	l.setText(ResourceNavigatorMessages.getString("Goto.folders")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 	
 	folderNames = new Table(dialogArea,SWT.SINGLE|SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
 	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.widthHint = 250;
 	data.heightHint = 3 * folderNames.getItemHeight();
 	folderNames.setLayoutData(data);
 
@@ -221,7 +220,7 @@ private void initDescriptors(IResource resources[]) {
  * Return true if the label matchs the choosen pattern.
  */
 private boolean match(String label) {
-	if((patternString == null) || (patternString.equals("")) || (patternString.equals("*")))
+	if((patternString == null) || (patternString.equals("")) || (patternString.equals("*")))//$NON-NLS-2$//$NON-NLS-1$
 		return true;
 	return stringMatcher.match(label);
 }
@@ -251,8 +250,8 @@ private void startNewThread() {
 private void textChanged() {
 	updateThread.stop = true;
 	patternString = pattern.getText();
-	if(!patternString.endsWith("*"))
-		patternString = patternString + "*";
+	if(!patternString.endsWith("*"))//$NON-NLS-1$
+		patternString = patternString + "*";//$NON-NLS-1$
 	stringMatcher = new StringMatcher(patternString,true,false);
 	resourceNames.removeAll();
 	startNewThread();
@@ -265,8 +264,17 @@ private void updateFolders(ResourceDescriptor desc) {
 	folderNames.removeAll();
 	for (int i = 0; i < desc.resources.size(); i++){
 		TableItem newItem = new TableItem(folderNames,SWT.NONE);
-		IResource r = (IResource)desc.resources.get(i);
-		newItem.setText(r.getParent().getFullPath().makeRelative().toString());
+		IResource r = (IResource) desc.resources.get(i);
+		IResource parent = r.getParent();
+		String text;
+		if (parent.getType() == IResource.ROOT) {
+			// XXX: Get readable name for workspace root ("Workspace"), without duplicating language-specific string here.
+			text = labelProvider.getText(parent);
+		}
+		else {
+			text = parent.getFullPath().makeRelative().toString();
+		}
+		newItem.setText(text);
 		newItem.setImage(labelProvider.getImage(r.getParent()));
 		newItem.setData(r);
 	}

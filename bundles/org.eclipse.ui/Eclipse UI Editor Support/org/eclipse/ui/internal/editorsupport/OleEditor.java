@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.editorsupport;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -11,7 +10,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.internal.model.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.*;
@@ -56,13 +54,13 @@ public class OleEditor extends EditorPart {
 		}
 	};
 
-	private static final String FILE_PROMPTER_TITLE = "Rename File";
-	private static final String FILE_PROMPTER_MESSAGE = "Enter new file name:";
-	private static final String RENAME_ERROR_TITLE = "Exception saving file";
-	private static final String OLE_EXCEPTION_TITLE = "OLE Exception";
-	private static final String OLE_EXCEPTION_MESSAGE = "OLE Error Saving ";
-	private static final String SAVE_ERROR_TITLE = "Error Saving";
-	private static final String SAVE_ERROR_MESSAGE = "Could not save ";
+	private static final String FILE_PROMPTER_TITLE = WorkbenchMessages.getString("OleEditor.renameTitle"); //$NON-NLS-1$
+	private static final String FILE_PROMPTER_MESSAGE = WorkbenchMessages.getString("OleEditor.renameMessage"); //$NON-NLS-1$
+	private static final String RENAME_ERROR_TITLE = WorkbenchMessages.getString("OleEditor.errorSaving"); //$NON-NLS-1$
+	private static final String OLE_EXCEPTION_TITLE = WorkbenchMessages.getString("OleEditor.oleExceptionTitle"); //$NON-NLS-1$
+	private static final String OLE_EXCEPTION_MESSAGE = WorkbenchMessages.getString("OleEditor.oleExceptionMessage"); //$NON-NLS-1$
+	private static final String SAVE_ERROR_TITLE = WorkbenchMessages.getString("OleEditor.savingTitle"); //$NON-NLS-1$
+	private static final String SAVE_ERROR_MESSAGE = WorkbenchMessages.getString("OleEditor.savingMessage"); //$NON-NLS-1$
 /**
  * Return a new ole editor.
  */
@@ -94,7 +92,6 @@ public void createPartControl(Composite parent) {
 
 	// Create a OLE client site.
 	clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
-	clientSite.doVerb(OLE.OLEIVERB_SHOW);
 	clientSite.setBackground(
 		clientFrame.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 }
@@ -234,8 +231,7 @@ public void init(IEditorSite site, IEditorInput input)
 {
 	// Check input.
 	if (!(input instanceof IFileEditorInput))
-		throw new PartInitException("Invalid Input: " + input
-			+ ".  Input must implement IFileEditorInput");
+		throw new PartInitException(WorkbenchMessages.format("OleEditor.invalidInput", new Object[]{input})); //$NON-NLS-1$
 
 	// Save input.
 	setSite(site);
@@ -275,7 +271,7 @@ protected void initializeWorkbenchMenus() {
 
 	for (int i = 0; i < menuBar.getItemCount(); i++) {
 		MenuItem item = menuBar.getItem(i);
-		String id = "";
+		String id = "";//$NON-NLS-1$
 		if (item.getData() instanceof IMenuManager)
 			id = ((IMenuManager) item.getData()).getId();
 		if (id.equals(IWorkbenchActionConstants.M_FILE))
@@ -328,16 +324,33 @@ public boolean isSaveNeeded() {
  * @param file java.io.File
  */
 private boolean saveFile(File file) {
-	//Otherwise save the file using SWT
-	if (OLE.isOleFile(file))
-		return clientSite.save(file, true);
-	//Try to save traditionally - if that fails give OLE a try
-	if (clientSite.save(file, false))
+
+	int result = clientSite.queryStatus(OLE.OLECMDID_SAVE);
+	if ((result & OLE.OLECMDF_ENABLED) == OLE.OLECMDF_ENABLED) {
+		result =
+			clientSite.exec(OLE.OLECMDID_SAVE, OLE.OLECMDEXECOPT_PROMPTUSER, null, null);
+		if (result == OLE.S_OK)
+			return true;
+	}
+
+	File tempFile = new File(file.getAbsolutePath() + ".tmp");
+	file.renameTo(tempFile);
+	boolean saved = false;
+	if (OLE.isOleFile(file) || usesStorageFiles(clientSite.getProgramID())) {
+		saved = clientSite.save(file, true);
+	} else {
+		saved = clientSite.save(file, false);
+	}
+
+	if (saved) {
+		// save was successful so discard the backup
+		tempFile.delete();
 		return true;
-
-	//Now see if OLE can handle it
-	return clientSite.save(file, true);
-
+	} else {
+		// save failed so restore the backup
+		tempFile.renameTo(file);
+		return false;
+	}
 }
 /**
  * Save the new File using the client site
@@ -380,9 +393,12 @@ private WorkspaceModifyOperation saveNewFileOperation() {
  * Asks the part to take focus within the workbench.
  */
 public void setFocus() {
-	//If there was an OLE Error 
-	if (!clientFrame.isDisposed())
-		clientFrame.setFocus();
+	//If there was an OLE Error or nothing has been created yet
+	if (clientFrame == null || clientFrame.isDisposed())
+		return;
+		
+	clientSite.doVerb(OLE.OLEIVERB_SHOW);
+	clientFrame.setFocus();
 }
 /**
  *	Set the file resource that this object is displaying
@@ -390,5 +406,19 @@ public void setFocus() {
 protected void setResource(IFile file) {
 	resource = file;
 	source = new File(file.getLocation().toOSString());
+}
+/*
+* See if it is one of the known types that use OLE Storage
+* @return boolean
+*/
+
+private static boolean usesStorageFiles(String progID) {
+	if (progID.startsWith("Word", 0)
+		|| progID.startsWith("MSGraph", 0)
+		|| progID.startsWith("PowerPoint", 0)
+		|| progID.startsWith("Excel", 0))
+		return true;
+
+	return false;
 }
 }

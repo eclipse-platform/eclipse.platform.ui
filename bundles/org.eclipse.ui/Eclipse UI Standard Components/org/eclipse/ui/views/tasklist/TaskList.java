@@ -1,21 +1,15 @@
 package org.eclipse.ui.views.tasklist;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.MarkerTransfer;
-
-// *** This is only until the class is properly
-// fixed up so it can be made public.
-//import org.eclipse.ui.part.TextActionHandler;
-import org.eclipse.ui.internal.TextActionHandler;
-
+import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.action.*;
@@ -57,7 +51,7 @@ public class TaskList extends ViewPart {
 	private TableViewer viewer;
 	private IMemento memento;
 
-	private TextActionHandler textActionHandler;
+	private CellEditorActionHandler editorActionHandler;
 	private TaskAction newTaskAction;
 	private TaskAction removeTaskAction;
 	private TaskAction purgeCompletedAction;
@@ -349,10 +343,10 @@ public void createPartControl(Composite parent) {
 	getSite().getPage().addPartListener(partListener);
 
 	// Add global action handlers.
-	getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeTaskAction);
-	textActionHandler = new TextActionHandler(getViewSite().getActionBars());
-	textActionHandler.addText((Text)descriptionEditor.getControl());
-	textActionHandler.setSelectAllAction(selectAllAction);
+	editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
+	editorActionHandler.addCellEditor(descriptionEditor);
+	editorActionHandler.setDeleteAction(removeTaskAction);
+	editorActionHandler.setSelectAllAction(selectAllAction);
 	
 	if (memento != null) restoreState(memento);
 	memento = null;
@@ -380,9 +374,9 @@ void createTable(Composite parent) {
 public void dispose() {
 	super.dispose();
 	getSite().getPage().removePartListener(partListener);
-	if (textActionHandler != null) {
-		textActionHandler.dispose();
-		textActionHandler = null;
+	if (editorActionHandler != null) {
+		editorActionHandler.dispose();
+		editorActionHandler = null;
 	}
 }
 /**
@@ -419,10 +413,11 @@ void fillContextMenu(IMenuManager menu) {
  * Refreshes the viewer and title bar.
  */
 void filterChanged() {
-	updateTitle();
 	// filter has already been updated by dialog; just refresh
 	getTableViewer().refresh();
+	// update after refresh since the content provider caches summary info
 	updateStatusMessage();
+	updateTitle();
 }
 void focusSelectionChanged(SelectionChangedEvent event) {
 	updateFocusResource(event.getSelection());
@@ -498,12 +493,13 @@ String getStatusMessage(IStructuredSelection selection) {
 		IMarker marker = (IMarker) selection.getFirstElement();
 		return MarkerUtil.getMessage(marker);
 	}
+	TaskListContentProvider provider = (TaskListContentProvider) viewer.getContentProvider();
 	if (selection.size() > 1) {
 		try {
 			String fmt = "{0} items selected: {1}";
 			Object[] args = new Object[] {
 				new Integer(selection.size()),
-				getSummary(selection.toList())
+				provider.getSummary(selection.toList())
 			};
 			return MessageFormat.format(fmt, args);
 		}
@@ -511,41 +507,7 @@ String getStatusMessage(IStructuredSelection selection) {
 			// ignore
 		}
 	}
-	return ((TaskListContentProvider) viewer.getContentProvider()).getSummary();
-}
-/**
- * Returns a one-line string containing a summary of the number
- * of tasks and problems in the given array of markers.
- */
-String getSummary(List markers) throws CoreException {
-	int numTasks = 0;
-	int numErrors = 0, numWarnings = 0, numInfos = 0;
-	for (Iterator i = markers.iterator(); i.hasNext();) {
-		IMarker marker = (IMarker) i.next();
-		if (marker.isSubtypeOf(IMarker.TASK)) {
-			++numTasks;
-		}
-		else if (marker.isSubtypeOf(IMarker.PROBLEM)) {
-			switch (MarkerUtil.getSeverity(marker)) {
-				case IMarker.SEVERITY_ERROR:
-					++numErrors;
-					break;
-				case IMarker.SEVERITY_WARNING:
-					++numWarnings;
-					break;
-				case IMarker.SEVERITY_INFO:
-					++numInfos;
-					break;
-			}
-		}
-	}
-	String fmt = "{0} Tasks, {1} Errors, {2} Warnings, {3} Infos";
-	Object[] args = new Object[] {
-		new Integer(numTasks),
-		new Integer(numErrors), 
-		new Integer(numWarnings), 
-		new Integer(numInfos)};
-	return MessageFormat.format(fmt, args);
+	return provider.getSummary();
 }
 /**
  * When created, new task instance is cached in
@@ -626,6 +588,13 @@ void makeActions() {
 	filtersAction.setText("&Filter...");
 	filtersAction.setToolTipText("Filter");
 	filtersAction.setImageDescriptor(MarkerUtil.getImageDescriptor("filter"));
+}
+/**
+ * The markers have changed.  Update the status line and title bar.
+ */
+void markersChanged() {
+	updateStatusMessage();
+	updateTitle();
 }
 void partActivated(IWorkbenchPart part) {
 	if (part == focusPart)
@@ -954,13 +923,15 @@ void updateFocusResource(ISelection selection) {
 	if (resource == null) {
 		if (focusPart instanceof IEditorPart) {
 			IEditorInput input = ((IEditorPart) focusPart).getEditorInput();
-			if (input instanceof IFileEditorInput) {
-				resource = ((IFileEditorInput) input).getFile();
-			}
-			else {
-				resource = (IResource) input.getAdapter(IResource.class);
-				if (resource == null) {
-					resource = (IFile) input.getAdapter(IFile.class);
+			if (input != null) {
+				if (input instanceof IFileEditorInput) {
+					resource = ((IFileEditorInput) input).getFile();
+				}
+				else {
+					resource = (IResource) input.getAdapter(IResource.class);
+					if (resource == null) {
+						resource = (IFile) input.getAdapter(IFile.class);
+					}
 				}
 			}
 		}
@@ -970,6 +941,7 @@ void updateFocusResource(ISelection selection) {
 		if (showSelections()) {
 			viewer.refresh();
 			updateStatusMessage();
+			updateTitle();
 		}
 	}
 }
@@ -991,10 +963,9 @@ void updateStatusMessage(IStructuredSelection selection) {
  */
 void updateTitle() {
 	String name = getConfigurationElement().getAttribute("name");
-	if (!getFilter().showAll()) {
-		name += " (Filter applied)";
-	}
-	setTitle(name);
+	TaskListContentProvider provider = (TaskListContentProvider) getTableViewer().getContentProvider();
+	String title = name + " " + provider.getTitleSummary();
+	setTitle(title);
 }
 /**
  * Writes a string representation of the given marker to the buffer

@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.bookmarkexplorer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -45,12 +44,12 @@ public class BookmarkNavigator extends ViewPart {
 	private IMemento memento;
 	
 	// Persistance tags.
-	private static final String TAG_SELECTION = "selection"; 
-	private static final String TAG_ID = "id";
-	private static final String TAG_MARKER = "marker";
-	private static final String TAG_RESOURCE = "resource";
-	private static final String TAG_VERTICAL_POSITION = "verticalPosition";
-	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";
+	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
+	private static final String TAG_ID = "id";//$NON-NLS-1$
+	private static final String TAG_MARKER = "marker";//$NON-NLS-1$
+	private static final String TAG_RESOURCE = "resource";//$NON-NLS-1$
+	private static final String TAG_VERTICAL_POSITION = "verticalPosition";//$NON-NLS-1$
+	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";//$NON-NLS-1$
 /**
  * Creates the bookmarks view.
  */
@@ -63,16 +62,19 @@ public BookmarkNavigator() {
 void addContributions() {
 	// Create the actions.
 	openAction = new OpenBookmarkAction(this);
-	openAction.setHoverImageDescriptor(getImageDescriptor("clcl16/gotoobj_tsk.gif"));
-	openAction.setImageDescriptor(getImageDescriptor("elcl16/gotoobj_tsk.gif"));
+	openAction.setHoverImageDescriptor(getImageDescriptor("clcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
+	openAction.setImageDescriptor(getImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
 	
 	removeAction = new RemoveBookmarkAction(this);
-	removeAction.setHoverImageDescriptor(getImageDescriptor("clcl16/remtsk_tsk.gif"));
-	removeAction.setImageDescriptor(getImageDescriptor("elcl16/remtsk_tsk.gif"));
-	removeAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/remtsk_tsk.gif"));
+	removeAction.setHoverImageDescriptor(getImageDescriptor("clcl16/remtsk_tsk.gif"));//$NON-NLS-1$
+	removeAction.setImageDescriptor(getImageDescriptor("elcl16/remtsk_tsk.gif"));//$NON-NLS-1$
+	removeAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/remtsk_tsk.gif"));//$NON-NLS-1$
 	
 	selectAllAction = new SelectAllAction(this);
 	showInNavigatorAction = new ShowInNavigatorAction(getViewSite().getPage(), viewer);
+
+	// initializes action enabled state
+	handleSelectionChanged(StructuredSelection.EMPTY);
 
 	// Create dynamic menu mgr.  Dynamic is currently required to
 	// support action contributions.
@@ -106,7 +108,7 @@ void addContributions() {
 	});
 	viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
-			handleSelectionChanged(event.getSelection());
+			handleSelectionChanged((IStructuredSelection) event.getSelection());
 		}
 	});
 	viewer.getControl().addKeyListener(new KeyAdapter() {
@@ -147,9 +149,9 @@ void fillContextMenu(IMenuManager manager) {
 ImageDescriptor getImageDescriptor(String relativePath) {
 	String iconPath;
 	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";
+		iconPath = "icons/full/";//$NON-NLS-1$
 	else
-		iconPath = "icons/basic/";
+		iconPath = "icons/basic/";//$NON-NLS-1$
 
 	try {
 		URL installURL = getPlugin().getDescriptor().getInstallURL();
@@ -201,11 +203,12 @@ void handleKeyPressed(KeyEvent event) {
  *
  * @param selection the new selection
  */
-void handleSelectionChanged(ISelection selection) {
+void handleSelectionChanged(IStructuredSelection selection) {
 	//update the actions
 	openAction.selectionChanged(selection);
 	removeAction.selectionChanged(selection);
 	selectAllAction.selectionChanged(selection);
+	showInNavigatorAction.selectionChanged(selection);
 }
 /* (non-Javadoc)
  * Method declared on IViewPart.

@@ -1,18 +1,14 @@
 package org.eclipse.ui;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
  * Interface for listening for property changes on an object.
  * <p>
  * This interface may be implemented by clients.
- * </p>
- * <p>
- * [Issue: Potential confusion with org.eclipse.jface.IPropertyChangeListener.]
  * </p>
  *
  * @see IWorkbenchPart#addPropertyListener

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
@@ -14,8 +13,8 @@ import org.eclipse.ui.internal.misc.UIHackFinder;
  * A strategy to read view extensions from the registry.
  */
 public class ViewRegistryReader extends RegistryReader {
-	private static final String TAG_VIEW="view";
-	private static final String TAG_CATEGORY="category";
+	private static final String TAG_VIEW="view";//$NON-NLS-1$
+	private static final String TAG_CATEGORY="category";//$NON-NLS-1$
 	private ViewRegistry viewRegistry;
 	
 /**
@@ -33,7 +32,7 @@ protected void readCategory(IConfigurationElement element) {
 		viewRegistry.add(category);
 	} catch (CoreException e) {
 		// log an error since its not safe to show a dialog here
-		WorkbenchPlugin.log("Unable to create view category.", e.getStatus());
+		WorkbenchPlugin.log("Unable to create view category.", e.getStatus());//$NON-NLS-1$
 	}
 }
 /**
@@ -62,7 +61,7 @@ protected void readView(IConfigurationElement element) {
 		viewRegistry.add(desc);
 	} catch (CoreException e) {
 		// log an error since its not safe to open a dialog here
-		WorkbenchPlugin.log("Unable to create view descriptor." , e.getStatus());
+		WorkbenchPlugin.log("Unable to create view descriptor." , e.getStatus());//$NON-NLS-1$
 	}
 }
 /**

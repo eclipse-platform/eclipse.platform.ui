@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -16,7 +15,7 @@ package org.eclipse.ui.views.properties;
  */
 public FilterAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
-	setToolTipText("Show/hide advanced properties");
+	setToolTipText(PropertiesMessages.getString("Filter.toolTip")); //$NON-NLS-1$
 }
 /**
  * Toggle the display of expert properties.

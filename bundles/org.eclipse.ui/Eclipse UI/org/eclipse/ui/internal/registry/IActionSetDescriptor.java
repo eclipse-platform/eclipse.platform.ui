@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 
@@ -33,10 +32,9 @@ public interface IActionSetDescriptor {
  */
 public IActionSet createActionSet() throws CoreException;
 /**
- * Returns the category of this action set.
- * This is the value of its <code>"category"</code> attribute.
+ * Returns the category id of this action set.
  *
- * @return a non-empty category name or <cod>null</code> if none specified
+ * @return a non-empty category id or <cod>null</code> if none specified
  */
 public String getCategory();
 /**
@@ -64,4 +62,10 @@ public String getLabel();
  * Returns whether this action set is initially visible.
  */
 public boolean isInitiallyVisible();
+/**
+ * Sets the category of this action set.
+ *
+ * @param cat a non-empty category id
+ */
+public void setCategory(String id);
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -284,13 +283,12 @@ public IWorkbench getWorkbench() {
  * because the default values are not stored in the preference store.
  */
 protected void initializeDefaultPreferences(IPreferenceStore store) {
-	store.setDefault(IWorkbenchPreferenceConstants.AUTO_BUILD, true);
-	store.setDefault(IWorkbenchPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
-	store.setDefault(IWorkbenchPreferenceConstants.VIEW_PRESENTATION_STYLE, 1);
-	store.setDefault(IWorkbenchPreferenceConstants.WELCOME_DIALOG, true);
+	store.setDefault(IPreferenceConstants.AUTO_BUILD, true);
+	store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
+	store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 	store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
-	store.setDefault(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
-	store.setDefault(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
+	store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
+	store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 	store.setDefault(
 		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
@@ -298,7 +296,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 		IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW);
 	store.setDefault(
-		IWorkbenchPreferenceConstants.ALT_OPEN_NEW_PERSPECTIVE,
+		IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,

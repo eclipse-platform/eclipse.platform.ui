@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.internal.framelist;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 /**
  * A frame source is the source of frames which appear in a frame list.
  * The frame list asks for the current frame whenever it switches

@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.navigator;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -20,8 +24,8 @@ import java.util.StringTokenizer;
 	private String[] patterns;
 	private StringMatcher[] matchers;
 	
-	static String COMMA_SEPARATOR = ",";
-	static String FILTERS_TAG = "resourceFilters";
+	static String COMMA_SEPARATOR = ",";//$NON-NLS-1$
+	static String FILTERS_TAG = "resourceFilters";//$NON-NLS-1$
 /**
  * Creates a new resource pattern filter.
  */

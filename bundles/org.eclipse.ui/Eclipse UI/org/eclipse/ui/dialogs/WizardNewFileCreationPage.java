@@ -1,13 +1,14 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 import org.eclipse.ui.IWorkbench;
@@ -23,7 +24,7 @@ import org.eclipse.swt.widgets.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
-
+import java.text.MessageFormat;
 /**
  * Standard main page for a wizard that creates a file resource.
  * <p>
@@ -82,7 +83,7 @@ public void createControl(Composite parent) {
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 	// resource and container group
-	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), "file");
+	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file")); //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initialPopulateContainerNameField();
 	if (initialFileName != null)
@@ -101,11 +102,21 @@ public void createControl(Composite parent) {
  * @exception CoreException if the operation fails
  * @exception OperationCanceledException if the operation is canceled
  */
-protected void createFile(IFile fileHandle,InputStream contents,IProgressMonitor monitor) throws CoreException {
+protected void createFile(IFile fileHandle, InputStream contents, IProgressMonitor monitor) throws CoreException {
 	if (contents == null)
 		contents = new ByteArrayInputStream(new byte[0]);
-		
-	fileHandle.create(contents,false,monitor);
+
+	try {
+		// Create a new file resource in the workspace
+		fileHandle.create(contents, false, monitor);
+	}
+	catch (CoreException e) {
+		// If the file already existed locally, just refresh to get contents
+		if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
+			fileHandle.refreshLocal(IResource.DEPTH_ZERO, null);
+		else
+			throw e;
+	}
 
 	if (monitor.isCanceled())
 		throw new OperationCanceledException();
@@ -160,7 +171,7 @@ public IFile createNewFile() {
 			InterruptedException
 		{
 			try {
-				monitor.beginTask("Creating", 2000);
+				monitor.beginTask(WorkbenchMessages.getString("WizardNewFileCreationPage.progress"), 2000); //$NON-NLS-1$
 				ContainerGenerator generator = new ContainerGenerator(containerPath);
 				generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 				createFile(newFileHandle,initialContents, new SubProgressMonitor(monitor, 1000));
@@ -178,14 +189,14 @@ public IFile createNewFile() {
 		if (e.getTargetException() instanceof CoreException) {
 			ErrorDialog.openError(
 				getContainer().getShell(), // Was Utilities.getFocusShell()
-				"Creation Problems", 
+				WorkbenchMessages.getString("WizardNewFileCreationPage.errorTitle"),  //$NON-NLS-1$
 				null,	// no special message
 				((CoreException) e.getTargetException()).getStatus());
 		}
 		else {
 			// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-			WorkbenchPlugin.log("Exception in " + getClass().getName() + ".getNewFile(): " + e.getTargetException());
-			MessageDialog.openError(getContainer().getShell(), "Creation problems", "Internal error: " + e.getTargetException().getMessage());
+			WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.getNewFile(): {1}", new Object[] {getClass().getName(), e.getTargetException()}));//$NON-NLS-1$
+			MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), WorkbenchMessages.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -238,7 +249,7 @@ protected InputStream getInitialContents() {
  *     component group
  */
 protected String getNewFileLabel() {
-	return "File name:";
+	return WorkbenchMessages.getString("WizardNewFileCreationPage.fileLabel"); //$NON-NLS-1$
 }
 /**
  * The <code>WizardNewFileCreationPage</code> implementation of this 

@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
@@ -31,20 +30,20 @@ import java.util.zip.*;
 
 	// constants
 	private static final int	COMBO_HISTORY_LENGTH = 5;
-	private static final String	FILE_IMPORT_MASK = "*.jar;*.zip";
+	private static final String	FILE_IMPORT_MASK = "*.jar;*.zip";//$NON-NLS-1$
 	
 	// dialog store id constants
-	private final static String STORE_SOURCE_NAMES_ID = "WizardZipFileImportPage1.STORE_SOURCE_NAMES_ID";
-	private final static String STORE_IMPORT_ALL_RESOURCES_ID = "WizardZipFileImportPage1.STORE_IMPORT_ALL_ENTRIES_ID";
-	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardZipFileImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";
-	private final static String STORE_SELECTED_TYPES_ID = "WizardZipFileImportPage1.STORE_SELECTED_TYPES_ID";
+	private final static String STORE_SOURCE_NAMES_ID = "WizardZipFileImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
+	private final static String STORE_IMPORT_ALL_RESOURCES_ID = "WizardZipFileImportPage1.STORE_IMPORT_ALL_ENTRIES_ID";//$NON-NLS-1$
+	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardZipFileImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";//$NON-NLS-1$
+	private final static String STORE_SELECTED_TYPES_ID = "WizardZipFileImportPage1.STORE_SELECTED_TYPES_ID";//$NON-NLS-1$
 /**
  *	Creates an instance of this class
  */
 public WizardZipFileImportPage1(IWorkbench aWorkbench, IStructuredSelection selection) {
-	super("zipFileImportPage1", aWorkbench, selection);
-	setTitle("Zip file");
-	setDescription("Import the contents of a Zip file from the local file system.");
+	super("zipFileImportPage1", aWorkbench, selection);//$NON-NLS-1$
+	setTitle(DataTransferMessages.getString("ZipExport.exportTitle")); //$NON-NLS-1$
+	setDescription(DataTransferMessages.getString("ZipImport.description")); //$NON-NLS-1$
 }
 /**
  * Called when the user presses the Cancel button. Return a boolean
@@ -71,7 +70,7 @@ protected boolean closeZipFile(ZipFile file) {
 	try {
 		file.close();
 	} catch (IOException e) {
-		displayErrorDialog("Could not close file " + file.getName());
+		displayErrorDialog(DataTransferMessages.format("ZipImport.couldNotClose", new Object [] {file.getName()})); //$NON-NLS-1$
 		return false;
 	}
 
@@ -90,7 +89,7 @@ protected void createOptionsGroup(Composite parent) {
 
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);
-	overwriteExistingResourcesCheckbox.setText("Overwrite existing resources without warning");
+	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 }
 /**
  *	Display the appropriate string representing a selection of the
@@ -98,9 +97,9 @@ protected void createOptionsGroup(Composite parent) {
  */
 protected void displaySelectedCount(int selectedEntryCount) {
 	if (selectedEntryCount == 1)
-		detailsDescriptionLabel.setText("1 entry selected");
+		detailsDescriptionLabel.setText(DataTransferMessages.getString("ImportPage.oneSelected")); //$NON-NLS-1$
 	else
-		detailsDescriptionLabel.setText(selectedEntryCount + " entries selected");
+		detailsDescriptionLabel.setText(DataTransferMessages.format("ZipImport.entriesSelected",new Object[] {String.valueOf(selectedEntryCount)})); //$NON-NLS-1$
 }
 /**
  *	Answer a boolean indicating whether the specified source currently exists
@@ -146,7 +145,7 @@ protected FileSystemElement getFileSystemTree() {
  *	Answer the string to display as the label for the source specification field
  */
 protected String getSourceLabel() {
-	return "Zip file:";
+	return DataTransferMessages.getString("ZipExport.destinationLabel"); //$NON-NLS-1$
 }
 /**
  *	Answer a handle to the zip file currently specified as being the source.
@@ -156,9 +155,9 @@ protected ZipFile getSpecifiedSourceFile() {
 	try {
 		return new ZipFile(sourceNameField.getText());
 	} catch (ZipException e) {
-		displayErrorDialog("Source file is not of proper format.");
+		displayErrorDialog(DataTransferMessages.getString("ZipImport.badFormat")); //$NON-NLS-1$
 	} catch (IOException e) {
-		displayErrorDialog("Source file could not be read.");
+		displayErrorDialog(DataTransferMessages.getString("ZipImport.couldNotRead")); //$NON-NLS-1$
 	}
 	
 	sourceNameField.setFocus();

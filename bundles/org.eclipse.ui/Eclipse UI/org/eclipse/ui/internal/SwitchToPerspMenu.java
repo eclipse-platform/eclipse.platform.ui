@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
@@ -36,7 +35,7 @@ public SwitchToPerspMenu(IMenuManager menuManager, IWorkbenchWindow window) {
  * Constructs a new menu.
  */
 public SwitchToPerspMenu(IWorkbenchWindow window) {
-	super(window, "SwitchToPerspectiveMenu");
+	super(window, "SwitchToPerspectiveMenu");//$NON-NLS-1$
 	showActive(true);
 }
 /* (non-Javadoc)

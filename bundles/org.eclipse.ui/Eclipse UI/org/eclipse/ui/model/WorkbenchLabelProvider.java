@@ -1,9 +1,8 @@
 package org.eclipse.ui.model;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -23,7 +22,7 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	 * The cache of images that have been dispensed by this provider.
 	 * Maps ImageDescriptor->Image.
 	 */
-	private Map imageTable = new Hashtable(40);
+	private Map imageTable;
 /**
  * Creates a new workbench label provider.
  */
@@ -59,11 +58,12 @@ protected String decorateText(String input, Object element) {
  * Disposes of all allocated images.
  */
 public final void dispose() {
-	Iterator images = imageTable.values().iterator();
-	while (images.hasNext()) {
-		((Image)images.next()).dispose();
+	if (imageTable != null) {
+		for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
+			((Image) i.next()).dispose();
+		}
+		imageTable = null;
 	}
-	imageTable = null;
 }
 /**
  * Returns the implementation of IWorkbenchAdapter for the given
@@ -92,6 +92,9 @@ public final Image getImage(Object element) {
 	descriptor = decorateImage(descriptor, element);
 
 	//obtain the cached image corresponding to the descriptor
+	if (imageTable == null) {
+		 imageTable = new Hashtable(40);
+	}
 	Image image = (Image) imageTable.get(descriptor);
 	if (image == null) {
 		image = descriptor.createImage();
@@ -106,7 +109,7 @@ public final String getText(Object element) {
 	//query the element for its label
 	IWorkbenchAdapter adapter = getAdapter(element);
 	if (adapter == null)
-		return "";
+		return "";//$NON-NLS-1$
 	String label = adapter.getLabel(element);
 
 	//return the decorated label

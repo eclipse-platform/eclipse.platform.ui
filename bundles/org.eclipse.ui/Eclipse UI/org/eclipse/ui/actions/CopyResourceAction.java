@@ -1,16 +1,17 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+import java.text.MessageFormat;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIHackFinder;
@@ -37,7 +38,7 @@ public class CopyResourceAction extends SelectionListenerAction
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyResourceAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyResourceAction";//$NON-NLS-1$
 	
 	/**
 	 * The shell in which to show any dialogs.
@@ -52,15 +53,15 @@ public class CopyResourceAction extends SelectionListenerAction
 
 	private boolean setUpErrors = false;
 
-	private static String RESOURCE_EXISTS_TITLE = "Resource Exists";
-	private static String RESOURCE_EXISTS_MESSAGE = " exists. Do you wish to overwrite?";
+	private boolean canceled = false;
+
 /**
  * Creates a new action.
  *
  * @param shell the shell for any dialogs
  */
 public CopyResourceAction(Shell shell) {
-	this(shell, "&Copy");
+	this(shell, WorkbenchMessages.getString("CopyResourceAction.title")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.COPY_RESOURCE_ACTION});
 }
 /**
@@ -72,7 +73,7 @@ public CopyResourceAction(Shell shell) {
  */
 CopyResourceAction(Shell shell, String name) {
 	super(name);
-	setToolTipText("Copy the resource");
+	setToolTipText(WorkbenchMessages.getString("CopyResourceAction.toolTip")); //$NON-NLS-1$
 	setId(CopyResourceAction.ID);
 	Assert.isNotNull(shell);
 	this.shell = shell;
@@ -111,8 +112,8 @@ private boolean checkOverwrite(
 			result[0] =
 				MessageDialog.openQuestion(
 					shell,
-					RESOURCE_EXISTS_TITLE,
-					destination.toString() + RESOURCE_EXISTS_MESSAGE);
+					WorkbenchMessages.getString("CopyResourceAction.resourceExists"), //$NON-NLS-1$
+					WorkbenchMessages.format("CopyResourceAction.overwriteQuestion", new Object[] {destination.getFullPath().makeRelative()})); //$NON-NLS-1$
 		}
 
 	};
@@ -139,8 +140,12 @@ void copyResource(IResource resource, IPath destination, IProgressMonitor monito
  *
  * @param message the message
  */
-void displayError(String message) {
-	MessageDialog.openError(getShell(), getProblemsTitle(), message);
+void displayError(final String message) {
+	getShell().getDisplay().syncExec(new Runnable() {
+		public void run() {
+			MessageDialog.openError(getShell(), getProblemsTitle(), message);
+		}
+	});
 }
 /**
  * Returns the path of the container to initially select in the container selection dialog,
@@ -174,12 +179,13 @@ public static IPath getNewNameFor(IPath originalName, IWorkspace workspace) {
 	IPath leadupSegment = originalName.removeLastSegments(1);
 	
 	while (true) {
-		String nameSegment = "Copy ";
+		String nameSegment;
 		
 		if (counter > 1)
-			nameSegment += "(" + counter + ") ";
+			nameSegment = WorkbenchMessages.format("CopyResourceAction.copyNameTwoArgs", new Object[] {new Integer(counter), resourceName}); //$NON-NLS-1$
+		else
+			nameSegment = WorkbenchMessages.format("CopyResourceAction.copyNameOneArg", new Object[] {resourceName}); //$NON-NLS-1$
 			
-		nameSegment += "of " + resourceName;
 		IPath pathToTry = leadupSegment.append(nameSegment);
 		
 		if (!workspace.getRoot().exists(pathToTry))
@@ -199,7 +205,7 @@ public static IPath getNewNameFor(IPath originalName, IWorkspace workspace) {
  * @return the problems message
  */
 String getProblemsMessage() {
-	return "Problems occurred copying the selected resources.";
+	return WorkbenchMessages.getString("CopyResourceAction.problemMessage"); //$NON-NLS-1$
 }
 /**
  * Returns the title for this action's problems dialog.
@@ -211,7 +217,7 @@ String getProblemsMessage() {
  * @return the problems dialog title
  */
 String getProblemsTitle() {
-	return "Copy Problems";
+	return WorkbenchMessages.getString("CopyResourceAction.copyFailedTitle"); //$NON-NLS-1$
 }
 /**
  * Return an array of resources from the provided list.
@@ -335,7 +341,7 @@ boolean performCopy(
 	IProgressMonitor monitor) {
 
 	try {
-		monitor.subTask("Copying");
+		monitor.subTask(WorkbenchMessages.getString("CopyResourceAction.copying")); //$NON-NLS-1$
 		ContainerGenerator generator = new ContainerGenerator(destination);
 		generator.generateContainer(new SubProgressMonitor(monitor, 500));
 		resources[0].getWorkspace().copy(
@@ -369,7 +375,7 @@ boolean performCopyWithAutoRename(
 	IPath destination,
 	IProgressMonitor monitor) {
 
-	monitor.subTask("Copying");
+	monitor.subTask(WorkbenchMessages.getString("CopyResourceAction.copying")); //$NON-NLS-1$
 
 	IWorkspace workspace = resources[0].getWorkspace();
 
@@ -420,7 +426,7 @@ IPath queryDestinationResource() {
 	// start traversal at root resource, should probably start at a
 	// better location in the tree
 	ContainerSelectionDialog dialog =
-		new ContainerSelectionDialog(shell, getInitialContainer(), true, "Select the destination.");
+		new ContainerSelectionDialog(shell, getInitialContainer(), true, WorkbenchMessages.getString("CopyResourceAction.selectDestination")); //$NON-NLS-1$
 	dialog.setValidator(this);
 	dialog.open();
 	Object[] result = dialog.getResult();
@@ -450,10 +456,16 @@ public void run() {
 	if (destination == null)
 		return;
 
+	String errorMsg = validateDestination(destination, sources);
+	if (errorMsg != null) {
+		displayError(errorMsg);
+		return;
+	}
+	
 	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		public void execute(IProgressMonitor monitor) {
 			// Checks only required if this is an exisiting container path.
-			monitor.beginTask("Copying",100);
+			monitor.beginTask(WorkbenchMessages.getString("CopyResourceAction.operationTitle"),100); //$NON-NLS-1$
 			boolean copyWithAutoRename = false;
 			IWorkspaceRoot root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 			if (root.exists(destination)) {
@@ -466,7 +478,8 @@ public void run() {
 					// If no auto-renaming will be happening, check for
 					// potential name collisions at the target resource
 					if (!validateNoNameCollisions(container, sources,monitor)) {
-						displayError("A resource name collision was detected.");
+						if(canceled) return;
+						displayError(WorkbenchMessages.getString("CopyResourceAction.nameCollision")); //$NON-NLS-1$
 						return;
 					}
 				}
@@ -493,11 +506,8 @@ public void run() {
 	} catch (InvocationTargetException e) {
 		// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
 		WorkbenchPlugin.log(
-			"Exception in "
-				+ getClass().getName()
-				+ ".performCopy(): "
-				+ e.getTargetException());
-		displayError("Internal error: " + e.getTargetException().getMessage());
+			MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] {getClass().getName(),e.getTargetException()}));//$NON-NLS-1$
+		displayError(WorkbenchMessages.format("CopyResourceAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
 	}
 
 	// If errors occurred, open an Error dialog
@@ -564,11 +574,11 @@ String validateDestination(IPath destination, List sourceResources) {
 	IContainer container = (IContainer) root.findMember(destination);
 	
 	if (!isAccessible(container)) {
-		return "Destination folder must be accessible.";
+		return WorkbenchMessages.getString("CopyResourceAction.destinationAccessError"); //$NON-NLS-1$
 	}
 
 	if (isDestinationDescendentOfSource(container, sourceResources)) {
-		return "Destination cannot be a descendent of the source.";
+		return WorkbenchMessages.getString("CopyResourceAction.destinationDescendentError"); //$NON-NLS-1$
 	}
 	
 	return null;
@@ -598,10 +608,12 @@ private boolean validateNoNameCollisions(
 
 		IResource newResource = workspaceRoot.findMember(currentPath);
 		if (newResource != null) {
-			if (checkOverwrite(getShell(), newResource))
+			if (checkOverwrite(getShell(), newResource)) {
 				deleteItems.add(newResource);
-			else
+			} else {
+				canceled = true;
 				return false;
+			}
 		}
 	} //No overwrite issues
 	if (deleteItems.size() == 0)
@@ -612,7 +624,7 @@ private boolean validateNoNameCollisions(
 	IResource[] deleteResources = new IResource[deleteItems.size()];
 	deleteItems.toArray(deleteResources);
 	try {
-	    monitor.subTask("Deleting collisons");
+	    monitor.subTask(WorkbenchMessages.getString("CopyResourceAction.deletingCollision")); //$NON-NLS-1$
 		destination.getWorkspace().delete(
 			deleteResources,
 			false,

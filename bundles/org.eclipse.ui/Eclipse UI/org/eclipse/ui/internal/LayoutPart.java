@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.*;
@@ -103,6 +102,13 @@ public IWorkbenchWindow getWorkbenchWindow() {
 	if (parentWindow instanceof DetachedWindow)
 		return ((DetachedWindow)parentWindow).getWorkbenchPage().getWorkbenchWindow();
 	return null;
+}
+/**
+ *	Allow the layout part to determine if they are in
+ * an acceptable state to start a drag & drop operation.
+ */
+public boolean isDragAllowed() {
+	return true;
 }
 /**
  * Returns true if this part is visible.  A part is visible if it has a control.

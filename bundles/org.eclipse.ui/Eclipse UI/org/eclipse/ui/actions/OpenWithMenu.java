@@ -1,18 +1,19 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -68,7 +69,7 @@ public OpenWithMenu(IWorkbenchPage page) {
  * @param file the selected file
  */
 public OpenWithMenu(IWorkbenchPage page, IAdaptable file) {
-	super("OpenWithMenu");
+	super("OpenWithMenu");//$NON-NLS-1$
 	this.page = page;
 	this.file = file;
 }
@@ -141,7 +142,11 @@ private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, boole
  *   it could not be made local for some reason
  */
 private boolean ensureFileLocal(final IFile file) {
-	file.setLocal(true, IResource.DEPTH_ZERO);
+	try {
+		file.setLocal(true, IResource.DEPTH_ZERO, null);
+	} catch (CoreException exception) {
+		return false;
+	}
 	return true;
 }
 /* (non-Javadoc)
@@ -223,7 +228,7 @@ private void openEditor(IEditorDescriptor editor) {
 		} catch (PartInitException e) {
 			DialogUtil.openError(
 				page.getWorkbenchWindow().getShell(),
-				"Problems Opening Editor",
+				WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
 				e.getMessage(),
 				e);
 		}

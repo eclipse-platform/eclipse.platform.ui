@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.*;
@@ -16,8 +15,11 @@ import org.eclipse.ui.*;
  * whose purpose is to initialize the delegate with
  * the window in which the action is intended to run.
  */
-public class WWinPluginAction extends PluginAction {
+public class WWinPluginAction extends PluginAction
+	implements IActionSetContributionItem
+{
 	private IWorkbenchWindow window;
+	private String actionSetId;
 /**
  * Constructs a new WWinPluginAction object..
  */
@@ -42,7 +44,7 @@ protected IActionDelegate createDelegate() {
 		return delegate;
 	} else {
 		WorkbenchPlugin.log(
-			"Action should implement IWorkbenchWindowActionDelegate: " + getText());
+			"Action should implement IWorkbenchWindowActionDelegate: " + getText());//$NON-NLS-1$
 		return null;
 	}
 }
@@ -58,6 +60,12 @@ public void dispose() {
 	}
 }
 /**
+ * Returns the action set id.
+ */
+public String getActionSetId() {
+	return actionSetId;
+}
+/**
  * Returns true if the window has been set.  
  * The window may be null after the constructor is called and
  * before the window is stored.  We cannot create the delegate
@@ -65,5 +73,11 @@ public void dispose() {
  */
 public boolean isOkToCreateDelegate() {
 	return super.isOkToCreateDelegate() && window != null;
+}
+/**
+ * Sets the action set id.
+ */
+public void setActionSetId(String newActionSetId) {
+	actionSetId = newActionSetId;
 }
 }

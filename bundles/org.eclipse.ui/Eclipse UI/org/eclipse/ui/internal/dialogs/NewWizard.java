@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
@@ -27,12 +26,8 @@ public class NewWizard extends Wizard {
  * Create the wizard pages
  */
 public void addPages() {
-	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
-	WizardCollectionElement wizards = null;
-	if (projectsOnly)
-		wizards = (WizardCollectionElement)rdr.getProjectWizards();
-	else
-		wizards = (WizardCollectionElement)rdr.getWizards();
+	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(projectsOnly);
+	WizardCollectionElement wizards = (WizardCollectionElement)rdr.getWizards();
 	mainPage =
 		new NewWizardSelectionPage(
 			this.workbench,
@@ -46,8 +41,11 @@ public void addPages() {
 public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
 	this.workbench = aWorkbench;
 	this.selection = currentSelection;
-	
-	setWindowTitle("New");
+
+	if (projectsOnly) 
+		setWindowTitle(WorkbenchMessages.getString("NewProject.title")); //$NON-NLS-1$
+	else 	
+		setWindowTitle(WorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
 	setDefaultPageImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
 	setNeedsProgressMonitor(true);
 }

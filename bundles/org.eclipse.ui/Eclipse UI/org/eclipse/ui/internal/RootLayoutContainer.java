@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -15,7 +14,7 @@ import java.util.*;
  */
 public class RootLayoutContainer extends PartSashContainer {
 public RootLayoutContainer(Listener mouseDownListener) {
-	super("root layout container");
+	super("root layout container");//$NON-NLS-1$
 	this.mouseDownListener = mouseDownListener;
 }
 /**
@@ -106,7 +105,7 @@ public void restoreState(IMemento memento)
 			if (refPart != null) {
 				add(part, relationship, ratio, refPart);	
 			} else {
-				WorkbenchPlugin.log("Unable to find part for ID: " + relativeID);
+				WorkbenchPlugin.log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
 			}
 		}
 		mapIDtoPart.put(partID, part);
@@ -147,7 +146,7 @@ public void saveState(IMemento memento)
 
 		// If this is a folder save the contents.
 		if (folder != null) {
-			childMem.putString(IWorkbenchConstants.TAG_FOLDER, "true");
+			childMem.putString(IWorkbenchConstants.TAG_FOLDER, "true");//$NON-NLS-1$
 			IMemento folderMem = childMem.createChild(IWorkbenchConstants.TAG_FOLDER);
 			folder.saveState(folderMem);
 		}

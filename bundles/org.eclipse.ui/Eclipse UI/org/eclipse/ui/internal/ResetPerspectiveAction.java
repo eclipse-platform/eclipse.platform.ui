@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.Action;
@@ -18,8 +17,9 @@ public class ResetPerspectiveAction extends Action {
  *	Create an instance of this class
  */
 public ResetPerspectiveAction(IWorkbenchWindow window) {
-	super("&Reset");
-	setToolTipText("Reset the current perspective");
+	super(WorkbenchMessages.getString("ResetPerspective.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ResetPerspective.toolTip")); //$NON-NLS-1$
+	setEnabled(false);
 	this.window = window;
 }
 /**
@@ -28,14 +28,14 @@ public ResetPerspectiveAction(IWorkbenchWindow window) {
 public void run() {
 	IWorkbenchPage page = this.window.getActivePage();
 	if (page != null) {
-		String message = "Do you want to reset the current perspective (" + page.getPerspective().getLabel() + ")?";
+		String message = WorkbenchMessages.format("ResetPerspective.message", new Object[] { page.getPerspective().getLabel() }); //$NON-NLS-1$
 		String [] buttons= new String[] { 
 			IDialogConstants.OK_LABEL,
 			IDialogConstants.CANCEL_LABEL
 		};
 		MessageDialog d= new MessageDialog(
 			this.window.getShell(),
-			"Reset Perspective",
+			WorkbenchMessages.getString("ResetPerspective.title"), //$NON-NLS-1$
 			null,
 			message,
 			MessageDialog.QUESTION,

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -20,20 +19,20 @@ import java.util.*;
  */
 public class EditorRegistryReader extends RegistryReader {
 	
-	private static final    String      PARAMETER_SEPARATOR = ",";
-	private static final    String      ATT_CLASS = "class";
-	private static final    String      ATT_NAME = "name";
-	private static final    String      TAG_EDITOR = "editor";
-	private static final    String      P_EXTERNAL = "external";
-	private static final    String      P_TRUE = "true";
-	private static final    String      ATT_COMMAND = "command";
-	private static final    String      ATT_LAUNCHER = "launcher";
-	private static final    String      ATT_DEFAULT = "default";
-	public  static final    String      ATT_ID = "id";
-	private static final    String      ATT_ICON = "icon";
-	private static final   String       ATT_EXTENSIONS = "extensions";
-	private static final   String       ATT_FILENAMES = "filenames";
-	private static final   String       ATT_EXTENDEDTYPE = "extendedType";
+	private static final    String      PARAMETER_SEPARATOR = ",";//$NON-NLS-1$
+	private static final    String      ATT_CLASS = "class";//$NON-NLS-1$
+	private static final    String      ATT_NAME = "name";//$NON-NLS-1$
+	private static final    String      TAG_EDITOR = "editor";//$NON-NLS-1$
+	private static final    String      P_EXTERNAL = "external";//$NON-NLS-1$
+	private static final    String      P_TRUE = "true";//$NON-NLS-1$
+	private static final    String      ATT_COMMAND = "command";//$NON-NLS-1$
+	private static final    String      ATT_LAUNCHER = "launcher";//$NON-NLS-1$
+	private static final    String      ATT_DEFAULT = "default";//$NON-NLS-1$
+	public  static final    String      ATT_ID = "id";//$NON-NLS-1$
+	private static final    String      ATT_ICON = "icon";//$NON-NLS-1$
+	private static final   String       ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
+	private static final   String       ATT_FILENAMES = "filenames";//$NON-NLS-1$
+	private static final   String       ATT_EXTENDEDTYPE = "extendedType";//$NON-NLS-1$
 	private EditorRegistry editorRegistry;
 /**
  * Get the editors that are defined in the registry
@@ -97,14 +96,14 @@ protected boolean readElement(IConfigurationElement element) {
 	// Get target extensions (optional field)
 	String extensionsString = element.getAttribute(ATT_EXTENSIONS);
 	if (extensionsString != null) {
-		StringTokenizer tokenizer = new StringTokenizer(extensionsString, ",");
+		StringTokenizer tokenizer = new StringTokenizer(extensionsString, ",");//$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			extensionsVector.add(tokenizer.nextToken().trim());
 		}
 	}
 	String filenamesString = element.getAttribute(ATT_FILENAMES);
 	if (filenamesString != null) {
-		StringTokenizer tokenizer = new StringTokenizer(filenamesString, ",");
+		StringTokenizer tokenizer = new StringTokenizer(filenamesString, ",");//$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			filenamesVector.add(tokenizer.nextToken().trim());
 		}

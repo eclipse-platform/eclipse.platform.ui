@@ -1,9 +1,8 @@
 package org.eclipse.jface.action;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.*;
@@ -20,6 +19,9 @@ import java.util.*;
  * </p>
  */
 public class ActionContributionItem extends ContributionItem {
+
+	private static ImageCache globalImageCache;
+	
 	/**
 	 * The action.
 	 */
@@ -298,26 +300,26 @@ public IAction getAction() {
 }
 /**
  * Returns the image cache.
- * The cache is kept as data on the parent widget.
- * Can't keep it on this item's widget, since the widget is disposed each time
- * a lazy context menu is popped up.
- * A single image cache is shared by all action contribution items with the same
- * parent widget.
+ * The cache is global, and is shared by all action contribution items.
+ * This has the disadvantage that once an image is allocated, it is never freed until the display
+ * is disposed.  However, it has the advantage that the same image in different contribution managers
+ * is only ever created once.
  */
 private ImageCache getImageCache() {
-	String key = "imageCache";
-	ImageCache cache = (ImageCache) parentWidget.getData(key);
+	ImageCache cache = globalImageCache;
 	if (cache == null) {
-		cache = new ImageCache();
-		parentWidget.setData(key, cache);
-		// Hook a dispose listener to dispose the images in the cache
-		// when parent widget is disposed.
-		final ImageCache cacheToDispose = cache;
-		parentWidget.addListener(SWT.Dispose, new Listener() {
-			public void handleEvent (Event event) {
-				cacheToDispose.dispose();
-			}
-		});
+		globalImageCache = cache = new ImageCache();
+		Display display = Display.getDefault();
+		if (display != null) {
+			display.disposeExec(new Runnable() {
+				public void run() {
+					if (globalImageCache != null) {
+						globalImageCache.dispose();
+						globalImageCache = null;
+					}
+				}	
+			});
+		}
 	}
 	return cache;
 }

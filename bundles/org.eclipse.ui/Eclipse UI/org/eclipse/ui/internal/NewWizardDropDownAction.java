@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
@@ -30,7 +29,7 @@ public class NewWizardDropDownAction extends Action implements IMenuCreator {
  *	Create a new instance of this class
  */
 public NewWizardDropDownAction(IWorkbench aWorkbench, NewWizardAction newWizardAction) {
-	super("&New Wizards");
+	super(WorkbenchMessages.getString("NewWizardDropDown.text")); //$NON-NLS-1$
 	this.workbench = aWorkbench;
 	this.newWizardAction = newWizardAction;
 	setToolTipText(newWizardAction.getToolTipText());

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
@@ -19,7 +18,6 @@ public class WorkbenchPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, Listener {
 	private IWorkbench workbench;
-	private Button showWelcomeButton;
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button linkButton;
@@ -42,15 +40,20 @@ public class WorkbenchPreferencePage
 	private String newProjectPerspectiveSetting;
 
 	//Labels
-	private static final String NEW_PERSPECTIVE_TITLE = "Open a new perspective";
-	private static final String NEW_PROJECT_PERSPECTIVE_TITLE =
-		"Open a project's default perspective";
-	private static final String OPEN_NEW_WINDOW_LABEL = "In a new window";
-	private static final String OPEN_NEW_PAGE_LABEL = "In the same window";
-	private static final String OPEN_REPLACE_LABEL = "Replace current";
-	private static final String DO_NOT_SWITCH_PERSPECTIVES = "Do not switch";
-	private static final String SHIFT_LABEL = "Shift";
-	private static final String ALT_LABEL = "Alt";
+	private static final String NEW_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.openNewPerspective"); //$NON-NLS-1$
+	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
+	
+	private static final String OPEN_NEW_WINDOW_LABEL = WorkbenchMessages.getString("WorkbenchPreference.newWindow"); //$NON-NLS-1$
+	private static final String OPEN_NEW_PAGE_LABEL = WorkbenchMessages.getString("WorkbenchPreference.sameWindow"); //$NON-NLS-1$
+	private static final String OPEN_REPLACE_LABEL = WorkbenchMessages.getString("WorkbenchPreference.replaceCurrent"); //$NON-NLS-1$
+
+	private static final String OPEN_NEW_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectNewWindow"); //$NON-NLS-1$
+	private static final String OPEN_NEW_PAGE_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectSameWindow"); //$NON-NLS-1$
+	private static final String OPEN_REPLACE_PROJECT_LABEL = WorkbenchMessages.getString("ReplacePerspective.toolTip"); //$NON-NLS-1$
+	private static final String DO_NOT_SWITCH_PERSPECTIVES = WorkbenchMessages.getString("WorkbenchPreference.noSwitch"); //$NON-NLS-1$
+	
+	private static final String SHIFT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.shift"); //$NON-NLS-1$
+	private static final String ALT_LABEL = getAlternateString();
 /**
  * Get the values for the alt perspective setting. It will be replace unless replace is selected.
  */
@@ -96,18 +99,15 @@ protected Control createContents(Composite parent) {
 	composite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	showWelcomeButton = new Button(composite, SWT.CHECK);
-	showWelcomeButton.setText("Show Welcome dialog at startup");
-
 	autoBuildButton = new Button(composite, SWT.CHECK);
-	autoBuildButton.setText("Perform build automatically on resource modification");
+	autoBuildButton.setText(WorkbenchMessages.getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
 
 	autoSaveAllButton = new Button(composite, SWT.CHECK);
 	autoSaveAllButton.setText(
-		"Save all modified resources automatically prior to manual build");
+		WorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
 
 	linkButton = new Button(composite, SWT.CHECK);
-	linkButton.setText("Link Navigator selection to active editor");
+	linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
 
 	createSpace(composite);
 
@@ -121,9 +121,7 @@ protected Control createContents(Composite parent) {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 	autoSaveAllButton.setSelection(
-		store.getBoolean(IWorkbenchPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-	showWelcomeButton.setSelection(
-		store.getBoolean(IWorkbenchPreferenceConstants.WELCOME_DIALOG));
+		store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 	linkButton.setSelection(
 		store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 
@@ -145,6 +143,23 @@ private void createPerspectiveGroup(Composite composite) {
 		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
 	composite.setData(data);
 
+	//Open New Page button
+	this.openInNewPageButton =
+		createRadioButton(buttonComposite, OPEN_NEW_PAGE_LABEL);
+	this.openInNewPageButton.setSelection(
+		this.currentPerspectiveSetting.equals(
+			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
+
+	this.openInNewPageButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			currentPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
+			setTextValuesForPerspective();
+		}
+	});
+
+	this.openInNewPageText = new Text(buttonComposite, SWT.NONE);
+	this.openInNewPageText.setEditable(false);
+
 	//Open New Window button
 	this.openInNewWindowButton =
 		createRadioButton(buttonComposite, OPEN_NEW_WINDOW_LABEL);
@@ -163,22 +178,6 @@ private void createPerspectiveGroup(Composite composite) {
 	this.openInNewWindowText = new Text(buttonComposite, SWT.NONE);
 	this.openInNewWindowText.setEditable(false);
 
-	//Open New Page button
-	this.openInNewPageButton =
-		createRadioButton(buttonComposite, OPEN_NEW_PAGE_LABEL);
-	this.openInNewPageButton.setSelection(
-		this.currentPerspectiveSetting.equals(
-			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
-
-	this.openInNewPageButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			currentPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
-			setTextValuesForPerspective();
-		}
-	});
-
-	this.openInNewPageText = new Text(buttonComposite, SWT.NONE);
-	this.openInNewPageText.setEditable(false);
 
 	//Replace button
 	this.replaceButton = createRadioButton(buttonComposite, OPEN_REPLACE_LABEL);
@@ -218,23 +217,9 @@ private void createProjectPerspectiveGroup(Composite composite) {
 		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
 	composite.setData(data);
 
-	//Open New Window button
-	this.openProjectInNewWindowButton =
-		createRadioButton(buttonComposite, OPEN_NEW_WINDOW_LABEL);
-	this.openProjectInNewWindowButton.setSelection(
-		this.newProjectPerspectiveSetting.equals(
-			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-
-	this.openProjectInNewWindowButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			newProjectPerspectiveSetting =
-				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
-		}
-	});
-
 	//Open New Page button
 	this.openProjectInNewPageButton =
-		createRadioButton(buttonComposite, OPEN_NEW_PAGE_LABEL);
+		createRadioButton(buttonComposite, OPEN_NEW_PAGE_PROJECT_LABEL);
 	this.openProjectInNewPageButton.setSelection(
 		this.newProjectPerspectiveSetting.equals(
 			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
@@ -246,9 +231,24 @@ private void createProjectPerspectiveGroup(Composite composite) {
 		}
 	});
 
+	//Open New Window button
+	this.openProjectInNewWindowButton =
+		createRadioButton(buttonComposite, OPEN_NEW_WINDOW_PROJECT_LABEL);
+	this.openProjectInNewWindowButton.setSelection(
+		this.newProjectPerspectiveSetting.equals(
+			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
+
+	this.openProjectInNewWindowButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			newProjectPerspectiveSetting =
+				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
+		}
+	});
+
+
 	//Replace button
 	this.replaceProjectButton =
-		createRadioButton(buttonComposite, OPEN_REPLACE_LABEL);
+		createRadioButton(buttonComposite, OPEN_REPLACE_PROJECT_LABEL);
 	this.replaceProjectButton.setSelection(
 		this.newProjectPerspectiveSetting.equals(
 			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
@@ -260,7 +260,7 @@ private void createProjectPerspectiveGroup(Composite composite) {
 		}
 	});
 
-	//Replace button
+	//No switch button
 	this.switchOnNewProjectButton =
 		createRadioButton(buttonComposite, DO_NOT_SWITCH_PERSPECTIVES);
 	this.switchOnNewProjectButton.setSelection(
@@ -314,6 +314,17 @@ protected IPreferenceStore doGetPreferenceStore() {
 	return WorkbenchPlugin.getDefault().getPreferenceStore();
 }
 /**
+ * Get the label for the alternate setting for this platform - either Control for Windows
+ * or Shift-Alt for Motif.
+ * @return java.lang.String
+ */
+private static String getAlternateString() {
+	if (SWT.getPlatform().equals("win32"))//$NON-NLS-1$
+		return WorkbenchMessages.getString("WorkbenchPreference.Control"); //$NON-NLS-1$
+	else
+		return WorkbenchMessages.getString("WorkbenchPreference.Shift-Alt"); //$NON-NLS-1$
+}
+/**
  * Handles events generated by controls on this page.
  *
  * @param e  the event to handle
@@ -343,9 +354,7 @@ protected void performDefaults() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 	autoSaveAllButton.setSelection(
-		store.getDefaultBoolean(IWorkbenchPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-	showWelcomeButton.setSelection(
-		store.getDefaultBoolean(IWorkbenchPreferenceConstants.WELCOME_DIALOG));
+		store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 	linkButton.setSelection(
 		store.getDefaultBoolean(
 			IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
@@ -404,7 +413,7 @@ public boolean performOk() {
 		// parties can know about the auto build setting change
 		// since it is not kept in the preference store.
 		store.firePropertyChangeEvent(
-			IWorkbenchPreferenceConstants.AUTO_BUILD,
+			IPreferenceConstants.AUTO_BUILD,
 			new Boolean(oldAutoBuildSetting),
 			new Boolean(newAutoBuildSetting));
 
@@ -419,13 +428,8 @@ public boolean performOk() {
 
 	// store the save all prior to build setting
 	store.setValue(
-		IWorkbenchPreferenceConstants.SAVE_ALL_BEFORE_BUILD,
+		IPreferenceConstants.SAVE_ALL_BEFORE_BUILD,
 		autoSaveAllButton.getSelection());
-
-	// store the Show welcome dialog setting
-	store.setValue(
-		IWorkbenchPreferenceConstants.WELCOME_DIALOG,
-		showWelcomeButton.getSelection());
 
 	// store the link navigator to editor setting
 	store.setValue(
@@ -444,7 +448,7 @@ public boolean performOk() {
 
 	// store the open in new window alt settings
 	store.setValue(
-		IWorkbenchPreferenceConstants.ALT_OPEN_NEW_PERSPECTIVE,
+		IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE,
 		altPerspectiveSetting());
 
 	// store the open in new project settings
@@ -463,20 +467,20 @@ private void setTextValuesForPerspective() {
 		== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE) {
 		this.openInNewWindowText.setText(SHIFT_LABEL);
 		this.replaceText.setText(ALT_LABEL);
-		this.openInNewPageText.setText("");
+		this.openInNewPageText.setText("");//$NON-NLS-1$
 	} else {
 
 		if (this.currentPerspectiveSetting
 			== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW) {
 			this.openInNewPageText.setText(SHIFT_LABEL);
 			this.replaceText.setText(ALT_LABEL);
-			this.openInNewWindowText.setText("");
+			this.openInNewWindowText.setText("");//$NON-NLS-1$
 		} else {
 			if (this.currentPerspectiveSetting
 				== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE) {
 				this.openInNewWindowText.setText(SHIFT_LABEL);
 				this.openInNewPageText.setText(ALT_LABEL);
-				this.replaceText.setText("");
+				this.replaceText.setText("");//$NON-NLS-1$
 			}
 		}
 

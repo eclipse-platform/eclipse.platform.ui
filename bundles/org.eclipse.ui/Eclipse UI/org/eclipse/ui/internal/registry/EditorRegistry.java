@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -48,7 +47,7 @@ public class EditorRegistry implements IEditorRegistry {
 	private ListenerList propChangeListeners = new ListenerList();
 
 	// Key for the EditorID save as a IFile persistent property
-	private static final QualifiedName EDITOR_KEY = new QualifiedName("org.eclipse.ui.internal.registry.ResourceEditorRegistry","EditorProperty");
+	private static final QualifiedName EDITOR_KEY = new QualifiedName("org.eclipse.ui.internal.registry.ResourceEditorRegistry","EditorProperty");//$NON-NLS-2$//$NON-NLS-1$
 /**
  * Return an instance of the receiver.
  */
@@ -81,7 +80,7 @@ public void addEditorFromPlugin(EditorDescriptor editor,
 		String fileExtension = (String)enum.next();
 		
 		if (fileExtension != null && fileExtension.length()>0) {
-			FileEditorMapping mapping = getMappingFor("*." + fileExtension);
+			FileEditorMapping mapping = getMappingFor("*." + fileExtension);//$NON-NLS-1$
 			if (mapping == null) {  // no mapping for that extension
 				mapping = new FileEditorMapping(fileExtension);
 				typeEditorMappings.put(mappingKeyFor(mapping), mapping);
@@ -105,7 +104,7 @@ public void addEditorFromPlugin(EditorDescriptor editor,
 				int index = filename.indexOf('.');
 				if (index < 0) {
 					name = filename;
-					extension = "";
+					extension = "";//$NON-NLS-1$
 				}
 				else {
 					name = filename.substring(0, index);
@@ -184,8 +183,8 @@ public IEditorDescriptor getDefaultEditor() {
 
 	// Panic: the default editor cannot be found.
 	MessageDialog.openError((Shell)null, 
-		"Editor Problems", 
-		"Unable to find default editor.");
+		"Editor Problems", //$NON-NLS-1$
+		"Unable to find default editor.");//$NON-NLS-1$
 	return null;
 }
 /* (non-Javadoc)
@@ -337,7 +336,7 @@ private FileEditorMapping[] getMappingForFilename(String filename) {
 	int index = filename.lastIndexOf('.');
 	if (index > -1) {
 		String extension = filename.substring(index);
-		mapping[1] = getMappingFor("*" + extension);
+		mapping[1] = getMappingFor("*" + extension);//$NON-NLS-1$
 	}
 	
 	return mapping;
@@ -506,7 +505,7 @@ private boolean loadAssociations() {
 		for (int i = 0; i < extMementos.length; i++) {
 			String name = extMementos[i].getString(IWorkbenchConstants.TAG_NAME);
 			if (name == null)
-				name = "*";
+				name = "*";//$NON-NLS-1$
 			String extension = extMementos[i].getString(IWorkbenchConstants.TAG_EXTENSION);
 			IMemento[] idMementos =
 				extMementos[i].getChildren(IWorkbenchConstants.TAG_EDITOR);
@@ -514,7 +513,7 @@ private boolean loadAssociations() {
 			for (int j = 0; j < idMementos.length; j++) {
 				editorIDs[j] = idMementos[j].getString(IWorkbenchConstants.TAG_ID);
 			}
-			FileEditorMapping mapping = getMappingFor(name + "." + extension);
+			FileEditorMapping mapping = getMappingFor(name + "." + extension);//$NON-NLS-1$
 			if (mapping == null) {
 				mapping = new FileEditorMapping(name, extension);
 			}
@@ -547,8 +546,8 @@ private boolean loadAssociations() {
 		}
 		MessageDialog.openError(
 			(Shell) null,
-			"Error",
-			"Unable to load resource associations.");
+			"Error",//$NON-NLS-1$
+			"Unable to load resource associations.");//$NON-NLS-1$
 		return false;
 	}
 	return true;
@@ -565,7 +564,7 @@ private String mappingKeyFor(String type) {
  * of the given mapping
  */
 private String mappingKeyFor(FileEditorMapping mapping) {
-	return mappingKeyFor(mapping.getName() + "." + mapping.getExtension());
+	return mappingKeyFor(mapping.getName() + "." + mapping.getExtension());//$NON-NLS-1$
 }
 /**
  * Rebuild the editor map
@@ -636,8 +635,8 @@ public void saveAssociations () {
 			if(writer != null) writer.close();
 		} catch(IOException ex) {}
 		MessageDialog.openError((Shell)null, 
-			"Saving Problems", 
-			"Unable to save resource associations.");
+			"Saving Problems", //$NON-NLS-1$
+			"Unable to save resource associations.");//$NON-NLS-1$
 		return;
 	}   
 	
@@ -659,8 +658,8 @@ public void saveAssociations () {
 			if(writer != null) writer.close();
 		} catch(IOException ex) {}
 		MessageDialog.openError((Shell)null,
-			"Error",
-			"Unable to save resource associations.");
+			"Error",//$NON-NLS-1$
+			"Unable to save resource associations.");//$NON-NLS-1$
 		return;
 	}       
 }

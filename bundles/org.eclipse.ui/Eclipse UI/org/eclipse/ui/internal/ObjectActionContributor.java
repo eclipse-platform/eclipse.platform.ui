@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -17,16 +16,16 @@ import java.util.*;
 /**
  * This class describes one element within the popup menu action registry.
  */
-public class ObjectActionContributor implements IObjectActionContributor {
+public class ObjectActionContributor extends PluginActionBuilder
+	implements IObjectActionContributor 
+{
 	private IConfigurationElement config;
-	private boolean configParsed=false;
-	static final String ATT_NAME_FILTER="nameFilter";
-	private List cache;
+	private boolean configRead=false;
+	static final String ATT_NAME_FILTER="nameFilter";//$NON-NLS-1$
 	private HashMap filterProperties;
 /**
  * The constructor.
  */
-
 public ObjectActionContributor(IConfigurationElement config) {
 	this.config = config;
 }
@@ -37,8 +36,8 @@ public boolean contributeObjectActions(IWorkbenchPart part, MenuManager menu,
 	ISelectionProvider selProv) 
 {
 	// Parse config.
-	if (!configParsed)
-		parseConfigElement();
+	if (!configRead)
+		readConfigElement();
 	if (cache == null)
 		return false;
 
@@ -54,7 +53,7 @@ public boolean contributeObjectActions(IWorkbenchPart part, MenuManager menu,
 		Object obj = cache.get(i);
 		if (obj instanceof ActionDescriptor) {
 			ActionDescriptor ad = (ActionDescriptor) obj;
-			PluginActionBuilder.contributeMenuAction(ad, menu, true);
+			contributeMenuAction(ad, menu, true);
 			// Update action for the current selection and part.
 			if (ad.getAction() instanceof ObjectPluginAction) {
 				ObjectPluginAction action = (ObjectPluginAction)ad.getAction();
@@ -71,8 +70,8 @@ public boolean contributeObjectActions(IWorkbenchPart part, MenuManager menu,
  */
 public boolean contributeObjectMenus(MenuManager menu, ISelectionProvider selProv) {
 	// Parse config element.
-	if (!configParsed)
-		parseConfigElement();
+	if (!configRead)
+		readConfigElement();
 	if (cache == null)
 		return false;
 
@@ -88,11 +87,18 @@ public boolean contributeObjectMenus(MenuManager menu, ISelectionProvider selPro
 		Object obj = cache.get(i);
 		if (obj instanceof IConfigurationElement) {
 			IConfigurationElement menuElement = (IConfigurationElement) obj;
-			PluginActionBuilder.processMenu(menuElement, menu, true);
+			contributeMenu(menuElement, menu, true);
 			actualContributions = true;
 		}
 	}
 	return actualContributions;
+}
+/**
+ * This factory method returns a new ActionDescriptor for the
+ * configuration element.  
+ */
+protected ActionDescriptor createActionDescriptor(IConfigurationElement element) {
+	return new ActionDescriptor(element, ActionDescriptor.T_POPUP);
 }
 /**
  * Returns true if name filter is not specified for the contribution
@@ -100,8 +106,8 @@ public boolean contributeObjectMenus(MenuManager menu, ISelectionProvider selPro
  */
 public boolean isApplicableTo(Object object) {
 	// Parse config.
-	if (!configParsed)
-		parseConfigElement();
+	if (!configRead)
+		readConfigElement();
 		
 	// Test name.
 	if (!testName(object))
@@ -121,41 +127,33 @@ public boolean isApplicableTo(Object object) {
 		return true;
 }
 /**
- * Parses child element and processes it in case
- * it is either menu or action.
+ * Reads the configuration element and all the children.
+ * This creates an action descriptor for every action in the extension.
  */
-private void parseChildElement(IConfigurationElement element) {
-	String tag = element.getName();
-	if (tag.equals(PluginActionBuilder.TAG_MENU)) {
-		if (cache==null) 
-			cache = new ArrayList();
-		cache.add(element);
-	}
-	else if (tag.equals(PluginActionBuilder.TAG_ACTION)) {
-		if (cache==null) 
-			cache = new ArrayList();
-		cache.add(new ActionDescriptor(element, ActionDescriptor.T_POPUP));
-	}
-	else if (tag.equals(PluginActionBuilder.TAG_FILTER)) {
-		String key = element.getAttribute("name");
-		String value = element.getAttribute("value");
-		if (key == null || value == null)
-			return;
-		if (filterProperties==null) 
-			filterProperties = new HashMap();
-		filterProperties.put(key, value);
+private void readConfigElement() {
+	if (!configRead) {
+		readElementChildren(config);
+		configRead = true;
 	}
 }
 /**
- * Parses the configuration element by reading all the children.
+ * Implements abstract method to handle the provided XML element
+ * in the registry.
  */
-
-private void parseConfigElement() {
-	IConfigurationElement [] children = config.getChildren();
-	for (int i=0; i<children.length; i++) {
-		parseChildElement(children[i]);
+protected boolean readElement(IConfigurationElement element) {
+	String tag = element.getName();
+	if (tag.equals(PluginActionBuilder.TAG_FILTER)) {
+		String key = element.getAttribute("name");//$NON-NLS-1$
+		String value = element.getAttribute("value");//$NON-NLS-1$
+		if (key == null || value == null)
+			return true;
+		if (filterProperties==null) 
+			filterProperties = new HashMap();
+		filterProperties.put(key, value);
+		return true;
+	} else {
+		return super.readElement(element);
 	}
-	configParsed = true;
 }
 /**
  * Returns whether the current selection passes a custom key value filter

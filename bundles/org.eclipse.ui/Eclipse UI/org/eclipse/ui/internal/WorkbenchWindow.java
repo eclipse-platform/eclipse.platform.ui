@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -57,17 +56,31 @@ public class WorkbenchWindow extends ApplicationWindow
 	private Label separator3;
 	private ToolBarManager shortcutBar;
 	private WorkbenchActionBuilder builder;
-	final private String TAG_INPUT = "input";
-	final private String TAG_LAYOUT = "layout";
-	final private String TAG_FOCUS = "focus";
-	final private String TAG_FACTORY_ID = "factoryID";
-	final protected String GRP_PAGES = "pages";
-	final protected String GRP_FAST_VIEWS = "fastViews";
+	final private String TAG_INPUT = "input";//$NON-NLS-1$
+	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
+	final private String TAG_FOCUS = "focus";//$NON-NLS-1$
+	final private String TAG_FACTORY_ID = "factoryID";//$NON-NLS-1$
+	final protected String GRP_PAGES = "pages";//$NON-NLS-1$
+	final protected String GRP_FAST_VIEWS = "fastViews";//$NON-NLS-1$
 
 	// static fields for inner classes.
 	static final int VGAP= 0;
 	static final int CLIENT_INSET = 3;
 	static final int BAR_SIZE = 23;
+
+	/**
+	 * The window toolbar must relayout whenever an update occurs, as items are
+	 * added and removed dynamically.
+	 */
+	class WindowToolBarManager extends ToolBarManager {
+		public WindowToolBarManager(int style) {
+			super(style);
+		}
+		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
+			Composite parent= toolBar.getParent();
+			parent.layout();
+		}       
+	}
 	
 	/**
 	 * This vertical layout supports a fixed size Toolbar area, a separator line,
@@ -289,8 +302,12 @@ private void closeAllPages()
 	// Deactivate active page.
 	setActivePage(null);
 
-	// Close all.
+	// Clone and deref all so that calls to getPages() returns
+	// empty list (if call by pageClosed event handlers)
 	List clone = (List)((ArrayList)pageTable).clone();
+	pageTable.clear();
+
+	// Close all.
 	Iterator enum = clone.iterator();
 	while (enum.hasNext()) {
 		WorkbenchPage page = (WorkbenchPage)enum.next();
@@ -298,9 +315,16 @@ private void closeAllPages()
 		firePageClosed(page);
 		page.dispose();
 	}
-
-	// Deref all.
-	pageTable.clear();
+}
+/**
+ * Save and close all of the pages.
+ */
+public void closeAllPages(boolean save) {
+	if (save) {
+		boolean ret = saveAllPages(true);
+		if (!ret) return;
+	}
+	closeAllPages();
 }
 /**
  * closePerspective method comment.
@@ -400,6 +424,12 @@ private void createShortcutBar(Shell shell) {
 				showShortcutBarPopup(e);
 		}
 	});
+}
+/* (non-Javadoc)
+ * Method declared on ApplicationWindow.
+ */
+protected ToolBarManager createToolBarManager(int style) {
+	return new WindowToolBarManager(style);
 }
 /**
  * Returns the shortcut for a page.
@@ -619,7 +649,7 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 	else if (result[0] instanceof WorkbenchException)
 		throw (WorkbenchException)result[0];
 	else
-		throw new WorkbenchException("Abnormal Workbench Condition");
+		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchWindow.exceptionMessage")); //$NON-NLS-1$
 }
 /**
  * Opens a new page. 
@@ -661,7 +691,7 @@ public void restoreState(IMemento memento) {
 	Assert.isNotNull(getShell());
 	
 	// Read the bounds.
-	if("true".equals(memento.getString("maximized"))) {
+	if("true".equals(memento.getString("maximized"))) {//$NON-NLS-2$//$NON-NLS-1$
 		getShell().setMaximized(true);
 	} else {
 		Integer bigInt;
@@ -680,11 +710,6 @@ public void restoreState(IMemento memento) {
 	// Recreate each perspective in the window. 
 	IWorkbenchPage newActivePage = null;
 	IMemento [] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
-	if(pageArray == null) {
-		getShell().setText(workbench.getProductInfo().getName());
-		return; //All the pages were closed.
-	}
-		
 	for (int i = 0; i < pageArray.length; i ++) {
 		IMemento pageMem = pageArray[i];
 
@@ -692,37 +717,31 @@ public void restoreState(IMemento memento) {
 		IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
 		String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 		if (factoryID == null) {
-			WorkbenchPlugin.log("Unable to restore page - no input factory ID.");
+			WorkbenchPlugin.log("Unable to restore page - no input factory ID.");//$NON-NLS-1$
 			continue;
 		}
 		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 		if (factory == null) {
-			WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID);
+			WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID);//$NON-NLS-1$
 			continue;
 		}
 			
 		// Get the input element.
 		IAdaptable input = factory.createElement(inputMem);
 		if (input == null) {
-			WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID);
+			WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID);//$NON-NLS-1$
 			continue;
 		}
-		if (!(input instanceof IContainer)) {
-			WorkbenchPlugin.log("Unable to restore page - input is wrong type.");
-			continue;
-		}
-		IAdaptable adaptableInput = (IAdaptable)input;
 
 		// Open the perspective.
 		WorkbenchPage result = null;
 		try {
-			result = new WorkbenchPage(this, null, adaptableInput);
-			result.restoreState(pageMem);
+			result = new WorkbenchPage(this, pageMem, input);
 			pageTable.add(result);
 			pageListeners.firePageOpened(result);
 			addShortcut(result);
 		} catch (WorkbenchException e) {
-			WorkbenchPlugin.log("Unable to restore perspective - constructor failed.");
+			WorkbenchPlugin.log("Unable to restore perspective - constructor failed.");//$NON-NLS-1$
 			continue;
 		}
 
@@ -731,13 +750,27 @@ public void restoreState(IMemento memento) {
 		if (strFocus != null && strFocus.length() > 0)
 			newActivePage = result;
 	}
-	
-	// Update focus.
-	if (newActivePage != null)
-		setActivePage(newActivePage);
 
-	// Don't do this again.
-	memento = null;
+	// If there are no pages create a default.
+	if (pageTable.isEmpty()) {
+		try {
+			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+			String defPerspID = workbench.getPerspectiveRegistry().getDefaultPerspective();
+			WorkbenchPage result = new WorkbenchPage(this, defPerspID, root);
+			pageTable.add(result);
+			pageListeners.firePageOpened(result);
+			addShortcut(result);
+		} catch (WorkbenchException e) {
+			WorkbenchPlugin.log("Unable to create default perspective - constructor failed.");//$NON-NLS-1$
+			getShell().setText(workbench.getProductInfo().getName());
+			return;
+		}
+	}
+		
+	// Set active page.
+	if (newActivePage == null)
+		newActivePage = (IWorkbenchPage)pageTable.get(0);
+	setActivePage(newActivePage);
 }
 /**
  * Save all of the pages.  Returns true if the operation succeeded.
@@ -759,7 +792,7 @@ public void saveState(IMemento memento) {
 	
 	// Save the bounds.
 	if(getShell().getMaximized()) {
-		memento.putString("maximized","true");
+		memento.putString("maximized","true");//$NON-NLS-2$//$NON-NLS-1$
 	} else {
 		Rectangle bounds = getShell().getBounds();
 		memento.putInteger(IWorkbenchConstants.TAG_X, bounds.x);
@@ -777,12 +810,12 @@ public void saveState(IMemento memento) {
 		// Get the input.
 		IAdaptable input = page.getInput();
 		if (input == null) {
-			WorkbenchPlugin.log("Unable to save page input: " + page);
+			WorkbenchPlugin.log("Unable to save page input: " + page);//$NON-NLS-1$
 			continue;
 		}
 		IPersistableElement persistable = (IPersistableElement)input.getAdapter(IPersistableElement.class);
 		if (persistable == null) {
-			WorkbenchPlugin.log("Unable to save page input: " + input);
+			WorkbenchPlugin.log("Unable to save page input: " + input);//$NON-NLS-1$
 			continue;
 		}
 
@@ -791,7 +824,7 @@ public void saveState(IMemento memento) {
 		page.saveState(pageMem);
 		
 		if (page == activePage) {
-			pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true");
+			pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true");//$NON-NLS-1$
 		}
 		
 		// Save input.
@@ -874,14 +907,14 @@ private void showShortcutBarPopup(MouseEvent e) {
 		// Create a popup menu.	
 		menu = new Menu(tb);
 		MenuItem menuItem = new MenuItem(menu, 0);
-		menuItem.setText("Close");
+		menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
 		menuItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				closePage(page, true);
 			}
 		});
 		menuItem = new MenuItem(menu, 0);
-		menuItem.setText("Close All");
+		menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
 		menuItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (saveAllPages(true))
@@ -946,7 +979,7 @@ private void updateTitle() {
 	String title = workbench.getProductInfo().getName();
 	if (activePage != null) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
-		title = persp.getLabel() + " - " + title;
+		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {persp.getLabel(), title}); //$NON-NLS-1$
 	}
 	getShell().setText(title);	
 }

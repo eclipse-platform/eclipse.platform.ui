@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.registry;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.dialogs.IDialogSettings;
 import java.io.IOException;
 import java.io.File;
@@ -16,8 +20,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	private File rootFolder;
 	private ArrayList children = new ArrayList(10);
 	private String defPerspID;
-	private static final String EXT = "_persp.xml";
-	private static final String ID_DEF_PERSP = "PerspectiveRegistry.DEFAULT_PERSP";
+	private static final String EXT = "_persp.xml";//$NON-NLS-1$
+	private static final String ID_DEF_PERSP = "PerspectiveRegistry.DEFAULT_PERSP";//$NON-NLS-1$
 /**
  * Construct a new registry.
  *

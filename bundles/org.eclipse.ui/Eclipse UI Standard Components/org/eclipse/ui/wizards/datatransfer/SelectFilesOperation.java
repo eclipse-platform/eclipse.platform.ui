@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.dialogs.FileSystemElement;
@@ -82,7 +81,7 @@ protected String getExtensionFor(String filename) {
 	if (nIndex >= 0)
 		return filename.substring(nIndex + 1);
 		
-	return "";
+	return "";//$NON-NLS-1$
 
 }
 /**
@@ -113,7 +112,7 @@ protected boolean hasDesiredExtension(String filename) {
 public void run(IProgressMonitor monitor) throws InterruptedException {
 	try {
 		this.monitor = monitor;
-		monitor.beginTask("Scanning for matching files...",IProgressMonitor.UNKNOWN);
+		monitor.beginTask(DataTransferMessages.getString("DataTransfer.scanningMatching"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		result = createElement(null,root);
 		if (result == null) {
 			result = new FileSystemElement(provider.getLabel(root),null,provider.isFolder(root));

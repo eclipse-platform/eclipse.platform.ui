@@ -1,9 +1,8 @@
 package org.eclipse.jface.action;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.util.*;
 import org.eclipse.swt.widgets.Menu;
@@ -86,7 +85,7 @@ public IMenuManager findMenuUsingPath(String path) {
 		IMenuManager menu = (IMenuManager)item;
 		IMenuManager wrapper = getWrapper(menu);
 		if (wrapper == null) {
-			wrapper = new SubMenuManager(menu);
+			wrapper = wrapMenu(menu);
 			putWrapper(menu, wrapper);
 		}
 		return wrapper;
@@ -237,5 +236,11 @@ public void updateAll(boolean force) {
 	// call <code>setVisible</code> and then force an update.  At that
 	// point we need to update the parent.
 	parentMgr.updateAll(force);
+}
+/**
+ * Wraps a menu manager in a sub menu manager, and returns the new wrapper.
+ */
+protected SubMenuManager wrapMenu(IMenuManager menu) {
+	return new SubMenuManager(menu);
 }
 }

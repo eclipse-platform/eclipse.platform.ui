@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
@@ -62,13 +61,13 @@ public void addResourceType(String newName, String newExtension) {
 	if (newExtension == null || newExtension.length() < 1) {
 		MessageDialog.openInformation(
 			getControl().getShell(),
-			"File Extension Empty",
-			"The file extension cannot be empty");
+			WorkbenchMessages.getString("FileEditorPreference.extensionEmptyTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("FileEditorPreference.extensionEmptyMessage")); //$NON-NLS-1$
 		return;
 	}
 
 	if (newName == null || newName.length() < 1)
-		newName = "*";
+		newName = "*";//$NON-NLS-1$
 	else {
 		// Wild card only valid by itself (i.e. rep* is not valid)
 		int index = newName.indexOf('*');
@@ -76,15 +75,15 @@ public void addResourceType(String newName, String newExtension) {
 			if (!(index == 0 && newName.length() == 1)) {
 				MessageDialog.openInformation(
 					getControl().getShell(),
-					"File Name Wrong",
-					"The file name cannot include the wild card character (*)");
+					WorkbenchMessages.getString("FileEditorPreference.fileNameInvalidTitle"), //$NON-NLS-1$
+					WorkbenchMessages.getString("FileEditorPreference.fileNameInvalidMessage")); //$NON-NLS-1$
 				return;
 			}
 		}
 	}
 	
 	// Find the index at which to insert the new entry.
-	String newFilename = (newName + "." + newExtension).toUpperCase();
+	String newFilename = (newName + "." + newExtension).toUpperCase();//$NON-NLS-1$
 	IFileEditorMapping resourceType;
 	TableItem[] items = resourceTypeTable.getItems();
 	boolean found = false;
@@ -97,8 +96,8 @@ public void addResourceType(String newName, String newExtension) {
 			// Same resource type not allowed!
 			MessageDialog.openInformation(
 				getControl().getShell(),
-				"File Type Exists",
-				"An entry already exists for that file type");
+				WorkbenchMessages.getString("FileEditorPreference.existsTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("FileEditorPreference.existsMessage")); //$NON-NLS-1$
 			return;
 		}
 
@@ -135,7 +134,7 @@ protected Control createContents(Composite parent) {
 
 	//layout the top table & its buttons
 	Label label = new Label(pageComponent, SWT.LEFT);
-	label.setText("File types");
+	label.setText(WorkbenchMessages.getString("FileEditorPreference.fileTypes")); //$NON-NLS-1$
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.horizontalSpan = 2;
@@ -156,7 +155,7 @@ protected Control createContents(Composite parent) {
 	groupComponent.setLayoutData(data);
 	
 	addResourceTypeButton = new Button(groupComponent, SWT.PUSH);
-	addResourceTypeButton.setText("Add...");
+	addResourceTypeButton.setText(WorkbenchMessages.getString("FileEditorPreference.add")); //$NON-NLS-1$
 	addResourceTypeButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
@@ -165,7 +164,7 @@ protected Control createContents(Composite parent) {
 	addResourceTypeButton.setLayoutData(data);
 	
 	removeResourceTypeButton = new Button(groupComponent, SWT.PUSH);
-	removeResourceTypeButton.setText("&Remove");
+	removeResourceTypeButton.setText(WorkbenchMessages.getString("FileEditorPreference.remove")); //$NON-NLS-1$
 	removeResourceTypeButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
@@ -182,7 +181,7 @@ protected Control createContents(Composite parent) {
 
 	// layout the bottom table & its buttons
 	editorLabel = new Label(pageComponent, SWT.LEFT);
-	editorLabel.setText("Associated editors");
+	editorLabel.setText(WorkbenchMessages.getString("FileEditorPreference.associatedEditors")); //$NON-NLS-1$
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.horizontalSpan = 2;
@@ -203,7 +202,7 @@ protected Control createContents(Composite parent) {
 	groupComponent.setLayoutData(data);
 	
 	addEditorButton = new Button(groupComponent, SWT.PUSH);
-	addEditorButton.setText("Add...");
+	addEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.add")); //$NON-NLS-1$
 	addEditorButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
@@ -212,7 +211,7 @@ protected Control createContents(Composite parent) {
 	addEditorButton.setLayoutData(data);
 	
 	removeEditorButton = new Button(groupComponent, SWT.PUSH);
-	removeEditorButton.setText("R&emove");
+	removeEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.removeEditor")); //$NON-NLS-1$
 	removeEditorButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
@@ -221,7 +220,7 @@ protected Control createContents(Composite parent) {
 	removeEditorButton.setLayoutData(data);
 	
 	defaultEditorButton= new Button(groupComponent, SWT.PUSH);
-	defaultEditorButton.setText("De&fault");
+	defaultEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.default")); //$NON-NLS-1$
 	defaultEditorButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
@@ -304,13 +303,13 @@ protected void fillResourceTypeTable() {
 	tableLayout.addColumnData(layoutData);
 	TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
 	tableCol.setResizable(false);
-	tableCol.setText(""); // no label for icon column
+	tableCol.setText(""); // no label for icon column//$NON-NLS-1$
 
 	layoutData = new ColumnWeightData(40, false);
 	tableLayout.addColumnData(layoutData);
 	tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
 	tableCol.setResizable(false);
-	tableCol.setText("Type");
+	tableCol.setText(WorkbenchMessages.getString("FileEditorPreference.type")); //$NON-NLS-1$
 
 	// Populate the table with the items
 	IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
@@ -410,7 +409,7 @@ public boolean performOk() {
 }
 public void promptForEditor() {
 	EditorSelectionDialog dialog = new EditorSelectionDialog(getControl().getShell());
-	dialog.setMessage("Choose the editor for files of type '" + getSelectedResourceType().getLabel()+"'");
+	dialog.setMessage(WorkbenchMessages.format("Choose_the_editor_for_file", new Object[] {getSelectedResourceType().getLabel()})); //$NON-NLS-1$
 	if (dialog.open() == dialog.OK) {
 		EditorDescriptor editor = (EditorDescriptor)dialog.getSelectedEditor();
 		if (editor != null && !hasEditor(getSelectedResourceType(), editor)) {

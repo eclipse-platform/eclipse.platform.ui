@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.*;

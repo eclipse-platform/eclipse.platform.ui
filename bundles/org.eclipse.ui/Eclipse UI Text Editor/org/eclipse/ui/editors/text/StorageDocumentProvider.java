@@ -1,9 +1,8 @@
 package org.eclipse.ui.editors.text;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -55,9 +54,27 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		return null;
 	}
 	/*
-	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument)
+	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
-	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document) throws CoreException {
+	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
+	}
+	/*
+	 * @see IDocumentProvider#getModificationStamp(Object)
+	 */
+	public long getModificationStamp(Object element) {
+		return 0;
+	}
+	/*
+	 * @see IDocumentProvider#getSynchronizationStamp(Object)
+	 */
+	public long getSynchronizationStamp(Object element) {
+		return 0;
+	}
+	/*
+	 * @see IDocumentProvider#isDeleted(Object)
+	 */
+	public boolean isDeleted(Object element) {
+		return false;
 	}
 	/**
 	 * Intitializes the given document with the given stream.

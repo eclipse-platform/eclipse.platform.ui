@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
@@ -36,13 +40,14 @@ public ActionPresentation(WorkbenchWindow window) {
 public void addActionSet(IActionSetDescriptor desc) {
 	try {
 		IActionSet set = desc.createActionSet();
-		SubActionBars bars = new SubActionBars(window.getActionBars());
+		SubActionBars bars = new ActionSetActionBars(window.getActionBars(),
+			desc.getId());
 		SetRec rec = new SetRec(desc, set, bars);
 		mapDescToRec.put(desc, rec);
 		set.init(window, bars);
 		bars.activate();
 	} catch (CoreException e) {
-		WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());
+		WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
 	}
 }
 /**

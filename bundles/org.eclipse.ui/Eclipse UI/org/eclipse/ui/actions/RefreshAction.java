@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.io.File;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Standard action for refreshing the workspace from the local file system for
@@ -33,15 +33,15 @@ public class RefreshAction extends WorkspaceAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".RefreshAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".RefreshAction";//$NON-NLS-1$
 /**
  * Creates a new action.
  *
  * @param shell the shell for any dialogs
  */
 public RefreshAction(Shell shell) {
-	super(shell, "Re&fresh From Local");
-	setToolTipText("Refresh the resource from the local copy");
+	super(shell, WorkbenchMessages.getString("RefreshAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("RefreshAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.REFRESH_ACTION});
 }
@@ -54,12 +54,11 @@ void checkLocationDeleted(IProject project) throws CoreException {
 		return;
 	File location = project.getLocation().toFile();
 	if (!location.exists()) {
-		String message = 
-			"Project \"" + project.getName() + "\"'s location in the file system (" + location.getAbsolutePath() + ") has been deleted.\n"
-		  + "Delete project from workspace?";
+		String message = WorkbenchMessages.format("RefreshAction.locationDeletedMessage", new Object[] {project.getName(),location.getAbsolutePath()});//$NON-NLS-1$
+		
 		final MessageDialog dialog = new MessageDialog(
 			getShell(),
-			"Project location has been deleted", // dialog title
+			WorkbenchMessages.getString("RefreshAction.dialogTitle"), // dialog title //$NON-NLS-1$
 			null, // use default window icon
 			message,
 			MessageDialog.QUESTION,
@@ -83,19 +82,19 @@ void checkLocationDeleted(IProject project) throws CoreException {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return "Refreshing:";
+	return WorkbenchMessages.getString("RefreshAction.progressMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return "Problems occurred refreshing the selected resources.";
+	return WorkbenchMessages.getString("RefreshAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return "Refresh Problems";
+	return WorkbenchMessages.getString("RefreshAction.problemTitle"); //$NON-NLS-1$
 }
 /**
  * Returns a list containing the workspace root if the selection would otherwise be empty.

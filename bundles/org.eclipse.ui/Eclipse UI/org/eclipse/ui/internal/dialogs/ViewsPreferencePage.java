@@ -1,6 +1,11 @@
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.ui.internal.IWorkbenchPreferenceConstants;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,14 +32,14 @@ public class ViewsPreferencePage
 	private int editorAlignment;
 	private int viewAlignment;
 
-	private static final String EDITORS_TITLE = "Editors";
-	private static final String VIEWS_TITLE = "Views";
-	private static final String TOP_TITLE = "Top";
-	private static final String BOTTOM_TITLE = "Bottom";
-	private static final String TAB_POSITIONS_LABEL = "Tab Positions";
+	private static final String EDITORS_TITLE = WorkbenchMessages.getString("Editors"); //$NON-NLS-1$
+	private static final String VIEWS_TITLE = WorkbenchMessages.getString("Views"); //$NON-NLS-1$
+	private static final String TOP_TITLE = WorkbenchMessages.getString("Top"); //$NON-NLS-1$
+	private static final String BOTTOM_TITLE = WorkbenchMessages.getString("Bottom"); //$NON-NLS-1$
+	private static final String TAB_POSITIONS_LABEL = WorkbenchMessages.getString("ViewPreferences.tabPositions"); //$NON-NLS-1$
 
 	private static final String APPLY_MESSAGE =
-		"Changes made to the View Preferences will not be applied to the current workbench. \nRestart the workbench to use any new settings.";
+		WorkbenchMessages.getString("ViewPreferences.applyMessage"); //$NON-NLS-1$
 /**
  * Create a composite that for creating the tab toggle buttons.
  * @param composite Composite
@@ -68,9 +73,9 @@ protected Control createContents(Composite parent) {
 
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	this.editorAlignment =
-		store.getInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
+		store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	this.viewAlignment =
-		store.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+		store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 
 	Composite composite = new Composite(parent, SWT.NULL);
 	composite.setLayout(new GridLayout());
@@ -93,7 +98,7 @@ protected Control createContents(Composite parent) {
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
 	Label noteLabel = new Label(messageComposite,SWT.BOLD );
-	noteLabel.setText("Note:");
+	noteLabel.setText(WorkbenchMessages.getString("ViewPreferences.note")); //$NON-NLS-1$
 	noteLabel.setFont(JFaceResources.getBannerFont());
 	noteLabel.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -226,12 +231,12 @@ public void init(org.eclipse.ui.IWorkbench workbench) {}
 protected void performDefaults() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	int editorTopValue =
-		store.getDefaultInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
+		store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	editorTopButton.setSelection(editorTopValue == SWT.TOP);
 	editorBottomButton.setSelection(editorTopValue == SWT.BOTTOM);
 
 	int viewTopValue =
-		store.getDefaultInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+		store.getDefaultInt(IPreferenceConstants.VIEW_TAB_POSITION);
 	viewTopButton.setSelection(viewTopValue == SWT.TOP);
 	viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
 
@@ -244,10 +249,10 @@ public boolean performOk() {
 	IPreferenceStore store = getPreferenceStore();
 
 	// store the editor tab value to setting
-	store.setValue(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION, editorAlignment);
+	store.setValue(IPreferenceConstants.EDITOR_TAB_POSITION, editorAlignment);
 
 	// store the view tab value to setting
-	store.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
+	store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
 
 	return true;
 }

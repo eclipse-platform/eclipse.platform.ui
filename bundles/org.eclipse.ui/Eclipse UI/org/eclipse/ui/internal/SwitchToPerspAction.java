@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
@@ -20,8 +19,8 @@ public class SwitchToPerspAction  extends Action {
  * 
  */
 public SwitchToPerspAction(IWorkbenchWindow window) {
-	super("Replace With");
-	setToolTipText("Replace Perspective");
+	super(WorkbenchMessages.getString("ReplacePerspective.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ReplacePerspective.toolTip")); //$NON-NLS-1$
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE));
 	this.window = window;
 }

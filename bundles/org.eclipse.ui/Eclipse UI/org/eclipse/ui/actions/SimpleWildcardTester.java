@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -20,16 +19,16 @@ public final class SimpleWildcardTester {
  * @return <code>true</code> if a match occurs; <code>false</code>otherwise.
  */
 public static boolean testWildcard(String pattern, String str) {
-	if (pattern.equals("*")) {
+	if (pattern.equals("*")) {//$NON-NLS-1$
 		return true;
-	} else if (pattern.startsWith("*")) {
-		if (pattern.endsWith("*")) {
+	} else if (pattern.startsWith("*")) {//$NON-NLS-1$
+		if (pattern.endsWith("*")) {//$NON-NLS-1$
 			if (pattern.length() == 2)
 				return true;
 			return str.indexOf(pattern.substring(1, pattern.length() - 1)) >= 0;
 		}
 		return str.endsWith(pattern.substring(1));
-	} else if (pattern.endsWith("*")) {
+	} else if (pattern.endsWith("*")) {//$NON-NLS-1$
 		return str.startsWith(pattern.substring(0, pattern.length() - 1));
 	} else {
 		return str.equals(pattern);

@@ -30,7 +30,6 @@
 
 <!-- Workbench extension point definitions -->
 
-<extension-point name="Welcome" id="welcome"/>
 <extension-point name="Perspectives" id="perspectives"/>
 <extension-point name="PerspectiveExtensions" id="perspectiveExtensions"/>
 <extension-point name="Preferences" id="preferencePages"/>
@@ -217,7 +216,7 @@
        </page>
 	<page id="org.eclipse.ui.preferencePages.Views"
 	      class="org.eclipse.ui.internal.dialogs.ViewsPreferencePage"
-            name="Views"
+            name="Appearance"
 		category="org.eclipse.ui.preferencePages.Workbench">
        </page>
 
@@ -254,6 +253,12 @@
       class="org.eclipse.ui.editors.text.TextEditor"
       contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">     
     </editor>
+
+    <editor id="org.eclipse.ui.internal.dialogs.WelcomeEditor"
+      name="Getting Started"
+      icon="icons/basic/obj16/welcome_editor.gif"
+      class="org.eclipse.ui.internal.dialogs.WelcomeEditor">
+    </editor>
 </extension>
 
 <extension
@@ -267,11 +272,9 @@
     <factory id ="org.eclipse.ui.part.FileEditorInputFactory"
       class="org.eclipse.ui.part.FileEditorInputFactory">
 	</factory>
-</extension>
-
-<extension point="org.eclipse.help.contexts"> 
-   <contexts name="WorkbenchHelpContexts.xml"/> 
-   <contexts name="StandardComponentsHelpContexts.xml"/> 
+    <factory id ="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"
+      class="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory">
+	</factory>
 </extension>
 
 <extension-point name="Marker updaters" id="markerUpdaters"/>
@@ -295,7 +298,7 @@
 
 <extension
 	point= "org.eclipse.ui.resourceFilters">
-	<filter pattern = ".*" selected = "true"/>
+	<filter pattern = ".*" selected = "false"/>
 </extension>
 
 <extension 

@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.*;
 import org.eclipse.ui.*;
@@ -19,10 +23,9 @@ import java.util.*;
  */
 public class ActionSetDialogInput {
 	private ArrayList categories = new ArrayList(10);
-	public final static String STR_OTHER = "Other";
-	private final static String STR_VIEW = "Views";
-	private final static String STR_WIZARD = "New Wizards";
-	private final static String STR_PERSP = "Perspectives";
+	private final static String ID_VIEW = "org.eclipse.ui.views";
+	private final static String ID_WIZARD = "org.eclipse.ui.wizards";
+	private final static String ID_PERSP = "org.eclipse.ui.perspectives";
 	private FakeActionSetCategory viewCat;
 	private FakeActionSetCategory perspCat;
 	private FakeActionSetCategory wizardCat;
@@ -41,11 +44,11 @@ public ActionSetDialogInput() {
  */
 public ActionSetCategory findCategory(String id) {
 	if (id == null)
-		id = "Other";
+		return null;
 	Iterator iter = categories.iterator();
 	while (iter.hasNext()) {
 		ActionSetCategory cat = (ActionSetCategory)iter.next();
-		if (cat.getLabel().equals(id))
+		if (cat.getId().equals(id))
 			return cat;
 	}
 	return null;
@@ -89,7 +92,8 @@ private void initActionSets() {
  */
 private void initNewWizards() {
 	// Create fake category.
-	wizardCat = new FakeActionSetCategory(STR_WIZARD);
+	wizardCat = new FakeActionSetCategory(ID_WIZARD, 
+		WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
 	categories.add(wizardCat);
 
 	// Get wizards categories.
@@ -102,7 +106,6 @@ private void initNewWizards() {
 		for (int nY = 0; nY < wizards.length; nY ++) {
 			WorkbenchWizardElement wiz = (WorkbenchWizardElement)wizards[nY];
 			FakeWizardActionSet actionSet = new FakeWizardActionSet(wiz);
-			actionSet.setCategory(STR_WIZARD);
 			wizardCat.addActionSet(actionSet);
 		}
 	}
@@ -112,7 +115,8 @@ private void initNewWizards() {
  */
 private void initPerspectives() {
 	// Create fake category.
-	perspCat = new FakeActionSetCategory(STR_PERSP);
+	perspCat = new FakeActionSetCategory(ID_PERSP,		
+		WorkbenchMessages.getString("ActionSetDialogInput.perspectiveCategory")); //$NON-NLS-1$
 	categories.add(perspCat);
 
 	// Add views.
@@ -120,7 +124,6 @@ private void initPerspectives() {
 	IPerspectiveDescriptor [] persps = perspReg.getPerspectives();
 	for (int nX = 0; nX < persps.length; nX ++) {
 		FakePerspectiveActionSet actionSet = new FakePerspectiveActionSet(persps[nX]);
-		actionSet.setCategory(STR_PERSP);
 		perspCat.addActionSet(actionSet);
 	}
 }
@@ -129,7 +132,8 @@ private void initPerspectives() {
  */
 private void initViews() {
 	// Create fake category.
-	viewCat = new FakeActionSetCategory(STR_VIEW);
+	viewCat = new FakeActionSetCategory(ID_VIEW, 
+		WorkbenchMessages.getString("ActionSetDialogInput.viewCategory")); //$NON-NLS-1$
 	categories.add(viewCat);
 
 	// Add views.
@@ -137,7 +141,6 @@ private void initViews() {
 	IViewDescriptor [] views = viewReg.getViews();
 	for (int nX = 0; nX < views.length; nX ++) {
 		FakeViewActionSet actionSet = new FakeViewActionSet(views[nX]);
-		actionSet.setCategory(STR_VIEW);
 		viewCat.addActionSet(actionSet);
 	}
 }

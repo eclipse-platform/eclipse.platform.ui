@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
@@ -88,7 +87,7 @@ public ViewPane createView(String id,IMemento memento)
 {
 	IViewDescriptor desc = viewReg.find(id);
 	if(desc == null)
-		throw new PartInitException("Could not create view: " + id);
+		throw new PartInitException(WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] {id})); //$NON-NLS-1$
 	IViewPart view = (IViewPart)counter.get(desc);
 	if (view == null) {
 		view = createView(desc,memento);
@@ -106,23 +105,22 @@ private IViewPart createView(IViewDescriptor desc,IMemento memento)
 {
 	// Debugging
 	if (DEBUG)
-		System.out.println("Create " + desc.getLabel());
+		System.out.println("Create " + desc.getLabel());//$NON-NLS-1$
 
 	// Create the view.
 	IViewPart view = null;
 	try {
 		view = desc.createView();
 	} catch (CoreException e) {
-		throw new PartInitException("Unable to instantiate view: " + desc.getID());
+		throw new PartInitException(WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()})); //$NON-NLS-1$
 	}
 	
 	// Create site
 	ViewSite site = new ViewSite(view, page, desc);
 	view.init(site,memento);
 	if (view.getSite() != site)
-		throw new PartInitException("View initialization failed: "
-			+ desc.getID()
-			+ ".  Site is incorrect");
+		throw new PartInitException(WorkbenchMessages.format("ViewFactory.siteException", new Object[] {desc.getID()})); //$NON-NLS-1$
+
 
 	// Create pane, etc.
 	ViewPane pane = new ViewPane(view, page);
@@ -144,7 +142,7 @@ private void destroyView(IViewDescriptor desc, IViewPart view)
 {
 	// Debugging
 	if (DEBUG)
-		System.out.println("Dispose " + desc.getLabel());
+		System.out.println("Dispose " + desc.getLabel());//$NON-NLS-1$
 
 	// Free action bars, pane, etc.
 	PartSite site = (PartSite)view.getSite();

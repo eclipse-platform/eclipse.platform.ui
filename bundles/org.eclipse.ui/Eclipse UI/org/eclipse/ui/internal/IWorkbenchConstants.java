@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.PlatformUI;
 
@@ -20,7 +19,6 @@ public interface IWorkbenchConstants {
 	public static final String PL_EDITOR_ACTIONS = "editorActions";
 	public static final String PL_PERSPECTIVES ="perspectives";
 	public static final String PL_PERSPECTIVE_EXTENSIONS ="perspectiveExtensions";
-	public static final String PL_WELCOME ="welcome";
 	public static final String PL_PREFERENCES ="preferencePages";
 	public static final String PL_PROPERTY_PAGES ="propertyPages";
 	public static final String PL_EDITOR ="editors";

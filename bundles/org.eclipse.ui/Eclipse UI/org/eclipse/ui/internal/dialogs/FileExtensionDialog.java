@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -11,6 +10,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.UIHackFinder;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -20,7 +20,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class FileExtensionDialog extends Dialog
 	implements Listener
 {
-	private String filename = "";
+	private String filename = "";//$NON-NLS-1$
 	private Text filenameField;
 /**
  * Constructs a new file extension dialog.
@@ -33,7 +33,7 @@ public FileExtensionDialog(Shell parentShell) {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText("New File Type");
+	shell.setText(WorkbenchMessages.getString("FileExtension.shellTitle")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.FILE_EXTENSION_DIALOG});
 }
 public void create() {
@@ -55,14 +55,14 @@ protected Control createDialogArea(Composite parent) {
 
 	// begin the layout
 	Label textLabel = new Label(contents,SWT.WRAP);
-	textLabel.setText("Enter file type to add: (e.g. *.doc or report.doc)");
+	textLabel.setText(WorkbenchMessages.getString("FileExtension.fileTypeMessage")); //$NON-NLS-1$
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
 	textLabel.setLayoutData(data);
 	textLabel.setFont(parent.getFont());
 
 	Label label = new Label(contents, SWT.LEFT);
-	label.setText("File type: ");
+	label.setText(WorkbenchMessages.getString("FileExtension.fileTypeLabel")); //$NON-NLS-1$
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	label.setLayoutData(data);
@@ -90,8 +90,8 @@ private boolean fileTypeValid() {
 	if (index == -1) {
 		MessageDialog.openWarning(
 			getShell(),
-			"Invalid File Type",
-			"File type must include an extension.");
+			WorkbenchMessages.getString("FileExtension.invalidTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("FileExtension.invalidMessage")); //$NON-NLS-1$
 		filenameField.setFocus();
 		return false;
 	}
@@ -99,8 +99,8 @@ private boolean fileTypeValid() {
 	if (index == filename.length() - 1) {
 		MessageDialog.openWarning(
 			getShell(),
-			"Invalid File Type",
-			"File type extension cannot be empty");
+			WorkbenchMessages.getString("FileExtension.invalidType"), //$NON-NLS-1$
+			WorkbenchMessages.getString("FileExtension.invalidTypeMessage")); //$NON-NLS-1$
 		filenameField.setFocus();
 		return false;
 	}
@@ -113,9 +113,9 @@ public String getExtension() {
 	
 	int index = filename.indexOf('.');
 	if (index == -1)
-		return "";
+		return "";//$NON-NLS-1$
 	if (index == filename.length())
-		return "";
+		return "";//$NON-NLS-1$
 	return filename.substring(index + 1,filename.length());
 }
 public String getName() {
@@ -124,7 +124,7 @@ public String getName() {
 	
 	int index = filename.indexOf('.');
 	if (index == -1)
-		return "*";
+		return "*";//$NON-NLS-1$
 	return filename.substring(0, index);
 }
 public void handleEvent(Event event) {

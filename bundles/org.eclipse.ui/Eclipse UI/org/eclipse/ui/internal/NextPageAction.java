@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
@@ -21,6 +20,7 @@ public class NextPageAction extends PageEventAction {
 public NextPageAction(String label, int increment, IWorkbenchWindow window) {
 	super(label, window);
 	this.increment = increment;
+	setEnabled(false);
 }
 /* (non-Javadoc)
  * Method declared on IAction.

@@ -1,5 +1,9 @@
 package org.eclipse.ui.views.navigator;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.core.resources.*;
@@ -22,7 +26,7 @@ public Image decorateImage(Image input, Object element) {
 public String decorateText(String input, Object element) {
 	if (element instanceof IFile) {
 		long size = ((IFile) element).getLocation().toFile().length();
-		return input + " (" + size + " bytes)";
+		return input + " (" + size + " bytes)";//$NON-NLS-2$//$NON-NLS-1$
 	}
 	else {
 		return input;

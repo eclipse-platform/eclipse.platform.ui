@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.jface.viewers.*;
 
@@ -24,12 +28,14 @@ public int compare(Viewer viewer, Object e1, Object e2) {
 		String str2 = removeAccel(((IActionSetDescriptor)e2).getLabel());
 		return str1.compareTo(str2);
 	} else if (e1 instanceof ActionSetCategory) {
-		String str1 = removeAccel(((ActionSetCategory)e1).getLabel());
-		String str2 = removeAccel(((ActionSetCategory)e2).getLabel());
-		if (str1.equals(ActionSetDialogInput.STR_OTHER))
+		ActionSetCategory cat1 = (ActionSetCategory)e1;
+		ActionSetCategory cat2 = (ActionSetCategory)e2;
+		if (cat1.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
 			return 1;
-		if (str2.equals(ActionSetDialogInput.STR_OTHER))
+		if (cat2.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
 			return -1;
+		String str1 = cat1.getLabel();
+		String str2 = cat2.getLabel();
 		return str1.compareTo(str2);
 	}
 	return 0;

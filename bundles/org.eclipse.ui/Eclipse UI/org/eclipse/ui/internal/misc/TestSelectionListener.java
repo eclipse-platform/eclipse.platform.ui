@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.misc;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 
@@ -20,6 +24,6 @@ public TestSelectionListener() {
  * @param selection the new selection, or <code>null</code> if none
  */
 public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-	System.out.println("selectionChanged(" + selection + ")");
+	System.out.println("selectionChanged(" + selection + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 }

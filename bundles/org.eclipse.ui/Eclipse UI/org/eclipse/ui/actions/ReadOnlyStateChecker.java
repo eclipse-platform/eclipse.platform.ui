@@ -1,12 +1,18 @@
 package org.eclipse.ui.actions;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.MessageFormat;
 
 /**
  * The ReadOnlyStateChecker is a helper class that takes a set of resource
@@ -19,7 +25,7 @@ class ReadOnlyStateChecker {
 	private String mainMessage;
 	private boolean yesToAllNotSelected = true;
 
-	private String READ_ONLY_EXCEPTION_MESSAGE = "Read Only Checking Problems";
+	private String READ_ONLY_EXCEPTION_MESSAGE = WorkbenchMessages.getString("ReadOnlyCheck.problems"); //$NON-NLS-1$
 	
 /**
  * Create a new checker that parents the dialog off of parent using the supplied
@@ -72,12 +78,16 @@ IResource[] checkReadOnlyResources(IResource[] itemsToCheck) {
 	int result = IDialogConstants.CANCEL_ID;
 	try {
 		result = checkReadOnlyResources(itemsToCheck, selections);
-	} catch (CoreException exception) {
-		ErrorDialog.openError(
-			this.shell,
-			READ_ONLY_EXCEPTION_MESSAGE,
-			null,
-			exception.getStatus());
+	} catch (final CoreException exception) {
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(
+					shell,
+					READ_ONLY_EXCEPTION_MESSAGE,
+					null,
+					exception.getStatus());
+			}
+		});
 	}
 
 	if (result == IDialogConstants.CANCEL_ID)
@@ -159,12 +169,12 @@ private int checkReadOnlyResources(IResource[] itemsToCheck, List allSelected)
  */
 private int queryYesToAllNoCancel(IResource resource) {
 
-	MessageDialog dialog =
+	final MessageDialog dialog =
 		new MessageDialog(
 			this.shell,
 			this.titleMessage,
 			null,
-			resource.getName() + this.mainMessage,
+			MessageFormat.format(this.mainMessage, new Object[] {resource.getName()}),
 			MessageDialog.QUESTION,
 			new String[] {
 				IDialogConstants.YES_LABEL,
@@ -172,8 +182,12 @@ private int queryYesToAllNoCancel(IResource resource) {
 				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL },
 			0);
-
-	int result = dialog.open();
+	shell.getDisplay().syncExec(new Runnable() {
+		public void run() {
+			dialog.open();
+		}
+	});
+	int result = dialog.getReturnCode();
 	if (result == 0)
 		return IDialogConstants.YES_ID;
 	if (result == 1)

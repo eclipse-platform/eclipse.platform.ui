@@ -1,14 +1,14 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
@@ -22,7 +22,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import java.util.List;
-
+import java.text.MessageFormat;
 
 
 /**
@@ -44,20 +44,20 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".RenameResourceAction";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".RenameResourceAction";//$NON-NLS-1$
 
 	/**
 	 * The new path.
 	 */
 	private IPath newPath;
 
-	private static final String CHECK_RENAME_TITLE = "Check Rename";
+	private static final String CHECK_RENAME_TITLE = WorkbenchMessages.getString("RenameResourceAction.checkTitle"); //$NON-NLS-1$
 
 	private static final String CHECK_RENAME_MESSAGE =
-		" is read only. Do you still wish to rename it?";
-	private static String RESOURCE_EXISTS_TITLE = "Resource Exists";
-	private static String RESOURCE_EXISTS_MESSAGE = " exists. Do you wish to overwrite?";
-	private static String RENAMING_MESSAGE = "Renaming";
+		WorkbenchMessages.getString("RenameResourceAction.readOnlyCheck"); //$NON-NLS-1$
+	private static String RESOURCE_EXISTS_TITLE = WorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
+	private static String RESOURCE_EXISTS_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
+	private static String RENAMING_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.progressMessage"); //$NON-NLS-1$
 
 /**
  * Creates a new action. Using this constructor directly will rename using a
@@ -66,8 +66,8 @@ public class RenameResourceAction extends WorkspaceAction {
  * @param shell the shell for any dialogs
  */
 public RenameResourceAction(Shell shell) {
-	super(shell, "Rena&me");
-	setToolTipText("Rename the resource");
+	super(shell, WorkbenchMessages.getString("RenameResourceAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("RenameResourceAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.RENAME_RESOURCE_ACTION});
 }
@@ -102,7 +102,7 @@ private boolean checkOverwrite(
 				MessageDialog.openQuestion(
 					shell,
 					RESOURCE_EXISTS_TITLE,
-					destination.toString() + RESOURCE_EXISTS_MESSAGE);
+					MessageFormat.format(RESOURCE_EXISTS_MESSAGE, new Object[] {destination.toString()}));
 		}
 
 	};
@@ -126,7 +126,7 @@ private boolean checkReadOnlyAndNull(IResource currentResource) {
 		return MessageDialog.openQuestion(
 			getShell(),
 			CHECK_RENAME_TITLE,
-			currentResource.getName() + CHECK_RENAME_MESSAGE);
+			MessageFormat.format(CHECK_RENAME_MESSAGE, new Object[] {currentResource.getName()}));
 	else
 		return true;
 }
@@ -145,19 +145,19 @@ private void disposeTextWidget() {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return "Renaming:";
+	return WorkbenchMessages.getString("RenameResourceAction.progress"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return "Problems occurred renaming the selected resource.";
+	return WorkbenchMessages.getString("RenameResourceAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return "Rename Problems";
+	return WorkbenchMessages.getString("RenameResourceAction.problemTitle"); //$NON-NLS-1$
 }
 /**
  * Get the Tree being edited.
@@ -213,14 +213,14 @@ protected String queryNewResourceName(final IResource resource) {
 	IInputValidator validator = new IInputValidator() {
 		public String isValid(String string) {
 			if (resource.getName().equals(string)) {
-				return "You must use a different name";
+				return WorkbenchMessages.getString("RenameResourceAction.nameMustBeDifferent"); //$NON-NLS-1$
 			}
 			IStatus status = workspace.validateName(string, resource.getType());
 			if (!status.isOK()) {
 				return status.getMessage();
 			}
 			if (workspace.getRoot().exists(prefix.append(string))) {
-				return "A resource with that name already exists";
+				return WorkbenchMessages.getString("RenameResourceAction.nameExists"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -228,8 +228,8 @@ protected String queryNewResourceName(final IResource resource) {
 		
 	InputDialog dialog = new InputDialog(
 		getShell(),
-		"Rename Resource", 
-		"Enter the new resource name:", resource.getName(), validator);
+		WorkbenchMessages.getString("RenameResourceAction.inputDialogTitle"),  //$NON-NLS-1$
+		WorkbenchMessages.getString("RenameResourceAction.inputDialogMessage"), resource.getName(), validator); //$NON-NLS-1$
 	dialog.setBlockOnOpen(true);
 	dialog.open();
 	return dialog.getValue();
@@ -317,7 +317,7 @@ public void run() {
 		if (!checkReadOnlyAndNull(currentResource))
 			return;
 		String newName = queryNewResourceName(currentResource);
-		if (newName == null || newName.equals(""))
+		if (newName == null || newName.equals(""))//$NON-NLS-1$
 			return;
 		newPath = currentResource.getFullPath().removeLastSegments(1).append(newName);
 		super.run();
@@ -354,8 +354,15 @@ private void saveChangesAndDispose(IResource resource) {
 	//Dispose the text widget regardless
 	disposeTextWidget();
 	if (!newName.equals(resource.getName())) {
-		IPath newPath = resource.getFullPath().removeLastSegments(1).append(newName);
-		runWithNewPath(newPath, resource);
+		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IStatus status = workspace.validateName(newName, resource.getType());
+		if (!status.isOK()) {
+			displayError(status.getMessage());
+		}
+		else {
+			IPath newPath = resource.getFullPath().removeLastSegments(1).append(newName);
+			runWithNewPath(newPath, resource);
+		}
 	}
 }
 /**
@@ -365,6 +372,8 @@ private void saveChangesAndDispose(IResource resource) {
  * not local.
  */
 protected boolean updateSelection(IStructuredSelection selection) {
+
+	disposeTextWidget();
 
 	if (selection.size() > 1)
 		return false;

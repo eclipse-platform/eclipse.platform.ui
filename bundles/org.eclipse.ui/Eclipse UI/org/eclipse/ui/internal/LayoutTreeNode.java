@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -262,19 +261,19 @@ void setChild(boolean left,LayoutTree child) {
  * Returns a string representation of this object.
  */
 public String toString() {
-	String s = "<null>\n";
+	String s = "<null>\n";//$NON-NLS-1$
 	if(part.getControl() != null)
-		s = "<@" + part.getControl().hashCode() + ">\n";
-	String result = "["; 
+		s = "<@" + part.getControl().hashCode() + ">\n";//$NON-NLS-2$//$NON-NLS-1$
+	String result = "["; //$NON-NLS-1$
 	if(children[0].getParent() != this)
-		result = result + "{" + children[0] + "}" + s;
+		result = result + "{" + children[0] + "}" + s;//$NON-NLS-2$//$NON-NLS-1$
 	else
 		result = result + children[0] + s;
 	
 	if(children[1].getParent() != this)
-		result = result + "{" + children[1] + "}]";
+		result = result + "{" + children[1] + "}]";//$NON-NLS-2$//$NON-NLS-1$
 	else
-		result = result + children[1] + "]";
+		result = result + children[1] + "]";//$NON-NLS-1$
 	return result;
 }
 /**

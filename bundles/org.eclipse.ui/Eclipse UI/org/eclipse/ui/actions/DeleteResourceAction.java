@@ -1,9 +1,8 @@
 package org.eclipse.ui.actions;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -19,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.text.MessageFormat;
 
 /**
  * Standard action for deleting the currently selected resources.
@@ -31,11 +31,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".DeleteResourceAction";
-
-	public static final String CHECK_DELETION_TITLE = "Check Deletion";
-
-	public static final String CHECK_DELETION_MESSAGE = " is read only. Do you still wish to delete it?";
+	public static final String ID = PlatformUI.PLUGIN_ID + ".DeleteResourceAction";//$NON-NLS-1$
 	
 	/**
 	 * The shell in which to show any dialogs.
@@ -47,8 +43,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
  * @param shell the shell for any dialogs
  */
 public DeleteResourceAction(Shell shell) {
-	super("&Delete");
-	setToolTipText("Delete the resource");
+	super(WorkbenchMessages.getString("DeleteAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("DeleteAction.toolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.DELETE_RESOURCE_ACTION});
 	setId(ID);
 	Assert.isNotNull(shell);
@@ -83,9 +79,9 @@ boolean canDelete() {
  */
 boolean confirmDelete() {
 	return
-		MessageDialog.openConfirm(shell,
-		"Question", 
-		"Delete the selected resources?");
+		MessageDialog.openQuestion(shell,
+		WorkbenchMessages.getString("Question"),  //$NON-NLS-1$
+		WorkbenchMessages.getString("DeleteAction.confirmDelete")); //$NON-NLS-1$
 }
 /**
  *	Return an array of the currently selected resources.
@@ -110,8 +106,8 @@ public void run() {
 	ReadOnlyStateChecker checker =
 		new ReadOnlyStateChecker(
 			this.shell,
-			CHECK_DELETION_TITLE,
-			CHECK_DELETION_MESSAGE);
+			WorkbenchMessages.getString("DeleteResource.checkDelete"), //$NON-NLS-1$
+			WorkbenchMessages.getString("DeleteResource.readOnlyQuestion")); //$NON-NLS-1$
 
 	final IResource[] resourcesToDelete =
 		checker.checkReadOnlyResources(getSelectedResourcesArray());
@@ -126,15 +122,15 @@ public void run() {
 	} catch (InvocationTargetException e) {
 		Throwable t = e.getTargetException();
 		if (t instanceof CoreException) {
-			ErrorDialog.openError(shell, "Delete Problems", null, // no special message
+			ErrorDialog.openError(shell, WorkbenchMessages.getString("DeleteAction.errorTitle"), null, // no special message //$NON-NLS-1$
 			 ((CoreException) t).getStatus());
 		} else {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-			WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + t);
+			WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.run: {1}", new Object[] {getClass().getName(), t}));//$NON-NLS-1$
 			MessageDialog.openError(
 				shell,
-				"Problems deleting",
-				"Internal error: " + t.getMessage());
+				WorkbenchMessages.getString("DeleteAction.messageTitle"), //$NON-NLS-1$
+				WorkbenchMessages.format("DeleteResourceAction.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 		}
 	} catch (InterruptedException e) {
 	}

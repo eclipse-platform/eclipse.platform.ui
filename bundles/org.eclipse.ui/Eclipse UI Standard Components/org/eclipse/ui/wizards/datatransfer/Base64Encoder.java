@@ -1,9 +1,8 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -11,8 +10,8 @@ package org.eclipse.ui.wizards.datatransfer;
  *	String according to the specification in RFC1521 section 5.2
  */
 /*package*/ class Base64Encoder {
-	private static final String mappings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	private static final String filler = "=";
+	private static final String mappings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";//$NON-NLS-1$
+	private static final String filler = "=";//$NON-NLS-1$
 /**
  *	Answer a string representing the Base 64 encoded form of the passed
  *	byte array
@@ -25,7 +24,7 @@ public static String encode(byte[] contents) {
 
 	for (int i = 0; i < contents.length; i = i + 3) {
 		if (result.length() == 76)
-			result.append("\n\r");
+			result.append("\n\r");//$NON-NLS-1$
 		
 		// output character 1
 		result.append(mappings.charAt((contents[i] & 0xFC) >> 2));

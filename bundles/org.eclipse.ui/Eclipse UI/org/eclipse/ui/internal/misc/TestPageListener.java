@@ -1,5 +1,9 @@
 package org.eclipse.ui.internal.misc;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.*;
 
 /**
@@ -19,7 +23,7 @@ public TestPageListener() {
  * @see IWorkbenchWindow#setActivePage
  */
 public void pageActivated(IWorkbenchPage page) {
-	System.out.println("pageActivated(" + page + ")");
+	System.out.println("pageActivated(" + page + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Notifies this listener that the given page has been closed.
@@ -28,7 +32,7 @@ public void pageActivated(IWorkbenchPage page) {
  * @see IWorkbenchPage#close
  */
 public void pageClosed(IWorkbenchPage page) {
-	System.out.println("pageClosed(" + page + ")");
+	System.out.println("pageClosed(" + page + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Notifies this listener that the given page has been opened.
@@ -37,6 +41,6 @@ public void pageClosed(IWorkbenchPage page) {
  * @see IWorkbenchWindow#openPage
  */
 public void pageOpened(IWorkbenchPage page) {
-	System.out.println("pageOpened(" + page + ")");
+	System.out.println("pageOpened(" + page + ")");//$NON-NLS-2$//$NON-NLS-1$
 }
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
@@ -43,8 +42,8 @@ public void createInitialLayout(IPageLayout layout) {
  */
 public void defineActions(IPageLayout layout) {
 	// Add "new wizards".
-	layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
-	layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");
+	layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
+	layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
 
 	// Add "show views".
 	layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
@@ -61,13 +60,13 @@ public void defineLayout(IPageLayout layout) {
 	String editorArea = layout.getEditorArea();
 
 	// Top left.
-	IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.26, editorArea);
+	IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.26, editorArea);//$NON-NLS-1$
 	topLeft.addView(IPageLayout.ID_RES_NAV);
 	topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
 	// Bottom left.
-	IFolderLayout bottomLeft = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, (float)0.50,
-		"topLeft");
+	IFolderLayout bottomLeft = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, (float)0.50,//$NON-NLS-1$
+		"topLeft");//$NON-NLS-1$
 	bottomLeft.addView(IPageLayout.ID_OUTLINE);
 
 	// Bottom right.

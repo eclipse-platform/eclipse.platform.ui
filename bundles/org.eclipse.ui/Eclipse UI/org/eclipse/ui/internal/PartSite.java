@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.core.runtime.*;
@@ -54,8 +53,8 @@ public PartSite(IWorkbenchPart part, IWorkbenchPage page)
 {
 	this.part = part;
 	this.page = page;
-	extensionID = "org.eclipse.ui.UnknownID";
-	extensionName = "Unknown Name";
+	extensionID = "org.eclipse.ui.UnknownID";//$NON-NLS-1$
+	extensionName = "Unknown Name";//$NON-NLS-1$
 }
 /**
  * Dispose the contributions.
@@ -171,14 +170,14 @@ public void setConfigurationElement(IConfigurationElement configElement) {
 	this.configElement = configElement;
 	
 	// Get extension ID.
-	extensionID = configElement.getAttribute("id");
+	extensionID = configElement.getAttribute("id");//$NON-NLS-1$
 
 	// Get plugin ID.
 	IPluginDescriptor pd = configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
 	pluginID = pd.getUniqueIdentifier();
 
 	// Get extension name.
-	String name = configElement.getAttribute("name");
+	String name = configElement.getAttribute("name");//$NON-NLS-1$
 	if (name != null)
 		extensionName = name;
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.misc.UIHackFinder;
@@ -31,18 +30,18 @@ public class ActionDescriptor {
 	public static final int T_EDITOR=0x4;
 	public static final int T_WORKBENCH_PULLDOWN=0x5;
 	
-	public static final String ATT_ID = "id";
-	public static final String ATT_HELP_CONTEXT_ID = "helpContextId";
-	public static final String ATT_LABEL = "label";
-	public static final String ATT_STATE = "state";
-	public static final String ATT_DESCRIPTION = "description";
-	public static final String ATT_TOOLTIP = "tooltip";
-	public static final String ATT_MENUBAR_PATH = "menubarPath";
-	public static final String ATT_TOOLBAR_PATH = "toolbarPath";
-	public static final String ATT_ICON = "icon";
-	public static final String ATT_HOVERICON = "hoverIcon";
-	public static final String ATT_DISABLEDICON = "disabledIcon";
-	public static final String ATT_CLASS = "class";
+	public static final String ATT_ID = "id";//$NON-NLS-1$
+	public static final String ATT_HELP_CONTEXT_ID = "helpContextId";//$NON-NLS-1$
+	public static final String ATT_LABEL = "label";//$NON-NLS-1$
+	public static final String ATT_STATE = "state";//$NON-NLS-1$
+	public static final String ATT_DESCRIPTION = "description";//$NON-NLS-1$
+	public static final String ATT_TOOLTIP = "tooltip";//$NON-NLS-1$
+	public static final String ATT_MENUBAR_PATH = "menubarPath";//$NON-NLS-1$
+	public static final String ATT_TOOLBAR_PATH = "toolbarPath";//$NON-NLS-1$
+	public static final String ATT_ICON = "icon";//$NON-NLS-1$
+	public static final String ATT_HOVERICON = "hoverIcon";//$NON-NLS-1$
+	public static final String ATT_DISABLEDICON = "disabledIcon";//$NON-NLS-1$
+	public static final String ATT_CLASS = "class";//$NON-NLS-1$
 /**
  * Creates a new descriptor with the specified target.
  */
@@ -66,6 +65,12 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	String hoverIcon = actionElement.getAttribute(ATT_HOVERICON);
 	String disabledIcon = actionElement.getAttribute(ATT_DISABLEDICON);
 	String description = actionElement.getAttribute(ATT_DESCRIPTION);
+
+	// Verify input.
+	if (label == null) {
+		WorkbenchPlugin.log("Invalid action declaration (label == null): " + id); //$NON-NLS-1$
+		label = WorkbenchMessages.getString("ActionDescriptor.invalidLabel"); //$NON-NLS-1$
+	}
 
 	// Calculate menu and toolbar paths.
 	String mgroup = null;
@@ -99,18 +104,17 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 
 	// Create action.
 	action = createAction(targetType, actionElement, target);
-	if (label != null)
-		action.setText(label);
+	action.setText(label);
 	if (tooltip != null)
 		action.setToolTipText(tooltip);
 	if (helpContextId != null) {
-		String fullID = actionElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier() + "." + helpContextId;
+		String fullID = actionElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier() + "." + helpContextId;//$NON-NLS-1$
 		WorkbenchHelp.setHelp(action, new String[] {fullID});
 	}
 	if (description != null)
 		action.setDescription(description);
 	if (state != null) {
-		action.setChecked(state.equals("true"));
+		action.setChecked(state.equals("true"));//$NON-NLS-1$
 	}
 	if (icon != null) {
 		action.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), icon));
@@ -139,7 +143,7 @@ private PluginAction createAction(int targetType, IConfigurationElement actionEl
 		case T_POPUP:
 			return new ObjectPluginAction(actionElement, ATT_CLASS);
 		default:
-			WorkbenchPlugin.log("Unknown Action Type: " + targetType);
+			WorkbenchPlugin.log("Unknown Action Type: " + targetType);//$NON-NLS-1$
 			return null;
 	}
 }
@@ -189,6 +193,6 @@ public String getToolbarPath() {
  * For debugging only.
  */
 public String toString() {
-	return "ActionDescriptor(" + id + ")";
+	return "ActionDescriptor(" + id + ")";//$NON-NLS-2$//$NON-NLS-1$
 }
 }

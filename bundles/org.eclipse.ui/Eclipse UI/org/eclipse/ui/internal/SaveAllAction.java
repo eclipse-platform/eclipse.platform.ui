@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,9 +36,9 @@ public class SaveAllAction extends PartEventAction
  * The default constructor.
  */
 public SaveAllAction(WorkbenchWindow window) {
-	super("saveAll");
-	setText("Sa&ve All@Ctrl+Shift+S");
-	setToolTipText("Save all the open files");
+	super("saveAll");//$NON-NLS-1$
+	setText(WorkbenchMessages.getString("SaveAll.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_ALL);
 	setEnabled(false);
 	this.window = window;

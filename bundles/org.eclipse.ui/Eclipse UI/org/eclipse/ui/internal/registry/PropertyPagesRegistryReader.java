@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
@@ -15,18 +14,18 @@ import java.util.*;
  * This class loads property pages from the registry.
  */
 public class PropertyPagesRegistryReader extends RegistryReader {
-	public static final String ATT_NAME_FILTER = "nameFilter";
-	public static final String ATT_FILTER_NAME = "name";
-	public static final String ATT_FILTER_VALUE = "value";
-	public static final String ATT_CLASS = "class";
+	public static final String ATT_NAME_FILTER = "nameFilter";//$NON-NLS-1$
+	public static final String ATT_FILTER_NAME = "name";//$NON-NLS-1$
+	public static final String ATT_FILTER_VALUE = "value";//$NON-NLS-1$
+	public static final String ATT_CLASS = "class";//$NON-NLS-1$
 
-	private static final String TAG_PAGE = "page";
-	private static final String TAG_CONTRIBUTOR = "contributor";
-	private static final String TAG_FILTER="filter";
-	private static final String ATT_NAME = "name";
-	private static final String ATT_ID = "id";
-	private static final String ATT_ICON = "icon";
-	private static final String ATT_OBJECTCLASS = "objectClass";
+	private static final String TAG_PAGE = "page";//$NON-NLS-1$
+	private static final String TAG_CONTRIBUTOR = "contributor";//$NON-NLS-1$
+	private static final String TAG_FILTER="filter";//$NON-NLS-1$
+	private static final String ATT_NAME = "name";//$NON-NLS-1$
+	private static final String ATT_ID = "id";//$NON-NLS-1$
+	private static final String ATT_ICON = "icon";//$NON-NLS-1$
+	private static final String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
 	
 	private HashMap filterProperties; 
 	private PropertyPageContributorManager manager;
@@ -60,7 +59,7 @@ private void processContributorElement(IConfigurationElement element) {
 	if (objectClassName == null || contributorClassName == null) {
 		// cannot safely open dialog so log the problem
 		WorkbenchPlugin.log(
-			"Unable to create property page contributor. Object class or contributor class are not specified."
+			"Unable to create property page contributor. Object class or contributor class are not specified."//$NON-NLS-1$
 		);
 		return;
 	}
@@ -70,7 +69,7 @@ private void processContributorElement(IConfigurationElement element) {
 			element, ATT_CLASS);
 	} catch (CoreException e) {
 		// cannot safely open dialog so log the problem
-		WorkbenchPlugin.log("Unable to create property page contributor.",e.getStatus());
+		WorkbenchPlugin.log("Unable to create property page contributor.",e.getStatus());//$NON-NLS-1$
 		return;
 	}
 	registerContributor(objectClassName, contributor);

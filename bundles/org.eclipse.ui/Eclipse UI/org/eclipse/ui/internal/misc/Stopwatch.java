@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import java.util.Map;
 import java.util.HashMap;
@@ -53,7 +52,7 @@ static public Stopwatch getStopwatch(String name) {
  */
 public void printInterval(String hint) {
 	long time = System.currentTimeMillis() - lastTime;
-	System.out.println(name + " '" + hint + "' took " + time + " ms");
+	System.out.println(name + " '" + hint + "' took " + time + " ms");//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 	lastTime = System.currentTimeMillis();
 }
 /**
@@ -61,7 +60,7 @@ public void printInterval(String hint) {
  */
 public void printTime() {
 	long time = System.currentTimeMillis() - startTime;
-	System.out.print(name + " is now " + time + " ms");
+	System.out.print(name + " is now " + time + " ms");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Add this stopwatch to the registry.
@@ -82,14 +81,14 @@ public void resetInterval() {
  */
 public void start() {
 	startTime = lastTime = System.currentTimeMillis();
-	System.out.println(name + " started");
+	System.out.println(name + " started");//$NON-NLS-1$
 }
 /**
  * Stop the watch and print the elapsed time.
  */
 public void stop() {
 	long time = System.currentTimeMillis() - startTime;
-	System.out.println(name + " finished in " + time + " ms");
+	System.out.println(name + " finished in " + time + " ms");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Remove this stopwatch from the registry.

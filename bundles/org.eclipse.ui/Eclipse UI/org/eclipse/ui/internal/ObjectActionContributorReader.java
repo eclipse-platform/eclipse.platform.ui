@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
@@ -16,8 +15,8 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  */
 public class ObjectActionContributorReader extends RegistryReader {
 
-	public final static	String TAG_OBJECT_CONTRIBUTION = "objectContribution";
-	private final static	String ATT_OBJECTCLASS = "objectClass";
+	public final static	String TAG_OBJECT_CONTRIBUTION = "objectContribution";//$NON-NLS-1$
+	private final static	String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
 	private ObjectActionContributorManager manager;
 /**
  * Creates popup menu contributor from this element.

@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -50,8 +49,8 @@ public class EditorManager {
 	private Map actionCache = new HashMap();
 
 	private static final String RESOURCES_TO_SAVE_MESSAGE =
-		"Select the resources to save.";
-	private static final String SAVE_RESOURCES_TITLE = "Save Resources?";
+		WorkbenchMessages.getString("EditorManager.saveResourcesMessage"); //$NON-NLS-1$
+	private static final String SAVE_RESOURCES_TITLE = WorkbenchMessages.getString("EditorManager.saveResourcesTitle"); //$NON-NLS-1$
 /**
  * EditorManager constructor comment.
  */
@@ -249,7 +248,7 @@ public IEditorPart openEditor(String editorID, IEditorInput input)
 	IEditorRegistry reg = getEditorRegistry();
 	EditorDescriptor desc = (EditorDescriptor)reg.findEditor(editorID);
 	if (desc == null) {
-		throw new PartInitException("Unable to open editor, unknown editor ID: " + editorID);
+		throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] {editorID})); //$NON-NLS-1$
 	}
 	return openEditor(desc, input);
 }
@@ -314,7 +313,7 @@ private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
 					openSystemEditor(((IFileEditorInput) input).getFile());
 					return null;
 				} else
-					throw new PartInitException("System editor can only open file base resources.");
+					throw new PartInitException(WorkbenchMessages.getString("EditorManager.systemEditorError")); //$NON-NLS-1$
 			} else {
 				openExternalEditor(desc, input);
 				return null;
@@ -329,8 +328,8 @@ private void openExternalEditor(final EditorDescriptor desc, final Object input)
 {
 	// Convert input to file.
 	if (!(input instanceof IFileEditorInput))
-		throw new PartInitException("Unable to open external editor " +
-			desc.getFileName() + " (" + desc.getId()+").  Input is not an IFileEditorInput."); 
+		throw new PartInitException(WorkbenchMessages.format("EditorManager.errorOpeningExternalEditor", new Object[] {desc.getFileName(),desc.getId() }));  //$NON-NLS-1$
+			
 	final IFileEditorInput fileInput = (IFileEditorInput)input;
 	
 	//Must catch CoreException inside the runnable because
@@ -344,7 +343,7 @@ private void openExternalEditor(final EditorDescriptor desc, final Object input)
 				if (desc.getLauncher() != null) {
 					// Open using launcher
 					Object launcher = WorkbenchPlugin.createExtension(
-						desc.getConfigurationElement(), "launcher");
+						desc.getConfigurationElement(), "launcher");//$NON-NLS-1$
 					((IEditorLauncher)launcher).open(fileInput.getFile());
 				} else {	
 					// Open using command
@@ -359,8 +358,7 @@ private void openExternalEditor(final EditorDescriptor desc, final Object input)
 	
 	// Test the result.
 	if (ex[0] != null) {
-		throw new PartInitException("Unable to open external editor " +
-			desc.getFileName() + " (" + desc.getId() + ")", ex[0]); 
+		throw new PartInitException(WorkbenchMessages.format("EditorManager.errorInitializingExternalEditor", new Object[] {desc.getFileName(),desc.getId(),ex[0]})); //$NON-NLS-1$
 	}
 }
 /*
@@ -381,9 +379,7 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 				EditorSite site = new EditorSite(part, page, desc);
 				part.init(site, input);
 				if (part.getSite() != site)
-					throw new PartInitException("Editor initialization failed: "
-						+ desc.getId()
-						+ ".  Site is incorrect.");
+					throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
 					
 				// Create the pane, action bars, etc.
 				if (desc != null)
@@ -417,7 +413,7 @@ private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() throws CoreException {
 			editor[0] = (IEditorPart) WorkbenchPlugin.createExtension(
-				desc.getConfigurationElement(), "class");
+				desc.getConfigurationElement(), "class");//$NON-NLS-1$
 		}
 		public void handleException(Throwable e) {
 			ex[0] = e;
@@ -425,7 +421,7 @@ private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput
 	});
 	
 	if(ex[0] != null)
-		throw new PartInitException("Unable to instantiate editor: " + desc.getId(),ex[0]);
+		throw new PartInitException(WorkbenchMessages.format("EditorManager.unableToInstantiate", new Object[] {desc.getId(),ex[0]})); //$NON-NLS-1$
 	 
 	// Open the instance.
 	openInternalEditor(editor[0], desc, input,setVisible);
@@ -449,7 +445,7 @@ public void openSystemEditor(final IFile input) throws PartInitException {
 	// ShellExecute returns whether call was successful
 	if (!result[0]) {
 		throw new PartInitException(
-			"Unable to open external (platform) editor for " + input.getName());
+			WorkbenchMessages.format("EditorManager.unableToOpenExternalEditor", new Object[] {input.getName()})); //$NON-NLS-1$
 	}
 }
 /**
@@ -479,13 +475,13 @@ public void restoreState(IMemento memento) {
 				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
 				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 				if (factoryID == null) {
-					WorkbenchPlugin.log("Unable to restore editor - no input factory ID.");
+					WorkbenchPlugin.log("Unable to restore editor - no input factory ID.");//$NON-NLS-1$
 					errors[0]++;
 					return;
 				}
 				IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input factory: " + factoryID);
+					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input factory: " + factoryID);//$NON-NLS-1$
 					errors[0]++;
 					return;
 				}
@@ -493,11 +489,11 @@ public void restoreState(IMemento memento) {
 				// Get the input element.
 				IAdaptable input = factory.createElement(inputMem);
 				if (input == null) {
-					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element: " + factoryID);
+					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element: " + factoryID);//$NON-NLS-1$
 					return;
 				}
 				if (!(input instanceof IEditorInput)) {
-					WorkbenchPlugin.log("Unable to restore editor - input is not IEditorInput");
+					WorkbenchPlugin.log("Unable to restore editor - input is not IEditorInput");//$NON-NLS-1$
 					errors[0]++;
 					return;
 				}
@@ -522,13 +518,13 @@ public void restoreState(IMemento memento) {
 						part = openInternalEditor(desc, editorInput,false);
 						
 					String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
-					if ("true".equals(strFocus))
+					if ("true".equals(strFocus))//$NON-NLS-1$
 						activeEditors.add(part);
 					String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
-					if ("true".equals(strActivePart))
+					if ("true".equals(strActivePart))//$NON-NLS-1$
 						activeEditor[0] = part;
 				} catch (PartInitException e) {
-					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage());
+					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage());//$NON-NLS-1$
 					errors[0]++;
 				}
 			}
@@ -557,10 +553,10 @@ public void restoreState(IMemento memento) {
 	});
 	
 	if(errors[0] > 0) {
-		String message = "Errors have occurred while restoring the workbench: See error log for more details.";
+		String message = WorkbenchMessages.getString("EditorManager.multipleErrorsRestoring"); //$NON-NLS-1$
 		if(errors[0] == 1)
-			message = "An error has occurred while restoring the workbench: See error log for more details.";
-		MessageDialog.openError(null, "Error", message);
+			message = WorkbenchMessages.getString("EditorManager.oneErrorRestoring"); //$NON-NLS-1$
+		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 	}
 }
 /**
@@ -574,11 +570,11 @@ private boolean runProgressMonitorOperation(String opName,
 	try {
 		dlg.run(false, true, progressOp);
 	} catch (InvocationTargetException e) {
-		String title = opName + " Failed";
+		String title = WorkbenchMessages.format("EditorManager.operationFailed", new Object[] {opName}); //$NON-NLS-1$
 		Throwable targetExc = e.getTargetException();
 		WorkbenchPlugin.log(title, new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, 
 			title, targetExc));
-		MessageDialog.openError(window.getShell(), "Error", 
+		MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("Error"),  //$NON-NLS-1$
 			title + ':' + targetExc.getMessage());
 	} catch (InterruptedException e) {
 		// Ignore.  We run in current thread.
@@ -636,7 +632,7 @@ public boolean saveAll(boolean confirm, boolean closing) {
 	final List finalEditors = dirtyEditors;
 	final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) {
-			monitor.beginTask("", finalEditors.size());
+			monitor.beginTask("", finalEditors.size());//$NON-NLS-1$
 			Iterator enum = finalEditors.iterator();
 			while (enum.hasNext()) {
 				IEditorPart part = (IEditorPart) enum.next();
@@ -653,18 +649,18 @@ public boolean saveAll(boolean confirm, boolean closing) {
 				ResourcesPlugin.getWorkspace().run(workspaceOp, monitorWrap);
 			} catch (CoreException e) {
 				IStatus status =
-					new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, "Save Failed", e);
-				WorkbenchPlugin.log("Save Failed", status);
+					new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.getString("EditorManager.saveFailed"), e); //$NON-NLS-1$
+				WorkbenchPlugin.log(WorkbenchMessages.getString("EditorManager.saveFailed"), status); //$NON-NLS-1$
 				MessageDialog.openError(
 					window.getShell(),
-					"Error",
-					"Save Failed:" + e.getMessage());
+					WorkbenchMessages.getString("Error"), //$NON-NLS-1$
+					WorkbenchMessages.format("EditorManager.saveFailedMessage", new Object[] {e.getMessage()})); //$NON-NLS-1$
 			}
 		}
 	};
 
 	// Do the save.
-	return runProgressMonitorOperation("Save All", progressOp);
+	return runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp); //$NON-NLS-1$
 }
 /**
  * Save and close an editor.
@@ -679,7 +675,7 @@ public boolean saveEditor(final IEditorPart part, boolean confirm) {
 	// If confirmation is required ..
 	if (confirm) {
 
-		String message = part.getTitle() + " has been modified. " + "Save changes?";
+		String message = WorkbenchMessages.format("EditorManager.saveChangesQuestion", new Object[] {part.getTitle()}); //$NON-NLS-1$
 		// Show a dialog.
 		String [] buttons= new String[] { 
 			IDialogConstants.YES_LABEL,
@@ -688,7 +684,7 @@ public boolean saveEditor(final IEditorPart part, boolean confirm) {
 		};
 		MessageDialog d= new MessageDialog(
 			window.getShell(),
-			"Save Resource",
+			WorkbenchMessages.getString("Save_Resource"), //$NON-NLS-1$
 			null,
 			message,
 			MessageDialog.QUESTION,
@@ -719,7 +715,7 @@ public boolean saveEditor(final IEditorPart part, boolean confirm) {
 	};
 
 	// Do the save.
-	return runProgressMonitorOperation("Save", progressOp);
+	return runProgressMonitorOperation(WorkbenchMessages.getString("Save"), progressOp); //$NON-NLS-1$
 }
 /**
  * @see IPersistablePart
@@ -753,10 +749,10 @@ public void saveState(final IMemento memento) {
 				editorMem.putString(IWorkbenchConstants.TAG_WORKBOOK, editorPane.getWorkbook().getID());
 
 				if (editor == page.getActivePart())
-					editorMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART, "true");
+					editorMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART, "true");//$NON-NLS-1$
 			
 				if (editorPane == editorPane.getWorkbook().getVisibleEditor())
-					editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true");
+					editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true");//$NON-NLS-1$
 
 				// Save input.
 				IMemento inputMem = editorMem.createChild(IWorkbenchConstants.TAG_INPUT);
@@ -769,10 +765,10 @@ public void saveState(final IMemento memento) {
 		});
 	}
 	if(errors[0] > 0) {
-		String message = "Errors have occurred while saving the workbench: See error log for more details.";
+		String message = WorkbenchMessages.getString("EditorManager.multipleErrors"); //$NON-NLS-1$
 		if(errors[0] == 1)
-			message = "An error has occurred while saving the workbench: See error log for more details.";
-		MessageDialog.openError(null, "Error", message);
+			message = WorkbenchMessages.getString("EditorManager.oneError"); //$NON-NLS-1$
+		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 	}
 
 }

@@ -1,5 +1,9 @@
 package org.eclipse.ui.part;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 /**
  * Interface for actions supplied by extensions to the
  * org.eclipse.ui.dropActions extension point.

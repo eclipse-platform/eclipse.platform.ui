@@ -1,9 +1,8 @@
 package org.eclipse.ui.editors.text;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 
@@ -22,6 +21,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -120,7 +120,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					case IResourceDelta.CHANGED:
 						if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
-							if (info.fModificationStamp == IResource.NULL_STAMP || getFile().getModificationStamp() != info.fModificationStamp) {
+							if (!info.fCanBeSaved && computeModificationStamp(getFile()) != info.fModificationStamp) {
 								runnable= new Runnable() {
 									public void run() {
 										if (getElementInfo(fFileEditorInput) != null)
@@ -140,12 +140,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 								}
 							};
 						} else {
-							runnable= new Runnable() {
-								public void run() {
-									if (getElementInfo(fFileEditorInput) != null)
-										handleElementDeleted(fFileEditorInput);
-								}
-							};
+							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
+							if (!info.fCanBeSaved) {
+								runnable= new Runnable() {
+									public void run() {
+										if (getElementInfo(fFileEditorInput) != null)
+											handleElementDeleted(fFileEditorInput);
+									}
+								};
+							}
 						}
 						break;
 				}
@@ -156,7 +159,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			
 			return true; // because we are sitting on files anyway
 		}
-				
+		
 		/*
 		 * Posts the update code "behind" the running operation.
 		 *
@@ -199,6 +202,38 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	public FileDocumentProvider() {
 		super();
 	}
+	/**
+	 * Checks whether the given resource has been changed on the 
+	 * local file system by comparing the actual time stamp with the 
+	 * cached one. If the resource has been changed, a <code>CoreException</code>
+	 * is thrown.
+	 * 
+	 * @param cachedModificationStamp the chached modification stamp
+	 * @param resource the resource to check
+	 * @exception CoreException if resource has been changed on the file system
+	 */
+	protected void checkSynchronizationState(long cachedModificationStamp, IResource resource) throws CoreException {
+		if (cachedModificationStamp != computeModificationStamp(resource)) {
+			Status status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, "Has been changed on the file system", null);
+			throw new CoreException(status);
+		}
+	}
+	/**
+	 * Computes the initial modification stamp for the given resource.
+	 * 
+	 * @param resource the resource
+	 * @return the modification stamp
+	 */
+	protected long computeModificationStamp(IResource resource) {
+		long modificationStamp= resource.getModificationStamp();
+		
+		IPath path= resource.getLocation();
+		if (path == null)
+			return modificationStamp;
+			
+		modificationStamp= path.toFile().lastModified();
+		return modificationStamp;
+	}
 	/*
 	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
 	 */
@@ -218,11 +253,21 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			
 			IFileEditorInput input= (IFileEditorInput) element;
 			
+			try {
+				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException x) {
+				handleCoreException(x,"FileDocumentProvider.createElementInfo");
+			}
+			
 			IDocument d= createDocument(element);
 			IAnnotationModel m= createAnnotationModel(element);
 			FileSynchronizer f= new FileSynchronizer(input);
 			f.install();
-			return new FileInfo(d, m, f);
+			
+			FileInfo info= new FileInfo(d, m, f);
+			info.fModificationStamp= computeModificationStamp(input.getFile());
+			
+			return info;
 		}
 		
 		return super.createElementInfo(element);
@@ -240,9 +285,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		super.disposeElementInfo(element, info);
 	}
 	/*
-	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument)
+	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
-	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document) throws CoreException {
+	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -250,17 +295,21 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			
 			IFile file= input.getFile();
 									
-			if (file.exists()) {
+			if (file.exists()) {				
 				
 				FileInfo info= (FileInfo) getElementInfo(element);
-				file.setContents(stream, false, true, monitor);
+				
+				if (info != null && !overwrite)
+					checkSynchronizationState(info.fModificationStamp, file);
+				
+				file.setContents(stream, overwrite, true, monitor);
 				
 				if (info != null) {
-					
-					info.fModificationStamp= file.getModificationStamp();
-					
+										
 					ResourceMarkerAnnotationModel model= (ResourceMarkerAnnotationModel) info.fModel;
 					model.updateMarkers(info.fDocument);
+					
+					info.fModificationStamp= computeModificationStamp(file);
 				}
 				
 			} else {
@@ -275,7 +324,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				}
 			}
 		} else {
-			super.doSaveDocument(monitor, element, document);
+			super.doSaveDocument(monitor, element, document, overwrite);
 		}
 	}
 	/*
@@ -285,6 +334,32 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected ElementInfo getElementInfo(Object element) {
 		return super.getElementInfo(element);
+	}
+	/*
+	 * @see IDocumentProvider#getModificationStamp(Object)
+	 */
+	public long getModificationStamp(Object element) {
+		
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			FileInfo info= (FileInfo) getElementInfo(element);
+			return computeModificationStamp(input.getFile());
+		}
+		
+		return super.getModificationStamp(element);
+	}
+	/*
+	 * @see IDocumentProvider#getSynchronizationStamp(Object)
+	 */
+	public long getSynchronizationStamp(Object element) {
+		
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			FileInfo info= (FileInfo) getElementInfo(element);
+			return info.fModificationStamp;
+		}
+		
+		return super.getSynchronizationStamp(element);
 	}
 	/**
 	 * Defines the standard procedure to handle CoreExceptions.
@@ -301,7 +376,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		log.log(exception.getStatus());
 	}
 	/**
-	 * Updates the element info to an change of the file content and sends out
+	 * Updates the element info to a change of the file content and sends out
 	 * appropriate notifications.
 	 *
 	 * @param fileEditorInput the input of an text editor
@@ -310,26 +385,38 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		FileInfo info= (FileInfo) getElementInfo(fileEditorInput);
 		try {
 			
+			IFile file= fileEditorInput.getFile();
+			
 			IDocument document= new Document();
-			setDocumentContent(document, fileEditorInput.getFile().getContents(false));
+			setDocumentContent(document, file.getContents(false));
 			String newContent= document.get();
 			
 			if ( !newContent.equals(info.fDocument.get())) {
 				
 				// set the new content and fire content related events
 				fireElementContentAboutToBeReplaced(fileEditorInput);
+				
+				removeUnchangedElementListeners(fileEditorInput, info);
+				
 				info.fDocument.removeDocumentListener(info);
 				info.fDocument.set(newContent);
 				info.fCanBeSaved= false;
-				info.fModificationStamp= IResource.NULL_STAMP;
+				info.fModificationStamp= computeModificationStamp(file);
+				
+				addUnchangedElementListeners(fileEditorInput, info);
+				
 				fireElementContentReplaced(fileEditorInput);
-				info.fDocument.addDocumentListener(info);
 				
 			} else {
 				
+				removeUnchangedElementListeners(fileEditorInput, info);
+				
 				// fires only the dirty state related event
 				info.fCanBeSaved= false;
-				info.fModificationStamp= IResource.NULL_STAMP;
+				info.fModificationStamp= computeModificationStamp(file);
+				
+				addUnchangedElementListeners(fileEditorInput, info);
+				
 				fireElementDirtyStateChanged(fileEditorInput, false);
 			}
 			
@@ -355,5 +442,22 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IFile newFile= workspace.getRoot().getFile(path);
 		fireElementMoved(fileEditorInput, newFile == null ? null : new FileEditorInput(newFile));
+	}
+	/*
+	 * @see IDocumentProvider#isDeleted(Object)
+	 */
+	public boolean isDeleted(Object element) {
+		
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			
+			IPath path= input.getFile().getLocation();
+			if (path == null)
+				return true;
+				
+			return !path.toFile().exists();
+		}
+		
+		return super.isDeleted(element);
 	}
 }

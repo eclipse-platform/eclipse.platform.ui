@@ -1,31 +1,24 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.window.*;
 import java.util.*;
-import java.util.List; // otherwise ambiguous with org.eclipse.swt.List
 
 /**
- * A dynamic contribution item which supports to switch to other Contexts.
+ * A <code>ShowViewMenu</code> is used to populate a menu manager with
+ * Show View actions.  The visible views are determined by user preference
+ * from the Perspective Customize dialog. 
  */
 public class ShowViewMenu extends ShortcutMenu {
-	private Action showDlgAction = new Action("&Other..") {
+	private Action showDlgAction = new Action(WorkbenchMessages.getString("ShowView.title")) { //$NON-NLS-1$
 		public void run() {
 			showOther();
 		}
@@ -33,7 +26,15 @@ public class ShowViewMenu extends ShortcutMenu {
 	private Map actions = new HashMap(21);
 /**
  * Create a show view menu.
- *
+ * <p>
+ * If the menu will appear on a semi-permanent basis, for instance within
+ * a toolbar or menubar, the value passed for <code>register</code> should be true.
+ * If set, the menu will listen to perspective activation and update itself
+ * to suit.  In this case clients are expected to call <code>deregister</code> 
+ * when the menu is no longer needed.  This will unhook any perspective
+ * listeners.
+ * </p>
+  *
  * @param innerMgr the location for the shortcut menu contents
  * @param window the window containing the menu
  * @param register if <code>true</code> the menu listens to perspective changes in
@@ -41,10 +42,10 @@ public class ShowViewMenu extends ShortcutMenu {
  */
 public ShowViewMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean register) {
 	super(innerMgr, window, register);
-	fillMenu(); // Must be done after ctr to ensure field initialization.
+	fillMenu(); // Must be done after constructor to ensure field initialization.
 }
-/**
- * Fill the menu with views.
+/* (non-Javadoc)
+ * Fills the menu with views.
  */
 protected void fillMenu() {
 	// Remove all.
@@ -90,7 +91,7 @@ private IAction getAction(String id) {
 	return action;
 }
 /**
- * Open show view dialog.
+ * Opens the view selection dialog.
  */
 private void showOther() {
 	IWorkbenchWindow window = getWindow();
@@ -107,7 +108,7 @@ private void showOther() {
 		try {
 			page.showView(desc.getID());
 		} catch (PartInitException e) {
-			MessageDialog.openError(window.getShell(), "Problems Showing View",
+			MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
 				e.getMessage());
 		}
 	}

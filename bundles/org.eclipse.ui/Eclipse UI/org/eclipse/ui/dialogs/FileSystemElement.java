@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -114,7 +113,7 @@ public Object getAdapter(Class adapter) {
  */
 public String getFileNameExtension() {
 	int lastDot = name.lastIndexOf('.');
-	return lastDot < 0 ? "" : name.substring(lastDot+1);	
+	return lastDot < 0 ? "" : name.substring(lastDot+1);	//$NON-NLS-1$
 }
 /**
  *	Answer the files property of this element
@@ -179,19 +178,19 @@ public void setParent(FileSystemElement element) {
 public String toString() {
 	StringBuffer buf = new StringBuffer();
 	if (isDirectory()) {
-		buf.append("Folder(");
+		buf.append("Folder(");//$NON-NLS-1$
 	} else {
-		buf.append("File(");
+		buf.append("File(");//$NON-NLS-1$
 	}
-	buf.append(name).append(")");
+	buf.append(name).append(")");//$NON-NLS-1$
 
 	if (!isDirectory()) {
 		return buf.toString();
 	}
 
-	buf.append(" folders: ");
+	buf.append(" folders: ");//$NON-NLS-1$
 	buf.append(folders);
-	buf.append(" files: ");
+	buf.append(" files: ");//$NON-NLS-1$
 	buf.append(files);
 	return buf.toString();
 }

@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.navigator;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -106,10 +105,10 @@ protected IStatus dragAndDropCopy(IContainer target, IResource source) {
 		return ok();
 	}
 	if (getCurrentOperation() != DND.DROP_COPY && (source.equals(target) || source.getParent().equals(target))) {
-		return info("Source and destination are the same.");
+		return info(ResourceNavigatorMessages.getString("DropAdapter.sameSourceAndDestination")); //$NON-NLS-1$
 	}
 	if (source.getFullPath().isPrefixOf(target.getFullPath())) {
-		return error(source, "Destination is a sub-folder of the source.");
+		return error(source, ResourceNavigatorMessages.getString("DropAdapter.destinationASubFolder")); //$NON-NLS-1$
 	}
 	IPath destination = target.getFullPath().append(source.getName());
 
@@ -143,7 +142,7 @@ protected IStatus dragAndDropCopy(IContainer target, IResource source) {
 protected IStatus dragAndDropImport(IContainer target, String filePath) {
 	File toImport = new File(filePath);
 	if (target.getLocation().equals(toImport)) {
-		return info("Cannot drop a resource onto itself");
+		return info(ResourceNavigatorMessages.getString("DropAdapter.canNotDropOntoSelf")); //$NON-NLS-1$
 	}
 	ImportOperation op = 
 		new ImportOperation(target.getFullPath(), new File(toImport.getParent()), FileSystemStructureProvider.INSTANCE, this, Arrays.asList(new File[] {toImport})); 
@@ -152,9 +151,9 @@ protected IStatus dragAndDropImport(IContainer target, String filePath) {
 	try {
 		new ProgressMonitorDialog(getShell()).run(true, true, op);
 	} catch (InterruptedException e) {
-		return info("Operation Cancelled");
+		return info(ResourceNavigatorMessages.getString("DropAdapter.cancelled")); //$NON-NLS-1$
 	} catch (InvocationTargetException e) {
-		return error("An error occurred during the drop operation: " + e.getTargetException().getMessage(), e.getTargetException()); 
+		return error(ResourceNavigatorMessages.format("DropAdapter.dropOperationError", new Object[] {e.getTargetException().getMessage()}), e.getTargetException());  //$NON-NLS-1$
 	}
 	return op.getStatus();
 }
@@ -199,14 +198,11 @@ protected IStatus error(String message, Throwable exception) {
  * could not be copied or moved.
  */
 protected IStatus error(IResource source, String message) {
-	String copyType = getCurrentOperation() == DND.DROP_COPY ? "copy" : "move";
-	StringBuffer result = new StringBuffer("Cannot ");
-	result.append(copyType);
-	result.append(" \"");
-	result.append(source.getName());
-	result.append("\".  ");
-	result.append(message);
-	return error(result.toString(), null);
+	if (getCurrentOperation() == DND.DROP_COPY) {
+		return error(ResourceNavigatorMessages.format("DropAdapter.canNotCopy", new Object[] {source.getName(),message}), null); //$NON-NLS-1$
+	} else {
+		return error(ResourceNavigatorMessages.format("DropAdapter.canNotMove", new Object[] {source.getName(),message}), null); //$NON-NLS-1$
+	}
 }
 /**
  * Expands the selection of the given tree viewer.
@@ -281,14 +277,14 @@ protected IStatus multiStatus(List problems, String message) {
  * Returns an status indicating success.
  */
 protected IStatus ok() {
-	return new Status(Status.OK, PlatformUI.PLUGIN_ID, 0, "ok", null);
+	return new Status(Status.OK, PlatformUI.PLUGIN_ID, 0, ResourceNavigatorMessages.getString("DropAdapter.ok"), null); //$NON-NLS-1$
 }
 /**
  * Opens an error dialog if necessary.  Takes care of
  * complex rules necessary for making the error dialog look nice.
  */
 protected void openError(IStatus status) {
-	String genericTitle = "Drag and Drop Problem";
+	String genericTitle = ResourceNavigatorMessages.getString("DropAdapter.title"); //$NON-NLS-1$
 	int codes = IStatus.ERROR | IStatus.WARNING;
 	
 	//simple case: one error, not a multistatus
@@ -331,7 +327,7 @@ public boolean performDrop(Object data) {
  * Performs a drop using the FileTransfer transfer type.
  */
 protected boolean performFileDrop(Object data) {
-	MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, "Problems occurred while importing resources.", null);
+	MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, ResourceNavigatorMessages.getString("DropAdapter.problemImporting"), null); //$NON-NLS-1$
 	mergeStatus(problems, validateTarget(getCurrentTarget()));
 
 	IContainer targetResource = getActualTarget((IResource)getCurrentTarget());
@@ -346,7 +342,7 @@ protected boolean performFileDrop(Object data) {
  * Performs a drop using the ResourceTransfer transfer type.
  */
 protected boolean performResourceDrop(Object data) {
-	MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, "Problems occurred while moving resources.", null);
+	MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
 	mergeStatus(problems, validateTarget(getCurrentTarget()));
 
 	IContainer targetResource = getActualTarget((IResource)getCurrentTarget());
@@ -364,11 +360,11 @@ protected boolean performResourceDrop(Object data) {
  */
 public String queryOverwrite(String pathString) {
 	final String returnCode[] = {CANCEL};
-	final String msg = pathString + " already exists.  Would you like to overwrite it?";
+	final String msg = ResourceNavigatorMessages.format("DropAdapter.overwriteQuery", new Object[] {pathString}); //$NON-NLS-1$
 	final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
 	getDisplay().syncExec(new Runnable() {
 		public void run() {
-			MessageDialog dialog = new MessageDialog(getShell(), "Question", null, msg, MessageDialog.QUESTION, options, 0);
+			MessageDialog dialog = new MessageDialog(getShell(), ResourceNavigatorMessages.getString("DropAdapter.question"), null, msg, MessageDialog.QUESTION, options, 0); //$NON-NLS-1$
 			dialog.open();
 			int returnVal = dialog.getReturnCode();
 			String[] returnCodes = {YES, NO, ALL, CANCEL};
@@ -392,15 +388,15 @@ public boolean validateDrop(Object target, int operation, TransferData transferT
  */
 protected IStatus validateTarget(Object target) {
 	if (!(target instanceof IResource)) {
-		return info("Target must be a resource");
+		return info(ResourceNavigatorMessages.getString("DropAdapter.targetMustBeResource")); //$NON-NLS-1$
 	}
 	IResource resource = (IResource)target;
 	if (!resource.isAccessible()) {
-		return error("Cannot drop a resource into closed project");
+		return error(ResourceNavigatorMessages.getString("DropAdapter.canNotDropIntoClosedProject")); //$NON-NLS-1$
 	}
 	IContainer destination = getActualTarget(resource);
 	if (destination.getType() == IResource.ROOT) {
-		return error("Resources cannot be siblings of projects");
+		return error(ResourceNavigatorMessages.getString("DropAdapter.resourcesCanNotBeSiblings")); //$NON-NLS-1$
 	}
 	return ok();
 }

@@ -1,9 +1,8 @@
 package org.eclipse.jface.viewers;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
@@ -417,6 +416,12 @@ protected void internalRefresh(Object element) {
 	tableViewerImpl.applyEditorValue();
 	if (element == null || element.equals(getRoot())) {
 		// the parent
+
+		// in the code below, it is important to do all disassociates
+		// before any associates, since a later disassociate can undo an earlier associate
+		// e.g. if (a, b) is replaced by (b, a), the disassociate of b to item 1 could undo
+		// the associate of b to item 0.
+		
 		Object[] children = getSortedChildren(getRoot());
 		TableItem[] items = table.getItems();
 		int min = Math.min(children.length, items.length);
@@ -434,23 +439,27 @@ protected void internalRefresh(Object element) {
 				disassociate(items[i]);
 			}
 		}
-		for (int i = 0; i < min; ++i) {
-			if (items[i].getData() == null) {
-				updateItem(items[i], children[i]);
-			}
-		}
 		
 		// dispose of all items beyond the end of the current elements
-		for (int i = items.length; --i >= min;) {
-			disassociate(items[i]);
+		if (min < items.length) {
+			for (int i = items.length; --i >= min;) {
+				disassociate(items[i]);
+			}
+			table.remove(min, items.length-1);
 		}
-		table.remove(min, items.length-1);
 		
 		// Workaround for 1GDGN4Q: ITPUI:WIN2000 - TableViewer icons get scrunched
 		if (table.getItemCount() == 0) {
 			table.removeAll();
 		}
-		
+
+		// Update items which were removed above
+		for (int i = 0; i < min; ++i) {
+			if (items[i].getData() == null) {
+				updateItem(items[i], children[i]);
+			}
+		}
+	
 		// add any remaining elements
 		for (int i = min; i < children.length; ++i) {
 			updateItem(new TableItem(table, SWT.NONE, i), children[i]);

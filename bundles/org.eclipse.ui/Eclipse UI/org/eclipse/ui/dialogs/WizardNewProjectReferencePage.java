@@ -1,9 +1,8 @@
 package org.eclipse.ui.dialogs;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.jface.wizard.*;
@@ -15,6 +14,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.model.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Standard project reference page for a wizard that creates a 
@@ -36,7 +36,7 @@ public class WizardNewProjectReferencePage extends WizardPage {
 	// widgets
 	private CheckboxTableViewer referenceProjectsViewer;
 
-	private static final String REFERENCED_PROJECTS_TITLE = "Referenced projects:";
+	private static final String REFERENCED_PROJECTS_TITLE = WorkbenchMessages.getString("WizardNewProjectReferences.title"); //$NON-NLS-1$
 	private static final int PROJECT_LIST_MULTIPLIER = 15;
 /**
  * Creates a new project reference wizard page.

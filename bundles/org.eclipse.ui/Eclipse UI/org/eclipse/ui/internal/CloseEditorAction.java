@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -19,8 +18,8 @@ public class CloseEditorAction extends ActiveEditorAction {
  *	Create an instance of this class
  */
 public CloseEditorAction(IWorkbenchWindow window) {
-	super("&Close@Ctrl+F4", window);
-	setToolTipText("Close the open editor");
+	super(WorkbenchMessages.getString("CloseEditorAction.text"), window); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("CloseEditorAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.CLOSE);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CLOSE_PART_ACTION});
 }

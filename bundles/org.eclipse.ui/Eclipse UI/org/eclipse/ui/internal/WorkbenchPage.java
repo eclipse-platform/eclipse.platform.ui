@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import java.io.*;
@@ -47,40 +46,35 @@ public class WorkbenchPage implements IWorkbenchPage
 	private ViewFactory viewFactory;
 	private ArrayList perspList = new ArrayList(1);
 
-	// Mouse down listener to hide fast view when
-	// user clicks on empty editor area or sashes.
-	Listener mouseDownListener = new Listener() {
-		public void handleEvent(Event event) {
-			if (event.type == SWT.MouseDown)
-				toggleFastView(null);
-		}
-	};
+	private Listener mouseDownListener;
 /**
- * WorkbenchPage constructor comment.
+ * Constructs a new page with a given perspective and input.
+ *
+ * @param w the parent window
+ * @param layoutID must not be <code>null</code>
+ * @param input the page input
  */
 public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input) 
 	throws WorkbenchException
 {
 	super();
-
-	// Save args.
-	this.window = w;
-	this.input = input;
-
-	// Create presentation.
-	createClientComposite();
-	editorPresentation = new EditorPresentation(this, mouseDownListener) ;
-	editorMgr = new EditorManager(window, this, editorPresentation);
-	
-	// Get perspective descriptor.
-	if(layoutID != null) {
-		PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-			.getDefault().getPerspectiveRegistry().findPerspectiveWithId(layoutID);
-		if (desc == null)
-			throw new WorkbenchException("Unable to recreate perspective");
-		activePersp = createPerspective(desc);
-		window.firePerspectiveActivated(this, desc);
-	}
+	if (layoutID == null)
+		throw new WorkbenchException("Perspective ID is undefined");
+	init(w, layoutID, input);
+}
+/**
+ * Constructs an old page from data stored in a persistance file.
+ *
+ * @param w the parent window
+ * @param memento result from previous call to saveState
+ * @param input the page input
+ */
+public WorkbenchPage(WorkbenchWindow w, IMemento memento, IAdaptable input) 
+	throws WorkbenchException
+{
+	super();
+	init(w, null, input);
+	restoreState(memento);
 }
 /**
  * Activates a part.  The part will be brought to the front and given focus.
@@ -207,9 +201,11 @@ private void busyResetPerspective() {
 	if (newPersp == null)
 		return;
 
-	// Install new persp.
+	// Deactivate active part.
 	IWorkbenchPart oldActivePart = activePart;
-	activate(null);
+	setActivePart(null);
+	
+	// Install new persp.
 	setPerspective(newPersp);
 
 	// Notify listeners.
@@ -217,9 +213,7 @@ private void busyResetPerspective() {
 	window.firePerspectiveReset(this, desc);
 	window.firePerspectiveChanged(this, desc, CHANGE_RESET);
 
-	// If the same view or editor is present in the new
-	// perspective, then activate because it probably still
-	// has focus.
+	// Reactivate active part.
 	if (oldActivePart != null) {
 		if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
 			activate(oldActivePart);
@@ -228,7 +222,6 @@ private void busyResetPerspective() {
 			if (findView(id) != null)
 				activate(oldActivePart);
 		}
-			
 	}
 	
 	// Destroy old persp.
@@ -255,26 +248,28 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 			return;
 	}
 
-	// If the active part will be hidden then deactivate it.
-	IWorkbenchPart oldActivePart = getActivePart();
-	if (oldActivePart instanceof IViewPart) {
-		String viewID = oldActivePart.getSite().getId();
-		if (newPersp.findView(viewID) == null) {
-			setActivePart(null);
-			oldActivePart = null;
-		}
-	}
+	// Deactivate active part.
+	IWorkbenchPart oldActivePart = activePart;
+	setActivePart(null);
 
 	// Change layout.
 	setPerspective(newPersp);
 	window.firePerspectiveActivated(this, desc);
 	
-	//Update shortcut
+	// Update shortcut
 	window.updateShortcut(this);
 	window.getShortcutBar().update(true);
 	
-	// Restore active part.
-	activate(oldActivePart);
+	// Reactivate active part.
+	if (oldActivePart != null) {
+		if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
+			activate(oldActivePart);
+		} else if (oldActivePart instanceof IViewPart) {
+			String id = oldActivePart.getSite().getId();
+			if (findView(id) != null)
+				activate(oldActivePart);
+		}
+	}
 }
 /**
  * Opens a view.
@@ -502,7 +497,6 @@ public boolean editActionSets() {
 	// Open.
 	boolean ret = (dlg.open() == Window.OK);
 	if (ret) {
-		savePerspective();	// Update xml file.
 		window.updateActionSets();
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
 		window.firePerspectiveReset(this, getPerspective());
@@ -758,6 +752,44 @@ public void hideView(IViewPart view) {
 	window.getShortcutBar().update(true);
 }
 /**
+ * Initialize the page.
+ *
+ * @param w the parent window
+ * @param layoutID may be <code>null</code> if restoring from file
+ * @param input the page input
+ */
+private void init(WorkbenchWindow w, String layoutID, IAdaptable input) 
+	throws WorkbenchException
+{
+	// Save args.
+	this.window = w;
+	this.input = input;
+
+	// Mouse down listener to hide fast view when
+	// user clicks on empty editor area or sashes.
+	mouseDownListener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MouseDown)
+				toggleFastView(null);
+		}
+	};
+	
+	// Create presentation.
+	createClientComposite();
+	editorPresentation = new EditorPresentation(this, mouseDownListener) ;
+	editorMgr = new EditorManager(window, this, editorPresentation);
+	
+	// Get perspective descriptor.
+	if(layoutID != null) {
+		PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
+			.getDefault().getPerspectiveRegistry().findPerspectiveWithId(layoutID);
+		if (desc == null)
+			throw new WorkbenchException("Unable to recreate perspective");
+		activePersp = createPerspective(desc);
+		window.firePerspectiveActivated(this, desc);
+	}
+}
+/**
  * See IWorkbenchPage.
  */
 public boolean isEditorAreaVisible() {
@@ -953,7 +985,7 @@ public IEditorPart openEditor(IEditorInput input, String editorID)
 /**
  * See IWorkbenchPage.
  */
-private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) 
+public IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) 
 	throws PartInitException
 {
 	// If part is added / removed always unzoom.
@@ -1060,7 +1092,7 @@ public void resetPerspective() {
 /**
  * @see IPersistable.
  */
-public void restoreState(IMemento memento) {
+private void restoreState(IMemento memento) {
 	// Restore editor manager.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
 	getEditorManager().restoreState(childMem);

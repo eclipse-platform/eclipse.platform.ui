@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.model;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -79,7 +78,7 @@ public boolean testAttribute(Object target, String name, String value) {
 			res.getFileExtension());
 	} else if (name.equals(READ_ONLY)) {
 		value = value.toLowerCase();
-		return (res.isReadOnly() == value.equals("true"));
+		return (res.isReadOnly() == value.equals("true"));//$NON-NLS-1$
 	} else if (name.equals(PROJECT_NATURE)) {
 		try {
 			return res.getProject().hasNature(value);

@@ -1,9 +1,8 @@
 package org.eclipse.ui.views.bookmarkexplorer;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.*;
@@ -17,8 +16,8 @@ import java.util.*;
  */
 /* package */ class OpenBookmarkAction extends BookmarkAction {
 public OpenBookmarkAction(BookmarkNavigator view) {
-	super(view, "&Go to File");
-	setToolTipText("Go to File");
+	super(view, BookmarkMessages.getString("OpenBookmark.text")); //$NON-NLS-1$
+	setToolTipText(BookmarkMessages.getString("OpenBookmark.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
 }
 public void run() {
@@ -30,7 +29,7 @@ public void run() {
 		} catch (PartInitException e) {
 			DialogUtil.openError(
 				getView().getShell(),
-				"Problems Opening Editor",
+				BookmarkMessages.getString("OpenBookmark.errorTitle"), //$NON-NLS-1$
 				e.getMessage(),
 				e);
 		}

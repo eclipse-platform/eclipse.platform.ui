@@ -1,9 +1,8 @@
 package org.eclipse.ui.internal.registry;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
@@ -24,7 +23,7 @@ import org.eclipse.ui.internal.misc.Sorter;
  * done by default.
  */
 public abstract class RegistryReader {
-	protected static final String TAG_DESCRIPTION = "description";	
+	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
 /**
  * The constructor.
  */
@@ -41,7 +40,7 @@ protected String getDescription(IConfigurationElement config) {
 	if (children.length>=1) {
 		return children[0].getValue();
 	}
-	return "";
+	return "";//$NON-NLS-1$
 }
 /**
  * Logs the error in the workbench log using the provided
@@ -51,21 +50,21 @@ protected void logError(IConfigurationElement element, String text) {
 	IExtension extension = element.getDeclaringExtension();
 	IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
 	StringBuffer buf = new StringBuffer();
-	buf.append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());
-	buf.append("\n"+text);
+	buf.append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
+	buf.append("\n"+text);//$NON-NLS-1$
 	WorkbenchPlugin.log(buf.toString());
 }
 /**
  * Logs a very common registry error when a required attribute is missing.
  */
 protected void logMissingAttribute(IConfigurationElement element, String attributeName) {
-	logError(element, "Required attribute '"+attributeName+"' not defined");
+	logError(element, "Required attribute '"+attributeName+"' not defined");//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Logs a registry error when the configuration element is unknown.
  */
 protected void logUnknownElement(IConfigurationElement element) {
-	logError(element, "Unknown extension tag found: " + element.getName());
+	logError(element, "Unknown extension tag found: " + element.getName());//$NON-NLS-1$
 }
 /**
  *	Apply a reproducable order to the list of extensions
