@@ -1,4 +1,4 @@
-<project name="exportplugins" default="Test for Echo" basedir=".">
+<project name="Echo Test" default="Test for Echo" basedir=".">
 	<target name="init">
 		<tstamp/>
 	</target>
