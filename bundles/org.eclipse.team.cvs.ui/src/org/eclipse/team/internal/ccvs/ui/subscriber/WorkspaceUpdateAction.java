@@ -25,12 +25,21 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
+import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
+import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This action performs an update for the CVSWorkspaceSubscriber.
  */
 public class WorkspaceUpdateAction extends SafeUpdateAction {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
+	 */
+	protected SyncInfoFilter getSyncInfoFilter() {
+		return new SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING});
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#runUpdateDeletions(org.eclipse.team.core.subscribers.SyncInfo[], org.eclipse.core.runtime.IProgressMonitor)

@@ -31,11 +31,20 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
+import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
 public class SubscriberCommitAction extends CVSSubscriberAction {
 
 	private String comment;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
+	 */
+	protected SyncInfoFilter getSyncInfoFilter() {
+		return new SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING});
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getFilteredSyncInfoSet(org.eclipse.team.internal.ui.sync.views.SyncInfo[])
