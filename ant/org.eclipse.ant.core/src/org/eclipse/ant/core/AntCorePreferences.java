@@ -239,7 +239,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * the Ant classpath.
 	 * The Xerces JARs are included when the plugin classloader for org.eclipse.ant.core
 	 * is set as one of the plugin classloaders of the AntClassLoader.
-	 * @see initializePluginClassLoaders()
 	 * 
 	 * Ant running through the command line tries to find tools.jar to help the
 	 * user. Try emulating the same behaviour here.
