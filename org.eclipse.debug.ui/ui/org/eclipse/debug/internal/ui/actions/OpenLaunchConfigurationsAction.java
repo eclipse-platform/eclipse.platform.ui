@@ -43,16 +43,13 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 	public OpenLaunchConfigurationsAction() {
 		super();
 		setConfigType(null);
-		String label = null;
 		ImageDescriptor imageDescriptor = null;
 		if (getMode() == ILaunchManager.DEBUG_MODE) {
-			label = "Debug Configurations...";
 			imageDescriptor = DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
 		} else {
-			label = "Run Configurations...";
 			imageDescriptor = DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);			
 		}	
-		setText(label);
+		setText("Edit Configurations...");
 		setImageDescriptor(imageDescriptor);	
 	}
 	
