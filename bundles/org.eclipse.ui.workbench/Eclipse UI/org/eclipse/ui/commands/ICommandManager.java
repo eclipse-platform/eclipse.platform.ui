@@ -12,6 +12,7 @@
 package org.eclipse.ui.commands;
 
 import java.util.SortedMap;
+import java.util.SortedSet;
 
 /**
  * <p>
@@ -41,6 +42,13 @@ public interface ICommandManager {
 	 *
 	 * @return
 	 */
+	SortedSet getActiveCommandIds();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
 	SortedMap getCategoriesById();
 	
 	/**
@@ -51,13 +59,6 @@ public interface ICommandManager {
 	 * @throws NullPointerException
 	 */	
 	ICategoryHandle getCategoryHandle(String categoryId);
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedMap getCommandDelegatesById();
 
 	/**
 	 * JAVADOC

@@ -46,6 +46,7 @@ public final class CommandManager implements ICommandManager {
 		return instance;
 	}
 
+	private SortedSet activeCommandIds = new TreeSet();
 	private SortedMap categoriesById = new TreeMap();
 	private SortedMap categoryHandlesById = new TreeMap();
 	private SortedMap commandDelegatesById = new TreeMap();	
@@ -74,6 +75,10 @@ public final class CommandManager implements ICommandManager {
 		
 		if (!commandManagerListeners.contains(commandManagerListener))
 			commandManagerListeners.add(commandManagerListener);
+	}
+
+	public SortedSet getActiveCommandIds() {
+		return Collections.unmodifiableSortedSet(activeCommandIds);
 	}
 
 	public SortedMap getCategoriesById() {
@@ -143,6 +148,15 @@ public final class CommandManager implements ICommandManager {
 			
 			if (commandManagerListeners.isEmpty())
 				commandManagerListeners = null;
+		}
+	}
+
+	public void setActiveCommandIds(SortedSet activeCommandIds) {
+		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
+		
+		if (!activeCommandIds.equals(this.activeCommandIds)) {
+			this.activeCommandIds = activeCommandIds;	
+			fireCommandManagerChanged();
 		}
 	}
 

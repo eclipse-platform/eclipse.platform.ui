@@ -52,6 +52,7 @@ import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.commands.CommandManager;
 
 public class ContextAndHandlerManager implements IContextResolver {
 
@@ -164,7 +165,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 		if (childSequenceMapForMode.isEmpty()) {
 			clear();			
-			ICommandDelegate commandDelegate = (ICommandDelegate) commandManager.getCommandDelegatesById().get((String) sequenceMapForMode.get(childMode));
+			ICommandDelegate commandDelegate = (ICommandDelegate) ((CommandManager) commandManager).getCommandDelegatesById().get((String) sequenceMapForMode.get(childMode));
 			
 			if (commandDelegate != null && commandDelegate.isEnabled())
 				try {			
@@ -208,7 +209,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 			String command = (String) entry.getValue();		
 
 			if (sequence.isChildOf(mode, false)) {
-				ICommandDelegate commandDelegate = (ICommandDelegate) commandManager.getCommandDelegatesById().get(command);
+				ICommandDelegate commandDelegate = (ICommandDelegate) ((CommandManager) commandManager).getCommandDelegatesById().get(command);
 				
 				if (commandDelegate != null)
 					strokeSetForMode.add(sequence.getStrokes().get(size));	

@@ -27,11 +27,12 @@ final class KeyBinding implements Comparable, IKeyBinding {
 	private String locale;
 	private String platform;
 	private String pluginId;
+	private int rank;
 
-	KeyBinding(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {
+	KeyBinding(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId, int rank) {
 		super();
 		
-		if (commandId == null || contextId == null || keyConfigurationId == null || keySequence == null || locale == null || platform == null)
+		if (commandId == null || contextId == null || keyConfigurationId == null || keySequence == null || locale == null || platform == null || rank < 0)
 			throw new NullPointerException();
 		
 		this.commandId = commandId;
@@ -41,6 +42,7 @@ final class KeyBinding implements Comparable, IKeyBinding {
 		this.locale = locale;
 		this.platform = platform;
 		this.pluginId = pluginId;
+		this.rank = rank;
 	}
 	
 	public int compareTo(Object object) {
@@ -62,8 +64,12 @@ final class KeyBinding implements Comparable, IKeyBinding {
 						if (compareTo == 0) {		
 							compareTo = platform.compareTo(keyBinding.platform);			
 			
-							if (compareTo == 0)
-								compareTo = Util.compare(pluginId, keyBinding.pluginId);								
+							if (compareTo == 0) {
+								compareTo = Util.compare(pluginId, keyBinding.pluginId);
+							
+								if (compareTo == 0)
+									compareTo = rank - keyBinding.rank;	
+							}								
 						}
 					}
 				}
@@ -78,7 +84,7 @@ final class KeyBinding implements Comparable, IKeyBinding {
 			return false;
 
 		KeyBinding keyBinding = (KeyBinding) object;	
-		return commandId.equals(keyBinding.commandId) && contextId.equals(keyBinding.contextId) && keyConfigurationId.equals(keyBinding.keyConfigurationId) && keySequence.equals(keyBinding.keySequence) && locale.equals(keyBinding.locale) && platform.equals(keyBinding.platform) && Util.equals(pluginId, keyBinding.pluginId);
+		return commandId.equals(keyBinding.commandId) && contextId.equals(keyBinding.contextId) && keyConfigurationId.equals(keyBinding.keyConfigurationId) && keySequence.equals(keyBinding.keySequence) && locale.equals(keyBinding.locale) && platform.equals(keyBinding.platform) && Util.equals(pluginId, keyBinding.pluginId) && rank == keyBinding.rank;
 	}
 
 	public String getCommandId() {
@@ -108,6 +114,10 @@ final class KeyBinding implements Comparable, IKeyBinding {
 	public String getPluginId() {
 		return pluginId;
 	}
+	
+	public int getRank() {
+		return rank;
+	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
@@ -118,10 +128,11 @@ final class KeyBinding implements Comparable, IKeyBinding {
 		result = result * HASH_FACTOR + locale.hashCode();
 		result = result * HASH_FACTOR + platform.hashCode();
 		result = result * HASH_FACTOR + Util.hashCode(pluginId);
+		result = result * HASH_FACTOR + rank;		
 		return result;
 	}
 
 	public String toString() {
-		return '[' + commandId + ',' + contextId + ',' + keyConfigurationId + ',' + keySequence + ',' + locale + ',' + platform + ',' + pluginId + ']';
+		return '[' + commandId + ',' + contextId + ',' + keyConfigurationId + ',' + keySequence + ',' + locale + ',' + platform + ',' + pluginId + ',' + rank + ']';
 	}
 }

@@ -76,4 +76,11 @@ public interface IKeyBinding {
 	 * @return
 	 */	
 	String getPluginId();		
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	int getRank();
 }

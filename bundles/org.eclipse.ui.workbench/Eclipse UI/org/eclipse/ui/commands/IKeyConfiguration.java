@@ -52,5 +52,12 @@ public interface IKeyConfiguration {
 	 * 
 	 * @return
 	 */	
+	String getParentId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
 	String getPluginId();
 }

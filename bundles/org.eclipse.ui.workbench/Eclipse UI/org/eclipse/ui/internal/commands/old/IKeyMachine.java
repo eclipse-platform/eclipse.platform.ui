@@ -39,12 +39,14 @@ public interface IKeyMachine {
 	setLocale(String locale)
 	setPlatform(String platform)
 	setCommandIds(SortedSet commandIds);
+	*/
 
+	/*
 	SortedMap getKeyBindingByKeySequence(KeySequence keySequence)
 	SortedMap getKeyBindingByCommandId(String commandId)
+	*/
 
-	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);
-
+	/*
 	SortedSet getKeySequences();
 	IKeyBinding getKeyBinding(KeySequence);
 	SortedSet getKeyBindingsForKeySequence()

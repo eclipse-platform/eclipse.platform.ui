@@ -48,7 +48,7 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IKeyConfiguration.class);				
+			Util.assertInstance(object, IKeyConfiguration.class);
 			IKeyConfiguration keyConfiguration = (IKeyConfiguration) object;
 			sortedMap.put(keyConfiguration.getId(), keyConfiguration);									
 		}			
@@ -65,7 +65,7 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IKeyConfiguration.class);				
+			Util.assertInstance(object, IKeyConfiguration.class);			
 			IKeyConfiguration keyConfiguration = (IKeyConfiguration) object;
 			sortedMap.put(keyConfiguration.getName(), keyConfiguration);									
 		}			
@@ -76,9 +76,10 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 	private String description;
 	private String id;
 	private String name;
+	private String parentId;
 	private String pluginId;
 	
-	KeyConfiguration(String description, String id, String name, String pluginId) {
+	KeyConfiguration(String description, String id, String name, String parentId, String pluginId) {
 		super();
 		
 		if (id == null || name == null)
@@ -87,6 +88,7 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 		this.description = description;
 		this.id = id;
 		this.name = name;
+		this.parentId = parentId;
 		this.pluginId = pluginId;
 	}
 	
@@ -100,8 +102,12 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 			if (compareTo == 0) {
 				compareTo = Util.compare(description, keyConfiguration.description);
 				
-				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, keyConfiguration.pluginId);								
+				if (compareTo == 0) {
+					compareTo = Util.compare(parentId, keyConfiguration.parentId);
+
+					if (compareTo == 0)
+						compareTo = Util.compare(pluginId, keyConfiguration.pluginId);								
+				}							
 			}
 		}
 		
@@ -113,7 +119,7 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 			return false;
 
 		KeyConfiguration keyConfiguration = (KeyConfiguration) object;	
-		return Util.equals(description, keyConfiguration.description) && id.equals(keyConfiguration.id) && name.equals(keyConfiguration.name) && Util.equals(pluginId, keyConfiguration.pluginId);
+		return Util.equals(description, keyConfiguration.description) && id.equals(keyConfiguration.id) && name.equals(keyConfiguration.name) && Util.equals(parentId, keyConfiguration.parentId) && Util.equals(pluginId, keyConfiguration.pluginId);
 	}
 
 	public String getDescription() {
@@ -128,6 +134,10 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 		return name;
 	}	
 
+	public String getParentId() {
+		return parentId;
+	}
+
 	public String getPluginId() {
 		return pluginId;
 	}
@@ -137,11 +147,12 @@ final class KeyConfiguration implements Comparable, IKeyConfiguration {
 		result = result * HASH_FACTOR + Util.hashCode(description);
 		result = result * HASH_FACTOR + id.hashCode();
 		result = result * HASH_FACTOR + name.hashCode();
+		result = result * HASH_FACTOR + Util.hashCode(parentId);
 		result = result * HASH_FACTOR + Util.hashCode(pluginId);
 		return result;
 	}
 
 	public String toString() {
-		return '[' + id + ',' + name + ',' + description + ',' + pluginId + ']';
+		return '[' + id + ',' + name + ',' + description + ',' + parentId + ',' + pluginId + ']';
 	}
 }

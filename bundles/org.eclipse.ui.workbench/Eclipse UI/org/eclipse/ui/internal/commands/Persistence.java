@@ -241,7 +241,8 @@ final class Persistence {
 		return list;				
 	}
 
-	static IKeyBinding readKeyBinding(IMemento memento, String pluginIdOverride) {
+	// TODO: rank?
+	static IKeyBinding readKeyBinding(IMemento memento, String pluginIdOverride, int rank) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -284,10 +285,11 @@ final class Persistence {
 			platform = Util.ZERO_LENGTH_STRING;
 
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new KeyBinding(commandId, contextId, keyConfigurationId, keySequence, locale, platform, pluginId);
+		return new KeyBinding(commandId, contextId, keyConfigurationId, keySequence, locale, platform, pluginId, rank);
 	}
 
-	static List readKeyBindings(IMemento memento, String name, String pluginIdOverride) {
+	// TODO rank?
+	static List readKeyBindings(IMemento memento, String name, String pluginIdOverride, int rank) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -299,7 +301,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readKeyBinding(mementos[i], pluginIdOverride));
+			list.add(readKeyBinding(mementos[i], pluginIdOverride, rank));
 	
 		return list;				
 	}
@@ -318,9 +320,10 @@ final class Persistence {
 
 		if (name == null)
 			name = Util.ZERO_LENGTH_STRING;
-		
+
+		String parentId = memento.getString(TAG_PARENT_ID);		
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new KeyConfiguration(description, id, name, pluginId);
+		return new KeyConfiguration(description, id, name, parentId, pluginId);
 	}
 
 	static List readKeyConfigurations(IMemento memento, String name, String pluginIdOverride) {
@@ -506,6 +509,7 @@ final class Persistence {
 		memento.putString(TAG_DESCRIPTION, keyConfiguration.getDescription());
 		memento.putString(TAG_ID, keyConfiguration.getId());
 		memento.putString(TAG_NAME, keyConfiguration.getName());
+		memento.putString(TAG_PARENT_ID, keyConfiguration.getParentId());
 		memento.putString(TAG_PLUGIN_ID, keyConfiguration.getPluginId());
 	}
 	

@@ -197,7 +197,7 @@ final class PluginRegistry extends AbstractRegistry {
 	}
 
 	private boolean readKeyBinding(IConfigurationElement element) {
-		IKeyBinding keyBinding = Persistence.readKeyBinding(new ConfigurationElementMemento(element), getPluginId(element));
+		IKeyBinding keyBinding = Persistence.readKeyBinding(new ConfigurationElementMemento(element), getPluginId(element), 2);
 	
 		if (keyBinding != null)
 			keyBindings.add(keyBinding);	
