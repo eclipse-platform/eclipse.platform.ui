@@ -117,7 +117,7 @@ public class Eclipse extends Thread {
 			if (status == STATUS_INIT) {
 				status = STATUS_ERROR;
 			}
-			if (status == STATUS_ERROR) {
+			if (status == STATUS_ERROR && exception == null) {
 				exception = new Exception("Unknown exception.");
 			}
 			lifeCycleListener.eclipseEnded();
