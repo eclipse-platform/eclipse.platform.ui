@@ -150,6 +150,7 @@ public class WebForm extends AbstractSectionForm {
 			Rectangle ibounds = headingUnderlineImage.getBounds();
 			height += ibounds.height;
 		}
+		gc.dispose();
 		return height;
 	}
 
