@@ -18,11 +18,7 @@ import java.util.*;
 public class PropertyStore {
 
 	// The indexed store will maintain the properties
-	protected IndexedStore store = null;
-	protected IPath location = null;
-
-	/* constants */
-	protected static final String INDEX_NAME = "index";
+	protected IndexedStoreWrapper store = null;
 
 	// Add directives
 	public static final int CREATE = 0; // must not exist
@@ -33,21 +29,20 @@ public class PropertyStore {
 	// Remove directives
 	public static final int IGNORE_MISSING = 0;
 	public static final int FAIL_MISSING = 1;
+
 public PropertyStore(IPath location) {
-	this.location = location;
+	store = new IndexedStoreWrapper(location);
 }
 protected boolean basicExists(StoreKey searchKey) throws CoreException {
+	byte[] searchBytes = searchKey.toBytes();
+	IndexCursor cursor = store.getCursor();
 	try {
-		byte[] searchBytes = searchKey.toBytes();
-		IndexCursor cursor = getIndex().open();
 		cursor.find(searchBytes);
 		boolean exists = cursor.keyEquals(searchBytes);
 		cursor.close();
 		return exists;
-	} catch (IndexedStoreException e) {
-		String message = "Problems accessing property store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
-		throw new ResourceException(status);
+	} catch (Exception e) {
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("couldNotReadProp", null), e);
 	}
 }
 /**
@@ -57,8 +52,8 @@ protected boolean basicExists(StoreKey searchKey) throws CoreException {
 protected void basicInsert(StoreKey key, String value) throws CoreException {
 	try {
 		ObjectID valueID = store.createObject(value);
-		getIndex().insert(key.toBytes(), valueID);
-	} catch (IndexedStoreException e) {
+		store.getIndex().insert(key.toBytes(), valueID);
+	} catch (Exception e) {
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, null, Policy.bind("couldNotWriteProp", null), e);
 	}
 }
@@ -66,8 +61,8 @@ protected boolean basicRemove(ResourceName resourceName, QualifiedName propertyN
 	StoreKey key = new StoreKey(resourceName, propertyName);
 	byte[] keyBytes = key.toBytes();
 	boolean wasFound = false;
+	IndexCursor cursor = store.getCursor();
 	try {
-		IndexCursor cursor = getIndex().open();
 		cursor.find(keyBytes);
 		if (cursor.keyEquals(keyBytes)) {
 			wasFound = true;
@@ -76,15 +71,15 @@ protected boolean basicRemove(ResourceName resourceName, QualifiedName propertyN
 			cursor.remove();
 		}
 		cursor.close();
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, null, Policy.bind("couldNotDeleteProp", null), e);
 	}
 	return wasFound;
 }
 protected void basicUpdate(StoreKey key, String value) throws CoreException {
+	byte[] keyBytes = key.toBytes();
+	IndexCursor cursor = store.getCursor();
 	try {
-		byte[] keyBytes = key.toBytes();
-		IndexCursor cursor = getIndex().open();
 		cursor.find(keyBytes);
 		if (cursor.keyEquals(keyBytes)) {
 			ObjectID newValueId = store.createObject(value);
@@ -92,29 +87,11 @@ protected void basicUpdate(StoreKey key, String value) throws CoreException {
 			cursor.updateValue(newValueId);
 		}
 		cursor.close();
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, null, Policy.bind("couldNotWriteProp", null), e);
 	}
 }
-protected synchronized void close(IndexedStore store) {
-	try {
-		store.close();
-	} catch (IndexedStoreException e) {
-		String message = "Could not close property store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-}
-protected void commit() throws CoreException {
-	try {
-		getIndexedStore().commit();
-	} catch (IndexedStoreException e) {
-		String message = "Property store transactions did not commit properly";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		throw new ResourceException(status);
-	}
-}
-synchronized protected void commonSet(ResourceName resourceName, StoredProperty[] properties, int depth, int setMode, QueryResults failures) throws CoreException {
+protected synchronized void commonSet(ResourceName resourceName, StoredProperty[] properties, int depth, int setMode, QueryResults failures) throws CoreException {
 	if (depth == IResource.DEPTH_ZERO) {
 		for (int i = 0; i < properties.length; i++) {
 			StoredProperty property = properties[i];
@@ -132,22 +109,6 @@ synchronized protected void commonSet(ResourceName resourceName, StoredProperty[
 		Enumeration resourceNamesEnum = deepResourceNames(resourceName);
 		while (resourceNamesEnum.hasMoreElements())
 			commonSet((ResourceName) resourceNamesEnum.nextElement(), properties, IResource.DEPTH_ZERO, setMode, failures);
-	}
-}
-protected synchronized IndexedStore create(IndexedStore store) throws CoreException {
-	store = open(store);
-	createIndex(store);
-	return store;
-}
-protected synchronized Index createIndex(IndexedStore store) throws CoreException {
-	try {
-		return store.createIndex(INDEX_NAME);
-	} catch (IndexedStoreException e) {
-		if (e.id == IndexedStoreException.IndexExists)
-			return getIndex(store);
-		String message = "Could not create index for property store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		throw new ResourceException(status);
 	}
 }
 /**
@@ -227,39 +188,6 @@ public QueryResults getAll(ResourceName resourceName, int depth) throws CoreExce
 		recordsDeepMatching(resourceName, visitor);
 	return result;
 }
-protected Index getIndex() throws CoreException {
-	return getIndex(getIndexedStore());
-}
-protected Index getIndex(IndexedStore store) throws CoreException {
-	try {
-		return store.getIndex(INDEX_NAME);
-	} catch (IndexedStoreException e) {
-		if (e.id == IndexedStoreException.IndexNotFound)
-			return createIndex(store);
-		String message = "Problems accessing property store index";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		throw new ResourceException(status);
-	}
-}
-protected IndexedStore getIndexedStore() throws CoreException {
-	if (store != null)
-		return store;
-	String name = location.toOSString();
-	store = IndexedStore.find(name);
-	if (store != null) {
-		rollback(store);
-		return store;
-	}
-	if (IndexedStore.exists(name))
-		store = open(new IndexedStore());
-	else
-		store = create(new IndexedStore());
-	if (store != null)
-		return store;
-	String message = "Problems accessing property store";
-	ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, null);
-	throw new ResourceException(status);
-}
 /**
  * Returns all the property names for a given resource.
  * <p>
@@ -281,17 +209,6 @@ public QueryResults getNames(ResourceName resourceName, int depth) throws CoreEx
 		recordsDeepMatching(resourceName, propertyNameVisitor(results));
 	return results;
 }
-protected synchronized IndexedStore open(IndexedStore store) throws CoreException {
-	try {
-		store.open(location.toOSString());
-	} catch (IndexedStoreException e) {
-		String message = "Could not open property store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-		store = recreate(store);
-	}
-	return store;
-}
 protected IVisitor propertyNameVisitor(final QueryResults results) {
 	return new IVisitor() {
 		public void visit(ResourceName resourceName, StoredProperty property, IndexCursor cursor) {
@@ -311,9 +228,9 @@ protected void recordsDeepMatching(ResourceName resourceName, IVisitor visitor) 
 	StoreKey searchKey = new StoreKey(resourceName, true);
 	byte[] searchBytes = searchKey.toBytes();
 	int probe = searchBytes.length;
+	// Position a cursor over the first matching key
+	IndexCursor cursor = store.getCursor();
 	try {
-		// Position a cursor over the first matching key
-		IndexCursor cursor = getIndex().open();
 		cursor.find(searchBytes);
 
 		// While we have a prefix match
@@ -331,7 +248,7 @@ protected void recordsDeepMatching(ResourceName resourceName, IVisitor visitor) 
 			cursor.next();
 		}
 		cursor.close();
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
 	}
 }
@@ -343,9 +260,9 @@ protected void recordsMatching(ResourceName resourceName, IVisitor visitor) thro
 	// Build the partial 'search' key
 	StoreKey searchKey = new StoreKey(resourceName, false);
 	byte[] searchBytes = searchKey.toBytes();
+	// Position a cursor over the first matching key
+	IndexCursor cursor = store.getCursor();
 	try {
-		// Position a cursor over the first matching key
-		IndexCursor cursor = getIndex().open();
 		cursor.find(searchBytes);
 
 		// While we have a prefix match, evaluate the visitor
@@ -354,7 +271,8 @@ protected void recordsMatching(ResourceName resourceName, IVisitor visitor) thro
 			cursor.next();
 		}
 		cursor.close();
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
+		store.reset();
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
 	}
 }
@@ -367,29 +285,19 @@ protected void recordsMatching(ResourceName resourceName, QualifiedName property
 	// Build the full 'search' key
 	StoreKey searchKey = new StoreKey(resourceName, propertyName);
 	byte[] searchBytes = searchKey.toBytes();
+	// Position a cursor over the first matching key
+	IndexCursor cursor = store.getCursor();
 	try {
-		// Position a cursor over the first matching key
-		IndexCursor cursor = getIndex().open();
 		cursor.find(searchBytes);
 
 		// If we have an exact match, evaluate the visitor
 		if (cursor.keyEquals(searchBytes))
 			visitPropertyAt(cursor, visitor);
 		cursor.close();
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
+		store.reset();
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
 	}
-}
-protected synchronized IndexedStore recreate(IndexedStore store) throws CoreException {
-	close(store);
-	String name = location.toOSString();
-	// Rename the problematic store for future analysis.
-	location.toFile().renameTo(location.append(".001").toFile());
-	location.toFile().delete();
-	if (location.toFile().exists())
-		return null; // we would not be able to recreate the store
-	store = create(new IndexedStore());
-	return store;
 }
 /**
  * Remove the given collection of named properties from the given resource.
@@ -466,15 +374,6 @@ public void removeAll(ResourceName resourceName, int depth) throws CoreException
 		}
 	}
 }
-protected void rollback(IndexedStore store) {
-	try {
-		store.rollback();
-	} catch (IndexedStoreException e) {
-		String message = "Property store transactions did not rollback properly";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-}
 /**
  * Sets the given collection of properties on the given resource.
  * <p>
@@ -516,7 +415,7 @@ public void set(ResourceName resourceName, StoredProperty property) throws CoreE
 public void shutdown(IProgressMonitor monitor) {
 	if (store == null)
 		return;
-	close(store);
+	store.close();
 }
 public void startup(IProgressMonitor monitor) {
 }
@@ -529,8 +428,11 @@ protected void visitPropertyAt(IndexCursor cursor, IVisitor visitor) throws Core
 		if (visitor.requiresValue(resourceName, propertyName))
 			propertyValue = store.getObjectAsString(cursor.getValueAsObjectID());
 		visitor.visit(resourceName, new StoredProperty(propertyName, propertyValue), cursor);
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem", null), e);
 	}
+}
+public void commit() throws CoreException {
+	store.commit();
 }
 }
