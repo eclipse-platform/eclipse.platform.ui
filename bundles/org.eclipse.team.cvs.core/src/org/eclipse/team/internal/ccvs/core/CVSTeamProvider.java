@@ -834,18 +834,14 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * Get the arguments to be passed to a commit or update
 	 */
 	private String[] getValidArguments(IResource[] resources, LocalOption[] options) throws CVSException {
-		int depth = Command.DO_NOT_RECURSE.isElementOf(options) ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		List arguments = new ArrayList(resources.length);
 		for (int i=0;i<resources.length;i++) {
 			checkIsChild(resources[i]);
-			// A depth of zero is only valid for files
-			if ((depth != IResource.DEPTH_ZERO) || (resources[i].getType() == IResource.FILE)) {
-				IPath cvsPath = resources[i].getFullPath().removeFirstSegments(1);
-				if (cvsPath.segmentCount() == 0) {
-					arguments.add(Session.CURRENT_LOCAL_FOLDER);
-				}
-				else
-					arguments.add(cvsPath.toString());
+			IPath cvsPath = resources[i].getFullPath().removeFirstSegments(1);
+			if (cvsPath.segmentCount() == 0) {
+				arguments.add(Session.CURRENT_LOCAL_FOLDER);
+			} else {
+				arguments.add(cvsPath.toString());
 			}
 		}
 		return (String[])arguments.toArray(new String[arguments.size()]);

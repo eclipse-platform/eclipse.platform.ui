@@ -226,7 +226,10 @@ public class UpdateSyncAction extends MergeAction {
 				// in the case where there are multiple levels of incoming folder creations.
 				Iterator it = parentCreationElements.iterator();
 				while (it.hasNext()) {
-					makeInSync((IDiffElement)it.next());
+					IDiffElement element = (IDiffElement)it.next();
+					makeInSync(element);
+					// Remove the folder from the update shallow list since we have it locally now
+					updateIgnoreLocalShallow.remove(element);
 				}				
 			}
 			if (parentConflictElements.size() > 0) {
