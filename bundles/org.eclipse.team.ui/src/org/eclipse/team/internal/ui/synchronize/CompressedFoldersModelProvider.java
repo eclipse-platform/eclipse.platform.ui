@@ -279,7 +279,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 					// but may still contain children
 				    resourcesToRemove.add(resource);
 					if (hasFileMembers((IContainer)resource)) {
-					    resourcesToAdd.addAll(Arrays.asList(getFileMembers((IContainer)resource)));
+					    resourcesToAdd.addAll(Arrays.asList(getSyncInfosForFileMembers((IContainer)resource)));
 					}
 				}
 			}
@@ -288,7 +288,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		    removeFromViewer((IResource[]) resourcesToRemove.toArray(new IResource[resourcesToRemove.size()]));
 		}
 		if (!resourcesToAdd.isEmpty()) {
-		    addResources((IResource[]) resourcesToAdd.toArray(new IResource[resourcesToAdd.size()]));
+		    addResources((SyncInfo[]) resourcesToAdd.toArray(new SyncInfo[resourcesToAdd.size()]));
 		}
 	}
 
@@ -323,7 +323,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		return false;
 	}
 	
-	private SyncInfo[] getFileMembers(IContainer parent) {
+	private SyncInfo[] getSyncInfosForFileMembers(IContainer parent) {
 		// Check if the sync set has any file children of the parent
 	    List result = new ArrayList();
 		IResource[] members = getSyncInfoTree().members(parent);
