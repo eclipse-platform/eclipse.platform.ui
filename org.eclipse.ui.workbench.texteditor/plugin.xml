@@ -165,11 +165,11 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             label="%textEditorNavigationActionSet.label"
-            visible="true"
+            visible="false"
             id="org.eclipse.ui.edit.text.actionSet.navigation">
          <action
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
-               id="gotoLastEditPosition"
+               id="org.eclipse.ui.edit.text.gotoLastEditPosition"
                hoverIcon="icons/full/ctool16/last_edit_pos.gif"
                class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
@@ -178,8 +178,25 @@
                label="%goToLastEditPosition.label"
                menubarPath="navigate/"
                helpContextId="goto_last_edit_position_action_context"
-               tooltip="%goToLastEditPosition.tooltip">
-         </action>
+               tooltip="%goToLastEditPosition.tooltip"/>
+		<action id="org.eclipse.ui.edit.text.gotoPreviousAnnotation"
+			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
+			label="%goToPreviousAnnotation.label"
+			tooltip="%goToPreviousAnnotation.tooltip"
+            retarget="true"
+			icon="icons/full/etool16/prev_nav.gif"
+            disabledIcon="icons/full/dtool16/prev_nav.gif"
+            hoverIcon="icons/full/ctool16/prev_nav.gif"			
+			class="org.eclipse.ui.internal.texteditor.NextPreviousPulldownActionDelegate"/>
+		<action id="org.eclipse.ui.edit.text.gotoNextAnnotation"
+			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
+			label="%goToNextAnnotation.label"
+			tooltip="%goToNextAnnotation.tooltip"
+            retarget="true"
+			icon="icons/full/etool16/next_nav.gif"
+            disabledIcon="icons/full/dtool16/next_nav.gif"
+            hoverIcon="icons/full/ctool16/next_nav.gif"			
+			class="org.eclipse.ui.internal.texteditor.NextPreviousPulldownActionDelegate"/>
       </actionSet>
    </extension>
 <!-- marker annotation types -->

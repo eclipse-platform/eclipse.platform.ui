@@ -108,4 +108,11 @@
       </page>
    </extension>
 
+   <extension point="org.eclipse.ui.actionSetPartAssociations">
+	  <actionSetPartAssociation 
+	  	targetID="org.eclipse.ui.edit.text.actionSet.navigation">
+		<part id="org.eclipse.ui.DefaultTextEditor"/>
+	 </actionSetPartAssociation>
+   </extension>
+
 </plugin>
