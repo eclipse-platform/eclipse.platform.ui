@@ -13,6 +13,8 @@
 package org.eclipse.ant.internal.ui.editor.formatter;
 
 import java.util.LinkedList;
+
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -24,16 +26,22 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy {
 
     /** access to the preferences store * */
-    private final FormattingPreferences prefs = new FormattingPreferences();
+    private final FormattingPreferences prefs;
     
     /** Documents to be formatted by this strategy */
 	private final LinkedList fDocuments= new LinkedList();
 	/** Partitions to be formatted by this strategy */
 	private final LinkedList fPartitions= new LinkedList();
 
-    public XmlElementFormattingStrategy() {        
+    public XmlElementFormattingStrategy() {
+        this.prefs = new FormattingPreferences();
     }
 
+    public XmlElementFormattingStrategy(FormattingPreferences prefs) {
+        Assert.isNotNull(prefs);
+        this.prefs=prefs;
+    }
+    
     /*
      * (non-Javadoc)
      * 

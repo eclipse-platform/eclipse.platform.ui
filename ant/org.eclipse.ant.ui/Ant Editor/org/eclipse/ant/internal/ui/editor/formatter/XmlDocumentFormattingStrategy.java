@@ -13,6 +13,8 @@
 package org.eclipse.ant.internal.ui.editor.formatter;
 
 import java.util.LinkedList;
+
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
@@ -22,10 +24,19 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
  
 	/** Documents to be formatted by this strategy */
 	private final LinkedList fDocuments= new LinkedList();
+    
+	/** access to the preferences store * */
+	private FormattingPreferences prefs; 
 	
 	public XmlDocumentFormattingStrategy() {
-     }
+	    this.prefs = new FormattingPreferences();
+    }
  
+	public XmlDocumentFormattingStrategy(FormattingPreferences prefs) {
+	    Assert.isNotNull(prefs);
+	    this.prefs = prefs;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#format()
 	 */
@@ -37,8 +48,7 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
 	        // TODO allow formatting of regions, not just the entire document
 	        String documentText = document.get();
 	        XmlDocumentFormatter formatter = new XmlDocumentFormatter();
-	        String formattedText = formatter.format(documentText,
-	                new FormattingPreferences());
+	        String formattedText = formatter.format(documentText, this.prefs);
 	        if (formattedText != null && !formattedText.equals(documentText)) {
 	        	document.set(formattedText);
 	        }
