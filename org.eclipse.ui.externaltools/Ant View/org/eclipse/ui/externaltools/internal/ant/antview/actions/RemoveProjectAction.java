@@ -1,15 +1,5 @@
 package org.eclipse.ui.externaltools.internal.ant.antview.actions;
 
-import java.util.Iterator;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.externaltools.internal.ant.antview.tree.ProjectNode;
-import org.eclipse.ui.externaltools.internal.ant.antview.views.AntView;
-import org.eclipse.ui.externaltools.internal.ant.antview.views.AntViewContentProvider;
-import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
-
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
@@ -18,11 +8,20 @@ http://www.eclipse.org/legal/cpl-v10.html
  
 Contributors:
 **********************************************************************/
-public class RemoveProjectAction extends Action {
 
-	/**
-	 * Constructor for RunAction
-	 */
+import java.util.Iterator;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.externaltools.internal.ant.antview.tree.ProjectNode;
+import org.eclipse.ui.externaltools.internal.ant.antview.views.AntView;
+import org.eclipse.ui.externaltools.internal.ant.antview.views.AntViewContentProvider;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
+import org.eclipse.ui.texteditor.IUpdate;
+
+public class RemoveProjectAction extends Action implements IUpdate {
+
 	public RemoveProjectAction(String label, ImageDescriptor imageDescriptor) {
 		super(label, imageDescriptor);
 		setToolTipText(label);
@@ -36,10 +35,10 @@ public class RemoveProjectAction extends Action {
 		if (view == null) {
 			return;
 		}
-		StructuredSelection selection= (StructuredSelection) view.getTreeViewer().getSelection();
+		IStructuredSelection selection= (IStructuredSelection) view.getTreeViewer().getSelection();
 		AntViewContentProvider provider= view.getViewContentProvider();
-		Object element;
 		Iterator iter= selection.iterator();
+		Object element;
 		while (iter.hasNext()) {
 			element= iter.next();
 			if (element instanceof ProjectNode) {
@@ -47,6 +46,31 @@ public class RemoveProjectAction extends Action {
 			}
 		}
 		view.refresh();
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	public void update() {
+		AntView view= AntUtil.getAntView();
+		if (view == null) {
+			setEnabled(false);
+		}
+		IStructuredSelection selection= (IStructuredSelection) view.getTreeViewer().getSelection();
+		if (selection.isEmpty()) {
+			setEnabled(false);
+			return;
+		}
+		Object element;
+		Iterator iter= selection.iterator();
+		while (iter.hasNext()) {
+			element= iter.next();
+			if (!(element instanceof ProjectNode)) {
+				setEnabled(false);
+				return;
+			}
+		}
+		setEnabled(true);
 	}
 
 }

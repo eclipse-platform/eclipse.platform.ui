@@ -13,12 +13,15 @@ import java.util.Hashtable;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -34,6 +37,7 @@ import org.eclipse.ui.externaltools.internal.ant.antview.core.ResourceMgr;
 import org.eclipse.ui.externaltools.internal.ant.antview.events.OpenListener;
 import org.eclipse.ui.externaltools.internal.ant.antview.preferences.Preferences;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.IUpdate;
 
 public class AntView extends ViewPart {
 	{
@@ -74,6 +78,15 @@ public class AntView extends ViewPart {
 		viewer.setInput(ResourcesPlugin.getWorkspace());
 		viewer.addOpenListener(new OpenListener());		
 		viewer.addFilter(new AntViewFilter());
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IAction action= (IAction)actionMap.get(IAntViewConstants.IMAGE_REMOVE);
+				if (action instanceof IUpdate) {
+					((IUpdate)action).update();
+				}
+				
+			}
+		});
 		hookContextMenu();
 		contributeToActionBars();
         // Check Preference DisplayLevel Action	
