@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -28,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.util.SWTResourceUtil;
 
 /**
  * Provides basic labels for adaptable objects that have the
@@ -37,25 +34,7 @@ import org.eclipse.ui.PlatformUI;
  * on the labels and icons of adaptable objects.
  */
 public class WorkbenchLabelProvider extends LabelProvider implements IColorProvider, IFontProvider {
-	/**
-	 * The cache of images that have been dispensed by this provider.
-	 * Maps ImageDescriptor->Image.
-	 * Caches are all static to avoid creating extra system
-	 * resources for very common images, font and colors.
-	 */
-	private static Map imageTable = new Hashtable(40);
 	
-	/**
-	 * The cache of colors that have been dispensed by this provider.
-	 * Maps RGB->Color.
-	 */
-	private static Map colorTable = new Hashtable(7);
-	
-	/**
-	 * The cache of fonts that have been dispensed by this provider.
-	 * Maps FontData->Font.
-	 */
-	private static Map fontTable = new Hashtable(7);;	
 
 	/**
 	 * Returns a workbench label provider that is hooked up to the decorator
@@ -83,6 +62,10 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 	 *
 	 * Subclasses may reimplement this method to decorate an object's
 	 * image.
+	 * 
+	 * @param input The base image to decorate.
+	 * @param element The element used to look up decorations.
+	 * @return the resuling ImageDescriptor.
 	 * @see org.eclipse.jface.resource.CompositeImageDescriptor
 	 */
 	protected ImageDescriptor decorateImage(
@@ -97,39 +80,21 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 	 *
 	 * Subclasses may implement this method to decorate an object's
 	 * label.
+	 * @param input The base text to decorate.
+	 * @param element The element used to look up decorations.
+	 * @return the resulting text
 	 */
 	protected String decorateText(String input, Object element) {
 		return input;
 	}
 	
-	/**
-	 * Disposes of all allocated images, colors and fonts
-	 * when shutting down the plug-in.
-	 */
-	public static final void shutdown() {
-		if (imageTable != null) {
-			for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
-				((Image) i.next()).dispose();
-			}
-			imageTable = null;
-		}
-		if (colorTable != null) {
-			for (Iterator i = colorTable.values().iterator(); i.hasNext();) {
-				((Color) i.next()).dispose();
-			}
-			colorTable = null;		    
-		}		
-		if (fontTable != null) {
-			for (Iterator i = fontTable.values().iterator(); i.hasNext();) {
-				((Font) i.next()).dispose();
-			}
-			fontTable = null;		    
-		}
-	}
+	
 	/**
 	 * Returns the implementation of IWorkbenchAdapter for the given
-	 * object.  Returns <code>null</code> if the adapter is not defined or the
-	 * object is not adaptable.
+	 * object.  
+	 * @param o the object to look up.
+	 * @return IWorkbenchAdapter or<code>null</code> if the adapter is not defined or the
+	 * object is not adaptable. 
 	 */
 	protected final IWorkbenchAdapter getAdapter(Object o) {
 		if (!(o instanceof IAdaptable)) {
@@ -141,8 +106,10 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 	
 	/**
 	 * Returns the implementation of IWorkbenchAdapter2 for the given
-	 * object.  Returns <code>null</code> if the adapter is not defined or the
-	 * object is not adaptable.
+	 * object.  
+	 * @param o the object to look up.
+	 * @return IWorkbenchAdapter2 or<code>null</code> if the adapter is not defined or the
+	 * object is not adaptable. 
 	 */
 	protected final IWorkbenchAdapter2 getAdapter2(Object o) {
 		if (!(o instanceof IAdaptable)) {
@@ -169,10 +136,10 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 		//add any annotations to the image descriptor
 		descriptor = decorateImage(descriptor, element);
 
-		Image image = (Image) imageTable.get(descriptor);
+		Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
 		if (image == null) {
 			image = descriptor.createImage();
-			imageTable.put(descriptor, image);
+			SWTResourceUtil.getImageTable().put(descriptor, image);
 		}
 		return image;
 	}
@@ -219,10 +186,10 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 			return null;
 		}
 
-		Font font = (Font) fontTable.get(descriptor);
+		Font font = (Font) SWTResourceUtil.getFontTable().get(descriptor);
 		if (font == null) {
 			font = new Font(Display.getCurrent(), descriptor);
-			fontTable.put(descriptor, font);
+			SWTResourceUtil.getFontTable().put(descriptor, font);
 		}
 		return font;
     }
@@ -240,10 +207,10 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 			return null;
 		}
 
-		Color color = (Color) colorTable.get(descriptor);
+		Color color = (Color) SWTResourceUtil.getColorTable().get(descriptor);
 		if (color == null) {
 			color = new Color(Display.getCurrent(), descriptor);
-			colorTable.put(descriptor, color);
+			SWTResourceUtil.getColorTable().put(descriptor, color);
 		}
 		return color;        
     }    
