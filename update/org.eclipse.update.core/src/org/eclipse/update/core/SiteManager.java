@@ -139,9 +139,9 @@ public class SiteManager {
 	 * 
 	 * @throws CoreException if an error occurs.
 	 * @since 2.0
+	 * @deprecated Do not use this method
 	 */
 	public static void handleNewChanges() throws CoreException {
-		InternalSiteManager.handleNewChanges();
 	}
 	/**
 	 * Returns system architecture specification. A comma-separated list of arch

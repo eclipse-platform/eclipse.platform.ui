@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.operations.UpdateUtils;
 
 /**
  * 
@@ -30,7 +29,6 @@ public class InternalSiteManager {
 
 	public static final String DEFAULT_SITE_TYPE = SiteURLContentProvider.SITE_TYPE;
 	private static final String DEFAULT_EXECUTABLE_SITE_TYPE = SiteFileContentProvider.SITE_TYPE;
-	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
 	//$NON-NLS-1$
 
 	private static Map estimates;
@@ -334,39 +332,6 @@ public class InternalSiteManager {
 		}
 		return site;
 	}
-
-	/*
-	 * Prompt the user to configure or unconfigure
-	 * newly discoverd features.
-	 * @throws CoreException if an error occurs.
-	 * @since 2.0
-	 */
-	public static void handleNewChanges() throws CoreException {
-		// find extension point
-		IInstallDeltaHandler handler = null;
-
-		String pluginID = UpdateCore.getPlugin().getBundle().getSymbolicName();
-
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-
-		IConfigurationElement[] elements = registry.getConfigurationElementsFor(pluginID, SIMPLE_EXTENSION_ID);
-
-		if (elements == null || elements.length == 0) {
-			throw Utilities.newCoreException(Policy.bind("SiteReconciler.UnableToFindInstallDeltaFactory", pluginID + "." + SIMPLE_EXTENSION_ID), null);
-			//$NON-NLS-1$
-		} else {
-			IConfigurationElement element = elements[0];
-			handler = (IInstallDeltaHandler) element.createExecutableExtension("class");
-			//$NON-NLS-1$
-		}
-
-		// instanciate and open
-		if (handler != null) {
-			handler.init(UpdateUtils.getSessionDeltas());
-			handler.open();
-		}
-	}
-
 
 
 	/*

@@ -99,15 +99,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		changeStamp = computeChangeStamp();
 		if (changeStamp > config.getDate().getTime() && !isTransient())
 			reconcile();
-
-//		// save configuration if there were changes
-//		if (config.isDirty())
-//			save();
-		
-		// determine which plugins we will use to start the rest of the "kernel"
-		// (need to get core.runtime matching the executing core.boot and
-		// xerces matching the selected core.runtime)
-		//		locateDefaultPlugins();
 	}
 
 	PlatformConfiguration(URL url) throws Exception {
@@ -656,10 +647,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		PlatformConfiguration config = getCurrent();
 		if (config != null) {
 			// only save if there are changes in the config
-//			// TODO clean this up when merging with the rest of update code
-//			long lastStamp = config.config.getDate().getTime();
-//			long computedStamp = config.computeChangeStamp();
-			if (config.config.isDirty() && !config.isTransient()/* || computedStamp > lastStamp */) {
+			if (config.config.isDirty() && !config.isTransient()) {
 				try {
 					config.save();
 				} catch (IOException e) {
@@ -769,29 +757,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		ISiteEntry defaultSite = createSiteEntry(siteURL, defaultPolicy);
 		return defaultSite;
 	}
-
-//	private void resetInitializationConfiguration(URL url) throws IOException {
-//		// [20111]
-//		if (!supportsDetection(url))
-//			return; // can't do ...
-//
-//		URL resolved = resolvePlatformURL(url);
-//		File initCfg = new File(resolved.getFile().replace('/', File.separatorChar));
-//		File initDir = initCfg.getParentFile();
-//		resetInitializationLocation(initDir);
-//	}
-
-//	private void resetInitializationLocation(File dir) {
-//		// [20111]
-//		if (dir == null || !dir.exists() || !dir.isDirectory())
-//			return;
-//		File[] list = dir.listFiles();
-//		for (int i = 0; i < list.length; i++) {
-//			if (list[i].isDirectory())
-//				resetInitializationLocation(list[i]);
-//			list[i].delete();
-//		}
-//	}
 
 	private boolean getConfigurationLock(URL url) {
 
@@ -1029,65 +994,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-//	private void copyInitializedState(URL source, String target) {
-//		try {
-//			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
-//				return; // need to be able to do "dir"
-//
-//			copy(new File(source.getFile()), new File(target));
-//
-//		} catch (IOException e) {
-//			// this is an optimistic copy. If we fail, the state will be reconciled
-//			// when the update manager is triggered.
-//		}
-//	}
-
-//	private void copy(File src, File tgt) throws IOException {
-//		if (src.isDirectory()) {
-//			// copy content of directories
-//			tgt.mkdir();
-//			FilenameFilter filter = new FilenameFilter() {
-//				public boolean accept(File dir, String name) {
-//					return !name.equals(ConfigurationActivator.LAST_CONFIG_STAMP);
-//				}
-//			};
-//			File[] list = src.listFiles(filter);
-//			if (list == null)
-//				return;
-//			for (int i = 0; i < list.length; i++) {
-//				copy(list[i], new File(tgt, list[i].getName()));
-//			}
-//		} else {
-//			// copy individual files
-//			FileInputStream is = null;
-//			FileOutputStream os = null;
-//			try {
-//				is = new FileInputStream(src);
-//				os = new FileOutputStream(tgt);
-//				byte[] buff = new byte[1024];
-//				int count = is.read(buff);
-//				while (count != -1) {
-//					os.write(buff, 0, count);
-//					count = is.read(buff);
-//				}
-//			} catch (IOException e) {
-//				// continue ... update reconciler will have to reconstruct state
-//			} finally {
-//				if (is != null)
-//					try {
-//						is.close();
-//					} catch (IOException e) {
-//						// ignore ...
-//					}
-//				if (os != null)
-//					try {
-//						os.close();
-//					} catch (IOException e) {
-//						// ignore ...
-//					}
-//			}
-//		}
-//	}
 
 	private void copy(URL src, File tgt) throws IOException {
 		InputStream is = null;
@@ -1116,6 +1022,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				}
 		}
 	}		
+	
 	private Configuration loadConfig(URL url) throws Exception {
 		if (url == null)
 			throw new IOException(Messages.getString("cfig.unableToLoad.noURL")); //$NON-NLS-1$
@@ -1173,26 +1080,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 		return config;
 	}
-	
-
-//
-//	private static String[] checkForNewUpdates(IPlatformConfiguration cfg, String[] args) {
-//		try {
-//			URL markerURL = new URL(cfg.getConfigurationLocation(), CHANGES_MARKER);
-//			File marker = new File(markerURL.getFile());
-//			if (!marker.exists())
-//				return args;
-//
-//			// indicate -newUpdates
-//			marker.delete();
-//			String[] newArgs = new String[args.length + 1];
-//			newArgs[0] = CMD_NEW_UPDATES;
-//			System.arraycopy(args, 0, newArgs, 1, args.length);
-//			return newArgs;
-//		} catch (MalformedURLException e) {
-//			return args;
-//		}
-//	}
 
 	public static boolean supportsDetection(URL url) {
 		String protocol = url.getProtocol();

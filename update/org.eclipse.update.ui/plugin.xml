@@ -99,11 +99,5 @@
             id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.update.core.deltaHandler">
-      <display
-            class="org.eclipse.update.internal.ui.wizards.InstallDeltaWizard">
-      </display>
-   </extension>
 
 </plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public interface IPlatformConfiguration {
 		 * 
 		 * @return site features change stamp 
 		 * @since 2.0
-		 * @deprecated
+		 * @deprecated Do not use this method
 		 */
 		public long getFeaturesChangeStamp();
 
@@ -114,7 +114,7 @@ public interface IPlatformConfiguration {
 		 * 
 		 * @return site plug-ins change stamp 
 		 * @since 2.0
-		 * @deprecated
+		 * @deprecated Do not use this method
 		 */
 		public long getPluginsChangeStamp();
 
@@ -464,6 +464,7 @@ public interface IPlatformConfiguration {
 	 * 
 	 * @return configuration features change stamp 
 	 * @since 2.0
+	 * @deprecated Do not use this method.
 	 */
 	public long getFeaturesChangeStamp();
 
@@ -474,6 +475,7 @@ public interface IPlatformConfiguration {
 	 * 
 	 * @return configuration plug-ins change stamp 
 	 * @since 2.0
+	 * @deprecated Do not use this method
 	 */
 	public long getPluginsChangeStamp();
 
@@ -503,6 +505,8 @@ public interface IPlatformConfiguration {
 	 * @return an array of identifiers, or empty array
 	 * otherwise
 	 * @since 2.0
+	 * @deprecated Do not use this method. Check the osgi.bundles system property for the
+	 * urls of the automatically started bundles
 	 */
 	public String[] getBootstrapPluginIdentifiers();
 
@@ -514,6 +518,8 @@ public interface IPlatformConfiguration {
 	 * by getBootstrapPluginIdentifiers()
 	 * @param location
 	 * @since 2.0
+	 * @deprecated Do not use this method. Use the osig.bundles system property contains
+	 * the urls of the automatically started bundles.
 	 */
 	public void setBootstrapPluginLocation(String id, URL location);
 
