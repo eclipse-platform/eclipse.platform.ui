@@ -1413,12 +1413,6 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
-            name="%ActionDefinition.closeDebugPopup.name"
-            category="org.eclipse.debug.ui.category.run"
-            description="%ActionDefinition.closeDebugPopup.description"
-            id="org.eclipse.debug.ui.commands.defaultDebugPopupClose">
-      </command>
-      <command
             name="%ActionDefinition.runToLine.name"
             description="%ActionDefinition.runToLine.description"
             category="org.eclipse.debug.ui.category.run"
