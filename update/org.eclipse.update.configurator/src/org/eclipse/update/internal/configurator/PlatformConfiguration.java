@@ -1138,12 +1138,16 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		Exception originalException = null;
 		try {
 			config = parser.parse(url);
+			if (config == null)
+				throw new Exception("Platform configuration file cannot be found");
 		} catch (Exception e1) {
 			// check for save failures, so open temp and backup configurations
 			originalException = e1;
 			try {
 				URL tempURL = new URL(url.toExternalForm()+CONFIG_FILE_TEMP_SUFFIX);
 				config = parser.parse(tempURL); 
+				if (config == null)
+					throw new Exception();
 			} catch (Exception e2) {
 				try {
 					// check the backup
