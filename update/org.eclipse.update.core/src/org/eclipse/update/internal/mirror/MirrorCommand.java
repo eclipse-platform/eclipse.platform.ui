@@ -27,17 +27,20 @@ public class MirrorCommand extends ScriptedCommand {
 	private String featureVersion;
 	private String fromSiteUrl;
 	private String toSiteDir;
+	private String mirrorURL;
 	private MirrorSite mirrorSite;
 
 	public MirrorCommand(
 		String featureId,
 		String featureVersion,
 		String fromSiteUrl,
-		String toSiteDir) {
+		String toSiteDir,
+		String mirrorUrl) {
 		this.featureId = featureId;
 		this.featureVersion = featureVersion;
 		this.fromSiteUrl = fromSiteUrl;
 		this.toSiteDir = toSiteDir;
+		this.mirrorURL = mirrorUrl;
 	}
 
 	/**
@@ -67,7 +70,8 @@ public class MirrorCommand extends ScriptedCommand {
 			mirrorSite.mirrorAndExpose(
 				remoteSite,
 				featureReferencesToMirror,
-				null);
+				null,
+				mirrorURL);
 			System.out.println("Mirror command completed successfully.");
 			return true;
 		} catch (MalformedURLException e) {
@@ -185,7 +189,8 @@ public class MirrorCommand extends ScriptedCommand {
 			String type =
 				((SiteFeatureReference) remoteSiteFeatureReferences[i])
 					.getType();
-			if (type!=null && !ISite.DEFAULT_PACKAGED_FEATURE_TYPE.equals(type)) {
+			if (type != null
+				&& !ISite.DEFAULT_PACKAGED_FEATURE_TYPE.equals(type)) {
 				// unsupported
 				throw Utilities.newCoreException(
 					"Feature "

@@ -36,13 +36,13 @@ public class CmdLineArgs {
 			}
 			// -to should specify a directory
 			// if -to specifies file URL, change it to a directory
-			String to=(String)options.get("-to");
-			if (to!=null && to.startsWith("file:")){
-				try{
-					URL url=new URL(to);
+			String to = (String) options.get("-to");
+			if (to != null && to.startsWith("file:")) {
+				try {
+					URL url = new URL(to);
 					options.put("-to", url.getFile());
 					continue;
-				}catch(MalformedURLException mue){
+				} catch (MalformedURLException mue) {
 				}
 			}
 		}
@@ -54,7 +54,8 @@ public class CmdLineArgs {
 			|| param.equals("-to")
 			|| param.equals("-from")
 			|| param.equals("-featureId")
-			|| param.equals("-verifyOnly");
+			|| param.equals("-verifyOnly")
+			|| param.equals("-mirrorURL");
 	}
 
 	private boolean isValidCommand(String cmd) {
@@ -100,7 +101,8 @@ public class CmdLineArgs {
 					(String) options.get("-featureId"),
 					(String) options.get("-version"),
 					(String) options.get("-from"),
-					(String) options.get("-to"));
+					(String) options.get("-to"),
+					(String) options.get("-mirrorURL"));
 			else if (cmd.equals("uninstall"))
 				return new UninstallCommand(
 					(String) options.get("-featureId"),

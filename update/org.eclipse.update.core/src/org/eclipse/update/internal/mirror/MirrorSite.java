@@ -35,14 +35,17 @@ public class MirrorSite extends Site {
 	}
 
 	/**
-	 * Install the specified feature and listed optional features on this site.
+	 * Mirrors the specified features and listed optional features on this site.
 	 * @see ISite#install(IFeature, IVerificationListener, IProgressMonitor)
+	 * @param mirrorSiteUrl external URL of the mirror site or null;
+	 * if parameter is provided policy fragment will be generated
 	 * @exception CoreException
 	 */
 	public void mirrorAndExpose(
 		ISite remoteSite,
 		ISiteFeatureReference[] sourceFeatureRefs,
-		IFeatureReference[] optionalfeatures)
+		IFeatureReference[] optionalfeatures,
+		String mirrorSiteUrl)
 		throws CoreException {
 
 		mirrorAndExposeFeatures(
@@ -59,6 +62,9 @@ public class MirrorSite extends Site {
 		System.out.println(
 			"Updating site description finished. Saving site.xml ...");
 		save();
+		if (mirrorSiteUrl != null) {
+			generatePolicyFragment(mirrorSiteUrl);
+		}
 	}
 	private void mirrorAndExposeFeatures(
 		ISite remoteSite,
@@ -630,7 +636,7 @@ public class MirrorSite extends Site {
 		}
 		return false;
 	}*/
-	
+
 	/**
 	 * Updates description of this site
 	 * from description of the remote site.
@@ -688,5 +694,37 @@ public class MirrorSite extends Site {
 			(CategoryModel[]) newCategoryModels.toArray(
 				new CategoryModel[newCategoryModels.size()]));
 
+	}
+	private void generatePolicyFragment(String url) {
+		FileOutputStream fos = null;
+		try {
+			URL siteURL = new URL(this.getURL(), "policy.inc");
+			fos = new FileOutputStream(new File(siteURL.getFile()));
+			PrintWriter writer = new PrintWriter(fos);
+			writeUrlMaps(writer, url);
+			writer.flush();
+		} catch (IOException ioe) {
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ioe2) {
+				}
+			}
+		}
+	}
+	private void writeUrlMaps(PrintWriter writer, String url) {
+		SiteFeatureReferenceModel[] featureReferenceModels =
+			getFeatureReferenceModels();
+		for (int i = 0; i < featureReferenceModels.length; i++) {
+			writer.print("\t");
+			writer.print("<url-map");
+			writer.print(
+				" pattern=\""
+					+ featureReferenceModels[i].getFeatureIdentifier()
+					+ "\"");
+			writer.print(" url=\"" + url + "\"");
+			writer.println(" />");
+		}
 	}
 }
