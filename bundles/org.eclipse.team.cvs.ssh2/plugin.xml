@@ -19,10 +19,6 @@
       <export name="*"/>
       <packages prefixes="org.eclipse.team.cvs.ssh2"/>
     </library>
-    <library name="jsch-0.1.9.jar">
-      <export name="*"/>
-      <packages prefixes="com.jcraft.jsch"/>
-    </library>
   </runtime>
 
   <extension id="ssh" point="org.eclipse.team.cvs.core.connectionmethods">
