@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.help.ViewContextComputer;
@@ -222,6 +223,9 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		if (IFindReplaceTarget.class.equals(required)) {
 			return fConsoleViewer.getFindReplaceTarget();
 		}
+		if (Widget.class.equals(required)) {
+			return fConsoleViewer.getTextWidget();
+		}
 		return super.getAdapter(required);
 	}
 
@@ -258,8 +262,9 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 
 	protected void updateAction(String actionId) {
 		IAction action= (IAction)fGlobalActions.get(actionId);
-		if (action instanceof IUpdate)
+		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
+		}
 	}
 	
 	public void dispose() {
