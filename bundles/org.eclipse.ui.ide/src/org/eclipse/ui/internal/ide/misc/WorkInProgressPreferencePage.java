@@ -157,6 +157,7 @@ public class WorkInProgressPreferencePage
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+		//Nothing to do here
 	}
 
 	/*
@@ -176,7 +177,9 @@ public class WorkInProgressPreferencePage
 		preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
 
 		if (autoRefresh) {
-
+			preferences.setValue(
+				ResourcesPlugin.PREF_REFRESH_POLLING_DELAY,
+				pollingRefreshText.getText());
 		}
 
 		return super.performOk();
@@ -207,7 +210,7 @@ public class WorkInProgressPreferencePage
 	 */
 	private void createRefreshControls(Composite parent) {
 		Group refreshParent = new Group(parent, SWT.NONE);
-		refreshParent.setText("Auto Refresh");
+		refreshParent.setText(WorkInProgressMessages.getString("WorkInProgressPreferencePage.AutoRefreshGroup")); //$NON-NLS-1$
 
 		GridData groupData = new GridData(GridData.FILL_BOTH);
 		groupData.grabExcessHorizontalSpace = true;
@@ -219,8 +222,8 @@ public class WorkInProgressPreferencePage
 		refreshParent.setLayout(layout);
 
 		this.autoRefreshButton = new Button(refreshParent, SWT.CHECK);
-		this.autoRefreshButton.setText("Auto Refresh");
-		this.autoRefreshButton.setToolTipText("Toggle auto refresh");
+		this.autoRefreshButton.setText(WorkInProgressMessages.getString("WorkInProgressPreferencePage.AutoRefreshButton")); //$NON-NLS-1$
+		this.autoRefreshButton.setToolTipText(WorkInProgressMessages.getString("WorkInProgressPreferencePage.AutoRefreshToolTip")); //$NON-NLS-1$
 
 		boolean autoRefresh =
 			ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(
@@ -232,7 +235,7 @@ public class WorkInProgressPreferencePage
 		this.autoRefreshButton.setLayoutData(buttonData);
 
 		Label pollingDelayLabel = new Label(refreshParent, SWT.NONE);
-		pollingDelayLabel.setText("Polling Delay");
+		pollingDelayLabel.setText(WorkInProgressMessages.getString("WorkInProgressPreferencePage.PollingDelay")); //$NON-NLS-1$
 
 		this.pollingRefreshText = new Text(refreshParent, SWT.BORDER);
 		this.pollingRefreshText.setEnabled(autoRefresh);
@@ -242,7 +245,7 @@ public class WorkInProgressPreferencePage
 
 		GridData textData = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		pollingRefreshText.setLayoutData(textData);
-		
+
 		this.autoRefreshButton.addSelectionListener(new SelectionAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
@@ -276,7 +279,7 @@ public class WorkInProgressPreferencePage
 			setErrorMessage(null);
 			return true;
 		} catch (NumberFormatException e1) {
-			setErrorMessage("Invalid Integer format");
+			setErrorMessage(WorkInProgressMessages.getString("WorkInProgressPreferencePage.InvalidMessage")); //$NON-NLS-1$
 		}
 
 		return false;
