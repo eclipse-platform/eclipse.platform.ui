@@ -303,7 +303,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		try {
 			orientation= getDialogSettings().getInt(ANT_VIEW_ORIENTATION);
 		} catch (NumberFormatException exception) {
-			orientation= SWT.HORIZONTAL;
+			orientation= SWT.VERTICAL;
 		}		
 		setViewOrientation(orientation);
 	}
