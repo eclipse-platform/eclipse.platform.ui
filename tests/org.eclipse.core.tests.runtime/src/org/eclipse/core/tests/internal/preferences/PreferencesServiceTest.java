@@ -892,7 +892,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 			fail("6.0", e);
 		}
 		assertEquals("6.1", 1, matching.length);
-		
+
 		// shouldn't match
 		try {
 			matching = service.matches(new ConfigurationScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
@@ -902,7 +902,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertEquals("7.1", 0, matching.length);
 	}
 
-	public void testExportWithTransfers() {
+	public void testExportWithTransfers1() {
 
 		final String VALID_QUALIFIER = getUniqueString();
 		IPreferenceFilter transfer = new IPreferenceFilter() {
@@ -934,6 +934,54 @@ public class PreferencesServiceTest extends RuntimeTest {
 		node = new InstanceScope().getNode(getUniqueString());
 		node.put("invalidkey1", "value1");
 		node.put("invalidkey2", "value2");
+
+		verifier.verify();
+	}
+
+	/*
+	 * Test exporting with a transfer that returns null for the mapping. This means
+	 * export everything in the scope.
+	 */
+	public void testExportWithTransfers2() {
+		final String VALID_QUALIFIER = getUniqueString();
+		IPreferenceFilter transfer = new IPreferenceFilter() {
+			public Map getMapping(String scope) {
+				return null;
+			}
+
+			public String[] getScopes() {
+				return new String[] {TestScope.SCOPE};
+			}
+		};
+
+		IPreferencesService service = Platform.getPreferencesService();
+		final ExportVerifier verifier = new ExportVerifier(service.getRootNode(), new IPreferenceFilter[] {transfer});
+
+		IEclipsePreferences testNode = new TestScope().getNode(VALID_QUALIFIER);
+		String VALID_KEY_1 = "key1";
+		String VALID_KEY_2 = "key2";
+		testNode.put(VALID_KEY_1, "value1");
+		testNode.put(VALID_KEY_2, "value2");
+
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
+				String[] keys = node.keys();
+				for (int i=0; i<keys.length; i++)
+					verifier.addExpected(node.absolutePath(), keys[i]);
+				return true;
+			}
+		};
+		try {
+			((IEclipsePreferences) service.getRootNode().node(TestScope.SCOPE)).accept(visitor);
+		} catch (BackingStoreException e) {
+			fail("2.00", e);
+		}
+		verifier.addVersion();
+		verifier.addExportRoot(service.getRootNode());
+
+		testNode = new InstanceScope().getNode(getUniqueString());
+		testNode.put("invalidkey1", "value1");
+		testNode.put("invalidkey2", "value2");
 
 		verifier.verify();
 	}
