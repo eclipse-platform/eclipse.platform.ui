@@ -265,6 +265,7 @@ public class DocumentCommand {
 	private final List fCommands= new ArrayList();
 	/**
 	 * Indicates whether the caret should be shifted by this command.
+	 *
 	 * @since 3.0
 	 */
 	public boolean shiftsCaret;

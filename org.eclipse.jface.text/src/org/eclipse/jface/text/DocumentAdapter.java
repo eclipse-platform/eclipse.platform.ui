@@ -61,7 +61,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	
 	
 	/**
-	 * Creates a new document adapter which is initiallly not connected to
+	 * Creates a new document adapter which is initially not connected to
 	 * any document.
 	 */
 	public DocumentAdapter() {
@@ -101,6 +101,12 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		fTextChangeListeners.remove(listener);
 	}
 	
+	/**
+	 * Tries to repair the line information.
+	 * 
+	 * @see IRepairableDocument#repairLineInformation()
+	 * @since 3.0
+	 */
 	private void repairLineInformation() {
 		if (fDocument instanceof IRepairableDocument) {
 			IRepairableDocument repairable= (IRepairableDocument) fDocument;
@@ -108,6 +114,14 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		}
 	}
 	
+	/**
+	 * Returns the line for the given line number.
+	 *  
+	 * @param line the line number
+	 * @return the line
+	 * @throws BadLocationException if the line number is invalid for the adapted document
+	 * @since 3.0
+	 */
 	private String doGetLine(int line) throws BadLocationException {
 		IRegion r= fDocument.getLineInformation(line);
 		return fDocument.get(r.getOffset(), r.getLength());

@@ -538,6 +538,7 @@ public class DefaultUndoManager implements IUndoManager {
 	 * subsequently contains a white space only.
 	 *
 	 * @param text the text to check
+	 * @return <code>true</code> if check is successful
 	 */
 	private boolean isWhitespaceText(String text) {
 				

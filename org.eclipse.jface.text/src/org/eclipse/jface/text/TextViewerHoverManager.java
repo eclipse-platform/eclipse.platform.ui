@@ -400,6 +400,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	
 	/*
 	 * @see org.eclipse.jface.text.AbstractHoverInformationControlManager#dispose()
+	 * @since 3.0
 	 */
 	public void dispose() {
 		if (fTextViewer != null) {

@@ -49,6 +49,7 @@ public class TextEvent {
 	 * 
 	 * @param offset the offset
 	 * @param length the length
+	 * @param text the inserted text
 	 * @param replacedText the replaced text
 	 * @param event the associated document event or <code>null</code> if none
 	 * @param viewerRedrawState the redraw state of the viewer

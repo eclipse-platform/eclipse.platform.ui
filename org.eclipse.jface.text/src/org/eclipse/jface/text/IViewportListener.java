@@ -25,6 +25,8 @@ public interface IViewportListener {
 	/**
 	 * Informs about viewport changes. The given vertical position
 	 * is the new vertical scrolling offset measured in pixels.
+	 * 
+	 * @param verticalOffset the vertical offset
 	 */
 	void viewportChanged(int verticalOffset);
 }

@@ -258,6 +258,8 @@ public interface ITextViewer {
 	/**
 	 * Returns whether a given range overlaps with the visible region of this viewer's document.
 	 *
+	 * @param offset the offset
+	 * @param length the length
 	 * @return <code>true</code> if the specified range overlaps with the visible region
 	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */

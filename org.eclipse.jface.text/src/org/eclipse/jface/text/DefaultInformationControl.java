@@ -275,8 +275,9 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			widgetDisposed(null);
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+	 * @since 3.0
 	 */
 	public void widgetDisposed(DisposeEvent event) {
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
@@ -322,6 +323,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
+	 * @since 3.0
 	 */
 	public Rectangle computeTrim() {
 		return fShell.computeTrim(0, 0, 0, 0);
@@ -329,6 +331,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
+	 * @since 3.0
 	 */
 	public Rectangle getBounds() {
 		return fShell.getBounds();
@@ -336,6 +339,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
+	 * @since 3.0
 	 */
 	public boolean restoresLocation() {
 		return false;
@@ -343,6 +347,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
+	 * @since 3.0
 	 */
 	public boolean restoresSize() {
 		return false;

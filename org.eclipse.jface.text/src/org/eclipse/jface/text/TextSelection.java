@@ -78,12 +78,13 @@ public class TextSelection implements ITextSelection {
 	}
 
 	/**
+	 * 
 	 * Returns true if the offset and length are smaller than 0. 
 	 * A selection of length 0, is a valid text selection as it 
 	 * describes, e.g., the cursor position in a viewer.
-	 */
-	/*
-	 * @see ISelection#isEmpty()
+	 * 
+	 * @return <code>true</code> if this selection is empty
+	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 	 */
 	public boolean isEmpty() {
 		return fOffset < 0 || fLength < 0;

@@ -1168,7 +1168,10 @@ public class TextViewer extends Viewer implements
 	private WidgetCommand fWidgetCommand= new WidgetCommand();	
 	/** The SWT control's scrollbars */
 	private ScrollBar fScroller;
-	/** Listener on the visible document */
+	/**
+	 * Listener on the visible document.
+	 * @since 3.0
+	 */
 	private VisibleDocumentListener fVisibleDocumentListener= new VisibleDocumentListener();
 	/** Verify listener */
 	private TextVerifyListener fVerifyListener= new TextVerifyListener();
@@ -3861,8 +3864,9 @@ public class TextViewer extends Viewer implements
 		}
 	}
 	
-	/**
+	/*
 	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 * @since 3.0
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (fTextWidget == null)
@@ -3894,7 +3898,7 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/**
+	/*
 	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
 	 * @since 3.0
 	 */
@@ -4542,6 +4546,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * @see ITextViewerExtension5#widgetLine2ModelLine(int)
+	 * @since 3.0
 	 */
 	public int widgetLine2ModelLine(int widgetLine) {
 		if (fInformationMapping == null)

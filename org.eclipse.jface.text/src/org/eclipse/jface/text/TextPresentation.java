@@ -138,7 +138,7 @@ public class TextPresentation {
 		}
 	}
 	
-	/** The syle information for the range covered by the whole presentation */
+	/** The style information for the range covered by the whole presentation */
 	private StyleRange fDefaultRange;
 	/** The member ranges of the presentation */
 	private ArrayList fRanges;
@@ -201,7 +201,7 @@ public class TextPresentation {
 	 * The default style range defines the overall area covered
 	 * by this presentation and its style information.
 	 *
-	 * @param range the range decribing the default region
+	 * @param range the range describing the default region
 	 */
 	public void setDefaultStyleRange(StyleRange range) {
 		fDefaultRange= range;
@@ -358,6 +358,8 @@ public class TextPresentation {
 	/**
 	 * Applies the template's style to the target.
 	 * 
+	 * @param template the style range to be used as template
+	 * @param target the style range to which to apply the template
 	 * @since 3.0
 	 */
 	private void applyStyle(StyleRange template, StyleRange target) {
@@ -469,7 +471,7 @@ public class TextPresentation {
 	 * Returns the region which is relative to the specified window and
 	 * appropriately clipped if necessary.
 	 *
-	 * @param region the absolute coverage
+	 * @param coverage the absolute coverage
 	 * @return the window relative region based on the absolute coverage
 	 * @since 3.0
 	 */
@@ -494,7 +496,7 @@ public class TextPresentation {
 	 * different from the presentation's default style range. The default style range
 	 * is not enumerated.
 	 *
-	 * @return a style range interator
+	 * @return a style range iterator
 	 */
 	public Iterator getNonDefaultStyleRangeIterator() {
 		return new FilterIterator(fDefaultRange != null);
@@ -536,7 +538,7 @@ public class TextPresentation {
 	 * Returns the style range with the smallest offset ignoring the default style range or null
 	 * if the presentation is empty.
 	 *
-	 * @return the style range with the smalled offset different from the default style range
+	 * @return the style range with the smallest offset different from the default style range
 	 */
 	public StyleRange getFirstStyleRange() {
 		try {
