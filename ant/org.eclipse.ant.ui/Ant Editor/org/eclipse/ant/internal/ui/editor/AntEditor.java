@@ -51,8 +51,9 @@ import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -233,7 +234,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		}
 	}
 	
-	class StatusLineSourceViewer extends SourceViewer{
+	class StatusLineSourceViewer extends ProjectionViewer{
 		
 		private boolean fIgnoreTextConverters= false;
 		
@@ -327,6 +328,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 * @since 3.0
 	 */
 	private EditorSelectionChangedListener fEditorSelectionChangedListener;
+
+	private ProjectionSupport fProjectionSupport;
   
     public AntEditor() {
         super();
@@ -376,6 +379,14 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
         if (key.equals(IContentOutlinePage.class)) {
 			return getOutlinePage();
         }
+        
+        if (fProjectionSupport != null) { 
+        	Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), key); 
+        	if (adapter != null) {
+            	return adapter;
+            }
+        }
+
         return super.getAdapter(key);
     }
 
@@ -652,6 +663,15 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
+		
+		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer(); 
+
+        if (isFoldingEnabled()) { 
+        	fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors()); 
+            fProjectionSupport.install();
+			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+        }
+
 		if (isTabConversionEnabled()) {
 			startTabConversion();		
 		}
@@ -659,6 +679,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
 	
+	public boolean isFoldingEnabled() {
+		IPreferenceStore store= getPreferenceStore();
+		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
+	}
+
 	private boolean isTabConversionEnabled() {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
@@ -673,6 +698,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
 		}
+		
+		if (fProjectionSupport != null) {
+			fProjectionSupport.dispose();
+			fProjectionSupport= null;
+		}
+		
 		XMLCore.getDefault().removeDocumentModelListener(fDocumentModelListener);
 	}
 	
