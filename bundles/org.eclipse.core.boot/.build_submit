@@ -1,0 +1,2 @@
+bin.includes=*.jar
+javadoc.packages=org.eclipse.core.boot.*

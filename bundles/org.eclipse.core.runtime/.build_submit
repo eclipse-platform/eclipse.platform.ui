@@ -1,4 +1,4 @@
-doc
-.options
-plugin.jars
-plugin.xml
+build.includes=doc,.options,plugin.jars,plugin.xml
+
+bin.includes=.options,plugin.xml,*.jar
+javadoc.packages=org.eclipse.core.runtime.*
