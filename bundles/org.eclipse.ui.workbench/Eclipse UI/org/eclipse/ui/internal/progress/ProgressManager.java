@@ -62,7 +62,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	private static ProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
-	private Collection listeners = new ArrayList();
+	private Collection listeners = Collections.synchronizedList(new ArrayList());
 	Object listenerKey = new Object();
 	private WorkbenchMonitorProvider monitorProvider;
 	private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
