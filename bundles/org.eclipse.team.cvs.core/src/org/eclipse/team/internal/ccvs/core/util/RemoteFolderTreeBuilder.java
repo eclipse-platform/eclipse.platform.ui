@@ -230,10 +230,10 @@ public class RemoteFolderTreeBuilder {
 			} else if (revision == ADDED) {
 				children.put(name, new RemoteFile(remote, name, tag));
 			} else if (revision == UNKNOWN) {
-				// This should have been created from the local resources.
-				// If it wasn't, we'll add it!
-				if (!children.containsKey(name))
-					children.put(name, new RemoteFile(remote, name, tag));
+				// The local resource is out of sync with the remote.
+				// Create a RemoteFile associated with the tag so we are assured of getting the proper revision
+				// (Note: this will replace the RemoteFile added from the local base)
+				children.put(name, new RemoteFile(remote, name, tag));
 			} else if (revision == DELETED) {
 				// This should have been deleted while creating from the local resources.
 				// If it wasn't, delete it now.

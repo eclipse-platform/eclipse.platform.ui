@@ -235,9 +235,9 @@ public class Client {
 	public static ICVSResource getManagedResource(IResource resource) throws CVSException {
 		File file = resource.getLocation().toFile();
 		if (resource.getType() == IResource.FILE)
-			return getManagedFolder(file);
-		else
 			return getManagedFile(file);
+		else
+			return getManagedFolder(file);
 	}
 	
 	/**
