@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.streams;
 
+import java.io.BufferedOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -56,7 +57,7 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 *        an InterruptedIOException; 0 blocks indefinitely, -1 closes the stream in the background
 	 */
 	public TimeoutOutputStream(OutputStream out, int bufferSize, long writeTimeout, long closeTimeout) {
-		super(out);
+		super(new BufferedOutputStream(out, bufferSize));
 		this.writeTimeout = writeTimeout;
 		this.closeTimeout = closeTimeout;
 		this.iobuffer = new byte[bufferSize];

@@ -83,6 +83,8 @@ public class RemoteFolderTreeBuilder {
 	
 	private static Map EMPTY_MAP = new HashMap();
 	
+	private boolean newFolderExist = false;
+	
 	static class DeltaNode {
 		int syncState = Update.STATE_NONE;
 		String name;
@@ -210,13 +212,17 @@ public class RemoteFolderTreeBuilder {
 			
 			// 2nd Connection: Build remote tree from above delta using 2nd connection to fetch unknown directories
 			// NOTE: Multiple commands may be issued over this connection.
-			// NOTE: It is also possible that no messages will be sent (i.e. wasted connection!)
 			remoteRoot =
 				new RemoteFolderTree(null, root.getName(), repository,
 					root.getFolderSyncInfo().getRepository(),
 					tagForRemoteFolder(root, tag));
-			session = new Session(repository, remoteRoot, false);
-			session.open(Policy.subMonitorFor(monitor, 10));
+			if (newFolderExist) {
+				// New folders will require a connection for fetching their members
+				session = new Session(repository, remoteRoot, false);
+				session.open(Policy.subMonitorFor(monitor, 10));
+			} else {
+				session = null;
+			}
 			try {
 				// Set up an infinite progress monitor for the recursive build
 				IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(monitor, 30);
@@ -224,9 +230,10 @@ public class RemoteFolderTreeBuilder {
 				// Build the remote tree
 				buildRemoteTree(session, root, remoteRoot, "", subProgress); //$NON-NLS-1$
 			} finally {
-				session.close();
+				if (session != null)
+					session.close();
 			}
-			
+
 			// 3rd+ Connection: Used to fetch file status in groups of 1024
 			if (!changedFiles.isEmpty()) {
 				String[] allChangedFiles = (String[])changedFiles.toArray(new String[changedFiles.size()]);
@@ -405,7 +412,7 @@ public class RemoteFolderTreeBuilder {
 			for (int i=0;i<folders.length;i++) {
 				ICVSFolder folder = (ICVSFolder)folders[i];
 				DeltaNode d = (DeltaNode)deltas.get(folder.getName());
-				if (folder.isCVSFolder() && ! isOrphanedSubtree(session, folder) && (d==null || d.getRevision() != DELETED)) {
+				if (folder.isCVSFolder() && ! isOrphanedSubtree(folder) && (d==null || d.getRevision() != DELETED)) {
 					children.put(folders[i].getName(), 
 						new RemoteFolderTree(remote, folders[i].getName(), repository, 
 							folder.getFolderSyncInfo().getRepository(), 
@@ -518,15 +525,12 @@ public class RemoteFolderTreeBuilder {
 	private List fetchDelta(Session session, String[] arguments, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create an listener that will accumulate new and removed files and folders
-		final List newChildDirectories = new ArrayList();
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(ICVSFolder root, String path, boolean newDirectory) {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
 					recordDelta(path, FOLDER, Update.STATE_NONE);
 					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", Util.toTruncatedPath(path, 3))); //$NON-NLS-1$
-					// Record new directory to be used as a parameter to fetch its contents
-					newChildDirectories.add(path.toString());
 				}
 			}
 			public void directoryDoesNotExist(ICVSFolder root, String path) {
@@ -690,6 +694,9 @@ public class RemoteFolderTreeBuilder {
 	 * from the repository yet.
 	 */
 	private void recordDelta(String path, String revision, int syncState) {
+		if (revision == FOLDER) {
+			newFolderExist = true;
+		}
 		String parent = Util.removeLastSegment(path);
 		Map deltas = (Map)fileDeltas.get(parent);
 		if (deltas == null) {
@@ -723,8 +730,8 @@ public class RemoteFolderTreeBuilder {
 		return tag == null ? folder.getFolderSyncInfo().getTag() : tag;
 	}
 	
-	private boolean isOrphanedSubtree(Session session, ICVSFolder mFolder) throws CVSException {
-		return mFolder.isCVSFolder() && ! mFolder.isManaged() && ! mFolder.equals(session.getLocalRoot()) && mFolder.getParent().isCVSFolder();
+	private boolean isOrphanedSubtree(ICVSFolder mFolder) throws CVSException {
+		return mFolder.isCVSFolder() && ! mFolder.isManaged() && ! mFolder.equals(root) && mFolder.getParent().isCVSFolder();
 	}
 	
 	private void recordRemoteFolder(RemoteFolderTree remote) throws CVSException {
