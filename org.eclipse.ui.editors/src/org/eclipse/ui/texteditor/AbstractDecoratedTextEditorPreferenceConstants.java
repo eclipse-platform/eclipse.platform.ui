@@ -64,6 +64,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 */
 	public final static String EDITOR_TAB_WIDTH= "tabWidth"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that holds the size of the editor's undo history.
+	 * <p>
+	 * Value is of type <code>int</code>: 0 or positive int value specifying the size of
+	 * the editor's undo history.
+	 * </p>
+	 * @since 3.1
+	 */
+	public final static String EDITOR_UNDO_HISTORY_SIZE= "undoHistorySize"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the print margin is turned on or off
@@ -336,6 +346,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(232, 242, 254));
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 4);
+		
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, 25);
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);

@@ -17,9 +17,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.jface.text.DefaultUndoManager;
+import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
-import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -180,5 +182,17 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			stateMask= stateMask | modifier;
 		}
 		return stateMask;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getUndoManager(org.eclipse.jface.text.source.ISourceViewer)
+	 * @since 3.1
+	 */
+	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
+		if (fPreferenceStore == null)
+			return super.getUndoManager(sourceViewer);
+		
+		int undoHistorySize= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE);
+		return new DefaultUndoManager(undoHistorySize);
 	}
 }

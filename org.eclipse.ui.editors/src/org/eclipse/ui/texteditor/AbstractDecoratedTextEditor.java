@@ -38,6 +38,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
@@ -863,6 +864,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				IPreferenceStore store= getPreferenceStore();
 				if (store != null)
 					sourceViewer.getTextWidget().setTabs(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+				return;
+			}
+			
+			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE.equals(property) && sourceViewer instanceof ITextViewerExtension6) {
+				IPreferenceStore store= getPreferenceStore();
+				if (store != null)
+					((ITextViewerExtension6)sourceViewer).getUndoManager().setMaximalUndoLevel(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE));
 				return;
 			}
 

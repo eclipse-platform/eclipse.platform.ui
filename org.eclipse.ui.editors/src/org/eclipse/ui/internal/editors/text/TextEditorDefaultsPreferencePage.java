@@ -411,6 +411,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
 		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE));
+		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
 		
@@ -486,6 +488,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		tabWidthDomain.addRange(1, 16);
 		addSpinner(appearanceComposite, tabWidth, tabWidthDomain, 0);
 
+		label= TextEditorMessages.getString("TextEditorPreferencePage.undoHistorySize"); //$NON-NLS-1$
+		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
+		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
+		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 5, 0);
+		
 		label= TextEditorMessages.getString("TextEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
 		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);
 		addCheckBox(appearanceComposite, highlightCurrentLine, new BooleanDomain(), 0);
@@ -496,8 +503,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		label= TextEditorMessages.getString("TextEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
 		Preference printMarginColumn= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, label, null);
-		EnumeratedDomain printMarginDomain= new EnumeratedDomain();
-		printMarginDomain.addRange(20, 200);
+		IntegerDomain printMarginDomain= new IntegerDomain(20, 200);
 		Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 3, 20);
 		createDependency(showPrintMarginButton, showPrintMargin, printMarginControls);
 		
