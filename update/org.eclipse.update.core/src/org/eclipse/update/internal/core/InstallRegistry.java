@@ -170,4 +170,12 @@ public class InstallRegistry extends Properties {
 		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
 		return InstallRegistry.getInstance().justInstalledPlugins.get(name) != null;
 	}
+	
+	/**
+	 * This method is only needed for the update JUnit tests.
+	 *
+	 */
+	public static void cleanup() {
+		InstallRegistry.getInstance().justInstalledPlugins.clear();
+	}
 }
