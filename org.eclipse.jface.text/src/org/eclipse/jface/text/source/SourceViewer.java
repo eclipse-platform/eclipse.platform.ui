@@ -99,24 +99,29 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		 */
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clArea= composite.getClientArea();
-			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
-				
-				Rectangle trim= getTextWidget().computeTrim(0, 0, 0, 0);
-				int scrollbarHeight= trim.height;
-				
-				int verticalRulerWidth= fVerticalRuler.getWidth();
-				int overviewRulerWidth= 0;
-				if (fOverviewRuler != null && fIsOverviewRulerVisible) {
-					overviewRulerWidth= fOverviewRuler.getWidth();
-					fOverviewRuler.getControl().setBounds(clArea.width - overviewRulerWidth -1, scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
-					fOverviewRuler.getHeaderControl().setBounds(clArea.width - overviewRulerWidth -1, 0, overviewRulerWidth, scrollbarHeight);
-				}				
-				
-				getTextWidget().setBounds(verticalRulerWidth + fGap, 0, clArea.width - verticalRulerWidth - overviewRulerWidth - 2*fGap, clArea.height);
-				fVerticalRuler.getControl().setBounds(0, 0, verticalRulerWidth, clArea.height - scrollbarHeight);
+			Rectangle trim= getTextWidget().computeTrim(0, 0, 0, 0);
+			int scrollbarHeight= trim.height;
 			
-			} else
-				getTextWidget().setBounds(0, 0, clArea.width, clArea.height);
+			int x= 0;
+			int width= clArea.width;
+
+			if (fOverviewRuler != null && fIsOverviewRulerVisible) {
+				int overviewRulerWidth= fOverviewRuler.getWidth();
+				fOverviewRuler.getControl().setBounds(clArea.width - overviewRulerWidth -1, scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
+				fOverviewRuler.getHeaderControl().setBounds(clArea.width - overviewRulerWidth -1, 0, overviewRulerWidth, scrollbarHeight);
+				
+				width -= overviewRulerWidth + fGap;
+			}				
+				
+			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
+				int verticalRulerWidth= fVerticalRuler.getWidth();
+				fVerticalRuler.getControl().setBounds(0, 0, verticalRulerWidth, clArea.height - scrollbarHeight);
+				
+				x= verticalRulerWidth + fGap;
+				width -= verticalRulerWidth + fGap;
+			}
+			
+			getTextWidget().setBounds(x, 0, width, clArea.height);
 		}
 	}
 	
