@@ -38,7 +38,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantySaxDefaultHandler;
+import org.eclipse.ui.externaltools.internal.ant.editor.AntEditorSaxDefaultHandler;
 import org.eclipse.ui.externaltools.internal.ant.editor.support.TestTextCompletionProcessor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
@@ -478,14 +478,14 @@ public class CodeCompletionTest extends TestCase {
 
 
     /**
-     * Tests parsing an XML file with the use of our PlantySaxDefaultHandler.
+     * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
      */
-    public void testXMLParsingWithPlantyDefaultHandler() throws SAXException, ParserConfigurationException, IOException {
+    public void testXMLParsingWithAntEditorDefaultHandler() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
 
 		URL url= getClass().getResource("test1.xml");
 		File file= new File(url.getFile());
-        PlantySaxDefaultHandler tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 4, 8);
+        AntEditorSaxDefaultHandler tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
         InputStream tempStream = getClass().getResourceAsStream("test1.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
@@ -500,7 +500,7 @@ public class CodeCompletionTest extends TestCase {
 
 		url= getClass().getResource("test2.xml");
 		file= new File(url.getFile());
-        tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 4, 8);
+        tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
         tempStream = getClass().getResourceAsStream("test2.xml");
         tempParser.parse(tempStream, tempHandler);
         tempElement = tempHandler.getParentElement(false);
@@ -515,7 +515,7 @@ public class CodeCompletionTest extends TestCase {
 
 		url= getClass().getResource("test3.xml");
 		file= new File(url.getFile());
-        tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 3, 1);
+        tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 3, 1);
         tempStream = getClass().getResourceAsStream("test3.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
@@ -527,7 +527,7 @@ public class CodeCompletionTest extends TestCase {
 
 		url= getClass().getResource("test4.xml");
 		file= new File(url.getFile());
-        tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 0, 46);
+        tempHandler = new AntEditorSaxDefaultHandler(file.getParentFile(), 0, 46);
         tempStream = getClass().getResourceAsStream("test4.xml");
         try {
             tempParser.parse(tempStream, tempHandler);

@@ -273,7 +273,7 @@ public class AntEditorContentOutlineTests extends TestCase {
 
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("PlantyContentOutlineTest");
+        TestSuite suite = new TestSuite("AntEditorContentOutlineTest");
         suite.addTest(new AntEditorContentOutlineTests("testOutlinePreparingHandler"));
         suite.addTest(new AntEditorContentOutlineTests("testCreationOfOutlineTree"));
         suite.addTest(new AntEditorContentOutlineTests("testParsingOfNonValidFile"));

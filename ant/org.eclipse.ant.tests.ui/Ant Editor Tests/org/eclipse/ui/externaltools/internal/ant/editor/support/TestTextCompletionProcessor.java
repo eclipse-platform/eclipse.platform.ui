@@ -17,12 +17,12 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantyCompletionProcessor;
+import org.eclipse.ui.externaltools.internal.ant.editor.AntEditorCompletionProcessor;
 import org.eclipse.ui.externaltools.internal.ant.editor.test.CodeCompletionTest;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.w3c.dom.Element;
 
-public class TestTextCompletionProcessor extends PlantyCompletionProcessor {
+public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	private final CodeCompletionTest TestTextCompletionProcessor;
     
     public TestTextCompletionProcessor(CodeCompletionTest TestTextCompletionProcessor) {
@@ -92,7 +92,7 @@ public class TestTextCompletionProcessor extends PlantyCompletionProcessor {
     /**
      * Returns the edited File that org.eclipse.ui.externaltools.internal.ant.editorfore or a temporary 
      * file, which only serves as a dummy.
-     * @see org.eclipse.ui.externaltools.internal.ant.editor.PlantyCompletionProcessor#getEditedFile()
+     * @see org.eclipse.ui.externaltools.internal.ant.editor.AntEditorCompletionProcessor#getEditedFile()
      */
 	public File getEditedFile() {
         File tempFile = null;

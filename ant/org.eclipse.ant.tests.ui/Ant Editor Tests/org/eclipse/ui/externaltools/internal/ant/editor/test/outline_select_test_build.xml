@@ -9,7 +9,7 @@
 		<property name="temp.folder" value="${basedir}/temp.folder" />
 		<property name="plugin.destination" value="${basedir}" />
 		<property name="build.result.folder" value="${basedir}" />
-		<property name="source.planty.jar" value="src/" />
+		<property name="source.antEditor.jar" value="src/" />
 		<echo message="Value is ${plugins_dir}" />
 	</target>
 
