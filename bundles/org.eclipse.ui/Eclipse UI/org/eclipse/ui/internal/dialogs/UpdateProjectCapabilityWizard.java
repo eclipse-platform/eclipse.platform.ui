@@ -81,6 +81,16 @@ public class UpdateProjectCapabilityWizard extends MultiStepWizard implements IP
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
+	protected boolean canFinishOnReviewPage() {
+		WizardStep[] steps = getSteps();
+		// yes if the only step is to remove capabilities
+		return steps.length == 1
+			&& steps[0] instanceof RemoveCapabilitiesStep;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
 	protected String getConfigurePageTitle() {
 		return WorkbenchMessages.getString("UpdateProjectCapabilityWizard.title");
 	}

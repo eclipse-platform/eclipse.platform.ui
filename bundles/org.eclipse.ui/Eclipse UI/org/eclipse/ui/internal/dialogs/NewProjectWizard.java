@@ -112,6 +112,14 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
+	protected boolean canFinishOnReviewPage() {
+		// yes if the only step is to create the project.
+		return getSteps().length == 1;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
 	protected String getConfigurePageTitle() {
 		return WorkbenchMessages.getString("NewProjectWizard.title");
 	}
@@ -215,11 +223,13 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 	 * Method declared on IWizard.
 	 */
 	public boolean performFinish() {
-		if (newProject != null) {
+		boolean done = super.performFinish();
+		
+		if (done && newProject != null) {
 			BasicNewResourceWizard.selectAndReveal(newProject, workbench.getActiveWorkbenchWindow());
 		}
 		
-		return true;
+		return done;
 	}
 	
 	/**

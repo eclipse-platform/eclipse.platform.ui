@@ -48,7 +48,7 @@ public abstract class MultiStepWizard extends Wizard {
 		super.addPages();
 		addCustomPages();
 		
-		reviewPage = new MultiStepReviewWizardPage("multiStepReviewWizardPage");//$NON-NLS-1$
+		reviewPage = new MultiStepReviewWizardPage("multiStepReviewWizardPage", this);//$NON-NLS-1$
 		reviewPage.setTitle(getReviewPageTitle()); //$NON-NLS-1$
 		reviewPage.setDescription(getReviewPageDescription()); //$NON-NLS-1$
 		this.addPage(reviewPage);
@@ -64,12 +64,23 @@ public abstract class MultiStepWizard extends Wizard {
 	 * Method declared on IWizard.
 	 */
 	public boolean canFinish() {
-		if (isConfigureStepMode())
+		if (getContainer().getCurrentPage() == reviewPage)
+			return canFinishOnReviewPage();
+		else if (isConfigureStepMode())
 			return getStepContainer().canWizardFinish();
 		else
 			return false;
 	}
 
+	/**
+	 * Returns whether the wizard wants the Finish button
+	 * enabled on the review page. Should only happen if
+	 * there is only one step and that step does not require
+	 * further interaction with the user. The Next button will
+	 * be disabled and the instructions updated.
+	 */
+	protected abstract boolean canFinishOnReviewPage();
+	
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
@@ -149,10 +160,27 @@ public abstract class MultiStepWizard extends Wizard {
 	 * Method declared on IWizard.
 	 */
 	public boolean performFinish() {
+		// Finish on review page is a shortcut to performing
+		// the steps.
+		if (getContainer().getCurrentPage() == reviewPage) {
+			getContainer().showPage(configPage);
+			return false;
+		}
+			
 		// Does nothing as each step is responsible
-		// to complete its work then its wizard is
+		// to complete its work when its wizard is
 		// done.
 		return true;
+	}
+	
+	/**
+	 * Returns the collection of steps for the wizard.
+	 */
+	public final WizardStep[] getSteps() {
+		if (reviewPage != null)
+			return reviewPage.getSteps();
+		else
+			return new WizardStep[0];
 	}
 	
 	/**

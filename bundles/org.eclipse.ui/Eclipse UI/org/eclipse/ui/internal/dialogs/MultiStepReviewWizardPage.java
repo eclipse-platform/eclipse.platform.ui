@@ -33,15 +33,18 @@ import org.eclipse.ui.internal.misc.WizardStepGroup;
  */
 public class MultiStepReviewWizardPage extends WizardPage {
 	private Text detailsField;
+	private Label instructionLabel;
 	private WizardStepGroup stepGroup;
+	private MultiStepWizard stepWizard;
 
 	/**
 	 * Creates a new step review wizard page.
 	 *
 	 * @param pageName the name of this page
 	 */
-	public MultiStepReviewWizardPage(String pageName) {
+	public MultiStepReviewWizardPage(String pageName, MultiStepWizard stepWizard) {
 		super(pageName);
+		this.stepWizard = stepWizard;
 	}
 
 	/* (non-Javadoc)
@@ -49,7 +52,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 	 */
 	public boolean canFlipToNextPage() {
 		// Already know there is a next page...
-		return isPageComplete();
+		return isPageComplete() && !stepWizard.canFinishOnReviewPage();
 	}
 
 	/* (non-Javadoc)
@@ -98,12 +101,12 @@ public class MultiStepReviewWizardPage extends WizardPage {
 	 * Creates the control for the instructions
 	 */
 	private void createInstructionsGroup(Composite parent) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionLabel")); //$NON-NLS-1$
+		instructionLabel = new Label(parent, SWT.LEFT);
+		instructionLabel.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionLabel")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
-		label.setLayoutData(data);
+		instructionLabel.setLayoutData(data);
 	}
 	
 	/**
@@ -125,12 +128,37 @@ public class MultiStepReviewWizardPage extends WizardPage {
 	}
 	
 	/**
-	 * Sets the steps to be displayed.
+	 * Returns the steps to be displayed.
+	 */
+	/* package */ WizardStep[] getSteps() {
+		if (stepGroup != null)
+			return stepGroup.getSteps();
+		else
+			return new WizardStep[0];
+	}
+
+	/**
+	 * Sets the steps to be displayed. Has no effect if
+	 * the page is not yet created.
 	 * 
 	 * @param steps the collection of steps
 	 */
 	/* package */ void setSteps(WizardStep[] steps) {
 		if (stepGroup != null)
 			stepGroup.setSteps(steps);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IDialogPage.
+	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			if (stepWizard.canFinishOnReviewPage())
+				instructionLabel.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionFinishLabel")); //$NON-NLS-1$
+			else
+				instructionLabel.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionNextLabel")); //$NON-NLS-1$
+			((Composite)getControl()).layout(true);
+		}
 	}
 }
