@@ -63,9 +63,13 @@ public class ResourceDeltaTest extends EclipseTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ResourceDeltaTest.class);
-		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new ResourceDeltaTest("testOrphanedSubtree"));
+		String testName = System.getProperty("eclipse.cvs.testName");
+		if (testName == null) {
+			TestSuite suite = new TestSuite(ResourceDeltaTest.class);
+			return new CVSTestSetup(suite);
+		} else {
+			return new CVSTestSetup(new ResourceDeltaTest(testName));
+		}
 	}
 	
 	public void assertNotManaged(ICVSFile cvsFile) throws CVSException {
@@ -274,5 +278,17 @@ public class ResourceDeltaTest extends EclipseTest {
 				return true;
 			}
 		}, 0);
+	}
+	
+	public void testExternalDeletion() throws CoreException, TeamException {
+		IProject project = createProject("testExternalDeletion", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
+		IFile file = project.getFile("folder1/a.txt");
+		deepDelete(file.getLocation().toFile());
+		file.refreshLocal(IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		assertTrue(!file.exists());
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+		assertTrue(cvsFile.isManaged());
+		byte[] syncBytes = cvsFile.getSyncBytes();
+		assertTrue(ResourceSyncInfo.isDeletion(syncBytes));
 	}
 }

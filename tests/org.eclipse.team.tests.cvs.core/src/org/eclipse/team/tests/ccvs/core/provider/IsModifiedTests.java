@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -523,7 +524,14 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, null, true);
 	}
 	
-	public void testExternalModifications() {
+	public void testExternalDeletion() throws CoreException, TeamException {
+		IProject project = createProject("testExternalDeletion", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
+		IFile file = project.getFile("folder1/unmanaged.txt");
+		file.create(new ByteArrayInputStream("stuff".getBytes()), false, DEFAULT_MONITOR);
+		file.getLocation().toFile().delete();
+		file.refreshLocal(IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		assertTrue(!file.exists());
+		assertModificationState(project, null, true);
 	}
 
 }
