@@ -31,7 +31,7 @@ public class CharacterKey extends NonModifierKey {
 	 * @param character
 	 * @return
 	 */	
-	public static CharacterKey create(char character) {
+	public static CharacterKey getInstance(char character) {
 		if (character <= 255) {
 			CharacterKey characterKey = cache[character];
 			
@@ -45,11 +45,8 @@ public class CharacterKey extends NonModifierKey {
 			return new CharacterKey(character);
 	}
 
-	private char character;
-	
 	private CharacterKey(char character) {
-		super();
-		this.character = character;
+		super("" + character); // TODO 1.4 Character.toString(character);
 	}
 
 	/**
@@ -58,10 +55,6 @@ public class CharacterKey extends NonModifierKey {
 	 * @return
 	 */	
 	public char getCharacter() {
-		return character;
-	}
-
-	public String toString() {
-		return "" + character; // TODO 1.4 Character.toString(character);
+		return name.charAt(0);
 	}
 }

@@ -45,14 +45,7 @@ public class SpecialKey extends NonModifierKey {
 	public final static SpecialKey PAGE_DOWN = new SpecialKey("PAGE_DOWN"); 
 	public final static SpecialKey PAGE_UP = new SpecialKey("PAGE_UP"); 
 
-	private String name;	
-	
 	private SpecialKey(String name) {
-		super();
-		this.name = name;
+		super(name);
 	}
-
-	public String toString() {
-		return name;
-	}	
 }

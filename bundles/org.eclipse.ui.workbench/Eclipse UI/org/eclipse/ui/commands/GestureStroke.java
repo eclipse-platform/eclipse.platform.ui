@@ -29,7 +29,7 @@ public class GestureStroke {
 	 * @param gesture
 	 * @return
 	 */	
-	public static GestureStroke create(Gesture gesture) {
+	public static GestureStroke getInstance(Gesture gesture) {
 		return new GestureStroke(gesture);
 	}
 

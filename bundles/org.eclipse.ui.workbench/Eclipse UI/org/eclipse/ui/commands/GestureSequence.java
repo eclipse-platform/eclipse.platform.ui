@@ -31,7 +31,7 @@ public class GestureSequence {
 	 * @param gestureStrokes
 	 * @return
 	 */	
-	public static GestureSequence create(List gestureStrokes) {
+	public static GestureSequence getInstance(List gestureStrokes) {
 		return new GestureSequence(gestureStrokes);
 	}
 

@@ -45,7 +45,7 @@ public final class Util {
 		else if (left == null)
 			return -1;	
 		else if (right == null)
-			return +1;
+			return 1;
 		else
 			return left.compareTo(right);
 	}
@@ -56,7 +56,7 @@ public final class Util {
 		else if (left == null)
 			return -1;	
 		else if (right == null)
-			return +1;
+			return 1;
 		else {
 			int l = left.length;
 			int r = right.length;
@@ -76,14 +76,13 @@ public final class Util {
 		}
 	}
 
-	public static int compare(List left, List right)
-		throws ClassCastException {
+	public static int compare(List left, List right) {
 		if (left == null && right == null)
 			return 0;
 		else if (left == null)
 			return -1;
 		else if (right == null)
-			return +1;
+			return 1;
 		else {
 			int l = left.size();
 			int r = right.size();
@@ -92,8 +91,8 @@ public final class Util {
 				return l - r;
 			else {
 				for (int i = 0; i < l; i++) {
-					int compareTo = ((Comparable) left.get(i)).compareTo((Comparable) right.get(i));
-
+					int compareTo = compare((Comparable) left.get(i), (Comparable) right.get(i)); 
+					
 					if (compareTo != 0)
 						return compareTo;
 				}

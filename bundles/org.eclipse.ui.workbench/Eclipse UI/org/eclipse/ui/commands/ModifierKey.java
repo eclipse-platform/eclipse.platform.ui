@@ -28,14 +28,7 @@ public class ModifierKey extends Key {
 	public final static ModifierKey CTRL = new ModifierKey("CTRL"); 
 	public final static ModifierKey SHIFT = new ModifierKey("SHIFT"); 
 
-	private String name;
-	
 	private ModifierKey(String name) {
-		super();
-		this.name = name;
-	}
-
-	public String toString() {
-		return name;
+		super(name);
 	}
 }

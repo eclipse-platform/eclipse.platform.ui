@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.commands;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -31,64 +33,62 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  */
-public class KeyStroke {
+public class KeyStroke implements Comparable {
 
-	private final static char KEY_DELIMITER = '+'; //$NON-NLS-1$
-	private final static String KEY_DELIMITERS = "+"; //$NON-NLS-1$
+	public final static String ALT = "ALT"; //$NON-NLS-1$
+	public final static String ARROW_DOWN = "ARROW_DOWN"; //$NON-NLS-1$
+	public final static String ARROW_LEFT = "ARROW_LEFT"; //$NON-NLS-1$
+	public final static String ARROW_RIGHT = "ARROW_RIGHT"; //$NON-NLS-1$
+	public final static String ARROW_UP = "ARROW_UP"; //$NON-NLS-1$
+	public final static String BS = "BS"; //$NON-NLS-1$
+	public final static String COMMAND = "COMMAND"; //$NON-NLS-1$
+	public final static String CR = "CR"; //$NON-NLS-1$
+	public final static String CTRL = "CTRL"; //$NON-NLS-1$
+	public final static String DEL = "DEL"; //$NON-NLS-1$
+	public final static String END = "END"; //$NON-NLS-1$
+	public final static String ESC = "ESC"; //$NON-NLS-1$
+	public final static String F1 = "F1"; //$NON-NLS-1$
+	public final static String F10 = "F10"; //$NON-NLS-1$
+	public final static String F11 = "F11"; //$NON-NLS-1$
+	public final static String F12 = "F12"; //$NON-NLS-1$
+	public final static String F2 = "F2"; //$NON-NLS-1$
+	public final static String F3 = "F3"; //$NON-NLS-1$
+	public final static String F4 = "F4"; //$NON-NLS-1$
+	public final static String F5 = "F5"; //$NON-NLS-1$
+	public final static String F6 = "F6"; //$NON-NLS-1$
+	public final static String F7 = "F7"; //$NON-NLS-1$
+	public final static String F8 = "F8"; //$NON-NLS-1$
+	public final static String F9 = "F9"; //$NON-NLS-1$
+	public final static String HOME = "HOME"; //$NON-NLS-1$
+	public final static String INSERT = "INSERT"; //$NON-NLS-1$
+	public final static char KEY_DELIMITER = '+'; //$NON-NLS-1$
+	public final static String KEY_DELIMITERS = KEY_DELIMITER + ""; //$NON-NLS-1$
+	public final static String PAGE_DOWN = "PAGE_DOWN"; //$NON-NLS-1$
+	public final static String PAGE_UP = "PAGE_UP"; //$NON-NLS-1$
+	public final static String PLUS = "PLUS"; //$NON-NLS-1$
+	public final static String SHIFT = "SHIFT"; //$NON-NLS-1$
+	public final static String SPACE = "SPACE"; //$NON-NLS-1$
+	public final static String TAB = "TAB"; //$NON-NLS-1$
 
-	private final static String BS = "BS"; //$NON-NLS-1$
-	private final static String CR = "CR"; //$NON-NLS-1$
-	private final static String DEL = "DEL"; //$NON-NLS-1$
-	private final static String ESC = "ESC"; //$NON-NLS-1$
-	private final static String PLUS = "PLUS"; //$NON-NLS-1$
-	private final static String SPACE = "SPACE"; //$NON-NLS-1$
-	private final static String TAB = "TAB"; //$NON-NLS-1$
-
-	private final static String ALT = "ALT"; //$NON-NLS-1$
-	private final static String COMMAND = "COMMAND"; //$NON-NLS-1$
-	private final static String CTRL = "CTRL"; //$NON-NLS-1$
-	private final static String SHIFT = "SHIFT"; //$NON-NLS-1$
-
-	private final static String ARROW_DOWN = "ARROW_DOWN"; //$NON-NLS-1$
-	private final static String ARROW_LEFT = "ARROW_LEFT"; //$NON-NLS-1$
-	private final static String ARROW_RIGHT = "ARROW_RIGHT"; //$NON-NLS-1$
-	private final static String ARROW_UP = "ARROW_UP"; //$NON-NLS-1$
-	private final static String END = "END"; //$NON-NLS-1$
-	private final static String F1 = "F1"; //$NON-NLS-1$
-	private final static String F10 = "F10"; //$NON-NLS-1$
-	private final static String F11 = "F11"; //$NON-NLS-1$
-	private final static String F12 = "F12"; //$NON-NLS-1$
-	private final static String F2 = "F2"; //$NON-NLS-1$
-	private final static String F3 = "F3"; //$NON-NLS-1$
-	private final static String F4 = "F4"; //$NON-NLS-1$
-	private final static String F5 = "F5"; //$NON-NLS-1$
-	private final static String F6 = "F6"; //$NON-NLS-1$
-	private final static String F7 = "F7"; //$NON-NLS-1$
-	private final static String F8 = "F8"; //$NON-NLS-1$
-	private final static String F9 = "F9"; //$NON-NLS-1$
-	private final static String HOME = "HOME"; //$NON-NLS-1$
-	private final static String INSERT = "INSERT"; //$NON-NLS-1$
-	private final static String PAGE_DOWN = "PAGE_DOWN"; //$NON-NLS-1$
-	private final static String PAGE_UP = "PAGE_UP"; //$NON-NLS-1$
+	private final static int HASH_FACTOR = 89;
+	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
 	
 	private static SortedMap escapeKeyLookup = new TreeMap();
 	private static SortedMap modifierKeyLookup = new TreeMap();
 	private static SortedMap specialKeyLookup = new TreeMap();
 	
 	static {
-		escapeKeyLookup.put(BS, CharacterKey.create('\b'));
-		escapeKeyLookup.put(CR, CharacterKey.create('\r'));
-		escapeKeyLookup.put(DEL, CharacterKey.create('\u007F'));
-		escapeKeyLookup.put(ESC, CharacterKey.create('\u001b'));
-		escapeKeyLookup.put(PLUS, CharacterKey.create('+'));
-		escapeKeyLookup.put(SPACE, CharacterKey.create(' '));
-		escapeKeyLookup.put(TAB, CharacterKey.create('\t'));
-
+		escapeKeyLookup.put(BS, CharacterKey.getInstance('\b'));
+		escapeKeyLookup.put(CR, CharacterKey.getInstance('\r'));
+		escapeKeyLookup.put(DEL, CharacterKey.getInstance('\u007F'));
+		escapeKeyLookup.put(ESC, CharacterKey.getInstance('\u001b'));
+		escapeKeyLookup.put(PLUS, CharacterKey.getInstance('+'));
+		escapeKeyLookup.put(SPACE, CharacterKey.getInstance(' '));
+		escapeKeyLookup.put(TAB, CharacterKey.getInstance('\t'));
 		modifierKeyLookup.put(ALT, ModifierKey.ALT);
 		modifierKeyLookup.put(COMMAND, ModifierKey.COMMAND);
 		modifierKeyLookup.put(CTRL, ModifierKey.CTRL);
 		modifierKeyLookup.put(SHIFT, ModifierKey.SHIFT);
-
 		specialKeyLookup.put(ARROW_DOWN, SpecialKey.ARROW_DOWN);
 		specialKeyLookup.put(ARROW_LEFT, SpecialKey.ARROW_LEFT);
 		specialKeyLookup.put(ARROW_RIGHT, SpecialKey.ARROW_RIGHT);
@@ -115,11 +115,47 @@ public class KeyStroke {
 	/**
 	 * JAVADOC
 	 * 
-	 * @param modifierKeys
 	 * @param nonModifierKey
 	 * @return
 	 */		
-	public static KeyStroke create(Set modifierKeys, NonModifierKey nonModifierKey) {
+	public static KeyStroke getInstance(NonModifierKey nonModifierKey) {
+		return new KeyStroke(Util.EMPTY_SORTED_SET, nonModifierKey);
+	}
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @param modifierKey
+	 * @param nonModifierKey
+	 * @return
+	 */
+	public static KeyStroke getInstance(ModifierKey modifierKey, NonModifierKey nonModifierKey) {
+		if (modifierKey == null)
+			throw new NullPointerException();
+
+		return new KeyStroke(new TreeSet(Collections.singletonList(modifierKey)), nonModifierKey);
+	}
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @param modifierKeys
+	 * @param nonModifierKey
+	 * @return
+	 */
+	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NonModifierKey nonModifierKey) {
+		Util.assertInstance(modifierKeys, ModifierKey.class);		
+		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), nonModifierKey);
+	}
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @param modifierKeys
+	 * @param nonModifierKey
+	 * @return
+	 */
+	public static KeyStroke getInstance(SortedSet modifierKeys, NonModifierKey nonModifierKey) {
 		return new KeyStroke(modifierKeys, nonModifierKey);
 	}
 
@@ -135,7 +171,7 @@ public class KeyStroke {
 		if (string == null)
 			throw new NullPointerException();
 
-		Set modifierKeys = new TreeSet();
+		SortedSet modifierKeys = new TreeSet();
 		NonModifierKey nonModifierKey = null;
 		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_DELIMITERS);
 		
@@ -149,7 +185,7 @@ public class KeyStroke {
 				if (modifierKey == null || !modifierKeys.add(modifierKey))
 					throw new ParseException();
 			} else if (name.length() == 1) {
-				nonModifierKey = CharacterKey.create(name.charAt(0));				
+				nonModifierKey = CharacterKey.getInstance(name.charAt(0));				
 				break;
 			} else {
 				name = name.toUpperCase();
@@ -168,16 +204,37 @@ public class KeyStroke {
 		return new KeyStroke(modifierKeys, nonModifierKey);
 	}
 
-	private Set modifierKeys;
+	private SortedSet modifierKeys;
 	private NonModifierKey nonModifierKey;
+
+	private transient ModifierKey[] modifierKeysAsArray;
 	
-	private KeyStroke(Set modifierKeys, NonModifierKey nonModifierKey) {
+	private KeyStroke(SortedSet modifierKeys, NonModifierKey nonModifierKey) {
 		super();
 		if (nonModifierKey == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
 		this.nonModifierKey = nonModifierKey;		
+		this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[modifierKeys.size()]);
+	}
+
+	public int compareTo(Object object) {
+		KeyStroke keyStroke = (KeyStroke) object;
+		int compareTo = Util.compare((Comparable[]) modifierKeysAsArray, (Comparable[]) keyStroke.modifierKeysAsArray);
+		
+		if (compareTo == 0)
+			compareTo = nonModifierKey.compareTo(keyStroke.nonModifierKey);			
+			
+		return compareTo;	
+	}
+	
+	public boolean equals(Object object) {
+		if (!(object instanceof KeyStroke))
+			return false;
+
+		KeyStroke keyStroke = (KeyStroke) object;	
+		return modifierKeys.equals(keyStroke.modifierKeys) && nonModifierKey.equals(keyStroke.nonModifierKey);
 	}
 
 	/**
@@ -185,7 +242,27 @@ public class KeyStroke {
 	 * 
 	 * @return
 	 */
-	public String format() {
+	public Set getModifierKeys() {
+		return Collections.unmodifiableSet(modifierKeys);
+	}
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */
+	public NonModifierKey getNonModifierKey() {
+		return nonModifierKey;
+	}
+
+	public int hashCode() {
+		int result = HASH_INITIAL;
+		result = result * HASH_FACTOR + modifierKeys.hashCode();
+		result = result * HASH_FACTOR + nonModifierKey.hashCode();
+		return result;		
+	}
+
+	public String toString() {
 		Iterator iterator = modifierKeys.iterator();
 		StringBuffer stringBuffer = new StringBuffer();
 	
@@ -214,23 +291,5 @@ public class KeyStroke {
 			stringBuffer.append(name);
 		
 		return stringBuffer.toString();
-	}
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
-	public Set getModifierKeys() {
-		return Collections.unmodifiableSet(modifierKeys);
-	}
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
-	public NonModifierKey getNonModifierKey() {
-		return nonModifierKey;
 	}
 }

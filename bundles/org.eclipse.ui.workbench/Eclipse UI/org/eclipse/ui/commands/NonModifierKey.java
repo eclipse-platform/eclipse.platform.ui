@@ -23,7 +23,7 @@ package org.eclipse.ui.commands;
  */
 public abstract class NonModifierKey extends Key {
 
-	NonModifierKey() {
-		super();
+	NonModifierKey(String name) {
+		super(name);
 	}
 }
