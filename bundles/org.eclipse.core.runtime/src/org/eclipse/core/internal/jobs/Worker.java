@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class Worker extends Thread {
 	//worker number used for debugging purposes only
 	private static int nextWorkerNumber = 0;
-	private volatile Job currentJob;
+	private volatile InternalJob currentJob;
 	private final WorkerPool pool;
 
 	public Worker(WorkerPool pool) {
@@ -33,9 +33,9 @@ public class Worker extends Thread {
 	 * Returns the currently running job, or null if none.
 	 */
 	public Job currentJob() {
-		return currentJob;
+		return (Job)currentJob;
 	}
-	private IStatus handleException(Job job, Throwable t) {
+	private IStatus handleException(InternalJob job, Throwable t) {
 		String message = Policy.bind("jobs.internalError", job.getName()); //$NON-NLS-1$
 		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, t);
 	}
@@ -58,7 +58,7 @@ public class Worker extends Thread {
 				currentJob.setThread(this);
 				IStatus result = Status.OK_STATUS;
 				try {
-					result = currentJob.run(((InternalJob) currentJob).getMonitor());
+					result = currentJob.run(currentJob.getMonitor());
 				} catch (OperationCanceledException e) {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {

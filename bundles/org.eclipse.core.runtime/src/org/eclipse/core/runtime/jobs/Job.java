@@ -301,6 +301,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * cancellation.  If the progress monitor has been cancelled, the job
 	 * should finish its execution at the earliest convenience. 
 	 * <p>
+	 * This method must not be called directly by clients.  Clients should call
+	 * <code>schedule</code>, which will in turn cause this method to be called.
+	 * <p>
 	 * Jobs can optionally finish their execution asynchronously (in another thread) by 
 	 * returning a result status of <code>Job.ASYNC_FINISH</code>.  Jobs that finish
 	 * asynchronously <b>must</b> indicate when they are finished by calling
@@ -312,7 +315,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #ASYNC_FINISH
 	 * @see #done
 	 */
-	public abstract IStatus run(IProgressMonitor monitor);
+	protected abstract IStatus run(IProgressMonitor monitor);
 	/**
 	 * Schedules this job to be run.  The job is added to a queue of waiting
 	 * jobs, and will be run when it arrives at the beginning of the queue.

@@ -9,6 +9,8 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import org.eclipse.core.runtime.*;
+
 /**
  * A linked list based priority queue. Either the elements in the queue must
  * implement Comparable, or a Comparator must be provided.
@@ -32,7 +34,10 @@ public class JobQueue {
 	 */
 	public JobQueue(boolean allowConflictOvertaking) {
 		//compareTo on dummy is never called
-		dummy = new InternalJob("Queue-Head") {}; //$NON-NLS-1$
+		dummy = new InternalJob("Queue-Head") {//$NON-NLS-1$
+			public IStatus run(IProgressMonitor m) {return Status.OK_STATUS;
+			}
+		}; 
 		dummy.setNext(dummy);
 		dummy.setPrevious(dummy);
 		this.allowConflictOvertaking = allowConflictOvertaking;

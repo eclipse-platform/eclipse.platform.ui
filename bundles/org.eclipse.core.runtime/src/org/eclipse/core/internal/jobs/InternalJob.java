@@ -93,7 +93,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		return (int) (((InternalJob) otherJob).startTime - startTime);
 	}
 	protected void done(IStatus result) {
-		manager.endJob((Job) this, result, true);
+		manager.endJob(this, result, true);
 	}
 	/**
 	 * Returns the job listeners that are only listening to this job.  Returns null
@@ -189,6 +189,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		next = previous = null;
 		return this;
 	}
+	protected abstract IStatus run(IProgressMonitor monitor);
 	/* (non-Javadoc)
 	 * @see Job#removeJobListener(IJobChangeListener)
 	 */

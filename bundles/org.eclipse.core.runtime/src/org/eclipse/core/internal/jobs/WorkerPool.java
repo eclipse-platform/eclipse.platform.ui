@@ -54,7 +54,7 @@ class WorkerPool {
 	private synchronized void decrementBusyThreads() {
 		busyThreads--;
 	}
-	protected void endJob(Job job, IStatus result) {
+	protected void endJob(InternalJob job, IStatus result) {
 		decrementBusyThreads();
 		manager.endJob(job, result, true);
 		//remove any locks this thread may be owning
@@ -117,7 +117,7 @@ class WorkerPool {
 	/**
 	 * Returns a new job to run. Returns null if the thread should die. 
 	 */
-	protected Job startJob(Worker worker) {
+	protected InternalJob startJob(Worker worker) {
 		//if we're above capacity, kill the thread
 		synchronized (this) {
 			if (!running || threads.size() > MAX_THREADS) {

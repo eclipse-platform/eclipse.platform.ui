@@ -258,23 +258,22 @@ public class JobManager implements IJobManager {
 	/**
 	 * Indicates that a job was running, and has now finished.
 	 */
-	protected void endJob(Job job, IStatus result, boolean notify) {
-		InternalJob internalJob = job;
+	protected void endJob(InternalJob job, IStatus result, boolean notify) {
 		InternalJob blocked = null;
 		synchronized (lock) {
 			//if the job is finishing asynchronously, there is nothing more to do for now
 			if (result == Job.ASYNC_FINISH)
 				return;
 			//if job is not known then it cannot be done
-			if (internalJob.getState() == Job.NONE)
+			if (job.getState() == Job.NONE)
 				return;
 			if (JobManager.DEBUG && notify)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
-			internalJob.setResult(result);
-			changeState(internalJob, Job.NONE);
-			internalJob.setMonitor(null);
-			blocked = internalJob.previous();
-			internalJob.setPrevious(null);
+			job.setResult(result);
+			changeState(job, Job.NONE);
+			job.setMonitor(null);
+			blocked = job.previous();
+			job.setPrevious(null);
 		}
 
 		//add any blocked jobs back to the wait queue
@@ -289,7 +288,7 @@ public class JobManager implements IJobManager {
 		}
 		//notify listeners outside sync block
 		if (notify)
-			jobListeners.done(job, result);
+			jobListeners.done((Job)job, result);
 	}
 	public void endRule(ISchedulingRule rule) {
 		implicitJobs.end(rule);
@@ -466,7 +465,7 @@ public class JobManager implements IJobManager {
 	 * due to a currently running job with a conflicting rule.  Listeners will never
 	 * be notified of jobs that are run in this way.
 	 */
-	protected boolean runNow(Job job) {
+	protected boolean runNow(InternalJob job) {
 		synchronized (lock) {
 			//cannot start if there is a conflicting job
 			if (findBlockingJob(job) != null)
