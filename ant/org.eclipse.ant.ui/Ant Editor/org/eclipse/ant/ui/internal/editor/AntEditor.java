@@ -14,7 +14,6 @@
 
 package org.eclipse.ant.ui.internal.editor;
 
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.ant.ui.internal.editor.outline.AntEditorContentOutlinePage;
@@ -28,34 +27,24 @@ import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
-import org.eclipse.ant.ui.internal.model.ColorManager;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.source.IAnnotationAccess;
-import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.OverviewRuler;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
-import org.eclipse.ui.texteditor.DefaultRangeIndicator;
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -83,14 +72,7 @@ public class AntEditor extends TextEditor {
      * The page that shows the outline.
      */
     protected AntEditorContentOutlinePage page;
-    
-	/**
-	 * The annotation preferences.
-	 * @since 2.1
-	 */
-	private MarkerAnnotationPreferences fAnnotationPreferences;
-
-
+  
     /**
      * Constructor for AntEditor.
      */
@@ -98,7 +80,6 @@ public class AntEditor extends TextEditor {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
-		fAnnotationPreferences= new MarkerAnnotationPreferences();
     }
 
 
@@ -122,10 +103,8 @@ public class AntEditor extends TextEditor {
 	 * Called from TextEditor.<init>
 	 */
     protected void initializeEditor() {
+		super.initializeEditor();
 		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
-		setRangeIndicator(new DefaultRangeIndicator());
-		configureInsertMode(SMART_INSERT, false);
-		setInsertMode(INSERT);		
 		setCompatibilityMode(false);
 		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);	
     }
@@ -288,50 +267,19 @@ public class AntEditor extends TextEditor {
 			}
 		}
 	}
-	
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
-	 */
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		fAnnotationAccess= createAnnotationAccess();
-		ISharedTextColors sharedColors= ColorManager.getDefault();
-		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
-		
-		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference preference= (AnnotationPreference) e.next();
-			if (preference.contributesToHeader()){
-				fOverviewRuler.addHeaderAnnotationType(preference.getAnnotationType());
-			}
-		}
-				
-		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isPrefOverviewRulerVisible(), styles);
-		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
-		configureSourceViewerDecorationSupport();
-		
-		return sourceViewer;
-	}
 
 	protected IAnnotationAccess createAnnotationAccess() {
-		return new AnnotationAccess(fAnnotationPreferences);
+		return new AnnotationAccess(getAnnotationPreferences());
 	}
 
-	protected void configureSourceViewerDecorationSupport() {
-//		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
-//		while (e.hasNext()){
-//			fSourceViewerDecorationSupport.setAnnotationPreference((AnnotationPreference) e.next());
-//		}
+	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
+		super.configureSourceViewerDecorationSupport(support);
 
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.UNKNOWN, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER, 2);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER, 4);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION, AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
-
-		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
-		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
-		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
+		support.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
+		support.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER, 2);
+		support.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
+		support.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER, 4);
+		support.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
+		support.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION, AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
 	}
 }
