@@ -191,8 +191,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
 			
 			// obtain the list of plugins
-			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite());
-			pluginPath = union(element.getPreviousPluginPath(),pluginPath);
+			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite(),element.getPreviousPluginPath());
 			
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 			
@@ -348,36 +347,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 
-	/**
-	 * Returns and array with the union of plugins
-	 */
-	private String[] union(String[] targetArray, String[] sourceArray) {
-
-		// No string 
-		if (sourceArray == null || sourceArray.length == 0) {
-			return targetArray;
-		}
-
-		// No string
-		if (targetArray == null || targetArray.length == 0) {
-			return sourceArray;
-		}
-
-		// if a String from sourceArray is NOT in
-		// targetArray, add it to targetArray
-		List list1 =  new ArrayList();
-		list1.addAll(Arrays.asList(targetArray));
-		for (int i = 0; i < sourceArray.length; i++) {
-			if (!list1.contains(sourceArray[i]))
-				list1.add(sourceArray[i]);
-		}
-
-		String[] resultEntry = new String[list1.size()];
-		if (list1.size() > 0)
-			list1.toArray(resultEntry);
-
-		return resultEntry;
-	}
-
+	
 
 }

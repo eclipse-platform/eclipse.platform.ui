@@ -125,9 +125,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 
 	/**
 	 * returns an array of string corresponding to plugins file
+	 * It will include the include list providing the objects in the include list
+	 * are not 'unconfigured' if the type is Exclude or 'configured' if the type is Include
 	 */
 	/*package*/
-	String[] getPluginPath(ISite site) throws CoreException {
+	String[] getPluginPath(ISite site,String[] include) throws CoreException {
 		String[] result = new String[0];
 
 		// which features
@@ -174,6 +176,19 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 				pluginsString.toArray(result);
 			}
 		}
+		
+		// remove from include the plugins that should not be saved 
+		String[] toInclude = null;
+		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+			if (getConfiguredFeatures() != null)
+				toInclude = remove(getConfiguredFeatures(),include);
+		} else {
+			if (getUnconfiguredFeatures() != null)
+				toInclude = remove(getUnconfiguredFeatures(),include);
+		}		
+		
+		
+		result = union(toInclude,result);
 
 		return result;
 	}
@@ -203,5 +218,54 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 		else
 			return (IFeatureReference[])result;
 	}
+
+/**
+	 * Returns and array with the union of plugins
+	 */
+	private String[] union(String[] targetArray, String[] sourceArray) {
+
+		// No string 
+		if (sourceArray == null || sourceArray.length == 0) {
+			return targetArray;
+		}
+
+		// No string
+		if (targetArray == null || targetArray.length == 0) {
+			return sourceArray;
+		}
+
+		// if a String from sourceArray is NOT in
+		// targetArray, add it to targetArray
+		List list1 =  new ArrayList();
+		list1.addAll(Arrays.asList(targetArray));
+		for (int i = 0; i < sourceArray.length; i++) {
+			if (!list1.contains(sourceArray[i]))
+				list1.add(sourceArray[i]);
+		}
+
+		String[] resultEntry = new String[list1.size()];
+		if (list1.size() > 0)
+			list1.toArray(resultEntry);
+
+		return resultEntry;
+	}
+
+	String[] remove(IFeatureReference[] arrayOfFeatureRef, String[] include){
+		if (arrayOfFeatureRef==null || arrayOfFeatureRef.length<1)
+			return include;
+		
+		if (include==null || include.length<1)
+			return include;
+			
+		String[] result = include;
+		
+		// we need to figure out which plugin SHOULD NOT be written and
+		// remove them from include
+		// we need to get a URL[] 
+		
+		return result;
+	}
+
+
 
 }

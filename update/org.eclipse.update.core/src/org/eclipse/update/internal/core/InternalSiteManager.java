@@ -307,7 +307,7 @@ public class InternalSiteManager {
 		// obtain the list of plugins
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();		
 		ConfigurationPolicy configurationPolicy = (ConfigurationPolicy)configSite.getConfigurationPolicy();
-		String[] pluginPath = configurationPolicy.getPluginPath(site);
+		String[] pluginPath = configurationPolicy.getPluginPath(site,null);
 		IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 		
 		// change runtime					
