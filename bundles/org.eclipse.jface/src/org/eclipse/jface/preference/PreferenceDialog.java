@@ -163,7 +163,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
  */
 public PreferenceDialog(Shell parentShell, PreferenceManager manager) {
 	super(parentShell);
-	setShellStyle(getShellStyle() | SWT.RESIZE);
+	setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 	preferenceManager = manager;
 }
 /* (non-Javadoc)
