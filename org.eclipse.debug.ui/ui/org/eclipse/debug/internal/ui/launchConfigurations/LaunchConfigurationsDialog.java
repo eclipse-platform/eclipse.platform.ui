@@ -1046,9 +1046,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		// If they hit 'Yes', save the working copy 
 		if (selectedButton == 0) {
 			getTabViewer().handleApplyPressed();
-		} else {
-			// this will discard the changes
-			getTabViewer().inputChanged(getTabViewer().getInput());
 		}
 		
 		return true;
