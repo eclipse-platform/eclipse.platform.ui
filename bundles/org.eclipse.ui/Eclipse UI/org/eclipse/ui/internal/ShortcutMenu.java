@@ -12,7 +12,7 @@ import org.eclipse.jface.action.*;
  * actions.  The visible actions are determined by the active perspective
  * within the workbench window.  
  */
-public abstract class ShortcutMenu implements IPerspectiveListener, IPageListener {
+public abstract class ShortcutMenu implements IInternalPerspectiveListener, IPageListener {
 	private IWorkbenchWindow window;
 	private IMenuManager innerMgr;
 
@@ -124,6 +124,9 @@ public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor per
     updateMenu();
 }
 public void perspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective){
+    updateMenu();
+}
+public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String id){
     updateMenu();
 }
 

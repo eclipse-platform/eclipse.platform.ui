@@ -21,7 +21,7 @@ public PerspectiveListenerListOld() {
 	super();
 }
 /**
- * Adds an IPerspectiveListener to the perspective service.
+ * Adds an IInternalPerspectiveListener to the perspective service.
  */
 public void addPerspectiveListener(IPerspectiveListener l) {
 	listeners.add(l);
@@ -67,7 +67,7 @@ public void firePerspectiveChanged(final IWorkbenchPage page, final IPerspective
 	}
 }
 /**
- * Removes an IPerspectiveListener from the perspective service.
+ * Removes an IInternalPerspectiveListener from the perspective service.
  */
 public void removePerspectiveListener(IPerspectiveListener l) {
 	listeners.remove(l);

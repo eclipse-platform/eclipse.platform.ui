@@ -23,7 +23,7 @@ public interface IPerspectiveService {
  *
  * @param listener a perspective listener
  */
-public void addPerspectiveListener(IPerspectiveListener listener);
+public void addPerspectiveListener(IInternalPerspectiveListener listener);
 /*
  * Returns the active perspective descriptor in the active workbench page.
  *
@@ -36,5 +36,5 @@ public IPerspectiveDescriptor getActivePerspective();
  *
  * @param listener a perspective listener
  */
-public void removePerspectiveListener(IPerspectiveListener listener);
+public void removePerspectiveListener(IInternalPerspectiveListener listener);
 }

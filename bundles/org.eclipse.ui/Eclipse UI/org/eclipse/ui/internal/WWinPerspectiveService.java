@@ -25,7 +25,7 @@ public WWinPerspectiveService(WorkbenchWindow window) {
  *
  * @param listener a perspective listener
  */
-public void addPerspectiveListener(IPerspectiveListener listener) {
+public void addPerspectiveListener(IInternalPerspectiveListener listener) {
 	perspectiveListeners.addPerspectiveListener(listener);
 }
 /**
@@ -58,7 +58,7 @@ public IPerspectiveDescriptor getActivePerspective() {
  *
  * @param listener a perspective listener
  */
-public void removePerspectiveListener(IPerspectiveListener listener) {
+public void removePerspectiveListener(IInternalPerspectiveListener listener) {
 	perspectiveListeners.removePerspectiveListener(listener);
 }
 }

@@ -20,9 +20,9 @@ public PerspectiveListenerList() {
 	super();
 }
 /**
- * Adds an IPerspectiveListener to the perspective service.
+ * Adds an IInternalPerspectiveListener to the perspective service.
  */
-public void addPerspectiveListener(IPerspectiveListener l) {
+public void addPerspectiveListener(IInternalPerspectiveListener l) {
 	listeners.add(l);
 }
 /**
@@ -31,7 +31,7 @@ public void addPerspectiveListener(IPerspectiveListener l) {
 public void firePerspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
-		final IPerspectiveListener l = (IPerspectiveListener)array[nX];
+		final IInternalPerspectiveListener l = (IInternalPerspectiveListener)array[nX];
 		Platform.run(new SafeRunnableAdapter() {
 			public void run() {
 				l.perspectiveActivated(page, perspective);
@@ -51,7 +51,7 @@ public void firePerspectiveActivated(final IWorkbenchPage page, final IPerspecti
 public void firePerspectiveReset(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
-		final IPerspectiveListener l = (IPerspectiveListener)array[nX];
+		final IInternalPerspectiveListener l = (IInternalPerspectiveListener)array[nX];
 		Platform.run(new SafeRunnableAdapter() {
 			public void run() {
 				l.perspectiveReset(page, perspective);
@@ -66,9 +66,9 @@ public void firePerspectiveReset(final IWorkbenchPage page, final IPerspectiveDe
 	}
 }
 /**
- * Removes an IPerspectiveListener from the perspective service.
+ * Removes an IInternalPerspectiveListener from the perspective service.
  */
-public void removePerspectiveListener(IPerspectiveListener l) {
+public void removePerspectiveListener(IInternalPerspectiveListener l) {
 	listeners.remove(l);
 }
 }

@@ -15,16 +15,8 @@ import org.eclipse.ui.*;
  *
  * @see IPerspectiveService
  */
-public interface IPerspectiveListener {
-/**
- * Notifies this listener that the given page's perspective
- * has been activated.
- *
- * @param page the page whose perspective was activated
- * @param perspective the perspective descriptor that was activated
- * @see IWorkbenchPage#setPerspective
- */
-public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective);
+public interface IInternalPerspectiveListener extends IPerspectiveListener{
+;
 /**
  * Notifies this listener that the given page's perspective
  * has been reset to its last saved layout.
