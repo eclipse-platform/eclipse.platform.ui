@@ -15,10 +15,16 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.ShowViewDialog;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * Shows the given view. If no view is specified in the parameters, then this
@@ -39,13 +45,41 @@ public final class ShowViewHandler extends AbstractHandler {
 		final Map parameters = event.getParameters();
 		final Object value = parameters.get(PARAMETER_NAME_VIEW_ID);
 		if (value == null) {
-			// TODO Allow for the parameter not to exist
-			// openViewChooser();
+			openOther();
 		} else {
 			openView((String) value);
 		}
 
 		return null;
+	}
+
+	/**
+	 * Opens a view selection dialog, allowing the user to chose a view.
+	 */
+	private final void openOther() {
+		final IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		final IWorkbenchPage page = window.getActivePage();
+		if (page == null)
+			return;
+		
+		final ShowViewDialog dialog = new ShowViewDialog(window.getShell(),
+				WorkbenchPlugin.getDefault().getViewRegistry());
+		dialog.open();
+		
+		if (dialog.getReturnCode() == Window.CANCEL)
+			return;
+		
+		final IViewDescriptor[] descriptors = dialog.getSelection();
+		for (int i = 0; i < descriptors.length; ++i) {
+			try {
+				page.showView(descriptors[i].getId());
+			} catch (PartInitException e) {
+				ErrorDialog.openError(window.getShell(),
+						WorkbenchMessages.ShowView_errorTitle, e.getMessage(),
+						e.getStatus());
+			}
+		}
 	}
 
 	/**
