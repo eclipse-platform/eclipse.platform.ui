@@ -60,7 +60,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	/**
 	 * The file extension for launch configuration files.
 	 */
-	public static final String LAUNCH_CONFIGURATION_FILE_EXTENSION = ".launch";
+	public static final String LAUNCH_CONFIGURATION_FILE_EXTENSION = "launch";
 	
 	/**
 	 * Launches this configuration in the specified mode by delegating to

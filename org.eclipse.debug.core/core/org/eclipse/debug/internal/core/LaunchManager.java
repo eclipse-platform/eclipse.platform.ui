@@ -20,8 +20,14 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -41,6 +47,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.omg.CORBA.PERSIST_STORE;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -50,7 +57,7 @@ import org.xml.sax.SAXException;
  *
  * @see ILaunchManager
  */
-public class LaunchManager implements ILaunchManager  {
+public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	/**
 	 * Collection of defined launch configuration type
@@ -92,6 +99,12 @@ public class LaunchManager implements ILaunchManager  {
 	 * Collection of listeners
 	 */
 	private ListenerList fListeners= new ListenerList(5);
+	
+	/**
+	 * Visitor used to process resource deltas,
+	 * to update launch configuration index.
+	 */
+	private IResourceDeltaVisitor fgVisitor;
 		
 	/**
 	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
@@ -290,6 +303,7 @@ public class LaunchManager implements ILaunchManager  {
 			}
 		}
 		fLaunchConfigurationTypes.clear();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	
 	/**
@@ -305,6 +319,7 @@ public class LaunchManager implements ILaunchManager  {
 		for (int i= 0; i < infos.length; i++) {
 			fLaunchConfigurationTypes.add(new LaunchConfigurationType(infos[i]));
 		}		
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
 	/**
@@ -388,7 +403,7 @@ public class LaunchManager implements ILaunchManager  {
 	 * 
 	 * @param configuration the configuration to remove
 	 */
-	protected void removeInfo(ILaunchConfiguration configuration) {
+	private void removeInfo(ILaunchConfiguration configuration) {
 		fLaunchConfigurations.remove(configuration);
 	}
 	
@@ -439,4 +454,147 @@ public class LaunchManager implements ILaunchManager  {
 		}
 		return null;
 	}	
+	
+	/**
+	 * Notifies the launch manager that a launch configuration
+	 * has been deleted. The configuration is removed from the
+	 * cache of info's and from the index of configurations by
+	 * project.
+	 * 
+	 * @param config the launch configuration that was deleted
+	 */
+	protected void launchConfigurationDeleted(ILaunchConfiguration config) {
+		removeInfo(config);
+		IProject project = config.getProject();
+		List list = (List)fLaunchConfigurationIndex.get(project);
+		if (list != null) {
+			list.remove(config);
+		}
+	}
+	
+	/**
+	 * Notifies the launch manager that a launch configuration
+	 * has been added. The configuration is added to the index of
+	 * configurations by project.
+	 * 
+	 * @param config the launch configuration that was added
+	 */
+	protected void launchConfigurationAdded(ILaunchConfiguration config) {
+		IProject project = config.getProject();
+		List list = (List)fLaunchConfigurationIndex.get(project);
+		if (list == null) {
+			list = new ArrayList(4);
+			fLaunchConfigurationIndex.put(project, list);
+		}
+		if (!list.contains(config)) {
+			list.add(config);
+		}
+	}
+	
+	/**
+	 * Notifies the launch manager that a launch configuration
+	 * has been changed. The configuration is removed from the
+	 * cache of info objects such that the new attributes will
+	 * be updated on the next access..
+	 * 
+	 * @param config the launch configuration that was changed
+	 */
+	protected void launchConfigurationChanged(ILaunchConfiguration config) {
+		removeInfo(config);
+	}
+	
+	/**
+	 * Persists launch configuration index for the specified project.
+	 * A file is written to the project's working area for the
+	 * debug plug-in, with an entry for each launch configuration
+	 * stored in the project.
+	 * 
+	 * @param project the project for which to persist the launch
+	 *  configuration index.
+	 * @exception CoreException if an exception occurrs writing the
+	 * 	index
+	 */
+	protected void persistIndex(IProject project) throws CoreException {
+	}
+	
+	/**
+	 * Restores the launch configurations from the index file of
+	 * the specified project.
+	 * 
+	 * @param project the project for which to restore launch
+	 *  configurations from.
+	 * @exception CoreException if an exception occurrs reading the
+	 * 	index
+	 */
+	protected void restoreIndex(IProject project) throws CoreException {
+	}	
+	
+	/**
+	 * Traverses the delta looking for added/removed/changed lanuch
+	 * configuration files.
+	 * 
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		if (delta != null) {
+			try {
+				if (fgVisitor == null) {
+					fgVisitor= new LaunchManagerVisitor();
+				}
+				delta.accept(fgVisitor);
+			} catch (CoreException e) {
+				DebugCoreUtils.logError(e);
+			}
+		}		
+	}
+
+	/**
+	 * Visitor for handling resource deltas.
+	 */
+	class LaunchManagerVisitor implements IResourceDeltaVisitor {
+		/**
+		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) {
+			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
+				if (delta.getResource() instanceof IProject) {
+					IProject project = (IProject)delta.getResource();
+					try {
+						if (project.isOpen()) {
+							LaunchManager.this.persistIndex(project);
+						} else { 
+						    LaunchManager.this.restoreIndex(project);
+						}
+					} catch (CoreException e) {
+						DebugCoreUtils.logError(e);
+					}
+				}
+				return false;
+			}
+			IResource resource = delta.getResource();
+			if (resource instanceof IFile) {
+				IFile file = (IFile)resource;
+				if (file.getFileExtension().equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
+					ILaunchConfiguration handle = new LaunchConfiguration(file.getLocation());
+					switch (delta.getKind()) {						
+						case IResourceDelta.ADDED :
+							LaunchManager.this.launchConfigurationAdded(handle);
+							break;
+						case IResourceDelta.REMOVED :
+							LaunchManager.this.launchConfigurationDeleted(handle);
+							break;
+						case IResourceDelta.CHANGED :
+							LaunchManager.this.launchConfigurationChanged(handle);
+							break;
+					}					
+				}
+				return false;
+			} else if (resource instanceof IContainer) {
+				return true;
+			}
+			return true;
+		}		
+
+	}
 }

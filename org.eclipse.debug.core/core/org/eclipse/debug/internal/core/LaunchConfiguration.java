@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -84,7 +85,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public String getName() {
 		String name = getLocation().lastSegment();
-		name = name.substring(0, name.length() - LAUNCH_CONFIGURATION_FILE_EXTENSION.length());
+		name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
 		return name;
 	}
 
@@ -99,12 +100,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#exists()
 	 */
 	public boolean exists() {
-		if (isLocal()) {
-			return getLocation().toFile().exists();
-		} else {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(getLocation());
-			return file != null && file.exists();
-		}
+		return getLocation().toFile().exists();
 	}
 
 	/**
@@ -143,7 +139,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			// May have to cache project name at creation
 			return null;
 		} else {
-			return ResourcesPlugin.getWorkspace().getRoot().getProject(getLocation().segment(0));
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IPath rootLocation = root.getLocation();
+			return root.getProject(getLocation().segment(rootLocation.segmentCount()));
 		}
 	}
 
@@ -189,7 +187,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				}
 				// manually update the launch manager cache since there
 				// will be no resource delta
-				getLaunchManager().removeInfo(this);
+				getLaunchManager().launchConfigurationDeleted(this);
 			} else {
 				// delete the resource using IFile API such that
 				// resource deltas are fired.

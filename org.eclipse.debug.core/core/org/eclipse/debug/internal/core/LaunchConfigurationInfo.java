@@ -256,7 +256,11 @@ public class LaunchConfigurationInfo {
 		if (id == null) {
 			throw invalidFormat;
 		} else {
-			// XXX: get type from launch manager
+			ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(id);
+			if (type == null) {
+				throw invalidFormat;
+			}
+			setType(type);
 		}
 		
 		NodeList list = root.getChildNodes();

@@ -154,15 +154,22 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if (isLocal()) {
 			// use java.io to update configuration file
 			try {
+				boolean added = false;
 				File file = getLocation().toFile();
 				File dir = getLocation().removeLastSegments(1).toFile();
 				dir.mkdirs();
 				if (!file.exists()) {
+					added = true;
 					file.createNewFile();
 				}
 				FileOutputStream stream = new FileOutputStream(file);
 				stream.write(xml.getBytes());
 				stream.close();
+				if (added) {
+					getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
+				} else {
+					getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
+				}
 			} catch (IOException e) {
 				throw new DebugException(
 					new Status(
@@ -281,6 +288,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see ILaunchConfigurationWorkingCopy#rename(String)
 	 */
 	public void rename(String name) {
+		setNewName(name);
 	}
 
 	/**
@@ -334,7 +342,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	public IProject getProject() {
 		if (getNewProject() == null) {
-			return super.getProject();
+			return getOriginal().getProject();
 		} else {
 			return getNewProject();
 		}
@@ -384,7 +392,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				path = new Path(getProject().getName());
 			}
 			path = path.append(".launches");
-			path = path.append(getName() + LAUNCH_CONFIGURATION_FILE_EXTENSION);
+			path = path.append(getName() + "." + LAUNCH_CONFIGURATION_FILE_EXTENSION);
 			return path;
 		} else {
 			return getOriginal().getLocation();
@@ -434,5 +442,33 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	public String getMemento() {
 		return null;
 	}	
+	
+	/**
+	 * Returns whether this configuration is equal to the
+	 * given configuration. Two configurations are equal if
+	 * they are stored in the same location (and neither one
+	 * is a working copy).
+	 * 
+	 * @return whether this configuration is equal to the
+	 *  given configuration
+	 * @see Object.equals(Object)
+	 */
+	public boolean equals(Object object) {
+		if (object instanceof ILaunchConfiguration) {
+			if (isWorkingCopy()) {
+				return this == object;
+			} else {
+				return  ((ILaunchConfiguration)object).getLocation().equals(getLocation());
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		return getLocation().hashCode();
+	}
 }
 
