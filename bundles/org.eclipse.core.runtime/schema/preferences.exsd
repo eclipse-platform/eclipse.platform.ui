@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.core.runtime" id="preferences" name="Preferences"/>
       </appInfo>
       <documentation>
-         The preferences extension point allows plug-ins to add new preference scopes to the Eclipse preference mechanism.
+         The preferences extension point allows plug-ins to add new preference scopes to the Eclipse preference mechanism as well as specify the class to run to initialize default preference values at runtime.
       </documentation>
    </annotation>
 
@@ -95,7 +95,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of a preference scope declaration.  This example declares that this plug-in will provide a preference implementation for the scope &quot;foo&quot;.
+         Following is an example of a preference scope declaration.  This example declares that this plug-in will provide a preference implementation for the scope &quot;foo&quot;. It also declares that when the default values are loaded for this plug-in, the class &quot;MyPreferenceInitializer&quot; contains code to be run to initialize preference default values at runtime.
 &lt;p&gt;
    &lt;pre&gt;
       &lt;extension point=&quot;org.eclipse.core.runtime.preferences&quot;&gt;
