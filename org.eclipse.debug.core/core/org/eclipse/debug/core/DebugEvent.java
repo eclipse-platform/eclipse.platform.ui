@@ -33,13 +33,13 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * by create/terminate/suspend/resume, the <code>CHANGE</code> event may be used.
  * For example, generally, the only way a thread or any of its children can change
  * state between a suspend and resume operation, is if the thread or owning debug
- * target is termianted. However, if a debug model supports some other operation
+ * target is terminated. However, if a debug model supports some other operation
  * that would allow a debug element to change state while suspended, the debug model
  * would fire a change event for that element. The valid detail codes for a
  * change event are:<ul>
  * <li><code>STATE</code> - indicates the state of an element has changed, but its
- *  children are not effected. A client would use a state change event to update
- *  a label of the effected element, but would not update any children.</li>
+ *  children are not affected. A client would use a state change event to update
+ *  a label of the affected element, but would not update any children.</li>
  * <li><code>CONTENT</code> - indicates that a debug element's value or contents have
  *  changed in some way. For example, when the value of a variable is changed
  *  explicitly, the variable should fire a content change event.</li>

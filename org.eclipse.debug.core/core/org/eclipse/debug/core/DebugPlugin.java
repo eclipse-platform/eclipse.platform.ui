@@ -414,7 +414,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Removes the given debug event filter from the registered
 	 * event filters. Has no effect if an identical filter
-	 * is not already registerd.
+	 * is not already registered.
 	 * 
 	 * @param filter debug event filter
 	 * @since 2.0
