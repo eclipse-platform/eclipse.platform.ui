@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids - bug 50567 Eclipse ANT support on Win98
+ *     Sebastian Davids - bug 50567 Eclipse native environment support on Win98
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -1619,6 +1619,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			String nativeCommand= null;
 			boolean windowsOS= false;
 			boolean isWin9xME= false; //see bug 50567
+			String fileName= null;
 			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 				windowsOS= true;
 				String osName= System.getProperty("os.name"); //$NON-NLS-1$
@@ -1626,7 +1627,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				if (isWin9xME) {
 					// Win 95, 98, and ME
 					// SET might not return therefore we pipe into a file
-					nativeCommand= "command.com /C set > env.txt"; //$NON-NLS-1$
+					IPath stateLocation= DebugPlugin.getDefault().getStateLocation();
+					fileName= stateLocation.toOSString() + File.separator  + "env.txt";
+					nativeCommand= "command.com /C set > " + fileName; //$NON-NLS-1$
 				} else {
 					// Win NT, 2K, XP
 					nativeCommand= "cmd.exe /C set"; //$NON-NLS-1$
@@ -1641,18 +1644,20 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			if (isWin9xME) {
 				//read piped data on Win 95, 98, and ME
 				Properties p= new Properties();
-				File file= new File("env.txt"); //$NON-NLS-1$
-				file.deleteOnExit(); // if delete() fails try again on VM close
-				p.load(new FileInputStream(file));
-				/*ignore*/ file.delete();
+				File file= new File(fileName);
+				FileInputStream stream= new FileInputStream(file);
+				p.load(stream);
+				stream.close();
+				if (!file.delete()) {
+					file.deleteOnExit(); // if delete() fails try again on VM close
+				}
 				for (Enumeration enum = p.keys(); enum.hasMoreElements();) {
 					// Win32's environment vars are case insensitive. Put everything
 					// to uppercase so that (for example) the "PATH" variable will match
 					// "pAtH" correctly on Windows.
 					String key= ((String) enum.nextElement()).toUpperCase();
 					//no need to cast value
-					Object value= p.get(key);
-					fgNativeEnv.put(key, value);
+					fgNativeEnv.put(key, p.get(key));
 				}
 			} else {
 				//read process directly on other platforms
@@ -1694,5 +1699,4 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return SourceLookupUtils.getSourcePathComputer(id);
 	}
-
 }
