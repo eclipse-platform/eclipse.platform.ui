@@ -250,8 +250,8 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 			} 
 			/* compare file last modified */
 			if (targetType == IResource.FILE && node.isFile()) {
-				long lastModifed = target.getResourceInfo(false, false).getLocalSyncInfo();
-				if (lastModifed == node.getLastModified())
+				ResourceInfo info = target.getResourceInfo(false, false);
+				if (info != null && info.getLocalSyncInfo() == node.getLastModified())
 					return true;
 			}
 		} else {
