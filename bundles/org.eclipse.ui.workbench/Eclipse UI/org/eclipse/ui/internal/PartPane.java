@@ -332,10 +332,10 @@ public IWorkbenchPartReference getPartReference() {
  * Answer the SWT widget style.
  */
 int getStyle() {
-	if (getContainer() != null && !getContainer().allowsBorder())
-		return SWT.NONE;
-	else
+	if (hasBorder())
 		return SWT.BORDER;
+	else
+		return SWT.NONE;
 }
 /**
  * Get the view form.
@@ -376,8 +376,13 @@ protected void requestActivation() {
 public void setContainer(ILayoutContainer container) {
 	super.setContainer(container);
 	if (control != null)
-		control.setBorderVisible(container == null || container.allowsBorder());
+		control.setBorderVisible(hasBorder());
 }
+
+protected boolean hasBorder() {
+	return container != null && container.allowsBorder();
+}
+
 /**
  * Shows the receiver if <code>visible</code> is true otherwise hide it.
  */
