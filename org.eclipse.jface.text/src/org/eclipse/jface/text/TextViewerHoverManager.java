@@ -111,8 +111,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		fThread= new Thread("Text Viewer Hover Presenter") { //$NON-NLS-1$
 			public void run() {
 				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693			
+				boolean hasFinished= false;
 				try {
-					
 					if (fThread != null) {
 						String information;
 						try {
@@ -137,12 +137,15 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 					} else {
 						setInformation(null, null);
 					}
-					
+					hasFinished= true;
 				} finally {
 					synchronized (fMutex) {
 						if (fTextViewer != null)
 							fTextViewer.removeTextListener(fStopper);
 						fThread= null;
+						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=44756
+						if (!hasFinished)
+							setInformation(null, null);
 					}
 				}
 			}
