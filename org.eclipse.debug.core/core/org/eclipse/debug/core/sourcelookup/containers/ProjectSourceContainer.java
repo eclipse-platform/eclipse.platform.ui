@@ -85,23 +85,26 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
-		if (isSearchReferencedProjects()) {
-			IProject project = getProject();
-			IProject[] projects = project.getReferencedProjects();
-			ISourceContainer[] folders = super.createSourceContainers();
-			List all = new ArrayList(folders.length + projects.length);
-			for (int i = 0; i < folders.length; i++) {
-				all.add(folders[i]);
-			}
-			for (int i = 0; i < projects.length; i++) {
-				if (project.exists() && project.isOpen()) {
-					ProjectSourceContainer container = new ProjectSourceContainer(projects[i], true);
-					container.init(getDirector());
-					all.add(container);
+		if (getProject().isOpen()) {
+			if (isSearchReferencedProjects()) {
+				IProject project = getProject();
+				IProject[] projects = project.getReferencedProjects();
+				ISourceContainer[] folders = super.createSourceContainers();
+				List all = new ArrayList(folders.length + projects.length);
+				for (int i = 0; i < folders.length; i++) {
+					all.add(folders[i]);
 				}
-			}
-			return (ISourceContainer[]) all.toArray(new ISourceContainer[all.size()]);
-		} 
-		return super.createSourceContainers();
+				for (int i = 0; i < projects.length; i++) {
+					if (project.exists() && project.isOpen()) {
+						ProjectSourceContainer container = new ProjectSourceContainer(projects[i], true);
+						container.init(getDirector());
+						all.add(container);
+					}
+				}
+				return (ISourceContainer[]) all.toArray(new ISourceContainer[all.size()]);
+			} 
+			return super.createSourceContainers();
+		}
+		return new ISourceContainer[0];
 	}
 }
