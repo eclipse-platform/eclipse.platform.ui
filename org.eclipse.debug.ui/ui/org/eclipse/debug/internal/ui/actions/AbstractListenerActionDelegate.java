@@ -149,8 +149,11 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		super.init(view);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		setWindow(view.getViewSite().getWorkbenchWindow());
-		getPage().addPartListener(this);
-		getPage().getWorkbenchWindow().addPageListener(this);
+		IWorkbenchPage page = getPage();
+		if (page != null) {
+			getPage().addPartListener(this);
+			getPage().getWorkbenchWindow().addPageListener(this);
+		}
 	}
 	
 	/**
