@@ -206,7 +206,8 @@ public class AntModel {
     		String textToParse= null;
     		ProjectHelper projectHelper= null;
 			if (region == null || fProjectNode == null) {  //full parse
-				if (fProjectNode == null) {
+				if (fProjectNode == null || !fProjectNode.hasChildren()) {
+					fProjectNode= null;
 					project = new AntModelProject();
 					projectHelper= prepareForFullParse(project);
 					textToParse= input.get(); //the entire document
