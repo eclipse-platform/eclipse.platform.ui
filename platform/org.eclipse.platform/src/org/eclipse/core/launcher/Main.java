@@ -14,7 +14,6 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
-import java.nio.channels.FileLock;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -151,10 +150,15 @@ public class Main {
 	 */
 	protected boolean inDevelopmentMode = false;
 
+	private String exitData = null;
+	private String vm = null;
+	private String[] vmargs = null;
+	private String[] commands = null;
+	
 	// splash handling
 	private String showSplash = null;
 	private String endSplash = null;
-	private boolean cmdInitialize = false;
+	private boolean initialize = false;
 	private Process showProcess = null;
 	private boolean splashDown = false;
 	private final Runnable endSplashHandler = new Runnable() {
@@ -168,10 +172,13 @@ public class Main {
 	private static final String FRAMEWORK = "-framework"; //$NON-NLS-1$
 	private static final String INSTALL = "-install"; //$NON-NLS-1$
 	private static final String INITIALIZE = "-initialize"; //$NON-NLS-1$
+	private static final String VM = "-vm"; //$NON-NLS-1$
+	private static final String VMARGS = "-vmargs"; //$NON-NLS-1$
 	private static final String DEBUG = "-debug"; //$NON-NLS-1$
 	private static final String DEV = "-dev"; //$NON-NLS-1$
-	private static final String DATA = "-data"; //$NON-NLS-1$
 	private static final String CONFIGURATION = "-configuration"; //$NON-NLS-1$
+	private static final String EXITDATA = "-exitdata"; //$NON-NLS-1$
+	private static final String NOSPLASH = "-nosplash"; //$NON-NLS-1$
 	private static final String SHOWSPLASH = "-showsplash"; //$NON-NLS-1$
 	private static final String ENDSPLASH = "-endsplash"; //$NON-NLS-1$
 	private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
@@ -191,13 +198,12 @@ public class Main {
 	private static final String PRODUCT_SITE_VERSION = "version"; //$NON-NLS-1$
 
 	// constants: System property keys and/or configuration file elements
-	/** @deprecated remove this constant */
-	private static final String PROP_INSTALL_LOCATION= "osgi.installLocation"; //$NON-NLS-1$
-
 	private static final String PROP_USER_HOME = "user.home"; //$NON-NLS-1$
 	private static final String PROP_USER_DIR = "user.dir"; //$NON-NLS-1$
 	private static final String PROP_INSTALL_AREA = "osgi.install.area"; //$NON-NLS-1$
 	private static final String PROP_CONFIG_AREA = "osgi.configuration.area"; //$NON-NLS-1$
+	private static final String PROP_BASE_CONFIG_AREA = "osgi.baseConfiguration.area"; //$NON-NLS-1$
+	private static final String PROP_SHARED_CONFIG_AREA = "osgi.sharedConfiguration.area"; //$NON-NLS-1$
 	private static final String PROP_CONFIG_CASCADED = "osgi.configuration.cascaded"; //$NON-NLS-1$
 	private static final String PROP_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
 	private static final String PROP_SPLASHPATH = "osgi.splashPath"; //$NON-NLS-1$
@@ -205,6 +211,10 @@ public class Main {
 	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
 	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
+	private static final String PROP_EXITDATA = "eclipse.exitdata"; //$NON-NLS-1$
+	private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
+	private static final String PROP_VMARGS = "eclipse.vmargs"; //$NON-NLS-1$
+	private static final String PROP_COMMANDS = "eclipse.commands"; //$NON-NLS-1$
 
 	// Data mode constants for user, configuration and data locations.
 	private static final String NONE = "@none"; //$NON-NLS-1$
@@ -222,8 +232,6 @@ public class Main {
 	protected File logFile = null;
 	protected BufferedWriter log = null;
 	protected boolean newSession = true;
-
-	protected String[] arguments;
 
 	static class Identifier {
 		private static final String DELIM = ". "; //$NON-NLS-1$
@@ -283,7 +291,9 @@ public class Main {
 	 */
 	protected Object basicRun(String[] args) throws Exception {
 		System.getProperties().setProperty("eclipse.debug.startupTime", Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
+		commands = args;
 		String[] passThruArgs = processCommandLine(args);
+		setupVMProperties();
 		processConfiguration();
 		// need to ensure that getInstallLocation is called at least once to initialize the value.
 		// Do this AFTER processing the configuration to allow the configuration to set
@@ -579,13 +589,12 @@ public class Main {
 		// and make it absolute.  
 		if (spec.startsWith("file:")) {
 			File file = new File(spec.substring(5));
-			if (!file.isAbsolute()) {
+			if (!file.isAbsolute()) 
 				spec = "file:" + file.getAbsolutePath();
-				if (trailingSlash && !spec.endsWith("/"))
-					spec += "/";
-			}
 		}
 		try {
+			if (trailingSlash && !spec.endsWith("/"))
+				spec += "/";
 			return new URL(spec);
 		} catch (MalformedURLException e) {
 			if (spec.startsWith("file:"))
@@ -600,21 +609,24 @@ public class Main {
 		System.getProperties().remove(property);
 		// if the instance location is not set, predict where the workspace will be and 
 		// put the instance area inside the workspace meta area.
-		if (location == null) 
-			result = defaultLocation;
-		else if (location.equalsIgnoreCase(NONE))
-			return null;
-		else if (location.equalsIgnoreCase(NO_DEFAULT))
-			result = buildURL(location, true);
-		else {
-			if (location.equalsIgnoreCase(USER_HOME)) 
-				location = computeDefaultUserAreaLocation(userDefaultAppendage);
-			if (location.equalsIgnoreCase(USER_DIR)) 
-				location = new File(System.getProperty(PROP_USER_DIR), userDefaultAppendage).getAbsolutePath();
-			result = buildURL(location, true);
+		try {
+			if (location == null) 
+				result = defaultLocation;
+			else if (location.equalsIgnoreCase(NONE))
+				return null;
+			else if (location.equalsIgnoreCase(NO_DEFAULT))
+				result = buildURL(location, true);
+			else {
+				if (location.equalsIgnoreCase(USER_HOME)) 
+					location = computeDefaultUserAreaLocation(userDefaultAppendage);
+				if (location.equalsIgnoreCase(USER_DIR)) 
+					location = new File(System.getProperty(PROP_USER_DIR), userDefaultAppendage).getAbsolutePath();
+				result = buildURL(location, true);
+			} 
+		} finally {
+			if (result != null)
+				System.getProperties().put(property, result.toExternalForm());
 		}
-		if (result != null)
-			System.getProperties().put(property, result.toExternalForm());
 		return result;
 	}
 
@@ -635,8 +647,8 @@ public class Main {
 
 		String install = getInstallLocation();
 		// TODO a little dangerous here.  Basically we have to assume that it is a file URL.
-		File installDir = new File(install.substring(5));
 		if (install.startsWith("file:")) {
+			File installDir = new File(install.substring(5));
 			if (installDir.canWrite()) 
 				return installDir.getAbsolutePath() + File.separator + CONFIG_DIR;
 		}
@@ -724,27 +736,40 @@ public class Main {
 	* @param args the command line arguments
 	*/	
 	public int run(String[] args) {
-		arguments = args;
+		int result = 0;
 		try {
 			basicRun(args);
+			String exitCode = System.getProperty(PROP_EXITCODE);
+			try {
+				result = exitCode == null ? 0: Integer.parseInt(exitCode);
+			} catch (NumberFormatException e) {
+				result = 17;
+			}
 		} catch (Throwable e) {
 			// try and take down the splash screen.
 			takeDownSplash();
-			log("Exception launching the Eclipse Platform:"); //$NON-NLS-1$
+			String message = "Exception launching the Eclipse Platform"; //$NON-NLS-1$
+			System.getProperties().put(PROP_EXITDATA, message);
+			log(message);
 			log(e);
 			// Return "unlucky" 13 as the exit code. The executable will recognize
 			// this constant and display a message to the user telling them that
 			// there is information in their log file.
-			return 13;
+			result = 13;
 		}
-		// Return an int exit code.
-		String exitCode = System.getProperty(PROP_EXITCODE);
-		try {
-			return exitCode == null ? 0: Integer.parseInt(exitCode);
-		} catch (NumberFormatException e) {
-			return 17;
-		}
+		// Return an int exit code and ensure the system property is set.
+		System.getProperties().put(PROP_EXITCODE, Integer.toString(result));
+		setExitData();
+		return result;
 	}
+
+	private void setExitData() {
+		String data = System.getProperty(PROP_EXITDATA);
+		if (exitData == null || data == null)
+			return;
+		runCommand(exitData, data, " " + EXITDATA);
+	}
+	
 	/**
 	 * Processes the command line arguments.  The general principle is to NOT
 	 * consume the arguments and leave them to be processed by Eclipse proper.
@@ -755,24 +780,32 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	protected String[] processCommandLine(String[] args) throws Exception {
-		int[] configArgs = new int[100];
+		// TODO temporarily handle the fact that PDE appends the -showsplash <timeout> onto 
+		// the *end* of the command line.  This interferes with the -vmargs arg.  Process 
+		// -showsplash now and remove it from the end.  This code should be removed soon.
+		int end = args.length;
+		if (args[end - 2].equalsIgnoreCase(SHOWSPLASH)) {
+			showSplash = args[end - 1];
+			end -= 2;
+		}
+		String[] arguments = new String[end];
+		System.arraycopy(args, 0, arguments, 0, end);
+		int[] configArgs = new int[arguments.length];
 		configArgs[0] = -1; // need to initialize the first element to something that could not be an index.
 		int configArgIndex = 0;
-		for (int i = 0; i < args.length; i++) {
+		for (int i = 0; i < arguments.length; i++) {
 			boolean found = false;
 			// check for args without parameters (i.e., a flag arg)
 			// check if debug should be enabled for the entire platform
-			if (args[i].equalsIgnoreCase(DEBUG)) {
+			if (arguments[i].equalsIgnoreCase(DEBUG)) {
 				debug = true;
 				// passed thru this arg (i.e., do not set found = true)
 				continue;
 			}
 
-			// TODO confirm with Update that this arg can be removed.  We should be able to ignore this
-			// case (only used for some splash logic) and consume the arg
 			// check if this is initialization pass
-			if (args[i].equalsIgnoreCase(INITIALIZE)) {
-				cmdInitialize = true;
+			if (arguments[i].equalsIgnoreCase(INITIALIZE)) {
+				initialize = true;
 				// passed thru this arg (i.e., do not set found = true)
 				continue;
 			}
@@ -781,7 +814,7 @@ public class Main {
 			// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 			// simply enable development mode.  Otherwise, assume that that the following arg is
 			// actually some additional development time class path entries.  This will be processed below.
-			if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) { //$NON-NLS-1$
+			if (arguments[i].equalsIgnoreCase(DEV) && ((i + 1 == arguments.length) || ((i + 1 < arguments.length) && (arguments[i + 1].startsWith("-"))))) { //$NON-NLS-1$
 				inDevelopmentMode = true;
 				// do not mark the arg as found so it will be passed through
 				continue;
@@ -794,19 +827,19 @@ public class Main {
 			}
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) //$NON-NLS-1$
+			if (i == arguments.length - 1 || arguments[i + 1].startsWith("-")) //$NON-NLS-1$
 				continue;
-			String arg = args[++i];
+			String arg = arguments[++i];
 
 			// look for the development mode and class path entries.  
-			if (args[i - 1].equalsIgnoreCase(DEV)) {
+			if (arguments[i - 1].equalsIgnoreCase(DEV)) {
 				inDevelopmentMode = true;
 				devClassPath = processDevArg(arg);
 				continue;
 			}
 
 			// look for the framework to run
-			if (args[i - 1].equalsIgnoreCase(FRAMEWORK)) {
+			if (arguments[i - 1].equalsIgnoreCase(FRAMEWORK)) {
 				framework = arg;
 				found = true;
 			}
@@ -814,7 +847,7 @@ public class Main {
 			// look for explicitly set install root
 			// Consume the arg here to ensure that the launcher and Eclipse get the 
 			// same value as each other.  
-			if (args[i - 1].equalsIgnoreCase(INSTALL)) {
+			if (arguments[i - 1].equalsIgnoreCase(INSTALL)) {
 				found = true;
 				URL url = buildURL(arg, true);
 				if (url == null)
@@ -825,26 +858,57 @@ public class Main {
 			// look for the configuration to use.  
 			// Consume the arg here to ensure that the launcher and Eclipse get the 
 			// same value as each other.  
-			if (args[i - 1].equalsIgnoreCase(CONFIGURATION)) {
+			if (arguments[i - 1].equalsIgnoreCase(CONFIGURATION)) {
 				System.getProperties().put(PROP_CONFIG_AREA, arg);
 				found = true;
 			}
 
-			// look for token to use to show the splash screen
-			if (args[i - 1].equalsIgnoreCase(SHOWSPLASH)) {
+			// look for the command to use to set exit data in the launcher
+			if (arguments[i - 1].equalsIgnoreCase(EXITDATA)) {
+				exitData = arg;
+				found = true;
+			}
+
+			// look for and consume the nosplash directive.  we ignore it
+			// since you only get a spalsh if you say show splash but some PDE
+			// scenarios have it passed in.
+			if (arguments[i - 1].equalsIgnoreCase(NOSPLASH)) {
+				found = true;
+			}
+
+			// look for the command to use to show the splash screen
+			if (arguments[i - 1].equalsIgnoreCase(SHOWSPLASH)) {
 				showSplash = arg;
 				found = true;
 			}
 
-			// look for token to use to end the splash screen
-			if (args[i - 1].equalsIgnoreCase(ENDSPLASH)) {
+			// look for the command to use to end the splash screen
+			if (arguments[i - 1].equalsIgnoreCase(ENDSPLASH)) {
 				endSplash = arg;
 				found = true;
 			}
 
-			// consume the old -boot option
-			if (args[i - 1].equalsIgnoreCase(BOOT)) 
+			// consume the old -boot option			
+			if (arguments[i - 1].equalsIgnoreCase(BOOT)) 
+				found = true;  // ignore
+
+			
+			// look for the VM location arg
+			if (arguments[i - 1].equalsIgnoreCase(VM)) {
+				vm = arg;
 				found = true;
+			}
+
+			// look for the VM args arg
+			if (arguments[i - 1].equalsIgnoreCase(VMARGS)) {
+				// consume the -vmargs arg itself
+				arguments[i - 1] = null;
+				vmargs = new String[arguments.length - i];
+				for (int j = 0; i < arguments.length; i++) {
+					vmargs[j++] = arguments[i];
+					arguments[i] = null;
+				}
+			}
 
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
@@ -854,15 +918,16 @@ public class Main {
 		}
 		// remove all the arguments consumed by this argument parsing
 		if (configArgIndex == 0)
-			return args;
-		String[] passThruArgs = new String[args.length - configArgIndex];
+			return arguments;
+		String[] passThruArgs = new String[arguments.length - configArgIndex - (vmargs == null ? 0 : vmargs.length + 1)];
 		configArgIndex = 0;
 		int j = 0;
-		for (int i = 0; i < args.length; i++) {
+		for (int i = 0; i < arguments.length; i++) {
 			if (i == configArgs[configArgIndex])
 				configArgIndex++;
 			else
-				passThruArgs[j++] = args[i];
+				if (arguments[i] != null)
+					passThruArgs[j++] = arguments[i];
 		}
 		return passThruArgs;
 	}
@@ -892,13 +957,7 @@ public class Main {
 			result = buildURL(computeDefaultConfigurationLocation(), true);
 		if (result == null)
 			return null;
-		// for backward compatibility, remove the filename if the location is a .cfg file.  config
-		// locations are directories not files now.
 		configurationLocation = result.toExternalForm();
-		if (configurationLocation.endsWith(".cfg")) {
-			int index = configurationLocation.lastIndexOf('/');
-			configurationLocation = configurationLocation.substring(0, index + 1);
-		}
 		if (!configurationLocation.endsWith("/"))
 			configurationLocation += "/";
 		System.getProperties().put(PROP_CONFIG_AREA, configurationLocation);
@@ -908,13 +967,84 @@ public class Main {
 	}
 
 	private void processConfiguration() {
-		loadConfiguration(getConfigurationLocation());
-		if (!"false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) {
-			URL parentConfigurationLocation = buildURL(getInstallLocation() + CONFIG_DIR, true);
-			if (parentConfigurationLocation != null)
-				loadConfiguration(parentConfigurationLocation.toExternalForm());
+		// if the configuration area is not already defined, discover the config area by
+		// trying to find a base config area.  This is either defined in a system property or
+		// is computed relative to the install location.
+		// Note that the config info read here is only used to determine a value 
+		// for the user configuration area
+		URL baseConfigurationLocation = null;
+		Properties baseConfiguration = null;
+		if (System.getProperty(PROP_CONFIG_AREA) == null) {
+			String baseLocation = System.getProperty(PROP_BASE_CONFIG_AREA);
+			if (baseLocation != null)
+				// here the base config cannot have any symbolic (e..g, @xxx) entries.  It must just
+				// point to the config file.
+				baseConfigurationLocation = buildURL(baseLocation, true);
+			if (baseConfigurationLocation == null)
+				// here we access the install location but this is very early.  This case will only happen if
+				// the config area is not set and the base config area is not set (or is bogus).
+				// In this case we compute based on the install location.
+				baseConfigurationLocation = buildURL(getInstallLocation() + CONFIG_DIR, true);
+			baseConfiguration = loadConfiguration(baseConfigurationLocation.toExternalForm());
+			if (baseConfiguration != null) {
+				// if the base sets the install area then use that value if the property.  We know the 
+				// property is not already set.
+				String location = baseConfiguration.getProperty(PROP_CONFIG_AREA);
+				if (location != null)
+					System.getProperties().put(PROP_CONFIG_AREA, location);
+				// if the base sets the install area then use that value if the property is not already set.
+				// This helps in selfhosting cases where you cannot easily compute the install location
+				// from the code base.
+				location = baseConfiguration.getProperty(PROP_INSTALL_AREA);
+				if (location != null  && System.getProperty(PROP_INSTALL_AREA) == null)
+					System.getProperties().put(PROP_INSTALL_AREA, location);
+			}
 		}
-		// setup the 
+
+		// Now we know where the base configuration is supposed to be.  Go ahead and load
+		// it and merge into the System properties.  Then, if cascaded, read the parent configuration
+		// Note that the parent may or may not be the same parent as we read above since the 
+		// base can define its parent.  The first parent we read was either defined by the user
+		// on the command line or was the one in the install dir.  
+		// if the config or parent we are about to read is the same as the base config we read above,
+		// just reuse the base
+		Properties configuration = baseConfiguration;
+		if (configuration == null || !getConfigurationLocation().equals(baseConfigurationLocation.toExternalForm()))
+			configuration = loadConfiguration(getConfigurationLocation());
+		mergeProperties(System.getProperties(), configuration);
+		if ("false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) 
+			// if we are not cascaded then remvoe the parent property even if it was set.
+			System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
+		else {
+			URL sharedConfigURL = buildLocation(PROP_SHARED_CONFIG_AREA, null, CONFIG_DIR);
+			if (sharedConfigURL == null) 
+				// here we access the install location but this is very early.  This case will only happen if
+				// the config is cascaded and the parent config area is not set (or is bogus).
+				// In this case we compute based on the install location.  Note that we should not 
+				// precompute this value and use it as the default in the call to buildLocation as it will
+				// unnecessarily bind the install location.
+				sharedConfigURL= buildURL(getInstallLocation() + CONFIG_DIR, true);
+
+			// if the parent location is different from the config location, read it too.
+			if (sharedConfigURL != null) {
+				String location = sharedConfigURL.toExternalForm();
+				if (location.equals(getConfigurationLocation())) 
+					// remove the property to show that we do not have a parent.
+					System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
+				else {
+					// if the parent we are about to read is the same as the base config we read above,
+					// just reuse the base
+					configuration = baseConfiguration;
+					if (!sharedConfigURL.equals(baseConfigurationLocation))
+						configuration = loadConfiguration(location);
+					mergeProperties(System.getProperties(), configuration);
+					System.getProperties().put(PROP_SHARED_CONFIG_AREA, location);
+					if (debug)
+						System.out.println("Shared configuration location:\n    " + location);
+				}
+			}
+		}
+		// setup the path to the framework
 		String urlString = System.getProperty(PROP_FRAMEWORK, null);
 		if (urlString != null) {
 			if (!urlString.endsWith("/")) {
@@ -929,21 +1059,15 @@ public class Main {
 	 * Returns url of the location this class was loaded from
 	 */
 	private String getInstallLocation() {
-		// TODO make the install location property end in / if it is a dir
 		if (installLocation != null)
 			return installLocation;
 
 		// value is not set so compute the default and set the value
 		installLocation = System.getProperty(PROP_INSTALL_AREA);
-		// TODO remove this if when we get off the old property value
-		if (installLocation == null)
-			installLocation = System.getProperty(PROP_INSTALL_LOCATION);			
 		if (installLocation != null) {
 			if (!installLocation.endsWith("/"))
 				installLocation += "/";
 			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
-			// TODO remove this set when we get off the old property
-			System.getProperties().put(PROP_INSTALL_LOCATION, installLocation); 
 			if (debug)
 				System.out.println("Install location:\n    " + installLocation);
 			return installLocation;
@@ -965,8 +1089,6 @@ public class Main {
 		try {
 			installLocation = new URL(result.getProtocol(), result.getHost(), result.getPort(), path).toExternalForm();
 			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
-			// TODO remove this set when we get off the old property
-			System.getProperties().put(PROP_INSTALL_LOCATION, installLocation); 
 		} catch (MalformedURLException e) {
 			// TODO Very unlikely case.  log here.  
 		}
@@ -978,7 +1100,7 @@ public class Main {
 	/*
 	 * Load the given configuration file
 	 */
-	private void loadConfiguration(String url) {
+	private Properties loadConfiguration(String url) {
 		Properties result = null;
 		url += CONFIG_FILE;
 		try {
@@ -986,12 +1108,12 @@ public class Main {
 				System.out.print("Configuration file:\n    " + url.toString()); //$NON-NLS-1$
 			result = loadProperties(url);
 			if (debug)
-				System.out.println("  loaded"); //$NON-NLS-1$
+				System.out.println(" loaded"); //$NON-NLS-1$
 		} catch (IOException e) {
 			if (debug)
-				System.out.println("  not found or not read"); //$NON-NLS-1$
+				System.out.println(" not found or not read"); //$NON-NLS-1$
 		}
-		mergeProperties(System.getProperties(), result);
+		return result;
 	}
 
 	private Properties loadProperties(String location) throws IOException {
@@ -1069,9 +1191,8 @@ public class Main {
 	 * @param bootPath search path for the boot plugin
 	 */
 	private void handleSplash(URL[] defaultPath) {
-
 		// run without splash if we are initializing
-		if (cmdInitialize) {
+		if (initialize) {
 			showSplash = null;
 			endSplash = null;
 			return;
@@ -1087,13 +1208,16 @@ public class Main {
 		if (showSplash == null)
 			return;
 
-		// determine the splash path
+		// determine the splash location
 		String location = getSplashLocation(defaultPath);
 		if (debug)
-			System.out.println("Splash path:\n    " + location); //$NON-NLS-1$
+			System.out.println("Splash location:\n    " + location); //$NON-NLS-1$
 		if (location == null)
 			return;
-
+		showProcess = runCommand(showSplash, location, " " + SHOWSPLASH);	//$NON-NLS-1$
+	}
+	
+	private Process runCommand(String command, String data, String separator) {
 		// Parse the showsplash command into its separate arguments.
 		// The command format is: 
 		//     <executable> -show <magicArg> [<splashPath>]
@@ -1101,28 +1225,35 @@ public class Main {
 		// space, Runtime.getRuntime().exec( String ) will not work, even
 		// if both arguments are enclosed in double-quotes. The solution is to
 		// use the Runtime.getRuntime().exec( String[] ) method.
-		String[] cmd = new String[(location != null ? 4 : 3)];
+		String[] args = new String[(data != null ? 4 : 3)];
+		// get the executable part
 		int sIndex = 0;
-		int eIndex = showSplash.indexOf(" -show"); //$NON-NLS-1$
+		int eIndex = command.indexOf(separator);
 		if (eIndex == -1)
-			return; // invalid -showsplash command
-		cmd[0] = showSplash.substring(sIndex, eIndex);
+			return null; // invalid command
+		args[0] = command.substring(sIndex, eIndex);
+
+		// get the command part
 		sIndex = eIndex + 1;
-		eIndex = showSplash.indexOf(" ", sIndex); //$NON-NLS-1$
+		eIndex = command.indexOf(" ", sIndex); //$NON-NLS-1$
 		if (eIndex == -1)
-			return; // invalid -showsplash command
-		cmd[1] = showSplash.substring(sIndex, eIndex);
-		cmd[2] = showSplash.substring(eIndex + 1);
-		if (location != null)
-			cmd[3] = location;
+			return null; // invalid command
+		args[1] = command.substring(sIndex, eIndex);
+		
+		// get the magic arg part
+		args[2] = command.substring(eIndex + 1);
+
+		// add on our data
+		if (data != null)
+			args[3] = data;
+		Process result = null;
 		try {
-			showProcess = Runtime.getRuntime().exec(cmd);
+			result = Runtime.getRuntime().exec(args);
 		} catch (Exception e) {
-			// continue without splash ...
-			log("Exception showing splash screen."); //$NON-NLS-1$
+			log("Exception running command: " + command); //$NON-NLS-1$
 			log(e);
 		}
-		return;
+		return result;
 	}
 
 	/*
@@ -1147,7 +1278,6 @@ public class Main {
 			showProcess.destroy();
 			showProcess = null;
 		}
-
 		splashDown = true;
 	}
 
@@ -1435,89 +1565,23 @@ public class Main {
 			}
 		}
 	}
-
 	
-	
-
-	// TODO the following methods will be deleted before 3.0 ships
-	/**
-	 * Return a boolean value indicating whether or not the version of the JVM is
-	 * deemed to be compatible with Eclipse.
-	 * @deprecated move this check to the application
-	 */
-	private boolean isCompatible() {
-		try {
-			String vmVersionString = System.getProperty("java.version"); //$NON-NLS-1$
-			Identifier minimum = new Identifier(1, 3, 0);
-			Identifier version = new Identifier(vmVersionString);
-			return version.isGreaterEqualTo(minimum);
-		} catch (SecurityException e) {
-			// If the security manager won't allow us to get the system property, continue for
-			// now and let things fail later on their own if necessary.
-			return true;
-		} catch (NumberFormatException e) {
-			// If the version string was in a format that we don't understand, continue and
-			// let things fail later on their own if necessary.
-			return true;
-		}
+	public void setupVMProperties() {
+		if (vm != null)
+			System.getProperties().put(PROP_VM, vm);
+		setMultiValueProperty(PROP_VMARGS, vmargs);
+		setMultiValueProperty(PROP_COMMANDS, commands);
 	}
 
-	private File computeLockFileLocation() {
-		// compute the base location and then append the name of the lock file
-		File base = computeMetadataLocation();
-		File result = new File(base, ".lock"); //$NON-NLS-1$
-		result.getParentFile().mkdirs();
-		return result;
-	}
-	/**
-	 * Return a boolean value indicating whether or not the platform is already
-	 * running in this workspace.
-	 * @deprecated  The application is now responsible for checking the lock
-	 */
-	private boolean isAlreadyRunning() {
-		if (System.getProperty("org.eclipse.core.runtime.ignoreLockFile") != null) //$NON-NLS-1$
-			return false;
-		// Calculate the location of the lock file
-		File lockFile = computeLockFileLocation();
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(lockFile, true);
-			FileLock lock = stream.getChannel().tryLock();
-			return lock == null;
-		} catch (IOException e) {
-			return false;
-		} finally {
-			if (stream != null)
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-		}
-	}
-
-	/*
-	 * Returns the location of the metadata.  This is a bit of a hack since it can be called 
-	 * very early in the case of an error (to get the log location).  So just iterate over the 
-	 * command line and look for -data and compute if none is found.
-	 */
-	private File computeMetadataLocation() {
-		File result = null;
-		// check to see if the user specified a workspace location in the command-line args
-		for (int i = 0; arguments != null && result == null && i < arguments.length; i++) {
-			if (arguments[i].equalsIgnoreCase(DATA)) {
-				// found the -data command line argument so the next argument should be the
-				// workspace location. Ensure that we have another arg to check
-				if (i + 1 < arguments.length)
-					result = new File(arguments[i + 1]);
+	private void setMultiValueProperty(String property, String[] value) {
+		if (value != null) {
+			StringBuffer result = new StringBuffer(300);
+			for (int i = 0; i < value.length; i++) {
+				result.append(value[i]);
+				result.append('\n');
 			}
-		}
-		// otherwise use the default location
-		if (result == null)
-			result = new File(System.getProperty("user.dir"), "workspace"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// append the .metadata directory to the path
-		return new File(result, ".metadata"); //$NON-NLS-1$
+			System.getProperties().put(property, result.toString());
+		}	
 	}
 
 }
