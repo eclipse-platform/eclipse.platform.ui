@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -136,6 +137,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
 		ILaunch launch = new Launch(this, mode, null);
 		getLaunchManager().addLaunch(launch);
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
 		try {
 			getDelegate().launch(this, mode, launch, monitor);
 		} catch (CoreException e) {
