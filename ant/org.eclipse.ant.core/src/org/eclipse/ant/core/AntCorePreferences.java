@@ -600,18 +600,19 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Returns the URL for the tools.jar associated with the "java.home"
-	 * location. May return <code>null</code> if no tools.jar is found (e.g. "java.home"
-	 * points to a JRE install).
+	 * Returns the URL for the tools.jar associated with the System property "java.home"
+	 * location. If "java.home" has no associated tools.jar (such as a JRE install), the environment variable "JAVA_HOME" is
+	 * resolved to check for a tools.jar.
+     * May return <code>null</code> if no tools.jar is found.
 	 * 
 	 * @return URL tools.jar URL or <code>null</code>
-	 * @deprecated
+	 * @deprecated use getToolsJarEntry()
 	 */
 	public URL getToolsJarURL() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
 		IAntClasspathEntry entry= getToolsJarEntry(path);
 		if (entry == null) {
-			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var");
+			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var"); //$NON-NLS-1$
 			String javaHome= null;
 			try {
 				if (variable != null) {
@@ -631,9 +632,11 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the IAntClasspathEntry for the tools.jar associated with the "java.home"
-	 * location. May return <code>null</code> if no tools.jar is found (e.g. "java.home"
-	 * points to a JRE install).
+	 * Returns the <code>IAntClasspathEntry</code> for the tools.jar associated with the System property "java.home"
+	 * location.
+	 * If "java.home" has no associated tools.jar (such as a JRE install), the environment variable "JAVA_HOME" is
+	 * resolved to check for a tools.jar. 
+	 * May return <code>null</code> if no tools.jar is found.
 	 * 
 	 * @return IAntClasspathEntry tools.jar IAntClasspathEntry or <code>null</code>
 	 */
@@ -641,7 +644,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
 		IAntClasspathEntry entry= getToolsJarEntry(path);
 		if (entry == null) {
-			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var");
+			IDynamicVariable variable = VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable("env_var"); //$NON-NLS-1$
 			String javaHome= null;
 			try {
 				if (variable != null) {
