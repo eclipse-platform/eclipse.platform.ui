@@ -461,4 +461,71 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		}
 		assertTrue("File not out of sync: " + file.getLocation().toOSString(), !file.isSynchronized(IResource.DEPTH_ZERO));
 	}
+
+	/*
+	 * Bug 61843 - Saving project preferences failed
+	 * 
+	 * The project preferences are being accessing (for the first time) from 
+	 * within a resource change listener reacting to a change in the workspace. 
+	 */
+	public void test_61843() {
+		// create the project and manually give it a settings file
+		final String qualifier = getUniqueString();
+		final IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+		IFile settingsFile = project.getFolder(".settings").getFile(qualifier + ".prefs");
+
+		// write some property values in the settings file
+		Properties properties = new Properties();
+		properties.put("key", "value");
+		OutputStream output = null;
+		try {
+			File file = settingsFile.getLocation().toFile();
+			file.getParentFile().mkdirs();
+			output = new BufferedOutputStream(new FileOutputStream(file));
+			properties.store(output, null);
+		} catch (FileNotFoundException e) {
+			fail("1.0", e);
+		} catch (IOException e) {
+			fail("1.1", e);
+		} finally {
+			try {
+				if (output != null)
+					output.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+
+		// add a log listener to ensure that no errors are reported silently
+		ILogListener logListener = new ILogListener() {
+			public void logging(IStatus status, String plugin) {
+				Throwable exception = status.getException();
+				if (exception == null || !(exception instanceof CoreException))
+					return;
+				if (IResourceStatus.WORKSPACE_LOCKED == ((CoreException) exception).getStatus().getCode())
+					fail("3.0");
+			}
+		};
+
+		// listener to react to changes in the workspace
+		IResourceChangeListener rclistener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				new ProjectScope(project).getNode(qualifier);
+			}
+		};
+
+		// add the listeners
+		Platform.addLogListener(logListener);
+		getWorkspace().addResourceChangeListener(rclistener, IResourceChangeEvent.POST_CHANGE);
+
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("4.0", e);
+		} finally {
+			Platform.removeLogListener(logListener);
+			getWorkspace().removeResourceChangeListener(rclistener);
+		}
+	}
 }
