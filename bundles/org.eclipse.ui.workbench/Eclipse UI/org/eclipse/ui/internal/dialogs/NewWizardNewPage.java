@@ -125,9 +125,9 @@ class NewWizardNewPage
 		categoryTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		categoryTreeViewer.setSorter(NewWizardCollectionSorter.INSTANCE);
 		categoryTreeViewer.addSelectionChangedListener(this);
-		if (wizardCategories.getParent(wizardCategories) == null)
+		if (wizardCategories.getParent(wizardCategories) == null) {
 			categoryTreeViewer.setInput(wizardCategories);
-		else
+		} else
 			categoryTreeViewer.setInput(new RootElementProxy(wizardCategories));
 		tree.setFont(wizardFont);
 
@@ -248,10 +248,11 @@ class NewWizardNewPage
 		if (currentSelection != selectedCategory) {
 			page.selectWizardNode(null);
 			wizardSelectionViewer.setInput(selectedCategory);
-			if(selectedCategory instanceof WizardCollectionElement){
-				Object[] children = ((WizardCollectionElement) selectedCategory).getWizards();
-				if(children.length == 1)
-					selectWizard(children[0]);	
+			if (selectedCategory instanceof WizardCollectionElement) {
+				Object[] children =
+					((WizardCollectionElement) selectedCategory).getWizards();
+				if (children.length == 1)
+					selectWizard(children[0]);
 			}
 		}
 	}
@@ -425,7 +426,14 @@ class NewWizardNewPage
 
 		public RootElementProxy(WizardCollectionElement element) {
 			super();
-			elements = new WizardCollectionElement[] { element };
+			//If the element has no wizard then it is an empty category
+			//and we should collapse
+			if (element.getWizards().length == 0) {
+				Object[] children = element.getChildren();
+				elements = new WizardCollectionElement[children.length];
+				System.arraycopy(children, 0, elements, 0, elements.length);
+			} else
+				elements = new WizardCollectionElement[] { element };
 		}
 
 		public Object getAdapter(Class adapter) {

@@ -111,6 +111,7 @@ public class NewExampleAction extends Action {
 		Shell parent = window.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
+		wizard.setWindowTitle(WorkbenchMessages.getString("NewExample.title")); //$NON-NLS-1$
 		dialog.getShell().setSize(
 			Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
 			SIZING_WIZARD_HEIGHT);
