@@ -14,11 +14,12 @@ package org.eclipse.debug.internal.ui;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -88,8 +89,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * of kind <code>org.eclipse.debug.ui.debugLabelProvider</code>
 	 */
 	public DelegatingModelPresentation() {
-		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint point= descriptor.getExtensionPoint(IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
+		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
 		if (point != null) {
 			IExtension[] extensions= point.getExtensions();
 			for (int i= 0; i < extensions.length; i++) {

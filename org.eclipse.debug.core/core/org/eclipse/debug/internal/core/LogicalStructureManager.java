@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IValue;
@@ -53,9 +54,9 @@ public class LogicalStructureManager {
 	
 	private void initialize() {
 		if (fTypes == null) {
-			fTypes = new ArrayList();
-			IExtensionPoint point = DebugPlugin.getDefault().getDescriptor().getExtensionPoint(DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
 			IConfigurationElement[] extensions = point.getConfigurationElements();
+			fTypes = new ArrayList(extensions.length);
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement extension = extensions[i];
 				LogicalStructureType type;

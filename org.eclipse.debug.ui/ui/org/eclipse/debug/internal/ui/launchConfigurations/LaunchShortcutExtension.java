@@ -352,7 +352,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return fConfig.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+		return fConfig.getDeclaringExtension().getNamespace();
 	}
 }
 

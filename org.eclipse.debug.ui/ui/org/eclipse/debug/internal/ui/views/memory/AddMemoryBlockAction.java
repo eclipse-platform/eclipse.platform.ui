@@ -211,7 +211,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				// make sure the memory block returned is not an instance of IExtendedMemoryBlock
 				if (memBlock instanceof IExtendedMemoryBlock)
 				{
-					Status status = new Status(IStatus.WARNING, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+					Status status = new Status(IStatus.WARNING, DebugUIPlugin.getUniqueIdentifier(),	0, 
 						"IMemoryBlockRetrieval returns IExtendedMemoryBlock.  This may result in unexpected behavior.", null); //$NON-NLS-1$
 					DebugUIPlugin.log(status);
 				}

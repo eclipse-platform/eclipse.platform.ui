@@ -17,10 +17,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
@@ -252,8 +253,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	public IConsoleColorProvider getColorProvider(String type) {
 		if (fColorProviders == null) {
 			fColorProviders = new HashMap();
-			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
-			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
@@ -287,8 +287,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	public ConsoleLineNotifier newLineNotifier(String type) {
 		if (fLineTrackers == null) {
 			fLineTrackers = new HashMap();
-			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
-			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];

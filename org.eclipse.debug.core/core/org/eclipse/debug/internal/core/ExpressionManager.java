@@ -105,7 +105,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * extension point.
 	 */
 	private void loadWatchExpressionDelegates() {
-		IExtensionPoint extensionPoint = Platform.getPluginRegistry().getExtensionPoint("org.eclipse.debug.core.watchExpressionDelegates"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), "watchExpressionDelegates"); //$NON-NLS-1$
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element = configurationElements[i];

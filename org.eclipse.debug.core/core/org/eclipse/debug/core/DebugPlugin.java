@@ -20,16 +20,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -46,9 +47,10 @@ import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
-import org.eclipse.debug.internal.core.memory.*;
+import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -69,6 +71,12 @@ import org.xml.sax.SAXException;
  * </p>
  */
 public class DebugPlugin extends Plugin {
+	
+	/**
+	 * Unique identifier constant (value <code>"org.eclipse.debug.core"</code>)
+	 * for the Debug Core plug-in.
+	 */
+	private static final String PI_DEBUG_CORE = "org.eclipse.debug.core"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"launchConfigurationTypes"</code>)
@@ -281,13 +289,7 @@ public class DebugPlugin extends Plugin {
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return "org.eclipse.debug.core"; //$NON-NLS-1$
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return PI_DEBUG_CORE;
 	}
 
 	/**
@@ -297,12 +299,9 @@ public class DebugPlugin extends Plugin {
 	 * when the facilities provided by this plug-in are required.
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
-	 * 
-	 * @param descriptor the plug-in descriptor for the
-	 *   debug plug-in
 	 */
-	public DebugPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public DebugPlugin() {
+		super();
 		setDefault(this);
 	}
 	
@@ -441,19 +440,12 @@ public class DebugPlugin extends Plugin {
 		}
 	}	
 
-	/**
-	 * Shuts down this debug plug-in and discards all plug-in state.
-	 * <p> 
-	 * This method will be automatically invoked by the platform when
-	 * the platform is shut down.
-	 * </p>
-	 * <b>Clients must never explicitly call this method.</b>
-	 *
-	 * @exception CoreException if this plug-in fails to shut down
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
+	public void stop(BundleContext context) throws Exception {
 		setShuttingDown(true);
-		super.shutdown();
+		super.stop(context);
 		if (fAsynchJob != null) {
 			fAsynchJob.cancel();
 		}
@@ -735,8 +727,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 */
 	private void initializeStatusHandlers() {
-		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(EXTENSION_POINT_STATUS_HANDLERS);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.PI_DEBUG_CORE, EXTENSION_POINT_STATUS_HANDLERS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fStatusHandlers = new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
@@ -764,7 +755,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 */
 	private void initializeProcessFactories() {
-		IExtensionPoint extensionPoint= getDescriptor().getExtensionPoint(EXTENSION_POINT_PROCESS_FACTORIES);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.PI_DEBUG_CORE, EXTENSION_POINT_PROCESS_FACTORIES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fProcessFactories = new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
@@ -775,14 +766,14 @@ public class DebugPlugin extends Plugin {
 					fProcessFactories.put(id, configurationElement);
 			} else {
 				// invalid process factory
-				String badDefiner= infos[i].getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-				log(new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.31"), new String[] {badDefiner, id}), null)); //$NON-NLS-1$
+				String badDefiner= infos[i].getDeclaringExtension().getNamespace();
+				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.31"), new String[] {badDefiner, id}), null)); //$NON-NLS-1$
 			}
 		}			
 	}
 	
 	private void invalidStatusHandler(Exception e, String id) {
-		log(new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.Invalid_status_handler_extension__{0}_2"), new String[] {id}), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.Invalid_status_handler_extension__{0}_2"), new String[] {id}), e)); //$NON-NLS-1$
 	}
 	
 	/**

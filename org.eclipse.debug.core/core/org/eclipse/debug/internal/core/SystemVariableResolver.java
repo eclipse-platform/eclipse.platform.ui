@@ -11,10 +11,11 @@
 package org.eclipse.debug.internal.core;
 
 import java.net.URL;
-import org.eclipse.core.boot.BootLoader;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 
@@ -36,17 +37,17 @@ public class SystemVariableResolver implements IDynamicVariableResolver {
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if ("ARCH".equals(argument)) { //$NON-NLS-1$
-			return BootLoader.getOSArch();
+			return Platform.getOSArch();
 		} else if ("ECLIPSE_HOME".equals(argument)) { //$NON-NLS-1$
-			URL installURL = BootLoader.getInstallURL();
+			URL installURL = Platform.getInstallLocation().getURL();
 			IPath ppath = new Path(installURL.getFile()).removeTrailingSeparator();
 			return getCorrectPath(ppath.toOSString());
 		} else if ("NL".equals(argument)) { //$NON-NLS-1$
-			return BootLoader.getNL();
+			return Platform.getNL();
 		} else if ("OS".equals(argument)) { //$NON-NLS-1$
-			return BootLoader.getOS();
+			return Platform.getOS();
 		} else if ("WS".equals(argument)) { //$NON-NLS-1$
-			return BootLoader.getWS();
+			return Platform.getWS();
 		}
 		return null;
 	}
@@ -55,7 +56,7 @@ public class SystemVariableResolver implements IDynamicVariableResolver {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < path.length(); i++) {
 			char c = path.charAt(i);
-			if (BootLoader.getOS().equals("win32")) { //$NON-NLS-1$
+			if (Platform.getOS().equals("win32")) { //$NON-NLS-1$
 				if (i == 0 && c == '/')
 					continue;
 			}

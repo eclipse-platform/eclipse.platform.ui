@@ -274,7 +274,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPluginId()
 	 */
 	public String getPluginIdentifier() {
-		return fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+		return fElement.getDeclaringExtension().getNamespace();
 	}
 }
 

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
@@ -91,7 +92,7 @@ public class StringVariablePresentationManager {
 	 */
 	private void initialize() {
 		fConfigurations = new HashMap();
-		IExtensionPoint point= DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS);
+		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS);
 		IConfigurationElement elements[]= point.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];

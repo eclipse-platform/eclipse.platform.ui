@@ -15,9 +15,10 @@ package org.eclipse.debug.internal.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -46,12 +47,7 @@ public class DebugPluginImages {
 
 	static {
 		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-			
-		try {
-			ICON_BASE_URL= new URL(DebugUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
+		ICON_BASE_URL= DebugUIPlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
@@ -198,8 +194,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ, WIZBAN + "edtsrclkup_wiz.gif"); //$NON-NLS-1$
 		
 		// launch configuration types
-		IPluginDescriptor pluginDescriptor = DebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= pluginDescriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);
 		IConfigurationElement[] configElements= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configElements.length; i++) {
 			IConfigurationElement configElement = configElements[i];

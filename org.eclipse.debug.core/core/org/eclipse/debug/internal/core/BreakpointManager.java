@@ -217,7 +217,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * breakpoints from markers.
 	 */
 	private void initBreakpointExtensions() {
-		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(DebugPlugin.EXTENSION_POINT_BREAKPOINTS);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_BREAKPOINTS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
 			String markerType = elements[i].getAttribute(MARKER_TYPE);
@@ -300,7 +300,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		setBreakpoints(new Vector(10));
 		try {
 			loadBreakpoints(getWorkspace().getRoot());
-			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
+			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_WORKSPACE_BUILD);
 		} catch (CoreException ce) {
 			DebugPlugin.log(ce);
 			setBreakpoints(new Vector(0));

@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,12 +25,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -78,13 +79,22 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressService;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
 
 /**
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {			
+public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
+	
+	/**
+	 * Unique identifier constant (value <code>"org.eclipse.debug.ui"</code>)
+	 * for the Debug UI plug-in.
+	 */
+	private static final String PI_DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
+	
 	/**
 	 * The singleton debug plugin instance
 	 */
@@ -164,8 +174,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Constructs the debug UI plugin
 	 */
-	public DebugUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public DebugUIPlugin() {
+		super();
 		fgDebugUIPlugin= this;
 	}
 		
@@ -184,13 +194,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return "org.eclipse.debug.ui"; //$NON-NLS-1$
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return PI_DEBUG_UI;
 	}
 
 	public static IDebugModelPresentation getModelPresentation() {
@@ -262,8 +266,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-		if (plugin.isPluginActivated()) {
+		Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+		if (bundle.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		} else {
 			final Object [] ret = new Object[1];
@@ -290,21 +294,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return DebugPluginImages.initializeImageRegistry();
 	}
 
-	/**
-	 * Shuts down this plug-in and discards all plug-in state.
-	 * If a plug-in has been started, this method is automatically
-	 * invoked by the platform core when the workbench is closed.
-	 * <p> 
-	 * This method is intended to perform simple termination
-	 * of the plug-in environment. The platform may terminate invocations
-	 * that do not complete in a timely fashion.
-	 * </p><p>
-	 * By default this will save the preference and dialog stores (if they are in use).
-	 * </p><p>
-	 * Subclasses which override this method must call super first.
-	 * </p>
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
+	public void stop(BundleContext context) throws Exception {
 		if (fPerspectiveManager != null) {
 			fPerspectiveManager.shutdown();
 		}
@@ -326,14 +319,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fMemBlkViewSynchronizer.shutdown();
 		}
 		
-		super.shutdown();
+		super.stop(context);
 	}
 
 	/**
 	 * @see AbstractUIPlugin#startup()
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		
 		// Listen to launches to lazily create "launch processors"
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);

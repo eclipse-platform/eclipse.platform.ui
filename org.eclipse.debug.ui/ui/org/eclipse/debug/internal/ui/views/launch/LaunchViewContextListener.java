@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -147,7 +148,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * is used to open the appropriate views when a context is activated. 
 	 */
 	private void loadContextToViewExtensions(boolean reloadContextMappings) {
-		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(ID_CONTEXT_VIEW_BINDINGS);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element = configurationElements[i];
@@ -179,7 +180,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * identifiers in the modelToContexts map as well
 	 */
 	private void loadDebugModelContextExtensions() {
-		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(ID_DEBUG_MODEL_CONTEXT_BINDINGS);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_DEBUG_MODEL_CONTEXT_BINDINGS);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element = configurationElements[i];

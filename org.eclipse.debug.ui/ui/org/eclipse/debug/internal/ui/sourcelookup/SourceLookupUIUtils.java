@@ -16,10 +16,11 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.sourcelookup.*;
+import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -57,10 +58,9 @@ public class SourceLookupUIUtils {
 	 * Constructor. Reads in Source Container Presentation extension implementations.
 	 */
 	public SourceLookupUIUtils(){
-		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();		
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), CONTAINER_PRESENTATION_EXTENSION);		
 		//read in SourceContainer presentation extensions
-		IConfigurationElement[] sourceContainerPresentationExtensions =
-			descriptor.getExtensionPoint(CONTAINER_PRESENTATION_EXTENSION).getConfigurationElements();
+		IConfigurationElement[] sourceContainerPresentationExtensions =extensionPoint.getConfigurationElements();
 		fSourceContainerPresentationHashtable = new Hashtable();
 		for (int i = 0; i < sourceContainerPresentationExtensions.length; i++) {
 			fSourceContainerPresentationHashtable.put(

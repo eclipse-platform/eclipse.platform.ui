@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,7 +43,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.eclipse.core.boot.BootLoader;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -60,7 +61,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -685,8 +685,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	private void initializeLaunchConfigurationTypes() {
-		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fLaunchConfigurationTypes= new ArrayList(infos.length);
 		for (int i= 0; i < infos.length; i++) {
@@ -701,8 +700,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * to an existing launch configuration type).
 	 */
 	private void initializeContributedDelegates() {
-		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fContributedDelegates= new ArrayList(infos.length);
 		for (int i= 0; i < infos.length; i++) {
@@ -1102,8 +1100,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 *  the extensions
 	 */
 	private void initializeSourceLocators() {
-		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fSourceLocators= new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
@@ -1114,7 +1111,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			} else {
 				// invalid status handler
 				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()} ), null);  //$NON-NLS-1$
+				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getDeclaringExtension().getNamespace()} ), null);  //$NON-NLS-1$
 				DebugPlugin.log(s);
 			}
 		}			
@@ -1125,8 +1122,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Load comparator extensions.
 	 */
 	private void initializeComparators() {
-		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fComparators = new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
@@ -1137,7 +1133,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			} else {
 				// invalid status handler
 				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
+				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getDeclaringExtension().getNamespace()}), null); //$NON-NLS-1$
 				DebugPlugin.log(s);
 			}
 		}			
@@ -1523,8 +1519,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 *  the extensions
 	 */
 	private void initializeLaunchModes() {
-		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fLaunchModes = new HashMap();
 		for (int i= 0; i < infos.length; i++) {
@@ -1562,7 +1557,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		
 		// Add variables from config
 		Iterator iter= envMap.entrySet().iterator();
-		boolean win32= BootLoader.getOS().equals(Constants.OS_WIN32);
+		boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
 		while (iter.hasNext()) {
 			Map.Entry entry= (Map.Entry) iter.next();
 			String key= (String) entry.getKey();
@@ -1606,7 +1601,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			boolean windowsOS= false;
 			boolean isWin9xME= false; //see bug 50567
 			String fileName= null;
-			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+			if (Platform.getOS().equals(Constants.OS_WIN32)) {
 				windowsOS= true;
 				String osName= System.getProperty("os.name"); //$NON-NLS-1$
 				isWin9xME= osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1620,7 +1615,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					// Win NT, 2K, XP
 					nativeCommand= "cmd.exe /C set"; //$NON-NLS-1$
 				}
-			} else if (!BootLoader.getOS().equals(Constants.OS_UNKNOWN)){
+			} else if (!Platform.getOS().equals(Constants.OS_UNKNOWN)){
 				nativeCommand= "printenv";		 //$NON-NLS-1$
 			}
 			if (nativeCommand == null) {
@@ -1691,15 +1686,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	private void initializeSourceContainerTypes() {
 		if (sourceContainerTypes == null) {
-			IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-			IConfigurationElement[] extensions = descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_CONTAINER_TYPES).getConfigurationElements();
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_CONTAINER_TYPES);
+			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
 			sourceContainerTypes = new HashMap();
 			for (int i = 0; i < extensions.length; i++) {
 				sourceContainerTypes.put(
 						extensions[i].getAttribute("id"), //$NON-NLS-1$
 						new SourceContainerType(extensions[i]));
-			}			
-			extensions = descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_PATH_COMPUTERS).getConfigurationElements();
+			}
+			extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_PATH_COMPUTERS);
+			extensions = extensionPoint.getConfigurationElements();
 			sourcePathComputers = new HashMap();
 			for (int i = 0; i < extensions.length; i++) {
 				sourcePathComputers.put(
