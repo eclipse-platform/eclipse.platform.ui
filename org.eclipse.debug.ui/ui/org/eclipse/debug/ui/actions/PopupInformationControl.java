@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -39,13 +38,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ActionHandler;
+import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.contexts.EnabledSubmission;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
  * A popup that appears on top of a text viewer displaying 
@@ -93,20 +93,16 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	private IPopupInformationControlAdapter adapter;
 	
 	/**
-	 * Debug hover scope 
+	 * ActionHandler for closeAction
 	 */
-	private List hoverScope = Collections.singletonList(new EnabledSubmission((Shell)null, (IWorkbenchSite)null, "org.eclipse.debug.ui.debugging.popups")); //$NON-NLS-1$
+	private List submissions;
 	
 	/**
 	 * Default action used to close popup
 	 */
 	private IAction closeAction = null;
 	
-	/**
-	 * The part this popup is parented by
-	 */
-	private IWorkbenchPart parentPart = null;
-
+	
 	/**
 	 * Creates a popup to display information provided by adapter
 	 * Style is set to SWT.NONE
@@ -148,7 +144,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */	
 	public PopupInformationControl(Shell parent, int shellStyle, IPopupInformationControlAdapter adapter, final	 IAction action) {
 		this.adapter = adapter;
-		parentPart = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().getActivePart();
+		
 		if (action != null) {
 			closeAction = new WrappedAction(action);
 		}
@@ -174,9 +170,12 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		GridData data= new GridData(GridData.FILL_BOTH);
 		Composite composite = createInformationComposite();
 		composite.setLayoutData(data);
+		
 		register();
+		
 		ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
 		ICommand command = commandManager.getCommand(closeAction.getActionDefinitionId());
+		
 		if (action != null) {
 			Label separator= new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
 			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -193,7 +192,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 				IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
 				label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {lastBinding.getKeySequence().format(), closeAction.getText()})); //$NON-NLS-1$
 				label.getParent().layout();
-			}							
+			}			
 		}
 	}
 	
@@ -252,11 +251,11 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */
 	private void deregister() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getContextSupport().removeEnabledSubmissions(hoverScope);
-		workbench.getCommandSupport().deregisterFromKeyBindings(shell);
-		if (closeAction != null) {
-			parentPart.getSite().getKeyBindingService().unregisterAction(closeAction);
-		}
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		
+		commandSupport.removeHandlerSubmissions(submissions);
+		contextSupport.unregisterShell(shell);
 	}
 	
 	/**
@@ -265,11 +264,14 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */
 	private void register() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getContextSupport().addEnabledSubmissions(hoverScope);
-		workbench.getCommandSupport().registerForKeyBindings(shell, false);
-		if (closeAction != null) {
-			parentPart.getSite().getKeyBindingService().registerAction(closeAction);
-		}
+		
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		
+		submissions = Collections.singletonList(new HandlerSubmission(null, null, closeAction.getActionDefinitionId(), new ActionHandler(closeAction), 4));
+		commandSupport.addHandlerSubmissions(submissions);
+		
+		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
 	}	
 	
 	/**
@@ -428,7 +430,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */
 	private class WrappedAction implements IAction {
 		IAction realAction;
-
+		
 		
 		WrappedAction(IAction action) {
 			realAction = action;			

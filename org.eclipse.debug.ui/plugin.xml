@@ -1418,12 +1418,6 @@
             description="%ActionDefinition.closeDebugPopup.description"
             id="org.eclipse.debug.ui.commands.defaultDebugPopupClose">
       </command>
-      <keyBinding
-            string="Enter"
-            scope="org.eclipse.debug.ui.debugging.popups"
-            command="org.eclipse.debug.ui.commands.defaultDebugPopupClose"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>  
       <command
             name="%ActionDefinition.runToLine.name"
             description="%ActionDefinition.runToLine.description"
@@ -1777,11 +1771,6 @@
            description="%Context.debugging.description"
            id="org.eclipse.debug.ui.debugging">
      </context>
-     <context
-           name="%Context.debugPopups.name"
-           description="%Context.debugPopups.description"
-           id="org.eclipse.debug.ui.debugging.popups">
-     </context>     
   </extension>
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">
