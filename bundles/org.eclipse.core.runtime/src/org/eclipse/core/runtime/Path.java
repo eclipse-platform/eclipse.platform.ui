@@ -146,17 +146,7 @@ public class Path implements IPath, Cloneable {
 	 * @see #isValidPath(String)
 	 */
 	public Path(String fullPath) {
-		String deviceString = null;
-		if (WINDOWS) {
-			int i = fullPath.indexOf(DEVICE_SEPARATOR);
-			if (i != -1) {
-				deviceString = fullPath.substring(0, i + 1);
-				fullPath = fullPath.substring(i + 1, fullPath.length());
-			}
-			//convert backslash to forward slash
-			fullPath = fullPath.indexOf('\\') == -1 ? fullPath : fullPath.replace('\\', SEPARATOR);
-		}
-		initialize(deviceString, fullPath);
+		this(null, fullPath);
 	}
 
 	/** 
@@ -174,9 +164,19 @@ public class Path implements IPath, Cloneable {
 	 * @see #setDevice(String)
 	 */
 	public Path(String device, String path) {
-		//convert backslash to forward slash
-		if (WINDOWS)
+		if (WINDOWS) {
+			//convert backslash to forward slash
 			path = path.indexOf('\\') == -1 ? path : path.replace('\\', SEPARATOR);
+			//extract device
+			int i = path.indexOf(DEVICE_SEPARATOR);
+			if (i != -1) {
+				// if the specified device is null then set it to
+				// be whatever is defined in the path string
+				if (device == null)
+					device = path.substring(0, i + 1);
+				path = path.substring(i + 1, path.length());
+			}
+		}
 		initialize(device, path);
 	}
 
@@ -684,9 +684,13 @@ public class Path implements IPath, Cloneable {
 		int size = segment.length();
 		if (size == 0)
 			return false;
-		for (int i = 0; i < size; i++)
-			if (segment.charAt(i) == '/')
+		for (int i = 0; i < size; i++) {
+			char c = segment.charAt(i);
+			if (c == '/')
 				return false;
+			if (WINDOWS && (c == '\\' || c == ':'))
+				return false;
+		}
 		return true;
 	}
 
