@@ -333,4 +333,18 @@ public final class HelpSystem {
 
 		return helpSupport;
 	}
+	/**
+	 * Obtains Name of the Eclipse product
+	 * @return String
+	 */
+	public static String getProductName() {
+		IPlatformConfiguration c = BootLoader.getCurrentPlatformConfiguration();
+		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
+		IPluginDescriptor pfd =
+			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
+		if (pfd == null)
+			return ""; // no primary feature installed
+		return pfd.getLabel();
+	}
+
 }

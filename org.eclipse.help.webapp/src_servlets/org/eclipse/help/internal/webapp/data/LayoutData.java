@@ -13,6 +13,9 @@ package org.eclipse.help.internal.webapp.data;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.webapp.*;
+
 public class LayoutData extends RequestData {
 
 	private String query = "";
@@ -128,5 +131,8 @@ public class LayoutData extends RequestData {
 			if (views[i].getName().equals(name))
 				return views[i];
 		return null;
+	}
+	public String getWindowTitle(){
+		return ServletResources.getString("browserTitle", HelpSystem.getProductName(), request);
 	}
 }
