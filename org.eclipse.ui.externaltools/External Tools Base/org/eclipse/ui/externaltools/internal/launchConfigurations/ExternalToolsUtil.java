@@ -46,7 +46,7 @@ public class ExternalToolsUtil {
 	 * Not to be instantiated.
 	 */
 	private ExternalToolsUtil() {
-	};
+	}
 
 	/**
 	 * Throws a core exception with an error status object built from

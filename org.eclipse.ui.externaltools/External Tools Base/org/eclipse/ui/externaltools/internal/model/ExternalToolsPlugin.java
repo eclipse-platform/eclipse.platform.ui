@@ -62,14 +62,14 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		if (message == null) {
 			message= EMPTY_STRING; 
 		}		
-		return new Status(Status.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, exception);
+		return new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, exception);
 	}
 
 	/**
 	 * Returns a new <code>CoreException</code> for this plug-in
 	 */
 	public static CoreException newError(String message, Throwable exception) {
-		return new CoreException(new Status(Status.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, exception));
+		return new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, exception));
 	}
 
 	/**

@@ -130,7 +130,7 @@ protected Control createDialogArea(Composite parent) {
 			SIZING_SELECTION_WIDGET_HEIGHT);
 
 	composite.addControlListener(new ControlListener() {
-		public void controlMoved(ControlEvent e) {};
+		public void controlMoved(ControlEvent e) {}
 		public void controlResized(ControlEvent e) {
 			//Also try and reset the size of the columns as appropriate
 			TableColumn[] columns = selectionGroup.getListTable().getColumns();

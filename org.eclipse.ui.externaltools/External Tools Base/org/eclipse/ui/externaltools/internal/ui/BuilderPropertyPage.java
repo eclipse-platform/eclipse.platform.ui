@@ -43,10 +43,10 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -489,7 +489,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.Copy_configuration_4")); //$NON-NLS-1$
 		dialog.setMessage(ExternalToolsUIMessages.getString("BuilderPropertyPage.&Choose_a_configuration_to_copy__5")); //$NON-NLS-1$
 		dialog.setElements(configurations.toArray());
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 		Object results[]= dialog.getResult();
@@ -609,7 +609,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			//then we can correctly update the list with the new config.
 			newConfigList.add(config);
 			int code= editConfiguration(config);
-			if (code == Dialog.CANCEL) {
+			if (code == Window.CANCEL) {
 				// If the user cancelled, delete the newly created config
 				newConfigList.remove(config);
 				config.delete();
