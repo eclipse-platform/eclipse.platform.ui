@@ -10,44 +10,32 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.*;
+import java.text.MessageFormat;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.IStatus;
 
 
-public class Filter {
+public class CompareFilter {
 	private static final char[][] NO_CHAR_CHAR= new char[0][];
 	
 	private char[][] fExtraResourceFileFilters;
 	private String[] fExtraResourceFolderFilters;
-	private IPreferenceStore fPreferenceStore;
-	private IPropertyChangeListener fPropertyChangeListener;
 
 	
-	public Filter(IPreferenceStore ps) {
-		fPreferenceStore= ps;
-		updateFilters();
-		fPropertyChangeListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (ComparePreferencePage.PATH_FILTER.equals(event.getProperty()))
-					updateFilters();
-			}
-		};
-		ps.addPropertyChangeListener(fPropertyChangeListener);
-	}
-
-	public void dispose() {
-		fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-		fPropertyChangeListener= null;
+	public CompareFilter() {
 	}
 
 	public boolean filter(String path0, boolean folder, boolean isArchive) {
-		if (fExtraResourceFileFilters != null) {
+		if (!folder && fExtraResourceFileFilters != null) {
 			char[] name= path0.toCharArray();
 			for (int i= 0, l= fExtraResourceFileFilters.length; i < l; i++)
 				if (match(fExtraResourceFileFilters[i], name, true))
 					return true;
 		}
-		if (fExtraResourceFolderFilters != null) {
+		if (folder && fExtraResourceFolderFilters != null) {
 			for (int i= 0, l= fExtraResourceFolderFilters.length; i < l; i++)
 				if (fExtraResourceFolderFilters[0].equals(path0))
 					return true;
@@ -55,11 +43,30 @@ public class Filter {
 		return false;
 	}
 
-	private void updateFilters() {
-		String filterSequence= fPreferenceStore.getString(ComparePreferencePage.PATH_FILTER);
+	public static String validateResourceFilters(String text) {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		String[] filters= getTokens(text, ","); //$NON-NLS-1$
+		for (int i= 0; i < filters.length; i++) {
+			String fileName= filters[i].replace('*', 'x');
+			int resourceType= IResource.FILE;
+			int lastCharacter= fileName.length() - 1;
+			if (lastCharacter >= 0 && fileName.charAt(lastCharacter) == '/') {
+				fileName= fileName.substring(0, lastCharacter);
+				resourceType= IResource.FOLDER;
+			}
+			IStatus status= workspace.validateName(fileName, resourceType);
+			if (status.matches(IStatus.ERROR)) {		
+				String format= Utilities.getString("ComparePreferencePage.filter.invalidsegment.error"); //$NON-NLS-1$
+				return MessageFormat.format(format, new String[] { status.getMessage() } );
+			}
+		}
+		return null;
+	}
+	
+	public void setFilters(String filterSequence) {
 		char[][] filters= filterSequence != null && filterSequence.length() > 0
-				? splitAndTrimOn(',', filterSequence.toCharArray())
-				: null;
+		? splitAndTrimOn(',', filterSequence.toCharArray())
+		: null;
 		if (filters == null) {
 			fExtraResourceFileFilters= null;
 			fExtraResourceFolderFilters= null;
@@ -88,6 +95,17 @@ public class Filter {
 		}
 	}
 
+	/////////
+	
+	private static String[] getTokens(String text, String separator) {
+		StringTokenizer tok= new StringTokenizer(text, separator); //$NON-NLS-1$
+		int nTokens= tok.countTokens();
+		String[] res= new String[nTokens];
+		for (int i= 0; i < res.length; i++)
+			res[i]= tok.nextToken().trim();
+		return res;
+	}	
+	
 	/**
 	 * Answers true if the pattern matches the given name, false otherwise.
 	 * This char[] pattern matching accepts wild-cards '*' and '?'.

@@ -11,15 +11,11 @@
 package org.eclipse.compare.internal;
 
 import java.io.*;
-import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -257,7 +253,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					String filters= t.getText();
-					String message= validateResourceFilters(filters);
+					String message= CompareFilter.validateResourceFilters(filters);
 					setValid(message == null);
 					setMessage(null);
 					setErrorMessage(message);
@@ -340,35 +336,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			b.setSelection(fOverlayStore.getBoolean(key));
 		}
 	}
-
-	private String validateResourceFilters(String text) {
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		String[] filters= getTokens(text, ","); //$NON-NLS-1$
-		for (int i= 0; i < filters.length; i++) {
-			String fileName= filters[i].replace('*', 'x');
-			int resourceType= IResource.FILE;
-			int lastCharacter= fileName.length() - 1;
-			if (lastCharacter >= 0 && fileName.charAt(lastCharacter) == '/') {
-				fileName= fileName.substring(0, lastCharacter);
-				resourceType= IResource.FOLDER;
-			}
-			IStatus status= workspace.validateName(fileName, resourceType);
-			if (status.matches(IStatus.ERROR)) {		
-				String format= Utilities.getString("ComparePreferencePage.filter.invalidsegment.error"); //$NON-NLS-1$
-				return MessageFormat.format(format, new String[] { status.getMessage() } );
-			}
-		}
-		return null;
-	}
-	
-	private static String[] getTokens(String text, String separator) {
-		StringTokenizer tok= new StringTokenizer(text, separator); //$NON-NLS-1$
-		int nTokens= tok.countTokens();
-		String[] res= new String[nTokens];
-		for (int i= 0; i < res.length; i++)
-			res[i]= tok.nextToken().trim();
-		return res;
-	}	
 
 	// overlay stuff
 	

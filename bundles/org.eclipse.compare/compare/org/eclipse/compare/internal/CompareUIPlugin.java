@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -97,8 +98,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 	private static CompareUIPlugin fgComparePlugin;
 	
-	private Filter fFilter;
-
+	private CompareFilter fFilter;
+	private IPropertyChangeListener fPropertyChangeListener;
+	
 	/**
 	 * Creates the <code>CompareUIPlugin</code> object and registers all
 	 * structure creators, content merge viewers, and structure merge viewers
@@ -280,8 +282,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				sb.append(' ');
 			}
 			ps.setValue(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME, sb.toString());
+			
+			if (fPropertyChangeListener != null) {
+				ps.removePropertyChangeListener(fPropertyChangeListener);
+				fPropertyChangeListener= null;
+			}
 		}
-		fFilter.dispose();
 		
 		super.shutdown();
 		
@@ -816,7 +822,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	private void initPreferenceStore() {
 		//System.out.println("initPreferenceStore");
-		IPreferenceStore ps= getPreferenceStore();
+		final IPreferenceStore ps= getPreferenceStore();
 		if (ps != null) {
 			String aliases= ps.getString(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME);
 			//System.out.println("  <" + aliases + ">");
@@ -833,7 +839,15 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					}
 				}
 			}
-			fFilter= new Filter(ps);
+			fFilter= new CompareFilter();
+			fFilter.setFilters(ps.getString(ComparePreferencePage.PATH_FILTER));
+			fPropertyChangeListener= new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (ComparePreferencePage.PATH_FILTER.equals(event.getProperty()))
+						fFilter.setFilters(ps.getString(ComparePreferencePage.PATH_FILTER));
+				}
+			};
+			ps.addPropertyChangeListener(fPropertyChangeListener);
 		}
 	}
 	
@@ -893,7 +907,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static boolean filter(String name, boolean isFolder, boolean isArchive) {
-		Filter f= getDefault().fFilter;
+		CompareFilter f= getDefault().fFilter;
 		return f.filter(name, isFolder, isArchive);
 	}
 }
