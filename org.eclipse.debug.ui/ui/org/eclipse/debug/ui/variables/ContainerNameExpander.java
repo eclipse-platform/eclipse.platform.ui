@@ -17,7 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 
 /**
- * Extracts the container name from a variable context
+ * Extracts the container name from a variable context.
+ * @since 3.0
  */
 public class ContainerNameExpander extends DefaultVariableExpander {
 

@@ -19,7 +19,8 @@ import org.eclipse.swt.widgets.Group;
 
 /**
  * The AbstractVariableComponent provides the base implementation of an
- * IVariableComponent
+ * <code>IVariableComponent</code>.
+ * @since 3.0
  */
 public abstract class AbstractVariableComponent implements IVariableComponent {
 	

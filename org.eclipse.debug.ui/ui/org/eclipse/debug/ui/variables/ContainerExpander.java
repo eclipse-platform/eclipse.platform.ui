@@ -16,9 +16,7 @@ import org.eclipse.core.resources.IResource;
 /**
  * Expands a resource's container type variable into the desired
  * result format.
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
+ * @since 3.0
  */
 public class ContainerExpander extends ResourceExpander {
 
