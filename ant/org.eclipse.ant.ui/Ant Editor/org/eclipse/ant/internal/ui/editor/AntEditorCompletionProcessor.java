@@ -299,8 +299,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * Returns the new determined proposals.
      */ 
 	private ICompletionProposal[] determineProposals() {
-		
-		cursorPosition = ((ITextSelection)viewer.getSelectionProvider().getSelection()).getOffset();
+		ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();
+		cursorPosition = selection.getOffset() + selection.getLength();
         
         IDocument doc = viewer.getDocument();
         try {
@@ -999,21 +999,15 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     }
 
 	/**
-     * Determines the current prefix, that should be used for completion.
+     * Determines the current prefix that should be used for completion.
      */
 	private String getCurrentPrefix() {
 		if (currentPrefix != null) {
         	return currentPrefix;
         }
 		ITextSelection selection = (ITextSelection)viewer.getSelectionProvider().getSelection();
-		
-		if (selection.getLength() > 0) {
-			return null;
-		}
-		
 		IDocument doc = viewer.getDocument();
-
-        return getPrefixFromDocument(doc.get(), selection.getOffset()).toLowerCase();
+        return getPrefixFromDocument(doc.get(), selection.getOffset() + selection.getLength()).toLowerCase();
 	}
 
 
