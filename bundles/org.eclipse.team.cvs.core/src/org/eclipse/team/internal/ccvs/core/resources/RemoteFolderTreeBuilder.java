@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -219,9 +220,27 @@ public class RemoteFolderTreeBuilder {
 		// NOTE: Multiple commands may be issued over this connection.
 		monitor.beginTask(null, 100);
 		Session session;
-		remoteRoot =
+		FolderSyncInfo folderSyncInfo = root.getFolderSyncInfo();
+		if (folderSyncInfo == null) {
+		    // We've lost the mapping in the local workspace.
+		    // This could be due to the project being deleted.
+		    if (root.exists()) {
+		        IResource resource = root.getIResource();
+		        String path;
+		        if (resource == null) {
+		            path = root.getName();
+		        } else {
+		            path = resource.getFullPath().toString();
+		        }
+                throw new CVSException(Policy.bind("RemoteFolderTreeBuilder.0", path)); //$NON-NLS-1$
+		    } else {
+		        // Just return. The remote tree will be null
+		        return;
+		    }
+		}
+        remoteRoot =
 			new RemoteFolderTree(null, root.getName(), repository,
-				root.getFolderSyncInfo().getRepository(),
+				folderSyncInfo.getRepository(),
 				tagForRemoteFolder(root, tag));
 		if (newFolderExist) {
 			// New folders will require a connection for fetching their members
@@ -246,7 +265,7 @@ public class RemoteFolderTreeBuilder {
 	
 	private void fetchFileRevisions(IProgressMonitor monitor) throws CVSException {
 		// 3rd+ Connection: Used to fetch file status in groups of 1024
-		if (!changedFiles.isEmpty()) {
+		if (remoteRoot != null && !changedFiles.isEmpty()) {
 			String[] allChangedFiles = (String[])changedFiles.toArray(new String[changedFiles.size()]);
 			int iterations = (allChangedFiles.length / MAX_REVISION_FETCHES_PER_CONNECTION) 
 				+ (allChangedFiles.length % MAX_REVISION_FETCHES_PER_CONNECTION == 0 ? 0 : 1);
