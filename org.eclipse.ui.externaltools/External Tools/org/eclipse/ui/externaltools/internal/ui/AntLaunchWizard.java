@@ -112,12 +112,8 @@ public class AntLaunchWizard extends Wizard {
 		
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					DefaultRunnerContext context = new DefaultRunnerContext(antTool, antFile.getProject(), window.getWorkbench().getWorkingSetManager());
-					context.run(monitor, window.getShell());
-				} catch (Exception e) {
-					throw new InvocationTargetException(e, e.getMessage());
-				}
+				DefaultRunnerContext context = new DefaultRunnerContext(antTool, antFile.getProject(), window.getWorkbench().getWorkingSetManager());
+				context.run(monitor, window.getShell());
 			};
 		};
 

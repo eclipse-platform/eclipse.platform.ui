@@ -179,25 +179,22 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 		
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					IResource resource = null;
-					ISelection sel = window.getSelectionService().getSelection();
-					if (sel instanceof IStructuredSelection) {
-						Object result = ((IStructuredSelection)sel).getFirstElement();
-						if (result instanceof IResource)
-							resource = (IResource) result;
-					}
-					DefaultRunnerContext context;
-					if (resource != null)
-						context = new DefaultRunnerContext(tool, resource.getProject(), resource, window.getWorkbench().getWorkingSetManager());
-					else
-						context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
-					context.run(monitor, window.getShell());
-				} catch (Exception e) {
-					throw new InvocationTargetException(e, e.getMessage());
+				IResource resource = null;
+				ISelection sel = window.getSelectionService().getSelection();
+				if (sel instanceof IStructuredSelection) {
+					Object result = ((IStructuredSelection)sel).getFirstElement();
+					if (result instanceof IResource)
+						resource = (IResource) result;
 				}
+				DefaultRunnerContext context;
+				if (resource != null)
+					context = new DefaultRunnerContext(tool, resource.getProject(), resource, window.getWorkbench().getWorkingSetManager());
+				else
+					context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
+				context.run(monitor, window.getShell());
 			};
 		};
+		
 		try {
 			new ProgressMonitorDialog(window.getShell()).run(true, true, runnable);		
 		} catch (InterruptedException e) {
