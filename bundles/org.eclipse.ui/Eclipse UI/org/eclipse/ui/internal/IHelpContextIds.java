@@ -68,7 +68,8 @@ public interface IHelpContextIds {
 	public static final String QUICK_START_ACTION = PREFIX + "quick_start_action_context"; //$NON-NLS-1$
 	public static final String QUIT_ACTION = PREFIX + "quit_action_context"; //$NON-NLS-1$
 	public static final String RESET_PERSPECTIVE_ACTION = PREFIX + "reset_perspective_action_context"; //$NON-NLS-1$
-	public static final String RESET_TOOLBAR_ACTION = PREFIX + "reset_toolbar_action_context";	public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX + "target_editors_visibility_action_context"; //$NON-NLS-1$
+	public static final String RESET_TOOLBAR_ACTION = PREFIX + "reset_toolbar_action_context";	//$NON-NLS-1$
+	public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX + "target_editors_visibility_action_context"; //$NON-NLS-1$
 	public static final String SWITCH_TO_PERSPECTIVE_ACTION = PREFIX + "switch_to_perspective_action_context"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_ACTION = PREFIX + "show_view_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_ALL_SAVED_ACTION = PREFIX + "close_all_saved_action_context"; //$NON-NLS-1$
