@@ -390,6 +390,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
+	    if (fActiveRunningOperations > 0) {
+	        return false;
+	    }
 		persistShellGeometry();
 		persistSashWeights();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
