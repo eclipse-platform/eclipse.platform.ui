@@ -295,6 +295,9 @@ public interface IIDEHelpContextIds {
    public static final String WORKING_SET_RESOURCE_PAGE = PREFIX
    			+ "working_set_resource_page"; //$NON-NLS-1$	
 
+   public static final String WORKSPACE_PREFERENCE_PAGE = PREFIX
+   			+ "workspace_preference_page_context"; //$NON-NLS-1$
+
     // Wizards
    
    public static final String NEW_FILE_WIZARD = PREFIX
