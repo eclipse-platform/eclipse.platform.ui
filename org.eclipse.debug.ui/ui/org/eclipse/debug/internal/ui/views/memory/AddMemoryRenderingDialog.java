@@ -58,7 +58,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	
 	IMemoryBlock[] fMemoryBlocks;
 	Combo memoryBlock;
-	ListViewer viewer;
+	ListViewer fViewer;
 	IMemoryBlock fSelectedMemoryBlock;
 	Button addNew;
 	
@@ -146,7 +146,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	 */
 	public boolean close() {
 		
-		viewer.removeSelectionChangedListener(fSelectionChangedListener);
+		fViewer.removeSelectionChangedListener(fSelectionChangedListener);
 		memoryBlock.removeSelectionListener(fSelectionListener);
 		addNew.removeMouseListener(fMouseListener);
 		
@@ -191,7 +191,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	 */
 	protected void okPressed() {
 		
-		ISelection select = viewer.getSelection();
+		ISelection select = fViewer.getSelection();
 		setSelectionResult(new Object[]{select});
 		
 		super.okPressed();
@@ -248,7 +248,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			public void mouseUp(MouseEvent e) {
 				AddMemoryBlockAction action = new AddMemoryBlockAction();
 				action.run();
-				populateDialog(memoryBlock, viewer, action.getLastMemoryBlock());
+				populateDialog(memoryBlock, fViewer, action.getLastMemoryBlock());
 				
 			}}; 
 		
@@ -266,7 +266,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				
 				fSelectedMemoryBlock = fMemoryBlocks[idx];
 				
-				viewer.setInput(fSelectedMemoryBlock);			
+				fViewer.setInput(fSelectedMemoryBlock);			
 				
 			}
 
@@ -283,27 +283,27 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		renderingLayout.horizontalSpan = 3;
 		renderingLabel.setLayoutData(renderingLayout);
 		
-		viewer = new ListViewer(composite);
-		viewer.setContentProvider(new MemoryRenderingContentProvider());
-		viewer.setLabelProvider(new MemoryRenderingLabelProvider());
+		fViewer = new ListViewer(composite);
+		fViewer.setContentProvider(new MemoryRenderingContentProvider());
+		fViewer.setLabelProvider(new MemoryRenderingLabelProvider());
 		
 		GridData listLayout = new GridData(GridData.FILL_BOTH);
 		listLayout.horizontalSpan = 3;
 		listLayout.heightHint =140;
-		viewer.getControl().setLayoutData(listLayout);
+		fViewer.getControl().setLayoutData(listLayout);
 		
-		viewer.addDoubleClickListener(new IDoubleClickListener (){
+		fViewer.addDoubleClickListener(new IDoubleClickListener (){
 
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}});
 		
-		populateDialog(memoryBlock, viewer, null);
+		populateDialog(memoryBlock, fViewer, null);
 		
 		fSelectionChangedListener = new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection  = viewer.getSelection();
+				ISelection selection  = fViewer.getSelection();
 				
 				if (selection.isEmpty())
 				{	
@@ -315,7 +315,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				}
 			}};
 		
-		viewer.addSelectionChangedListener(fSelectionChangedListener);
+		fViewer.addSelectionChangedListener(fSelectionChangedListener);
 		return composite;
 	}
 

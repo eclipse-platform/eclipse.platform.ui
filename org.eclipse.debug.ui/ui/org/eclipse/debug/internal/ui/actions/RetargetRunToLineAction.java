@@ -55,7 +55,7 @@ public class RetargetRunToLineAction extends RetargetAction {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		window.getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
+		fWindow.getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
 		super.dispose();
 	}
 	/* (non-Javadoc)

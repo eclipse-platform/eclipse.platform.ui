@@ -37,20 +37,20 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public abstract class ToggleBreakpointObjectActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
 	
-	private IWorkbenchPart part;
-	private IStructuredSelection selection;
+	private IWorkbenchPart fPart;
+	private IStructuredSelection fSelection;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		part = targetPart;
+		fPart = targetPart;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IAdaptable adaptable = (IAdaptable) selection.getFirstElement();
+		IAdaptable adaptable = (IAdaptable) fSelection.getFirstElement();
 		IToggleBreakpointsTarget target = (IToggleBreakpointsTarget) adaptable.getAdapter(IToggleBreakpointsTarget.class);
 		if (target == null) {
 			IAdapterManager adapterManager = Platform.getAdapterManager();
@@ -58,7 +58,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 		}
 		if (target != null) {
 			try {
-				performAction(target, part, selection);
+				performAction(target, fPart, fSelection);
 			} catch (CoreException e) {
 				DebugPlugin.log(e);
 			}
@@ -82,7 +82,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 		boolean enabled = false;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
-			this.selection = ss;
+			this.fSelection = ss;
 			if (!ss.isEmpty()) {
 				Object object = ss.getFirstElement();
 				if (object instanceof IAdaptable) {
@@ -109,8 +109,8 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
-		selection = null;
-		part = null;
+		fSelection = null;
+		fPart = null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
