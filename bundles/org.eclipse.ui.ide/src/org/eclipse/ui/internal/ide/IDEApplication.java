@@ -66,7 +66,7 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		Display display = PlatformUI.createDisplay();
 
 		try {
-			Shell shell = new Shell(display);
+			Shell shell = new Shell(display, SWT.ON_TOP);
 
 			if (!checkJavaRuntimeVersion(shell)) {
 				Platform.endSplash();
