@@ -527,7 +527,8 @@ static void loadOptions(Properties bootOptions) {
 private static MultiStatus loadRegistry(URL[] pluginPath) {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
-	registry = (PluginRegistry) parsePlugins(pluginPath, factory, DEBUG && DEBUG_PLUGINS);
+	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
+	registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
 	IStatus resolveStatus = registry.resolve(true, true);
 	problems.merge(resolveStatus);
 	registry.markReadOnly();
@@ -567,16 +568,13 @@ public synchronized static PluginRegistryModel parsePlugins(URL[] pluginPath, Fa
 	// or inside the platform).
 	if (!(InternalBootLoader.isRunning() || InternalBootLoader.isStarting()))
 		return RegistryLoader.parseRegistry(pluginPath, factory, debug);
-		
-	// augment the plugin path with any additional platform entries
-	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);		
 
 	// If we are running the platform, we want to conserve class loaders.  
 	// Temporarily install the xml class loader as a prerequisite of the platform class loader
 	// This allows us to find the xml classes.  Be sure to reset the prerequisites after loading.
 	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
 	try {
-		return RegistryLoader.parseRegistry(augmentedPluginPath, factory, debug);
+		return RegistryLoader.parseRegistry(pluginPath, factory, debug);
 	} finally {
 		PlatformClassLoader.getDefault().setImports(null);
 	}
