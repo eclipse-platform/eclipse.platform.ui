@@ -87,12 +87,15 @@ public class DefaultHelp implements IHelp {
 	 */
 	public void displayHelpResource(IHelpResource helpResource) {
 		if (helpResource instanceof IToc)
-			displayHelpURL("toc=" + helpResource.getHref());
+			displayHelpURL("toc=" + helpResource.getHref() + "&lang=" + defaultLocale);
 		else if (helpResource instanceof ITopic)
 			displayHelpURL(
-				"topic=" + URLEncoder.encode(getTopicURL(helpResource.getHref())));
+				"topic="
+					+ URLEncoder.encode(getTopicURL(helpResource.getHref()))
+					+ "&lang="
+					+ defaultLocale);
 		else
-			displayHelpURL(helpResource.getHref());
+			displayHelpURL(helpResource.getHref() + "&lang=" + defaultLocale);
 	}
 
 	/**
@@ -105,9 +108,9 @@ public class DefaultHelp implements IHelp {
 			displayHelpResource(toc);
 		else if (href != null && href.indexOf('=') != -1) {
 			// assume it is a query string
-			displayHelpURL(href);
+			displayHelpURL(href + "&lang=" + defaultLocale);
 		} else // assume this is a topic
-			displayHelpURL("topic=" + URLEncoder.encode(href));
+			displayHelpURL("topic=" + URLEncoder.encode(href) + "&lang=" + defaultLocale);
 
 	}
 
@@ -138,7 +141,7 @@ public class DefaultHelp implements IHelp {
 			if (topic != null)
 				query = "topic=" + URLEncoder.encode(getTopicURL(topic));
 		}
-
+		query += "&lang=" + defaultLocale;
 		displayHelpURL(query);
 	}
 	/**
@@ -170,7 +173,9 @@ public class DefaultHelp implements IHelp {
 				+ "&contextId="
 				+ URLEncoder.encode(getContextID(context))
 				+ "&topic="
-				+ URLEncoder.encode(getTopicURL(topic.getHref()));
+				+ URLEncoder.encode(getTopicURL(topic.getHref()))
+				+ "&lang="
+				+ defaultLocale;
 
 		displayHelpURL(url);
 	}
@@ -185,7 +190,12 @@ public class DefaultHelp implements IHelp {
 			return;
 
 		String url =
-			"tab=search&" + searchQuery + "&topic=" + URLEncoder.encode(getTopicURL(topic));
+			"tab=search&"
+				+ searchQuery
+				+ "&topic="
+				+ URLEncoder.encode(getTopicURL(topic))
+				+ "&lang="
+				+ defaultLocale;
 
 		displayHelpURL(url);
 	}
@@ -199,7 +209,8 @@ public class DefaultHelp implements IHelp {
 			return; // may want to display an error message
 
 		if (helpURL == null || helpURL.length() == 0) {
-			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(getBaseURL());
+			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
+				getBaseURL() + "?lang=" + defaultLocale);
 		} else if (
 			helpURL.startsWith("tab=")
 				|| helpURL.startsWith("toc=")
@@ -241,7 +252,7 @@ public class DefaultHelp implements IHelp {
 	}
 
 	private String getBaseURL() {
-		return "http://" + AppServer.getHost() + ":" + AppServer.getPort() + "/help";
+		return "http://" + AppServer.getHost() + ":" + AppServer.getPort() + "/help/";
 	}
 
 	private String getTopicURL(String topic) {
