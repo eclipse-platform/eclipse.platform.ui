@@ -411,6 +411,8 @@ public class KeysPreferencePage
 	}
 
 	private Composite createAdvancedTab(TabFolder parent) {
+		GridData gridData = null;
+
 		// The composite for this tab.
 		final Composite composite = new Composite(parent, SWT.NULL);
 		final GridLayout gridLayout = new GridLayout();
@@ -426,7 +428,9 @@ public class KeysPreferencePage
 		checkBoxMultiKeyAssist.setFont(composite.getFont());
 		checkBoxMultiKeyAssist.setSelection(
 			getPreferenceStore().getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
-		checkBoxMultiKeyAssist.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		checkBoxMultiKeyAssist.setLayoutData(gridData);
 
 		// The multi key assist time.
 		final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -453,7 +457,9 @@ public class KeysPreferencePage
 		checkBoxMultiKeyRocker.setFont(composite.getFont());
 		checkBoxMultiKeyRocker.setSelection(
 			getPreferenceStore().getBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
-		checkBoxMultiKeyRocker.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		checkBoxMultiKeyRocker.setLayoutData(gridData);
 
 		return composite;
 	}
