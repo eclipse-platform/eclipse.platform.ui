@@ -152,7 +152,8 @@ public class Project extends Container implements IProject {
 		if (!status.isOK())
 			throw new ResourceException(status);
 		//try infer the device if there isn't one (windows)
-		desc.setLocation(new Path(location.toFile().getAbsolutePath()));
+		if (location.isAbsolute())
+			desc.setLocation(new Path(location.toFile().getAbsolutePath()));
 	}
 
 	/* (non-Javadoc)

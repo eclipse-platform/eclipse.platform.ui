@@ -366,6 +366,39 @@ public class IProjectTest extends EclipseWorkspaceTest {
 		getWorkspace().removeResourceChangeListener(listener);
 	}
 
+	/**
+	 * Tests creation of a project whose location is specified by
+	 * a path variable. See bug 56274.
+	 */
+	public void testPathVariableLocation() {
+		final String projectName = "Project";
+		final String varName = "ProjectLocatio";
+		IPath varValue = Platform.getLocation().removeLastSegments(1);
+		IPath rawLocation = new Path(varName).append("ProjectLocation");
+		//define the variable
+		try {
+			getWorkspace().getPathVariableManager().setValue(varName, varValue);
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		IProject project = getWorkspace().getRoot().getProject(projectName);
+		IProjectDescription description = getWorkspace().newProjectDescription(projectName);
+		description.setLocation(rawLocation);
+		//create the project
+		try {
+			project.create(description, getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("9.99", e);
+		}
+
+		assertEquals("1.0", varValue, getWorkspace().getPathVariableManager().getValue(varName));
+		assertTrue("1.1", project.exists());
+		assertTrue("1.2", project.isOpen());
+		assertEquals("1.3", rawLocation, project.getRawLocation());
+		assertEquals("1.4", varValue.append(rawLocation.lastSegment()), project.getLocation());
+	}
+
 	public void testProjectCloseOpen() {
 		IProject target = getWorkspace().getRoot().getProject("Project");
 		ensureExistsInWorkspace(target, true);
