@@ -170,6 +170,7 @@ public class MarkerAnnotationPreferences {
 	 * 
 	 * @param spec the <code>AnnotationPreference</code> to check
 	 * @return <code>true</code> if <code>spec</code> is complete, <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	private boolean isComplete(AnnotationPreference spec) {
 		return spec.getColorPreferenceKey() != null
