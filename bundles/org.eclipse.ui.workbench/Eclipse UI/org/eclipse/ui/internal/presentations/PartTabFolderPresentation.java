@@ -11,13 +11,11 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -98,27 +96,12 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
             return;
 
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
-	    ColorRegistry colorRegistry = theme.getColorRegistry();
 	    	    
 	    if (isActive()) {
-	        drawGradient(
-	                colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR), 
-	                new Color [] {
-	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START), 
-	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
-	                }, 
-	                new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)},
-	                theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
+	        setActiveTabColors();
 	    }
 	    else {
-	        drawGradient(
-	                colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR), 
-	                new Color [] {
-	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START), 
-	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
-	                }, 
-	                new int [] {theme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT)},
-	                theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL));	        
+	        setInactiveTabColors();
 	    }
 	    boolean resizeNeeded = false;
 	    
@@ -146,10 +129,10 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
   	}
 
     /* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
+	 * @see org.eclipse.ui.internal.skins.Presentation#setActive(int)
 	 */
-	public void setActive(boolean isActive) {
-		super.setActive(isActive);
+	public void setActive(int newState) {
+		super.setActive(newState);
 		
 		updateGradient();
 	}

@@ -16,6 +16,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -29,6 +30,9 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -70,7 +74,7 @@ public class BasicStackPresentation extends StackPresentation {
 	
 	private PaneFolder tabFolder;
 	private IPresentablePart current;
-	private boolean activeState = false;
+	private int activeState = StackPresentation.AS_INACTIVE;
 	private MenuManager systemMenuManager = new MenuManager();
 	private Label titleLabel;
 	private Listener dragListener;
@@ -174,6 +178,22 @@ public class BasicStackPresentation extends StackPresentation {
 	};
 	private ToolBar viewToolBar;
 	
+	private boolean shellActive = true;
+	
+	private ShellListener shellListener = new ShellAdapter() {
+
+        public void shellActivated(ShellEvent e) {
+            shellActive = true;
+            updateGradient();
+        }
+
+
+        public void shellDeactivated(ShellEvent e) {
+            shellActive = false;
+            updateGradient();            
+        }
+	};
+	
 	/**
 	 * property listener that listens for theme events and updates the tab folder
 	 * accordingly
@@ -207,11 +227,16 @@ public class BasicStackPresentation extends StackPresentation {
 
 	public BasicStackPresentation(PaneFolder control, IStackPresentationSite stackSite) {
 	    super(stackSite);
+	    
+	    shellActive = control.getControl().getShell().equals(control.getControl().getDisplay().getActiveShell());
+	    
 		tabFolder = control;
 		
 		tabFolder.setMinimizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MINIMIZED));
 		tabFolder.setMaximizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
-				
+		
+		tabFolder.getControl().getShell().addShellListener(shellListener);
+		
 		titleLabel = new Label(tabFolder.getControl(), SWT.NONE);
 		titleLabel.setVisible(false);
 		titleLabel.moveAbove(null);
@@ -322,8 +347,56 @@ public class BasicStackPresentation extends StackPresentation {
     }
     
     /**
-     * Update the folder gradients based on the current active state.  
-     * Default implementation only sets teh viewToolBar background to the 
+     * Sets the colors of the tab to the inactive tab colors.
+     */
+    protected final void setInactiveTabColors() {
+	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
+	    ColorRegistry colorRegistry = theme.getColorRegistry();
+
+        drawGradient(
+                colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR), 
+                new Color [] {
+                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START), 
+                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
+                }, 
+                new int [] {theme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT)},
+                theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL));	               
+    }
+    
+    /**
+     * Sets the colors of the tab to the active tab colors, taking into account 
+     * shell focus.
+     */
+    protected final void setActiveTabColors() {
+	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
+	    ColorRegistry colorRegistry = theme.getColorRegistry();
+	    
+        if (isShellActive()) {
+	        drawGradient(
+	                colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR), 
+	                new Color [] {
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START), 
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
+	                }, 
+	                new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)},
+	                theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
+        }
+        else {
+	        drawGradient(
+	                colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_NOFOCUS_TAB_TEXT_COLOR), 
+	                new Color [] {
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_NOFOCUS_TAB_BG_START), 
+	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_NOFOCUS_TAB_BG_END)
+	                }, 
+	                new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_NOFOCUS_TAB_PERCENT)},
+	                theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_NOFOCUS_TAB_VERTICAL));
+            
+        }
+    }
+    
+    /**
+     * Update the folder colors and fonts based on the current active state.  
+     * Default implementation only sets the viewToolBar background to the 
      * correct value.  Subclasses should override, ensuring that they call
      * super after all color/font changes.
      */
@@ -514,8 +587,12 @@ public class BasicStackPresentation extends StackPresentation {
 	}
 	
 	public boolean isActive() {
-		return activeState;
+		return activeState == StackPresentation.AS_ACTIVE_FOCUS;
 	}
+	
+	public int getActive() {
+	    return activeState;
+	}	
 	
 	protected String getCurrentTitle() {
 		if (current == null) {
@@ -595,6 +672,7 @@ public class BasicStackPresentation extends StackPresentation {
 		if (isDisposed()) {
 			return;
 		}
+		tabFolder.getControl().getShell().removeShellListener(shellListener);
 		PresentationUtil.removeDragListener(tabFolder.getControl(), dragListener);
 		
 		systemMenuManager.dispose();
@@ -614,10 +692,10 @@ public class BasicStackPresentation extends StackPresentation {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
+	 * @see org.eclipse.ui.presentations.StackPresentation#setActive(int)
 	 */
-	public void setActive(boolean isActive) {
-		activeState = isActive;
+	public void setActive(int newState) {
+	    activeState = newState;	   
 	}
 	
 	private CTabItem createPartTab(IPresentablePart part, int tabIndex) {
@@ -982,5 +1060,12 @@ public class BasicStackPresentation extends StackPresentation {
             boolean includePath) {
         String title = presentablePart.getTitle().trim();
         return title;
+    }
+    
+    /**
+     * Answers whether the shell containing this presentation is currently the active shell.
+     */
+    protected boolean isShellActive() {
+        return shellActive;
     }
 }

@@ -1201,6 +1201,34 @@
                value="COLOR_TITLE_INACTIVE_BACKGROUND">
          </colorValue>
       </colorDefinition>
+<!-- Active (Nofocus) Tab Colors -->
+      <colorDefinition
+            label="%Color.activeNofocusTabText"
+            categoryId="org.eclipse.ui.presentation.default"
+            value="COLOR_TITLE_INACTIVE_FOREGROUND"
+            id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_TEXT_COLOR">
+         <description>
+            %Color.activeNofocusTabTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.activeNofocusTabBGEnd"
+            categoryId="org.eclipse.ui.presentation.default"
+            value="COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT"
+            id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_END">
+         <description>
+            %Color.activeNofocusTabBGStartDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.activeNofocusTabBGStart"
+            value="COLOR_TITLE_INACTIVE_BACKGROUND"
+            categoryId="org.eclipse.ui.presentation.default"
+            id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START">
+         <description>
+            %Color.activeNofocusTabBGEndDesc
+         </description>
+      </colorDefinition>      
 <!-- Inactive Tab Colors -->
       <colorDefinition
             label="%Color.inactiveTabText"
@@ -1234,6 +1262,11 @@
             name="org.eclipse.ui.workbench.ACTIVE_TAB_PERCENT"
             value="100">
       </data>
+<!-- percentage value for the active (nofocus) tab gradient -->
+      <data
+            name="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_PERCENT"
+            value="100">
+      </data>      
 <!-- percentage value for the inactive tab gradient -->
       <data
             name="org.eclipse.ui.workbench.INACTIVE_TAB_PERCENT"
@@ -1244,6 +1277,11 @@
             name="org.eclipse.ui.workbench.ACTIVE_TAB_VERTICAL"
             value="true">
       </data>
+<!-- whether the active (nofocus) gradient is vertical -->
+      <data
+            name="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_VERTICAL"
+            value="true">
+      </data>      
 <!-- whether the inactive gradient is vertical -->
       <data
             name="org.eclipse.ui.workbench.INACTIVE_TAB_VERTICAL"

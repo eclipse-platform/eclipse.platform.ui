@@ -208,25 +208,21 @@ public class EditorPresentation extends BasicStackPresentation {
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
 	    ColorRegistry colorRegistry = theme.getColorRegistry();
 	    
-	    if (isActive()) {
-	        drawGradient(
-	                colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR), 
-	                new Color [] {
-	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START), 
-	                        colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
-	                }, 
-	                new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)},
-	                theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
+	    
+	    if (getActive() == StackPresentation.AS_ACTIVE_FOCUS) {	        
+	        setActiveTabColors();
 	    }
-	    else {
+	    else if (getActive() == StackPresentation.AS_ACTIVE_NOFOCUS) {
 	        drawGradient(
 	                colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR), 
 	                new Color [] {
-	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START), 
-	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
+	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START) 
 	                }, 
-	                new int [] {theme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT)},
-	                theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL));	        
+	                new int [0],
+	                true);	        
+	    }
+	    else {
+	        setInactiveTabColors();
 	    }
 	    
 	    boolean resizeNeeded = false;
