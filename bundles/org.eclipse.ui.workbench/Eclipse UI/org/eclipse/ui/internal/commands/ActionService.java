@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.ui.commands.ActionServiceEvent;
 import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActionService implements IActionService {
 
 	private SortedMap actionsById;
-	private IActionServiceEvent actionServiceEvent;
+	private ActionServiceEvent actionServiceEvent;
 	private List actionServiceListeners;
 
 	public ActionService() {

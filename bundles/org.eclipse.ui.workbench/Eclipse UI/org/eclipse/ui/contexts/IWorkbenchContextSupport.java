@@ -29,7 +29,7 @@ public interface IWorkbenchContextSupport {
 	 * @return the context activation for the workbench. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
-	public IContextActivationService getContextActivationService();
+	IContextActivationService getContextActivationService();
 
 	/**
 	 * Returns the compound context activation service for the workbench.
@@ -37,5 +37,5 @@ public interface IWorkbenchContextSupport {
 	 * @return the compound context activation service for the workbench.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	public ICompoundContextActivationService getCompoundContextActivationService();
+	ICompoundContextActivationService getCompoundContextActivationService();
 }

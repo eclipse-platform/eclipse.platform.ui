@@ -16,9 +16,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.commands.ActionServiceEvent;
 import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.contexts.ContextActivationServiceEvent;
@@ -36,7 +36,7 @@ public class WorkbenchCommandsAndContexts {
 
 	IActionServiceListener actionServiceListener =
 		new IActionServiceListener() {
-		public void actionServiceChanged(IActionServiceEvent actionServiceEvent) {
+		public void actionServiceChanged(ActionServiceEvent actionServiceEvent) {
 			updateActiveIds();
 		}
 	};

@@ -31,5 +31,5 @@ public interface IActionServiceListener {
 	 * 
 	 * @param actionServiceEvent
 	 */
-	void actionServiceChanged(IActionServiceEvent actionServiceEvent);
+	void actionServiceChanged(ActionServiceEvent actionServiceEvent);
 }

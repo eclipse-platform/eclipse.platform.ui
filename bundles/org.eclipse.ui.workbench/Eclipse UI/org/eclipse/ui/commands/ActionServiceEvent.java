@@ -9,16 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.commands;
 
-import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActionServiceEvent;
-
-final class ActionServiceEvent implements IActionServiceEvent {
+public final class ActionServiceEvent {
 
 	private IActionService actionService;
 
-	ActionServiceEvent(IActionService actionService) {
+	public ActionServiceEvent(IActionService actionService) {
 		if (actionService == null)
 			throw new NullPointerException();
 
