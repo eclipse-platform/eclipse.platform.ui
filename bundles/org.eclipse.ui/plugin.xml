@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin
+   name="IBM Eclipse Workbench"
+   id="org.eclipse.ui"
+   version="1.0"
+   vendor-name="IBM"
+   class="org.eclipse.ui.internal.WorkbenchPlugin">
+   
+   <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.swt" export="true" /> 
+   </requires>
+
+<runtime>
+  <library name="workbench.jar" >
+     <export name = "*"/>
+  </library> 
+</runtime>
+
+<extension id="workbench" point="org.eclipse.core.runtime.applications">
+  <application> 
+     <run class="org.eclipse.ui.internal.Workbench">
+	<parameter name="productInfo" value="product.ini"/>
+     </run>
+  </application>
+</extension>
+
+<!-- Workbench extension point definitions -->
+
+<extension-point name="Welcome" id="welcome"/>
+<extension-point name="Perspectives" id="perspectives"/>
+<extension-point name="PerspectiveExtensions" id="perspectiveExtensions"/>
+<extension-point name="Preferences" id="preferencePages"/>
+<extension-point name="Properties" id="propertyPages"/>
+<extension-point name="Resource Editors" id="editors"/>
+<extension-point name="Additional Workbench Views" id="views"/>
+<extension-point name="Action Sets" id="actionSets"/>
+<extension-point name="View Menus and Actions" id="viewActions"/>
+<extension-point name="Editor Menus and Actions" id="editorActions"/>
+<extension-point name="Popup Menus" id="popupMenus"/>
+<extension-point name="Import wizards" id="importWizards"/>
+<extension-point name="Export wizards" id="exportWizards"/>
+<extension-point name="Resource creation" id="newWizards"/>
+<extension-point name="Element factory" id="elementFactories"/>
+<extension-point name="Drop actions" id="dropActions"/>
+<extension-point name="Resource Filters" id="resourceFilters"/>
+<extension-point name="Marker Image Provider" id="markerImageProviders"/>
+
+<!-- Extensions -->
+
+<extension 
+	point="org.eclipse.ui.perspectives">
+	<perspective
+		id="org.eclipse.ui.resourcePerspective"
+		name="Resource"
+		class="org.eclipse.ui.internal.ResourcePerspective">
+	</perspective>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.importWizards">
+	<wizard 
+	   id="org.eclipse.ui.wizards.import.FileSystem"
+	   name="File system"
+	   class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
+	   icon="icons/basic/ctool16/importdir_wiz.gif">
+	   <description>Import resources from the local file system</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+	</wizard>
+	<wizard
+	   id="org.eclipse.ui.wizards.import.ZipFile"
+	   name="Zip file"
+	   class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
+	   icon="icons/basic/ctool16/importzip_wiz.gif">
+	   <description>Import resources from a Zip or Jar file on the local file system</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+      	</wizard>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.exportWizards">
+	<wizard
+	   id="org.eclipse.ui.wizards.export.FileSystem"
+	   name="File system"
+	   class="org.eclipse.ui.wizards.datatransfer.FileSystemExportWizard"
+	   icon="icons/basic/ctool16/exportdir_wiz.gif">
+	   <description>Export resources to the local file system</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+	</wizard>
+	<wizard
+	   id="org.eclipse.ui.wizards.export.ZipFile"
+	   name="Zip file"
+	   class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
+	   icon="icons/basic/ctool16/exportzip_wiz.gif">
+	   <description>Export resources to a Zip file on the local file system</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+	</wizard>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.views">
+	<category 
+	   id="org.eclipse.ui"
+	   name="&amp;Basic">
+	</category>
+	<view
+       id="org.eclipse.ui.views.ResourceNavigator"
+	   name="Navigator"
+	   category="org.eclipse.ui"
+	   class="org.eclipse.ui.views.navigator.ResourceNavigator"
+	   icon="icons/basic/cview16/filenav_nav.gif">
+	</view>
+	<view
+       id="org.eclipse.ui.views.BookmarkNavigator"
+	   name="Bookmarks"
+	   category="org.eclipse.ui"
+	   class="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator"
+	   icon="icons/basic/cview16/bkmrk_nav.gif">
+	</view>
+	<view
+       id="org.eclipse.ui.views.PropertySheet"
+	   name="Properties"
+	   category="org.eclipse.ui"
+	   class="org.eclipse.ui.views.properties.PropertySheet"
+	   icon="icons/basic/cview16/prop_ps.gif">
+	</view>
+	<view
+	   id="org.eclipse.ui.views.ContentOutline"
+	   name="Outline"
+	   category="org.eclipse.ui"
+	   class="org.eclipse.ui.views.contentoutline.ContentOutline"
+	   icon="icons/basic/cview16/outline_co.gif">
+	</view>
+	<view
+	   id="org.eclipse.ui.views.TaskList"
+	   name="Tasks"
+	   category="org.eclipse.ui"
+	   class="org.eclipse.ui.views.tasklist.TaskList"
+	   icon="icons/basic/cview16/tasks_tsk.gif">
+	</view>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.markerImageProviders">
+	<imageprovider 
+		id="org.eclipse.ui.taskMarkerProvider"
+		markertype="org.eclipse.core.resources.taskmarker"
+		icon="icons/basic/cview16/tasks_tsk.gif">
+	</imageprovider>
+	<imageprovider 
+		id="org.eclipse.ui.problemMarkerProvider"
+		markertype="org.eclipse.core.resources.problemmarker"
+		class="org.eclipse.ui.internal.ProblemImageProvider">
+	</imageprovider>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.newWizards">
+	<category
+	   id="org.eclipse.ui.Basic"
+	   name="Basic">
+	</category>
+	<wizard 
+	   id="org.eclipse.ui.wizards.new.project"
+	   name="Project"
+	   class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
+	   category="org.eclipse.ui.Basic"
+	   project="true"
+	   finalPerspective="org.eclipse.ui.resourcePerspective"
+	   icon="icons/basic/ctool16/newprj_wiz.gif">
+           <description>Create a new project resource</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+        </wizard>
+	<wizard
+	   id="org.eclipse.ui.wizards.new.folder"
+	   name="Folder"
+	   class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard"
+	   category="org.eclipse.ui.Basic"
+	   icon="icons/basic/ctool16/newfolder_wiz.gif">
+	   <description>Create a new folder resource</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+	</wizard>
+	<wizard
+	   id="org.eclipse.ui.wizards.new.file"
+	   name="File"
+	   class="org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard"
+	   category="org.eclipse.ui.Basic"
+	   icon="icons/basic/ctool16/newfile_wiz.gif">
+	   <description>Create a new file resource</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+	</wizard>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.preferencePages">
+   	<page id="org.eclipse.ui.preferencePages.Workbench"
+              name="Workbench"
+              class="org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage">
+   	</page>
+   	<page name="File Editors"
+              id="org.eclipse.ui.preferencePages.FileEditors"
+	      class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"
+	      category="org.eclipse.ui.preferencePages.Workbench">
+   	</page>
+	<page id="org.eclipse.ui.preferencePages.FileStates"
+	      class="org.eclipse.ui.internal.dialogs.FileStatesPage"
+            name="Local History"
+		category="org.eclipse.ui.preferencePages.Workbench">
+       </page>
+	<page id="org.eclipse.ui.preferencePages.Perspectives"
+	      class="org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage"
+            name="Perspectives"
+		category="org.eclipse.ui.preferencePages.Workbench">
+       </page>
+	<page id="org.eclipse.ui.preferencePages.Views"
+	      class="org.eclipse.ui.internal.dialogs.ViewsPreferencePage"
+            name="Views"
+		category="org.eclipse.ui.preferencePages.Workbench">
+       </page>
+
+</extension>
+
+<extension 
+	point="org.eclipse.ui.preferencePages">
+   	<page id="org.eclipse.ui.preferencePages.BuildOrder"
+              name="Build Order"
+              class="org.eclipse.ui.internal.dialogs.BuildOrderPreferencePage">
+   	</page>
+</extension>
+
+<extension
+	point="org.eclipse.ui.propertyPages">
+   	<page name="Project References"
+  	   id="org.eclipse.ui.propertypages.project.reference"
+           objectClass="org.eclipse.core.resources.IProject"
+           class="org.eclipse.ui.internal.dialogs.ProjectReferencePage">
+   	</page>
+   	<page name="Info"
+  	   id="org.eclipse.ui.propertypages.info.file"
+           objectClass="org.eclipse.core.resources.IResource"
+           class="org.eclipse.ui.internal.dialogs.ResourceInfoPage">
+   	</page>
+</extension>
+
+<extension
+    point = "org.eclipse.ui.editors">
+    <editor id ="org.eclipse.ui.DefaultTextEditor"
+      icon="icons/basic/obj16/file_obj.gif"
+      name="Default Text Editor"
+      extensions="txt"
+      class="org.eclipse.ui.editors.text.TextEditor"
+      contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">     
+    </editor>
+</extension>
+
+<extension
+    point = "org.eclipse.ui.elementFactories">
+    <factory id ="org.eclipse.ui.internal.model.ResourceFactory"
+      class="org.eclipse.ui.internal.model.ResourceFactory">
+	</factory>
+    <factory id ="org.eclipse.ui.internal.model.WorkspaceFactory"
+      class="org.eclipse.ui.internal.model.WorkspaceFactory">
+	</factory>
+    <factory id ="org.eclipse.ui.part.FileEditorInputFactory"
+      class="org.eclipse.ui.part.FileEditorInputFactory">
+	</factory>
+</extension>
+
+<extension point="org.eclipse.help.contexts"> 
+   <contexts name="WorkbenchHelpContexts.xml"/> 
+   <contexts name="StandardComponentsHelpContexts.xml"/> 
+</extension>
+
+<extension-point name="Marker updaters" id="markerUpdaters"/>
+<extension-point name="Document providers" id="documentProviders"/>
+
+<extension
+	point= "org.eclipse.ui.markerUpdaters">
+	<updater id="org.eclipse.ui.texteditor.BasicMarkerUpdater"
+		class="org.eclipse.ui.texteditor.BasicMarkerUpdater">
+	</updater>
+</extension>
+
+
+<extension
+	point= "org.eclipse.ui.documentProviders">
+	<provider id= "org.eclipse.ui.editors.text.FileDocumentProvider"
+		class="org.eclipse.ui.editors.text.FileDocumentProvider"
+		inputTypes="org.eclipse.ui.IStorageEditorInput">
+	</provider>
+</extension>
+
+<extension
+	point= "org.eclipse.ui.resourceFilters">
+	<filter pattern = ".*" selected = "true"/>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.preferencePages">
+	<page id="org.eclipse.ui.preferencePages.TextEditor"
+	      class="org.eclipse.ui.editors.text.TextEditorPreferencePage"
+          name="Default Text Editor"
+	      category="org.eclipse.ui.preferencePages.Workbench">
+    	</page>
+</extension>
+
+</plugin>

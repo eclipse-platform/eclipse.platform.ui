@@ -1,0 +1,52 @@
+package org.eclipse.ui.internal;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
+ */
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.graphics.*;
+
+/**
+ * Controls the drag and drop of the part
+ * which is contained within the CTabFolder
+ * tab.
+ */
+public class CTabPartDragDrop extends PartDragDrop {
+	private CTabItem tab;
+public CTabPartDragDrop(LayoutPart dragPart, CTabFolder tabFolder, CTabItem tabItem) {
+	super(dragPart, tabFolder);
+	this.tab = tabItem;
+}
+protected CTabFolder getCTabFolder() {
+	return (CTabFolder) getDragControl();
+}
+/**
+ * Returns the source's bounds
+ */
+protected Rectangle getSourceBounds() {
+	return PartTabFolder.calculatePageBounds(getCTabFolder());
+}
+/**
+ * @see MouseListener::mouseDown
+ */
+public void mouseDown(MouseEvent e) {
+	if (e.button != 1) return;
+
+	// Verify that the tab under the mouse pointer
+	// is the same as for this drag operation
+	CTabFolder tabFolder = getCTabFolder();
+	CTabItem tabUnderPointer = tabFolder.getItem(new Point(e.x, e.y));
+	if (tabUnderPointer != tab)
+		return;
+
+	super.mouseDown(e);
+}
+public void setTab(CTabItem newTab) {
+	tab = newTab;
+}
+}

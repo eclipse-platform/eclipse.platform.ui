@@ -1,0 +1,209 @@
+package org.eclipse.ui.internal.dialogs;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.model.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+/**
+ * A property page for viewing and modifying the set
+ * of projects referenced by a given project.
+ */
+public class ProjectReferencePage extends PropertyPage {
+	private IProject project;
+	private boolean modified = false;
+	//widgets
+	private CheckboxTableViewer listViewer;
+
+	private static final int PROJECT_LIST_MULTIPLIER = 30;
+/**
+ * Creates a new ProjectReferencePage.
+ */
+public ProjectReferencePage() {
+}
+/**
+ * @see PreferencePage#createContents
+ */
+protected Control createContents(Composite parent) {
+
+	Composite composite = new Composite(parent, SWT.NONE);
+	composite.setLayout(new GridLayout());
+	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+	listViewer = new CheckboxTableViewer(composite, SWT.TOP | SWT.BORDER);
+	GridData data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.grabExcessHorizontalSpace = true;
+	data.heightHint =
+		getDefaultFontHeight(listViewer.getTable(), PROJECT_LIST_MULTIPLIER);
+	listViewer.getTable().setLayoutData(data);
+
+	listViewer.setLabelProvider(new WorkbenchLabelProvider());
+	listViewer.setContentProvider(getContentProvider(project));
+	listViewer.setInput(project.getWorkspace());
+	try {
+		listViewer.setCheckedElements(project.getReferencedProjects());
+	} catch (CoreException e) {
+		//don't initial-check anything
+	}
+
+	//check for initial modification to avoid work if no changes are made
+	listViewer.addCheckStateListener(new ICheckStateListener() {
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			modified = true;
+		}
+	});
+
+	return composite;
+}
+/* (non-Javadoc)
+ * Method declared on IDialogPage.
+ */
+public void createControl(Composite parent) {
+	initialize();
+	
+	GridData gd;
+	Composite content= new Composite(parent, SWT.NULL);
+	GridLayout layout= new GridLayout();
+	layout.marginHeight = layout.marginWidth = 0;
+	content.setLayout(layout);
+
+	createDescriptionLabel(content);
+		
+	Control body = createContents(content);
+
+	setControl(content);
+}
+/**
+ * Returns a content provider for the list dialog. It
+ * will return all projects in the workspace except
+ * the given project, plus any projects referenced
+ * by the given project which do no exist in the
+ * workspace.
+ */
+protected IStructuredContentProvider getContentProvider(final IProject project) {
+	return new WorkbenchContentProvider() {
+		public Object[] getChildren(Object o) {
+			if (!(o instanceof IWorkspace)) {
+				return new Object[0];
+			}
+
+			// Collect all the projects in the workspace except the given project
+			IProject[] projects = ((IWorkspace)o).getRoot().getProjects();
+			ArrayList referenced = new ArrayList(projects.length);
+			boolean found = false;
+			for (int i = 0; i < projects.length; i++) {
+				if (!found && projects[i].equals(project)) {
+					found = true;
+					continue;
+				}
+				referenced.add(projects[i]);
+			}
+
+			// Add any referenced that do not exist in the workspace currently
+			try {
+				projects = project.getReferencedProjects();
+				for (int i = 0; i < projects.length; i++) {
+					if (!referenced.contains(projects[i]))
+						referenced.add(projects[i]);
+				}
+			}
+			catch (CoreException e) {
+			}
+			
+			return referenced.toArray();
+		}
+	};
+}
+/**
+ * Get the defualt widget height for the supplied control.
+ * @return int
+ * @param control - the control being queried about fonts
+ * @param lines - the number of lines to be shown on the table.
+ */
+private static int getDefaultFontHeight(Control control, int lines) {
+	FontData[] viewerFontData = control.getFont().getFontData();
+	int fontHeight = 10;
+
+	//If we have no font data use our guess
+	if (viewerFontData.length > 0)
+		fontHeight = viewerFontData[0].getHeight();
+	return lines * fontHeight;
+
+}
+/**
+ * @see PreferencePage#doOk
+ */
+protected void handle(InvocationTargetException e) {
+	IStatus error;
+	Throwable target = e.getTargetException();
+	if (target instanceof CoreException) {
+		error = ((CoreException) target).getStatus();
+	} else {
+		String msg = target.getMessage();
+		if (msg == null)
+			msg = "Internal error";
+		error = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, msg, target);
+	}
+	ErrorDialog.openError(getControl().getShell(), "Problems Occurred", null, error);
+	WorkbenchPlugin.log("Error in ProjectReferencePage.doOk", error);
+}
+/**
+ * Initializes a ProjectReferencePage.
+ */
+private void initialize() {
+	project = (IProject) getElement().getAdapter(IResource.class);
+	noDefaultAndApplyButton();
+	StringBuffer buf = new StringBuffer();
+		buf.append("Projects may refer to other projects in the workspace. Use\n");
+		buf.append("this page to specify what other projects are referenced by\n");
+		buf.append("project ");
+		buf.append(project.getName());
+		buf.append(".");
+	setDescription(buf.toString());
+}
+/**
+ * @see PreferencePage#performOk
+ */
+public boolean performOk() {
+	if (!modified) return true;
+	Object[] checked = listViewer.getCheckedElements();
+	final IProject[] refs = new IProject[checked.length];
+	System.arraycopy(checked, 0, refs, 0, checked.length);
+	IRunnableWithProgress runnable = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor) throws InvocationTargetException {
+
+			try {
+				IProjectDescription description = project.getDescription();
+				description.setReferencedProjects(refs);
+				project.setDescription(description, monitor);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+	};
+	try {
+		new ProgressMonitorDialog(getControl().getShell()).run(true, true, runnable);
+	} catch (InterruptedException e) {
+	} catch (InvocationTargetException e) {
+		handle(e);
+		return false;
+	}
+	return true;
+}
+}

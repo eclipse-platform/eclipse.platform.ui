@@ -1,0 +1,588 @@
+package org.eclipse.ui.dialogs;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
+ */
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import java.util.*;
+import java.util.List; // disambiguate from SWT
+import java.lang.reflect.InvocationTargetException;
+
+/**
+ * Abstract superclass for a typical export wizard's main page.
+ * <p>
+ * Clients may subclass this page to inherit its common destination resource
+ * selection facilities.
+ * </p>
+ * <p>
+ * Subclasses must implement 
+ * <ul>
+ *   <li><code>createDestinationGroup</code></li>
+ * </ul>
+ * </p>
+ * <p>
+ * Subclasses may override
+ * <ul>
+ *   <li><code>allowNewContainerName</code></li>
+ * </ul>
+ * </p>
+ * <p>
+ * Subclasses may extend
+ * <ul>
+ *   <li><code>handleEvent</code></li>
+ *   <li><code>internalSaveWidgetValues</code></li>
+ *   <li><code>updateWidgetEnablements</code></li>
+ * </ul>
+ * </p>
+ */
+public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
+	private IStructuredSelection initialResourceSelection;
+	private List selectedTypes = new ArrayList();
+
+	// widgets
+	private CheckboxTreeAndListGroup	resourceGroup;
+	private Button						typesToExportEditButton;
+
+	private final static int 	SIZING_SELECTION_WIDGET_WIDTH = 400;
+	private final static int	SIZING_SELECTION_WIDGET_HEIGHT = 150;
+
+	private final static String SELECT_TYPES_TITLE = "Select Types...";
+	private static String SELECT_ALL_TITLE = "Select All";
+	private static String DESELECT_ALL_TITLE = "Deselect All";
+/**
+ * Creates an export wizard page. If the current resource selection 
+ * is not empty then it will be used as the initial collection of resources
+ * selected for export.
+ *
+ * @param pageName the name of the page
+ * @param selection the current resource selection
+ */
+protected WizardExportResourcesPage(String pageName, IStructuredSelection selection) {
+	super(pageName);
+	this.initialResourceSelection = selection;
+}
+/**
+ * The <code>addToHierarchyToCheckedStore</code> implementation of this 
+ * <code>WizardDataTransferPage</code> method returns <code>false</code>. 
+ * Subclasses may override this method.
+ */
+protected boolean allowNewContainerName() {
+	return false;
+}
+/**
+ * Creates a new button with the given id.
+ * <p>
+ * The <code>Dialog</code> implementation of this framework method
+ * creates a standard push button, registers for selection events
+ * including button presses and registers
+ * default buttons with its shell.
+ * The button id is stored as the buttons client data.
+ * Note that the parent's layout is assumed to be a GridLayout and 
+ * the number of columns in this layout is incremented.
+ * Subclasses may override.
+ * </p>
+ *
+ * @param parent the parent composite
+ * @param id the id of the button (see
+ *  <code>IDialogConstants.*_ID</code> constants 
+ *  for standard dialog button ids)
+ * @param label the label from the button
+ * @param defaultButton <code>true</code> if the button is to be the
+ *   default button, and <code>false</code> otherwise
+ */
+protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+	// increment the number of columns in the button bar
+	((GridLayout)parent.getLayout()).numColumns++;
+
+	Button button = new Button(parent, SWT.PUSH);
+
+	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH + 2);
+	button.setLayoutData(data);
+	
+	button.setData(new Integer(id));
+	button.setText(label);
+	
+	if (defaultButton) {
+		Shell shell = parent.getShell();
+		if (shell != null) {
+			shell.setDefaultButton(button);
+		}
+		button.setFocus();
+	}
+	button.setFont(parent.getFont());
+	return button;
+}
+/**
+ * Creates the buttons for selecting specific types or selecting all or none of the
+ * elements.
+ *
+ * @param parent the parent control
+ */
+protected final void createButtonsGroup(Composite parent) {
+	// top level group
+	Composite buttonComposite = new Composite(parent, SWT.NONE);
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 3;
+	buttonComposite.setLayout(layout);
+	buttonComposite.setLayoutData(
+		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+
+	// types edit button
+	Button selectTypesButton =
+		createButton(
+			buttonComposite,
+			IDialogConstants.SELECT_TYPES_ID,
+			SELECT_TYPES_TITLE,
+			false);
+	SelectionListener listener = new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handleTypesEditButtonPressed();
+		}
+	};
+	selectTypesButton.addSelectionListener(listener);
+
+	Button selectButton =
+		createButton(
+			buttonComposite,
+			IDialogConstants.SELECT_ALL_ID,
+			SELECT_ALL_TITLE,
+			false);
+
+	listener = new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			resourceGroup.setAllSelections(true);
+		}
+	};
+	selectButton.addSelectionListener(listener);
+
+	Button deselectButton =
+		createButton(
+			buttonComposite,
+			IDialogConstants.DESELECT_ALL_ID,
+			DESELECT_ALL_TITLE,
+			false);
+
+	listener = new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			resourceGroup.setAllSelections(false);
+		}
+	};
+	deselectButton.addSelectionListener(listener);
+
+}
+/** (non-Javadoc)
+ * Method declared on IDialogPage.
+ */
+public void createControl(Composite parent) {
+
+	initializeDialogUnits(parent);
+	
+	Composite composite = new Composite(parent, SWT.NULL);
+	composite.setLayout(new GridLayout());
+	composite.setLayoutData(new GridData(
+		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+
+	createPlainLabel(composite, "What resources do you want to export?");
+	createResourcesGroup(composite);
+	createButtonsGroup(composite);
+	
+	createPlainLabel(composite, "Where do you want to export resources to?");
+	createDestinationGroup(composite);
+	
+	createPlainLabel(composite, "Options:");	
+	createOptionsGroup(composite);
+
+	restoreResourceSpecificationWidgetValues();		// ie.- local
+	restoreWidgetValues();							// ie.- subclass hook
+	if (initialResourceSelection != null)
+		setupBasedOnInitialSelections();
+
+	updateWidgetEnablements();
+	setPageComplete(determinePageCompletion());
+
+	setControl(composite);
+}
+/**
+ * Creates the export destination specification visual components.
+ * <p>
+ * Subclasses must implement this method.
+ * </p>
+ *
+ * @param parent the parent control
+ */
+protected abstract void createDestinationGroup(Composite parent);
+/**
+ * Creates the checkbox tree and list for selecting resources.
+ *
+ * @param parent the parent control
+ */
+protected final void createResourcesGroup(Composite parent) {
+
+	//create the input element, which has the root resource
+	//as its only child
+	List input = new ArrayList();
+	IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	for(int i = 0; i < projects.length; i ++)
+		input.add(projects[i]);
+
+	this.resourceGroup =
+		new CheckboxTreeAndListGroup(
+			parent,
+			input,
+			getResourceProvider(IResource.FOLDER | IResource.PROJECT),
+			new WorkbenchLabelProvider(),
+			getResourceProvider(IResource.FILE),
+			new WorkbenchLabelProvider(),
+			SWT.NONE,
+			SIZING_SELECTION_WIDGET_WIDTH,
+			SIZING_SELECTION_WIDGET_HEIGHT);
+
+}
+/**
+ * Display an error dialog with the specified message.
+ *
+ * @param message the error message
+ */
+protected void displayErrorDialog(String message) {
+	MessageDialog.openError(getContainer().getShell(),"Export Problems",message);
+}
+/**
+ * Ensures that all resources have local contents.  Retrieves server contents 
+ * for resources without local contents.
+ * <p>
+ * Note that this is a potentially long operation which should be used sparingly
+ * (in other words, once per export operation, likely just before performance of
+ * the export).
+ * </p>
+ *
+ * @param resources the list of resources to ensure locality for
+ * @return <code>true</code> for successful completion
+ */
+protected boolean ensureResourcesLocal(List resources) {
+	if (resources.isEmpty())
+		return true;
+
+	final List nonLocalResources = extractNonLocalResources(resources);
+	if (nonLocalResources.isEmpty())
+		return true;
+
+	final Vector errors = new Vector();
+	
+	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+		protected void execute(IProgressMonitor monitor) {
+
+			UIHackFinder.fixPR();
+			// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
+			monitor.beginTask("Retrieving content:", nonLocalResources.size() * 1000);
+			Iterator resourcesEnum = nonLocalResources.iterator();
+			UIHackFinder.fixPR(); //1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
+
+			try {
+				while (resourcesEnum.hasNext()) {
+					IResource resource = (IResource)resourcesEnum.next();
+/*
+					try {
+						UIHackFinder.fixPR();
+						// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
+						resource.ensureLocal(IResource.DEPTH_INFINITE,new SubProgressMonitor(monitor,1000));
+					} catch (CoreException e) {
+						errors.addElement(e.getStatus());
+					}
+*/
+					if (monitor.isCanceled())
+						throw new OperationCanceledException();
+				}
+			} finally {
+				monitor.done();
+			}
+		}
+	};
+
+	try {
+		getContainer().run(true, true, op);
+	} catch (InterruptedException e) {
+		return false;
+	} catch (InvocationTargetException e) {
+		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".ensureResourcesLocal(): " + e.getTargetException());
+		MessageDialog.openError(getContainer().getShell(), "Internal error", "Internal error: " + e.getTargetException().getMessage());
+	}
+
+	if (errors.isEmpty())
+		return true;
+
+	// If errors occurred, open an Error dialog
+	ErrorDialog.openError(getContainer().getShell(),
+		"Content Retrieval Problems",
+		null,   // no special message
+		StatusUtil.newStatus(errors,	// make a multi status
+			null,
+			"Problems occurred retrieving content for the selected resources.",
+			null));
+
+	return false;
+}
+/**
+ * Returns a new subcollection containing only those resources which are not 
+ * local.
+ *
+ * @param originalList the original list of resources (element type: 
+ *   <code>IResource</code>)
+ * @return the new list of non-local resources (element type: 
+ *   <code>IResource</code>)
+ */
+protected List extractNonLocalResources(List originalList) {
+	Vector result = new Vector(originalList.size());
+	Iterator resourcesEnum = originalList.iterator();
+	
+	while (resourcesEnum.hasNext()) {
+		IResource currentResource = (IResource)resourcesEnum.next();
+		if (!currentResource.isLocal(IResource.DEPTH_ZERO))
+			result.addElement(currentResource);
+	}
+
+	return result;
+}
+/**
+ * Returns a content provider for <code>IResource</code>s that returns 
+ * only children of the given resource type.
+ */
+private ITreeContentProvider getResourceProvider(final int resourceType) {
+	return new WorkbenchContentProvider() {
+		public Object[] getChildren(Object o) {
+			if (o instanceof IContainer) {
+				IResource[] members = null;
+				try {
+					members = ((IContainer)o).members();
+				} catch (CoreException e) {
+					//just return an empty set of children
+					return new Object[0];
+				}
+
+				//filter out the desired resource types
+				ArrayList results = new ArrayList();
+				for (int i = 0; i < members.length; i++) {
+					//And the test bits with the resource types to see if they are what we want
+					if ((members[i].getType() & resourceType) > 0) {
+						results.add(members[i]);
+					}
+				}
+				return results.toArray();
+			} else {
+				//input element case
+				if (o instanceof ArrayList) {
+					return ((ArrayList)o).toArray();
+				} else {
+					return new Object[0];
+				}
+			}
+		}
+	};
+}
+/**
+ * Returns this page's collection of currently-specified resources to be 
+ * exported. This is the primary resource selection facility accessor for 
+ * subclasses.
+ *
+ * @return a collection of resources currently selected 
+ * for export (element type: <code>IResource</code>)
+ */
+protected List getSelectedResources() {
+	Iterator resourcesToExportIterator = getSelectedResourcesIterator();
+	List resourcesToExport = new ArrayList();
+	while (resourcesToExportIterator.hasNext())
+		resourcesToExport.add(resourcesToExportIterator.next());
+	return resourcesToExport;
+}
+/**
+ * Returns this page's collection of currently-specified resources to be 
+ * exported. This is the primary resource selection facility accessor for 
+ * subclasses.
+ *
+ * @return an iterator over the collection of resources currently selected 
+ * for export (element type: <code>IResource</code>)
+ */
+protected Iterator getSelectedResourcesIterator() {
+	return this.resourceGroup.getAllCheckedListItems();
+}
+/**
+ * Returns the resource extensions currently specified to be exported.
+ *
+ * @return the resource extensions currently specified to be exported (element 
+ *   type: <code>String</code>)
+ */
+protected List getTypesToExport() {
+
+	return selectedTypes;
+}
+/**
+ * Queries the user for the types of resources to be exported and selects
+ * them in the checkbox group.
+ */
+protected void handleTypesEditButtonPressed() {
+	Object[] newSelectedTypes = queryResourceTypesToExport();
+
+	if (newSelectedTypes != null) { // ie.- did not press Cancel
+		this.selectedTypes = new ArrayList(newSelectedTypes.length);
+		for (int i = 0; i < newSelectedTypes.length; i++)
+			this.selectedTypes.add(((IFileEditorMapping) newSelectedTypes[i]).getExtension());
+	}
+
+	setupSelectionsBasedOnSelectedTypes();
+}
+/**
+ * Returns whether the extension of the given resource name is an extension that
+ * has been specified for export by the user.
+ *
+ * @param resourceName the resource name
+ * @return <code>true</code> if the resource name is suitable for export based 
+ *   upon its extension
+ */
+protected boolean hasExportableExtension(String resourceName) {
+	if (selectedTypes == null)	// ie.- all extensions are acceptable
+		return true;
+		
+	int separatorIndex = resourceName.lastIndexOf(".");
+	if (separatorIndex == -1)
+		return false;
+	
+	String extension = resourceName.substring(separatorIndex + 1);
+
+	Iterator enum = selectedTypes.iterator();
+	while (enum.hasNext()) {
+		if (extension.equalsIgnoreCase((String)enum.next()))
+			return true;
+	}
+	
+	return false;
+}
+/**
+ * Queries the user for the resource types that are to be exported and returns
+ * these types as an array.
+ *
+ * @return the resource types selected for export (element type: 
+ *   <code>String</code>), or <code>null</code> if the user canceled the 
+ *   selection
+ */
+protected Object[] queryResourceTypesToExport() {
+	IFileEditorMapping editorMappings[] =
+		WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
+
+	int mappingsSize = editorMappings.length;
+	List selectedTypes = getTypesToExport();
+	List initialSelections = new ArrayList(selectedTypes.size());
+	
+	for (int i = 0; i < mappingsSize; i++) {
+		IFileEditorMapping currentMapping = editorMappings[i];
+		if (selectedTypes.contains(currentMapping.getExtension()))
+			initialSelections.add(currentMapping);
+	}
+
+	ListSelectionDialog dialog =
+		new ListSelectionDialog(
+			getContainer().getShell(),
+			editorMappings,
+			FileEditorMappingContentProvider.INSTANCE,
+			FileEditorMappingLabelProvider.INSTANCE,
+			"Select the resource types to export.");
+
+	dialog.setInitialSelections(initialSelections.toArray());
+	dialog.setTitle("Resource Type Selection");
+	dialog.open();
+
+	return dialog.getResult();
+}
+/**
+ * Restores resource specification control settings that were persisted
+ * in the previous instance of this page. Subclasses wishing to restore
+ * persisted values for their controls may extend.
+ */
+protected void restoreResourceSpecificationWidgetValues() {
+}
+/**
+ * Set the initial selections in the resource group.
+ */
+protected void setupBasedOnInitialSelections() {
+
+	Iterator enum = this.initialResourceSelection.iterator();
+	while (enum.hasNext()) {
+		IResource currentResource = (IResource) enum.next();
+		if (currentResource.getType() == IResource.FILE)
+			this.resourceGroup.initialCheckListItem(currentResource);
+		else
+			this.resourceGroup.initialCheckTreeItem(currentResource);
+	}
+}
+/**
+ * Update the tree to only select those elements that match the selected types
+ */
+private void setupSelectionsBasedOnSelectedTypes() {
+
+	Map selectionMap = new Hashtable();
+	IProject[] resources = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	for (int i = 0; i < resources.length; i++) {
+		setupSelectionsBasedOnSelectedTypes(selectionMap, resources[i]);
+	}
+	this.resourceGroup.updateSelections(selectionMap);
+
+}
+/**
+* Set up the selection values for the resources and put them in the selectionMap.
+* If a resource is a file see if it matches one of the selected extensions. If not
+* then check the children.
+* @return a boolean if any children are selected
+*/
+private void setupSelectionsBasedOnSelectedTypes(
+	Map selectionMap,
+	IContainer parent) {
+
+	List selections = new ArrayList();
+	IResource[] resources;
+	boolean hasFiles = false;
+
+	try {
+		resources = parent.members();
+	} catch (CoreException exception) {
+		//Just return if we can't get any info
+		return;
+	}
+	boolean hasSelectedSubFolder = false;
+
+	for (int i = 0; i < resources.length; i++) {
+		IResource resource = resources[i];
+		if (resource.getType() == IResource.FILE) {
+			hasFiles = true;
+			if (hasExportableExtension(resource.getName()))
+				selections.add(resource);
+		} else {
+			setupSelectionsBasedOnSelectedTypes(selectionMap, (IContainer) resource);
+		}
+	}
+
+	//Only add it to the list if there are files in this folder
+	if (hasFiles) 
+		selectionMap.put(parent, selections);
+}
+}

@@ -1,0 +1,81 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
+   <meta name="Author" content="Build">
+   <title>Eclipse Workbench Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Eclipse Platform User Interface</h1></center>
+This document lists all of the extension points that the Eclipse Platform
+User Interface makes available to tool developers. Developers may extend
+various aspects of the workbench, both visually and functionally.
+<p>In general, each of the extension points defined in the UI follow a
+simple pattern.&nbsp; The extension point is defined within <tt>plugin.xml</tt>
+for <tt>org.eclipse.ui</tt>.&nbsp; Then extensions are defined for the
+extension point.&nbsp; These may exist in the same or other <tt>plugin.xml</tt>
+files.&nbsp; The top level XML element for any extension may contain one
+or more extension declarations.&nbsp; For example, a <tt>org.eclipse.ui.propertyPage</tt>
+extension may contain several instances of <tt>page</tt> elements. Although
+making one extension per subelement is not technically incorrect, we recommend
+grouping for consistent style. It can also improve workbench startup time
+because there will be fewer extensions to process.
+<br>
+<hr WIDTH="100%">
+<h1>
+General Extension Points</h1>
+The following extension points can be used to extend various aspects of
+the UI, both visually and functionally:
+<ul>
+<li>
+<a href="org_eclipse_ui_welcome.html">org.eclipse.ui.welcome</a></li>
+
+<li>
+<a href="org_eclipse_ui_new.html">org.eclipse.ui.newWizards</a></li>
+
+<li>
+<a href="org_eclipse_ui_import.html">org.eclipse.ui.importWizards</a></li>
+
+<li>
+<a href="org_eclipse_ui_export.html">org.eclipse.ui.exportWizards</a></li>
+
+<li>
+<a href="org_eclipse_ui_actionSets.html">org.eclipse.ui.actionSets</a></li>
+
+<li>
+<a href="org_eclipse_ui_perspective.html">org.eclipse.ui.perspective</a></li>
+
+<li>
+<a href="org_eclipse_ui_perspectiveExtensions.html">org.eclipse.ui.perspectiveExtensions</a></li>
+
+<li>
+<a href="org_eclipse_ui_views.html">org.eclipse.ui.views</a></li>
+
+<li>
+<a href="org_eclipse_ui_viewActions.html">org.eclipse.ui.viewActions</a></li>
+
+<li>
+<a href="org_eclipse_ui_editor.html">org.eclipse.ui.editors</a></li>
+
+<li>
+<a href="org_eclipse_ui_editorActions.html">org.eclipse.ui.editorActions</a></li>
+
+<li>
+<a href="org_eclipse_ui_popupMenu.html">org.eclipse.ui.popupMenus</a></li>
+
+<li>
+<a href="org_eclipse_ui_preferencePages.html">org.eclipse.ui.preferencePages</a></li>
+
+<li>
+<a href="org_eclipse_ui_propertyPages.html">org.eclipse.ui.propertyPages</a></li>
+
+<li>
+<a href="org_eclipse_ui_elementFactory.html">org.eclipse.ui.elementFactories</a></li>
+</ul>
+<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+</body>
+</html>
