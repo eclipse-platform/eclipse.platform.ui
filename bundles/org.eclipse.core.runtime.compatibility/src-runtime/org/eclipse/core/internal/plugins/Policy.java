@@ -16,7 +16,20 @@ import org.eclipse.core.runtime.*;
 
 public class Policy {
 	private static String bundleName = "org.eclipse.core.internal.plugins.messages"; //$NON-NLS-1$
-	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
+	private static ResourceBundle bundle;
+
+	/*
+	 * Returns a resource bundle, creating one if it none is available. 
+	 */
+	private static ResourceBundle getResourceBundle() {
+		// thread safety
+		ResourceBundle tmpBundle = bundle;
+		if (tmpBundle != null)
+			return tmpBundle;
+		// always create a new classloader to be passed in 
+		// in order to prevent ResourceBundle caching
+		return bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
+	}
 
 	/**
 	 * Lookup the message with the given ID in this catalog 
@@ -50,7 +63,7 @@ public class Policy {
 			return "No message available"; //$NON-NLS-1$
 		String message = null;
 		try {
-			message = bundle.getString(id);
+			message = getResourceBundle().getString(id);
 		} catch (MissingResourceException e) {
 			// If we got an exception looking for the message, fail gracefully by just returning
 			// the id we were looking for.  In most cases this is semi-informative so is not too bad.
