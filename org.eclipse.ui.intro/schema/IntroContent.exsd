@@ -44,6 +44,20 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
             <element ref="title" minOccurs="0" maxOccurs="1"/>
             <element ref="anchor" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
+         <attribute name="url" type="string">
+            <annotation>
+               <documentation>
+                  The optional relative path to an HTML file. When using the Web based presentation, this HTML file will displayed instead of any content defined for this page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standby-url" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -65,20 +79,6 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="url" type="string">
-            <annotation>
-               <documentation>
-                  The optional relative path to an HTML file. When using the Web based presentation, this HTML file will displayed instead of any content defined for this page.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="standby-url" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="standby-style" type="string">
             <annotation>
                <documentation>
@@ -90,13 +90,6 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
             <annotation>
                <documentation>
                   
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="style-id" type="string">
-            <annotation>
-               <documentation>
-                  A means to classifiy the page into a given category so that a common style may be applied.
                </documentation>
             </annotation>
          </attribute>
@@ -164,6 +157,13 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  A means to classifiy the page into a given category so that a common style may be applied.
+               </documentation>
+            </annotation>
          </attribute>
       </complexType>
    </element>
