@@ -20,8 +20,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,11 +33,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.GlobalBuildAction;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -49,7 +49,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class CleanDialog extends MessageDialog {
     private Button allButton, selectedButton, buildNowButton;
 
-    private Text projectName;
+    private CheckboxTableViewer projectNames;
 
     private Object[] selection;
 
@@ -84,25 +84,6 @@ public class CleanDialog extends MessageDialog {
             this.selection = new Object[0];
     }
 
-    protected void browsePressed() {
-        ILabelProvider labelProvider = new WorkbenchLabelProvider();
-        ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-                getShell(), labelProvider);
-        dialog.setMultipleSelection(true);
-        dialog.setTitle("Project Selection"); //$NON-NLS-1$
-        dialog.setMessage("Chose projects to clean:"); //$NON-NLS-1$
-        dialog.setElements(ResourcesPlugin.getWorkspace().getRoot()
-                .getProjects());
-        dialog.setInitialSelections(new Object[] { selection });
-        if (dialog.open() == Window.OK) {
-            selection = dialog.getResult();
-            if (selection == null)
-                selection = new Object[0];
-        }
-        setProjectName();
-        updateEnablement();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -135,29 +116,6 @@ public class CleanDialog extends MessageDialog {
         cleanJob.schedule();
     }
 
-    protected void createButtonsForButtonBar(Composite parent) {
-        //only need to prompt for immediate build if autobuild is off
-        if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-            // increment the number of columns in the button bar
-            GridLayout layout = ((GridLayout) parent.getLayout());
-            layout.numColumns += 2;
-            layout.makeColumnsEqualWidth = false;
-            buildNowButton = new Button(parent, SWT.CHECK);
-            buildNowButton.setText(IDEWorkbenchMessages
-                    .getString("CleanDialog.buildNowButton")); //$NON-NLS-1$
-            buildNowButton.setSelection(true);
-            buildNowButton.setLayoutData(new GridData(
-                    GridData.HORIZONTAL_ALIGN_BEGINNING));
-            //create some horizontal space before the ok and cancel buttons
-            Label spacer = new Label(parent, SWT.NONE);
-            GridData data = new GridData();
-            data.horizontalAlignment = GridData.FILL;
-            data.widthHint = 200;
-            spacer.setLayoutData(data);
-        }
-        super.createButtonsForButtonBar(parent);
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
      */
@@ -188,73 +146,76 @@ public class CleanDialog extends MessageDialog {
         selectedButton = new Button(radioGroup, SWT.RADIO);
         selectedButton.setText(IDEWorkbenchMessages
                 .getString("CleanDialog.cleanSelectedButton")); //$NON-NLS-1$
+        GridData data = new GridData();
+        data.verticalAlignment = SWT.TOP;
+        selectedButton.setLayoutData(data);
         selectedButton.addSelectionListener(updateEnablement);
-        projectName = new Text(radioGroup, SWT.READ_ONLY | SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-        projectName.setLayoutData(data);
-        setProjectName();
-        Button browse = new Button(radioGroup, SWT.PUSH);
-        browse.setText(IDEWorkbenchMessages.getString("CleanDialog.browse")); //$NON-NLS-1$
-        setButtonLayoutData(browse);
-        browse.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                browsePressed();
-            }
-        });
+        createProjectSelectionTable(radioGroup);
+        //only prompt for immediate build if autobuild is off
+        if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+            buildNowButton = new Button(parent, SWT.CHECK);
+            buildNowButton.setText(IDEWorkbenchMessages
+                    .getString("CleanDialog.buildNowButton")); //$NON-NLS-1$
+            buildNowButton.setSelection(true);
+            buildNowButton.setLayoutData(new GridData(
+                    GridData.HORIZONTAL_ALIGN_BEGINNING));
+        }
         return radioGroup;
     }
 
-    /**
-     * Performs the actual clean operation.
-     * @param cleanAll if <code>true</true> clean all projects
-     * @param monitor The monitor that the build will report to
-     * @throws CoreException thrown if there is a problem from the
-     * core builder.
-     */
-    protected void doClean(boolean cleanAll, IProgressMonitor monitor)
-            throws CoreException {
-        if (cleanAll)
-            ResourcesPlugin.getWorkspace().build(
-                    IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-        else {
-            try {
-                monitor.beginTask(IDEWorkbenchMessages
-                        .getString("CleanDialog.taskName"), //$NON-NLS-1$
-                        selection.length);
-                for (int i = 0; i < selection.length; i++)
-                    ((IProject) selection[i]).build(
-                            IncrementalProjectBuilder.CLEAN_BUILD,
-                            new SubProgressMonitor(monitor, 1));
-            } finally {
-                monitor.done();
-            }
-        }
-    }
+    private void createProjectSelectionTable(Composite radioGroup) {
+    	projectNames = CheckboxTableViewer.newCheckList(radioGroup, SWT.BORDER);
+    	projectNames.setContentProvider(new WorkbenchContentProvider());
+    	projectNames.setLabelProvider(new WorkbenchLabelProvider());
+    	projectNames.setInput(ResourcesPlugin.getWorkspace().getRoot());
+    	GridData data = new GridData(GridData.FILL_BOTH);
+    	data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+    	data.heightHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+    	projectNames.getTable().setLayoutData(data);
+    	projectNames.setCheckedElements(selection);
+    	//table is disabled to start because all button is selected
+    	projectNames.getTable().setEnabled(selectedButton.getSelection());
+    	projectNames.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				selection = projectNames.getCheckedElements();
+				updateEnablement();
+			}
+		});
+	}
 
-    /**
-     * Fills in the name of the project in the text area.
-     */
-    private void setProjectName() {
-        if (selection.length == 0)
-            projectName.setText(IDEWorkbenchMessages
-                    .getString("CleanDialog.noSelection")); //$NON-NLS-1$
-        else {
-            StringBuffer names = new StringBuffer(((IProject) selection[0])
-                    .getName());
-            for (int i = 1; i < selection.length; i++) {
-                names.append(',');
-                names.append(((IProject) selection[i]).getName());
-            }
-            projectName.setText(names.toString());
-        }
-    }
+	/**
+	 * Performs the actual clean operation.
+	 * @param cleanAll if <code>true</true> clean all projects
+	 * @param monitor The monitor that the build will report to
+	 * @throws CoreException thrown if there is a problem from the
+	 * core builder.
+	 */
+	protected void doClean(boolean cleanAll, IProgressMonitor monitor)
+	        throws CoreException {
+	    if (cleanAll)
+	        ResourcesPlugin.getWorkspace().build(
+	                IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+	    else {
+	        try {
+	            monitor.beginTask(IDEWorkbenchMessages
+	                    .getString("CleanDialog.taskName"), //$NON-NLS-1$
+	                    selection.length);
+	            for (int i = 0; i < selection.length; i++)
+	                ((IProject) selection[i]).build(
+	                        IncrementalProjectBuilder.CLEAN_BUILD,
+	                        new SubProgressMonitor(monitor, 1));
+	        } finally {
+	            monitor.done();
+	        }
+	    }
+	}
 
     /**
      * Updates the enablement of the dialog's ok button based
      * on the current choices in the dialog.
      */
     protected void updateEnablement() {
+    	projectNames.getTable().setEnabled(selectedButton.getSelection());
         boolean enabled = allButton.getSelection() || selection.length > 0;
         getButton(OK).setEnabled(enabled);
     }
