@@ -211,7 +211,7 @@ public final class MutableActivityManager
 			IdentifierEvent identifierEvent =
 				(IdentifierEvent) entry.getValue();
 			Identifier identifier =
-				(Identifier) categoriesById.get(identifierId);
+				(Identifier) identifiersById.get(identifierId);
 
 			if (identifier != null)
 				identifier.fireIdentifierChanged(identifierEvent);
