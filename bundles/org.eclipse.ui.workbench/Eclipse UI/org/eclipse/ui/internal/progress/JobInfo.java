@@ -125,7 +125,7 @@ class JobInfo extends JobTreeElement {
 	 * @param work
 	 */
 	void beginTask(String taskName, int work) {
-		taskInfo = new TaskInfo(job, taskName, work);
+		taskInfo = new TaskInfo(this, taskName, work);
 	}
 
 	/**
@@ -133,7 +133,7 @@ class JobInfo extends JobTreeElement {
 	 * @param subTaskName
 	 */
 	void addSubTask(String subTaskName) {
-		children.add(new SubTaskInfo(this.job, subTaskName));
+		children.add(new SubTaskInfo(this, subTaskName));
 	}
 
 	/**

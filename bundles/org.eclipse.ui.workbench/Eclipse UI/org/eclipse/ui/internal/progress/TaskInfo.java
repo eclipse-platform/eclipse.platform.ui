@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * The TaskInfo is the info on a task with a job. It is 
@@ -24,12 +23,12 @@ public class TaskInfo extends SubTaskInfo {
 	/**
 	 * Create a new instance of the receiver with the supplied total
 	 * work and task name.
-	 * @param parentJob
+	 * @param parentJobInfo
 	 * @param infoName
 	 * @param total
 	 */
-	TaskInfo(Job parentJob, String infoName, int total) {
-		super(parentJob, infoName);
+	TaskInfo(JobInfo parentJobInfo, String infoName, int total) {
+		super(parentJobInfo, infoName);
 		totalWork = total;
 	}
 
@@ -50,12 +49,12 @@ public class TaskInfo extends SubTaskInfo {
 		int done = (int) (preWork * 100 / totalWork);
 		if (taskName == null) {
 			String[] messageValues = new String[2];
-			messageValues[0] = job.getName();
+			messageValues[0] = jobInfo.getJob().getName();
 			messageValues[1] = String.valueOf(done);
 			return ProgressMessages.format("JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
 		} else {
 			String[] messageValues = new String[3];
-			messageValues[0] = job.getName();
+			messageValues[0] = jobInfo.getJob().getName();
 			messageValues[1] = taskName;
 			messageValues[2] = String.valueOf(done);
 			return ProgressMessages.format("JobInfo.DoneMessage", messageValues); //$NON-NLS-1$
