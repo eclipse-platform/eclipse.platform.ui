@@ -424,6 +424,8 @@ public class EncodingActionGroup extends ActionGroup {
 	 * Updates all actions of this action group.
 	 */
 	public void update() {
+		if (fTextEditor == null)
+			return;
 		
 		IAction a= fTextEditor.getAction(IEncodingActionsConstants.SYSTEM);
 		if (a instanceof IUpdate)
