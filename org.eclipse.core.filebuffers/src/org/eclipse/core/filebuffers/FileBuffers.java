@@ -10,6 +10,8 @@ Contributors:
 **********************************************************************/
 package org.eclipse.core.filebuffers;
 
+import java.io.File;
+
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -71,5 +73,28 @@ public final class FileBuffers {
 		fileLocation= fileLocation.setDevice(null);
 		return fileLocation.makeAbsolute();
 		
+	}
+	
+	/**
+	 * Returns the file in the local file system for the given location.
+	 * <p>
+	 * The location is either a full path of a workspace resource or an
+	 * absolute path in the local file system.
+	 * </p>
+	 * 
+	 * @param location
+	 * @return
+	 */
+	public static File getSystemFileAtLocation(IPath location) {
+		if (location == null)
+			return null;
+		
+		IFile file= getWorkspaceFileAtLocation(location);
+		if (file != null) {
+			IPath path= file.getLocation();
+			return path.toFile();
+		}
+		
+		return location.toFile();
 	}
 }

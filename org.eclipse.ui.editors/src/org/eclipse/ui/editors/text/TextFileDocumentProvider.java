@@ -773,7 +773,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	
 	protected File getSystemFile(FileInfo info)  {
 		IPath path= info.fTextFileBuffer.getLocation();
-		return path == null ? null : path.toFile();		
+		return FileBuffers.getSystemFileAtLocation(path);
 	}
 	
 	protected boolean isSystemFileReadOnly(FileInfo info)  {
