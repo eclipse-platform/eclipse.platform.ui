@@ -10,43 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
-public class SystemMenuMaximize extends ContributionItem {
+public class SystemMenuMaximize extends SystemMenuStateChange {
 
-    private IStackPresentationSite stackPresentationSite;
+	/**
+	 * @param site
+	 * @param name
+	 * @param state
+	 */
+	public SystemMenuMaximize(IStackPresentationSite site) {
+		super(site, WorkbenchMessages.getString("PartPane.maximize"), //$NON-NLS-1$
+				IStackPresentationSite.STATE_MAXIMIZED);
+	}
 
-    public SystemMenuMaximize(IStackPresentationSite stackPresentationSite) {
-        this.stackPresentationSite = stackPresentationSite;
-    }
-
-    public void dispose() {
-        stackPresentationSite = null;
-    }
-    
-    public void fill(Menu menu, int index) {
-        MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
-        menuItem.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                stackPresentationSite
-                        .setState(IStackPresentationSite.STATE_MAXIMIZED);
-            }
-        });
-
-        menuItem
-                .setEnabled(stackPresentationSite.getState() != IStackPresentationSite.STATE_MAXIMIZED);
-    }
-    
-    public boolean isDynamic() {
-        return true;
-    }
 }

@@ -10,43 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
-public class SystemMenuMinimize extends ContributionItem {
+public class SystemMenuMinimize extends SystemMenuStateChange {
 
-    private IStackPresentationSite stackPresentationSite;
+	/**
+	 * @param site
+	 * @param name
+	 * @param state
+	 */
+	public SystemMenuMinimize(IStackPresentationSite site) {
+		super(site, WorkbenchMessages.getString("ViewPane.minimizeView"), //$NON-NLS-1$
+				IStackPresentationSite.STATE_MINIMIZED);
+	}
 
-    public SystemMenuMinimize(IStackPresentationSite stackPresentationSite) {
-        this.stackPresentationSite = stackPresentationSite;
-    }
-
-    public void dispose() {
-        stackPresentationSite = null;
-    }
-    
-    public void fill(Menu menu, int index) {
-        MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
-        menuItem.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                stackPresentationSite
-                        .setState(IStackPresentationSite.STATE_MINIMIZED);
-            }
-        });
-
-        menuItem
-                .setEnabled(stackPresentationSite.getState() != IStackPresentationSite.STATE_MINIMIZED);
-    }
-    
-    public boolean isDynamic() {
-        return true;
-    }
 }
