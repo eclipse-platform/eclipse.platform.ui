@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
 
@@ -30,6 +31,7 @@ public class JobView extends ViewPart {
 	/* an property of type IAction that is run when link is activated. */
 	static final String PROPERTY_GOTO= "goto"; //$NON-NLS-1$
 
+	private static String ELLIPSIS = ProgressMessages.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
 	
 	/*
 	 * Label with hyperlink capability.
@@ -38,7 +40,7 @@ public class JobView extends ViewPart {
 		final static int MARGINWIDTH = 1;
 		final static int MARGINHEIGHT = 1;
 		boolean hasFocus;
-		String text;
+		String text= ""; //$NON-NLS-1$
 		boolean underlined;
 		IAction gotoAction;
 		
@@ -89,8 +91,14 @@ public class JobView extends ViewPart {
 			}
 		}
 		void setText(String t) {
-			text= t != null ? t : ""; //$NON-NLS-1$
-			redraw();
+			if (t == null)
+				t= "";	//$NON-NLS-1$
+			else
+				t= shortenText(this, t);
+			if (!t.equals(text)) {
+				text= t;
+				redraw();
+			}
 		}
 		void setAction(IAction action) {
 			gotoAction= action;
@@ -120,8 +128,9 @@ public class JobView extends ViewPart {
 			bufferGC.fillRectangle(0, 0, clientArea.width, clientArea.height);
 			bufferGC.setFont(getFont());
 			bufferGC.setForeground(getForeground());
-			bufferGC.drawText(text, MARGINWIDTH, MARGINHEIGHT, true);
-			int sw= bufferGC.stringExtent(text).x;
+			String t= shortenText(bufferGC, clientArea.height, text);
+			bufferGC.drawText(t, MARGINWIDTH, MARGINHEIGHT, true);
+			int sw= bufferGC.stringExtent(t).x;
 			if (underlined) {
 				FontMetrics fm= bufferGC.getFontMetrics();
 				int lineY= clientArea.height - MARGINHEIGHT - fm.getDescent() + 1;
@@ -209,7 +218,7 @@ public class JobView extends ViewPart {
 			fIcon.addMouseListener(ml);
 			
 			fName= new Label(this, SWT.NONE);
-			//fName.setText(getName());
+			fName.setFont(defaultFont);
 			fName.addMouseListener(ml);
 			
 			actionBar= new ToolBar(this, SWT.FLAT);
@@ -250,11 +259,11 @@ public class JobView extends ViewPart {
 			
 			fTaskIsShown= true;
  			fTask= new Hyperlink(this, SWT.NONE);
+ 			fTask.setFont(defaultFont);
  			if (gotoAction != null) {
  				fTask.setToolTipText(gotoAction.getToolTipText());
  				fTask.setAction(gotoAction);
  			}
-			fTask.setText(getTaskName());
 			
 			addMouseListener(ml);
 			
@@ -272,30 +281,8 @@ public class JobView extends ViewPart {
 				return ((JobInfo)jobTreeElement).getJob();
 			return null;
 		}
-		
-		private String getStatus() {
-			if (jobTreeElement instanceof JobInfo) {
-				JobInfo ji= (JobInfo) jobTreeElement;
-				if (ji.isCanceled())
-					return "Canceled";
-				if (ji.isBlocked())
-					return "Blocked (" + ji.getBlockedStatus().getMessage() + ")";
-				switch (ji.getJob().getState()) {
-				case Job.NONE:
-					return "Terminated";
-				case Job.RUNNING:
-					return "Running";
-				case Job.SLEEPING:
-					return "Sleeping";
-				case Job.WAITING:
-					return "Waiting";
-				}
-				return "Unknown state";
-			}
-			return "Group";
-		}
-		
-		String getName() {
+				
+		String getJobName() {
 			
 			if (jobTreeElement instanceof JobInfo) {
 				JobInfo ji= (JobInfo) jobTreeElement;
@@ -316,7 +303,7 @@ public class JobView extends ViewPart {
 				}
 			}
 			
-			return "??? " + jobTreeElement.getDisplayString();
+			return jobTreeElement.getDisplayString();
 		}
 		
 		String getTaskName() {
@@ -332,7 +319,7 @@ public class JobView extends ViewPart {
 				TaskInfo ti= ji.getTaskInfo();
 				if (ti != null) {
 					String s= ti.getDisplayString();
-					String n= getName() + ": ";
+					String n= getJobName() + ": "; //$NON-NLS-1$
 					int pos= s.indexOf(n);
 					if (pos > 0)
 						s= s.substring(pos+n.length());
@@ -382,7 +369,7 @@ public class JobView extends ViewPart {
 					for (int i= 0; i < listeners.length; i++) {
 						JobView jv= (JobView) listeners[i];
 						if (jv != JobView.this) {
-							JobItem ji= jv.findJobItem("kill", null, jobTreeElement);
+							JobItem ji= jv.findJobItem(null, jobTreeElement);
 							if (ji != null)
 								ji.kill(true, false);
 						}
@@ -516,7 +503,7 @@ public class JobView extends ViewPart {
 		 */
 		void refresh() {
 
-			fName.setText(getName());
+			fName.setText(shortenText(fName, getJobName()));
 
 			if (fTerminated) {
 				if (! isCanceled() && fKeep) {
@@ -541,6 +528,7 @@ public class JobView extends ViewPart {
 			
 			setTask(getTaskName());
 		}
+		
 	}
 	
 	private static ListenerList allJobViews= new ListenerList();
@@ -552,6 +540,7 @@ public class JobView extends ViewPart {
 	private Color taskColor;
 	private Color selectedColor;
 	private Cursor handCursor;
+	private Font defaultFont= JFaceResources.getDefaultFont();
 
 	private Composite list;
 	private ScrolledComposite scroller;
@@ -600,21 +589,22 @@ public class JobView extends ViewPart {
 		linkColor= display.getSystemColor(SWT.COLOR_DARK_BLUE);
 		linkColor2= display.getSystemColor(SWT.COLOR_BLUE);
 				
-
 		scroller= new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-		int height= scroller.getFont().getFontData()[0].getHeight();
+		int height= defaultFont.getFontData()[0].getHeight();
 		scroller.getVerticalBar().setIncrement(height * 2);
 		scroller.setExpandHorizontal(true);
 		scroller.setExpandVertical(true);
 				
 		list= new Composite(scroller, SWT.NONE);
+		list.setFont(defaultFont);
 		list.setBackground(whiteColor);
 		
 		scroller.setContent(list);
 		
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
-		layout.marginHeight= layout.marginWidth= layout.verticalSpacing= 0;
+		layout.marginHeight= 1;
+		layout.marginWidth= layout.verticalSpacing= 0;
 		list.setLayout(layout);
 		
 		list.addDisposeListener(new DisposeListener() {
@@ -667,7 +657,7 @@ public class JobView extends ViewPart {
 		for (int i= 0; i < elements.length; i++) {
 			JobTreeElement jte= (JobTreeElement) elements[i];
 			if (use(jte)) {
-				JobItem ji= findJobItem("refresh", children, jte);
+				JobItem ji= findJobItem(children, jte);
 				if (ji != null)
 					ji.refresh();
 			}
@@ -681,7 +671,7 @@ public class JobView extends ViewPart {
 		for (int i= 0; i < elements.length; i++) {
 			JobTreeElement jte= (JobTreeElement) elements[i];
 			if (use(jte)) {
-				if (findJobItem("add", children, jte) == null) {
+				if (findJobItem(children, jte) == null) {
 					new JobItem(list, jte);
 					changed= true;
 					lastAdded= jte;
@@ -699,7 +689,7 @@ public class JobView extends ViewPart {
 		for (int i= 0; i < elements.length; i++) {
 			JobTreeElement jte= (JobTreeElement) elements[i];
 			if (use(jte)) {
-				JobItem ji= findJobItem("remove", children, jte);
+				JobItem ji= findJobItem(children, jte);
 				if (ji != null)
 					changed |= ji.remove();
 			}
@@ -759,7 +749,7 @@ public class JobView extends ViewPart {
 		relayout(changed, changed);
 	}
 	
-	private JobItem findJobItem(String tag, Control[] children, JobTreeElement jte) {
+	private JobItem findJobItem(Control[] children, JobTreeElement jte) {
 		if (children == null)
 			children= list.getChildren();
 		for (int i= 0; i < children.length; i++) {
@@ -767,7 +757,6 @@ public class JobView extends ViewPart {
 			if (jte == ji.jobTreeElement)
 				return ji;
 		}
-		//System.err.println("*** not found (" + tag + ") " + jte.getCondensedDisplayString());
 		return null;
 	}
 
@@ -794,7 +783,7 @@ public class JobView extends ViewPart {
 	}
 	
 	private void reveal(JobTreeElement jte) {
-		JobItem ji= findJobItem("reveal", null, jte);
+		JobItem ji= findJobItem(null, jte);
 		if (ji != null) {
 			Rectangle bounds= ji.getBounds();
 			/*
@@ -880,5 +869,51 @@ public class JobView extends ViewPart {
 				roots.add(element);
 		}
 		return roots.toArray();
+	}
+	
+	/**
+	 * Shorten the given text <code>t</code> so that its length
+	 * doesn't exceed the given width. This implementation
+	 * replaces characters in the center of the original string with an
+	 * ellipsis ("...").
+	 */
+	static String shortenText(GC gc, int maxWidth, String textValue) {
+		if (gc.textExtent(textValue).x < maxWidth) {
+			return textValue;
+		}
+		int length = textValue.length();
+		int ellipsisWidth = gc.textExtent(ELLIPSIS).x;
+		int pivot = length / 2;
+		int start = pivot;
+		int end = pivot + 1;
+		while (start >= 0 && end < length) {
+			String s1 = textValue.substring(0, start);
+			String s2 = textValue.substring(end, length);
+			int l1 = gc.textExtent(s1).x;
+			int l2 = gc.textExtent(s2).x;
+			if (l1 + ellipsisWidth + l2 < maxWidth) {
+				gc.dispose();
+				return s1 + ELLIPSIS + s2;
+			}
+			start--;
+			end++;
+		}
+		return textValue;
+	}
+	/**
+	 * Shorten the given text <code>t</code> so that its length
+	 * doesn't exceed the width of the given control. This implementation
+	 * replaces characters in the center of the original string with an
+	 * ellipsis ("...").
+	 */
+	static String shortenText(Control control, String textValue) {
+		if (textValue != null) {
+			Display display = control.getDisplay();
+			GC gc = new GC(display);
+			int maxWidth = control.getBounds().width;
+			textValue = shortenText(gc, maxWidth, textValue);
+			gc.dispose();
+		}
+		return textValue;
 	}
 }
