@@ -1015,21 +1015,38 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 
 	// carefully navigate to the plug-in for the primary feature
 	IPlatformConfiguration cfg = BootLoader.getCurrentPlatformConfiguration();
-	if (cfg == null) {
+	if (cfg == null) { 
 		// bail if we don't seem to have one for whatever reason (!)
 		if (DEBUG_PREFERENCES) {
 			System.out.println("Plugin preferences unable to find a platform configuration"); //$NON-NLS-1$
 		}
 		return;
-	}
-	String primaryFeaturePluginId = cfg.getPrimaryFeatureIdentifier();
-	if (primaryFeaturePluginId  == null) {
+	}	
+	String primaryFeatureID = cfg.getPrimaryFeatureIdentifier();
+	if (primaryFeatureID  == null) {
+		// bail if we don't seem to have one of these (!)
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Plugin preferences unable to find a primary feature id"); //$NON-NLS-1$
+		}
+		return;
+	}	
+	IPlatformConfiguration.IFeatureEntry primaryFeatureEntry = cfg.findConfiguredFeatureEntry(primaryFeatureID);
+	if (primaryFeatureEntry  == null) { 
+		// bail if we don't seem to have one of these (!)
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Plugin preferences unable to find a primary feature entry"); //$NON-NLS-1$
+		}
+		return;
+	}	
+	String primaryFeaturePluginId = primaryFeatureEntry.getFeaturePluginIdentifier();
+	if (primaryFeaturePluginId  == null) { 
 		// bail if we don't seem to have one of these (!)
 		if (DEBUG_PREFERENCES) {
 			System.out.println("Plugin preferences unable to find a primary feature plugin id"); //$NON-NLS-1$
 		}
 		return;
-	}
+	}	
+	
 	IPluginDescriptor primaryFeatureDescriptor = getPluginRegistry().getPluginDescriptor(primaryFeaturePluginId);
 	if (primaryFeatureDescriptor  == null) {
 		// bail if primary feature is missing (!)
