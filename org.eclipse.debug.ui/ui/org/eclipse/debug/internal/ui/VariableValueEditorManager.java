@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.actions;
+package org.eclipse.debug.internal.ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.actions.IVariableValueEditor;
 
 /**
  * Manager which provides the variable value editors contributed
