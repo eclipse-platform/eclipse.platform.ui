@@ -1045,7 +1045,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		if (validKeySequence) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence, true) + '\''}); //$NON-NLS-1$
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence, false) + '\''}); //$NON-NLS-1$
 			labelCommandsForSequence.setText(text);
 		} else 
 			labelCommandsForSequence.setText(Util.getString(resourceBundle, "labelCommandsForSequence.noSelection")); //$NON-NLS-1$
@@ -1219,7 +1219,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			StringBuffer stringBuffer = new StringBuffer();
 
 			if (commandRecord.sequence != null)
-				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence, true));
+				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence, false));
 
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
