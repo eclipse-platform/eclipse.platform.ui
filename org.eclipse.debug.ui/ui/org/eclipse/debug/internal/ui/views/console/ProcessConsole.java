@@ -267,7 +267,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 */
 	protected void init() {
 		super.init();
-		DebugPlugin.getDefault().addDebugEventListener(this);
+		if(fProcess.isTerminated()) {
+		    closeStreams();
+		    resetName();
+		} else {
+		    DebugPlugin.getDefault().addDebugEventListener(this);
+		}
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         store.addPropertyChangeListener(this);
         if (store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP)) {
@@ -297,17 +302,20 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	                DebugPlugin.getDefault().removeDebugEventListener(this);
 	            }
 	            
-	            Runnable r = new Runnable() {
-	                public void run() {
-	                    setName(computeName());
-	                    warnOfContentChange();
-	                }
-	            };	
-	            DebugUIPlugin.getStandardDisplay().asyncExec(r);
+	            resetName();
 	        }
 	    }
 	}
 	
+	private void resetName() {
+	    Runnable r = new Runnable() {
+	        public void run() {
+	            setName(computeName());
+	            warnOfContentChange();
+	        }
+	    };	
+	    DebugUIPlugin.getStandardDisplay().asyncExec(r);
+	}
 	
 	private void warnOfContentChange() {
 		ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(DebugUITools.getConsole(fProcess));

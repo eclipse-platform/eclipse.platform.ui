@@ -423,7 +423,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-				updateJob.schedule(50);
+				updateJob.schedule(100);
 			}
 		}
 	}
@@ -502,7 +502,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			        if (notifyClosed) {
 		                partitionerFinished();
 		            }
-			        matchJob.schedule(50);
+			        matchJob.schedule(100);
 			    }
 			});
 			
@@ -596,6 +596,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
     }
     
     private class MatchJob extends Job {
+        private boolean propertyFired = false;
         
         MatchJob() {
             super("Match Job"); //$NON-NLS-1$
@@ -700,8 +701,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 						allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
 					}
 		        }
-	        	if (allDone && !monitor.isCanceled()) {
+	        	if (allDone && !monitor.isCanceled() && !propertyFired) {
 	        	    console.firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+	        	    propertyFired = true;
 	        	    cancel(); // cancels this job if it has already been re-scheduled
 	        	}
         	}
