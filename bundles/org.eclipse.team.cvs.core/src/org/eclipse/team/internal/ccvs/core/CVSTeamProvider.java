@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
@@ -65,9 +64,9 @@ import org.eclipse.team.internal.ccvs.core.streams.LFtoCRLFInputStream;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
+import org.eclipse.team.internal.ccvs.core.util.ReplaceWithBaseVisitor;
 
 /**
  * This class acts as both the ITeamNature and the ITeamProvider instances
@@ -452,8 +451,13 @@ public class CVSTeamProvider extends RepositoryProvider {
 	
 	public void get(final IResource[] resources, final int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
 		try {
-			
 			progress.beginTask(null, 100);
+			
+			// Handle the retrival of the base in a special way
+			if (tag != null && tag.equals(CVSTag.BASE)) {
+				new ReplaceWithBaseVisitor().replaceWithBase(getProject(), resources, depth, Policy.subMonitorFor(progress, 100)); //$NON-NLS-1$
+				return;
+			}
 			
 			// Prepare for the replace (special handling for "cvs added" and "cvs removed" resources
 			new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 30)); //$NON-NLS-1$

@@ -46,7 +46,6 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			if (CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
 				file.delete();
 			}
-			// If the file is unmanaged, just leave it as is
 		} else if (info.isAdded()) {
 			file.delete();
 			file.unmanage(null);
