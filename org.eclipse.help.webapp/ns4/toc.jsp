@@ -156,7 +156,7 @@ if (parent.parent.temp){
 %>
 <body BGCOLOR="#FFFFFF" onload='onloadHandler("<%=tocHref%>", "<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
 	<ul class='expanded' id='root'>
-		<a class='book' href='<%=tocDescription%>'><nobr class='book'><img id="book" src="../images/toc_obj.gif" border=0><%=tocElement.getAttribute("label")%></nobr></a>
+		<a class='book' href='<%=tocDescription%>'><nobr class='book'><img id="book" src="../images/toc_obj.gif" border=0>&nbsp;<%=tocElement.getAttribute("label")%></nobr></a>
 <%
 	// JSP does not have good support for recursive calls using scriplets
 	// or at least I could not find a simple way...
