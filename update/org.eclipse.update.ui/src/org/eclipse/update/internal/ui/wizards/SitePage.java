@@ -387,12 +387,23 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
+		if (bookmark.isUnavailable()) {
+			treeViewer.setChecked(bookmark, false);
+			return;
+		}
+		
 		bookmark.setSelected(checked);
 		if (checked)
 			bookmark.setIgnoredCategories(new String[0]);
 			
 		if (checked || bookmark.isSiteConnected())
 			treeViewer.setSubtreeChecked(bookmark, checked);
+		// at this point, we may realize the site is not available
+		if (bookmark.isUnavailable()) {
+			treeViewer.setChecked(bookmark, false);
+			return;
+		}
+			
 		treeViewer.setGrayed(bookmark, false);
 		updateSearchRequest();
 	}
