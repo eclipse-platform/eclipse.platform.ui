@@ -32,7 +32,7 @@ import org.eclipse.ui.part.EditorPart;
  */
 public class FormPage extends EditorPart implements IFormPage {
 	private FormEditor editor;
-	private ManagedForm mform;
+	private PageForm mform;
 	private int index;
 	private String id;
 	private String title;
@@ -78,6 +78,15 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * @see org.eclipse.ui.forms.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
+		if (active) {
+			// We are switching to this page - refresh it
+			// if needed.
+			mform.refresh();
+		}
+		else {
+			// We are going away from the page - commit it
+			mform.commit(false);
+		}
 	}
 	
 	public boolean isActive() {
@@ -89,7 +98,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	 */
 	public void createPartControl(Composite parent) {
 		ScrolledForm form = editor.getToolkit().createScrolledForm(parent);
-		mform = new ManagedForm(editor.getToolkit(), form);
+		mform = new PageForm(this, form);
 		BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
 			public void run() {
 				createFormContent(mform);
@@ -102,7 +111,7 @@ public class FormPage extends EditorPart implements IFormPage {
  * in the form hosted in this page.
  * @param managedForm the form hosted in this page.
  */
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 	}
 	
 	public Control getPartControl() {

@@ -11,8 +11,33 @@
 package org.eclipse.ui.forms;
 
 /**
- * 
+ * Classes that implement this interface can be added to the managed
+ * form and take part in the form life cycle. The part is initialize
+ * with the form and be asked to accept focus. The part can receive
+ * form input and can elect to do something according to it (for
+ * example, select an object that matches the input).
+ * <p>The form part has two 'out of sync' states in respect to 
+ * the model(s) that feed the form: <b>dirty</b> and <b>stale</b>.
+ * When a part is dirty, it means that the user interacted with 
+ * it and now its widgets contain state that is newer than the
+ * model. In order to sync up with the model, 'commit' needs to
+ * be called. In contrast, the model can change 'under' the form
+ * (as a result of some actions outside the form), resulting
+ * in data in the model being 'newer' than the content presented
+ * in the form. A 'stale' form part is brought in sync with the 
+ * model by calling 'refresh'. The part is responsible to notify
+ * the form when one of these states change in the part. The
+ * form reserves the right to handle this notification in the
+ * most appropriate way for the situation (for example, if 
+ * form is in a page of the multi-page editor, it may do 
+ * nothing for stale parts if the page is currently not showing).
+ * <p>When form is disposed, each registered part is disposed as well.
+ * Parts are responsible for releasing any system resources
+ * they created and for removing themselves as listeners
+ * from all event providers.
  * @see IManagedForm
+ * @since 3.0
+ * 
  */
 public interface IFormPart {
 	/**
@@ -72,12 +97,6 @@ public interface IFormPart {
 	 * <code>false</code> otherwise.
 	 */
 	boolean isStale();
-	/**
-	 * Marks the part stale. Stale parts are refreshed the next
-	 * time the form is made visible. If the form is already
-	 * visible, it will be refreshed immediately.
-	 */
-	void markStale();
 	/**
 	 * Refreshes the part completely from the information freshly 
 	 * obtained from the model. The method will not be called

@@ -1,11 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.forms;
-
 import java.util.Vector;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
-
 /**
  * Managed form wraps a form widget and adds life cycle methods for form parts.
  * A form part is a portion of the form that participates in form life cycle
@@ -14,6 +21,13 @@ import org.eclipse.ui.forms.widgets.*;
  * There is requirement for 1/1 mapping between widgets and form parts. A
  * widget like Section can be a part by itself, but a number of widgets can
  * join around one form part.
+ * <p>Note to developers: this class is left public to allow its use
+ * beyond the original intention (inside a multi-page editor's page).
+ * You should limit the use of this class to make new instances
+ * inside a form container (wizard page, dialog etc.).
+ * Clients that need access to the class should not do it directly. 
+ * Instead, they should do it through IManagedForm interface as 
+ * much as possible.
  * 
  * @since 3.0
  */
@@ -23,7 +37,6 @@ public class ManagedForm implements IManagedForm {
 	private FormToolkit toolkit;
 	private boolean ownsToolkit;
 	private Vector parts = new Vector();
-
 	/**
 	 * Creates a managed form in the provided parent. Form toolkit and widget
 	 * will be created and owned by this object.
@@ -31,7 +44,6 @@ public class ManagedForm implements IManagedForm {
 	 * @param parent
 	 *            the parent widget
 	 */
-
 	public ManagedForm(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		ownsToolkit = true;
@@ -47,7 +59,6 @@ public class ManagedForm implements IManagedForm {
 		this.form = form;
 		this.toolkit = toolkit;
 	}
-
 	/**
 	 * Add a part to be managed by this form.
 	 * 
@@ -66,7 +77,6 @@ public class ManagedForm implements IManagedForm {
 	public void removePart(IFormPart part) {
 		parts.remove(part);
 	}
-
 	/**
 	 * Returns all the parts current managed by this form.
 	 */
@@ -81,7 +91,6 @@ public class ManagedForm implements IManagedForm {
 	public FormToolkit getToolkit() {
 		return toolkit;
 	}
-
 	/**
 	 * Returns the form widget managed by this form.
 	 * 
@@ -90,13 +99,12 @@ public class ManagedForm implements IManagedForm {
 	public ScrolledForm getForm() {
 		return form;
 	}
-/**
- * Reflows the form as a result of a layout change.
- */	
+	/**
+	 * Reflows the form as a result of a layout change.
+	 */
 	public void reflow(boolean changed) {
 		form.reflow(changed);
 	}
-
 	/**
 	 * A part can use this method to notify other parts that implement
 	 * IPartSelectionListener about selection changes.
@@ -113,13 +121,11 @@ public class ManagedForm implements IManagedForm {
 			if (part.equals(cpart))
 				continue;
 			if (cpart instanceof IPartSelectionListener) {
-				((IPartSelectionListener) cpart).selectionChanged(
-					part,
-					selection);
+				((IPartSelectionListener) cpart).selectionChanged(part,
+						selection);
 			}
 		}
 	}
-
 	/**
 	 * Initializes all the parts in this form.
 	 */
@@ -129,7 +135,6 @@ public class ManagedForm implements IManagedForm {
 			part.initialize(this);
 		}
 	}
-
 	/**
 	 * Disposes all the parts in this form.
 	 */
@@ -142,30 +147,31 @@ public class ManagedForm implements IManagedForm {
 			toolkit.dispose();
 		}
 	}
-
 	/**
-	 * Refreshes the form by forcing all the parts to reload the content from
-	 * the model.
+	 * Refreshes the form by refreshes all the stale parts.
 	 */
 	public void refresh() {
+		int nrefreshed = 0;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
-			part.refresh();
+			if (part.isStale()) {
+				part.refresh();
+				nrefreshed++;
+			}
 		}
-		form.reflow(true);
+		if (nrefreshed > 0)
+			form.reflow(true);
 	}
-	
 	/**
-	 * Refreshes the form by forcing all the parts to reload the content from
-	 * the model.
+	 * Commits the form by commiting all the dirty parts to the model.
 	 */
 	public void commit(boolean onSave) {
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
-			part.commit(onSave);
+			if (part.isDirty())
+				part.commit(onSave);
 		}
 	}
-
 	/**
 	 * Sets the form input. Managed parts could opt to react to it by selecting
 	 * and/or revealing the object if they contain it.
@@ -192,7 +198,6 @@ public class ManagedForm implements IManagedForm {
 			part.setFocus();
 		}
 	}
-
 	public boolean isDirty() {
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
@@ -201,6 +206,22 @@ public class ManagedForm implements IManagedForm {
 		}
 		return false;
 	}
-	public void markDirty() {
+	public boolean isStale() {
+		for (int i = 0; i < parts.size(); i++) {
+			IFormPart part = (IFormPart) parts.get(i);
+			if (part.isStale())
+				return true;
+		}
+		return false;
+	}
+	/**
+	 * @see IManagedForm#dirtyStateChanged
+	 */
+	public void dirtyStateChanged() {
+	}
+	/**
+	 * @see IManagedForm#staleStateChanged
+	 */
+	public void staleStateChanged() {
 	}
 }

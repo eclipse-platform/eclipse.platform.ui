@@ -49,6 +49,20 @@ public interface IManagedForm {
 	 */
 	IFormPart[] getParts();
 	/**
+	 * Adds the new part to the form.
+	 * 
+	 * @param part
+	 *            the part to add
+	 */
+	void addPart(IFormPart part);
+	/**
+	 * Removes the part from the form.
+	 * 
+	 * @param part
+	 *            the part to remove
+	 */
+	void removePart(IFormPart part);
+	/**
 	 * Sets the input of this page to the provided object.
 	 * 
 	 * @param input
@@ -62,14 +76,37 @@ public interface IManagedForm {
 	 */
 	Object getInput();
 	/**
-	 * Tests if form is dirty. A managed form is dirty if at least one
-	 * managed part is dirty.
-	 * @return <code>true</code> if at least one managed part is
-	 * dirty, <code>false</code> otherwise.
+	 * Tests if form is dirty. A managed form is dirty if at least one managed
+	 * part is dirty.
+	 * 
+	 * @return <code>true</code> if at least one managed part is dirty,
+	 *         <code>false</code> otherwise.
 	 */
 	boolean isDirty();
 	/**
-	 * Marks the form dirty.
+	 * Notifies the form that the dirty state of one of its parts has changed.
+	 * The global dirty state of the form can be obtained by calling 'isDirty'.
+	 * 
+	 * @see #isDirty
 	 */
-	void markDirty();
+	void dirtyStateChanged();
+	/**
+	 * Tests if form is stale. A managed form is stale if at least one managed
+	 * part is stale. This can happen when the underlying model changes,
+	 * resulting in the presentation of the part being out of sync with the
+	 * model and needing refreshing.
+	 * 
+	 * @return <code>true</code> if the form is stale, <code>false</code>
+	 *         otherwise.
+	 */
+	boolean isStale();
+	/**
+	 * Notifies the form that the stale state of one of its parts has changed.
+	 * The global stale state of the form can be obtained by calling 'isStale'.
+	 */
+	void staleStateChanged();
+	/**
+	 * Refreshes the form by refreshing every part that is stale.
+	 */
+	void refresh();
 }

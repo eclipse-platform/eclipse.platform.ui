@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.ISelection;
  * Form parts can implement this interface if they want to be notified when
  * another part on the same form changes selection state.
  * 
+ * @since 3.0
  * @see IFormPart
  */
 public interface IPartSelectionListener {

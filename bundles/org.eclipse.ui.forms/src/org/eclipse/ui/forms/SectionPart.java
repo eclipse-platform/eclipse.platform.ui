@@ -13,7 +13,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 /**
- * Section part implements IFormPart interface based on the Section widget.
+ * Section part implements IFormPart interface based on the Section widget. It
+ * can either wrap the widget or create one itself.
  * 
  * @see Section
  */
@@ -30,15 +31,23 @@ public class SectionPart implements IFormPart {
 	 */
 	public SectionPart(Section section) {
 		this.section = section;
-		initialize();
+		hookListeners();
 	}
+	/**
+	 * Creates a new section part inside the provided parent and using the
+	 * provided toolkit. The section part will create the section widget.
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param toolkit
+	 *            the toolkit to use
+	 * @param style
+	 *            the section widget style
+	 */
 	public SectionPart(Composite parent, FormToolkit toolkit, int style) {
 		this(toolkit.createSection(parent, style));
 	}
-	/**
-	 * Initializes the section.
-	 */
-	protected void initialize() {
+	protected void hookListeners() {
 		if ((section.getExpansionStyle() & Section.TWISTIE) != 0
 				|| (section.getExpansionStyle() & Section.TREE_NODE) != 0) {
 			section.addExpansionListener(new ExpansionAdapter() {
@@ -59,8 +68,22 @@ public class SectionPart implements IFormPart {
 	public Section getSection() {
 		return section;
 	}
+	/**
+	 * The section is about to expand or collapse.
+	 * 
+	 * @param expanding
+	 *            <code>true</code> for expansion, <code>false</code> for
+	 *            collapse.
+	 */
 	protected void expansionStateChanging(boolean expanding) {
 	}
+	/**
+	 * The section has expanded or collapsed.
+	 * 
+	 * @param expanded
+	 *            <code>true</code> for expansion, <code>false</code> for
+	 *            collapse.
+	 */
 	protected void expansionStateChanged(boolean expanded) {
 		managedForm.getForm().reflow(false);
 	}
@@ -72,69 +95,92 @@ public class SectionPart implements IFormPart {
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;
 	}
+	/**
+	 * Returns the form that manages this part.
+	 * 
+	 * @return the managed form
+	 */
 	public IManagedForm getForm() {
 		return managedForm;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#dispose()
+	/**
+	 * Disposes the section part. Subclasses should override to release any
+	 * system resources.
 	 */
 	public void dispose() {
 	}
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Commits the section part. Subclasses should call 'super' when
+	 * overriding.
 	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#commit(boolean)
+	 * @param onSave
+	 *            <code>true</code> if the request to commit has arrived as a
+	 *            result of the 'save' action.
 	 */
 	public void commit(boolean onSave) {
 		dirty = false;
 	}
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets the overal form input. Subclases may elect to override the method
+	 * and adjust according to the form input.
 	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#setFormInput(java.lang.Object)
+	 * @param input
+	 *            the form input object
 	 */
 	public void setFormInput(Object input) {
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#setFocus()
+	/**
+	 * Instructs the section to grab keyboard focus. The default implementation
+	 * will transfer focus to the section client. Subclasses may override and
+	 * transfer focus to some widget in the client.
 	 */
 	public void setFocus() {
 		Control client = section.getClient();
 		if (client != null)
 			client.setFocus();
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#refresh()
+	/**
+	 * Refreshes the section after becoming stale (falling behind data in the
+	 * model). Subclasses must call 'super' when overriding this method.
 	 */
 	public void refresh() {
+		stale = false;
 	}
-	protected void markDirty() {
+	/**
+	 * Marks the section dirty. Subclasses should call this method as a result
+	 * of user interaction with the widgets in the section.
+	 */
+	public void markDirty() {
 		dirty = true;
-		managedForm.markDirty();
+		managedForm.dirtyStateChanged();
 	}
+	/**
+	 * Tests whether the section is dirty i.e. its widgets have state that is
+	 * newer than the data in the model.
+	 * 
+	 * @return <code>true</code> if the section is dirty, <code>false</code>
+	 *         otherwise.
+	 */
 	public boolean isDirty() {
 		return dirty;
 	}
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Tests whether the section is stale i.e. its widgets have state that is
+	 * older than the data in the model.
 	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#isStale()
+	 * @return <code>true</code> if the section is stale, <code>false</code>
+	 *         otherwise.
 	 */
 	public boolean isStale() {
-		// TODO Auto-generated method stub
-		return false;
+		return stale;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#markStale()
+	/**
+	 * Marks the section stale. Subclasses should call this method as a result
+	 * of model notification that indicates that the content of the section is
+	 * no longer in sync with the model.
 	 */
 	public void markStale() {
+		stale = true;
+		managedForm.staleStateChanged();
 	}
 }
