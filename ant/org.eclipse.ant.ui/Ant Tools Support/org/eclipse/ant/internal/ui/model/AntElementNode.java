@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -320,7 +320,7 @@ public class AntElementNode implements IAdaptable {
 	 * hierarchy that has problems. The severity of the problem is provided.
 	 */
 	public void setProblemSeverity(int severity) {
-		this.fProblemSeverity= severity;
+		fProblemSeverity= severity;
 	}
 	
 	/**
@@ -526,7 +526,7 @@ public class AntElementNode implements IAdaptable {
 	}
 	
 	public void setImportNode(AntElementNode importNode) {
-		this.fImportNode = importNode;
+		fImportNode = importNode;
 	}
 	
 	public boolean hasChildren() {
