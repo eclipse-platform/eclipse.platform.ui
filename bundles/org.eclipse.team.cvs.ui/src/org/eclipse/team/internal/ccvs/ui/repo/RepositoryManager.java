@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -643,8 +644,12 @@ public class RepositoryManager {
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				int code = dialog.open();
-				if (code == ReleaseCommentDialog.OK)
+				if (code == IDialogConstants.YES_ID) {
 					result[0] = dialog.getResourcesToAdd();
+				} else if(code == IDialogConstants.NO_ID) {
+					// allow the commit to continue.
+					result[0] = new IResource[0];
+				}
 			}
 		});
 		return result[0];

@@ -198,4 +198,33 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		label.setLayoutData(data);
 		return label;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
+		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
+		super.createButtonsForButtonBar(parent);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.DetailsDialog#includeOkButton()
+	 */
+	protected boolean includeOkButton() {
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int id) {
+		// hijack yes and no buttons to set the correct return
+		// codes.
+		if(id == IDialogConstants.YES_ID || id == IDialogConstants.NO_ID) {
+			setReturnCode(id);
+			close();
+		} else {
+			super.buttonPressed(id);
+		}
+	}
 }

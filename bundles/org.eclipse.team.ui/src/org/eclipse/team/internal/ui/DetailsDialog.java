@@ -111,7 +111,9 @@ abstract public class DetailsDialog extends Dialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Details buttons
-		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		if(includeOkButton()) {
+			okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		}
 		if (includeCancelButton()) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		}
@@ -236,6 +238,11 @@ abstract public class DetailsDialog extends Dialog {
 	protected boolean includeCancelButton() {
 		return true;
 	}
+	
+	protected boolean includeOkButton() {
+		return true;
+	}
+	
 	/**
 	 * Returns the imageKey.
 	 * @return String
