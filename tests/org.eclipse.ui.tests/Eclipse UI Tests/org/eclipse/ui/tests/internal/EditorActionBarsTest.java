@@ -1,12 +1,19 @@
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.tests.util.*;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.tests.api.*;
+import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 
 /**
@@ -114,14 +121,34 @@ public class EditorActionBarsTest extends UITestCase {
 	 */
 	protected void verifyToolItemState(IAction action, boolean enabled) {
 		String actionText = action.getText();
-		ToolBarManager tbm = ((WorkbenchWindow)fWindow).getToolBarManager();
-		ToolBar tb = tbm.getControl();
-		ToolItem [] items = tb.getItems();
-		for (int nX = 0; nX < items.length; nX ++) {
-			String itemText = items[nX].getToolTipText();
-			if (actionText.equals(itemText)) {
-				assertEquals(enabled, items[nX].getEnabled());
-				return;
+		IToolBarManager tbm = ((WorkbenchWindow)fWindow).getToolsManager();
+		if (tbm instanceof ToolBarManager) {
+			ToolBar tb = ((ToolBarManager) tbm).getControl();
+			ToolItem [] items = tb.getItems();
+			for (int i = 0; i < items.length; i ++) {
+				String itemText = items[i].getToolTipText();
+				if (actionText.equals(itemText)) {
+					assertEquals(enabled, items[i].getEnabled());
+					return;
+				}
+			}
+		}
+		else if (tbm instanceof CoolBarManager) {
+			IContributionItem[] coolItems = tbm.getItems();
+			for (int i = 0; i < coolItems.length; ++i) {
+				if (coolItems[i] instanceof CoolBarContributionItem) {
+					CoolBarContributionItem coolItem = (CoolBarContributionItem) coolItems[i];
+					ToolBarManager citbm = coolItem.getToolBarManager();
+					ToolBar tb = ((ToolBarManager) citbm).getControl();
+					ToolItem [] items = tb.getItems();
+					for (int j = 0; j < items.length; j ++) {
+						String itemText = items[j].getToolTipText();
+						if (actionText.equals(itemText)) {
+							assertEquals(enabled, items[j].getEnabled());
+							return;
+						}
+					}
+				}
 			}
 		}
 		fail("Action for " + actionText + " not found");
