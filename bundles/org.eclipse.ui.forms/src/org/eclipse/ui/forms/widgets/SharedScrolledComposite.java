@@ -210,7 +210,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 				updateSizeWhilePending();
 				return;
 			}
-			getDisplay().timerExec(100, new Runnable() {
+			getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if (!isDisposed())
 						reflow(flushCache);

@@ -32,7 +32,7 @@ public class TextSegment extends ParagraphSegment {
 	private boolean wrapAllowed = true;
 
 	protected Vector areaRectangles = new Vector();
-	private ArrayList textFragments;
+	private TextFragment[] textFragments;
 
 	class AreaRectangle {
 		Rectangle rect;
@@ -77,9 +77,9 @@ public class TextSegment extends ParagraphSegment {
 	}
 	
 	static class TextFragment {
-		int index;
-		int length;
-		public TextFragment(int index, int length) {
+		short index;
+		short length;
+		public TextFragment(short index, short length) {
 			this.index = index;
 			this.length = length;
 		}
@@ -224,8 +224,8 @@ public class TextSegment extends ParagraphSegment {
 		int width = 0;
 		Point lineExtent = new Point(0,0);
 
-		for (int i=0; i<textFragments.size(); i++) {
-			TextFragment textFragment = (TextFragment)textFragments.get(i);
+		for (int i=0; i<textFragments.length; i++) {
+			TextFragment textFragment = textFragments[i];
 
 			if (locator.x + lineExtent.x + textFragment.length > wHint) {
 				// overflow
@@ -534,8 +534,8 @@ public class TextSegment extends ParagraphSegment {
 			//for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE; breakLoc = wb
 			//		.next()) {
 			computeTextFragments(gc);
-			for (int i=0; i<textFragments.size(); i++) {
-				TextFragment fragment = (TextFragment)textFragments.get(i);
+			for (int i=0; i<textFragments.length; i++) {
+				TextFragment fragment = textFragments[i];
 				int breakLoc = fragment.index;
 				if (breakLoc == 0)
 					continue;
@@ -590,7 +590,7 @@ public class TextSegment extends ParagraphSegment {
 	private void computeTextFragments(GC gc) {
 		if (textFragments!=null)
 			return;
-		textFragments = new ArrayList();
+		ArrayList list = new ArrayList();
 		BreakIterator wb = BreakIterator.getLineInstance();
 		wb.setText(getText());
 		int cursor = 0;
@@ -598,8 +598,9 @@ public class TextSegment extends ParagraphSegment {
 			if (loc==0) continue;
 			String word = text.substring(cursor, loc);
 			Point extent = gc.textExtent(word);
-			textFragments.add(new TextFragment(loc, extent.x));
+			list.add(new TextFragment((short)loc, (short)extent.x));
 			cursor = loc;
 		}
+		textFragments = (TextFragment[])list.toArray(new TextFragment[list.size()]);
 	}
 }

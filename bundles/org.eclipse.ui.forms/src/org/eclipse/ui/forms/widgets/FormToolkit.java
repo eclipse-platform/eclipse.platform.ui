@@ -55,6 +55,7 @@ public class FormToolkit {
 	private FormColors colors;
 	//private KeyListener deleteListener;
 	private BorderPainter borderPainter;
+	private BoldFontHolder boldFontHolder;
 	private HyperlinkGroup hyperlinkGroup;
 	/* default */
 	VisibilityHandler visibilityHandler;
@@ -131,6 +132,31 @@ public class FormToolkit {
 			if (w instanceof Control) {
 				if (e.doit)
 					FormUtil.processKey(e.keyCode, (Control) w);
+			}
+		}
+	}
+	private class BoldFontHolder {
+		private Font normalFont;
+		private Font boldFont;
+		public BoldFontHolder() {
+		}
+		public Font getBoldFont(Font font) {
+			createBoldFont(font);
+			return boldFont;
+		}
+		private void createBoldFont(Font font) {
+			if (normalFont==null || !normalFont.equals(font)) {
+				normalFont = font;
+				dispose();
+			}
+			if (boldFont==null) {
+				boldFont = FormUtil.createBoldFont(colors.getDisplay(), normalFont);
+			}
+		}
+		public void dispose() {
+			if (boldFont!=null) {
+				boldFont.dispose();
+				boldFont=null;
 			}
 		}
 	}
@@ -391,8 +417,7 @@ public class FormToolkit {
 			section.toggle.setDecorationColor(colors
 					.getColor(FormColors.SEPARATOR));
 		}
-		section.setFont(JFaceResources.getFontRegistry().get(
-				JFaceResources.BANNER_FONT));
+		section.setFont(boldFontHolder.getBoldFont(parent.getFont()));
 		if ((sectionStyle & Section.TITLE_BAR) != 0) {
 			colors.initializeSectionToolBarColors();
 			//section.setForeground(colors.getColor(COLOR_TB_FG));
@@ -432,8 +457,7 @@ public class FormToolkit {
 			ec.textLabel.addFocusListener(visibilityHandler);
 			ec.textLabel.addKeyListener(keyboardHandler);
 		}
-		ec.setFont(JFaceResources.getFontRegistry().get(
-				JFaceResources.BANNER_FONT));
+		ec.setFont(boldFontHolder.getBoldFont(ec.getFont()));
 		return ec;
 	}
 	/**
@@ -573,6 +597,7 @@ public class FormToolkit {
 			colors.dispose();
 			colors = null;
 		}
+		boldFontHolder.dispose();
 	}
 	/**
 	 * Returns the hyperlink group that manages hyperlinks for this toolkit.
@@ -675,6 +700,7 @@ public class FormToolkit {
 		hyperlinkGroup.setBackground(colors.getBackground());
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
+		boldFontHolder = new BoldFontHolder();
 	}
 	private void initializeBorderStyle() {
 		String osname = System.getProperty("os.name");
