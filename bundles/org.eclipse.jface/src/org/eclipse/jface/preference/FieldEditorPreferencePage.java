@@ -260,10 +260,9 @@ protected Composite getFieldEditorParent() {
 		Composite parent = new Composite(fieldEditorParent, SWT.NULL);
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return parent;
-	} else {
-		// Just return the parent
-		return fieldEditorParent;
-	}
+	} 
+	// Just return the parent
+	return fieldEditorParent;
 }
 /**
  * Initializes all field editors.
@@ -311,6 +310,7 @@ public boolean performOk() {
 		while (e.hasNext()) {
 			FieldEditor pe = (FieldEditor) e.next();
 			pe.store();
+			pe.setPresentsDefaultValue(false);
 		}
 	}
 	return true;
