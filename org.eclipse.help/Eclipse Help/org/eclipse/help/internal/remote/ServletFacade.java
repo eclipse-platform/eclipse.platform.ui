@@ -39,7 +39,7 @@ public class ServletFacade implements IPlatformRunnable {
 		} catch (CoreException e) {
 		}
 	}
-	public void fillContent(String url, OutputStream out) {
+	private void fillContent(String url, OutputStream out) {
 		try {
 			Logger.logInfo("url =" + url);
 			HelpURL helpURL = HelpURLFactory.createHelpURL(url);
@@ -100,6 +100,12 @@ public class ServletFacade implements IPlatformRunnable {
 
 	}
 	public Object run(Object args) {
+		if(args!=null && args instanceof Object[]){
+			Object[] argsArray= (Object[])args;
+			if(argsArray.length==2)
+				if(argsArray[0] instanceof String && argsArray[1] instanceof OutputStream)
+					fillContent((String)argsArray[0], (OutputStream)argsArray[1]);
+		}
 		return this;
 	}
 	/**

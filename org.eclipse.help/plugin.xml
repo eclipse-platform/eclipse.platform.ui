@@ -26,15 +26,12 @@
 
    <!-- For remote install, run this application -->
    <!-- ======================================== -->
-   <extension id="workbench" point="org.eclipse.core.runtime.applications">
+   <extension id="servletFacade" point="org.eclipse.core.runtime.applications">
      <application> 
-        <run class="org.eclipse.help.internal.remote.StandaloneFacade">
-	  <!--<parameter name="productInfo" value="product.ini"/>-->
+        <run class="org.eclipse.help.internal.remote.ServletFacade">
         </run>
      </application>
    </extension>
-
-
 
    <!-- ========================================================================== -->
    <!-- Extension point: org.eclipse.help.support                              -->
