@@ -801,14 +801,6 @@
          </view>
       </perspectiveExtension>
    </extension>
-<!-- ************** Project Sets **************** -->
-   <extension
-         point="org.eclipse.team.core.projectSets">
-      <projectSet
-            class="org.eclipse.team.internal.ccvs.ui.CVSProjectSetSerializer"
-            id="org.eclipse.team.cvs.core.cvsnature">
-      </projectSet>
-   </extension>
 <!-- ********** Action Sets ************** -->
    <extension
          point="org.eclipse.ui.actionSets">
