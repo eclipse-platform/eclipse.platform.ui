@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * </p>
  */
 public class RemoveCapabilityWizard extends Wizard implements ICapabilityUninstallWizard {
-	private IWorkbench workbench;
 	private IProject project;
 	private String[] natureIds;
 
@@ -55,7 +54,6 @@ public class RemoveCapabilityWizard extends Wizard implements ICapabilityUninsta
 	 * Method declared on ICapabilityUninstallWizard.
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection, IProject project, String[] natureIds) {
-		this.workbench = workbench;
 		this.project = project;
 		this.natureIds = natureIds;
 	}
