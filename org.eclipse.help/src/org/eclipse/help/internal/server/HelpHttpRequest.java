@@ -11,7 +11,6 @@ import java.util.zip.*;
 import java.net.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.navigation1_0.HelpNavigationManager;
 import org.eclipse.help.internal.util.Resources;
 
 /**

@@ -20,7 +20,7 @@ class Topic extends TocNode implements ITopic {
 	private ITopic[] topicArray;
 	
 	/**
-	 * Contstructor.  
+	 * Constructor.  
 	 */
 	protected Topic(TocFile tocFile, Attributes attrs) throws SAXException {
 		if (attrs == null)
@@ -37,11 +37,6 @@ class Topic extends TocNode implements ITopic {
 	public void build(TocBuilder builder) {
 		builder.buildTopic(this);
 	}
-
-	/////////////////
-	//  ITopic
-	/////////////////
-	
 	public String getHref() {
 		return href;
 	}

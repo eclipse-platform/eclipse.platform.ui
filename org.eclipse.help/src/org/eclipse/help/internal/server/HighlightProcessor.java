@@ -8,7 +8,6 @@ package org.eclipse.help.internal.server;
 import java.util.*;
 import java.net.URLDecoder;
 import org.eclipse.help.internal.util.TString;
-import org.eclipse.help.internal.navigation1_0.HelpNavigationManager;
 import org.eclipse.help.internal.HelpSystem;
 
 /**

@@ -7,8 +7,6 @@ import java.net.*;
 import java.util.Locale;
 
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.contributions1_0.Contribution;
-import org.eclipse.help.internal.contributions1_0.InfoView;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
@@ -29,7 +27,6 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 	 */
 	protected Control createControl(Composite parent)
 		throws HelpWorkbenchException {
-		Contribution url = null;
 		String factoryClass = "org.eclipse.help.internal.ui.win32.BrowserFactory";
 		try {
 			if (!System.getProperty("os.name").startsWith("Win"))
