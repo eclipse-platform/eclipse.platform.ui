@@ -76,6 +76,18 @@ public class LaunchConfigurationTabGroupExtension {
 	}
 	
 	/**
+	 * Returns the identifier of the help context associated with this tab
+	 * group, or <code>null</code> if one was not specified.
+	 * 
+	 * @return the identifier of this tab group's help context or
+	 * <code>null</code>
+	 * @since 2.1
+	 */	
+	protected String getHelpContextId() {
+		return getConfigurationElement().getAttribute("helpContextId"); //$NON-NLS-1$		
+	}
+	
+	/**
 	 * Returns a new tab group defined by this extension
 	 * 
 	 * @return a new tab group defined by this extension

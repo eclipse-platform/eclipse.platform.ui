@@ -2,14 +2,14 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTabGroups" name="Launch Configuration Tab Groups"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a mechanism for contributing a group of tab to the launch configuration
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTabGroups" name="Launch Configuration Tab Groups"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a mechanism for contributing a group of tab to the launch configuration
 dialog for a type of launch configuration.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -33,7 +33,7 @@ dialog for a type of launch configuration.
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -67,6 +67,13 @@ launch configuration type extension).
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier that specifies the help context to associate with this tab group&apos;s launch configuration type
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -79,11 +86,11 @@ launch configuration type extension).
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.debug.ui.launchConfigurationTabGroups"&gt;
+ &lt;extension point=&quot;org.eclipse.debug.ui.launchConfigurationTabGroups&quot;&gt;
   &lt;launchConfigurationTabGroup
-      id="com.example.ExampleTabGroup"
-      type="com.example.ExampleLaunchConfigurationTypeIdentifier"
-      class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
+      id=&quot;com.example.ExampleTabGroup&quot;
+      type=&quot;com.example.ExampleLaunchConfigurationTypeIdentifier&quot;
+      class=&quot;com.example.ExampleLaunchConfigurationTabGroupClass&quot;&gt;
   &lt;/launchConfigurationTabGroup&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -109,7 +116,7 @@ interface &lt;b&gt;org.eclipse.debug.ui.ILaunchConfigurationTabGroup&lt;/b&gt;.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-          &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

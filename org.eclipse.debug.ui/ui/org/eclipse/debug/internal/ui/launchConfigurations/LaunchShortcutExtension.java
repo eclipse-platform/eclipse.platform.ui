@@ -101,6 +101,18 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	}	
 	
 	/**
+	 * Returns the identifier of the help context associated with this launch
+	 * shortcut, or <code>null</code> if one was not specified.
+	 * 
+	 * @return the identifier of this launch shortcut's help context or
+	 * <code>null</code>
+	 * @since 2.1
+	 */	
+	public String getHelpContextId() {
+		return getConfigurationElement().getAttribute("helpContextId"); //$NON-NLS-1$		
+	}
+	
+	/**
 	 * Returns the category of this shortcut
 	 *
 	 * @return the category of this shortcut, or <code>null</code> if not

@@ -14,6 +14,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
@@ -21,11 +22,14 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -80,8 +84,46 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		treeViewer.addFilter(new LaunchGroupFilter(getLaunchGroup()));
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		treeViewer.expandAll();
+		treeViewer.getControl().addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent evt) {
+				handleHelpRequest(evt);
+			}
+		});
 		getLaunchManager().addLaunchConfigurationListener(this);
 		return treeViewer;
+	}
+	
+	/**
+	 * Handle help events locally rather than deferring to WorkbenchHelp.  This
+	 * allows help specific to the selected config type to be presented.
+	 * 
+	 * @since 2.1
+	 */
+	protected void handleHelpRequest(HelpEvent evt) {
+		if (getTreeViewer().getTree() != evt.getSource()) {
+			return;
+		}
+		try {
+			ISelection selection = getViewer().getSelection();
+			if (!selection.isEmpty() && selection instanceof IStructuredSelection ) {
+				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				Object firstSelected = structuredSelection.getFirstElement();
+				ILaunchConfigurationType configType = null;
+				if (firstSelected instanceof ILaunchConfigurationType) {
+					configType = (ILaunchConfigurationType) firstSelected;
+				} else if (firstSelected instanceof ILaunchConfiguration) {
+					configType = ((ILaunchConfiguration) firstSelected).getType();
+				}
+				if (configType != null) {
+					String helpContextId = LaunchConfigurationPresentationManager.getDefault().getHelpContext(configType);
+					if (helpContextId != null) {
+						WorkbenchHelp.displayHelp(helpContextId);
+					}
+				}
+			}
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);
+		}
 	}
 
 	/**

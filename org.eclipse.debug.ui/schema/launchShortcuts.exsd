@@ -2,14 +2,14 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.ui" id="launchShortcuts" name="Launch Shortcuts"/>
-   </appInfo>
-   <documentation>
-      This extension point provides support for selection sensitive launching.  Extensions register a shortcut which
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.ui" id="launchShortcuts" name="Launch Shortcuts"/>
+      </appInfo>
+      <documentation>
+         This extension point provides support for selection sensitive launching.  Extensions register a shortcut which
 appears in the run and/or debug cascade menus to launch the workbench selection or active editor.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -33,7 +33,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -92,7 +92,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                </appInfo>
             </annotation>
          </attribute>
-          <attribute name="category" type="string" use="optional">
+         <attribute name="category" type="string">
             <annotation>
                <documentation>
                   specifies the launch configuration type category this shortcut is applicable for. When unspecified, the category is null (default).
@@ -100,6 +100,13 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                <appInfo>
                   <meta.attribute kind="resource"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier that specifies the help context to associate with this launch shortcut
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -126,26 +133,26 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.debug.ui.launchShortcuts"&gt;
+ &lt;extension point=&quot;org.eclipse.debug.ui.launchShortcuts&quot;&gt;
   &lt;shortcut
-     id="com.example.ExampleLaunchShortcutId"
-     modes="run,debug"
-     class="com.example.ExampleLaunchShortcutImpl"
-     label="Example Launch Shortcut"
-     icon="icons/examples.gif"&gt;
-     &lt;perspective id="org.eclipse.jdt.ui.JavaPerspective"/&gt;
-     &lt;perspective id="org.eclipse.debug.ui.DebugPerspective"/&gt;
+     id=&quot;com.example.ExampleLaunchShortcutId&quot;
+     modes=&quot;run,debug&quot;
+     class=&quot;com.example.ExampleLaunchShortcutImpl&quot;
+     label=&quot;Example Launch Shortcut&quot;
+     icon=&quot;icons/examples.gif&quot;&gt;
+     &lt;perspective id=&quot;org.eclipse.jdt.ui.JavaPerspective&quot;/&gt;
+     &lt;perspective id=&quot;org.eclipse.debug.ui.DebugPerspective&quot;/&gt;
   &lt;/shortcut&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
 In the above example, a launch shortcut will be shown in the run and debug cascade menus with the label
-"Example Launch Shortcut", in the JavaPerspective and the DebugPerspective.
+&quot;Example Launch Shortcut&quot;, in the JavaPerspective and the DebugPerspective.
       </documentation>
    </annotation>
 
- <annotation>
+   <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>
       </appInfo>
@@ -154,13 +161,13 @@ In the above example, a launch shortcut will be shown in the run and debug casca
 interface &lt;b&gt;org.eclipse.debug.ui.ILaunchShortcut&lt;/b&gt;.
       </documentation>
    </annotation>
-   
+
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-          &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

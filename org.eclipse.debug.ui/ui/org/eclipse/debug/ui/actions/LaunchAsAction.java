@@ -28,6 +28,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.help.WorkbenchHelp;
 //import org.eclipse.ui.internal.WWinKeyBindingService;
 //import org.eclipse.ui.internal.WorkbenchWindow;
 
@@ -158,6 +159,10 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	private void populateMenu(LaunchShortcutExtension ext, Menu menu, int menuCount) {
 		LaunchShortcutAction action = new LaunchShortcutAction(getMode(), ext);
 		action.setActionDefinitionId(ext.getId());
+		String helpContextId = ext.getHelpContextId();
+		if (helpContextId != null) {
+			WorkbenchHelp.setHelp(action, helpContextId);
+		}
 		/*if (fKeyBindingService != null) {
 			fKeyBindingService.registerGlobalAction(action);	
 		}*/

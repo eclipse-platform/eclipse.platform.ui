@@ -8,46 +8,55 @@
 <b><i>Description: </i></b>This extension point provides a mechanism to specify the visibility of action groups.
 Any view that returns an instance of IDebugView when queried with #getAdapter(IDebugView.class) will have its context menu
 and toolbar affected by the visibility of the action groups.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (debugActionGroup*)&gt;</samp>
-<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension (debugActionGroup*)&gt;</font></samp>
+<br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>point</b> - a fully qualified identifier of the target extension point</li><li><b>id</b> - an optional identifier of the extension instance</li><li><b>name</b> - an optional name of the extension instance</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT debugActionGroup (action*)&gt;</samp>
-<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST debugActionGroup</samp>
+<li><b>point</b> - a fully qualified identifier of the target extension point</li>
+<li><b>id</b> - an optional identifier of the extension instance</li>
+<li><b>name</b> - an optional name of the extension instance</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT debugActionGroup (action*)&gt;</font></samp>
+<br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST debugActionGroup</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visible&nbsp;(true | false) "false"#IMPLIED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visible&nbsp;(true | false) </samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>id</b> - specifies a unique identifier for this debug action group.</li><li><b>name</b> - a translatable name that will be used for the debug action group label.</li><li><b>visible</b> - an optional attribute indicating the visibility of the group.  If omitted, the group is set to be visible.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT action EMPTY&gt;</samp>
-<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST action</samp>
+<li><b>id</b> - specifies a unique identifier for this debug action group.</li>
+<li><b>name</b> - a translatable name that will be used for the debug action group label.</li>
+<li><b>visible</b> - an optional attribute indicating the visibility of the group.  If omitted, the group is set to be visible.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT action EMPTY&gt;</font></samp>
+<br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST action</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>id</b> - the unique identifier of an action that will be added to the debug action group.</li></ul>
+<li><b>id</b> - the unique identifier of an action that will be added to the debug action group.</li>
+</ul>
 <b><i>Examples: </i></b>The following is an example of a debug action group extension point.  In all debug views (views that return
 an instance of IDebugView when queried with #getAdapter(IDebugView.class)), the actions listed will not
 be visible in the toolbar or context menu of the view.
 
 <p>
 <pre>
- &lt;extension point="org.eclipse.debug.ui.debugActionGroups"&gt;
-  &lt;debugActionGroup
-   id="org.eclipse.jdt.debug.ui.javaDebugActionGroup"
-   visible="false"
-   name="Java Debug"&gt;
-   &lt;action id="org.eclipse.jdt.ui.actions.RunToLineToolbar"/&gt;
-   &lt;action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/&gt;
-  &lt;/debugActionGroup&gt;
- &lt;/extension&gt;
+ <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.debug.ui.debugActionGroups&quot;</font>&gt;</font>
+  <font color="#000080">&lt;debugActionGroup
+   id=<font color="#008000">&quot;org.eclipse.jdt.debug.ui.javaDebugActionGroup&quot;</font>
+   visible=<font color="#008000">&quot;false&quot;</font>
+   name=<font color="#008000">&quot;Java Debug&quot;</font>&gt;</font>
+   <font color="#000080">&lt;action id=<font color="#008000">&quot;org.eclipse.jdt.ui.actions.RunToLineToolbar&quot;</font>/&gt;</font>
+   <font color="#000080">&lt;action id=<font color="#008000">&quot;org.eclipse.jdt.ui.breakpointViewActions.ShowQualified&quot;</font>/&gt;</font>
+  <font color="#000080">&lt;/debugActionGroup&gt;</font>
+ <font color="#000080">&lt;/extension&gt;</font>
 </pre>
 </p><p>
 <b><i>Supplied Implementation: </i></b>Currently, the org.eclipse.jdt.debug.ui plugin provides the org.eclipse.jdt.debug.ui.javaDebugActionGroup<p>
+<font size="-1" color="#336699">
 <a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195></a><p>
+</font>
 </BODY>
 </HTML>

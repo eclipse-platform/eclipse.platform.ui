@@ -105,8 +105,27 @@ public class LaunchConfigurationPresentationManager {
 			 throw new CoreException(status);
 		} else {
 			return ext.newTabGroup();
-		}
-		
+		}		
+	}
+	
+	/**
+	 * Returns the identifier of the help context that is associated with the
+	 * specified launch configuration type, or <code>null</code> if none.
+	 * 
+	 * @return the identifier for the help context associated with the given
+	 * type of launch configuration, or <code>null</code>
+	 * @exception CoreException if an exception occurrs creating the group
+	 * @since 2.1
+	 */
+	public String getHelpContext(ILaunchConfigurationType type) throws CoreException {
+		LaunchConfigurationTabGroupExtension ext = (LaunchConfigurationTabGroupExtension)fTabGroupExtensions.get(type.getIdentifier());
+		if (ext == null) {
+			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
+			 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.No_tab_group_defined_for_launch_configuration_type_{0}_3"), (new String[] {type.getIdentifier()})), null);			; //$NON-NLS-1$
+			 throw new CoreException(status);
+		} else {
+			return ext.getHelpContextId();
+		}		
 	}
 }
 
