@@ -429,7 +429,8 @@ private void addFilesToHistoryStore(IPath key, IPath localLocation, boolean move
 		addFilesToHistoryStore(key.append(children[i]), localLocation.append(children[i]), move);
 }
 /** 
- * Returns the real name of the resource on disk. It is useful when dealing with
+ * Returns the real name of the resource on disk. Returns null if no local
+ * file exists by that name.  This is useful when dealing with
  * case insensitive file systems.
  */
 public String getLocalName(java.io.File target) {
