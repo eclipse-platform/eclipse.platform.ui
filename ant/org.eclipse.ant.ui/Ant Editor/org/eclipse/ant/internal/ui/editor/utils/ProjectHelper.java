@@ -261,15 +261,14 @@ public class ProjectHelper extends ProjectHelper2 {
 		public void onStartElement(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
 			try {
 				super.onStartElement(uri, tag, qname, attrs, context);
-				if (currentImportStackSize == 1) {
-					Locator locator= context.getLocator();
-					getAntModel().addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
-				}
-				
 			} catch (SAXParseException e) {
 				getAntModel().error(e);
 			} catch (BuildException be) {
 				getAntModel().error(be);
+			}
+			if (currentImportStackSize == 1) {
+				Locator locator= context.getLocator();
+				getAntModel().addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
 			}
 		}
 		

@@ -677,4 +677,21 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length == 6); //the boolean proposals
     	assertContains("true", proposals);
 	}
+	
+	/**
+     * Tests the code completion when a parse error orrurs in the project definition
+     * bug 63151
+     */
+	public void testBadProjectProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("badproject.xml"));
+    	int lineNumber= 0;
+    	int columnNumber= 10;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "n");
+    	assertTrue(proposals.length == 1); 
+    	assertContains("name", proposals);
+	}
 }
