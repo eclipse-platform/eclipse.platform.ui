@@ -37,6 +37,7 @@ class WorkbenchMonitorProvider {
 		/**
 		 * Return a new instance of the receiver.
 		 * 
+		 * 
 		 * @param name
 		 */
 		public RefreshJob() {
@@ -50,11 +51,10 @@ class WorkbenchMonitorProvider {
 			IStatusLineWithProgressManager manager = getStatusLineManager();
 			if (manager == null)
 				return Status.CANCEL_STATUS;
-			if (clear){
+			if (clear) {
 				manager.clearProgress();
 				clear = false;
-			}
-			else
+			} else
 				manager.setProgressMessage(message);
 			return Status.OK_STATUS;
 		}
@@ -62,6 +62,7 @@ class WorkbenchMonitorProvider {
 		/**
 		 * Set the message for the receiver. If it is a new message return a
 		 * boolean.
+		 * 
 		 * 
 		 * 
 		 * 
@@ -89,6 +90,7 @@ class WorkbenchMonitorProvider {
 	 * Get the progress monitor for a job. If it is a UIJob get the main
 	 * monitor from the status line. Otherwise get a background monitor.
 	 * 
+	 * 
 	 * @return IProgressMonitor
 	 */
 	IProgressMonitor getMonitor(Job job) {
@@ -107,6 +109,7 @@ class WorkbenchMonitorProvider {
 	 * 
 	 * 
 	 * 
+	 * 
 	 * @return IStatusLineWithProgressManager
 	 */
 	private IStatusLineWithProgressManager getStatusLineManager() {
@@ -121,6 +124,7 @@ class WorkbenchMonitorProvider {
 
 	/**
 	 * Get a IProgressMonitor for the background jobs.
+	 * 
 	 * @return
 	 */
 	private IProgressMonitor getBackgroundProgressMonitor() {
@@ -129,6 +133,7 @@ class WorkbenchMonitorProvider {
 			double allWork;
 			double worked;
 			String taskName;
+			String subTask = ""; //$NON-NLS-1$
 
 			/*
 			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
@@ -137,6 +142,7 @@ class WorkbenchMonitorProvider {
 			public void beginTask(String name, int totalWork) {
 				allWork = totalWork;
 				taskName = name;
+				subTask = ""; //$NON-NLS-1$
 				worked = 0;
 				updateMessage();
 			}
@@ -209,16 +215,33 @@ class WorkbenchMonitorProvider {
 			/**
 			 * Get the display string for the task.
 			 * 
-			 * 
-			 * 
 			 * @return String
 			 */
 			String getDisplayString() {
-				int done = (int) (worked * 100 / allWork);
-				if (taskName == null)
-					return ProgressMessages.format("MonitorProvider.noNameDoneMessage", new String[] { String.valueOf(done)}); //$NON-NLS-1$
-				else
-					return ProgressMessages.format("MonitorProvider.doneMessage", new String[] { taskName, String.valueOf(done)}); //$NON-NLS-1$
+
+				if (worked == IProgressMonitor.UNKNOWN) {
+					if (taskName == null)
+						return subTask;
+					else {
+						if (subTask.length() == 0)
+							return taskName;
+						else
+							return ProgressMessages.format("MonitorProvider.twoValueUnknownMessage", new String[] { taskName, subTask }); //$NON-NLS-1$
+					}
+				} else {
+					int done = (int) (worked * 100 / allWork);
+					String percentDone = String.valueOf(done);
+
+					String text = taskName;
+					if (text == null)
+						return ProgressMessages.format("MonitorProvider.oneValueMessage", new String[] { subTask, percentDone }); //$NON-NLS-1$
+					else {
+						if (subTask.length() == 0)
+							return ProgressMessages.format("MonitorProvider.oneValueMessage", new String[] { taskName, percentDone }); //$NON-NLS-1$
+					}
+					return ProgressMessages.format("MonitorProvider.twoValueMessage", new String[] { taskName, subTask, String.valueOf(done)}); //$NON-NLS-1$
+
+				}
 
 			}
 		};
