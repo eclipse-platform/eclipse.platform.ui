@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> A project could not be deleted.</li>
@@ -69,6 +69,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResource#delete(int,IProgressMonitor)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -170,7 +172,7 @@ public IFile getFileForLocation(IPath location);
  * 
  * @param name the name of the project 
  * @return a project resource handle
- * @see #getProjects()
+ * @see #getProjects
  */
 public IProject getProject(String name);
 /**
@@ -178,7 +180,7 @@ public IProject getProject(String name);
  * The projects can be open or closed.
  * 
  * @return an array of projects
- * @see #getProject(String)
+ * @see #getProject
  */
 public IProject[] getProjects();
 }

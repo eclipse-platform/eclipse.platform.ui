@@ -161,10 +161,12 @@ public interface IWorkspace extends IAdaptable {
 	 * states.
 	 * </ul>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @exception CoreException if some of the builds fail. The status contained
 	 * in the exception is a multi-status with entries for the project builds
 	 * that failed.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * 
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see #computeProjectOrder(IProject[])
@@ -342,13 +344,15 @@ public interface IWorkspace extends IAdaptable {
 	 * @param force a flag controlling whether resources that are not in sync
 	 * with the local file system will be tolerated
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @return a status object with code <code>OK</code> if there were no
 	 * problems; otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages
 	 * @exception CoreException if the method fails to copy some resources. The
 	 * status contained in the exception may be a multi-status indicating where
 	 * the individual failures occurred.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #copy(IResource[],IPath,int,IProgressMonitor)
 	 */
 	public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -398,7 +402,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @param destination the destination container path
 	 * @param updateFlags bit-wise or of update flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @return a status object with code <code>OK</code> if there were no
 	 * problems; otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages
@@ -424,6 +428,8 @@ public interface IWorkspace extends IAdaptable {
 	 * change event notification. See <code>IResourceChangeEvent</code> for
 	 * more details.</li>
 	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#copy(IPath,int,IProgressMonitor)
 	 * @see IResourceRuleFactory#copyRule(IResource, IResource)
 	 * @since 2.0
@@ -452,13 +458,15 @@ public interface IWorkspace extends IAdaptable {
 	 * @param force a flag controlling whether resources that are not in sync
 	 * with the local file system will be tolerated
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @return status with code <code>OK</code> if there were no problems;
 	 * otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages
 	 * @exception CoreException if the method fails to delete some resource. The
 	 * status contained in the exception is a multi-status indicating where the
 	 * individual failures occurred.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #delete(IResource[],int,IProgressMonitor)
 	 */
 	public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -495,13 +503,15 @@ public interface IWorkspace extends IAdaptable {
 	 * @param resources the resources to delete
 	 * @param updateFlags bit-wise or of update flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @return status with code <code>OK</code> if there were no problems;
 	 * otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages
 	 * @exception CoreException if the method fails to delete some resource. The
 	 * status contained in the exception is a multi-status indicating where the
 	 * individual failures occurred.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 * @since 2.0
@@ -672,13 +682,15 @@ public interface IWorkspace extends IAdaptable {
 	 * @param force a flag controlling whether resources that are not in sync
 	 * with the local file system will be tolerated
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @return status with code <code>OK</code> if there were no problems;
 	 * otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages.
 	 * @exception CoreException if the method fails to move some resources. The
 	 * status contained in the exception may be a multi-status indicating where
 	 * the individual failures occurred.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #move(IResource[],IPath,int,IProgressMonitor)
 	 */
 	public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -734,7 +746,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @param destination the destination container path
 	 * @param updateFlags bit-wise or of update flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @return status with code <code>OK</code> if there were no problems;
 	 * otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages.
@@ -760,6 +772,8 @@ public interface IWorkspace extends IAdaptable {
 	 * change event notification. See <code>IResourceChangeEvent</code> for
 	 * more details.</li>
 	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#move(IPath,int,IProgressMonitor)
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 * @since 2.0
@@ -863,8 +877,11 @@ public interface IWorkspace extends IAdaptable {
 	 * @param flags bit-wise or of flag constants (only AVOID_UPDATE is relevant
 	 * here)
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired. 
+	 * reporting is not desired. 
 	 * @exception CoreException if the operation failed.
+	 * @exception OperationCanceledException if the operation is canceled. If a 
+	 * non-<code>null</code> scheduling rule is supplied, cancelation can occur
+	 * even if no progress monitor is provided.
 	 * 
 	 * @see #AVOID_UPDATE
 	 * @see IResourceRuleFactory
@@ -884,8 +901,10 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @param action the action to perform
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancelation are not desired
+	 * reporting is not desired
 	 * @exception CoreException if the operation failed.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 */
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
 	/**
@@ -1072,7 +1091,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <code>false</code> if this is only a snapshot for protecting against
 	 * crashes
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting is not desired
 	 * @return a status that may contain warnings, such as the failure of an
 	 * individual participant
 	 * @exception CoreException if this method fails to save the state of this
@@ -1080,6 +1099,8 @@ public interface IWorkspace extends IAdaptable {
 	 * <ul>
 	 * <li>The operation cannot be batched with others.</li>
 	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 */
 	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException;

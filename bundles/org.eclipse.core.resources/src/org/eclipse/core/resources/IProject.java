@@ -70,11 +70,13 @@ public interface IProject extends IContainer, IAdaptable {
  *		(key type: <code>String</code>, value type: <code>String</code>);
  *		<code>null</code> is equivalent to an empty map
  * @param monitor a progress monitor, or <code>null</code> if progress
- *		reporting and cancellation are not desired
+ *		reporting is not desired
  * @exception CoreException if the build fails.
  *		The status contained in the exception may be a generic <code>BUILD_FAILED</code>
  *		code, but it could also be any other status code; it might
  *		also be a multi-status.
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * 
  * @see IProjectDescription
  * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
@@ -105,11 +107,13 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
  *		<li> <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> - indicates an incremental build.</li>
  *		</ul>
  * @param monitor a progress monitor, or <code>null</code> if progress
- *		reporting and cancellation are not desired
+ *		reporting is not desired
  * @exception CoreException if the build fails.
  *		The status contained in the exception may be a generic <code>BUILD_FAILED</code>
  *		code, but it could also be any other status code; it might
  *		also be a multi-status.
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see IProjectDescription
  * @see IncrementalProjectBuilder#FULL_BUILD
@@ -141,13 +145,15 @@ public void build(int kind, IProgressMonitor monitor) throws CoreException;
  * </p>
  *
  * @param monitor a progress monitor, or <code>null</code> if progress
- *		reporting and cancellation are not desired
+ *		reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #open(IProgressMonitor)
  * @see #isOpen()
  * @see IResourceRuleFactory#modifyRule(IResource)
@@ -180,7 +186,7 @@ public void close(IProgressMonitor monitor) throws CoreException;
  *
  * @param description the project description
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This project already exists in the workspace.</li>
@@ -193,6 +199,8 @@ public void close(IProgressMonitor monitor) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see IWorkspace#validateProjectLocation(IProject, IPath)
  * @see IResourceRuleFactory#createRule(IResource)
@@ -229,7 +237,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  * </p>
  * 
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This project already exists in the workspace.</li>
@@ -242,6 +250,8 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see IWorkspace#validateProjectLocation(IProject, IPath)
  * @see IResourceRuleFactory#createRule(IResource)
@@ -270,7 +280,7 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This project could not be deleted.</li>
@@ -278,6 +288,8 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResource#delete(int, IProgressMonitor)
  * @see #open(IProgressMonitor)
  * @see #close(IProgressMonitor)
@@ -471,7 +483,7 @@ public boolean isOpen();
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
  * <ul>
  * <li> This resource is not accessible.</li>
@@ -483,6 +495,8 @@ public boolean isOpen();
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceDelta#getFlags()
  * @see IResource#move(IProjectDescription,int,IProgressMonitor)
  * @see IResourceRuleFactory#moveRule(IResource, IResource)
@@ -507,12 +521,14 @@ public void move(IProjectDescription description, boolean force, IProgressMonito
  * </p>
  *
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #close(IProgressMonitor)
  * @see IResourceRuleFactory#moveRule(IResource, IResource)
  */
@@ -539,7 +555,7 @@ public void open(IProgressMonitor monitor) throws CoreException;
  *
  * @param description the project description
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This project does not exist in the workspace.</li>
@@ -552,6 +568,8 @@ public void open(IProgressMonitor monitor) throws CoreException;
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see #getDescription()
  * @see IProjectNature#configure()
@@ -627,7 +645,7 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This project does not exist in the workspace.</li>
@@ -641,6 +659,8 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
  *   event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see #getDescription()
  * @see IProjectNature#configure()

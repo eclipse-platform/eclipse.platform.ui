@@ -433,7 +433,7 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -452,6 +452,8 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  */
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 /**
@@ -530,7 +532,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code> and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -555,6 +557,8 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #FORCE
  * @see #SHALLOW
  * @see IResourceRuleFactory#copyRule(IResource, IResource)
@@ -583,7 +587,7 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -597,6 +601,8 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  */
 public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -657,7 +663,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code> and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -671,6 +677,8 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #FORCE
  * @see #SHALLOW
  * @see IResourceRuleFactory#copyRule(IResource, IResource)
@@ -715,7 +723,7 @@ public IMarker createMarker(String type) throws CoreException;
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource could not be deleted for some reason.</li>
@@ -724,6 +732,8 @@ public IMarker createMarker(String type) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see IResource#delete(int,IProgressMonitor)
  */
@@ -814,7 +824,7 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  *   <code>ALWAYS_DELETE_PROJECT_CONTENTS</code>,
  *   and <code>NEVER_DELETE_PROJECT_CONTENTS</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource could not be deleted for some reason.</li>
@@ -823,6 +833,8 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IFile#delete(boolean, boolean, IProgressMonitor)
  * @see IFolder#delete(boolean, boolean, IProgressMonitor)
  * @see #FORCE
@@ -1420,7 +1432,7 @@ public boolean isTeamPrivateMember();
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -1441,6 +1453,8 @@ public boolean isTeamPrivateMember();
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceDelta#getFlags()
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -1538,7 +1552,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code>, <code>KEEP_HISTORY</code> and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -1563,6 +1577,8 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> Resource changes are disallowed during certain types of resource change
  * event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceDelta#getFlags()
  * @see #FORCE
  * @see #KEEP_HISTORY
@@ -1599,7 +1615,7 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * @param keepHistory a flag indicating whether or not to keep
  *    local history for files
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -1613,6 +1629,8 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceDelta#getFlags()
  */
 public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -1699,7 +1717,7 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code>, <code>KEEP_HISTORY</code>, and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -1713,6 +1731,8 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * <li> Resource changes are disallowed during certain types of resource change 
  *      event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceDelta#getFlags()
  * @see #FORCE
  * @see #KEEP_HISTORY
@@ -1746,12 +1766,14 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
  * @param depth valid values are <code>DEPTH_ZERO</code>, 
  *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
@@ -1823,12 +1845,14 @@ public void setDerived(boolean isDerived) throws CoreException;
  * @param depth valid values are <code>DEPTH_ZERO</code>, 
  *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #isLocal(int)
  */
 public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
@@ -1975,7 +1999,7 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
  * </p>
  *
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -1983,6 +2007,8 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceRuleFactory#modifyRule(IResource)
  */ 
 public void touch(IProgressMonitor monitor) throws CoreException;

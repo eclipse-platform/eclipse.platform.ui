@@ -116,7 +116,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
  * @param keepHistory a flag indicating whether or not to store
  *    the current contents in the local history
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancelation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -128,6 +128,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #appendContents(java.io.InputStream,int,IProgressMonitor)
  */
 public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -188,7 +190,7 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancelation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -200,6 +202,8 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceRuleFactory#modifyRule(IResource)
  * @since 2.0
  */
@@ -228,7 +232,7 @@ public void appendContents(InputStream source, int updateFlags, IProgressMonitor
  * @param force a flag controlling how to deal with resources that
  *    are not in sync with the local file system
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource already exists in the workspace.</li>
@@ -245,6 +249,8 @@ public void appendContents(InputStream source, int updateFlags, IProgressMonitor
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  */
 public void create(InputStream source, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -282,7 +288,7 @@ public void create(InputStream source, boolean force, IProgressMonitor monitor) 
  * @param updateFlags bit-wise or of update flag constants
  *   (only <code>FORCE</code> is relevant here)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource already exists in the workspace.</li>
@@ -299,6 +305,8 @@ public void create(InputStream source, boolean force, IProgressMonitor monitor) 
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceRuleFactory#createRule(IResource)
  * @since 2.0
  */
@@ -340,7 +348,7 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  * @param updateFlags bit-wise or of update flag constants
  *   (only ALLOW_MISSING_LOCAL is relevant here)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource already exists in the workspace.</li>
@@ -361,7 +369,9 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  *       linked resources.</li>
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
- * @see IResource#isLinked() 
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
+ * @see IResource#isLinked()
  * @see IResource#ALLOW_MISSING_LOCAL
  * @since 2.1
  */
@@ -390,7 +400,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  * @param keepHistory a flag controlling whether files under this folder
  *    should be stored in the workspace's local history
   * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource could not be deleted for some reason.</li>
@@ -399,6 +409,8 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResource#delete(int,IProgressMonitor)
  * @see IResourceRuleFactory#deleteRule(IResource)
  */
@@ -546,9 +558,11 @@ public IPath getFullPath();
  * </p>
  * 
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @return an array of states of this file
  * @exception CoreException if this method fails.
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  */
 public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException;
 /**
@@ -598,7 +612,7 @@ public boolean isReadOnly();
  * @param keepHistory a flag controlling whether files under this folder
  *    should be stored in the workspace's local history
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -615,6 +629,8 @@ public boolean isReadOnly();
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see IResource#move(IPath,int,IProgressMonitor)
  * @see IResourceRuleFactory#moveRule(IResource, IResource)
@@ -660,7 +676,7 @@ public void setCharset(String newCharset) throws CoreException;
  * @param keepHistory a flag indicating whether or not store
  *    the current contents in the local history
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -672,6 +688,8 @@ public void setCharset(String newCharset) throws CoreException;
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #setContents(java.io.InputStream,int,IProgressMonitor)
  */
 public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -700,7 +718,7 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  * @param keepHistory a flag indicating whether or not store
  *    the current contents in the local history
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -713,6 +731,8 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see #setContents(IFileState,int,IProgressMonitor)
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -769,7 +789,7 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -781,6 +801,8 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceRuleFactory#modifyRule(IResource)
  * @since 2.0
  */
@@ -834,7 +856,7 @@ public void setContents(InputStream source, int updateFlags, IProgressMonitor mo
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -847,6 +869,8 @@ public void setContents(InputStream source, int updateFlags, IProgressMonitor mo
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceRuleFactory#modifyRule(IResource)
  * @since 2.0
  */

@@ -55,7 +55,7 @@ public interface IFolder extends IContainer, IAdaptable {
  * @param local a flag controlling whether or not the folder will be local
  *    after the creation
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource already exists in the workspace.</li>
@@ -74,6 +74,8 @@ public interface IFolder extends IContainer, IAdaptable {
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IFolder#create(int,boolean,IProgressMonitor)
  */
 public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException;
@@ -110,7 +112,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  * @param local a flag controlling whether or not the folder will be local
  *    after the creation
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource already exists in the workspace.</li>
@@ -129,6 +131,8 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResourceRuleFactory#createRule(IResource)
  * @since 2.0
  */
@@ -170,7 +174,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  * @param updateFlags bit-wise or of update flag constants
  *   (only ALLOW_MISSING_LOCAL is relevant here) 
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource already exists in the workspace.</li>
@@ -191,6 +195,8 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  *       linked resources.</li>
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  * @see IResource#isLinked()
  * @see IResource#ALLOW_MISSING_LOCAL
  * @since 2.1
@@ -219,7 +225,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  * @param keepHistory a flag controlling whether files under this folder
  *    should be stored in the workspace's local history
   * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource could not be deleted for some reason.</li>
@@ -228,6 +234,8 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see IResourceRuleFactory#deleteRule(IResource)
  * @see IResource#delete(int,IProgressMonitor)
@@ -289,7 +297,7 @@ public IFolder getFolder(String name);
  * @param keepHistory a flag controlling whether files under this folder
  *    should be stored in the workspace's local history
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting is not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -306,6 +314,8 @@ public IFolder getFolder(String name);
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
+ * @exception OperationCanceledException if the operation is canceled. 
+ * Cancelation can occur even if no progress monitor is provided.
  *
  * @see IResourceRuleFactory#moveRule(IResource, IResource)
  * @see IResource#move(IPath,int,IProgressMonitor)
