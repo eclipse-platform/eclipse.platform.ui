@@ -206,7 +206,7 @@ public class BasicStackList extends AbstractTableInformationControl {
 			 * @see org.eclipse.jface.viewers.TableViewer#internalRefresh(java.lang.Object)
 			 */
 			protected void internalRefresh(Object element) {
-				boolean usingMotif = "motif".equals(SWT.getPlatform());
+				boolean usingMotif = "motif".equals(SWT.getPlatform()); //$NON-NLS-1$
 				try {
 					// This avoids a "graphic is disposed" error on Motif by not letting
 					// it redraw while we remove entries.  Some items in this table are
