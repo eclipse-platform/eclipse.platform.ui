@@ -25,7 +25,7 @@ public class Policy {
 	// default workspace description values
 	public static final boolean defaultAutoBuild = true;
 	public static final boolean defaultSnapshots = true;
-	public static final int defaultOperationsPerSnapshot = 10;
+	public static final int defaultOperationsPerSnapshot = 100;
 	public static final long defaultDeltaExpiration = 30 * 24 * 3600 * 1000l; // 30 days
 	public static final long defaultFileStateLongevity = 7 * 24 * 3600 * 1000l; // 7 days
 	public static final long defaultMaxFileStateSize = 1024 * 1024l; // 1 Mb
