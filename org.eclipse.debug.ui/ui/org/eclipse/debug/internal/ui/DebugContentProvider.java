@@ -252,7 +252,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	public void launchRegistered(final ILaunch launch) {
 		Runnable r= new Runnable() {
 			public void run() {
-				if (!isDisposed()) {
+				if (!isDisposed() && launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
 					insert(launch);
 					((LaunchesViewer)fViewer).autoExpand(launch, false);
 				}
