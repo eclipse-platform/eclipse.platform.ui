@@ -338,7 +338,7 @@ The following is an other example of a view action extension:
                &lt;/and&gt;
             &lt;/enablement&gt;
          &lt;/action&gt; 
-      &lt;/editorContribution&gt; 
+      &lt;/viewContribution&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
