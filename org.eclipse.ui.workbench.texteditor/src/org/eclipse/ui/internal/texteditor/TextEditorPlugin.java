@@ -166,7 +166,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
-		Platform.getExtensionRegistry().addRegistryChangeListener(this, PLUGIN_ID);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		fQuickDiffExtensionRegistry= null;
 		super.stop(context);
 	}
