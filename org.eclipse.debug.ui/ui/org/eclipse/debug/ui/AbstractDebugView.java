@@ -306,7 +306,10 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (viewer != null) {
 			createContextMenu(viewer.getControl());
 		}
-		WorkbenchHelp.setHelp(parent, getHelpContextId());
+		String helpId = getHelpContextId();
+		if (helpId != null) {
+			WorkbenchHelp.setHelp(parent, helpId);
+		}
 		if (viewer != null) {
 			getViewer().getControl().addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
