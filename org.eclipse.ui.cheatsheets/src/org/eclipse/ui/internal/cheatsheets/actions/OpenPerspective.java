@@ -1,0 +1,52 @@
+/*
+ * Created on Apr 29, 2004
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package org.eclipse.ui.internal.cheatsheets.actions;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.*;
+import org.eclipse.ui.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.*;
+
+/**
+ * Action to programmatically open a Enterprise Services perspective.
+ * 
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
+ * 
+ */
+public class OpenPerspective extends Action implements ICheatSheetAction {
+
+	/**
+	 * Create a new <code>OpenPerspective</code> action.
+	 */
+	public OpenPerspective() {
+	}
+
+
+	/**
+	 * @see Action#run()
+	 */
+	public void run(String[] params, ICheatSheetManager manager) {
+		try {
+			if(params == null || params[0] == null) {
+				return;
+			}
+
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			IWorkbenchPage page = window.getActivePage();
+
+			IPerspectiveDescriptor perspective = workbench.getPerspectiveRegistry().findPerspectiveWithId(params[0]);
+			page.setPerspective(perspective);
+		} catch(Exception e) {
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_PERSPECTIVE), null);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+		}
+	}
+}

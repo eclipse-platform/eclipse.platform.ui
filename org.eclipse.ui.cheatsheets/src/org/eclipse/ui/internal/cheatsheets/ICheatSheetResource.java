@@ -83,6 +83,8 @@ public interface ICheatSheetResource {
 	
 	public static final String HELP_BUTTON_TOOLTIP = "%HELP_BUTTON_TOOLTIP";//$NON-NLS-1$
 	public static final String LESS_THAN_2_SUBITEMS = "%LESS_THAN_2_SUBITEMS";//$NON-NLS-1$
+
+	public static final String ERROR_OPENING_PERSPECTIVE = "%ERROR_OPENING_PERSPECTIVE"; //$NON-NLS-1$
 	
 }
 
