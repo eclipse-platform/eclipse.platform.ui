@@ -26,13 +26,13 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.debug.ui.variables.ExpandVariableContext;
 
 /**
  * Launch delegate for a program.
@@ -95,29 +95,22 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
-		// get variable context
-		ExpandVariableContext resourceContext = ExternalToolsUtil.getVariableContext();
-
-		if (monitor.isCanceled()) {
-			return;
-		}
-		
 		// resolve location
-		IPath location = ExternalToolsUtil.getLocation(configuration, resourceContext);
+		IPath location = ExternalToolsUtil.getLocation(configuration);
 		
 		if (monitor.isCanceled()) {
 			return;
 		}		
 		
 		// resolve working directory
-		IPath workingDirectory = ExternalToolsUtil.getWorkingDirectory(configuration, resourceContext);
+		IPath workingDirectory = ExternalToolsUtil.getWorkingDirectory(configuration);
 		
 		if (monitor.isCanceled()) {
 			return;
 		}
 		
 		// resolve arguments
-		String[] arguments = ExternalToolsUtil.getArguments(configuration, resourceContext);
+		String[] arguments = ExternalToolsUtil.getArguments(configuration);
 		
 		if (monitor.isCanceled()) {
 			return;
@@ -142,7 +135,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
-		String[] envp = ExternalToolsUtil.getEnvironment(configuration, resourceContext);
+		String[] envp = VariableUtil.getEnvironment(configuration);
 		
 		if (monitor.isCanceled()) {
 			return;
@@ -173,7 +166,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (ExternalToolsUtil.isBackground(configuration)) {
 			// refresh resources after process finishes
 			if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
-				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process, resourceContext);
+				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);
 				refresher.startBackgroundRefresh();
 			}				
 		} else {
@@ -190,7 +183,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 			
 			// refresh resources
-			ExternalToolsUtil.refreshResources(configuration, resourceContext, monitor);
+			ExternalToolsUtil.refreshResources(configuration, monitor);
 		}
 	}
 	

@@ -26,11 +26,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.variables.ExpandVariableContext;
-import org.eclipse.debug.ui.variables.LaunchConfigurationVariable;
-import org.eclipse.debug.ui.variables.VariableContextManager;
-import org.eclipse.debug.ui.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.IContextLaunchVariable;
+import org.eclipse.debug.ui.launchVariables.VariableContextManager;
+import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
@@ -65,48 +63,6 @@ public class ExternalToolsUtil {
 		throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, code, message, exception));
 	}
 	
-	/** 
-	 * Returns an array of (expanded) environment variables to be used when
-	 * running the launch configuration or <code>null</code> if unspecified
-	 * 
-	 * @param configuration launch configuration
-	 * @param context context used to expand environment variable values
-	 * @return String[] the array of "variable=value" pairs, suitable for
-	 * passing to Process.exec
-	 * @throws CoreException if unable to access associated attribute or if
-	 * unable to resolve a variable in an environment variable's value
-	 */
-	public static String[] getEnvironment(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
-		Map envMap = configuration.getAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
-		if (envMap != null) {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_environment._1"), null); //$NON-NLS-1$
-			String[] expandedEnvironment = VariableUtil.expandEnvironment(envMap, context, status);
-			if (status.isOK()) {
-				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
-					return expandedEnvironment;
-				} else {
-					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Invalid_environment_specified_for_the_launch_configuration_named_{0}._2"), new Object[] { configuration.getName()}); //$NON-NLS-1$
-					abort(msg, null, 0);
-				}
-			} else {
-				throw new CoreException(status);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns active variable context. The active variable context is used to
-	 * expand variable expressions. If the workspace is currently being built,
-	 * the context is associated with the project being built. Otherwise, the
-	 * context is associated with the selected resource.
-	 * 
-	 * @return active variable context
-	 */
-	public static ExpandVariableContext getVariableContext() {
-		return VariableContextManager.getDefault().getVariableContext();
-	}
-
 	/**
 	 * Expands and returns the location attribute of the given launch
 	 * configuration, based on the given variable context. The location is
@@ -120,13 +76,13 @@ public class ExternalToolsUtil {
 	 * resolved location does not point to an existing file in the local file
 	 * system
 	 */
-	public static IPath getLocation(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
+	public static IPath getLocation(ILaunchConfiguration configuration) throws CoreException {
 		String location = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
 		if (location == null) {
 			abort(MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Location_not_specified_by_{0}_1"), new String[] { configuration.getName()}), null, 0); //$NON-NLS-1$
 		} else {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_location._3"), null); //$NON-NLS-1$
-			String expandedLocation = VariableUtil.expandLocationText(location, context, status);
+			String expandedLocation = VariableUtil.expandVariables(location, status);
 			if (status.isOK()) {
 				if (expandedLocation == null || expandedLocation.length() == 0) {
 					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation_{0}"), new Object[] { configuration.getName()}); //$NON-NLS-1$
@@ -177,11 +133,11 @@ public class ExternalToolsUtil {
 	 * resolved location does not point to an existing directory in the local
 	 * file system
 	 */
-	public static IPath getWorkingDirectory(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
+	public static IPath getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		String location = configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) null);
 		if (location != null) {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_working_directory._4"), null); //$NON-NLS-1$
-			String expandedLocation = VariableUtil.expandLocationText(location, context, status);
+			String expandedLocation = VariableUtil.expandVariables(location, status);
 			if (status.isOK()) {
 				if (expandedLocation != null && expandedLocation.length() > 0) {
 					File path = new File(expandedLocation);
@@ -211,11 +167,11 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if unable to retrieve the associated launch
 	 * configuration attribute, or if unable to resolve any variables
 	 */
-	public static String[] getArguments(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
+	public static String[] getArguments(ILaunchConfiguration configuration) throws CoreException {
 		String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
 		if (args != null) {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_an_argument._1"), null); //$NON-NLS-1$
-			String[] expandedArgs = VariableUtil.expandArguments(args, context, status);
+			String[] expandedArgs = VariableUtil.expandStrings(args, status);
 			if (status.isOK()) {
 				return expandedArgs;
 			} else {
@@ -257,8 +213,8 @@ public class ExternalToolsUtil {
 	 * @param monitor progress monitor
 	 * @throws CoreException if an exception occurrs while refreshing resources
 	 */
-	public static void refreshResources(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
-		IResource[] resources= getResourcesForRefreshScope(configuration, context, monitor);
+	public static void refreshResources(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		IResource[] resources= getResourcesForRefreshScope(configuration, monitor);
 		if (resources == null || resources.length == 0){
 			return;
 		}
@@ -301,13 +257,13 @@ public class ExternalToolsUtil {
 	 * @param monitor progress monitor
 	 * @throws CoreException if an exception occurs while refreshing resources
 	 */
-	public static IResource[] getResourcesForRefreshScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
+	public static IResource[] getResourcesForRefreshScope(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String scope = getRefreshScope(configuration);
 		if (scope == null) {
 			return null;
 		}
 
-		return getResourcesForScope(configuration, context, monitor, scope);
+		return getResourcesForScope(configuration, monitor, scope);
 	}
 
 	/**
@@ -318,25 +274,25 @@ public class ExternalToolsUtil {
 	 * @param monitor progress monitor
 	 * @throws CoreException if an exception occurs while refreshing resources
 	 */
-	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
+	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String scope = configuration.getAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String) null);
 		if (scope == null) {
 			return null;
 		}
 
-		return getResourcesForScope(configuration, context, monitor, scope);
+		return getResourcesForScope(configuration, monitor, scope);
 	
 	}
 	
-	private static IResource[] getResourcesForScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor, String scope) throws CoreException {
-		VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableTag(scope, 0);
+	private static IResource[] getResourcesForScope(ILaunchConfiguration configuration, IProgressMonitor monitor, String scope) throws CoreException {
+		VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableDefinition(scope, 0);
 		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
 			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 			abort(msg, null, 0);
 		}
 
 		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
-		LaunchConfigurationVariable variable = registry.getVariable(varDef.name);
+		IContextLaunchVariable variable = registry.getVariable(varDef.name);
 		if (variable == null) {
 			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
 			abort(msg, null, 0);
@@ -346,7 +302,7 @@ public class ExternalToolsUtil {
 			return null;
 		}
 
-		return variable.getExpander().getResources(varDef.name, varDef.argument, context);
+		return variable.getExpander().getResources(varDef.name, varDef.argument, VariableContextManager.getDefault().getVariableContext());
 	}
 
 	/**

@@ -24,7 +24,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.debug.ui.variables.ExpandVariableContext;
 
 /**
  * Refreshes resources as specified by a lanunch configuration, when 
@@ -32,14 +31,12 @@ import org.eclipse.debug.ui.variables.ExpandVariableContext;
  */
 public class BackgroundResourceRefresher implements IDebugEventSetListener, Runnable, IRunnableWithProgress  {
 
-	private ExpandVariableContext fContext;
 	private ILaunchConfiguration fConfiguration;
 	private IProcess fProcess;
 	
-	public BackgroundResourceRefresher(ILaunchConfiguration configuration, IProcess process, ExpandVariableContext context) {
+	public BackgroundResourceRefresher(ILaunchConfiguration configuration, IProcess process) {
 		fConfiguration = configuration;
 		fProcess = process;
-		fContext = context;
 	}
 	
 	/**
@@ -99,7 +96,7 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener, Runn
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			ExternalToolsUtil.refreshResources(fConfiguration, fContext, monitor);
+			ExternalToolsUtil.refreshResources(fConfiguration, monitor);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}				

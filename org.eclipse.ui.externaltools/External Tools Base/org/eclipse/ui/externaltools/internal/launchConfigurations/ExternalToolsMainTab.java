@@ -18,14 +18,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.variables.LaunchConfigurationVariableRegistry;
-import org.eclipse.debug.ui.variables.IVariableConstants;
-import org.eclipse.debug.ui.variables.VariableSelectionDialog;
-import org.eclipse.debug.ui.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.IVariableConstants;
+import org.eclipse.debug.ui.launchVariables.ContextLaunchVariableRegistry;
+import org.eclipse.debug.ui.launchVariables.VariableSelectionDialog;
+import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -434,7 +436,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 */
 	private String validateVariables(String value) {
 		int start= 0;
-		VariableUtil.VariableDefinition variable = VariableUtil.extractVariableTag(value, start);
+		VariableUtil.VariableDefinition variable = VariableUtil.extractVariableDefinition(value, start);
 		while (variable.start != -1) {
 			if (variable.end == -1) {
 				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Invalid_Expected_closing_}"); //$NON-NLS-1$
@@ -442,18 +444,19 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			if (variable.name == null || variable.name.length() == 0) {
 				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.No_variable_specified"); //$NON-NLS-1$
 			}
-			LaunchConfigurationVariableRegistry registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
-			if (registry.getVariable(variable.name) == null) {
+			ContextLaunchVariableRegistry contextVariableRegistry = DebugUIPlugin.getDefault().getContextVariableRegistry();
+			ISimpleVariableRegistry simpleVariableRegistry= DebugPlugin.getDefault().getSimpleVariableRegistry();
+			if (contextVariableRegistry.getVariable(variable.name) == null && simpleVariableRegistry.getVariable(variable.name) == null) {
 				return MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Unknown_variable"), new String[] {variable.name}); //$NON-NLS-1$
 			}
 			start= variable.end;
-			variable = VariableUtil.extractVariableTag(value, start);
+			variable = VariableUtil.extractVariableDefinition(value, start);
 		}
 		return null;
 	}
 	
 	private boolean containsVariable(String value) {
-		return VariableUtil.extractVariableTag(value, 0).start != -1;
+		return VariableUtil.extractVariableDefinition(value, 0).start != -1;
 	}
 
 	/**

@@ -6,14 +6,12 @@
    provider-name="%providerName"
    class="org.eclipse.debug.internal.ui.DebugUIPlugin">
 
-<!-- Runtime -->
    <runtime>
       <library name="dtui.jar">
          <export name="*"/>
          <packages prefixes="org.eclipse.debug.ui,org.eclipse.debug.internal.ui"/>
       </library>
    </runtime>
-<!-- Required plugins -->
    <requires>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.resources"/>
@@ -32,9 +30,9 @@
    <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName" schema="schema/launchConfigurationTypeImages.exsd"/>
    <extension-point id="launchGroups" name="%LaunchGroupsExtensionName" schema="schema/launchGroups.exsd"/>
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
-   <extension-point id="launchConfigurationVariables" name="%LaunchConfigurationVariablesName"/>
+   <extension-point id="contextLaunchVariables" name="%ContextLaunchVariablesName" scheme="schema/contextLaunchVariables.exsd"/>
    <extension-point id="variablesContentProviders" name="%VariablesContentProvidersName"/>
-	
+
 <!-- Extensions -->
    <extension
          point="org.eclipse.ui.perspectives">
@@ -117,6 +115,12 @@
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.DebugActionGroupsPreferencePage"
             id="org.eclipse.debug.ui.DebugActionGroupsPreferencePage">
+      </page>
+      <page
+            name="%SimpleVariablePreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.SimpleVariablePreferencePage"
+            id="org.eclipse.debug.ui.SimpleVariablePreferencePage">
       </page>
    </extension>
    <extension
@@ -245,7 +249,7 @@
             </separator>
             <separator
                   name="profileGroup">
-            </separator>            
+            </separator>
             <separator
                   name="emptyLaunchGroup">
             </separator>
@@ -284,7 +288,7 @@
                class="org.eclipse.debug.internal.ui.actions.ProfileHistoryMenuAction"
                menubarPath="org.eclipse.ui.run/profileGroup"
                id="org.eclipse.debug.internal.ui.actions.ProfileHistoryMenuAction">
-         </action>                  
+         </action>
          <action
                definitionId="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
                label="%OpenRunConfigurations.label"
@@ -319,7 +323,7 @@
                helpContextId="profile_last_action_context"
                label="%ProfileLastAction.label"
                menubarPath="org.eclipse.ui.run/relaunchGroup">
-         </action>         
+         </action>
          <action
                id="org.eclipse.debug.internal.ui.actions.DebugLastAction"
                hoverIcon="icons/full/clcl16/debuglast_co.gif"
@@ -341,7 +345,7 @@
                helpContextId="run_last_action_context"
                label="%RunLastAction.label"
                menubarPath="org.eclipse.ui.run/relaunchGroup">
-         </action>         
+         </action>
          <action
                toolbarPath="debug"
                id="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
@@ -585,10 +589,10 @@
                label="%DetailPaneWordWrapAction.label"
                helpContextId="detail_pane_word_wrap_action_context"
                tooltip="%DetailPaneWordWrapAction.tooltip"
+               state="false"
                class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
                menubarPath="viewActions"
-               id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap"
-               state="false">
+               id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">
          </action>
       </viewContribution>
       <viewContribution
@@ -626,10 +630,10 @@
                label="%DetailPaneWordWrapAction.label"
                helpContextId="detail_pane_word_wrap_action_context"
                tooltip="%DetailPaneWordWrapAction.tooltip"
+               state="false"
                class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
                menubarPath="viewActions"
-               id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap"
-               state="false">
+               id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap">
          </action>
       </viewContribution>
    </extension>
@@ -926,7 +930,6 @@
          </action>
       </viewerContribution>
    </extension>
-
    <extension
          id="instructionPointer"
          point="org.eclipse.core.resources.markers">
@@ -989,7 +992,7 @@
             image="icons/full/ctool16/profile_exc.gif"
             mode="profile"
             id="org.eclipse.debug.ui.launchGroup.profile">
-      </launchGroup>      
+      </launchGroup>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -1025,255 +1028,241 @@
          </description>
       </fontDefinition>
    </extension>
-   
-	<!-- commands and their bindings -->   
-	<extension point="org.eclipse.ui.commands">
-		<category
-			name="%runCategory.name"
-			description="%runCategory.description"
-			id="org.eclipse.debug.ui.category.run"
-		/>
-
-		<command
-			category="org.eclipse.debug.ui.category.run"
-			id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+<!-- commands and their bindings -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="%runCategory.name"
+            description="%runCategory.description"
+            id="org.eclipse.debug.ui.category.run">
+      </category>
+      <command
             name="%ActionDefinition.stepWithFilters.name"
             description="%ActionDefinition.stepWithFilters.description"
-		/>
-		<keyBinding
-			string="Shift+F5"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
+      </command>
+      <keyBinding
+            string="Shift+F5"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.stepInto.name"
             description="%ActionDefinition.stepInto.description"
-		/>
-		<keyBinding
-			string="F5"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
+      </command>
+      <keyBinding
+            string="F5"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.stepOver.name"
             description="%ActionDefinition.stepOver.description"
-		/>
-		<keyBinding
-			string="F6"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
+      </command>
+      <keyBinding
+            string="F6"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.stepReturn.name"
             description="%ActionDefinition.stepReturn.description"
-		/>
-		<keyBinding
-			string="F7"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
+      </command>
+      <keyBinding
+            string="F7"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.resume.name"
             description="%ActionDefinition.resume.description"
-		/>
-		<keyBinding
-			string="F8"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
+      </command>
+      <keyBinding
+            string="F8"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.terminate.name"
             description="%ActionDefinition.terminate.description"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.suspend.name"
             description="%ActionDefinition.suspend.description"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.openProfile.name"
             description="%ActionDefinition.openProfile.description"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-				
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.openRun.name"
             description="%ActionDefinition.openRun.description"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.openDebug.name"
             description="%ActionDefinition.openDebug.description"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.DebugLastAction"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.debugLast.name"
             description="%ActionDefinition.debugLast.description"
-		/>
-		<keyBinding
-			string="F11"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.DebugLastAction"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.RunLastAction"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
+      </command>
+      <keyBinding
+            string="F11"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.runLast.name"
             description="%ActionDefinition.runLast.description"
-		/>
-		<keyBinding
-			string="Ctrl+F11"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.RunLastAction"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		
-		<command
-			category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.debug.internal.ui.actions.ProfileLastAction"			
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.RunLastAction">
+      </command>
+      <keyBinding
+            string="Ctrl+F11"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.profileLast.name"
             description="%ActionDefinition.profileLast.description"
-		/>
-		<keyBinding
-			string="Ctrl+F11"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.debug.internal.ui.actions.RunLastAction"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>		
-				
-	</extension>
-	
-	<!-- Variable Extensions -->
-	<extension point="org.eclipse.debug.ui.launchConfigurationVariables">
-		<variable
-			tag="workspace_loc"
-			description="%workspace_loc.description"
-			expanderClass="org.eclipse.debug.ui.variables.WorkspaceExpander">
-		</variable>
-		<variable
-			tag="project_loc"
-			description="%project_loc.description"
-			expanderClass="org.eclipse.debug.ui.variables.ProjectExpander">
-		</variable>
-		<variable
-			tag="project_path"
-			description="%project_path.description"
-			expanderClass="org.eclipse.debug.ui.variables.ProjectExpander">
-		</variable>
-		<variable
-			tag="project_name"
-			description="%project_name.description"
-			expanderClass="org.eclipse.debug.ui.variables.ProjectNameExpander">
-		</variable>
-		<variable
-			tag="resource_loc"
-			description="%resource_loc.description"
-			componentClass="org.eclipse.debug.ui.variables.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.debug.ui.variables.ResourceExpander">
-		</variable>
-		<variable
-			tag="resource_path"
-			description="%resource_path.description"
-			componentClass="org.eclipse.debug.ui.variables.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.debug.ui.variables.ResourceExpander">
-		</variable>
-		<variable
-			tag="resource_name"
-			description="%resource_name.description"
-			expanderClass="org.eclipse.debug.ui.variables.ResourceNameExpander">
-		</variable>
-		<variable
-			tag="container_loc"
-			description="%container_loc.description"
-			expanderClass="org.eclipse.debug.ui.variables.ContainerExpander">
-		</variable>
-		<variable
-			tag="container_path"
-			description="%container_path.description"
-			expanderClass="org.eclipse.debug.ui.variables.ContainerExpander">
-		</variable>
-		<variable
-			tag="container_name"
-			description="%container_name.description"
-			expanderClass="org.eclipse.debug.ui.variables.ContainerNameExpander">
-		</variable>
-		<variable
-			tag="string_prompt"
-			description="%string_prompt.description"
-			expanderClass="org.eclipse.debug.ui.variables.StringPromptExpander">
-		</variable>
-		<variable
-			tag="file_prompt"
-			description="%file_prompt.description"
-			expanderClass="org.eclipse.debug.ui.variables.FilePromptExpander">
-		</variable>
-		<variable
-			tag="folder_prompt"
-			description="%folder_prompt.description"
-			expanderClass="org.eclipse.debug.ui.variables.FolderPromptExpander">
-		</variable>
-	</extension>
-   
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.internal.ui.actions.ProfileLastAction">
+      </command>
+      <keyBinding
+            string="Ctrl+F11"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+<!-- Context Variable Extensions -->
+   <extension
+         point="org.eclipse.debug.ui.contextLaunchVariables">
+      <variable
+            name="workspace_loc"
+            expanderClass="org.eclipse.debug.ui.launchVariables.WorkspaceExpander"
+            description="%workspace_loc.description">
+      </variable>
+      <variable
+            name="project_loc"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ProjectExpander"
+            description="%project_loc.description">
+      </variable>
+      <variable
+            name="project_path"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ProjectExpander"
+            description="%project_path.description">
+      </variable>
+      <variable
+            name="project_name"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ProjectNameExpander"
+            description="%project_name.description">
+      </variable>
+      <variable
+            name="resource_loc"
+            componentClass="org.eclipse.debug.ui.launchVariables.SpecificFileResourceComponent"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ResourceExpander"
+            description="%resource_loc.description">
+      </variable>
+      <variable
+            name="resource_path"
+            componentClass="org.eclipse.debug.ui.launchVariables.SpecificFileResourceComponent"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ResourceExpander"
+            description="%resource_path.description">
+      </variable>
+      <variable
+            name="resource_name"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ResourceNameExpander"
+            description="%resource_name.description">
+      </variable>
+      <variable
+            name="container_loc"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ContainerExpander"
+            description="%container_loc.description">
+      </variable>
+      <variable
+            name="container_path"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ContainerExpander"
+            description="%container_path.description">
+      </variable>
+      <variable
+            name="container_name"
+            expanderClass="org.eclipse.debug.ui.launchVariables.ContainerNameExpander"
+            description="%container_name.description">
+      </variable>
+      <variable
+            name="string_prompt"
+            expanderClass="org.eclipse.debug.ui.launchVariables.StringPromptExpander"
+            description="%string_prompt.description">
+      </variable>
+      <variable
+            name="file_prompt"
+            expanderClass="org.eclipse.debug.ui.launchVariables.FilePromptExpander"
+            description="%file_prompt.description">
+      </variable>
+      <variable
+            name="folder_prompt"
+            expanderClass="org.eclipse.debug.ui.launchVariables.FolderPromptExpander"
+            description="%folder_prompt.description">
+      </variable>
+   </extension>
+
 </plugin>

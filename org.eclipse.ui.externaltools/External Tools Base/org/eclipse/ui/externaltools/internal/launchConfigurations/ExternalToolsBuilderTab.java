@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.variables.IVariableComponentContainer;
-import org.eclipse.debug.ui.variables.VariableUtil;
-import org.eclipse.debug.ui.variables.WorkingSetComponent;
+import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
+import org.eclipse.debug.ui.launchVariables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.WorkingSetComponent;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -132,7 +132,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		workingSetButton.setSelection(buildScope != null);
 		
 		if (buildScope != null) {
-			VariableUtil.VariableDefinition variable= VariableUtil.extractVariableTag(buildScope, 0);
+			VariableUtil.VariableDefinition variable= VariableUtil.extractVariableDefinition(buildScope, 0);
 			workingSetComponent.setVariableValue(variable.argument);
 		}
 		

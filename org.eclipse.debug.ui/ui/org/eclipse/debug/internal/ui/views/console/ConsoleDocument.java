@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
-import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ITextStore;

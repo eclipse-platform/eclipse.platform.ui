@@ -11,9 +11,9 @@
 package org.eclipse.debug.internal.ui;
 
 
-import java.util.HashMap;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;

@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.views.console;
 
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.Position;
 
 /**

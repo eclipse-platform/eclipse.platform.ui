@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variables;
 
-import org.eclipse.debug.ui.variables.DefaultVariableExpander;
-import org.eclipse.debug.ui.variables.ExpandVariableContext;
+import org.eclipse.debug.ui.launchVariables.DefaultVariableExpander;
+import org.eclipse.debug.ui.launchVariables.ExpandVariableContext;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 
 

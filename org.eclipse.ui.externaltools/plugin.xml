@@ -189,40 +189,40 @@
 	</extension>
 		
 	<!-- Variable Extensions -->
-	<extension point="org.eclipse.debug.ui.launchConfigurationVariables">
+	<extension point="org.eclipse.debug.ui.contextLaunchVariables">
 		<variable
-			tag="build_type"
+			name="build_type"
 			description="%build_type.description"
 			expanderClass="org.eclipse.ui.externaltools.internal.variables.BuildTypeExpander">
 		</variable>
 	</extension>
 	<extension point="org.eclipse.ui.externaltools.refreshVariables">
 		<variable
-			tag="workspace"
+			name="workspace"
 			description="%workspace.description"
-			expanderClass="org.eclipse.debug.ui.variables.WorkspaceExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.WorkspaceExpander">
 		</variable>
 		<variable
-			tag="project"
+			name="project"
 			description="%project.description"
-			expanderClass="org.eclipse.debug.ui.variables.ProjectExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.ProjectExpander">
 		</variable>
 		<variable
-			tag="container"
+			name="container"
 			description="%container.description"
-			expanderClass="org.eclipse.debug.ui.variables.ContainerExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.ContainerExpander">
 		</variable>
 		<variable
-			tag="resource"
+			name="resource"
 			description="%resource.description"
-			componentClass="org.eclipse.debug.ui.variables.ResourceComponent"
-			expanderClass="org.eclipse.debug.ui.variables.ResourceExpander">
+			componentClass="org.eclipse.debug.ui.launchVariables.ResourceComponent"
+			expanderClass="org.eclipse.debug.ui.launchVariables.ResourceExpander">
 		</variable>
 		<variable
-			tag="working_set"
+			name="working_set"
 			description="%working_set.description"
-			componentClass="org.eclipse.debug.ui.variables.WorkingSetComponent"
-			expanderClass="org.eclipse.debug.ui.variables.WorkingSetExpander">
+			componentClass="org.eclipse.debug.ui.launchVariables.WorkingSetComponent"
+			expanderClass="org.eclipse.debug.ui.launchVariables.WorkingSetExpander">
 		</variable>
 	</extension>
 	

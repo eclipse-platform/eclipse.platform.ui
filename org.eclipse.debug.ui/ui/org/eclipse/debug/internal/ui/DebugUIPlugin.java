@@ -49,8 +49,8 @@ import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.internal.ui.views.variables.VariablesContentProviderManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.variables.LaunchConfigurationVariableRegistry;
-import org.eclipse.debug.ui.variables.VariableContextManager;
+import org.eclipse.debug.ui.launchVariables.ContextLaunchVariableRegistry;
+import org.eclipse.debug.ui.launchVariables.VariableContextManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -121,7 +121,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Collection of launch configuration variables
 	 */
-	private LaunchConfigurationVariableRegistry toolVariableRegistry;
+	private ContextLaunchVariableRegistry contextLaunchVariableRegistry;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -200,13 +200,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 
 	/**
-	 * Returns the registry of launch configuration variables.
+	 * Returns the registry of context launch variables.
 	 */
-	public LaunchConfigurationVariableRegistry getToolVariableRegistry() {
-		if (toolVariableRegistry == null) {
-			toolVariableRegistry = new LaunchConfigurationVariableRegistry();
+	public ContextLaunchVariableRegistry getContextVariableRegistry() {
+		if (contextLaunchVariableRegistry == null) {
+			contextLaunchVariableRegistry = new ContextLaunchVariableRegistry();
 		}
-		return toolVariableRegistry;
+		return contextLaunchVariableRegistry;
 	}
 	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {

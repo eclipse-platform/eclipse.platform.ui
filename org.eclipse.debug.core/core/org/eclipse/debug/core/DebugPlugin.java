@@ -30,12 +30,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.RuntimeProcess;
+import org.eclipse.debug.internal.core.SimpleVariableRegistry;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -108,7 +110,14 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String EXTENSION_POINT_LAUNCH_DELEGATES= "launchDelegates";	 //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_LAUNCH_DELEGATES= "launchDelegates";	 //$NON-NLS-1$
+	/**
+	 * Simple identifier constant (value <code>"simpleLaunchVariables"</code>) for the
+	 * simple launch variables extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_SIMPLE_LAUNCH_VARIABLES= "simpleLaunchVariables"; //$NON-NLS-1$	
 		
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -146,6 +155,11 @@ public class DebugPlugin extends Plugin {
 	 * The singleton launch manager.
 	 */
 	private LaunchManager fLaunchManager;
+	
+	/**
+	 * The singleton variable registry.
+	 */
+	private SimpleVariableRegistry fVariableRegistry;
 
 	/**
 	 * The collection of debug event listeners.
@@ -334,6 +348,18 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
+	 * Returns the registry of simple launch variables.
+	 * 
+	 * @return the registry of simple launch variables
+	 */
+	public ISimpleVariableRegistry getSimpleVariableRegistry() {
+		if (fVariableRegistry == null) {
+			fVariableRegistry = new SimpleVariableRegistry();
+		}
+		return fVariableRegistry;
+	}
+	
+	/**
 	 * Returns the status handler registered for the given
 	 * status, or <code>null</code> if none.
 	 *
@@ -421,6 +447,9 @@ public class DebugPlugin extends Plugin {
 		}
 		if (fEventListeners != null) {
 			fEventListeners.removeAll();
+		}
+		if (fVariableRegistry != null) {
+			fVariableRegistry.storeVariables();
 		}
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
@@ -605,6 +634,16 @@ public class DebugPlugin extends Plugin {
 			// be due to the resource bundle itself
 			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null)); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Logs the given message with this plug-in's log and the given
+	 * throwable or <code>null</code> if none.
+	 * @param message the message to log
+	 * @param throwable the exception that occurred or <code>null</code> if none
+	 */
+	public static void logMessage(String message, Throwable throwable) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, message, throwable));
 	}
 	
 	/**

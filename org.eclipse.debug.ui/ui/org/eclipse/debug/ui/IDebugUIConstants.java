@@ -696,6 +696,8 @@ public interface IDebugUIConstants {
 	/**
 	 * Launch configuration attribute - a map of variables passed into
 	 * Runtime.exec(...) when a launch configuration is launched.
+	 * 
+	 * @since 3.0
 	 */
 	public static final String ATTR_ENVIRONMENT_VARIABLES = PLUGIN_ID + ".environmentVariables"; //$NON-NLS-1$
 	

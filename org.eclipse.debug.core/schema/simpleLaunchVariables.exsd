@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="simpleLaunchVariables" name="Simple Launch Variables"/>
+      </appInfo>
+      <documentation>
+         This extension point defines a mechanism for defining simple launch configuration variables.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="simpleLaunchVariables" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="simpleLaunchVariable">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique name for this variable.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="initialValue" type="string">
+            <annotation>
+               <documentation>
+                  specifies the initial value for this variable.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="initializerClass" type="string">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified name of the java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.IVariableInitializer&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  specifies the human-readable description of this variable
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a launch configuration variable extension point with an initial value:
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.simpleLaunchVariables&quot;&gt;
+  &lt;variable
+   name=&quot;FOO_HOME&quot;
+   initialValue=&quot;/usr/local/foo&quot;
+  &lt;/breakpoint&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the specified variable is created with the initial value &quot;/usr/local/foo&quot;.
+
+         The following is an example of a launch configuration variable extension point with an initializer class:
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.simpleLaunchVariables&quot;&gt;
+  &lt;variable
+   name=&quot;FOO_HOME&quot;
+   initializerClass=&quot;com.example.FooLocator&quot;&gt;
+  &lt;/breakpoint&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the variable FOO_HOME is created and the class &quot;com.example.FooLocator&quot; will be
+used to initialize the value the first time it&apos;s requested.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;initializerClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.variables.IVariableInitializer&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variables;
 
-import org.eclipse.debug.ui.variables.LaunchConfigurationVariableRegistry;
+import org.eclipse.debug.ui.launchVariables.ContextLaunchVariableRegistry;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Registry of all available refresh scope variables.
  */
-public class RefreshScopeVariableRegistry extends LaunchConfigurationVariableRegistry {
+public class RefreshScopeVariableRegistry extends ContextLaunchVariableRegistry {
 
 	/**
 	 * Creates the registry and loads the variables.
