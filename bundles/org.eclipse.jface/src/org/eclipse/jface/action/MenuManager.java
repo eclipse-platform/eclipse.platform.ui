@@ -622,8 +622,14 @@ private void updateMenuItem() {
 	if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
 		boolean enabled = menu.getItemCount() > 0;
 		// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
-		if (menuItem.getEnabled() != enabled)
-			menuItem.setEnabled(enabled);
+		if (menuItem.getEnabled() != enabled) {
+			// We only do this for context menus (for bug #34969)
+			Menu topMenu = menu;
+			while (topMenu.getParentMenu() != null)
+				topMenu = topMenu.getParentMenu();
+			if ((topMenu.getStyle() & SWT.BAR) == 0)
+				menuItem.setEnabled(enabled);
+		}
 	}
 }
 
