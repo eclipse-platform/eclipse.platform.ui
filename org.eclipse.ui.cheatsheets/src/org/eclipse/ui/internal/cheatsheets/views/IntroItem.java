@@ -67,7 +67,7 @@ public class IntroItem extends ViewItem {
 	/**
 	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
 	 */
-	/*package*/ void handleButtons(Composite bodyWrapperComposite) {
+	/*package*/ void handleButtons() {
 		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
 		GridLayout buttonlayout = new GridLayout(4, false);
 		buttonlayout.marginHeight = 2;

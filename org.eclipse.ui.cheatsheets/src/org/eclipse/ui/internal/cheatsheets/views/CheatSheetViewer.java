@@ -34,7 +34,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	//ITEMS
 	private ViewItem currentItem;
-	private ViewItem nextItem;
 
 	//Lists
 	private ArrayList expandRestoreList = new ArrayList();
@@ -100,10 +99,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 //		fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, introItem);
 
 		ViewItem nextItem = (ViewItem) viewItemList.get(1);
-//FIXME: ???
-//		if (nextItem.contentItem.isDynamic()) {
-//							((CoreItem) nextItem).handleLazyButtons();
-//		}
+		if (nextItem.item.isDynamic()) {
+			nextItem.handleButtons();
+		}
 		nextItem.setAsCurrentActiveItem();
 		/* LP-item event */
 //		fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
@@ -140,14 +138,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			}
 		}
 		if (index < viewItemList.size()) {
-			nextItem = (ViewItem) viewItemList.get(index);
+			ViewItem nextItem = (ViewItem) viewItemList.get(index);
 			currentItemNum = index;
 			if (nextItem != null) {
 				//Handle lazy button instantiation here.
-//FIXME: ???
-//				if (nextItem.contentItem.isDynamic()) {
-//					((CoreItem) nextItem).handleLazyButtons();
-//				}
+				if (nextItem.item.isDynamic()) {
+					((CoreItem) nextItem).handleButtons();
+				}
 				nextItem.setAsCurrentActiveItem();
 				/* LP-item event */
 //				fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
@@ -400,9 +397,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			for (int i = 0; i < viewItemList.size(); i++) {
 
 				ViewItem item = (ViewItem) viewItemList.get(i);
-//FIXME: ???
-//				if (i > 0 && ((CoreItem) item).contentItem.isDynamic() && i <= currentItemNum)
-//					 ((CoreItem) item).handleLazyButtons();
+				if (i > 0 && item.item.isDynamic() && i <= currentItemNum)
+					 item.handleButtons();
 
 				if (completedStatesList.contains(Integer.toString(i))) {
 					item.setComplete();
@@ -619,7 +615,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return getContent().getID();
 	}
 
-	private CheatSheetManager getManager() {
+	/*package*/ CheatSheetManager getManager() {
 		if (manager == null) {
 			manager = new CheatSheetManager(contentElement);
 		}
@@ -722,8 +718,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		//reset current item to be null; next item too.
 		currentItem = null;
-		nextItem = null;
-
 		currentItemNum = 0;
 		viewItemList = new ArrayList();
 

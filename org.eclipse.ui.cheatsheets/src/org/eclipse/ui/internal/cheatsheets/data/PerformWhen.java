@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-import java.util.ArrayList;
+import java.util.*;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 public class PerformWhen implements IActionItem {
 	private String condition;
 	private ArrayList actions;
+	private Action selectedAction;
 
 	/**
 	 * Constructor for PerformWhen.
@@ -76,5 +78,21 @@ public class PerformWhen implements IActionItem {
 	 */
 	public void setAction(Action action) {
 		addAction(action);
+	}
+
+	public Action getSelectedAction() {
+		return selectedAction;
+	}
+
+	public void setSelectedAction(CheatSheetManager csm) {
+		String conditionValue = csm.getVariableData(condition);
+
+		for (Iterator iter = actions.iterator(); iter.hasNext();) {
+			Action action = (Action) iter.next();
+			if(action.getWhen() != null && action.getWhen().equals(conditionValue)) {
+				selectedAction = action;
+				break;
+			}
+		}
 	}
 }

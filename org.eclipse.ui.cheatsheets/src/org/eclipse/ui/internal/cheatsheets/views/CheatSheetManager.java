@@ -63,6 +63,15 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return (String) dataTable.get(key);
 	}
 
+	public String getVariableData(String variable) {
+		String result = null;
+		if(variable != null && variable.startsWith("${") && variable.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
+			result = variable.substring(2,variable.length()-1);
+			result = getData(result);
+		}
+		return result;
+	}
+
 	/*package*/ void setData(Hashtable data) {
 		dataTable = data;
 	}

@@ -39,7 +39,7 @@ public abstract class ViewItem {
 	private Composite bodyComp;
 
 	protected FormText bodyText;
-	private Composite bodyWrapperComposite;
+	protected Composite bodyWrapperComposite;
 	protected Composite buttonComposite;
 
 	protected ArrayList buttonCompositeList;
@@ -193,7 +193,6 @@ public abstract class ViewItem {
 		bodyWrapperComposite.setLayout(wrapperLayout);
 		bodyWrapperComposite.setBackground(itemColor);
 
-//		bodyText = toolkit.createLabel(bodyWrapperComposite, item.getDescription(), SWT.WRAP);
 		bodyText = toolkit.createFormText(bodyWrapperComposite, false);
 		bodyText.setText(item.getDescription(), item.getDescription().startsWith(IParserTags.FORM_START_TAG), false);
 
@@ -206,12 +205,9 @@ public abstract class ViewItem {
 		//As it will be handled by the CoreItemWithSubs.
 		//If there is no sub steps, create a button composite and Pass it to CoreItem using the handleButtons.
 
-//FIXME: What now? 
-//		if (contentItem.isDynamic()) {
-//			((CoreItem) this).setBodyWrapperComposite(bodyWrapperComposite);
-//		} else {
-			handleButtons(bodyWrapperComposite);
-//		}
+		if(!item.isDynamic()) {
+			handleButtons();
+		}
 
 		setButtonsCollapsed();
 		setCollapsed();
@@ -316,7 +312,7 @@ public abstract class ViewItem {
 
 	//Adds the buttons to the buttonComposite.
 	/*package*/
-	abstract void handleButtons(Composite buttonComposite);
+	abstract void handleButtons();
 
 	protected void init() {
 
@@ -378,10 +374,16 @@ public abstract class ViewItem {
 	byte runAction(CheatSheetManager csm) {
 		Action action = item.getAction();
 		if(action == null) {
-			return VIEWITEM_ADVANCE;
-		} else {
+			if(item.getPerformWhen() != null){
+				action = item.getPerformWhen().getSelectedAction();
+			}
+		}
+
+		if(action != null) {
 			return runAction(action.getPluginID(), action.getActionClass(), action.getParams(), csm);
 		}
+
+		return VIEWITEM_ADVANCE;
 	}
 
 	/**

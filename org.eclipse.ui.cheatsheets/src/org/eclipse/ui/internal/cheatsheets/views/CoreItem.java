@@ -26,7 +26,6 @@ import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 
 public class CoreItem extends ViewItem {
-	protected Composite bodyWrapperComposite;
 	protected boolean buttonsHandled = false;
 	protected ImageHyperlink completeButton;
 	protected Image completeImage;
@@ -45,6 +44,57 @@ public class CoreItem extends ViewItem {
 	 */
 	public CoreItem(FormToolkit toolkit, ScrolledForm form, Item item, Color itemColor, CheatSheetViewer viewer) {
 		super(toolkit, form, item, itemColor, viewer);
+	}
+
+	private void createButtonComposite() {
+		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
+		buttonCompositeList.add(buttonComposite);
+		GridLayout buttonlayout = new GridLayout(4, false);
+		buttonlayout.marginHeight = 2;
+		buttonlayout.marginWidth = 2;
+		buttonlayout.verticalSpacing = 2;
+
+		TableWrapData buttonData = new TableWrapData(TableWrapData.FILL);
+
+		buttonComposite.setLayout(buttonlayout);
+		buttonComposite.setLayoutData(buttonData);
+		buttonComposite.setBackground(itemColor);
+
+		Label spacer = toolkit.createLabel(buttonComposite, null);
+		spacer.setBackground(itemColor);
+		GridData spacerData = new GridData();
+		spacerData.widthHint = 16;
+		spacer.setLayoutData(spacerData);
+	}
+
+	private void createButtons(Action action) {
+		if (action != null ) {
+			startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+			toolkit.adapt(startButton, true, true);
+			startButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					viewer.runPerformAction(startButton);
+				}
+			});
+		}
+		if (item.isSkip()) {
+			skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+			toolkit.adapt(skipButton, true, true);
+			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					viewer.advanceItem(skipButton, false);
+				}
+			});
+		}
+		if (action == null || action.isConfirm()) {
+			completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+			toolkit.adapt(completeButton, true, true);
+			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					viewer.advanceItem(completeButton, true);
+				}
+			});
+		}
 	}
 
 	/**
@@ -70,79 +120,67 @@ public class CoreItem extends ViewItem {
 	/**
 	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
 	 */
-	/*package*/ void handleButtons(Composite bodyWrapperComposite) {
-		if (item.getSubItems() != null && item.getSubItems().size() > 0) {
+	/*package*/ void handleButtons() {
+		if(item.isDynamic()) {
+			handleDynamicButtons();
+			return;
+		}
+
+		if (buttonsHandled)
+			return;
+
+		createButtonComposite();
+		createButtons(item.getAction());
+		buttonsHandled = true;
+	}
+
+	private void handleDynamicButtons() {
+		if( item.getPerformWhen() != null ) {
+			handlePerformWhenButtons();
+		} else if( item.getConditionalSubItems() != null && item.getConditionalSubItems().size() > 0) {
+			
+		} else if( item.getSubItems() != null && item.getSubItems().size() > 0) {
 			try{
-				handleSubButtons(bodyWrapperComposite);
+				handleSubButtons();
 			}catch(Exception e){
 				//Need to log exception here. 
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
 			}
-			return;
 		}
-		
-		if (buttonsHandled)
-			return;
-		
-		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
-		GridLayout buttonlayout = new GridLayout(4, false);
-		buttonlayout.marginHeight = 2;
-		buttonlayout.marginWidth = 2;
-		buttonlayout.verticalSpacing = 2;
-
-		TableWrapData buttonData = new TableWrapData(TableWrapData.FILL);
-
-		buttonComposite.setLayout(buttonlayout);
-		buttonComposite.setLayoutData(buttonData);
-		buttonComposite.setBackground(itemColor);
-
-		Label spacer = toolkit.createLabel(buttonComposite, null);
-		spacer.setBackground(itemColor);
-		GridData spacerData = new GridData();
-		spacerData.widthHint = 16;
-		spacer.setLayoutData(spacerData);
-
-		if (item.getAction() != null ) {
-			startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
-			toolkit.adapt(startButton, true, true);
-			startButton.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					viewer.runPerformAction(startButton);
-				}
-			});
-		}
-		if (item.isSkip()) {
-			skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
-			toolkit.adapt(skipButton, true, true);
-			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					viewer.advanceItem(skipButton, false);
-				}
-			});
-		}
-		if (item.getAction() == null || item.getAction().isConfirm()) {
-			completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
-			toolkit.adapt(completeButton, true, true);
-			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					viewer.advanceItem(completeButton, true);
-				}
-			});
-		}
-		buttonCompositeList.add(buttonComposite);
-		buttonsHandled = true;
 	}
 
-	/*package*/ void handleLazyButtons() {
-		handleButtons(bodyWrapperComposite);
+	private void handlePerformWhenButtons() {
+		boolean refreshRequired = false;
+
+		if(buttonComposite != null) {
+			if(startButton != null)
+				startButton.dispose();
+			if(skipButton != null)
+				skipButton.dispose();
+			if(completeButton != null)
+				completeButton.dispose();
+			
+			refreshRequired = true;
+		} else {
+			createButtonComposite();
+		}
+
+		item.getPerformWhen().setSelectedAction(viewer.getManager());
+		Action performAction = item.getPerformWhen().getSelectedAction();
+
+		createButtons(performAction);
+		
+		if(refreshRequired) {
+			buttonComposite.layout();
+		}
 	}
 
 	/**
-		 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
-		 */
-	private void handleSubButtons(Composite bodyWrapperComposite) throws Exception {
+	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
+	 */
+	private void handleSubButtons() throws Exception {
 		if (buttonsHandled)
 			return;
 		//Instantiate the list to store the sub item composites.
@@ -255,13 +293,6 @@ public class CoreItem extends ViewItem {
 		restartImage = imageDescriptor.createImage();
 	}
 
-	/**
-	 * @param composite
-	 */
-	/*package*/ void setBodyWrapperComposite(Composite composite) {
-		bodyWrapperComposite = composite;
-	}
-	
 	/*package*/void setButtonsHandled(boolean handled){
 		buttonsHandled = handled;
 	}

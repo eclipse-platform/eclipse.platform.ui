@@ -47,14 +47,18 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 	}
 
 	/**
-	 * Returns the skip.
-	 * @return boolean
+	 * Returns whether this item is dynamic. An item is dynamic if it
+	 * has performWhen condition, conditionalSubItems or repeatedSubItems.
+	 *
+	 * @return <code>true</code> if this item is dynamic, and
+	 *  <code>false</code> for normal items
 	 */
 	public boolean isDynamic() {
-//		this.conditionalSubItems;
-//		this.repeatedSubItems;
-//		this.subItems;
-//		this.performWhen;
+		if( performWhen != null ||
+			(conditionalSubItems != null && conditionalSubItems.size() > 0) ||
+			(repeatedSubItems != null && repeatedSubItems.size() > 0)) {
+			return true;
+		}
 
 		return false;
 	}
