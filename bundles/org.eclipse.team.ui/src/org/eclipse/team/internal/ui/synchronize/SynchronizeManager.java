@@ -363,7 +363,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 						null,	// accept the default window icon
 						Policy.bind("SynchronizeManager.30", perspectiveDescriptor.getLabel()), //$NON-NLS-1$
 						MessageDialog.QUESTION, 
-						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, Policy.bind("SynchronizeManager.28"), Policy.bind("SynchronizeManager.29")}, //$NON-NLS-1$ //$NON-NLS-2$
+						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, Policy.bind("SynchronizeManager.29"), Policy.bind("SynchronizeManager.28")}, //$NON-NLS-1$ //$NON-NLS-2$
 						0); 	// yes is the default
 		
 			int result = m.open();
@@ -374,14 +374,14 @@ public class SynchronizeManager implements ISynchronizeManager {
 				// no
 				case 1 :
 					return false;
-				// never
-				case 2 :
-					TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER);
-					return false;
 				// always
-				case 3 :
+				case 2 :
 					TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS);
 					return true;
+				// never
+				case 3 :
+					TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER);
+					return false;
 			}
 		}
 		return false;
