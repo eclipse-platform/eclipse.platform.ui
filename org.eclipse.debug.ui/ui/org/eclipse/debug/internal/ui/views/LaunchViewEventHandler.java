@@ -127,7 +127,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			doHandleSuspendThreadEvent((IThread)element);
 		}
 		updateButtons();
-		getLaunchView().showMarkerForCurrentSelection();
 	}
 	
 	// This method exists to provide some optimization for refreshing suspended
