@@ -51,6 +51,8 @@ public interface IProgressService {
 	 * Set the cursor to busy and run runnable within the UI Thread. After the
 	 * cursor has been running for LONG_OPERATION_MILLISECONDS replace it with
 	 * a ProgressMonitorDialog so that the user may cancel.
+	 * Do not open the ProgressMonitorDialog if there is already a modal
+	 * dialog open.
 	 * 
 	 * @param runnable
 	 */
