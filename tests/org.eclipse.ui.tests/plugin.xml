@@ -96,7 +96,7 @@
       class="org.eclipse.ui.tests.api.MockEditorPart"
       contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor">
     </editor>
-    <editor id ="org.eclipse.ui.tests.api.IEditorActionBarsTest"
+    <editor id ="org.eclipse.ui.tests.internal.EditorActionBarsTest"
       name="IEditorActionBarsTest"
       extensions="mock3"
       icon="icons\mockeditorpart2.gif"

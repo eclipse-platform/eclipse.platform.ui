@@ -28,5 +28,6 @@ public class UiTestSuite extends TestSuite {
 			addTest(new org.eclipse.ui.tests.dialogs.UIAutomatedSuite());
 		}
 		addTest(new org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite());		
+		addTest(new org.eclipse.ui.tests.internal.InternalTestSuite());		
 	}
 }

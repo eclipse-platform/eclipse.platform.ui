@@ -1,9 +1,12 @@
 package org.eclipse.ui.tests;
 
-import org.eclipse.ui.plugin.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
+import java.net.*;
 import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -60,4 +63,21 @@ public class TestPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
+	
+	/**
+	 * Returns the image descriptor with the given relative path.
+	 */
+	public ImageDescriptor getImageDescriptor(String relativePath) {
+		String iconPath = "icons/";
+		try {
+			URL installURL = getDescriptor().getInstallURL();
+			URL url = new URL(installURL, iconPath + relativePath);
+			return ImageDescriptor.createFromURL(url);
+		}
+		catch (MalformedURLException e) {
+			// should not happen
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
+	}
+	
 }
