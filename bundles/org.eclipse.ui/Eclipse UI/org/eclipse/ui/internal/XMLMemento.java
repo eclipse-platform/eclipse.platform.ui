@@ -4,14 +4,29 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
-import java.util.*;
-import org.eclipse.ui.*;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.*;
+import org.apache.xerces.dom.TextImpl;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.ui.IMemento;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * A Memento is a class independent container for persistence
@@ -95,7 +110,6 @@ public IMemento copyChild(IMemento child) {
 	element.appendChild(newElement);	
 	return new XMLMemento(factory, newElement);
 }
-
 /**
  * @see IMemento.
  */
@@ -203,6 +217,42 @@ public String getString(String key) {
 		return null; 
 	return attr.getValue();
 }
+
+/**
+ * @see IMemento.
+ */
+public String getTextData() {
+	Text textNode = getTextNode();
+	if (textNode != null) {
+		return textNode.getData();
+	} else {
+		return null;	
+	}
+}
+
+/**
+ * Returns the Text node of the memento. Each memento is allowed only 
+ * one Text node.
+ * 
+ * @return the Text node of the memento, or <code>null</code> if
+ * the memento has no Text node.
+ */
+private Text getTextNode() {
+	// Get the nodes.
+	NodeList nodes = element.getChildNodes();
+	int size = nodes.getLength();
+	if (size == 0)
+		return null;
+	for (int nX = 0; nX < size; nX ++) {
+		Node node = nodes.item(nX);
+		if (node instanceof Text) {
+			return (Text)node;
+		}
+	}
+	// a Text node was not found
+	return null;
+}
+
 /**
  * @see IMemento.
  */
@@ -251,10 +301,23 @@ public void putString(String key, String value) {
 	element.setAttribute(key, value);
 }
 /**
+ * @see IMemento.
+ */
+public void putTextData(String data) {
+	Text textNode = getTextNode();
+	if (textNode == null) {
+		textNode = factory.createTextNode(data);
+		element.appendChild(textNode);	
+	} else {
+		textNode.setData(data);
+	}
+}
+/**
  * Save this Memento to a Writer.
  */
 public void save(Writer writer) throws IOException {
 	OutputFormat format = new OutputFormat();
+	format.setPreserveSpace(true);
 	Serializer serializer = SerializerFactory.getSerializerFactory("xml").makeSerializer(writer, format);//$NON-NLS-1$
 	serializer.asDOMSerializer().serialize(factory);
 }

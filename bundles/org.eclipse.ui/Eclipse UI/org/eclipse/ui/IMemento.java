@@ -120,6 +120,15 @@ public Integer getInteger(String key);
  */
 public String getString(String key);
 /**
+ * Returns the data of the Text node of the memento. Each memento is allowed
+ * only one Text node.
+ * 
+ * @return the data of the Text node of the memento, or <code>null</code>
+ * if the memento has no Text node.
+ * @since 2.0
+ */
+public String getTextData();
+/**
  * Sets the value of the given key to the given floating point number.
  *
  * @param key the key
@@ -147,4 +156,13 @@ public void putMemento(IMemento memento);
  * @param value the value
  */
 public void putString(String key, String value);
+/**
+ * Sets the memento's Text node to contain the given data. Creates the Text node if
+ * none exists. If a Text node does exist, it's current contents are replaced. 
+ * Each memento is allowed only one text node.
+ * 
+ * @param data the data to be placed on the Text node
+ * @since 2.0
+ */
+public void putTextData(String data);
 }
