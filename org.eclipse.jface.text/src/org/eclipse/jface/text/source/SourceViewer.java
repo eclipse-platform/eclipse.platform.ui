@@ -687,14 +687,15 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fSelections.clear();
 		
 		IDocument document= getDocument();
-		document.removePositionUpdater(fSelectionUpdater);
-		fSelectionUpdater= null;
-		
-		try {
-			document.removePositionCategory(fSelectionCategory);
-		} catch (BadPositionCategoryException e) {
-			// ignore
+		if (document != null) {
+			document.removePositionUpdater(fSelectionUpdater);
+			try {
+				document.removePositionCategory(fSelectionCategory);
+			} catch (BadPositionCategoryException e) {
+				// ignore
+			}
 		}
+		fSelectionUpdater= null;
 		fSelectionCategory= null;
 	}
 
