@@ -75,9 +75,6 @@ public abstract class ActionFactory {
 
     /**
      * Interface for a workbench action.
-     * <p>
-     * This interface is not intended to be implemented by clients.
-     * </p>
      */
     public interface IWorkbenchAction extends IAction {
         /**
@@ -562,7 +559,7 @@ public abstract class ActionFactory {
     };
 
     /**
-     * Workbench action (id "new"): Opens the new wizard. This action maintains
+     * Workbench action (id "new"): Opens the new wizard dialog. This action maintains
      * its enablement state.
      */
     public static final ActionFactory NEW = new ActionFactory("new") {//$NON-NLS-1$
@@ -576,6 +573,26 @@ public abstract class ActionFactory {
             // indicate that a new wizard submenu has been created
             ((WorkbenchWindow) window)
                     .addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
+            return action;
+        }
+    };
+
+    /**
+     * Workbench action (id "newWizardDropDown"): Drop-down action which shows shows the new wizard drop down, 
+     * or opens the new wizard dialog when pressed.  For use in the toolbar.
+     * This action maintains its enablement state.
+     * 
+     * @since 3.1
+     */
+    public static final ActionFactory NEW_WIZARD_DROP_DOWN = new ActionFactory(
+            "newWizardDropDown") { //$NON-NLS-1$
+        /* (non-javadoc) method declared on ActionFactory */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new NewWizardDropDownAction(window);
+            action.setId(getId());
             return action;
         }
     };
