@@ -68,6 +68,17 @@
          </run>
       </application>
    </extension>
+   
+   <extension
+         id="example"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.example.ExampleApplication">
+         </run>
+      </application>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.commands">
       <activeKeyConfiguration
