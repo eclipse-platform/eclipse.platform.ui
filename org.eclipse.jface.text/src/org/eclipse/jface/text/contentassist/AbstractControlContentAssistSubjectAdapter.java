@@ -105,7 +105,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	AbstractControlContentAssistSubjectAdapter(Control control, boolean showCue) {
 		fVerifyKeyListeners= new ArrayList(1);
 		fKeyListeners= new HashSet(1);
-		internalEnableContentAssistCue(control, showCue);
+		setShowContentAssistCue(control, showCue);
 	}
 	
 	/*
@@ -286,13 +286,18 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	}
 	
 	/**
+	 * Uninstalls this control content assist subject adapter.
+	 */
+	public void uninstall() {
+		setShowContentAssistCue(getControl(), false);
+	}
+	
+	/**
 	 * Controls visibilty of the visual cue for content assist.
 	 *
 	 * @param enable iff <code>true</code>, show cue
 	 */
 	public void enableContentAssistCue(boolean enable) {
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#enableContentAssistCue(" + enable + "): " + getControl().toString()); //$NON-NLS-1$ //$NON-NLS-2$
-		internalEnableContentAssistCue(getControl(), enable);
 	}
 
 	/**
@@ -301,7 +306,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * @param control the <code>Control</code>
 	 * @param enable iff <code>true</code>, show cue
 	 */
-	private void internalEnableContentAssistCue(Control control, boolean enable) {
+	private void setShowContentAssistCue(Control control, boolean enable) {
 		SmartFieldController.setSmartCue(control, enable ? "Content Assist Available" : null);
 	}
 	
@@ -575,6 +580,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			
 			/**
 			 * Installs or deinstalls a visual cue indicating availability of content assist on the given control.
+			 * 
+			 * @param control the control on which to install or uninstall the cue
+			 * @param message the tool tip message or <code>null</code> to uninstall the cue
 			 */
 			public static void setSmartCue(Control control, String message) {
 				getSmartFieldController(control).setSmartCue2(control, message);

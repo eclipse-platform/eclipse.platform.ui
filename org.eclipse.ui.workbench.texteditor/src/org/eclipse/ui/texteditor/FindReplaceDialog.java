@@ -466,13 +466,33 @@ class FindReplaceDialog extends Dialog {
 		fProposalPopupBackgroundColor= new Color(getShell().getDisplay(), new RGB(254, 241, 233));
 		fProposalPopupForegroundColor= new Color(getShell().getDisplay(), new RGB(0, 0, 0));
 		
+		return panel;
+	}
+	
+	private void ensureContentAssistantsInstalled() {
+		if (fFindFieldContentAssistant != null)
+			return;
+		
 		fFindFieldContentAssistAdapter= new ComboContentAssistSubjectAdapter(fFindField);
 		fFindFieldContentAssistant= createContentAssistant(fFindField, fFindFieldContentAssistAdapter);
 		fReplaceFieldContentAssistAdapter= new ComboContentAssistSubjectAdapter(fReplaceField);
 		fReplaceFieldContentAssistant= createContentAssistant(fReplaceField, fReplaceFieldContentAssistAdapter);
-		
-		return panel;
 	}
+	
+	private void ensureContentAssistantsUninstalled() {
+		if (fFindFieldContentAssistant == null)
+			return;
+		
+		fFindFieldContentAssistant.uninstall();
+		fFindFieldContentAssistant= null;
+		fFindFieldContentAssistAdapter.uninstall();
+		fFindFieldContentAssistAdapter= null;
+		fReplaceFieldContentAssistant.uninstall();
+		fReplaceFieldContentAssistant= null;
+		fReplaceFieldContentAssistAdapter.uninstall();
+		fReplaceFieldContentAssistAdapter= null;
+	}
+
 	
 	/**
 	 * Creates the direction defining part of the options defining section
@@ -735,10 +755,10 @@ class FindReplaceDialog extends Dialog {
 				fWholeWordCheckBox.setEnabled(!newState);
 				updateButtonState();
 				storeSettings();
-				fFindFieldContentAssistant.enableAutoActivation(newState);
-				fFindFieldContentAssistAdapter.enableContentAssistCue(newState);
-				fReplaceFieldContentAssistant.enableAutoActivation(newState);
-				fReplaceFieldContentAssistAdapter.enableContentAssistCue(newState);
+				if (newState)
+					ensureContentAssistantsInstalled();
+				else
+					ensureContentAssistantsUninstalled();
 			}
 		});
 		fWholeWordCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
@@ -995,8 +1015,7 @@ class FindReplaceDialog extends Dialog {
 		if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).endSession();
 
-		fFindFieldContentAssistant.uninstall();
-		fReplaceFieldContentAssistant.uninstall();
+		ensureContentAssistantsUninstalled();
 		
 		fProposalPopupBackgroundColor.dispose();
 		fProposalPopupForegroundColor.dispose();
@@ -1004,8 +1023,7 @@ class FindReplaceDialog extends Dialog {
 		// prevent leaks
 		fActiveShell= null;
 		fTarget= null;
-		fFindFieldContentAssistant= null;
-		fReplaceFieldContentAssistant= null;
+		
 	}
 
 	/**
@@ -1619,10 +1637,10 @@ class FindReplaceDialog extends Dialog {
 			updateButtonState();
 		}
 		
-		fFindFieldContentAssistant.enableAutoActivation(isRegExSearchAvailableAndChecked());
-		fFindFieldContentAssistAdapter.enableContentAssistCue(isRegExSearchAvailableAndChecked());
-		fReplaceFieldContentAssistant.enableAutoActivation(isRegExSearchAvailableAndChecked());
-		fReplaceFieldContentAssistAdapter.enableContentAssistCue(isRegExSearchAvailableAndChecked());
+		if (isRegExSearchAvailableAndChecked())
+			ensureContentAssistantsInstalled();
+		else
+			ensureContentAssistantsUninstalled();
 	}
 
 	/** 

@@ -95,12 +95,22 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	 * @param combo the combo to adapt
 	 */
 	public ComboContentAssistSubjectAdapter(Combo combo) {
-		super(combo, true);
+		this(combo, true);
+	}
+
+	/**
+	 * Creates a content assist subject adapter for the given combo.
+	 * 
+	 * @param combo the combo to adapt
+	 * @param showCue show cue on the left side of control
+	 */
+	public ComboContentAssistSubjectAdapter(Combo combo, boolean showCue) {
+		super(combo, showCue);
 		Assert.isNotNull(combo);
 		fCombo= combo;
 		fModifyListeners= new HashMap();
-	}
-
+	 }
+	
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getControl()
 	 */
