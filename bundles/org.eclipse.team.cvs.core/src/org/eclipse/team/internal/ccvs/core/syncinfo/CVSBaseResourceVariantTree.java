@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.ResourceVariantByteStore;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSWorkspaceSubscriber;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 
@@ -35,10 +40,14 @@ public class CVSBaseResourceVariantTree extends ResourceVariantByteStore {
 			}
 			return bytes;
 		} else {
-			// For a folder, return the folder sync info bytes
-			FolderSyncInfo info = EclipseSynchronizer.getInstance().getFolderSync((IContainer)resource);
-			if (info == null) return null;
-			return info.getBytes();
+			// For a folder, return the folder sync info bytes if the folder is managed or is a project
+			if (EclipseSynchronizer.getInstance().isManagedCVSFolder((IContainer)resource)) {
+				FolderSyncInfo info = EclipseSynchronizer.getInstance().getFolderSync((IContainer)resource);
+				if (info != null) {
+					return info.getBytes();
+				}
+			}
+			return null;
 		}
 	}
 	public boolean isVariantKnown(IResource resource) throws TeamException {
@@ -53,14 +62,22 @@ public class CVSBaseResourceVariantTree extends ResourceVariantByteStore {
 	public boolean deleteBytes(IResource resource) throws TeamException {
 		throw new UnsupportedOperationException();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.utils.SynchronizationCache#members(org.eclipse.core.resources.IResource)
-	 */
 	public IResource[] members(IResource resource) throws TeamException {
 		if(resource.getType() == IResource.FILE) {
 			return new IResource[0];
 		}	
-		return EclipseSynchronizer.getInstance().members((IContainer)resource);
+		CVSWorkspaceSubscriber workspaceSubscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+		if(resource.getType() == IResource.ROOT) {
+			return workspaceSubscriber.roots();
+		}
+		IResource[] members = EclipseSynchronizer.getInstance().members((IContainer)resource);
+		List result = new ArrayList();
+		for (int i = 0; i < members.length; i++) {
+			IResource member = members[i];
+			if (workspaceSubscriber.isSupervised(member)) {
+				result.add(member);
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 }

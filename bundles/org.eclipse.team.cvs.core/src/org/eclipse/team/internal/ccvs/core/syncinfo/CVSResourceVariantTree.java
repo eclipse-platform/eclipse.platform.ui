@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
@@ -161,16 +162,16 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	}
 
 	private byte[] getBaseBytes(IContainer parent, CVSTag tag) throws CVSException {
-		byte[] bytes;
+		byte[] bytes = null;
 		// Look locally for the folder bytes
-		ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor(parent);
-		FolderSyncInfo info = local.getFolderSyncInfo();
-		if (info == null) {
-			bytes = null;
-		} else {
-			// Use the folder sync from the workspace and the tag from the store
-			FolderSyncInfo newInfo = new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, false);
-			bytes = newInfo.getBytes();
+		EclipseSynchronizer synchronizer = EclipseSynchronizer.getInstance();
+		if (synchronizer.isManagedCVSFolder(parent)) {
+			FolderSyncInfo info = synchronizer.getFolderSync(parent);
+			if (info != null) {
+				// Use the folder sync from the workspace and the tag from the store
+				FolderSyncInfo newInfo = new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, false);
+				bytes = newInfo.getBytes();
+			}
 		}
 		return bytes;
 	}
