@@ -70,6 +70,7 @@ _highlightHandler = highlightHandler;
 function onloadHandler() {
 	sizeButtons();
 	enableButtons();
+	document.getElementById("alldocs").focus();
 }
 
 function sizeButtons() {

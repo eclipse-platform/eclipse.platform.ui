@@ -337,7 +337,8 @@ for (int i=0; i<data.getTocCount(); i++)
 							name='<%=data.getTocHref(i)%>' 
 							alt="<%=label%>" <%=checked%> 
 						  	onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
-							onclick="setSubtreeChecked(this, '<%="div"+i%>')"><%=label%>
+							onclick="setSubtreeChecked(this, '<%="div"+i%>')">
+							<label for="<%=data.getTocHref(i)%>"><%=label%></label>
 					<div id='<%="div"+i%>' class="collapsed">
 <%
 	for (int topic=0; topic<data.getTopicCount(i); topic++)
@@ -350,10 +351,12 @@ for (int i=0; i<data.getTocCount(); i++)
 						<div class="topic" id='<%="id"+i+"_"+topic%>'>
 							<input 	class="checkbox" 
 									type="checkbox" 
+									id='<%=data.getTocHref(i)+"_"+topic+"_"%>' 
 									name='<%=data.getTocHref(i)+"_"+topic+"_"%>' 
 									alt="<%=topicLabel%>" <%=topicChecked%> 
 									onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
-									onclick="updateParentState(this, '<%="div"+i%>')"><%=topicLabel%>
+									onclick="updateParentState(this, '<%="div"+i%>')">
+									<label for="<%=data.getTocHref(i)+"_"+topic+"_"%>"><%=topicLabel%></label>
 						</div>
 <%
 	}
