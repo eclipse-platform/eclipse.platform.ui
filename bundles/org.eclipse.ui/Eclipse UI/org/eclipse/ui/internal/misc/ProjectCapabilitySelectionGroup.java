@@ -69,7 +69,7 @@ public class ProjectCapabilitySelectionGroup {
 		// Create the main composite for the other controls
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Add a label to identify the checkbox tree viewer of capabilities
 		Label capabilityLabel = new Label(composite, SWT.LEFT);
