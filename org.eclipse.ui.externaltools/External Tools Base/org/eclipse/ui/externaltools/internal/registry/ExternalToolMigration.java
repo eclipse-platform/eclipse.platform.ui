@@ -49,6 +49,9 @@ public final class ExternalToolMigration {
 	* String attribute indicating the Ant targets to execute. Default value is
 	 * <code>null</code> which indicates that the default target is to be
 	 * executed. Format is a comma separated listing of targets.
+	 * NOTE: This value is copied here from org.eclipse.ant.ui.internal.IAntLaunchConfigurationConstants.
+	 * 		Ant no longer resides in External Tools and this plug-in. This value is kept here only
+	 * 		for migration.
 	 */
 	public static final String ATTR_ANT_TARGETS = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$
 	
