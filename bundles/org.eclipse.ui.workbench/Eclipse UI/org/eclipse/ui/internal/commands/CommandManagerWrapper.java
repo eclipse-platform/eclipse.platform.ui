@@ -520,7 +520,8 @@ public final class CommandManagerWrapper implements ICommandManager,
 		// Set up the active scheme.
 		try {
 			bindingManager
-					.setActiveScheme("org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
+					.setActiveScheme(bindingManager
+							.getScheme("org.eclipse.ui.defaultAcceleratorConfiguration")); //$NON-NLS-1$
 		} catch (final NotDefinedException e) {
 			// Oh, well....
 		}
@@ -588,7 +589,8 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	public void setActiveKeyConfigurationId(String activeKeyConfigurationId) {
 		try {
-			bindingManager.setActiveScheme(activeKeyConfigurationId);
+			bindingManager.setActiveScheme(bindingManager
+					.getScheme(activeKeyConfigurationId));
 		} catch (final NotDefinedException e) {
 			// The key configuration is not defined, so do nothing.
 		}

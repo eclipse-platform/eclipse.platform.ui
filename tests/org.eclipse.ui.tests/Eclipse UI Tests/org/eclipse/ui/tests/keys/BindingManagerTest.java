@@ -152,7 +152,7 @@ public final class BindingManagerTest extends UITestCase {
 		context.define("name", "description", null);
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -229,7 +229,7 @@ public final class BindingManagerTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -345,7 +345,7 @@ public final class BindingManagerTest extends UITestCase {
 		context.define("name", "description", null);
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -423,7 +423,7 @@ public final class BindingManagerTest extends UITestCase {
 		context.define("name", "description", null);
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -505,7 +505,7 @@ public final class BindingManagerTest extends UITestCase {
 		context.define("name", "description", null);
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -563,7 +563,7 @@ public final class BindingManagerTest extends UITestCase {
 		context.define("name", "description", null);
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -615,7 +615,7 @@ public final class BindingManagerTest extends UITestCase {
 		context.define("name", "description", null);
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -653,8 +653,36 @@ public final class BindingManagerTest extends UITestCase {
 				.getActiveBindingsFor("command3"));
 	}
 
+	/**
+	 * Verifies that selecting an undefimned scheme doesn't work. Verifies that
+	 * selecting a scheme works. Verifies that undefining scheme removes it as
+	 * the active scheme.
+	 */
 	public final void testSetActiveScheme() {
-		// TODO Implement this test case.
+		// SELECT UNDEFINED
+		final String schemeId = "schemeId";
+		final Scheme scheme = bindingManager.getScheme(schemeId);
+		try {
+			bindingManager.setActiveScheme(scheme);
+			fail("Cannot activate an undefined scheme");
+		} catch (final NotDefinedException e) {
+			// Success
+		}
+
+		// SELECT DEFINED
+		scheme.define("name", "description", null);
+		try {
+			bindingManager.setActiveScheme(scheme);
+			assertSame("The schemes should match", scheme, bindingManager
+					.getActiveScheme());
+		} catch (final NotDefinedException e) {
+			fail("Should be able to activate a scheme");
+		}
+
+		// UNDEFINE SELECTED
+		scheme.undefine();
+		assertNull("The scheme should have become unselected", bindingManager
+				.getActiveScheme());
 	}
 
 	public final void testSetBindings() {

@@ -840,7 +840,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @return The active scheme; may be <code>null</code> if there is no
-	 *         active scheme.
+	 *         active scheme. This scheme is guaranteed to be defined.
 	 */
 	public final Scheme getActiveScheme() {
 		return activeScheme;
@@ -1627,18 +1627,17 @@ public final class BindingManager implements IContextManagerListener,
 	 * the height of the context tree.
 	 * </p>
 	 * 
-	 * @param schemeId
+	 * @param scheme
 	 *            The scheme to become active; must not be <code>null</code>.
 	 * @throws NotDefinedException
 	 *             If the given scheme is currently undefined.
 	 */
-	public final void setActiveScheme(final String schemeId)
+	public final void setActiveScheme(final Scheme scheme)
 			throws NotDefinedException {
-		if (schemeId == null) {
+		if (scheme == null) {
 			throw new NullPointerException("Cannot activate a null scheme"); //$NON-NLS-1$
 		}
 
-		final Scheme scheme = (Scheme) schemesById.get(schemeId);
 		if ((scheme == null) || (!scheme.isDefined())) {
 			throw new NotDefinedException("Cannot activate an undefined scheme"); //$NON-NLS-1$
 		}

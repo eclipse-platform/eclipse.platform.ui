@@ -87,7 +87,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -128,7 +128,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 
 		final Binding binding1 = new TestBinding("parent", "na", "parent",
 				null, null, Binding.SYSTEM);
@@ -181,7 +181,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -215,7 +215,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -253,7 +253,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -290,7 +290,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -328,7 +328,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -376,7 +376,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme childScheme = bindingManager.getScheme("child");
 		childScheme.define("child", "child scheme", "parent");
 
-		bindingManager.setActiveScheme("child");
+		bindingManager.setActiveScheme(childScheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -420,7 +420,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme childScheme = bindingManager.getScheme("child");
 		childScheme.define("child", "child scheme", "parent");
 
-		bindingManager.setActiveScheme("child");
+		bindingManager.setActiveScheme(childScheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);
@@ -457,7 +457,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 
 		final Binding binding1 = new TestBinding("sibling1", "na", "sibling1",
 				null, null, Binding.SYSTEM);
@@ -517,7 +517,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", "description", null);
 
-		bindingManager.setActiveScheme("na");
+		bindingManager.setActiveScheme(scheme);
 		final Set activeContextIds = new HashSet();
 		activeContextIds.add("na");
 		contextManager.setActiveContextIds(activeContextIds);

@@ -1815,7 +1815,7 @@ public class KeysPreferencePage extends PreferencePage implements
 							scheme.getParentId());
 				}
 				localChangeManager.setActiveScheme(bindingService
-						.getActiveScheme().getId());
+						.getActiveScheme());
 			} catch (final NotDefinedException e) {
 				throw new Error(
 						"There is a programmer error in the keys preference page"); //$NON-NLS-1$
