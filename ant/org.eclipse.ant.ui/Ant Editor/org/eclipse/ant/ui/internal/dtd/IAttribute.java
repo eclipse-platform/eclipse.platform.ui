@@ -38,7 +38,7 @@ public interface IAttribute extends IAtom {
 	
 	/**
 	 * 
-	 * @return String[] or null if type is not "NOTATION" or "enumeration".
+	 * @return String[] or null if type is not "NOTATION" or "ENUMERATION".
 	 */
 	public String[] getEnum();
 	
