@@ -790,6 +790,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		WorkbenchHelp.setHelp(deleteAction, IHelpContextIds.DELETE_RETARGET_ACTION);
 		partService.addPartListener(deleteAction);
 		deleteAction.setActionDefinitionId(deleteActionDefId);
+		// don't register the delete action with the key binding service.
+		// doing so would break cell editors that listen for keyPressed SWT 
+		// events.
 		//keyBindingService.registerGlobalAction(deleteAction);
 
 		// See if a welcome page is specified
