@@ -15,9 +15,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -41,7 +39,6 @@ public class EditWorkingSetAction extends Action {
 		super(WorkbenchMessages.getString("EditWorkingSetAction.text")); //$NON-NLS-1$
 		Assert.isNotNull(actionGroup);
 		setToolTipText(WorkbenchMessages.getString("EditWorkingSetAction.toolTip")); //$NON-NLS-1$
-		
 		this.shell = shell;
 		this.actionGroup = actionGroup;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_WORKING_SET_ACTION);

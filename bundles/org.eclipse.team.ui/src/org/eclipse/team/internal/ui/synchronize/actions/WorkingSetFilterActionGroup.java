@@ -10,24 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.WorkingSetComparator;
 
@@ -44,12 +34,11 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	private ClearWorkingSetAction clearWorkingSetAction;
 	private SelectWorkingSetAction selectWorkingSetAction;
 	private EditWorkingSetAction editWorkingSetAction;
-	
 	private IPropertyChangeListener workingSetUpdater;
-	
 	private int mruMenuCount;
-	private IMenuManager menuManager;
-	private IMenuListener menuListener;
+	private IActionBars bars;
+
+	private final String MRULIST_SEPARATOR = "mruList"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new instance of the receiver
@@ -78,24 +67,15 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		Collections.sort(sortedWorkingSets, new WorkingSetComparator());
 		
 		Iterator iter = sortedWorkingSets.iterator();
-		mruMenuCount = 0;
+		mruMenuCount = sortedWorkingSets.size();
+		int i = mruMenuCount;
 		while (iter.hasNext()) {
 			IWorkingSet workingSet = (IWorkingSet)iter.next();
 			if (workingSet != null) {
-				IContributionItem item = new WorkingSetMenuContributionItem(++mruMenuCount, this, workingSet);
-				menuManager.add(item);
+				IContributionItem item = new WorkingSetMenuContributionItem(i--, this, workingSet);
+				menuManager.prependToGroup(MRULIST_SEPARATOR, item);
 			}
 		}
-	}
-	/**
-	 * Removes the menu listener
-	 * 
-	 * @see ActionGroup#dispose()
-	 */
-	public void dispose() {
-		if (menuManager != null)
-			menuManager.removeMenuListener(menuListener);
-		super.dispose();
 	}
 	/**
 	 * Adds working set actions to the specified action bar.
@@ -104,14 +84,35 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
-		menuManager = actionBars.getMenuManager();
+		bars = actionBars;
+		IMenuManager menuManager = actionBars.getMenuManager();
 		menuManager.add(selectWorkingSetAction);
 		menuManager.add(clearWorkingSetAction);
 		menuManager.add(editWorkingSetAction);
-		menuManager.add(new Separator());
-		addMruWorkingSetActions(menuManager);
-		menuManager.add(new Separator());
+		menuManager.add(new Separator(MRULIST_SEPARATOR));
+		updateMruList();
 	};
+	
+	public void updateMruList() {
+		removePreviousMruWorkingSetActions(bars.getMenuManager());
+		addMruWorkingSetActions(bars.getMenuManager());
+		bars.updateActionBars();
+	}
+	
+	/**
+	 * Removes the most recently used working set actions that were
+	 * added to the specified menu.
+	 * 
+	 * @param menuManager menu manager to remove actions from
+	 */
+	private void removePreviousMruWorkingSetActions(IMenuManager menuManager) {
+		for (int i = 1; i <= mruMenuCount; i++) {
+			String id = WorkingSetMenuContributionItem.getId(i);
+			if(menuManager.find(id) != null) {
+				menuManager.remove(id);
+			}
+		}
+	}
 	/**
 	 * Returns the working set which is currently selected.
 	 * 
@@ -144,5 +145,6 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 					oldWorkingSet, 
 					newWorkingSet));
 		}
+		updateMruList();
 	}	
 }

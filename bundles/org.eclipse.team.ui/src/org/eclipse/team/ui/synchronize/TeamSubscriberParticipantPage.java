@@ -480,11 +480,11 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 
 	private void updateViewMenu(IActionBars actionBars) {
 		IMenuManager menu = actionBars.getMenuManager();
-		menu.removeAll();
 		MenuManager layoutMenu = new MenuManager(Policy.bind("action.layout.label")); //$NON-NLS-1$		
 		layoutMenu.add(toggleLayoutTable);
 		layoutMenu.add(toggleLayoutTree);
 		workingSetGroup.fillActionBars(actionBars);
+		menu.add(new Separator());
 		menu.add(layoutMenu);
 		menu.add(new Separator());
 		menu.add(showPreferences);
@@ -511,9 +511,12 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		// do all the real work when we get the next workset changed event
 		} else if(event.getProperty().equals(WorkingSetFilterActionGroup.CHANGE_WORKING_SET)) {
 			if(settingWorkingSet) return;
+			settingWorkingSet = true;
 			participant.setWorkingSet((IWorkingSet)event.getNewValue());
+			settingWorkingSet = false;
 		// Working set changed programatically
 		} else if(event.getProperty().equals(TeamSubscriberParticipant.P_SYNCVIEWPAGE_WORKINGSET)) {
+			if(settingWorkingSet) return;
 			settingWorkingSet = true;
 			Object newValue = event.getNewValue();
 			if (newValue instanceof IWorkingSet) {	
@@ -522,6 +525,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 				workingSetGroup.setWorkingSet(null);
 			}
 			settingWorkingSet = false;
+		// Change to showing of sync state in text labels preference
 		} else if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL)) {
 			getViewer().refresh(true /* update labels */);
 		}

@@ -41,7 +41,6 @@ public class SelectWorkingSetAction extends Action {
 		super(WorkbenchMessages.getString("SelectWorkingSetAction.text")); //$NON-NLS-1$
 		Assert.isNotNull(actionGroup);
 		setToolTipText(WorkbenchMessages.getString("SelectWorkingSetAction.toolTip")); //$NON-NLS-1$
-		
 		this.shell = shell;
 		this.actionGroup = actionGroup;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SELECT_WORKING_SET_ACTION);
