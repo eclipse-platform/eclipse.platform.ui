@@ -42,6 +42,12 @@ public interface IDebugPreferenceConstants {
 	public static final String VARIABLES_DETAIL_PANE_RIGHT = "Variables.detail.orientation.right"; //$NON-NLS-1$
 	public static final String VARIABLES_DETAIL_PANE_UNDERNEATH = "Variables.detail.orientation.underneath"; //$NON-NLS-1$
 
+	/**
+	 * The type of launching to perform
+	 */
+	public static final String LAUNCHING_STYLE = "Launching.style";
+	public static final String LAUNCHING_STYLE_LAUNCHERS = "Launching.style.launchers";
+	public static final String LAUNCHING_STYLE_CONFIGURATIONS = "Launching.style.configurations";
 }
 
 

@@ -25,10 +25,12 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.LaunchWizard;
 import org.eclipse.debug.internal.ui.LaunchWizardDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -52,8 +54,13 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		boolean controlHeld = (event.stateMask & SWT.SHIFT) != 0;
-		if (controlHeld) {
+		// For some transitional period, use a preference to determine whether to do launcher-based
+		// or configuration-based launching.  Eventually, the launcher-based support will be removed.
+		//boolean shiftHeld = (event.stateMask & SWT.SHIFT) != 0;		
+
+		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		String launchingStyle = prefStore.getString(IDebugPreferenceConstants.LAUNCHING_STYLE);
+		if (IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS.equals(launchingStyle)) {
 			runLaunchConfiguration();
 		} else {
 			runOldStyleLaunch();

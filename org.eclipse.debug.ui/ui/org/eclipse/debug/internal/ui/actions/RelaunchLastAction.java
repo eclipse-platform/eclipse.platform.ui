@@ -8,7 +8,7 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.LaunchHistoryElement;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -45,7 +45,7 @@ public class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
 	 * @see IActionDelegate
 	 */
 	public void run(IAction action){
-		final LaunchHistoryElement recent= DebugUIPlugin.getDefault().getLastLaunch();
+		final LaunchConfigurationHistoryElement recent= DebugUIPlugin.getDefault().getLastLaunch();
 		if (recent == null) {
 			Display.getCurrent().beep();
 		} else {

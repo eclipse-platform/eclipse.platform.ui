@@ -9,7 +9,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.LaunchHistoryElement;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -22,9 +22,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class RelaunchHistoryLaunchAction extends Action {
 
-	protected LaunchHistoryElement fLaunch;
+	protected LaunchConfigurationHistoryElement fLaunch;
 	
-	public RelaunchHistoryLaunchAction(LaunchHistoryElement launch) {
+	public RelaunchHistoryLaunchAction(LaunchConfigurationHistoryElement launch) {
 		super();
 		fLaunch= launch;
 		setText(launch.getLabel());

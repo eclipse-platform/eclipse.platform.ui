@@ -465,5 +465,33 @@ public class LaunchConfigurationInfo {
 			);
 	}
 	
+	/**
+	 * Two <code>LaunchConfigurationInfo</code> objects are equal if and only if they have the
+	 * same type and they have the same set of attributes with the same values.
+	 * 
+	 * @see Object#equals(Object)
+	 */
+	public boolean equals(Object obj) {
+		
+		// Make sure it's a LaunchConfigurationInfo object
+		if (!(obj instanceof LaunchConfigurationInfo)) {
+			return false;
+		}
+		
+		// Make sure the types are the same
+		LaunchConfigurationInfo other = (LaunchConfigurationInfo) obj;
+		if (!fType.getIdentifier().equals(other.getType().getIdentifier())) {
+			return false;
+		}
+		
+		// Make sure the attributes are the same
+		if (!fAttributes.equals(other.getAttributeTable())) {
+			return false;
+		}
+		
+		// They're equal
+		return true;
+	}
+	
 }
 

@@ -39,6 +39,14 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
 	protected void createFieldEditors() {
+		addField(new RadioGroupFieldEditor(IDebugPreferenceConstants.LAUNCHING_STYLE,
+											"Launching style", 
+											1,
+											new String[][] {
+												{"Launcher-based (no history or relaunching)", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, //$NON-NLS-1$
+												{"Configuration-based (history and relaunching available)", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} //$NON-NLS-1$
+											},
+											getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, DebugUIMessages.getString("Enable_&single-click_launching_1"), SWT.NONE, getFieldEditorParent()));  //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, DebugUIMessages.getString("DebugPreferencePage.Show_Debug_Perspective_when_a_program_is_launched_in_de&bug_mode_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
@@ -63,6 +71,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	}
 	
 	public static void initDefaults(IPreferenceStore store) {
+		store.setDefault(IDebugPreferenceConstants.LAUNCHING_STYLE, IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, true);
 		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, true);

@@ -7,7 +7,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.LaunchHistoryElement;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.ui.actions.DebugAction;
 
 public class DebugDropDownAction extends LaunchDropDownAction {
@@ -31,7 +31,7 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	/**
 	 * @see LaunchDropDownAction#getHistory()
 	 */
-	public LaunchHistoryElement[] getHistory() {
+	public LaunchConfigurationHistoryElement[] getHistory() {
 		return DebugUIPlugin.getDefault().getDebugHistory();
 	}
 	

@@ -525,15 +525,17 @@
 	</launchConfigurationTab>
 </extension>
 
+<!--
 <extension point="org.eclipse.ui.decorators">
 	<decorator
 		id="org.eclipse.debug.ui.launchConfigurationDecorator"
 		label="Launch Configuration Decorator"
-		state="true"
+		state="false"
 		class="org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationLabelDecorator"
 		objectClass="org.eclipse.core.resources.IFile"
 		adaptable="true">	
 	</decorator>
 </extension>
+-->
 
 </plugin>

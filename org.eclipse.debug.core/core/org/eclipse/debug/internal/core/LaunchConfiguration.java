@@ -272,10 +272,26 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	}
 
 	/**
-	 * @see ILaunchConfiguratin#getFile()
+	 * @see ILaunchConfiguration#getFile()
 	 */	
 	public IFile getFile() {
 		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(getLocation());
+	}
+
+	/**
+	 * @see ILaunchConfiguration#contentsEqual(Object)
+	 */
+	public boolean contentsEqual(Object object) {
+		try {
+			if (object instanceof LaunchConfiguration) {
+				LaunchConfiguration otherConfig = (LaunchConfiguration) object;
+				return getInfo().equals(otherConfig.getInfo()) &&
+						getName().equals(otherConfig.getName());				
+			}
+			return false;
+		} catch (CoreException ce) {
+			return false;
+		}
 	}
 
 	/**
@@ -286,7 +302,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * 
 	 * @return whether this configuration is equal to the
 	 *  given configuration
-	 * @see Object.equals(Object)
+	 * @see Object#equals(Object)
 	 */
 	public boolean equals(Object object) {
 		if (object instanceof ILaunchConfiguration) {

@@ -104,7 +104,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	/**
 	 * Collection of all launch configurations in the workspace.
-	 * <code>List</code> of <code>ILanuchConfiguratin</code>.
+	 * <code>List</code> of <code>ILaunchConfiguration</code>.
 	 */
 	private List fLaunchConfigurationIndex = new ArrayList(10);
 	

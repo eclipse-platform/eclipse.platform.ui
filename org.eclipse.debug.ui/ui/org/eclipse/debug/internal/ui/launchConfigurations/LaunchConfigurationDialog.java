@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -130,6 +131,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * launch configuration under edit
 	 */
 	private Text fNameText;
+	
+	private boolean fIgnoreNameChange = false;
 	
 	private String fLastSavedName = null;
 	
@@ -706,7 +709,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getNameTextWidget().addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					updateConfigFromName();
+					if (!ignoreNameChange()) {
+						updateConfigFromName();
+					}
 				}
 			}
 		);		
@@ -792,8 +797,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return fConfigTree;
 	}
 	
+	protected IStructuredSelection getTreeViewerSelection() {
+		return (IStructuredSelection)getTreeViewer().getSelection();
+	}
+	
 	protected Object getTreeViewerFirstSelectedElement() {
-		IStructuredSelection selection = (IStructuredSelection)getTreeViewer().getSelection();
+		IStructuredSelection selection = getTreeViewerSelection();
 		if (selection == null) {
 			return null;
 		}
@@ -806,6 +815,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	class LaunchConfigurationContentProvider implements ITreeContentProvider {
 		
 		/**
+		 * Actual launch configurations have no children.  Launch configuration types have
+		 * all configurations of that type as children, minus any configurations that are 
+		 * private or were autosaved.
+		 * 
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
 		public Object[] getChildren(Object parentElement) {
@@ -814,8 +827,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			} else if (parentElement instanceof ILaunchConfigurationType) {
 				try {
 					ILaunchConfigurationType type = (ILaunchConfigurationType)parentElement;
-					// all configs in workspace of a specific type
-					return getLaunchManager().getLaunchConfigurations(type);
+					ILaunchConfiguration[] allConfigs = getLaunchManager().getLaunchConfigurations(type);
+					ArrayList filteredConfigs = new ArrayList(allConfigs.length);
+					for (int i = 0; i < allConfigs.length; i++) {
+						ILaunchConfiguration config = allConfigs[i];
+						if (config.getAttribute(IDebugUIConstants.ATTR_AUTOSAVED, false) ||
+							config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+							continue;
+						}
+						filteredConfigs.add(config);
+					}
+					return filteredConfigs.toArray();
 				} catch (CoreException e) {
 					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e.getStatus());
 				}
@@ -1258,6 +1280,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		return fMode;
  	}
  	
+ 	protected void setIgnoreNameChange(boolean ignore) {
+ 		fIgnoreNameChange = ignore;
+ 	}
+ 	
+ 	protected boolean ignoreNameChange() {
+ 		return fIgnoreNameChange;
+ 	}
+ 	
 	/**
 	 * Sets the text widget used to display the name
 	 * of the configuration being displayed/edited
@@ -1471,14 +1501,16 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Notification the 'delete' button has been pressed
 	 */
 	protected void handleDeletePressed() {
-		try {
-			Object firstElement = getTreeViewerFirstSelectedElement();
-			if (firstElement instanceof ILaunchConfiguration) {
-				ILaunchConfiguration config = (ILaunchConfiguration) firstElement;
-				clearLaunchConfiguration();
-				config.delete();
+		IStructuredSelection selection = getTreeViewerSelection();
+		Iterator iterator = selection.iterator();
+		while (iterator.hasNext()) {
+			Object selectedElement = iterator.next();
+			if (selectedElement instanceof ILaunchConfiguration) {
+				try {
+					((ILaunchConfiguration)selectedElement).delete();
+				} catch (CoreException ce) {					
+				}
 			}
-		} catch (CoreException ce) {
 		}
 	}	
 	
@@ -1507,10 +1539,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * The new name is guaranteed not to collide with any existing config name.
 	 */
 	protected String generateUniqueNameFrom(String startingName) {
-		String newName = startingName;
 		int index = 1;
+		String baseName = startingName;
+		int underscoreIndex = baseName.lastIndexOf('_');
+		if (underscoreIndex > -1) {
+			String trailer = baseName.substring(underscoreIndex + 1);
+			try {
+				index = Integer.parseInt(trailer);
+				baseName = startingName.substring(0, underscoreIndex);
+			} catch (NumberFormatException nfe) {
+			}
+		} 
+		String newName = baseName;
 		while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
-			StringBuffer buffer = new StringBuffer(startingName);
+			StringBuffer buffer = new StringBuffer(baseName);
 			buffer.append('_');
 			buffer.append(String.valueOf(index));
 			index++;
@@ -1538,7 +1580,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			setIgnoreSelectionChanges(true);
 			newConfig = workingCopy.doSave();
 			setIgnoreSelectionChanges(false);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {						
 		}	
 		setLastSavedName(workingCopy.getName());	
 		setWorkingCopyUserDirty(false);		
@@ -1551,8 +1593,32 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Notification the 'launch' button has been pressed
 	 */
 	protected void handleLaunchPressed() {
+		
+		// If the working copy has changed or has not yet been saved, 'autosave' it
+		ILaunchConfiguration config = null;
+		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
+		if (isWorkingCopyUserDirty() || !workingCopy.exists()) {
+			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_AUTOSAVED, true);
+			// If we're autosaving an existing config, set a unique name to avoid overwriting
+			// the existing config
+			if (workingCopy.exists()) {
+				String uniqueName = generateUniqueNameFrom(getNameTextWidget().getText());
+				workingCopy.rename(uniqueName);
+			}
+			
+			try {
+				setIgnoreSelectionChanges(true);
+				config = workingCopy.doSave();
+				setIgnoreSelectionChanges(false);
+			} catch (CoreException ce) {			
+			}	
+		} else {
+			config = workingCopy.getOriginal();
+		}
+		
+		// Do the launch
 		try {
-			getWorkingCopy().launch(getMode());
+			config.launch(getMode());
 		} catch (CoreException ce) {
 		}		
 		close();
@@ -1564,7 +1630,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 
 	/***************************************************************************************
 	 * 
-	 * ProgressMonitor & IRunnableContext related method
+	 * ProgressMonitor & IRunnableContext related methods
 	 * 
 	 ***************************************************************************************/
 

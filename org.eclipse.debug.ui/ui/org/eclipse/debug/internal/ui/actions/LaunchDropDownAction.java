@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.internal.ui.LaunchHistoryElement;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -69,10 +69,10 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	}
 
 	protected Menu createMenu(Menu menu) {
-		LaunchHistoryElement[] historyList= getHistory();
+		LaunchConfigurationHistoryElement[] historyList= getHistory();
 		int count= 0;
 		for (int i = 0; i < historyList.length; i++) {
-			LaunchHistoryElement launch= historyList[i];
+			LaunchConfigurationHistoryElement launch= historyList[i];
 			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
 			createMenuForAction(menu, newAction, i+1);
 			count++;
@@ -119,7 +119,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	/**
 	 * Returns an array of previous launches applicable to this drop down.
 	 */
-	public abstract LaunchHistoryElement[] getHistory();
+	public abstract LaunchConfigurationHistoryElement[] getHistory();
 	
 	/**
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down.

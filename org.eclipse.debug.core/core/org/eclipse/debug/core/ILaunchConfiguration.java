@@ -324,5 +324,16 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @see ILaunchManager#getLaunchConfiguration(String)
 	 */
 	public String getMemento();
+	
+	/**
+	 * Because an <code>ILaunchConfiguration</code> is a handle, the equals() method
+	 * should return whether the handles are equal.  This method returns whether the
+	 * contents of the launch configurations are equal.  Thus, this method is akin
+	 * to a 'deep' equals.
+	 * 
+	 * @return whether the contents of this launch configuration are equal to the contents
+	 * of specified launch configuration.
+	 */
+	public boolean contentsEqual(Object object);
 
 }
