@@ -136,12 +136,12 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 				InputStream stream= file.getContents(false);
 				reader= new BufferedReader(new InputStreamReader(stream, ResourcesPlugin.getEncoding()));
 			}
-			StringBuffer sb= new StringBuffer(100);
 			int lineCounter= 1;
 			int charCounter=0;
 			boolean eof= false;
 			try {
 				while (!eof) {
+					StringBuffer sb= new StringBuffer(200);
 					int eolStrLength= readLine(reader, sb);
 					int lineLength= sb.length();
 					int start= 0;
@@ -194,7 +194,6 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	
 	protected int readLine(BufferedReader reader, StringBuffer sb) throws IOException {
 		int ch= -1;
-		sb.setLength(0);
 		if (fPushback) {
 			ch= fPushbackChar;
 			fPushback= false;
