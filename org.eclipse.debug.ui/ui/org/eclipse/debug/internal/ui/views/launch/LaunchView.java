@@ -178,7 +178,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Context manager which automatically opens and closes views
 	 * based on debug contexts.
 	 */
-	private LaunchViewContextListener contextListener;
+	private LaunchViewContextListener fContextListener;
 	
 	/**
 	 * Creates a launch view and an instruction pointer marker for the view
@@ -438,7 +438,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (getViewer() != null) {
 			getViewer().removeSelectionChangedListener(this);
 		}
-		
+		if (fContextListener != null {
+			fContextListener.dispose();
+		}
 		getSite().getPage().removePartListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		getSite().getWorkbenchWindow().removePageListener(this);
@@ -490,7 +492,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 
 	private void updateContextListener() {
 		if (isActive() && isAutoManageViews()) {
-			contextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
+			fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 		}
 	}
 
@@ -553,7 +555,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected void launchesTerminated(ILaunch[] launches) {
 		if (isAutoManageViews()) {
-			contextListener.launchesTerminated(launches);
+			fContextListener.launchesTerminated(launches);
 		}
 	}
 
@@ -636,8 +638,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void partOpened(IWorkbenchPart part) {
 		if (part == this) {		   
-            contextListener= new LaunchViewContextListener(LaunchView.this);
-            contextListener.init(getMemento());
+            fContextListener= new LaunchViewContextListener(LaunchView.this);
+            fContextListener.init(getMemento());
 			updateContextListener();
 		}
 	}
@@ -1232,7 +1234,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
 			}
 		}
-		contextListener.saveState(memento);
+		fContextListener.saveState(memento);
 	}
 
 	/**
