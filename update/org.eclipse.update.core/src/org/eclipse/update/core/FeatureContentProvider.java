@@ -37,12 +37,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	
 	
 	private URL base;
-	protected IFeature feature;
-		
-	// local file map in temporary area
-	
-	// buffer pool
-	
+	private IFeature feature;
+	private File tmpDir; // local work area for each provider
 		
 	/**
 	 * @since 2.0
@@ -57,6 +53,13 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 */
 	public URL getURL() {
 		return base;
+	}
+	
+	/*
+	 * @see IFeatureContentProvider#getFeature()
+	 */
+	public IFeature getFeature() {
+		return feature;
 	}
 		
 	/*
@@ -86,7 +89,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			return ref.newContentReference(ref.getIdentifier(), localFile);
 			
 		// download the referenced file into local temporary area
-		localFile = UpdateManagerUtils.createLocalFile(getWorkingDirectory(),key, null/*name*/);
+		localFile = UpdateManagerUtils.createLocalFile(getWorkingDirectory(), key, null/*name*/);
 		InputStream is = null;
 		OutputStream os = null;
 		try {
@@ -127,14 +130,16 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		file = localRef.asFile();
 		return file;
 	}
-
+	
+		
 	/**
-	 * Gets the eature.
-	 * @return Returns a IFeature
+	 * Returns working directory for this content provider
+	 * 
+	 * @since 2.0
 	 */
-	public IFeature getFeature() {
-		return feature;
+	protected File getWorkingDirectory() throws IOException {
+		if (tmpDir == null)
+			tmpDir = UpdateManagerUtils.createWorkingDirectory();
+		return tmpDir;
 	}
-
-
 }

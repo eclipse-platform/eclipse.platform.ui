@@ -22,8 +22,6 @@ import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 public class JarContentReference extends ContentReference {
 
-
-
 	private JarFile jarFile;
 
 
@@ -57,23 +55,7 @@ public class JarContentReference extends ContentReference {
 		public String defineIdentifier(JarEntry entry) {
 			return entry.getName();
 		}
-	}
-
-	
-	
-	
-	
-	
-	
-	
-
-	
-
-	
-
-	
-	
-	
+	}	
 
 	public JarContentReference(String id, File file) {
 		super(id, file);
@@ -105,7 +87,7 @@ public class JarContentReference extends ContentReference {
 	 * 
 	 * @since 2.0
 	 */
-	public ContentReference[] unpack(ContentSelector selector, InstallMonitor monitor) throws IOException {
+	public ContentReference[] unpack(File dir, ContentSelector selector, InstallMonitor monitor) throws IOException {
 		
 		// make sure we have a selector
 		if (selector == null)
@@ -135,7 +117,7 @@ public class JarContentReference extends ContentReference {
 					is = null;
 					os = null;
 					entryId = selector.defineIdentifier(entry);
-					localFile = UpdateManagerUtils.createLocalFile(getWorkingDirectory(),null/*key*/, entryId); // create temp file w/o a key map
+					localFile = UpdateManagerUtils.createLocalFile(dir, null/*key*/, entryId); // create temp file w/o a key map
 					if (!entry.isDirectory()) { 
 						try {
 							is = jarArchive.getInputStream(entry);
@@ -163,7 +145,7 @@ public class JarContentReference extends ContentReference {
 	 * 
 	 * @since 2.0
 	 */
-	public ContentReference unpack( String entryName, ContentSelector selector, InstallMonitor monitor) throws IOException {
+	public ContentReference unpack(File dir, String entryName, ContentSelector selector, InstallMonitor monitor) throws IOException {
 						
 		// make sure we have a selector
 		if (selector == null)		
@@ -178,7 +160,7 @@ public class JarContentReference extends ContentReference {
 			InputStream is = null;
 			OutputStream os = null;
 			entryId = selector.defineIdentifier(entry);
-			File localFile = UpdateManagerUtils.createLocalFile(getWorkingDirectory(),null/*key*/, entryId); // create temp file w/o a key map
+			File localFile = UpdateManagerUtils.createLocalFile(dir, null/*key*/, entryId); // create temp file w/o a key map
 			if (!entry.isDirectory()) { 
 				try {
 					is = jarArchive.getInputStream(entry);

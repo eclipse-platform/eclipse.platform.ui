@@ -98,6 +98,13 @@ public interface IFeatureContentProvider {
 	 */
 
 	ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException;
+		
+	/**
+	 * Returns the feature for this content provider
+	 * @return feature for this content provider
+	 * @since 2.0
+	 */
+	IFeature getFeature();
 	
 	/**
 	 * sets the feature for this content provider
