@@ -42,7 +42,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	
 	protected Button runBackgroundButton;
 	protected Text argumentField;
-	protected Button promptArgButton;
+	//protected Button promptArgButton;
 	private Button variableButton;
 	
 	private SelectionAdapter selectionAdapter;
@@ -122,15 +122,15 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createPromptForArgumentComponent(Composite parent) {
-		promptArgButton = new Button(parent, SWT.CHECK);
-		if (promptArgLabel != null) {
-			promptArgButton.setText(promptArgLabel);
-		} else {
-			promptArgButton.setText("Prompt for arguments before running tool"); //$NON-NLS-1$
-		}
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		promptArgButton.setLayoutData(data);
-		promptArgButton.addSelectionListener(getSelectionAdapter());
+//		promptArgButton = new Button(parent, SWT.CHECK);
+//		if (promptArgLabel != null) {
+//			promptArgButton.setText(promptArgLabel);
+//		} else {
+//			promptArgButton.setText("Prompt for arguments before running tool");
+//		}
+//		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+//		promptArgButton.setLayoutData(data);
+//		promptArgButton.addSelectionListener(getSelectionAdapter());
 	}
 	
 	/**
@@ -179,13 +179,13 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	}
 		
 	private void updatePromptForArgument(ILaunchConfiguration configuration) {
-		boolean  prompt= false;
-		try {
-			prompt= configuration.getAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, false);
-		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
-		}
-		promptArgButton.setSelection(prompt);
+//		boolean  prompt= false;
+//		try {
+//			prompt= configuration.getAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, false);
+//		} catch (CoreException ce) {
+//			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
+//		}
+//		promptArgButton.setSelection(prompt);
 	}
 	
 	private void updateArgument(ILaunchConfiguration configuration) {
@@ -212,7 +212,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, configuration, promptArgButton.getSelection(), false);
+		//setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, configuration, promptArgButton.getSelection(), false);
 		setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, configuration, runBackgroundButton.getSelection(), false);
 		
 		String arguments= argumentField.getText().trim();
