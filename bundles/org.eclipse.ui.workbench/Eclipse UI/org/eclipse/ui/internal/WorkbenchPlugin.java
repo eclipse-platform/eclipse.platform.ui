@@ -463,7 +463,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
                     getWorkbench());
             registryReader
                     .loadFromRegistry(Platform.getExtensionRegistry());
-            preferenceManager.addPagesAndGroups(registryReader.getTopLevelNodes(),registryReader.getTopLevelGroups());
+            preferenceManager.addPagesAndGroups(registryReader.getTopLevelNodes(),registryReader.getGroups());
            
         }
         return preferenceManager;

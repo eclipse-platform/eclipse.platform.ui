@@ -602,7 +602,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		getTreeViewer().setInput(group);
 		Object selection = group.getLastSelection();
 		if (selection == null)
-			selection = group.getGroupsAndNodes()[0];
+			selection = group.getPreferenceNodes()[0];
 		getTreeViewer().setSelection(new StructuredSelection(selection), true);
 	}
 

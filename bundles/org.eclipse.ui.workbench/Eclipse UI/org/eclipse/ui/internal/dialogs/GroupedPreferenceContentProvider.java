@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -46,6 +45,7 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 		WorkbenchPreferenceManager manager = (WorkbenchPreferenceManager) WorkbenchPlugin
 				.getDefault().getPreferenceManager();
 		WorkbenchPreferenceGroup[] groups = manager.groups;
+		setManager(manager);
 
 		for (int i = 0; i < groups.length; i++) {
 			WorkbenchPreferenceGroup group = groups[i];
@@ -59,7 +59,7 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	public Object[] getElements(Object inputElement) {
 
 		if(groupedMode)
-			return ((WorkbenchPreferenceGroup) inputElement).getGroupsAndNodes();
+			return ((WorkbenchPreferenceGroup) inputElement).getPreferenceNodes();
 		return super.getElements(inputElement);
 	}
 
@@ -77,27 +77,11 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceContentProvider#getParent(java.lang.Object)
-	 */
-	public Object getParent(Object element) {
-		if(groupedMode)
-			return currentInput.findParent(element);
-		if(element instanceof WorkbenchPreferenceGroup)
-			return null;//Handle the case where input changes and the selection is invalid
-		return super.getParent(element);
-
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
 
-		Object[] children;
-		if (parentElement instanceof IPreferenceNode)
-			children = super.getChildren(parentElement);
-		else
-			children = getElements(parentElement);
+		Object[] children = super.getChildren(parentElement);
 
 		if(!groupedMode)//No check if we are not grouping
 			return children;

@@ -29,7 +29,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceGroup;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 
@@ -39,29 +38,27 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
  */
 public class PreferencePageRegistryReader extends CategorizedPageRegistryReader {
 
-	public static final String ATT_GROUP = "group"; //$NON-NLS-1$
+	private static final String ATT_GROUP = "group"; //$NON-NLS-1$
 
-	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
+	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
-	public static final String ATT_NAME = "name"; //$NON-NLS-1$
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$
 
-	public static final String ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
 
-	public static final String TAG_PAGE = "page"; //$NON-NLS-1$
+	private static final String TAG_PAGE = "page"; //$NON-NLS-1$
 
-	public static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 
-	public static final String TAG_GROUP = "group"; //$NON-NLS-1$
+	private static final String ATT_GROUP_DEFAULT = "default"; //$NON-NLS-1$
 
-	public static final String ATT_PARENT_GROUP = "parent"; //$NON-NLS-1$
+	private final static String TRUE_STRING = "true";//$NON-NLS-1$
 
-	public static final String ADVANCED_ID = "org.eclipse.ui.advanced"; //$NON-NLS-1$
+	private static final String TAG_GROUP = "group"; //$NON-NLS-1$
 
 	private List nodes;
 
-	private Collection topGroups;
-
-	private Hashtable groups;
+	private List groups;
 
 	private IWorkbench workbench;
 
@@ -79,21 +76,21 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 			super(reader);
 			this.node = nodeToCategorize;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader.CategoryNode#getLabelText()
 		 */
 		String getLabelText() {
 			return node.getLabelText();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader.CategoryNode#getLabelText(java.lang.Object)
 		 */
 		String getLabelText(Object element) {
 			return ((WorkbenchPreferenceNode) element).getLabelText();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader.CategoryNode#getNode()
 		 */
@@ -133,28 +130,28 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#add(java.lang.Object, java.lang.Object)
 	 */
 	void add(Object parent, Object node) {
 		((IPreferenceNode) parent).add((IPreferenceNode) node);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#createCategoryNode(org.eclipse.ui.internal.registry.CategorizedPageRegistryReader, java.lang.Object)
 	 */
 	CategoryNode createCategoryNode(CategorizedPageRegistryReader reader, Object object) {
 		return new PreferencesCategoryNode(reader, (WorkbenchPreferenceNode) object);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getCategory(java.lang.Object)
 	 */
 	String getCategory(Object node) {
 		return ((WorkbenchPreferenceNode) node).getCategory();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getNodes()
 	 */
@@ -173,7 +170,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 */
 	public void loadFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
-		groups = new Hashtable();
+		groups = new ArrayList();
 
 		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
 
@@ -207,7 +204,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		String name = element.getAttribute(ATT_NAME);
 		String id = element.getAttribute(ATT_ID);
 		String icon = element.getAttribute(ATT_ICON);
-		String parent = element.getAttribute(ATT_PARENT_GROUP);
+		boolean defaultValue = TRUE_STRING.equals(element.getAttribute(ATT_GROUP_DEFAULT));
 
 		Collection pageIds = readPages(element);
 
@@ -218,7 +215,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 			descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, icon);
 		}
 
-		groups.put(id, new WorkbenchPreferenceGroup(id, name, parent, pageIds, descriptor));
+		groups.add(new WorkbenchPreferenceGroup(id, name, pageIds, descriptor, defaultValue));
 		return true;
 	}
 
@@ -277,8 +274,9 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	private void processGroups() {
 
 		Hashtable nodeToGroupMapping = new Hashtable();
+		WorkbenchPreferenceGroup defaultGroup = null;
 
-		Iterator groupIterator = groups.values().iterator();
+		Iterator groupIterator = groups.iterator();
 
 		while (groupIterator.hasNext()) {
 			WorkbenchPreferenceGroup nextGroup = (WorkbenchPreferenceGroup) groupIterator.next();
@@ -286,58 +284,22 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 			while (pages.hasNext()) {
 				nodeToGroupMapping.put(pages.next(), nextGroup);
 			}
+			if (nextGroup.isDefault())
+				defaultGroup = nextGroup;
 		}
 
 		Iterator nodeIterator = nodes.iterator();
-		WorkbenchPreferenceGroup advanced = (WorkbenchPreferenceGroup) groups.get(ADVANCED_ID);
 
 		while (nodeIterator.hasNext()) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodeIterator.next();
 			if (nodeToGroupMapping.containsKey(node.getId())) {
 				((WorkbenchPreferenceGroup) nodeToGroupMapping.get(node.getId())).addNode(node);
-			} else if (advanced != null && topLevelNodes.contains(node))
-				advanced.addNode(node);
-
-		}
-
-		organizeGroups();
-	}
-
-	/**
-	 * Return the groupd in sorted and in tree order.
-	 * 
-	 * @return Collection of Group
-	 */
-	private void organizeGroups() {
-		topGroups = new ArrayList();
-
-		Iterator allGroups = groups.values().iterator();
-
-		while (allGroups.hasNext()) {
-			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) allGroups.next();
-			String parentId = group.getParent();
-			if (parentId == null)
-				topGroups.add(group);
-			else {
-				Object parent = groups.get(parentId);
-				if (parent == null) {
-					WorkbenchPlugin.log("Invalid category path: " + parentId); //$NON-NLS-1$
-					topGroups.add(group);
-				} else {
-					((WorkbenchPreferenceGroup) parent).addChild(group);
-				}
+			} else if (topLevelNodes.contains(node) && defaultGroup != null) {
+				defaultGroup.addNode(node);
 			}
 
 		}
 
-	}
-
-	/**
-	 * Return the top level groups.
-	 * @return Collection of WorkbenchPreferenceGroup.
-	 */
-	public Collection getTopLevelGroups() {
-		return topGroups;
 	}
 
 	/**
@@ -347,11 +309,19 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	public Collection getTopLevelNodes() {
 		return topLevelNodes;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getFavoriteNodeId()
 	 */
 	String getFavoriteNodeId() {
 		return ((Workbench) workbench).getMainPreferencePageId();
+	}
+
+	/**
+	 * Get all of the groups found by the receiver.
+	 * @return Returns the groups.
+	 */
+	public Collection getGroups() {
+		return this.groups;
 	}
 }

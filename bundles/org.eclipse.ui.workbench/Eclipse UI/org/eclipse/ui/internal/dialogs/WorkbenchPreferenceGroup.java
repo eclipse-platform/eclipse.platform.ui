@@ -25,50 +25,41 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * in the workbench.
  */
 public class WorkbenchPreferenceGroup {
-	
+
 	private String id;
+
 	private String name;
-	private String parentGroupId;
-	private Collection childGroups = new ArrayList();
+
 	private Collection pages = new ArrayList();
+
 	private Collection pageIds;
+
 	private ImageDescriptor imageDescriptor;
+
 	private Image image;
+
 	private boolean highlight = false;
+
 	private Object lastSelection = null;
+
+	private boolean isDefault = false;
 
 	/**
 	 * Create a new instance of the receiver.
 	 * @param uniqueID The unique id. Must be unique and non null.
 	 * @param displayableName The human readable name
-	 * @param parentId The id of the parent category.
 	 * @param ids
 	 * @param icon The ImageDescriptor for the icon for the
 	 * receiver. May be <code>null</code>.
+	 * @param defaultValue <code>true</code> if this is the default group
 	 */
-	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, String parentId, Collection ids, ImageDescriptor icon) {
+	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, Collection ids,
+			ImageDescriptor icon, boolean defaultValue) {
 		id = uniqueID;
 		name = displayableName;
-		parentGroupId = parentId;
 		imageDescriptor = icon;
 		pageIds = ids;
-	}
-
-	/**
-	 * Return the id of the parent
-	 * @return String
-	 */
-	public String getParent() {
-		return parentGroupId;
-	}
-
-	/**
-	 * Add the category to the children.
-	 * @param category
-	 */
-	public void addChild(WorkbenchPreferenceGroup category) {
-		childGroups.add(category);
-		
+		isDefault = defaultValue;
 	}
 
 	/**
@@ -85,20 +76,20 @@ public class WorkbenchPreferenceGroup {
 	 */
 	public void addNode(WorkbenchPreferenceNode node) {
 		pages.add(node);
-		
+
 	}
-	
+
 	/**
 	 * Return the image for the receiver. Return a default
 	 * image if there isn't one.
 	 * @return Image
 	 */
 	public Image getImage() {
-		
-		if(imageDescriptor == null)
+
+		if (imageDescriptor == null)
 			return null;
-		
-		if(image == null)
+
+		if (image == null)
 			image = imageDescriptor.createImage();
 		return image;
 	}
@@ -110,12 +101,12 @@ public class WorkbenchPreferenceGroup {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Dispose the resources for the receiver.
 	 *
 	 */
-	public void disposeResources(){
+	public void disposeResources() {
 		image.dispose();
 		image = null;
 	}
@@ -139,26 +130,6 @@ public class WorkbenchPreferenceGroup {
 	}
 
 	/**
-	 * Return the children of the receiver.
-	 * @return Collection
-	 */
-	public Collection getChildren() {
-		return childGroups;
-	}
-	
-	/**
-	 * Return the all of the child groups and
-	 * nodes.
-	 * @return Collection
-	 */
-	public Object[] getGroupsAndNodes() {
-		Collection allChildren = new ArrayList();
-		allChildren.addAll(childGroups);
-		allChildren.addAll(pages);
-		return allChildren.toArray();
-	}
-
-	/**
 	 * Add all of the children that match text to the
 	 * highlight list.
 	 * @param text
@@ -166,23 +137,15 @@ public class WorkbenchPreferenceGroup {
 	public void highlightHits(String text) {
 		Iterator pagesIterator = pages.iterator();
 		StringMatcher matcher = new StringMatcher('*' + text + '*', true, false);
-		
-		
-		while(pagesIterator.hasNext()){
+
+		while (pagesIterator.hasNext()) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) pagesIterator.next();
-			if (text.length() ==0) 
-				clearSearchResults(node); 
+			if (text.length() == 0)
+				clearSearchResults(node);
 			else
 				matchNode(matcher, node);
 		}
-		
-		Iterator groupsIterator = childGroups.iterator();
-		
-		while(groupsIterator.hasNext()){
-			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) groupsIterator.next();
-			group.highlight = text.length() == 0 ? false : matcher.match(group.getName()); 
-			group.highlightHits(text);
-		}
+
 	}
 
 	void clearSearchResults(WorkbenchPreferenceNode node) {
@@ -231,46 +194,6 @@ public class WorkbenchPreferenceGroup {
 	}
 
 	/**
-	 * Find the parent of element in the receiver.
-	 * If there isn't one return <code>null</null>.
-	 * @param element
-	 * @return Object or <code>null</null>.
-	 */
-	public Object findParent(Object element) {
-		return findParent(this,element);
-	}
-
-	/**
-	 * Find the parent of this element starting at this group.
-	 * @param group
-	 * @param element
-	 */
-	private Object findParent(WorkbenchPreferenceGroup group, Object element) {
-		Iterator pagesIterator = group.pages.iterator();
-		while(pagesIterator.hasNext()){
-			WorkbenchPreferenceNode next = (WorkbenchPreferenceNode) pagesIterator.next();
-			if(next.equals(element))
-				return group;
-			Object parent = findParent(next,element);
-			if(parent != null)
-				return parent;
-		}
-		
-		Iterator subGroupsIterator = group.childGroups.iterator();
-		while(subGroupsIterator.hasNext()){
-			WorkbenchPreferenceGroup next = (WorkbenchPreferenceGroup) subGroupsIterator.next();
-			if(next.equals(element))
-				return group;
-			Object parent = findParent(next,element);
-			if(parent != null)
-				return parent;
-		}
-		
-		return null;
-		
-	}
-
-	/**
 	 * Find the parent of this element starting at this node.
 	 * @param node
 	 * @param element
@@ -280,11 +203,11 @@ public class WorkbenchPreferenceGroup {
 		IPreferenceNode[] subs = node.getSubNodes();
 		for (int i = 0; i < subs.length; i++) {
 			IPreferenceNode subNode = subs[i];
-			if(subNode.equals(element))
+			if (subNode.equals(element))
 				return node;
-			Object parent = findParent(subNode,element);
-			if(parent != null)
-				return parent;			
+			Object parent = findParent(subNode, element);
+			if (parent != null)
+				return parent;
 		}
 		return null;
 	}
@@ -298,7 +221,7 @@ public class WorkbenchPreferenceGroup {
 		for (int i = 0; i < filteredIds.length; i++) {
 			checkId(filteredIds[i]);
 		}
-		
+
 	}
 
 	/**
@@ -308,16 +231,11 @@ public class WorkbenchPreferenceGroup {
 	 */
 	private void checkId(String id) {
 		Iterator pagesIterator = pages.iterator();
-		while(pagesIterator.hasNext()){
+		while (pagesIterator.hasNext()) {
 			WorkbenchPreferenceNode next = (WorkbenchPreferenceNode) pagesIterator.next();
 			checkHighlightNode(id, next);
 		}
-		
-		Iterator childIterator = childGroups.iterator();
-		while(childIterator.hasNext()){
-			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) childIterator.next();
-			group.checkId(id);
-		}
+
 	}
 
 	/**
@@ -327,15 +245,22 @@ public class WorkbenchPreferenceGroup {
 	 * @return <code>true</code> if a match is found
 	 */
 	private boolean checkHighlightNode(String id, IPreferenceNode node) {
-		if(node.getId().equals(id)){
+		if (node.getId().equals(id)) {
 			((WorkbenchPreferenceNode) node).setHighlighted(true);
 			return true;
 		}
 		IPreferenceNode[] subNodes = node.getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
-			if(checkHighlightNode(id,subNodes[i]))
-				return true;			
+			if (checkHighlightNode(id, subNodes[i]))
+				return true;
 		}
 		return false;
+	}
+	/**
+	 * Return whether or not this is the default group.
+	 * @return boolean
+	 */
+	public boolean isDefault() {
+		return this.isDefault;
 	}
 }

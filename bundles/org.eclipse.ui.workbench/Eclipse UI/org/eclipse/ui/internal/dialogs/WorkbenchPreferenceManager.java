@@ -63,11 +63,6 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 			returnValue.put(pageIds.next(),group);
 		}
 		
-		Iterator children = group.getChildren().iterator();
-		while(children.hasNext()){
-			addIds(((WorkbenchPreferenceGroup)children.next()),returnValue);
-		}
-		
 	}
 
 	/**
