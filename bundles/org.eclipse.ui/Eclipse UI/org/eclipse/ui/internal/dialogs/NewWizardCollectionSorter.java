@@ -39,6 +39,13 @@ public int compare(Viewer viewer,Object o1,Object o2) {
 	String name2 = ((WizardCollectionElement)o2).getLabel(o2);
 	if (name1.equals(name2))
 		return 0;
+		
+	// Be sure that the examples category is at the end of the wizard categories
+	if (name2.equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
+		return -1;
+		
+	if (name1.equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
+		return 1;
 
 	// note that this must be checked for name2 before name1 because if they're
 	// BOTH equal to BASE_CATEGORY then we want to answer false by convention
