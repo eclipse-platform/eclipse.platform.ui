@@ -12,6 +12,7 @@ package org.eclipse.team.internal.core;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,7 +23,7 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 
 	private IStatus getDefaultStatus(IFile file) {
 		return file.isReadOnly()
-				? new Status(Status.ERROR, TeamPlugin.ID, Status.ERROR, Policy.bind("FileModificationValidator.fileIsReadOnly", file.getFullPath().toString()), null) //$NON-NLS-1$
+				? new Status(Status.ERROR, TeamPlugin.ID, IResourceStatus.READ_ONLY_LOCAL, Policy.bind("FileModificationValidator.fileIsReadOnly", file.getFullPath().toString()), null) //$NON-NLS-1$
 				: OK;
 	}
 	
