@@ -2,7 +2,13 @@
 
 # Turn on debugging for the org.eclipse.core.resources plugin.
 # Also displays snapshot (incremental save) times.
-org.eclipse.core.resources/debug=true
+org.eclipse.core.resources/debug=false
+
+# Monitor builders and gather time statistics etc.
+org.eclipse.core.resources/monitor/builders=false
+
+# Monitor resource change listeners and gather time statistics etc.
+org.eclipse.core.resources/monitor/listeners=false
 
 # Debug build failure cases such as failure to retrieve deltas.
 org.eclipse.core.resources/build/failure=false
