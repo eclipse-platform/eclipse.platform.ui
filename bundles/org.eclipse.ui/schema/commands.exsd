@@ -470,6 +470,11 @@ This particular API should still be considered experimental.  While you may use 
    </element>
 
    <element name="commandParameter">
+      <annotation>
+         <documentation>
+            Defines a parameter that a command should understand.  A parameter is a way to provide more information to a handler at execution time.  For example, a &quot;show view&quot; command might take a view as a parameter.  Handlers should be able to understand these parameters, so they should be treated like API.
+         </documentation>
+      </annotation>
       <complexType>
          <all>
             <element ref="values"/>
@@ -477,14 +482,14 @@ This particular API should still be considered experimental.  While you may use 
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The unique identifier for this parameter.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name for the parameter.  This is the name as it will be displayed to an end-user.  As such, it should be translatable.  The name should be short -- preferrably one word.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -494,7 +499,7 @@ This particular API should still be considered experimental.  While you may use 
          <attribute name="values" type="string">
             <annotation>
                <documentation>
-                  
+                  The class providing a list of parameter values for the user to select.  This class should implement &lt;code&gt;org.eclipse.core.commands.IParameterValues&lt;/code&gt;.  If this class is not specified, you must specify the more verbose &lt;code&gt;values&lt;/code&gt; element.  Please see &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IParameterValues"/>
@@ -504,7 +509,7 @@ This particular API should still be considered experimental.  While you may use 
          <attribute name="optional" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  
+                  Whether this parameter is optional.  If a parameter is optional, the handler should be able to handle the absence of the parameter.  By default, all parameters are optional.
                </documentation>
             </annotation>
          </attribute>
@@ -512,6 +517,11 @@ This particular API should still be considered experimental.  While you may use 
    </element>
 
    <element name="values">
+      <annotation>
+         <documentation>
+            The more verbose version of the &lt;code&gt;values&lt;/code&gt; attribute on the &lt;code&gt;commandParameter&lt;/code&gt;.
+         </documentation>
+      </annotation>
       <complexType>
          <all>
             <element ref="parameter"/>
@@ -519,7 +529,7 @@ This particular API should still be considered experimental.  While you may use 
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The class providing a list of parameter values for the user to select.  This class should implement &lt;code&gt;org.eclipse.core.commands.IParameterValues&lt;/code&gt;.  If this class is not specified, you must specify the more verbose &lt;code&gt;values&lt;/code&gt; element.  Please see &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IParameterValues"/>
@@ -530,11 +540,16 @@ This particular API should still be considered experimental.  While you may use 
    </element>
 
    <element name="parameter">
+      <annotation>
+         <documentation>
+            A possible value for a parameter.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The human-readable name for this parameter value.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -544,7 +559,7 @@ This particular API should still be considered experimental.  While you may use 
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The actual value for the parameter, as it would be passed to the handler.
                </documentation>
             </annotation>
          </attribute>
