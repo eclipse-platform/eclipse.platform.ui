@@ -75,7 +75,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	// toolbars can be locked (i.e. part of the view form and 
 	// positioned inside it, or not locked (embedded in a floating
 	// toolbar that is not part of the view form
-	private boolean locked = false;
+	private boolean locked = true;
 
 	private ToolBar viewToolBar;
 	private ToolBarManager viewToolBarMgr;
@@ -85,9 +85,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private ToolItem pullDownButton;
 	boolean hasFocus;
 
-	private ToolItem lockToolBarButton;
+	//private ToolItem lockToolBarButton;
 	
-	private ToolbarFloatingWindow floatingWindow;
+	//private ToolbarFloatingWindow floatingWindow;
 	
 	/**
 	 * Indicates whether a toolbar button is shown for the view local menu.
@@ -143,7 +143,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		public void fill(ToolBar toolbar, int index) {
 			showMenuButton = (isvMenuMgr != null && !isvMenuMgr.isEmpty());
 			
-			// if we have a toolbar then we want to support floating it
+/*			// if we have a toolbar then we want to support floating it
 			if (isvToolBarMgr != null) {
 				// create the button to allow for a floating toolbar
 				lockToolBarButton = new ToolItem(toolbar, SWT.CHECK, index++);
@@ -163,7 +163,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 						recreateToolbars();
 					}
 				});
-			}
+			}*/
 			
 			if (showMenuButton) {
 				pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
@@ -359,7 +359,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		
 		// the lock button in the receivers toolbar was selected so we know
 		// we are active
-		showFloatingWindow(true, true);
+/*		showFloatingWindow(true, true);*/
 	}	
 	
 	protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
@@ -406,13 +406,13 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * 
 	 * @return a <code>ToolBarFloatingWindow</code> to contain the toolbar 
 	 */
-	private ToolbarFloatingWindow getFloatingWindow() {
+/*	private ToolbarFloatingWindow getFloatingWindow() {
 		if (floatingWindow != null) 
 			return floatingWindow;
 		
 		floatingWindow = new ToolbarFloatingWindow(getWorkbenchWindow().getShell(), this.getControl(), AssociatedWindow.TRACK_OUTER_TOP_RHS);
 		return floatingWindow;
-	}
+	}*/
 	
 		/*
 	 * Return true if <code>x</code> is over the label image.
@@ -451,10 +451,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private void createToolBars() {
 		Composite parentControl = control;
 		int barStyle = SWT.FLAT | SWT.WRAP;
-		if (!locked) {
+/*		if (!locked) {
 			parentControl = getFloatingWindow().getControl();
 			barStyle = barStyle | SWT.VERTICAL;
-		}
+		}*/
 		
 		// View toolbar
 		viewToolBar = new ToolBar(parentControl, barStyle);
@@ -528,9 +528,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			isvToolBarMgr.dispose();
 		if (viewToolBarMgr != null)
 			viewToolBarMgr.dispose();
-		if (floatingWindow != null) {
+/*		if (floatingWindow != null) {
 			floatingWindow.close();
-		}
+		}*/
 	}
 	/**
 	 * @see PartPane#doHide
@@ -697,8 +697,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		} else {
 			setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
 		}
-		showFloatingWindow(active, false);
-	}
+/*		showFloatingWindow(active, false);
+*/	}
 
 	/**
 	 * @param color
@@ -718,7 +718,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * @param lockChanged <code>boolean</code> has the state of locked/unlocked just 
 	 * 			been changed
 	 */
-	private void showFloatingWindow(boolean active, boolean lockChanged) {
+/*	private void showFloatingWindow(boolean active, boolean lockChanged) {
 		// if we have a locked toolbar and the toolbar has not just 
 		// been locked then we have no floating window to worry about
 		if (locked & !lockChanged)
@@ -740,7 +740,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		} else if (floatingWindow != null) {
 			getFloatingWindow().getShell().setVisible(false);
 		}		
-	}
+	}*/
 	
 	/**
 	 * Indicate focus in part.
