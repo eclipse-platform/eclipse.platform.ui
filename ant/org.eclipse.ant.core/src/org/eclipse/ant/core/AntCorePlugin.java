@@ -13,12 +13,7 @@ import java.util.Map;
 
 import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
@@ -29,30 +24,30 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	/**
 	 * The single instance of this plug-in runtime class.
 	 */
-	private static AntCorePlugin fgPlugin;
+	private static AntCorePlugin plugin;
 
 	/**
 	 * Table of Ant tasks (IConfigurationElement) added through the tasks extension point
 	 */
-	private Map fTaskExtensions;
+	private Map taskExtensions;
 
 	/**
 	 * Table of libraries (IConfigurationElement) added through the extraClasspathEntries extension point
 	 */
-	private Map fExtraClasspathExtensions;
+	private Map extraClasspathExtensions;
 
 	/**
 	 * Table of Ant types (IConfigurationElement) added through the types extension point
 	 */
-	private Map fTypeExtensions;
+	private Map typeExtensions;
 
 	/**
 	 * The preferences class for this plugin.	 */
-	private AntCorePreferences fPreferences;
+	private AntCorePreferences preferences;
 	
 	/**
 	 * The cached class loader to use when executing Ant scripts	 */
-	private ClassLoader fClassLoader;
+	private ClassLoader classLoader;
 
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
@@ -134,16 +129,16 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 */
 	public AntCorePlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
-		fgPlugin = this;
+		plugin = this;
 	}
 
 	/**
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
-		fTaskExtensions = extractExtensions(PT_TASKS, NAME);
-		fTypeExtensions = extractExtensions(PT_TYPES, NAME);
-		fExtraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
+		taskExtensions = extractExtensions(PT_TASKS, NAME);
+		typeExtensions = extractExtensions(PT_TYPES, NAME);
+		extraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
 		getPluginPreferences().addPropertyChangeListener(this);
 	}
 
@@ -152,10 +147,10 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 */
 	public void shutdown() throws CoreException {
 		getPluginPreferences().removePropertyChangeListener(this);
-		if (fPreferences == null) {
+		if (preferences == null) {
 			return;
 		}
-		fPreferences.updatePluginPreferences();
+		preferences.updatePluginPreferences();
 		savePluginPreferences();
 		
 	}
@@ -184,10 +179,10 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * @return the Ant core object representing the preferences for this plug-in.
 	 */
 	public AntCorePreferences getPreferences() {
-		if (fPreferences == null) {
-			fPreferences = new AntCorePreferences(fTaskExtensions, fExtraClasspathExtensions, fTypeExtensions);
+		if (preferences == null) {
+			preferences = new AntCorePreferences(taskExtensions, extraClasspathExtensions, typeExtensions);
 		}
-		return fPreferences;
+		return preferences;
 	}
 
 	/**
@@ -196,20 +191,20 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * @return the single instance of this plug-in runtime class
 	 */
 	public static AntCorePlugin getPlugin() {
-		return fgPlugin;
+		return plugin;
 	}
 	
 	/**
 	 * Returns the cached class loader to use when executing Ant scripts.
 	 * 	 * @return the cached class loader	 */
 	protected ClassLoader getClassLoader() {
-		if (fClassLoader == null) {
+		if (classLoader == null) {
 			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
 			URL[] urls = preferences.getURLs();
 			ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
-			fClassLoader= new AntClassLoader(urls, pluginLoaders, null);
+			classLoader= new AntClassLoader(urls, pluginLoaders, null);
 		}
-		return fClassLoader;
+		return classLoader;
 	}
 	
 	/**
@@ -217,7 +212,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_URLS)) {
-			fClassLoader= null;
+			classLoader= null;
 		}
 	}
 }
