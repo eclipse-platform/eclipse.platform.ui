@@ -22,12 +22,23 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
 
 /**
+ * <p>
  * A utility class for converting SWT events into key strokes.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */
-public class SWTKeySupport {
+public final class SWTKeySupport {
 
+	/**
+	 * A formatter that displays key sequences in a style native to the
+	 * platform.
+	 */
 	private static final IKeyFormatter NATIVE_FORMATTER = new NativeKeyFormatter();
 
 	/**

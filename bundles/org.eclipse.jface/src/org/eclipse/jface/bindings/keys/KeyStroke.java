@@ -46,12 +46,17 @@ import org.eclipse.jface.util.Util;
  * <code>KeyStroke</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  * @see org.eclipse.jface.bindings.keys.ModifierKey
  * @see org.eclipse.jface.bindings.keys.NaturalKey
  */
-public class KeyStroke extends Trigger implements Comparable {
+public final class KeyStroke extends Trigger implements Comparable {
 
     /**
      * The delimiter between multiple keys in a single key strokes -- expressed
@@ -233,7 +238,7 @@ public class KeyStroke extends Trigger implements Comparable {
      */
     protected KeyStroke(final SortedSet modifierKeys,
             final NaturalKey naturalKey) {
-        this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
+        this.modifierKeys = new TreeSet(modifierKeys);
         this.naturalKey = naturalKey;
         this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys
                 .toArray(new ModifierKey[this.modifierKeys.size()]);

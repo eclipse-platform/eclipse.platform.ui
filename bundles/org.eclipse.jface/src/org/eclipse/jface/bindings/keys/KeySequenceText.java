@@ -33,12 +33,19 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * <p>
  * A wrapper around the SWT text widget that traps literal key presses and
  * converts them into key sequences for display. There are two types of key
  * strokes that are displayed: complete and incomplete. A complete key stroke is
  * one with a natural key, while an incomplete one has no natural key.
  * Incomplete key strokes are only displayed until they are made complete or
  * their component key presses are released.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */

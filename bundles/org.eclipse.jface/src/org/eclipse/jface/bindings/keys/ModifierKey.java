@@ -27,11 +27,16 @@ import org.eclipse.swt.SWT;
  * <code>ModifierKey</code> objects are immutable. Clients are not permitted
  * to extend this class.
  * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  * @see org.eclipse.jface.bindings.keys.NaturalKey
  */
-public class ModifierKey extends Key {
+public final class ModifierKey extends Key {
 
     /**
      * An internal map used to lookup instances of <code>ModifierKey</code>
