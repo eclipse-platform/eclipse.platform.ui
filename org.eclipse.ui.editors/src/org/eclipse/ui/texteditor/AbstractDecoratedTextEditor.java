@@ -120,6 +120,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * Preference key for print margin ruler column.
 	 */
 	private final static String PRINT_MARGIN_COLUMN= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
+	/**
+	 * Preference key to get whether the overwrite mode is disabled.
+	 * @since 3.1
+	 */
+	private final static String DISABLE_OVERWRITE_MODE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE;
 	
 	/**
 	 * Adapter class for <code>IGotoMarker</code>.
@@ -301,7 +306,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
 
-		if (getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE))
+		if (!isOverwriteModeEnabled())
 			enableOverwriteMode(false);
 	}
 	
@@ -577,6 +582,19 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(LINE_NUMBER_RULER) : false;
 	}
+	
+	/**
+	 * Returns whether the overwrite mode is enabled according to the preference
+	 * store settings. Subclasses may override this method to provide a custom
+	 * preference setting.
+	 * 
+	 * @return <code>true</code> if overwrite mode is enabled
+	 * @since 3.1
+	 */
+	protected boolean isOverwriteModeEnabled() {
+		IPreferenceStore store= getPreferenceStore();
+		return store != null ? !store.getBoolean(DISABLE_OVERWRITE_MODE) : true;
+	}
 
 	/**
 	 * Returns whether quick diff info should be visible upon opening an editor 
@@ -824,9 +842,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				return;
 			}
 			
-			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE.equals(property)) {
-				boolean disable= Boolean.valueOf(event.getNewValue().toString()).booleanValue();
-				enableOverwriteMode(!disable);
+			if (DISABLE_OVERWRITE_MODE.equals(property)) {
+				enableOverwriteMode(isOverwriteModeEnabled());
 				return;
 			}
 			
@@ -843,7 +860,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
-				sourceViewer.getTextWidget().setTabs(getPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+				IPreferenceStore store= getPreferenceStore();
+				if (store != null)
+					sourceViewer.getTextWidget().setTabs(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
 				return;
 			}
 
