@@ -19,7 +19,12 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage;
 import org.eclipse.debug.internal.ui.views.RemoteTreeContentManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
@@ -29,19 +34,30 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
  * Provides deferred content for the debug view.
  * @since 3.1
  */
-public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
+public class DebugViewContentProvider extends BaseWorkbenchContentProvider implements IPropertyChangeListener {
     
     private DeferredTreeContentManager fManager;
     
+    // TODO: work in progress - to be removed
+    private boolean fUseDeferredContent = false;
+    
     public DebugViewContentProvider(LaunchViewer tree, IWorkbenchPartSite site) {
         fManager = new RemoteTreeContentManager(this, tree, site);
+        // TODO: remove work in progress
+        IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();
+		fUseDeferredContent = preferenceStore.getBoolean(DebugWorkInProgressPreferencePage.WIP_PREF_USE_BACKGROUND_CONTENT);
+		preferenceStore.addPropertyChangeListener(this);
+        
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
      */
     public Object[] getChildren(Object parentElement) {
-        Object[] children = fManager.getChildren(parentElement);
+        Object[] children = null;
+        if (fUseDeferredContent) {
+        	children = fManager.getChildren(parentElement);
+        }
         if (children == null) {
             children = super.getChildren(parentElement);
         }
@@ -93,7 +109,22 @@ public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
      */
     public void dispose() {
         fManager.cancel(DebugPlugin.getDefault().getLaunchManager());
+        // TODO: remove work in progress
+        DebugUITools.getPreferenceStore().removePropertyChangeListener(this);
         super.dispose();
     }
+
+	/* (non-Javadoc)
+	 * 
+	 * TODO: remove work in progress
+	 * 
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(DebugWorkInProgressPreferencePage.WIP_PREF_USE_BACKGROUND_CONTENT)) {
+			fUseDeferredContent = DebugUITools.getPreferenceStore().getBoolean(DebugWorkInProgressPreferencePage.WIP_PREF_USE_BACKGROUND_CONTENT);
+		}
+		
+	}
 
 }

@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -91,5 +92,8 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		// set default for column size preference
 		prefs.setDefault(IDebugPreferenceConstants.PREF_COLUMN_SIZE, 
 				IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
+		
+		// TODO: REMOVE WORK IN PROGRESS SWITCHES
+		prefs.setDefault(DebugWorkInProgressPreferencePage.WIP_PREF_USE_BACKGROUND_CONTENT, false);
 	}
 }
