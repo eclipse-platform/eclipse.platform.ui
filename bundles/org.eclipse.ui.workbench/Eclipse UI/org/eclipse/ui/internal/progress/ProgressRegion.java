@@ -15,7 +15,9 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.jface.viewers.IContentProvider;
+
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
  * The ProgressRegion is class for the region of the workbench where the
@@ -40,7 +42,7 @@ public class ProgressRegion {
 	 * @return
 	 */
 	public Control createContents(Composite parent, WorkbenchWindow window) {
-		region = new Composite(parent, SWT.BORDER);
+		region = new Composite(parent, SWT.BORDER | SWT.FLAT);
 		
 		FormLayout regionLayout = new FormLayout();
 		region.setLayout(regionLayout);
@@ -48,8 +50,8 @@ public class ProgressRegion {
 		
 		item = new AnimationItem(window);
 		item.createControl(region);
+		item.setAnimationContainer(getAnimationContainer());
 		Control itemControl = item.getControl();
-		setInfoColors(itemControl);
 
 		FormData itemData = new FormData();
 		itemData.right = new FormAttachment(100);
@@ -60,7 +62,6 @@ public class ProgressRegion {
 		viewer = new ProgressViewer(region, SWT.NONE, 1);
 		viewer.setUseHashlookup(true);
 		Control viewerControl = viewer.getControl();
-		setInfoColors(viewerControl);
 
 		int margin = 2;
 		
@@ -95,6 +96,19 @@ public class ProgressRegion {
 	}
 	
 	/**
+	 * Set the info colors opf the control
+	 * 
+	 * @param control
+	 *            The Control to color.
+	 */
+	private void setBackgroundColors(Control control) {
+		control.setBackground(control.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		control.setForeground(control.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_FOREGROUND));
+	}
+	
+	/**
 	 * Return the animationItem for the receiver.
 	 * @return
 	 */
@@ -108,5 +122,27 @@ public class ProgressRegion {
 	 */
 	public Control getControl(){
 		return region;
+	}
+	
+	private AnimationItem.IAnimationContainer getAnimationContainer(){
+		return new AnimationItem.IAnimationContainer(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationDone()
+			 */
+			public void animationDone() {
+				setBackgroundColors(item.getControl());
+				setBackgroundColors(viewer.getControl());
+				setBackgroundColors(region);
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationStart()
+			 */
+			public void animationStart() {
+				setInfoColors(item.getControl());
+				setInfoColors(viewer.getControl());
+				setInfoColors(region);
+			}
+		};
 	}
 }

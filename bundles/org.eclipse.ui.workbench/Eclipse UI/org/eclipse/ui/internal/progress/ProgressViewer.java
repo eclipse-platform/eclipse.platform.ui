@@ -147,6 +147,7 @@ public class ProgressViewer extends StructuredViewer {
 				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
 				
 				int itemCount = displayedItems.length;
+				
 				int yOffset = 0;
 				if(numShowItems == 1){//If there is a single item try to center it
 					Rectangle clientArea = canvas.getParent().getClientArea();

@@ -110,6 +110,7 @@ public class AnimationManager {
 		items.add(item);
 		if (background == null)
 			background = getItemBackgroundColor(item.getControl());
+		
 		item.getControl().addDisposeListener(new DisposeListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
