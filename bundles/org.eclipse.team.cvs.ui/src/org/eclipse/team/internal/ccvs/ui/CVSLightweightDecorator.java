@@ -118,14 +118,8 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
 	}
 
-	public static boolean isDirty(final ICVSResource cvsResource) {
-		try {
-			return !cvsResource.isIgnored() && cvsResource.isModified(null);
-		} catch (CVSException e) {
-			//if we get an error report it to the log but assume dirty
-			handleException(e);
-			return true;
-		}
+	public static boolean isDirty(final ICVSResource cvsResource) throws CVSException {
+		return !cvsResource.isIgnored() && cvsResource.isModified(null);
 	}
 
 	public static boolean isDirty(IResource resource) {
@@ -133,7 +127,18 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		// No need to decorate non-existant resources
 		if (!resource.exists()) return false;
 
-		return isDirty(CVSWorkspaceRoot.getCVSResourceFor(resource));
+		try {
+			return isDirty(CVSWorkspaceRoot.getCVSResourceFor(resource));
+		} catch (CVSException e) {
+			//if we get an error report it to the log but assume dirty.
+			boolean accessible = resource.getProject().isAccessible();
+			if (accessible) {
+				// We only care about the failure if the project is open
+				handleException(e);
+			}
+			// Return dirty if the project is open and clean otherwise
+			return accessible;
+		}
 
 	}
 	
