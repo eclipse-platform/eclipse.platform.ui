@@ -6,6 +6,12 @@
    version="3.1.0"
    provider-name="%providerName"
    class="org.eclipse.ui.internal.views.ViewsPlugin">
+   
+   <runtime>
+      <library name=".">
+         <export name="*"/>
+      </library>
+   </runtime>
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>

@@ -7,5 +7,11 @@
    provider-name="%Plugin.providerName"
    plugin-id="org.eclipse.ui.ide"
    plugin-version="3.0.0">
+   
+   <runtime>
+      <library name=".">
+         <export name="*"/>
+      </library>
+   </runtime>
 
 </fragment>
