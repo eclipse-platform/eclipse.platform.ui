@@ -45,7 +45,7 @@ public class ServletResources {
 			return property;
 		}
 		return property.substring(0, amp - 1)
-			+ property.subSequence(amp + 1, property.length());
+			+ property.substring(amp + 1, property.length());
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class ServletResources {
 			return property;
 		}
 		return property.substring(0, amp - 1)
-			+ property.subSequence(amp + 1, property.length());
+			+ property.substring(amp + 1, property.length());
 	}
 	/**
 	 * Returns a string from a property file, with underlined access key.
@@ -85,7 +85,7 @@ public class ServletResources {
 			+ "<u>"
 			+ property.charAt(amp - 1)
 			+ "</u>"
-			+ property.subSequence(amp + 1, property.length());
+			+ property.substring(amp + 1, property.length());
 	}
 
 	/**
