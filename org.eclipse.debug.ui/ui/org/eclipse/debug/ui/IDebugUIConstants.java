@@ -334,6 +334,21 @@ public interface IDebugUIConstants {
 	 */
 	public static final String IMG_DLCL_CONTENT_ASSIST= "IMG_DLCL_CONTENT_ASSIST"; //$NON-NLS-1$
 	
+	/**
+	 * Content assist action image identifier.
+	 */
+	public static final String IMG_LCL_DETAIL_PANE_UNDER= "IMG_LCL_DETAIL_PANE_UNDER"; //$NON-NLS-1$
+	
+	/**
+	 * Content assist action image identifier.
+	 */
+	public static final String IMG_LCL_DETAIL_PANE_RIGHT= "IMG_LCL_DETAIL_PANE_RIGHT"; //$NON-NLS-1$
+	
+	/**
+	 * Content assist action image identifier.
+	 */
+	public static final String IMG_LCL_DETAIL_PANE_HIDE= "IMG_LCL_DETAIL_PANE_HIDE"; //$NON-NLS-1$
+	
 	// Debug element images
 	
 	/** Debug mode launch image identifier. */

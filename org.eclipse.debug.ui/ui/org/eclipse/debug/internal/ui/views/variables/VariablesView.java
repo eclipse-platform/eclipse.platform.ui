@@ -33,9 +33,9 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
-import org.eclipse.debug.internal.ui.actions.ShowDetailPaneAction;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
+import org.eclipse.debug.internal.ui.actions.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
@@ -94,6 +94,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -303,9 +304,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * These are used to initialize and persist the position of the sash that
 	 * separates the tree viewer from the detail pane.
 	 */
-	private static final int[] DEFAULT_SASH_WEIGHTS = {6, 3};
+	private static final int[] DEFAULT_SASH_WEIGHTS = {13, 6};
 	private int[] fLastSashWeights;
 	private boolean fToggledDetailOnce;
+	private String fCurrentDetailPaneOrientation = IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN;
+	private ToggleDetailPaneAction[] fToggleDetailPaneActions;
 
 	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
@@ -473,9 +476,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
-		if (propertyName.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION)) {
-			setDetailPaneOrientation(DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION));
-		} else if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
+		if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
 			getEventHandler().refresh();
 		} else if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
 			getDetailViewer().getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));			
@@ -489,7 +490,20 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		TreeViewer variablesViewer = createTreeViewer(parent);
 		createDetailsViewer();
 		getSashForm().setMaximizedControl(variablesViewer.getControl());
+
+		createOrientationActions();
+		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		String orientation = prefStore.getString(getDetailPanePreferenceKey());
+		for (int i = 0; i < fToggleDetailPaneActions.length; i++) {
+			fToggleDetailPaneActions[i].setChecked(fToggleDetailPaneActions[i].getOrientation().equals(orientation));
+		}
+		setDetailPaneOrientation(orientation);
+		
 		return variablesViewer;
+	}
+	
+	protected String getDetailPanePreferenceKey() {
+		return IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION;
 	}
 		
 	/**
@@ -501,9 +515,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		JFaceResources.getFontRegistry().addListener(this);
 		// create the sash form that will contain the tree viewer & text viewer
 		setSashForm(new SashForm(parent, SWT.NONE));
-		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
-		String orientString = prefStore.getString(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION);
-		setDetailPaneOrientation(orientString);
 		
 		// add tree viewer
 		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -594,8 +605,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected AbstractDebugEventHandler createEventHandler(Viewer viewer) {
 		return new VariablesViewEventHandler(this);
 	}	
-	
-	
+		
 	/**
 	 * @see AbstractDebugView#getHelpContextId()
 	 */
@@ -604,15 +614,52 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 	
 	/**
+	 * Set the orientation of the details pane so that is one of:
+	 * - underneath the main tree view
+	 * - to the right of the main tree view
+	 * - not visible
+	 */
+	public void setDetailPaneOrientation(String orientation) {
+		if (orientation.equals(fCurrentDetailPaneOrientation)) {
+			return;
+		}
+		if (orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN)) {
+			hideDetailPane();
+		} else {
+			int vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
+			getSashForm().setOrientation(vertOrHoriz);	
+			if (IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN.equals(fCurrentDetailPaneOrientation)) {
+				showDetailPane();			
+			}
+		}
+		fCurrentDetailPaneOrientation  = orientation;
+		DebugUIPlugin.getDefault().getPreferenceStore().setValue(getDetailPanePreferenceKey(), orientation);
+	}
+	
+	private void hideDetailPane() {
+		if (fToggledDetailOnce) {
+			setLastSashWeights(getSashForm().getWeights());
+		}
+		getSashForm().setMaximizedControl(getViewer().getControl());		
+	}
+	
+	private void showDetailPane() {
+		getSashForm().setMaximizedControl(null);
+		getSashForm().setWeights(getLastSashWeights());
+		populateDetailPane();
+		fToggledDetailOnce = true;		
+	}
+
+	/**
 	 * Set the orientation of the sash form to display its controls according to the value
 	 * of <code>value</code>.  'VARIABLES_DETAIL_PANE_UNDERNEATH' means that the detail 
 	 * pane appears underneath the tree viewer, 'VARIABLES_DETAIL_PANE_RIGHT' means the
 	 * detail pane appears to the right of the tree viewer.
 	 */
-	protected void setDetailPaneOrientation(String value) {
-		int orientation = value.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
-		getSashForm().setOrientation(orientation);				
-	}
+//	protected void setDetailPaneOrientation(String value) {
+//		int orientation = value.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
+//		getSashForm().setOrientation(orientation);				
+//	}
 	
 	/**
 	 * Show or hide the detail pane, based on the value of <code>on</code>.
@@ -621,19 +668,19 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * details for the current selection.  If hiding, save the current relative 
 	 * weights, unless the detail pane hasn't yet been shown.
 	 */
-	public void toggleDetailPane(boolean on) {
-		if (on) {
-			getSashForm().setMaximizedControl(null);
-			getSashForm().setWeights(getLastSashWeights());
-			populateDetailPane();
-			fToggledDetailOnce = true;
-		} else {
-			if (fToggledDetailOnce) {
-				setLastSashWeights(getSashForm().getWeights());
-			}
-			getSashForm().setMaximizedControl(getViewer().getControl());
-		}
-	}
+//	public void toggleDetailPane(boolean on) {
+//		if (on) {
+//			getSashForm().setMaximizedControl(null);
+//			getSashForm().setWeights(getLastSashWeights());
+//			populateDetailPane();
+//			fToggledDetailOnce = true;
+//		} else {
+//			if (fToggledDetailOnce) {
+//				setLastSashWeights(getSashForm().getWeights());
+//			}
+//			getSashForm().setMaximizedControl(getViewer().getControl());
+//		}
+//	}
 	
 	/**
 	 * Set on or off the word wrap flag for the detail pane.
@@ -709,11 +756,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
-		action = new ShowDetailPaneAction(this);
-		setAction("ShowDetailPane", action); //$NON-NLS-1$
-	
-		//detail specific actions
-		
 		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -747,10 +789,25 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fSelectionActions.add(ITextEditorActionConstants.CUT);
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
 		updateAction(ITextEditorActionConstants.FIND);
-		
+					
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	} 
+	
+	private void createOrientationActions() {
+		IActionBars actionBars = getViewSite().getActionBars();
+		IMenuManager viewMenu = actionBars.getMenuManager();
+		
+		fToggleDetailPaneActions = new ToggleDetailPaneAction[3];
+		fToggleDetailPaneActions[0] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
+		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT);
+		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN);
+		viewMenu.add(new Separator());
+		viewMenu.add(fToggleDetailPaneActions[0]);
+		viewMenu.add(fToggleDetailPaneActions[1]);
+		viewMenu.add(fToggleDetailPaneActions[2]);
+		viewMenu.add(new Separator());		
+	}
 	
 	/**
 	 * Configures the toolBar.
@@ -762,8 +819,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
 		tbm.add(getAction("ToggleContentProviders")); //$NON-NLS-1$
-		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
-		tbm.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 	}
 
    /**
@@ -799,8 +854,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add(getAction(ITextEditorActionConstants.FIND));
-		menu.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
-		menu.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
