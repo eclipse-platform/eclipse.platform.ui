@@ -1,4 +1,5 @@
 org.eclipse.core.runtime/debug=true
+org.eclipse.core.runtime/debug/context=false
 org.eclipse.core.runtime/registry/debug=false
 org.eclipse.core.runtime/registry/debug/dump=
 org.eclipse.core.runtime/registry/debug/resolve=false
