@@ -283,6 +283,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected static final String DEFAULT_NEW_CONFIG_NAME = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.New_configuration_1"); //$NON-NLS-1$
 	
 	/**
+	 * Size of this dialog if there is no preference specifying a size.
+	 */
+	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(620, 560);
+
+	/**
 	 * Status area messages
 	 */
 	protected static final String LAUNCH_STATUS_OK_MESSAGE = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2"); //$NON-NLS-1$
@@ -1070,7 +1075,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				return sizePoint;
 			}
 		}
-		return super.getInitialSize();
+		return DEFAULT_INITIAL_DIALOG_SIZE;
 	}
 	
 	/**
