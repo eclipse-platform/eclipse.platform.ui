@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
-import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -78,6 +78,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  *  use to unhook listeners, etc.</li>
  * <li><code>eventLoopException</code> - called to handle the case where the
  * event loop has crashed; use to inform the user that things are not well</li>
+ * <li><code>eventLoopIdle</code> - called when there are currently no more
+ * events to be processed; use to perform other work or to yield until new
+ * events enter the queue</li>
  * <li><code>preShutdown</code> - called just after event loop has terminated
  * but before any windows have been closed; use to deregister things registered
  * during initialize</li>
@@ -261,6 +264,25 @@ public abstract class WorkbenchAdviser {
 		}
 	}
 
+	/**
+	 * Performs arbitrary work or yields when there are no events to be processed.
+	 * <p>
+	 * This method is called when there are currently no more events on the queue
+	 * to be processed at the moment. 
+	 * </p><p>
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation yields until new events enter the queue.
+	 * Subclasses may override or extend this method. It is generally
+	 * a bad idea to override with an empty method. 
+	 * It is okay to call <code>IWorkbench.close()</code> from this method.
+	 * </p>
+	 * @param display the main display of the workbench UI
+	 */
+	public void eventLoopIdle(Display display) {
+		// default: yield cpu until new events enter the queue
+		display.sleep();
+	}
+	
 	/**
 	 * Performs arbitrary actions before the given workbench window is
 	 * opened.

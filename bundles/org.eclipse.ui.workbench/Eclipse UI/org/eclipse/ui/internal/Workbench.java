@@ -1164,8 +1164,9 @@ public final class Workbench implements IWorkbench {
 		runEventLoop = true;
 		while (runEventLoop) {
 			try {
-				if (!display.readAndDispatch())
-					display.sleep();
+				if (!display.readAndDispatch()) {
+					getAdviser().eventLoopIdle(display);
+				}
 			} catch (Throwable t) {
 				handler.handleException(t);
 			}
