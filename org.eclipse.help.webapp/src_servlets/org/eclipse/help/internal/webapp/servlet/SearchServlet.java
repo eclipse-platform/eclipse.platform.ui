@@ -138,7 +138,6 @@ public class SearchServlet extends HttpServlet {
 	 */
 	private static class ResultsWriter extends XMLGenerator {
 		/**
-		 * @param toc Toc
 		 * @param writer java.io.Writer
 		 */
 		public ResultsWriter(Writer writer) {
