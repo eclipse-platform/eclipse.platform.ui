@@ -49,7 +49,7 @@ public abstract class AbstractPresentationFactory {
 	 * @return a newly created part stack
 	 */
 	public Presentation createFastViewPresentation(Composite parent, 
-			IPartPresentationSite container, IPresentablePart thePart, int flags) {
+			IPresentationSite container, IPresentablePart thePart, int flags) {
 		return null;
 	}
 	
@@ -62,7 +62,7 @@ public abstract class AbstractPresentationFactory {
 	 * @since 3.0
 	 */
 	public Presentation createDetachedViewPresentation(Composite parent, 
-			IPartPresentationSite container, IPresentablePart thePart, int flags) {
+			IPresentationSite container, IPresentablePart thePart, int flags) {
 		return null;
 	}
 	
