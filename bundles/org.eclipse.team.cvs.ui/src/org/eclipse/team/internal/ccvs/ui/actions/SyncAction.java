@@ -11,11 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -32,6 +32,7 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticip
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -54,7 +55,12 @@ public class SyncAction extends WorkspaceTraversalAction {
                 if (includesAllCVSProjects(resources)) {
                     scope = new WorkspaceScope();
                 } else {
-                    scope = new ResourceScope(resources);
+                    IWorkingSet[] sets = getSelectedWorkingSets();            
+                    if (sets != null) {
+                        scope = new WorkingSetScope(sets);
+                    } else {
+                        scope = new ResourceScope(resources);
+                    }
                 }
                 participant = new WorkspaceSynchronizeParticipant(scope);
 				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
@@ -62,6 +68,23 @@ public class SyncAction extends WorkspaceTraversalAction {
 			participant.refresh(resources, getTargetPart().getSite());
 		}
 	}
+    
+    private IWorkingSet[] getSelectedWorkingSets() {
+        ResourceMapping[] mappings = getCVSResourceMappings();
+        List sets = new ArrayList();
+        for (int i = 0; i < mappings.length; i++) {
+            ResourceMapping mapping = mappings[i];
+            if (mapping.getModelObject() instanceof IWorkingSet) {
+                IWorkingSet set = (IWorkingSet) mapping.getModelObject();
+                sets.add(set);
+            } else {
+                return null;
+            }
+        }
+        if (sets.isEmpty())
+            return null;
+        return (IWorkingSet[]) sets.toArray(new IWorkingSet[sets.size()]);
+    }
 
     private boolean includesAllCVSProjects(IResource[] resources) {
         // First, make sure all the selected thinsg are projects
