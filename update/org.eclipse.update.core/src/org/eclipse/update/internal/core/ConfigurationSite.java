@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.ConfigurationPolicyModel;
 import org.eclipse.update.core.model.ConfigurationSiteModel;
@@ -86,7 +87,8 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 				if (element.getURL() != null) {
 					ISite featureSite = (ISite) ((FeatureReference) element).getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+					w.print("updateURL=\""+Writer.xmlSafe(((FeatureReference)element).getUpdateURL().getURLString())+ "\" ");
 				}
 				w.println("/>");
 			}
@@ -105,7 +107,11 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 				if (element.getURL() != null) {
 					ISite featureSite = element.getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+					URLEntryModel entry = ((FeatureReferenceModel)element).getUpdateURL();
+					if (entry!=null){
+						w.print("updateURL=\""+Writer.xmlSafe(entry.getURLString())+ "\" ");					
+					}
 				}
 				w.println("/>");
 			}

@@ -153,5 +153,10 @@ public interface ISite extends IPluginContainer {
 	ISiteContentProvider getSiteContentProvider() throws CoreException;
 	
 		
+	/**
+	 * returns the FeatureReference of this Feature inside the Site
+	 * returns null if this site does not manage this feature
+	 */
+	IFeatureReference getFeatureReference(IFeature feature) ;
 
 	}

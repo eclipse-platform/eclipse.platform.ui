@@ -18,6 +18,7 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.ISite;
@@ -182,7 +183,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		boolean configured = configuredString.trim().equalsIgnoreCase("true")?true:false;
 
 		if (url != null) {
-			IFeatureReference ref = new FeatureReference();
+			FeatureReference ref = new FeatureReference();
 			ref.setSite((ISite)configSite.getSiteModel());
 			ref.setURL(url);
 			if (ref != null)
@@ -191,6 +192,16 @@ public class InstallConfigurationParser extends DefaultHandler {
 				}
 				else
 					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)ref);
+
+			//updateURL
+			String updateURLString = attributes.getValue("updateURL");
+			URLEntry entry = new URLEntry();
+			entry.setURLString(updateURLString);
+			entry.resolve(siteURL,null);
+			ref.setUpdateURL(entry);
+
+		
+
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

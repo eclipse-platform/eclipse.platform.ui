@@ -143,7 +143,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 			for (int i = 0; i < arrayOfFeatureRef.length; i++) {
 				IFeatureReference element = arrayOfFeatureRef[i];
 				IFeature feature = element.getFeature();
-				IPluginEntry[] entries = feature.getPluginEntries();
+				IPluginEntry[] entries = (feature==null)?new IPluginEntry[0]:feature.getPluginEntries();
 
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];

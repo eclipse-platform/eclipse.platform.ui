@@ -474,4 +474,20 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		return pluginID + IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
 	}
 
+	/*
+	 * @see ISite#getFeatureReference(IFeature)
+	 */
+	public IFeatureReference getFeatureReference(IFeature feature) {
+		IFeatureReference result = null;
+		IFeatureReference[] references = getFeatureReferences();
+		boolean found = false;
+		for (int i = 0; i < references.length &&!found; i++) {
+			if (references[i].getURL().equals(feature.getURL())){
+				result = references[i];
+				found = true;
+			}
+		}
+		return result;
+	}
+
 }
