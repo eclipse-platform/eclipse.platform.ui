@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A capability is the user interface aspect of a project's nature. There is
@@ -155,10 +156,10 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	public ImageDescriptor getIconDescriptor() {
 		if (icon == null && isValid()) {
 			IExtension extension = element.getDeclaringExtension();
+			String extendingPluginId = extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
 			String location = element.getAttribute(ATT_ICON);
 			if (location != null && location.length() > 0)
-				// @issue ref to internal generic workbench method
-				icon = WorkbenchImages.getImageDescriptorFromExtension(extension, location);
+				icon = AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, location);
 		}
 		return icon;
 	}

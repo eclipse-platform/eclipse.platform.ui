@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.model.AdaptableList;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -121,7 +125,11 @@ protected boolean initializeWizard(WorkbenchWizardElement element, IConfiguratio
 	String iconName = config.getAttribute(ATT_ICON);
 	if (iconName != null) {
 		IExtension extension = config.getDeclaringExtension();
-		element.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(extension, iconName));
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		ImageDescriptor image =
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, iconName);
+		element.setImageDescriptor(image);
 	}
 	// ensure that a class was specified
 	if (element.getConfigurationElement() == null) {

@@ -28,8 +28,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A widget group that displays path variables. 
@@ -150,10 +150,11 @@ public class PathVariablesGroup {
 		Font font = parent.getFont();
 
 		if (imageUnkown == null ) {
-			// @issue direct access to an image 
-			ImageDescriptor descriptor = WorkbenchImages.getImageDescriptorFromPlugin(
-				PlatformUI.PLUGIN_ID, 
-				"icons/full/obj16/warning.gif");	//$NON-NLS-1$
+			// @issue direct access to one of the workbench's images
+			ImageDescriptor descriptor =
+				AbstractUIPlugin.imageDescriptorFromPlugin(
+					PlatformUI.PLUGIN_ID, 
+					"icons/full/obj16/warning.gif");	//$NON-NLS-1$
 			imageUnkown = descriptor.createImage();
 		}
 		initializeDialogUnits(parent);

@@ -11,10 +11,13 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A LinkedResourceDecorator decorates an element's image with a linked 
@@ -23,24 +26,18 @@ import org.eclipse.ui.PlatformUI;
  * @since 2.1
  */
 public class LinkedResourceDecorator implements ILightweightLabelDecorator {
-	private static final String FOLDER_NAME = "ovr16/"; //$NON-NLS-1$
-	private static final String ICON_NAME = "link_ovr.gif"; //$NON-NLS-1$
-	private static final String ICON_NAME_WARNING = "linkwarn_ovr.gif"; //$NON-NLS-1$
 	private static final ImageDescriptor LINK;
 	private static final ImageDescriptor LINK_WARNING;	
 
 	static {
-		// @issue direct access to image files
-		String fileName;
-		IPluginDescriptor descriptor = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor(); 
-
-		fileName = WorkbenchImages.ICONS_PATH + FOLDER_NAME + ICON_NAME;
-		LINK =
-			WorkbenchImages.getImageDescriptorFromPlugin(descriptor, fileName);
-		
-		fileName = WorkbenchImages.ICONS_PATH + FOLDER_NAME + ICON_NAME_WARNING;				
-		LINK_WARNING =
-			WorkbenchImages.getImageDescriptorFromPlugin(descriptor, fileName);
+		// @issue direct access to IDE workbench image files
+		LINK = AbstractUIPlugin.imageDescriptorFromPlugin(
+			IDEWorkbenchPlugin.IDE_WORKBENCH,
+			"icons/full/ovr16/link_ovr.gif");  //$NON-NLS-1$
+		// @issue direct access to IDE workbench image files
+		LINK_WARNING = AbstractUIPlugin.imageDescriptorFromPlugin(
+			IDEWorkbenchPlugin.IDE_WORKBENCH,
+			"icons/full/ovr16/linkwarn_ovr.gif");  //$NON-NLS-1$
 	}
 
 	/**

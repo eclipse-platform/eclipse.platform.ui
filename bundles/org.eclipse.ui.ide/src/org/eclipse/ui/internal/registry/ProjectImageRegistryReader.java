@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A strategy to project nature image extensions from the registry.
@@ -55,8 +57,11 @@ protected boolean readElement(IConfigurationElement element) {
 		logMissingAttribute(element, ATT_ICON);
 		return true;
 	}
-	ImageDescriptor image = WorkbenchImages.getImageDescriptorFromExtension(
-			element.getDeclaringExtension(), icon);
+	IExtension extension = element.getDeclaringExtension();
+	String extendingPluginId =
+		extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+	ImageDescriptor image =
+		AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon);
 
 	if (image != null)	
 		registry.setNatureImage(natureId, image);
