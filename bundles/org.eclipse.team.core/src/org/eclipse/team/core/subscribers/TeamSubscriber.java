@@ -36,7 +36,7 @@ abstract public class TeamSubscriber {
 	 * team subscribers.
 	 * @return the subscriber manager
 	 */
-	public static ISubscriberManager getSubscriberManager() {
+	public static ISubscriberManager2 getSubscriberManager() {
 		return SubscriberManager.getInstance();
 	}
 	

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * all currently registered subscribers. It also fires events when subscribers
  * are registered and deregistered.
  */
-public interface ISubscriberManager {
+public interface ISubscriberManager2 {
 
 	/**
 	 * Register a subscriber with the subscriber manager. The id of the subscriber
