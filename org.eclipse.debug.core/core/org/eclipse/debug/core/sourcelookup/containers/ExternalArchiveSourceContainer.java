@@ -90,7 +90,6 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 				}
 			}
 		} else {
-			Enumeration entries = file.entries();
 			// try exact match
 			ZipEntry entry = file.getEntry(name);
 			if (entry != null) {
@@ -98,17 +97,21 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 				return new Object[]{new ZipEntryStorage(file, entry)};
 			}
 			// search
+			Enumeration entries = file.entries();
 			List matches = null;
 			while (entries.hasMoreElements()) {
 				entry = (ZipEntry)entries.nextElement();
-				if (entry.getName().endsWith(name)) {
-					if (isFindDuplicates()) {
-						if (matches == null) {
-							matches = new ArrayList();
+				String entryName = entry.getName();
+				if (entryName.endsWith(name)) {
+					if (isQualfied || entryName.length() == name.length() || entryName.charAt(entryName.length() - name.length() - 1) == '/') {
+						if (isFindDuplicates()) {
+							if (matches == null) {
+								matches = new ArrayList();
+							}
+							matches.add(new ZipEntryStorage(file, entry));
+						} else {
+							return new Object[]{new ZipEntryStorage(file, entry)};
 						}
-						matches.add(new ZipEntryStorage(file, entry));
-					} else {
-						return new Object[]{new ZipEntryStorage(file, entry)};
 					}
 				}
 			}
