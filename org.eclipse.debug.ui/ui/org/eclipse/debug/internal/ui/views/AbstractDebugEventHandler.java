@@ -59,7 +59,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 			IWorkbenchPart part= ref.getPart(false);
 			// The event handler is created before the viewer is set.
 			if (part != null && part == getView() && getViewer() != null) {
-				refresh();
+				viewBecomesVisible();
 			}
 		}
 		public void partHidden(IWorkbenchPartReference ref) {
@@ -339,5 +339,14 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		}
 		return false;		
 	}	
+	
+	/**
+	 * Called when this event handler's view becomes visible. Default behavior
+	 * is to refresh the view.
+	 */
+	protected void viewBecomesVisible() {
+		refresh();
+	}
+
 }
 

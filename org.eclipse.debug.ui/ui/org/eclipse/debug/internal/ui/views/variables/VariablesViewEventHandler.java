@@ -110,5 +110,15 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		return (VariablesView)getView();
 	}
 	
+	/**
+	 * Also update the details area.
+	 * 
+	 * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#viewBecomesVisible()
+	 */
+	protected void viewBecomesVisible() {
+		super.viewBecomesVisible();
+		getVariablesView().populateDetailPane();
+	}
+
 }
 
