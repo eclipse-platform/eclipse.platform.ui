@@ -19,11 +19,10 @@ import org.eclipse.team.core.TeamPlugin;
 
 public class DefaultFileModificationValidator implements IFileModificationValidator {
 	private static final Status OK = new Status(Status.OK, TeamPlugin.ID, Status.OK, Policy.bind("FileModificationValidator.ok"), null); //$NON-NLS-1$
-	private static final Status READ_ONLY = new Status(Status.ERROR, TeamPlugin.ID, Status.ERROR, Policy.bind("FileModificationValidator.isReadOnly"), null); //$NON-NLS-1$
 
 	private IStatus getDefaultStatus(IFile file) {
 		return file.isReadOnly()
-				? READ_ONLY
+				? new Status(Status.ERROR, TeamPlugin.ID, Status.ERROR, Policy.bind("FileModificationValidator.fileIsReadOnly", file.getFullPath().toString()), null) //$NON-NLS-1$
 				: OK;
 	}
 	
@@ -36,12 +35,21 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 		}
 		
 		IStatus[] stati = new Status[files.length];
+		boolean allOK = true;
 		
 		for (int i = 0; i < files.length; i++) {
 			stati[i] = getDefaultStatus(files[i]);	
+			if(! stati[i].isOK())
+				allOK = false;
 		}
 		
-		return new MultiStatus(TeamPlugin.ID, 0, stati, Policy.bind("FileModificationValidator.validateEdit"), null); //$NON-NLS-1$
+		return new MultiStatus(TeamPlugin.ID,
+			0, stati,
+			Policy.bind(
+				allOK
+					? "FileModificationValidator.ok"	//$NON-NLS-1$
+					: "FileModificationValidator.someReadOnly" ),	//$NON-NLS-1$
+			null); 
 	}
 
 	/**

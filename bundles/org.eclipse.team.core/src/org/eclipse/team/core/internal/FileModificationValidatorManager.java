@@ -18,16 +18,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamPlugin;
 
-public class FileModificationValidator implements IFileModificationValidator {
+public class FileModificationValidatorManager implements IFileModificationValidator {
 	private static final IFileModificationValidator DEFAULT_VALIDATOR =
 		new DefaultFileModificationValidator();
-
-	private static final Status OK = new Status(Status.OK, TeamPlugin.ID,
-		Status.OK,
-		Policy.bind("FileModificationValidator.ok"), null); //$NON-NLS-1$
-	private static final Status READ_ONLY = new Status(Status.ERROR, TeamPlugin.ID,
-		Status.ERROR,
-		Policy.bind("FileModificationValidator.isReadOnly"), null); //$NON-NLS-1$
 	
 	/*
 	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
