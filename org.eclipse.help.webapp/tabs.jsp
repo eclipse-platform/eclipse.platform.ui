@@ -36,6 +36,7 @@ BODY {
 	margin:0px;
 	padding:0px;
 	border:1px black solid;
+	border-top:1px Window solid;
 	background:#000000;
 	height:100%;
 }
@@ -45,7 +46,7 @@ BODY {
 	background:ButtonFace;
 	margin:0px;
 	padding:0px;
- 	border:1px ButtonFace solid;
+ 	border-top:1px black solid;
 	cursor:default;
 	align:center;
 }
@@ -54,7 +55,7 @@ BODY {
 	background:Window;
 	margin:0px;
 	padding:0px;
-	border:1px black solid;
+	border-top:1px Window solid;
 	cursor:default;
 	align:center;
 }
