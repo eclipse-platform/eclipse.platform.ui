@@ -144,8 +144,10 @@ public final class FormText extends Canvas {
 	private IHyperlinkSegment entered;
 
 	private boolean mouseFocus = false;
+	
+	private boolean handleFocusGained = false;
 
-	private boolean mouseDown = false;
+	private boolean inSelection = false;
 
 	private SelectionData selData;
 
@@ -346,7 +348,8 @@ public final class FormText extends Canvas {
 			public void focusGained(FocusEvent e) {
 				if (!hasFocus) {
 					hasFocus = true;
-					handleFocusChange();
+					if (handleFocusGained)
+						handleFocusChange();
 				}
 			}
 
@@ -1035,7 +1038,7 @@ public final class FormText extends Canvas {
 	}
 
 	private void startSelection(MouseEvent e) {
-		mouseDown = true;
+		inSelection = true;
 		selData = new SelectionData(e);
 		redraw();
 		Form form = FormUtil.getForm(this);
@@ -1044,7 +1047,7 @@ public final class FormText extends Canvas {
 	}
 
 	private void endSelection(MouseEvent e) {
-		mouseDown = false;
+		inSelection = false;
 		if (selData != null) {
 			if (!selData.isEnclosed())
 				selData = null;
@@ -1144,7 +1147,7 @@ public final class FormText extends Canvas {
 	}
 
 	private void handleMouseMove(MouseEvent e) {
-		if (mouseDown) {
+		if (inSelection) {
 			handleDrag(e);
 			return;
 		}
@@ -1429,5 +1432,16 @@ public final class FormText extends Canvas {
 		for (int i = 0; i < imagesToRemove.size(); i++) {
 			resourceTable.remove(imagesToRemove.get(i));
 		}
+	}
+	
+	/**
+	 * @see org.eclipse.swt.widgets.Canvas#setFocus()
+	 */
+
+	public boolean setFocus() {
+		handleFocusGained = true;
+		boolean value = super.setFocus();
+		handleFocusGained = false;
+		return value;
 	}
 }
