@@ -11,16 +11,18 @@
 
 package org.eclipse.ui.internal.keys;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.core.runtime.NLS;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,11 +40,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.CommandException;
@@ -52,9 +49,8 @@ import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.keys.KeySequence;
-
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
@@ -70,12 +66,7 @@ import org.eclipse.ui.internal.util.Util;
  */
 final class KeyAssistDialog extends Dialog {
 
-    /**
-     * The translation bundle in which to look up internationalized text.
-     */
-    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(KeyAssistDialog.class.getName());
-
+ 
     /**
      * The activity manager for the associated workbench.
      */
@@ -398,9 +389,7 @@ final class KeyAssistDialog extends Dialog {
         final Label text = new Label(composite, SWT.NONE);
         text.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
         text.setBackground(composite.getBackground());
-        text.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE,
-                "openPreferencePage"), //$NON-NLS-1$
-                new Object[] { keyBinding.format() }));
+        text.setText(NLS.bind(KeyAssistMessages.openPreferencePage,keyBinding.format()));
 
         return composite;
     }
@@ -499,8 +488,7 @@ final class KeyAssistDialog extends Dialog {
      */
     private final void createEmptyDialogArea(final Composite parent) {
         final Label noMatchesLabel = new Label(parent, SWT.NULL);
-        noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE,
-                "NoMatches.Message")); //$NON-NLS-1$
+        noMatchesLabel.setText(KeyAssistMessages.NoMatches_Message);
         noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
         noMatchesLabel.setBackground(parent.getBackground());
     }
