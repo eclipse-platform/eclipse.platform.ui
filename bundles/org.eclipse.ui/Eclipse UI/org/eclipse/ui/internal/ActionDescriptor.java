@@ -47,6 +47,8 @@ public class ActionDescriptor {
 	public static final String ATT_HOVERICON = "hoverIcon";//$NON-NLS-1$
 	public static final String ATT_DISABLEDICON = "disabledIcon";//$NON-NLS-1$
 	public static final String ATT_CLASS = "class";//$NON-NLS-1$
+	public static final String ATT_RETARGET = "retarget";//$NON-NLS-1$
+	public static final String ATT_ALLOW_LABEL_UPDATE = "allowLabelUpdate";//$NON-NLS-1$
 	public static final String ATT_ACCELERATOR = "accelerator";//$NON-NLS-1$
 /**
  * Creates a new descriptor with the specified target.
