@@ -33,7 +33,7 @@ public SafeChunkyOutputStream(File target) throws IOException {
 	this(target.getAbsolutePath());
 }
 public SafeChunkyOutputStream(String filePath) throws IOException {
-	super(new FileOutputStream(filePath, true));
+	super(new BufferedOutputStream(new FileOutputStream(filePath, true)));
 	this.filePath = filePath;
 	isOpen = true;
 	beginChunk();
@@ -45,7 +45,7 @@ protected void endChunk() throws IOException {
 	write(ILocalStoreConstants.END_CHUNK);
 }
 protected void open() throws IOException {
-	out = new FileOutputStream(filePath, true);
+	out = new BufferedOutputStream(new FileOutputStream(filePath, true));
 	isOpen = true;
 	beginChunk();
 }

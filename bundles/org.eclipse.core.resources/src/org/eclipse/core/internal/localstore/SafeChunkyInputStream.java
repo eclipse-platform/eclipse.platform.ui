@@ -16,7 +16,7 @@ public class SafeChunkyInputStream extends InputStream {
 	// to be written...
 	//
 	//
-	protected FileInputStream input;
+	protected InputStream input;
 	protected byte[] buffer;
 	protected int nextByteToRead;
 	protected int beginUnparsedData;
@@ -33,7 +33,7 @@ public SafeChunkyInputStream(String filePath) throws IOException {
  * @parameter bufferSize cannot be set under 1024 bytes
  */
 public SafeChunkyInputStream(String filePath, int bufferSize) throws IOException {
-	input = new FileInputStream(filePath);
+	input = new BufferedInputStream(new FileInputStream(filePath));
 	bufferSize = (bufferSize < BUFFER_SIZE_LOWER_LIMIT) ? BUFFER_SIZE_LOWER_LIMIT : bufferSize;
 	buffer = new byte[bufferSize];
 	nextByteToRead = 0;

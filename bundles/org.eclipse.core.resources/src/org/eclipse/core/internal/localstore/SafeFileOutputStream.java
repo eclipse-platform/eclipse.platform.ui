@@ -19,7 +19,7 @@ import java.io.*;
 public class SafeFileOutputStream extends OutputStream {
 	protected File temp;
 	protected File target;
-	protected FileOutputStream output;
+	protected OutputStream output;
 	protected boolean failed;
 	protected static final String EXTENSION = ".bak";
 public SafeFileOutputStream(File file) throws IOException {
@@ -37,7 +37,7 @@ public SafeFileOutputStream(String targetPath, String tempPath) throws IOExcepti
 	createTempFile(tempPath);
 	if (!target.exists()) {
 		if (!temp.exists()) {
-			output = new FileOutputStream(target);
+			output = new BufferedOutputStream(new FileOutputStream(target));
 			return;
 		}
 		// If we do not have a file at target location, but we do have at temp location,
@@ -45,7 +45,7 @@ public SafeFileOutputStream(String targetPath, String tempPath) throws IOExcepti
 		// So, try to recover the backup file. And, if successful, write the new one.
 		copy(temp, target);
 	}
-	output = new FileOutputStream(temp);
+	output = new BufferedOutputStream(new FileOutputStream(temp));
 }
 public void close() throws IOException {
 	try {
