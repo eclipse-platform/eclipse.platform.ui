@@ -1,33 +1,25 @@
 package org.eclipse.help.ui.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.lang.reflect.*;
-import java.util.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.ui.*;
-import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.internal.util.*;
-import org.eclipse.help.ui.browser.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.search.ui.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.help.ui.browser.IBrowser;
-
+import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * HelpSearchPage
  */
-public class HelpSearchPage extends DialogPage implements ISearchPage
-{
+public class HelpSearchPage extends DialogPage implements ISearchPage {
 	private static final int ENTRY_FIELD_LENGTH = 256;
 	private static final int ENTRY_FIELD_ROW_COUNT = 1;
 	private Combo patternCombo = null;
@@ -43,13 +35,11 @@ public class HelpSearchPage extends DialogPage implements ISearchPage
 	/**
 	 * Search Page
 	 */
-	public HelpSearchPage()
-	{
+	public HelpSearchPage() {
 		super();
 		searchQueryData = new SearchQueryData();
 	}
-	public void createControl(Composite parent)
-	{
+	public void createControl(Composite parent) {
 		Composite control = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -71,10 +61,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage
 		patternCombo.setLayoutData(gd);
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
-		patternCombo.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
+		patternCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				if (patternCombo.getSelectionIndex() < 0)
 					return;
 				int index =
@@ -86,10 +74,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage
 				//searchOperation.getQueryData().getExcludedCategories());
 			}
 		});
-		patternCombo.addModifyListener(new ModifyListener()
-		{
-			public void modifyText(ModifyEvent e)
-			{
+		patternCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
 				scontainer.setPerformActionEnabled(patternCombo.getText().length() > 0);
 			}
 		});
@@ -122,99 +108,58 @@ public class HelpSearchPage extends DialogPage implements ISearchPage
 	/**
 	 * @see ISearchPage#performAction()
 	 */
-	public boolean performAction()
-	{
+	public boolean performAction() {
 		searchQueryData.setExpression(patternCombo.getText());
-		searchQueryData.setFieldsSearch(false
-		/*headingsButton.getSelection()*/
+		searchQueryData.setFieldsSearch(false		/*headingsButton.getSelection()*/
 		);
 		//java.util.List excluded = filteringOptions.getExcludedCategories();
-		searchQueryData.setCategoryFiltering(false
-		/*excluded.size() > 0*/
+		searchQueryData.setCategoryFiltering(false		/*excluded.size() > 0*/
 		);
-		searchQueryData.setExcludedCategories(new ArrayList(0)
-		/*excluded*/
+		searchQueryData.setExcludedCategories(new ArrayList(0)		/*excluded*/
 		);
 		if (!previousSearchQueryData.contains(searchQueryData))
 			previousSearchQueryData.add(searchQueryData);
-		ProgressMonitorDialog pmd = null;
-		scontainer.getRunnableContext();
-		Shell shell = patternCombo.getShell();
-
-		if (pmd == null)
-			pmd = new ProgressMonitorDialog(shell);
-		try
-		{
-			//context.run(true, true, searchOperation);
+		try {
 			// NOTE: For now, we directly ask the Search Manager to index.
 			// This should be looked at sometimes and maybe changed.
-			pmd.run(true, true, new IRunnableWithProgress()
-			{
+			scontainer.getRunnableContext().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm)
-					throws InvocationTargetException, InterruptedException
-				{
-					try
-					{
+					throws InvocationTargetException, InterruptedException {
+					try {
 						if (HelpSystem
 							.getSearchManager()
 							.isIndexingNeeded(searchQueryData.getLocale()))
 							HelpSystem.getSearchManager().updateIndex(pm, searchQueryData.getLocale());
-					}
-					catch (Exception e)
-					{
+					} catch (Exception e) {
 						throw new InterruptedException();
 					}
 				}
 			});
-		}
-		catch (InvocationTargetException ex)
-		{
+			SearchUI.activateSearchResultView();
+			scontainer.getRunnableContext().run(
+				true,
+				true,
+				new SearchOperation(searchQueryData));
+		} catch (InvocationTargetException ex) {
+			return false;
+		} catch (InterruptedException e) {
 			return false;
 		}
-		catch (InterruptedException e)
-		{
-			return false;
-		}
-		try
-		{
-			//Help.displayHelp(topicsURL);
-			if (!AppServer.isRunning())
-				return true; // may want to display an error message
-
-			String url =
-				"http://"
-					+ AppServer.getHost()
-					+ ":"
-					+ AppServer.getPort()
-					+ "/help?tab=search&query="
-					+ URLCoder.encode(searchQueryData.getExpression());
-			IBrowser browser = WorkbenchHelpPlugin.getDefault().getHelpBrowser();
-			browser.displayURL(url);
-		}
-		catch (Exception e)
-		{
-		}
-
 		return true;
 	}
-	public void setContainer(ISearchPageContainer container)
-	{
+	public void setContainer(ISearchPageContainer container) {
 		scontainer = container;
 	}
 	/*
 	 * Implements method from IDialogPage
 	 */
-	public void setVisible(boolean visible)
-	{
-		if (visible && patternCombo != null)
-		{
-			if (firstTime)
-			{
+	public void setVisible(boolean visible) {
+		if (visible && patternCombo != null) {
+			if (firstTime) {
 				firstTime = false;
 				// Set item and text here to prevent page from resizing
 				String[] patterns = new String[previousSearchQueryData.size()];
-				for (int i = 0; i < previousSearchQueryData.size(); i++)
-				{
+				for (int i = 0; i < previousSearchQueryData.size(); i++) {
 					patterns[previousSearchQueryData.size() - 1 - i] =
 						((SearchQueryData) previousSearchQueryData.get(i)).getExpression();
 				}
