@@ -26,7 +26,10 @@ public BenchPath(String testName) {
 public static Test suite() { 
 	TestSuite suite= new TestSuite();
 
-	suite.addTest(new BenchPath("benchHash"));
+//	suite.addTest(new BenchPath("benchHash"));
+//	suite.addTest(new BenchPath("benchPathCreation"));
+	suite.addTest(new BenchPath("benchToOSString"));
+	suite.addTest(new BenchPath("benchToString"));
 
  	return suite;
 }
@@ -105,6 +108,23 @@ public void benchToOSString() {
 		}
 	}	
 	stopBench("benchToOSString", count);
+}
+/**
+ * Tests the performance of Path.toOSString
+ */
+public void benchToString() {
+	final int repeat = 500000;
+	
+	IPath[] paths = generateVariousPaths();
+	final int count = repeat * paths.length;
+
+	startBench();
+	for (int rep = repeat; --rep >= 0;) {
+		for (int p = paths.length; --p >= 0;) {
+			paths[p].toString();
+		}
+	}	
+	stopBench("benchToString", count);
 }
 
 /**
