@@ -151,7 +151,7 @@ public void triggerLinkAt(int offset) {
 
 	// Check if there is an action link at the offset
 	for (int i = 0; i < actionRanges.length; i++){
-		if (offset > actionRanges[i][0] && offset <= actionRanges[i][0] + actionRanges[i][1]) {
+		if (offset >= actionRanges[i][0] && offset < actionRanges[i][0] + actionRanges[i][1]) {
 			// trigger the link
 			runAction(actionPluginIds[i], actionClasses[i]);
 			return;
