@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.core.resources"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.core.resources.ResourcesPlugin">
+<plugin>
 
    <extension-point id="builders" name="%buildersName" schema="schema/builders.exsd"/>
    <extension-point id="markers" name="%markersName" schema="schema/markers.exsd"/>
