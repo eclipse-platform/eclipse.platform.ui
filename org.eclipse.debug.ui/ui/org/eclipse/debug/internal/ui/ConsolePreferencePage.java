@@ -5,28 +5,30 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.preference.*;import org.eclipse.swt.graphics.*;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbench;import org.eclipse.ui.IWorkbenchPreferencePage;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 /**
  * A page to set the preferences for the console
  */
 public class ConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
-		
-	private static final String PREFIX= "console_preferences.";
-	private static final String DESCRIPTION= PREFIX + "description";
-	private static final String OUT= PREFIX + "out";
-	private static final String ERR= PREFIX + "err";
-	private static final String IN= PREFIX + "in";
-	private static final String FONT=PREFIX + "font";
-
 	/**
 	 * Create the console page.
 	 */
 	public ConsolePreferencePage() {
 		super(GRID);
-		setDescription(DebugUIUtils.getResourceString(DESCRIPTION));
-		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
-		setPreferenceStore(store);
+		setDescription("Console text color settings.");
+		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
 	public void createControl(Composite parent) {
@@ -43,15 +45,17 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 
 		// Note: first String value is the key for the preference bundle and second the
 		// second String value is the label displayed in front of the editor.
-		ColorFieldEditor sysout= new ColorFieldEditor(CONSOLE_SYS_OUT_RGB, DebugUIUtils.getResourceString(OUT), getFieldEditorParent());
-		ColorFieldEditor syserr= new ColorFieldEditor(CONSOLE_SYS_ERR_RGB, DebugUIUtils.getResourceString(ERR), getFieldEditorParent());
-		ColorFieldEditor sysin= new ColorFieldEditor(CONSOLE_SYS_IN_RGB, DebugUIUtils.getResourceString(IN), getFieldEditorParent());
+		ColorFieldEditor sysout= new ColorFieldEditor(CONSOLE_SYS_OUT_RGB, "Standard Out:", getFieldEditorParent());
+		ColorFieldEditor syserr= new ColorFieldEditor(CONSOLE_SYS_ERR_RGB, "Standard Error:", getFieldEditorParent());
+		ColorFieldEditor sysin= new ColorFieldEditor(CONSOLE_SYS_IN_RGB, "Standard In:", getFieldEditorParent());
 		
-		FontFieldEditor font= new FontFieldEditor(CONSOLE_FONT, DebugUIUtils.getResourceString(FONT), getFieldEditorParent());
+		WorkbenchChainedTextFontFieldEditor editor= new WorkbenchChainedTextFontFieldEditor(CONSOLE_FONT,
+				"Console font setting: ", getFieldEditorParent());
+		
 		addField(sysout);
 		addField(syserr);
 		addField(sysin);
-		addField(font);
+		addField(editor);
 	}
 
 	/**
@@ -78,5 +82,13 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		FontData fontData= PreferenceConverter.getFontData(pstore, CONSOLE_FONT);
 		return fontData;
 	}
+	
+	public static void initDefaults(IPreferenceStore store) {
+		WorkbenchChainedTextFontFieldEditor.startPropagate(store, CONSOLE_FONT);
+		
+		PreferenceConverter.setDefault(store, CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
+		PreferenceConverter.setDefault(store, CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
+		PreferenceConverter.setDefault(store, CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
+		
+	}	
 }
-
