@@ -63,7 +63,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="keyConfigurationId" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id (&lt;code&gt;id&lt;/code&gt;attribute) of the keyConfiguration element one wishes to be initially active.
                </documentation>
             </annotation>
          </attribute>
@@ -139,7 +139,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="categoryId" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
                </documentation>
             </annotation>
          </attribute>
@@ -163,7 +163,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 <!--sequence>
             <element ref="sequence" minOccurs="0" maxOccurs="1"/>
          </sequence-->
-         <attribute name="configuration" type="string" use="required">
+         <attribute name="configuration" type="string">
             <annotation>
                <documentation>
                   The unique id of the key configuration of this key binding.
@@ -198,7 +198,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="string" type="string" use="required">
+         <attribute name="string" type="string">
             <annotation>
                <documentation>
                   The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
@@ -215,21 +215,21 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="keyConfigurationId" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id of the key configuration of this key binding.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="commandId" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique identifier of the command to which the key sequence specified by this key binding is assigned. If the value of this attribute is an empty string, the key sequence is assigned to an internal &apos;no operation&apos; command. This is useful for &apos;undefining&apos; key bindings in specific key configurations and contexts which may have been borrowed from their parents.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="keySequence" type="string">
             <annotation>
                <documentation>
-                  
+                  The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
                </documentation>
             </annotation>
          </attribute>
@@ -271,16 +271,16 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="parentId" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the parent key configuration. If this key configuration has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own key configuration.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -290,6 +290,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element-->
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
       </complexType>
    </element-->
    <element name="context">
@@ -330,7 +337,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="parentId" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
                </documentation>
             </annotation>
          </attribute>
