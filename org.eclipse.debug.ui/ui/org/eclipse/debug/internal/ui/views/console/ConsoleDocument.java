@@ -423,11 +423,11 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	 */
 	protected void appendToDocument(final String text, final int source) {
 		setAppendInProgress(true);
+		int appendedLength= text.length();
+		fNewStreamWriteEnd= fLastStreamWriteEnd + appendedLength;
+		updateOutputStyleRanges(source, getLength() + appendedLength, fLastStreamWriteEnd, fNewStreamWriteEnd);
 		update(new Runnable() {
 			public void run() {
-				int appendedLength= text.length();
-				fNewStreamWriteEnd= fLastStreamWriteEnd + appendedLength;
-				updateOutputStyleRanges(source, getLength() + appendedLength, fLastStreamWriteEnd, fNewStreamWriteEnd);
 				replace0(fLastStreamWriteEnd, 0, text);
 				fLastStreamWriteEnd= fNewStreamWriteEnd;
 				setAppendInProgress(false);

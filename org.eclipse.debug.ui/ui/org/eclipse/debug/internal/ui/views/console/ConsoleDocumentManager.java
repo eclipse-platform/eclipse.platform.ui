@@ -267,12 +267,12 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * Opens the console view. If the view is already open, it is brought to the front.
 	 */
 	protected void showConsole(final IDocument doc) {
+		IProcess debugViewProcess= getDebugViewProcess();
+		if (doc != null && debugViewProcess != null && !doc.equals(getConsoleDocument(debugViewProcess))) {
+			return;
+		}
 		DebugUIPlugin.getDefault().getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				IProcess debugViewProcess= getDebugViewProcess();
-				if (doc != null && debugViewProcess != null && !doc.equals(getConsoleDocument(debugViewProcess))) {
-					return;
-				}
 				IWorkbenchWindow window= DebugUIPlugin.getDefault().getActiveWorkbenchWindow();
 				if (window != null) {
 					IWorkbenchPage page= window.getActivePage();
