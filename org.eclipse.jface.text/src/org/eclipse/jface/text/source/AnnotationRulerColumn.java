@@ -13,6 +13,8 @@ package org.eclipse.jface.text.source;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -123,6 +125,36 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		}
 	}
 	
+	/**
+	 * Pair of an annotation and their associated position. Used inside the paint method
+	 * for sorting annotations based on the offset of their position.
+	 * @since 3.0
+	 */
+	private static class Tuple {
+		Annotation annotation;
+		Position position;
+		
+		Tuple(Annotation annotation, Position position) {
+			this.annotation= annotation;
+			this.position= position;
+		}
+	}
+	
+	/**
+	 * Comparator for <code>Tuple</code>s.
+	 * @since 3.0
+	 */
+	private static class TupleComparator implements Comparator {
+		/*
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Object o1, Object o2) {
+			Position p1= ((Tuple) o1).position;
+			Position p2= ((Tuple) o2).position;
+			return p1.getOffset() - p2.getOffset();
+		}
+	}
+	
 	/** This column's parent ruler */
 	private CompositeRuler fParentRuler;
 	/** The cached text viewer */
@@ -170,6 +202,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @since 3.0
 	 */
 	private List fCachedAnnotations= new ArrayList();
+	/**
+	 * The comparator for sorting annotations according to the offset of their position.
+	 * @since 3.0
+	 */
+	private Comparator fTupleComparator= new TupleComparator();
 	/**
 	 * The hit detection cursor.
 	 * @since 3.0
@@ -715,16 +752,15 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			
 			minLayer= Math.min(minLayer, lay);
 			maxLayer= Math.max(maxLayer, lay);
-			fCachedAnnotations.add(annotation);
+			fCachedAnnotations.add(new Tuple(annotation, position));
 		}
-
+		Collections.sort(fCachedAnnotations, fTupleComparator);
+		
 		for (int layer= minLayer; layer <= maxLayer; layer++) {
 			for (int i= 0, n= fCachedAnnotations.size(); i < n; i++) {
-				Annotation annotation= (Annotation) fCachedAnnotations.get(i);
-				
-				Position position= fModel.getPosition(annotation);
-				if (position == null)
-					continue;
+				Tuple tuple= (Tuple) fCachedAnnotations.get(i);
+				Annotation annotation= tuple.annotation;
+				Position position= tuple.position;
 				
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (fAnnotationAccessExtension != null)
