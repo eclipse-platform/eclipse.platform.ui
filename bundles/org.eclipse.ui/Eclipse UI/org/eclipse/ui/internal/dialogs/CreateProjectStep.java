@@ -26,7 +26,7 @@ public class CreateProjectStep extends WizardStep {
 	 * @param page the wizard page containing the new project name and location
 	 * @param wizard the multi-step wizard for collecting new project information
 	 */
-	public CreateProjectStep(int number, WizardNewProjectCreationPage page, NewProjectWizard wizard) {
+	public CreateProjectStep(int number, WizardNewProjectNameAndLocationPage page, NewProjectWizard wizard) {
 		super(number);
 		stepWizard = new CreateProjectWizard(page, wizard);
 	}

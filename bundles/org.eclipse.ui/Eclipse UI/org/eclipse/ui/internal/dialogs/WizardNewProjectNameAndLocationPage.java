@@ -44,13 +44,13 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Example useage:
  * <pre>
- * mainPage = new WizardNewProjectCreationPage("wizardNewProjectCreationPage");
+ * mainPage = new WizardNewProjectNameAndLocationPage("wizardNewProjectCreationPage");
  * mainPage.setTitle("Project");
  * mainPage.setDescription("Create a new project.");
  * </pre>
  * </p>
  */
-public class WizardNewProjectCreationPage extends WizardPage {
+public class WizardNewProjectNameAndLocationPage extends WizardPage {
 	// Whether to use default or custom project location
 	private boolean useDefaults = true;
 
@@ -89,7 +89,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 *
 	 * @param pageName the name of this page
 	 */
-	public WizardNewProjectCreationPage(String pageName) {
+	public WizardNewProjectNameAndLocationPage(String pageName) {
 		super(pageName);
 		setPageComplete(false);
 		initialLocationFieldValue = Platform.getLocation();

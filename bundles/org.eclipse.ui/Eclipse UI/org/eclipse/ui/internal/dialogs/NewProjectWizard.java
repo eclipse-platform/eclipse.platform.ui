@@ -41,7 +41,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	private IStructuredSelection selection;
 	
 	// Reference to the pages provided by this wizard
-	private WizardNewProjectCreationPage creationPage;
+	private WizardNewProjectNameAndLocationPage creationPage;
 	private WizardNewProjectCapabilityPage capabilityPage;
 	
 	// Newly created project
@@ -71,7 +71,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	 * Method declared on MultiStepWizard.
 	 */
 	protected void addCustomPages() {
-		creationPage = new WizardNewProjectCreationPage("newProjectCreationPage");//$NON-NLS-1$
+		creationPage = new WizardNewProjectNameAndLocationPage("newProjectCreationPage");//$NON-NLS-1$
 		creationPage.setTitle(WorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
 		creationPage.setDescription(WorkbenchMessages.getString("WizardNewProjectCreationPage.description")); //$NON-NLS-1$
 		creationPage.setInitialProjectName(initialProjectName);

@@ -38,13 +38,13 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class CreateProjectWizard extends Wizard {
 	private NewProjectWizard wizard;
-	private WizardNewProjectCreationPage page;
+	private WizardNewProjectNameAndLocationPage page;
 
 	/**
 	 * Creates an empty wizard for creating a new project
 	 * in the workspace.
 	 */
-	/* package */ CreateProjectWizard(WizardNewProjectCreationPage page, NewProjectWizard wizard) {
+	/* package */ CreateProjectWizard(WizardNewProjectNameAndLocationPage page, NewProjectWizard wizard) {
 		super();
 		this.page = page;
 		this.wizard = wizard;
