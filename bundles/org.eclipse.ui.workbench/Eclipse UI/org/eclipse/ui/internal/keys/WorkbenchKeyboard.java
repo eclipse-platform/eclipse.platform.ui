@@ -784,7 +784,7 @@ public final class WorkbenchKeyboard {
         } else {
             // Layout the table.
             final Table completionsTable = new Table(multiKeyAssistShell,
-                    SWT.BORDER | SWT.SINGLE);
+                    SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE);
             completionsTable.setBackground(multiKeyAssistShell.getBackground());
             completionsTable.setLinesVisible(true);
             GridData gridData = new GridData(GridData.FILL_BOTH);
