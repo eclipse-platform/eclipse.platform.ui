@@ -47,9 +47,6 @@ public interface ICheatSheetResource {
 	public static final String CHEAT_SHEET_OTHER_MENU = "%CHEAT_SHEET_OTHER_MENU"; //$NON-NLS-1$
 
 	public static final String CHEAT_SHEETS = "%CHEAT_SHEETS"; //$NON-NLS-1$
-	public static final String FASTVIEW_ONLY_ERROR = "FASTVIEW_ONLY_ERROR"; //$NON-NLS-1$
-	public static final String FASTVIEW_ONLY_ERROR_MESSAGE = "FASTVIEW_ONLY_ERROR_MESSAGE"; //$NON-NLS-1$
-	public static final String FASTVIEW_DISABLED_FOR_CHEAT_SHEET = "FASTVIEW_DISABLED_FOR_CHEAT_SHEET"; //$NON-NLS-1$
 
 	public static final String PERFORM_TASK_TOOLTIP = "%PERFORM_TASK_TOOLTIP"; //$NON-NLS-1$
 	public static final String SKIP_TASK_TOOLTIP = "%SKIP_TASK_TOOLTIP"; //$NON-NLS-1$
