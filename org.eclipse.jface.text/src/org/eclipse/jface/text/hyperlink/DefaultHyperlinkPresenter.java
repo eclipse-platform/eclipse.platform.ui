@@ -362,11 +362,12 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	}
 
 	private Point getMaximumLocation(StyledText text, int offset, int length) {
+		int max= text.getCharCount();
 		Point maxLocation= new Point(0, 0);
 
 		for (int i= 0; i <= length; i++) {
 			int k= offset + i;
-			if (k < 0 || k > text.getCharCount())
+			if (k < 0 || k > max)
 				break;
 			
 			Point location= text.getLocationAtOffset(k);
