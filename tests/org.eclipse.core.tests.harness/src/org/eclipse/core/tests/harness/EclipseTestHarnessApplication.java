@@ -56,7 +56,8 @@ protected Object findTestFor(String testName) {
 				try {
 					return element.createExecutableExtension("run");
 				} catch (CoreException e) {
-					System.out.println("Could not instantiate test: " + testName);
+					System.err.println("Could not instantiate test: " + testName);
+					e.printStackTrace();
 					return null;
 				}
 		}
@@ -64,6 +65,7 @@ protected Object findTestFor(String testName) {
 	System.out.println("Could not find test: " + testName);
 	return null;
 }
+
 protected String[] processCommandLine(String[] args) {
 	int[] configArgs = new int[100];
 	configArgs[0] = -1; // need to initialize the first element to something that could not be an index.
