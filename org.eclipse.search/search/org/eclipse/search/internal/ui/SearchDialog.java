@@ -343,7 +343,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		return result;
 	}
 
-	protected boolean doPerformAction(int actionID) {
+	protected boolean performAction(int actionID) {
 		if (fCurrentPage == null)
 			return true;
 		
@@ -364,13 +364,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			if (isAutoBuilding)
 				// enable auto-building again
 				SearchPlugin.setAutoBuilding(true);				
-		}
-		
-	}
-	
-	protected void performAction(int actionID) {
-		if (doPerformAction(actionID)) {
-			close();
 		}
 	}
 

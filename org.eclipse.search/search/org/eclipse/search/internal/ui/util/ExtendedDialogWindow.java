@@ -68,8 +68,8 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 * the dialog's action. If the method returns <code>false</code>
 	 * the dialog stays open. Otherwise the dialog is going to be closed.
 	 */
-	protected void performAction(int buttonId) {
-		return;
+	protected boolean performAction(int buttonId) {
+		return true;
 	}
 	 
 	/**
@@ -144,7 +144,8 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 					close();
 				break;	
 			default:
-				performAction(buttonId);
+				if (performAction(buttonId))
+					close();
 		}
 	}
 	
