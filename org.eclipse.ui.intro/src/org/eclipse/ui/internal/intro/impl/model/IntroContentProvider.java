@@ -22,11 +22,11 @@ import org.w3c.dom.*;
  * used if the class doesn't come from the plugin that defined the markup. The
  * text content should be used only if we fail to load the class. <br>
  * 
- * REVISIT: model class has access to style-id attribute but it is not used in
- * the schema.
+ * INTRO: model class has access to style-id attribute but it is not used in the
+ * schema.
  */
 public class IntroContentProvider extends AbstractTextElement {
-    protected static final String TAG_CONTENT_PROVIDER = "contentProvider"; //$NON-NLS-1$
+    public static final String TAG_CONTENT_PROVIDER = "contentProvider"; //$NON-NLS-1$
 
     private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
     private static final String ATT_CLASS = "class"; //$NON-NLS-1$

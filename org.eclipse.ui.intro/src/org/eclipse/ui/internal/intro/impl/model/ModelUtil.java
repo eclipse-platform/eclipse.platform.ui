@@ -254,6 +254,24 @@ public class ModelUtil {
     }
 
 
+    /**
+     * Remove all anchors from this page.
+     *  
+     */
+    public static void removeElement(Document dom, String elementLocalName) {
+        // get all elements in DOM and remove them.
+        NodeList anchors = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
+                elementLocalName);
+        // get the array version of the nodelist to work around DOM api design.
+        Node[] anchorArray = ModelUtil.getArray(anchors);
+        for (int i = 0; i < anchorArray.length; i++) {
+            Node anchor = anchorArray[i];
+            anchor.getParentNode().removeChild(anchor);
+        }
+
+    }
+
+
 
 }
 

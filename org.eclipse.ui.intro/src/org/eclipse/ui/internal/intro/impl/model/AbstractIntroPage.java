@@ -64,7 +64,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * this extension into the target is ignored. Shared divs do not have
      * styles.</li>
      * <li>Shared hashtable has alt-styles as keys and bundles as values.</li>
-     * 
      * </ul>
      */
     private Vector styles;
@@ -417,7 +416,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @return
      */
     public Document getDocument() {
-        // we need to force a getChildren to resolve the page.
+        // we only need to load children here.
         if (!loaded)
             loadChildren();
         return dom;
@@ -496,7 +495,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // insert base meta-tag, and resolve includes.
         ModelUtil.insertBase(dom, ModelUtil.getFolderPath(content));
         resolveIncludes();
-        removeAnchors();
+        // now remove all anchors from this page.
+        ModelUtil.removeElement(dom, IntroAnchor.TAG_ANCHOR);
         resolved = true;
     }
 
@@ -612,24 +612,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     public String getContent() {
         return content;
-    }
-
-    /**
-     * Remove all anchors from this page.
-     *  
-     */
-    private void removeAnchors() {
-        // get all anchor elements in DOM and remove them.
-        NodeList anchors = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
-                IntroAnchor.TAG_ANCHOR);
-        // get the array version of the nodelist to work around
-        // removeChild() DOM api design.
-        Node[] anchorArray = ModelUtil.getArray(anchors);
-        for (int i = 0; i < anchorArray.length; i++) {
-            Node anchor = anchorArray[i];
-            anchor.getParentNode().removeChild(anchor);
-        }
-
     }
 
 

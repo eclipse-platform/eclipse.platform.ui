@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.config.*;
+import org.w3c.dom.*;
 
 public class BrowserIntroPartImplementation extends
         AbstractIntroPartImplementation implements IPropertyListener,
@@ -130,7 +131,7 @@ public class BrowserIntroPartImplementation extends
             // generateDynamicContentForPage(homePage);
             updateHistory(homePage.getId());
         }
-        // REVISIT: all setText calls above are commented out because calling
+        // INTRO: all setText calls above are commented out because calling
         // setText twice causes problems. revisit when swt bug is fixed.
 
         // Add this presentation as a listener to model
@@ -144,12 +145,12 @@ public class BrowserIntroPartImplementation extends
      * widget (Revisit this). This method also updates the navigation history.
      * 
      * @param page
-     *            the page to generate HTML for
+     *                   the page to generate HTML for
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
         String content = null;
         if (page.isXHTMLPage())
-            content = generateXHTMLPage(page);
+            content = generateXHTMLPage(page, this);
         else {
             HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
                     this);
@@ -180,10 +181,61 @@ public class BrowserIntroPartImplementation extends
         return success;
     }
 
-    private String generateXHTMLPage(AbstractIntroPage page) {
-        // if page is an XHTML page, we know it has a DOM cached.
-        return IntroContentParser.convertToString(page.getResolvedDocument());
+    /**
+     * Use xslt to flatten the DOM for the page. Also create any dynamic content
+     * providers if there are any.
+     */
+    private String generateXHTMLPage(AbstractIntroPage page,
+            IIntroContentProviderSite site) {
+        // if page is an XHTML page, DOM is cached. Resolve dynamic content
+        // first, then XSLT tansform. Resolving dynamic content is done at the
+        // UI level.
+        Document dom = resolveDynamicContent(page, site);
+        return IntroContentParser.convertToString(dom);
     }
+
+    /**
+     * Resolve the dynamic content in the page. Dynamic content tags are removed
+     * to prevent creating content twice, and to have clean xhtml.
+     */
+    private Document resolveDynamicContent(AbstractIntroPage page,
+            IIntroContentProviderSite site) {
+        Document dom = page.getResolvedDocument();
+        // get all content provider elements in DOM.
+        NodeList includes = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
+                IntroContentProvider.TAG_CONTENT_PROVIDER);
+        // get the array version of the nodelist to work around DOM api design.
+        Node[] nodes = ModelUtil.getArray(includes);
+        for (int i = 0; i < nodes.length; i++) {
+            Element contentProviderElement = (Element) nodes[i];
+            IntroContentProvider provider = new IntroContentProvider(
+                    contentProviderElement, page.getBundle());
+            // If we've already loaded the content provider for this element,
+            // retrieve it, otherwise load the class.
+            IIntroXHTMLContentProvider providerClass = (IIntroXHTMLContentProvider) ContentProviderManager
+                    .getInst().getContentProvider(provider);
+            if (providerClass == null)
+                // content provider never created before, create it.
+                providerClass = (IIntroXHTMLContentProvider) ContentProviderManager
+                        .getInst().createContentProvider(provider, site);
+
+            if (providerClass != null) {
+                // create the specialized content
+                providerClass.createContent(provider.getId(),
+                        (Element) contentProviderElement.getParentNode());
+                contentProviderElement.getParentNode().removeChild(
+                        contentProviderElement);
+            } else {
+                // we couldn't load the content provider, so add any alternate
+                // text content if there is any.
+                // INTRO: do it. 3.0 intro content style uses text element as
+                // alt text. We can load XHTML content here.
+            }
+
+        }
+        return dom;
+    }
+
 
     /**
      * Return the cached IntroHTMLGenerator
@@ -246,7 +298,7 @@ public class BrowserIntroPartImplementation extends
      * dynamic case.
      * 
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
-     *      int)
+     *           int)
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {

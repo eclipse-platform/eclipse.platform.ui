@@ -369,7 +369,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // extensions are only for anchors. Insert all children of this
             // extension before the target anchor. Anchors need to stay in DOM ,
             // even after all extensions have been resolved, to enable other
-            // plugins to contribute. Find the taget node.
+            // plugins to contribute. Find the target node.
             Document pageDom = targetPage.getDocument();
             Element targetAnchor = targetPage.findDomChild(pathSegments[1],
                     IntroAnchor.TAG_ANCHOR);
