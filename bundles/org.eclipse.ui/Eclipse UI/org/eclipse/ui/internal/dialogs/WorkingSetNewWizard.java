@@ -69,6 +69,14 @@ public class WorkingSetNewWizard extends Wizard {
 	}
 	/**
 	 * Overrides method in Wizard.
+	 * 
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		return (workingSetEditPage != null && workingSetEditPage.isPageComplete());
+	}
+	/**
+	 * Overrides method in Wizard.
 	 * Returns a working set page for creating the new working set.
 	 * This second page is loaded from the plugin that defined the
 	 * selected working set type.
@@ -113,13 +121,4 @@ public class WorkingSetNewWizard extends Wizard {
 		((WorkingSet) workingSet).setEditPageId(editPageId);
 		return true;
 	}
-	/**
-	 * Overrides method in Wizard.
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-	 */
-	public boolean canFinish() {
-		return (workingSetEditPage != null && workingSetEditPage.isPageComplete());
-	}
-
 }

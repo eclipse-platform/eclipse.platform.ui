@@ -39,6 +39,7 @@ public class WorkingSetTypePage extends WizardPage {
 	 */
 	public WorkingSetTypePage() {
 		super("workingSetTypeSelectionPage"); //$NON-NLS-1$
+		setDescription(WorkbenchMessages.getString("WorkingSetTypePage.description")); //$NON-NLS-1$				
 	}
 	/** 
 	 * Overrides method in WizardPage
@@ -89,6 +90,11 @@ public class WorkingSetTypePage extends WizardPage {
 				handleSelectionChanged();
 			}
 		});
+		typesListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick();
+			}
+		});		
 		createContent();
 		setPageComplete(false);
 	}
@@ -106,6 +112,13 @@ public class WorkingSetTypePage extends WizardPage {
 			return workingSetDescriptor.getId();
 		}
 		return null;
+	}
+	/**
+	 * Called when a working set type is double clicked.
+	 */
+	private void handleDoubleClick() {
+		handleSelectionChanged();
+		getContainer().showPage(getNextPage());
 	}
 	/**
 	 * Called when the selection has changed.
