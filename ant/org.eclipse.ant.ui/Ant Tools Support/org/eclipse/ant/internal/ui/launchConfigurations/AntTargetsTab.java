@@ -487,7 +487,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					}
 				};
 				
-				PlatformUI.getWorkbench().getProgressService().runInUI(getLaunchConfigurationDialog(), operation, null);
+				PlatformUI.getWorkbench().getProgressService().runInUI(getLaunchConfigurationDialog(), operation, AntUtil.getFileForLocation(expandedLocation, null));
 			} catch (CoreException ce) {
 				exceptions[0]= ce;
 			} catch (InvocationTargetException e) {
