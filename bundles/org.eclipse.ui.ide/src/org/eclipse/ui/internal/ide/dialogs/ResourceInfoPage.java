@@ -37,6 +37,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;

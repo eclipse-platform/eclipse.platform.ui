@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
+import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -72,7 +73,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		List encodings = WorkbenchEncoding.getDefinedEncodings();
 		Collections.sort(encodings);
 
-		encodingEditor.doLoadDefault();
+		encodingEditor.loadDefault();
 
 		super.performDefaults();
 	}
