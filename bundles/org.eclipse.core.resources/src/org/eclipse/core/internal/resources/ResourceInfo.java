@@ -272,7 +272,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Returns true if all of the bits indicated by the mask are set.
 	 */
 	public boolean isSet(int mask) {
-		return isSet(flags, mask);
+		return (flags & mask) == mask;
 	}
 
 	public void readFrom(int newFlags, DataInput input) throws IOException {
