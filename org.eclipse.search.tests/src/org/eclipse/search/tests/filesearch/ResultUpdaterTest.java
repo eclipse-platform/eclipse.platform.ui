@@ -19,14 +19,10 @@ import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 
 public class ResultUpdaterTest extends TestCase {
 	FileSearchQuery fQuery1;
 	FileSearchQuery fQuery2;
-
-	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
 	public ResultUpdaterTest(String name) {
 		super(name);

@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.text.FileSearchPage;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
@@ -23,6 +24,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
 
 public class SearchResultPageTest extends TestCase {
@@ -98,4 +100,25 @@ public class SearchResultPageTest extends TestCase {
 		assertTrue(itemCount > 0);
 		assertTrue(item.getText().indexOf(String.valueOf(itemCount)) >= 0);
 	}
+	
+	public void testTableNavigation() {
+		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
+		NewSearchUI.runQueryInForeground(null, fQuery1);
+		FileSearchPage page= (FileSearchPage) view.getActivePage();
+		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
+		Table table= ((TableViewer) page.getViewer()).getTable();
+		
+		// select the first element.
+		table.setSelection(0);
+		
+		// back from first match, goto last
+		page.gotoPreviousMatch();
+		assertEquals(1, table.getSelectionCount());
+		assertEquals(table.getItemCount()-1, table.getSelectionIndex());
+
+		// and forward again, to the first match.
+		page.gotoNextMatch();
+		assertEquals(1, table.getSelectionCount());
+		assertEquals(0, table.getSelectionIndex());
+}
 }

@@ -7,13 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
+ *       o Go to next match on last match does nothing
+ *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=58311)
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.basic.views;
 import org.eclipse.jface.viewers.TableViewer;
-/**
- * @author Thomas Mäder
- *  
- */
+
 public class TableViewerNavigator implements INavigate {
 	private TableViewer fViewer;
 	public TableViewerNavigator(TableViewer viewer) {
@@ -28,7 +28,7 @@ public class TableViewerNavigator implements INavigate {
 		if (selection.length > 0) {
 			if (forward) {
 				nextIndex = selection[selection.length - 1] + 1;
-				if (nextIndex > itemCount)
+				if (nextIndex >= itemCount)
 					nextIndex = 0;
 			} else {
 				nextIndex = selection[0] - 1;
