@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 
@@ -53,7 +54,12 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 			ms.merge(ce.getStatus());
 		}
 		if (!ms.isOK()) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("RemoveBreakpointAction.Removing_a_breakpoint_4"),ActionMessages.getString("RemoveBreakpointAction.Exceptions_occurred_attempting_to_remove_a_breakpoint._5") , ms); //$NON-NLS-1$ //$NON-NLS-2$
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window != null) {
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RemoveBreakpointAction.Removing_a_breakpoint_4"),ActionMessages.getString("RemoveBreakpointAction.Exceptions_occurred_attempting_to_remove_a_breakpoint._5") , ms); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				DebugUIPlugin.log(ms);
+			}
 		}
 	}
 	

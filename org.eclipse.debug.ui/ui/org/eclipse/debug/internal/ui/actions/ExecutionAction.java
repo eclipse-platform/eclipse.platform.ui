@@ -41,6 +41,9 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	 */
 	private void openLaunchConfigurationDialog() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (dwindow == null) {
+			return;
+		}
 		IStructuredSelection selection= resolveSelection(dwindow);
 		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
 		dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_LAUNCH_LAST);

@@ -89,7 +89,12 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			}
 		}
 		if (!ms.isOK()) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ms); //$NON-NLS-2$ //$NON-NLS-1$
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window != null) {
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ms); //$NON-NLS-2$ //$NON-NLS-1$
+			} else {
+				DebugUIPlugin.log(ms);
+			}
 		}
 	}
 
@@ -122,7 +127,12 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 					action.setEnabled(isEnableAction());
 				}
 			} catch (CoreException ce) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ce); //$NON-NLS-2$ //$NON-NLS-1$
+				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+				if (window != null) {
+					DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ce); //$NON-NLS-2$ //$NON-NLS-1$
+				} else {
+					DebugUIPlugin.log(ce);
+				}
 			}
 		}
 	}

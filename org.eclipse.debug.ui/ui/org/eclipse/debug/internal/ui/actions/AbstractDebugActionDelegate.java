@@ -102,7 +102,12 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 			}
 		});
 		if (!ms.isOK()) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window != null) {
+				DebugUIPlugin.errorDialog(window.getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
+			} else {
+				DebugUIPlugin.log(ms);
+			}
 		}		
 	}
 

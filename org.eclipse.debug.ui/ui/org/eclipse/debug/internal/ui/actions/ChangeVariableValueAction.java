@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -66,7 +67,11 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * Edit the variable value with an inline text editor.  
 	 */
 	protected void doActionPerformed(final IVariable variable) {
-		final Shell activeShell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
+		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		final Shell activeShell= window.getShell();
 		
 		// If a previous edit is still in progress, finish it
 		if (fEditorText != null) {
