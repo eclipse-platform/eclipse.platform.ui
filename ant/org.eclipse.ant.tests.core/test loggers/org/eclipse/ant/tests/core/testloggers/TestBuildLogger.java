@@ -98,6 +98,9 @@ public class TestBuildLogger implements BuildLogger {
 	 * @see BuildListener#messageLogged(BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
+		if (event.getPriority() > getMessageOutputLevel()) {
+			return;
+		}
 		logMessage(event.getMessage(), event.getPriority());
 		AntTestChecker.getDefault().messageLogged(event.getMessage());
 	}

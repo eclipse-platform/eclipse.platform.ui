@@ -187,7 +187,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyTargetAsArg() throws CoreException {
 		run("echoing.xml", new String[]{"echo3"}, false);
-		assertTrue("21 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 21);
+		assertTrue("3 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 3);
 		assertSuccessful();
 	}
 	
@@ -196,8 +196,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyTargetAsArgAndQuiet() throws CoreException {
 		run("echoing.xml", new String[]{"-quiet", "echo3"}, false);
-		assertTrue("2 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 2);
-		assertSuccessful();
+		assertTrue("1 message should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
 	}
 	
 	/**
