@@ -112,7 +112,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 							getLaunchView().setStackFrame(null);
 						}
 					}
-					refresh(element);
+					if (event.getDetail() == DebugEvent.STATE) {
+						labelChanged(element);
+					} else {
+						//structural change
+						refresh(element);
+					}
 					break;
 			}
 		}
