@@ -278,6 +278,14 @@ class SearchResultViewer extends TableViewer {
 					new RemoveResultAction(SearchResultViewer.this).run();
 					return; // performance
 				}
+				if (e.stateMask == SWT.CTRL && e.character == 'E'-0x40) {
+					showNextResult();
+					return; // performance
+				}
+				if (e.stateMask == (SWT.CTRL | SWT.SHIFT) && e.character == 'E'-0x40) {
+					showPreviousResult();
+					return; // performance
+				}
 			}
 		});
 	}	
