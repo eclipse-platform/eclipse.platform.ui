@@ -21,7 +21,6 @@ import java.util.zip.GZIPOutputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -559,6 +558,7 @@ public class Session {
 		try {
 			InputStream in = file.getContents();
 			try {
+				boolean compressed = false;
 				byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
 				if (! isBinary && IS_CRLF_PLATFORM || compressionLevel != 0) {
 					// this affects the file size, spool the converted copy to an in-memory buffer
@@ -568,6 +568,7 @@ public class Session {
 					if (compressionLevel != 0) {
 						try {
 							zout = new GZIPOutputStream(bout); // apparently does not support specifying compression level
+							compressed = true;
 						} catch (IOException e) {
 							throw CVSException.wrapException(e);
 						}
@@ -576,8 +577,8 @@ public class Session {
 					}
 					for (int count; (count = in.read(buffer)) != -1;) zout.write(buffer, 0, count);
 					zout.close();
-					byte[] contents = bout.toByteArray();
 					in.close();
+					byte[] contents = bout.toByteArray();
 					in = new ByteArrayInputStream(contents);
 					size = contents.length;
 				}
@@ -591,7 +592,7 @@ public class Session {
 				};
 				// send the file
 				String sizeLine = Long.toString(size);
-				if (compressionLevel != 0) sizeLine = "z" + sizeLine;
+				if (compressed) sizeLine = "z" + sizeLine;
 				writeLine(sizeLine);
 				for (int count; (count = in.read(buffer)) != -1;) out.write(buffer, 0, count);
 			} finally {

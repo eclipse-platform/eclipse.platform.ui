@@ -90,9 +90,9 @@ public class SizeConstrainedInputStream extends FilterInputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public int read(byte[] buffer, int offset, int length) throws IOException {
-		if (length >= bytesRemaining) {
+		if (length > bytesRemaining) {
+			if (bytesRemaining == 0) return -1;
 			length = (int) bytesRemaining;
-			if (length == 0) return -1;
 		}
 		try {
 			int count = in.read(buffer, offset, length);

@@ -48,6 +48,31 @@ public class PollingInputStream extends FilterInputStream {
 	
 	/**
 	 * Wraps the underlying stream's method.
+	 * It may be important to wait for an input stream to be closed because it
+	 * holds an implicit lock on a system resoure (such as a file) while it is
+	 * open.  Closing a stream may take time if the underlying stream is still
+	 * servicing a previous request.
+	 * @throws OperationCanceledException if the progress monitor is canceled
+	 * @throws InterruptedIOException if the underlying operation times out numAttempts times
+	 * @throws IOException if an i/o error occurs
+	 */
+	public void close() throws IOException {
+		int attempts = 0;
+		for (;;) {
+			try {
+				in.close();
+				return;
+			} catch (InterruptedIOException e) {
+				if (monitor.isCanceled()) throw new OperationCanceledException();
+				if (++attempts == numAttempts)
+					throw new InterruptedIOException(Policy.bind("PollingInputStream.closeTimeout"));
+				if (DEBUG) System.out.println("close retry=" + attempts);
+			}
+		}
+	}
+	
+	/**
+	 * Wraps the underlying stream's method.
 	 * @throws OperationCanceledException if the progress monitor is canceled
 	 * @throws InterruptedIOException if the underlying operation times out numAttempts times
 	 *         and no data was received, bytesTransferred will be zero

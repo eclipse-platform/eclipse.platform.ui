@@ -53,7 +53,7 @@ public class CVSProviderPlugin extends Plugin {
 	// communication timeout with the server
 	public static final int DEFAULT_TIMEOUT = 60;
 	// file transfer compression level (0 - 9)
-	public static final int DEFAULT_COMPRESSION_LEVEL = 0;
+	public static final int DEFAULT_COMPRESSION_LEVEL = 6;
 
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$

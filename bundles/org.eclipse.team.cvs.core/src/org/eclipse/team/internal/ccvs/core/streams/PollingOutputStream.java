@@ -141,10 +141,22 @@ public class PollingOutputStream extends FilterOutputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public void close() throws IOException {
-		try {
-			flush();
-		} finally {
-			out.close();
-		}
+		int attempts = numAttempts - 1; // fail fast if flush() does times out
+ 		try {
+ 			flush();
+			attempts = 0;
+ 		} finally {
+			for (;;) {
+				try {
+					out.close();
+					return;
+				} catch (InterruptedIOException e) {
+					if (monitor.isCanceled()) throw new OperationCanceledException();
+					if (++attempts == numAttempts)
+						throw new InterruptedIOException(Policy.bind("PollingOutputStream.closeTimeout"));
+					if (DEBUG) System.out.println("close retry=" + attempts);
+				}
+			}
+ 		}
 	}
 }
