@@ -363,7 +363,11 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
     
     public void waitUntilDone(IProgressMonitor monitor) {
         super.waitUntilDone(monitor);
-        if (checkedInCollector != null) checkedInCollector.waitUntilDone(monitor);
+        if (checkedInCollector != null) {
+            checkedInCollector.waitUntilDone(monitor);
+            // Wait for the provider again since the change set handler may have queued UI updates
+            super.waitUntilDone(monitor);
+        }
     }
     
     void removeModelElementForSet(final ChangeSet set) {
