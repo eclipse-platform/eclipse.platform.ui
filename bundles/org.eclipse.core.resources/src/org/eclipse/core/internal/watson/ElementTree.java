@@ -928,12 +928,12 @@ public void setTreeData(IElementTreeData data) {
 public String toDebugString() {
 	final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
 	ElementTreeIterator iterator = new ElementTreeIterator();
-	IElementContentVisitor visitor = new IElementContentVisitor() {
+	IElementPathContentVisitor visitor = new IElementPathContentVisitor() {
 		public void visitElement(ElementTree tree, IPath elementID, Object elementContents) {
 			buffer.append(elementID + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	};
-	iterator.iterate(this, visitor);
+	iterator.iterateWithPath(this, visitor, Path.ROOT);
 	return buffer.toString();
 }
 public String toString() {
