@@ -203,9 +203,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 				} else if (source instanceof IProcess) {
 					launch = ((IProcess)source).getLaunch();
 				}
-				if (launch != null && isPrivate(launch)) {
-					continue;
-				}
 				String perspectiveId = null;
 				try {
 					perspectiveId = getPerspectiveId(launch);
