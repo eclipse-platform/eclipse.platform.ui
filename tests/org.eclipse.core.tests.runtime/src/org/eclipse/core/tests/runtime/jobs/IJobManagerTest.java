@@ -421,7 +421,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 	
-	public void _testJobFamilyFind() {
+	public void testJobFamilyFind() {
 		//test of finding jobs based on the job family they belong to
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
@@ -573,7 +573,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 	
 	public void testJobFamilyNULL() {
-		//test methods that accept job families with the null family (ie. all jobs)
+		//test methods that accept the null job family (ie. all jobs)
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create two different families of jobs
@@ -629,7 +629,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testJobFamilyJoin() {
 		//test the join method on a family of jobs
 		final int[] status = new int[1];
-		status[0] = 0;
+		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create two different families of jobs
@@ -643,51 +643,50 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			if(i%2 == 0) {
 				jobs[i] = new CustomTestJob("TestFirstFamily", 10, 10, TestJobFamily.TYPE_ONE);
 				jobs[i].setRule(rule1);
+				jobs[i].schedule(1000000);
 			}
 			else /*if(i%2 == 1)*/ {
-				jobs[i] = new CustomTestJob("TestSecondFamily", 100000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 				jobs[i].setRule(rule2);
+				jobs[i].schedule();
 			}	
 			
-			jobs[i].schedule();
+			
 		}
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = 1;
+				status[0] = StatusChecker.STATUS_START;
 				try {
+					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+					status[0] = StatusChecker.STATUS_RUNNING;
 					manager.join(first, null);
 				} catch (OperationCanceledException e) {
 					
 				} catch (InterruptedException e) {
 					
 				}
-				status[0] = 2;
+				status[0] = StatusChecker.STATUS_DONE;
 				
 			}
 		});
 		
-		waitForStart(jobs[0]);
+		//start the thread that will join the first family of jobs and be blocked until they finish execution		
 		t.start();
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
+		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
+		//wake up the first family of jobs
+		manager.wakeUp(first);
+				
 		int i = 0;
-		while(status[0] == 0) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			}
-			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for thread to start", i++ < 100);
-		}
-				
-		assertTrue("1.0", status[0] == 1);
-		i = 0;
 		for (; i < 100; i++) {
 			Job[] result = manager.find(first);
-			if (status[0] == 2)
+			
+			if (status[0] == StatusChecker.STATUS_DONE)
 				break;
 			
-			assertTrue("2." + i, ((result.length > 0) || (status[0] == 1)));
+			//the thread is either blocked, or it is done
+			assertTrue("2." + i, ((result.length > 0) || (status[0] == StatusChecker.STATUS_RUNNING)));
 			
 			try {
 				Thread.sleep(100);
@@ -707,10 +706,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 	
-	public void testJobFamilyJoinCancel() {
+	public void testJobFamilyJoinCancelManager() {
 		//test the join method on a family of jobs, then cancel the call
 		final int[] status = new int[1];
-		status[0] = 0;
+		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create a progress monitor to cancel the join call
@@ -724,87 +723,147 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for(int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if(i%2 == 0) {
-				jobs[i] = new CustomTestJob("TestFirstFamily", 10, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 				jobs[i].setRule(rule1);
 			}
 			else /*if(i%2 == 1)*/ {
-				jobs[i] = new CustomTestJob("TestSecondFamily", 100000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 				jobs[i].setRule(rule2);
 			}	
-			
 			jobs[i].schedule();
+			
 		}
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = 1;
+				status[0] = StatusChecker.STATUS_START;
 				try {
+					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+					status[0] = StatusChecker.STATUS_RUNNING;
 					manager.join(first, canceller);
+					
 				} catch (OperationCanceledException e) {
 					
 				} catch (InterruptedException e) {
 					
 				}
-				status[0] = 2;
-				
+				status[0] = StatusChecker.STATUS_DONE;
 			}
 		});
 		
-		waitForStart(jobs[0]);
+		//start the thread that will join the first family of jobs
+		//it will be blocked until the cancel call is made to the thread
 		t.start();
-		int  i = 0;
-		while(status[0] == 0) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
+		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;		
+		waitForStart(jobs[0]);
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
 				
-			}
-			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for thread to start", i++ < 100);
-		}
-				
-		assertTrue("1.0", status[0] == 1);
-		i = 0;
-		for (; i < 100; i++) {
-			Job[] result = manager.find(first);
-			if (status[0] == 2)
-				break;
-			
-			assertTrue("2." + i, (result.length > 0));
-			
-			if(result.length < 6)
-				canceller.setCanceled(true);
-			
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			}
-		}
-		assertTrue("2.0", i < 100);
-		assertTrue("2.1", manager.find(first).length > 0);
+		assertState("2.0", jobs[0], Job.RUNNING);
+		assertTrue("2.1", status[0] == StatusChecker.STATUS_RUNNING);
+		
+		//cancel the monitor that is attached to the join call
+		canceller.setCanceled(true);
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		
+		//the first job in the first family should still be running
+		assertState("2.2", jobs[0], Job.RUNNING);
+		assertTrue("2.3", status[0] == StatusChecker.STATUS_DONE);
+		assertTrue("2.4", manager.find(first).length > 0);
 		
 		//cancel the second family of jobs
 		manager.cancel(second);
 		waitForCancel(jobs[1]);
 		
-		//wait for the rest of the jobs in the first family to finish
-		waitForCompletion();
-		
+		//cancel the first family of jobs
+		manager.cancel(first);
+		waitForCancel(jobs[0]);
+				
 		//all the jobs should now be in the NONE state
 		for(int j = 0; j < NUM_JOBS; j++) {
 			assertState("3." + j, jobs[j], Job.NONE);
 		}
 	}
 	
-	
-	public void _testJobFamilyJoinSimple() {
-		//test the join method on a family of jobs that is empty
+	public void testJobFamilyJoinCancelJobs() {
+		//test the join method on a family of jobs, then cancel the jobs that are blocking the join call
 		final int[] status = new int[1];
-		status[0] = 0;
+		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create two different families of jobs
+		final TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
+		final TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
+		//need two scheduling rule so that jobs in each family would be executing one by one
+		ISchedulingRule rule1 = new IdentityRule();
+		ISchedulingRule rule2 = new IdentityRule();
+		for(int i = 0; i < NUM_JOBS; i++) {
+			//assign half the jobs to the first family, the other half to the second family
+			if(i%2 == 0) {
+				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i].setRule(rule1);
+			}
+			else /*if(i%2 == 1)*/ {
+				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i].setRule(rule2);
+			}	
+			jobs[i].schedule();
+			
+		}
+		
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = StatusChecker.STATUS_START;
+				try {
+					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+					status[0] = StatusChecker.STATUS_RUNNING;
+					manager.join(first, null);
+					
+				} catch (OperationCanceledException e) {
+					
+				} catch (InterruptedException e) {
+					
+				}
+				status[0] = StatusChecker.STATUS_DONE;
+			}
+		});
+		
+		//start the thread that will join the first family of jobs
+		//it will be blocked until the all jobs in the first family finish execution or are cancelled
+		t.start();
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
+		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;		
+		waitForStart(jobs[0]);
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);		
+			
+		assertState("2.0", jobs[0], Job.RUNNING);
+		assertTrue("2.1", status[0] == StatusChecker.STATUS_RUNNING);
+		
+		//cancel the first family of jobs
+		//the join call should be unblocked when all the jobs are cancelled
+		manager.cancel(first);
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		
+		//all jobs in the first family should be removed from the manager
+		assertTrue("2.2", manager.find(first).length == 0);
+		
+		//cancel the second family of jobs
+		manager.cancel(second);
+		waitForCancel(jobs[1]);
+		
+		//all the jobs should now be in the NONE state
+		for(int j = 0; j < NUM_JOBS; j++) {
+			assertState("3." + j, jobs[j], Job.NONE);
+		}
+	}	
+
+	public void testJobFamilyJoinSimple() {
+		//test the join method on a family of jobs that is empty
+		final int[] status = new int[1];
+		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		final int NUM_JOBS = 20;
+		Job [] jobs = new Job[NUM_JOBS];
+		//create three different families of jobs
 		final TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		final TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
 		final TestJobFamily third = new TestJobFamily(TestJobFamily.TYPE_THREE);
@@ -827,65 +886,46 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = 1;
+				status[0] = StatusChecker.STATUS_START;
 				try {
+					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+					status[0] = StatusChecker.STATUS_RUNNING;
 					manager.join(third, null);
-					int  i = 0;
-					while(status[0] == 1) {
-						Thread.yield();
-						try {
-							Thread.sleep(100);
-						} catch(InterruptedException e) {
-							
-						}
-						//sanity test to avoid hanging tests
-						assertTrue("Timeout waiting for thread to start", i++ < 100);
-					}
+					
 				} catch (OperationCanceledException e) {
 					
 				} catch (InterruptedException e) {
 					
 				}
 				
-				status[0] = 2;
+				status[0] = StatusChecker.STATUS_DONE;
 				
 			}
 		});
 		
+		//try joining the third family of jobs, which is empty
+		//join method should return without blocking
 		waitForStart(jobs[0]);
 		t.start();
 		
-		int i = 0;
-		while(status[0] == 0) {
-			Thread.yield();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			}
-			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for thread to start", i++ < 100);
-		}
-				
-		assertTrue("1.0", status[0] == 1);
-		
-		status[0] = 3;
-		i = 0;
-		while(status[0] == 3) {
-			Thread.yield();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				
-			}
-			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for thread to start", i++ < 100);
-		}
-		
-		assertTrue("2.0", status[0] == 2);
-		
+		//let the thread execute the join call
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
+		assertTrue("1.0", status[0] == StatusChecker.STATUS_START);
+		long startTime = System.currentTimeMillis();
+		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
+		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		long endTime = 	System.currentTimeMillis();	
+
+		assertTrue("2.0", status[0] == StatusChecker.STATUS_DONE);
+		assertTrue("2.1", endTime > startTime);		
+
+		//the join call should take no actual time (join call should not block thread at all)
+		if(PEDANTIC)
+			assertTrue("2.2 start time: " + startTime + " end time: " + endTime , (endTime-startTime) < 300);		
+
 		//cancel all jobs
 		manager.cancel(null);
+		waitForCancel(jobs[0]);
 		waitForCancel(jobs[1]);
 		
 		//all the jobs should now be in the NONE state

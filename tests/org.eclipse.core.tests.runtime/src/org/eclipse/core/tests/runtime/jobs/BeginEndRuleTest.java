@@ -25,43 +25,51 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	private class JobRuleRunner extends Job{
 		private ISchedulingRule rule;
 		private int[] status;
-			
+		private int index;
+		private int numRepeats;	
+		
 		/**
 		 * This job will start applying the given rule in the manager
 		*/	 
-		public JobRuleRunner(String name, ISchedulingRule rule, int [] status) {
+		public JobRuleRunner(String name, ISchedulingRule rule, int [] status, int index, int numRepeats) {
 			super(name);
 			this.status = status;
 			this.rule = rule;
+			this.index = index;
+			this.numRepeats = numRepeats;
 		}
 			
 		protected IStatus run(IProgressMonitor monitor) {
-			
-			monitor.beginTask(getName(), 10);
+			//begin executing the job
+			monitor.beginTask(getName(), numRepeats);
 			try {
-				for (int i = 0; i < 10; i++) {
-					status[0] = 2;
+				//set the status flag to START
+				status[index] = StatusChecker.STATUS_START;
+				for (int i = 0; i < numRepeats; i++) {
+					//wait until the tester allows this job to run again
+					StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+					//start the given rule in the manager
 					manager.beginRule(rule);
-					status[0] = 3;
-					monitor.subTask("Tick: " + i);
+					//set status to RUNNING
+					status[index] = StatusChecker.STATUS_RUNNING;
+								
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-					}
-					monitor.worked(1);
-					status[0] = 4;
+
+					//wait until tester allows this job to finish
+					StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_WAIT_FOR_DONE, 100);
+					//end the given rule
 					manager.endRule(rule);
-					status[0] = 1;
+					//set status to DONE
+					status[index] = StatusChecker.STATUS_DONE;
+					
+					monitor.worked(1);
 					Thread.yield();
 				}
 						
 			} finally {
 				monitor.done();
-				/*for(int i = 0; i < 10; i++) {
-					manager.endRule(rule);
-				}*/
+				Thread.yield();
 			}
 			return Status.OK_STATUS;
 		}
@@ -100,137 +108,218 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		super(name);
 	}
 	
-	public void _testComplexRuleStarting() {
+	public void testComplexRuleStarting() {
+		//test how the manager reacts when several different threads try to begin conflicting rules
 		
-		final int[] status1 = {0};
-		final int[] status2 = {0};
-		final int[] status3 = {0};
-		final int[] status4 = {0};
+		//array to communicate with the launched threads
+		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START,
+						StatusChecker.STATUS_WAIT_FOR_START,
+						StatusChecker.STATUS_WAIT_FOR_START,
+						StatusChecker.STATUS_WAIT_FOR_START,
+						StatusChecker.STATUS_WAIT_FOR_START};
+		//number of times to start each rule
+		int NUM_REPEATS = 10;
 		
 		RuleSetA.conflict = true;
-		Job job1 = new JobRuleRunner("Job1", new RuleSetB(), status1);
-		Job job2 = new JobRuleRunner("Job2", new RuleSetC(), status2);
-		Job job3 = new JobRuleRunner("Job3", new RuleSetD(), status3);
-		Job job4 = new JobRuleRunner("Job4", new RuleSetE(), status4);
-						
-		job1.schedule();
-		job2.schedule();
-		job3.schedule();
-		job4.schedule();
+		Job[] jobs = new Job[5];
 		
-		waitForStart(job1);
-		assertTrue("1.0", status1[0] > 0);
-		waitForStart(job2);
-		assertTrue("2.0", status2[0] > 0);
-		waitForStart(job3);
-		assertTrue("3.0", status3[0] > 0);
-		waitForStart(job4);
-		assertTrue("4.0", status4[0] > 0);
-				
-		while(manager.currentJob() != null) {
-			try {
-				assertTrue("5.0 : " + status1[0] + " , " + status2[0] + " , " + status3[0] + " , " + status4[0], 
-				((status1[0] > 2) && (status2[0] < 3) && (status3[0] < 3) && (status4[0] < 3)) 
-				|| ((status1[0] < 3) && (status2[0] > 2) && (status3[0] < 3) && (status4[0] < 3))
-				|| ((status1[0] < 3) && (status2[0] < 3) && (status3[0] > 2) && (status4[0] < 3))
-				|| ((status1[0] < 3) && (status2[0] < 3) && (status3[0] < 3) && (status4[0] > 2)));
-				
-				//Thread.yield();
-				Thread.sleep(100);
-			} catch(InterruptedException e) {
-			
-			}
+		jobs[0] = new JobRuleRunner("Job1", new RuleSetB(), status , 0, NUM_REPEATS);
+		jobs[1] = new JobRuleRunner("Job2", new RuleSetB(), status, 1, NUM_REPEATS);
+		jobs[2] = new JobRuleRunner("Job3", new RuleSetC(), status, 2, NUM_REPEATS);
+		jobs[3] = new JobRuleRunner("Job4", new RuleSetD(), status, 3, NUM_REPEATS);
+		jobs[4] = new JobRuleRunner("Job5", new RuleSetE(), status, 4, NUM_REPEATS);
+						
+		//schedule the jobs
+		for(int i = 0; i < jobs.length; i++) {
+			jobs[i].schedule();
 		}
 		
-		assertTrue("6.1", status1[0] == 1);
+		//by the time the fifth job starts, the rest should have already started
+		waitForStart(jobs[4]);
+		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_START, 100);
+		
+		//all jobs should be running
+		//the status flag should be set to START
+		for(int i = 0; i < status.length; i++) {
+			assertTrue("1." + i, jobs[i].getState() == Job.RUNNING);
+			assertTrue("2." + i, status[i] == StatusChecker.STATUS_START);
+		}
 				
-//		while(job2.getState() != Job.NONE) {
-//			try {
-//				Thread.sleep(100);
-//			} catch(InterruptedException e) {
-//			
-//			}
-//		}
-//		
-		assertTrue("6.2", status2[0] == 1);
-//		
-//		while(job3.getState() != Job.NONE) {
-//			try {
-//				Thread.sleep(100);
-//			} catch(InterruptedException e) {
-//			
-//			}
-//		}
-//		
-		assertTrue("6.3", status3[0] == 1);
+		//the order that the jobs will be executed
+		int[] order = {0, 1, 2, 3, 4};
+						
+		for(int j = 0; j < NUM_REPEATS; j++) {
+			//let the first job in the order run
+			status[order[0]] = StatusChecker.STATUS_WAIT_FOR_RUN;
+			//wait until the first job in the order reads the flag
+			StatusChecker.waitForStatus(status, order[0], StatusChecker.STATUS_RUNNING, 100);
+			
+			//let the second job run (it will be blocked), the other jobs will be waiting for the flag reset
+			status[order[1]] = StatusChecker.STATUS_WAIT_FOR_RUN;
+			assertTrue("3.0", status[order[0]] == StatusChecker.STATUS_RUNNING);
+			assertTrue("3.1", status[order[1]] == StatusChecker.STATUS_WAIT_FOR_RUN);
+			
+			//let the first job finish			
+			status[order[0]] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			//first job is done
+			StatusChecker.waitForStatus(status, order[0], StatusChecker.STATUS_DONE, 100);
+			
+			//let the second job run
+			StatusChecker.waitForStatus(status, order[1], StatusChecker.STATUS_RUNNING, 100);
+			status[order[2]] = StatusChecker.STATUS_WAIT_FOR_RUN;
+			
+			assertTrue("4.0", status[order[1]] == StatusChecker.STATUS_RUNNING);
+			assertTrue("4.1", status[order[2]] == StatusChecker.STATUS_WAIT_FOR_RUN);
+			
+			//let the second job finish
+			status[order[1]] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			//second job is done
+			StatusChecker.waitForStatus(status, order[1], StatusChecker.STATUS_DONE, 100);
+			
+			//start the third job
+			StatusChecker.waitForStatus(status, order[2], StatusChecker.STATUS_RUNNING, 100);
+			status[order[3]] = StatusChecker.STATUS_WAIT_FOR_RUN;
+			
+			assertTrue("5.0", status[order[2]] == StatusChecker.STATUS_RUNNING);
+			assertTrue("5.1", status[order[3]] == StatusChecker.STATUS_WAIT_FOR_RUN);
+			
+			//let the third job finish
+			status[order[2]] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			//third job is done
+			StatusChecker.waitForStatus(status, order[2], StatusChecker.STATUS_DONE, 100);
+			
+			//start the fourth job
+			StatusChecker.waitForStatus(status, order[3], StatusChecker.STATUS_RUNNING, 100);
+			status[order[4]] = StatusChecker.STATUS_WAIT_FOR_RUN;
+			
+			assertTrue("6.0", status[order[3]] == StatusChecker.STATUS_RUNNING);
+			assertTrue("6.1", status[order[4]] == StatusChecker.STATUS_WAIT_FOR_RUN);
+			
+			//let the fourth job finish
+			status[order[3]] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			//fourth job is done
+			StatusChecker.waitForStatus(status, order[3], StatusChecker.STATUS_DONE, 100);
+			
+			//start the fifth job
+			StatusChecker.waitForStatus(status, order[4], StatusChecker.STATUS_RUNNING, 100);
+			
+			assertTrue("7.0", status[order[4]] == StatusChecker.STATUS_RUNNING);
+						
+			status[order[4]] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			//fifth job is done
+			StatusChecker.waitForStatus(status, order[4], StatusChecker.STATUS_DONE, 100);
+			
+			if(j < 9) {
+				for(int i = 0; i < status.length; i++) {
+					assertTrue("7." + (i+1), status[i] == StatusChecker.STATUS_DONE);
+					assertTrue("8." + (i+1), jobs[i].getState() == Job.RUNNING);
+				}
+			}
+			
+			//change the order of the jobs, nothing should change in the execution
+			int temp = order[0];
+			
+			order[0] = order[2];
+			order[2] = order[4];
+			order[4] = order[1];
+			order[1] = order[3];
+			order[3] = temp;
+		}
 		
-//		while(job4.getState() != Job.NONE) {
-//			try {
-//				Thread.sleep(100);
-//			} catch(InterruptedException e) {
-//			
-//			}
-//		}
-		
-		assertTrue("6.4", status4[0] == 1);
-		
-		assertTrue("7.1", job1.getResult().isOK());
-		assertTrue("7.2", job2.getResult().isOK());
-		assertTrue("7.3", job3.getResult().isOK());
-		assertTrue("7.4", job4.getResult().isOK());
-		
+		for(int i = 0; i < jobs.length; i++) {
+			//check that the final status of all jobs is correct		
+			assertTrue("9.", status[i] == StatusChecker.STATUS_DONE);
+			assertTrue("10.", jobs[i].getState() == Job.NONE);
+			assertTrue("11.", jobs[i].getResult().getSeverity() == Status.OK);
+		}
 	}
 	
-	public void _testSimpleRuleStarting() {
+	
+	
+	public void testSimpleRuleStarting() {
 		//start two jobs, each of which will begin and end a rule several times
 		//while one job starts a rule, the second job's call to begin rule should block that thread
 		//until the first job calls end rule
-		final int[] status1 = {0};
-		final int[] status2 = {0};
-		
+		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
+		//number of repetitions of beginning and ending the rule
+		final int NUM_REPEATS = 10;
+		//set the two rules to conflict with each other
 		RuleSetA.conflict = true;
-		Job job1 = new JobRuleRunner("Job1", new RuleSetB(), status1);
-		Job job2 = new JobRuleRunner("Job2", new RuleSetD(), status2);
+		Job [] jobs = new Job[2];
+				
+		jobs[0] = new JobRuleRunner("Job1", new RuleSetB(), status, 0, NUM_REPEATS);
+		jobs[1] = new JobRuleRunner("Job2", new RuleSetD(), status, 1, NUM_REPEATS);
 						
 		//schedule both jobs to start their execution
-		job1.schedule();
-		job2.schedule();
+		jobs[0].schedule();
+		jobs[1].schedule();
 		
-		waitForStart(job1);
-		assertTrue("1.0", status1[0] > 0);
-		waitForStart(job2);
-		assertTrue("1.1", status2[0] > 0);
+		//make sure both jobs are running and their respective run methods have been invoked
+		waitForStart(jobs[1]);
+		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
 		
+		assertTrue("2.0", jobs[0].getState() == Job.RUNNING);
+		assertTrue("2.1", jobs[1].getState() == Job.RUNNING);
+		assertTrue("2.2", status[0] == StatusChecker.STATUS_START);
+		assertTrue("2.3", status[1] == StatusChecker.STATUS_START);
 		
-		assertTrue("2.0", job1.getState() == Job.RUNNING);
-		assertTrue("2.1", job2.getState() == Job.RUNNING);
+		//the order of execution of the jobs (by their index in the status array)
+		int first = 0;
+		int second = 1;
 		
-		while(manager.currentJob() != null) {
-			try {
-				//only one job can be executing at a time, the other one should be blocked
-				assertTrue("3.0", ((status1[0] < 3) && (status2[0] > 2)) || ((status1[0] > 2) && (status2[0] < 3)));
-				
-				Thread.yield();
-				Thread.sleep(100);
-			} catch(InterruptedException e) {
+		//now both jobs are waiting for the STATUS_WAIT_FOR_RUN flag
+		for(int j = 0; j < NUM_REPEATS; j++) {
+			//let the first job start executing
+			status[first] = StatusChecker.STATUS_WAIT_FOR_RUN;
+						
+			//wait for the first job to read the flag
+			StatusChecker.waitForStatus(status, first, StatusChecker.STATUS_RUNNING, 100);
 			
-			}
+			//let the second job start, its thread will be blocked by the beginRule method
+			status[second] = StatusChecker.STATUS_WAIT_FOR_RUN;
+					
+			//only the first job should be running
+			//the other job should be blocked by the beginRule method
+			assertTrue("3.1", status[first] == StatusChecker.STATUS_RUNNING);
+			assertTrue("3.2", status[second] == StatusChecker.STATUS_WAIT_FOR_RUN);
+			
+			//let the first job finish execution and call endRule
+			//the second thread will then become unblocked
+			status[first] = StatusChecker.STATUS_WAIT_FOR_DONE;
+						
+			//wait until the first job is done
+			StatusChecker.waitForStatus(status, first, StatusChecker.STATUS_DONE, 100);
+						
+			//now wait until the second job begins execution
+			StatusChecker.waitForStatus(status, second, StatusChecker.STATUS_RUNNING, 100);
+						
+			//the first job is done, the second job is executing
+			assertTrue("4.1", status[first] == StatusChecker.STATUS_DONE);
+			assertTrue("4.2", status[second] == StatusChecker.STATUS_RUNNING);
+			
+			//let the second job finish execution
+			status[second] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			
+			//wait until the second job is finished
+			StatusChecker.waitForStatus(status, second, StatusChecker.STATUS_DONE, 100);
+			
+			//both jobs are done now
+			assertTrue("5.1", status[first] == StatusChecker.STATUS_DONE);
+			assertTrue("5.2", status[second] == StatusChecker.STATUS_DONE);
+			
+			//flip the order of execution of the jobs
+			int temp = first;
+			first = second;
+			second = temp;
 		}
 		
-		assertTrue("3.0", status1[0] == 1);
-				
-//		while(job2.getState() != Job.NONE) {
-//			try {
-//				Thread.sleep(100);
-//			} catch(InterruptedException e) {
-//			
-//			}
-//		}
-		
-		assertTrue("4.0", status2[0] == 1);
-		
-		assertTrue("5.0", job1.getState() == Job.NONE);
-		assertTrue("6.0", job2.getState() == Job.NONE);
+		//check that the final status of both jobs is correct		
+		assertTrue("6.1", status[0] == StatusChecker.STATUS_DONE);
+		assertTrue("6.2", status[1] == StatusChecker.STATUS_DONE);
+		assertTrue("6.3", jobs[0].getState() == Job.NONE);
+		assertTrue("6.4", jobs[1].getState() == Job.NONE);
+		assertTrue("6.5", jobs[0].getResult().getSeverity() == Status.OK);
+		assertTrue("6.6", jobs[1].getResult().getSeverity() == Status.OK);
 		
 	}
 	public void testComplexRuleContainment() {
@@ -473,7 +562,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		int i = 0;
 		while (job.getState() != Job.RUNNING) {
 			try {
-				Thread.yield();
+				//Thread.yield();
 				Thread.sleep(100);
 			} catch(InterruptedException e) {
 				

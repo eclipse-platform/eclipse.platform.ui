@@ -18,17 +18,19 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 class AsynchTestJob extends Job {
 	private int [] status;
+	private int index;
 	
-	public AsynchTestJob(String name, int [] status) {
+	public AsynchTestJob(String name, int [] status, int index) {
 		super(name);
 		this.status = status;
+		this.index = index;
 	}
 			
 	public IStatus run(IProgressMonitor monitor) {
-		//wait
-		Thread t = new Thread(new AsynchExecThread(monitor, this, 100, 10, getName(), status));
+		AsynchExecThread t = new AsynchExecThread(monitor, this, 100, 10, getName(), status, index);
+		StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_START, 100);
 		t.start();
-		
+		status[index] = StatusChecker.STATUS_WAIT_FOR_START;
 		return Job.ASYNC_FINISH;
 	}
 		
