@@ -16,7 +16,7 @@ public class Analyzer_en extends Analyzer {
 	 */
 	public Analyzer_en() {
 		super();
-		stopAnalyzer = new StopAnalyzer();
+		stopAnalyzer = new StopAnalyzer(STOP_WORDS);
 	}
 	/**
 	 * Creates a TokenStream which tokenizes all the text
@@ -25,4 +25,43 @@ public class Analyzer_en extends Analyzer {
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		return new PorterStemFilter(stopAnalyzer.tokenStream(fieldName, reader));
 	}
+	/**
+	* Array of English stop words.
+	* Differs from StandardAnalyzer's default stop words by
+	* not having "for", "if", and "this" that are java keywords.
+	*/
+	private final static String[] STOP_WORDS =
+		{
+			"a",
+			"and",
+			"are",
+			"as",
+			"at",
+			"be",
+			"but",
+			"by",
+			"in",
+			"into",
+			"is",
+			"it",
+			"no",
+			"not",
+			"of",
+			"on",
+			"or",
+			"s",
+			"such",
+			"t",
+			"that",
+			"the",
+			"their",
+			"then",
+			"there",
+			"these",
+			"they",
+			"to",
+			"was",
+			"will",
+			"with" };
+
 }
