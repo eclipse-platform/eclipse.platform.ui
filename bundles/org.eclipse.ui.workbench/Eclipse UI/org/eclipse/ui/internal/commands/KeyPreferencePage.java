@@ -1135,10 +1135,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		buttonRestore.setEnabled(false);
 		labelCommandsForSequence.setEnabled(validKeySequence);		
 		tableCommandsForSequence.setEnabled(validKeySequence);		
-
-		textName.setText(commandSelected ? command.getName() : Util.ZERO_LENGTH_STRING);
-		textDescription.setText(commandSelected ? command.getDescription() : Util.ZERO_LENGTH_STRING);
-		
+		textName.setText(commandSelected ? command.getName() : Util.ZERO_LENGTH_STRING);		
+		String description = commandSelected ? command.getDescription() : null;
+		textDescription.setText(description != null ? description : Util.ZERO_LENGTH_STRING);		
 		CommandRecord commandRecord = getSelectedCommandRecord();
 		
 		if (commandRecord == null)
