@@ -28,10 +28,23 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
 
     public static String fgIdentifier= IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP;
     
-    public void testOpenAntLaunchConfigurationDialog() {
+    public void testOpenAntLaunchConfigurationDialog1() {
+        //cold run
         ILaunchConfiguration configuration= getLaunchConfiguration("big");
 		IStructuredSelection selection= new StructuredSelection(configuration);
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 20; i++) {
+		    openLCD(selection, fgIdentifier); 
+        }
+		
+		commitMeasurements();
+		assertPerformance();
+    }
+    
+    public void testOpenAntLaunchConfigurationDialog2() {
+        //warm run
+        ILaunchConfiguration configuration= getLaunchConfiguration("big");
+		IStructuredSelection selection= new StructuredSelection(configuration);
+		for (int i = 0; i < 20; i++) {
 		    openLCD(selection, fgIdentifier); 
         }
 		
