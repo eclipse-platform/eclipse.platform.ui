@@ -918,10 +918,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		this.numberOfInPlaceHits = numberOfInPlaceHits;
 	}
 	void handleLinkEntered(HyperlinkEvent e) {
-		IStatusLineManager mng = getStatusLineManager();
+		IStatusLineManager mng = getRoot(getStatusLineManager());
 		if (mng!=null) {
 			String label = e.getLabel();
 			String href = (String)e.getHref();
+			if (href.startsWith("__"))
+				href = null;
 			if (href!=null)
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (label!=null && href!=null) {
@@ -933,6 +935,23 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			else
 				mng.setMessage(href);
 		}
+	}
+	
+	private IStatusLineManager getRoot(IStatusLineManager mng) {
+		while (mng!=null) {
+			if (mng instanceof SubStatusLineManager) {
+				SubStatusLineManager smng = (SubStatusLineManager)mng;
+				IContributionManager parent = smng.getParent();
+				if (parent==null)
+					return smng;
+				if (!(parent instanceof IStatusLineManager))
+					return smng;
+				mng = (IStatusLineManager)parent;
+			}
+			else
+				break;
+		}
+		return mng;
 	}
 
 	void handleLinkExited(HyperlinkEvent e) {

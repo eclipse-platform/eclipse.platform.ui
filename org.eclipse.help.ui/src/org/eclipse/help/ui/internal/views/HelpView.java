@@ -290,7 +290,12 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	
 	public void displayContext(IContext context, IWorkbenchPart part, Control control) {
 		if (reusableHelpPart!=null) {
-			reusableHelpPart.update(context, part, control);
+			//check if there is a dynamic version
+			IContextProvider provider = (IContextProvider)part.getAdapter(IContextProvider.class);
+			if (provider!=null)
+				reusableHelpPart.update(provider, part, control);
+			else 
+				reusableHelpPart.update(context, part, control);
 		}
 	}
 	/* (non-Javadoc)

@@ -25,8 +25,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 
 public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private static final String CANCEL_HREF = "__cancel__"; //$NON-NLS-1$
@@ -119,7 +121,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
 		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
 		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
-		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
+		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if (href.equals(CANCEL_HREF)) { //$NON-NLS-1$
@@ -132,6 +134,12 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 					doMore();
 				} else
 					doOpenLink(e.getHref());
+			}
+			public void linkEntered(HyperlinkEvent e) {
+				DynamicHelpPart.this.parent.handleLinkEntered(e);
+			}
+			public void linkExited(HyperlinkEvent e) {
+				DynamicHelpPart.this.parent.handleLinkExited(e);
 			}
 		});
 		searchResults.setText("", false, false); //$NON-NLS-1$

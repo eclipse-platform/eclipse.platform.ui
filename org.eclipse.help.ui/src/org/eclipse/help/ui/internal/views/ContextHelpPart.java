@@ -11,18 +11,38 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.*;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContext2;
+import org.eclipse.help.IContextProvider;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.SectionPart;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
@@ -71,9 +91,16 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				FormColors.TITLE));
 		String key = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		text.setImage(key, HelpUIResources.getImage(key));
-		text.addHyperlinkListener(new HyperlinkAdapter() {
+		text.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				doOpenLink(e.getHref());
+			}
+			public void linkEntered(HyperlinkEvent e) {
+				ContextHelpPart.this.parent.handleLinkEntered(e);
+			}
+
+			public void linkExited(HyperlinkEvent e) {
+				ContextHelpPart.this.parent.handleLinkExited(e);
 			}
 		});
 		text.setText(defaultText, false, false);
