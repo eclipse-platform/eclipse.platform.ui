@@ -208,8 +208,13 @@ public void dispose() {
 	}
 	// recursive call to dispose children
 	if (childEntries != null)
-		for (int i = 0; i < childEntries.length; i++)
-			childEntries[i].dispose();
+		for (int i = 0; i < childEntries.length; i++) {
+			// an error in a property source may cause refreshChildEntries
+			// to fail. Since the Workbench handles such errors we
+			// can be left in a state where a child entry is null.
+			if (childEntries[i] != null)
+				childEntries[i].dispose();
+		}
 }
 /**
  * The child entries of this entry have changed 
