@@ -58,10 +58,14 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 			// visit if we have an exact match
 			if (storedKey.length - bytesToOmit == key.length) {
 				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-				if (!visitor.visit(storedEntry))
+				if (!visitor.visit(storedEntry)) {
 					break;
+				} else {
+					cursor.next();
+					continue;
+				}
 			}
-			
+
 			// return if we aren't checking partial matches
 			if (!visitOnPartialMatch) {
 				cursor.next();
