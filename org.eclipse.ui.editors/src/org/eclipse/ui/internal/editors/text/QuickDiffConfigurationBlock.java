@@ -145,7 +145,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (i < label.length())
 					label= label.substring(0, i) + label.substring(i+1);
 				else
-					label.substring(0, i);
+					label= label.substring(0, i);
 				i= label.indexOf('&');
 			}
 			listModelItems.add(new String[] { descriptor.getId(), label });
