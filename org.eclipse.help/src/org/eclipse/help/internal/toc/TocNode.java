@@ -43,18 +43,6 @@ abstract class TocNode implements ITocNode {
 	}
 	
 	/**
-	 * Removes a child
-	 */
-	public void removeChild(ITocNode child)
-	{
-		// first, remove the parent of the child
-		((TocNode)child).getParents().remove(this);
-		// remove the child now
-		getChildren().remove(child);
-	}
-	
-	
-	/**
 	 * Obtains children
 	 * @return ITocNode List
 	 */

@@ -24,12 +24,6 @@ interface ITocNode extends INavigationElement{
 	void addChild(ITocNode child);
 	
 	/**
-	 * Removes specified child.
-	 * @param child child to remove
-	 */
-	void removeChild(ITocNode child);
-	
-	/**
 	 * When a builder builds the navigation, each node
 	 * must "accomodate" the builder by responding to the build() 
 	 * command.
