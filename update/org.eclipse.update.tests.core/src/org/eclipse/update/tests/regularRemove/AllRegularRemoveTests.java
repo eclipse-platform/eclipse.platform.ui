@@ -16,12 +16,8 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.setName("Regular Remove Tests");
 	
-	// the following will take all teh test methods in teh class that start with 'test'
-	suite.addTest(new TestSuite(TestRemove.class));
-	
-	
-	// or you can specify the method
-	//suite.addTest(new TestGetFeature("methodThatDoesNotStartWithtest"));	
+	// R2.0 STARTUP ISSUE
+	//suite.addTest(new TestSuite(TestRemove.class));
 	
 	return suite;
 }

@@ -23,7 +23,8 @@ public class AllPlatformConfigurationTests
 		TestSuite suite = new TestSuite();
 		suite.setName("PlatformConfiguration Tests");
 
-		suite.addTest(new TestSuite(TestPlatCfgAPI.class));
+		// R2.0 STARTUP ISSUE
+		//suite.addTest(new TestSuite(TestPlatCfgAPI.class));
 
 		return suite;
 	}
