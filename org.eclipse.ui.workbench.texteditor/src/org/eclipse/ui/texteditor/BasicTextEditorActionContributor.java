@@ -224,6 +224,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * method.
 	 * <p>
 	 * Subclasses may extend.</p>
+	 * 
+	 * @param part {@inheritDoc}
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		doSetActiveEditor(part);

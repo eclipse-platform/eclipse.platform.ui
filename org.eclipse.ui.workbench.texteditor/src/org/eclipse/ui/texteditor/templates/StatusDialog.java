@@ -41,6 +41,8 @@ abstract class StatusDialog extends Dialog {
 	
 	/**
 	 * Creates an instane of a status dialog.
+	 * 
+	 * @param parent the parent shell
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
@@ -61,6 +63,8 @@ abstract class StatusDialog extends Dialog {
 	/**
 	 * Update the dialog's status line to reflect the given status.
 	 * It is save to call this method before the dialog has been opened.
+	 * 
+	 * @param status the status
 	 */
 	protected void updateStatus(IStatus status) {
 		fLastStatus= status;
@@ -72,6 +76,8 @@ abstract class StatusDialog extends Dialog {
 	
 	/**
 	 * Returns the last status.
+	 * 
+	 * @return the last status
 	 */
 	public IStatus getStatus() {
 		return fLastStatus;

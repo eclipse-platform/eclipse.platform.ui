@@ -60,6 +60,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			/**
 			 * The actual functionality of this operation.
 			 * 
+			 * @param monitor a progress monitor to track execution
 			 * @throws CoreException
 			 */
 			protected abstract void execute(IProgressMonitor monitor) throws CoreException;
@@ -242,6 +243,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	/**
 	 * Returns the runnable context for this document provider.
 	 * 
+	 * @param monitor a progress monitor to track the operation
 	 * @return the runnable context for this document provider
 	 * @since 3.0
 	 */
@@ -590,6 +592,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				
 		class SaveOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
 			
+			/*
+			 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+			 */
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 				if (info != null) {
@@ -794,7 +799,6 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * 
 	 * @param element the element
 	 * @param computationContext the context in which validation happens
-	 * @exception ValidateStateException in case validation succeeds, but the state cannot be changed
 	 * @exception CoreException in case validation fails
 	 * @since 2.0
 	 */
@@ -968,6 +972,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * 
 	 * @param element the element
 	 * @param monitor the progress monitor
+	 * @exception CoreException in the case that synchronization fails
 	 * @since 3.0
 	 */
 	protected void doSynchronize(Object element, IProgressMonitor monitor) throws CoreException {

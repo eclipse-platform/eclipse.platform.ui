@@ -234,7 +234,9 @@ class DeleteLineTarget {
 	private final DeleteLineClipboard fClipboard;
 
 	/**
-	 * Constructor for DeleteLineTarget.
+	 * Creates a new target.
+	 * 
+	 * @param viewer the viewer that the new target operates on
 	 */
 	public DeleteLineTarget(ITextViewer viewer) {
 		fClipboard= new DeleteLineClipboard(viewer);

@@ -52,13 +52,17 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	
 	/**
 	 * Sets the context type.
+	 * 
+	 * @param contextType the context type for this processor
 	 */
 	public void setContextType(ContextType contextType) {
 		fContextType= contextType;	
 	}
 	
 	/**
-	 * Gets the context type.
+	 * Returns the context type.
+	 * 
+	 * @return the context type
 	 */
 	public ContextType getContextType() {
 		return fContextType;	

@@ -23,6 +23,8 @@ import org.eclipse.jface.resource.JFaceColors;
 
 /**
  * A message line displaying a status.
+ * 
+ * @since 3.0
  */
 class MessageLine extends CLabel {
 	
@@ -30,6 +32,8 @@ class MessageLine extends CLabel {
 
 	/**
 	 * Creates a new message line as a child of the given parent.
+	 * 
+	 * @param parent the parent composite
 	 */
 	public MessageLine(Composite parent) {
 		this(parent, SWT.LEFT);
@@ -37,6 +41,9 @@ class MessageLine extends CLabel {
 
 	/**
 	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
+	 * 
+	 * @param parent the parent composite
+	 * @param style the style
 	 */
 	public MessageLine(Composite parent, int style) {
 		super(parent, style);
@@ -54,6 +61,8 @@ class MessageLine extends CLabel {
 	/**
 	 * Sets the message and image to the given status.
 	 * <code>null</code> is a valid argument and will set the empty text and no image
+	 * 
+	 * @param status the status
 	 */
 	public void setErrorStatus(IStatus status) {
 		if (status != null && !status.isOK()) {

@@ -28,8 +28,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EditorHistoryUpdater implements ILinkedFocusListener {
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusLost(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
 	 */
 	public void linkedFocusLost(LinkedPosition position, LinkedUITarget target) {
 		// mark navigation history
@@ -43,8 +43,8 @@ public class EditorHistoryUpdater implements ILinkedFocusListener {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusGained(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
 	 */
 	public void linkedFocusGained(LinkedPosition position, LinkedUITarget target) {
 		// does nothing

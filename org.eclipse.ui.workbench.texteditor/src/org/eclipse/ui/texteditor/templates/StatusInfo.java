@@ -43,14 +43,18 @@ class StatusInfo implements IStatus {
 	}		
 	
 	/**
-	 *  Returns if the status' severity is OK.
+	 * Returns if the status' severity is OK.
+	 * 
+	 * @return <code>true</code> if the status' severity is OK
 	 */
 	public boolean isOK() {
 		return fSeverity == IStatus.OK;
 	}
 
 	/**
-	 *  Returns if the status' severity is WARNING.
+	 * Returns if the status' severity is WARNING.
+	 * 
+	 * @return <code>true</code> if the status' severity is WARNING
 	 */	
 	public boolean isWarning() {
 		return fSeverity == IStatus.WARNING;
@@ -58,6 +62,8 @@ class StatusInfo implements IStatus {
 
 	/**
 	 *  Returns if the status' severity is INFO.
+	 * 
+	 * @return <code>true</code> if the status' severity is INFO
 	 */	
 	public boolean isInfo() {
 		return fSeverity == IStatus.INFO;
@@ -65,13 +71,18 @@ class StatusInfo implements IStatus {
 
 	/**
 	 *  Returns if the status' severity is ERROR.
+	 * 
+	 * @return <code>true</code> if the status' severity is ERROR
 	 */	
 	public boolean isError() {
 		return fSeverity == IStatus.ERROR;
 	}
 	
 	/**
-	 * @see IStatus#getMessage
+	 * Returns the message.
+	 * 
+	 * @return the message
+	 * @see IStatus#getMessage()
 	 */
 	public String getMessage() {
 		return fStatusMessage;
@@ -79,7 +90,7 @@ class StatusInfo implements IStatus {
 	
 	/**
 	 * Sets the status to ERROR.
-	 * @param The error message (can be empty, but not null)
+	 * @param errorMessage the error message (can be empty, but not null)
 	 */	
 	public void setError(String errorMessage) {
 		Assert.isNotNull(errorMessage);
@@ -89,7 +100,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Sets the status to WARNING.
-	 * @param The warning message (can be empty, but not null)
+	 * @param warningMessage the warning message (can be empty, but not null)
 	 */		
 	public void setWarning(String warningMessage) {
 		Assert.isNotNull(warningMessage);
@@ -99,7 +110,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Sets the status to INFO.
-	 * @param The info message (can be empty, but not null)
+	 * @param infoMessage the info message (can be empty, but not null)
 	 */		
 	public void setInfo(String infoMessage) {
 		Assert.isNotNull(infoMessage);
@@ -141,7 +152,7 @@ class StatusInfo implements IStatus {
 	 * @see IStatus#getPlugin()
 	 */
 	public String getPlugin() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

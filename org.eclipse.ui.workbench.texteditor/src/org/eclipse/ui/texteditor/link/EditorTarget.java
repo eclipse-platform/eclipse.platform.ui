@@ -53,8 +53,8 @@ public class EditorTarget extends LinkedUITarget {
 		return fTextViewer;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusGained(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
 	 */
 	public void linkedFocusGained(LinkedPosition position, LinkedUITarget target) {
 		IWorkbenchPage page= fTextEditor.getEditorSite().getPage();
@@ -64,8 +64,8 @@ public class EditorTarget extends LinkedUITarget {
 		fTextEditor.setFocus();
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusLost(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
 	 */
 	public void linkedFocusLost(LinkedPosition position, LinkedUITarget target) {
 	}

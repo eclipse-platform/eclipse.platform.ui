@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 /**
  * An action to delete a whole line, the fraction of the line that is left from the cursor
  * or the fraction that is right from the cursor.
+ * 
  * @since 2.0
  */
 public class DeleteLineAction extends TextEditorAction {
@@ -57,6 +58,8 @@ public class DeleteLineAction extends TextEditorAction {
 	/**
 	 * Creates a line delimiter conversion action.
 	 * 
+	 * @param bundle the resource bundle for ui strings
+	 * @param prefix the prefix for the property keys into <code>bundle</code>
 	 * @param editor the editor
 	 * @param type the line deletion type, must be one of
 	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
@@ -68,9 +71,12 @@ public class DeleteLineAction extends TextEditorAction {
 	/**
 	 * Creates a line deletion action.
 	 * 
+	 * @param bundle the resource bundle for ui strings
+	 * @param prefix the prefix for the property keys into <code>bundle</code>
 	 * @param editor the editor
 	 * @param type the line deletion type, must be one of
 	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @param copyToClipboard if <code>true</code>, the contents of the deleted line are copied to the clipboard
 	 * @since 2.1
 	 */
 	public DeleteLineAction(ResourceBundle bundle, String prefix, ITextEditor editor, int type, boolean copyToClipboard) {

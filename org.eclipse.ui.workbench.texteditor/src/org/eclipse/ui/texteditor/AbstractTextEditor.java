@@ -647,6 +647,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/**
 		 * Returns <code>true</code> if this activation code matches the given verify event.
 		 * @param event the event to test for matching
+		 * @return whether this activation code matches <code>event</code> 
 		 */
 		public boolean matches(VerifyEvent event) {
 			return (event.character == fCharacter &&
@@ -3485,6 +3486,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IEditorPart</code> method returns <code>false</code>.
 	 * Subclasses may override.
+	 * 
+	 * @return <code>false</code>
 	 */
 	public boolean isSaveAsAllowed() {
 		return false;
@@ -4865,13 +4868,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Returns wether this editor can handle the move of the original element
-	 * so that it ends up being the moved element. By default this method returns
-	 * <code>true</code>.
-	 * Subclasses may reimplement.
-	 *  
+	 * Returns whether this editor can handle the move of the original element
+	 * so that it ends up being the moved element. By default this method
+	 * returns <code>true</code>. Subclasses may reimplement.
+	 * 
 	 * @param originalElement the original element
 	 * @param movedElement the moved element
+	 * @return whether this editor can handle the move of the original element
+	 *         so that it ends up being the moved element
 	 * @since 2.0
 	 */
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
@@ -4916,6 +4920,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Returns the minimal region of the given source viewer's document that completely
 	 * comprises everything that is visible in the viewer's widget.
 	 * 
+	 * @param viewer the viewer go return the coverage for
 	 * @return the minimal region of the source viewer's document comprising the contents of the viewer's widget
 	 * @since 2.1
 	 */
