@@ -284,7 +284,6 @@ public class HistoryStore2 implements IHistoryStore {
 			BucketIndex.Entry fileEntry = currentBucket.getEntry(filePath);
 			if (fileEntry == null || fileEntry.isEmpty())
 				return new IFileState[0];
-			fileEntry.sortStates();
 			IFileState[] states = new IFileState[fileEntry.getOccurrences()];
 			for (int i = 0; i < states.length; i++)
 				states[i] = new FileState(this, fileEntry.getPath(), fileEntry.getTimestamp(i), fileEntry.getUUID(i));

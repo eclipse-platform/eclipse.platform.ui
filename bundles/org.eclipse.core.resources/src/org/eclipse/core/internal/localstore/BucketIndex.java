@@ -25,6 +25,15 @@ public class BucketIndex {
 	 * of states, which by their turn contain a (UUID, timestamp) pair.  
 	 */
 	public static final class Entry {
+
+		final static Comparator COMPARATOR = new Comparator() {
+			public int compare(Object o1, Object o2) {
+				byte[] state1 = (byte[]) o1;
+				byte[] state2 = (byte[]) o2;
+				return Entry.compareStates(state1, state2);
+			}
+		};
+
 		private final static byte[][] EMPTY_DATA = new byte[0][];
 		// the length of a long in bytes
 		private final static int LONG_LENGTH = 8;
@@ -32,7 +41,7 @@ public class BucketIndex {
 		private final static int UUID_LENGTH = UniversalUniqueIdentifier.BYTES_SIZE;
 		// the length of each component of the data array
 		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;
-		
+
 		/**
 		 * The history states. The first array dimension is the number of states. The
 		 * second dimension is an encoding of the {UUID,timestamp} pair for that entry.
@@ -45,9 +54,22 @@ public class BucketIndex {
 		private IPath path;
 
 		/**
+		 * Comparison logic for states in byte[] form.
+		 * 
+		 * @see Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		static int compareStates(byte[] state1, byte[] state2) {
+			long timestamp1 = getTimestamp(state1);
+			long timestamp2 = getTimestamp(state2);
+			if (timestamp1 == timestamp2)
+				return -UniversalUniqueIdentifier.compareTime(state1, state2);
+			return timestamp1 < timestamp2 ? +1 : -1;
+		}
+
+		/**
 		 * Returns the byte array representation of a (UUID, timestamp) pair. 
 		 */
-		public static byte[] getDataAsByteArray(byte[] uuid, long timestamp) {
+		static byte[] getDataAsByteArray(byte[] uuid, long timestamp) {
 			byte[] item = new byte[DATA_LENGTH];
 			System.arraycopy(uuid, 0, item, 0, uuid.length);
 			for (int j = 0; j < LONG_LENGTH; j++) {
@@ -57,7 +79,7 @@ public class BucketIndex {
 			return item;
 		}
 
-		static long getTimestamp(byte[] item) {
+		private static long getTimestamp(byte[] item) {
 			long timestamp = 0;
 			for (int j = 0; j < LONG_LENGTH; j++)
 				timestamp += (item[UUID_LENGTH + j] & 0xFFL) << j * 8;
@@ -68,19 +90,38 @@ public class BucketIndex {
 			return new UniversalUniqueIdentifier(item);
 		}
 
-		private static void sortStates(byte[][] data) {
-			Arrays.sort(data, new Comparator() {
-				// sort in inverse order
-				public int compare(Object o1, Object o2) {
-					byte[] state1 = (byte[]) o1;
-					byte[] state2 = (byte[]) o2;
-					long timestamp1 = getTimestamp(state1);
-					long timestamp2 = getTimestamp(state2);
-					if (timestamp1 == timestamp2)
-						return -UniversalUniqueIdentifier.compareTime(state1, state2);
-					return timestamp1 < timestamp2 ? +1 : -1;
-				}
-			});
+		/**
+		 * Merges two entries (are always sorted). Duplicates are discarded.
+		 */
+		static byte[][] merge(byte[][] base, byte[][] additions) {
+			int additionPointer = 0;
+			int basePointer = 0;
+			int added = 0;
+			byte[][] result = new byte[base.length + additions.length][];
+			while (basePointer < base.length && additionPointer < additions.length) {
+				int comparison = compareStates(base[basePointer], additions[additionPointer]);
+				if (comparison == 0) {
+					result[added++] = base[basePointer++];
+					// duplicate, ignore
+					additionPointer++;
+				} else if (comparison < 0)
+					result[added++] = base[basePointer++];
+				else
+					result[added++] = additions[additionPointer++];
+			}
+			// copy the remaining items from either additions or base arrays
+			byte[][] remaining = basePointer == base.length ? additions : base;
+			int remainingPointer = basePointer == base.length ? additionPointer : basePointer;
+			int remainingCount = remaining.length - remainingPointer;
+			System.arraycopy(remaining, remainingPointer, result, added, remainingCount);
+			added += remainingCount;
+			if (added == base.length + additions.length)
+				// no collisions
+				return result;
+			// there were collisions, need to compact
+			byte[][] finalResult = new byte[added][];
+			System.arraycopy(result, 0, finalResult, 0, finalResult.length);
+			return finalResult;
 		}
 
 		public Entry(IPath path, byte[][] data) {
@@ -147,10 +188,6 @@ public class BucketIndex {
 		public boolean isEmpty() {
 			return data.length == 0;
 		}
-
-		public void sortStates() {
-			sortStates(this.data);
-		}
 	}
 
 	public abstract static interface Visitor {
@@ -173,6 +210,22 @@ public class BucketIndex {
 
 	private static final String BUCKET = "bucket.index"; //$NON-NLS-1$
 
+	/** Version number for the current implementation file's format.
+	 * <p>
+	 * Version 2: same as version 1, but states for an entry are already sorted
+	 * </p>
+	 * <p>
+	 * Version 1:
+	 * <pre>
+	 * FILE ::= VERSION_ID ENTRY+
+	 * ENTRY ::= STATE_COUNT STATE+
+	 * STATE_COUNT ::= int
+	 * STATE ::= UUID LAST_MODIFIED
+	 * UUID	 ::= byte[16]
+	 * LAST_MODIFIED ::= byte[8]
+	 * </pre>
+	 * </p>
+	 */
 	public final static byte VERSION = 1;
 
 	/**
@@ -194,21 +247,6 @@ public class BucketIndex {
 	 * The root directory of the bucket indexes on disk.
 	 */
 	private File root;
-
-	private static int indexOf(byte[][] array, byte[] item, int length) {
-		// look for existing occurrences
-		for (int i = 0; i < array.length; i++) {
-			boolean same = true;
-			for (int j = 0; j < length; j++)
-				if (item[j] != array[i][j]) {
-					same = false;
-					break;
-				}
-			if (same)
-				return i;
-		}
-		return -1;
-	}
 
 	public BucketIndex(File root) {
 		this.root = root;
@@ -234,7 +272,6 @@ public class BucketIndex {
 					continue;
 				// calls the visitor passing all uuids for the entry
 				final Entry fileEntry = new Entry(path, (byte[][]) entry.getValue());
-				fileEntry.sortStates();
 				int outcome = visitor.visit(fileEntry);
 				if ((outcome & Visitor.UPDATE) != 0) {
 					needSaving = true;
@@ -269,44 +306,38 @@ public class BucketIndex {
 			needSaving = true;
 			return;
 		}
-		// look for existing occurrences
-		if (contains(existing, item))
-			// already there - nothing else to be done
-			return;
+		// look for the right spot where to insert the new guy
+		int insertPosition;
+		for (insertPosition = 0; insertPosition < existing.length; insertPosition++) {
+			int result = Entry.compareStates(existing[insertPosition], item);
+			if (result == 0)
+				// already there - nothing else to be done
+				return;
+			if (result > 0)
+				break;
+		}
 		byte[][] newValue = new byte[existing.length + 1][];
-		System.arraycopy(existing, 0, newValue, 0, existing.length);
-		newValue[newValue.length - 1] = item;
+		if (insertPosition > 0)
+			System.arraycopy(existing, 0, newValue, 0, insertPosition);
+		newValue[insertPosition] = item;
+		if (insertPosition < existing.length)
+			System.arraycopy(existing, insertPosition, newValue, insertPosition + 1, existing.length - insertPosition);
 		entries.put(pathAsString, newValue);
 		needSaving = true;
 	}
 
 	public void addBlobs(Entry fileEntry) {
 		IPath path = fileEntry.getPath();
-		byte[][] data = fileEntry.getData();
+		byte[][] additions = fileEntry.getData();
 		String pathAsString = path.toString();
 		byte[][] existing = (byte[][]) entries.get(pathAsString);
 		if (existing == null) {
-			entries.put(pathAsString, data);
+			entries.put(pathAsString, additions);
 			needSaving = true;
 			return;
 		}
-		// add after looking for existing occurrences
-		List newUUIDs = new ArrayList(existing.length + data.length);
-		for (int i = 0; i < data.length; i++)
-			if (!contains(existing, data[i]))
-				newUUIDs.add(data[i]);
-		if (newUUIDs.isEmpty())
-			// none added
-			return;
-		byte[][] newValue = new byte[existing.length + newUUIDs.size()][];
-		newUUIDs.toArray(newValue);
-		System.arraycopy(existing, 0, newValue, newUUIDs.size(), existing.length);
-		entries.put(pathAsString, newValue);
+		entries.put(pathAsString, Entry.merge(existing, additions));
 		needSaving = true;
-	}
-
-	private static boolean contains(byte[][] array, byte[] item) {
-		return indexOf(array, item, UniversalUniqueIdentifier.BYTES_SIZE) >= 0;
 	}
 
 	/**
@@ -354,8 +385,16 @@ public class BucketIndex {
 				return;
 			DataInputStream source = new DataInputStream(new BufferedInputStream(new FileInputStream(location), 8192));
 			try {
+				// TODO: remove this backward compatibility before M4
+				boolean shouldSort = false;
 				int version = source.readByte();
-				if (version != VERSION) {
+				// version 1 had the same format but states where not ordered
+				if (version == 1) {
+					shouldSort = true;
+					// so it is converted to the new version
+					needSaving = true;
+				} else if (version != VERSION) {
+					// unknown version
 					String message = Policy.bind("resources.readMetaWrongVersion", location.getAbsolutePath(), Integer.toString(version)); //$NON-NLS-1$
 					ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, message);
 					throw new ResourceException(status);
@@ -367,6 +406,8 @@ public class BucketIndex {
 					byte[][] uuids = new byte[length][Entry.DATA_LENGTH];
 					for (int j = 0; j < uuids.length; j++)
 						source.read(uuids[j]);
+					if (shouldSort)
+						Arrays.sort(uuids, Entry.COMPARATOR);
 					this.entries.put(key, uuids);
 				}
 			} finally {

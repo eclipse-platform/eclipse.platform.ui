@@ -38,7 +38,6 @@ public class BucketIndexTest extends ResourceTest {
 			index.addBlob(path, uuid1, timestamp1);
 			BucketIndex.Entry entry = index.getEntry(path);
 			assertNotNull("2.0", entry);
-			entry.sortStates();			
 			assertEquals("2.1", 1, entry.getOccurrences());
 			assertEquals("2.2", uuid1, entry.getUUID(0));
 			assertEquals("2.3", timestamp1, entry.getTimestamp(0));
@@ -48,7 +47,6 @@ public class BucketIndexTest extends ResourceTest {
 			index.addBlob(path, uuid2, timestamp2);
 			entry = index.getEntry(path);
 			assertNotNull("3.0", entry);
-			entry.sortStates();
 			// since it is newer, should appear first
 			assertEquals("3.1", 2, entry.getOccurrences());
 			assertEquals("3.2", uuid2, entry.getUUID(0));
@@ -61,7 +59,6 @@ public class BucketIndexTest extends ResourceTest {
 			index.addBlob(path, uuid3, timestamp3);
 			entry = index.getEntry(path);
 			assertNotNull("4.0", entry);
-			entry.sortStates();			
 			// its UUID was created later so it will be considered more recent
 			// even if it has the same timestamp
 			assertEquals("4.1", 3, entry.getOccurrences());
@@ -95,7 +92,7 @@ public class BucketIndexTest extends ResourceTest {
 			long lastModified = (long) (Math.random() * Long.MAX_VALUE);
 			index1.addBlob(path, uuid, lastModified);
 			assertEquals("2.0", 1, index1.getEntryCount());
-			index1.addBlob(path, uuid, lastModified + 1);
+			index1.addBlob(path, uuid, lastModified);
 			assertEquals("3.0", 1, index1.getEntryCount());
 			BucketIndex.Entry entry = index1.getEntry(path);
 			assertNotNull("3.1", entry);
@@ -183,5 +180,5 @@ public class BucketIndexTest extends ResourceTest {
 		} finally {
 			ensureDoesNotExistInFileSystem(baseLocation.toFile());
 		}
-	}
+	}	
 }
