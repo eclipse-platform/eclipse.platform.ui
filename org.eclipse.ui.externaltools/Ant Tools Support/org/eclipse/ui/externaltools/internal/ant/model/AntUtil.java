@@ -269,15 +269,11 @@ public final class AntUtil {
 	}
 	
 	/**
-	 * Returns an IFile with the given fully qualified path. The given path is
-	 * interpreted as relative to the file system root and the returned IFile
-	 * points to a path within the workspace. The returned IFile may or may not
-	 * exist.
+	 * Returns an IFile with the given fully qualified path. The returned IFile
+	 * may or may not exist.
 	 */
-	public static IFile getFile(String fullpath) {
+	public static IFile getFile(String fullPath) {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		Path buildFilePath= new Path(fullpath);
-		int matchingSegments= root.getLocation().matchingFirstSegments(buildFilePath);
-		return root.getFile(buildFilePath.removeFirstSegments(matchingSegments));
+		return root.getFileForLocation(new Path(fullPath));
 	}
 }
