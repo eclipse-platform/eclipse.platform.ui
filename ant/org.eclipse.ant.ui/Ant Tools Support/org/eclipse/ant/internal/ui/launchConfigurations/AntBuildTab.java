@@ -241,6 +241,7 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 		fWorkspaceButton.setSelection(false);
 		fProjectButton.setSelection(false);
 		fSpecificProjectsButton.setSelection(false);
+		fProjects.clear();
 		if (scope == null) {
 			// select the workspace by default
 			fBuildButton.setSelection(true);
