@@ -19,24 +19,37 @@ import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 public class DynamicPluginTest extends RuntimeTest {
+	private static final String PLUGIN_TESTING_ROOT = "Plugin_Testing";
 	public DynamicPluginTest(String name) {
 		super(name);
 	}
 	/**
 	 * Allows test cases to wait for event notification so they can make assertions on the event.  
 	 */
-	public static class RegistryChangeListener implements IRegistryChangeListener {
+	protected static class TestRegistryChangeListener implements IRegistryChangeListener {
 		private IRegistryChangeEvent event;
 		private String xpNamespace;
 		private String xpId;
 		private String extNamespace;
 		private String extId;
-		public RegistryChangeListener(String xpNamespace, String xpId, String extNamespace, String extId) {
+		/**
+		 * Creates a new listener. The parameters allow filtering of events based on extension point/extension's 
+		 * namespaces/ids.
+		 * 
+		 * @param xpNamespace extension point namespace. If <code>null</code>, xpId must also be null
+		 * @param xpId extension point simple id.  May be <code>null</code>
+		 * @param extNamespace extension namespace. If <code>null</code>, extId must also be null
+		 * @param extIdextension id. May be <code>null</code>
+		 */
+		public TestRegistryChangeListener(String xpNamespace, String xpId, String extNamespace, String extId) {
 			this.xpNamespace = xpNamespace;
 			this.xpId = xpId;
 			this.extNamespace = extNamespace;
 			this.extId = extId;
 		}
+		/**
+		 * @see IRegistryChangeListener#registryChanged
+		 */
 		public synchronized void registryChanged(IRegistryChangeEvent newEvent) {
 			if (this.event != null)
 				return;
@@ -50,7 +63,15 @@ public class DynamicPluginTest extends RuntimeTest {
 			this.event = newEvent;
 			notify();
 		}
-		public synchronized IRegistryChangeEvent waitFor(long timeout) {
+		/**
+		 * Returns the first event that is received, blocking for at most <code>timeout</code> milliseconds.
+		 * Returns <code>null</code> if a event was not received for the time allowed.
+		 * 
+		 * @param timeout the maximum time to wait in milliseconds. If zero, this method will 
+		 * block until an event is received 
+		 * @return the first event received, or <code>null</code> if none was received
+		 */
+		public synchronized IRegistryChangeEvent getEvent(long timeout) {
 			IRegistryChangeEvent result = event;
 			if (event != null) {
 				event = null;
@@ -65,15 +86,18 @@ public class DynamicPluginTest extends RuntimeTest {
 			event = null;
 			return result;
 		}
-	}
-	
-	protected void installRegistryListener(RegistryChangeListener listener, String namespace) {
-		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(listener, namespace);
 	}	
-	public void installBundle(String location) throws BundleException, MalformedURLException, IOException {
-		URL entry = InternalPlatform.getDefault().getBundle(PI_RUNTIME_TESTS).getEntry("Plugin_Testing/" + location);
+	protected void registerListener(TestRegistryChangeListener listener, String namespace) {
+		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(listener, namespace);
+	}
+	protected void unregisterListener(TestRegistryChangeListener listener) {
+		InternalPlatform.getDefault().getRegistry().removeRegistryChangeListener(listener);
+	}	
+	public Bundle installBundle(String location) throws BundleException, MalformedURLException, IOException {
+		URL entry = InternalPlatform.getDefault().getBundle(PI_RUNTIME_TESTS).getEntry(PLUGIN_TESTING_ROOT + '/' + location);
 		Bundle installed = InternalPlatform.getDefault().getBundleContext().installBundle(Platform.asLocalURL(entry).toExternalForm());
 		refreshPackages(InternalPlatform.getDefault().getBundleContext(), new Bundle[] {installed});
+		return installed;
 	}
 	/**
 	 * Do PackageAdmin.refreshPackages() in a synchronous way.  After installing
@@ -111,6 +135,7 @@ public class DynamicPluginTest extends RuntimeTest {
 				try {
 					flag.wait();
 				} catch (InterruptedException e) {
+					// who cares....
 				}
 			}
 		}

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.tests.runtime.DynamicPluginTest;
+import org.osgi.framework.Bundle;
 
 public class IContentTypeTest extends DynamicPluginTest {
 	public IContentTypeTest(String name) {
@@ -56,21 +57,25 @@ public class IContentTypeTest extends DynamicPluginTest {
 	 * This test shows how we deal with orphan file associations (associations
 	 * whose content types are missing).
 	 */
-	//TODO: enable this when clean-up implemented
-	public void _testOrphanContentType() throws Exception {
+	public void testOrphanContentType() throws Exception {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		assertEquals("1.0", 0, contentTypeManager.findContentTypesFor("foo.orphan2").length);
 		//test late addition of content type - orphan2 should become visible
-		RegistryChangeListener listener = new RegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null); 
-		installRegistryListener(listener, Platform.PI_RUNTIME);
-		installBundle("content/bundle01");
-		IRegistryChangeEvent event = listener.waitFor(10000);
-		assertNotNull("1.5", event);
-		assertNotNull("2.0", Platform.getBundle("org.eclipse.foo"));
-		IContentType newType = contentTypeManager.getContentType("org.eclipse.foo.bar");
-		assertNotNull("2.1", newType);
-		assertTrue("2.2", newType.isAssociatedWith("foo.orphan2"));			
-		assertEquals("2.3", 1, contentTypeManager.findContentTypesFor("foo.orphan2").length);
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null); 
+		registerListener(listener, Platform.PI_RUNTIME);
+		Bundle installed = installBundle("content/bundle01");
+		try {
+			IRegistryChangeEvent event = listener.getEvent(10000);
+			assertNotNull("1.5", event);
+			assertNotNull("2.0", Platform.getBundle("org.eclipse.foo"));
+			IContentType newType = contentTypeManager.getContentType("org.eclipse.foo.bar");
+			assertNotNull("2.1", newType);
+			assertTrue("2.2", newType.isAssociatedWith("foo.orphan2"));			
+			assertEquals("2.3", 1, contentTypeManager.findContentTypesFor("foo.orphan2").length);
+		} finally {
+			//remove installed bundle
+			installed.uninstall();
+		}
 	}
 
 	private boolean contains(Object[] list, Object item) {
