@@ -69,7 +69,7 @@ public class Symmetria {
 			// If the local resource does not exist then it is created as a container.
 			if (!localResource.exists()) {
 				// Create a corresponding local directory.
-				mkLocalDirs(localResource, Policy.subMonitorFor(progress, 5));
+				mkLocalDirs((IFolder)localResource, Policy.subMonitorFor(progress, 5));
 			}
 			
 			// Finally, resolve the collection membership based upon the depth parameter.
@@ -181,32 +181,27 @@ public class Symmetria {
 	/**
 	 * Delete the local resource represented by the resource state.  Do not complain if the resource does not exist.
 	 */
-	protected void deleteLocal(
-		IResource resource,
-		IProgressMonitor progress) throws TeamException {
-
+	protected void deleteLocal(IResource resource, IProgressMonitor progress) throws TeamException {
 		try {
 			resource.delete(true, progress);
 		} catch (CoreException exception) {
 			throw TeamPlugin.wrapException(exception);
 		}
+		// XXX We need to purge any stored state!!!
 	}
 
 	/**
 	 * Make local directories matching the description of the local resource state.
 	 * XXX There has to be a better way.
 	 */
-	protected void mkLocalDirs(IResource resource, IProgressMonitor progress) throws TeamException {	
-		IContainer project = resource.getProject();
-		IPath path = resource.getProjectRelativePath();
-		IFolder folder = project.getFolder(path);
-
+	protected void mkLocalDirs(IFolder folder, IProgressMonitor progress) throws TeamException {	
 		try {
 			folder.create(false, true, progress);	// No force, yes make local.
 		} catch (CoreException exception) {
 			// The creation failed.
 			throw TeamPlugin.wrapException(exception);
-		}	
+		}
+		// XXX We need to store the base state!!!
 	}
 	
 	/**

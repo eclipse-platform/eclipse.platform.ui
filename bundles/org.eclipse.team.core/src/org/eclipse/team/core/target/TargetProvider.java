@@ -120,14 +120,22 @@ public abstract class TargetProvider {
 	
 	/**
 	 * Answers true if the base identifier of the given resource is different to the
-	 * current released state of the resource.
+	 * current released state of the resource. Answer false if the remote resource no 
+	 * longer exists.
+	 * 
+	 * @param resource the resource to test
+	 * @param monitor a progress monitor
+	 * 
 	 * @throws TeamException if there is a problem getting this information from the server.
 	 */
 	public abstract boolean isOutOfDate(IResource resource, IProgressMonitor monitor) throws TeamException;
 	
 	/**
-	 * Answer if the local resource currently has a different timestamp to the
-	 * base timestamp for this resource.
+	 * Answer true if the local resource currently has a different timestamp to the
+	 * base timestamp for this resource. Answer false if the local resource does not 
+	 * exist.
+	 * 
+	 * @param resource the resource to test
 	 */
 	public abstract boolean isDirty(IResource resource);
 

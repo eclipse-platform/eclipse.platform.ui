@@ -136,45 +136,45 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 		boolean localExists = local.exists();
 		
 		if (remote == null) {
-				if (!localExists) {
-					// this should never happen
-					// Assert.isTrue(false);
-				} else {
-					// no remote but a local
-					if (!isDirty && isOutOfDate) {
-						description = INCOMING | DELETION;
-					} else if (isDirty && isOutOfDate) {
-						description = CONFLICTING | CHANGE;
-					} else if (!isDirty && !isOutOfDate) {
-						description = OUTGOING | ADDITION;
-					}
-				}
+			if (!localExists) {
+				// this should never happen
+				// Assert.isTrue(false);
 			} else {
-				if (!localExists) {
-					// a remote but no local
-					if (!isDirty && !isOutOfDate) {
-						description = INCOMING | ADDITION;
-					} else if (isDirty && !isOutOfDate) {
-						description = OUTGOING | DELETION;
-					} else if (isDirty && isOutOfDate) {
-						description = CONFLICTING | CHANGE;
-					}
-				} else {
-					// have a local and a remote			
-					if (!isDirty && !isOutOfDate) {
-						// ignore, there is no change;
-					} else if (!isDirty && isOutOfDate) {
-						description = INCOMING | CHANGE;
-					} else if (isDirty && !isOutOfDate) {
-						description = OUTGOING | CHANGE;
-					} else {
-						description = CONFLICTING | CHANGE;
-					}
-					// if contents are the same, then mark as pseudo change
-					if (description != IN_SYNC && compare(granularity, false, local, remote, Policy.subMonitorFor(progress, 90)))
-						description |= PSEUDO_CONFLICT;
+				// no remote but a local
+				if (!isDirty && isOutOfDate) {
+					description = INCOMING | DELETION;
+				} else if (isDirty && isOutOfDate) {
+					description = CONFLICTING | CHANGE;
+				} else if (!isDirty && !isOutOfDate) {
+					description = OUTGOING | ADDITION;
 				}
 			}
-			return description;
+		} else {
+			if (!localExists) {
+				// a remote but no local
+				if (!isDirty && !isOutOfDate) {
+					description = INCOMING | ADDITION;
+				} else if (isDirty && !isOutOfDate) {
+					description = OUTGOING | DELETION;
+				} else if (isDirty && isOutOfDate) {
+					description = CONFLICTING | CHANGE;
+				}
+			} else {
+				// have a local and a remote			
+				if (!isDirty && !isOutOfDate) {
+					// ignore, there is no change;
+				} else if (!isDirty && isOutOfDate) {
+					description = INCOMING | CHANGE;
+				} else if (isDirty && !isOutOfDate) {
+					description = OUTGOING | CHANGE;
+				} else {
+					description = CONFLICTING | CHANGE;
+				}
+				// if contents are the same, then mark as pseudo change
+				if (description != IN_SYNC && compare(granularity, false, local, remote, Policy.subMonitorFor(progress, 90)))
+					description |= PSEUDO_CONFLICT;
+			}
+		}
+		return description;
 	}
 }
