@@ -8,16 +8,15 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * A thread represents a thread of execution in a debug target. A
- * thread has element type <code>THREAD</code>, and a parent
- * of type <code>DEBUG_TARGET</code>. The children of a thread are of
- * type <code>STACK_FRAME</code>. A thread only has children when
- * suspended, and children are returned in top-down order.
+ * A thread is a sequential flow of execution in a debug target. A
+ * thread is of element type <code>THREAD</code>. A thread contains
+ * stack frames.  Stack frames are only available when the thread is 
+ * suspended, and are returned in top-down order.
  * Minimally, a thread supports the following capabilities:
  * <ul>
  * <li>suspend/resume
  * <li>stepping
- * <li>termiante
+ * <li>terminate
  * </ul>
  * <p>
  * Clients may implement this interface.
@@ -42,11 +41,10 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * are returned in top down order.
 	 * 
 	 * @return a collection of stack frames
-	 * @exception DebugException
 	 * @exception DebugException if unable to retrieve stack frames
 	 *   from the target
 	 */
-	IStackFrame[] getStackFrames() throws DebugException;
+	public IStackFrame[] getStackFrames() throws DebugException;
 	/**
 	 * Returns the priority of this thread. The meaning of this
 	 * number is operating-system dependent.
@@ -55,7 +53,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * @exception DebugException if unable to retrieve this thread's priority from
 	 *   the target
 	 */
-	int getPriority() throws DebugException;
+	public int getPriority() throws DebugException;
 	/** 
 	 * Returns the top stack frame or <code>null</code> if there is
 	 * currently no top stack frame.
@@ -64,7 +62,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * @exception DebugException if unable to retrieve this thread's top stack frame
 	 *   from the target
 	 */
-	IStackFrame getTopStackFrame() throws DebugException;
+	public IStackFrame getTopStackFrame() throws DebugException;
 	/**
 	 * Returns the name of this thread. Name format is debug model
 	 * specific, and should be specified by a debug model.
@@ -73,5 +71,14 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * @exception DebugException if unable to retrieve this element's name from
 	 *    the target
 	 */
-	String getName() throws DebugException;
+	public String getName() throws DebugException;
+
+	/**
+	 * Returns the breakpoint that caused this thread to suspend,
+	 * or <code>null</code> if this thread is not suspended or
+	 * was not suspended by a breakpoint.
+	 *
+	 * @return breakpoint that caused suspend, or <code>null</code> if none
+	 */
+	public IBreakpoint getBreakpoint();	
 }

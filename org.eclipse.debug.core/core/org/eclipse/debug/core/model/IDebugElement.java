@@ -81,20 +81,20 @@ public interface IDebugElement extends IAdaptable {
 	 *
 	 * @return debug element type constant
 	 */
-	int getElementType();
+	public int getElementType();
 	/**
 	 * Returns the unique identifier of the plug-in
 	 * this debug element originated from.
 	 *
 	 * @return plug-in identifier
 	 */
-	String getModelIdentifier();
+	public String getModelIdentifier();
 	/**
 	 * Returns the debug target this element is contained in.
 	 * 
 	 * @return debug target
 	 */
-	IDebugTarget getDebugTarget();
+	public IDebugTarget getDebugTarget();
 	/**
 	 * Returns the launch this target is contained in,
 	 * or <code>null</code> if not yet registered with
@@ -102,7 +102,7 @@ public interface IDebugElement extends IAdaptable {
 	 * 
 	 * @return launch or <code>null</code>
 	 */
-	ILaunch getLaunch();
+	public ILaunch getLaunch();
 }
 
 
