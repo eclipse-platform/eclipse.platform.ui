@@ -192,11 +192,15 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	private List getAllLaunchConfigurations() throws CoreException {
 		if (fLaunchConfigurationIndex == null) {
-			fLaunchConfigurationIndex = new ArrayList(20);
-			List configs = findLocalLaunchConfigurations();
-			verifyConfigurations(configs, fLaunchConfigurationIndex);
-			configs = findLaunchConfigurations(getWorkspaceRoot());
-			verifyConfigurations(configs, fLaunchConfigurationIndex);
+			try {			
+				fLaunchConfigurationIndex = new ArrayList(20);
+				List configs = findLocalLaunchConfigurations();
+				verifyConfigurations(configs, fLaunchConfigurationIndex);
+				configs = findLaunchConfigurations(getWorkspaceRoot());
+				verifyConfigurations(configs, fLaunchConfigurationIndex);
+			} finally {
+				getWorkspace().addResourceChangeListener(this);				
+			}
 		}
 		return fLaunchConfigurationIndex;
 	}
@@ -432,16 +436,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		clearAllLaunchConfigurations();
 
 		getWorkspace().removeResourceChangeListener(this);
-	}
-	
-	/**
-	 * Creates launch configuration types for each defined extension.
-	 * 
-	 * @exception CoreException if an exception occurs processing
-	 *  the extensions
-	 */
-	public void startup() throws CoreException {
-		getWorkspace().addResourceChangeListener(this);
 	}
 							
 	/**

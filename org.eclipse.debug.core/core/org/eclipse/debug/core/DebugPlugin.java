@@ -416,7 +416,6 @@ public class DebugPlugin extends Plugin {
 		fAsynchRunner = new AsynchRunner();
 		fAsyncThread = new Thread(fAsynchRunner, DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
 		fLaunchManager= new LaunchManager();
-		fLaunchManager.startup();
 		fBreakpointManager= new BreakpointManager();
 		fBreakpointManager.startup();
 		fExpressionManager = new ExpressionManager();
