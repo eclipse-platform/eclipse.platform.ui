@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.RoleNotDefinedException;
+import org.eclipse.ui.roles.NotDefinedException;
 
 /**
  * The RoleLabelProvider is a class that supplies the labels for the viewer in
@@ -69,7 +69,7 @@ public class RoleLabelProvider extends LabelProvider {
         try {
             return role.getName();
         }
-        catch (RoleNotDefinedException e) {
+        catch (NotDefinedException e) {
             return role.getId();
         }
     }

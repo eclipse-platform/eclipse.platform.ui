@@ -87,11 +87,11 @@ public interface IRole extends Comparable {
 	 * 
 	 * @return the description of the role represented by this handle. 
 	 *         Guaranteed not to be <code>null</code>.
-	 * @throws RoleNotDefinedException if the role represented by this handle is 
+	 * @throws NotDefinedException if the role represented by this handle is 
 	 *                                 not defined.
 	 */	
 	String getDescription()
-		throws RoleNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * Returns the identifier of this handle.
@@ -113,11 +113,11 @@ public interface IRole extends Comparable {
 	 *  
 	 * @return the name of the role represented by this handle. Guaranteed 
 	 *         not to be <code>null</code>.
-	 * @throws RoleNotDefinedException if the role represented by this handle is 
+	 * @throws NotDefinedException if the role represented by this handle is 
 	 *                                 not defined.
 	 */	
 	String getName()
-		throws RoleNotDefinedException;
+		throws NotDefinedException;
 
 	/**
 	 * <p>

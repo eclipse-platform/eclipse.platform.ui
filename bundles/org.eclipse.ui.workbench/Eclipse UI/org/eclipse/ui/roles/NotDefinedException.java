@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.commands.api;
+package org.eclipse.ui.roles;
 
 /**
  * <p>
  * Signals that an attempt was made to access the attributes of an undefined
- * key configuration.
+ * role.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -25,22 +25,22 @@ package org.eclipse.ui.internal.csm.commands.api;
  * 
  * @since 3.0
  */
-public class KeyConfigurationNotDefinedException extends Exception {
+public final class NotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>KeyConfigurationNotDefinedException</code> with no specified 
+	 * Constructs a <code>RoleNotDefinedException</code> with no specified 
 	 * detail message. 
 	 */	
-	public KeyConfigurationNotDefinedException() {
+	public NotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>KeyConfigurationNotDefinedException</code> with the specified 
+	 * Constructs a <code>RoleNotDefinedException</code> with the specified 
 	 * detail message. 
 	 *
 	 * @param s	the detail message.
 	 */	
-	public KeyConfigurationNotDefinedException(String s) {
+	public NotDefinedException(String s) {
 		super(s);
 	}
 }

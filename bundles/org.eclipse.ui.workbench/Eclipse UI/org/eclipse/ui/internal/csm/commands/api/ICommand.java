@@ -69,11 +69,11 @@ public interface ICommand extends Comparable {
 	 *  
 	 * @return the identifier of the category of the command represented by this 
 	 * 		   handle. May be <code>null</code>. 
-	 * @throws CommandNotDefinedException if the command represented by this 
+	 * @throws NotDefinedException if the command represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getCategoryId()
-		throws CommandNotDefinedException;	
+		throws NotDefinedException;	
 	
 	/**
 	 * <p>
@@ -87,11 +87,11 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return the description of the command represented by this handle. 
 	 *         Guaranteed not to be <code>null</code>.
-	 * @throws CommandNotDefinedException if the command represented by this 
+	 * @throws NotDefinedException if the command represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getDescription()
-		throws CommandNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * Returns the identifier of this handle.
@@ -113,11 +113,11 @@ public interface ICommand extends Comparable {
 	 *  
 	 * @return the name of the command represented by this handle. Guaranteed 
 	 *         not to be <code>null</code>.
-	 * @throws CommandNotDefinedException if the command represented by this 
+	 * @throws NotDefinedException if the command represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getName()
-		throws CommandNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * <p>

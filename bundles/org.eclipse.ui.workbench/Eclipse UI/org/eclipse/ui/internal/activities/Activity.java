@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.activities.ActivityNotDefinedException;
+import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityEvent;
 import org.eclipse.ui.activities.IActivityListener;
@@ -116,9 +116,9 @@ final class Activity implements IActivity {
 	}
 
 	public String getDescription()
-		throws ActivityNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new ActivityNotDefinedException();
+			throw new NotDefinedException();
 			
 		return description;	
 	}
@@ -128,17 +128,17 @@ final class Activity implements IActivity {
 	}
 	
 	public String getName()
-		throws ActivityNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new ActivityNotDefinedException();
+			throw new NotDefinedException();
 
 		return name;
 	}	
 
 	public String getParentId()
-		throws ActivityNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new ActivityNotDefinedException();
+			throw new NotDefinedException();
 
 		return parentId;
 	}			

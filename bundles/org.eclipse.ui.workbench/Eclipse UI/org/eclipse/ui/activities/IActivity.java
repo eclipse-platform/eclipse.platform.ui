@@ -69,11 +69,11 @@ public interface IActivity extends Comparable {
 	 * 
 	 * @return the description of the activity represented by this handle. 
 	 *         Guaranteed not to be <code>null</code>.
-	 * @throws ActivityNotDefinedException if the activity represented by this 
+	 * @throws NotDefinedException if the activity represented by this 
 	 *                                     handle is not defined.
 	 */	
 	String getDescription()
-		throws ActivityNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * Returns the identifier of this handle.
@@ -95,11 +95,11 @@ public interface IActivity extends Comparable {
 	 *  
 	 * @return the name of the activity represented by this handle. Guaranteed 
 	 *         not to be <code>null</code>.
-	 * @throws ActivityNotDefinedException if the activity represented by this 
+	 * @throws NotDefinedException if the activity represented by this 
 	 *                                     handle is not defined.
 	 */	
 	String getName()
-		throws ActivityNotDefinedException;
+		throws NotDefinedException;
 
 	/**
 	 * <p>
@@ -113,11 +113,11 @@ public interface IActivity extends Comparable {
 	 *  
 	 * @return the identifier of the parent of the activity represented by this 
 	 * 		   handle. May be <code>null</code>. 
-	 * @throws ActivityNotDefinedException if the activity represented by this 
+	 * @throws NotDefinedException if the activity represented by this 
 	 *                                     handle is not defined.
 	 */	
 	String getParentId()
-		throws ActivityNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * <p>

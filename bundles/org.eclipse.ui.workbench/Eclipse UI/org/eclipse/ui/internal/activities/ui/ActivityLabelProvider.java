@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
-import org.eclipse.ui.activities.ActivityNotDefinedException;
+import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.IActivity;
 
 /**
@@ -44,7 +44,7 @@ public class ActivityLabelProvider extends LabelProvider {
         try {
             return activity.getName();
         }
-        catch (ActivityNotDefinedException e) {
+        catch (NotDefinedException e) {
             return activity.getId();
         }
     }

@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.internal.csm.commands.api;
 
 /**
  * <p>
  * Signals that an attempt was made to access the attributes of an undefined
- * role.
+ * object.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -25,22 +25,22 @@ package org.eclipse.ui.roles;
  * 
  * @since 3.0
  */
-public final class RoleNotDefinedException extends Exception {
+public class NotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>RoleNotDefinedException</code> with no specified 
+	 * Constructs a <code>CommandNotDefinedException</code> with no specified 
 	 * detail message. 
 	 */	
-	public RoleNotDefinedException() {
+	public NotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>RoleNotDefinedException</code> with the specified 
+	 * Constructs a <code>CommandNotDefinedException</code> with the specified 
 	 * detail message. 
 	 *
 	 * @param s	the detail message.
 	 */	
-	public RoleNotDefinedException(String s) {
+	public NotDefinedException(String s) {
 		super(s);
 	}
 }

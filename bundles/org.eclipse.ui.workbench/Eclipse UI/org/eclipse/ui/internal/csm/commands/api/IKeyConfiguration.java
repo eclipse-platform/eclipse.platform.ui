@@ -66,11 +66,11 @@ public interface IKeyConfiguration extends Comparable {
 	 *  
 	 * @return the identifier of the category of the key configuration represented by this 
 	 * 		   handle. May be <code>null</code>. 
-	 * @throws KeyConfigurationNotDefinedException if the key configuration represented by this 
+	 * @throws NotDefinedException if the key configuration represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getCategoryId()
-		throws KeyConfigurationNotDefinedException;	
+		throws NotDefinedException;	
 	
 	/**
 	 * <p>
@@ -84,11 +84,11 @@ public interface IKeyConfiguration extends Comparable {
 	 * 
 	 * @return the description of the key configuration represented by this handle. 
 	 *         Guaranteed not to be <code>null</code>.
-	 * @throws KeyConfigurationNotDefinedException if the key configuration represented by this 
+	 * @throws NotDefinedException if the key configuration represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getDescription()
-		throws KeyConfigurationNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * Returns the identifier of this handle.
@@ -110,11 +110,11 @@ public interface IKeyConfiguration extends Comparable {
 	 *  
 	 * @return the name of the key configuration represented by this handle. Guaranteed 
 	 *         not to be <code>null</code>.
-	 * @throws KeyConfigurationNotDefinedException if the key configuration represented by this 
+	 * @throws NotDefinedException if the key configuration represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getName()
-		throws KeyConfigurationNotDefinedException;
+		throws NotDefinedException;
 
 	/**
 	 * <p>

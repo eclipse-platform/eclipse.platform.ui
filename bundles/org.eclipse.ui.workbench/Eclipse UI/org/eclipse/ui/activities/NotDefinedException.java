@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.commands.api;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
  * Signals that an attempt was made to access the attributes of an undefined
- * command.
+ * activity.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -25,22 +25,22 @@ package org.eclipse.ui.internal.csm.commands.api;
  * 
  * @since 3.0
  */
-public class CommandNotDefinedException extends Exception {
+public class NotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>CommandNotDefinedException</code> with no specified 
+	 * Constructs a <code>ActivityNotDefinedException</code> with no specified 
 	 * detail message. 
 	 */	
-	public CommandNotDefinedException() {
+	public NotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>CommandNotDefinedException</code> with the specified 
+	 * Constructs a <code>ActivityNotDefinedException</code> with the specified 
 	 * detail message. 
 	 *
 	 * @param s	the detail message.
 	 */	
-	public CommandNotDefinedException(String s) {
+	public NotDefinedException(String s) {
 		super(s);
 	}
 }

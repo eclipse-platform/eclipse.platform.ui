@@ -66,11 +66,11 @@ public interface ICategory extends Comparable {
 	 * 
 	 * @return the description of the category represented by this handle. 
 	 *         Guaranteed not to be <code>null</code>.
-	 * @throws CategoryNotDefinedException if the category represented by this 
+	 * @throws NotDefinedException if the category represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getDescription()
-		throws CategoryNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * Returns the identifier of this handle.
@@ -92,11 +92,11 @@ public interface ICategory extends Comparable {
 	 *  
 	 * @return the name of the category represented by this handle. Guaranteed 
 	 *         not to be <code>null</code>.
-	 * @throws CategoryNotDefinedException if the category represented by this 
+	 * @throws NotDefinedException if the category represented by this 
 	 *                                    handle is not defined.
 	 */	
 	String getName()
-		throws CategoryNotDefinedException;
+		throws NotDefinedException;
 	
 	/**
 	 * <p>

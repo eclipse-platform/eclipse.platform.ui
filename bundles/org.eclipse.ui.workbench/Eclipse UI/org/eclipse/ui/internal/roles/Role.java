@@ -20,7 +20,7 @@ import org.eclipse.ui.roles.IActivityBinding;
 import org.eclipse.ui.roles.IRole;
 import org.eclipse.ui.roles.IRoleEvent;
 import org.eclipse.ui.roles.IRoleListener;
-import org.eclipse.ui.roles.RoleNotDefinedException;
+import org.eclipse.ui.roles.NotDefinedException;
 
 final class Role implements IRole {
 
@@ -102,9 +102,9 @@ final class Role implements IRole {
 	}			
 	
 	public String getDescription()
-		throws RoleNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new RoleNotDefinedException();
+			throw new NotDefinedException();
 			
 		return description;	
 	}
@@ -114,9 +114,9 @@ final class Role implements IRole {
 	}
 	
 	public String getName()
-		throws RoleNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new RoleNotDefinedException();
+			throw new NotDefinedException();
 
 		return name;
 	}	

@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.activities.ActivityNotDefinedException;
+import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.internal.Workbench;
@@ -482,7 +482,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	
 						activities.add(activity);								
 					}
-				} catch (ActivityNotDefinedException eActivityNotDefined) {					
+				} catch (NotDefinedException eActivityNotDefined) {					
 				}
 			}
 			
@@ -1379,7 +1379,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 						labelActivityExtends.setText(Util.translateString(resourceBundle, "extendsGeneral")); //$NON-NLS-1$
 			
 					return;
-				} catch (ActivityNotDefinedException eActivityNotDefined) {				
+				} catch (NotDefinedException eActivityNotDefined) {				
 				}
 			}
 		}
