@@ -243,7 +243,8 @@ public final class Util {
 	}
 
 	public static boolean equals(Object left, Object right) {
-		return left == null ? right == null : left.equals(right);
+		return left == null ? right == null 
+				: ((right != null) && left.equals(right));
 	}
 
 	public static int hashCode(boolean b) {
