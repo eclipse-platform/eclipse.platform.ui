@@ -27,7 +27,7 @@
 		srcNavFrame=srcNavFrame+"&contextId="+request.getParameter("contextId");
 	
 	// url of MainFrame
-	String srcMainFrame = "main.html";
+	String srcMainFrame = "about:blank";
 	if(request.getParameter("topic")!=null)
 		srcMainFrame=request.getParameter("topic");
 	
