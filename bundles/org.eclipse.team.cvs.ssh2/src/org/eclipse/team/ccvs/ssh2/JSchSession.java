@@ -138,7 +138,6 @@ class JSchSession {
 		public String[] promptKeyboardInteractive(String destination,   
 				String name,   
 				String instruction,   
-				String lang,   
 				String[] prompt,   
 				boolean[] echo){   
 			IUserAuthenticator authenticator = location.getUserAuthenticator();
