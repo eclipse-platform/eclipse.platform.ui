@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -96,7 +97,7 @@ public class BasicStackPresentation extends StackPresentation {
 		public void closeButtonPressed(CTabItem item) {
 			IPresentablePart part = getPartForTab(item);
 			
-			getSite().close(part);		
+			getSite().close(new IPresentablePart[]{part});		
 		}
 		
         public void showList(CTabFolderEvent event) {
@@ -410,7 +411,6 @@ public class BasicStackPresentation extends StackPresentation {
     }
 
 	/**
-	 * @param systemMenuManager2
 	 */
 	private void populateSystemMenu(IMenuManager systemMenuManager) {
 
@@ -1028,8 +1028,22 @@ public class BasicStackPresentation extends StackPresentation {
         getSite().selectPart(getPartForTab(tabItem));
     }
 
-    void close(IPresentablePart presentablePart) {
+    void close(IPresentablePart[] presentablePart) {
         getSite().close(presentablePart);
+    }
+    
+    /**
+     * Returns the List of IPresentablePart currently in this presentation
+     */
+    List getPresentableParts() {
+    	CTabItem[] items = tabFolder.getItems();
+    	List result = new ArrayList(items.length);
+    	
+    	for (int idx = 0; idx < tabFolder.getItemCount(); idx++) {
+    		result.add(getPartForTab(items[idx]));
+    	}
+    	
+    	return result;
     }
     
     Image getLabelImage(IPresentablePart presentablePart) {

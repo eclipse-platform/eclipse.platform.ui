@@ -38,7 +38,7 @@ public final class SystemMenuClose extends Action implements ISelfUpdatingAction
     public void run() {
     	IPresentablePart part = site.getSelectedPart();
     	if (part != null) {
-    		site.close(part);
+    		site.close(new IPresentablePart[]{part});
     	}
     }
     

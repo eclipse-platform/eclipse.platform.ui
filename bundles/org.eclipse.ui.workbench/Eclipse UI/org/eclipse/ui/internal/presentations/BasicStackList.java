@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ContentViewer;
@@ -226,10 +227,14 @@ public class BasicStackList extends AbstractTableInformationControl {
         	BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
             .getInput();
             
+        	ArrayList list = new ArrayList(structuredSelection.size());
+        	
             for (Iterator iterator = structuredSelection.iterator(); iterator.hasNext();) {
-    			IPresentablePart presentablePart = basicStackPresentation.getPartForTab((CTabItem) iterator.next());    			
-    			basicStackPresentation.close(presentablePart);                
+    			IPresentablePart presentablePart = basicStackPresentation.getPartForTab((CTabItem) iterator.next());
+    			list.add(presentablePart);                
             }
+            
+            basicStackPresentation.close((IPresentablePart[]) list.toArray(new IPresentablePart[list.size()]));
         }
         
 		if (((BasicStackPresentation)getTableViewer().getInput()).isDisposed()) {
