@@ -65,7 +65,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {				
 		if (kind == FULL_BUILD) {
-			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(args);
+			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), args);
 			if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
 				launchBuild(kind, config, monitor);
 			}
@@ -78,7 +78,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		projectsWithinScope= new ArrayList();
 		for (int i = 0; i < commands.length; i++) {
 			if (ID.equals(commands[i].getBuilderName())){
-				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
+				ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), commands[i].getArguments());
 				if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
 					doBuild(kind, config, monitor);
 				}

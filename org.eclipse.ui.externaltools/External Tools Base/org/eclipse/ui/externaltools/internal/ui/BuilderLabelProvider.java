@@ -23,8 +23,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.BuilderPropertyPage.ErrorConfig;
@@ -51,7 +49,7 @@ class BuilderLabelProvider extends LabelProvider {
 		
 		public Image getImage(Object element) {
 			if (element instanceof ICommand) {
-				return getCommandImage((ICommand) element);
+				return getCommandImage();
 			} else if (element instanceof ILaunchConfiguration || element instanceof ILaunchConfigurationType) {
 				return getDebugModelImage(element);
 			} else if (element instanceof ErrorConfig) {
@@ -62,13 +60,6 @@ class BuilderLabelProvider extends LabelProvider {
 		
 		public String getCommandText(ICommand command) {
 			String builderID = command.getBuilderName();
-			if (builderID.equals(ExternalToolBuilder.ID)) {
-				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(command.getArguments());
-				if (config == null) {
-					return ExternalToolsUIMessages.getString("BuilderPropertyPage.invalidBuildTool"); //$NON-NLS-1$
-				}
-				return config.getName();
-			}
 			return getBuilderName(builderID);
 		}
 		
@@ -84,18 +75,12 @@ class BuilderLabelProvider extends LabelProvider {
 			return builderName;
 		}
 		
-		public Image getCommandImage(ICommand command) {
-			String builderID = command.getBuilderName();
-			if (builderID.equals(ExternalToolBuilder.ID)) {
-				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(command.getArguments());
-				if (config == null) {
-					return invalidBuildToolImage;
-				}
-				Image configImage = getDebugModelImage(config);
-				if (configImage != null) {
-					return configImage;
-				}
-			}
+		/**
+		 * Returns the image for build commands.
+		 * 
+		 * @return the build command image
+		 */
+		public Image getCommandImage() {
 			return builderImage;
 		}
 		

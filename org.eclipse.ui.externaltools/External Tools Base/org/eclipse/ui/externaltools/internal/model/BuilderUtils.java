@@ -1,0 +1,243 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ui.externaltools.internal.model;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
+import org.eclipse.ui.externaltools.internal.ui.BuilderPropertyPage;
+
+/**
+ * Utility methods for working with external tool project builders.
+ */
+public class BuilderUtils {
+
+	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
+
+	// Extension point constants.
+	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
+	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
+	private static final String TAG_BUILDER_TYPE= "builderType"; //$NON-NLS-1$
+
+	/**
+	 * Returns a launch configuration from the given ICommand arguments. If the
+	 * given arguments are from an old-style external tool, an unsaved working
+	 * copy will be created from the arguments and returned.
+	 * 
+	 * @param commandArgs the builder ICommand arguments
+	 * @return a launch configuration, a launch configuration working copy, or
+	 * <code>null</code> if not possible.
+	 */
+	public static ILaunchConfiguration configFromBuildCommandArgs(IProject project, Map commandArgs) {
+		String configHandle = (String) commandArgs.get(LAUNCH_CONFIG_HANDLE);
+		if (configHandle == null) {
+			// Probably an old-style external tool. Try to migrate.
+			return ExternalToolMigration.configFromArgumentMap(commandArgs);
+		}
+		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfiguration configuration= null;
+		try {
+			// First, treat the configHandle as a memento. This is the format
+			// used before 3.0
+			configuration = manager.getLaunchConfiguration(configHandle);
+		} catch (CoreException e) {
+		}
+		if (configuration == null) {
+			// If the memento failed, try treating the handle as a file name.
+			// This is the format used in 3.0.
+			IPath path= new Path(BuilderPropertyPage.BUILDER_FOLDER_NAME).append(configHandle);
+			IFile file= project.getFile(path);
+			configuration= manager.getLaunchConfiguration(file);
+		}
+		return configuration;
+	}
+
+	public static ICommand commandFromLaunchConfig(IProject project, ILaunchConfiguration config) {
+		ICommand newCommand = null;
+		try {
+			newCommand = project.getDescription().newCommand();
+			newCommand = toBuildCommand(project, config, newCommand);
+		} catch (CoreException exception) {
+			Shell shell= ExternalToolsPlugin.getActiveWorkbenchShell();
+			if (shell != null) {
+				MessageDialog.openError(shell, ExternalToolsModelMessages.getString("BuilderUtils.5"), ExternalToolsModelMessages.getString("BuilderUtils.6")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return null;
+		}
+		return newCommand;
+	}
+
+	/**
+	 * Returns whether the given configuration is an "unmigrated" builder.
+	 * Unmigrated builders are external tools that are stored in an old format
+	 * but have not been migrated by the user. Old format builders are always
+	 * translated into launch config working copies in memory, but they're not
+	 * considered "migrated" until the config has been saved and the project spec
+	 * updated.
+	 * @param config the config to examine
+	 * @return whether the given config represents an unmigrated builder
+	 */
+	public static boolean isUnmigratedConfig(ILaunchConfiguration config) {
+		return config.isWorkingCopy() && ((ILaunchConfigurationWorkingCopy) config).getOriginal() == null;
+	}
+
+	/**
+	 * Converts the given config to a build command which is stored in the
+	 * given command.
+	 *
+	 * @return the configured build command
+	 */
+	public static ICommand toBuildCommand(IProject project, ILaunchConfiguration config, ICommand command) throws CoreException {
+		Map args= null;
+		if (isUnmigratedConfig(config)) {
+			// This config represents an old external tool builder that hasn't
+			// been edited. Try to find the old ICommand and reuse the arguments.
+			// The goal here is to not change the storage format of old, unedited builders.
+			ICommand[] commands= project.getDescription().getBuildSpec();
+			for (int i = 0; i < commands.length; i++) {
+				ICommand projectCommand = commands[i];
+				String name= ExternalToolMigration.getNameFromCommandArgs(projectCommand.getArguments());
+				if (name != null && name.equals(config.getName())) {
+					args= projectCommand.getArguments();
+					break;
+				}
+			}
+		} else {
+			if (config instanceof ILaunchConfigurationWorkingCopy) {
+				ILaunchConfigurationWorkingCopy workingCopy= (ILaunchConfigurationWorkingCopy) config;
+				if (workingCopy.getOriginal() != null) {
+					config= workingCopy.getOriginal();
+				}
+			}
+			args= new HashMap();
+			// Launch configuration builders are stored by their name only.
+			// The config's location is recreated dynamically based on the
+			// containing project.
+			args.put(LAUNCH_CONFIG_HANDLE, config.getFile().getName());
+		}
+		command.setBuilderName(ExternalToolBuilder.ID);
+		command.setArguments(args);
+		return command;
+	}
+	
+	/**
+	 * Returns the type of launch configuration that should be created when
+	 * duplicating the given configuration as a project builder. Queries to see
+	 * if an extension has been specified to explicitly declare the mapping.
+	 */
+	public static ILaunchConfigurationType getConfigurationDuplicationType(ILaunchConfiguration config) throws CoreException {
+		IExtensionPoint ep= ExternalToolsPlugin.getDefault().getDescriptor().getExtensionPoint(IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS); 
+		IConfigurationElement[] elements = ep.getConfigurationElements();
+		String sourceType= config.getType().getIdentifier();
+		String builderType= null;
+		for (int i= 0; i < elements.length; i++) {
+			IConfigurationElement element= elements[i];
+			if (element.getName().equals(TAG_CONFIGURATION_MAP) && sourceType.equals(element.getAttribute(TAG_SOURCE_TYPE))) {
+				builderType= element.getAttribute(TAG_BUILDER_TYPE);
+				break;
+			}
+		}
+		if (builderType != null) {
+			ILaunchConfigurationType type= DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(builderType);
+			if (type != null) {
+				return type;
+			}
+		}
+		return config.getType();
+	}
+
+	/**
+	 * Returns the folder where project builders should be stored or
+	 * <code>null</code> if the folder could not be created
+	 */
+	public static IFolder getBuilderFolder(IProject project, boolean create) {
+		IFolder folder = project.getFolder(BuilderPropertyPage.BUILDER_FOLDER_NAME);
+		if (!folder.exists() && create) {
+			try {
+				folder.create(true, true, new NullProgressMonitor());
+			} catch (CoreException e) {
+				return null;
+			}
+		}
+		return folder;
+	}
+
+	/**
+	 * Returns a duplicate of the given configuration. The new configuration
+	 * will be of the same type as the given configuration or of the duplication
+	 * type registered for the given configuration via the extension point
+	 * IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS.
+	 */
+	public static ILaunchConfiguration duplicateConfiguration(IProject project, ILaunchConfiguration config) throws CoreException {
+		Map attributes= null;
+		attributes= config.getAttributes();
+		String newName= new StringBuffer(config.getName()).append(ExternalToolsModelMessages.getString("BuilderUtils.7")).toString(); //$NON-NLS-1$
+		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
+		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
+		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(project, true), newName);
+		newWorkingCopy.setAttributes(attributes);
+		return newWorkingCopy.doSave();
+	}
+
+	/**
+	 * Migrates the launch configuration working copy, which is based on an old-
+	 * style external tool builder, to a new, saved launch configuration. The
+	 * returned launch configuration will contain the same attributes as the
+	 * given working copy with the exception of the configuration name, which
+	 * may be changed during the migration. The name of the configuration will
+	 * only be changed if the current name is not a valid name for a saved
+	 * config.
+	 * 
+	 * @param workingCopy the launch configuration containing attributes from an
+	 * old-style project builder.
+	 * @return ILaunchConfiguration a new, saved launch configuration whose
+	 * attributes match those of the given working copy as well as possible
+	 * @throws CoreException if an exception occurs while attempting to save the
+	 * new launch configuration
+	 */
+	public static ILaunchConfiguration migrateBuilderConfiguration(IProject project, ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
+		workingCopy.setContainer(getBuilderFolder(project, true));
+		// Before saving, make sure the name is valid
+		String name= workingCopy.getName();
+		name.replace('/', '.');
+		if (name.charAt(0) == ('.')) {
+			name = name.substring(1);
+		}
+		IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
+		if (!status.isOK()) {
+			name = "ExternalTool"; //$NON-NLS-1$
+		}
+		name = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+		workingCopy.rename(name);
+		return workingCopy.doSave();
+	}
+}

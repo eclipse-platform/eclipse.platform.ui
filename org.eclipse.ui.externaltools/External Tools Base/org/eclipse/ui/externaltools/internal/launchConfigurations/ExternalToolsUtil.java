@@ -16,7 +16,6 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,11 +25,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 
 /**
  * Utilities for external tool launch configurations.
@@ -40,20 +37,12 @@ import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
  */
 public class ExternalToolsUtil {
 
-	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
-
 	/**
 	 * Argument parsing constants
 	 */
 	private static final char ARG_DELIMITER = ' ';
 	private static final char ARG_DBL_QUOTE = '"';
 	private static final char ARG_BACKSLASH = '\\';
-	
-	/**
-	 * Not to be instantiated.
-	 */
-	private ExternalToolsUtil() {
-	}
 
 	/**
 	 * Throws a core exception with an error status object built from
@@ -198,28 +187,6 @@ public class ExternalToolsUtil {
 		}
 	
 		return RefreshTab.getRefreshResources(scope);
-	}
-
-	/**
-	 * Returns a launch configuration from the given ICommand arguments. If the
-	 * given arguments are from an old-style external tool, an unsaved working
-	 * copy will be created from the arguments and returned.
-	 * 
-	 * @param commandArgs the builder ICommand arguments
-	 * @return a launch configuration, a launch configuration working copy, or
-	 * <code>null</code> if not possible.
-	 */
-	public static ILaunchConfiguration configFromBuildCommandArgs(Map commandArgs) {
-		String configHandle = (String) commandArgs.get(LAUNCH_CONFIG_HANDLE);
-		if (configHandle == null) {
-			// Probably an old-style external tool. Try to migrate.
-			return ExternalToolMigration.configFromArgumentMap(commandArgs);
-		}
-		try {
-			return DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(configHandle);
-		} catch (CoreException e) {
-			return null;
-		}
 	}
 	
 	/**

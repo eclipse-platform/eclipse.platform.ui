@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -124,6 +125,17 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		IWorkbenchWindow window= getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getActivePage();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the active workbench shell or <code>null</code> if none.
+	 */
+	public static Shell getActiveWorkbenchShell() {
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
 		}
 		return null;
 	}

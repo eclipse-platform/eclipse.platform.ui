@@ -28,10 +28,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -69,12 +66,12 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.IgnoreWhiteSpaceComparator;
+import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -87,10 +84,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	//locally mark a command's enabled state so it can be processed correctly on performOK
 	private static final String COMMAND_ENABLED= "CommandEnabled"; //$NON-NLS-1$
 	
-	// Extension point constants.
-	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
-	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
-	private static final String TAG_BUILDER_TYPE= "builderType"; //$NON-NLS-1$
+	public static final String BUILDER_FOLDER_NAME= ".externalToolBuilders"; //$NON-NLS-1$
 
 	private Button upButton, downButton, newButton, copyButton, editButton, removeButton;
 	
@@ -202,7 +196,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 	
 		for (int i = 0; i < commands.length; i++) {
-			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
+			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(project, commands[i].getArguments());
 			Object element= null;
 			if (config != null) {
 				if (!config.isWorkingCopy() && !config.exists()) {
@@ -228,43 +222,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				viewer.setChecked(element, isEnabled(element));
 			}
 		}
-	}
-	
-	/**
-	 * Converts the given config to a build command which is stored in the
-	 * given command.
-	 *
-	 * @return the configured build command
-	 */
-	private ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
-		Map args= null;
-		if (isUnmigratedConfig(config)) {
-			// This config represents an old external tool builder that hasn't
-			// been edited. Try to find the old ICommand and reuse the arguments.
-			// The goal here is to not change the storage format of old, unedited builders.
-			ICommand[] commands= getInputProject().getDescription().getBuildSpec();
-			for (int i = 0; i < commands.length; i++) {
-				ICommand projectCommand = commands[i];
-				String name= ExternalToolMigration.getNameFromCommandArgs(projectCommand.getArguments());
-				if (name != null && name.equals(config.getName())) {
-					args= projectCommand.getArguments();
-					break;
-				}
-			}
-		} else {
-			if (config instanceof ILaunchConfigurationWorkingCopy) {
-				ILaunchConfigurationWorkingCopy workingCopy= (ILaunchConfigurationWorkingCopy) config;
-				if (workingCopy.getOriginal() != null) {
-					config= workingCopy.getOriginal();
-				}
-			}
-			args= new HashMap();
-			// Launch configuration builders are stored by storing their handle
-			args.put(LAUNCH_CONFIG_HANDLE, config.getMemento());
-		}
-		command.setBuilderName(ExternalToolBuilder.ID);
-		command.setArguments(args);
-		return command;
 	}
 
 	/**
@@ -487,7 +444,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		try {
 			setAutobuild(false);
-			newConfig= duplicateConfiguration(config);
+			newConfig= BuilderUtils.duplicateConfiguration(getInputProject(), config);
 		} catch (CoreException e) {
 			handleException(e);
 		} finally {
@@ -505,49 +462,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 	}
 	
-	/**
-	 * Returns a duplicate of the given configuration. The new configuration
-	 * will be of the same type as the given configuration or of the duplication
-	 * type registered for the given configuration via the extension point
-	 * IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS.
-	 */
-	private ILaunchConfiguration duplicateConfiguration(ILaunchConfiguration config) throws CoreException {
-		Map attributes= null;
-		attributes= config.getAttributes();
-		String newName= config.getName() + ExternalToolsUIMessages.getString("BuilderPropertyPage._[Builder]_6"); //$NON-NLS-1$
-		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
-		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
-		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(true), newName);
-		newWorkingCopy.setAttributes(attributes);
-		return newWorkingCopy.doSave();
-	}
-	
-	/**
-	 * Returns the type of launch configuration that should be created when
-	 * duplicating the given configuration as a project builder. Queries to see
-	 * if an extension has been specified to explicitly declare the mapping.
-	 */
-	private ILaunchConfigurationType getConfigurationDuplicationType(ILaunchConfiguration config) throws CoreException {
-		IExtensionPoint ep= ExternalToolsPlugin.getDefault().getDescriptor().getExtensionPoint(IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS); 
-		IConfigurationElement[] elements = ep.getConfigurationElements();
-		String sourceType= config.getType().getIdentifier();
-		String builderType= null;
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
-			if (element.getName().equals(TAG_CONFIGURATION_MAP) && sourceType.equals(element.getAttribute(TAG_SOURCE_TYPE))) {
-				builderType= element.getAttribute(TAG_BUILDER_TYPE);
-				break;
-			}
-		}
-		if (builderType != null) {
-			ILaunchConfigurationType type= DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(builderType);
-			if (type != null) {
-				return type;
-			}
-		}
-		return config.getType();
-	}
-
 	/**
 	 * The user has pressed the remove button. Delete the selected builder.
 	 */
@@ -583,7 +497,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(ExternalToolsUIMessages.getString("BuilderPropertyPage.New_Builder_7")); //$NON-NLS-1$
-			workingCopy = type.newInstance(getBuilderFolder(true), name);		
+			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);		
 			
 			StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
 			buffer.append(',');
@@ -682,12 +596,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			Object data = selection.getData();
 			if (data instanceof ILaunchConfiguration) {
 				ILaunchConfiguration config= (ILaunchConfiguration) data;
-				if (isUnmigratedConfig(config)) {
+				if (BuilderUtils.isUnmigratedConfig(config)) {
 					if (!shouldProceedWithMigration()) {
 						return;
 					}
 					try {
-						config= migrateBuilderConfiguration((ILaunchConfigurationWorkingCopy) config);
+						config= BuilderUtils.migrateBuilderConfiguration(getInputProject(), (ILaunchConfigurationWorkingCopy) config);
 					} catch (CoreException e) {
 						handleException(e);
 						return;
@@ -714,39 +628,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	}
 	
 	/**
-	 * Migrates the launch configuration working copy, which is based on an old-
-	 * style external tool builder, to a new, saved launch configuration. The
-	 * returned launch configuration will contain the same attributes as the
-	 * given working copy with the exception of the configuration name, which
-	 * may be changed during the migration. The name of the configuration will
-	 * only be changed if the current name is not a valid name for a saved
-	 * config.
-	 * 
-	 * @param workingCopy the launch configuration containing attributes from an
-	 * old-style project builder.
-	 * @return ILaunchConfiguration a new, saved launch configuration whose
-	 * attributes match those of the given working copy as well as possible
-	 * @throws CoreException if an exception occurs while attempting to save the
-	 * new launch configuration
-	 */
-	private ILaunchConfiguration migrateBuilderConfiguration(ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
-		workingCopy.setContainer(getBuilderFolder(true));
-		// Before saving, make sure the name is valid
-		String name= workingCopy.getName();
-		name.replace('/', '.');
-		if (name.charAt(0) == ('.')) {
-			name = name.substring(1);
-		}
-		IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
-		if (!status.isOK()) {
-			name = "ExternalTool"; //$NON-NLS-1$
-		}
-		name = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
-		workingCopy.rename(name);
-		return workingCopy.doSave();
-	}
-	
-	/**
 	 * Prompts the user to proceed with the migration of a project builder from
 	 * the old format to the new, launch configuration-based, format and returns
 	 * whether or not the user wishes to proceed with the migration.
@@ -764,22 +645,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			IPreferenceConstants.PROMPT_FOR_MIGRATION,
 			ExternalToolsUIMessages.getString("BuilderPropertyPage.Prompt"), //$NON-NLS-1$
 			ExternalToolsPlugin.getDefault().getPreferenceStore());
-	}
-
-	/**
-	 * Returns the folder where project builders should be stored or
-	 * <code>null</code> if the folder could not be created
-	 */
-	private IFolder getBuilderFolder(boolean create) {
-		IFolder folder = getInputProject().getFolder(".externalToolBuilders"); //$NON-NLS-1$
-		if (!folder.exists() && create) {
-			try {
-				folder.create(true, true, new NullProgressMonitor());
-			} catch (CoreException e) {
-				return null;
-			}
-		}
-		return folder;
 	}
 
 	/**
@@ -946,7 +811,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				if (enabled != null && enabled.equals(Boolean.FALSE)) {
 					ILaunchConfiguration config= disableCommand(command);
 					if (config != null) {
-						data= translateLaunchConfigurationToCommand(config, project);
+						data= BuilderUtils.commandFromLaunchConfig(project,config);
 					}
 				} else {
 					args.remove(COMMAND_ENABLED);
@@ -964,7 +829,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				} catch (CoreException e1) {
 				}
 				
-				if (!isUnmigratedConfig(config) && (config instanceof ILaunchConfigurationWorkingCopy)) {
+				if (!BuilderUtils.isUnmigratedConfig(config) && (config instanceof ILaunchConfigurationWorkingCopy)) {
 					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
 					// Save any changes to the config (such as enable/disable)
 					if (workingCopy.isDirty()) {
@@ -975,7 +840,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 						}
 					}
 				}
-				data= translateLaunchConfigurationToCommand(config, project);
+				data= BuilderUtils.commandFromLaunchConfig(project, config);
 			} else if (data instanceof ErrorConfig) {
 				data= ((ErrorConfig) data).getCommand();
 			}
@@ -1027,22 +892,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	}
 	
 	/**
-	 * 
-	 * Translates a launch configuration to an ICommand for storage
-	 */
-	private ICommand translateLaunchConfigurationToCommand(ILaunchConfiguration config, IProject  project) {
-		ICommand newCommand = null;
-		try {
-			newCommand = project.getDescription().newCommand();
-			newCommand = toBuildCommand(config, newCommand);
-		} catch (CoreException exception) {
-			MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Command_error_13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
-		}
-		return newCommand;
-	}
-	
-	/**
 	 * Disables a builder by wrappering the builder command as a disabled external tool builder.
 	 * The details of the command is persisted in the launch configuration.
 	 */
@@ -1064,7 +913,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String builderName = command.getBuilderName();
 			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(builderName);
-			workingCopy = type.newInstance(getBuilderFolder(true), name);		
+			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);		
 					
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, builderName);
 			if (arguments != null) {
@@ -1085,20 +934,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Returns whether the given configuration is an "unmigrated" builder.
-	 * Unmigrated builders are external tools that are stored in an old format
-	 * but have not been migrated by the user. Old format builders are always
-	 * translated into launch config working copies in memory, but they're not
-	 * considered "migrated" until the config has been saved and the project spec
-	 * updated.
-	 * @param config the config to examine
-	 * @return whether the given config represents an unmigrated builder
-	 */
-	private boolean isUnmigratedConfig(ILaunchConfiguration config) {
-		return config.isWorkingCopy() && ((ILaunchConfigurationWorkingCopy) config).getOriginal() == null;
 	}
 
 	private void deleteConfigurations() {
@@ -1188,7 +1023,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			}
 		}
 		try {
-			IFolder builderFolder= getBuilderFolder(false);
+			IFolder builderFolder= BuilderUtils.getBuilderFolder(getInputProject(), false);
 			if (builderFolder != null && builderFolder.exists() && builderFolder.members().length == 0) {
 				// All files in the builder folder were newly created. Clean up
 				builderFolder.delete(true, false, null);
