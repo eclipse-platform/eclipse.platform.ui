@@ -145,10 +145,16 @@ A.book {
 		out.write(WebappResources.getString("Nothing_found", null));
 		return;
 	}
+	String tocDescription = tocElement.getAttribute("topic");
+	if (tocDescription == null || tocDescription.length() == 0)
+		tocDescription = "javascript: void 0;";
+	else
+		tocDescription = "content/help:" + tocDescription;
+
 %>
-<body onload="onloadHandler('<%=tocHref%>', '<%=tocElement.getAttribute("label")%>', <%=topicHref != null%>)">
+<body onload='onloadHandler("<%=tocHref%>", "<%=tocElement.getAttribute("label")%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
 	<ul class='expanded' id='root'>
-		<a class='book' href='javascript: void 0;'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
+		<a class='book' href='<%=tocDescription%>'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
 <%
 	// JSP does not have good support for recursive calls using scriplets
 	// or at least I could not find a simple way...

@@ -263,14 +263,19 @@ var tocTitle = "";
 /**
  * Handles the onload event
  */
-function onloadHandler(toc, title, isTopicSelected)
+function onloadHandler(toc, title, tocDescription, isTopicSelected)
 {
 	tocTitle = title;
 	parent.parent.setToolbarTitle(title);
 	
 	// clear the content page
 	if (!isTopicSelected)
-		parent.parent.MainFrame.location="home.jsp?title="+escape(title);
+	{
+		if (tocDescription.indexOf("javascript:") == 0)
+			parent.parent.MainFrame.location="home.jsp?title="+escape(title);
+		else
+			parent.parent.MainFrame.location = tocDescription;
+	}
 }
 
 

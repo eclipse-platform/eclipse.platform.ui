@@ -12,41 +12,49 @@ import org.eclipse.help.internal.util.XMLGenerator;
  * This generates the XML file for the help navigation.
  */
 public class TocWriter extends XMLGenerator {
-	protected IToc toc;
 	/**
 	 * @param toc Toc
 	 * @param writer java.io.Writer
 	 */
-	public TocWriter(IToc toc, Writer writer) {
+	public TocWriter(Writer writer) {
 		super(writer);
-		this.toc = toc;
 	}
 	/**
 	 * @param toc Toc
 	 * @param outputFile java.io.File
 	 */
-	public TocWriter(IToc toc, File outputFile) {
+	public TocWriter(File outputFile) {
 		super(outputFile);
-		this.toc = toc;
 	}
 	/**
-	 * Writes out navigation for the Toc to a file
+	 * Writes out xml data for a toc
 	 */
-	public void generate() {
+	public void generate(IToc toc, boolean genTopics)
+	{
+		// get the topic description
+		String topicDescription = "";
+		ITopic topic = toc.getTopic(null);
+		if (topic != null)
+			topicDescription = topic.getHref();
+			
 		println(
 			"<toc label=\""
 				+ xmlEscape(toc.getLabel())
 				+ "\" href=\""
 				+ reduceURL(toc.getHref())
+				+ "\" topic=\""
+				+ reduceURL(topicDescription)
 				+ "\">");
-		ITopic[] topics = toc.getTopics();
-		for (int i = 0; i < topics.length; i++) {
-			generate(topics[i]);
+		if (genTopics) {
+			ITopic[] topics = toc.getTopics();
+			for (int i = 0; i < topics.length; i++) {
+				generate(topics[i]);
+			}
 		}
 		println("</toc>");
-		super.close();
 	}
-	/**
+	
+		/**
 	 * Generates part of navigation for a given Topic
 	 * and it children Topic
 	 */

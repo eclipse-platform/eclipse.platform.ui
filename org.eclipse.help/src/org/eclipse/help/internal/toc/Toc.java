@@ -16,6 +16,8 @@ public class Toc extends TocNode implements IToc {
 	private String label;
 	private TocFile tocFile;
 	private ITopic[] topicArray;
+	private Topic descriptionTopic;
+	
 	/**
 	 * Map of all topics in a TOC for fast lookup by href
 	 */
@@ -31,6 +33,15 @@ public class Toc extends TocNode implements IToc {
 		this.link_to = attrs.getValue("link_to");
 		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
 		this.href = HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref());
+		// create the description topic
+		String topic = attrs.getValue("topic");
+		if (topic!= null && topic.trim().length() > 0) {
+			try{
+				this.descriptionTopic = new Topic(tocFile, null);
+				this.descriptionTopic.setLabel(this.label);
+				this.descriptionTopic.setHref(HrefUtil.normalizeHref(tocFile.getPluginID(), topic));
+			}catch(Exception e){}
+		}
 	}
 	/**
 	 * Implements abstract method.
@@ -70,6 +81,9 @@ public class Toc extends TocNode implements IToc {
 	 * @param href The topic's href value.
 	 */
 	public ITopic getTopic(String href) {
+		if (href == null)
+			return descriptionTopic;
+			
 		if (topicMap == null) {
 			// traverse TOC and fill in the topicMap
 			topicMap = new HashMap();

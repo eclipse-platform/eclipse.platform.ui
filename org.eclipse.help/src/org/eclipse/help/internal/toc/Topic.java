@@ -49,4 +49,12 @@ class Topic extends TocNode implements ITopic {
 		}
 		return topicArray;
 	}
+	
+	void setLabel(String label) {
+		this.label = label;
+	}
+	
+	void setHref(String href) {
+		this.href = href;
+	}
 }

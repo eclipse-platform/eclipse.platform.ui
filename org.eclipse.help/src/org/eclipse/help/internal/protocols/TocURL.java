@@ -6,10 +6,11 @@ package org.eclipse.help.internal.protocols;
 
 import java.io.*;
 
-import org.eclipse.help.IToc;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.XMLGenerator;
+
 
 /**
  * URL to files in the plugin's working directory, as well as
@@ -61,7 +62,9 @@ public class TocURL extends HelpURL {
 		if (toc == null)
 			return null;
 		StringWriter stWriter = new StringWriter();
-		new TocWriter(toc, stWriter).generate();
+		TocWriter tocWriter = new TocWriter(stWriter);
+		tocWriter.generate(toc, true);
+		tocWriter.close();
 		try {
 			return new ByteArrayInputStream(stWriter.toString().getBytes("UTF8"));
 		} catch (UnsupportedEncodingException uee) {
@@ -76,16 +79,12 @@ public class TocURL extends HelpURL {
 		TocManager tocManager = HelpSystem.getTocManager();
 		IToc[] tocs = tocManager.getTocs(getLocale().toString());
 		StringWriter stWriter = new StringWriter();
-		XMLGenerator gen = new XMLGenerator(stWriter);
+		TocWriter gen = new TocWriter(stWriter);
 		gen.println("<tocs>");
 		gen.pad++;
 		for (int i = 0; i < tocs.length; i++) {
 			gen.printPad();
-			gen.print("<toc href=\"");
-			gen.print(tocs[i].getHref());
-			gen.print("\" label=\"");
-			gen.print(tocs[i].getLabel());
-			gen.println("\"/>");
+			gen.generate(tocs[i], false);
 		}
 		gen.pad--;
 		gen.println("</tocs>");

@@ -23,8 +23,8 @@ public interface IHelpResource {
 	public final static String LABEL = "label";
 	
 	/**
-	 * Returns the string URL associated with this help resource.
-	 * @return the string URL associated with the resource
+	 * Returns the URL (as a string) associated with this help resource.
+	 * @return the URL (as a string) associated with the resource
 	 * <p>
 	 * Valid URL of a help resource is:
 	 * <ul>
