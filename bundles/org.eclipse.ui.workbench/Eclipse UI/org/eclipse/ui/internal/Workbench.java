@@ -202,10 +202,11 @@ public final class Workbench implements IWorkbench {
 	}
 	
 	/**
-	 * Returns the one and only instance of the workbench
-	 * or <code>null</code> if not created yet.
+	 * Returns the one and only instance of the workbench, if there
+	 * is one.
 	 * 
-	 * @return the workbench or <code>null</code> if not created yet.
+	 * @return the workbench, or <code>null</code> if the workbench has
+	 * not been created, or has been created and already completed
 	 */
 	public static final Workbench getInstance() {
 		return instance;
