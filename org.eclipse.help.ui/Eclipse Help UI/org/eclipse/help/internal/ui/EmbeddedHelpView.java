@@ -76,12 +76,13 @@ public class EmbeddedHelpView extends ViewPart {
 			viewContainer,
 			new String[] {IHelpUIConstants.EMBEDDED_HELP_VIEW});
 
+		String errorMessage = "";
 		try {
 			// get proper InfoSet. 
 			InfoSet infoSet = null;
 			
 			if (lastInfosetId != null) // mememto was saved
-				{
+			{
 				infoSet = HelpSystem.getNavigationManager().getInfoSet(lastInfosetId);
 				if (infoSet != null) // plugin still exists
 					HelpSystem.getNavigationManager().setCurrentInfoSet(lastInfosetId);
@@ -89,18 +90,13 @@ public class EmbeddedHelpView extends ViewPart {
 			
 			infoSet = HelpSystem.getNavigationManager().getCurrentInfoSet();
 
-			// no InsoSets installed at all. Display error dialog, but also handle
+			// no InfoSets installed at all. Display error dialog, but also handle
 			// empty view. Since view is already created, do *not* close for safety. 
 			if (infoSet == null) {
-				String msg= WorkbenchResources.getString("WW001");
-				Util.displayErrorDialog(msg);
-				viewContainer.dispose();
-				Text text = new Text(parent, SWT.BORDER | SWT.MULTI 
-										| SWT.READ_ONLY | SWT.WRAP);
-				text.setText(msg);
-
-				// capture that the view was not created successfully
+				errorMessage = WorkbenchResources.getString("WW001");
 				creationSuccessful = false;
+				
+				Util.displayErrorDialog(errorMessage);
 				return;
 			}
 
@@ -142,28 +138,28 @@ public class EmbeddedHelpView extends ViewPart {
 
 			// if any errors or parsing errors have occurred, display them in a pop-up
 			Util.displayStatus();
-
 			creationSuccessful = true;
 
 		} catch (HelpWorkbenchException e) {
 			// something we know about failed.
-			viewContainer.dispose();
-			Text text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP );
-			text.setText(e.getMessage());
-
-			// capture that the view was not created successfully
 			creationSuccessful = false;
-
+			errorMessage = e.getMessage();
 		} catch (Exception e) {
-			// now handle worst case scenario. Should never be here!
-			viewContainer.dispose();
-			Text text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP );
-			text.setText(WorkbenchResources.getString("WE007"));
-
-			// capture that the view was not created successfully
+			// now handle worst case scenario. Should never be here!			
 			creationSuccessful = false;
+			errorMessage = WorkbenchResources.getString("WE007");
+		}
+		finally
+		{
+			if (!creationSuccessful)
+			{
+				viewContainer.dispose();
+				Text text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP );
+				text.setText(errorMessage);
+			}
 		}
 	}
+	
 	/**
 	 * Shows the related links, and current information set
 	 */

@@ -12,6 +12,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.help.internal.contributions.InfoSet;
 import org.eclipse.help.internal.navigation.*;
@@ -75,14 +76,26 @@ public class NavigationViewer implements ISelectionProvider {
 
 			HelpNavigationManager navManager = HelpSystem.getNavigationManager();
 			for (int i = 0; i < infoSetIds.size(); i++) {
-				infoSetsCombo.add(navManager.getInfoSet((String) infoSetIds.get(i)).getLabel());
+				infoSetsCombo.add(navManager.getInfoSetLabel((String) infoSetIds.get(i)));
 			}
 			infoSetsCombo.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					int index = ((Combo) e.widget).getSelectionIndex();
-					String id = (String) infoSetIds.get(index);
-					if(currentInfoset != HelpSystem.getNavigationManager().getInfoSet(id))
-						setInput(HelpSystem.getNavigationManager().getInfoSet(id));
+					final String id = (String) infoSetIds.get(index);
+					// Switching to another infoset may be time consuming
+					// so display the busy cursor
+					BusyIndicator.showWhile(null, new Runnable()
+					{
+						public void run()
+						{
+							try
+							{
+								InfoSet selectedInfoset = HelpSystem.getNavigationManager().getInfoSet(id);
+								if(currentInfoset != selectedInfoset)
+									setInput(selectedInfoset);
+							}catch(Exception e){}
+						}
+					});
 				}
 				public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);

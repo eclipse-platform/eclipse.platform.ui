@@ -4,7 +4,7 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 
-
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.action.*;
 import org.eclipse.core.runtime.*;
@@ -56,8 +56,17 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 	 * [Issue: Will be made abstract. For now, calls <code>actionPerformed()</code> for backwards compatibility.]
 	 */
 	public void run(IAction a) {
-		//Help.displayHelp(infoset.getID());
-		Help.displayHelp(infoset);
+		//This may take a while, so use the busy indicator
+		BusyIndicator.showWhile(null, new Runnable()
+		{
+			public void run()
+			{
+				try
+				{
+					Help.displayHelp(infoset);
+				}catch(Exception e){}
+			}
+		});
 	}
 	/**
 	 * Selection in the workbench has changed. Plugin provider
