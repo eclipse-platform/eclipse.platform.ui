@@ -261,15 +261,6 @@ public interface IBreakpoint extends IAdaptable {
 	 */
 	public void setGroup(String groupName) throws CoreException;
     
-    /**
-     * Returns whether this breakpoint should be skipped, based on breakpoint
-     * manager enablement.
-     * 
-     * @return whether this breakpoint should be skipped, based on breakpoint
-     *   manager enablement
-     * @since 3.1
-     */
-    public boolean isSkipped();
 }
 
 

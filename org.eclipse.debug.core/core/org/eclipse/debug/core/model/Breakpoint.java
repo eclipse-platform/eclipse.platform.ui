@@ -355,10 +355,4 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
     	}			
     }  
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IBreakpoint#isSkipped()
-     */
-    public boolean isSkipped() {
-        return !DebugPlugin.getDefault().getBreakpointManager().isEnabled();
-    }
 }
