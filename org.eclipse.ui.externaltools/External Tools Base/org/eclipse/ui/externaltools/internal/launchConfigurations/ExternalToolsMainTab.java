@@ -112,7 +112,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		
+		mainComposite.setFont(parent.getFont());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -162,6 +162,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
+		buttonComposite.setFont(parent.getFont());
 		
 		workspaceLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Browse_Workspace..._3"), null); //$NON-NLS-1$
 		workspaceLocationButton.addSelectionListener(fListener);
@@ -213,6 +214,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
+		buttonComposite.setFont(parent.getFont());
 		
 		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_Wor&kspace..._6"), null); //$NON-NLS-1$
 		workspaceWorkingDirectoryButton.addSelectionListener(fListener);
