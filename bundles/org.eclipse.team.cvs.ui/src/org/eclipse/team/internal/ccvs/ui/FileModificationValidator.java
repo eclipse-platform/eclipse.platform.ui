@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -153,7 +154,15 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 			// Allow the files to be edited without notifying the server
 			for (int i = 0; i < files.length; i++) {
 				IFile file = files[i];
-				file.setReadOnly(false);
+				ResourceAttributes attributes = file.getResourceAttributes();
+				if (attributes != null) {
+					attributes.setReadOnly(false);
+				}
+				try {
+					file.setResourceAttributes(attributes);
+				} catch (CoreException e) {
+					CVSUIPlugin.log(e);
+				}
 			}
 		}
 
