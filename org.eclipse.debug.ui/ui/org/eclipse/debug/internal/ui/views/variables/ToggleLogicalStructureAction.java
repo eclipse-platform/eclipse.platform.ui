@@ -14,7 +14,6 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -34,9 +33,9 @@ public class ToggleLogicalStructureAction extends Action {
 		super(null, IAction.AS_CHECK_BOX);
 		setView(view);
 		setToolTipText(VariablesViewMessages.getString("ToggleObjectBrowsersAction.1"));  //$NON-NLS-1$
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_VARIABLES_CONTENT_PROVIDERS));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_VARIABLES_CONTENT_PROVIDERS));
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_VARIABLES_CONTENT_PROVIDERS));
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_SHOW_LOGICAL_STRUCTURE));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_SHOW_LOGICAL_STRUCTURE));
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_SHOW_LOGICAL_STRUCTURE));
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ToggleObjectBrowsersAction"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.VARIABLES_CONTENT_PROVIDERS_ACTION);
 	}
@@ -52,7 +51,7 @@ public class ToggleLogicalStructureAction extends Action {
 		if (!getView().isAvailable()) {
 			return;
 		}
-		getView().setUseContentProviders(on);	
+		getView().setShowLogicalStructure(on);	
 		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
 			public void run() {
 				getView().getViewer().refresh();					

@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -161,10 +162,34 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		if (isShowLogicalStructure()) {
 			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
 			if (types.length > 0) {
-				try {
-					return types[0].getLogicalStructure(value);
-				} catch (CoreException e) {
-					DebugUIPlugin.log(e);
+				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+				ILogicalStructureType type = null;
+				boolean exist = false;
+				for (int i = 0; i < types.length; i++) {
+					String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId();
+					int setting = store.getInt(key);
+					// 0 = never used, 1 = on, -1 = off
+					if (setting != 0) {
+						exist = true;
+						if (setting == 1) {
+							type = types[i];
+							break;
+						}
+					} else {
+						store.setValue(types[i].getId(), -1);
+					}
+				}
+				if (type == null && !exist) {
+					type = types[0];
+					// choose first by default
+					store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + type.getId(), 1);
+				}
+				if (type != null) {
+					try {
+						return type.getLogicalStructure(value);
+					} catch (CoreException e) {
+						DebugUIPlugin.log(e);
+					}
 				}
 			}
 		}

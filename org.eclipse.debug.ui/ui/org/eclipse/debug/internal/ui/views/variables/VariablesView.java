@@ -321,6 +321,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected static final String DETAIL_COPY_ACTION = IWorkbenchActionConstants.COPY + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_COPY_ACTION=  IWorkbenchActionConstants.COPY + ".Variables"; //$NON-NLS-1$
 
+	protected static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 	
 	/**
 	 * Remove myself as a selection listener
@@ -753,6 +754,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		action = new ToggleLogicalStructureAction(this);
 		setAction("ToggleContentProviders", action); //$NON-NLS-1$
 		
+		action = new AvailableLogicalStructuresAction(this);
+		setAction("SelectLogicalStructure", action); //$NON-NLS-1$
+		
 		action = new CollapseAllAction(getVariablesViewer());
 		setAction("CollapseAll", action); //$NON-NLS-1$
 
@@ -828,6 +832,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
 		tbm.add(getAction("ToggleContentProviders")); //$NON-NLS-1$
+		tbm.add(getAction("SelectLogicalStructure")); //$NON-NLS-1$
 		tbm.add(getAction("CollapseAll")); //$NON-NLS-1$
 	}
 
@@ -1290,11 +1295,22 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 	
 	/** 
-	 * Use model supplied content providers. 
+	 * Sets whether logical structures are being displayed
 	 */
-	public void setUseContentProviders(boolean flag) {
+	public void setShowLogicalStructure(boolean flag) {
 		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).setShowLogicalStructure(flag);
+		AvailableLogicalStructuresAction action = (AvailableLogicalStructuresAction) getAction("SelectLogicalStructure"); //$NON-NLS-1$
+		if (action != null) {
+			action.selectionChanged(new SelectionChangedEvent(getVariablesViewer(), getVariablesViewer().getSelection()));
+		}
 	}	
+	
+	/** 
+	 * Returns whether logical structures are being displayed 
+	 */
+	public boolean isShowLogicalStructure() {
+		return ((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).isShowLogicalStructure();
+	}		
 
 	/**
 	 * Returns the number of entries that should be displayed in each
@@ -1307,4 +1323,5 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		// TODO: this should be a view setting
 		return 100;
 	}
+	
 }
