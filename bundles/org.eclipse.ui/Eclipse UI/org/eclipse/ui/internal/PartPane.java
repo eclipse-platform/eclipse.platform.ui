@@ -12,8 +12,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.part.*;
 
@@ -252,6 +250,16 @@ public void setWorkbenchPage(WorkbenchPage workbenchPage) {
 public void setZoomed(boolean isZoomed) {
 	this.isZoomed = isZoomed;
 }
+/**
+ * Informs the pane that it's window shell has
+ * been activated.
+ */
+/* package */ abstract void shellActivated();
+/**
+ * Informs the pane that it's window shell has
+ * been deactivated.
+ */
+/* package */ abstract void shellDeactivated();
 /**
  * Indicate focus in part.
  */

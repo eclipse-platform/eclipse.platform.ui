@@ -20,11 +20,15 @@ public class WorkbenchColors {
 	static private HashMap systemColorMap;
 	static private Color workbenchColors[];
 	static private Color [] activeViewGradient;
+	static private Color [] deactivatedViewGradient;
 	static private Color [] activeEditorGradient;
 	static private Color [] activeNoFocusEditorGradient;
+	static private Color [] deactivatedEditorGradient;
 	static private int [] activeViewPercentages;
+	static private int [] deactivatedViewPercentages;
 	static private int [] activeEditorPercentages;
 	static private int [] activeNoFocusEditorPercentages;
+	static private int [] deactivatedEditorPercentages;
 	static private final String CLR_VIEW_GRAD_START = "clrViewGradStart";//$NON-NLS-1$
 	static private final String CLR_VIEW_GRAD_END = "clrViewGradEnd";//$NON-NLS-1$
 	static private final String CLR_EDITOR_GRAD_START = "clrEditorGradStart";//$NON-NLS-1$
@@ -104,6 +108,34 @@ static public Color getActiveViewGradientStart() {
 	Color clr = (Color)systemColorMap.get(CLR_VIEW_GRAD_START);
 	Assert.isNotNull(clr);
 	return clr;
+}
+/**
+ * Returns the gradient for editors when the window
+ * is deactivated.
+ */
+static public Color [] getDeactivatedEditorGradient() {
+	return deactivatedEditorGradient;
+}
+/**
+ * Returns the editor gradient percents when the window
+ * is deactivated.
+ */
+static public int [] getDeactivatedEditorGradientPercents() {
+	return deactivatedEditorPercentages;
+}
+/**
+ * Returns the gradient for views when the window
+ * is deactivated.
+ */
+static public Color [] getDeactivatedViewGradient() {
+	return deactivatedViewGradient;
+}
+/**
+ * Returns the view gradient percents when the window
+ * is deactivated.
+ */
+static public int [] getDeactivatedViewGradientPercents() {
+	return deactivatedViewPercentages;
 }
 /**
  * Returns a color identified by an RGB value.
@@ -246,6 +278,17 @@ static public void startup() {
 	// Define active no focus editor gradient
 	activeNoFocusEditorGradient = new Color[] {getSystemColor(SWT.COLOR_LIST_BACKGROUND)};
 	activeNoFocusEditorPercentages = new int[0];
+	
+	// Define view gradient for deactivated window using same OS title gradient colors.
+	clr1 = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
+	clr2 = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
+	clr3 = getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+	deactivatedViewGradient = new Color[] {clr1, clr2, clr3};
+	deactivatedViewPercentages = new int[] {70, 100};
+
+	// Define editor gradient for deactivated window using same OS title gradient colors.
+	deactivatedEditorGradient = new Color[] {clr1, clr2, null, null};
+	deactivatedEditorPercentages = new int[] {70, 95, 100};
 	
 	// Preload.
 	getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);

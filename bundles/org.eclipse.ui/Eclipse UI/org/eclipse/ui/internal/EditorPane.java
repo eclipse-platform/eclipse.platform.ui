@@ -117,6 +117,19 @@ protected void requestActivation() {
 public void setWorkbook(EditorWorkbook editorWorkbook) {
 	workbook = editorWorkbook;
 }
+/* (non-Javadoc)
+ * Method declared on PartPane.
+ */
+/* package */ void shellActivated() {
+	this.workbook.drawGradient();
+}
+
+/* (non-Javadoc)
+ * Method declared on PartPane.
+ */
+/* package */ void shellDeactivated() {
+	this.workbook.drawGradient();
+}
 /**
  * Indicate focus in part.
  */

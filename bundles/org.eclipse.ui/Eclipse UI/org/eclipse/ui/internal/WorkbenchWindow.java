@@ -55,6 +55,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private WorkbenchActionBuilder builder;
 	private boolean updateDisabled = true;
 	private boolean closing = false;
+	private boolean shellActivated = false;
 	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
@@ -384,6 +385,8 @@ protected void configureShell(Shell shell) {
 
 	WorkbenchHelp.setHelp(shell, new String[] {IHelpContextIds.WORKBENCH_WINDOW});
 
+	trackShellActivation(shell);
+	
 	// If the user clicks on toolbar, status bar, or shortcut bar
 	// hide the fast view.
 	Listener listener = new Listener() {
@@ -557,6 +560,17 @@ public IPerspectiveService getPerspectiveService() {
  */
 public ISelectionService getSelectionService() {
 	return partService.getSelectionService();
+}
+/**
+ * Returns <code>true</code> when the window's shell
+ * is activated, <code>false</code> when it's shell is
+ * deactivated
+ * 
+ * @return boolean <code>true</code> when shell activated,
+ * 		<code>false</code> when shell deactivated
+ */
+/* package */ boolean getShellActivated() {
+	return shellActivated;
 }
 /**
  * Returns the shortcut bar.
@@ -969,6 +983,45 @@ private void showShortcutBarPopup(MouseEvent e) {
 	pt = tb.toDisplay(pt);
 	menu.setLocation(pt.x, pt.y);
 	menu.setVisible(true);
+}
+/**
+ * Hooks a listener to track the activation and
+ * deactivation of the window's shell. Notifies
+ * the active part and editor of the change
+ */
+private void trackShellActivation(Shell shell) {
+	shell.addShellListener(new ShellAdapter() {
+		public void shellActivated(ShellEvent event) {
+			shellActivated = true;
+			if (activePage != null) {
+				IWorkbenchPart part = activePage.getActivePart();
+				if (part != null) {
+					PartSite site = (PartSite) part.getSite();
+					site.getPane().shellActivated();
+				}
+				IEditorPart editor = activePage.getActiveEditor();
+				if (editor != null) {
+					PartSite site = (PartSite) editor.getSite();
+					site.getPane().shellActivated();
+				}
+			}
+		}
+		public void shellDeactivated(ShellEvent event) {
+			shellActivated = false;
+			if (activePage != null) {
+				IWorkbenchPart part = activePage.getActivePart();
+				if (part != null) {
+					PartSite site = (PartSite) part.getSite();
+					site.getPane().shellDeactivated();
+				}
+				IEditorPart editor = activePage.getActiveEditor();
+				if (editor != null) {
+					PartSite site = (PartSite) editor.getSite();
+					site.getPane().shellDeactivated();
+				}
+			}
+		}
+	});
 }
 /**
  * update the action bars.

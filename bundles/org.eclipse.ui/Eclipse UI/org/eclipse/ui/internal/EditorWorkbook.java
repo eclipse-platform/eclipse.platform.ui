@@ -281,6 +281,44 @@ private void doZoom() {
 	((WorkbenchPage)(getWorkbenchWindow().getActivePage())).toggleZoom(visibleEditor.getPart());
 }
 /**
+ * Draws the applicable gradient on the active tab
+ */
+/* package */ void drawGradient() {
+	Color fgColor;
+	Color[] bgColors;
+	int[] bgPercents;
+	
+	switch (activeState) {
+		case ACTIVE_FOCUS :
+			if (getShellActivated()) {
+				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+				bgColors = WorkbenchColors.getActiveEditorGradient();
+				bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
+			}
+			else {
+				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+				bgColors = WorkbenchColors.getDeactivatedEditorGradient();
+				bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
+			}
+			break;
+		case ACTIVE_NOFOCUS :
+			fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_BLACK);
+			bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
+			bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
+			break;
+		case INACTIVE :
+		default :
+			fgColor = null;
+			bgColors = null;
+			bgPercents = null;
+			break;
+	}
+	
+	tabFolder.setSelectionForeground(fgColor);
+	tabFolder.setSelectionBackground(bgColors, bgPercents);
+	tabFolder.update();
+}
+/**
  * enableDrop
  */
 private void enableDrop(LayoutPart part) {
@@ -633,6 +671,15 @@ private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {
 public void replace(LayoutPart oldPart, LayoutPart newPart) {
 }
 /**
+ * Sets the gradient state of the active tab
+ */
+private void setActiveState(int state) {
+	if (activeState != state) {
+		activeState = state;
+		drawGradient();
+	}
+}
+/**
  * Sets the presentation bounds.
  */
 public void setBounds(Rectangle r) {
@@ -693,42 +740,19 @@ public void tabFocusHide() {
 	if (tabFolder == null || ignoreTabFocusHide) 
 		return;
 
-	if (isActiveWorkbook()) {
-		if (activeState != ACTIVE_NOFOCUS) {
-			activeState = ACTIVE_NOFOCUS;
-			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_BLACK));
-			tabFolder.setSelectionBackground(WorkbenchColors.getActiveNoFocusEditorGradient(), WorkbenchColors.getActiveNoFocusEditorGradientPercents());
-			tabFolder.update();
-		}
-	} else {
-		if (activeState != INACTIVE) {
-			activeState = INACTIVE;
-			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_BLACK));
-			tabFolder.setSelectionBackground(null, null);
-			tabFolder.update();
-		}
-	}
+	if (isActiveWorkbook())
+		setActiveState(ACTIVE_NOFOCUS);
+	else
+		setActiveState(INACTIVE);
 }
 public void tabFocusShow(boolean hasFocus) {
 	if (tabFolder == null) 
 		return;
 
-	if (hasFocus) {
-		if (activeState != ACTIVE_FOCUS) {
-			activeState = ACTIVE_FOCUS;
-			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
-			tabFolder.setSelectionBackground(WorkbenchColors.getActiveEditorGradient(), WorkbenchColors.getActiveEditorGradientPercents());
-			tabFolder.update();
-		}
-	}
-	else {
-		if (activeState != ACTIVE_NOFOCUS) {
-			activeState = ACTIVE_NOFOCUS;
-			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_BLACK));
-			tabFolder.setSelectionBackground(WorkbenchColors.getActiveNoFocusEditorGradient(), WorkbenchColors.getActiveNoFocusEditorGradientPercents());
-			tabFolder.update();
-		}
-	}
+	if (hasFocus)
+		setActiveState(ACTIVE_FOCUS);
+	else
+		setActiveState(ACTIVE_NOFOCUS);
 }
 /**
  * @see IPartDropTarget::targetPartFor

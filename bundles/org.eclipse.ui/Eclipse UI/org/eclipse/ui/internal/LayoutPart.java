@@ -76,6 +76,16 @@ public String getID() {
 		.getPreferenceStore();
 }
 /**
+ * Return whether the window's shell is activated
+ */
+/* package */ boolean getShellActivated() {
+	Window window = getWindow();
+	if (window instanceof WorkbenchWindow) 
+		return ((WorkbenchWindow) window).getShellActivated();
+	else
+		return false;
+}
+/**
  * Gets the presentation size.
  */
 public Point getSize() {

@@ -34,6 +34,7 @@ public class ViewPane extends PartPane
 	private CLabel titleLabel;
 		
 	private boolean fast = false;
+	private boolean showFocus = false;
 	private ToolBar isvToolBar;
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
@@ -302,6 +303,33 @@ protected void doPin() {
 	WorkbenchPage page = (WorkbenchPage)getPart().getSite().getPage();
 	page.removeFastView(getViewPart());
 }
+
+/**
+ * Draws the applicable gradient on the view's title area
+ */
+/* package */ void drawGradient() {
+	if (showFocus) {
+		if (getShellActivated()) {
+			titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
+			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+			titleLabel.update();
+			isvToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
+		}
+		else {
+			titleLabel.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents());
+			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+			titleLabel.update();
+			isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		}
+	}
+	else {
+		titleLabel.setBackground(null, null);
+		titleLabel.setForeground(null);
+		titleLabel.update();
+		isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+	}
+}
+
 /**
  * Returns the drag control.
  */
@@ -376,25 +404,29 @@ public void setFastViewSash(Sash s) {
 	fastViewSash = s;
 }
 
+/* (non-Javadoc)
+ * Method declared on PartPane.
+ */
+/* package */ void shellActivated() {
+	drawGradient();
+}
+
+/* (non-Javadoc)
+ * Method declared on PartPane.
+ */
+/* package */ void shellDeactivated() {
+	drawGradient();
+}
+
 /**
  * Indicate focus in part.
  */
 public void showFocus(boolean inFocus) {
-	if(titleLabel == null)
+	if (titleLabel == null)
 		return;
-		
-	if (inFocus) {
-		titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
-		titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-		titleLabel.update();
-		isvToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
-	}
-	else {
-		titleLabel.setBackground(null, null);
-		titleLabel.setForeground(null);
-		titleLabel.update();
-		isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-	}
+
+	showFocus = inFocus;
+	drawGradient();
 }
 
 /**
