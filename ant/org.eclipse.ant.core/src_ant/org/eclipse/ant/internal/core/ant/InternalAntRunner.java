@@ -124,6 +124,8 @@ public class InternalAntRunner {
 	
 	protected Project fCurrentProject;
 	
+	protected BuildLogger fBuildLogger= null;
+	
 	/**
 	 * Cache of the Ant version information when it has been loaded	 */
 	protected static String fgAntVersion= null;
@@ -481,6 +483,8 @@ public class InternalAntRunner {
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
+			fErr.close();
+			fOut.close();
 			fireBuildFinished(getCurrentProject(), error);
 		}
 	}
@@ -503,23 +507,22 @@ public class InternalAntRunner {
 	 * @return the default build logger for logging build events to the ant log
 	 */
 	protected BuildLogger createLogger() {
-		BuildLogger logger = null;
 		if (fLoggerClassname != null) {
 			try {
-				logger = (BuildLogger) (Class.forName(fLoggerClassname).newInstance());
+				fBuildLogger = (BuildLogger) (Class.forName(fLoggerClassname).newInstance());
 			} catch (Exception e) {
 				String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unable_to_instantiate_logger__{0}_6"), new String[]{fLoggerClassname}); //$NON-NLS-1$
 				logMessage(null, message, Project.MSG_ERR);
 				throw new BuildException(e);
 			}
 		} else {
-			logger = new DefaultLogger();
+			fBuildLogger = new DefaultLogger();
 		}
-		logger.setMessageOutputLevel(fMessageOutputLevel);
-		logger.setOutputPrintStream(fOut);
-		logger.setErrorPrintStream(fErr);
-		logger.setEmacsMode(fEmacsMode);
-		return logger;
+		fBuildLogger.setMessageOutputLevel(fMessageOutputLevel);
+		fBuildLogger.setOutputPrintStream(fOut);
+		fBuildLogger.setErrorPrintStream(fErr);
+		fBuildLogger.setEmacsMode(fEmacsMode);
+		return fBuildLogger;
 	}
 
 	/**
@@ -640,6 +643,27 @@ public class InternalAntRunner {
 			printVersion();
 			return false;
 		}
+		
+		String[] args = getArguments(commands, "-logfile"); //$NON-NLS-1$
+		if (args == null) {
+			args = getArguments(commands, "-l"); //$NON-NLS-1$
+		}
+		if (args != null) {
+			try {
+				File logFile = new File(args[0]);
+				//this stream is closed in the finally block of run(list)
+				fOut = new PrintStream(new FileOutputStream(logFile));
+				fErr = fOut;
+				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
+				fBuildLogger.setErrorPrintStream(fErr);
+				fBuildLogger.setOutputPrintStream(fOut);
+			} catch (IOException e) {
+				// just log message and ignore exception
+				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{args[0]}), Project.MSG_INFO); //$NON-NLS-1$
+				return false;
+			}
+		}
+
 		if (commands.remove("-quiet") || commands.remove("-q")) { //$NON-NLS-1$ //$NON-NLS-2$
 			fMessageOutputLevel = Project.MSG_WARN;
 		}
@@ -657,24 +681,7 @@ public class InternalAntRunner {
 		if (commands.remove("-projecthelp")) { //$NON-NLS-1$
 			fProjectHelp = true;
 		}
-
-		// look for arguments
-		String[] args = getArguments(commands, "-logfile"); //$NON-NLS-1$
-		if (args == null) {
-			args = getArguments(commands, "-l"); //$NON-NLS-1$
-		}
-		if (args != null) {
-			try {
-				File logFile = new File(args[0]);
-				fOut = new PrintStream(new FileOutputStream(logFile));
-				fErr = fOut;
-			} catch (IOException e) {
-				// just log message and ignore exception
-				logMessage(null, InternalAntMessages.getString("InternalAntRunner.Cannot_write_on_the_specified_log_file.__Make_sure_the_path_exists_and_you_have_write_permissions._11"), Project.MSG_INFO); //$NON-NLS-1$
-				return false;
-			}
-		}
-
+		
 		args = getArguments(commands, "-buildfile"); //$NON-NLS-1$
 		if (args == null) {
 			args = getArguments(commands, "-file"); //$NON-NLS-1$
