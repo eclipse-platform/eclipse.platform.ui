@@ -242,7 +242,7 @@ for (int i=0; i<wsets.length; i++)
 		workingSetId = "a" + i;
 %>
 <tr class='list' id='r<%=i%>' style="width:100%;">
-	<td align='left' class='label' nowrap style="width:100%; padding-left:5px;">
+	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap style="width:100%; padding-left:5px;">
 		<a id='a<%=i%>' 
 		   href='#' 
 		   onclick="active=this;highlightHandler()"
