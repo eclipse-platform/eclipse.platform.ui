@@ -114,20 +114,34 @@ public void run() {
 		
 	AboutInfo feature = (AboutInfo)d.getResult()[0];
 	
+	IWorkbenchPage page = null;
+	IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+	if (window == null)
+		return;
+
 	// See if the feature wants a specific perspective
 	String perspectiveId = feature.getWelcomePerspective();
-	if (perspectiveId == null)
-		perspectiveId = WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();		
-			
-	WorkbenchPage page;
-	try {
-		page =
-			(WorkbenchPage) workbench.showPerspective(
-				perspectiveId,
-				workbench.getActiveWorkbenchWindow());
-	} catch (WorkbenchException e) {
-		return;
+
+	if (perspectiveId == null) {
+		// Just use the current perspective unless one is not open 
+		// in which case use the default
+		page = window.getActivePage();
+	
+		if (page == null || page.getPerspective() == null) {
+			perspectiveId = WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();		
+		}
 	}
+
+	if (perspectiveId != null) { 			
+		try {
+			page =
+				(WorkbenchPage) workbench.showPerspective(
+					perspectiveId,
+					window);
+		} catch (WorkbenchException e) {
+			return;
+		}
+	} 		
 	
 	page.setEditorAreaVisible(true);
 
