@@ -78,7 +78,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		createClasspathModel(configuration, !antHomeString.equals(defaultAntHome));
 		antClasspathBlock.setInput(model);
 		
-		antClasspathBlock.initializeAntHome(antHomeString);
+		antClasspathBlock.initializeAntHome(antHomeString, model.getAntHomeEntry() != null);
 	}
 
 	/* (non-Javadoc)
@@ -87,14 +87,14 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		
 		String dfltAntHome= AntCorePlugin.getPlugin().getPreferences().getDefaultAntHome();
-		
-		if (antClasspathBlock.getAntHome().equals(dfltAntHome)) {
+		boolean defaultAntHome= antClasspathBlock.getAntHome().equals(dfltAntHome);
+		if (defaultAntHome) {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 		} else {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, antClasspathBlock.getAntHome());
 		}
 		
-		String classpath= model.serializeClasspath();
+		String classpath= model.serializeClasspath(defaultAntHome);
 		if (classpath.equals(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
 			classpath= null;
 		}

@@ -70,7 +70,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		createClasspathModel();
 		antClasspathBlock.setInput(model);
-		antClasspathBlock.initializeAntHome(prefs.getAntHome());
+		antClasspathBlock.initializeAntHome(prefs.getAntHome(), true);
 		
 		preferencePage.setErrorMessage(null);
 		preferencePage.setValid(true);
@@ -89,7 +89,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		model.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
 		model.setGlobalEntries(new IAntClasspathEntry[] {prefs.getToolsJarEntry()});
 		antClasspathBlock.setInput(model);
-		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
+		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome(), true);
 		update();
 	}
 	

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 
@@ -28,7 +29,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public static final int GLOBAL_USER= 1;
 	public static final int USER= 2;
 	
-	private GlobalClasspathEntries antHomeGlobalEntry;
+	private GlobalClasspathEntries antHomeEntry;
 	private GlobalClasspathEntries userGlobalEntry;
 	
 	public Object addEntry(Object entry) {
@@ -60,11 +61,11 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		IClasspathEntry entryParent= null;
 		switch (entryType) {
 			case GLOBAL :
-				if (antHomeGlobalEntry == null) {
+				if (antHomeEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
-					antHomeGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true);
+					antHomeEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true);
 				}
-				entryParent= antHomeGlobalEntry;
+				entryParent= antHomeEntry;
 				break;
 			case GLOBAL_USER :
 				if (userGlobalEntry == null) {
@@ -101,8 +102,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		IAntClasspathEntry[] classpathEntries= null;
 		switch (entryType) {
 			case GLOBAL :
-				if (antHomeGlobalEntry != null) {
-					classpathEntries= antHomeGlobalEntry.getEntries();
+				if (antHomeEntry != null) {
+					classpathEntries= antHomeEntry.getEntries();
 				}
 				break;
 			case GLOBAL_USER :
@@ -134,8 +135,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	public void removeAll() {
-		if (antHomeGlobalEntry != null) {
-			antHomeGlobalEntry.removeAll();
+		if (antHomeEntry != null) {
+			antHomeEntry.removeAll();
 		} 
 		if (userGlobalEntry != null) {
 			userGlobalEntry.removeAll();
@@ -145,8 +146,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public void removeAll(int entryType) {
 		switch (entryType) {
 			case GLOBAL :
-				if (antHomeGlobalEntry != null) {
-					antHomeGlobalEntry.removeAll();
+				if (antHomeEntry != null) {
+					antHomeEntry.removeAll();
 				}
 				break;
 			case GLOBAL_USER :
@@ -180,13 +181,13 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	 * @param urls
 	 */
 	public void setAntHomeEntries(IAntClasspathEntry[] entries) {
-		if (antHomeGlobalEntry == null) {
+		if (antHomeEntry == null) {
 			String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
-			antHomeGlobalEntry= createGlobalEntry(entries, name, false, true);
+			antHomeEntry= createGlobalEntry(entries, name, false, true);
 		} else {
-			antHomeGlobalEntry.removeAll();
+			antHomeEntry.removeAll();
 			for (int i = 0; i < entries.length; i++) {
-				antHomeGlobalEntry.addEntry(new ClasspathEntry(entries[i], antHomeGlobalEntry));
+				antHomeEntry.addEntry(new ClasspathEntry(entries[i], antHomeEntry));
 			}
 		}
 	}
@@ -230,14 +231,24 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		return (IAntClasspathEntry[])userEntries.toArray(new IAntClasspathEntry[userEntries.size()]);
 	}
 	
-	public String serializeClasspath() {
+	public String serializeClasspath(boolean defaultAntHome) {
 		Iterator itr= childEntries.iterator();
 		StringBuffer buff= new StringBuffer();
 		while (itr.hasNext()) {
 			IClasspathEntry element = (IClasspathEntry) itr.next();
 			if (element instanceof GlobalClasspathEntries) {
-				if (element == antHomeGlobalEntry) {
-					buff.append(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER);
+				if (element == antHomeEntry) {
+					if (!defaultAntHome || !isSameAsDefaultAntHome()) {
+						IAntClasspathEntry[] antHomeEntries= antHomeEntry.getEntries();
+						for (int i = 0; i < antHomeEntries.length; i++) {
+							IAntClasspathEntry entry = antHomeEntries[i];
+							buff.append('?');
+							buff.append(entry.toString());
+							buff.append(AntUtil.ATTRIBUTE_SEPARATOR);
+						}
+					} else {
+						buff.append(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER);
+					}
 				} else {
 					buff.append(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER);
 				}
@@ -251,6 +262,24 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		} else {
 			return ""; //$NON-NLS-1$
 		}
+	}
+	
+	private boolean isSameAsDefaultAntHome() {
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		IAntClasspathEntry[] defaultAntHomeEntries= prefs.getAntHomeClasspathEntries();
+		IAntClasspathEntry[] antHomeEntries= antHomeEntry.getEntries();
+		if (antHomeEntries.length != defaultAntHomeEntries.length) {
+			return false;
+		}
+		
+		for (int i = 0; i < antHomeEntries.length; i++) {
+			IAntClasspathEntry entry = antHomeEntries[i];
+			IAntClasspathEntry defaultEntry= defaultAntHomeEntries[i];
+			if (!entry.getLabel().equals(defaultEntry.getLabel())) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public ClasspathModel(String serializedClasspath, boolean customAntHome) {
@@ -267,19 +296,29 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			} else if (string.equals(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
 				setGlobalEntries(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries());
 			} else {
+				boolean isAntHomeEntry= false;
 				Object entry= null;
 				if (string.charAt(0) == '*') {
 					//old customclasspath
 					string= string.substring(1);
+				}
+				if (string.charAt(0) == '?') {
+					//ant home entry
+					string= string.substring(1);
+					isAntHomeEntry= true;
 				}
 				try {
 					entry=  new URL("file:" + string); //$NON-NLS-1$
 				} catch (MalformedURLException e) {
 					entry= string;
 				}
-				addEntry(entry);
+				if (isAntHomeEntry) {
+					addEntry(GLOBAL, entry);
+				} else {
+					addEntry(entry);
+				}
 			}
-		}	
+		}
 	}
 	
 	public ClasspathModel() {
@@ -301,6 +340,6 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	 * @return
 	 */
 	public Object getAntHomeEntry() {
-		return antHomeGlobalEntry;
+		return antHomeEntry;
 	}
 }

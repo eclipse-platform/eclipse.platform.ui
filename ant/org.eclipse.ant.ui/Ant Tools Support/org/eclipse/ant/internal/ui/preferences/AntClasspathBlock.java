@@ -188,7 +188,7 @@ public class AntClasspathBlock {
 					}
 				} else {
 					if (dialog.addAsUnit()) {
-						initializeAntHome(AntCorePlugin.getPlugin().getPreferences().getAntHome());
+						initializeAntHome(AntCorePlugin.getPlugin().getPreferences().getAntHome(), false);
 					} else {
 						IAntClasspathEntry[] entries= AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries();
 						addURLs(entries);
@@ -502,7 +502,7 @@ public class AntClasspathBlock {
 			}
 			IClasspathEntry parent= element.getParent();
 			if (parent instanceof GlobalClasspathEntries) {
-				haveGlobalEntrySelected= true;
+				haveGlobalEntrySelected= ((GlobalClasspathEntries)parent).canBeRemoved();
 			}
 			Object[] childEntries = contentProvider.getChildren(parent);
 			List entries = Arrays.asList(childEntries);
@@ -653,8 +653,8 @@ public class AntClasspathBlock {
 		return antHomeText;
 	}
 	
-	public void initializeAntHome(String antHomeString) {
-		initializing= true;
+	public void initializeAntHome(String antHomeString, boolean setInitializing) {
+		this.initializing= setInitializing;
 		antHomeButton.setSelection(antHomeString != null);
 		antHome.setEnabled(antHomeString != null);
 		browseAntHomeButton.setEnabled(antHomeString != null);
@@ -663,7 +663,7 @@ public class AntClasspathBlock {
 		} else {
 			antHome.setText(""); //$NON-NLS-1$
 		}
-		initializing= false;
+		this.initializing= false;
 	}
 	
 	public void setInput(ClasspathModel model) {

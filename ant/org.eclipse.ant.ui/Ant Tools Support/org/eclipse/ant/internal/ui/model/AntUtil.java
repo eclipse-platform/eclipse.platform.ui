@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.TargetInfo;
@@ -277,9 +278,19 @@ public final class AntUtil {
 	
 	private static void getEntries(List entries, String urlString) {
 		String[] entryStrings= AntUtil.parseString(urlString, AntUtil.ATTRIBUTE_SEPARATOR);
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		for (int i = 0; i < entryStrings.length; i++) {
 			String string = entryStrings[i];
-			entries.add(new AntClasspathEntry(string));
+			if (string.equals(ANT_GLOBAL_CLASSPATH_PLACEHOLDER)) {
+				entries.addAll(Arrays.asList(prefs.getAntHomeClasspathEntries()));
+			} else if (string.equals(ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
+				entries.addAll(Arrays.asList(prefs.getAdditionalClasspathEntries()));
+			} else {
+				if (string.charAt(0) == '?') {
+					string= string.substring(1);
+				}
+				entries.add(new AntClasspathEntry(string));
+			}
 		}
 	}
 
