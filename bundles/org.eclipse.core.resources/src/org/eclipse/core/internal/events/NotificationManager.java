@@ -97,13 +97,20 @@ private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners
 				}
 			};
 			boolean oldLock = workspace.isTreeLocked();
+			boolean immutable = workspace.getElementTree().isImmutable();
 			if (lockTree)
 				workspace.setTreeLocked(true);
+			else
+				if (immutable)
+					workspace.newWorkingTree();
 			try {
 				Platform.run(code);
 			} finally {
 				if (lockTree)
 					workspace.setTreeLocked(oldLock);
+				else
+					if (immutable)
+						workspace.getElementTree().immutable();
 			}
 			ResourceStats.endNotify();
 		}
