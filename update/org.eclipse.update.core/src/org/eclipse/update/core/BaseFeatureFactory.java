@@ -52,6 +52,7 @@ public abstract class BaseFeatureFactory
 	 */
 	protected ResourceBundle getResourceBundle(URL url)
 		throws IOException, CoreException {
+			
 		if (url == null)
 			return null;
 
@@ -60,12 +61,11 @@ public abstract class BaseFeatureFactory
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(Feature.FEATURE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			//ok, there is no bundle, keep it as null
+			//if there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(
-					e.getLocalizedMessage() + ":" + url.toExternalForm());
-				//$NON-NLS-1$
+					e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 			}
 		}
 		return bundle;
