@@ -136,7 +136,7 @@ public class DocumentRangeNode
 	public Object[] getChildren() {
 		if (fChildren != null)
 			return fChildren.toArray(); 
-		return null;
+		return new Object[0];
 	}
 
 	/**
