@@ -378,7 +378,7 @@ private String[] computeSegments(String path) {
 	// check for initial slash
 	int firstPosition = (path.charAt(0) == SEPARATOR) ? 1 : 0;
 	// check for UNC
-	if (firstPosition == 1 && isUNC())
+	if (firstPosition == 1 && len > 1 && (path.charAt(1) == SEPARATOR))
 		firstPosition = 2;
 	int lastPosition = (path.charAt(len - 1) != SEPARATOR) ? len - 1 : len - 2;
 	// for non-empty paths, the number of segments is 
