@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.osgi.framework.Bundle;
 
 /**
  * This class tests the Command framework using simple CVS commands
@@ -56,14 +57,8 @@ public class ModuleTest extends EclipseTest {
 		if (isSetUp) return;
 		
 		// upload the modules definitions file
-		PluginDescriptor testPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.team.tests.cvs.core");
-		String filePath = testPlugin.getLocation().concat(RESOURCE_PATH + "CVSROOT/modules");
-		URL url = null;
-		try {
-			url = new URL (filePath);
-		} catch (java.net.MalformedURLException e) {
-			assertTrue("Bad URL for " + filePath, true);
-		}
+		Bundle b = Platform.getBundle("org.eclipse.team.tests.cvs.core");
+		URL url = b.getEntry(RESOURCE_PATH + "CVSROOT/modules");
 
 		waitMsec(1000);
 
