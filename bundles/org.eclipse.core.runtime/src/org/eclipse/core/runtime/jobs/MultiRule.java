@@ -30,6 +30,29 @@ public class MultiRule implements ISchedulingRule {
 	private ISchedulingRule[] rules;
 
 	/**
+	 * Returns a scheduling rule that encompases all provided rules.  The resulting
+	 * rule may or may not be an instance of <code>MultiRule</code>.  If all
+	 * provided rules are <code>null</code> then the result will be
+	 * <code>null</code>.
+	 * 
+	 * @param ruleArray An array of scheduling rules, some of which may be <code>null</code>
+	 * @return a combined scheduling rule, or <code>null</code>
+	 * @since 3.1
+	 */
+	public static ISchedulingRule combine(ISchedulingRule[] ruleArray) {
+		ISchedulingRule result = null;
+		for (int i = 0; i < ruleArray.length; i++) {
+			if (ruleArray[i] == null)
+				continue;
+			if (result == null) {
+				result = ruleArray[i];
+				continue;
+			}
+			result = combine(result, ruleArray[i]);
+		}
+		return result;
+	}
+	/**
 	 * Returns a scheduling rule that encompases both provided rules.  The resulting
 	 * rule may or may not be an instance of <code>MultiRule</code>.  If both
 	 * provided rules are <code>null</code> then the result will be

@@ -20,6 +20,7 @@ import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
@@ -38,122 +39,130 @@ import org.osgi.util.tracker.ServiceTracker;
  * platform class loader and passing control to the actual application class
  */
 public final class InternalPlatform {
-	private BundleContext context;
-	private IExtensionRegistry registry;
-	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
-
-	private ServiceTracker userLocation = null;
-	private ServiceTracker instanceLocation = null;
-	private ServiceTracker configurationLocation = null;
-	private ServiceTracker installLocation = null;
-	private ServiceTracker debugTracker = null;
-	private DebugOptions options = null;
 
 	private static IAdapterManager adapterManager;
-	private static final InternalPlatform singleton = new InternalPlatform();
-
-	static EnvironmentInfo infoService;
-	static URLConverter urlConverter;
-	static FrameworkLog frameworkLog;
-	static PackageAdmin packageAdmin;
-
-	private static ArrayList logListeners = new ArrayList(5);
-	private static Map logs = new HashMap(5);
-	private static PlatformLogWriter platformLog = null;
-	private static DataArea metaArea;
-	private static boolean initialized;
-	private static Runnable endOfInitializationHandler = null;
-	private static String password = ""; //$NON-NLS-1$
-	private static String keyringFile;
 
 	// Command line args as seen by the Eclipse runtime. allArgs does NOT
 	// include args consumed by the underlying framework (e.g., OSGi)
 	private static String[] allArgs = new String[0];
 	private static String[] appArgs = new String[0];
-	private static String[] frameworkArgs = new String[0];
-
-	private static boolean splashDown = false;
-	public static String pluginCustomizationFile = null;
-
-	private ArrayList groupProviders = new ArrayList(3);
-	private IProduct product;
-	private boolean missingProductReported = false;
-	
-	private FileManager runtimeFileManager;
-	private Path cachedInstanceLocation; // Cache the path of the instance location
-
-	// execution options
-	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_REGISTRY = Platform.PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_REGISTRY_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCES = Platform.PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
-
-	// command line options
-	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
 	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
-	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
-	private static final String PASSWORD = "-password"; //$NON-NLS-1$
-	private static final String NO_REGISTRY_CACHE = "-noregistrycache"; //$NON-NLS-1$	
-	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$		
-	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
 
-	// obsolete command line args
-	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
-	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$	
+	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, Platform.ARCH_PPC, Platform.ARCH_SPARC, Platform.ARCH_X86, Platform.ARCH_AMD64, Platform.ARCH_IA64};
 	private static final String BOOT = "-boot"; //$NON-NLS-1$
-	private static final String PLUGINS = "-plugins"; //$NON-NLS-1$
-	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
-	private static final String NO_UPDATE = "-noUpdate"; //$NON-NLS-1$
-	private static final String NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
-	private static final String UPDATE = "-update"; //$NON-NLS-1$
-	private static final String FEATURE = "-feature"; //$NON-NLS-1$
+	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$	
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
-	public static boolean DEBUG_REGISTRY = false;
-	public static boolean DEBUG_STARTUP = false;
-	public static boolean DEBUG_SHUTDOWN = false;
-	public static String DEBUG_REGISTRY_DUMP = null;
 	public static boolean DEBUG_PREFERENCES = false;
+	public static boolean DEBUG_REGISTRY = false;
+	public static String DEBUG_REGISTRY_DUMP = null;
+	public static boolean DEBUG_SHUTDOWN = false;
+	public static boolean DEBUG_STARTUP = false;
+	public static boolean DEBUG_STRINGS = false;
+	private static Runnable endOfInitializationHandler = null;
+	private static final String FEATURE = "-feature"; //$NON-NLS-1$
+	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
+	private static String[] frameworkArgs = new String[0];
+	static FrameworkLog frameworkLog;
 
-	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
+	static EnvironmentInfo infoService;
+	private static boolean initialized;
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 
-	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
+	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
+	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
+	private static String keyringFile;
 
-	// Eclipse System Properties
-	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
+	private static ArrayList logListeners = new ArrayList(5);
+	private static Map logs = new HashMap(5);
+	private static DataArea metaArea;
+	private static final String NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
+	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$		
+
+	// obsolete command line args
+	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
+	private static final String NO_REGISTRY_CACHE = "-noregistrycache"; //$NON-NLS-1$	
+	private static final String NO_UPDATE = "-noUpdate"; //$NON-NLS-1$
+
+	// execution options
+	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PREFERENCES = Platform.PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_REGISTRY = Platform.PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_REGISTRY_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_STRINGS = Platform.PI_RUNTIME + "/strings"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
+	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+	static PackageAdmin packageAdmin;
+	private static String password = ""; //$NON-NLS-1$
+	private static final String PASSWORD = "-password"; //$NON-NLS-1$
+	private static PlatformLogWriter platformLog = null;
+	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
+
+	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
+	public static String pluginCustomizationFile = null;
+	private static final String PLUGINS = "-plugins"; //$NON-NLS-1$
+
+	// command line options
+	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
+	public static final String PROP_ADAPTOR = "osgi.adaptor"; //$NON-NLS-1$
 	public static final String PROP_APPLICATION = "eclipse.application"; //$NON-NLS-1$
+	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
+	public static final String PROP_CHECK_CONFIG = "osgi.checkConfiguration"; //$NON-NLS-1$
+	public static final String PROP_CONFIG_AREA = "osgi.configuration.area"; //$NON-NLS-1$
+	public static final String PROP_CONSOLE = "osgi.console"; //$NON-NLS-1$
+	public static final String PROP_CONSOLE_CLASS = "osgi.consoleClass"; //$NON-NLS-1$
 	public static final String PROP_CONSOLE_LOG = "eclipse.consoleLog"; //$NON-NLS-1$
-	public static final String PROP_NO_REGISTRY_CACHE = "eclipse.noRegistryCache"; //$NON-NLS-1$
-	public static final String PROP_NO_LAZY_CACHE_LOADING = "eclipse.noLazyRegistryCacheLoading"; //$NON-NLS-1$
-	public static final String PROP_NO_REGISTRY_FLUSHING = "eclipse.noRegistryFlushing"; //$NON-NLS-1$
+	public static final String PROP_DEBUG = "osgi.debug"; //$NON-NLS-1$
+	public static final String PROP_DEV = "osgi.dev"; //$NON-NLS-1$
 	public static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 
 	// OSGI system properties.  Copied from EclipseStarter
 	public static final String PROP_INSTALL_AREA = "osgi.install.area"; //$NON-NLS-1$
-	public static final String PROP_CONFIG_AREA = "osgi.configuration.area"; //$NON-NLS-1$
 	public static final String PROP_INSTANCE_AREA = "osgi.instance.area"; //$NON-NLS-1$
-	public static final String PROP_USER_AREA = "osgi.user.area"; //$NON-NLS-1$
 	public static final String PROP_MANIFEST_CACHE = "osgi.manifest.cache"; //$NON-NLS-1$
-	public static final String PROP_CHECK_CONFIG = "osgi.checkConfiguration"; //$NON-NLS-1$
-	public static final String PROP_DEBUG = "osgi.debug"; //$NON-NLS-1$
-	public static final String PROP_DEV = "osgi.dev"; //$NON-NLS-1$
-	public static final String PROP_CONSOLE = "osgi.console"; //$NON-NLS-1$
-	public static final String PROP_CONSOLE_CLASS = "osgi.consoleClass"; //$NON-NLS-1$
-	public static final String PROP_OS = "osgi.os"; //$NON-NLS-1$
-	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
 	public static final String PROP_NL = "osgi.nl"; //$NON-NLS-1$
-	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
-	public static final String PROP_ADAPTOR = "osgi.adaptor"; //$NON-NLS-1$
-	public static final String PROP_SYSPATH = "osgi.syspath"; //$NON-NLS-1$
+	public static final String PROP_NO_LAZY_CACHE_LOADING = "eclipse.noLazyRegistryCacheLoading"; //$NON-NLS-1$
+	public static final String PROP_NO_REGISTRY_CACHE = "eclipse.noRegistryCache"; //$NON-NLS-1$
+	public static final String PROP_NO_REGISTRY_FLUSHING = "eclipse.noRegistryFlushing"; //$NON-NLS-1$
+	public static final String PROP_OS = "osgi.os"; //$NON-NLS-1$
 
-	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, Platform.ARCH_PPC, Platform.ARCH_SPARC, Platform.ARCH_X86, Platform.ARCH_AMD64, Platform.ARCH_IA64};
-	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+	// Eclipse System Properties
+	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
+	public static final String PROP_SYSPATH = "osgi.syspath"; //$NON-NLS-1$
+	public static final String PROP_USER_AREA = "osgi.user.area"; //$NON-NLS-1$
+	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
+	private static final InternalPlatform singleton = new InternalPlatform();
+
+	private static boolean splashDown = false;
+	private static final String UPDATE = "-update"; //$NON-NLS-1$
+	static URLConverter urlConverter;
 	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32};
+	private Path cachedInstanceLocation; // Cache the path of the instance location
+	private ServiceTracker configurationLocation = null;
+	private BundleContext context;
+	private ServiceTracker debugTracker = null;
+
+	private ArrayList groupProviders = new ArrayList(3);
+	private ServiceTracker installLocation = null;
+	private ServiceTracker instanceLocation = null;
+	private boolean missingProductReported = false;
+	private DebugOptions options = null;
+	private IProduct product;
+	private IExtensionRegistry registry;
+	
+	private FileManager runtimeFileManager;
+	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
+	
+	private StringPoolJob stringPoolJob;
+
+	private ServiceTracker userLocation = null;
+
+	public static InternalPlatform getDefault() {
+		return singleton;
+	}
 
 	/**
 	 * Private constructor to block instance creation.
@@ -162,8 +171,8 @@ public final class InternalPlatform {
 		super();
 	}
 
-	public static InternalPlatform getDefault() {
-		return singleton;
+	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
+		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
 
 	/**
@@ -177,6 +186,25 @@ public final class InternalPlatform {
 			logListeners.remove(listener);
 			logListeners.add(listener);
 		}
+	}
+
+	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
+		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
+	}
+
+	public void addStringPoolParticipant(IStringPoolParticipant participant, ISchedulingRule rule) {
+		if (stringPoolJob == null)
+			stringPoolJob = new StringPoolJob();
+		stringPoolJob.addStringPoolParticipant(participant, rule);
+	}
+
+	private URL asActualURL(URL url) throws IOException {
+		if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
+			return url;
+		URLConnection connection = url.openConnection();
+		if (connection instanceof PlatformURLConnection)
+			return ((PlatformURLConnection) connection).getResolvedURL();
+		return url;
 	}
 
 	/**
@@ -198,16 +226,6 @@ public final class InternalPlatform {
 		}
 
 		return result;
-	}
-
-	private URL asActualURL(URL url) throws IOException {
-		if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
-			return url;
-		URLConnection connection = url.openConnection();
-		if (connection instanceof PlatformURLConnection)
-			return ((PlatformURLConnection) connection).getResolvedURL();
-		else
-			return url;
 	}
 
 	private void assertInitialized() {
@@ -238,6 +256,18 @@ public final class InternalPlatform {
 		run(endOfInitializationHandler);
 	}
 
+	public URL find(Bundle b, IPath path) {
+		return FindSupport.find(b, path);
+	}
+
+	public URL find(Bundle bundle, IPath path, Map override) {
+		return FindSupport.find(bundle, path, override);
+	}
+
+	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
+		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
+	}
+
 	/**
 	 * @see Platform#getAdapterManager()
 	 */
@@ -248,9 +278,110 @@ public final class InternalPlatform {
 		return adapterManager;
 	}
 
+	public String[] getApplicationArgs() {
+		return appArgs;
+	}
+
+	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
+	}
+
 	public boolean getBooleanOption(String option, boolean defaultValue) {
 		String value = getOption(option);
 		return (value != null && value.equalsIgnoreCase("true")) || defaultValue; //$NON-NLS-1$
+	}
+
+	public Bundle getBundle(String symbolicName) {
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null);
+		if (bundles == null)
+			return null;
+		//Return the first bundle that is not installed or uninstalled
+		for (int i = 0; i < bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				return bundles[i];
+			}
+		}
+		return null;
+	}
+
+	public BundleContext getBundleContext() {
+		return context;
+	}
+
+	public IBundleGroupProvider[] getBundleGroupProviders() {
+		return (IBundleGroupProvider[]) groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
+	}
+
+	public Bundle[] getBundles(String symbolicName, String version) {
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version);
+		if (bundles == null)
+			return null;
+		// optimize for common case; length==1
+		if (bundles.length == 1 && (bundles[0].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0)
+			return bundles;
+		//Remove all the bundes that are installed or uninstalled
+		Bundle[] selectedBundles = new Bundle[bundles.length];
+		int added = 0;
+		for (int i = 0; i < bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				selectedBundles[added++] = bundles[i];
+			}
+		}
+		if (added == 0)
+			return null;
+
+		//return an array of the correct size
+		Bundle[] results = new Bundle[added];
+		System.arraycopy(selectedBundles, 0, results, 0, added);
+		return results;
+	}
+
+	public String[] getCommandLineArgs() {
+		return allArgs;
+	}
+
+	public Location getConfigurationLocation() {
+		assertInitialized();
+		return (Location) configurationLocation.getService();
+	}
+
+	public IContentTypeManager getContentTypeManager() {
+		return ContentTypeManager.getInstance();
+	}
+
+	public EnvironmentInfo getEnvironmentInfoService() {
+		return infoService;
+	}
+
+	public Bundle[] getFragments(Bundle bundle) {
+		return packageAdmin.getFragments(bundle);
+	}
+
+	public FrameworkLog getFrameworkLog() {
+		return frameworkLog;
+	}
+
+	public Bundle[] getHosts(Bundle bundle) {
+		return packageAdmin.getHosts(bundle);
+	}
+
+	public Location getInstallLocation() {
+		assertInitialized();
+		return (Location) installLocation.getService();
+	}
+
+	public URL getInstallURL() {
+		Location location = getInstallLocation();
+		// it is pretty much impossible for the install location to be null.  If it is, the
+		// system is in a bad way so throw and exception and get the heck outta here.
+		if (location == null)
+			throw new IllegalStateException("The installation location must not be null"); //$NON-NLS-1$
+		return location.getURL();
+	}
+
+	public Location getInstanceLocation() {
+		assertInitialized();
+		return (Location) instanceLocation.getService();
 	}
 
 	public int getIntegerOption(String option, int defaultValue) {
@@ -264,25 +395,8 @@ public final class InternalPlatform {
 		}
 	}
 
-	public String[] getCommandLineArgs() {
-		return allArgs;
-	}
-
-	/**
-	 * @see Platform
-	 */
-	public String getOption(String option) {
-		if (options != null)
-			return options.getOption(option);
-		return null;
-	}
-
 	public IJobManager getJobManager() {
 		return JobManager.getInstance();
-	}
-
-	public IPath getLogFileLocation() {
-		return getMetaArea().getLogLocation();
 	}
 
 	/**
@@ -312,9 +426,8 @@ public final class InternalPlatform {
 		return result;
 	}
 
-	private void initializeAuthorizationHandler() {
-		AuthorizationHandler.setKeyringFile(keyringFile);
-		AuthorizationHandler.setPassword(password);
+	public IPath getLogFileLocation() {
+		return getMetaArea().getLogLocation();
 	}
 
 	/**
@@ -327,6 +440,239 @@ public final class InternalPlatform {
 
 		metaArea = new DataArea();
 		return metaArea;
+	}
+
+	public String getNL() {
+		return System.getProperty(PROP_NL);
+	}
+
+	/**
+	 * @see Platform
+	 */
+	public String getOption(String option) {
+		if (options != null)
+			return options.getOption(option);
+		return null;
+	}
+
+	public String getOS() {
+		return System.getProperty(PROP_OS);
+	}
+
+	public String getOSArch() {
+		return System.getProperty(PROP_ARCH);
+	}
+
+	public PlatformAdmin getPlatformAdmin() {
+		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
+		if (platformAdminReference == null)
+			return null;
+		return (PlatformAdmin) context.getService(platformAdminReference);
+	}
+
+	//TODO I guess it is now time to get rid of that
+	/*
+	 * This method is retained for R1.0 compatibility because it is defined as API.
+	 * It's function matches the API description (returns <code>null</code> when
+	 * argument URL is <code>null</code> or cannot be read).
+	 */
+	public URL[] getPluginPath(URL pluginPathLocation /*R1.0 compatibility*/
+	) {
+		InputStream input = null;
+		// first try and see if the given plugin path location exists.
+		if (pluginPathLocation == null)
+			return null;
+		try {
+			input = pluginPathLocation.openStream();
+		} catch (IOException e) {
+			//fall through
+		}
+
+		// if the given path was null or did not exist, look for a plugin path
+		// definition in the install location.
+		if (input == null)
+			try {
+				URL url = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING + PLUGIN_PATH);
+				input = url.openStream();
+			} catch (MalformedURLException e) {
+				//fall through
+			} catch (IOException e) {
+				//fall through
+			}
+
+		// nothing was found at the supplied location or in the install location
+		if (input == null)
+			return null;
+		// if we found a plugin path definition somewhere so read it and close the location.
+		URL[] result = null;
+		try {
+			try {
+				result = readPluginPath(input);
+			} finally {
+				input.close();
+			}
+		} catch (IOException e) {
+			//let it return null on failure to read
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 */
+	public IPreferencesService getPreferencesService() {
+		return PreferencesService.getDefault();
+	}
+
+	/**
+	 * Look for the companion preference translation file for a group
+	 * of preferences.  This method will attempt to find a companion 
+	 * ".properties" file first.  This companion file can be in an
+	 * nl-specific directory for this plugin or any of its fragments or 
+	 * it can be in the root of this plugin or the root of any of the
+	 * plugin's fragments. This properties file can be used to translate
+	 * preference values.
+	 * 
+	 * TODO fix these comments
+	 * @param uniqueIdentifier the descriptor of the plugin
+	 *   who has the preferences
+	 * @param basePrefFileName the base name of the preference file
+	 *   This base will be used to construct the name of the 
+	 *   companion translation file.
+	 *   Example: If basePrefFileName is "plugin_customization",
+	 *   the preferences are in "plugin_customization.ini" and
+	 *   the translations are found in
+	 *   "plugin_customization.properties".
+	 * @return the properties file
+	 * 
+	 * @since 2.0
+	 */
+	public Properties getPreferenceTranslator(String uniqueIdentifier, String basePrefFileName) {
+		return new Properties();
+	}
+
+	public IProduct getProduct() {
+		if (product != null)
+			return product;
+		String productId = System.getProperty(PROP_PRODUCT);
+		if (productId == null)
+			return null;
+		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT, productId);
+		if (entries.length > 0) {
+			// There should only be one product with the given id so just take the first element
+			product = new Product(productId, entries[0]);
+			return product;
+		}
+		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT);
+		List logEntries = null;
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			if (element.getName().equalsIgnoreCase("provider")) { //$NON-NLS-1$
+				try {
+					IProductProvider provider = (IProductProvider) element.createExecutableExtension("run"); //$NON-NLS-1$
+					IProduct[] products = provider.getProducts();
+					for (int j = 0; j < products.length; j++) {
+						IProduct provided = products[j];
+						if (provided.getId().equalsIgnoreCase(productId)) {
+							product = provided;
+							return product;
+						}
+					}
+				} catch (CoreException e) {
+					if (logEntries == null)
+						logEntries = new ArrayList(3);
+					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null)); //$NON-NLS-1$
+				}
+			}
+		}
+		if (logEntries != null)
+			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid.general"), 0, null, (FrameworkLogEntry[]) logEntries.toArray())); //$NON-NLS-1$
+		
+		if (!missingProductReported) {
+			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("product.notFound", productId), 0, null, null)); //$NON-NLS-1$
+			missingProductReported = true;
+		}
+		return null;
+	}
+
+	public String getProtectionSpace(URL resourceUrl) {
+		return AuthorizationHandler.getProtectionSpace(resourceUrl);
+	}
+
+	public IExtensionRegistry getRegistry() {
+		return registry;
+	}
+
+	public ResourceBundle getResourceBundle(Bundle bundle) {
+		return ResourceTranslator.getResourceBundle(bundle);
+	}
+
+	public String getResourceString(Bundle bundle, String value) {
+		return ResourceTranslator.getResourceString(bundle, value);
+	}
+
+	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
+		return ResourceTranslator.getResourceString(bundle, value, resourceBundle);
+	}
+
+	public FileManager getRuntimeFileManager() {
+		return runtimeFileManager;
+	}
+
+	public Plugin getRuntimeInstance() {
+		return runtimeInstance;
+	}
+
+	private Runnable getSplashHandler() {
+		ServiceReference[] ref;
+		try {
+			ref = context.getServiceReferences(Runnable.class.getName(), null);
+		} catch (InvalidSyntaxException e) {
+			return null;
+		}
+		// assumes the endInitializationHandler is available as a service
+		// see EclipseStarter.publishSplashScreen
+		for (int i = 0; i < ref.length; i++) {
+			String name = (String) ref[i].getProperty("name"); //$NON-NLS-1$
+			if (name != null && name.equals("splashscreen")) { //$NON-NLS-1$
+				Runnable result = (Runnable) context.getService(ref[i]);
+				context.ungetService(ref[i]);
+				return result;
+			}
+		}
+		return null;
+	}
+
+	public IPath getStateLocation(Bundle bundle) {
+		return getStateLocation(bundle, true);
+	}
+
+	public IPath getStateLocation(Bundle bundle, boolean create) throws IllegalStateException {
+		assertInitialized();
+		IPath result = getMetaArea().getStateLocation(bundle);
+		if (create)
+			result.toFile().mkdirs();
+		return result;
+	}
+
+	public long getStateTimeStamp() {
+		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
+		if (platformAdminReference == null)
+			return -1;
+		return ((PlatformAdmin) context.getService(platformAdminReference)).getState(false).getTimeStamp();
+	}
+
+	public URLConverter getURLConverter() {
+		return urlConverter;
+	}
+
+	public Location getUserLocation() {
+		assertInitialized();
+		return (Location) userLocation.getService();
+	}
+
+	public String getWS() {
+		return System.getProperty(PROP_WS);
 	}
 
 	private void handleException(ISafeRunnable code, Throwable e) {
@@ -357,69 +703,9 @@ public final class InternalPlatform {
 		return platformLog != null && logListeners.contains(platformLog);
 	}
 
-	public IExtensionRegistry getRegistry() {
-		return registry;
-	}
-
-	/**
-	 * Internal method for starting up the platform.  The platform is not started with any location
-	 * and should not try to access the instance data area.
-	 */
-
-	public void start(BundleContext runtimeContext) throws IOException {
-		this.context = runtimeContext;
-		initializeLocationTrackers();
-		ResourceTranslator.start();
-		endOfInitializationHandler = getSplashHandler();
-		processCommandLine(infoService.getNonFrameworkArgs());
-		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
-		debugTracker.open();
-		options = (DebugOptions) debugTracker.getService();
-		initializeDebugFlags();
-		initialized = true;
-		getMetaArea();
-		initializeAuthorizationHandler();
-		platformLog = new PlatformLogWriter();
-		addLogListener(platformLog);		
-		initializeRuntimeFileManager();
-	}
-	
-	private void initializeRuntimeFileManager() throws IOException {
-		File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
-		controlledDir.mkdirs();
-		runtimeFileManager = new FileManager(controlledDir, InternalPlatform.getDefault().getConfigurationLocation().isReadOnly() ? "none" : null); //$NON-NLS-1$
-		runtimeFileManager.open(true);
-	}
-
-	private Runnable getSplashHandler() {
-		ServiceReference[] ref;
-		try {
-			ref = context.getServiceReferences(Runnable.class.getName(), null);
-		} catch (InvalidSyntaxException e) {
-			return null;
-		}
-		// assumes the endInitializationHandler is available as a service
-		// see EclipseStarter.publishSplashScreen
-		for (int i = 0; i < ref.length; i++) {
-			String name = (String) ref[i].getProperty("name"); //$NON-NLS-1$
-			if (name != null && name.equals("splashscreen")) { //$NON-NLS-1$
-				Runnable result = (Runnable) context.getService(ref[i]);
-				context.ungetService(ref[i]);
-				return result;
-			}
-		}
-		return null;
-	}
-
-	//TODO: what else must be done during the platform shutdown? See #loaderShutdown
-	public void stop(BundleContext bundleContext) {
-		assertInitialized();
-		//shutdown all running jobs
-		JobManager.shutdown();
-		debugTracker.close();
-		ResourceTranslator.stop();
-		initialized = false;
-		context = null;
+	private void initializeAuthorizationHandler() {
+		AuthorizationHandler.setKeyringFile(keyringFile);
+		AuthorizationHandler.setPassword(password);
 	}
 
 	/*
@@ -434,7 +720,90 @@ public final class InternalPlatform {
 			DEBUG_REGISTRY = getBooleanOption(OPTION_DEBUG_REGISTRY, false);
 			DEBUG_REGISTRY_DUMP = getOption(OPTION_DEBUG_REGISTRY_DUMP);
 			DEBUG_PREFERENCES = getBooleanOption(OPTION_DEBUG_PREFERENCES, false);
+			DEBUG_STRINGS= getBooleanOption(OPTION_DEBUG_STRINGS, false);
 		}
+	}
+
+	private void initializeLocationTrackers() {
+		final String FILTER_PREFIX = "(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type="; //$NON-NLS-1$
+		Filter filter = null;
+		try {
+			filter = context.createFilter(FILTER_PREFIX + PROP_CONFIG_AREA + "))"); //$NON-NLS-1$
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		configurationLocation = new ServiceTracker(context, filter, null);
+		configurationLocation.open();
+
+		try {
+			filter = context.createFilter(FILTER_PREFIX + PROP_USER_AREA + "))"); //$NON-NLS-1$
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		userLocation = new ServiceTracker(context, filter, null);
+		userLocation.open();
+
+		try {
+			filter = context.createFilter(FILTER_PREFIX + PROP_INSTANCE_AREA + "))"); //$NON-NLS-1$
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		instanceLocation = new ServiceTracker(context, filter, null);
+		instanceLocation.open();
+
+		try {
+			filter = context.createFilter(FILTER_PREFIX + PROP_INSTALL_AREA + "))"); //$NON-NLS-1$
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		installLocation = new ServiceTracker(context, filter, null);
+		installLocation.open();
+	}
+	
+	private void initializeRuntimeFileManager() throws IOException {
+		File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
+		controlledDir.mkdirs();
+		runtimeFileManager = new FileManager(controlledDir, InternalPlatform.getDefault().getConfigurationLocation().isReadOnly() ? "none" : null); //$NON-NLS-1$
+		runtimeFileManager.open(true);
+	}
+
+	public boolean isFragment(Bundle bundle) {
+		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
+	}
+
+	public boolean isRunning() {
+		try {
+			return initialized && context.getBundle().getState() == Bundle.ACTIVE;
+		} catch (IllegalStateException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns a list of known system architectures.
+	 * 
+	 * @return the list of system architectures known to the system
+	 */
+	public String[] knownOSArchValues() {
+		return ARCH_LIST;
+	}
+
+	/**
+	 * Returns a list of known operating system names.
+	 * 
+	 * @return the list of operating systems known to the system
+	 */
+	public String[] knownOSValues() {
+		return OS_LIST;
+	}
+
+	/**
+	 * Returns a list of known windowing system names.
+	 * 
+	 * @return the list of window systems known to the system
+	 */
+	public String[] knownWSValues() {
+		return WS_LIST;
 	}
 
 	/**
@@ -452,12 +821,12 @@ public final class InternalPlatform {
 		for (int i = 0; i < listeners.length; i++) {
 			final ILogListener listener = listeners[i];
 			ISafeRunnable code = new ISafeRunnable() {
-				public void run() throws Exception {
-					listener.logging(status, Platform.PI_RUNTIME);
-				}
 
 				public void handleException(Throwable e) {
 					//Ignore
+				}
+				public void run() throws Exception {
+					listener.logging(status, Platform.PI_RUNTIME);
 				}
 			};
 			run(code);
@@ -584,6 +953,34 @@ public final class InternalPlatform {
 		return appArgs;
 	}
 
+	private URL[] readPluginPath(InputStream input) {
+		Properties ini = new Properties();
+		try {
+			ini.load(input);
+		} catch (IOException e) {
+			return null;
+		}
+		Vector result = new Vector(5);
+		for (Enumeration groups = ini.propertyNames(); groups.hasMoreElements();) {
+			String group = (String) groups.nextElement();
+			for (StringTokenizer entries = new StringTokenizer(ini.getProperty(group), ";"); entries.hasMoreElements();) { //$NON-NLS-1$
+				String entry = (String) entries.nextElement();
+				if (!entry.equals("")) //$NON-NLS-1$
+					try {
+						result.addElement(new URL(entry));
+					} catch (MalformedURLException e) {
+						//intentionally ignore bad URLs
+						System.err.println(Policy.bind("ignore.plugin", entry)); //$NON-NLS-1$
+					}
+			}
+		}
+		return (URL[]) result.toArray(new URL[result.size()]);
+	}
+
+	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
+		groupProviders.add(provider);
+	}
+
 	/**
 	 * @see Platform#removeLogListener(ILogListener)
 	 */
@@ -592,6 +989,11 @@ public final class InternalPlatform {
 		synchronized (logListeners) {
 			logListeners.remove(listener);
 		}
+	}
+
+	public void removeStringPoolParticipant(IStringPoolParticipant participant) {
+		if (stringPoolJob != null)
+			stringPoolJob.removeStringPoolParticipant(participant);
 	}
 
 	/**
@@ -628,16 +1030,20 @@ public final class InternalPlatform {
 
 		final Runnable finalHandler = handler;
 		ISafeRunnable code = new ISafeRunnable() {
-			public void run() throws Exception {
-				finalHandler.run();
-			}
 
 			public void handleException(Throwable e) {
 				// just continue ... the exception has already been logged by
 				// the platform (see handleException(ISafeRunnable)
 			}
+			public void run() throws Exception {
+				finalHandler.run();
+			}
 		};
 		run(code);
+	}
+
+	public void setExtensionRegistry(IExtensionRegistry value) {
+		registry = value;
 	}
 
 	public void setOption(String option, String value) {
@@ -645,38 +1051,43 @@ public final class InternalPlatform {
 			options.setOption(option, value);
 	}
 
-	/**
-	 * Look for the companion preference translation file for a group
-	 * of preferences.  This method will attempt to find a companion 
-	 * ".properties" file first.  This companion file can be in an
-	 * nl-specific directory for this plugin or any of its fragments or 
-	 * it can be in the root of this plugin or the root of any of the
-	 * plugin's fragments. This properties file can be used to translate
-	 * preference values.
-	 * 
-	 * TODO fix these comments
-	 * @param uniqueIdentifier the descriptor of the plugin
-	 *   who has the preferences
-	 * @param basePrefFileName the base name of the preference file
-	 *   This base will be used to construct the name of the 
-	 *   companion translation file.
-	 *   Example: If basePrefFileName is "plugin_customization",
-	 *   the preferences are in "plugin_customization.ini" and
-	 *   the translations are found in
-	 *   "plugin_customization.properties".
-	 * @return the properties file
-	 * 
-	 * @since 2.0
-	 */
-	public Properties getPreferenceTranslator(String uniqueIdentifier, String basePrefFileName) {
-		return new Properties();
+	//Those two methods are only used to register runtime once compatibility has been started.
+	public void setRuntimeInstance(Plugin runtime) {
+		runtimeInstance = runtime;
 	}
 
 	/**
-	 * 
+	 * Internal method for starting up the platform.  The platform is not started with any location
+	 * and should not try to access the instance data area.
 	 */
-	public IPreferencesService getPreferencesService() {
-		return PreferencesService.getDefault();
+
+	public void start(BundleContext runtimeContext) throws IOException {
+		this.context = runtimeContext;
+		initializeLocationTrackers();
+		ResourceTranslator.start();
+		endOfInitializationHandler = getSplashHandler();
+		processCommandLine(infoService.getNonFrameworkArgs());
+		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
+		debugTracker.open();
+		options = (DebugOptions) debugTracker.getService();
+		initializeDebugFlags();
+		initialized = true;
+		getMetaArea();
+		initializeAuthorizationHandler();
+		platformLog = new PlatformLogWriter();
+		addLogListener(platformLog);		
+		initializeRuntimeFileManager();
+	}
+
+	//TODO: what else must be done during the platform shutdown? See #loaderShutdown
+	public void stop(BundleContext bundleContext) {
+		assertInitialized();
+		//shutdown all running jobs
+		JobManager.shutdown();
+		debugTracker.close();
+		ResourceTranslator.stop();
+		initialized = false;
+		context = null;
 	}
 
 	/**
@@ -703,403 +1114,7 @@ public final class InternalPlatform {
 		return value;
 	}
 
-	public void setExtensionRegistry(IExtensionRegistry value) {
-		registry = value;
-	}
-
-	public BundleContext getBundleContext() {
-		return context;
-	}
-
-	public Bundle getBundle(String symbolicName) {
-		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null);
-		if (bundles == null)
-			return null;
-		//Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
-			}
-		}
-		return null;
-	}
-
-	public Bundle[] getBundles(String symbolicName, String version) {
-		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version);
-		if (bundles == null)
-			return null;
-		// optimize for common case; length==1
-		if (bundles.length == 1 && (bundles[0].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0)
-			return bundles;
-		//Remove all the bundes that are installed or uninstalled
-		Bundle[] selectedBundles = new Bundle[bundles.length];
-		int added = 0;
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				selectedBundles[added++] = bundles[i];
-			}
-		}
-		if (added == 0)
-			return null;
-
-		//return an array of the correct size
-		Bundle[] results = new Bundle[added];
-		System.arraycopy(selectedBundles, 0, results, 0, added);
-		return results;
-	}
-
-	public boolean isFragment(Bundle bundle) {
-		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
-	}
-
-	public Bundle[] getHosts(Bundle bundle) {
-		return packageAdmin.getHosts(bundle);
-	}
-
-	public Bundle[] getFragments(Bundle bundle) {
-		return packageAdmin.getFragments(bundle);
-	}
-
-	public URL getInstallURL() {
-		Location location = getInstallLocation();
-		// it is pretty much impossible for the install location to be null.  If it is, the
-		// system is in a bad way so throw and exception and get the heck outta here.
-		if (location == null)
-			throw new IllegalStateException("The installation location must not be null"); //$NON-NLS-1$
-		return location.getURL();
-	}
-
-	public EnvironmentInfo getEnvironmentInfoService() {
-		return infoService;
-	}
-
-	public URLConverter getURLConverter() {
-		return urlConverter;
-	}
-
-	public FrameworkLog getFrameworkLog() {
-		return frameworkLog;
-	}
-
-	public boolean isRunning() {
-		try {
-			return initialized && context.getBundle().getState() == Bundle.ACTIVE;
-		} catch (IllegalStateException e) {
-			return false;
-		}
-	}
-
-	//TODO I guess it is now time to get rid of that
-	/*
-	 * This method is retained for R1.0 compatibility because it is defined as API.
-	 * It's function matches the API description (returns <code>null</code> when
-	 * argument URL is <code>null</code> or cannot be read).
-	 */
-	public URL[] getPluginPath(URL pluginPathLocation /*R1.0 compatibility*/
-	) {
-		InputStream input = null;
-		// first try and see if the given plugin path location exists.
-		if (pluginPathLocation == null)
-			return null;
-		try {
-			input = pluginPathLocation.openStream();
-		} catch (IOException e) {
-			//fall through
-		}
-
-		// if the given path was null or did not exist, look for a plugin path
-		// definition in the install location.
-		if (input == null)
-			try {
-				URL url = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING + PLUGIN_PATH);
-				input = url.openStream();
-			} catch (MalformedURLException e) {
-				//fall through
-			} catch (IOException e) {
-				//fall through
-			}
-
-		// nothing was found at the supplied location or in the install location
-		if (input == null)
-			return null;
-		// if we found a plugin path definition somewhere so read it and close the location.
-		URL[] result = null;
-		try {
-			try {
-				result = readPluginPath(input);
-			} finally {
-				input.close();
-			}
-		} catch (IOException e) {
-			//let it return null on failure to read
-		}
-		return result;
-	}
-
-	private URL[] readPluginPath(InputStream input) {
-		Properties ini = new Properties();
-		try {
-			ini.load(input);
-		} catch (IOException e) {
-			return null;
-		}
-		Vector result = new Vector(5);
-		for (Enumeration groups = ini.propertyNames(); groups.hasMoreElements();) {
-			String group = (String) groups.nextElement();
-			for (StringTokenizer entries = new StringTokenizer(ini.getProperty(group), ";"); entries.hasMoreElements();) { //$NON-NLS-1$
-				String entry = (String) entries.nextElement();
-				if (!entry.equals("")) //$NON-NLS-1$
-					try {
-						result.addElement(new URL(entry));
-					} catch (MalformedURLException e) {
-						//intentionally ignore bad URLs
-						System.err.println(Policy.bind("ignore.plugin", entry)); //$NON-NLS-1$
-					}
-			}
-		}
-		return (URL[]) result.toArray(new URL[result.size()]);
-	}
-
-	public Location getConfigurationLocation() {
-		assertInitialized();
-		return (Location) configurationLocation.getService();
-	}
-
-	public IContentTypeManager getContentTypeManager() {
-		return ContentTypeManager.getInstance();
-	}
-
-	private void initializeLocationTrackers() {
-		final String FILTER_PREFIX = "(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type="; //$NON-NLS-1$
-		Filter filter = null;
-		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_CONFIG_AREA + "))"); //$NON-NLS-1$
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		configurationLocation = new ServiceTracker(context, filter, null);
-		configurationLocation.open();
-
-		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_USER_AREA + "))"); //$NON-NLS-1$
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		userLocation = new ServiceTracker(context, filter, null);
-		userLocation.open();
-
-		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_INSTANCE_AREA + "))"); //$NON-NLS-1$
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		instanceLocation = new ServiceTracker(context, filter, null);
-		instanceLocation.open();
-
-		try {
-			filter = context.createFilter(FILTER_PREFIX + PROP_INSTALL_AREA + "))"); //$NON-NLS-1$
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		installLocation = new ServiceTracker(context, filter, null);
-		installLocation.open();
-	}
-
-	public Location getUserLocation() {
-		assertInitialized();
-		return (Location) userLocation.getService();
-	}
-
-	public IPath getStateLocation(Bundle bundle, boolean create) throws IllegalStateException {
-		assertInitialized();
-		IPath result = getMetaArea().getStateLocation(bundle);
-		if (create)
-			result.toFile().mkdirs();
-		return result;
-	}
-
-	public URL find(Bundle b, IPath path) {
-		return FindSupport.find(b, path);
-	}
-
-	public URL find(Bundle bundle, IPath path, Map override) {
-		return FindSupport.find(bundle, path, override);
-	}
-
-	public IPath getStateLocation(Bundle bundle) {
-		return getStateLocation(bundle, true);
-	}
-
-	public ResourceBundle getResourceBundle(Bundle bundle) {
-		return ResourceTranslator.getResourceBundle(bundle);
-	}
-
-	public String getResourceString(Bundle bundle, String value) {
-		return ResourceTranslator.getResourceString(bundle, value);
-	}
-
-	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
-		return ResourceTranslator.getResourceString(bundle, value, resourceBundle);
-	}
-
-	public String getOSArch() {
-		return System.getProperty(PROP_ARCH);
-	}
-
-	public String getNL() {
-		return System.getProperty(PROP_NL);
-	}
-
-	public String getOS() {
-		return System.getProperty(PROP_OS);
-	}
-
-	public String getWS() {
-		return System.getProperty(PROP_WS);
-	}
-
-	public String[] getApplicationArgs() {
-		return appArgs;
-	}
-
-	//Those two methods are only used to register runtime once compatibility has been started.
-	public void setRuntimeInstance(Plugin runtime) {
-		runtimeInstance = runtime;
-	}
-
-	public Plugin getRuntimeInstance() {
-		return runtimeInstance;
-	}
-
-	public long getStateTimeStamp() {
-		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
-		if (platformAdminReference == null)
-			return -1;
-		else
-			return ((PlatformAdmin) context.getService(platformAdminReference)).getState(false).getTimeStamp();
-	}
-
-	public PlatformAdmin getPlatformAdmin() {
-		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
-		if (platformAdminReference == null)
-			return null;
-		return (PlatformAdmin) context.getService(platformAdminReference);
-	}
-
-	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
-	}
-
-	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
-	}
-
-	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
-	}
-
-	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
-	}
-
-	public String getProtectionSpace(URL resourceUrl) {
-		return AuthorizationHandler.getProtectionSpace(resourceUrl);
-	}
-
-	public Location getInstanceLocation() {
-		assertInitialized();
-		return (Location) instanceLocation.getService();
-	}
-
-	public Location getInstallLocation() {
-		assertInitialized();
-		return (Location) installLocation.getService();
-	}
-
-	public IBundleGroupProvider[] getBundleGroupProviders() {
-		return (IBundleGroupProvider[]) groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
-	}
-
-	public IProduct getProduct() {
-		if (product != null)
-			return product;
-		String productId = System.getProperty(PROP_PRODUCT);
-		if (productId == null)
-			return null;
-		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT, productId);
-		if (entries.length > 0) {
-			// There should only be one product with the given id so just take the first element
-			product = new Product(productId, entries[0]);
-			return product;
-		}
-		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT);
-		List logEntries = null;
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			if (element.getName().equalsIgnoreCase("provider")) { //$NON-NLS-1$
-				try {
-					IProductProvider provider = (IProductProvider) element.createExecutableExtension("run"); //$NON-NLS-1$
-					IProduct[] products = provider.getProducts();
-					for (int j = 0; j < products.length; j++) {
-						IProduct provided = products[j];
-						if (provided.getId().equalsIgnoreCase(productId)) {
-							product = provided;
-							return product;
-						}
-					}
-				} catch (CoreException e) {
-					if (logEntries == null)
-						logEntries = new ArrayList(3);
-					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null)); //$NON-NLS-1$
-				}
-			}
-		}
-		if (logEntries != null)
-			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid.general"), 0, null, (FrameworkLogEntry[]) logEntries.toArray())); //$NON-NLS-1$
-		
-		if (!missingProductReported) {
-			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("product.notFound", productId), 0, null, null)); //$NON-NLS-1$
-			missingProductReported = true;
-		}
-		return null;
-	}
-
-	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.add(provider);
-	}
-
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		groupProviders.remove(provider);
-	}
-
-	public FileManager getRuntimeFileManager() {
-		return runtimeFileManager;
-	}
-
-	/**
-	 * Returns a list of known system architectures.
-	 * 
-	 * @return the list of system architectures known to the system
-	 */
-	public String[] knownOSArchValues() {
-		return ARCH_LIST;
-	}
-
-	/**
-	 * Returns a list of known operating system names.
-	 * 
-	 * @return the list of operating systems known to the system
-	 */
-	public String[] knownOSValues() {
-		return OS_LIST;
-	}
-
-	/**
-	 * Returns a list of known windowing system names.
-	 * 
-	 * @return the list of window systems known to the system
-	 */
-	public String[] knownWSValues() {
-		return WS_LIST;
 	}
 }
