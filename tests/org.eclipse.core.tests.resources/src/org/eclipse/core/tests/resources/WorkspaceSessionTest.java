@@ -30,10 +30,7 @@ package org.eclipse.core.tests.resources;
  * This way, each test class plays like a series of related operations on the same
  * workspace, with each operation running in a separate platform instance.
  * 
- * The class SessionTestLauncher acts as a harness for running the tests.  Each string
- * passed to the main method of SessionTestLauncher represents a separate fully-qualified 
- * session test class name.  There must be a corresponding test ID in some XML file that exactly
- * matches the fully qualified class name.
+ * @see org.eclipse.core.tests.session.WorkspaceSessionTestSuite
  */
 public class WorkspaceSessionTest extends ResourceTest {
 	protected String testName;
