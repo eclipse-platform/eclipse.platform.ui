@@ -1,14 +1,14 @@
-package org.eclipse.ui.views.navigator;
-
-/**********************************************************************
-Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
+http://www.eclipse.org/legal/cpl-v10.html
+
 Contributors:
-**********************************************************************/
+    IBM - Initial implementation
+************************************************************************/
+package org.eclipse.ui.views.navigator;
 
 import java.util.*;
 import java.util.List;
@@ -29,13 +29,12 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ViewsPlugin;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.framelist.FrameList;
+import org.eclipse.ui.views.framelist.*;
 
 /**
  * Implements the Resource Navigator view.
@@ -81,6 +80,7 @@ public class ResourceNavigator
 	private static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
 	private static final String TAG_IS_ENABLED = "isEnabled"; //$NON-NLS-1$
 	private static final String TAG_PATH = "path"; //$NON-NLS-1$
+	private static final String TAG_CURRENT_FRAME = "currentFrame"; //$NON-NLS-1$
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -782,26 +782,38 @@ public class ResourceNavigator
 	 */
 	protected void restoreState(IMemento memento) {
 		TreeViewer viewer = getTreeViewer();
-		IContainer container = ResourcesPlugin.getWorkspace().getRoot();
-		IMemento childMem = memento.getChild(TAG_EXPANDED);
-		if (childMem != null) {
-			ArrayList elements = new ArrayList();
-			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
-			for (int i = 0; i < elementMem.length; i++) {
-				Object element = container.findMember(elementMem[i].getString(TAG_PATH));
-				elements.add(element);
-			}
-			viewer.setExpandedElements(elements.toArray());
+		IMemento frameMemento = memento.getChild(TAG_CURRENT_FRAME);
+		
+		if (frameMemento != null) {
+			TreeFrame frame = new TreeFrame(viewer);
+			frame.restoreState(frameMemento);
+			frame.setName(getFrameName(frame.getInput()));
+			frame.setToolTipText(getFrameToolTipText(frame.getInput()));
+			viewer.setSelection(new StructuredSelection(frame.getInput()));
+			frameList.gotoFrame(frame);
 		}
-		childMem = memento.getChild(TAG_SELECTION);
-		if (childMem != null) {
-			ArrayList list = new ArrayList();
-			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
-			for (int i = 0; i < elementMem.length; i++) {
-				Object element = container.findMember(elementMem[i].getString(TAG_PATH));
-				list.add(element);
+		else {		
+			IContainer container = ResourcesPlugin.getWorkspace().getRoot();
+			IMemento childMem = memento.getChild(TAG_EXPANDED);
+			if (childMem != null) {
+				ArrayList elements = new ArrayList();
+				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
+				for (int i = 0; i < elementMem.length; i++) {
+					Object element = container.findMember(elementMem[i].getString(TAG_PATH));
+					elements.add(element);
+				}
+				viewer.setExpandedElements(elements.toArray());
 			}
-			viewer.setSelection(new StructuredSelection(list));
+			childMem = memento.getChild(TAG_SELECTION);
+			if (childMem != null) {
+				ArrayList list = new ArrayList();
+				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
+				for (int i = 0; i < elementMem.length; i++) {
+					Object element = container.findMember(elementMem[i].getString(TAG_PATH));
+					list.add(element);
+				}
+				viewer.setSelection(new StructuredSelection(list));
+			}
 		}
 	}
 
@@ -830,28 +842,35 @@ public class ResourceNavigator
 			child.putString(TAG_ELEMENT, element);
 			child.putString(TAG_IS_ENABLED, String.valueOf(selectedFilters.contains(element)));
 		}		
-			
-		//save visible expanded elements
-		Object expandedElements[] = viewer.getVisibleExpandedElements();
-		if (expandedElements.length > 0) {
-			IMemento expandedMem = memento.createChild(TAG_EXPANDED);
-			for (int i = 0; i < expandedElements.length; i++) {
-				IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
-				elementMem.putString(
-					TAG_PATH,
-					((IResource) expandedElements[i]).getFullPath().toString());
-			}
-		}
 
-		//save selection
-		Object elements[] = ((IStructuredSelection) viewer.getSelection()).toArray();
-		if (elements.length > 0) {
-			IMemento selectionMem = memento.createChild(TAG_SELECTION);
-			for (int i = 0; i < elements.length; i++) {
-				IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
-				elementMem.putString(
-					TAG_PATH,
-					((IResource) elements[i]).getFullPath().toString());
+		if (frameList.getCurrentIndex() > 0) {
+			//save frame, it's not the "home"/workspace frame
+			TreeFrame currentFrame = (TreeFrame) frameList.getCurrentFrame();
+			IMemento frameMemento = memento.createChild(TAG_CURRENT_FRAME);
+			currentFrame.saveState(frameMemento);
+		}
+		else {			
+			//save visible expanded elements
+			Object expandedElements[] = viewer.getVisibleExpandedElements();
+			if (expandedElements.length > 0) {
+				IMemento expandedMem = memento.createChild(TAG_EXPANDED);
+				for (int i = 0; i < expandedElements.length; i++) {
+					IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
+					elementMem.putString(
+						TAG_PATH,
+						((IResource) expandedElements[i]).getFullPath().toString());
+				}
+			}
+			//save selection
+			Object elements[] = ((IStructuredSelection) viewer.getSelection()).toArray();
+			if (elements.length > 0) {
+				IMemento selectionMem = memento.createChild(TAG_SELECTION);
+				for (int i = 0; i < elements.length; i++) {
+					IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
+					elementMem.putString(
+						TAG_PATH,
+						((IResource) elements[i]).getFullPath().toString());
+				}
 			}
 		}
 	}
