@@ -525,7 +525,7 @@ public class EditorManager {
 
 		// Test the result.
 		if (ex[0] != null) {
-			throw new PartInitException(ex[0].getMessage()); //$NON-NLS-1$
+			throw new PartInitException(ex[0].getMessage(), ex[0]); //$NON-NLS-1$
 		}
 	}
 	/*
