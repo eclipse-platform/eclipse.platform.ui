@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -136,24 +137,38 @@ private IProject getProject(Object element) {
 	}	
 	return project;
 }
+private IResource getResource(Object element) {
+	IResource resource = null;
+	if (element instanceof IResource) {
+		resource = (IResource) element;
+	}
+	else 
+	if (element instanceof IAdaptable) {
+		resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+	}	
+	return resource;
+}
 /* (non-Javadoc)
  * Method declared on IStructuredContentProvider.
  */
 public Object[] getElements(Object element) {
 	NavigatorDescriptor[] descriptors = registry.getDescriptors(partId);
 	Object[] elements = new Object[0];
+//	Collection elements = new ArrayList();
 	
 	for (int i = 0; i < descriptors.length; i++) {
 		NavigatorDescriptor descriptor = descriptors[i];
-		ITreeContentProvider[] contentProviders = descriptor.getContentProviders();
+		ITreeContentProvider contentProvider = descriptor.getContentProvider();
 		IInputProvider inputProvider = descriptor.getInputProvider();
 		Object input = element;
+		Object[] newElements;
 		
 		if (inputProvider != null)
 			input = inputProvider.getInput(element);
-			
-		for (int j = 0; j < contentProviders.length; j++)
-			elements = concatenate(elements, contentProviders[j].getElements(input));
+		
+		newElements = contentProvider.getElements(input);
+		setContentName(newElements, descriptor.getContentDescriptor().getName());
+		elements = concatenate(elements, newElements);
 	}
 	Object[] workbenchElements = (new WorkbenchContentProvider()).getElements(element);
 	List workbenchProjects = new ArrayList();
@@ -300,6 +315,17 @@ public void resourceChanged(final IResourceChangeEvent event) {
 				processDelta(delta);
 			}
 		});
+	}
+}
+private void setContentName(Object[] elements, String name) {
+	for (int i = 0; i < elements.length; i++) {
+		IResource resource = getResource(elements[i]);
+		try {
+			resource.setSessionProperty(new QualifiedName(null, "contentProvider"), name);
+		}
+		catch (CoreException e) {
+			// TODO: handle exception
+		}
 	}
 }
 }

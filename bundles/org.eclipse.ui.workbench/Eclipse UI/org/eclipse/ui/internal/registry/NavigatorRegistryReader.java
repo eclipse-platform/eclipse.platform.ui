@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read navigator extensions from the registry.
  */
 public class NavigatorRegistryReader extends RegistryReader {
-	private static final String TAG_VIEW="view";	//$NON-NLS-1$
+	private static final String TAG_VIEW = "view";	//$NON-NLS-1$
 	private NavigatorRegistry registry;
 	
 /**

@@ -42,12 +42,12 @@
    <element name="view">
       <complexType>
          <sequence>
-            <element ref="content" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="content"/>
          </sequence>
          <attribute name="targetId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Id of the targeted view part
                </documentation>
             </annotation>
          </attribute>

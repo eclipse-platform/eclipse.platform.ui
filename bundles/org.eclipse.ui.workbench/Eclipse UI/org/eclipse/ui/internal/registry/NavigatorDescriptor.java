@@ -33,7 +33,7 @@ public class NavigatorDescriptor {
 	private String targetId;
 	private String input;
 	private IConfigurationElement configElement;
-	private List contentDescriptors = new ArrayList();
+	private ContentDescriptor contentDescriptor;
 
 /**
  * Creates a descriptor from a configuration element.
@@ -45,27 +45,13 @@ public NavigatorDescriptor(IConfigurationElement configElement) throws Workbench
 	this.configElement = configElement;
 	readConfigElement();
 }
-public ITreeContentProvider getContentProvider() {
-	Iterator contentIterator = contentDescriptors.iterator();
-				
-	while (contentIterator.hasNext()) {
-		ContentDescriptor contentDescriptor = (ContentDescriptor) contentIterator.next();
-		List targetNatures = contentDescriptor.getNatures();
-		if (targetNatures.isEmpty())
-			return contentDescriptor.createContentProvider();
-	}		
-	return null;
+/**
+ */
+public ContentDescriptor getContentDescriptor() {
+	return contentDescriptor;
 }
-public ITreeContentProvider[] getContentProviders() {
-	List contentProviders = new ArrayList();
-
-	Iterator contentIterator = contentDescriptors.iterator();
-	
-	while (contentIterator.hasNext()) {
-		ContentDescriptor contentDescriptor = (ContentDescriptor) contentIterator.next();
-		contentProviders.add(contentDescriptor.createContentProvider());
-	}		
-	return (ITreeContentProvider[]) contentProviders.toArray(new ITreeContentProvider[contentProviders.size()]);
+public ITreeContentProvider getContentProvider() {
+	return contentDescriptor.createContentProvider();
 }
 /**
  */
@@ -87,10 +73,12 @@ public IInputProvider getInputProvider() {
 public String getTargetId() {
 	return targetId;
 }
+
 /**
  */
-public List getContentDescriptors() {
-	return contentDescriptors;
+public String[] getNatures() {
+	List natures = contentDescriptor.getNatures();
+	return (String[]) natures.toArray(new String[natures.size()]);
 }
 	/*
 	 * Performance: Should create a lookup table indexed by nature.
@@ -142,21 +130,14 @@ private void readConfigElement() throws WorkbenchException {
 	targetId = configElement.getAttribute(ATT_TARGET_ID);
 	input = configElement.getAttribute(ATT_INPUT);
 			
-	IConfigurationElement [] children = configElement.getChildren();
-	for (int i = 0; i < children.length; i++) {
-		IConfigurationElement child = children[i];
-		String type = child.getName();
-		if (type.equals(TAG_CONTENT)) {
-			ContentDescriptor content = new ContentDescriptor(child);
-			contentDescriptors.add(content);
-		}
-		else  {
-			throw new WorkbenchException(
-				"Unable to process element: " +//$NON-NLS-1$
-				type +
-				" in navigator extension: " +//$NON-NLS-1$
-				configElement.getDeclaringExtension().getUniqueIdentifier());				
-		}
-	}
+	IConfigurationElement [] children = configElement.getChildren(TAG_CONTENT);
+	if (children.length > 0)
+		contentDescriptor = new ContentDescriptor(children[0]);
+	else
+		throw new WorkbenchException(
+			"Unable to process element: " +//$NON-NLS-1$
+			TAG_CONTENT +
+			" in navigator extension: " +//$NON-NLS-1$
+			configElement.getDeclaringExtension().getUniqueIdentifier());				
 }
 }
