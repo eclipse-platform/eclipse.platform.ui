@@ -18,6 +18,7 @@ The intros are organized into pages which usually reflect a particular category 
    <element name="extension">
       <complexType>
          <sequence>
+            <element ref="handle" minOccurs="0" maxOccurs="1"/>
             <element ref="config" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -168,6 +169,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
       </annotation>
       <complexType>
          <sequence>
+            <element ref="handle" minOccurs="0" maxOccurs="1"/>         
             <element ref="shortcut" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="location" use="default" value="right">
@@ -236,6 +238,33 @@ The content file is parsed at run time by the intro framework. Based on the sett
                <documentation>
                   the URL to execute when the shortcut in the launch bar is activated
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="handle">
+      <annotation>
+         <documentation>
+            an optional element that controls how launch bar handle is rendered.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="close" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  an optional flag that controls if the handle will have a close button (default is &lt;code&gt;true&lt;/code&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="image" type="string">
+            <annotation>
+               <documentation>
+                  a plug-in-relative path of the branding image to be tiled on the handle.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
