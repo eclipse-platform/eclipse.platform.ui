@@ -106,10 +106,18 @@ public final class InternalPlatform implements IPlatform {
 	private static final String NO_REGISTRY_CACHE = "-noregistrycache"; //$NON-NLS-1$	
 	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$		
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
+	
+	// obsolete command line args
 	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
-	private static final String NO_VERSION_CHECK = "-noversioncheck"; //$NON-NLS-1$
 	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$	
-
+	private static final String BOOT = "-boot"; //$NON-NLS-1$
+	private static final String PLUGINS = "-plugins"; //$NON-NLS-1$
+	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
+	private static final String NO_UPDATE = "-noUpdate"; //$NON-NLS-1$
+	private static final String NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
+	private static final String UPDATE = "-update"; //$NON-NLS-1$
+	private static final String FEATURE = "-feature"; //$NON-NLS-1$
+	
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
@@ -128,9 +136,6 @@ public final class InternalPlatform implements IPlatform {
 	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
 	public static final String PROP_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 	public static final String PROP_CONSOLE_LOG = "eclipse.consoleLog"; //$NON-NLS-1$
-	public static final String PROP_NO_VERSION_CHECK = "eclipse.noVersionCheck"; //$NON-NLS-1$
-	public static final String PROP_NO_DATA = "eclipse.noData"; //$NON-NLS-1$
-	public static final String PROP_NO_DEFAULT_DATA = "eclipse.noDefaultData"; //$NON-NLS-1$
 	public static final String PROP_NO_REGISTRY_CACHE = 	"eclipse.noRegistryCache"; //$NON-NLS-1$
 	public static final String PROP_NO_LAZY_CACHE_LOADING = 	"eclipse.noLazyRegistryCacheLoading"; //$NON-NLS-1$
 	public static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
@@ -488,24 +493,23 @@ public final class InternalPlatform implements IPlatform {
 				found = true;
 			}
 
-			// look for the flag to turn off the workspace metadata version check
-			if (args[i].equalsIgnoreCase(NO_VERSION_CHECK)) {
-				System.setProperty(PROP_NO_VERSION_CHECK, "true"); //$NON-NLS-1$
-				found = true;
-			}
-
-			// look for the flag to turn off using package prefixes
-			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES))
-				found = true;  				// ignored
-
-			// this option (may have and argument) comes from InternalBootLoader.processCommandLine
+			// consume obsolete args
 			if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) 
 				found = true;				// ignored
-
-			// look for the flag to turn off using package prefixes
-			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES)) {
+			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES))
 				found = true;				// ignored
-			}
+			if (args[i].equalsIgnoreCase(PLUGINS))
+				found = true;				// ignored
+			if (args[i].equalsIgnoreCase(FIRST_USE))
+				found = true;				// ignored
+			if (args[i].equalsIgnoreCase(NO_UPDATE))
+				found = true;				// ignored
+			if (args[i].equalsIgnoreCase(NEW_UPDATES))
+				found = true;				// ignored
+			if (args[i].equalsIgnoreCase(UPDATE))
+				found = true;				// ignored
+			if (args[i].equalsIgnoreCase(FEATURE))
+				found = true;				// ignored
 			
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
@@ -547,10 +551,11 @@ public final class InternalPlatform implements IPlatform {
 				found = true;
 			}
 
-			if (args[i - 1].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) {
-				// ignored
-				found = true;
-			}
+			// consume obsolete args for compatibilty
+			if (args[i - 1].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) 
+				found = true;  // ignore
+			if (args[i - 1].equalsIgnoreCase(BOOT)) 
+				found = true;  // ignore
 
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
