@@ -14,7 +14,6 @@ package org.eclipse.ant.tests.ui;
 import junit.framework.TestResult;
 
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
-import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.swt.widgets.Display;
@@ -72,7 +71,6 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	 */
 	protected void launch(String buildFileName) throws CoreException {
 		super.launch(buildFileName);
-		ConsoleLineTracker.waitForConsole();
 	}
 	
 	/**
@@ -84,7 +82,6 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	 */
 	protected void launch(ILaunchConfiguration config) throws CoreException {
 	    launchAndTerminate(config, 20000);
-		ConsoleLineTracker.waitForConsole();
 	}
 	
 	protected void activateLink(final IHyperlink link) {
@@ -99,6 +96,5 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	 */
 	protected void launch(String buildFileName, String arguments) throws CoreException {
 		super.launch(buildFileName, arguments);
-		ConsoleLineTracker.waitForConsole();
 	}
 }

@@ -282,7 +282,8 @@ public abstract class AbstractAntUITest extends TestCase {
 		assertNotNull("Program did not terminate.", terminatee);
 		assertTrue("terminatee is not an IProcess", terminatee instanceof IProcess);
 		IProcess process = (IProcess) terminatee;
-		assertTrue("process is not terminated", process.isTerminated());
+        boolean terminated = process.isTerminated();
+		assertTrue("process is not terminated", terminated);
 	}
 	
 	/**
@@ -306,7 +307,13 @@ public abstract class AbstractAntUITest extends TestCase {
 				fail("Program did not suspend, and unable to terminate launch.");
 			}
 		}
-		assertNotNull("Program did not suspend, launch terminated.", suspendee);
+        assertNotNull("Program did not suspend, launch terminated.", suspendee);
+        boolean terminated = launch.isTerminated();
+        assertTrue("launch did not terminate", terminated);
+        if (terminated && !ConsoleLineTracker.isClosed()) {
+            ConsoleLineTracker.waitForConsole();
+        }
+        assertTrue("Console is not closed", ConsoleLineTracker.isClosed());	
 		return suspendee;		
 	}
 	

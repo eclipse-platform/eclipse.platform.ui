@@ -108,4 +108,10 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 			lines.notifyAll();
 		}
 	}
+    
+    public static boolean isClosed() {
+        synchronized (lines) {
+            return consoleClosed;
+        }
+    }
 }
