@@ -11,6 +11,50 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20020115
+<h2>
+What's new in this drop</h2>
+<b>Marker F1 Help - Experimental</b>
+<br>This drop contains preliminary work for marker F1 help and resolutions.
+<br>Two new extension points have been added:
+<br>- org.eclipse.ui.markerHelp
+<br>- org.eclipse.ui.markerResolution
+<br>These extension points target specific kinds of markers using a marker
+type and attributes
+<p>The marker help registry is available from the Workbench.
+<p>The task list has been modified to show the F1 help for its selected
+marker and an "Autofix..." menu item has
+<br>been added to its context menu to display the resolutions registered
+for the marker.
+<p>The readme example has been modified to demonstrate these extension
+points.
+<br>Use the editor context "Add" menu to add markers for which F1 help
+and resolutions have been registered.
+<p>NOTE: Any of this API and implementation is subject to change. More
+extensive documentation will follow once
+<br>the API has stabilzed.
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F01%2F08&chfieldto=2002%2F01%2F15&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/01/08 and 2002/01/15.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20020108
 <h2>
 What's new in this drop</h2>
