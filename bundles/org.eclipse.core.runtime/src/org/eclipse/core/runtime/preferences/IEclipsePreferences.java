@@ -66,7 +66,11 @@ public interface IEclipsePreferences extends Preferences {
 		/**
 		 * Return the child node for this event. This is the node
 		 * which was added or removed.
-		 * 
+		 * <p>
+		 * Note: The child node may have been removed as a result of
+		 * the bundle supplying its implementation being un-installed. In this case
+		 * the only method which can safely be called on the child is #name().
+		 * </p>
 		 * @return the child node
 		 */
 		public Preferences getChild() {
