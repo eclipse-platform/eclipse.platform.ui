@@ -277,7 +277,8 @@ public class DebugUITools {
 	 * @param selection the initial selection for the dialog
 	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
 	 *  This should be one of the constants defined in <code>ILaunchManager</code>.
-	 * @return the return code from opening the launch configuration dialog
+	 * @return the return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
 	 * @since 2.0
 	 */
 	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
@@ -309,7 +310,8 @@ public class DebugUITools {
 	 * @param selection the initial selection for the dialog
 	 * @param groupIdentifier the identifier of the launch group to display (corresponds to
 	 * the identifier of a lanuch group extension)
-	 * @return the return code from opening the launch configuration dialog
+	 * @return the return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
 	 * @since 2.1
 	 */
 	public static int openLaunchConfigurationDialogOnGroup(Shell shell, IStructuredSelection selection, String groupIdentifier) {
