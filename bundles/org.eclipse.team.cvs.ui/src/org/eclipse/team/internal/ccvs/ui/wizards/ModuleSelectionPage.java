@@ -87,7 +87,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			if (useProjectNameButton != null) {
+			if (useProjectNameButton != null && useProjectNameButton.getSelection()) {
 				useProjectNameButton.setFocus();
 			} else if (useSpecifiedNameButton.getSelection()) {
 				text.setFocus();
