@@ -15,7 +15,7 @@ import org.osgi.framework.Bundle;
 /**
  * A log to which status events can be written.  Logs appear on individual
  * plug-ins and on the platform itself.  Clients can register log listeners which
- * will receive notification of all log events as the come in.
+ * will receive notification of all log events as they come in.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
