@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
-import java.lang.reflect.Constructor;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.internal.cheatsheets.*;
