@@ -595,16 +595,33 @@ private boolean validateNoNameCollisions(
 
 	Iterator sourcesEnum = sourceResources.iterator();
 	while (sourcesEnum.hasNext()) {
-		IResource currentResource = (IResource) sourcesEnum.next();
-		IPath currentPath = destination.getFullPath().append(currentResource.getName());
+		final IResource currentResource = (IResource) sourcesEnum.next();
+		final IPath currentPath = destination.getFullPath().append(currentResource.getName());
 
 		IResource newResource = workspaceRoot.findMember(currentPath);
 		if (newResource != null) {
-			if (checkOverwrite(getShell(), newResource)) {
-				deleteItems.add(newResource);
-			} else {
+			// Check to see if we would be overwriting a parent folder
+			if (currentPath.isPrefixOf(currentResource.getFullPath())) {
+				//Run it inside of a runnable to make sure we get to parent off of the shell as we are not
+				//in the UI thread.
+				Runnable notice = new Runnable() {
+					public void run() {
+						MessageDialog.openError(
+							getShell(),
+							WorkbenchMessages.getString("CopyResourceAction.overwriteProblemTitle"),
+							WorkbenchMessages.format("CopyResourceAction.overwriteProblem", new Object[] {currentPath, currentResource.getFullPath()})); //$NON-NLS-1$
+					}
+				};
+				getShell().getDisplay().syncExec(notice);
 				canceled = true;
 				return false;
+			} else {
+				if (checkOverwrite(getShell(), newResource)) {
+					deleteItems.add(newResource);
+				} else {
+					canceled = true;
+					return false;
+				}
 			}
 		}
 	} //No overwrite issues
