@@ -46,7 +46,7 @@ public interface IDocumentExtension {
 	 * to register a post notification replace operation on the document notifying them.
 	 * 
 	 * @param owner the owner of the replace operation
-	 * @param the replace operation to be executed
+	 * @param replace the replace operation to be executed
 	 * @exception UnsupportedOperationException if <code>registerPostNotificationReplace</code>
 	 * 	is not supported by this document
 	 */

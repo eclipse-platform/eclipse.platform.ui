@@ -436,7 +436,7 @@ public interface IDocument {
 	 * connect the new partitioner to the document. Informs all document partitioning
 	 * listeners about this change.
 	 *
-	 * @param the document's new partitioner
+	 * @param partitioner the document's new partitioner
 	 *
 	 * @see IDocumentPartitioningListener
 	 */
