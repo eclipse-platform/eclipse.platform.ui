@@ -257,8 +257,9 @@ public class SearchManager implements IResourceChangeListener {
 		}
 		monitor.done();
 	}
+
 	/**
-	 * Returns the list with current (last) results
+	 * Returns the number of matches
 	 */
 	int getCurrentItemCount() {
 		if (fCurrentSearch != null)
