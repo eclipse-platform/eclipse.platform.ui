@@ -647,7 +647,24 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getSashForm().setMaximizedControl(null);
 		getSashForm().setWeights(getLastSashWeights());
 		populateDetailPane();
+		revealTreeSelection();
 		fToggledDetailOnce = true;		
+	}
+
+	/**
+	 * Make sure the currently selected item in the tree is visible.
+	 */
+	protected void revealTreeSelection() {
+		VariablesViewer viewer = getVariablesViewer();
+		if (viewer != null) {
+			ISelection selection = viewer.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				Object selected = ((IStructuredSelection)selection).getFirstElement();
+				if (selected != null) {
+					viewer.reveal(selected);
+				}
+			}
+		}
 	}
 
 	/**
