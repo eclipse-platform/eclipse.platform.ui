@@ -76,6 +76,13 @@ build spec.  If the attribute is not specified, it is assumed to be &quot;&lt;tt
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="isConfigurable" type="boolean">
+            <annotation>
+               <documentation>
+                  &quot;&lt;tt&gt;true&lt;/tt&gt;&quot; or &quot;&lt;tt&gt;false&lt;/tt&gt;&quot; indicating whether the builder allows customization of what build triggers it will respond to.  If &quot;&lt;tt&gt;true&lt;/tt&gt;&quot;, clients will be able to use the API &lt;tt&gt;ICommand.setBuilding&lt;/tt&gt; to specify if this builder should be run for a particular build trigger. If the attribute is not specified, it is assumed to be &quot;&lt;tt&gt;false&lt;/tt&gt;&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
