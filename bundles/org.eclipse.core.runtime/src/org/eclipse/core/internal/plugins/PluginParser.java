@@ -310,22 +310,21 @@ public void handleExtensionState(String elementName, Attributes attributes) {
 public void handleFragmentState(String elementName, Attributes attributes) {
 
 	if (elementName.equals(RUNTIME)) {
-		// Change State
 		stateStack.push(new Integer(PLUGIN_RUNTIME_STATE));
-		// All runtime attributes are ignored so no further parsing required.
+		return;
+	}
+	if (elementName.equals(PLUGIN_REQUIRES)) {
+		stateStack.push(new Integer(PLUGIN_REQUIRES_STATE));
+		parseRequiresAttributes(attributes);
 		return;
 	}
 	if (elementName.equals(EXTENSION_POINT)) {
-		// Change State
 		stateStack.push(new Integer(PLUGIN_EXTENSION_POINT_STATE));
-		// Pick up Extension Point Attributes
 		parseExtensionPointAttributes(attributes);
 		return;
 	}
 	if (elementName.equals(EXTENSION)) {
-		// Change State
 		stateStack.push(new Integer(PLUGIN_EXTENSION_STATE));
-		// Pick up Extension Attributes
 		parseExtensionAttributes(attributes);
 		return;
 	}
@@ -393,29 +392,21 @@ public void handleLibraryState(String elementName, Attributes attributes) {
 public void handlePluginState(String elementName, Attributes attributes) {
 
 	if (elementName.equals(RUNTIME)) {
-		// Change State
 		stateStack.push(new Integer(PLUGIN_RUNTIME_STATE));
-		// All runtime attributes are ignored so no further parsing required.
 		return;
 	}
 	if (elementName.equals(PLUGIN_REQUIRES)) {
-		// Change State
 		stateStack.push(new Integer(PLUGIN_REQUIRES_STATE));
-		// Pick up Requires Attributes
 		parseRequiresAttributes(attributes);
 		return;
 	}
 	if (elementName.equals(EXTENSION_POINT)) {
-		// Change State
 		stateStack.push(new Integer(PLUGIN_EXTENSION_POINT_STATE));
-		// Pick up Extension Point Attributes
 		parseExtensionPointAttributes(attributes);
 		return;
 	}
 	if (elementName.equals(EXTENSION)) {
-		// Change State
 		stateStack.push(new Integer(PLUGIN_EXTENSION_STATE));
-		// Pick up Extension Attributes
 		parseExtensionAttributes(attributes);
 		return;
 	}

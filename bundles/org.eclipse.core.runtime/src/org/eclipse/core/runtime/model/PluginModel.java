@@ -25,6 +25,7 @@ public abstract class PluginModel extends PluginModelObject {
 	private LibraryModel[] runtime = null;
 	private ExtensionPointModel[] extensionPoints = null;
 	private ExtensionModel[] extensions = null;
+	private PluginPrerequisiteModel[] requires = null;
 
 	// transient properties (not included in plug-in manifest)
 	private PluginRegistryModel registry = null;
@@ -101,6 +102,16 @@ public String getProviderName() {
 public PluginRegistryModel getRegistry() {
 	return registry;
 }
+
+/**
+ * Returns the prerequisites of this plug-in.
+ *
+ * @return the prerequisites of this plug-in or <code>null</code>
+ */
+public PluginPrerequisiteModel[] getRequires() {
+	return requires;
+}
+
 /**
  * Returns the libraries configured for this plug-in.
  *
@@ -134,6 +145,9 @@ public void markReadOnly() {
 	if (extensions != null)
 		for (int i = 0; i < extensions.length; i++)
 			extensions[i].markReadOnly();
+	if (requires != null)
+		for (int i = 0; i < requires.length; i++)
+			requires[i].markReadOnly();
 }
 /**
  * Sets the extension points in this plug-in descriptor.
@@ -204,6 +218,18 @@ public void setRegistry(PluginRegistryModel value) {
 	assertIsWriteable();
 	registry = value;
 }
+
+/**
+ * Sets the prerequisites of this plug-in.
+ * This object must not be read-only.
+ *
+ * @param value the prerequisites of this plug-in.  May be <code>null</code>.
+ */
+public void setRequires(PluginPrerequisiteModel[] value) {
+	assertIsWriteable();
+	requires = value;
+}
+
 /**
  * Sets the libraries configured for this plug-in.
  * This object must not be read-only.

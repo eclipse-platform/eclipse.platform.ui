@@ -17,7 +17,6 @@ public class PluginDescriptorModel extends PluginModel {
 
 	// DTD properties (included in plug-in manifest)
 	private String pluginClass = null;
-	private PluginPrerequisiteModel[] requires = null;
 
 	// transient properties (not included in plug-in manifest)
 	private boolean enabled = true; // whether or not the plugin definition loaded ok
@@ -68,28 +67,7 @@ public String getPluginClass() {
 public String getPluginId() {
 	return getId();
 }
-/**
- * Returns the prerequisites of this plug-in.
- *
- * @return the prerequisites of this plug-in or <code>null</code>
- */
-public PluginPrerequisiteModel[] getRequires() {
-	return requires;
-}
 
-
-/**
- * Sets this model object and all of its descendents to be read-only.
- * Subclasses may extend this implementation.
- *
- * @see #isReadOnly
- */
-public void markReadOnly() {
-	super.markReadOnly();
-	if (requires != null)
-		for (int i = 0; i < requires.length; i++)
-			requires[i].markReadOnly();
-}
 /*
  * Sets the value of the field 'enabled' to the parameter 'value'.
  * If this plugin is enabled (default) it is assumed to have all
@@ -125,16 +103,5 @@ public void setPluginClass(String value) {
 	assertIsWriteable();
 	pluginClass = value;
 }
-/**
- * Sets the prerequisites of this plug-in.
- * This object must not be read-only.
- *
- * @param value the prerequisites of this plug-in.  May be <code>null</code>.
- */
-public void setRequires(PluginPrerequisiteModel[] value) {
-	assertIsWriteable();
-	requires = value;
-}
-
 
 }
