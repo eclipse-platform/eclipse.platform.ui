@@ -49,6 +49,7 @@ public class NewWizardDropDownAction extends Action implements
 
         private MenuManager dropDownMenuMgr;
 
+       
         protected void createDropDownMenuMgr() {
             if (dropDownMenuMgr == null) {
                 dropDownMenuMgr = new MenuManager();
@@ -56,11 +57,17 @@ public class NewWizardDropDownAction extends Action implements
             }
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+         */
         public Menu getMenu(Control parent) {
             createDropDownMenuMgr();
             return dropDownMenuMgr.createContextMenu(parent);
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+         */
         public Menu getMenu(Menu parent) {
             createDropDownMenuMgr();
             Menu menu = new Menu(parent);
@@ -130,8 +137,9 @@ public class NewWizardDropDownAction extends Action implements
         setMenuCreator(menuCreator);
     }
 
-    /**
-     * Disposes the action.
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
      */
     public void dispose() {
         if (workbenchWindow == null) {

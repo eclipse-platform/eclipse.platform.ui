@@ -70,8 +70,9 @@ public final class OpenPerspectiveAction extends Action implements
                 IWorkbenchHelpContextIds.OPEN_PERSPECTIVE_ACTION);
     }
 
-    /**
-     * Implementation of method defined on <code>IAction</code>.
+  
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
      */
     public final void runWithEvent(final Event event) {
         callback.run(descriptor, new SelectionEvent(event));
