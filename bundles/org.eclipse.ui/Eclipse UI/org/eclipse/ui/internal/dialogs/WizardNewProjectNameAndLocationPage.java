@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Example useage:
  * <pre>
- * mainPage = new WizardNewProjectNameAndLocationPage("wizardNewProjectCreationPage");
+ * mainPage = new WizardNewProjectNameAndLocationPage("wizardNewProjectNameAndLocationPage");
  * mainPage.setTitle("Project");
  * mainPage.setDescription("Create a new project.");
  * </pre>
