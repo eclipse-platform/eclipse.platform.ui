@@ -13,6 +13,8 @@ package org.eclipse.jface.dialogs;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -134,11 +136,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 	/**
 	 * Internal progress monitor implementation.
 	 */
-	private class ProgressMonitor implements IProgressMonitor {
+	private class ProgressMonitor implements IProgressMonitorWithBlocking {
 		
 		private String fSubTask= "";//$NON-NLS-1$
 		private boolean fIsCanceled;
 		protected boolean forked = false;
+		protected boolean locked = false;
 		
 		public void beginTask(String name, int totalWork) {
 			if (progressIndicator.isDisposed())
@@ -190,6 +193,8 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		
 		public void setCanceled(boolean b) {
 			fIsCanceled= b;
+			if(locked)
+				clearBlocked();
 		}
 		
 		public void subTask(String name) {
@@ -213,6 +218,26 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		public void internalWorked(double work) {
 			if (!progressIndicator.isDisposed())
 				progressIndicator.worked(work);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+		 */
+		public void clearBlocked() {
+			setMessage(task);
+			locked = false;
+			imageLabel.setImage(getImage());
+
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+		 */
+		public void setBlocked(IStatus reason) {
+			setMessage(reason.getMessage());
+			locked = true;
+			imageLabel.setImage(getImage());
+
 		}
 	}
 /**
@@ -461,7 +486,10 @@ private void setOperationCancelButtonEnabled(boolean b) {
  * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
  */
 protected Image getImage() {
-	return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
+	if(progressMonitor.locked)
+		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_LOCKED);
+	else
+		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
 }
 	
 /**
