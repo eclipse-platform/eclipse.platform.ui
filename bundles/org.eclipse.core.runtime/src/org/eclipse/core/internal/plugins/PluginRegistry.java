@@ -21,10 +21,10 @@ public class PluginRegistry extends PluginRegistryModel implements IPluginRegist
 	// lifecycle events
 	private static final int STARTUP = 0;
 	private static final int SHUTDOWN = 1;
-  public PluginRegistry()
-  {
+	
+public PluginRegistry() {
 	super();
-  }  
+}  
 /**
  * Iterate over the plug-ins in this registry.  Plug-ins are visited in dependent order.  That is, 
  * a plug-in, A, which requires another plug-in, B, is visited before its dependents (i.e., A is 

@@ -24,6 +24,9 @@ import java.util.*;
 public final class InternalPlatform {
 	private static IAdapterManager adapterManager;
 	private static PluginRegistry registry;
+	// registry index - used to store last modified times for
+	// registry caching
+	private static Map regIndex = new HashMap(30);
 	private static Set logListeners = new HashSet(5);
 	private static Map logs = new HashMap(5);
 	private static PlatformLogListener platformLog = null;
@@ -41,7 +44,7 @@ public final class InternalPlatform {
 	private static String password = "";
 	private static boolean inDevelopmentMode = false;
 	private static boolean splashDown = false;
-	private static boolean cacheRegistry = false;
+	private static boolean cacheRegistry = true;
 
 	private static File lockFile = null;
 	private static RandomAccessFile lockRAF = null;
@@ -64,7 +67,7 @@ public final class InternalPlatform {
 	private static final String PASSWORD = "-password";
 	private static final String DEV = "-dev";
 	private static final String ENDSPLASH = "-endsplash";
-	private static final String REGISTRYCACHE = "-registrycache";
+	private static final String NOREGISTRYCACHE = "-noregistrycache";
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
@@ -654,13 +657,16 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	IPath tempPath = getMetaArea().getBackupFilePathFor(path);
 	DataInputStream input = null;
 	registry = null;
+	// augment the plugin path with any additional platform entries
+	// (eg. user scripts)
+	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);
 	if (path.toFile().exists() && cacheRegistry) {
 		try {
 			input = new DataInputStream(new BufferedInputStream(new SafeFileInputStream(path.toOSString(), tempPath.toOSString())));
 			try {
 				long start = System.currentTimeMillis();
 				RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
-				registry = (PluginRegistry)cacheReader.readPluginRegistry(input);
+				registry = (PluginRegistry)cacheReader.readPluginRegistry(input, augmentedPluginPath, DEBUG && DEBUG_PLUGINS);
 				if (DEBUG)
 					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms");
 			} finally {
@@ -672,7 +678,6 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		}
 	}
 	if (registry == null) {
-		URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
 		long start = System.currentTimeMillis();
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
 		IStatus resolveStatus = registry.resolve(true, true);
@@ -748,9 +753,9 @@ private static String[] processCommandLine(String[] args) {
 			found = true;
 		}
 
-		// look for the registry cache flag
-		if (args[i].equalsIgnoreCase(REGISTRYCACHE)) {
-			cacheRegistry = true;
+		// look for the no registry cache flag
+		if (args[i].equalsIgnoreCase(NOREGISTRYCACHE)) {
+			cacheRegistry = false;
 			found = true;
 		}
 
@@ -851,5 +856,11 @@ private static void setupMetaArea(String locationString) throws CoreException {
 	metaArea.createLocation();
 	if (keyringFile == null)
 		keyringFile = metaArea.getLocation().append(PlatformMetaArea.F_KEYRING).toOSString();
+}
+public static void addLastModifiedTime (String pathKey, long lastModTime) {
+	regIndex.put(pathKey, new Long(lastModTime));
+}
+public static Map getRegIndex() {
+	return regIndex;
 }
 }

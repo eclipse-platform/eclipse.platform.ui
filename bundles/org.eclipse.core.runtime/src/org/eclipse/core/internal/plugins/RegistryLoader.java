@@ -9,9 +9,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
+
 import java.io.*;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Map;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
@@ -124,6 +126,7 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 			return false;
 	entry.setRegistry(registry);
 	entry.setLocation(url);
+	InternalPlatform.addLastModifiedTime(location.getFile(), new File(location.getFile()).lastModified());
 	return true;
 }
 }

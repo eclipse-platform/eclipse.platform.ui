@@ -7,15 +7,17 @@ package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.LaunchInfo;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.model.*;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 public class RegistryCacheWriter {
 	// See RegistryCacheReader for constants commonly used here too.
@@ -593,6 +595,18 @@ public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream o
 		// add this object to the object table first
 		addToObjectTable(registry);
 		writeHeaderInformation(out);
+		// Now write out all the last modified times
+		writeLabel(RegistryCacheReader.REGISTRY_LAST_MOD_START, out);
+		Map regIndex = InternalPlatform.getRegIndex();
+		out.writeInt(regIndex.keySet().size());
+		for (Iterator list = regIndex.keySet().iterator(); list.hasNext();) {
+			String fileName = (String)list.next();
+			long lastMod = ((Long)regIndex.get(fileName)).longValue();
+			out.writeUTF(fileName);
+			out.writeLong(lastMod);
+		}
+		writeLabel(RegistryCacheReader.REGISTRY_LAST_MOD_END, out);
+	
 		String outString = null;
 
 		writeLabel(RegistryCacheReader.REGISTRY_LABEL, out);
