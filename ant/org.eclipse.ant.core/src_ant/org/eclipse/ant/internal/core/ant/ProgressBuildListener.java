@@ -11,8 +11,6 @@
 package org.eclipse.ant.internal.core.ant;
 
 import java.util.*;
-import java.util.Hashtable;
-import java.util.Iterator;
 
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.Ant;
