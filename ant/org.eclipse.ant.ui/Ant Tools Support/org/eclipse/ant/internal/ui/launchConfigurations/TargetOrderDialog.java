@@ -58,6 +58,9 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight= 10;
+		layout.marginWidth= 10;
+		
 		comp.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
@@ -87,6 +90,8 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	private void createButtons(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.verticalAlignment = GridData.BEGINNING;
 		comp.setLayout(layout);
