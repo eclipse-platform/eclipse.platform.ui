@@ -73,13 +73,13 @@ public abstract class StackPresentation {
 	public abstract void dispose();
 
 	/**
-	 * This is invoked notify the presentation that one of its parts
+	 * This is invoked to notify the presentation that one of its parts
 	 * has gained or lost keyboard focus. It should not change the part's focus.
 	 * Only one presentation may be active at a time.
 	 * <p>
 	 * This method relates specifically to keyboard focus, and should
-	 * not be confused with the notion of an "active" editor (which would
-	 * be the editor that most recently had focus if no editor currently
+	 * not be confused with the notion of an "active" part (which would
+	 * be the part that most recently had focus if no part currently
 	 * has focus). 
 	 * </p> 
 	 * 

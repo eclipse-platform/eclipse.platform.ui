@@ -398,8 +398,6 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param vertical
 	 */
 	public void drawGradient(Color fgColor, Color [] bgColors, int [] percentages, boolean vertical) {
-		Display display = tabFolder.getDisplay();
-		
 		tabFolder.setSelectionForeground(fgColor);
 		tabFolder.setSelectionBackground(bgColors, percentages, vertical);	
 	}
