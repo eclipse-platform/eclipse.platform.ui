@@ -368,11 +368,11 @@
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_synchronize_action_context"
                label="%Synchronize.label"
-               definitionId="org.eclipse.team.ui.synchronizeLast"
-               class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
                tooltip="%Synchronize.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
+               definitionId="org.eclipse.team.cvs.ui.sync"
                menubarPath="team.main/group1"
-               id="org.eclipse.team.ccvs.ui.sync">
+               id="org.eclipse.team.cvs.ui.sync">
          </action>
       </objectContribution>
       <objectContribution
@@ -1059,11 +1059,11 @@
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_synchronize_action_context"
                label="%Synchronize.label"
-               definitionId="org.eclipse.team.ui.synchronizeLast"
-               class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
                tooltip="%Synchronize.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
+               definitionId="org.eclipse.team.ui.synchronizeLast"
                menubarPath="cvs.main/group1"
-               id="org.eclipse.team.ui.synchronizeLast">
+               id="org.eclipse.team.cvs.ui.sync">
          </action>
       </actionSet>
    </extension>
@@ -1262,9 +1262,6 @@
       		handler="org.eclipse.team.internal.ccvs.ui.actions.UpdateSilentAction"
             commandId="org.eclipse.team.cvs.ui.update"/>
       <handlerSubmission
-      		commandId="org.eclipse.team.ui.synchronizeLast"
-            handler="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>
-      <handlerSubmission
             handler="org.eclipse.team.internal.ccvs.ui.actions.CheckoutWizardAction"
             commandId="org.eclipse.team.cvs.ui.checkout"/>
       <handlerSubmission
@@ -1272,7 +1269,7 @@
             commandId="org.eclipse.team.cvs.ui.compareWithRevision"/>
       <handlerSubmission
             handler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
-            commandId="org.eclipse.team.ccvs.ui.compareWithTag"/>
+            commandId="org.eclipse.team.cvs.ui.compareWithTag"/>
       <handlerSubmission
             handler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
             commandId="org.eclipse.team.cvs.ui.compareWithRemote"/>
@@ -1284,7 +1281,15 @@
             commandId="org.eclipse.team.cvs.ui.replaceWithRevision"/>
       <handlerSubmission
             handler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"
-            commandId="org.eclipse.team.cvs.ui.replace"/>      
+            commandId="org.eclipse.team.cvs.ui.replace"/>
+      <command
+            category="org.eclipse.team.cvs.ui.actionSet"
+            description="%Synchronize.tooltip"
+            name="%Synchronize.name"
+            id="org.eclipse.team.cvs.ui.sync"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
+            commandId="org.eclipse.team.cvs.ui.sync"/>      
    </extension>
    
 <!-- ********** Color and Font Definitions ************** -->   

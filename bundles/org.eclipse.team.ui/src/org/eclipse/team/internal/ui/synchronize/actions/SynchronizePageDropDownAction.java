@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
@@ -22,21 +21,13 @@ import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.texteditor.IUpdate;
 
-public class SynchronizePageDropDownAction extends Action implements IMenuCreator, ISynchronizeParticipantListener, IUpdate {
+public class SynchronizePageDropDownAction extends Action implements IMenuCreator, ISynchronizeParticipantListener {
 
 		private ISynchronizeView fView;
-		private Menu fMenu;
 		private Action synchronizeAction;
+		private MenuManager menuManager;
 	
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.texteditor.IUpdate#update()
-		 */
-		public void update() {
-			updateTooltipText();
-		}
-		
 		protected ISynchronizeParticipantReference[] getParticipants() {
 			return TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		}
@@ -57,19 +48,24 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 				}
 			};
 			synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
+			synchronizeAction.setActionDefinitionId("org.eclipse.team.ui.synchronizeAll"); //$NON-NLS-1$
 			setMenuCreator(this);		
-			update();
+			TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);
+			update();			
+			fView.getSite().getKeyBindingService().registerAction(synchronizeAction);
+			setActionDefinitionId("org.eclipse.team.ui.synchronizeLast"); //$NON-NLS-1$
+			fView.getSite().getKeyBindingService().registerAction(this);
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 		 */
 		public void dispose() {
-			if (fMenu != null) {
-				fMenu.dispose();
-				fMenu = null;
+			if(menuManager != null) {
+				menuManager.dispose();
+				menuManager = null;
 			}
-			TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
+			TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);	
 		}
 
 		/* (non-Javadoc)
@@ -83,19 +79,23 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 		 */
 		public Menu getMenu(Control parent) {
-			if (fMenu != null) {
-				fMenu.dispose();
-			}		
-			fMenu= new Menu(parent);
-			final ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
-			addParticipantsToMenu(fMenu, participants);
-			if(participants.length > 0) 	addMenuSeparator();
-			addActionToMenu(fMenu, synchronizeAction);
-			TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);	
+			Menu fMenu = null;
+			if (menuManager == null) {
+				menuManager = new MenuManager();
+				fMenu = menuManager.createContextMenu(parent);
+				final ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+				addParticipantsToMenu(participants);
+				if (participants.length > 0)
+					menuManager.add(new Separator());
+				menuManager.add(synchronizeAction);
+				menuManager.update(true);
+			} else {
+				fMenu = menuManager.getMenu();
+			}
 			return fMenu;
 		}
 	
-		protected void addParticipantsToMenu(Menu parent, ISynchronizeParticipantReference[] refs) {
+		protected void addParticipantsToMenu(ISynchronizeParticipantReference[] refs) {
 			ISynchronizeParticipant current = fView.getParticipant();
 			for (int i = 0; i < refs.length; i++) {
 				ISynchronizeParticipantReference page = refs[i];
@@ -106,17 +106,8 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 				} catch (TeamException e) {
 					continue;
 				}
-				addActionToMenu(fMenu, action);
+				menuManager.add(action);
 			}
-		}
-		
-		protected void addActionToMenu(Menu parent, Action action) {
-			ActionContributionItem item= new ActionContributionItem(action);
-			item.fill(parent, -1);
-		}
-
-		protected void addMenuSeparator() {
-			new MenuItem(fMenu, SWT.SEPARATOR);		
 		}
 
 		/* (non-Javadoc)
@@ -139,6 +130,10 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 			Display display = TeamUIPlugin.getStandardDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
+					if(menuManager != null) {
+						menuManager.dispose();
+						menuManager = null;
+					}
 					update();
 				}
 			});
@@ -151,15 +146,16 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 			Display display = TeamUIPlugin.getStandardDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
-					if (fMenu != null) {
-						fMenu.dispose();
+					if(menuManager != null) {
+						menuManager.dispose();
+						menuManager = null;
 					}
 					update();
 				}
 			});
 		}
 		
-		private void updateTooltipText() {
+		public void update() {
 			ISynchronizeParticipant current = fView.getParticipant();
 			ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 			String text = null;

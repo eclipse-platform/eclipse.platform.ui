@@ -21,6 +21,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -36,8 +37,6 @@ import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.commands.*;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.IHandlerListener;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -89,7 +88,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 						action.setToolTipText((String) val);
 					}
 				} else if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS)) {
-					if(action != null) {
+					if(action != null && retargetAction != null) {
 						action.setEnabled(retargetAction.isEnabled());
 					}
 				}
@@ -158,8 +157,11 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	public void dispose() {
 		super.dispose();
         getWindow().getPartService().removePartListener(retargetAction);
-        retargetAction.dispose();
-        retargetAction = null;
+        
+        if(retargetAction != null) {
+        	retargetAction.dispose();
+        	retargetAction = null;
+        }
 	}
 	
 	public void selectionChanged(final IAction action, ISelection selection) {
@@ -599,8 +601,18 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 			if(activeWorkbenchWindow!= null) {
 				IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 				if(activePage!= null) {
-					// Prime the action with the selection
-					selectionChanged((IAction)null, activePage.getSelection());
+					IWorkbenchPart part = activePage.getActivePart();
+					// If the action is run from within an editor, try and find the 
+					// file for the given editor.
+					if(part != null && part instanceof IEditorPart) {
+						Object input = ((IEditorPart)part).getEditorInput();
+						if(input instanceof IFileEditorInput) {
+							selectionChanged((IAction)null, new StructuredSelection(((IFileEditorInput)input).getFile()));
+						}
+					} else {						
+						// Fallback is to prime the action with the selection
+						selectionChanged((IAction)null, activePage.getSelection());
+					}
 					// Safe guard to ensure that the action is only run when enabled. 
 					if(isEnabled()) {
 						execute((IAction)null);

@@ -53,8 +53,6 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 				}
 			};
 			Utils.initAction(refreshSelectionAction, "action.refreshWithRemote."); //$NON-NLS-1$
-			refreshSelectionAction.setActionDefinitionId("org.eclipse.team.ui.synchronizeLast"); //$NON-NLS-1$
-			refreshSelectionAction.setId("org.eclipse.team.ui.synchronizeLast"); //$NON-NLS-1$
 		
 			configureSchedule = new Action() {
 				public void run() {

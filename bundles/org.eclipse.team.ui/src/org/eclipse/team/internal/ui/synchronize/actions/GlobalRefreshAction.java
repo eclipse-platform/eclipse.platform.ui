@@ -14,7 +14,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
@@ -39,7 +38,8 @@ import org.eclipse.ui.commands.*;
 public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate, ISynchronizeParticipantListener {
 
 	public final static String NO_DEFAULT_PARTICPANT = "none"; //$NON-NLS-1$
-	private Menu fMenu;
+	
+	private MenuManager menuManager;
 	private Action synchronizeAction;
 	private IWorkbenchWindow window;
 	private IAction actionProxy;
@@ -71,11 +71,12 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			}
 		};
 		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
+		synchronizeAction.setActionDefinitionId("org.eclipse.team.ui.synchronizeAll"); //$NON-NLS-1$
 		
 		// hook up actions to the commands
 		IHandler handler = new ActionHandler(synchronizeAction);
         syncAll = new HandlerSubmission(null,
-                null, null, "org.eclipse.team.ui.synchronizeAll", handler, Priority.MEDIUM);	 //$NON-NLS-1$
+                null, null, "org.eclipse.team.ui.synchronizeAll", handler, Priority.LOW);	 //$NON-NLS-1$
 		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(syncAll);
 				
 		handler = new ActionHandler(this);
@@ -92,10 +93,14 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
 	public void dispose() {
-		if (fMenu != null) {
-			fMenu.dispose();
+		if(menuManager != null) {
+			menuManager.dispose();
 		}
+		
+		// participant listener
 		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
+		
+		// handlers
 		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(syncAll);
 		syncAll.getHandler().dispose();
 		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(syncLatest);
@@ -115,28 +120,24 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
 	public Menu getMenu(Control parent) {
-		if (fMenu != null) {
-			fMenu.dispose();
+		Menu fMenu = null;
+		if (menuManager == null) {
+			menuManager = new MenuManager();
+			fMenu = menuManager.createContextMenu(parent);
+			menuManager.removeAll();
+			ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+			for (int i = 0; i < participants.length; i++) {
+				ISynchronizeParticipantReference description = participants[i];
+				Action action = new RefreshParticipantAction(i + 1, description);
+				menuManager.add(action);
+			}
+			if (participants.length > 0)
+				menuManager.add(new Separator());
+			menuManager.add(synchronizeAction);
+		} else {
+			fMenu = menuManager.getMenu();
 		}
-		fMenu = new Menu(parent);
-		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
-		for (int i = 0; i < participants.length; i++) {
-			ISynchronizeParticipantReference description = participants[i];
-			Action action = new RefreshParticipantAction(i + 1, description);
-			addActionToMenu(fMenu, action);
-		}
-		if(participants.length > 0) addMenuSeparator();
-		addActionToMenu(fMenu, synchronizeAction);
 		return fMenu;
-	}
-
-	protected void addActionToMenu(Menu parent, Action action) {
-		ActionContributionItem item = new ActionContributionItem(action);
-		item.fill(parent, -1);
-	}
-
-	protected void addMenuSeparator() {
-		new MenuItem(fMenu, SWT.SEPARATOR);
 	}
 
 	/*
@@ -187,6 +188,10 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		Display display = TeamUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
+				if(menuManager != null) {
+					menuManager.dispose();
+					menuManager = null;
+				}
 				updateTooltipText();
 			}
 		});
@@ -199,8 +204,9 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		Display display = TeamUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				if (fMenu != null) {
-					fMenu.dispose();
+				if(menuManager != null) {
+					menuManager.dispose();
+					menuManager = null;
 				}
 				updateTooltipText();
 			}
