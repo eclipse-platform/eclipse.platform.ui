@@ -12,7 +12,7 @@
 a content type represents a file format and its naming conventions. Content types can be defined from scratch, or can inherit from existing ones, specializing them
 &lt;/li&gt;
 &lt;li&gt;
-a file association allows extends an existing content type by associating new file names and/or extensions to it&lt;/li&gt;&lt;/ul&gt;
+a file association extends an existing content type by associating new file names and/or extensions to it&lt;/li&gt;&lt;/ul&gt;
       </documentation>
    </annotation>
 
@@ -196,11 +196,11 @@ a file association allows extends an existing content type by associating new fi
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
       &lt;content-type id=&quot;ABC&quot;
-      	base-type=&quot;org.eclipse.core.runtime.xml&quot;      
-      	file-extensions=&quot;a,b,c&quot;&gt;
-      	&lt;describer class=&quot;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&quot;&gt;
-      		&lt;param name=&quot;element&quot; value=&quot;abc&quot;/&gt;
-      	&lt;/describer&gt;
+       base-type=&quot;org.eclipse.core.runtime.xml&quot;      
+       file-extensions=&quot;a,b,c&quot;&gt;
+       &lt;describer class=&quot;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&quot;&gt;
+        &lt;param name=&quot;element&quot; value=&quot;abc&quot;/&gt;
+       &lt;/describer&gt;
       &lt;/content-type&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -210,8 +210,8 @@ Here is an example of a simple text-based content type that has a specific file 
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
       &lt;content-type id=&quot;MyText&quot;
-      	base-type=&quot;org.eclipse.core.runtime.text&quot;
-      	file-extensions=&quot;mytxt&quot;/&gt;
+       base-type=&quot;org.eclipse.core.runtime.text&quot;
+       file-extensions=&quot;mytxt&quot;/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -220,8 +220,8 @@ In a case like the example above, when we are just trying to associate new file 
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
       &lt;file-association 
-      	content-type=&quot;org.eclipse.core.runtime.text&quot;
-      	file-extensions=&quot;mytxt&quot;/&gt;
+       content-type=&quot;org.eclipse.core.runtime.text&quot;
+       file-extensions=&quot;mytxt&quot;/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
