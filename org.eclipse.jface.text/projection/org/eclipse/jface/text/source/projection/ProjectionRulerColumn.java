@@ -153,33 +153,37 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 */
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		Control control= super.createControl(parentRuler, parentControl);
+		
 		// set background
 		Display display= parentControl.getDisplay();
 		Color background= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		control.setBackground(background);
+		
 		// install hover listener
 		control.addMouseTrackListener(new MouseTrackAdapter() {
-			public void mouseHover(MouseEvent e) {
-				boolean redraw= clearCurrentAnnotation();
-				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y));
-				if (annotation != null && !annotation.isCollapsed()) {
-					annotation.setRangeIndication(true);
-					fCurrentAnnotation= annotation;
-					redraw= true;
-				}
-				if (redraw)
-					redraw();
-
-			}
 			public void mouseExit(MouseEvent e) {
 				if (clearCurrentAnnotation())
 					redraw();
 			}
 		});
+		
 		// install mouse move listener
 		control.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
-				if (clearCurrentAnnotation())
+				boolean redraw= false;
+				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y));
+				if (annotation != fCurrentAnnotation) {
+					if (fCurrentAnnotation != null) {
+						fCurrentAnnotation.setRangeIndication(false);
+						redraw= true;
+					}
+					fCurrentAnnotation= annotation;
+					if (fCurrentAnnotation != null && !fCurrentAnnotation.isCollapsed()) {
+						fCurrentAnnotation.setRangeIndication(true);
+						redraw= true;
+					}
+				}
+				if (redraw)
 					redraw();
 			}
 		});
