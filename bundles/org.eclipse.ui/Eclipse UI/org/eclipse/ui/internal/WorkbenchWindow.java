@@ -695,8 +695,9 @@ public boolean isApplicationMenu(String menuID) {
  */
 public boolean okToClose() {
 	// Save all of the editors.
-	if (!saveAllPages(true))
-		return false;
+	if(!workbench.isClosing())
+		if (!saveAllPages(true))
+			return false;
 	return true;
 }
 /**

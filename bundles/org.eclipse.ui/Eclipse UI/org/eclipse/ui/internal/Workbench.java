@@ -104,7 +104,33 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
-				isClosing = windowManager.close();
+				//Collect dirtyEditors
+				ArrayList dirtyEditors = new ArrayList();
+				ArrayList dirtyEditorsInput = new ArrayList();
+				IWorkbenchWindow windows[] = getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					IWorkbenchPage pages[] = windows[i].getPages();
+					for (int j = 0; j < pages.length; j++) {
+						IEditorPart editors[] = pages[j].getEditors();
+						for (int k = 0; k < editors.length; k++) {
+							IEditorPart editor = editors[k];
+							if(editor.isDirty()) {
+								if(!dirtyEditorsInput.contains(editor.getEditorInput())) {
+									dirtyEditors.add(editor);
+									dirtyEditorsInput.add(editor.getEditorInput());
+								}
+							}
+						}
+					}
+				}
+				if(dirtyEditors.size() > 0) {
+					IWorkbenchWindow w = getActiveWorkbenchWindow();
+					if(w == null)
+						w = windows[0];
+					isClosing = EditorManager.saveAll(dirtyEditors,true,w);					
+				}
+				if(isClosing)
+					isClosing = windowManager.close();
 			}
 		});
 

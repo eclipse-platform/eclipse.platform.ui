@@ -687,7 +687,7 @@ public class EditorManager {
 	 * Runs a progress monitor operation.
 	 * Returns true if success, false if cancelled.
 	 */
-	private boolean runProgressMonitorOperation(String opName, IRunnableWithProgress progressOp) {
+	private static boolean runProgressMonitorOperation(String opName, IRunnableWithProgress progressOp,IWorkbenchWindow window) {
 		ProgressMonitorDialog dlg = new ProgressMonitorDialog(window.getShell());
 		try {
 			dlg.run(false, true, progressOp);
@@ -715,31 +715,35 @@ public class EditorManager {
 			return true;
 
 		// If confirmation is required ..
+		return saveAll(dirtyEditors,confirm,window); //$NON-NLS-1$
+	}
+	
+	public static boolean saveAll(List dirtyEditors,boolean confirm,final IWorkbenchWindow window) {
 		if (confirm) {
 			// Convert the list into an element collection.
 			AdaptableList input = new AdaptableList();
 			input.add(dirtyEditors.iterator());
-
+		
 			ListSelectionDialog dlg =
 				new ListSelectionDialog(window.getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
-
+		
 			dlg.setInitialSelections(dirtyEditors.toArray(new Object[dirtyEditors.size()]));
 			dlg.setTitle(SAVE_RESOURCES_TITLE);
 			int result = dlg.open();
-
+		
 			//Just return false to prevent the operation continuing
 			if (result == IDialogConstants.CANCEL_ID)
 				return false;
-
+		
 			dirtyEditors = Arrays.asList(dlg.getResult());
 			if (dirtyEditors == null)
 				return false;
-
+		
 			// If the editor list is empty return.
 			if (dirtyEditors.size() == 0)
 				return true;
 		}
-
+		
 		// Create save block.
 		final List finalEditors = dirtyEditors;
 		final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
@@ -767,9 +771,9 @@ public class EditorManager {
 				}
 			}
 		};
-
+		
 		// Do the save.
-		return runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp); //$NON-NLS-1$
+		return runProgressMonitorOperation(WorkbenchMessages.getString("Save_All"), progressOp,window);
 	}
 	/**
 	 * Save and close an editor.
@@ -786,8 +790,9 @@ public class EditorManager {
 			String message = WorkbenchMessages.format("EditorManager.saveChangesQuestion", new Object[] { part.getTitle()}); //$NON-NLS-1$
 			// Show a dialog.
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-				MessageDialog d = new MessageDialog(window.getShell(), WorkbenchMessages.getString("Save_Resource"), //$NON-NLS-1$
-	null, message, MessageDialog.QUESTION, buttons, 0);
+				MessageDialog d = new MessageDialog(
+					window.getShell(), WorkbenchMessages.getString("Save_Resource"), //$NON-NLS-1$
+					null, message, MessageDialog.QUESTION, buttons, 0);
 			int choice = d.open();
 
 			// Branch on the user choice.
@@ -812,7 +817,7 @@ public class EditorManager {
 		};
 
 		// Do the save.
-		return runProgressMonitorOperation(WorkbenchMessages.getString("Save"), progressOp); //$NON-NLS-1$
+		return runProgressMonitorOperation(WorkbenchMessages.getString("Save"), progressOp,window); //$NON-NLS-1$
 	}
 	/**
 	 * @see IPersistablePart
