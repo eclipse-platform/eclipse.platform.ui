@@ -18,14 +18,23 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.swt.graphics.RGB;
 
+/*
+ * @see org.eclipse.jface.text.source.ISharedTextColors
+ * @since 2.1
+ */
 class SharedTextColors implements ISharedTextColors {
 
+	/** The display table. */
 	private Map fDisplayTable;
 
+	/** Creates an returns a shared color manager. */
 	public SharedTextColors() {
 		super();
 	}
 
+	/*
+	 * @see ISharedTextColors#getColor(RGB)
+	 */
 	public Color getColor(RGB rgb) {
 		if (rgb == null)
 			return null;
@@ -50,6 +59,9 @@ class SharedTextColors implements ISharedTextColors {
 		return color;
 	}
 
+	/*
+	 * @see ISharedTextColors#dispose()
+	 */
 	public void dispose() {
 		if (fDisplayTable != null) {
 			Iterator j= fDisplayTable.values().iterator();

@@ -14,8 +14,9 @@ package org.eclipse.ui.editors.text;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 
 /**
- * Help context ids for the text editor. <p>
- * This interface contains constants only; it is not intended to be implemented.
+ * Help context ids for the text editor.
+ * <p>
+ * This interface contains constants only; it is not intended to be implemented.</p>
  */
 public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContextIds {
 	

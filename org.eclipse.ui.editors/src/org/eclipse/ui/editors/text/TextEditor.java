@@ -87,46 +87,79 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  */
 public class TextEditor extends StatusTextEditor {
 	
-	/** Preference key for showing the line number ruler */
+	/**
+	 * Preference key for showing the line number ruler.
+	 * @since 2.1
+	 */
 	private final static String LINE_NUMBER_RULER= TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
-	/** Preference key for the foreground color of the line numbers */
+	/**
+	 * Preference key for the foreground color of the line numbers.
+	 * @since 2.1
+	 */
 	private final static String LINE_NUMBER_COLOR= TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
-	/** Preference key for showing the overview ruler */
+	/**
+	 * Preference key for showing the overview ruler.
+	 * @since 2.1
+	 */
 	private final static String OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
-	/** Preference key for unknown annotation indication in overview ruler */
+	/**
+	 * Preference key for unknown annotation indication in overview ruler.
+	 * @since 2.1
+	 **/
 	private final static String UNKNOWN_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for unknown annotation indication */
+	/**
+	 * Preference key for unknown annotation indication.
+	 * @since 2.1
+	 **/
 	private final static String UNKNOWN_INDICATION= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION;
-	/** Preference key for unknown annotation color */
+	/**
+	 * Preference key for unknown annotation color.
+	 * @since 2.1
+	 **/
 	private final static String UNKNOWN_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR;
-	/** Preference key for highlighting current line */
+	/**
+	 * Preference key for highlighting current line.
+	 * @since 2.1
+	 */
 	private final static String CURRENT_LINE= TextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
-	/** Preference key for highlight color of current line */
+	/**
+	 * Preference key for highlight color of current line.
+	 * @since 2.1
+	 */
 	private final static String CURRENT_LINE_COLOR= TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
-	/** Preference key for showing print marging ruler */
+	/**
+	 * Preference key for showing print marging ruler.
+	 * @since 2.1
+	 */
 	private final static String PRINT_MARGIN= TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
-	/** Preference key for print margin ruler color */
+	/**
+	 * Preference key for print margin ruler color.
+	 * @since 2.1
+	 */
 	private final static String PRINT_MARGIN_COLOR= TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
-	/** Preference key for print margin ruler column */
+	/**
+	 * Preference key for print margin ruler column.
+	 * @since 2.1
+	 **/
 	private final static String PRINT_MARGIN_COLUMN= TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
 
 	/** 
-	 * The overview ruler of this editor
+	 * The overview ruler of this editor.
 	 * @since 2.1
 	 */
 	protected IOverviewRuler fOverviewRuler;
 	/**
-	 * Helper for accessing annotation from the perspective of this editor
+	 * Helper for accessing annotation from the perspective of this editor.
 	 * @since 2.1
 	 */
 	protected IAnnotationAccess fAnnotationAccess;
 	/**
-	 * Helper for managing the decoration support of this editor's viewer
+	 * Helper for managing the decoration support of this editor's viewer.
 	 * @since 2.1
 	 */
 	protected SourceViewerDecorationSupport fSourceViewerDecorationSupport;
 	/**
-	 * The line number column
+	 * The line number column.
 	 * @since 2.1
 	 */
 	protected LineNumberRulerColumn fLineNumberRulerColumn;
@@ -165,6 +198,7 @@ public class TextEditor extends StatusTextEditor {
 
 	/**
 	 * Initializes the key binding scopes of this editor.
+	 * @since 2.1
 	 */
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { "org.eclipse.ui.textEditorScope" });  //$NON-NLS-1$
@@ -217,6 +251,7 @@ public class TextEditor extends StatusTextEditor {
  	 * Subclasses may override to install their own encoding
  	 * support or to disable the default encoding support.
  	 * </p>
+	 * @since 2.1
 	 */
 	protected void installEncodingSupport() {
 		fEncodingSupport= new DefaultEncodingSupport();
@@ -227,6 +262,7 @@ public class TextEditor extends StatusTextEditor {
 	 * Asks the user if it is ok to store in non-workbench encoding.
 	 * 
 	 * @return <true> if the user wants to continue or if no encoding support has been installed
+	 * @since 2.1
 	 */
 	private boolean askIfNonWorkbenchEncodingIsOk() {
 		
@@ -473,6 +509,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	 * @since 2.1
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		
@@ -497,11 +534,15 @@ public class TextEditor extends StatusTextEditor {
 	/**
 	 * Creates the annotation access for this editor.
 	 * @return the created annotation access
+	 * @since 2.1
 	 */
 	protected IAnnotationAccess createAnnotationAccess() {
 		return new DefaultMarkerAnnotationAccess(fAnnotationPreferences);
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	protected void configureSourceViewerDecorationSupport() {
 
 		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
@@ -514,6 +555,9 @@ public class TextEditor extends StatusTextEditor {
 		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	private void showOverviewRuler() {
 		if (getSourceViewer() instanceof ISourceViewerExtension) {
 			((ISourceViewerExtension) getSourceViewer()).showAnnotationsOverview(true);
@@ -521,6 +565,9 @@ public class TextEditor extends StatusTextEditor {
 		}
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	private void hideOverviewRuler() {
 		if (getSourceViewer() instanceof ISourceViewerExtension) {
 			fSourceViewerDecorationSupport.hideAnnotationOverview();
@@ -528,6 +575,9 @@ public class TextEditor extends StatusTextEditor {
 		}
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	protected boolean isOverviewRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(OVERVIEW_RULER) : false;
@@ -535,6 +585,7 @@ public class TextEditor extends StatusTextEditor {
 
 	/**
 	 * Shows the line number ruler column.
+	 * @since 2.1
 	 */
 	private void showLineNumberRuler() {
 		if (fLineNumberRulerColumn == null) {
@@ -548,6 +599,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/**
 	 * Hides the line number ruler column.
+	 * @since 2.1
 	 */
 	private void hideLineNumberRuler() {
 		if (fLineNumberRulerColumn != null) {
@@ -564,6 +616,7 @@ public class TextEditor extends StatusTextEditor {
 	 * Return whether the line number ruler column should be 
 	 * visible according to the preference store settings.
 	 * @return <code>true</code> if the line numbers should be visible
+	 * @since 2.1
 	 */
 	private boolean isLineNumberRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
@@ -573,6 +626,7 @@ public class TextEditor extends StatusTextEditor {
 	/**
 	 * Initializes the given line number ruler column from the preference store.
 	 * @param rulerColumn the ruler column to be initialized
+	 * @since 2.1
 	 */
 	protected void initializeLineNumberRulerColumn(LineNumberRulerColumn rulerColumn) {
 		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
@@ -608,6 +662,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/**
 	 * Creates a new line number ruler column that is appropriately initialized.
+	 * @since 2.1
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
 		fLineNumberRulerColumn= new LineNumberRulerColumn();
@@ -617,6 +672,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see AbstractTextEditor#createVerticalRuler()
+	 * @since 2.1
 	 */
 	protected IVerticalRuler createVerticalRuler() {
 		CompositeRuler ruler= new CompositeRuler();
@@ -628,6 +684,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see AbstractTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
+	 * @since 2.1
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		
@@ -670,6 +727,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 * @since 2.1
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);

@@ -13,6 +13,7 @@ package org.eclipse.ui.editors.text;
 
 /**
  * Interface to be implemented by objects supporting character encodings.
+ * 
  * @since 2.0
  */
 public interface IEncodingSupport{

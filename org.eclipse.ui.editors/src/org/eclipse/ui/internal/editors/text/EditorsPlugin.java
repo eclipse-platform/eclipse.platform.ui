@@ -24,7 +24,10 @@ import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * EditorsPlugin.java
+ * Represents the editors plug-in. It provides a series of convenience methods such as
+ * access to the shared text colors and the log.
+ * 
+ * @since 2.1
  */
 public class EditorsPlugin extends AbstractUIPlugin {
 	

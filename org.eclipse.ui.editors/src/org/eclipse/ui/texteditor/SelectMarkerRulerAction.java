@@ -48,7 +48,7 @@ import org.eclipse.ui.views.tasklist.TaskList;
 
 /**
  * A ruler action which can select the textual range of a marker 
- * that has a visual  representation in the vertical ruler.
+ * that has a visual representation in a vertical ruler.
  * <p>
  * This class may be instantiated but is not intended for subclassing.
  * </p>
@@ -178,7 +178,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Returns the <code>AbstractMarkerAnnotationModel</code> of the editor's input.
 	 *
-	 * @return the marker annotation model
+	 * @return the marker annotation model or <code>null</code> if there's none
 	 */
 	protected AbstractMarkerAnnotationModel getAnnotationModel() {
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
@@ -224,7 +224,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Handles core exceptions. This implementation logs the exceptions
-	 * with the workbech plugin and shows an error dialog.
+	 * with the workbech plug-in and shows an error dialog.
 	 *
 	 * @param exception the exception to be handled
 	 * @param message the message to be logged with the given exception
@@ -248,7 +248,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Returns all markers which include the ruler's line of activity.
 	 *
-	 * @return all markers which include the ruler's line of activity
+	 * @return a list with all markers which include the ruler's line of activity
 	 */
 	protected List getMarkers() {
 

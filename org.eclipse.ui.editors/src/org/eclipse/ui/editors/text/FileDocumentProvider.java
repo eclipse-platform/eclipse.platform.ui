@@ -56,6 +56,9 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
  */
 public class FileDocumentProvider extends StorageDocumentProvider {
 
+	/**
+	 * @since 2.1
+	 */
 	private static final QualifiedName ENCODING_KEY = new QualifiedName("org.eclipse.ui.editors", "encoding"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
@@ -111,7 +114,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/** The file editor input */
 		protected IFileEditorInput fFileEditorInput;
-		/** A flag indicating whether this synchronizer is installed or not. */
+		/**
+		 * A flag indicating whether this synchronizer is installed or not.
+		 * @since 2.1
+		 */
 		protected boolean fIsInstalled= false;
 		
 		/**
@@ -685,6 +691,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @param file
 	 * @throws CoreException
+	 * @since 2.1
 	 */
 	protected void refreshFile(IFile file) throws CoreException {
 		try {
@@ -695,6 +702,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	// --------------- Encoding support ---------------
 	
+	/**
+	 * @since 2.1
+	 */
 	protected String getPersistedEncoding(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput editorInput= (IFileEditorInput)element;
@@ -709,6 +719,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return null;
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput editorInput= (IFileEditorInput)element;

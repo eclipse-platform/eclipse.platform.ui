@@ -14,6 +14,12 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * Helper class which wraps the specified resource bundle
+ * and offers methods to access the bundle.
+ * 
+ * @since 2.1
+ */
 class TextEditorMessages {
 
 	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.internal.editors.text.TextEditorMessages";//$NON-NLS-1$

@@ -50,8 +50,12 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
-/*
- * The page for setting the editor options.
+/**
+ * The preference page for setting the editor options.
+ * <p>
+ * This class is internal and not intended to be used by clients.</p>
+ * 
+ * @since 2.1
  */
 public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
 		

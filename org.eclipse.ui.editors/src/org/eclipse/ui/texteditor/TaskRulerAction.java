@@ -44,8 +44,8 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 		 * @param prefix a prefix to be prepended to the various resource keys
 		 *   (described in <code>ResourceAction</code> constructor), or 
 		 *   <code>null</code> if none
-		 * @param editor the editor
-		 * @param ruler the ruler
+		 * @param editor the text editor
+		 * @param ruler the vertical ruler info
 		 * @see ResourceAction#ResourceAction
 		 */
 		public TaskMarkerRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {

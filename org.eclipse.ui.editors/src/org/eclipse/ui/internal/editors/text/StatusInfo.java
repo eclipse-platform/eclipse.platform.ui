@@ -18,23 +18,28 @@ import org.eclipse.jface.util.Assert;
  * A settable IStatus. 
  * Can be an error, warning, info or ok. For error, info and warning states,
  * a message describes the problem.
+ * 
+ * @since 2.1
  */
 class StatusInfo implements IStatus {
-	
+
+	/** The message of this status.  */	
 	private String fStatusMessage;
+	/** The severity of this status. */
 	private int fSeverity;
 	
 	/**
-	 * Creates a status set to OK (no message)
+	 * Creates a status set to OK (no message).
 	 */
 	public StatusInfo() {
 		this(OK, null);
 	}
 
 	/**
-	 * Creates a status .
-	 * @param severity The status severity: ERROR, WARNING, INFO and OK.
-	 * @param message The message of the status. Applies only for ERROR,
+	 * Creates a status with the given severity and message.
+	 * 
+	 * @param severity the severity of this status: ERROR, WARNING, INFO and OK.
+	 * @param message the message of this status. Applies only for ERROR,
 	 * WARNING and INFO.
 	 */	
 	public StatusInfo(int severity, String message) {
@@ -70,8 +75,8 @@ class StatusInfo implements IStatus {
 		return fSeverity == IStatus.ERROR;
 	}
 	
-	/**
-	 * @see IStatus#getMessage
+	/*
+	 * @see IStatus#getMessage()
 	 */
 	public String getMessage() {
 		return fStatusMessage;
@@ -79,7 +84,8 @@ class StatusInfo implements IStatus {
 	
 	/**
 	 * Sets the status to ERROR.
-	 * @param The error message (can be empty, but not null)
+	 * 
+	 * @param the error message which can be an empty string, but not <code>null</code>
 	 */	
 	public void setError(String errorMessage) {
 		Assert.isNotNull(errorMessage);
@@ -89,7 +95,8 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Sets the status to WARNING.
-	 * @param The warning message (can be empty, but not null)
+	 * 
+	 * @param the warning message which can be an empty string, but not <code>null</code>
 	 */		
 	public void setWarning(String warningMessage) {
 		Assert.isNotNull(warningMessage);
@@ -99,7 +106,8 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Sets the status to INFO.
-	 * @param The info message (can be empty, but not null)
+	 * 
+	 * @param the info message which can be an empty string, but not <code>null</code>
 	 */		
 	public void setInfo(String infoMessage) {
 		Assert.isNotNull(infoMessage);
@@ -124,6 +132,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always <code>false</code>.
+	 * 
 	 * @see IStatus#isMultiStatus()
 	 */
 	public boolean isMultiStatus() {
@@ -146,6 +155,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always <code>null</code>.
+	 * 
 	 * @see IStatus#getException()
 	 */
 	public Throwable getException() {
@@ -154,6 +164,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always the error severity.
+	 * 
 	 * @see IStatus#getCode()
 	 */
 	public int getCode() {
@@ -162,6 +173,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always <code>null</code>.
+	 * 
 	 * @see IStatus#getChildren()
 	 */
 	public IStatus[] getChildren() {

@@ -46,7 +46,11 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
  */
 public class StorageDocumentProvider extends AbstractDocumentProvider implements IStorageDocumentProvider {
 	
-	/** Default file size. */
+	/**
+	 * Default file size.
+	 * 
+	 * @since 2.1
+	 */
 	protected final static int DEFAULT_FILE_SIZE= 15 * 1024;
 	
 	
@@ -185,6 +189,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	/**
 	 * Factory method for creating empty documents.
 	 * @return the newly created document
+	 * @since 2.1
 	 */
 	protected IDocument createEmptyDocument() {
 		return new Document();
@@ -375,6 +380,8 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 
 	/**
 	 * Gets the persited encoding.
+	 * 
+	 * @since 2.1
 	 */
 	protected String getPersistedEncoding(Object element) {
 		// Default is to do use return the default encoding
@@ -383,6 +390,8 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 
 	/**
 	 * Persists the current encoding.
+	 * 
+	 * @since 2.1
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {
 		// Default is to do nothing

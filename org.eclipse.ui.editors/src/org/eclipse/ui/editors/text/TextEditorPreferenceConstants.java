@@ -24,7 +24,8 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
  * Preference constants used in the default text editor preference store.
-  */
+ * @since 2.1
+ */
 public class TextEditorPreferenceConstants {
 	
 

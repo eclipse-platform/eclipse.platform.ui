@@ -21,23 +21,23 @@ package org.eclipse.ui.editors.text;
 public interface IStorageDocumentProvider {
 	
 	/**
-	 * Returns the default character encoding used by this provider for reading.
+	 * Returns the default character encoding used by this provider.
 	 * 
-	 * @return the default character encoding used  by this provider for reading
+	 * @return the default character encoding used by this provider
 	 */
 	String getDefaultEncoding();
 	
 	/**
-	 * Returns the character encoding for reading the given element, or 
+	 * Returns the character encoding for the given element, or 
 	 * <code>null</code> if the element is not managed by this provider.
 	 * 
 	 * @param element the element
-	 * @return the encoding for reading the given element
+	 * @return the encoding for the given element
 	 */
 	String getEncoding(Object element);
 	
 	/**
-	 * Sets the encoding for reading the given element. If <code>encoding</code>
+	 * Sets the encoding for the given element. If <code>encoding</code>
 	 * is <code>null</code> the workbench's character encoding should be used.
 	 * 
 	 * @param element the element

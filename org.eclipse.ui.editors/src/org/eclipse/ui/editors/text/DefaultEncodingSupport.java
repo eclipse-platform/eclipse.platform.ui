@@ -167,6 +167,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	
 	/**
 	 * Returns a status header for the given status.
+	 * 
 	 * @param status the status
 	 * @return a status header for the given status.
 	 */
@@ -183,7 +184,8 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	}
 	
 	/**
-	 * Returns a banner for the given status
+	 * Returns a banner for the given status.
+	 * 
 	 * @param status the status
 	 * @return a banner for the given status.
 	 */
@@ -201,10 +203,10 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	}
 	
 	/**
-	 * Returns a status message for the given status indicating encoding problems or <code>null</code> otherwise.
+	 * Returns a status message if any.
 	 * 
 	 * @param status the status
-	 * @return a status message indicating encoding problems
+	 * @return a status message indicating encoding problems or <code>null</code> otherwise
 	 */
 	public String getStatusMessage(IStatus status) {
 		Throwable t= status.getException();

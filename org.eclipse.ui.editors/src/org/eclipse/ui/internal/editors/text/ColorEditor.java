@@ -31,15 +31,27 @@ import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * A "button" of a certain color determined by the color picker.
+ * 
+ * @since 2.1
  */
 class ColorEditor {
 	
+	/** The extent. */
 	private Point fExtent;
+	/** The image for the push button. */
 	private Image fImage;
+	/** The current RGB color value. */
 	private RGB fColorValue;
+	/** The current color. */
 	private Color fColor;
+	/** The image push button which open the color dialog. */
 	private Button fButton;
 	
+	/**
+	 * Creates and returns a new color editor.
+	 * 
+	 * @param parent the parent composite of this color editor
+	 */
 	public ColorEditor(Composite parent) {
 		
 		fButton= new Button(parent, SWT.PUSH);
@@ -78,19 +90,37 @@ class ColorEditor {
 		});
 	}
 	
+	/**
+	 * Returns the current RGB color value.
+	 * 
+	 * @return an rgb with the current color value
+	 */
 	public RGB getColorValue() {
 		return fColorValue;
 	}
 	
+	/**
+	 * Sets the current RGB color value.
+	 * 
+	 * @param rgb the new value for the rgb color value
+	 */
 	public void setColorValue(RGB rgb) {
 		fColorValue= rgb;
 		updateColorImage();
 	}
 	
+	/**
+	 * Returns the image push button.
+	 * 
+	 * @return the button which shows the current color as image
+	 */
 	public Button getButton() {
 		return fButton;
 	}
 	
+	/**
+	 * Updates the color of the button image.
+	 */
 	protected void updateColorImage() {
 		
 		Display display= fButton.getDisplay();
@@ -110,6 +140,13 @@ class ColorEditor {
 		fButton.setImage(fImage);
 	}
 	
+	
+	/**
+	 * Computes the size for the image.
+	 * 
+	 * @param window the window on which to render the image
+	 * @return the point with the image size
+	 */
 	protected Point computeImageSize(Control window) {
 		GC gc= new GC(window);
 		Font f= JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);

@@ -47,7 +47,7 @@ public class EncodingActionGroup extends ActionGroup {
 		
 		/** The target encoding of this action. */
 		private String fEncoding;
-		/** The action label */
+		/** The action label. */
 		private String fLabel;
 		/** Indicates whether the target encoding is the default encoding. */
 		private boolean fIsDefault;
@@ -85,7 +85,7 @@ public class EncodingActionGroup extends ActionGroup {
 		/**
 		 * Returns the encoding support of the action's editor.
 		 * 
-		 * @return the encoding support of the action's editor
+		 * @return the encoding support of the action's editor or <code>null</code> if none
 		 */
 		private IEncodingSupport getEncodingSupport() {
 			ITextEditor editor= getTextEditor();
@@ -107,7 +107,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * Returns the encoding currently used in the given editor.
 		 * 
 		 * @param editor the editor
-		 * @return the encoding currently used in the given editor
+		 * @return the encoding currently used in the given editor or <code>null</code> if no encoding support is installed
 		 */		
 		private String getEncoding(ITextEditor editor) {
 			IEncodingSupport s= getEncodingSupport();
@@ -120,7 +120,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * Returns the default encoding for the given editor.
 		 * 
 		 * @param editor the editor
-		 * @return the default encoding for the given editor
+		 * @return the default encoding for the given editor or <code>null</code> if no encoding support is installed
 		 */
 		private String getDefaultEncoding(ITextEditor editor) {
 			IEncodingSupport s= getEncodingSupport();
@@ -187,12 +187,7 @@ public class EncodingActionGroup extends ActionGroup {
 			ITextEditor editor= getTextEditor();
 			setEnabled(editor != null && !editor.isDirty());
 		}
-		
 
-
-
-
-		
 		/*
 		 * @see IAction#run()
 		 */
@@ -227,13 +222,13 @@ public class EncodingActionGroup extends ActionGroup {
 	};
 	
 		
-	/** Suffix added to the default encoding action */
+	/** Suffix added to the default encoding action. */
 	private static final String DEFAULT_SUFFIX= " " + TextEditorMessages.getString("Editor.ConvertEncoding.default_suffix"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	/** List of predefined encodings */
+	/** List of predefined encodings. */
 	private static final String[][] ENCODINGS;
 	
-	/** The default encoding */
+	/** The default encoding. */
 	private static final String SYSTEM_ENCODING;
 	
 	/**
@@ -275,7 +270,7 @@ public class EncodingActionGroup extends ActionGroup {
 	
 	
 	
-	/** List of encoding actions of this group */
+	/** List of encoding actions of this group. */
 	private List fRetargetActions= new ArrayList();
 	
 	/**
@@ -295,7 +290,7 @@ public class EncodingActionGroup extends ActionGroup {
 	}
 	
 	/*
-	 * @see ActionGroup#fillActionBars(IActionBars)
+	 * @see ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		IMenuManager menuManager= actionBars.getMenuManager(); 
@@ -314,7 +309,7 @@ public class EncodingActionGroup extends ActionGroup {
 	/**
 	 * Retargets this action group to the given editor.
 	 * 
-	 * @param editor the target editor
+	 * @param editor the text editor to which the group should be retargeted
 	 */
 	public void retarget(ITextEditor editor) {
 		Iterator e= fRetargetActions.iterator();
@@ -328,13 +323,13 @@ public class EncodingActionGroup extends ActionGroup {
 	//------------------------------------------------------------------------------------------
 		
 	
-	/** Text editor this group is associated with */
+	/** Text editor this group is associated with. */
 	private ITextEditor fTextEditor;
 	
 	/**
-	 * Creates a new encoding action group for the given editor
+	 * Creates a new encoding action group for the given editor.
 	 * 
-	 * @param editor the editor
+	 * @param editor the text editor
 	 */
 	public EncodingActionGroup(ITextEditor editor) {
 		

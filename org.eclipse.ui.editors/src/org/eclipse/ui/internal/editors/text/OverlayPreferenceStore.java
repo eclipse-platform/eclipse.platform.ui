@@ -17,10 +17,15 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * An overlaying preference store.
+ * 
+ * @since 2.1
  */
 class OverlayPreferenceStore  implements IPreferenceStore {
 	
-	
+
+	/**
+	 * Descriptor used to denote data types.
+	 */	
 	public static final class TypeDescriptor {
 		private TypeDescriptor() {
 		}
@@ -33,6 +38,9 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	public static final TypeDescriptor LONG= new TypeDescriptor();
 	public static final TypeDescriptor STRING= new TypeDescriptor();
 	
+	/**
+	 * Data structure for the overlay key.
+	 */
 	public static class OverlayKey {
 		
 		TypeDescriptor fDescriptor;
@@ -43,7 +51,10 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 			fKey= key;
 		}
 	};
-	
+
+	/*
+	 * @see IPropertyChangeListener
+	 */	
 	private class PropertyListener implements IPropertyChangeListener {
 				
 		/*
@@ -57,19 +68,34 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	};
 	
 	
+	/** The parent preference store. */
 	private IPreferenceStore fParent;
+	/** This store. */
 	private IPreferenceStore fStore;
+	/** The keys of this store. */
 	private OverlayKey[] fOverlayKeys;
-	
+	/** The property listener. */
 	private PropertyListener fPropertyListener;
 	
-	
+
+	/**
+	 * Creates and returns a new overlay preference store.
+	 * 
+	 * @param parent the parent preference store
+	 * @param overlayKeys the overlay keys
+	 */	
 	public OverlayPreferenceStore(IPreferenceStore parent, OverlayKey[] overlayKeys) {
 		fParent= parent;
 		fOverlayKeys= overlayKeys;
 		fStore= new PreferenceStore();
 	}
 	
+	/**
+	 * Tries to find and return the overlay key for the given preference key string.
+	 * 
+	 * @param key the preference key string
+	 * @return the overlay key or <code>null</code> if none can be found
+	 */
 	private OverlayKey findOverlayKey(String key) {
 		for (int i= 0; i < fOverlayKeys.length; i++) {
 			if (fOverlayKeys[i].fKey.equals(key))
@@ -78,10 +104,24 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 		return null;
 	}
 	
+	/**
+	 * Tells whether the given preference key string is
+	 * covered by this overlay store.
+	 * 
+	 * @param key the preference key string
+	 * @return <code>true</code> if this overlay store covers the given key
+	 */
 	private boolean covers(String key) {
 		return (findOverlayKey(key) != null);
 	}
-	
+
+	/**
+	 * Propagates the given overlay key from the orgin to the target preference store.
+	 * 
+	 * @param orgin the source preference store
+	 * @param key the overlay key
+	 * @param target the preference store to which the key is propagated
+	 */	
 	private void propagateProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target) {
 		
 		if (orgin.isDefault(key.fKey)) {
@@ -135,12 +175,23 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 
 		}
 	}
-	
+
+	/**
+	 * Propagates all overlay keys from this store to the parent store.
+	 */	
 	public void propagate() {
 		for (int i= 0; i < fOverlayKeys.length; i++)
 			propagateProperty(fStore, fOverlayKeys[i], fParent);
 	}
 	
+	/**
+	 * Loads the given key from the orgin into the target.
+	 * 
+	 * @param orgin the source preference store
+	 * @param key the overlay key
+	 * @param target the preference store to which the key is propagated
+	 * @param forceInitialization if <code>true</code> the value in the target gets initialized before loading
+	 */
 	private void loadProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target, boolean forceInitialization) {
 		TypeDescriptor d= key.fDescriptor;
 		if (BOOLEAN == d) {
@@ -187,17 +238,26 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 			
 		}
 	}
-	
+
+	/**
+	 * Loads the values from the parent into this store.
+	 */	
 	public void load() {
 		for (int i= 0; i < fOverlayKeys.length; i++)
 			loadProperty(fParent, fOverlayKeys[i], fStore, true);
 	}
 	
+	/**
+	 * Loads the default values.
+	 */
 	public void loadDefaults() {
 		for (int i= 0; i < fOverlayKeys.length; i++)
 			setToDefault(fOverlayKeys[i].fKey);
 	}
-	
+
+	/**
+	 * Starts to listen for changes.
+	 */	
 	public void start() {
 		if (fPropertyListener == null) {
 			fPropertyListener= new PropertyListener();
@@ -205,6 +265,9 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 		}
 	}
 	
+	/**
+	 * Stops to listen for changes.
+	 */
 	public void stop() {
 		if (fPropertyListener != null)  {
 			fParent.removePropertyChangeListener(fPropertyListener);
@@ -213,49 +276,49 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	}
 	
 	/*
-	 * @see IPreferenceStore#addPropertyChangeListener(IPropertyChangeListener)
+	 * @see IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.addPropertyChangeListener(listener);
 	}
 	
 	/*
-	 * @see IPreferenceStore#removePropertyChangeListener(IPropertyChangeListener)
+	 * @see IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.removePropertyChangeListener(listener);
 	}
 	
 	/*
-	 * @see IPreferenceStore#firePropertyChangeEvent(String, Object, Object)
+	 * @see IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		fStore.firePropertyChangeEvent(name, oldValue, newValue);
 	}
 
 	/*
-	 * @see IPreferenceStore#contains(String)
+	 * @see IPreferenceStore#contains(java.lang.String)
 	 */
 	public boolean contains(String name) {
 		return fStore.contains(name);
 	}
 	
 	/*
-	 * @see IPreferenceStore#getBoolean(String)
+	 * @see IPreferenceStore#getBoolean(java.lang.String)
 	 */
 	public boolean getBoolean(String name) {
 		return fStore.getBoolean(name);
 	}
 
 	/*
-	 * @see IPreferenceStore#getDefaultBoolean(String)
+	 * @see IPreferenceStore#getDefaultBoolean(java.lang.String)
 	 */
 	public boolean getDefaultBoolean(String name) {
 		return fStore.getDefaultBoolean(name);
 	}
 
 	/*
-	 * @see IPreferenceStore#getDefaultDouble(String)
+	 * @see IPreferenceStore#getDefaultDouble(java.lang.String)
 	 */
 	public double getDefaultDouble(String name) {
 		return fStore.getDefaultDouble(name);
