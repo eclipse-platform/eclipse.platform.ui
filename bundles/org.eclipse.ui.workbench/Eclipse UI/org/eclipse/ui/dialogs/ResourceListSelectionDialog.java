@@ -292,6 +292,25 @@ public ResourceListSelectionDialog(Shell parentShell, IContainer container, int 
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
 /**
+ * Adjust the pattern string for matching.
+ */
+protected String adjustPattern() {
+	String text = pattern.getText().trim();
+	if (!text.equals("") && 
+		text.indexOf('*') == -1 && 
+		text.indexOf('?') == -1 &&
+		text.indexOf('<') == -1) {
+			text = text + "*";	//$NON-NLS-1$
+			return text;
+	}
+	if (text.endsWith("<")) {	//$NON-NLS-1$
+		// the < character indicates an exact match search
+		return text.substring(0, text.length() - 1);
+	}
+	return text;
+}
+
+/**
  * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
  */
 protected void cancelPressed() {
@@ -386,11 +405,7 @@ protected Control createDialogArea(Composite parent) {
  */
 private void filterResources() {
 	String oldPattern = patternString;
-	patternString = pattern.getText().trim();
-	if (!patternString.equals("")) {
-		if(patternString.indexOf('*') == -1 && patternString.indexOf('?') == -1)	//$NON-NLS-1$ //$NON-NLS-2$
-			patternString = patternString + "*";	//$NON-NLS-1$
-	}
+	patternString = adjustPattern();
 	if(patternString.equals(oldPattern))
 		return;
 
@@ -401,17 +416,26 @@ private void filterResources() {
 	if (patternString.equals("")) {
 		updateFilterThread.firstMatch = 0;
 		updateFilterThread.lastMatch = -1;
-	} else if(oldPattern == null || 
-	  (oldPattern.length() == 0) || 
-	  (!patternString.regionMatches(0,oldPattern,0,oldPattern.length())) ||
-	  (patternString.endsWith("?")) ||
-	  (patternString.endsWith("*"))) {
-		updateFilterThread.firstMatch = 0;
-		updateFilterThread.lastMatch = descriptorsSize - 1;
-	} else {
-		updateFilterThread.firstMatch = oldThread.firstMatch;
-		updateFilterThread.lastMatch = oldThread.lastMatch;
-	}
+		updateFilterThread.start();
+		return;
+	} 
+	
+	if (oldPattern != null && (oldPattern.length() != 0) && 
+	   	oldPattern.endsWith("*") && patternString.endsWith("*")) {
+		int matchLength = oldPattern.length() - 1;
+	  	if (patternString.regionMatches(0, oldPattern, 0, matchLength)) {
+			// filter the previous list of items, this is done when the 
+			// new pattern is a derivative of the old pattern
+			updateFilterThread.firstMatch = oldThread.firstMatch;
+			updateFilterThread.lastMatch = oldThread.lastMatch;
+			updateFilterThread.start();
+			return;
+	  	}
+	} 
+	
+	// filter the entire list
+	updateFilterThread.firstMatch = 0;
+	updateFilterThread.lastMatch = descriptorsSize - 1; 
 	updateFilterThread.start();
 }
 /**
@@ -448,11 +472,7 @@ private int getFirstMatch() {
  */
 private void gatherResources() {
 	String oldPattern = patternString;
-	patternString = pattern.getText().trim();
-	if (!patternString.equals("")) {
-		if(patternString.indexOf('*') == -1 && patternString.indexOf('?') == -1)	//$NON-NLS-1$ //$NON-NLS-2$
-			patternString = patternString + "*";	//$NON-NLS-1$
-	}
+	patternString = adjustPattern();
 	if(patternString.equals(oldPattern))
 		return;
 	
