@@ -87,8 +87,6 @@ public class ResourceNavigator
 	private static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
 	private static final String TAG_IS_ENABLED = "isEnabled"; //$NON-NLS-1$
 	private static final String TAG_PATH = "path"; //$NON-NLS-1$
-	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
-	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -781,29 +779,6 @@ public class ResourceNavigator
 			}
 			viewer.setSelection(new StructuredSelection(list));
 		}
-
-		Tree tree = viewer.getTree();
-		//save vertical position
-		ScrollBar bar = tree.getVerticalBar();
-		if (bar != null) {
-			try {
-				String posStr = memento.getString(TAG_VERTICAL_POSITION);
-				int position;
-				position = new Integer(posStr).intValue();
-				bar.setSelection(position);
-			} catch (NumberFormatException e) {
-			}
-		}
-		bar = tree.getHorizontalBar();
-		if (bar != null) {
-			try {
-				String posStr = memento.getString(TAG_HORIZONTAL_POSITION);
-				int position;
-				position = new Integer(posStr).intValue();
-				bar.setSelection(position);
-			} catch (NumberFormatException e) {
-			}
-		}
 	}
 
 	/**	
@@ -855,16 +830,6 @@ public class ResourceNavigator
 					((IResource) elements[i]).getFullPath().toString());
 			}
 		}
-
-		Tree tree = viewer.getTree();
-		//save vertical position
-		ScrollBar bar = tree.getVerticalBar();
-		int position = bar != null ? bar.getSelection() : 0;
-		memento.putString(TAG_VERTICAL_POSITION, String.valueOf(position));
-		//save horizontal position
-		bar = tree.getHorizontalBar();
-		position = bar != null ? bar.getSelection() : 0;
-		memento.putString(TAG_HORIZONTAL_POSITION, String.valueOf(position));
 	}
 
 	/**
