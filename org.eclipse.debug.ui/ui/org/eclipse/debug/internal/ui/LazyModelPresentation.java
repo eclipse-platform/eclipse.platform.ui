@@ -185,7 +185,7 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 	public SourceViewerConfiguration newDetailsViewerConfiguration() throws CoreException {
 		String attr  = fConfig.getAttribute("detailsViewerConfiguration"); //$NON-NLS-1$
 		if (attr != null) {
-			return (SourceViewerConfiguration)fConfig.createExecutableExtension("detailsViewerConfiguration");
+			return (SourceViewerConfiguration)fConfig.createExecutableExtension("detailsViewerConfiguration"); //$NON-NLS-1$
 		}
 		return null;
 	}

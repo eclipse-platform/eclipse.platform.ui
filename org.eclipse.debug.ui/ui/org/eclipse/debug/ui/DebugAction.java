@@ -8,7 +8,7 @@ package org.eclipse.debug.ui;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.ExecutionAction;
+import org.eclipse.debug.internal.ui.actions.ExecutionAction;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.help.WorkbenchHelp;

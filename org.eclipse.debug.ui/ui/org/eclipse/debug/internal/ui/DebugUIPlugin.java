@@ -658,7 +658,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * 
 	 * @param history the history element to remove
 	 */
-	protected void removeHistoryElement(LaunchHistoryElement history) {
+	public void removeHistoryElement(LaunchHistoryElement history) {
 		fDebugHistory.remove(history);
 		fRunHistory.remove(history);
 		if (history.equals(fRecentLaunch)) {
@@ -907,16 +907,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * Save all dirty editors of all the workbench pages.
 	 * Returns whether the operation succeeded.
 	 * 
-	 * @param confirm whether to prompt for saving
 	 * @return whether all saving was completed
 	 */
-	protected static boolean saveAllPages(boolean confirm) {
+	protected static boolean saveAllPages() {
 		IWorkbench wb = getActiveWorkbenchWindow().getWorkbench();
 		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages = windows[i].getPages();
 			for (int j = 0; j < pages.length; j++) {
-				if (!pages[j].saveAllEditors(confirm)) {
+				if (!pages[j].saveAllEditors(true)) {
 					return false;
 				};
 			}
@@ -932,18 +931,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * 
 	 * @return whether saving and building was completed
 	 */
-	protected static boolean saveAndBuild() {
+	public static boolean saveAndBuild() {
 		if (!getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH)) {
 			return true;
 		}
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		if (workspace.isAutoBuilding()) {
 			// if auto-building, saving will trigger a build for us
-			return saveAllPages(true);
+			return saveAllPages();
 		}
 		
 		// prompt for save and then do build if required
-		if (saveAllPages(true)) {
+		if (saveAllPages()) {
 			return doBuild();
 		}
 		return false;	

@@ -7,8 +7,8 @@ package org.eclipse.debug.internal.ui.views;
  
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.RemoveAllExpressionsAction;
-import org.eclipse.debug.internal.ui.RemoveExpressionAction;
+import org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction;
+import org.eclipse.debug.internal.ui.actions.RemoveExpressionAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
