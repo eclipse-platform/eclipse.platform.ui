@@ -147,9 +147,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	protected void updateTitle() {
 		IConsole console = getConsole();
 		if (console == null) {
-			setTitle(ConsoleMessages.getString("ConsoleView.0")); //$NON-NLS-1$
+			setContentDescription(ConsoleMessages.getString("ConsoleView.0")); //$NON-NLS-1$
 		} else {
-			setTitle(MessageFormat.format(ConsoleMessages.getString("ConsoleView.1"), new String[]{console.getName()})); //$NON-NLS-1$
+			setContentDescription(console.getName()); //$NON-NLS-1$
 		}
 	}
 
