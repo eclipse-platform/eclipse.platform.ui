@@ -21,8 +21,8 @@ import org.eclipse.ui.intro.internal.html.*;
 import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.ui.intro.internal.util.*;
 
-public class BrowserIntroPartImplementation extends AbstractIntroPartImplementation implements
-        IPropertyListener {
+public class BrowserIntroPartImplementation extends
+        AbstractIntroPartImplementation implements IPropertyListener {
 
     // the browser widget that will display the intro content
     private Browser browser = null;
@@ -97,7 +97,7 @@ public class BrowserIntroPartImplementation extends AbstractIntroPartImplementat
         }
     };
 
-    private Action homeAction = new Action() {       
+    private Action homeAction = new Action() {
 
         {
             setToolTipText(IntroPlugin
@@ -120,7 +120,13 @@ public class BrowserIntroPartImplementation extends AbstractIntroPartImplementat
      * create the browser and set it's contents
      */
     public void createPartControl(Composite parent) {
-        browser = new Browser(parent, SWT.MULTI);
+        try {
+            browser = new Browser(parent, SWT.MULTI);
+        } catch (SWTException e) {
+            // should never be here. This means that SWT could not create
+            // browser on current platform. This should have been handled by the
+            // model. We should not get here.
+        }
 
         // add a location listener on the browser so we can intercept
         // LocationEvents. Responsible for intercepting URLs and updating UI
@@ -190,7 +196,7 @@ public class BrowserIntroPartImplementation extends AbstractIntroPartImplementat
         if (browser != null) {
             boolean success = browser.setText(html.toString());
             if (!success)
-                    Logger.logError("Unable to set HTML on the browser", null); //$NON-NLS-1$
+                Logger.logError("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
         // print the HTML if we are in debug mode and have tracing turned on
         if (IntroPlugin.getDefault().isDebugging()) {
@@ -208,7 +214,8 @@ public class BrowserIntroPartImplementation extends AbstractIntroPartImplementat
      * @return
      */
     private IntroHTMLGenerator getHTMLGenerator() {
-        if (htmlGenerator == null) htmlGenerator = new IntroHTMLGenerator();
+        if (htmlGenerator == null)
+            htmlGenerator = new IntroHTMLGenerator();
 
         return htmlGenerator;
     }
@@ -235,8 +242,8 @@ public class BrowserIntroPartImplementation extends AbstractIntroPartImplementat
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModelRoot().getCurrentPageId();
             if (pageId == null || pageId.equals("")) //$NON-NLS-1$
-                    // page ID was not set properly. exit.
-                    return;
+                // page ID was not set properly. exit.
+                return;
             generateDynamicContentForPage(getModelRoot().getCurrentPage());
         }
     }

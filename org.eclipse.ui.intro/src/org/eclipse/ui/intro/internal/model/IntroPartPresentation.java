@@ -240,7 +240,7 @@ public class IntroPartPresentation extends IntroElement {
      *  
      */
     private boolean listValueHasValue(String stringValue, String value) {
-        String[] attributeValues = stringValue.split(";");
+        String[] attributeValues = stringValue.split(",");
         for (int i = 0; i < attributeValues.length; i++) {
             if (attributeValues[i].equalsIgnoreCase(value))
                 return true;
