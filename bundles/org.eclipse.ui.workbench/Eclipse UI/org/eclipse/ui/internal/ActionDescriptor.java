@@ -82,7 +82,6 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	id = actionElement.getAttribute(ATT_ID);
 	pluginId = actionElement.getDeclaringExtension().getNamespace();
 	String label = actionElement.getAttribute(ATT_LABEL);
-	String defId = actionElement.getAttribute(ATT_DEFINITION_ID);
 	String tooltip = actionElement.getAttribute(ATT_TOOLTIP);
 	String helpContextId = actionElement.getAttribute(ATT_HELP_CONTEXT_ID);
 	String mpath = actionElement.getAttribute(ATT_MENUBAR_PATH);
@@ -133,10 +132,9 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	toolbarGroupId = tgroup;
 
 	// Create action.
-	action = createAction(targetType, actionElement, target, defId, style);
+	action = createAction(targetType, actionElement, target, style);
 	if (action.getText() == null) // may have been set by delegate
 		action.setText(label);
-	action.setId(id);
 	if (action.getToolTipText() == null && tooltip != null) // may have been set by delegate
 		action.setToolTipText(tooltip);
 	if (helpContextId != null) {
@@ -191,7 +189,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
  * Creates an instance of PluginAction. Depending on the target part,
  * subclasses of this class may be created.
  */
-private PluginAction createAction(int targetType, IConfigurationElement actionElement, Object target, String defId, String style) {
+private PluginAction createAction(int targetType, IConfigurationElement actionElement, Object target, String style) {
 	int actionStyle = IAction.AS_UNSPECIFIED;
 	if (style != null) {
 		if (style.equals(STYLE_RADIO)) {
@@ -207,16 +205,16 @@ private PluginAction createAction(int targetType, IConfigurationElement actionEl
 	
 	switch (targetType) {
 		case T_VIEW:
-			return new ViewPluginAction(actionElement, ATT_CLASS, (IViewPart)target, defId, actionStyle);
+			return new ViewPluginAction(actionElement, (IViewPart)target, id, actionStyle);
 		case T_EDITOR:
-			return new EditorPluginAction(actionElement, ATT_CLASS, (IEditorPart)target, defId, actionStyle);
+			return new EditorPluginAction(actionElement, (IEditorPart)target, id, actionStyle);
 		case T_WORKBENCH:
-			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target, defId, actionStyle);
+			return new WWinPluginAction(actionElement, (IWorkbenchWindow)target, id, actionStyle);
 		case T_WORKBENCH_PULLDOWN:
 			actionStyle = IAction.AS_DROP_DOWN_MENU;
-			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target, defId, actionStyle);
+			return new WWinPluginPulldown(actionElement, (IWorkbenchWindow)target, id, actionStyle);
 		case T_POPUP:
-			return new ObjectPluginAction(actionElement, ATT_CLASS, defId, actionStyle);
+			return new ObjectPluginAction(actionElement, id, actionStyle);
 		default:
 			WorkbenchPlugin.log("Unknown Action Type: " + targetType);//$NON-NLS-1$
 			return null;

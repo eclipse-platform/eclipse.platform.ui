@@ -32,8 +32,8 @@ public class ObjectPluginAction extends PluginAction {
 	/**
 	 * Constructs a new ObjectPluginAction.
 	 */
-	public ObjectPluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId, int style) {
-		super(actionElement, runAttribute, definitionId, style);
+	public ObjectPluginAction(IConfigurationElement actionElement, String id, int style) {
+		super(actionElement, id, style);
 		overrideActionId = actionElement.getAttribute(ATT_OVERRIDE_ACTION_ID);
 	}
 

@@ -40,8 +40,9 @@ public class WWinPluginPulldown extends WWinPluginAction {
 			return null;
 		}
 		public void dispose() {
+		    // do nothing
 		}
-	};
+	}
 	
 	/**
 	 * WWinPluginPulldown constructor comment.
@@ -49,8 +50,8 @@ public class WWinPluginPulldown extends WWinPluginAction {
 	 * @param runAttribute java.lang.String
 	 * @param window org.eclipse.ui.IWorkbenchWindow
 	 */
-	public WWinPluginPulldown(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window, String definitionId, int style) {
-		super(actionElement, runAttribute, window, definitionId, style);
+	public WWinPluginPulldown(IConfigurationElement actionElement, IWorkbenchWindow window, String id, int style) {
+		super(actionElement, window, id, style);
 		menuProxy = new MenuProxy();
 		setMenuCreator(menuProxy);
 	}

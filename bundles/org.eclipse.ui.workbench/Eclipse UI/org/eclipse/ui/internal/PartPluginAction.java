@@ -24,10 +24,9 @@ import org.eclipse.jface.viewers.*;
 public class PartPluginAction extends PluginAction {
 	/**
 	 * PartPluginAction constructor.
-	 *
 	 */
-	public PartPluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId, int style) {
-		super(actionElement, runAttribute, definitionId, style);
+	public PartPluginAction(IConfigurationElement actionElement, String id, int style) {
+		super(actionElement, id, style);
 	}
 	/**
 	 * Registers this action as a listener of the workbench part.

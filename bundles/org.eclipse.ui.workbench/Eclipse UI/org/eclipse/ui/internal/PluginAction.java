@@ -61,7 +61,7 @@ public abstract class PluginAction extends Action
 	private ISelection selection;
 	private IConfigurationElement configElement;
 	private String pluginId;
-	private String runAttribute;
+	private String runAttribute = ActionDescriptor.ATT_CLASS;
 	private static int actionCount = 0;
 
 	//a boolean that returns whether or not this action
@@ -72,16 +72,23 @@ public abstract class PluginAction extends Action
 	/**
 	 * PluginAction constructor.
 	 */
-	public PluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId, int style) {
+	public PluginAction(IConfigurationElement actionElement, String id, int style) {
 		super(null, style);
-		
-		// Create unique action id.
-		setId("PluginAction." + Integer.toString(actionCount)); //$NON-NLS-1$
-		++actionCount;
-		setActionDefinitionId(definitionId);
-				
+
 		this.configElement = actionElement;
-		this.runAttribute = runAttribute;
+		
+		if (id != null) {
+		    setId(id);
+		}
+		else {
+			// Create unique action id.
+			setId("PluginAction." + Integer.toString(actionCount)); //$NON-NLS-1$
+			++actionCount;
+		}
+
+		String defId = actionElement.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
+		setActionDefinitionId(defId);
+				
 		pluginId = configElement.getDeclaringExtension().getNamespace();
 		
 		// Read enablement declaration.

@@ -25,8 +25,8 @@ public final class EditorPluginAction extends PartPluginAction {
 	 * This class adds the requirement that action delegates
 	 * loaded on demand implement IViewActionDelegate
 	 */
-	public EditorPluginAction(IConfigurationElement actionElement, String runAttribute, IEditorPart part, String definitionId, int style) {
-		super(actionElement, runAttribute, definitionId, style);
+	public EditorPluginAction(IConfigurationElement actionElement, IEditorPart part, String id, int style) {
+		super(actionElement, id, style);
 		if (part != null)
 			editorChanged(part);
 	}

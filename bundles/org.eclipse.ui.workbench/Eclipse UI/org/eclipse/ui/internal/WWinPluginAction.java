@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -54,8 +54,8 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 	/**
 	 * Constructs a new WWinPluginAction object..
 	 */
-	public WWinPluginAction(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window, String definitionId, int style) {
-		super(actionElement, runAttribute, definitionId, style);
+	public WWinPluginAction(IConfigurationElement actionElement, IWorkbenchWindow window, String id, int style) {
+		super(actionElement, id, style);
 		this.window = window;
 
 		// If config specifies a retarget action, create it now
@@ -63,7 +63,6 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 		if (retarget != null && retarget.equals(TRUE_VALUE)) {
 			// create a retarget action
 			String allowLabelUpdate = actionElement.getAttribute(ActionDescriptor.ATT_ALLOW_LABEL_UPDATE);
-			String id = actionElement.getAttribute(ActionDescriptor.ATT_ID);
 			String label = actionElement.getAttribute(ActionDescriptor.ATT_LABEL);
 
 			if (allowLabelUpdate != null && allowLabelUpdate.equals(TRUE_VALUE))
@@ -72,22 +71,22 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 				retargetAction = new RetargetAction(id, label, style);
 			retargetAction.addPropertyChangeListener(new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
-					if (event.getProperty().equals(Action.ENABLED)) {
+					if (event.getProperty().equals(IAction.ENABLED)) {
 						Object val = event.getNewValue();
 						if (val instanceof Boolean) {
 							setEnabled(((Boolean) val).booleanValue());
 						}
-					} else if (event.getProperty().equals(Action.CHECKED)) {
+					} else if (event.getProperty().equals(IAction.CHECKED)) {
 						Object val = event.getNewValue();
 						if (val instanceof Boolean) {
 							setChecked(((Boolean) val).booleanValue());
 						}
-					} else if (event.getProperty().equals(Action.TEXT)) {
+					} else if (event.getProperty().equals(IAction.TEXT)) {
 						Object val = event.getNewValue();
 						if (val instanceof String) {
 							setText((String) val);
 						}
-					} else if (event.getProperty().equals(Action.TOOL_TIP_TEXT)) {
+					} else if (event.getProperty().equals(IAction.TOOL_TIP_TEXT)) {
 						Object val = event.getNewValue();
 						if (val instanceof String) {
 							setToolTipText((String) val);
