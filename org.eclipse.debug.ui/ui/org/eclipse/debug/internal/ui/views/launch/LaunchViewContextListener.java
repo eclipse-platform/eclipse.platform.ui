@@ -449,6 +449,10 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 				if (viewId == null) {
 					continue;
 				}
+				IViewReference reference = page.findViewReference(viewId);
+				if (reference != null && reference.isFastView()) {
+					continue;
+				}
 				IViewPart view = page.findView(viewId);
 				if (view != null) {
 					viewIdsShow.add(view);
