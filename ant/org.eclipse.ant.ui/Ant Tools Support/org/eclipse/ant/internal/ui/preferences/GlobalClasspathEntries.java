@@ -44,4 +44,8 @@ public class GlobalClasspathEntries {
 	public String toString() {
 		return name;
 	}
+
+	public void removeAll() {
+		elements.clear();
+	}
 }

@@ -265,7 +265,7 @@ public class AntClasspathBlock2 {
 	
 	private void addJars(TreeViewer viewer) {
 		List allURLs= new ArrayList();
-		allURLs.addAll(getAntURLs());
+		allURLs.addAll(Arrays.asList(getAntClasspathEntries()));
 		
 		ViewerFilter filter= new ArchiveFilter(allURLs);
 		
@@ -580,9 +580,8 @@ public class AntClasspathBlock2 {
 		updateContainer();
 	}
 	
-	public List getAntURLs() { 
-		Object[] elements = antContentProvider.getElements(null);
-		return Arrays.asList(elements);
+	public Object[] getAntClasspathEntries() { 
+		return antContentProvider.getAntClasspathEntries();
 	}
 	
 	public String getAntHome() {
@@ -661,7 +660,7 @@ public class AntClasspathBlock2 {
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING);
 		if (check && !AntUIPlugin.isMacOS()) {
-			List antURLs= getAntURLs();
+			Object[] antURLs= getAntClasspathEntries();
 			boolean valid= !JARPresent(antURLs, TOOLS).isEmpty();
 			if (!valid) {
 				valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -680,7 +679,7 @@ public class AntClasspathBlock2 {
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
 		if (check) {
-			List antURLs= getAntURLs();
+			Object[] antURLs= getAntClasspathEntries();
 			List suffixes= JARPresent(antURLs, XERCES);
 			if (sameVM && !suffixes.isEmpty()) {
 				valid= MessageDialogWithToggle.openQuestion(treeViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new Object[]{suffixes.get(0)}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -702,18 +701,18 @@ public class AntClasspathBlock2 {
 		return valid;
 	}
 	
-	private List JARPresent(List URLs, String[] suffixes) {
+	private List JARPresent(Object[] classpathEntries, String[] suffixes) {
 		List found= new ArrayList(2);
-		for (Iterator iter = URLs.iterator(); iter.hasNext();) {
+		for (int i = 0; i < classpathEntries.length; i++) {
 			String file;
-			Object entry = iter.next();
+			Object entry = classpathEntries[i];
 			if (entry instanceof URL) {
 				file= ((URL)entry).getFile();
 			} else {
 				file= entry.toString();
 			}
-			for (int i = 0; i < suffixes.length; i++) {
-				String suffix = suffixes[i];
+			for (int j = 0; j < suffixes.length; j++) {
+				String suffix = suffixes[j];
 				if (file.endsWith(suffix)) {
 					found.add(suffix);
 				}
@@ -730,9 +729,7 @@ public class AntClasspathBlock2 {
 		validated= 3;
 	}
 
-	public List getUserURLs() {
-		return new ArrayList();
-		//Object[] elements = userContentProvider.getElements(null);
-		//return Arrays.asList(elements);
+	public Object[] getUserURLs() {
+		return antContentProvider.getUserClasspathEntries();
 	}
 }

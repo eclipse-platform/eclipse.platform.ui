@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.Viewer;
  *
  */
 public class AntClasspathContentProvider2 implements ITreeContentProvider {
-	protected TreeViewer treeViewer;
+	private TreeViewer treeViewer;
 	private ClasspathModel model= null;
 		
 	public void add(Object parent, Object child) {
@@ -49,10 +49,8 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	}
 
 	public void removeAll() {
-		if (treeViewer != null) {
-			treeViewer.remove(model.getEntries());
-		}
 		model.removeAll();
+		treeViewer.refresh();
 	}
 
 	/**
@@ -154,5 +152,13 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 		Object[] array= selection.toArray();
 		model.removeAll(array);
 		treeViewer.refresh();
+	}
+
+	public Object[] getUserClasspathEntries() {
+		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
+	}
+
+	public Object[] getAntClasspathEntries() {
+		return model.getURLEntries(ClasspathModel.GLOBAL);
 	}
 }
