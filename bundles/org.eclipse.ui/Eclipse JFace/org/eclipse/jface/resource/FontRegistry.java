@@ -11,6 +11,8 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
@@ -121,14 +123,25 @@ public FontRegistry() {
  * </pre>
  *
  * @param location the name of the resource bundle
+ * @param the ClassLoader to use to find the resource bundle
  * @exception MissingResourceException if the resource bundle cannot be found
  */
-public FontRegistry(String location) throws MissingResourceException {
+public FontRegistry(String location, ClassLoader loader) throws MissingResourceException {
 
 	Display display = Display.getCurrent();
 	Assert.isNotNull(display);
-	readResourceBundle(location);
+	readResourceBundle(location, loader);
 	hookDisplayDispose(display);
+}
+
+/**
+ * Load the FontRegistry using the ClassLoader from the PlatformUI
+ * plug-in
+ * @see FontRegistry(String,loader) 
+ */
+public FontRegistry(String location) throws MissingResourceException {
+
+	this(location, WorkbenchPlugin.getDefault().getDescriptor().getPluginClassLoader());
 }
 
 /**
@@ -137,7 +150,7 @@ public FontRegistry(String location) throws MissingResourceException {
  * @param location - String - the location of the file.
  */
 
-private void readResourceBundle(String location) {
+private void readResourceBundle(String location, ClassLoader loader) {
 	String osname = System.getProperty("os.name").trim();//$NON-NLS-1$
 	String wsname = SWT.getPlatform();
 	osname = StringConverter.removeWhiteSpaces(osname).toLowerCase();
@@ -152,16 +165,16 @@ private void readResourceBundle(String location) {
 	}
 	
 	try{
-		bundle = ResourceBundle.getBundle(WSLocation);
+		bundle = ResourceBundle.getBundle(WSLocation,Locale.getDefault(),loader);
 		readResourceBundle(bundle, WSLocation);
 	}
 	catch(MissingResourceException wsException){
 		try {
-			bundle = ResourceBundle.getBundle(OSLocation);
+			bundle = ResourceBundle.getBundle(OSLocation, Locale.getDefault(),loader);
 			readResourceBundle(bundle, WSLocation);
 		} catch (MissingResourceException osException) {
 			if (location != OSLocation) {
-				bundle = ResourceBundle.getBundle(location);
+				bundle = ResourceBundle.getBundle(location,Locale.getDefault(),loader);
 				readResourceBundle(bundle, WSLocation);
 			}
 			else
