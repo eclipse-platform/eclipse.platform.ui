@@ -234,9 +234,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 						readRegistry();
 					}
 				});
-		this.commandManager.addCommandManagerListener(this);
-		this.bindingManager.addBindingManagerListener(this);
-		this.contextManager.addContextManagerListener(this);
 
 		// Make sure to read in the registry.
 		readRegistry();
@@ -250,6 +247,9 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 		if (commandManagerListeners == null) {
 			commandManagerListeners = new ArrayList();
+			this.commandManager.addCommandManagerListener(this);
+			this.bindingManager.addBindingManagerListener(this);
+			this.contextManager.addContextManagerListener(this);
 		}
 
 		if (!commandManagerListeners.contains(commandManagerListener)) {
@@ -652,10 +652,19 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	public void removeCommandManagerListener(
 			ICommandManagerListener commandManagerListener) {
-		if (commandManagerListener == null)
-			throw new NullPointerException();
-		if (commandManagerListeners != null)
+		if (commandManagerListener == null) {
+			throw new NullPointerException("Cannot remove a null listener"); //$NON-NLS-1$
+		}
+		
+		if (commandManagerListeners != null) {
 			commandManagerListeners.remove(commandManagerListener);
+			if (commandManagerListeners.isEmpty()) {
+				commandManagerListeners = null;
+				this.commandManager.removeCommandManagerListener(this);
+				this.bindingManager.removeBindingManagerListener(this);
+				this.contextManager.removeContextManagerListener(this);
+			}
+		}
 	}
 
 	/**
