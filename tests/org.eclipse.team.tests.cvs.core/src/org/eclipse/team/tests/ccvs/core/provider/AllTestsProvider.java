@@ -14,23 +14,12 @@ import junit.framework.TestSuite;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
-/**
- * @version 	1.0
- * @author 	${user}
- */
 public class AllTestsProvider extends EclipseTest {
 
-	/**
-	 * Constructor for AllTests.
-	 */
 	public AllTestsProvider() {
 		super();
 	}
 
-	/**
-	 * Constructor for AllTests.
-	 * @param name
-	 */
 	public AllTestsProvider(String name) {
 		super(name);
 	}

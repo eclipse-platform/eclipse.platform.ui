@@ -21,16 +21,12 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSWorkspaceSubscriber;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.synchronize.sets.SyncSet;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * SyncInfoSource that obtains SyncInfo from the SynchronizeView's SyncSet.
@@ -58,6 +54,8 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		}						
 	}
 	
+	
+	
 	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
 		SubscriberInput input = getInput(subscriber);
 		SyncSet set = input.getWorkingSetSyncSet();
@@ -75,16 +73,11 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		// show the sync view
 		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		for (int i = 0; i < participants.length; i++) {
-			String id = "";
-			if(subscriber instanceof CVSMergeSubscriber) {
-				id = ((CVSMergeSubscriber)subscriber).getId().getQualifier();
-			} else if(subscriber instanceof CVSWorkspaceSubscriber) {
-				id = ((CVSWorkspaceSubscriber)subscriber).getId().getQualifier();
-			}
 			ISynchronizeParticipant participant = participants[i];
-			if(participant.getId().equals(id)) {
-				if(participant instanceof TeamSubscriberParticipant) {
-					SubscriberInput input = ((TeamSubscriberParticipant)participant).getInput();
+			if(participant instanceof TeamSubscriberParticipant) {
+				SubscriberInput input = ((TeamSubscriberParticipant)participant).getInput();
+				TeamSubscriber s = input.getSubscriber();
+				if(s == subscriber) {
 					waitForEventNotification(input);
 					return input;
 				}
@@ -133,5 +126,13 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		}
 		// Process all async events that may have been generated above
 		while (Display.getCurrent().readAndDispatch()) {};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#refresh(org.eclipse.team.core.subscribers.TeamSubscriber, org.eclipse.core.resources.IResource)
+	 */
+	public void refresh(TeamSubscriber subscriber, IResource resource) throws TeamException {
+		super.refresh(subscriber, resource);
+		waitForEventNotification(getInput(subscriber));
 	}
 }

@@ -9,36 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.IFileTypeInfo;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.Team;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -416,17 +397,6 @@ public class CVSProviderTest extends EclipseTest {
 		} else {
 			file.create(is, false /*force*/, null);
 		}
-	}
-	public static String getFileContents(IFile file) throws CoreException, IOException {
-		StringBuffer buf = new StringBuffer();
-		Reader reader = new InputStreamReader(new BufferedInputStream(file.getContents()));
-		try {
-			int c;
-			while ((c = reader.read()) != -1) buf.append((char) c);
-		} finally {
-			reader.close();
-		}
-		return buf.toString();
 	}
 	
 	public static void assertEqualsFileContents(IFile file, String string) throws CoreException, IOException {
