@@ -129,9 +129,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Button fDeleteButton;
 	
 	/**
-	 * The 'save' button
+	 * The 'apply' button
 	 */
-	private Button fSaveButton;	
+	private Button fApplyButton;	
+	
+	/**
+	 * The 'revert' button
+	 */
+	private Button fRevertButton;
+	
+	/**
+	 * The 'cancel' button that appears when the in-dialog progress monitor is shown.
+	 */
+	private Button fProgressMonitorCancelButton;
 	
 	/**
 	 * The text widget displaying the name of the
@@ -186,11 +196,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Cursor arrowCursor;
 	private MessageDialog fWindowClosingDialog;
 	
-	private SelectionAdapter fCancelListener = new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent evt) {
-			cancelPressed();
-		}
-	};
 	/**
 	 * Whether initlialing tabs
 	 */
@@ -215,6 +220,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Id for 'Launch' button.
 	 */
 	protected static final int ID_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
+	
+	/**
+	 * Id for 'Close' button.
+	 */
+	protected static final int ID_CLOSE_BUTTON = IDialogConstants.CLIENT_ID + 2;
 	
 	/**
 	 * Constrant String used as key for setting and retrieving current Control with focus
@@ -337,20 +347,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Close_1"), false);  //$NON-NLS-1$
 	}
 	
-	/**
-	 * Returns the appropriate text for the launch button - run or debug.
-	 */
-	protected String getLaunchButtonText() {
-		if (getMode() == ILaunchManager.DEBUG_MODE) {
-			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Deb&ug_4"); //$NON-NLS-1$
-		} else {
-			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.R&un_5"); //$NON-NLS-1$
-		}
-	}
-
 	/**
 	 * Handle the 'save and launch' & 'launch' buttons here, all others are handled
 	 * in <code>Dialog</code>
@@ -360,8 +359,21 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == ID_LAUNCH_BUTTON) {
 			handleLaunchPressed();
+		} else if (buttonId == ID_CLOSE_BUTTON) {
+			handleClosePressed();
 		} else {
 			super.buttonPressed(buttonId);
+		}
+	}
+
+	/**
+	 * Returns the appropriate text for the launch button - run or debug.
+	 */
+	protected String getLaunchButtonText() {
+		if (getMode() == ILaunchManager.DEBUG_MODE) {
+			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Deb&ug_4"); //$NON-NLS-1$
+		} else {
+			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.R&un_5"); //$NON-NLS-1$
 		}
 	}
 
@@ -758,7 +770,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected Composite createLaunchConfigurationSelectionArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
 		comp.setLayout(layout);
@@ -767,8 +779,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		TreeViewer tree = new TreeViewer(comp);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
-		gd.widthHint = 150;
+		gd.horizontalSpan = 2;
+		gd.widthHint = 130;
 		gd.heightHint = 375;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
@@ -816,22 +828,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @return the composite used for launch configuration editing
 	 */ 
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
-		Composite c = new Composite(parent, SWT.NONE);
-		setEditArea(c);
+		Composite comp = new Composite(parent, SWT.NONE);
+		setEditArea(comp);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
-		c.setLayout(layout);
+		comp.setLayout(layout);
 		
 		GridData gd;
 		
-		Label nameLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
+		Label nameLabel = new Label(comp, SWT.HORIZONTAL | SWT.LEFT);
 		nameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		nameLabel.setLayoutData(gd);
 		
-		Text nameText = new Text(c, SWT.SINGLE | SWT.BORDER);
+		Text nameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
 		setNameTextWidget(nameText);
@@ -844,12 +856,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		);		
 		
-		Label spacer = new Label(c, SWT.NONE);
+		Label spacer = new Label(comp, SWT.NONE);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 		
-		TabFolder tabFolder = new TabFolder(c, SWT.NONE);
+		TabFolder tabFolder = new TabFolder(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.heightHint = 375;
@@ -862,20 +874,37 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		});
 		
-		Button saveButton = new Button(c, SWT.PUSH);
-		saveButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Apply_17")); //$NON-NLS-1$
+		Composite buttonComp = new Composite(comp, SWT.NONE);
+		GridLayout buttonCompLayout = new GridLayout();
+		buttonCompLayout.numColumns = 2;
+		buttonComp.setLayout(buttonCompLayout);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
-		saveButton.setLayoutData(gd);
-		setSaveButton(saveButton);
-		SWTUtil.setButtonDimensionHint(saveButton);
-		getSaveButton().addSelectionListener(new SelectionAdapter() {
+		buttonComp.setLayoutData(gd);
+		
+		setApplyButton(new Button(buttonComp, SWT.PUSH));
+		getApplyButton().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Apply_17")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		getApplyButton().setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(getApplyButton());
+		getApplyButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
 			}
 		});
 		
-		return c;
+		setRevertButton(new Button(buttonComp, SWT.PUSH));
+		getRevertButton().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Revert_2"));   //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		getRevertButton().setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(getRevertButton());
+		getRevertButton().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleRevertPressed();
+			}
+		});
+		
+		return comp;
 	}	
 	
 	/**
@@ -891,8 +920,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		GridLayout pmLayout = new GridLayout();
-		pmLayout.numColumns = 2;
+		pmLayout.numColumns = 3;
 		setProgressMonitorPart(new ProgressMonitorPart(composite, pmLayout, PROGRESS_INDICATOR_HEIGHT));
+		setProgressMonitorCancelButton(new Button(getProgressMonitorPart(), SWT.PUSH));
+		getProgressMonitorCancelButton().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"));  //$NON-NLS-1$
 		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		getProgressMonitorPart().setVisible(false);
 
@@ -1098,7 +1129,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		
 		// Take care of any unsaved changes.  If the user aborts, reset selection
 		// to whatever it was previously selected
-		boolean canReplaceConfig = canReplaceCurrentConfig();
+		boolean canReplaceConfig = canDiscardCurrentConfig();
  		if (!canReplaceConfig) {
  			StructuredSelection prevSelection;
  			Object selectedTreeObject = getSelectedTreeObject();
@@ -1143,6 +1174,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	
  	protected ProgressMonitorPart getProgressMonitorPart() {
  		return fProgressMonitorPart;
+ 	}
+ 	
+ 	protected void setProgressMonitorCancelButton(Button button) {
+ 		fProgressMonitorCancelButton = button;
+ 	}
+ 	
+ 	protected Button getProgressMonitorCancelButton() {
+ 		return fProgressMonitorCancelButton;
  	}
  	
  	/**
@@ -1380,21 +1419,39 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	} 
 	
  	/**
- 	 * Sets the 'save' button.
+ 	 * Sets the 'apply' button.
  	 * 
- 	 * @param button the 'save' button.
+ 	 * @param button the 'apply' button.
  	 */	
- 	private void setSaveButton(Button button) {
- 		fSaveButton = button;
+ 	private void setApplyButton(Button button) {
+ 		fApplyButton = button;
  	}
  	
  	/**
- 	 * Returns the 'save' button
+ 	 * Returns the 'apply' button
  	 * 
- 	 * @return the 'save' button
+ 	 * @return the 'apply' button
  	 */
- 	protected Button getSaveButton() {
- 		return fSaveButton;
+ 	protected Button getApplyButton() {
+ 		return fApplyButton;
+ 	}	
+ 	
+ 	/**
+ 	 * Sets the 'revert' button.
+ 	 * 
+ 	 * @param button the 'revert' button.
+ 	 */	
+ 	private void setRevertButton(Button button) {
+ 		fRevertButton = button;
+ 	}
+ 	
+ 	/**
+ 	 * Returns the 'revert' button
+ 	 * 
+ 	 * @return the 'revert' button
+ 	 */
+ 	protected Button getRevertButton() {
+ 		return fRevertButton;
  	}	
  	
  	/**
@@ -1483,10 +1540,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Return whether the current configuration can be replaced.  This involves determining
+	 * Return whether the current configuration can be discarded.  This involves determining
 	 * if it is dirty, and if it is, asking the user what to do.
 	 */
-	protected boolean canReplaceCurrentConfig() {		
+	protected boolean canDiscardCurrentConfig() {		
 		// If there is no working copy, there's no problem, return true
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
 		if (workingCopy == null) {
@@ -1610,7 +1667,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected void handleNewCopyPressed() {
 		
 		// Take care of any unsaved changes
-		if (!canReplaceCurrentConfig()) {
+		if (!canDiscardCurrentConfig()) {
 			return;
 		}
 		
@@ -1741,11 +1798,29 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Notification that the 'apply' button has been pressed
+	 * Notification the 'Close' button has been pressed.
+	 */
+	protected void handleClosePressed() {
+		if (canDiscardCurrentConfig()) {
+			cancelPressed();
+		}
+	}
+
+	/**
+	 * Notification that the 'Apply' button has been pressed
 	 */
 	protected void handleApplyPressed() {
 		saveConfig();
 		getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
+	}
+	
+	/**
+	 * Notification that the 'Revert' button has been pressed
+	 */
+	protected void handleRevertPressed() {
+		ISelection selection = getTreeViewer().getSelection();		
+		getTreeViewer().setSelection(StructuredSelection.EMPTY);		
+		getTreeViewer().setSelection(selection);
 	}
 	
 	protected void saveConfig() {
@@ -1952,7 +2027,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * About to start a long running operation tiggered through
+	 * About to start a long running operation triggered through
 	 * the dialog. Shows the progress monitor and disables the dialog's
 	 * buttons and controls.
 	 *
@@ -1968,9 +2043,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			if (focusControl != null && focusControl.getShell() != getShell())
 				focusControl = null;
 			
-			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
-			cancelButton.removeSelectionListener(fCancelListener);
-			
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
 			waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
@@ -1978,7 +2050,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					
 			// Set the arrow cursor to the cancel component.
 			arrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
-			cancelButton.setCursor(arrowCursor);
+			getProgressMonitorCancelButton().setCursor(arrowCursor);
 	
 			// Deactivate shell
 			savedState = saveUIState(enableCancelButton);
@@ -1986,7 +2058,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				savedState.put(FOCUS_CONTROL, focusControl);
 				
 			// Attach the progress monitor part to the cancel button
-			getProgressMonitorPart().attachToCancelComponent(cancelButton);
+			getProgressMonitorCancelButton().setEnabled(true);
+			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
 			getProgressMonitorPart().setVisible(true);
 		}
 		return savedState;
@@ -2004,14 +2077,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private void stopped(Object savedState) {
 		if (getShell() != null) {
 			getProgressMonitorPart().setVisible(false);
-			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
-			getProgressMonitorPart().removeFromCancelComponent(getButton(IDialogConstants.CANCEL_ID));
+			getProgressMonitorPart().removeFromCancelComponent(getProgressMonitorCancelButton());
 			Map state = (Map)savedState;
 			restoreUIState(state);
-			cancelButton.addSelectionListener(fCancelListener);
 	
 			setDisplayCursor(null);	
-			cancelButton.setCursor(null);
 			waitCursor.dispose();
 			waitCursor = null;
 			arrowCursor.dispose();
@@ -2038,9 +2108,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Map savedState= new HashMap(10);
 		saveEnableStateAndSet(getNewCopyButton(), savedState, "new", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getDeleteButton(), savedState, "delete", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getSaveButton(), savedState, "save", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getButton(IDialogConstants.CANCEL_ID), savedState, "cancel", keepCancelEnabled);//$NON-NLS-1$
+		saveEnableStateAndSet(getApplyButton(), savedState, "apply", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getRevertButton(), savedState, "revert", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getButton(ID_CLOSE_BUTTON), savedState, "close", false);//$NON-NLS-1$
 		TabItem selectedTab = getTabFolder().getItem(getTabFolder().getSelectionIndex());
 		savedState.put("tab", ControlEnableState.disable(selectedTab.getControl()));//$NON-NLS-1$
 		return savedState;
@@ -2076,9 +2147,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private void restoreUIState(Map state) {
 		restoreEnableState(getNewCopyButton(), state, "new");//$NON-NLS-1$
 		restoreEnableState(getDeleteButton(), state, "delete");//$NON-NLS-1$
-		restoreEnableState(getSaveButton(), state, "save");//$NON-NLS-1$
-		restoreEnableState(getButton(IDialogConstants.CANCEL_ID), state, "cancel");//$NON-NLS-1$
+		restoreEnableState(getApplyButton(), state, "apply");//$NON-NLS-1$
+		restoreEnableState(getRevertButton(), state, "revert");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
+		restoreEnableState(getButton(ID_CLOSE_BUTTON), state, "close");//$NON-NLS-1$
 		ControlEnableState tabState = (ControlEnableState) state.get("tab");//$NON-NLS-1$
 		tabState.restore();
 	}
@@ -2199,11 +2271,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		
-		// new, copy, delete buttons
+		// Get the current selection
 		IStructuredSelection sel = (IStructuredSelection)getTreeViewer().getSelection();
 		
+		// New/Copy button
  		getNewCopyButton().setEnabled(sel.size() == 1);
 		
+		// Delete button
 		if (sel.isEmpty()) {
 			getDeleteButton().setEnabled(false); 		
 		} else {
@@ -2218,11 +2292,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 
+		// Apply & Launch buttons
 		if (sel.isEmpty()) {
-			getSaveButton().setEnabled(false);
+			getApplyButton().setEnabled(false);
 			getButton(ID_LAUNCH_BUTTON).setEnabled(false);
 		} else {
-			// save and launch buttons
 			ILaunchConfigurationTab tab = getActiveTab();
 			boolean verified = false;
 			try {
@@ -2231,8 +2305,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			} catch (CoreException e) {
 			}
 			if (tab != null) {
-				getSaveButton().setEnabled(verified && tab.isValid());
+				getApplyButton().setEnabled(verified && tab.isValid());
 				getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch());		
+			}
+		}
+		
+		// Revert button
+		if (sel.isEmpty() || sel.size() > 1) {
+			getRevertButton().setEnabled(false);
+		} else {
+			if ((sel.getFirstElement() instanceof ILaunchConfiguration) && (isWorkingCopyDirty())) {
+				getRevertButton().setEnabled(true);
+			} else {
+				getRevertButton().setEnabled(false);
 			}
 		}
 	}
