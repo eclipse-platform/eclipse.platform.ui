@@ -291,8 +291,8 @@ public class BreakpointsView extends AbstractDebugView {
 							viewer.remove(breakpoint);
 							if (viewer.getSelection().isEmpty()) {
 								if (indices.length > 0) {
-									int index= Math.max(indices[0] - 1, 0);
-									viewer.getTable().select(index);
+									int index= indices[0];
+									viewer.getTable().select(Math.min(index, viewer.getTable().getItemCount() - 1));
 								}
 								//fire the selection changed as does not occur when
 								//setting selection on the swt widget
