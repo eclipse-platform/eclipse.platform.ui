@@ -44,12 +44,13 @@ import org.eclipse.compare.internal.*;
 	 */
 	/* package */ PatchWizard(ISelection selection) {
 		
+		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.gif"));	//$NON-NLS-1$
+		setWindowTitle(PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
+
 		setTargets(getResource(selection));
 
 		fPatcher= new Patcher();
-		
-		setWindowTitle(PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
-		
+				
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY); //$NON-NLS-1$
 		if (section == null)
