@@ -43,12 +43,19 @@
 			id="org.eclipse.ui.externaltools.ExternalToolsSet"
 			label="%ActionSet.externalTools"
 			visible="true">
+			<menu id="org.eclipse.ui.run" 
+				label="%Menu.run" 
+				path="additions"> 
+				<separator name="ExternalToolsGroup"/> 
+			</menu> 
 			<action
 				id="org.eclipse.ui.externaltools.ExternalToolAction"
 				label="%Action.externalTools"
-				menubarPath="file/additions"
+				menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
 				toolbarPath="Normal/additions"
-				icon="icons/externaltools.gif"
+				disabledIcon="icons/full/dtool16/external_tools.gif"
+				icon="icons/full/etool16/external_tools.gif"
+				hoverIcon="icons/full/ctool16/external_tools.gif"
 				tooltip="%Action.externalToolsTip"
 				pulldown="true"
 				class="org.eclipse.ui.externaltools.internal.ui.ExternalToolsAction">
@@ -88,13 +95,12 @@
 		<view
 			id="org.eclipse.ui.externaltools.LogConsoleView"
 	  		name="%View.logConsole"
-			icon="icons/full/cview16/log_console.gif"
+			icon="icons/full/clcl16/log_console_view.gif"
 			category="org.eclipse.ui.externaltools.views"
 			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
 		</view>
 	</extension>
 	
-<!-- Objects -->
 	<extension point="org.eclipse.ant.core.antObjects">
 		<antObject
 			name="org.eclipse.ui.externaltools.internal.ui.ant.AntBuildLogger"
