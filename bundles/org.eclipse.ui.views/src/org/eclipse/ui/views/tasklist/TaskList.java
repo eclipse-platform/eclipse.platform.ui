@@ -415,7 +415,7 @@ public void createPartControl(Composite parent) {
 	long t = System.currentTimeMillis();
 	createPartControl0(parent);
 	t = System.currentTimeMillis() - t;
-	System.out.println("TaskList.createPartControl: " + t + "ms");
+//	System.out.println("TaskList.createPartControl: " + t + "ms");
 }
 
 private void createPartControl0(Composite parent) {
