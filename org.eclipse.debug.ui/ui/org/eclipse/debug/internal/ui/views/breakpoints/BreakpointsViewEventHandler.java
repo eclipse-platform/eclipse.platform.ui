@@ -23,12 +23,16 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.internal.Workbench;
 
 /**
- * Handles breakpoint events, updating the breakpoints view
- * and viewer.
+ * Handles breakpoint events and activity manager events (which can affect filtering),
+ * updating the breakpoints view and viewer.
  */
-public class BreakpointsViewEventHandler implements IBreakpointsListener {
+public class BreakpointsViewEventHandler implements IBreakpointsListener, IActivityManagerListener {
 
 	private BreakpointsView fView;
 
@@ -38,6 +42,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 	public BreakpointsViewEventHandler(BreakpointsView view) {
 		fView= view;
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+		((Workbench) PlatformUI.getWorkbench()).getActivityManager().addActivityManagerListener(this);
 	}
 	
 	public void dispose() {
@@ -140,6 +145,20 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 						viewer.getControl().setRedraw(true);
 						fView.updateObjects();
 					}
+				}
+			});
+		}
+	}
+
+	/**
+	 * When new activities are added or enabled, refresh the view contents to add/remove
+	 * breakpoints related to the affected activities.
+	 */
+	public void activityManagerChanged(final IActivityManagerEvent activityManagerEvent) {
+		if (fView.isAvailable() & fView.isVisible() && activityManagerEvent.haveDefinedActivityIdsChanged() || activityManagerEvent.haveEnabledActivityIdsChanged()) {
+			fView.asyncExec(new Runnable() {
+				public void run() {
+					fView.getViewer().refresh();
 				}
 			});
 		}

@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -50,6 +52,9 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.internal.Workbench;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -135,6 +140,34 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			DebugUIPlugin.log(e);
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns a collection of launch configurations that does not contain
+	 * configs from disabled activities.
+	 * 
+	 * @param configurations a collection of configurations
+	 * @return the given collection minus any configurations from disabled activities
+	 */
+	public static ILaunchConfiguration[] filterConfigs(ILaunchConfiguration[] configurations) {
+		List filteredConfigs= new ArrayList();
+		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+		HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
+		disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
+		for (int i = 0; i < configurations.length; i++) {
+			ILaunchConfiguration configuration= configurations[i];
+			ILaunchConfigurationType type= null;
+			try {
+				type = configuration.getType();
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e.getStatus());
+			}
+			if (type != null && !activityManager.match(type.getIdentifier(), disabledActivityIds)) {
+				// Don't add config types that match disabled activities.
+				filteredConfigs.add(configuration);
+			}
+		}
+		return (ILaunchConfiguration[]) filteredConfigs.toArray(new ILaunchConfiguration[filteredConfigs.size()]);
 	}
 	
 	public void shutdown() {

@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,7 +36,10 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.Workbench;
 //import org.eclipse.ui.internal.WWinKeyBindingService;
 //import org.eclipse.ui.internal.WorkbenchWindow;
 
@@ -155,12 +159,18 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 }
 
 		 int menuCount = 1;
+		 IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+		 HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
+		 disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
 		 Iterator iter = shortcuts.iterator();
 		 while (iter.hasNext()) {
 			 LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			 if (ext.getModes().contains(getMode())) {
-				 populateMenu(ext, getCreatedMenu(), menuCount);
-				 menuCount++;
+					if (!activityManager.match(ext.getId(), disabledActivityIds)) {
+						// Don't add config types that match disabled activities.
+						populateMenu(ext, getCreatedMenu(), menuCount);
+						menuCount++;
+					}
 			 }
 		 }
 	}

@@ -11,9 +11,17 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.internal.Workbench;
 
 public class BreakpointsViewContentProvider
 	implements IStructuredContentProvider {
@@ -22,7 +30,19 @@ public class BreakpointsViewContentProvider
 	 * @see IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object parent) {
-		return ((IBreakpointManager) parent).getBreakpoints();
+		List filteredBreakpoints= new ArrayList();
+		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+		HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
+		disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
+		IBreakpoint[] breakpoints= ((IBreakpointManager) parent).getBreakpoints();
+		for (int i = 0; i < breakpoints.length; i++) {
+			IBreakpoint breakpoint= breakpoints[i];
+			if (!activityManager.match(breakpoint.getModelIdentifier(), disabledActivityIds)) {
+				// Don't add config types that match disabled activities.
+				filteredBreakpoints.add(breakpoint);
+			}
+		}
+		return filteredBreakpoints.toArray();
 	}
 
 	/**

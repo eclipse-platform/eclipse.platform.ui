@@ -12,6 +12,8 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -23,6 +25,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * Content provider for representing launch configuration types & launch configurations in a tree.
@@ -119,15 +124,27 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 */
 	public Object[] getElements(Object inputElement) {
 		ILaunchConfigurationType[] allTypes = getLaunchManager().getLaunchConfigurationTypes();
-		ArrayList list = new ArrayList(allTypes.length);
+		return filterTypes(allTypes).toArray();
+	}
+
+	/**
+	 * @param allTypes
+	 * @return
+	 */
+	private List filterTypes(ILaunchConfigurationType[] allTypes) {
+		List filteredTypes= new ArrayList();
 		String mode = getMode();
+		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+		HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
+		disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
 		for (int i = 0; i < allTypes.length; i++) {
-			ILaunchConfigurationType configType = allTypes[i];
-			if (isVisible(configType, mode)) {
-				list.add(configType);
+			ILaunchConfigurationType type = allTypes[i];
+			if (isVisible(type, mode) && !activityManager.match(type.getIdentifier(), disabledActivityIds)) {
+				// Don't add config types that match disabled activities.
+				filteredTypes.add(type);
 			}
-		}			
-		return list.toArray();
+		}
+		return filteredTypes;
 	}
 
 	/**

@@ -117,7 +117,8 @@ public class FavoritesDialog extends Dialog {
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return getFavorites().toArray();
+			ILaunchConfiguration[] favorites= (ILaunchConfiguration[]) getFavorites().toArray(new ILaunchConfiguration[0]);
+			return LaunchConfigurationManager.filterConfigs(favorites);
 		}
 
 		/**
