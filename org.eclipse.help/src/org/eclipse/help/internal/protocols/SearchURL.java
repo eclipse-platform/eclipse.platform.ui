@@ -10,6 +10,7 @@ import java.util.*;
 import org.apache.lucene.search.Hits;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.*;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
@@ -129,7 +130,7 @@ public class SearchURL extends HelpURL {
 				// this will avoid seing progress if there is no work to do
 				while (!pm.isStarted()) {
 					try {
-						Thread.sleep(50);
+						Thread.currentThread().sleep(50);
 					} catch (InterruptedException ie) {
 					}
 					if (progressMonitors.get(getLocale()) == null)
@@ -223,7 +224,7 @@ public class SearchURL extends HelpURL {
 	}
 	private SearchResults createHitCollector() {
 		if (arguments == null) {
-			return new SearchResults(null, 500, Locale.getDefault().toString());
+			return new SearchResults(null, 500, BootLoader.getNL());
 		}
 		Collection scopeCol = null;
 		Object scopes = arguments.get("scope");

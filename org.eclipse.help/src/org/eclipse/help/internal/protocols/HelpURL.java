@@ -5,9 +5,10 @@ package org.eclipse.help.internal.protocols;
  */
 
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.help.internal.util.URLCoder;
 
 /**
@@ -123,17 +124,19 @@ public class HelpURL {
 			return locale;
 			
 		String clientLocale = getValue(lang);
-
-		// The clientLocale takes precedence over the Help Server locale.
-		if (clientLocale != null && clientLocale.length() >= 2) {
-			String language = clientLocale.substring(0,2);
-			String country;
-			if (clientLocale.length() >= 5 && clientLocale.indexOf('_') == 2) 
-				country = clientLocale.substring(3,5);
-			else
-				country = "";
-			locale = new Locale(language, country);	
-		}
+		if (clientLocale == null)
+			clientLocale = BootLoader.getNL();
+		if (clientLocale == null)
+			clientLocale = Locale.getDefault().toString();
+		
+		// break the string into tokens to get the Locale object
+		StringTokenizer locales = new StringTokenizer(clientLocale,"_");
+		if (locales.countTokens() == 1)
+			locale = new Locale(locales.nextToken());
+		else if (locales.countTokens() == 2)
+			locale = new Locale(locales.nextToken(), locales.nextToken());
+		else if (locales.countTokens() == 3)
+			locale = new Locale(locales.nextToken(), locales.nextToken(), locales.nextToken());
 		else
 			locale = Locale.getDefault();
 		
