@@ -469,14 +469,11 @@ public class ToolBarContributionItem extends ContributionItem {
      */
     public void update(String propertyName) {
         if (coolItem != null) {
-            boolean sizeChanged = (propertyName == null)
-                    || propertyName.equals(ICoolBarManager.SIZE);
-
-            if (sizeChanged) {
+            if ((propertyName == null) || propertyName.equals(ICoolBarManager.SIZE)) {
                 updateSize(true);
             }
-
         }
+
         // Sets its own visibility depending on whether there exist any items
         // in
         // tool bar manager that are visible
