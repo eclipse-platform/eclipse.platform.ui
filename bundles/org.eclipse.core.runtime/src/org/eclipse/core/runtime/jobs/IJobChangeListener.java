@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.jobs;
 
-import org.eclipse.core.runtime.IStatus;
-
 /**
  * Callback interface for clients interested in being notified when jobs change state.
  * <p>
@@ -34,45 +32,44 @@ public interface IJobChangeListener {
 	 * or change the priority of the job before it is started (and as a result may prevent
 	 * the run from actually occurring).
 	 * 
-	 * @param job the job that is about to be run.
+	 * @param event the event details
 	 */
-	public void aboutToRun(Job job);
+	public void aboutToRun(IJobChangeEvent event);
 	/**
 	 * Notification that a job was previously sleeping and has now been rescheduled
 	 * to run.
 	 * 
-	 * @param job the job that has been awakened
+	 * @param event the event details
 	 */
-	public void awake(Job job);
+	public void awake(IJobChangeEvent event);
 	/**
 	 * Notification that a job has completed execution, either due to cancelation, successful
-	 * completion, or failure.  The supplied status object indicates how the job finished,
+	 * completion, or failure.  The event status object indicates how the job finished,
 	 * and the reason for failure, if applicable.
 	 * 
-	 * @param job the job that has stopped.
-	 * @param result the result from the job's <code>run</code>
-	 * method.
+	 * @param event the event details
 	 */
-	public void done(Job job, IStatus result);
+	public void done(IJobChangeEvent event);
 	/**
 	 * Notification that a job has started running.
 	 * 
-	 * @param job the job that has started.
+	 * @param event the event details
 	 */
-	public void running(Job job);
+	public void running(IJobChangeEvent event);
 	/**
-	 * Notification that a job has been added to the queue of 
-	 * scheduled jobs.  Listeners are allowed to sleep, cancel, or
-	 * change the priority of the given job before it has a chance to run.
+	 * Notification that a job has been added to the queue of scheduled jobs.  
+	 * Listeners are allowed to sleep, cancel, or change the priority of the given job 
+	 * before it has a chance to run.  The event details includes the scheduling delay
+	 * before the event should start running.
 	 * 
-	 * @param job the job that is about to be added.
+	 * @param event the event details
 	 */
-	public void scheduled(Job job);
+	public void scheduled(IJobChangeEvent event);
 	/**
 	 * Notification that a job was waiting to run and has now been put in the
 	 * sleeping state.
 	 * 
-	 * @param job the job that has been put to sleep
+	 * @param event the event details
 	 */
-	public void sleeping(Job job);
+	public void sleeping(IJobChangeEvent event);
 }

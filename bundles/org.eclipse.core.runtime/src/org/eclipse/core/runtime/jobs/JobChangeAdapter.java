@@ -9,7 +9,6 @@
  **********************************************************************/
 package org.eclipse.core.runtime.jobs;
 
-import org.eclipse.core.runtime.IStatus;
 
 /**
  * This adapter class provides default implementations for the
@@ -28,36 +27,36 @@ public class JobChangeAdapter implements IJobChangeListener {
 	 * Method declared on IJobChangeListener.
 	 * This default implementation does nothing
 	 */
-	public void aboutToRun(Job job) {
+	public void aboutToRun(IJobChangeEvent event) {
 	}
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeListener.
 	 * This default implementation does nothing
 	 */
-	public void awake(Job job) {
+	public void awake(IJobChangeEvent event) {
 	}
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeListener.
 	 * This default implementation does nothing
 	 */
-	public void done(Job job, IStatus result) {
+	public void done(IJobChangeEvent event) {
 	}
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeListener.
 	 * This default implementation does nothing
 	 */
-	public void running(Job job) {
+	public void running(IJobChangeEvent event)	 {
 	}
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeListener.
 	 * This default implementation does nothing
 	 */
-	public void scheduled(Job job) {
+	public void scheduled(IJobChangeEvent event) {
 	}
 	/* (non-Javadoc)
 	 * Method declared on IJobChangeListener.
 	 * This default implementation does nothing
 	 */
-	public void sleeping(Job job) {
+	public void sleeping(IJobChangeEvent event) {
 	}
 }

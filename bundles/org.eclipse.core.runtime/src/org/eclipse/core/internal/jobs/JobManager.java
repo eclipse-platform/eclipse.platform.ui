@@ -30,7 +30,8 @@ import org.eclipse.core.runtime.jobs.*;
  * must NEVER call the worker pool while its own monitor is held.
  */
 public class JobManager implements IJobManager {
-	public static final boolean DEBUG = false;
+	private static final String JOB_DEBUG_OPTION = Platform.PI_RUNTIME + "/jobs"; //$NON-NLS-1$
+	public static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(JOB_DEBUG_OPTION));
 	private static JobManager instance;
 	protected static final long NEVER = Long.MAX_VALUE;
 
@@ -203,7 +204,7 @@ public class JobManager implements IJobManager {
 			if (result == Job.ASYNC_FINISH)
 				return;
 			if (JobManager.DEBUG)
-				JobManager.debug("JobManager.endJob: " + job); //$NON-NLS-1$
+				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			internalJob.setState(Job.NONE);
 			internalJob.setMonitor(null);
 			running.remove(job);
@@ -275,8 +276,11 @@ public class JobManager implements IJobManager {
 			}
 			//the job to run must be in the running list before we exit
 			//the sync block, otherwise two jobs with conflicting rules could start at once
-			if (job != null)
+			if (job != null)  {
 				running.add(job);
+				if (JobManager.DEBUG)
+					JobManager.debug("Starting job: " + job); //$NON-NLS-1$
+			}
 			return (Job)job;
 		}
 	}
@@ -306,7 +310,7 @@ public class JobManager implements IJobManager {
 			}
 		}
 		//notify listeners outside sync block
-		jobListeners.scheduled((Job)job);
+		jobListeners.scheduled((Job)job, delay);
 
 		//call the pool outside sync block to avoid deadlock
 		pool.jobQueued(job);
