@@ -125,14 +125,9 @@ public class TextSearchScope extends SearchScope {
 	 * and <code>?</code> for one character.
 	 * @param extensions
 	 */
-	public void addExtensions(Set extensions) {
-		if (extensions == null)
-			return;
-		Iterator iter= extensions.iterator();
-		while (iter.hasNext()) {
-			Object obj= iter.next();
-			if (obj instanceof String)
-				addExtension((String)obj);
+	public void addExtensions(String[] extensions) {
+		for (int i= 0; i < extensions.length; i++) {
+			addExtension(extensions[i]);
 		}
 	}  
 

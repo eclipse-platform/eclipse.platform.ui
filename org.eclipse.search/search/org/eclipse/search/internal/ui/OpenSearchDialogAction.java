@@ -53,7 +53,6 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 		}
 		SearchDialog dialog= new SearchDialog(
 			getWindow().getShell(),
-			SearchPlugin.getWorkspace(),
 			getSelection(),
 			getEditorPart(),
 			fPageId);

@@ -81,6 +81,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	private IConfigurationElement fElement;
 	private List fExtensionScorePairs;
 	private int fWildcardScore= ISearchPageScoreComputer.UNKNOWN;
+	private ISearchPage fCreatedPage;
 	
 	/**
 	 * Creates a new search page node with the given configuration element.
@@ -95,19 +96,27 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	 * @return the created page or null if the creation failed
 	 */
 	public ISearchPage createObject() {
-		ISearchPage result= null;
-		try {
-			result= (ISearchPage)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
-		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
-		} catch (ClassCastException ex) {
-			ExceptionHandler.displayMessageDialog(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
-			return null;
+		if (fCreatedPage == null) {
+			try {
+				fCreatedPage= (ISearchPage) fElement.createExecutableExtension(CLASS_ATTRIBUTE);
+			} catch (CoreException ex) {
+				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			} catch (ClassCastException ex) {
+				ExceptionHandler.displayMessageDialog(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
+				return null;
+			}
+			if (fCreatedPage != null) {
+				fCreatedPage.setTitle(getLabel());
+			}
 		}
-		if (result != null) {
-			result.setTitle(getLabel());
+		return fCreatedPage;
+	}
+	
+	public void dispose() {
+		if (fCreatedPage != null) {
+			fCreatedPage.dispose();
+			fCreatedPage= null;
 		}
-		return result;
 	}
 	
 	//---- XML Attribute accessors ---------------------------------------------

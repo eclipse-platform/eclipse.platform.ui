@@ -12,7 +12,6 @@ package org.eclipse.search.internal.ui.util;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -28,6 +27,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.dialogs.TypeFilteringDialog;
 
 import org.eclipse.search.internal.ui.SearchMessages;
 
@@ -62,47 +62,53 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		
 	public void widgetDoubleSelected(SelectionEvent event) {
 	}
-	/**
-	 *	Answer a collection of the currently-specified resource types
-	 *
-	 *	@return java.util.Vector
-	 */
-	public Set getFileTypes() {
+	
+	public String[] getFileTypes() {
 		Set result= new HashSet();
-			StringTokenizer tokenizer= new StringTokenizer(fTextField.getText(), TYPE_DELIMITER);
+		StringTokenizer tokenizer= new StringTokenizer(fTextField.getText(), TYPE_DELIMITER);
 
-			while (tokenizer.hasMoreTokens()) {
-				String currentExtension= tokenizer.nextToken().trim();
-					result.add(currentExtension);
-			}
-		return result;
+		while (tokenizer.hasMoreTokens()) {
+			String currentExtension= tokenizer.nextToken().trim();
+			result.add(currentExtension);
+		}
+		return (String[]) result.toArray(new String[result.size()]);
 	}
-	/**
-	 *	Populate self's import types field based upon the passed types collection
-	 *
-	 *	@param types java.util.Vector
-	 */
-	public void setFileTypes(Set types) {
+
+	public void setFileTypes(String[] types) {
 		fTextField.setText(typesToString(types));
 	}
+
 	protected void handleBrowseButton() {
-		TypeFilteringDialog dialog= new TypeFilteringDialog(fTextField.getShell(), getFileTypes());
+		TypeFilteringDialog dialog= new TypeFilteringDialog(fTextField.getShell(), Arrays.asList(getFileTypes()));
 		if (dialog.open() == Window.OK) {
-			setFileTypes(new HashSet(Arrays.asList(dialog.getResult())));
+			Object[] result= dialog.getResult();
+			HashSet patterns= new HashSet();
+			boolean starIncluded= false;
+			for (int i= 0; i < result.length; i++) {
+				String curr= result[i].toString();
+				if (curr.equals("*")) { //$NON-NLS-1$
+					starIncluded= true;
+				} else {
+					patterns.add("*." + curr); //$NON-NLS-1$
+				}
+			}
+			if (patterns.isEmpty() && starIncluded) { // remove star when other file extensions active
+				patterns.add("*"); //$NON-NLS-1$
+			}
+			String[] filePatterns= (String[]) patterns.toArray(new String[patterns.size()]);
+			Arrays.sort(filePatterns);
+			setFileTypes(filePatterns);
 		}
 	}
 
-	public static String typesToString(Set types) {
+	public static String typesToString(String[] types) {
 		StringBuffer result= new StringBuffer();
-		Iterator typesIter= types.iterator();
-		boolean first= true;
-		while (typesIter.hasNext()) {
-			if (!first) {
+		for (int i= 0; i < types.length; i++) {
+			if (i > 0) {
 				result.append(TYPE_DELIMITER);
 				result.append(" "); //$NON-NLS-1$
-			} else
-				first= false;
-			result.append(typesIter.next());
+			}
+			result.append(types[i]);
 		}
 		return result.toString();
 	}

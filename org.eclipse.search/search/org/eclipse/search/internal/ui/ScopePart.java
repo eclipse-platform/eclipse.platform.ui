@@ -49,14 +49,8 @@ public class ScopePart {
 	private static final String STORE_SCOPE= "scope"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAME= "lastUsedWorkingSetName"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAMES= "lastUsedWorkingSetNames"; //$NON-NLS-1$
-	private static IDialogSettings fgSettingsStore;
-
-	static {
-		fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS_KEY);
-		if (fgSettingsStore == null)
-			fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_KEY);
-	}
-
+	
+	private IDialogSettings fSettingsStore;
 	private Group fPart;
 
 	// Scope radio buttons
@@ -80,7 +74,12 @@ public class ScopePart {
 	 * @param searchEnclosingProjects If true, add the 'search enclosing project' radio button
 	 */
 	public ScopePart(ISearchPageContainer searchPageContainer, boolean searchEnclosingProjects) {
-		int initialScope= getStoredScope();
+		IDialogSettings dialogSettings= SearchPlugin.getDefault().getDialogSettings();
+		fSettingsStore= dialogSettings.getSection(DIALOG_SETTINGS_KEY);
+		if (fSettingsStore == null)
+			fSettingsStore= dialogSettings.addNewSection(DIALOG_SETTINGS_KEY);
+		
+		int initialScope= getStoredScope(fSettingsStore);
 		Assert.isLegal(initialScope >= 0 && initialScope <= 3);
 		fScope= initialScope;
 		fCanSearchEnclosingProjects= searchEnclosingProjects;
@@ -89,11 +88,12 @@ public class ScopePart {
 		fSearchPageContainer= searchPageContainer;
 		restoreState();
 	}
+	
 
-	private static int getStoredScope() {
+	private int getStoredScope(IDialogSettings settingsStore) {
 		int scope;
 		try {
-			scope= fgSettingsStore.getInt(STORE_SCOPE);
+			scope= settingsStore.getInt(STORE_SCOPE);
 		} catch (NumberFormatException ex) {
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
 		}
@@ -107,7 +107,7 @@ public class ScopePart {
 
 
 	private void restoreState() {
-		String[] lruWorkingSetNames= fgSettingsStore.getArray(STORE_LRU_WORKING_SET_NAMES);
+		String[] lruWorkingSetNames= fSettingsStore.getArray(STORE_LRU_WORKING_SET_NAMES);
 		if (lruWorkingSetNames != null) {
 			Set existingWorkingSets= new HashSet(lruWorkingSetNames.length);
 			for (int i= 0; i < lruWorkingSetNames.length; i++) {
@@ -120,7 +120,7 @@ public class ScopePart {
 				fWorkingSets= (IWorkingSet[]) existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
 		} else {
 			// Backward compatibility
-			String workingSetName= fgSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
+			String workingSetName= fSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
 			if (workingSetName != null) {
 				IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
 				if (workingSet != null) {
@@ -194,7 +194,7 @@ public class ScopePart {
 		}
 
 		updateSearchPageContainerActionPerformedEnablement();
-		fgSettingsStore.put(STORE_SCOPE, fScope);
+		fSettingsStore.put(STORE_SCOPE, fScope);
 		
 	}
 
@@ -254,7 +254,7 @@ public class ScopePart {
 			String[] existingWorkingSetNames= new String[fWorkingSets.length];
 			for (int i= 0; i < existingWorkingSetNames.length; i++)
 				existingWorkingSetNames[i]= fWorkingSets[i].getName();
-			fgSettingsStore.put(STORE_LRU_WORKING_SET_NAMES, existingWorkingSetNames);
+			fSettingsStore.put(STORE_LRU_WORKING_SET_NAMES, existingWorkingSetNames);
 		}
 	}
 
