@@ -88,12 +88,17 @@ public class AdvancedSearchDialog extends Dialog {
 		options = new SearchFilteringOptions(control, query);
 		setOptionsVisible(query.isCategoryFiltering());
 		
-		WorkbenchHelp.setHelp(
+		/*WorkbenchHelp.setHelp(
 			control,
 			new String[] {
 				IHelpUIConstants.SEARCH_PAGE,
 				IHelpUIConstants.NAVIGATION_VIEWER,
-				IHelpUIConstants.EMBEDDED_HELP_VIEW});
+				IHelpUIConstants.EMBEDDED_HELP_VIEW});*/
+		WorkbenchHelp.setHelp(
+			control.getShell(),
+			new String[] {
+				IHelpUIConstants.ADVANCED_SEARCH});
+
 		return control;
 	}
 	public Control getControl() {
