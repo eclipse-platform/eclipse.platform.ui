@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -27,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -247,6 +247,26 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 				new FastSyncInfoFilter() {
 					public boolean select(SyncInfo info) {
 						return info.getLocal().getType() == IResource.FILE;
+					}
+				}
+			}),
+			// Conflicting changes of files will fail if the local is not managed
+			// or is an addition
+			new AndSyncInfoFilter(new FastSyncInfoFilter[] {
+				FastSyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.CHANGE),
+				new FastSyncInfoFilter() {
+					public boolean select(SyncInfo info) {
+						if (info.getLocal().getType() == IResource.FILE) {
+							try {
+								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)info.getLocal());
+								byte[] syncBytes = cvsFile.getSyncBytes();
+								return (syncBytes == null || ResourceSyncInfo.isAddition(syncBytes));
+							} catch (CVSException e) {
+								CVSUIPlugin.log(e);
+								// Fall though and try to update
+							}
+						}
+						return false;
 					}
 				}
 			}),

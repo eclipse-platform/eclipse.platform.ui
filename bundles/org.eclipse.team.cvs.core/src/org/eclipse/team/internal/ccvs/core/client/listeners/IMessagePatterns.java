@@ -33,4 +33,6 @@ public interface IMessagePatterns {
 	public static final String RDIFF_SUMMARY_DELETED_FILE = "File " + Util.getVariablePattern(FILE_PATH_PATTERN, "remoteFilePath") + " is removed; not included in release tag " + TAG_PATTERN; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	// This format was introduced in 1.11.7
 	public static final String RDIFF_SUMMARY_DELETED_FILE2 = "File " + Util.getVariablePattern(FILE_PATH_PATTERN, "remoteFilePath") + " is removed; " + TAG_PATTERN + " revision " + Util.getVariablePattern(REVISION_PATTERN, "leftRevision"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	
+	public static final String MERGE_UPDATE_CONFLICTING_ADDITION = SERVER_MESSAGE_PREFIX + "file " + Util.getVariablePattern(FILE_PATH_PATTERN, "localFilePath") + " exists, but has been added in revision " + TAG_PATTERN;  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 }

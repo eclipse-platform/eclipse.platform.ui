@@ -388,6 +388,26 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			includeTimestamps, includeTags);
 	}
 	
+	protected void assertContentsEqual(IContainer c1, IContainer c2) throws CoreException {
+		assertTrue("The number of resource in " + c1.getProjectRelativePath().toString() + " differs", 
+			c1.members().length == c2.members().length);
+		IResource[] resources = c1.members();
+		for (int i= 0;i <resources.length;i++) {
+			assertContentsEqual(resources[i], c2.findMember(resources[i].getName()));
+		}
+	}
+	
+	protected void assertContentsEqual(IResource resource, IResource resource2) throws CoreException {
+		if (resource.getType() == IResource.FILE) {
+			assertContentsEqual((IFile)resource, (IFile)resource2);
+		} else {
+			assertContentsEqual((IContainer)resource, (IContainer)resource2);
+		}
+	}
+
+	protected void assertContentsEqual(IFile resource, IFile resource2) throws CoreException {
+		assertTrue("Contents of " + resource.getProjectRelativePath() + " do not match", compareContent(resource.getContents(), resource2.getContents()));
+	}
 	/*
 	 * Compare resources by casting them to their prpoer type
 	 */

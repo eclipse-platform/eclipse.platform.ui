@@ -533,7 +533,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
 		IProject branchedProject = branchProject(project, root, branch);
 		
-		// add a file to HEAD
+		// add a file to the branch
 		addResources(branchedProject, new String[] {"folder2/", "folder2/added.txt"}, true);
 		
 		// Setup a merge by creating a merge subscriber
@@ -562,5 +562,62 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 					SyncInfo.IN_SYNC, 
 					SyncInfo.CONFLICTING | SyncInfo.CHANGE
 				});
+	}
+	
+	public void testFileAddedToBranch() throws InvocationTargetException, InterruptedException, CoreException, IOException {
+		// Create a project
+		IProject project = createProject(new String[] { "delete.txt", "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// Add a file to the branch
+		addResources(branchedProject, new String[] {"folder2/", "folder2/added.txt"}, true);
+		
+		// Merge the file with HEAD but do not commit
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
+		assertSyncEquals("testFileAddedToBranch", subscriber, project, 
+				new String[]{"folder2/", "folder2/added.txt"}, true, 
+				new int[]{
+					SyncInfo.INCOMING | SyncInfo.ADDITION, 
+					SyncInfo.INCOMING | SyncInfo.ADDITION
+				});
+		mergeResources(subscriber, project, new String[]{"folder2/", "folder2/added.txt"}, true /* allow overwrite */);
+		
+		// Ensure HEAD matches branch
+		assertContentsEqual(project, branchedProject);
+		
+		// Modify the file on the branch
+		setContentsAndEnsureModified(branchedProject.getFile("folder2/added.txt"));
+		commitProject(branchedProject);
+		
+		// Merge with HEAD again and commit afterwards
+		assertSyncEquals("testFileAddedToBranch", subscriber, project, 
+				new String[]{"folder2/added.txt"}, true, 
+				new int[]{
+					SyncInfo.CONFLICTING | SyncInfo.CHANGE
+				});
+		mergeResources(subscriber, project, new String[]{"folder2/added.txt"}, true /* allow overwrite */);
+		commitProject(project);
+
+		// Ensure HEAD matches branch
+		assertContentsEqual(project, branchedProject);
+		
+		// Modify the file on the branch again
+		setContentsAndEnsureModified(branchedProject.getFile("folder2/added.txt"));
+		commitProject(branchedProject);
+		
+		// Merge with HEAD one last time
+		assertSyncEquals("testFileAddedToBranch", subscriber, project, 
+				new String[]{"folder2/added.txt"}, true, 
+				new int[]{
+					SyncInfo.CONFLICTING | SyncInfo.CHANGE
+				});
+		mergeResources(subscriber, project, new String[]{"folder2/added.txt"}, true /* allow overwrite */);
+
+		// Ensure HEAD matches branch
+		assertContentsEqual(project, branchedProject);
 	}
 }
