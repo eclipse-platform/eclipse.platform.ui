@@ -26,7 +26,7 @@ in the title of the window and in the shortcut bar as a pushed-in icon.
 
 When opening perspectives you can hold down Ctrl (on Linux use Alt+Shift) or Shift to
 optionally open each perspective in its own window, or to replace the current perspective 
-with a new perspective. The behavior of Ctrl and Shift is configurable from <action pluginId="org.eclipse.ui"  class="org.eclipse.ui.internal.OpenPreferencesAction">Window > Preferences</action>.
+with a new perspective. The behavior of Ctrl and Shift is configurable from <action pluginId="org.eclipse.ui"  class="org.eclipse.ui.internal.OpenPreferencesAction">Workbench > Preferences</action>.
 
 To open the Java perspective choose Perspective > Open > Java. </item>
 
