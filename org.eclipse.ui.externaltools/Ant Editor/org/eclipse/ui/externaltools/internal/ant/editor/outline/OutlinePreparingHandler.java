@@ -422,10 +422,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      */
     public void warning(SAXParseException anException) throws SAXException {
 		if (errorHandler != null) {
-			XmlElement element= new XmlElement(""); //$NON-NLS-1$
-			element.setFilePath(anException.getSystemId());
-			element.setExternal(isExternal());
-			computeErrorLocation(element, anException);
+			XmlElement element= createProblemElement(anException);
 			errorHandler.warning(anException, element);
 		}
     }
@@ -434,9 +431,11 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      * @see org.xml.sax.ErrorHandler#error(SAXParseException)
      */
     public void error(SAXParseException anException) throws SAXException {
-		XmlElement errorElement= generateErrorElementHierarchy(anException);
-		if (errorHandler != null)
+		generateErrorElementHierarchy();
+		if (errorHandler != null) {
+			XmlElement errorElement= createProblemElement(anException);
 			errorHandler.error(anException, errorElement);
+		}
     }
 
     /**
@@ -446,26 +445,14 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      * @see org.xml.sax.ErrorHandler#fatalError(SAXParseException)
      */
     public void fatalError(SAXParseException anException) throws SAXException {
-		XmlElement errorElement= generateErrorElementHierarchy(anException);
+		generateErrorElementHierarchy();
 		if (errorHandler != null) {
+			XmlElement errorElement= createProblemElement(anException);
 			errorHandler.fatalError(anException, errorElement);
 		}
     }
 
-	private XmlElement generateErrorElementHierarchy(SAXParseException exception) {
-		if (rootElement == null) {
-			String path= exception.getSystemId() != null ? exception.getSystemId() : mainFile.getAbsolutePath();
-			rootElement= new XmlElement(path); //$NON-NLS-1$
-			rootElement.setFilePath(path);
-			stillOpenElements.push(rootElement);
-		}
-		rootElement.setIsErrorNode(true);
-		
-		if (rootElement.getStartingRow() == 0) {
-			//an error occurred attempting to create the root element
-			computeErrorLocation(rootElement, exception);
-		}
-		
+	private XmlElement createProblemElement(SAXParseException exception) {
 		int lineNumber= exception.getLineNumber();
 		StringBuffer message= new StringBuffer(exception.getMessage());
 		if (lineNumber != -1){
@@ -477,20 +464,15 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		errorNode.setExternal(isExternal());
 		errorNode.setIsErrorNode(true);
 		computeErrorLocation(errorNode, exception);
-		XmlElement lastOpen= getLastOpenElement();
-		if (lastOpen != null) {
-			lastOpen.addChildNode(errorNode);
-			lastOpen.setIsErrorNode(true);
-			XmlElement parent= lastOpen.getParentNode();
-			while (parent != null && parent != rootElement) {
-				parent.setIsErrorNode(true);
-				parent= parent.getParentNode();
-			}
-		} else {
-			rootElement.addChildNode(errorNode);
-		}
-		
 		return errorNode;
+	}
+	
+	private void generateErrorElementHierarchy() {
+		XmlElement openElement= getLastOpenElement();
+		while (openElement != null) {
+			openElement.setIsErrorNode(true);
+			openElement= openElement.getParentNode();
+		}
 	}
 	
 	/**
