@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.contentassist;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.contentassist;
 import java.util.Iterator;
 
 import java.util.Stack;
@@ -34,7 +40,12 @@ import org.eclipse.jface.text.contentassist.ContentAssistant.LayoutManager;
  * If multiple contexts are valid at the current cursor location, 
  * a list is presented from which the user may choose one context. 
  * Once the user makes their choice, or if there was only a single 
- * posible context, the context information is shown in a tooltip like popup.
+ * possible context, the context information is shown in a tooltip like popup. <p>
+ * If the tooltip is visible and the user wants to see context information of 
+ * a context embedded into the one for which context information is displayed,
+ * context information for the embedded context is shown. As soon as the 
+ * cursor leaves the embedded context area, the context information for
+ * the embedding context is shown again.
  *
  * @see IContextInformation
  * @see IContextInformationValidator
@@ -43,6 +54,10 @@ class ContextInformationPopup implements IContentAssistListener {
 	
 	
 	
+	/**
+	 * Represents the state necessary for embedding contexts.
+	 * @since 2.0
+	 */
 	static class ContextFrame {
 		public int fBeginOffset;
 		public int fOffset;
@@ -69,11 +84,23 @@ class ContextInformationPopup implements IContentAssistListener {
 	private Stack fContextFrameStack= new Stack();
 	
 	
+	/**
+	 * Creates a new context information popup.
+	 * 
+	 * @param contentAssistant the content assist for computing the context information
+	 * @param viewer the viewer on top of which the context information is shown
+	 */
 	public ContextInformationPopup(ContentAssistant contentAssistant, ITextViewer viewer) {
 		fContentAssistant= contentAssistant;
 		fViewer= viewer;
 	}
 
+	/**
+	 * Shows all possible contexts for the given cursor position of the viewer.
+	 * 
+	 * @param autoActivated <code>true</code>  if auto activated
+	 * @return  a potential error message or <code>null</code> in case of no error
+	 */
 	public String showContextProposals(final boolean autoActivated) {
 		final StyledText styledText= fViewer.getTextWidget();
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
@@ -108,6 +135,13 @@ class ContextInformationPopup implements IContentAssistListener {
 		return getErrorMessage();
 	}
 	
+	/**
+	 * Displays the given context information for the given offset.
+	 * 
+	 * @param info the context information
+	 * @param position the offset
+	 * @since 2.0
+	 */
 	public void showContextInformation(final IContextInformation info, final int position) {
 		Control control= fViewer.getTextWidget();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
@@ -118,26 +152,41 @@ class ContextInformationPopup implements IContentAssistListener {
 		});
 	}
 	
-		private void internalShowContextInfo(IContextInformation information, int offset) {
-					
-			IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer.getDocument(), offset);
+	/**
+	 * Displays the given context information for the given offset.
+	 * 
+	 * @param info the context information
+	 * @param position the offset
+	 * @since 2.0
+	 */
+
+	private void internalShowContextInfo(IContextInformation information, int offset) {
+				
+		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer.getDocument(), offset);
+		
+		if (validator != null) {
+			ContextFrame current= new ContextFrame();
+			current.fInformation= information;
+			current.fBeginOffset= (information instanceof IContextInformationExtension) ? ((IContextInformationExtension) information).getContextInformationPosition() : offset;
+			if (current.fBeginOffset == -1) current.fBeginOffset= offset;
+			current.fOffset= offset;
+			current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x - (offset - current.fBeginOffset);
+			current.fValidator= validator;
+			current.fPresenter= fContentAssistant.getContextInformationPresenter(fViewer.getDocument(), offset);
 			
-			if (validator != null) {
-				ContextFrame current= new ContextFrame();
-				current.fInformation= information;
-				current.fBeginOffset= (information instanceof IContextInformationExtension) ? ((IContextInformationExtension) information).getContextInformationPosition() : offset;
-				if (current.fBeginOffset == -1) current.fBeginOffset= offset;
-				current.fOffset= offset;
-				current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x - (offset - current.fBeginOffset);
-				current.fValidator= validator;
-				current.fPresenter= fContentAssistant.getContextInformationPresenter(fViewer.getDocument(), offset);
-				
-				fContextFrameStack.push(current);
-				
-				internalShowContextFrame(current, fContextFrameStack.size() == 1);
-			}
+			fContextFrameStack.push(current);
+			
+			internalShowContextFrame(current, fContextFrameStack.size() == 1);
 		}
+	}
 	
+	/**
+	 * Shows the given context frame.
+	 * 
+	 * @param frame the frane to display
+	 * @param initial <code>true</code> if this is the first frame to be displayed
+	 * @since 2.0
+	 */
 	private void internalShowContextFrame(ContextFrame frame, boolean initial) {
 		
 		frame.fValidator.install(frame.fInformation, fViewer, frame.fOffset);
@@ -167,14 +216,29 @@ class ContextInformationPopup implements IContentAssistListener {
 		}
 	}
 	
+	/**
+	 * Computes all possible context information for the given offset.
+	 * 
+	 * @param position the offset
+	 * @return all possible context information for the given offset
+	 * @since 2.0
+	 */
 	private IContextInformation[] computeContextInformation(int position) {
 		return fContentAssistant.computeContextInformation(fViewer, position);
 	}
 	
+	/**
+	 *Returns the error message generated while computing context information.
+	 * 
+	 * @return the error message
+	 */
 	private String getErrorMessage() {
 		return fContentAssistant.getErrorMessage();
 	}
 
+	/**
+	 * Creates the context information popup. This is the tooltip like overlay window.
+	 */
 	private void createContextInfoPopup() {
 		if (Helper.okToUse(fContextInfoPopup))
 			return;
@@ -198,6 +262,10 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextInfoText.setForeground(c);			
 	}
 		
+	/**
+	 * Resizes the context information popup.
+	 * @since 2.0
+	 */
 	private void resize() {
 		Point size= fContextInfoText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		size.x += 3;
@@ -208,6 +276,9 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextInfoPopup.setSize(size);
 	}
 	
+	/**
+	 *Hides the context information popup.
+	 */
 	private void hideContextInfoPopup() {
 		
 		if (Helper.okToUse(fContextInfoPopup)) {
@@ -237,6 +308,10 @@ class ContextInformationPopup implements IContentAssistListener {
 		}
 	}
 	
+	/**
+	 * Creates the context selector in case the user has the choice between multiple valid contexts
+	 * at a given offset.
+	 */
 	private void createContextSelector() {
 		if (Helper.okToUse(fContextSelectorShell))
 			return;
@@ -278,6 +353,10 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContentAssistant.addToLayout(this, fContextSelectorShell, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_SELECTOR, fContentAssistant.getSelectionOffset());
 	}
 	
+	/**
+	 * Causes the context information of the context selected in the context selector 
+	 * to be displayed in the context information popup.
+	 */
 	private void insertSelectedContext() {
 		int i= fContextSelectorTable.getSelectionIndex();
 
@@ -288,6 +367,11 @@ class ContextInformationPopup implements IContentAssistListener {
 		internalShowContextInfo(fContextSelectorInput[i], position);
 	}
 	
+	/**
+	 * Sets the contexts in the context selector to the given set.
+	 * 
+	 * @param contexts teh possible contexts
+	 */
 	private void setContexts(IContextInformation[] contexts) {
 		if (Helper.okToUse(fContextSelectorTable)) {
 
@@ -311,11 +395,17 @@ class ContextInformationPopup implements IContentAssistListener {
 		}
 	}
 	
+	/**
+	 * Displays the context selector.
+	 */
 	private void displayContextSelector() {
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR))
 			fContextSelectorShell.setVisible(true);
 	}
 
+	/**
+	 * Hodes the context selector.
+	 */
 	private void hideContextSelector() {
 		if (Helper.okToUse(fContextSelectorShell)) {
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR);
@@ -327,6 +417,10 @@ class ContextInformationPopup implements IContentAssistListener {
 		}
 	}
 	
+	/**
+	 *Returns whether the context selector has the focus.
+	 * @return <code>true</code> if teh context selector has the focus
+	 */
 	public boolean hasFocus() {
 		if (Helper.okToUse(fContextSelectorShell))
 			return (fContextSelectorShell.isFocusControl() || fContextSelectorTable.isFocusControl());
@@ -334,15 +428,27 @@ class ContextInformationPopup implements IContentAssistListener {
 		return false;
 	}
 	
+	/**
+	 * Hides context selector and context information popup.
+	 */
 	public void hide() {
 		hideContextSelector();
 		hideContextInfoPopup();
 	}
 	
+	/**
+	 * Returns whether this context information popup is active. I.e., either 
+	 * a context selector or context information is displayed.
+	 * 
+	 * @return <code>true</code> if the context selector is active
+	 */
 	public boolean isActive() {
 		return (Helper.okToUse(fContextInfoPopup) || Helper.okToUse(fContextSelectorShell));
 	}
 	
+	/* 
+	 * @see IContentAssistListener#verifyKey(VerifyEvent)
+	 */
 	public boolean verifyKey(VerifyEvent e) {
 		if (Helper.okToUse(fContextSelectorShell))
 			return contextSelectorKeyPressed(e);
@@ -351,6 +457,12 @@ class ContextInformationPopup implements IContentAssistListener {
 		return true;
 	}
 	
+	/**
+	 * Processes a key stroke in the context selector.
+	 * 
+	 * @param e the verify event describing the key stroke
+	 * @return <code>true</code> if processing can be stopped
+	 */
 	private boolean contextSelectorKeyPressed(VerifyEvent e) {
 
 		char key= e.character;
@@ -416,6 +528,12 @@ class ContextInformationPopup implements IContentAssistListener {
 		return true;
 	}
 
+	/**
+	 * Processes a key stroke while the info popup is up.
+	 * 
+	 * @param e the verify event describing the key stroke
+	 * @return <code>true</code> if processing can be stopped
+	 */
 	private boolean contextInfoPopupKeyPressed(KeyEvent e) {
 
 		char key= e.character;
@@ -444,6 +562,9 @@ class ContextInformationPopup implements IContentAssistListener {
 		return true;
 	}
 	
+	/*
+	 * @see IEventConsumer#processEvent(VerifyEvent)
+	 */
 	public void processEvent(VerifyEvent event) {
 		if (Helper.okToUse(fContextSelectorShell))
 			contextSelectorProcessEvent(event);
@@ -451,6 +572,11 @@ class ContextInformationPopup implements IContentAssistListener {
 			contextInfoPopupProcessEvent(event);
 	}
 
+	/**
+	 * Processes a key stroke in the context selector.
+	 * 
+	 * @param e the verify event describing the key stroke
+	 */
 	private void contextSelectorProcessEvent(VerifyEvent e) {
 		
 		if (e.start == e.end && e.text != null && e.text.equals(fLineDelimiter)) {
@@ -461,11 +587,19 @@ class ContextInformationPopup implements IContentAssistListener {
 		hideContextSelector();
 	}
 
+	/**
+	 * Processes a key stroke while the info popup is up.
+	 * 
+	 * @param e the verify event describing the key stroke
+	 */
 	private void contextInfoPopupProcessEvent(VerifyEvent e) {
 		if (e.start != e.end && (e.text == null || e.text.length() == 0))
 			validateContextInformation();
 	}
-		
+	
+	/**
+	 * Validates the context information for the viewer's actual cursor position.
+	 */
 	private void validateContextInformation() {
 		/*
 		 * Post the code in the event queue in order to ensure that the

@@ -1,18 +1,26 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.rules;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.Assert;
 
+
 /**
  * A generic scanner which can be "programmed" with a sequence of rules.
- * The scanner is used to get the next token by evaluating each rule in order.
- * If a rule returns a token which is undefined, the scanner will proceed to 
+ * The scanner is used to get the next token by evaluating its rule in sequence until
+ * one is successful. If a rule returns a token which is undefined, the scanner will proceed to 
  * the next rule. Otherwise the token provided by the rule will be returned by 
  * the scanner. If no rule returned a defined token, this scanner returns a token
  * which returns <code>true</code> when calling <code>isOther</code>, unless the end 
@@ -58,6 +66,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 * reached.
 	 * 
 	 * @param token the default return token
+	 * @since 2.0
 	 */
 	public void setDefaultReturnToken(IToken defaultReturnToken) {
 		Assert.isNotNull(defaultReturnToken.getData());
@@ -128,6 +137,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 * @see #setDefaultReturnToken(IToken)
 	 * 
 	 * @return the scanner's default return token
+	 * @since 2.0
 	 */
 	private IToken getDefaultReturnToken() {
 		return fDefaultReturnToken;

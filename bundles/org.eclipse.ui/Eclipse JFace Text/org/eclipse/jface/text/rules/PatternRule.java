@@ -1,20 +1,28 @@
-package org.eclipse.jface.text.rules;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.rules;
 
 
 import org.eclipse.jface.util.Assert;
 
 
 /**
- * Standard implementation of <code>IRule</code>.
- * Is is capable of detecting a pattern which begins with a given starting
- * sequence and ends with a given ending sequence. If the ending sequence is
+ * Standard implementation of <code>IPredicateRule</code>.
+ * Is is capable of detecting a pattern which begins with a given start
+ * sequence and ends with a given end sequence. If the end sequence is
  * not specified, it can be either end of line, end or file, or both. Additionally,
- * the pattern can be constrained to begin in a certain column.
+ * the pattern can be constrained to begin in a certain column. The rule can also
+ * be used to check whether the text to scan covers half of the pattern, i.e. contains
+ * the end sequence required by the rule.
  */
 public class PatternRule implements IPredicateRule {
 	
@@ -83,10 +91,14 @@ public class PatternRule implements IPredicateRule {
 	}
 	
 	/**
-	 * Evaluates this rules without considering any column constraints.
+	 * Evaluates this rules without considering any column constraints. Resumes
+	 * detection, i.e. look sonly for the end sequence required by this rule if the
+	 * <code>resume</code> flag is set.
 	 *
 	 * @param scanner the character scanner to be used
+	 * @param resume <code>true</code> if detection should be resumed, <code>false</code> otherwise
 	 * @return the token resulting from this evaluation
+	 * @since 2.0
 	 */
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		
@@ -178,6 +190,7 @@ public class PatternRule implements IPredicateRule {
 	
 	/*
 	 * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
+	 * @since 2.0
 	 */
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		if (fColumn == UNDEFINED)
@@ -193,9 +206,9 @@ public class PatternRule implements IPredicateRule {
 
 	/*
 	 * @see IPredicateRule#getSuccessToken()
+	 * @since 2.0
 	 */
 	public IToken getSuccessToken() {
 		return fToken;
 	}
-
 }

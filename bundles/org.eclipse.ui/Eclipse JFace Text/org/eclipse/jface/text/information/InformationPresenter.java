@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.information;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.information;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +49,12 @@ import org.eclipse.jface.util.Assert;
  * This implementation extends <code>AbstractInformationControlManager</code>.
  * The information control is made visible on request by calling 
  * <code>showInformation</code>.<p>
- * Usually, clients instantiate this class and configure it before using it.
+ * Usually, clients instantiate this class and configure it before using it. The configuration
+ * must be consistent: This means the used <code>IInformationControlCreator</code>
+ * must create an information control expecting information in the same format the configured
+ * <code>IInformationProvider</code>s  use to encode the information they provide.
+ * 
+ * @since 2.0
  */
 public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter, IWidgetTokenKeeper {
 	
@@ -206,8 +217,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * Creates a new information presenter that uses the given information control creator.
 	 * The presenter is not installed on any text viewer yet. By default, an information
 	 * control closer is set that closes the information control in the event of key strokes, 
-	 * resizing, moves,focus changes, mouse clicks, and disposal - all of those applied to
-	 * the information control's parent control.
+	 * resizing, moves, focus changes, mouse clicks, and disposal - all of those applied to
+	 * the information control's parent control. Also, the setup ensures that the information 
+	 * control when made visible will request thel focus.
 	 * 
 	 * @param creator the information control creator to be used
 	 */
@@ -275,7 +287,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	}
 	
 	/**
-	 * Determines graphical area covered by the given text region.
+	 * Determines the graphical area covered by the given text region.
 	 *
 	 * @param region the region whose graphical extend must be computed
 	 * @return the graphical extend of the given region

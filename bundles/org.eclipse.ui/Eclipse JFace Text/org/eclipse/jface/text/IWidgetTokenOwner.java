@@ -1,15 +1,22 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 /**
  * A widget token must be aquired in order to display
- * overlay information because multiple overlay information
- * displays may hide each other. This interface is intended to become
- * part of <code>ITextViewer</code>.
+ * information in a temporary window.  The intent behind this concept is that
+ * only one temporary window should be presented at any moment in time and
+ * also to avoid overlapping temporary windows.
  * 
  * @since 2.0
  */ 

@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ResourceBundle;
 
@@ -19,16 +26,17 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 
 /**
- * An action which gets a text operation target from its text editor.
+ * A content asisst action which gets its target from its text editor.
  * <p>
  * The action is initially associated with a text editor via the constructor,
  * but can subsequently be changed using <code>setEditor</code>.
  * </p>
  * <p>
- * If this class is used as is, it works by asking the text editor for its
- * text operation target adapter (using <code>getAdapter(ITextOperationTarget.class)</code>. 
- * The action runs this operation with the pre-configured opcode.
+ * If this class is used as is, it works by asking the text editor for its text operation target
+ * (using <code>getAdapter(ITextOperationTarget.class)</code> and runs the content assist
+ * operation on this target.
  * </p>
+ * @since 2.0
  */
 public final class ContentAssistAction extends TextEditorAction {
 	
@@ -40,8 +48,8 @@ public final class ContentAssistAction extends TextEditorAction {
 	 * The action configures its visual representation from the given resource
 	 * bundle. The action works by asking the text editor at the time for its 
 	 * text operation target adapter (using
-	 * <code>getAdapter(ITextOperationTarget.class)</code>. The action runs that
-	 * operation with the given opcode.
+	 * <code>getAdapter(ITextOperationTarget.class)</code>. The action runs the
+	 * content assist operation on this target.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
@@ -56,9 +64,7 @@ public final class ContentAssistAction extends TextEditorAction {
 	}
 	
 	/**
-	 * The <code>TextOperationAction</code> implementation of this 
-	 * <code>IAction</code> method runs the operation with the current
-	 * operation code.
+	 * Runs the content assist operation on the editor's text operation target.
 	 */
 	public void run() {
 		if (fOperationTarget != null) {
@@ -83,7 +89,7 @@ public final class ContentAssistAction extends TextEditorAction {
 	}
 	
 	/**
-	 * The <code>TextOperationAction</code> implementation of this 
+	 * The <code>ContentAssistAction</code> implementation of this 
 	 * <code>IUpdate</code> method discovers the operation through the current
 	 * editor's <code>ITextOperationTarget</code> adapter, and sets the
 	 * enabled state accordingly.

@@ -1,28 +1,36 @@
-package org.eclipse.jface.text.rules;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.rules;
 
 
 import org.eclipse.jface.text.IDocument;
 
 
 /**
- * A token scanner scans a range of a document and reports about the token it finds.
- * A scanner has state. When asked the scanner returns the offset and the length of the
- * last found token.
+ * A partition token scanner returns tokens that represent partitions. For that reason,
+ * a partition token scanner is vulnerable in respect to the document offset it starts 
+ * scanning. In a simple case, a partition token scanner must always start at a partition
+ * boundary. A partition token scanner can also start in the middle of a partition,
+ * if it knows the type of the partition.
  * 
- * @see org.eclipse.jface.text.rules.IToken
+ * @since 2.0
  */
 public interface IPartitionTokenScanner  extends ITokenScanner {
 	
 	/**
-	 * Configures the scanner by providing access to the document range over which to scan.
-	 * The range is not a full range but starts at the beginning of a line in the middle of a partition
-	 * of the given content type. Therefore, it is assumed that a partition delimiter can not contain
-	 * a line delimiter.
+	 * Configures the scanner by providing access to the document range that should be scanned.
+	 * The range may no only contain complete partitions but starts at the beginning of a line in the
+	 * middle of a partition of the given content type. This requires that a partition delimiter can not 
+	 * contain a line delimiter.
 	 *
 	 * @param document the document to scan
 	 * @param offset the offset of the document range to scan

@@ -1,9 +1,15 @@
-package org.eclipse.ui.editors.text;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
- 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.editors.text; 
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,18 +34,31 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  * Action group for encoding actions.
+ * @since 2.0
  */
 public class EncodingActionGroup extends ActionGroup {
 	
 	/**
-	 * Sets the encoding of the editor to the value it has been initialized with.
+	 * Action for setting the encoding of the editor to the value this action has 
+	 * been initialized with.
 	 */
 	static class PredefinedEncodingAction extends TextEditorAction {
 		
+		/** The target encoding of this action. */
 		private String fEncoding;
+		/** The action label */
 		private String fLabel;
+		/** Indicates whether the target encoding is the default encoding. */
 		private boolean fIsDefault;
 		
+		/**
+		 * Creates a new action for the given specification.
+		 * 
+		 * @param bundle the resource bundle
+		 * @param prefix the prefix for lookups from the resource bundle
+		 * @param encoding the target encoding
+		 * @param editor the target editor
+		 */
 		public PredefinedEncodingAction(ResourceBundle bundle, String prefix, String encoding, ITextEditor editor) {
        		super(bundle, prefix, editor);
 			fEncoding= encoding;
@@ -48,6 +67,13 @@ public class EncodingActionGroup extends ActionGroup {
 			fLabel= getText();
 		}
 		
+		/**
+		 * Creates a new action for the given specification.
+		 * 
+		 * @param bundle the resource bundle
+		 * @param encoding the target encoding
+		 * @param editor the target editor
+		 */
 		public PredefinedEncodingAction(ResourceBundle bundle, String encoding, ITextEditor editor) {
        		super(bundle, null, editor);
 			fEncoding= encoding;
@@ -56,7 +82,9 @@ public class EncodingActionGroup extends ActionGroup {
 		}
 		
 		/**
-		 * Returns the encoding support.
+		 * Returns the encoding support of the action's editor.
+		 * 
+		 * @return the encoding support of the action's editor
 		 */
 		private IEncodingSupport getEncodingSupport() {
 			ITextEditor editor= getTextEditor();
@@ -75,7 +103,10 @@ public class EncodingActionGroup extends ActionGroup {
 		}
 		
 		/**
-		 * Returns the editor's encoding.
+		 * Returns the encoding currently used in the given editor.
+		 * 
+		 * @param editor the editor
+		 * @return the encoding currently used in the given editor
 		 */		
 		private String getEncoding(ITextEditor editor) {
 			IEncodingSupport s= getEncodingSupport();
@@ -85,7 +116,10 @@ public class EncodingActionGroup extends ActionGroup {
 		}
 		
 		/**
-		 * Returns the default encoding.
+		 * Returns the default encoding for the given editor.
+		 * 
+		 * @param editor the editor
+		 * @return the default encoding for the given editor
 		 */
 		private String getDefaultEncoding(ITextEditor editor) {
 			IEncodingSupport s= getEncodingSupport();
@@ -131,10 +165,14 @@ public class EncodingActionGroup extends ActionGroup {
 	};
 	
 	/**
-	 * Sets the encoding of the editor to the value that has been defined interactively.
+	 * Sets the encoding of an  editor to the value that has interactively been defined.
 	 */
 	static class CustomEncodingAction extends TextEditorAction {
 		
+		
+		/*
+		 * @see org.eclipse.ui.texteditor.TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
+		 */
 		protected CustomEncodingAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 			super(bundle, prefix, editor);
 		}
@@ -260,6 +298,8 @@ public class EncodingActionGroup extends ActionGroup {
 	
 	/**
 	 * Retargets this action group to the given editor.
+	 * 
+	 * @param editor the target editor
 	 */
 	public void retarget(ITextEditor editor) {
 		Iterator e= fRetargetActions.iterator();
@@ -278,6 +318,8 @@ public class EncodingActionGroup extends ActionGroup {
 	
 	/**
 	 * Creates a new encoding action group for the given editor
+	 * 
+	 * @param editor the editor
 	 */
 	public EncodingActionGroup(ITextEditor editor) {
 		

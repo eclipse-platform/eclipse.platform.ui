@@ -1,9 +1,17 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ResourceBundle;
 
@@ -34,7 +42,10 @@ public final class TextOperationAction extends TextEditorAction {
 	private int fOperationCode= -1;
 	/** The text operation target */
 	private ITextOperationTarget fOperationTarget;
-	/** Indicates whether this action can be executed on read only editors */
+	/** 
+	 * Indicates whether this action can be executed on read only editors
+	 * @since 2.0
+	 */
 	private boolean fRunsOnReadOnly= false;
 	
 	/**
@@ -76,6 +87,7 @@ public final class TextOperationAction extends TextEditorAction {
 	 * @param runsOnReadOnly <code>true</code> if action can be executed on read-only files
 	 * 
 	 * @see ResourceAction#ResourceAction
+	 * @since 2.0
 	 */
 	public TextOperationAction(ResourceBundle bundle, String prefix, ITextEditor editor, int operationCode, boolean runsOnReadOnly) {
 		super(bundle, prefix, editor);

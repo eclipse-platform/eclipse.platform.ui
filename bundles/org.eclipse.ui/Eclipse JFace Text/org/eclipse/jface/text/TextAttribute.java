@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.SWT;
@@ -48,7 +54,7 @@ public class TextAttribute {
 		this(foreground, null, SWT.NORMAL);
 	}
 	
-	/**
+	/*
 	 * @see Object#equals
 	 */
 	public boolean equals(Object object) {
@@ -64,11 +70,12 @@ public class TextAttribute {
 	}
 	
 	/**
-	 * Returns whether to given objects are equal.
+	 * Returns whether the two given objects are equal.
 	 * 
 	 * @param o1 the first object, can be <code>null</code>
 	 * @param o2 the second object, can be <code>null</code>
 	 * @return <code>true</code> if the given objects are equals
+	 * @since 2.0
 	 */
 	private boolean equals(Object o1, Object o2) {
 		if (o1 != null)

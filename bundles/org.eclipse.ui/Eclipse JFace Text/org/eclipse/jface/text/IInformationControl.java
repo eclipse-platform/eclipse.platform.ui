@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.events.DisposeListener;
@@ -14,10 +20,12 @@ import org.eclipse.swt.graphics.Point;
 
 /**
  * Interface of a control presenting information. The information is given
- * in textual form. Thus, it can either be the content itself or a description
- * of the content.<p>
- * The information control may not grap focus when made visible 
- * using <code>setVisible(true)</code>.
+ * in textual form. It can either be the content itself or a description
+ * of the content. This specification is left to the implementers of this interface.<p>
+ * The information control may not grap focus when made visible  using
+ * <code>setVisible(true)</code>.
+ * 
+ * @since 2.0
  */
 public interface IInformationControl {
 
@@ -29,19 +37,19 @@ public interface IInformationControl {
 	void setInformation(String information);
 	
 	/**
-	 * Sets the information control's size constraints. A constraint value of -1 indicates 
-	 * no constraint. This method is called before <code>computeSizeHint</code>
-	 * is called.
+	 * Sets the information control's size constraints. A constraint value of
+	 * <code>-1</code> indicates no constraint. This method is called before 
+	 * <code>computeSizeHint</code> is called.
 	 * 
-	 * @param maxWidth the maximal width of the control  to present the information, or -1 for not constraint
-	 * @param maxHeight the maximal height of the control to present the information, or -1 for not constraint
+	 * @param maxWidth the maximal width of the control  to present the information, or <code>-1</code> for not constraint
+	 * @param maxHeight the maximal height of the control to present the information, or <code>-1</code> for not constraint
 	 */
 	void setSizeConstraints(int maxWidth, int maxHeight);
 	
 	/**
-	 * Computes and returns a proposal for its size depending on the
-	 * information to present. The method tries to honor the previously
-	 * set constraints but might returns a size that exceeds them. 
+	 * Computes and returns a proposal for the size of this information control depending
+	 * on the information to present. The method tries to honor known size constraints but might 
+	 * returns a size that exceeds them. 
 	 * 
 	 * @return the computed size hint
 	 */
@@ -107,7 +115,7 @@ public interface IInformationControl {
 	/**
 	 * Returns whether this information control has the focus.
 	 * 
-	 * @return whether this information control has the focus
+	 * @return <code>true</code> when the information control has the focus otherwise <code>false</code>
 	 */
 	boolean isFocusControl();
 	

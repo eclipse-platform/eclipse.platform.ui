@@ -1,9 +1,15 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.texteditor;
 
 
 import java.util.ArrayList;
@@ -32,7 +38,7 @@ import org.eclipse.core.runtime.Status;
 
 
 /**
- * An abstract base implementation of a shareable document provider.
+ * An abstract  implementation of a shareable document provider.
  * <p>
  * Subclasses must implement <code>createDocument</code>,
  * <code>createAnnotationModel</code>, and <code>doSaveDocument</code>.
@@ -56,9 +62,15 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			public IDocument fDocument;
 			/** The element's annotation model */
 			public IAnnotationModel fModel;
-			/** Has element state been validated */
+			/** 
+			 * Has element state been validated
+			 * @since 2.0
+			 */
 			public boolean fIsStateValidated;
-			/** The status of this element */
+			/** 
+			 * The status of this element
+			 * @since 2.0
+			 */
 			public IStatus fStatus;
 			
 			
@@ -117,6 +129,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	/** 
 	 * Indicates whether this provider should behave as described in
 	 * use case 5 of http://bugs.eclipse.org/bugs/show_bug.cgi?id=10806.
+	 * Current value: <code>false</code>
+	 * @since 2.0
 	 */ 
 	static final protected boolean PR10806_UC5_ENABLED= false;
 	
@@ -124,16 +138,20 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Indicates whether this provider should behave as described in
 	 * http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469
 	 * Notes: This contradicts <code>PR10806_UC5_ENABLED</code>.
+	 * Current value: <code>true</code>
+	 * @since 2.0
 	 */
 	static final protected boolean PR14469_ENABLED= true;
 	
 	/**
-	 * Constant for representing an ok status.
+	 * Constant for representing an ok status. This is considered a value object.
+	 * @since 2.0
 	 */
 	static final protected IStatus STATUS_OK= new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "OK", null);
 	
 	/**
-	 * Constant for representing an error status.
+	 * Constant for representing an error status. This is considered a value object.
+	 * @since 2.0
 	 */
 	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.INFO, "ERROR", null);
 	
@@ -294,6 +312,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * This hook method is called when this provider starts managing documents for 
 	 * elements. I.e. it is called when the first element gets connected to this provider.
 	 * Subclasses may extend.
+	 * @since 2.0
 	 */
 	protected void connected() {
 	}
@@ -324,6 +343,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * This hook method is called when this provider stops managing documents for
 	 * element. I.e. it is called when the last element gets disconnected from this provider.
 	 * Subcalles may extend.
+	 * @since 2.0
 	 */
 	protected void disconnected() {
 	}
@@ -439,6 +459,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * The <code>AbstractDocumentProvider</code> implementation of this 
 	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
 	 * reimplement.
+	 * 
+	 * @param element the element
 	 */
 	public void aboutToChange(Object element) {
 	}
@@ -447,6 +469,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * The <code>AbstractDocumentProvider</code> implementation of this 
 	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
 	 * reimplement.
+	 * 
+	 * @param element the element
 	 */
 	public void changed(Object element) {
 	}
@@ -546,6 +570,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProvider#getModificationStamp(Object)
+	 * @since 2.0
 	 */
 	public long getModificationStamp(Object element) {
 		return 0;
@@ -553,6 +578,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProvider#getSynchronizationStamp(Object)
+	 * @since 2.0
 	 */
 	public long getSynchronizationStamp(Object element) {
 		return 0;
@@ -560,6 +586,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProvider#isDeleted(Object)
+	 * @since 2.0
 	 */
 	public boolean isDeleted(Object element) {
 		return false;
@@ -567,6 +594,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProviderExtension#isReadOnly(Object)
+	 * @since 2.0
 	 */
 	public boolean isReadOnly(Object element) {
 		return true;
@@ -574,6 +602,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
+	 * @since 2.0
 	 */
 	public boolean isModifiable(Object element) {
 		return false;
@@ -585,6 +614,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * 
 	 * @param element the element
 	 * @return whether <code>validateState</code> has been called for the given element
+	 * @since 2.0
 	 */
 	public boolean isStateValidated(Object element) {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
@@ -599,12 +629,15 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * 
 	 * @param element the element
 	 * @param computationContext the context in which validation happens
+	 * @exception CoreException in case validation fails
+	 * @since 2.0
 	 */
 	protected void doValidateState(Object  element, Object computationContext) throws CoreException {
 	}
 	
 	/*
 	 * @see IDocumentProviderExtension#validateState(Object, Object)
+	 * @since 2.0
 	 */
 	final public void validateState(Object element, Object computationContext) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
@@ -621,6 +654,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Default implementation is empty.
 	 * 
 	 * @param element the element
+	 * @exception CoreException in case state cache updating fails
+	 * @since 2.0
 	 */
 	protected void doUpdateStateCache(Object element) throws CoreException {
 	}
@@ -632,6 +667,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @param element the element
 	 * @param wasReadOnly the previous read-only state
 	 * @return <code>true</code> if the state of the given element must be invalidated
+	 * @since 2.0
 	 */
 	protected boolean invalidatesState(Object element, boolean wasReadOnly) {
 		Assert.isTrue(PR10806_UC5_ENABLED != PR14469_ENABLED);
@@ -643,6 +679,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProviderExtension#updateStateCache(Object)
+	 * @since 2.0
 	 */
 	final public void updateStateCache(Object element) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
@@ -658,6 +695,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProviderExtension#setCanSaveDocument(Object)
+	 * @since 2.0
 	 */
 	public void setCanSaveDocument(Object element) {
 		if (element != null) {
@@ -676,7 +714,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 *
 	 * @param element the element
 	 * @param isStateValidated
-	 * @see IElementStateListenerExtension#elementValidationStateChanged
+	 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
+	 * @since 2.0
 	 */
 	protected void fireElementStateValidationChanged(Object element, boolean isStateValidated) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -694,7 +733,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * change of the element
 	 *
 	 * @param element the element
-	 * @see IElementStateListenerExtension#elementStateChanging
+	 * @see IElementStateListenerExtension#elementStateChanging(Object)
+	 * @since 2.0
 	 */
 	protected void fireElementStateChanging(Object element) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -712,7 +752,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * change of the element
 	 *
 	 * @param element the element
-	 * @see IElementStateListenerExtension#elementStateChanging
+	 * @see IElementStateListenerExtension#elementStateChangeFailed(Object)
+	 * @since 2.0
 	 */
 	protected void fireElementStateChangeFailed(Object element) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -727,6 +768,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see IDocumentProviderExtension#getStatus(Object)
+	 * @since 2.0
 	 */
 	public IStatus getStatus(Object element) {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
@@ -741,6 +783,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(Object)
+	 * @since 2.0
 	 */
 	public void synchronize(Object element) throws CoreException {
 	}

@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import org.eclipse.jface.util.Assert;
@@ -11,13 +17,13 @@ import org.eclipse.jface.util.Assert;
  
 /**
  * Positions describe text ranges of a document and are
- * adapted to changes applied that document. The text range 
+ * adapted to changes applied to that document. The text range 
  * is specified by an offset and a length. Positions can be marked as
  * deleted. Deleted positions are considered to no longer represent 
  * a valid text range in the managing document. <p>
  * Positions attached to documents are ususally updated by position updaters.
  * Because position updaters are freely defineable and because of the
- * refrequence in which they are used, the fields of a position are made
+ * frequence in which they are used, the fields of a position are made
  * publicly accessible. Clients other than position updaters are not 
  * allowed to access these public fields.
  *
@@ -71,6 +77,7 @@ public class Position {
 	
 	/**
 	 * Marks this position as not deleted.
+	 * @since 2.0
 	 */
 	public void undelete() {
 		isDeleted= false;
@@ -106,7 +113,7 @@ public class Position {
 	}
 	
 	/**
-	 * Checks whetherthe given offset is inside
+	 * Checks whether the given offset is inside
 	 * of this position's text range.
 	 *
 	 * @param offset the offset to check

@@ -1,9 +1,15 @@
-package org.eclipse.ui.editors.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.editors.text;
 
 
 import java.io.ByteArrayInputStream;
@@ -55,21 +61,35 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	
 	/**
-	 * Runnable that makes sure that a change failed message is sent out.
+	 * Runnable encapsulating an element state change. This runnable ensures 
+	 * that a element change failed message is sent out to the element state listeners
+	 * in case an exception occurred.
+	 * @since 2.0
 	 */
 	protected class SafeChange implements Runnable {
 		
+		/** The input that changes. */
 		private IFileEditorInput fInput;
 		
+		/**
+		 * Creates a new safe runnable for the given input.
+		 * @param input the input
+		 */
 		public SafeChange(IFileEditorInput input) {
 			fInput= input;
 		}
 		
+		/** 
+		 * Subclass responsibility.
+		 * @param input the input
+		 * @exception Exception in case of error
+		 */
 		protected void execute(IFileEditorInput input) throws Exception {
 		}
 		
 		/*
 		 * @see java.lang.Runnable#run()
+		 * @since 2.0
 		 */
 		public void run() {
 			
@@ -97,6 +117,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/**
 		 * Creates a new file synchronizer. Is not yet installed on a resource.
+		 * @param fileEditorInput the editor input to be synchronized
 		 */
 		public FileSynchronizer(IFileEditorInput fileEditorInput) {
 			fFileEditorInput= fileEditorInput;
@@ -104,7 +125,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/**
 		 * Creates a new file synchronizer. Is not yet installed on a resource.
-		 * @deprecated since 0.042 use FileSynchronizer(IFileEditorInput)
+		 * @param fileEditorInput the editor input to be synchronized
+		 * @deprecated use FileSynchronizer(IFileEditorInput)
 		 */
 		public FileSynchronizer(FileEditorInput fileEditorInput) {
 			fFileEditorInput= fileEditorInput;
@@ -112,6 +134,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/**
 		 * Returns the file wrapped by the file editor input.
+		 * @return the file wrapped by the editor input associated with that synchronizer
 		 */
 		protected IFile getFile() {
 			return fFileEditorInput.getFile();
@@ -194,7 +217,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			return true; // because we are sitting on files anyway
 		}
 		
-		/*
+		/**
 		 * Posts the update code "behind" the running operation.
 		 *
 		 * @param runnable the update code
@@ -218,8 +241,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	
 	/**
-	 * Bundle of all required informations to allow files as 
-	 * underlying document resources. 
+	 * Bundle of all required information to allow files as underlying document resources. 
 	 */
 	protected class FileInfo extends StorageInfo {
 		
@@ -228,6 +250,12 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		/** The time stamp at which this provider changed the file */
 		public long fModificationStamp= IResource.NULL_STAMP;
 		
+		/**
+		 * Creates a new file info.
+		 * @param document the document
+		 * @param model the annotation model
+		 * @param fileSynchronizer the file synchronizer
+		 */
 		public FileInfo(IDocument document, IAnnotationModel model, FileSynchronizer fileSynchronizer) {
 			super(document, model);
 			fFileSynchronizer= fileSynchronizer;
@@ -245,6 +273,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	/**
 	 * Overrides <code>StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput)</code>.
 	 * @deprecated use file encoding based version
+	 * @since 2.0
 	 */
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
@@ -257,6 +286,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput, String)
+	 * @since 2.0
 	 */
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
@@ -341,6 +371,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(Object)
+	 * @since 2.0
 	 */
 	public void synchronize(Object element)  throws CoreException {
 		if (element instanceof IFileEditorInput) {
@@ -589,6 +620,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see AbstractDocumentProvider#doValidateState(Object, Object)
+	 * @since 2.0
 	 */
 	protected void doValidateState(Object element, Object computationContext) throws CoreException {
 		
@@ -609,6 +641,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
+	 * @since 2.0
 	 */
 	public boolean isModifiable(Object element) {
 		if (!isStateValidated(element)) {
@@ -620,6 +653,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see IDocumentProvider#resetDocument(Object)
+	 * @since 2.0
 	 */
 	public void resetDocument(Object element) throws CoreException {
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014

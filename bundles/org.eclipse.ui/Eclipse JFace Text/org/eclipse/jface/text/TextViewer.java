@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import java.util.ArrayList;
@@ -58,8 +64,15 @@ import org.eclipse.jface.viewers.Viewer;
  * SWT based implementation of <code>ITextViewer</code>. Once the viewer and its SWT control
  * have been created the viewer can only indirectly be disposed by disposing its SWT control.<p>
  * Clients are supposed to instantiate a text viewer and subsequently to communicate with it 
- * exclusively using the <code>ITextViewer</code> interface. Clients should no subclass this
- * class as it is rather likely that subclasses will be broken by future releases.
+ * exclusively using the <code>ITextViewer</code> interface or any of the implemented extension
+ * interfaces. <p>
+ * A text viewer serves as text operation target. It only partially supports the external control of
+ * the enable state of its text operations. A text viewer is also a widget token owner. Anything that
+ * wants to display an overlay window on top of a text viewer should implement the 
+ * <code>IWidgetTokenKeeper</code> interface and participate in the widget token negotiation between
+ * the text viewer and all its potential widget token keepers.<p>
+ * Clients should no subclass this class as it is rather likely that subclasses will be broken by
+ * future releases.
  * 
  * @see ITextViewer
  */  
@@ -68,11 +81,11 @@ public class TextViewer extends Viewer implements
 		ITextOperationTarget, ITextOperationTargetExtension,
 		IWidgetTokenOwner {
 	
-	
+	/** Internal flag to indicate the debug state. */
 	public static boolean TRACE_ERRORS= false;
 	
 	/**
-	 * Represent a replace command that brings the text viewer's text widget
+	 * Represents a replace command that brings the text viewer's text widget
 	 * back in sync with text viewer's document after the document has been changed.
 	 */
 	protected class WidgetCommand {
@@ -114,15 +127,22 @@ public class TextViewer extends Viewer implements
 	 */	
 	class TextDoubleClickStrategyConnector extends MouseAdapter {
 		
+		/** Internal flag to remember that a double clicked occurred. */
 		private boolean fDoubleClicked= false;
 		
 		public TextDoubleClickStrategyConnector() {
 		}
 				
+		/*
+		 * @see MouseListener#mouseDoubleClick(MouseEvent)
+		 */
 		public void mouseDoubleClick(MouseEvent e) {
 			fDoubleClicked= true;
 		}
 			
+		/*
+		 * @see MouseListener#mouseUp(MouseEvent)
+		 */
 		public void mouseUp(MouseEvent e) {
 			if (fDoubleClicked) {
 				fDoubleClicked= false;
@@ -135,8 +155,9 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Monitors the area of the viewer's document that is visible in the viewer. 
-	 * If the area might have been changed, it informs the text viewer about this
-	 * potential change and its origin. The origin is internally used for optimization purposes.
+	 * If the area might have changed, it informs the text viewer about this
+	 * potential change and its origin. The origin is internally used for optimization
+	 * purposes.
 	 */
 	class ViewportGuard extends MouseAdapter 
 		implements ControlListener, KeyListener, MouseMoveListener, SelectionListener {
@@ -219,11 +240,9 @@ public class TextViewer extends Viewer implements
 			super(category);
 		}
 		
-		/*
+		/**
 		 * If an insertion happens at the selection's start offset,
 		 * the position is extended rather than shifted.
-		 *
-		 * @see DefaultPositionUpdater#adaptToInsert
 		 */
 		protected void adaptToInsert() {
 			
@@ -276,10 +295,17 @@ public class TextViewer extends Viewer implements
 	 */
 	class TextVerifyListener implements VerifyListener {
 		
+		/**
+		 * Indicates whether verify events are forwarded or ignored.
+		 * @since 2.0
+		 */
 		private boolean fForward= true;
 		
 		/**
 		 * Tells the listener to forward received events.
+		 * 
+		 * @param forward <code>true</code> if forwarding should be enabled.
+		 * @since 2.0
 		 */
 		public void forward(boolean forward) {
 			fForward= forward;
@@ -295,24 +321,39 @@ public class TextViewer extends Viewer implements
 	};
 	
 	/**
-	 * The viewer's manager of registered verify key listeners.
-	 * Uses batches rather than robust iterators because of
-	 * performance issues.
+	 * The viewer's manager reponsible for registered verify key listeners.
+	 * Uses batches rather than robust iterators because of performance issues.
+	 * 
+	 * @since 2.0
 	 */
 	class VerifyKeyListenersManager implements VerifyKeyListener {
 		
+		/**
+		 * Represents a batched addListener/removeListener command.
+		 */
 		class Batch {
+			/** The index at which to insert the listener. */
 			int index;
+			/** The listener to be inserted. */
 			VerifyKeyListener listener;
 			
+			/**
+			 * Creates a new batch containing the given listener for the given index.
+			 * 
+			 * @param l the listener to be added
+			 * @param i the index at which to insert the listener
+			 */
 			public Batch(VerifyKeyListener l, int i) {
 				listener= l;
 				index= i;
 			}
 		};
 		
+		/** List of registed verify key listeners. */
 		private List fListeners= new ArrayList();
+		/** List of pending batches. */
 		private List fBatched= new ArrayList();
+		/** The currently active iterator. */
 		private Iterator fIterator;
 		
 		/*
@@ -332,6 +373,9 @@ public class TextViewer extends Viewer implements
 			processBatchedRequests();
 		}
 		
+		/**
+		 * Processes the pending batched requests.
+		 */
 		private void processBatchedRequests() {
 			if (!fBatched.isEmpty()) {
 				Iterator e= fBatched.iterator();
@@ -345,6 +389,8 @@ public class TextViewer extends Viewer implements
 		
 		/**
 		 * Returns the number of registered verify key listeners.
+		 * 
+		 * @return the number of registered verify key listeners
 		 */
 		public int numberOfListeners() {
 			return fListeners.size();
@@ -446,28 +492,54 @@ public class TextViewer extends Viewer implements
 	
 	
 	/**
-	 * MISSING
+	 * Reification of a range in which a find replace operation is performed. This range is visually 
+	 * highlighted in the viewer as long as the replace operation is in progress.
+	 * 
+	 * @since 2.0
 	 */
 	class FindReplaceRange implements LineBackgroundListener, ITextListener, IPositionUpdater {		
 
+		/** Internal name for the position category used to update the range. */
 		private final static String RANGE_CATEGORY= "org.eclipse.jface.text.TextViewer.find.range"; //$NON-NLS-1$
 
+		/** The highlight color of this range. */
 		private Color fHighlightColor;
+		/** The region describing this range's extend. */
 		private IRegion fRange;
+		/** The position used to lively update this range's extent. */
 		private Position fPosition;
 		
+		/** Creates a new find/replace range with the given extent.
+		 * 
+		 * @param range the extent of this range 
+		 */
 		public FindReplaceRange(IRegion range) {
 			setRange(range);
 		}
 		
+		/** 
+		 * Sets the extent of this range.
+		 * 
+		 * @param range the extent of this range
+		 */
 		public void setRange(IRegion range) {
 			fPosition= new Position(range.getOffset(), range.getLength());
 		}
 		
+		/**
+		 * Returns the extent of this range.
+		 * 
+		 * @return the extent of this range
+		 */
 		public IRegion getRange() {
 			return new Region(fPosition.getOffset(), fPosition.getLength());
 		}
 		
+		/**
+		 * Sets the highlight color of this range. Causes the range to be redrawn.
+		 * 
+		 * @param color the highlight color
+		 */
 		public void setHighlightColor(Color color) {
 			fHighlightColor= color;
 			paint();
@@ -475,6 +547,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see LineBackgroundListener#lineGetBackground(LineBackgroundEvent)
+		 * @since 2.0
 		 */
 		public void lineGetBackground(LineBackgroundEvent event) {
 			/* Don't use cached line information because of patched redrawing events. */
@@ -487,6 +560,11 @@ public class TextViewer extends Viewer implements
 			}
 		}
 		
+		/**
+		 * Installs this range. The range registers itself as background
+		 * line painter and text listener. Also, it creates a category with the
+		 * viewer's document to maintain its own extent.
+		 */
 		public void install() {
 			TextViewer.this.addTextListener(this);						
 			fTextWidget.addLineBackgroundListener(this);
@@ -505,6 +583,10 @@ public class TextViewer extends Viewer implements
 			paint();
 		}
 		
+		/**
+		 * Uninstalls this range.
+		 * @see #install();
+		 */
 		public void uninstall() {
 			
 			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19612
@@ -523,11 +605,17 @@ public class TextViewer extends Viewer implements
 			clear();
 		}
 		
+		/**
+		 * Clears the highlighting of this range.
+		 */
 		private void clear() {
 			if (fTextWidget != null && !fTextWidget.isDisposed())
 				fTextWidget.redraw();
 		}
 		
+		/**
+		 * Paints the highlighting of this range.
+		 */
 		private void paint() {
 			int offset= fPosition.getOffset() - TextViewer.this.getVisibleRegionOffset();
 			int length= fPosition.getLength();
@@ -548,6 +636,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see ITextListener#textChanged(TextEvent)
+		 * @since 2.0
 		 */
 		public void textChanged(TextEvent event) {
 			if (event.getViewerRedrawState())
@@ -556,6 +645,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IPositionUpdater#update(DocumentEvent)
+		 * @since 2.0
 		 */
 		public void update(DocumentEvent event) {
 			int offset= event.getOffset();
@@ -574,8 +664,11 @@ public class TextViewer extends Viewer implements
 	 */
 	class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension {
 
+		/** The range for this target. */
 		private FindReplaceRange fRange;
+		/** The highlight color of the range of this target. */
 		private Color fScopeHighlightColor;
+		/** The document partitioner remembered in case of a "Replace All". */
 		private IDocumentPartitioner fRememberedPartitioner;
 		
 		/*
@@ -654,6 +747,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#beginSession()
+		 * @since 2.0
 		 */
 		public void beginSession() {
 			fRange= null;
@@ -661,6 +755,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#endSession()
+		 * @since 2.0
 		 */
 		public void endSession() {
 			if (fRange != null) {
@@ -671,6 +766,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#getScope()
+		 * @since 2.0
 		 */
 		public IRegion getScope() {			
 			return fRange == null ? null : fRange.getRange();
@@ -678,6 +774,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#getLineSelection()
+		 * @since 2.0
 		 */
 		public Point getLineSelection() {
 			Point point= TextViewer.this.getSelectedRange();
@@ -703,6 +800,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#setSelection(int, int)
+		 * @since 2.0
 		 */
 		public void setSelection(int offset, int length) {
 			TextViewer.this.setSelectedRange(offset /*+ TextViewer.this.getVisibleRegionOffset()*/, length);
@@ -710,6 +808,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#setScope(IRegion)
+		 * @since 2.0
 		 */
 		public void setScope(IRegion scope) {
 			if (fRange != null)
@@ -727,6 +826,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#setScopeHighlightColor(Color)
+		 * @since 2.0
 		 */
 		public void setScopeHighlightColor(Color color) {
 			if (fRange != null)
@@ -736,6 +836,7 @@ public class TextViewer extends Viewer implements
 
 		/*
 		 * @see IFindReplaceTargetExtension#setReplaceAllMode(boolean)
+		 * @since 2.0
 		 */
 		public void setReplaceAllMode(boolean replaceAll) {
 			
@@ -776,6 +877,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * The viewer's rewrite target.
+	 * @since 2.0
 	 */
 	class RewriteTarget implements IRewriteTarget {
 		
@@ -834,7 +936,10 @@ public class TextViewer extends Viewer implements
 	private ChildDocumentManager fChildDocumentManager;
 	/** The text viewer's double click strategies connector */
 	private TextDoubleClickStrategyConnector fDoubleClickStrategyConnector;
-	/** The text viewer's hovering controller */
+	/** 
+	 * The text viewer's hovering controller
+	 * @since 2.0
+	 */
 	private AbstractHoverInformationControlManager fTextHoverManager;
 	/** The text viewer's viewport guard */
 	private ViewportGuard fViewportGuard;
@@ -852,21 +957,45 @@ public class TextViewer extends Viewer implements
 	private DocumentCommand fDocumentCommand= new DocumentCommand();
 	/** The viewer's find/replace target */
 	private IFindReplaceTarget fFindReplaceTarget;
-	/** The viewer widget token keeper */
+	/** 
+	 * The viewer widget token keeper
+	 * @since 2.0
+	 */
 	private IWidgetTokenKeeper fWidgetTokenKeeper;
-	/** The viewer's manager of verify key listeners */
+	/** 
+	 * The viewer's manager of verify key listeners
+	 * @since 2.0
+	 */
 	private VerifyKeyListenersManager fVerifyKeyListenersManager= new VerifyKeyListenersManager();
-	/** The mark position. */
+	/** 
+	 * The mark position.
+	 * @since 2.0
+	 */
 	private Position fMarkPosition;
-	/** The mark position category. */
+	/** 
+	 * The mark position category.
+	 * @since 2.0
+	 */
 	private final String MARK_POSITION_CATEGORY="__mark_category_" + hashCode();
-	/** The mark position updater */
+	/** 
+	 * The mark position updater
+	 * @since 2.0
+	 */
 	private final IPositionUpdater fMarkPositionUpdater= new DefaultPositionUpdater(MARK_POSITION_CATEGORY);
-	/** The flag indicating the redraw behavior */
+	/** 
+	 * The flag indicating the redraw behavior
+	 * @since 2.0
+	 */
 	private int fRedrawCounter= 0;
-	/** The selection when working in non-redraw state */
+	/** 
+	 * The selection when working in non-redraw state
+	 * @since 2.0
+	 */
 	private Point fDocumentSelection;
-	/** The viewer's rewrite target */
+	/** 
+	 * The viewer's rewrite target
+	 * @since 2.0
+	 */
 	private IRewriteTarget fRewriteTarget;
 	
 	
@@ -884,7 +1013,10 @@ public class TextViewer extends Viewer implements
 	protected Map fAutoIndentStrategies;
 	/** The text viewer's text hovers */
 	protected Map fTextHovers;
-	/** The creator of the text hover control */
+	/** 
+	 * The creator of the text hover control
+	 * @since 2.0
+	 */
 	protected IInformationControlCreator fHoverControlCreator;
 	/** All registered viewport listeners> */
 	protected List fViewportListeners;
@@ -1027,8 +1159,8 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Frees all resources allocated by this viewer. Internally called when the viewer's control
-	 * has been disposed.
+	 * Frees all resources allocated by this viewer. Internally called when the viewer's
+	 * control has been disposed.
 	 */
 	protected void handleDispose() {
 		
@@ -1169,6 +1301,7 @@ public class TextViewer extends Viewer implements
 			
 	/*
 	 * @see ITextViewer#setDefaultPrefixes
+	 * @since 2.0
 	 */
 	public void setDefaultPrefixes(String[] defaultPrefixes, String contentType) {
 				
@@ -1214,6 +1347,7 @@ public class TextViewer extends Viewer implements
 	 * Returns the text hovering controller of this viewer.
 	 * 
 	 * @return the text hovering controller of this viewer
+	 * @since 2.0
 	 */
 	protected AbstractInformationControlManager getTextHoveringController() {
 		return fTextHoverManager;
@@ -1223,6 +1357,7 @@ public class TextViewer extends Viewer implements
 	 * Sets the creator for the hover controls.
 	 *  
 	 * @param creator the hover control creator
+	 * @since 2.0
 	 */
 	public void setHoverControlCreator(IInformationControlCreator creator) {
 		fHoverControlCreator= creator;
@@ -1230,6 +1365,7 @@ public class TextViewer extends Viewer implements
 	
 	/*
 	 * @see IWidgetTokenOwner#requestWidgetToken(IWidgetTokenKeeper)
+	 * @since 2.0
 	 */
 	public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
 		if (fTextWidget != null) {
@@ -1250,6 +1386,7 @@ public class TextViewer extends Viewer implements
 	
 	/*
 	 * @see IWidgetTokenOwner#releaseWidgetToken(IWidgetTokenKeeper)
+	 * @since 2.0
 	 */
 	public void releaseWidgetToken(IWidgetTokenKeeper tokenKeeper) {
 		if (fWidgetTokenKeeper == tokenKeeper)
@@ -1335,6 +1472,7 @@ public class TextViewer extends Viewer implements
 	 * 
 	 * @param selectionRange selectionRange[0] is the offset, selectionRange[1]
 	 * 				the length of the selection to validate.
+	 * @since 2.0
 	 */
 	protected void validateSelectionRange(int[] selectionRange) {
 		
@@ -1438,6 +1576,7 @@ public class TextViewer extends Viewer implements
 	 * 
 	 * @param offset the offset of the mark selection in the visible document, the offset is <code>-1</code> if the mark was cleared
 	 * @param length the length of the mark selection, may be negative if the caret is before the mark.
+	 * @since 2.0
 	 */
 	protected void markChanged(int offset, int length) {
 		if (redraws()) {
@@ -1779,8 +1918,8 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Returns the viewport height in lines.
-	 * The actual visible lines can be fewer if the document is shorter than the viewport.
+	 * Returns the viewport height in lines. The actual visible lines can be fewer if the
+	 * document is shorter than the viewport.
 	 *
 	 * @return the viewport height in lines
 	 */
@@ -2012,6 +2151,7 @@ public class TextViewer extends Viewer implements
 	 * @param offset the offset of the text range in the visible region
 	 * @param length the length of the text range in the visible region
 	 * @return the width of the presentation of the specified text range
+	 * @since 2.0
 	 */
 	final protected int getWidthInPixels(int offset, int length) {		
 		
@@ -2069,6 +2209,7 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Invalidates the current presentation by sending an initialization
 	 * event to all text listener.
+	 * @since 2.0
 	 */
 	public final void invalidateTextPresentation() {
 		if (fVisibleDocument != null) {
@@ -2317,6 +2458,11 @@ public class TextViewer extends Viewer implements
 	
 	//---- text manipulation
 
+	/**
+	 * Returns whether the marked region of this viewer is empty.
+	 * 
+	 * @return <code>true</code> if the marked region of this viewer is empty, otherwise <code>false</code>
+	 */
 	private boolean isMarkedRegionEmpty() {
 
 		if (fTextWidget == null)
@@ -2432,6 +2578,7 @@ public class TextViewer extends Viewer implements
 	
 	/*
 	 * @see ITextOperationTargetExtension#enableOperation(int, boolean)
+	 * @since 2.0
 	 */
 	public void enableOperation(int operation, boolean enable) {
 		/* 
@@ -2440,8 +2587,11 @@ public class TextViewer extends Viewer implements
 		 */
 	}
 	
-	/*
+	/**
 	 * Copies/cuts the marked region.
+	 * 
+	 * @param delete <code>true</code> if the region should be deleted rather than copied.
+	 * @since 2.0
 	 */
 	private void copyMarkedRegion(boolean delete) {
 		
@@ -2509,9 +2659,12 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Returns whether one or multiple lines are selected.
+	 * Returns <code>true</code> if one line is completely selected or if multiple lines are selected.
+	 * Being completely selected means that all characters except the new line characters are 
+	 * selected.
 	 * 
 	 * @return <code>true</code> if one or multiple lines are selected
+	 * @since 2.0
 	 */
 	protected boolean areMultipleLinesSelected() {
 		Point s= getSelectedRange();
@@ -2567,6 +2720,8 @@ public class TextViewer extends Viewer implements
 	 * the beginning of a line) completely containing the current selection.
 	 * 
 	 * @param selection the selection to use
+	 * @return the region describing the text block comprising the given selection
+	 * @since 2.0
 	 */
 	private IRegion getTextBlockFromSelection(Point selection) {
 				
@@ -2603,6 +2758,7 @@ public class TextViewer extends Viewer implements
 	 * @param useDefaultPrefixes says whether the configured default or indent prefixes should be used
 	 * @param right says whether to shift to the right or the left
 	 * @param ignoreWhitespace says whether whitepsace in front of prefixes is allowed
+	 * @since 2.0
 	 */
 	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
 		
@@ -2699,6 +2855,7 @@ public class TextViewer extends Viewer implements
 	 * @param prefix the prefix to be inserted
 	 * @param startLine the first line to shift
 	 * @param endLine the last line to shift
+	 * @since 2.0
 	 */
 	private void shiftRight(int startLine, int endLine, String prefix) {
 		
@@ -2725,6 +2882,7 @@ public class TextViewer extends Viewer implements
 	 * @param right if <code>true</code> shift to the right otherwise to the left
 	 * @param startLine the first line to shift
 	 * @param endLine the last line to shift
+	 * @since 2.0
 	 */
 	private void shiftLeft(int startLine, int endLine, String[] prefixes, boolean ignoreWhitespace) {
 		
@@ -2795,8 +2953,8 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * This implementation brings up a print dialog, then 
-	 * calls printContents(Printer), which performs the actual print.
+	 * Brings up a print dialog and calls <code>printContents(Printer)</code> which 
+	 * performs the actual print.
 	 *
 	 * Subclasses may override.
 	 */
@@ -2861,8 +3019,8 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Performs a search similar to <code>IFindReplaceTarget.findAndSelect()</code> within the given
-	 * range of the viewer's visible document.
+	 * @see IFindReplaceTarget#findAndSelectInRange(int, String, boolean, boolean, boolean, int, int)
+	 * @since 2.0
 	 */
 	private int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength) {
 		if (fTextWidget == null)
@@ -3025,6 +3183,7 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see ITextViewerExtension#appendVerifyKeyListener(VerifyKeyListener)
+	 * @since 2.0
 	 */
 	public void appendVerifyKeyListener(VerifyKeyListener listener) {
 		int index= fVerifyKeyListenersManager.numberOfListeners();
@@ -3033,6 +3192,7 @@ public class TextViewer extends Viewer implements
 	
 	/*
 	 * @see ITextViewerExtension#prependVerifyKeyListener(VerifyKeyListener)
+	 * @since 2.0
 	 */
 	public void prependVerifyKeyListener(VerifyKeyListener listener) {
 		fVerifyKeyListenersManager.insertListener(listener, 0);
@@ -3041,6 +3201,7 @@ public class TextViewer extends Viewer implements
 	
 	/*
 	 * @see ITextViewerExtension#removeVerifyKeyListener(VerifyKeyListener)
+	 * @since 2.0
 	 */
 	public void removeVerifyKeyListener(VerifyKeyListener listener) {
 		fVerifyKeyListenersManager.removeListener(listener);
@@ -3048,6 +3209,7 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see ITextViewerExtension#getMark()
+	 * @since 2.0
 	 */
 	public int getMark() {
 		return fMarkPosition == null || fMarkPosition.isDeleted()
@@ -3057,6 +3219,7 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see ITextViewerExtension#setMark(int)
+	 * @since 2.0
 	 */
 	public void setMark(int offset) {
 
@@ -3114,8 +3277,9 @@ public class TextViewer extends Viewer implements
 		}		
 	}
 
-	/**
+	/*
 	 * @see Viewer#inputChanged(Object, Object)
+	 * @since 2.0
 	 */
 	protected void inputChanged(Object newInput, Object oldInput) {
 
@@ -3145,6 +3309,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Informs all text listeners about the change of the viewer's redraw state.
+	 * @since 2.0
 	 */
 	private void fireRedrawChanged() {
 		fWidgetCommand.start= 0;
@@ -3156,6 +3321,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Enables the redrawing of this text viewer. Subclasses may extend.
+	 * @since 2.0
 	 */
 	protected void enabledRedrawing() {
 		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
@@ -3185,6 +3351,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Disables the redrawing of this text viewer. Subclasses may extend.
+	 * @since 2.0
 	 */
 	protected void disableRedrawing() {
 		
@@ -3203,6 +3370,7 @@ public class TextViewer extends Viewer implements
 	
 	/*
 	 * @see ITextViewerExtension#setRedraw(boolean)
+	 * @since 2.0
 	 */
 	public final void setRedraw(boolean redraw) {
 		if (!redraw) {
@@ -3220,6 +3388,7 @@ public class TextViewer extends Viewer implements
 	 * Returns whether this viewer redraws itself.
 	 * 
 	 * @return <code>true</code> if this viewer redraws itself
+	 * @since 2.0
 	 */
 	protected final boolean redraws() {
 		return fRedrawCounter <= 0;
@@ -3227,6 +3396,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Starts  the sequential rewrite mode of the viewer's document.
+	 * @since 2.0
 	 */
 	protected final void startSequentialRewriteMode(boolean normalized) {
 		IDocument document= getDocument();
@@ -3238,6 +3408,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * Sets the sequential rewrite mode of the viewer's document.
+	 * @since 2.0
 	 */
 	protected final void stopSequentialRewriteMode() {
 		IDocument document= getDocument();
@@ -3249,6 +3420,7 @@ public class TextViewer extends Viewer implements
 	
 	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension#getRewriteTarget()
+	 * @since 2.0
 	 */
 	public IRewriteTarget getRewriteTarget() {
 		if (fRewriteTarget == null)

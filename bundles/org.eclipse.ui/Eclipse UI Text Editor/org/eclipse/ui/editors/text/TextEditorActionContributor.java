@@ -1,4 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.editors.text;
+
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -12,7 +24,11 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 /**
- * 
+ * Manages the installation and deinstallation of global actions for the default text editor. <p>
+ * If instantiated and used as-is, this contributor connects global actions and adds actions
+ * for line delimiter conversion and encpding support. <p>
+ * Subclasses may override the following methods:
+ * @since 2.0
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
 
@@ -25,7 +41,10 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	/** Encoding action group */
 	private EncodingActionGroup fEncodingActionGroup;
 
-
+	
+	/**
+	 * Creates a new contributor.
+	 */
 	public TextEditorActionContributor() {
 		super();
 		
@@ -38,6 +57,11 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fEncodingActionGroup= new EncodingActionGroup();
 	}	
 	
+	/**
+	 * Internally sets the active editor to the actions provided by this contributor.
+	 * Cannot be overridden by subclasses.
+	 * @param part the editor
+	 */
 	private void doSetActiveEditor(IEditorPart part) {
 				
 		ITextEditor textEditor= null;

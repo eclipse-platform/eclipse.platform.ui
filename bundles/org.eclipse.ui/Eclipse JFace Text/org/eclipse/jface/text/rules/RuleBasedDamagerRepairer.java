@@ -1,16 +1,22 @@
-package org.eclipse.jface.text.rules;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.rules;
 
 
 import org.eclipse.jface.text.TextAttribute;
 
 
 /**
- * @deprecated use DefaultDamagerRepairer
+ * @deprecated use <code>DefaultDamagerRepairer</code>
  */
 public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 		
@@ -33,6 +39,7 @@ public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 	 * and is assumed to return only token that carry text attributes.
 	 *
 	 * @param scanner the rule based scanner to be used, may not be <code>null</code>
+	 * @since 2.0
 	 */
 	public RuleBasedDamagerRepairer(RuleBasedScanner scanner) {
 		super(scanner);

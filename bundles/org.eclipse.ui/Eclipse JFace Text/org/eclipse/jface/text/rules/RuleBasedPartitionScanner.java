@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.rules;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.rules;
 
 
 import java.util.ArrayList;
@@ -14,10 +20,13 @@ import org.eclipse.jface.text.IDocument;
 
 /**
  * Scanner that exclusively uses predicate rules.
+ * @since 2.0
  */
 public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implements IPartitionTokenScanner {
 	
+	/** The content type of the partion in which to resume scanning. */
 	protected String fContentType;
+	/** The offset of the partition inside which to resume. */
 	protected int fPartitionOffset;
 	
 	
@@ -43,7 +52,7 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	}
 	
 	/*
-	 * @see ITokenScanner2#setPartialRange(IDocument, int, int, String, int)
+	 * @see IPartitionTokenScanner#setPartialRange(IDocument, int, int, String, int)
 	 */
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
 		fContentType= contentType;

@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.contentassist;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.contentassist;
 
 
 import org.eclipse.swt.events.DisposeEvent;
@@ -24,6 +30,8 @@ import org.eclipse.jface.util.Assert;
 
 /**
  * Displays the additional information available for a completion proposal.
+ * 
+ * @since 2.0
  */
 class AdditionalInfoController extends AbstractInformationControlManager implements Runnable {
 	
@@ -58,7 +66,12 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	private int fDelay;
 	
 	
-	
+	/**
+	 * Creates a new additional information controller.
+	 * 
+	 * @param creator the information control creator to be used by this controller
+	 * @param delay time in milliseconds after which additional info should be displayed
+	 */
 	AdditionalInfoController(IInformationControlCreator creator, int delay) {
 		super(creator);
 		fDelay= delay;
@@ -113,6 +126,9 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		super.disposeInformationControl();
 	}
 	
+	/*
+	 * @see java.lang.Runnable#run()
+	 */
 	public void run() {
 		try {
 			while (true) {
@@ -154,6 +170,9 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		fThread= null;
 	}
 	
+	/**
+	 *Handles a change of the line selected in the associated selector.
+	 */
 	public void handleTableSelectionChanged() {
 		
 		if (fProposalTable != null && !fProposalTable.isDisposed() && fProposalTable.isVisible()) {

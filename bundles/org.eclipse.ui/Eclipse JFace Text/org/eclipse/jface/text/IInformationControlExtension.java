@@ -1,11 +1,23 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 /**
- * Extension interface for <code>IInformationControl</code>.
+ * Extension interface for <code>IInformationControl</code>. As it is the responsibility of
+ * the implementer of <code>IInformationControl</code> to specify whether the information
+ * set is the information itself or a description of the information, only the infomation control
+ * can decide whether there is something that must be displayed.
+ * 
+ * @since 2.0
  */ 
 public interface IInformationControlExtension {
 	

@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
@@ -18,6 +25,8 @@ import org.eclipse.swt.widgets.Display;
  * computation is performed in a dedicated background thread. This implies
  * that the used <code>ITextHover</code> objects must be capable of 
  * operating in a non-UI thread.
+ * 
+ * @since 2.0
  */
 class TextViewerHoverManager extends AbstractHoverInformationControlManager implements IWidgetTokenKeeper {
 	
@@ -53,8 +62,9 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		};
 	}
 	
-	/*
-	 * @see AbstractHoverInformationControlManager#computeInformation
+	/**
+	 * Determines all necessary details and delegates the computation into
+	 * a background thread.
 	 */
 	protected void computeInformation() {
 		
@@ -110,8 +120,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		}
 	}
 	
-	/*
-	 * @see AbstractInformationControlManager#presentInformation()
+	/**
+	 * As computation is done in the background, this method is
+	 * also called in the background thread. Delegates the control
+	 * flow back into the ui thread, in order to allow displaying the
+	 * information in the information control.
 	 */
 	protected void presentInformation() {
 		if (fTextViewer == null)
@@ -269,7 +282,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
+	 * @see IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		super.hideInformationControl();

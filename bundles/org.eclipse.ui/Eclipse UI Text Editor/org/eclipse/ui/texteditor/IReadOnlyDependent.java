@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
     IBM Corporation - Initial API and implementation
 **********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
 
@@ -17,6 +18,7 @@ package org.eclipse.ui.texteditor;
  * only manage an enable/disable state but also manage a "hypothetical"
  * enable state, depending on whether the target they work on is writable
  * or read-only.
+ * @since 2.0
  */
 public interface IReadOnlyDependent {
 

@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.source;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 
 import java.text.NumberFormat;
@@ -40,6 +45,7 @@ import org.eclipse.jface.text.TextEvent;
 /**
  * A vertical ruler column displaying line numbers.
  * Clients may use this class as is.
+ * @since 2.0
  */
 public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	
@@ -79,6 +85,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 	};
 	
+	/** Maximal number of digits visible in the ruler column. */
 	private final static int MAXDIGITS= 5;
 	
 	/** This column's parent ruler */
@@ -110,22 +117,38 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	
 	
 	/**
-	 * Constructs the vertical ruler column.
+	 * Constructs a new vertical ruler column.
 	 */
 	public LineNumberRulerColumn() {
 		fDigitPlaceHolder= JFaceTextMessages.getString("LineNumberRulerColumn.prefix_placeholder");  //$NON-NLS-1$
 	}
 	
+	/**
+	 * Sets the foreground color of this column.
+	 * 
+	 * @param foreground the foreground color
+	 */
 	public void setForeground(Color foreground) {
 		fForeground= foreground;
 	}
 	
+	/**
+	 * Sets the background color of this column.
+	 * 
+	 * @param background the background color
+	 */
 	public void setBackground(Color background) {
 		fBackground= background;			
 		if (fCanvas != null && !fCanvas.isDisposed())
 			fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 	}
 	
+	/**
+	 * Returns the System background color for list widgets.
+	 * 
+	 * @param display the display
+	 * @return the System background color for list widgets
+	 */
 	protected Color getBackground(Display display) {
 		if (fBackground == null)
 			return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -147,7 +170,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	}
 		
 	/**
-	 * Computes the indentations for the given font.
+	 * Computes the indentations for the given font and stores them in
+	 * <code>fIndentation</code>.
 	 */
 	protected void computeIndentations() {
 		GC gc= new GC(fCanvas);
@@ -235,7 +259,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 	/**
 	 * Selects the given line in the text viewer.
-	 * @param line
+	 * 
+	 * @param line the number of the line to be selected
 	 */
 	private void selectLine(int line) {
 		try {
@@ -264,6 +289,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	
 	/**
 	 * Double buffer drawing.
+	 * 
+	 * @param dest the gc to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -312,6 +339,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	
 	/**
 	 * Draws the ruler column.
+	 * 
+	 * @param gc the gc to draw into
 	 */
 	private void doPaint(GC gc) {
 		

@@ -1,18 +1,25 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 /**
- * For internal use only. Not API. <p>
- * A find replace target extension is for extending
- * <code>IFindReplaceTarget</code> instances with new functionality.
+ * Extension interface for <code>IFindReplaceTarget</code>. Extends the find replace target with
+ * the concept of searching in a limiting scope and introduces the state of a replace-all mode.
+ * 
+ * @since 2.0
  */
 public interface IFindReplaceTargetExtension {
 	
@@ -23,14 +30,14 @@ public interface IFindReplaceTargetExtension {
 	 * <code>IFindReplaceTargetExtension</code> must be embedded within calls to
 	 * <code>beginSession()</code> and <code>endSession()</code>.
 	 * 
-	 * @see endSession()
+	 * @see #endSession()
 	 */
 	void beginSession();
 
 	/**
 	 * Indicates that a session with the target ends.
 	 * 
-	 * @see beginSession()
+	 * @see #beginSession()
 	 */
 	void endSession();
 
@@ -73,9 +80,10 @@ public interface IFindReplaceTargetExtension {
 	
 	
 	/**
-	 * Sets the target's Replace All mode.
+	 * Sets the target's replace-all mode.
 	 * 
-	 * @param replaceAll <code>true</code> if this target should switch into Replace All mode.
+	 * @param replaceAll <code>true</code> if this target should switch into replace-all mode, 
+	 * 	<code>false</code> if it should leave the replace-all state
 	 */
 	void setReplaceAllMode(boolean replaceAll); 
 }

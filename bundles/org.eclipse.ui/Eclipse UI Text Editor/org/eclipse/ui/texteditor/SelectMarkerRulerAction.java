@@ -1,9 +1,17 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,19 +47,24 @@ import org.eclipse.ui.views.tasklist.TaskList;
 
 
 /**
- * A ruler action which can select the range covered by markers 
- * which have a visual  representation in the ruler.
+ * A ruler action which can select the textual range of a marker 
+ * that has a visual  representation in the vertical ruler.
  * <p>
  * This class may be instantiated but is not intended for subclassing.
  * </p>
+ * @since 2.0
  */
 public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
+	/** The vertical ruler info of the action's editor */
 	private IVerticalRulerInfo fRuler;
+	/** The associated editor */
 	private ITextEditor fTextEditor;
+	/** The cached list of markers including a given vertical ruler location */
 	private List fMarkers;
-
+	/** The action's resource bundle */
 	private ResourceBundle fBundle;
+	/** The prefix for resource bundle lookups */
 	private String fPrefix;
 
 	/**
@@ -60,8 +73,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
-	 *   <code>null</code> if none
+	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
 	 * @param editor the editor
 	 * @param ruler the ruler
 	 * 
@@ -212,7 +224,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Handles core exceptions. This implementation logs the exceptions
-	 * with the workbech plugin.
+	 * with the workbech plugin and shows an error dialog.
 	 *
 	 * @param exception the exception to be handled
 	 * @param message the message to be logged with the given exception

@@ -1,10 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.reconciler;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,8 +32,8 @@ import org.eclipse.jface.util.Assert;
  * Usually, clients instantiate this class and configure it before using it.
  *
  * @see IReconciler
- * @see IDocumentListener
- * @see ITextInputListener
+ * @see org.eclipse.jface.text.IDocumentListener
+ * @see org.eclipse.jface.text.ITextInputListener
  * @see DirtyRegion
  */
 public class Reconciler extends AbstractReconciler {
@@ -37,8 +43,8 @@ public class Reconciler extends AbstractReconciler {
 	
 	/**
 	 * Creates a new reconciler with the following configuration: it is
-	 * an incremental reconciler which kicks in every 500 ms. There are no
-	 * predefined reconciling strategies.
+	 * an incremental reconciler with a standard delay of 500 ms. There
+	 * are no predefined reconciling strategies.
 	 */ 
 	public Reconciler() {
 		super();
@@ -90,7 +96,6 @@ public class Reconciler extends AbstractReconciler {
 	 * for the partition's content type.
 	 *
 	 * @param dirtyRegion the dirty region to be processed
-	 * 
 	 * @see AbstractReconciler#process(DirtyRegion)
 	 */
 	protected void process(DirtyRegion dirtyRegion) {
@@ -122,6 +127,7 @@ public class Reconciler extends AbstractReconciler {
 	
 	/*
 	 * @see AbstractReconciler#reconcilerDocumentChanged(IDocument)
+	 * @since 2.0
 	 */
 	protected void reconcilerDocumentChanged(IDocument document) {
 		if (fStrategies != null) {
@@ -135,6 +141,7 @@ public class Reconciler extends AbstractReconciler {
 	
 	/*
 	 * @see AbstractReconciler#setProgressMonitor(IProgressMonitor)
+	 * @since 2.0
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		super.setProgressMonitor(monitor);
@@ -153,6 +160,7 @@ public class Reconciler extends AbstractReconciler {
 	
 	/*
 	 * @see AbstractReconciler#initialProcess()
+	 * @since 2.0
 	 */
 	protected void initialProcess() {
 		

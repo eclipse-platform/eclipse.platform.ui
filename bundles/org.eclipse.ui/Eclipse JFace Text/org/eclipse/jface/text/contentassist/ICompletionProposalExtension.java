@@ -1,19 +1,30 @@
-package org.eclipse.jface.text.contentassist;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.contentassist;
 
 
 import org.eclipse.jface.text.IDocument;
 
 
 /**
- * For internal use only. Not API. <p>
- * A completion proposal extension is for extending
- * <code>ICompletionProposalExtension</code> instances with new functionality.
-*/
+ * Extension interface to <code>ICompletionProposal</code>.
+ * Add the following functions:
+ * <ul>
+ * <li> handling of trigger characters other then ENTER
+ * <li> completion proposal validation for a given offset
+ * <li> freely positionable context information
+ * </ul>
+ *  * @since 2.0
+ */
 public interface ICompletionProposalExtension {
 	
 	/**

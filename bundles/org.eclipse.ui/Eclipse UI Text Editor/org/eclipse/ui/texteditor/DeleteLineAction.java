@@ -8,7 +8,9 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+
 package org.eclipse.ui.texteditor;
+
 
 import java.util.ResourceBundle;
 
@@ -19,8 +21,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 
+
 /**
- * An action to delete a whole line, to the beginning or end of a line.
+ * An action to delete a whole line, the fraction of the line that is left from the cursor
+ * or the fraction that is right from the cursor.
+ * @since 2.0
  */
 public class DeleteLineAction extends TextEditorAction {
 
@@ -46,6 +51,12 @@ public class DeleteLineAction extends TextEditorAction {
 		fType= type;		
 	}
 
+	
+	/**
+	 * Returns the editor's document.
+	 * @param editor the editor
+	 * @return teh editor's document
+	 */
 	private static IDocument getDocument(ITextEditor editor) {
 
 		IDocumentProvider documentProvider= editor.getDocumentProvider();
@@ -59,6 +70,12 @@ public class DeleteLineAction extends TextEditorAction {
 		return document;
 	}
 	
+	
+	/**
+	 * Returns the editor's selection.
+	 * @param editor the editor
+	 * @return the editor's selection
+	 */
 	private static ITextSelection getSelection(ITextEditor editor) {
 
 		ISelectionProvider selectionProvider= editor.getSelectionProvider();
@@ -96,6 +113,13 @@ public class DeleteLineAction extends TextEditorAction {
 		}
 	}
 	
+	/**
+	 * Deletes the specified fraction of the line of the given offset.
+	 * @param document the document
+	 * @param position the offset
+	 * @param type the specification of what to delete
+	 * @throws BadLocationException if position is not valid in the given document
+	 */
 	private static void deleteLine(IDocument document, int position, int type) throws BadLocationException {
 
 		int line= document.getLineOfOffset(position);

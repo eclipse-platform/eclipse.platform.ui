@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
-
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 
 import java.util.ArrayList;
@@ -32,14 +37,15 @@ import org.eclipse.ui.PlatformUI;
 
 
 /**
- * Abstract base implementation of a marker-based annotation model.
+ * Abstract  implementation of a marker-based annotation model.
  * <p>
  * Markers are provided by an underlying source (a subclass responsibility).
  * Markers whose textual range gets deleted during text editing are removed
  * from the model on save. The <code>updateMarkers</code> method can be used
  * to force the model to update the source's markers with any changes to their 
  * locations due to edits. Clients can register <code>IMarkerUpdater</code> 
- * objects in order to define the process of marker updating.
+ * objects in order to define the process of marker updating. Registration can be done
+ * using the <code>"org.eclipse.ui.markerUpdaters"</code> extension point.
  * <p>
  * Subclasses must implement the following methods:
  * <ul>
@@ -408,8 +414,10 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	}
 	
 	/**
-	 * Creates a marker updater as specified in the given configuration
-	 * element.
+	 * Creates a marker updater as specified in the given configuration element.
+	 * 
+	 * @param element the configuration element
+	 * @return the created marker updater or <code>null</code> if none could be created
 	 */
 	private IMarkerUpdater createMarkerUpdater(IConfigurationElement element) {
 		try {
@@ -422,9 +430,12 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	}
 	
 	/**
-	 * Checks whether a merker updater is registered for the type of the
+	 * Checks whether a marker updater is registered for the type of the
 	 * given marker but not yet instantiated. If so, the method instantiates
 	 * the marker updater and registers it with this model.
+	 * 
+	 * @param marker the marker for which to look for an updater
+	 * @since 2.0
 	 */
 	private void checkMarkerUpdaters(IMarker marker) {
 		List toBeDeleted= new ArrayList();
@@ -454,6 +465,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * @param document the document into which the given position points
 	 * @param position the current position of the marker inside the given document
 	 * @exception CoreException if there is a problem updating the marker  
+	 * @since 2.0
 	 */
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) throws CoreException {
 		

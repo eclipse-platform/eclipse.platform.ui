@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.source;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.widgets.Shell;
@@ -136,6 +142,7 @@ public class SourceViewerConfiguration {
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @param contentType the content type for which the prefix is applicable
 	 * @return the default prefixes or <code>null</code> if the prefix operation should not be supported
+	 * @since 2.0
 	 */
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return null;
@@ -199,6 +206,7 @@ public class SourceViewerConfiguration {
 	 * 
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the information control creator or <code>null</code> if no information support should be installed
+	 * @since 2.0
 	 */
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
@@ -214,8 +222,8 @@ public class SourceViewerConfiguration {
 	 * always returns <code>null</code>.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
-	 * @return an information presenter <code>null</code> if  no information
-	 * 		presenter should be installed
+	 * @return an information presenter <code>null</code> if  no information presenter should be installed
+	 * @since 2.0
 	 */
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		return null;

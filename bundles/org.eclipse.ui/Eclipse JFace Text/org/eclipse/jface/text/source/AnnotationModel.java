@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.source;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.source;
 
 
 import java.util.ArrayList;
@@ -21,8 +27,8 @@ import org.eclipse.jface.util.Assert;
 
 /**
  * Standard implementation of <code>IAnnotationModel</code>. This class can directly
- * be used by clients. Subclasses may adapt this annotation model to other
- * exsisting annotation mechanisms.
+ * be used by clients. Subclasses may adapt this annotation model to other exsisting 
+ * annotation mechanisms.
  */
 public class AnnotationModel implements IAnnotationModel {
 
@@ -98,7 +104,7 @@ public class AnnotationModel implements IAnnotationModel {
 		}
 	}
 	
-	/**
+	/*
 	 * @see IAnnotationModel#connect
 	 */
 	public void connect(IDocument document) {
@@ -160,9 +166,12 @@ public class AnnotationModel implements IAnnotationModel {
 	
 	/**
 	 * Informs all annotation model listeners that this model has been changed
-	 * as described in the annotation model event.
+	 * as described in the annotation model event. The event is sent out
+	 * to all listeners implementing <code>IAnnotationModelListenerExtension</code>.
+	 * All other listeners are notified by just calling <code>modelChanged(IAnnotationModel)</code>.
 	 * 
 	 * @param event the event to be sent out to the listeners
+	 * @since 2.0
 	 */
 	protected void fireModelChanged(AnnotationModelEvent event) {
 		ArrayList v= new ArrayList(fAnnotationModelListeners);

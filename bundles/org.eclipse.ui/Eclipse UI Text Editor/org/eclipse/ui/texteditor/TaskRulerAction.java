@@ -8,6 +8,8 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+
+
 package org.eclipse.ui.texteditor;
 
 
@@ -23,11 +25,14 @@ import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
 
 
 
+/**
+ * Adapter for the marker ruler action creating/removing tasks.
+ * @since 2.0
+ */
 public class TaskRulerAction extends AbstractRulerActionDelegate {
 	
 	/**
-	 * Adds a task marker over the ruler context menu. Uses the Workbench's
-	 * Task properties dialog.
+	 * Adds a task marker over the ruler context menu. Uses the Workbench's Task properties dialog.
 	 */
 	static class TaskMarkerRulerAction extends MarkerRulerAction {
 		

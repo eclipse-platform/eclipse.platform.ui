@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.information;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.information;
 
  
 import org.eclipse.jface.text.IRegion;
@@ -15,6 +21,7 @@ import org.eclipse.jface.text.ITextViewer;
  * Clients may implement this interface.
  *
  * @see ITextViewer
+ * @since 2.0
  */
 public interface IInformationProvider {
 	
@@ -33,11 +40,14 @@ public interface IInformationProvider {
 	
 	/**
 	 * Returns the information about the given subject or <code>null</code> if
-	 * no information is available.
+	 * no information is available. It depends on the concrete configuration in which
+	 * format the information is to be provided. For example, information presented
+	 * in an information control displaying HTML, should be provided in HTML.
 	 *  
 	 * @param textViewer the viewer in whose document the subject is contained
 	 * @param subject the text region constituting the information subject
-	 * @return the information about the subject  
+	 * @return the information about the subject
+	 * @see IInformationPresenter
 	 */
 	String getInformation(ITextViewer textViewer, IRegion subject);
 }

@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.source;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.custom.StyledText;
@@ -22,6 +28,7 @@ import org.eclipse.jface.util.Assert;
  * This manager controls the layout, content, visibility, etc. of an information
  * control in reaction to mouse hover events issued by the vertical ruler of a
  * source viewer.
+ * @since 2.0
  */
 class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 	
@@ -34,7 +41,8 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 	
 	
 	/**
-	 * Creates an annotation hover manager with the given parameters.
+	 * Creates an annotation hover manager with the given parameters. In addition,
+	 * the hovers anchor is RIGHT and the margin is 5 points to the right.
 	 *
 	 * @param sourceViewer the source viewer this manager connects to
 	 * @param ruler the vertical ruler this manager connects to
@@ -70,6 +78,7 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 	 *
 	 * @param line the absolute line number
 	 * @return the line number relative to the viewer's visible region
+	 * @throws BadLocationException if <code>line</code> is not valid in the viewer's document
 	 */
 	private int getRelativeLineNumber(int line) throws BadLocationException {
 		IRegion region= fSourceViewer.getVisibleRegion();

@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.editors.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ResourceBundle;
 
@@ -39,7 +46,10 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  */
 public class TextEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-	
+	/**
+	 * Indicates whether the preferences this page maniulates have been initialized.
+	 * @since 2.0
+	 */
 	private static boolean fgInitialized= false;
 	
 	/**
@@ -77,7 +87,11 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	public void init(IWorkbench workbench) {
 	}
 	
-	
+	/**
+	 * Initialzes the defaults for the given store.
+	 * @param store the preference store
+	 * @since 2.0
+	 */
 	public static void initDefaults(IPreferenceStore store) {
 		
 		if (fgInitialized)

@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.SWT;
@@ -22,12 +28,15 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Text based implementation of <code>IInformationControl</code>. 
  * Displays information in a styled text widget. Before displaying, the 
- * information is processed by an <code>IInformationPresenter</code>. 
+ * information set to this information control is processed by an 
+ * <code>IInformationPresenter</code>. 
+ * 
+ * @since 2.0
  */
 public class DefaultInformationControl implements IInformationControl, IInformationControlExtension {
 	
 	/**
-	 * A information presenter determines the presentation
+	 * An information presenter determines the style presentation
 	 * of information displayed in the default information control. 
 	 * The interface can be implemented by clients.
 	 */
@@ -35,13 +44,15 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		
 		/**
 		 * Updates the given presentation of the given information and
-		 * thus manipulates the information to be displayed. Returns the 
-		 * manipulated
+		 * thereby may manipulate the information to be displayed. The manipulation
+		 * could be the extraction of textual encoded style information etc. Returns the 
+		 * manipulated information.
 		 *
 		 * @param display the display of the information control
-		 * @param information the information to be presented
+		 * @param hoverInfo the information to be presented
 		 * @param presentation the presentation to be updated
 		 * @param maxWidth the maximal width in pixels
+		 * @param maxHeight the maximal height in pixels
 		 * 
 		 * @return the manipulated information
 		 */
@@ -49,9 +60,9 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	};
 	
 	
-	/* border thickness */
+	/** Border thickness in pixels. */
 	private static final int BORDER= 1;
-	/* right margin */
+	/** Right margin in pixels. */
 	private static final int RIGHT_MARGIN= 3;
 	
 	/** The control's shell */

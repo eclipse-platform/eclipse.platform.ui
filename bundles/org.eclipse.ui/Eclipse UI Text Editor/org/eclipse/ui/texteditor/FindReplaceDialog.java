@@ -1,9 +1,15 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.texteditor;
 
 
 import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import java.util.ResourceBundle;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.SWT;import org.eclipse.swt.events.ModifyEvent;import org.eclipse.swt.events.ModifyListener;import org.eclipse.swt.events.SelectionAdapter;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.events.ShellAdapter;import org.eclipse.swt.events.ShellEvent;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.graphics.Rectangle;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.Button;import org.eclipse.swt.widgets.Combo;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Group;import org.eclipse.swt.widgets.Label;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IStatusLineManager;
@@ -22,7 +28,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Find/Replace dialog. The dialog is opened on a particular 
- * target but can be re-targeted.
+ * target but can be re-targeted. Internally used by the <code>FindReplaceAction</code>
  */
 class FindReplaceDialog extends Dialog {
 
@@ -31,6 +37,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	class ActivationListener extends ShellAdapter {
 		
+		/*
+		 * @see ShellListener#shellActivated(ShellEvent)
+		 */
 		public void shellActivated(ShellEvent e) {
 			
 			String oldText= fFindField.getText(); // XXX workaround for 10766
@@ -53,6 +62,9 @@ class FindReplaceDialog extends Dialog {
 				fFindField.setFocus();
 		}
 		
+		/*
+		 * @see ShellListener#shellDeactivated(ShellEvent)
+		 */
 		public void shellDeactivated(ShellEvent e) {
 			storeSettings();
 
@@ -69,7 +81,15 @@ class FindReplaceDialog extends Dialog {
 		}
 	}
 
+	/**
+	 * Modify listener to update the search result in case of incremental search.
+	 * @since 2.0
+	 */
 	private class FindModifyListener implements ModifyListener {
+		
+		/*
+		 * @see ModifyListener#modifyText(ModifyEvent)
+		 */
 		public void modifyText(ModifyEvent e) {
 			if (isIncrementalSearch()) {
 				if (fFindField.getText().equals("") && fTarget != null) { //$NON-NLS-1$
@@ -88,6 +108,7 @@ class FindReplaceDialog extends Dialog {
 		}
 	}
 
+	/** The size of the dialogs search history. */
 	private static final int HISTORY_SIZE= 5;
 
 	private Point fLocation;
@@ -95,7 +116,9 @@ class FindReplaceDialog extends Dialog {
 	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit, fGlobalInit, fIncrementalInit;
 	private List fFindHistory;
 	private List fReplaceHistory;
+	private IRegion fOldScope;
 
+	private boolean fIsTargetEditable;
 	private IFindReplaceTarget fTarget;
 	private Shell fParentShell;
 	private Shell fActiveShell;
@@ -109,13 +132,12 @@ class FindReplaceDialog extends Dialog {
 	private Button fReplaceSelectionButton, fReplaceFindButton, fFindNextButton, fReplaceAllButton;
 	private Combo fFindField, fReplaceField;
 	private Rectangle fDialogPositionInit;
-	private IRegion fOldScope;
 
 	private IDialogSettings fDialogSettings;
-	private boolean fIsTargetEditable;
 
 	/**
-	 * Default constructor.
+	 * Creates a new dialog with the given shell as parent.
+	 * @param parentShell the parent shell
 	 */
 	public FindReplaceDialog(Shell parentShell) {
 		super(parentShell);
@@ -141,7 +163,8 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/**
-	 * Returns this dialogs parent shell.
+	 * Returns this dialog's parent shell.
+	 * @return the dialog's parent shell
 	 */
 	public Shell getParentShell() {
 		return super.getParentShell();
@@ -356,6 +379,7 @@ class FindReplaceDialog extends Dialog {
 	 *
 	 * @param parent the parent composite
 	 * @return the scope defining part
+	 * @since 2.0
 	 */
 	private Composite createScopeGroup(Composite parent) {
 
@@ -406,6 +430,11 @@ class FindReplaceDialog extends Dialog {
 		return panel;
 	}
 
+	/**
+	 * Tells the dialog to perform searches only in the scope given by the actually selected lines.
+	 * @param selectedLines <code>true</code> if selected lines should be used
+	 * @since 2.0
+	 */
 	private void useSelectedLines(boolean selectedLines) {
 		if (isIncrementalSearch())
 			initIncrementalBaseLocation();
@@ -584,8 +613,16 @@ class FindReplaceDialog extends Dialog {
 	// ------- action invocation ---------------------------------------
 
 	/**
-	 * Returns the position of the specified search string, or -1 if the string can
+	 * Returns the position of the specified search string, or <code>-1</code> if the string can
 	 * not be found when searching using the given options.
+	 * 
+	 * @param findString the string to search for
+	 * @param startPosition the position at which to start the search
+	 * @param forwardSearch the direction of the search
+	 * @param caseSensitive	should the search be case sensitive
+	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
+	 * @param wholeWord does the search string represent a complete word
+	 * @return the occurrence of the find string following the options or <code>-1</code> if nothing found
 	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
 
@@ -612,6 +649,16 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Returns whether the specified  search string can be found using the given options.
+	 * 
+	 * @param findString the string to search for
+	 * @param forwardSearch the direction of the search
+	 * @param caseSensitive	should the search be case sensitive
+	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
+	 * @param wholeWord does the search string represent a complete word
+	 * @param incremental is this an incremental search
+	 * @param global is the search scope the whoel document
+	 * @return <code>true</code> if the search string can be found using the given options
+	 * @since 2.0
 	 */
 	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean global) {
 
@@ -638,6 +685,7 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Returns the dialog's boundaries.
+	 * @return the dialog's boundaries
 	 */
 	private Rectangle getDialogBoundaries() {
 		if (okToUse(getShell())) {
@@ -648,7 +696,8 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/**
-	 * Returns the dialogs history.
+	 * Returns the dialog's history.
+	 * @return the dialog's history
 	 */
 	private List getFindHistory() {
 		return fFindHistory;
@@ -657,8 +706,8 @@ class FindReplaceDialog extends Dialog {
 	// ------- accessors ---------------------------------------
 
 	/**
-	 * Retrieves the string to search for from the appriopriate text
-	 * input field and returns it. 
+	 * Retrieves the string to search for from the appriopriate text input field and returns it. 
+	 * @return the search string
 	 */
 	private String getFindString() {
 		if (okToUse(fFindField)) {
@@ -669,14 +718,15 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Returns the dialog's replace history.
+	 * @return the dialog's replace history
 	 */
 	private List getReplaceHistory() {
 		return fReplaceHistory;
 	}
 
 	/**
-	 * Retrieves the replacement string from the appriopriate text
-	 * input field and returns it. 
+	 * Retrieves the replacement string from the appriopriate text input field and returns it. 
+	 * @return the replacement string
 	 */
 	private String getReplaceString() {
 		if (okToUse(fReplaceField)) {
@@ -689,6 +739,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Returns the actual selection of the find replace target
+	 * @return the selection of the target
 	 */
 	private String getSelectionString() {
 		
@@ -739,6 +790,10 @@ class FindReplaceDialog extends Dialog {
 		fTarget= null;		
 	}
 	
+	/**
+	 * Stores the current state in the dialog settings.
+	 * @since 2.0
+	 */
 	private void storeSettings() {
 		fDialogPositionInit= getDialogBoundaries();
 		fWrapInit= isWrapSearch();
@@ -778,6 +833,10 @@ class FindReplaceDialog extends Dialog {
 		}
 	}
 
+	/**
+	 * Initializes the anchor used as starting point for incremental searching.
+	 * @since 2.0
+	 */
 	private void initIncrementalBaseLocation() {
 		if (fTarget != null && isIncrementalSearch()) {
 			fIncrementalBaseLocation= fTarget.getSelection();
@@ -790,6 +849,8 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Initialize the find history.
+	 * @param history the history to be initialized
+	 * @param init the initialization data
 	 */
 	private void initHistory(List history, List init) {
 		history.clear();
@@ -799,8 +860,8 @@ class FindReplaceDialog extends Dialog {
 	}
 	
 	/**
-	 * Retrieves and returns the option case sensitivity from
-	 * the appropriate check box.
+	 * Retrieves and returns the option case sensitivity from the appropriate check box.
+	 * @return <code>true</code> if case sensitive
 	 */
 	private boolean isCaseSensitiveSearch() {
 		if (okToUse(fCaseCheckBox)) {
@@ -810,8 +871,8 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves and returns the option search direction from
-	 * the appropriate check box.
+	 * Retrieves and returns the option search direction from the appropriate check box.
+	 * @return <code>true</code> if searching forward
 	 */
 	private boolean isForwardSearch() {
 		if (okToUse(fForwardRadioButton)) {
@@ -821,8 +882,9 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves and returns the option global scope from
-	 * the appropriate check box.
+	 * Retrieves and returns the option global scope from the appropriate check box.
+	 * @return <code>true</code> if searching globally
+	 * @since 2.0
 	 */
 	private boolean isGlobalSearch() {
 		if (okToUse(fGlobalRadioButton)) {
@@ -832,8 +894,8 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves and returns the option search whole words from
-	 * the appropriate check box.
+	 * Retrieves and returns the option search whole words from the appropriate check box.
+	 * @return <code>true</code> if searching for whole words
 	 */
 	private boolean isWholeWordSearch() {
 		if (okToUse(fWholeWordCheckBox)) {
@@ -843,8 +905,8 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves and returns the option wrap search from
-	 * the appropriate check box.
+	 * Retrieves and returns the option wrap search from the appropriate check box.
+	 * @return <code>true</code> if wrapping while searching
 	 */
 	private boolean isWrapSearch() {
 		if (okToUse(fWrapCheckBox)) {
@@ -854,8 +916,9 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves and returns the option incremental search from
-	 * the appropriate check box.
+	 * Retrieves and returns the option incremental search from the appropriate check box.
+	 * @return <code>true</code> if incremental search
+	 * @since 2.0
 	 */
 	private boolean isIncrementalSearch() {
 		if (okToUse(fIncrementalCheckBox)) {
@@ -866,6 +929,12 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Creates a button.
+	 * @param parent the parent control
+	 * @param key the key to lookup the button label
+	 * @param id the button id
+	 * @param dfltButton is this button the default button
+	 * @param listener a button pressed listener
+	 * @return teh new button
 	 */
 	private Button makeButton(Composite parent, String key, int id, boolean dfltButton, SelectionListener listener) {
 		String label= EditorMessages.getString(key);
@@ -874,6 +943,11 @@ class FindReplaceDialog extends Dialog {
 		return b;
 	}
 
+	/**
+	 * Returns the status line manager of the active editor or <code>null</code> if there is no such editor.
+	 * @return the status line manager of the active editor
+	 * @since 2.0
+	 */
 	private IStatusLineManager getStatusLineManager() {
 		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		IWorkbenchWindow window= plugin.getWorkbench().getActiveWorkbenchWindow();
@@ -895,6 +969,11 @@ class FindReplaceDialog extends Dialog {
 		return null;
 	}
 
+	/**
+	 * Sets the given error message in the status line.
+	 * @param message the error message
+	 * @since 2.0
+	 */
 	private void statusError(String message) {
 		fStatusLabel.setText(message);
 
@@ -908,6 +987,11 @@ class FindReplaceDialog extends Dialog {
 		getShell().getDisplay().beep();
 	}
 
+	/**
+	 * Sets the given message in the status line.
+	 * @param message the message
+	 * @since 2.0
+	 */
 	private void statusMessage(String message) {
 		fStatusLabel.setText(message);
 
@@ -992,6 +1076,16 @@ class FindReplaceDialog extends Dialog {
 	 * Replaces all occurrences of the user's findString with
 	 * the replace string.  Returns the number of replacements
 	 * that occur.
+	 * 
+	 * @param findString the string to search for
+	 * @param replaceString the replacement string
+	 * @param forwardSearch	the search direction
+	 * @param caseSensitive should the search be case sensitive
+	 * @param wrapSearch	should search wrap to start/end if end/start is reached
+	 * @param wholeWord does the search string represent a complete word
+	 * @param global	is the search performed globally
+	 * @return the number of occurrences
+	 * @since 2.0
 	 */
 	private int replaceAll(String findString, String replaceString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean global) {
 
@@ -1039,6 +1133,12 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Attaches the given layout specification to the <code>component</code>
+	 * 
+	 * @param component the component
+	 * @param horizontalAlignment horizontal alignment
+	 * @param grabExcessHorizontalSpace grab excess horizontal space
+	 * @param verticalAlignment vertical alignment
+	 * @param grabExcessVerticalSpace grab excess vertical space
 	 */
 	private void setGridData(Control component, int horizontalAlignment, boolean grabExcessHorizontalSpace, int verticalAlignment, boolean grabExcessVerticalSpace) {
 		GridData gd= new GridData();
@@ -1074,6 +1174,8 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Updates the given combo with the given content.
+	 * @param combo combo to be updated
+	 * @param content to be put into the combo
 	 */
 	private void updateCombo(Combo combo, List content) {
 		combo.removeAll();
@@ -1108,6 +1210,8 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Updates the combo with the history.
+	 * @param combo to be updated
+	 * @param history to be put into the combo
 	 */
 	private void updateHistory(Combo combo, List history) {
 		String findString= combo.getText();
@@ -1124,6 +1228,7 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Returns whether the target is editable
+	 * @return <code>true</code> if target is editable
 	 */
 	private boolean isEditable() {
 		boolean isEditable= (fTarget == null ? false : fTarget.isEditable());
@@ -1132,8 +1237,9 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Updates this dialog because of a different target.
-	 *
-	 * @return target the new target
+	 * @param target the new target
+	 * @param isTargetEditable <code>true</code> if the new target can be modifed
+	 * @since 2.0
 	 */
 	public void updateTarget(IFindReplaceTarget target, boolean isTargetEditable) {
 		

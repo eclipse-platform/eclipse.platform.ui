@@ -30,13 +30,13 @@ import org.eclipse.jface.util.Assert;
  * It uses a rule based scanner to scan the document and to determine
  * the document's partitioning. The tokens returned by the rules the
  * scanner is configured with are supposed to return the partition type
- * as their data. The partitoner remembers the document's partitions
+ * as their data. The partitioner remembers the document's partitions
  * in the document itself rather than maintaining its own data structure.
  *
  * @see IRule
  * @see RuleBasedScanner
  * 
- * @deprecated use DefaultPartitioner instead
+ * @deprecated use <code>DefaultPartitioner</code> instead
  */
 public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension {
 	
@@ -149,6 +149,15 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		return (region != null);
 	}
 		
+	/**
+	 * Helper method for tracking the minimal region containg all partition changes.
+	 * If <code>offset</code> is smaller than the remembered offset, <code>offset</code>
+	 * will from now on be remembered. If <code>offset  + length</code> is greater than
+	 * the remembered end offset, it will be remembered from now on.
+	 * 
+	 * @param offset the offset
+	 * @param length the length
+	 */
 	private void rememberRegion(int offset, int length) {
 		// remember start offset
 		if (fStartOffset == -1)
@@ -164,10 +173,20 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 			fEndOffset= endOffset;
 	}
 	
+	/**
+	 * Remembers the given offset as the deletion offset.
+	 * 
+	 * @param offset the offset
+	 */
 	private void rememberDeletedOffset(int offset) {
 		fDeleteOffset= offset;
 	}
 	
+	/**
+	 * Creates the minimal region containing all partition changes using the
+	 * remembered offset, end offset, and deletion offset.
+	 * @return the minimal region containing all the partition changes
+	 */
 	private IRegion createRegion() {
 		if (fDeleteOffset == -1) {
 			if (fStartOffset == -1 || fEndOffset == -1)
@@ -184,6 +203,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 
 	/*
 	 * @see IDocumentPartitionerExtension#documentChanged2(DocumentEvent)
+	 * @since 2.0
 	 */
 	public IRegion documentChanged2(DocumentEvent e) {
 						

@@ -1,11 +1,19 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.jface.util.Assert;
+
 
 /**
  * A child document represent a range of its parent document. 
@@ -81,7 +89,10 @@ public final class ChildDocument extends AbstractDocument {
 	
 	/** The parent document */
 	private IDocument fParentDocument;
-	/** The parent document as document extension */
+	/** 
+	 * The parent document as document extension
+	 * @since 2.0
+	 */
 	private IDocumentExtension fExtension;
 	
 	/** The section inside the parent document */
@@ -233,6 +244,7 @@ public final class ChildDocument extends AbstractDocument {
 	
 	/*
 	 * @see IDocument#replace(int, int, String)
+	 * @since 2.0
 	 */
 	public void replace(int offset, int length, String text) throws BadLocationException {
 		try {
@@ -251,6 +263,7 @@ public final class ChildDocument extends AbstractDocument {
 	
 	/*
 	 * @see IDocument#set(String)
+	 * @since 2.0
 	 */
 	public void set(String text) {
 		try {
@@ -268,9 +281,10 @@ public final class ChildDocument extends AbstractDocument {
 	}
 	
 	/*
-	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IReplace)
+	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IDocumentExtension.IReplace)
+	 * @since 2.0
 	 */
-	public void registerPostNotificationReplace(IDocumentListener owner, IReplace replace) {
+	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
 		if (!fIsUpdating)
 			throw new UnsupportedOperationException();
 		super.registerPostNotificationReplace(owner, replace);

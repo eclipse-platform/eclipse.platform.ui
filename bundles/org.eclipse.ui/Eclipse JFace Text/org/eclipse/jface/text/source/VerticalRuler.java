@@ -38,14 +38,15 @@ import org.eclipse.jface.text.TextEvent;
 
 
 /**
- * A vertical ruler which is connected to a text viewer.
- * Standard implementation of <code>IVerticalRuler</code>.
+ * A vertical ruler which is connected to a text viewer. Single column standard 
+ * implementation of <code>IVerticalRuler</code>. The same can be achieved by 
+ * using <code>CompositeRuler</code> configured with an <code>AnnotationRulerColumn</code>.
  * Clients may use this class as is.
  *
  * @see ITextViewer
  */
 public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtension {
-	
+
 	/**
 	 * Internal listener class.
 	 */
@@ -91,6 +92,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	private InternalListener fInternalListener= new InternalListener();
 	/** The width of this vertical ruler */
 	private int fWidth;
+	
 	
 	/**
 	 * Constructs a vertical ruler with the given width.
@@ -175,6 +177,8 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	
 	/**
 	 * Double buffer drawing.
+	 * 
+	 * @param dest the gc to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -205,9 +209,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		dest.drawImage(fBuffer, 0, 0);
 	}
 	
-	/*
-	 * Returns the document offset of the upper left corner of the widgets viewport,
-	 * possibly including partially visible lines.
+	/**
+	 * Returns the document offset of the upper left corner of the
+	 * widgets viewport, possibly including partially visible lines.
+	 * 
+	 * @return the document offset of the upper left corner including partially visible lines
+	 * @since 2.0
 	 */
 	private int getInclusiveTopIndexStartOffset() {
 		
@@ -228,6 +235,8 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
+	 * 
+	 * @param gc  the gc to draw into
 	 */
 	private void doPaint(GC gc) {
 	
@@ -403,32 +412,35 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	}
 	
 	/*
-	 * @see IVerticalRulerInfo#addMouseListener
-	 */
-	public void addMouseListener(MouseListener listener) {
-		if (fCanvas != null && !fCanvas.isDisposed())
-			fCanvas.addMouseListener(listener);
-	}
-	
-	/*
-	 * @see IVerticalRulerInfo#addMouseListener
-	 */
-	public void removeMouseListener(MouseListener listener) {
-		if (fCanvas != null && !fCanvas.isDisposed())
-			fCanvas.removeMouseListener(listener);
-	}
-
-	/*
 	 * @see IVerticalRulerExtension#setFont(Font)
+	 * @since 2.0
 	 */
 	public void setFont(Font font) {
 	}
 
 	/*
 	 * @see IVerticalRulerExtension#setLocationOfLastMouseButtonActivity(int, int)
+	 * @since 2.0
 	 */
 	public void setLocationOfLastMouseButtonActivity(int x, int y) {
 		fLastMouseButtonActivityLine= toDocumentLineNumber(y);
 	}
+	
+	/**
+	 * @deprecated will be removed
+	 * @since 2.0
+	 */
+	public void addMouseListener(MouseListener listener) {
+		if (fCanvas != null && !fCanvas.isDisposed())
+			fCanvas.addMouseListener(listener);
+	}
 
+	/**
+	 * @deprecated will be removed
+	 * @since 2.0
+	 */
+	public void removeMouseListener(MouseListener listener) {
+		if (fCanvas != null && !fCanvas.isDisposed())
+			fCanvas.removeMouseListener(listener);
+	}
 }

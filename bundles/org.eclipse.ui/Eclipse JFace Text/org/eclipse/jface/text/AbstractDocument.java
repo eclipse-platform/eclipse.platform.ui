@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,15 +23,14 @@ import org.eclipse.jface.util.Assert;
 
 /**
  * Abstract implementation of <code>IDocument</code>. 
- * Implements the complete contract of <code>IDocument</code>.
+ * Implements the complete contract of <code>IDocument</code> and <code>IDocumentExtension</code>.
  * An <code>AbstractDocument</code> supports the following implementation plug-ins:
  * <ul>
  * <li> a text store for storing and managing the document's content
  * <li> a line tracker to map character positions to line numbers and vice versa
  * </ul>
  * This class must be subclassed. Subclasses must configure which implementation 
- * plug-ins the document should use. Subclasses are not intended to overwrite 
- * existing methods.
+ * plug-ins the document should use. Subclasses are not intended to overwrite existing methods.
  *
  * @see IDocument
  * @see ITextStore
@@ -38,7 +44,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	private ILineTracker fTracker;
 	/** The document's partitioner */
 	private IDocumentPartitioner fDocumentPartitioner;
-	/** The document's partitioner casted to <code>IDocumentPartitionerExtension</code>. */
+	/** 
+	 * The document's partitioner casted to <code>IDocumentPartitionerExtension</code>. 
+	 * @since 2.0
+	 */
 	private IDocumentPartitionerExtension fDocumentPartitionerExtension;
 	/** The registered document listeners */
 	private List fDocumentListeners;
@@ -51,11 +60,20 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	/** All registered document position updaters */
 	private List fPositionUpdaters;
 	
-	/** The list of post notification changes */
+	/** 
+	 * The list of post notification changes
+	 * @since 2.0
+	 */
 	private List fPostNotificationChanges;
-	/** The reentrance count for post notification changes. */
+	/** 
+	 * The reentrance count for post notification changes.
+	 * @since 2.0
+	 */
 	private int fReentranceCount= 0;
-	/** Indicates whether post notification change processing has been stopped. */
+	/** 
+	 * Indicates whether post notification change processing has been stopped.
+	 * @since 2.0
+	 */
 	private int fStoppedCount= 0;
 	
 	/**
@@ -114,7 +132,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	 * Returns all positions managed by the document grouped by category.
 	 *
 	 * @return the document's positions
-       */
+     */
 	protected Map getDocumentManagedPositions() {
 		return fPositions;
 	}
@@ -132,7 +150,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		
 	/**
 	 * Sets the document's text store.
-	 * Must be called inside the constructor.
+	 * Must be called first inside the constructor.
 	 *
 	 * @param store the document's text store
 	 */
@@ -142,7 +160,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	
 	/**
 	 * Sets the document's line tracker. 
-	 * Must be called inside the constructor.
+	 * Must be called first inside the constructor.
 	 *
 	 * @param tracker the document's line tracker
 	 */
@@ -421,6 +439,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	 * document partitioning listeners. Uses a robust iterator.
 	 * 
 	 * @param region the region in which partitioning has changed
+	 * @see IDocumentPartitioningListenerExtension
+	 * @since 2.0
 	 */
 	protected void fireDocumentPartitioningChanged(IRegion region) {
 		
@@ -501,9 +521,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		
 	/**
 	 * Updates the internal document structures and informs all document listeners.
-	 * Uses a robust iterator.
+	 * Uses a robust iterator. <p>
+	 * Executes all registered post notification replace operation.
 	 *
 	 * @param event the document event to be sent out
+	 * @see IDocumentExtension
 	 */
 	protected void fireDocumentChanged(DocumentEvent event) {
 		updateDocumentStructures(event);
@@ -895,9 +917,15 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		return -1;
 	}
 	
-	/*
+	/**
 	 * Returns the first index greater than <code>fromIndex</code> at which <code>str</code>
 	 * can be found in the <code>store</code>.
+	 * 
+	 * @param store the text store to search
+	 * @param str the string to search
+	 * @param fromIndex the start offset
+	 * @param caseSensitive <code>true</code> if capitalization should be honored, <code>false</code> otherwise
+	 * @return the offset greater than the start offset at which the search string has been found
 	 */
 	static private int indexOf(ITextStore store, char[] str, int fromIndex, boolean caseSensitive) {
 		int count= store.getLength();
@@ -955,9 +983,15 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		}
 	}
 	
-	/*
+	/**
 	 * Returns the first index smaller than <code>fromIndex</code> at which <code>str</code>
 	 * can be found in the <code>store</code>.
+	 * 
+	 * @param store the text store to search
+	 * @param str the string to search
+	 * @param fromIndex the start offset
+	 * @param caseSensitive <code>true</code> if capitalization should be honored, <code>false</code> otherwise
+	 * @return the offset smaller than the start offset at which the search string has been found
 	 */
 	static private int lastIndexOf(ITextStore store, char[] str, int fromIndex, boolean caseSensitive) {
     	
@@ -1019,8 +1053,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		}
 	}
 	
-	/*
+	/**
 	 * Tests if the substring is a whole word.
+	 * 
+	 * @param store the store in which to find the string
+	 * @param from the substring start offset
+	 * @param to the substring endoffset
+	 * @return <code>true</code> if the string is a whole word, otherwise <code>false</code>
 	 */	
 	private static boolean isWholeWord(ITextStore store, int from, int to) {
 		    	
@@ -1042,10 +1081,21 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	
 	// ---------- implementation of IDocumentExtension --------------
 	
+	/**
+	 * Inner class to bundle a registered post notifcation replace operation together with its
+	 * owner.
+	 * 
+	 * @since 2.0
+	 */
 	static private class RegisteredReplace {
+		/** The owner of this replace operation. */
 		IDocumentListener fOwner;
+		/** The replace operation */
 		IDocumentExtension.IReplace fReplace;
 		
+		/**
+		 * Creates a new bundle object.
+		 */
 		RegisteredReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
 			fOwner= owner;
 			fReplace= replace;
@@ -1054,6 +1104,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	
 	/**
 	 * Flushs all registered post notification changes.
+	 * 
+	 * @since 2.0
 	 */
 	private void flushPostNotificationChanges() {
 		if (fPostNotificationChanges != null)
@@ -1063,6 +1115,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	/**
 	 * Executes all registered post notification changes. The process is
 	 * repeated until no new post notification changes are added.
+	 * 
+	 * @since 2.0
 	 */
 	private void executePostNotificationChanges() {
 		
@@ -1082,7 +1136,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	}
 	
 	/*
-	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IReplace)
+	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IDocumentExtension.IReplace)
+	 * @since 2.0
 	 */
 	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
 		if (fPostNotificationChanges == null)
@@ -1092,6 +1147,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	
 	/*
 	 * @see IDocumentExtension#stopPostNotificationProcessing()
+	 * @since 2.0
 	 */
 	public void stopPostNotificationProcessing() {
 		++ fStoppedCount;
@@ -1099,6 +1155,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	
 	/*
 	 * @see IDocumentExtension#resumePostNotificationProcessing()
+	 * @since 2.0
 	 */
 	public void resumePostNotificationProcessing() {
 		-- fStoppedCount;
@@ -1108,12 +1165,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	
 	/*
 	 * @see IDocumentExtension#startSequentialRewrite(boolean)
+	 * @since 2.0
 	 */
 	public void startSequentialRewrite(boolean normalized) {
 	}
 
 	/*
 	 * @see IDocumentExtension#stopSequentialRewrite()
+	 * @since 2.0
 	 */
 	public void stopSequentialRewrite() {
 	}

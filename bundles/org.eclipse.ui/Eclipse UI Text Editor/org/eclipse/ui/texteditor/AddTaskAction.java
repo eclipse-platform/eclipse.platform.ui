@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -16,6 +23,7 @@ import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
 
 /**
  * Creates a new task marker. Uses the Workbench's task properties dialog.
+ * @since 2.0
  */
 public class AddTaskAction extends AddMarkerAction {
 	

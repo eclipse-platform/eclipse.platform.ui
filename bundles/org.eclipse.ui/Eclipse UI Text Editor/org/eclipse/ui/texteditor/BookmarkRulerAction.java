@@ -8,12 +8,18 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+
 package org.eclipse.ui.texteditor;
+
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
+/**
+ * Adapter for the managing bookmark action.
+ * @since 2.0
+ */
 public class BookmarkRulerAction extends AbstractRulerActionDelegate {
 	
 	/*

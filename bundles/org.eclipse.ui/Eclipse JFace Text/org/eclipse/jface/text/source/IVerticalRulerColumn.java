@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.source;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.graphics.Font;
@@ -12,7 +18,14 @@ import org.eclipse.swt.widgets.Control;
 
 
 /**
+ * A <code>IVerticalRulerColumn</code> is an element that can be added
+ * to a composite vertical ruler. A composite vertical ruler is a vertical ruler
+ * with a dynamically changing appearance and behavior depending on its
+ * actual arrangement of ruler columns. A vertical ruler column supports a
+ * subset of the contract of a full vertical ruler.
+ * 
  * @see org.eclipse.jface.text.source.CompositeRuler
+ * @since 2.0
  */
 public interface IVerticalRulerColumn {
 

@@ -1,12 +1,17 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.rules;
 
 import org.eclipse.jface.util.Assert;
-
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
  
 /**
@@ -21,19 +26,20 @@ public class Token implements IToken {
 	
 	
 	/** 
-	 * Standard undefined token 
+	 * Standard token: Undefined.
 	 */
 	public static final IToken UNDEFINED= new Token(T_UNDEFINED);
 	/** 
-	 * Standard End Of File token 
+	 * Standard token: End Of File. 
 	 */
 	public static final IToken EOF= new Token(T_EOF);
 	/** 
-	 * Standard whitespace token
+	 * Standard token: Whitespace.
 	 */
 	public static final IToken WHITESPACE= new Token(T_WHITESPACE);
+	
 	/**
-	 * Standard token neither undefine, whitespace, nor whitespace
+	 * Standard token: Neither Undefine, Whitespace, nor End Of File.
 	 * @deprecated will be removed
 	 */
 	public static final IToken OTHER= new Token(T_OTHER);
@@ -47,6 +53,7 @@ public class Token implements IToken {
 	 * have any data attached to it.
 	 *
 	 * @param type the type of the token
+	 * @since 2.0
 	 */
 	private Token(int type) {
 		fType= type;
@@ -69,6 +76,7 @@ public class Token implements IToken {
 	 * undefined, whitepsace, or EOF.
 	 * 
 	 * @param the data to be attached to the token
+	 * @since 2.0
 	 */
 	public void setData(Object data) {
 		Assert.isTrue(isOther());

@@ -1,14 +1,17 @@
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
+http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-    IBM Corporation - Initial API and implementation
+    IBM Corporation - Initial implementation
 **********************************************************************/
+
+
 package org.eclipse.ui.texteditor;
+
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -23,9 +26,14 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * This class serves as an adapter for ruler actions.
+ * This class serves as an adapter for actions contributed to the vertical ruler's
+ * context menu. This adapter provides the contributed actions access to their editor
+ * and the editor's vertical ruler. These actions gain only limited access to the vertical
+ * ruler as defined by <code>IVerticalRulerInfo</code>.  The adapter updates the
+ * adapter (inner) action on menu and mouse action on the vertical ruler.<p>
  * Extending classes must implement the factory method
  * <code>createAction(ITextEditor editor, IVerticalRulerInfo)</code>.
+ * @since 2.0
  */
 public abstract class AbstractRulerActionDelegate implements IEditorActionDelegate, MouseListener, IMenuListener {
 
@@ -35,6 +43,16 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	private IAction fCallerAction;
 	/** The underlying action. */
 	private IAction fAction;
+	
+	/**
+	 * The factory method creating the underlying action.
+	 * 
+	 * @param editor the editor the action to be created will work on
+	 * @param rulerInfo the vertical ruler the action to be created will work on
+	 * @return the created action
+	 */
+	protected abstract IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo);
+
 
 	/*
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
@@ -87,10 +105,8 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	}
 
 	/**
-	 * The factory method creating the underlying action.
+	 * Requests the adaptee to update itself to the current state.
 	 */
-	protected abstract IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo);
-
 	private void update() {
 		if (fAction != null && fAction instanceof IUpdate) {
 			((IUpdate) fAction).update();
@@ -126,5 +142,4 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	 */
 	public void mouseUp(MouseEvent e) {
 	}
-
 }

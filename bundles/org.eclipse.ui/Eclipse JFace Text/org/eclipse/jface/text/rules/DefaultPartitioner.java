@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.rules;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +41,7 @@ import org.eclipse.jface.util.Assert;
  * in the document itself rather than maintaining its own data structure.
  *
  * @see IPartitionTokenScanner
+ * @since 2.0
  */
 public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension {
 	
@@ -146,6 +154,15 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return (region != null);
 	}
 		
+	/**
+	 * Helper method for tracking the minimal region containg all partition changes.
+	 * If <code>offset</code> is smaller than the remembered offset, <code>offset</code>
+	 * will from now on be remembered. If <code>offset  + length</code> is greater than
+	 * the remembered end offset, it will be remembered from now on.
+	 * 
+	 * @param offset the offset
+	 * @param length the length
+	 */
 	private void rememberRegion(int offset, int length) {
 		// remember start offset
 		if (fStartOffset == -1)
@@ -161,10 +178,20 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			fEndOffset= endOffset;
 	}
 	
+	/**
+	 * Remembers the given offset as the deletion offset.
+	 * 
+	 * @param offset the offset
+	 */
 	private void rememberDeletedOffset(int offset) {
 		fDeleteOffset= offset;
 	}
 	
+	/**
+	 * Creates the minimal region containing all partition changes using the
+	 * remembered offset, end offset, and deletion offset.
+	 * @return the minimal region containing all the partition changes
+	 */
 	private IRegion createRegion() {
 		if (fDeleteOffset == -1) {
 			if (fStartOffset == -1 || fEndOffset == -1)

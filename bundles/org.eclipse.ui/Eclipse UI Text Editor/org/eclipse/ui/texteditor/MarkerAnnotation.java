@@ -1,10 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,11 +41,21 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class MarkerAnnotation extends Annotation {
 	
-	/** The layer in which markers representing problem are located. */
+	/** 
+	 * The layer in which markers representing problem are located.
+	 * @since 2.0
+	 */
 	public final static int PROBLEM_LAYER= 5;
 	
+	/** Internal image registry */
 	private static Map fgImageRegistry;
 	
+	/**
+	 * Returns an image for the given display as specified by the given image descriptor.
+	 * @param display the display
+	 * @param descriptor the image descriptor
+	 * @return an image for the display as specified by the descriptor
+	 */
 	protected static Image getImage(Display display, ImageDescriptor descriptor) {
 		Map map= getImageRegistry(display);
 		Image image= (Image) map.get(descriptor);
@@ -50,6 +66,12 @@ public class MarkerAnnotation extends Annotation {
 		return image;
 	}
 	
+	/**
+	 * Returns an image registry for the given display. If no such registry exists
+	 * the resgitry is created.
+	 * @param display the display
+	 * @return the image registry for the given display
+	 */
 	protected static Map getImageRegistry(Display display) {
 		if (fgImageRegistry == null) {
 			fgImageRegistry= new HashMap();
@@ -213,6 +235,14 @@ public class MarkerAnnotation extends Annotation {
 	}
 	
 	
+	/**
+	 * Returns an image for this annotation. It first consults the workbench adapter
+	 * for this annotation's marker. If none is defined, it tries to find an image for 
+	 * the image name of this annotation.
+	 * 
+	 * @param display the display for which the image is requested
+	 * @return the image for this annotation
+	 */
 	protected Image getImage(Display display) {
 		if (fImage == null) {
 			

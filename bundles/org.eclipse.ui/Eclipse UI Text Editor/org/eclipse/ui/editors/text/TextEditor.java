@@ -1,9 +1,15 @@
-package org.eclipse.ui.editors.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.editors.text;
 
 
 import java.lang.reflect.InvocationTargetException;
@@ -63,6 +69,10 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
  */
 public class TextEditor extends StatusTextEditor {
 	
+	/**
+	 * The encoding support for the editor.
+	 * @since 2.0
+	 */
 	private DefaultEncodingSupport fEncodingSupport;
 		
 	/**
@@ -73,6 +83,9 @@ public class TextEditor extends StatusTextEditor {
 		initializeEditor();
 	}
 	
+	/**
+	 * Initializes this editor.
+	 */
 	protected void initializeEditor() {
 		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
@@ -88,6 +101,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see IWorkbenchPart#dispose()
+	 * @since 2.0
 	 */
 	public void dispose() {
 		if (fEncodingSupport != null) {
@@ -98,9 +112,10 @@ public class TextEditor extends StatusTextEditor {
 	}
 	
 	/**
-	 * The <code>TextEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method asks the user for the workspace path
-	 * of a file resource and saves the document there.
+	 * The <code>TextEditor</code> implementation of this  <code>AbstractTextEditor</code> 
+	 * method asks the user for the workspace path of a file resource and saves the document there.
+	 * 
+	 * @param progressMonitor the progress monitor to be used
 	 */
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
 		
@@ -197,6 +212,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see AbstractTextEditor#createActions()
+	 * @since 2.0
 	 */
 	protected void createActions() {
 		super.createActions();
@@ -227,6 +243,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see StatusTextEditor#getStatusHeader(IStatus)
+	 * @since 2.0
 	 */
 	protected String getStatusHeader(IStatus status) {
 		if (fEncodingSupport != null) {
@@ -239,6 +256,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see StatusTextEditor#getStatusBanner(IStatus)
+	 * @since 2.0
 	 */
 	protected String getStatusBanner(IStatus status) {
 		if (fEncodingSupport != null) {
@@ -251,6 +269,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see StatusTextEditor#getStatusMessage(IStatus)
+	 * @since 2.0
 	 */
 	protected String getStatusMessage(IStatus status) {
 		if (fEncodingSupport != null) {
@@ -263,6 +282,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see AbstractTextEditor#doSetInput(IEditorInput)
+	 * @since 2.0
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
@@ -272,6 +292,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see IAdaptable#getAdapter(Class)
+	 * @since 2.0
 	 */
 	public Object getAdapter(Class adapter) {
 		if (IEncodingSupport.class.equals(adapter))
@@ -281,6 +302,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see AbstractTextEditor#editorContextMenuAboutToShow(IMenuManager)
+	 * @since 2.0
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
@@ -290,6 +312,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updatePropertyDependentActions()
+	 * @since 2.0
 	 */
 	protected void updatePropertyDependentActions() {
 		super.updatePropertyDependentActions();

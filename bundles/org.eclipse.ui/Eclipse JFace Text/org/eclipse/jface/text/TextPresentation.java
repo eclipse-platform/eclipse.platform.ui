@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import java.util.ArrayList;
@@ -28,13 +34,12 @@ import org.eclipse.swt.custom.StyledText;
  */
 public class TextPresentation {
 	
-	
-	
 	/**
-	 * Applies the given presentation to the given text widget.
+	 * Applies the given presentation to the given text widget. Helper method.
 	 *
 	 * @param presentation the style information
 	 * @param the widget to which to apply the style information
+	 * @since 2.0
 	 */
 	public static void applyTextPresentation(TextPresentation presentation, StyledText text) {
 		
@@ -62,7 +67,7 @@ public class TextPresentation {
 		protected IRegion fWindow;
 		
 		/**
-		 * skipDefaults tells the enumeration to skip all those style ranges
+		 * <code>skipDefaults</code> tells the enumeration to skip all those style ranges
 		 * which define the same style as the presentation's default style range.
 		 */
 		protected FilterIterator(boolean skipDefaults) {
@@ -106,11 +111,19 @@ public class TextPresentation {
 			throw new UnsupportedOperationException();
 		}
 		
+		/**
+		 * Returns whether the given object should be skipped.
+		 * 
+		 * @return <code>true</code> if teh object should be skipped by the iterator
+		 */
 		protected boolean skip(Object o) {
 			StyleRange r= (StyleRange) o;
 			return r.similarTo(fDefaultRange);
 		}
 		
+		/**
+		 * Computes the index of the styled range that is the next to be enumerated.
+		 */
 		protected void computeIndex() {
 			while (fIndex < fLength && skip(fRanges.get(fIndex)))
 				++ fIndex;
@@ -375,6 +388,7 @@ public class TextPresentation {
 	
 	/**
 	 * Clears this presentation by resetting all applied changes.
+	 * @since 2.0
 	 */
 	public void clear() {
 		fDefaultRange= null;

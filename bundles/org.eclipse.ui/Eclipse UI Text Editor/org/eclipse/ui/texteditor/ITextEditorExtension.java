@@ -1,40 +1,63 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.jface.action.IMenuListener;
 
 
 /**
- * Extension to <code>ITextEditor</code>. Intention to be integrated with
- * <code>ITextEditor</code>. Should not yet be considered API.
+ * Extension interface for <code>ITextEditor</code>. Adds the following functions:
+ * <ul>
+ * <li> status fields
+ * <li> read-only state of the editor's input
+ * <li> ruler context menu listeners.
+ * </ul>
+ * 
+ * @since 2.0
  */
 public interface ITextEditorExtension {
 	
 	/**
-	 * Informs the editor about which status field is to be used
-	 * when posting information of a given category.
+	 * Informs the editor which status field is to be used when posting status 
+	 * information  in the given category.
+	 * 
+	 * @param field the status field to be used
+	 * @param category the status information category
 	 * @see ITextEditorActionConstants
 	 */
 	void setStatusField(IStatusField field, String category);
 	
 	/**
-	 * Returns whether the editor's input is read-only. The semantics of this method is
-	 * orthogonal to <code>isEditable</code> as it talks about the editor input and
-	 * <b>not</b> about the editor document.
+	 * Returns whether the editor's input is read-only. The semantics of
+	 * this method is orthogonal to <code>isEditable</code> as it talks about the
+	 * editor input, i.e. the domain element, and <b>not</b> about the editor
+	 * document.
+	 * 
+	 * @return <code>true</code> if the editor input is read-only
 	 */
 	boolean isEditorInputReadOnly();
 
 	/**
 	 * Adds a ruler context menu listener to the editor.
+	 * 
+	 * @param listener the listener
 	 */
 	void addRulerContextMenuListener(IMenuListener listener);
 	
 	/**
 	 * Removes a ruler context menu listener from the editor.
+	 * 
+	 * @param listener the listener
 	 */
 	void removeRulerContextMenuListener(IMenuListener listener);
 }

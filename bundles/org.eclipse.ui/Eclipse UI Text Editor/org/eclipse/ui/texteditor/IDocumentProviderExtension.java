@@ -1,17 +1,31 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 
 /**
- * Extension to <code>IDocumentProvider</code>. Intention to be integrated with
- * <code>IDocumentProvider</code>. Should not yet be considered API.
+ * Extension interface for <code>IDocumentProvider</code>. It adds the following
+ * functions:
+ * <ul>
+ * <li> dealing with immutable domain elements
+ * <li> state validation
+ * <li> persistent status of domain element operations
+ * <li> extended synchronization support
+ * </ul>
+ * @since 2.0
  */
 public interface IDocumentProviderExtension {
 	
@@ -84,6 +98,7 @@ public interface IDocumentProviderExtension {
 	 * Returns the status of the given element.
 	 * 
 	 * @param element the element
+	 * @return the status of the given element
 	 */
 	IStatus getStatus(Object element);
 	

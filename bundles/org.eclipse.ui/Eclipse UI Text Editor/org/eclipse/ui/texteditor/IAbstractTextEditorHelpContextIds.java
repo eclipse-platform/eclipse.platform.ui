@@ -1,57 +1,227 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.ui.PlatformUI;
+
 
 /**
  * Help context ids for the text editor.
  * <p>
- * This interface contains constants only; 
- * it is not intended to be implemented.
+ * This interface contains constants only; it is not intended to be implemented.
  * </p>
  */
 public interface IAbstractTextEditorHelpContextIds {
 	
-	/** The string with which action, dialog, etc. ids are prefixed to construct help context ids. */
+	/** 
+	 * The string with which action, dialog, etc. ids are prefixed to construct help context ids. 
+	 * Value: <code>"org.eclipse.ui."</code>
+	 */
 	public static final String PREFIX= PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 	
-	/** The string which is appended to action ids to construct help context ids. */
+	/** 
+	 * The string which is appended to action ids to construct help context ids.
+	 * Value: <code>"_action_context"</code>
+	 */
 	public static final String ACTION_POSTFIX= "_action_context"; //$NON-NLS-1$
 
-	/* Actions */
+	
+
+
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.undo_action_context"</code>
+	 */
 	public static final String UNDO_ACTION= PREFIX + ITextEditorActionConstants.UNDO + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.redo_action_context"</code>
+	 */
 	public static final String REDO_ACTION= PREFIX + ITextEditorActionConstants.REDO + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.cut_action_context"</code>
+	 */
 	public static final String CUT_ACTION= PREFIX + ITextEditorActionConstants.CUT + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.copy_action_context"</code>
+	 */
 	public static final String COPY_ACTION= PREFIX + ITextEditorActionConstants.COPY + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.paste_action_context"</code>
+	 */
 	public static final String PASTE_ACTION= PREFIX + ITextEditorActionConstants.PASTE + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.delete_action_context"</code>
+	 */
 	public static final String DELETE_ACTION= PREFIX + ITextEditorActionConstants.DELETE + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.DeleteLine_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String DELETE_LINE_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.DeleteLineToBeginning_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String DELETE_LINE_TO_BEGINNING_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.DeleteLineToEnd_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String DELETE_LINE_TO_END_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE_TO_END + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.SetMark_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String SET_MARK_ACTION= PREFIX + ITextEditorActionConstants.SET_MARK + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.ClearMark_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String CLEAR_MARK_ACTION= PREFIX + ITextEditorActionConstants.CLEAR_MARK + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.SwapMark_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String SWAP_MARK_ACTION= PREFIX + ITextEditorActionConstants.SWAP_MARK + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.selectAll_action_context"</code>
+	 */
 	public static final String SELECT_ALL_ACTION= PREFIX + ITextEditorActionConstants.SELECT_ALL + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.ShiftRight_action_context"</code>
+	 */
 	public static final String SHIFT_RIGHT_ACTION= PREFIX + ITextEditorActionConstants.SHIFT_RIGHT + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.ShiftLeft_action_context"</code>
+	 */
 	public static final String SHIFT_LEFT_ACTION= PREFIX + ITextEditorActionConstants.SHIFT_LEFT + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.find_action_context"</code>
+	 */
 	public static final String FIND_ACTION= PREFIX + ITextEditorActionConstants.FIND + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.FindNext_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String FIND_NEXT_ACTION = PREFIX + ITextEditorActionConstants.FIND_NEXT + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.FindPrevious_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String FIND_PREVIOUS_ACTION = PREFIX + ITextEditorActionConstants.FIND_PREVIOUS + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.FindIncremental_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String FIND_INCREMENTAL_ACTION = PREFIX + ITextEditorActionConstants.FIND_INCREMENTAL + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.bookmark_action_context"</code>
+	 */
 	public static final String BOOKMARK_ACTION= PREFIX + ITextEditorActionConstants.BOOKMARK + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.addTask_action_context"</code>
+	 */
 	public static final String ADD_TASK_ACTION= PREFIX + ITextEditorActionConstants.ADD_TASK + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.save_action_context"</code>
+	 */
 	public static final String SAVE_ACTION= PREFIX + ITextEditorActionConstants.SAVE + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.revert_action_context"</code>
+	 */
 	public static final String REVERT_TO_SAVED_ACTION= PREFIX + ITextEditorActionConstants.REVERT_TO_SAVED + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.GotoLine_action_context"</code>
+	 */
 	public static final String GOTO_LINE_ACTION= PREFIX + ITextEditorActionConstants.GOTO_LINE + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.print_action_context"</code>
+	 */
 	public static final String PRINT_ACTION= PREFIX + ITextEditorActionConstants.PRINT + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToWindows_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS + ACTION_POSTFIX;
+	
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToUNIX_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_UNIX= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX + ACTION_POSTFIX;
+	
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToMAC_action_context"</code>
+	 * @since 2.0
+	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_MAC= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC + ACTION_POSTFIX;
 	
-	/* Dialogs */
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.find_replace_dialog_context"</code>
+	 */
 	public static final String FIND_REPLACE_DIALOG= PREFIX + "find_replace_dialog_context"; //$NON-NLS-1$
 }

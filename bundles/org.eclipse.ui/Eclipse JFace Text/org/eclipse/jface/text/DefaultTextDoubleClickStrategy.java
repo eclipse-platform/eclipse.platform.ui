@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 import java.text.BreakIterator;
 import java.text.CharacterIterator;
@@ -13,33 +18,49 @@ import java.text.CharacterIterator;
 /**
  * Standard implementation of <code>ITextDoubleClickStrategy</code>.
  * Selects words using <code>java.text.BreakIterator</code> for the
- * default locale.
- * This class is not intended to be subclassed.
+ * default locale. This class is not intended to be subclassed.
+ * 
+ * @see java.text.BreakIterator
  */
 public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy {
 	
 	
-	
 	/**
-	 * Implements a character iterator for documents.
+	 * Implements a character iterator that works directly on
+	 * instances of <code>IDocument</code>. Used to collaborate with
+	 * the break iterator.
+	 * 
+	 * @see IDocument
+	 * @since 2.0
 	 */
 	static class DocumentCharacterIterator implements CharacterIterator {
 		
+		/** Document to iterate over. */
 		private IDocument fDocument;
+		/** Start offset of iteration. */
 		private int fOffset= -1;
+		/** Endoffset of iteration. */
 		private int fEndOffset= -1;
+		/** Current offset of iteration. */
 		private int fIndex= -1;
 		
+		/** Creates a new document iterator. */
 		public DocumentCharacterIterator() {
 		}
 		
+		/**
+		 * Configures this document iterator with the document section to be iteratored. 
+		 *
+		 * @param document the document to be iterated
+		 * @param iteratorRange the range in the document to be iterated
+		 */
 		public void setDocument(IDocument document, IRegion iteratorRange) {
 			fDocument= document;
 			fOffset= iteratorRange.getOffset();
 			fEndOffset= fOffset + iteratorRange.getLength();
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#first()
 		 */
 		public char first() {
@@ -47,7 +68,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return current();
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#last()
 		 */
 		public char last() {
@@ -55,7 +76,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
         	return current();
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#current()
 		 */
 		public char current() {
@@ -68,7 +89,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return DONE;
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#next()
 		 */
 		public char next() {
@@ -81,7 +102,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return current();
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#previous()
 		 */
 		public char previous() {
@@ -94,7 +115,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return current();
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#setIndex(int)
 		 */
 		public char setIndex(int index) {
@@ -102,28 +123,28 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return current();
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#getBeginIndex()
 		 */
 		public int getBeginIndex() {
 			return fOffset;
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#getEndIndex()
 		 */
 		public int getEndIndex() {
 			return fEndOffset;
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#getIndex()
 		 */
 		public int getIndex() {
 			return fIndex;
 		}
 		
-		/**
+		/*
 		 * @see CharacterIterator#clone()
 		 */
 		public Object clone() {
@@ -137,7 +158,10 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	};
 	
 	
-	/** The document character iterator used by this strategy */
+	/** 
+	 * The document character iterator used by this strategy.
+	 * @since 2.0
+	 */
 	private DocumentCharacterIterator fDocIter= new DocumentCharacterIterator();
 	
 	

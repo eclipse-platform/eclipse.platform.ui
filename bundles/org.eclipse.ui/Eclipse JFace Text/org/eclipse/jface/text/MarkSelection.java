@@ -8,10 +8,13 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * @see IMarkSelection
+
+/**
+ * Default implementation of <code>IMarkSelection</code>.
+ * @since 2.0
  */
 public class MarkSelection implements IMarkSelection {
 

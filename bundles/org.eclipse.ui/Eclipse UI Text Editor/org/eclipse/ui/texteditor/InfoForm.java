@@ -1,9 +1,16 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+
+package org.eclipse.ui.texteditor;
 
 
 import org.eclipse.swt.SWT;
@@ -26,18 +33,25 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * A form consisting of a title, a banner, and a info text. Banner and info text are
  * separated by a separator line. This form must be handled like a SWT widget. 
+ * @since 2.0
  */
 public class InfoForm {
-				
+	
+	/** The form's root widget */
 	private ScrolledComposite fScrolledComposite;
+	/** The background color */
 	private Color fBackgroundColor;
+	/** The foreground color */
 	private Color fForegroundColor;
+	/** The separator's color */
 	private Color fSeparatorColor;
-	
+	/** The form header */
 	private Label fHeader;
+	/** The form banner */
 	private Label fBanner;
+	/** The form text */
 	private Label fText;
-	
+	/** The preference change listener */
 	private IPropertyChangeListener fPropertyChangeListener;
 	
 	/**
@@ -99,12 +113,14 @@ public class InfoForm {
 
 	/**
 	 * Hook method for creating an appropriate action control.
+	 * @param parent the action control's parent control
 	 */
 	protected void createActionControls(Composite parent) {
 	}
 	
 	/**
 	 * Returns the control of this form.
+	 * @return the root control of this form
 	 */
 	public Control getControl() {
 		return fScrolledComposite;
@@ -153,20 +169,27 @@ public class InfoForm {
 		fScrolledComposite.redraw();
 	}
 
-	// --- copied from org.eclipse.update.ui.forms.internal.FormWidgetFactory
-
+	/**
+	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createComposite(Composite)
+	 */
 	private Composite createComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(fBackgroundColor);
 		return composite;
 	}
 
+	/**
+	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createCompositeSeparator(Composite)
+	 */
 	private Composite createCompositeSeparator(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(fSeparatorColor);
 		return composite;
 	}
 		
+	/**
+	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createLabel(Composite, String)
+	 */
 	private Label createLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.NONE);
 		if (text != null)
@@ -176,6 +199,9 @@ public class InfoForm {
 		return label;
 	}
 
+	/**
+	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createHeader(Composite, String)
+	 */
 	private Label createHeader(Composite parent, String text) {
 		Label label = new Label(parent, SWT.NONE);
 		if (text != null)
@@ -186,6 +212,9 @@ public class InfoForm {
 		return label;
 	}
 
+	/**
+	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createBanner(Composite, String)
+	 */
 	private Label createBanner(Composite parent, String text) {
 		Label label = new Label(parent, SWT.NONE);
 		if (text != null)

@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,16 +57,23 @@ import org.eclipse.ui.PlatformUI;
  */
 public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
+	/** The vertical ruler info of the editor */
 	private IVerticalRulerInfo fRuler;
+	/** The associated editor */
 	private ITextEditor fTextEditor;
+	/** The of the marker to be created/removed */
 	private String fMarkerType;
+	/** The cached list of markers covering a particular vertical ruler position */
 	private List fMarkers;
+	/** The flag indicating whether user interaction is required. */
 	private boolean fAskForLabel;
-
+	/** The action's resource bundle */
 	private ResourceBundle fBundle;
+	/** The prefix used for resource bundle look ups */
 	private String fPrefix;
-
+	/** The cached action label when adding a marker */
 	private String fAddLabel;
+	/** The cached action label when removing a marker */
 	private String fRemoveLabel;
 
 	
@@ -69,14 +83,13 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
-	 *   <code>null</code> if none
+	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
 	 * @param editor the editor
 	 * @param ruler the ruler
 	 * @param markerType the type of marker
-	 * @param askForLabel <code>true</code> if the user should be asked for 
-	 *   a label when a new marker is created 
+	 * @param askForLabel <code>true</code> if the user should be asked for a label when a new marker is created 
 	 * @see ResourceAction#ResourceAction
+	 * @since 2.0
 	 */
 	public MarkerRulerAction(ResourceBundle bundle, String prefix,  ITextEditor editor, IVerticalRulerInfo ruler, String markerType, boolean askForLabel) {
 		super(bundle, prefix);
@@ -124,7 +137,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Returns this action's vertical ruler info.
 	 *
-	 * @return this action's vertical ruler
+	 * @return this action's vertical ruler info
+	 * @since 2.0
 	 */
 	protected IVerticalRulerInfo getVerticalRulerInfo() {
 		return fRuler;
@@ -232,7 +246,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Handles core exceptions. This implementation logs the exceptions
-	 * with the workbech plugin.
+	 * with the workbech plugin and shows an error dialog.
 	 *
 	 * @param exception the exception to be handled
 	 * @param message the message to be logged with the given exception
@@ -332,6 +346,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * map of attributes.
 	 *
 	 * @param attributes the map of attributes
+	 * @return <code>true</code> if the map of attributes has successfuly been initialized 
 	 */
 	protected boolean askForLabel(Map attributes) {
 

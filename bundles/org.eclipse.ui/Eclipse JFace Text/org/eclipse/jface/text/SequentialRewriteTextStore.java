@@ -1,18 +1,28 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 /**
- * A text store that is optimized for sequential rewriting. 
- * Non-sequential modifications are not supported and result in
- * <code>IllegalArgumentException</code>s.
+ * A text store that optimizes a given source text store for sequential rewriting. 
+ * While rewritten it keeps a list of replace command that serve as patches for
+ * the source store. Only on request, the source store is indeed manipulated
+ * by applying the patch commands to the source text store.
+ * 
+ * @since 2.0
  */
 public class SequentialRewriteTextStore implements ITextStore {
 
@@ -35,7 +45,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 
 	/** The list of buffered replacements. */
 	private List fReplaceList;	
-	/** The source store */
+	/** The source text store */
 	private ITextStore fSource;
 	/** A flag to enforce sequential access. */
 	private static final boolean ASSERT_SEQUENTIALITY= false;
@@ -43,6 +53,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 	
 	/**
 	 * Creates a new sequential rewrite store for the given source store.
+	 * 
+	 * @param source the source text store
 	 */
 	public SequentialRewriteTextStore(ITextStore source) {
 		fReplaceList= new LinkedList();
@@ -51,6 +63,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	
 	/**
 	 * Returns the source store of this rewrite store.
+	 * 
 	 * @return  the source store of this rewrite store
 	 */
 	public ITextStore getSourceStore() {
@@ -157,12 +170,13 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 	
 	/**
-	 * Returns the difference between current and original offset after the replace position.
+	 * Returns the difference between the offset in the source store and the "same" offset in the
+	 * rewrite store after the replace operation.
+	 * 
+	 * @param replace the replace command
 	 */
 	private static final int getDelta(Replace replace) {
-		return
-			replace.newOffset - replace.offset +
-			replace.text.length() - replace.length;
+		return replace.newOffset - replace.offset + replace.text.length() - replace.length;
 	}
 
 	/*

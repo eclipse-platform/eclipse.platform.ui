@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.contentassist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,12 +63,27 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private String fLineDelimiter= null;
 
 	
+	/**
+	 * Creates a new completion proposal popup for the given elements.
+	 * 
+	 * @param contentAssistant the content assistant feeding this popup
+	 * @param viewer the viewer on top of which this popup appears
+	 * @param infoController the info control collaborating with this popup
+	 * @since 2.0
+	 */
 	public CompletionProposalPopup(ContentAssistant contentAssistant, ITextViewer viewer, AdditionalInfoController infoController) {
 		fContentAssistant= contentAssistant;
 		fViewer= viewer;
 		fAdditionalInfoController= infoController;
 	}
 
+	/**
+	 * Computes and presents completion proposals. The flag indicates whether this call has
+	 * be made out of an auto activation context.
+	 * 
+	 * @param autoActivated <code>true</code> if auto activation context
+	 * @return an error message or <code>null</code> in case of no error
+	 */
 	public String showProposals(final boolean autoActivated) {
 		final StyledText styledText= fViewer.getTextWidget();
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
@@ -100,14 +122,29 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return getErrorMessage();
 	}
 	
+	/**
+	 * Returns the completion proposal available at the given offset of the
+	 * viewer's document. Delegates the work to the content assistant.
+	 * 
+	 * @param offset the offset
+	 * @return the completion proposals available at this offset
+	 */
 	private ICompletionProposal[] computeProposals(int offset) {
 		return fContentAssistant.computeCompletionProposals(fViewer, offset);
 	}
 	
+	/**
+	 * Returns the error message.
+	 * 
+	 * @return the error message
+	 */
 	private String getErrorMessage() {
 		return fContentAssistant.getErrorMessage();
 	}
 	
+	/**
+	 * Creates the proposal selector.
+	 */
 	private void createProposalSelector() {
 		if (Helper.okToUse(fProposalShell))
 			return;
@@ -148,6 +185,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
 	}
 	
+	/**
+	 * Returns the proposal selected in the proposal selector.
+	 * 
+	 * @return the selected proposal
+	 * @since 2.0
+	 */
 	private ICompletionProposal getSelectedProposal() {
 		int i= fProposalTable.getSelectionIndex();
 		if (i < 0 || i >= fFilteredProposals.length)
@@ -155,6 +198,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return fFilteredProposals[i];
 	}
 		
+	/**
+	 * Takes the selected proposal and applies it.
+	 * @since 2.0
+	 */
 	private void selectProposal() {
 		ICompletionProposal p= getSelectedProposal();
 		hide();
@@ -162,6 +209,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 			insertProposal(p, (char) 0, fViewer.getSelectedRange().x);
 	}
 	
+	/**
+	 * Applies the given proposal at the given offset. The given character is the
+	 * one that triggered the insertion of this proposal.
+	 * 
+	 * @param p the completion proposal
+	 * @param trigger the trigger character
+	 * @param offset the offset
+	 * 
+	 * @since 2.0
+	 */
 	private void insertProposal(ICompletionProposal p, char trigger, int offset) {
 			
 		fInserting= true;
@@ -204,6 +261,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	}
 	
+	/**
+	 * Returns whether this popup has the focus.
+	 * @return <code>true</code> if the popup has the focus
+	 */
 	public boolean hasFocus() {
 		if (Helper.okToUse(fProposalShell))
 			return (fProposalShell.isFocusControl() || fProposalTable.isFocusControl());
@@ -211,6 +272,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return false;
 	}
 	
+	/**
+	 * Hides this popup.
+	 */
 	public void hide() {
 		if (Helper.okToUse(fProposalShell)) {
 			
@@ -225,10 +289,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fFilteredProposals= null;
 	}
 	
+	/**
+	 *Returns whether this popup is active, i.e. the propsal selector is visible.
+	 * @return <code>true</code> if this popup is active
+	 */
 	public boolean isActive() {
 		return fProposalShell != null && !fProposalShell.isDisposed();
 	}
 	
+	/**
+	 * Initializes the proposal selector with these given proposals.
+	 * 
+	 * @param proposals the proposals
+	 */
 	private void setProposals(ICompletionProposal[] proposals) {
 		if (Helper.okToUse(fProposalTable)) {
 
@@ -258,6 +331,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 	
+	/**
+	 * Returns the graphical location at which this popup should be made visible.
+	 * @return the location of this popup
+	 */
 	private Point getLocation() {
 		StyledText text= fViewer.getTextWidget();
 		int caret= text.getCaretOffset();
@@ -266,6 +343,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return text.toDisplay(p);
 	}
 
+	/**
+	 *Displays this popup and install the additional info controller, so that additional info
+	 * is displayed when a proposal is selected and additional info is available.
+	 */
 	private void displayProposals() {
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR)) {
 			fProposalShell.setVisible(true);
@@ -276,6 +357,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 	
+	/*
+	 * @see IContentAssistListener#verifyKey(VerifyEvent)
+	 */
 	public boolean verifyKey(VerifyEvent e) {
 		if (!Helper.okToUse(fProposalShell))
 			return true;
@@ -370,6 +454,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return true;
 	}
 	
+	/**
+	 * Selects the entry with the given index in the proposal selector and feeds
+	 * the selection to the additional info controller.
+	 * 
+	 * @param index the index in the list
+	 * @since 2.0
+	 */
 	private void selectProposal(int index) {
 		fProposalTable.setSelection(index);
 		fProposalTable.showSelection();
@@ -377,6 +468,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fAdditionalInfoController.handleTableSelectionChanged();
 	}
 	
+	/**
+	 * Returns whether the given character is contained in the given array of 
+	 * characters.
+	 * 
+	 * @param characters the list of characters
+	 * @param c the character to look for in the list
+	 * @return <code>true</code> if character belongs to the list
+	 * @since 2.0
+	 */
 	private boolean contains(char[] characters, char c) {
 		
 		if (characters == null)
@@ -390,11 +490,18 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return false;
 	}
 	
+	/*
+	 * @see IEventConsumer#processEvent(VerifyEvent)
+	 */
 	public void processEvent(VerifyEvent e) {
 		if (!fInserting)
 			filterProposal();
 	}
 	
+	/**
+	 * Filters the displayed proposal based on the given cursor position and the 
+	 * offset of the original invocation of the content assistant.
+	 */
 	private void filterProposal() {
 		++ fInvocationCounter;
 		Control control= fViewer.getTextWidget();
@@ -416,6 +523,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 		});
 	}
 	
+	/**
+	 * Computes the subset of already computed propsals that are still valid for
+	 * the given offset.
+	 * 
+	 * @param offset the offset
+	 * @return the set of filtered proposals
+	 * @since 2.0
+	 */
 	private ICompletionProposal[] computeFilteredProposals(int offset) {
 		
 		if (offset == fInvocationOffset)

@@ -1,9 +1,16 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+
+package org.eclipse.ui.texteditor;
 
 
 import java.text.MessageFormat;
@@ -151,6 +158,11 @@ import org.eclipse.ui.texteditor.AbstractTextEditor.ElementStateListener.Validat
  */
 public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension {
 
+	/**
+	 * Tag used in xml configuration files to specify editor action contributions.
+	 * Current value: <code>editorContribution</code>
+	 * @since 2.0
+	 */
 	private static final String TAG_CONTRIBUTION_TYPE= "editorContribution"; //$NON-NLS-1$
 
 	/**
@@ -158,14 +170,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	class ElementStateListener implements IElementStateListener, IElementStateListenerExtension {
 		
+			/**
+			 * Internal <code>VerifyListener</code> for performing the state validation of the
+			 * editor input in case of the first attempted manipulation via typing on the keyboard.
+			 * @since 2.0
+			 */
 			class Validator implements VerifyListener {
 				
+				/** Indicates whether the editor input changed during the process of state validation. */
 				private boolean fInputChanged;
+				/** Detector for editor input changes during the process of state validation. */
 				private ITextInputListener fInputListener= new ITextInputListener() {
 					public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {}
 					public void inputDocumentChanged(IDocument oldInput, IDocument newInput) { fInputChanged= true; }
 				};
 				
+				/*
+				 * @see VerifyListener#verifyText(VerifyEvent)
+				 */
 				public void verifyText(VerifyEvent e) {
 					
 					ISourceViewer viewer= getSourceViewer();
@@ -182,10 +204,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			};
 		
+		/**
+		 * The listener's validator.
+		 * @since 2.0
+		 */
 		private Validator fValidator;
 		
 		/*
 		 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
+		 * @since 2.0
 		 */
 		public void elementStateValidationChanged(Object element, boolean isStateValidated) {
 
@@ -294,6 +321,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/*
 		 * @see IElementStateListenerExtension#elementStateChanging(Object)
+		 * @since 2.0
 		 */
 		public void elementStateChanging(Object element) {
 			if (element != null && element.equals(getEditorInput()))
@@ -302,6 +330,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/*
 		 * @see IElementStateListenerExtension#elementStateChangeFailed(Object)
+		 * @since 2.0
 		 */
 		public void elementStateChangeFailed(Object element) {
 			if (element != null && element.equals(getEditorInput()))
@@ -310,10 +339,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	/**
-	 * Internal text listener.
+	 * Internal text listener for updating all content dependent
+	 * actions. The updating is done asynchronously.
 	 */
 	class TextListener implements ITextListener {
 		
+		/** The posted updater code. */
 		private Runnable fRunnable= new Runnable() {
 			public void run() {
 				if (fSourceViewer != null) {
@@ -323,6 +354,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 		};
 		
+		/** Display used for posting the updater code. */
 		private Display fDisplay;
 		
 		/*
@@ -344,12 +376,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 
 	/**
-	 * MISSING
+	 * Compare configuration elements according to the prerequisite relation
+	 * of their defining plug-ins.
+	 * @since 2.0
 	 */
 	static class ConfigurationElementComparator implements Comparator {
 		
 		/*
 		 * @see Comparator#compare(Object, Object)
+		 * @since 2.0
 		 */
 		public int compare(Object object0, Object object1) {
 
@@ -365,6 +400,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return 0;
 		}
 
+		/**
+		 * Returns whether one configuration element depends on the other element. Does this by
+		 * checking the dependency chain of the defining plugins.
+		 * 
+		 * @param element0 the first element
+		 * @param element1 the second element
+		 * @return <code>true</code> if <code>element0</code> depends on <code>element1</code>.
+		 * @since 2.0
+		 */
 		private static boolean dependsOn(IConfigurationElement element0, IConfigurationElement element1) {
 			IPluginDescriptor descriptor0= element0.getDeclaringExtension().getDeclaringPluginDescriptor();
 			IPluginDescriptor descriptor1= element1.getDeclaringExtension().getDeclaringPluginDescriptor();
@@ -372,6 +416,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return dependsOn(descriptor0, descriptor1);
 		}
 		
+		/**
+		 * Returns whether one plugin depends on the other plugin. 
+		 * 
+		 * @param descriptor0 descriptor of the first plugin
+		 * @param descriptor1 descriptor of the second plugin
+		 * @return <code>true</code> if <code>descriptor0</code> depends on <code>descriptor1</code>.
+		 * @since 2.0
+		 */
 		private static boolean dependsOn(IPluginDescriptor descriptor0, IPluginDescriptor descriptor1) {
 
 			IPluginRegistry registry= Platform.getPluginRegistry();
@@ -391,7 +443,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Internal property change listener.
+	 * Internal property change listener for handling changes in the editor's preferences.
 	 */
 	class PropertyChangeListener implements IPropertyChangeListener {
 		/*
@@ -407,7 +459,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	class ActivationCodeTrigger implements VerifyKeyListener {
 		
+		/** Indicates whether this trigger has been installed. */
 		private boolean fIsInstalled= false;
+		/**
+		 * The key binding service to use.
+		 * @since 2.0
+		 */
 		private IKeyBindingService fKeyBindingService;
 		
 		/*
@@ -447,6 +504,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/**
 		 * Installs this trigger on the editor's text widget.
+		 * @since 2.0
 		 */
 		public void install() {
 			if (!fIsInstalled) {
@@ -467,6 +525,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/**
 		 * Uninstalls this trigger from the editor's text widget.
+		 * @since 2.0
 		 */
 		public void uninstall() {
 			if (fIsInstalled) {
@@ -487,6 +546,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/**
 		 * Registers the given action for key activation.
+		 * @param action the action to be registered
+		 * @since 2.0
 		 */
 		public void registerActionForKeyActivation(IAction action) {
 			if (action.getActionDefinitionId() != null)
@@ -495,6 +556,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/**
 		 * The given action is no longer available for key activation
+		 * @param action the action to be unregistered
+		 * @since 2.0
 		 */
 		public void unregisterActionFromKeyActivation(IAction action) {
 			// No such action available on the service
@@ -511,10 +574,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public int fKeyCode;
 		public int fStateMask;
 		
+		/**
+		 * Creates a new action activation code for the given action id.
+		 * @param actionId the action id
+		 */
 		public ActionActivationCode(String actionId) {
 			fActionId= actionId;
 		}
 		
+		/**
+		 * Returns <code>true</code> if this activation code matches the given verify event.
+		 * @param event the event to test for matching
+		 */
 		public boolean matches(VerifyEvent event) {
 			return (event.character == fCharacter &&
 						event.keyCode == fKeyCode &&
@@ -523,11 +594,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	/**
-	 * Internal part and shell activation listener
+	 * Internal part and shell activation listener for triggering state validation.
+	 * @since 2.0
 	 */
 	class ActivationListener extends ShellAdapter implements IPartListener {
 		
+		/** Cache of the active workbench part. */
 		private IWorkbenchPart fActivePart;
+		/** Indicates whether activation handling is currently be done. */
 		private boolean fIsHandlingActivation= false;
 		
 		/*
@@ -579,6 +653,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			});
 		}
 		
+		/**
+		 * Handles the activation triggering a element state check in the editor.
+		 */
 		private void handleActivation() {
 			if (fIsHandlingActivation)
 				return;
@@ -597,27 +674,44 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
 	 * of mouse and key listener.
+	 * @since 2.0
 	 */
 	interface ICursorListener extends MouseListener, KeyListener {
 	};
 	
 	/**
 	 * Maps an action definition id to an StyledText action.
+	 * @since 2.0
 	 */
 	static class IdMapEntry {
 		
+		/** The action id */
 		private String fActionId;
+		/** The StyledText action */
 		private int fAction;
 		
+		/**
+		 * Creates a new mapping. 
+		 * @param actionId the action id
+		 * @param action the StyledText action
+		 */
 		public IdMapEntry(String actionId, int action) {
 			fActionId= actionId;
 			fAction= action;
 		}
 		
+		/**
+		 * Returns the action id.
+		 * @return the action id
+		 */
 		public String getActionId() {
 			return fActionId;
 		}
 		
+		/**
+		 * Returns the action
+		 * @return the action
+		 */
 		public int getAction() {
 			return fAction;
 		}
@@ -625,11 +719,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Internal action to scroll the editor's viewer by a specified number of lines.
+	 * @since 2.0
 	 */
 	class ScrollLinesAction extends Action {
 		
+		/** Number of lines to scroll. */
 		private int fScrollIncrement;
 		
+		/** 
+		 * Creates a new scroll action that scroll the given number of lines. If the
+		 * increment is &lt 0, it's scrolling up, if &gt 0 it's scrolling down.
+		 * @param scrollIncrement the number of lines to scroll
+		 */
 		public ScrollLinesAction(int scrollIncrement) {
 			fScrollIncrement= scrollIncrement;
 		}
@@ -647,6 +748,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Internal action to show the editor's ruler context menu (accessibility).
+	 * @since 2.0
 	 */		
 	class ShowRulerContextMenuAction extends Action {
 
@@ -671,21 +773,41 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fRulerContextMenu.setLocation(location.x, location.y);
 			fRulerContextMenu.setVisible(true);
 		}		
-	}
+	};
 	
 	
 	
 	/** Key used to look up font preference */
 	public final static String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
-	/** Key used to look up foreground color preference */
+	/** 
+	 * Key used to look up foreground color preference
+	 * Value: <code>AbstractTextEditor.Color.Foreground</code>
+	 * @since 2.0
+	 */
 	public final static String PREFERENCE_COLOR_FOREGROUND= "AbstractTextEditor.Color.Foreground"; //$NON-NLS-1$
-	/** Key used to look up background color preference */
+	/** 
+	 * Key used to look up background color preference
+	 * Value: <code>AbstractTextEditor.Color.Background</code>
+	 * @since 2.0
+	 */
 	public final static String PREFERENCE_COLOR_BACKGROUND= "AbstractTextEditor.Color.Background"; //$NON-NLS-1$	
-	/** Key used to look up foreground color system default preference */
+	/** 
+	 * Key used to look up foreground color system default preference
+	 * Value: <code>AbstractTextEditor.Color.Foreground.SystemDefault</code>
+	 * @since 2.0
+	 */
 	public final static String PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Foreground.SystemDefault"; //$NON-NLS-1$
-	/** Key used to look up background color system default preference */
+	/** 
+	 * Key used to look up background color system default preference
+	 * Value: <code>AbstractTextEditor.Color.Background.SystemDefault</code>
+	 * @since 2.0
+	 */
 	public final static String PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Background.SystemDefault"; //$NON-NLS-1$	
-	/** Key used to look up find scope background color preference */
+	/** 
+	 * Key used to look up find scope background color preference
+	 * Value: <code>AbstractTextEditor.Color.FindScope</code>
+	 * @since 2.0
+	 */
 	public final static String PREFERENCE_COLOR_FIND_SCOPE= "AbstractTextEditor.Color.FindScope"; //$NON-NLS-1$	
 	
 	/** Menu id for the editor context menu. */
@@ -696,7 +818,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** The width of the vertical ruler */
 	protected final static int VERTICAL_RULER_WIDTH= 12;
 	
-	/** The complete mapping between action definition ids used by eclipse and StyledText actions. */
+	/** 
+	 * The complete mapping between action definition ids used by eclipse and StyledText actions.
+	 * @since 2.0
+	 */
 	protected final static IdMapEntry[] ACTION_MAP= new IdMapEntry[] {
 		// navigation
 		new IdMapEntry(ITextEditorActionDefinitionIds.LINE_UP, ST.LINE_UP),
@@ -739,7 +864,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	
-	/* Status line labels */
 	private final String fReadOnlyLabel = EditorMessages.getString("Editor.statusline.state.readonly.label"); //$NON-NLS-1$
 	private final String fWritableLabel = EditorMessages.getString("Editor.statusline.state.writable.label"); //$NON-NLS-1$
 	private final String fInsertModeLabel = EditorMessages.getString("Editor.statusline.mode.insert.label"); //$NON-NLS-1$
@@ -754,6 +878,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	};
 	
+	/** The error message shown in the status line in case of failed information look up. */
 	protected final String fErrorLabel= EditorMessages.getString("Editor.statusline.error.label"); //$NON-NLS-1$
 	private final String fPositionLabelPattern= EditorMessages.getString("Editor.statusline.position.pattern"); //$NON-NLS-1$
 	private final PositionLabelValue fLineLabel= new PositionLabelValue();
@@ -777,11 +902,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ISourceViewer fSourceViewer;
 	/** The editor's font */
 	private Font fFont;
-	/** The editor's foreground color */
+	/** 
+	 * The editor's foreground color
+	 * @since 2.0
+	 */
 	private Color fForegroundColor;
-	/** The editor's background color */
+	/** 
+	 * The editor's background color
+	 * @since 2.0
+	 */
 	private Color fBackgroundColor;
-	/** The find scope's highlight color */
+	/** 
+	 * The find scope's highlight color
+	 * @since 2.0
+	 */
 	private Color fFindScopeHighlightColor;
 	/** The editor's vertical ruler */
 	private IVerticalRuler fVerticalRuler;
@@ -799,9 +933,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private List fSelectionActions= new ArrayList(5);
 	/** The actions marked as content dependent */
 	private List fContentActions= new ArrayList(5);
-	/** The actions marked as property dependent */
+	/** 
+	 * The actions marked as property dependent
+	 * @since 2.0
+	 */
 	private List fPropertyActions= new ArrayList(5);
-	/** The actions marked as state dependent */
+	/** 
+	 * The actions marked as state dependent
+	 * @since 2.0
+	 */
 	private List fStateActions= new ArrayList(5);
 	/** The editor's action activation codes */
 	private List fActivationCodes= new ArrayList(2);
@@ -825,29 +965,65 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ITextListener fTextListener= new TextListener();
 	/** The editor's property change listener */
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
-	/** The editor's activation listener */
+	/** 
+	 * The editor's activation listener
+	 * @since 2.0
+	 */
 	private ActivationListener fActivationListener= new ActivationListener();
-	/** The map of the editor's status fields */
+	/** 
+	 * The map of the editor's status fields
+	 * @since 2.0
+	 */
 	private Map fStatusFields;
-	/** The editor's cursor listener */
+	/** 
+	 * The editor's cursor listener
+	 * @since 2.0
+	 */
 	private ICursorListener fCursorListener;
-	/** The editor's insert mode */
+	/** 
+	 * The editor's insert mode
+	 * @since 2.0
+	 */
 	private boolean fOverwriting= false;
-	/** The editor's remembered text selection */
+	/** 
+	 * The editor's remembered text selection
+	 * @since 2.0
+	 */
 	private ITextSelection fRememberedSelection;
-	/** Indicates whether the editor runs in 1.0 context menu registration compatibility mode */
+	/** 
+	 * Indicates whether the editor runs in 1.0 context menu registration compatibility mode
+	 * @since 2.0
+	 */
 	private boolean fCompatibilityMode= true;
-	/** The number of reentrances into error correction code while saving */
+	/** 
+	 * The number of reentrances into error correction code while saving
+	 * @since 2.0
+	 */
 	private int fErrorCorrectionOnSave;
-	/** The incremental find target */
+	/** 
+	 * The incremental find target
+	 * @since 2.0
+	 */
 	private IncrementalFindTarget fIncrementalFindTarget;
-	/** The mark region target */
+	/** 
+	 * The mark region target
+	 * @since 2.0
+	 */
 	private IMarkRegionTarget fMarkRegionTarget;
-	/** Cached modification stamp of the editor's input */
+	/** 
+	 * Cached modification stamp of the editor's input
+	 * @since 2.0
+	 */
 	private long fModificationStamp= -1;
-	/** Ruler context menu listeners. */	
+	/** 
+	 * Ruler context menu listeners.
+	 * @since 2.0
+	 */	
 	private List fRulerContextMenuListeners= new ArrayList();
-	/** Indicates whether sanity checking in enabled. */
+	/** 
+	 * Indicates whether sanity checking in enabled.
+	 * @since 2.0
+	 */
 	private boolean fIsSanityCheckEnabled= true;
 	
 	
@@ -1007,6 +1183,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * description for more details.)
 	 * 
 	 * @param compatible <code>true</code> if compatibility mode is enabled
+	 * @since 2.0
 	 */
 	protected final void setCompatibilityMode(boolean compatible) {
 		fCompatibilityMode= compatible;
@@ -1068,6 +1245,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * syntactic.
 	 * 
 	 * @see #restoreSelection
+	 * @since 2.0
 	 */
 	protected void rememberSelection() {
 		ISelectionProvider sp= getSelectionProvider();
@@ -1081,6 +1259,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * remembered textual range. 
 	 * 
 	 * @see #rememberSelection
+	 * @since 2.0
 	 */
 	protected void restoreSelection() {
 		if (getSourceViewer() != null && fRememberedSelection != null)
@@ -1196,8 +1375,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Returns this editor's "cursor" listener to be installed on the editor's
 	 * source viewer. This listener is listening to key and mouse button events.
+	 * It triggers the updating of the status line by calling
+	 * <code>handleCursorPositionChanged()</code>.
 	 * 
 	 * @return the listener
+	 * @since 2.0
 	 */
 	protected final ICursorListener getCursorListener() {
 		if (fCursorListener == null) {
@@ -1367,9 +1549,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Initializes the given widget's font.
+	 * Initializes the given viewer's font.
 	 * 
-	 * @param styledText the widget to be initialized
+	 * @param viewer the viewer
+	 * @since 2.0
 	 */
 	private void initializeViewerFont(ISourceViewer viewer) {
 		
@@ -1405,6 +1588,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @param sourceViewer the source viewer
 	 * @param font the font
+	 * @since 2.0
 	 */
 	private void setFont(ISourceViewer sourceViewer, Font font) {
 		if (sourceViewer.getDocument() != null) {
@@ -1454,6 +1638,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Creates a color from the information stored in the given preference store.
 	 * Returns <code>null</code> if there is no such information available.
+	 * 
+	 * @param store the store to read from
+	 * @param key the key used for the lookup in the preference store
+	 * @param display the display used create the color
+	 * @return the created color according to the specification in the preference store
+	 * @since 2.0
 	 */
 	private Color createColor(IPreferenceStore store, String key, Display display) {
 	
@@ -1477,6 +1667,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Initializes the given viewer's colors.
 	 * 
 	 * @param viewer the viewer to be initialized
+	 * @since 2.0
 	 */
 	private void initializeViewerColors(ISourceViewer viewer) {
 		
@@ -1509,6 +1700,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 
+	/**
+	 * Initializes the background color used for highlighting the document ranges
+	 * defining search scopes.
+	 * @param viewer the viewer to initialize
+	 * @since 2.0
+	 */
 	private void initializeFindScopeColor(ISourceViewer viewer) {
 
 		IPreferenceStore store= getPreferenceStore();
@@ -1786,8 +1983,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * May be reimplemented by subclasses.
 	 * 
 	 * @param event the event which should be investigated
-	 * @return whether the event describes a preference change affecting the editor's
-	 * 			presentation
+	 * @return <code>true</code> if the event describes a preference change affecting the editor's presentation
+	 * @since 2.0
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		return false;
@@ -1902,6 +2099,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Marks this editor and its editor input as dirty.
+	 * @since 2.0
 	 */
 	private void markEditorAsDirty() {
 		
@@ -1927,7 +2125,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
-	 * <code>IEditorPart</code> method does nothing. Subclasses may reimplement.
+	 * <code>IEditorPart</code> method calls <code>oerformSaveAs</code>. 
+	 * Subclasses may reimplement.
 	 */
 	public void doSaveAs() {
 		/*
@@ -1985,6 +2184,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Enables/Disabled sanity checking.
+	 * @param enable <code>true</code> if santity checking should be enabled, <code>false</code> otherwise
+	 * @since 2.0
 	 */
 	protected void enableSanityChecking(boolean enable) {
 		synchronized (this) {
@@ -1993,7 +2194,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Checks the state of the editor input if enabled.
+	 * Checks the state of the given editor input if sanity checking is enabled.
+	 * @param input the editor input whose state is to be checked
+	 * @since 2.0
 	 */
 	protected void safelySanityCheckState(IEditorInput input) {
 		boolean enabled= false;
@@ -2007,7 +2210,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Checks the state of the editor input.
+	 * Checks the state of the given editor input.
+	 * @param input the editor input whose state is to be checked
+	 * @since 2.0
 	 */
 	protected void sanityCheckState(IEditorInput input) {
 		
@@ -2035,6 +2240,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * the input can persistently be changed.
 	 * 
 	 * @param input the input to be validated
+	 * @since 2.0
 	 */
 	protected void validateState(IEditorInput input) {
 		IDocumentProvider provider= getDocumentProvider();
@@ -2060,9 +2266,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Updates the state of the given editor input such as Read-only flag etc.
+	 * Updates the state of the given editor input such as read-only flag etc.
 	 * 
 	 * @param input the input to be validated
+	 * @since 2.0
 	 */
 	protected void updateState(IEditorInput input) {
 		IDocumentProvider provider= getDocumentProvider();
@@ -2138,7 +2345,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Handles the given exception. If the exception reports a out-of-sync
+	 * Handles the given exception. If the exception reports an out-of-sync
 	 * situation, this is reported to the user. Otherwise, the exception
 	 * is generically reported.
 	 * 
@@ -2284,8 +2491,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Returns the activation code registered for the specified action.
 	 * 
 	 * @param actionID the action id
-	 * @return the registered activation code or <code>null</code> if no
-	 * 			code has been installed
+	 * @return the registered activation code or <code>null</code> if no code has been installed
 	 */
 	private ActionActivationCode findActionActivationCode(String actionID) {
 		int size= fActivationCodes.size();
@@ -2323,6 +2529,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return action;
 	}
 	
+	/**
+	 * Returns the action with the given action id that has been contributed via xml to this editor.
+	 * The lookup honors the dependencies of plugins.
+	 * 
+	 * @param actionID the action id to look up
+	 * @return the action that has been contributed
+	 * @since 2.0
+	 */
 	private IAction findContributedAction(String actionID) {
 		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "editorActions"); //$NON-NLS-1$
 		if (extensionPoint != null) {
@@ -2404,6 +2618,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *
 	 * @param actionId the action id
 	 * @param mark <code>true</code> if the action is property dependent
+	 * @since 2.0
 	 */
 	public void markAsPropertyDependentAction(String actionId, boolean mark) {
 		Assert.isNotNull(actionId);
@@ -2419,6 +2634,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *
 	 * @param actionId the action id
 	 * @param mark <code>true</code> if the action is state dependent
+	 * @since 2.0
 	 */
 	public void markAsStateDependentAction(String actionId, boolean mark) {
 		Assert.isNotNull(actionId);
@@ -2453,6 +2669,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Updates all property dependent actions.
+	 * @since 2.0
 	 */
 	protected void updatePropertyDependentActions() {
 		if (fPropertyActions != null) {
@@ -2464,6 +2681,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Updates all state dependent actions.
+	 * @since 2.0
 	 */
 	protected void updateStateDependentActions() {
 		if (fStateActions != null) {
@@ -2478,6 +2696,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <p>
 	 * Subclasses may extend.
 	 * </p>
+	 * @since 2.0
 	 */
 	protected void createNavigationActions() {
 		
@@ -2502,6 +2721,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Creates this editor's accessibility actions.
+	 * @since 2.0
 	 */
 	private void createAccessibilityActions() {
 		IAction action= new ShowRulerContextMenuAction();
@@ -2678,8 +2898,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Convenience method to add the action installed under the given action id
-	 * to the given menu.
+	 * Convenience method to add the action installed under the given action id to the given menu.
+	 * @param menu the menu to add the action to
+	 * @param actionId the id of the action to be added
 	 */
 	protected final void addAction(IMenuManager menu, String actionId) {
 		IAction action= getAction(actionId);
@@ -2691,8 +2912,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Convenience method to add the action installed under the given action id
-	 * to the specified group of the menu.
+	 * Convenience method to add the action installed under the given action id to the specified group of the menu.
+	 * @param menu the menu to add the action to
+	 * @param group the group in the menu
+	 * @param actionId the id of the action to add
 	 */
 	protected final void addAction(IMenuManager menu, String group, String actionId) {
 	 	IAction action= getAction(actionId);
@@ -2710,6 +2933,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 
 	/**
 	 * Convenience method to add a new group after the specified group.
+	 * @param menu the menu to add the new group to
+	 * @param existingGroup the group after which to insert the new group
+	 * @param newGroup the new group
 	 */
 	protected final void addGroup(IMenuManager menu, String existingGroup, String newGroup) {
  		IMenuManager subMenu= menu.findMenuUsingPath(existingGroup);
@@ -2771,6 +2997,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 
+	/**
+	 * Returns the status line manager of this editor.
+	 * @return the status line manager of this editor
+	 * @since 2.0
+	 */
 	private IStatusLineManager getStatusLineManager() {
 
 		IEditorActionBarContributor contributor= getEditorSite().getActionBarContributor();		
@@ -2845,6 +3076,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * the text manipulations. However, those changes are not yet propagated to the
 	 * marker manager. Thus, when opening a marker, the marker's position in the editor
 	 * must be determined as it might differ from the position stated in the marker.
+	 * @param marker the marker to go to
 	 * @see EditorPart#gotoMarker
 	 */
 	public void gotoMarker(IMarker marker) {
@@ -3003,6 +3235,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see ITextEditorExtension#setStatusField(IStatusField, String)
+	 * @since 2.0
 	 */
 	public void setStatusField(IStatusField field, String category) {
 		Assert.isNotNull(category);
@@ -3023,6 +3256,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @param category the status category
 	 * @return the current status field for the given status category.
+	 * @since 2.0
 	 */
 	protected IStatusField getStatusField(String category) {
 		if (category != null && fStatusFields != null)
@@ -3033,22 +3267,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Returns whether this editor is in overwrite or insert mode.
 	 * 
-	 * @return <code>true</code> if in insert mode,
-	 * 	<code>false</code> for overwrite mode
+	 * @return <code>true</code> if in insert mode, <code>false</code> for overwrite mode
+	 * @since 2.0
 	 */
 	protected boolean isInInsertMode() {
 		return !fOverwriting;
 	}
 	
 	/**
-	 * Handles a potential change of the cursor position.
+	 * Handles a potential change of the cursor position. Subclasses may extend.
+	 * @since 2.0
 	 */
 	protected void handleCursorPositionChanged() {
 		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
 	}
 	
 	/**
-	 * Handles a change of the editor's insert mode.
+	 * Handles a change of the editor's insert mode. Subclasses may extend.
+	 * @since 2.0
 	 */
 	protected void handleInsertModeChanged() {
 		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE);
@@ -3056,8 +3292,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Updates the status fields for the given category.
-	 * 
 	 * @param category
+	 * @since 2.0
 	 */
 	protected void updateStatusField(String category) {
 		
@@ -3082,6 +3318,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Updates all status fields.
+	 * @since 2.0
 	 */
 	protected void updateStatusFields() {
 		if (fStatusFields != null) {
@@ -3093,8 +3330,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Returns a description of the cursor position.
-	 * 
 	 * @return a description of the cursor position
+	 * @since 2.0
 	 */
 	protected String getCursorPosition() {
 		
@@ -3134,6 +3371,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see ITextEditorExtension#isEditorInputReadOnly()
+	 * @since 2.0
 	 */
 	public boolean isEditorInputReadOnly() {
 		IDocumentProvider provider= getDocumentProvider();
@@ -3146,6 +3384,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see ITextEditorExtension#addRulerContextMenuListener(IMenuListener)
+	 * @since 2.0
 	 */
 	public void addRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.add(listener);	
@@ -3153,6 +3392,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see ITextEditorExtension#removeRulerContextMenuListener(IMenuListener)
+	 * @since 2.0
 	 */
 	public void removeRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.remove(listener);
@@ -3164,6 +3404,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <code>true</code>. Subclasses may reimplement. 
 	 * @param originalElement the original element
 	 * @param movedElement the moved element
+	 * @since 2.0
 	 */
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
 		return true;

@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
  
 
 import org.eclipse.swt.custom.StyledText;
@@ -272,7 +278,9 @@ public interface ITextViewer {
 	
 	/**
 	 * Marks the currently applied text presentation as invalid. It is the viewer's
-	 * responsibility to take any action is can to repair the text presentation.
+	 * responsibility to take any action it can to repair the text presentation.
+	 * 
+	 * @since 2.0
 	 */
 	void invalidateTextPresentation();
 		
@@ -322,6 +330,7 @@ public interface ITextViewer {
 	 *
 	 * @param defaultPrefixes the prefixes to be used
 	 * @param contentType the content type for which the prefixes are specified
+	 * @since 2.0
 	 */
 	void setDefaultPrefixes(String[] defaultPrefixes, String contentType);
 	

@@ -1,4 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.texteditor;
+
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
@@ -19,8 +31,11 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 
+
 /**
- * An action to convert line delimiters of a text editor document to a particular line delimiter.
+ * An action to convert line delimiters of a text editor document to a particular line 
+ * delimiter.
+ * @since 2.0
  */
 public class ConvertLineDelimitersAction extends TextEditorAction {
 
@@ -40,6 +55,8 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	/**
 	 * Creates a line delimiter conversion action.
 	 * 
+	 * @param bundle the resource bundle
+	 * @param prefix the prefix for the resource bundle lookup
 	 * @param editor the editor
 	 * @param lineDelimiter the target line delimiter to convert the editor's document to
 	 */
@@ -186,6 +203,11 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		}
 	}
 
+	/**
+	 * Returns whether the given document uses only the given line delimiter.
+	 * @param document the document to check
+	 * @param lineDelimiter the line delimiter to check for
+	 */
 	private static boolean usesLineDelimiterExclusively(IDocument document, String lineDelimiter) {
 
 		try {
@@ -202,7 +224,14 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		
 		return true;
 	}
-
+	
+	/**
+	 * Computes and returns the key to be used to lookup the action's label in
+	 * its resource bundle.
+	 * 
+	 * @param lineDelimiter the line delimiter
+	 * @param platformLineDelimiter the platform line delimiter
+	 */
 	private static String getLabelKey(String lineDelimiter, String platformLineDelimiter) {
 		if (lineDelimiter.equals(platformLineDelimiter)) {
 
@@ -230,6 +259,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		return null;
 	}
 
+	/**
+	 * Internally sets the enable state of this action.
+	 */
 	private boolean doEnable() {
 			ITextEditor editor= getTextEditor();
 			if (editor == null)

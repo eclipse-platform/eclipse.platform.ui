@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.source;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.widgets.Composite;
@@ -17,14 +23,12 @@ import org.eclipse.jface.text.ITextViewer;
  * text viewers as a line oriented annotation presentation 
  * area. This interfaces comprises three contracts:
  * <ul>
- * <li>	The vertical ruler retrieves the annotations it 
- *		presents from an annotation model.
- * <li>	The ruler is a visual component which must be integrated in
- * 		a hierarchy of SWT controls.
+ * <li>	The vertical ruler retrieves the annotations it presents from an annotation model.
+ * <li>	The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
  * <li> The ruler provides interested clients with mapping and
  * 		interaction information. This covers the mapping between
  * 		coordinates of the ruler's control and line numbers based 
- * 		on the connected text viewer's document.
+ * 		on the connected text viewer's document (<code>IVerticalRulerInfo</code>).
  * </ul>
  * Clients may implement this interface or use the default implementation provided
  * by <code>VerticalRuler</code>.

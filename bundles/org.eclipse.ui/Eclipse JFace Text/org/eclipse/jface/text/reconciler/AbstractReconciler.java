@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.reconciler;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.reconciler;
 
 
 import java.util.HashMap;
@@ -33,10 +39,14 @@ import org.eclipse.jface.util.Assert;
  * listens to input document changes as well as changes of
  * the input document of the text viewer it is installed on. Depending on 
  * its configuration it manages the received change notifications in a 
- * queue folding neighboring or overlapping changes together. After the
- * configured period of time, it processes one dirty region after the other.
- * A reconciler is started using its <code>install</code> method. It is the
- * clients responsibility to stop a reconciler using its <code>uninstall</code>
+ * queue folding neighboring or overlapping changes together.  The reconciler
+ * processes the dirty regions as a background activity after having waited for further
+ * changes for the configured duration of time. A reconciler is started using its
+ * <code>install</code> method.  As a first step <code>initialProcess</code> is
+ * executed in the background. Then, the reconciling thread waits for changes that
+ * need to be reconciled. A reconciler can be resumed by calling <code>forceReconciling</code>
+ * independent from the existence of actual changes. This mechanism is for subclasses only.
+ * It is the clients responsibility to stop a reconciler using its <code>uninstall</code>
  * method. Unstopped reconcilers do not free their resources.<p>
  * It is subclass responsibility to specify how dirty regions are processed.
  *
@@ -44,12 +54,13 @@ import org.eclipse.jface.util.Assert;
  * @see IDocumentListener
  * @see ITextInputListener
  * @see DirtyRegion
+ * @since 2.0
  */
 abstract public class AbstractReconciler implements IReconciler {
 
 	
 	/**
-	 * Background thread for the periodic reconciling activity.
+	 * Background thread for the reconciling activity.
 	 */
 	class BackgroundThread extends Thread {
 		
@@ -122,9 +133,10 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 		
 		/**
-		 * The periodic activity. Wait until there is something in the
-		 * queue managing the changes applied to the text viewer. Remove the
-		 * first change from the queue and process it.
+		 * The background activity. Waits until there is something in the
+		 * queue managing the changes that have been applied to the text viewer.
+		 * Removes the first change from the queue and process it.<p>
+		 * Calls <code>initialProcess</code> on entrance.
 		 */
 		public void run() {
 			
@@ -285,17 +297,15 @@ abstract public class AbstractReconciler implements IReconciler {
 	
 	
 	/**
-	 * Creates a new reconciler with the following configuration: it is
-	 * an incremental reconciler which kicks in every 500 ms. There are no
-	 * predefined reconciling strategies.
+	 * Creates a new reconciler without configuring it.
 	 */ 
 	protected AbstractReconciler() {
 		super();
 	}
 		
 	/**
-	 * Tells the reconciler how long it should collect text changes before
-	 * it activates the appropriate reconciling strategies.
+	 * Tells the reconciler how long it should wait for further text changes before
+	 * activating the appropriate reconciling strategies.
 	 *
 	 * @param delay the duration in milli seconds of a change collection period.
 	 */

@@ -1,14 +1,16 @@
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
+http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+
 package org.eclipse.ui.texteditor;
+
 
 import org.eclipse.swt.graphics.Point;
 
@@ -19,8 +21,9 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 
 /**
- * An implementation of <code>IMarkRegionTarget</code> using <code>ITextViewer</code> and
- * <code>IStatusLineManager</code>.
+ * Default implementation of <code>IMarkRegionTarget</code> using <code>ITextViewer</code>
+ * and <code>IStatusLineManager</code>.
+ * @since 2.0
  */
 public class MarkRegionTarget implements IMarkRegionTarget {
 	
@@ -101,5 +104,4 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
 		fStatusLine.setMessage(EditorMessages.getString("Editor.mark.status.message.mark.swapped")); //$NON-NLS-1$
 	}
-
 }	

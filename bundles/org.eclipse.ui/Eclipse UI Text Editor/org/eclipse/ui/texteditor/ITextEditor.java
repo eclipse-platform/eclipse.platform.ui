@@ -24,7 +24,7 @@ import org.eclipse.ui.IEditorPart;
  * the input's annotation model which is used to control the editor's vertical ruler.
  * </p>
  * <p>
- * Clients may implement this interface from scratch, but the recommented way is to 
+ * Clients may implement this interface from scratch, but the recommended way is to 
  * subclass the abstract base class <code>AbstractTextEditor</code>.
  * </p>
  * 

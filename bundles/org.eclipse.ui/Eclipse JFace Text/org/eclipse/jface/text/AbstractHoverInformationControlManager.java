@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.events.ControlEvent;
@@ -30,14 +36,22 @@ import org.eclipse.jface.util.Assert;
  * An information control manager that shows information on mouse hover events.
  * The mouse hover events are caught by registering a <code>MouseTrackListener</code>
  * on the manager's subject control. The manager has by default an information control closer
- * that closes the information control as soon as the mouse pointer leaves the 
- * subject area.
+ * that closes the information control as soon as the mouse pointer leaves the subject area, the
+ * user presses a key, or the subject control is resized, moved, or deactivated.<p>
+ * When being activated by a mouse hover event, the manager disables itself, until the mouse
+ * leaves the subject area. Thus, the manager is usually still disabled, when the information control
+ * has already been closed by the closer.
+ * 
+ * @see org.eclipse.swt.events.MouseTrackListener
+ * @since 2.0
  */
 abstract public class AbstractHoverInformationControlManager extends AbstractInformationControlManager {		
 	
 	
 	/**
-	 * The  information control closer for the hover information.
+	 * The  information control closer for the hover information. Closes the information control as 
+	 * soon as the mouse pointer leaves the subject area, the user presses a key, or the subject
+	 * control is resized or moved.
 	 */
 	class Closer extends MouseTrackAdapter 
 		implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener {
@@ -103,6 +117,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		/**
 		 * Stops the information control and if <code>delayRestart</code> is set
 		 * allows restart only after a certain delay.
+		 * 
+		 * @param delayRestart <code>true</code> if restart should be delayed
 		 */
 		protected void stop(boolean delayRestart) {
 			
@@ -186,7 +202,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	
 	
 	/**
-	 * The mouse tracker to be installed on the manager's subject control.
+	 * To be installed on the manager's subject control.  Serves two different purposes:
+	 * <ul>
+	 * <li> start function: initiates the computation of the information to be presented. This happens on 
+	 * 		receipt of a mouse hover event and disables the information control manager,
+	 * <li> restart function: tracks mouse move and shell activation event to determine when the information
+	 * 		control manager needs to be reactivated.
+	 * </ul>
 	 */
 	class MouseTracker extends ShellAdapter implements MouseTrackListener, MouseMoveListener {
 		
@@ -194,25 +216,46 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19686
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19719
 		
+		/** Margin around the original hover event location for coputing the hover area. */
 		private final static int EPSILON= 3;
 		
+		/** The area in which the original hover event occurred. */
 		private Rectangle fHoverArea;
+		/** The area for which is computed information is valid. */
 		private Rectangle fSubjectArea;
+		/** The tracker's subject control. */
 		private Control fSubjectControl;
 		
+		/** Indicates whether the tracker is computing the start function. */
 		private boolean fIsActive= false;
+		/** Indicates whether the mouse has been lost. */
 		private boolean fMouseLost= false;
+		/** Indicates whether the subject control's shelll has been deactivated. */
 		private boolean fShellDeactivated= false;
 		
-		
+		/**
+		 * Creates a new mouse tracker.
+		 */
 		public MouseTracker() {
 		}
-				
+		
+		/**
+		 * Sets this mouse tracker's subject area, the area to be tracked in order
+		 * to reenable the information control manager.
+		 * 
+		 * @param subjectArea the subject area
+		 */
 		public void setSubjectArea(Rectangle subjectArea) {
 			Assert.isNotNull(subjectArea);
 			fSubjectArea= subjectArea;
 		}
 		
+		/**
+		 * Starts this mouse tracker. The given control becomes this tracker's subject control.
+		 * Installs itself as mouse track listener on the subject control.
+		 * 
+		 * @param subjectControl the subject control
+		 */
 		public void start(Control subjectControl) {
 			fSubjectControl= subjectControl;
 			if (fSubjectControl != null && !fSubjectControl.isDisposed())
@@ -223,6 +266,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fShellDeactivated= false;
 		}
 		
+		/**
+		 * Stops this mouse tracker. Removes itself  as mouse track, mouse move, and
+		 * shell listener from the subject control.
+		 */
 		public void stop() {
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseTrackListener(this);
@@ -234,8 +281,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fShellDeactivated= false;
 		}
 		
-		/*
-		 * @see MouseTrackAdapter#mouseHover
+		/**
+		 * Initiates the computation of the information to be presented. Sets the initial hover area
+		 * to a small rectangle around the hover event location. Adds mouse move and shell activation listeners
+		 * to track whether the computed information is, after completion, useful for presentation and to
+		 * implement the restart function.
 		 */
 		public void mouseHover(MouseEvent event) {
 			
@@ -262,6 +312,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			doShowInformation();
 		}
 		
+		/**
+		 * Deactivates this tracker's restart function and enables the information control
+		 * manager. Does not have any effect if the tracker is still executing the start function (i.e. 
+		 * computing the information to be presented.
+		 */
 		protected void deactivate() {
 			if (fIsActive)
 				return;
@@ -312,12 +367,23 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			deactivate();
 		}
 		
+		/**
+		 * Tells this tracker that the start function processing has been completed.
+		 */
 		public void computationCompleted() {
 			fIsActive= false;
 			fMouseLost= false;
 			fShellDeactivated= false;
 		}
 		
+		/**
+		 * Determines whether the computed information is still useful for presentation.
+		 * This is the case, if the shell of the subject control has been deactivated, the mouse
+		 * left the subject control, or the mouse moved on, so that it is no longer in the subject
+		 * area.
+		 * 
+		 * @return <code>true</code> if information is still useful for presentation, <code>false</code> otherwise
+		 */
 		public boolean isMouseLost() {
 			
 			if (fMouseLost || fShellDeactivated)

@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.contentassist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +68,9 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 */
 	class Closer implements ControlListener, MouseListener, FocusListener, DisposeListener, IViewportListener {
 
+		/**
+		 * Installs this closer on it's viewer's text widget.
+		 */
 		protected void install() {
 			Control w= fViewer.getTextWidget();
 			if (Helper.okToUse(w)) {
@@ -79,7 +89,10 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			
 			fViewer.addViewportListener(this);
 		}
-
+		
+		/**
+		 * Uninstalls this closer from the viewer's text widget.
+		 */
 		protected void uninstall() {
 			Control w= fViewer.getTextWidget();
 			if (Helper.okToUse(w)) {
@@ -100,31 +113,49 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			fViewer.removeViewportListener(this);
 		}
 
-		// WindowListener
+		/*
+		 * @see ControlListener#controlResized(ControlEvent)
+		 */
 		public void controlResized(ControlEvent e) {
 			hide();
 		}
 
+		/*
+		 * @see ControlListener#controlMoved(ControlEvent)
+		 */
 		public void controlMoved(ControlEvent e) {
 			hide();
 		}
 
-		// MouseListener
+		/*
+		 * @see MouseListener#mouseDown(MouseEvent)
+		 */
 		public void mouseDown(MouseEvent e) {
 			hide();
 		}
 
+		/*
+		 * @see MouseListener#mouseUp(MouseEvent)
+		 */
 		public void mouseUp(MouseEvent e) {
 		}
 
+		/*
+		 * @see MouseListener#mouseDoubleClick(MouseEvent)
+		 */
 		public void mouseDoubleClick(MouseEvent e) {
 			hide();
 		}
 
-		// FocusListener
+		/* 
+		 * @see FocusListener#focusGained(FocusEvent)
+		 */
 		public void focusGained(FocusEvent e) {
 		}
 
+		/*
+		 * @see FocusListener#focusLost(FocusEvent)
+		 */
 		public void focusLost(FocusEvent e) {
 			Control control= fViewer.getTextWidget();
 			Display d= control.getDisplay();
@@ -137,7 +168,9 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			});
 		}
 		
-		// DisposeListener
+		/*
+		 * @seeDisposeListener#widgetDisposed(DisposeEvent)
+		 */
 		public void widgetDisposed(DisposeEvent e) {
 			/*
 			 * 1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots of Internal Errors
@@ -145,7 +178,9 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			hide();
 		}
 
-		// IViewPortListener
+		/*
+		 * @see IViewportListener#viewportChanged(int)
+		 */
 		public void viewportChanged(int topIndex) {
 			hide();
 		}
@@ -160,7 +195,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	};
 	
 	/**
-	 * An implementation of IContentAssistListener, this class is
+	 * An implementation of <code>IContentAssistListener</code>, this class is
 	 * used to monitor key events in support of automatic activation
 	 * of the content assistant. If enabled, the implementation utilizes a
 	 * thread to watch for input characters matching the activation
@@ -677,6 +712,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * make the choice.
 	 * 
 	 * @param enabled indicates whether auto insertion is enabled or not
+	 * @since 2.0
 	 */
 	public void enableAutoInsert(boolean enabled) {
 		fIsAutoInserting= enabled;
@@ -687,6 +723,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * mode or not.
 	 * 
 	 * @return <code>true</code> if in auto insertion mode
+	 * @since 2.0
 	 */
 	boolean isAutoInserting() {
 		return fIsAutoInserting;
@@ -696,6 +733,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Installs and uninstall the listeners needed for autoactivation.
 	 * @param start <code>true</code> if listeners must be installed,
 	 * 	<code>false</code> if they must be removed
+	 * @since 2.0
 	 */
 	private void manageAutoActivation(boolean start) {			
 		if (start) {
@@ -792,6 +830,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the background of the context information popup.
 	 *
 	 * @return the background of the context information popup
+	 * @since 2.0
 	 */
 	Color getContextInformationPopupBackground() {
 		return fContextInfoPopupBackground;
@@ -801,6 +840,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Sets the context information popup's foreground color.
 	 *
 	 * @param foreground the foreground color
+	 * @since 2.0
 	 */
 	public void setContextInformationPopupForeground(Color foreground) {
 		fContextInfoPopupForeground= foreground;
@@ -810,6 +850,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the foreground of the context information popup.
 	 *
 	 * @return the foreground of the context information popup
+	 * @since 2.0
 	 */
 	Color getContextInformationPopupForeground() {
 		return fContextInfoPopupForeground;
@@ -819,6 +860,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Sets the proposal selector's background color.
 	 *
 	 * @param background the background color
+	 * @since 2.0
 	 */
 	public void setProposalSelectorBackground(Color background) {
 		fProposalSelectorBackground= background;
@@ -828,6 +870,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the background of the proposal selector.
 	 *
 	 * @return the background of the proposal selector
+	 * @since 2.0
 	 */
 	Color getProposalSelectorBackground() {
 		return fProposalSelectorBackground;
@@ -837,6 +880,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Sets the proposal's foreground color.
 	 *
 	 * @param foreground the foreground color
+	 * @since 2.0
 	 */
 	public void setProposalSelectorForeground(Color foreground) {
 		fProposalSelectorForeground= foreground;
@@ -846,6 +890,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the foreground of the proposal selector.
 	 *
 	 * @return the foreground of the proposal selector
+	 * @since 2.0
 	 */
 	Color getProposalSelectorForeground() {
 		return fProposalSelectorForeground;
@@ -855,6 +900,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Sets the context selector's background color.
 	 *
 	 * @param background the background color
+	 * @since 2.0
 	 */
 	public void setContextSelectorBackground(Color background) {
 		fContextSelectorBackground= background;
@@ -864,6 +910,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the background of the context selector.
 	 *
 	 * @return the background of the context selector
+	 * @since 2.0
 	 */
 	Color getContextSelectorBackground() {
 		return fContextSelectorBackground;
@@ -873,6 +920,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Sets the context selector's foreground color.
 	 *
 	 * @param foreground the foreground color
+	 * @since 2.0
 	 */
 	public void setContextSelectorForeground(Color foreground) {
 		fContextSelectorForeground= foreground;
@@ -882,6 +930,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the foreground of the context selector.
 	 *
 	 * @return the foreground of the context selector
+	 * @since 2.0
 	 */
 	Color getContextSelectorForeground() {
 		return fContextSelectorForeground;
@@ -891,6 +940,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Sets the information control creator for the additional information control.
 	 * 
 	 * @param creator the information control creator for the additional information control
+	 * @since 2.0
 	 */
 	public void setInformationControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
@@ -941,6 +991,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * @param shell the shell of the content-assist popup
 	 * @param type the type of popup
 	 * @param visibleOffset the offset at which to layout the popup relative to the offset of the viewer's visible region
+	 * @since 2.0
 	 */
 	void addToLayout(Object popup, Shell shell, int type, int visibleOffset) {
 		fLayoutManager.add(popup, shell, type, visibleOffset);
@@ -953,6 +1004,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * 
 	 * @param type the type of popup to layout
 	 * @param visibleOffset the offset at which to layout relative to the offset of the viewer's visible region
+	 * @since 2.0
 	 */
 	void layout(int type, int visibleOffset) {
 		fLayoutManager.layout(type, visibleOffset);
@@ -971,6 +1023,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the offset of the selection relative to the offset of the visible region.
 	 * 
 	 * @return the offset of the selection relative to the offset of the visible region
+	 * @since 2.0
 	 */
 	int getSelectionOffset() {
 		StyledText text= fViewer.getTextWidget();
@@ -988,6 +1041,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * <ul>
 	 * @param type the listener type for which to acquire
 	 * @return <code>true</code> if the widget token could be acquired
+	 * @since 2.0
 	 */
 	private boolean acquireWidgetToken(int type) {
 		switch (type) {
@@ -1068,6 +1122,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * <ul>
 	 * 
 	 * @param type the listener type
+	 * @since 2.0
 	 */
 	private void releaseWidgetToken(int type) {
 		if (fListeners[CONTEXT_SELECTOR] == null && fListeners[PROPOSAL_SELECTOR] == null) {
@@ -1127,6 +1182,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * Returns the number of listeners.
 	 *
 	 * @return the number of listeners
+	 * @since 2.0
 	 */
 	private int getNumberOfListeners() {
 		int count= 0;
@@ -1156,6 +1212,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 *
 	 * @param contextInformation the context information to be shown
 	 * @param position the position to which the context information refers to
+	 * @since 2.0
 	 */
 	void showContextInformation(IContextInformation contextInformation, int position) {
 		fContextInfoPopup.showContextInformation(contextInformation, position);
@@ -1265,6 +1322,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * @param document the document
 	 * @param position a document position
 	 * @return a presenter
+	 * @since 2.0
 	 */
 	IContextInformationPresenter getContextInformationPresenter(IDocument document, int position) {
 		IContextInformationValidator validator= getContextInformationValidator(document, position);
@@ -1293,7 +1351,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	
 	/**
 	 * Returns the characters which when typed by the user should automatically
-	 * initiate the presenation of context information. The position is used
+	 * initiate the presentation of context information. The position is used
 	 * to determine the appropriate content assist processor to invoke.
 	 *
 	 * @param document the document
@@ -1311,6 +1369,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	
 	/*
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
+	 * @since 2.0
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		return false;

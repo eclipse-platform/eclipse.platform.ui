@@ -8,15 +8,22 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
     IBM Corporation - Initial API and implementation
 **********************************************************************/
+
 package org.eclipse.jface.text.source;
+
 
 import org.eclipse.swt.widgets.Control;
 
+
 /**
- * The ruler info provides interested clients with mapping and
- * interaction information. This covers the mapping between
- * coordinates of the ruler's control and line numbers based 
- * on the connected text viewer's document.
+ * A vertical ruler is a visual component which may serve
+ * text viewers as a line oriented annotation presentation 
+ * area. The ruler info provides interested clients with the
+ * mapping and interaction aspect of the vertical ruler. This
+ * covers the mapping between coordinates of the ruler's
+ * control and line numbers based on the connected text viewer's
+ * document.
+ * @since 2.0
  */
 public interface IVerticalRulerInfo {
 

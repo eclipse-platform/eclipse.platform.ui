@@ -1,9 +1,16 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+
+package org.eclipse.ui.texteditor;
 
 
 import org.eclipse.jface.action.IAction;
@@ -16,20 +23,25 @@ import org.eclipse.swt.widgets.Event;
 
 
 /**
- * <code>IAction</code> wrapper for text widget navigational and
- * selection actions.
- * This is not yet API.
+ * An <code>IAction</code> wrapper for text widget navigational and selection actions.
+ * @since 2.0
  */
 public class TextNavigationAction implements IAction {
 	
+	/** The text widget */
 	private StyledText fTextWidget;
+	/** The styled text action id */
 	private int fAction;
+	/** The action's action id */
 	private String fActionId;
+	/** This action's action definition id */
 	private String fActionDefinitionId;
 	
 	
 	/**
-	 * Creates a new TextNavigationAction.
+	 * Creates a new <code>TextNavigationAction</code>.
+	 * @param textWidget the text widget
+	 * @param action the styled text widget action
 	 */
 	public TextNavigationAction(StyledText textWidget, int action) {
 		fTextWidget= textWidget;
@@ -80,6 +92,7 @@ public class TextNavigationAction implements IAction {
 	
 	
 // ----------------------------------------------------------------------------------------------------------------------------------	
+// All the subsequent methods are just empty method bodies.
 
 	/*
 	 * @see IAction#addPropertyChangeListener(IPropertyChangeListener)

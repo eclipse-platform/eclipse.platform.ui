@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.events.DisposeEvent;
@@ -26,6 +32,8 @@ import org.eclipse.jface.util.Assert;
  * a presented information control must be closed. The disposal of the subject and the information
  * control are internally handled by the information control manager and are not the responsibility
  * of the information control closer.
+ * 
+ * @since 2.0
  */
 abstract public class AbstractInformationControlManager {
 	
@@ -54,6 +62,8 @@ abstract public class AbstractInformationControlManager {
 		 * if necessary. <p>
 		 * Must be called before <code>start</code>. May again be called 
 		 * between <code>start</code> and <code>stop</code>.
+		 * 
+		 * @param control the information control
 		 */
 		public void setInformationControl(IInformationControl control);
 		
@@ -82,6 +92,7 @@ abstract public class AbstractInformationControlManager {
 		};
 	};
 	
+	/** Internal anchor list. */
 	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor() };
 	
 	/** Anchor representing the top of the information area */
@@ -163,7 +174,7 @@ abstract public class AbstractInformationControlManager {
 	 * <li> width constraint == 60 characters
 	 * <li> height constraint == 6 characters
 	 * <li> enforce constraints as minimal size == false
-	 * <li> enforece constraints as maximal size == false
+	 * <li> enforce constraints as maximal size == false
 	 * <li> layout anchor == ANCHOR_BOTTOM
 	 * <li> fallback anchors == { ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT }
 	 * <li> takes focus when visible == false
@@ -178,14 +189,16 @@ abstract public class AbstractInformationControlManager {
 	
 	/**
 	 * Computes the information to be displayed and the area in which the computed 
-	 * information is valid. The two values must be set using <code>setInformation</code>.
+	 * information is valid. Implementation of this method must finish their computation
+	 * by setting the computation results using <code>setInformation</code>.
 	 */
 	abstract protected void computeInformation();
 	
 	/**
 	 * Sets the parameters of the information to be displayed. These are the information itself and
 	 * the area for which the given information is valid. This so called subject area is a graphical
-	 * region of the information control's subject control.
+	 * region of the information control's subject control. This method calls <code>presentInformation()</code>
+	 * to trigger the presentation of the computed information.
 	 * 
 	 * @param information the information
 	 * @param subjectArea the subject area
@@ -256,7 +269,7 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * Tells the manager whether the information control should take focus when made visible.
+	 * Tells the manager whether it should set the focus to the information control when made visible.
 	 * 
 	 * @param takesFocus <code>true</code> if information control should take focus when made visible  
 	 */
@@ -266,15 +279,15 @@ abstract public class AbstractInformationControlManager {
 	
 	/**
 	 * Handles the disposal of the subject control. By default, the information control
-	 * is disposed by calling <code>disposeInformationControl</code>. Maybe 
-	 * extended by subclasses.
+	 * is disposed by calling <code>disposeInformationControl</code>. Subclasses may extend
+	 * this method.
 	 */
 	protected void handleSubjectControlDisposed() {
 		disposeInformationControl();
 	}
 	
 	/**
-	 * Installs the manager on the given control. The control is now taking the role of
+	 * Installs this manager on the given control. The control is now taking the role of
 	 * the subject control. This implementation sets the control also as the information
 	 * control closer's subject control and automatically enables this manager.
 	 * 

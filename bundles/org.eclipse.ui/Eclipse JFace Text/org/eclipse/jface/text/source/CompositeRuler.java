@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.source;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 
 import java.util.ArrayList;
@@ -50,23 +55,33 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * A vertical ruler which is connected to a text viewer.
- * Standard implementation of <code>IVerticalRuler</code>.
- * Clients may use this class as is.
+ * Standard implementation of <code>IVerticalRuler</code>. This ruler does not have a 
+ * a visual representation of its own.  The presentation comes from the configurable list 
+ * of decorators. Decorators must implement the <code>IVerticalRulerColumn</code>
+ * interface.
+ * Clients may instantiate and configure this class.
  *
+ * @see IVerticalRulerColumn
  * @see ITextViewer
+ * @since 2.0
  */
 public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	
 	
 	/**
-	 * Layout of  composite vertical ruler.
+	 * Layout of the composite vertical ruler. Arranges the list of decorators.
 	 */
 	class RulerLayout extends Layout {
 		
+		/**
+		 * Creates the new ruler layout.
+		 */
 		protected RulerLayout() {
 		}
 		
+		/*
+		 * @see Layout#computeSize(Composite, int, int, boolean)
+		 */
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Control[] children= composite.getChildren();
 			Point size= new Point(0, 0);
@@ -78,6 +93,9 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			return size;
 		}
 		
+		/*
+		 * @see Layout#layout(Composite, boolean)
+		 */
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clArea= composite.getClientArea();
 			int rulerHeight= clArea.height;
@@ -94,20 +112,29 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	};
 	
 	/**
-	 * A canvas that adds listeners to all its children.
+	 * A canvas that adds listeners to all its children. Used by the implementation of the
+	 * vertical ruler to propagate listener additions and removals to the ruler's columns.
 	 */
 	static class CompositeRulerCanvas extends Canvas {
 		
+		/**
+		 * Keeps the information for which event type a listener object has been added.
+		 */
 		static class ListenerInfo {
 			Class fClass;
 			SWTEventListener fListener;
 		};
-				
+		
+		/** The list of listeners added to this canvas. */
 		private List fCachedListeners= new ArrayList();
+		/** Internal mouse listener for opening the context menu. */
 		private MouseListener fMouseListener;
 		
 		/**
 		 * Creates a new composite ruler canvas.
+		 * 
+		 * @param parent the parent composite
+		 * @param style the SWT styles
 		 */
 		public CompositeRulerCanvas(Composite parent, int style) {
 			super(parent, style);
@@ -135,6 +162,14 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			});
 		}
 		
+		/**
+		 * Adds the given listener object as listner of the given type (<code>clazz</code>) to
+		 * the given control.
+		 * 
+		 * @param clazz the listener type
+		 * @param control the control to add the listener to
+		 * @param listener the listener to be added
+		 */
 		private void addListener(Class clazz, Control control, SWTEventListener listener) {
 			if (ControlListener.class.equals(clazz)) {
 				control. addControlListener((ControlListener) listener);
@@ -178,6 +213,14 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			}
 		}
 		
+		/**
+		 * Removes the given listener object as listner of the given type (<code>clazz</code>) from
+		 * the given control.
+		 * 
+		 * @param clazz the listener type
+		 * @param control the control to remove the listener from
+		 * @param listener the listener to be removed
+		 */
 		private void removeListener(Class clazz, Control control, SWTEventListener listener) {
 			if (ControlListener.class.equals(clazz)) {
 				control. removeControlListener((ControlListener) listener);
@@ -221,6 +264,13 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			}		
 		}
 				
+		/**
+		 * Adds the given listener object to the internal book keeping under
+		 * the given listener type (<code>clazz</code>).
+		 * 
+		 * @param clazz the listener type
+		 * @param listener the listener object
+		 */
 		private void addListener(Class clazz, SWTEventListener listener) {
 			Control[] children= getChildren();
 			for (int i= 0; i < children.length; i++) {
@@ -234,7 +284,13 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			fCachedListeners.add(info);
 		}
 		
-		private void removeListener(Class clazz, SWTEventListener listener) {
+		/**
+		 * Removes the given listener object from the internal book keeping under
+		 * the given listener type (<code>clazz</code>).
+		 * 
+		 * @param clazz the listener type
+		 * @param listener the listener object
+		 */		private void removeListener(Class clazz, SWTEventListener listener) {
 			int length= fCachedListeners.size();
 			for (int i= 0; i < length; i++) {
 				ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
@@ -253,6 +309,8 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		
 		/**
 		 * Tells this canvas that a child has been added.
+		 * 
+		 * @param child the child
 		 */
 		public void childAdded(Control child) {
 			if (child != null && !child.isDisposed()) {
@@ -267,6 +325,8 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		
 		/**
 		 * Tells this canvas that a child has been removed.
+		 * 
+		 * @param child the child
 		 */
 		public void childRemoved(Control child) {
 			if (child != null && !child.isDisposed()) {
@@ -440,22 +500,33 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		}
 	};
 	
-	
+	/** The ruler's viewer */
 	private ITextViewer fTextViewer;
+	/** The ruler's canvas to which to add the ruler columns */
 	private CompositeRulerCanvas fComposite;
+	/** The ruler's annotation model */
 	private IAnnotationModel fModel;
-	
-	private List fDecorators= new ArrayList(2);	
+	/** The list of decorators */
+	private List fDecorators= new ArrayList(2);
+	/** The cached location of the last mouse button activity */
 	private Point fLocation= new Point(-1, -1);
+	/** The cached line of the list mouse button activity */
 	private int fLastMouseButtonActivityLine= -1;
 	
 	
 	/**
-	 * Constructs a vertical ruler.
+	 * Constructs a new composite vertical ruler.
 	 */
 	public CompositeRuler() {
 	}
 	
+	/**
+	 * Inserts the given decorator at the specfied slot to this composite ruler.
+	 * Decorators are counted from left to right.
+	 * 
+	 * @param index the index
+	 * @param rulerColumn the decorator to be inserted
+	 */
 	public void addDecorator(int index, IVerticalRulerColumn rulerColumn) {
 		fDecorators.add(index, rulerColumn);
 		if (fComposite != null && !fComposite.isDisposed()) {
@@ -465,6 +536,11 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		}
 	}
 	
+	/**
+	 * Removes the decorator in the specified slot from this composite ruler.
+	 * 
+	 * @param index the index
+	 */
 	public void removeDecorator(int index) {
 		IVerticalRulerColumn column= (IVerticalRulerColumn) fDecorators.get(index);
 		fDecorators.remove(index);
@@ -476,6 +552,10 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		layoutTextViewer();
 	}
 	
+	/**
+	 * Relayouts the text viewer, i.e. this also causes this ruler to get
+	 * relayouted.
+	 */
 	private void layoutTextViewer() {
 		
 		Control parent= fTextViewer.getTextWidget();
@@ -636,5 +716,4 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		fLocation.y= y;
 		fLastMouseButtonActivityLine= -1;
 	}
-
 }

@@ -1,9 +1,15 @@
-package org.eclipse.ui.editors.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.editors.text;
 
 
 import java.io.CharConversionException;
@@ -21,11 +27,15 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
 
 /**
  * The standard implementation of <code>IEncodingSupport</code>.
+ * @since 2.0
  */
 public class DefaultEncodingSupport implements IEncodingSupport {
 	
+	/** Internal property change listener. */
 	private Preferences.IPropertyChangeListener fPropertyChangeListener;
+	/** The editor this support is associated with. */
 	private StatusTextEditor fTextEditor;
+	/** The action group of this support. */
 	private EncodingActionGroup fEncodingActionGroup;
 	
 	/**
@@ -36,7 +46,9 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	}
 	
 	/**
-	 * Initializes this encoding support.
+	 * Associates this encoding support to the given text editor and initializes this encoding.
+	 * 
+	 * @param textEditor the editor
 	 */
 	public void initialize(StatusTextEditor textEditor) {
 		
@@ -70,8 +82,8 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	}
 	
 	/**
-	 * Resets this encoding support. Should be called if, e.g., the input element
-	 * of the editor changed.
+	 * Resets this encoding support. Should be called if, e.g., the input element of the 
+	 * associated editor changed.
 	 */
 	public void reset() {
 		fEncodingActionGroup.update();
@@ -80,6 +92,9 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	/**
 	 * Sets the encoding of the editor's input to the given value. If <code>overwrite</code> is
 	 * <code>true</code> the value is set even if the encoding is already set.
+	 * 
+	 * @param encoding the new encoding
+	 * @param overwrite <code>true</code> if current encoding should be overwritten
 	 */
 	protected void setEncoding(String encoding, boolean overwrite) {
 		
@@ -173,8 +188,10 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	}
 	
 	/**
-	 * Returns status messages for status objects indicating encoding problems or
-	 * <code>null</code> otherwise.
+	 * Returns a status message for the given status indicating encoding problems or <code>null</code> otherwise.
+	 * 
+	 * @param status the status
+	 * @return a status message indicating encoding problems
 	 */
 	public String getStatusMessage(IStatus status) {
 		Throwable t= status.getException();

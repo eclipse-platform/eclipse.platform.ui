@@ -1,9 +1,17 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+
 package org.eclipse.ui.texteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 
 import org.eclipse.swt.SWT;
@@ -18,16 +26,25 @@ import org.eclipse.jface.action.ContributionItem;
 
 /**
  * Contribution item for the status line.
+ * @since 2.0
  */
 public class StatusLineContributionItem extends ContributionItem implements IStatusField {
 	
-	
+	/**
+	 * Specific label for the status line.
+	 */
 	static class StatusLineLabel extends CLabel {
 		
-		private static int INDENT= 3; // left and right margin used in CLabel
-		
+		/** Left and right margin used in CLabel */
+		private static int INDENT= 3; 
+		/** Precomputed label size */
 		private Point fFixedSize;
 		
+		/**
+		 * Creates a new status line label.
+		 * @param parent parent control
+		 * @param style the swt style bits
+		 */
 		public StatusLineLabel(Composite parent, int style) {
 			super(parent, style);
 			
@@ -39,13 +56,19 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			fFixedSize= new Point(extent.x + INDENT * 2, 10);
 		}
 		
+		/*
+		 * @see Control#computeSize(int, int, boolean)
+		 */
 		public Point computeSize(int wHint, int hHint, boolean changed) {
 			return fFixedSize;
 		}
 	};
 	
+	/** The label text */
 	private String fText;
+	/** The label image */
 	private Image fImage;
+	/** The status line label widget */
 	private StatusLineLabel fLabel;
 	
 	/**

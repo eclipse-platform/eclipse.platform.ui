@@ -1,24 +1,32 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 /**
- * For internal use only. Not API. <p>
- * A document partitioning listener extension is for extending
- * <code>IDocumentPartitioningListener</code> instances with new 
- * or revised functionality.
-*/
+ * Extension interface for <code>IDocumentPartitioningListener</code>. Extends the original
+ * partitioning listener concept by telling the listener the minimal region that comprises all
+ * partitioning changes.
+ * 
+ * @see org.eclipse.jface.text.IDocumentPartitionerExtension
+ * @since 2.0
+ */
 public interface IDocumentPartitioningListenerExtension {
 		
 	/**
-	 * The partitioning of the given document changed in the given range.
+	 * The partitioning of the given document changed in the given region.
 	 *
 	 * @param document the document whose partitioning changed
-	 * @param region the range in which the partition type changed
-	 *
+	 * @param region the region in which the partitioning changed
 	 * @see IDocument#addDocumentPartitioningListener
 	 */
 	void documentPartitioningChanged(IDocument document, IRegion region);

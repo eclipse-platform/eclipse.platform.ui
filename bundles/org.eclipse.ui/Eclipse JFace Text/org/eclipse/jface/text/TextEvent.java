@@ -1,9 +1,15 @@
-package org.eclipse.jface.text;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text;
 
 
 /**
@@ -32,11 +38,20 @@ public class TextEvent {
 	private String fReplacedText;
 	/** The original document event, may by null */
 	private DocumentEvent fDocumentEvent;
-	/** The redraw state of the viewer issuing this event */
+	/** 
+	 * The redraw state of the viewer issuing this event
+	 * @since 2.0
+	 */
 	private boolean fViewerRedrawState;
 	
 	/**
 	 * Creates a new <code>TextEvent</code> based on the specification.
+	 * 
+	 * @param offset the offset
+	 * @param length the length
+	 * @param replacedText the replaced text
+	 * @param event the associated document event or <code>null</code> if none
+	 * @param viewerRedrawState the redraw state of the viewer
 	 */
 	protected TextEvent(int offset, int length, String text, String replacedText, DocumentEvent event, boolean viewerRedrawState) {
 		fOffset= offset;
@@ -96,6 +111,7 @@ public class TextEvent {
 	 * Returns the viewer's redraw state.
 	 * 
 	 * @return <code>true</code> if the viewer's redraw state is <code>true</code>
+	 * @since 2.0
 	 */
 	public boolean getViewerRedrawState() {
 		return fViewerRedrawState;

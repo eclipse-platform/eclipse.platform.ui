@@ -1,9 +1,15 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.texteditor;
 
 
 import java.util.ArrayList;
@@ -27,11 +33,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 /**
- * An action which finds next/previous occurence of the last search or
+ * An action which finds the next/previous occurrence of the last search or
  * the current selection if present.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @since 2.0
  */
 public class FindNextAction extends ResourceAction implements IUpdate {
 
@@ -41,14 +48,19 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
-
+	/** The dialog settings to retrieve the last search */
 	private IDialogSettings fDialogSettings;
-
+	/** The find history as initially given in the dialog settings. */
 	private List fFindHistory= new ArrayList();
+	/** The find string as initially given in the dialog settings. */
 	private String fFindString;
+	/** The search direction as initially given in the dialog settings. */
 	private boolean fForward;
+	/** The warpping flag as initially given in the dialog settings. */
 	private boolean fWrapInit;
+	/** The case flag as initially given in the dialog settings. */
 	private boolean fCaseInit;
+	/** The whole word flag as initially given in the dialog settings. */
 	private boolean fWholeWordInit;
 	
 	/**
@@ -93,6 +105,10 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		update();
 	}
 
+	/**
+	 * Returns the find string based on the selection or the find history.
+	 * @return the find string
+	 */
 	private String getFindString() {
 		String string= getSelectionString();
 
@@ -102,6 +118,10 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		return string;
 	}
 
+	/**
+	 * Returns the status line manager of the active editor.
+	 * @return the status line manager of the active editor
+	 */
 	private IStatusLineManager getStatusLineManager() {
 
 		IEditorPart editor= fWorkbenchPart.getSite().getPage().getActiveEditor();
@@ -115,6 +135,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		return null;
 	}	
 	
+	/**
+	 * Sets the "no matches found" error message to the status line.
+	 */
 	private void statusError() {
 		fWorkbenchPart.getSite().getShell().getDisplay().beep();
 
@@ -126,6 +149,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		manager.setMessage(""); //$NON-NLS-1$
 	}
 
+	/**
+	 * Clears the status line.
+	 */
 	private void statusClear() {
 		IStatusLineManager manager= getStatusLineManager();
 		if (manager == null)				
@@ -174,11 +200,8 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 	}
 
-	// --- copied from FindReplaceDialog
-
 	/**
-	 * Returns the position of the specified search string, or -1 if the string can
-	 * not be found when searching using the given options.
+	 * @see FindReplaceDialog#findIndex(String, int, boolean, boolean, boolean, boolean)
 	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
 
@@ -205,6 +228,12 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	
 	/**
 	 * Returns whether the specified  search string can be found using the given options.
+	 * @param findString the string to search for
+	 * @param forwardSearch the search direction
+	 * @param caseSensitive should the search honor cases
+	 * @param wrapSearch	should the search wrap to the start/end if end/start reached
+	 * @param wholeWord does the find string represent a complete word
+	 * @return <code>true</code> if the find string can be found using the given options
 	 */
 	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
 

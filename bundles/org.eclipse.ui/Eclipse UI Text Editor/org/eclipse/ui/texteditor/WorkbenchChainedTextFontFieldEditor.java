@@ -1,9 +1,16 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+
+package org.eclipse.ui.texteditor;
 
 
 import org.eclipse.swt.widgets.Composite;
@@ -27,7 +34,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * default text font in the target store. If the target store does not contain a value
  * rather than the default text font, the new default text font is immediately effective.
  * 
- * @see FontFieldEditor 
+ * @see org.eclipse.jface.preference.FontFieldEditor 
+ * @since 2.0
  */
 public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEditor {
 	

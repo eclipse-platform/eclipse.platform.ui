@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.presentation;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.presentation;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,7 +47,8 @@ import org.eclipse.jface.util.Assert;
  * Usually, clients instantiate this class and configure it before using it.
  */
 public class PresentationReconciler implements IPresentationReconciler {
-		
+	
+	/** Prefix of the name of the position category for tracking damage regions. */
 	protected final static String TRACKED_PARTITION= "__reconciler_tracked_partition"; //$NON-NLS-1$
 	
 	
@@ -52,6 +59,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 			ITextInputListener, IDocumentListener, ITextListener, 
 			IDocumentPartitioningListener, IDocumentPartitioningListenerExtension {
 				
+		/** Set to <code>true</code> if between a document about to be changed and a changed event. */
 		private boolean fDocumentChanging= false;
 		
 		/*
@@ -108,6 +116,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		
 		/*
 		 * @see IDocumentPartitioningListenerExtension#documentPartitioningChanged
+		 * @since 2.0
 		 */
 		public void documentPartitioningChanged(IDocument document, IRegion changedRegion) {
 			if (!fDocumentChanging) {
@@ -176,20 +185,23 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 	};
 	
-	/** The map of presentation damagers */
+	/** The map of presentation damagers. */
 	private Map fDamagers;
-	/** The map of presentation repairers */
+	/** The map of presentation repairers. */
 	private Map fRepairers;
-
+	/** The target viewer. */
 	private ITextViewer fViewer;
-	
+	/** The internal listener. */
 	private InternalListener fInternalListener= new InternalListener();
-	
+	/** The name of the position category to track damage regions. */
 	private String fPositionCategory;
+	/** The position updated for the damage regions' position category. */
 	private IPositionUpdater fPositionUpdater;
+	/** The positions representing the damage regions. */
 	private TypedPosition fRememberedPosition;
-	
+	/** Flag indicating the receipt of a partitioning changed notification. */
 	private boolean fDocumentPartitioningChanged= false;
+	/** The range covering the changed parititoning. */
 	private IRegion fChangedDocumentPartitions= null;
 	
 	

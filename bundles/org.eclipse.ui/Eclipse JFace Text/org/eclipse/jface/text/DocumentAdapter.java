@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 import java.util.ArrayList;import java.util.Iterator;import java.util.List;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.TextChangeListener;import org.eclipse.swt.custom.TextChangedEvent;import org.eclipse.swt.custom.TextChangingEvent;import org.eclipse.jface.util.Assert;
 
@@ -17,16 +24,29 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	private IDocument fDocument;
 	/** The registered text change listeners */
 	private List fTextChangeListeners= new ArrayList(1);
-	/** The remembered document event */
+	/** 
+	 * The remembered document event
+	 * @since 2.0
+	 */
 	private DocumentEvent fEvent;
 	/** The line delimiter */
 	private String fLineDelimiter= null;
-	/** Indicates whether this adapter is forwarding document changes */
+	/** 
+	 * Indicates whether this adapter is forwarding document changes
+	 * @since 2.0
+	 */
 	private boolean fIsForwarding= true;
-	/** Indicates whether the current document event describes a complete replace. */
+	/** 
+	 * Indicates whether the current document event describes a complete replace.
+	 * @since 2.0
+	 */
 	private boolean fDocumentContentReplaced= false;
-	/** Indicates that the line delimiter cache is flushed */
+	/** 
+	 * Indicates that the line delimiter cache is flushed
+	 * @since 2.0
+	 */
 	private boolean fInvalidateLineDelimiter;
+	
 	
 	/**
 	 * Creates a new document adapter which is initiallly not connected to
@@ -301,6 +321,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	
 	/*
 	 * @see IDocumentAdapterExtension#resumeForwardingDocumentChanges()
+	 * @since 2.0
 	 */
 	public void resumeForwardingDocumentChanges() {
 		fIsForwarding= true;
@@ -309,6 +330,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	
 	/*
 	 * @see IDocumentAdapterExtension#stopForwardingDocumentChanges()
+	 * @since 2.0
 	 */
 	public void stopForwardingDocumentChanges() {
 		fIsForwarding= false;

@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text.source;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 
 import java.util.Iterator;
@@ -38,8 +43,9 @@ import org.eclipse.jface.text.TextEvent;
 
 
 /**
- * A vertical ruler column displaying the graphics of annotations.
+ * A vertical ruler column showing graphical representations of  annotations.
  * Will become final. Do not subclass.
+ * @since 2.0
  */
 public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	
@@ -91,6 +97,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	private InternalListener fInternalListener= new InternalListener();
 	/** The width of this vertical ruler */
 	private int fWidth;
+	
 	
 	/**
 	 * Constructs this column with the given width.
@@ -183,6 +190,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	
 	/**
 	 * Double buffer drawing.
+	 * 
+	 * @param dest the gc to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -213,9 +222,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		dest.drawImage(fBuffer, 0, 0);
 	}
 
-	/*
-	 * Returns the document offset of the upper left corner of the widgets viewport,
-	 * possibly including partially visible lines.
+	/**
+	 * Returns the document offset of the upper left corner of the widgets
+	 * viewport, possibly including partially visible lines.
+	 * 
+	 * @return document offset of the upper left corner including partially visible lines
 	 */
 	private int getInclusiveTopIndexStartOffset() {
 		
@@ -235,6 +246,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
+	 * 
+	 * @param gc the gc to draw into
 	 */
 	private void doPaint(GC gc) {
 	
@@ -318,7 +331,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	}
 	
 	/**
-	 * Post a redraw request for thsi column  into the UI thread.
+	 * Post a redraw request for thid column into the UI thread.
 	 */
 	private void postRedraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {

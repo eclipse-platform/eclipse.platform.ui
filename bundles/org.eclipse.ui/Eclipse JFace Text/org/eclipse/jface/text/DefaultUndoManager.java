@@ -1,9 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +76,7 @@ public class DefaultUndoManager implements IUndoManager {
 		 * Undo the change described by this command.
 		 * 
 		 * @param text the text widget to be modified
+		 * @since 2.0
 		 */
 		protected void undoTextChange(StyledText text) {
 			text.replaceTextRange(fStart, fText.length(), fPreservedText);
@@ -95,14 +103,15 @@ public class DefaultUndoManager implements IUndoManager {
 		 * Redo the change described by this command.
 		 * 
 		 * @param text the text widget to be modified
+		 * @since 2.0
 		 */
 		protected void redoTextChange(StyledText text) {
 			text.replaceTextRange(fStart, fEnd - fStart, fText);
 		}
 		
 		/**
-		 * Redo the change described by this command, and previously been 
-		 * rolled back.
+		 * Redo the change described by this command that previously been 
+		 * rolled back. Also selects and reveals the change.
 		 *
 		 * @param text the text widget to be modified
 		 */

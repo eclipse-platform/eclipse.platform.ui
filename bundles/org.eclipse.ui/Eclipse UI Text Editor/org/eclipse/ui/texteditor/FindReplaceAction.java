@@ -1,9 +1,15 @@
-package org.eclipse.ui.texteditor;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.ui.texteditor;
 
 
 import java.util.ResourceBundle;import org.eclipse.swt.events.DisposeEvent;import org.eclipse.swt.events.DisposeListener;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.ui.IPartListener;import org.eclipse.ui.IPartService;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.IWorkbenchPartSite;import org.eclipse.ui.IWorkbenchWindow;
@@ -38,6 +44,10 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		private IWorkbenchWindow fWindow;
 		private FindReplaceDialog fDialog;
 		
+		/**
+		 * Creates a new find/replace dialog accessor anchored at the given part site.
+		 * @param site the part site
+		 */
 		public FindReplaceDialogStub(IWorkbenchPartSite site) {
 			
 			fWindow= site.getWorkbenchWindow();
@@ -51,10 +61,17 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			partActivated(service.getActivePart());
 		}
 		
+		/**
+		 * Returns the find/replace dialog.
+		 * @return the find/replace dialog
+		 */
 		public FindReplaceDialog getDialog() {
 			return fDialog;
 		}
 		
+		/*
+		 * @see IPartListener#partActivated(IWorkbenchPart)
+		 */
 		public void partActivated(IWorkbenchPart part) {			
 			
 			IFindReplaceTarget target= part == null ? null : (IFindReplaceTarget) part.getAdapter(IFindReplaceTarget.class);
@@ -74,6 +91,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			}
 		}
 		
+		/*
+		 * @see IPartListener#partClosed(IWorkbenchPart)
+		 */
 		public void partClosed(IWorkbenchPart part) {
 			
 			if (part == fPreviousPart) {
@@ -85,6 +105,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				partActivated(null);
 		}
 		
+		/*
+		 * @see DisposeListener#widgetDisposed(DisposeEvent)
+		 */
 		public void widgetDisposed(DisposeEvent event) {
 			
 			if (fgFindReplaceDialogStub == this)
@@ -100,8 +123,19 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			fPreviousTarget= null;
 		}
 		
+		/*
+		 * @see IPartListener#partOpened(IWorkbenchPart)
+		 */
 		public void partOpened(IWorkbenchPart part) {}
+		
+		/*
+		 * @see IPartListener#partDeactivated(IWorkbenchPart)
+		 */
 		public void partDeactivated(IWorkbenchPart part) {}
+		
+		/*
+		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+		 */
 		public void partBroughtToTop(IWorkbenchPart part) {}		
 	};
 	
@@ -114,7 +148,10 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
-	/** Indicates whether the find/replace target is editable */ 
+	/** 
+	 * Indicates whether the find/replace target is editable
+	 * @since 2.0
+	 */ 
 	private boolean fIsTargetEditable= false;
 
 	/**

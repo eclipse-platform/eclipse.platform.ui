@@ -1,9 +1,15 @@
-package org.eclipse.jface.text.source;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
+package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.SWT;
@@ -45,12 +51,21 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 */
 	class RulerLayout extends Layout {
 		
+		/** The gap between the text viewer and the vertical ruler. */
 		protected int fGap;
 		
+		/** 
+		 * Creates a new ruler layout with the given gap between text viewer and vertical ruler.
+		 * 
+		 * @param gap the gap between text viewer and vertical ruler
+		 */
 		protected RulerLayout(int gap) {
 			fGap= gap;
 		}
 		
+		/*
+		 * @see Layout#computeSize(Composite, int, int, boolean)
+		 */
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Control[] children= composite.getChildren();
 			Point s= children[children.length - 1].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
@@ -59,6 +74,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			return s;
 		}
 		
+		/*
+		 * @see Layout#layout(Composite, boolean)
+		 */
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clArea= composite.getClientArea();
 			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
@@ -78,7 +96,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	
 	/** The viewer's content assistant */
 	protected IContentAssistant fContentAssistant;
-	/** Flag indicating whether the viewer's content assistant is installed */
+	/** 
+	 * Flag indicating whether the viewer's content assistant is installed
+	 * @since 2.0
+	 */
 	protected boolean fContentAssistantInstalled;
 	/** The viewer's content formatter */
 	protected IContentFormatter fContentFormatter;
@@ -88,7 +109,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	protected IPresentationReconciler fPresentationReconciler;
 	/** The viewer's annotation hover */
 	protected IAnnotationHover fAnnotationHover;
-	/** The viewer's information presenter */
+	/** 
+	 * The viewer's information presenter
+	 * @since 2.0
+	 */
 	protected IInformationPresenter fInformationPresenter;
 	
 	/** Visual vertical ruler */
@@ -414,6 +438,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	
 	/*
 	 * @see ITextOperationTargetExtension#enableOperation(int, boolean)
+	 * @since 2.0
 	 */
 	public void enableOperation(int operation, boolean enable) {
 		
@@ -480,7 +505,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	}
 	
 	/*
-	 * @see ISourceViewer#showAnnotations
+	 * @see ISourceViewer#showAnnotations(boolean)
 	 */
 	public void showAnnotations(boolean show) {
 		boolean old= fIsVerticalRulerVisible;

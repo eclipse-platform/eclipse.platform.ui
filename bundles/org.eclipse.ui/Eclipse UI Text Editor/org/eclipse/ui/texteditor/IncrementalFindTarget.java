@@ -1,7 +1,13 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
 
 package org.eclipse.ui.texteditor;
 
@@ -29,6 +35,7 @@ import org.eclipse.swt.graphics.Point;
 
 /**
  * An incremental find target. Replace is always disabled.
+ * @since 2.0
  */
 class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, VerifyKeyListener, MouseListener, FocusListener, ITextListener {
 
@@ -172,6 +179,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	public void setReplaceAllMode(boolean replaceAll) {
 	}
 	
+	/**
+	 * Installs this target. I.e. adds all required listeners.
+	 */
 	private void install() {
 		if (fInstalled)
 			return;
@@ -193,6 +203,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fInstalled= true;
 	}
 	
+	/**
+	 * Uninstalls itself. I.e. removes all listeners installed in <code>install</code>.
+	 */
 	private void uninstall() {
 		fTextViewer.removeTextListener(this);
 
@@ -209,6 +222,15 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fInstalled= false;
 	}
 
+	/**
+	 * Returns whether the find string can be found using the given options.
+	 * 
+	 * @param forward the search direction
+	 * @param position the start offset
+	 * @param wrapSearch	should the search wrap to start/end if end/start is reached
+	 * @param takeBack is the find string shortend
+	 * @return <code>true</code> if find string can be found using the options
+	 */
 	private boolean performFindNext(boolean forward, int position, boolean wrapSearch, boolean takeBack) {
 		String string= fFindString.toString();
 
@@ -233,6 +255,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		return found;
 	}
 
+	/**
+	 * Updates the status line appropriate for the indicated success.
+	 * @param found the success
+	 */
 	private void updateStatus(boolean found) {
 		if (fSessionStack == null) return;
 
@@ -251,6 +277,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		}
 	}
 
+	/**
+	 * Retuns the offset at which the search string is found next using the given options
+	 * @param findString the string to search for
+	 * @param startPosition the start offset
+	 * @param forward the search direction
+	 * @param caseSensitive is the search case sensitive
+	 * @param wrapSearch	should the search wrap to start/end if end/start is reached
+	 * @param takeBack is the find string shortend
+	 * @return the offset of the next match or <code>-1</code>
+	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean takeBack) {
 
 		if (fTarget == null)
@@ -282,6 +318,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		return index;
 	}
 
+	/**
+	 * Remembers wrapping in the session stack.
+	 */
 	private void wrap() {
 		fSessionStack.push(WRAPPED);
 	}
@@ -386,6 +425,11 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		updateStatus(fFound);
 	}
 
+
+	/**
+	 * Extends the incremental search by the given character.
+	 * @param character the character to append to the searhc string
+	 */
 	private void pushChar(char character) {
 		if (fCasePosition == -1 && Character.isUpperCase(character) && Character.toLowerCase(character) != character)
 			fCasePosition= fFindString.length();
@@ -393,6 +437,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fSessionStack.push(CHAR);
 	}
 
+	/**
+	 * Pops the top element from the session stack.
+	 * @return the top element from the session stack
+	 */
 	private Object popSessionStack() {
 		Object o = fSessionStack.pop();
 		if (o == CHAR) {
@@ -404,6 +452,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		return o;
 	}
 
+	/**
+	 * Leaves this incremental search session.
+	 */
 	private void leave() {
 		statusClear();
 		uninstall();				
@@ -452,21 +503,37 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		leave();
 	}
 
+	/**
+	 * Sets the given string as status message, clears the status error message.
+	 * @param string the status message
+	 */
 	private void statusMessage(String string) {
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
 		fStatusLine.setMessage(escapeTabs(string));
 	}
 
+	/**
+	 * Sets the status error message, clears the status message.
+	 * @param string the status error message
+	 */
 	private void statusError(String string) {
 		fStatusLine.setErrorMessage(escapeTabs(string));
 		fStatusLine.setMessage(""); //$NON-NLS-1$
 	}
 
+	/**
+	 * Clears the status message and the status error message.
+	 */
 	private void statusClear() {
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
 		fStatusLine.setMessage(""); //$NON-NLS-1$
 	}
 	
+	/**
+	 * Translates all tab characters into a proper status line presentation.
+	 * @param string the string in which to translate the tabs
+	 * @return the given string with all tab characters replace with a proper status line presentation
+	 */
 	private String escapeTabs(String string) {
 		StringBuffer buffer= new StringBuffer();
 
