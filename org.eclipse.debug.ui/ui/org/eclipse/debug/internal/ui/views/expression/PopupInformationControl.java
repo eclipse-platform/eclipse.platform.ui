@@ -220,7 +220,7 @@ public abstract class PopupInformationControl implements IInformationControl, II
 			submission = new HandlerSubmission(null, shell, null, commandId, closeHandler, Priority.MEDIUM);
 			commandSupport.addHandlerSubmission(submission);
 			
-			contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
+			contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_DIALOG);
 		}
 	}	
 	
