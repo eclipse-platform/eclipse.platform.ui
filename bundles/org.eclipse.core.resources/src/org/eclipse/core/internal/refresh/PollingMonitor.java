@@ -51,11 +51,11 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	/**
 	 * The minimum polling interval
 	 */
-	private long MIN_FREQUENCY = 5000;
+	private long MIN_FREQUENCY = 4000;
 	/**
 	 * The maximum duration of a single polling iteration
 	 */
-	private static final long MAX_DURATION = 100;
+	private static final long MAX_DURATION = 250;
 	private static final long HOT_ROOT_DECAY = 90000;
 
 	/**
@@ -112,7 +112,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 			System.out.println(RefreshManager.DEBUG_PREFIX + "polled " + (oldSize - toRefresh.size()) + " roots in " + time + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		//reschedule automatically - shouldRun will cancel if not needed
 		//make sure it doesn't run more than 5% of the time
-		long delay = Math.max(MIN_FREQUENCY, time * 30);
+		long delay = Math.max(MIN_FREQUENCY, time * 20);
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + "rescheduling polling job in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		schedule(delay);
