@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,18 +12,19 @@ package org.eclipse.jface.text;
 
 
 /**
- * A position updater is responsible for adapting document positions.
- * When installed on a document, the position updater updates the 
- * document's positions to changes applied to this document. Document
- * updaters can be selective, i.e. they might only update positions of 
- * a certain category.<p>
- * Position updaters are of primary importance for the definition of
- * the semantics of positions.<p>
+ * A position updater is responsible for adapting document positions. When
+ * installed on a document, the position updater updates the document's
+ * positions to changes applied to this document. Document updaters can be
+ * selective, i.e. they might only update positions of a certain category.
+ * <p>
+ * Position updaters are of primary importance for the definition of the
+ * semantics of positions.
+ * <p>
  * Clients may implement this interface or use the standard implementation
- * <code>DefaultPositionUpdater</code>.
- *
- * @see IDocument
- * @see Position
+ * {@link org.eclipse.jface.text.DefaultPositionUpdater}.
+ * 
+ * @see org.eclipse.jface.text.IDocument
+ * @see org.eclipse.jface.text.Position
  */
 public interface IPositionUpdater {
 	

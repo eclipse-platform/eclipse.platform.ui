@@ -13,7 +13,8 @@ package org.eclipse.jface.text;
 
 
 /**
- * Default implementation of <code>ITypedRegion</code>.
+ * Default implementation of {@link org.eclipse.jface.text.ITypedRegion}. A
+ * <code>TypedRegion</code> is a value object.
  */
 public class TypedRegion extends Region implements ITypedRegion {
 	
@@ -33,16 +34,14 @@ public class TypedRegion extends Region implements ITypedRegion {
 	}
 	
 	/*
-	 * @see ITypedRegion#getType()
+	 * @see org.eclipse.jface.text.ITypedRegion#getType()
 	 */
 	public String getType() {
 		return fType;
 	}
 	
-	/**
-	 * Two typed positions are equal if they have the same offset, length, and type.
-	 *
-	 * @see Object#equals(java.lang.Object)
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof TypedRegion) {
@@ -52,10 +51,10 @@ public class TypedRegion extends Region implements ITypedRegion {
 		return false;
 	}
 	
-	/*
-	 * @see Object#hashCode()
+	 /*
+	 * @see java.lang.Object#hashCode()
 	 */
-	 public int hashCode() {
+	public int hashCode() {
 	 	int type= fType == null ? 0 : fType.hashCode();
 	 	return super.hashCode() | type;
 	 }	

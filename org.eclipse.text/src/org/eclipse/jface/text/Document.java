@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,17 @@ package org.eclipse.jface.text;
 
 
 /**
- * Default document implementation. Uses a <code>GapTextStore</code> as default
- * text store and a <code>SequentialRewriteTextStore</code> when in sequential
- * rewrite mode. The used line tracker considers the following strings as line delimiters
- * "\n", "\r", "\r\n". The document is ready to use. It has a default position
- * category for which a default position updater is installed.
- *
+ * Default document implementation. Uses a
+ * {@link org.eclipse.jface.text.GapTextStore}as default text store and a
+ * {@link org.eclipse.jface.text.SequentialRewriteTextStore}when in sequential
+ * rewrite mode.
+ * <p>
+ * The used line tracker considers the following strings as line delimiters
+ * "\n", "\r", "\r\n".
+ * <p>
+ * The document is ready to use. It has a default position category for which a
+ * default position updater is installed.
+ * 
  * @see org.eclipse.jface.text.GapTextStore
  * @see org.eclipse.jface.text.SequentialRewriteTextStore
  */
@@ -50,7 +55,7 @@ public class Document extends AbstractDocument {
 	}
 	
 	/*
-	 * @see IDocumentExtension#startSequentialRewrite(boolean)
+	 * @see org.eclipse.jface.text.IDocumentExtension#startSequentialRewrite(boolean)
 	 * @since 2.0
 	 */
 	public void startSequentialRewrite(boolean normalized) {
@@ -59,7 +64,7 @@ public class Document extends AbstractDocument {
 	}
 	
 	/*
-	 * @see IDocumentExtension#stopSequentialRewrite()
+	 * @see org.eclipse.jface.text.IDocumentExtension#stopSequentialRewrite()
 	 * @since 2.0
 	 */
 	public void stopSequentialRewrite() {

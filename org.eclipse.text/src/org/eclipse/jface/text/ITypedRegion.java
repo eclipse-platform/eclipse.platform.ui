@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,13 @@ package org.eclipse.jface.text;
 
 
 /**
- * Describes a region of an indexed text store such as document or string.
- * The region consists of offset, length, and type. The type is defines as 
- * a string. A typed region can, e.g., be used to described document partitions.
- * Clients may implement this interface or use the standard impementation
- * <code>TypedRegion</code>.
+ * Describes a region of an indexed text store such as a document or a string.
+ * The region consists of offset, length, and type. The region type is defined
+ * as a string.
+ * <p>
+ * A typed region can, e.g., be used to described document partitions. Clients
+ * may implement this interface or use the standard implementation
+ * {@link org.eclipse.jface.text.TypedRegion}.
  */
 public interface ITypedRegion extends IRegion {
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,24 +21,31 @@ import java.util.regex.PatternSyntaxException;
 
 
 /**
- * Abstract implementation of <code>IDocument</code>. 
- * Implements the complete contract of <code>IDocument</code>, <code>IDocumentExtension</code>,
- * and <code>IDocumentExtension2</code>.<p>
+ * Abstract default implementation of <code>IDocument</code> and its extension
+ * interfaces {@link org.eclipse.jface.text.IDocumentExtension},
+ * {@link org.eclipse.jface.text.IDocumentExtension2},
+ * {@link org.eclipse.jface.text.IDocumentExtension3}, as well as
+ * {@link org.eclipse.jface.text.IRepairableDocument}.
+ * <p>
  * 
- * An <code>AbstractDocument</code> supports the following implementation plug-ins:
+ * An <code>AbstractDocument</code> supports the following implementation
+ * plug-ins:
  * <ul>
- * <li> a text store for storing and managing the document's content,
- * <li> a line tracker to map character positions to line numbers and vice versa
+ * <li>a text store implementing {@link org.eclipse.jface.text.ITextStore} for
+ *     storing and managing the document's content,</li>
+ * <li>a line tracker implementing {@link org.eclipse.jface.text.ILineTracker}
+ *     to map character positions to line numbers and vice versa</li>
  * </ul>
- * The document can dynamically change the text store when switching between 
- * sequential rewrite mode and normal mode.<p>
+ * The document can dynamically change the text store when switching between
+ * sequential rewrite mode and normal mode.
+ * <p>
  * 
- * This class must be subclassed. Subclasses must configure which implementation 
- * plug-ins the document should use. Subclasses are not intended to overwrite existing methods.
- *
- * @see IDocument
- * @see ITextStore
- * @see ILineTracker
+ * This class must be subclassed. Subclasses must configure which implementation
+ * plug-ins the document instance should use. Subclasses are not intended to
+ * overwrite existing methods.
+ * 
+ * @see org.eclipse.jface.text.ITextStore
+ * @see org.eclipse.jface.text.ILineTracker
  */
 public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3, IRepairableDocument {
 	
@@ -72,7 +79,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	private ILineTracker fTracker;
 	/** The registered document listeners */
 	private List fDocumentListeners;
-	/** The registered prenotified document listeners */
+	/** The registered pre-notified document listeners */
 	private List fPrenotifiedDocumentListeners;
 	/** The registered document partitioning listeners */
 	private List fDocumentPartitioningListeners;
@@ -96,8 +103,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private int fStoppedCount= 0;
 	/**
-	 * Indicates whether the registration of post notification changes should be
-	 * ignored.
+	 * Indicates whether the registration of post notification changes should be ignored.
 	 * @since 2.1
 	 */
 	private boolean fAcceptPostNotificationReplaces= true;
@@ -137,9 +143,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected AbstractDocument() {
 	}
 	
-	
-	//--- accessor to fields -------------------------------
-	
+		
 	/**
 	 * Returns the document's text store. Assumes that the
 	 * document has been initialized with a text store.
@@ -190,7 +194,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#getDocumentPartitioner
+	 * @see org.eclipse.jface.text.IDocument#getDocumentPartitioner()
 	 */
 	public IDocumentPartitioner getDocumentPartitioner() {
 		return getDocumentPartitioner(DEFAULT_PARTITIONING);
@@ -212,7 +216,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	
 	/**
 	 * Sets the document's line tracker. 
-	 * Must be called at the beginnng of the constructor.
+	 * Must be called at the beginning of the constructor.
 	 *
 	 * @param tracker the document's line tracker
 	 */
@@ -265,7 +269,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#addPrenotifiedDocumentListener(IDocumentListener) 
+	 * @see org.eclipse.jface.text.IDocument#addPrenotifiedDocumentListener(org.eclipse.jface.text.IDocumentListener)
 	 */
 	public void addPrenotifiedDocumentListener(IDocumentListener listener) {
 		Assert.isNotNull(listener);
@@ -274,7 +278,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#removePrenotifiedDocumentListener(IDocumentListener)
+	 * @see org.eclipse.jface.text.IDocument#removePrenotifiedDocumentListener(org.eclipse.jface.text.IDocumentListener)
 	 */
 	public void removePrenotifiedDocumentListener(IDocumentListener listener) {
 		Assert.isNotNull(listener);
@@ -467,7 +471,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * Fires the document partitioning changed notification to all registered 
 	 * document partitioning listeners. Uses a robust iterator.
 	 * 
-	 * @deprecated use <code>fireDocumentPartitioningChanged(IRegion)</code> instead
+	 * @deprecated as of 2.0. Use <code>fireDocumentPartitioningChanged(IRegion)</code> instead.
 	 */
 	protected void fireDocumentPartitioningChanged() {
 		
@@ -483,14 +487,16 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
-	 * Fires the document partitioning changed notification to all registered 
+	 * Fires the document partitioning changed notification to all registered
 	 * document partitioning listeners. Uses a robust iterator.
 	 * 
 	 * @param region the region in which partitioning has changed
 	 * 
 	 * @see IDocumentPartitioningListenerExtension
 	 * @since 2.0
-	 * @deprecated use <code>fireDocumentPartitioningChanged(DocumentPartitioningChangedEvent)</code> instead
+	 * @deprecated as of 3.0. Use
+	 *             <code>fireDocumentPartitioningChanged(DocumentPartitioningChangedEvent)</code>
+	 *             instead.
 	 */
 	protected void fireDocumentPartitioningChanged(IRegion region) {
 		
@@ -611,8 +617,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
-	 * Notifies all listeners about the given document change.
-	 * Uses a robust iterator. <p>
+	 * Notifies all listeners about the given document change. Uses a robust
+	 * iterator.
+	 * <p>
 	 * Executes all registered post notification replace operation.
 	 * 
 	 * @param event the event to be sent out.
@@ -632,20 +639,22 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param firePartitionChange <code>true</code> if a partition change notification should be sent
 	 * @param partitionChange the region whose partitioning changed
 	 * @since 2.0
-	 * @deprecated use doFireDocumentChanged2(DocumentEvent) instead; this method will be removed
+	 * @deprecated as of 3.0. Use <code>doFireDocumentChanged2(DocumentEvent)</code> instead; this method will be removed.
 	 */
 	protected void doFireDocumentChanged(DocumentEvent event, boolean firePartitionChange, IRegion partitionChange) {
 		doFireDocumentChanged2(event);
 	}
 	
 	/**
-	 * Notifies all listeners about the given document change.
-	 * Uses a robust iterator. <p>
+	 * Notifies all listeners about the given document change. Uses a robust
+	 * iterator.
+	 * <p>
 	 * Executes all registered post notification replace operation.
+	 * <p>
+	 * This method will be renamed to <code>doFireDocumentChanged</code>.
 	 * 
 	 * @param event the event to be sent out
 	 * @since 3.0
-	 * @deprecated this method will be renamed to <code>doFireDocumentChanged</code>
 	 */
 	protected void doFireDocumentChanged2(DocumentEvent event) {
 		
@@ -724,7 +733,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#getLegalContentTypes()
+	 * @see org.eclipse.jface.text.IDocument#getLegalContentTypes()
 	 */
 	public String[] getLegalContentTypes() {
 		String[] contentTypes= null;
@@ -738,7 +747,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 		
 	/*
-	 * @see IDocument#getLength()
+	 * @see org.eclipse.jface.text.IDocument#getLength()
 	 */
 	public int getLength() {
 		return getStore().getLength();
@@ -752,70 +761,70 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#getLegalLineDelimiters()
+	 * @see org.eclipse.jface.text.IDocument#getLegalLineDelimiters()
 	 */
 	public String[] getLegalLineDelimiters() {
 		return getTracker().getLegalLineDelimiters();
 	}
 	
 	/*
-	 * @see IDocument#getLineLength(int)
+	 * @see org.eclipse.jface.text.IDocument#getLineLength(int)
 	 */
 	public int getLineLength(int line) throws BadLocationException {
 		return getTracker().getLineLength(line);
 	}
 	
 	/*
-	 * @see IDocument#getLineOfOffset(int)
+	 * @see org.eclipse.jface.text.IDocument#getLineOfOffset(int)
 	 */
 	public int getLineOfOffset(int pos) throws BadLocationException {
 		return getTracker().getLineNumberOfOffset(pos);
 	}
 	
 	/*
-	 * @see IDocument#getLineOffset(int)
+	 * @see org.eclipse.jface.text.IDocument#getLineOffset(int)
 	 */
 	public int getLineOffset(int line) throws BadLocationException {
 		return getTracker().getLineOffset(line);
 	}
 	
 	/*
-	 * @see IDocument#getLineInformation(int)
+	 * @see org.eclipse.jface.text.IDocument#getLineInformation(int)
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
 		return getTracker().getLineInformation(line);
 	}
 	
 	/*
-	 * @see IDocument#getLineInformationOfOffset(int)
+	 * @see org.eclipse.jface.text.IDocument#getLineInformationOfOffset(int)
 	 */
 	public IRegion getLineInformationOfOffset(int offset) throws BadLocationException {
 		return getTracker().getLineInformationOfOffset(offset);
 	}
 	
 	/*
-	 * @see IDocument#getNumberOfLines()
+	 * @see org.eclipse.jface.text.IDocument#getNumberOfLines()
 	 */
 	public int getNumberOfLines() {
 		return getTracker().getNumberOfLines();
 	}
 	
 	/*
-	 * @see IDocument#getNumberOfLines(int, int)
+	 * @see org.eclipse.jface.text.IDocument#getNumberOfLines(int, int)
 	 */
 	public int getNumberOfLines(int offset, int length) throws BadLocationException {
 		return getTracker().getNumberOfLines(offset, length);
 	}
 	
 	/*
-	 * @see IDocument#computeNumberOfLines(String)
+	 * @see org.eclipse.jface.text.IDocument#computeNumberOfLines(java.lang.String)
 	 */
 	public int computeNumberOfLines(String text) {
 		return getTracker().computeNumberOfLines(text);
 	}
 	
 	/*
-	 * @see IDocument#getPartition(int)
+	 * @see org.eclipse.jface.text.IDocument#getPartition(int)
 	 */
 	public ITypedRegion getPartition(int offset) throws BadLocationException {
 		ITypedRegion partition= null;
@@ -829,7 +838,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#computePartitioning(int, int)
+	 * @see org.eclipse.jface.text.IDocument#computePartitioning(int, int)
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length) throws BadLocationException {
 		ITypedRegion[] partitioning= null;
@@ -843,7 +852,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#getPositions(String)
+	 * @see org.eclipse.jface.text.IDocument#getPositions(java.lang.String)
 	 */
 	public Position[] getPositions(String category) throws BadPositionCategoryException {
 		
@@ -860,7 +869,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#getPositionCategories()
+	 * @see org.eclipse.jface.text.IDocument#getPositionCategories()
 	 */
 	public String[] getPositionCategories() {
 		String[] categories= new String[fPositions.size()];
@@ -871,7 +880,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#getPositionUpdaters()
+	 * @see org.eclipse.jface.text.IDocument#getPositionUpdaters()
 	 */
 	public IPositionUpdater[] getPositionUpdaters() {
 		IPositionUpdater[] updaters= new IPositionUpdater[fPositionUpdaters.size()];
@@ -880,14 +889,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 		
 	/*
-	 * @see IDocument#get()
+	 * @see org.eclipse.jface.text.IDocument#get()
 	 */
 	public String get() {
 		return getStore().get(0, getLength());
 	}
 	
 	/*
-	 * @see IDocument#get(int, int)
+	 * @see org.eclipse.jface.text.IDocument#get(int, int)
 	 */
 	public String get(int pos, int length) throws BadLocationException {
 		int myLength= getLength();
@@ -897,7 +906,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 		
 	/*
-	 * @see IDocument#insertPositionUpdater(IPositionUpdater, int)
+	 * @see org.eclipse.jface.text.IDocument#insertPositionUpdater(org.eclipse.jface.text.IPositionUpdater, int)
 	 */
 	public void insertPositionUpdater(IPositionUpdater updater, int index) {
 
@@ -938,7 +947,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#removePosition(Position)
+	 * @see org.eclipse.jface.text.IDocument#removePosition(org.eclipse.jface.text.Position)
 	 */
 	public void removePosition(Position position) {
 		try {
@@ -948,7 +957,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 		
 	/*
-	 * @see IDocument#removePositionCategory(String)
+	 * @see org.eclipse.jface.text.IDocument#removePositionCategory(java.lang.String)
 	 */
 	public void removePositionCategory(String category) throws BadPositionCategoryException {
 
@@ -962,7 +971,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 		
 	/*
-	 * @see IDocument#removePositionUpdater(IPositionUpdater)
+	 * @see org.eclipse.jface.text.IDocument#removePositionUpdater(org.eclipse.jface.text.IPositionUpdater)
 	 */
 	public void removePositionUpdater(IPositionUpdater updater) {
 		for (int i= fPositionUpdaters.size() - 1; i >= 0; i--) {
@@ -974,7 +983,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocument#replace(int, int, String)
+	 * @see org.eclipse.jface.text.IDocument#replace(int, int, java.lang.String)
 	 */
 	public void replace(int pos, int length, String text) throws BadLocationException {
 		if ((0 > pos) || (0 > length) || (pos + length > getLength()))
@@ -990,7 +999,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 		
 	/*
-	 * @see IDocument#set(String)
+	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String)
 	 */
 	public void set(String text) {
 		int length= getStore().getLength();
@@ -1004,12 +1013,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 		
 	/**
-	 * Updates all positions of all categories to the change
-	 * described by the document event. All registered document
-	 * updaters are called in the sequence they have been arranged.
-	 * Uses a robust iterator.
-	 *
-	 * @param event the document event describing the change to which to adapt the positions
+	 * Updates all positions of all categories to the change described by the
+	 * document event. All registered document updaters are called in the
+	 * sequence they have been arranged. Uses a robust iterator.
+	 * 
+	 * @param event the document event describing the change to which to adapt
+	 *            the positions
 	 */
 	protected void updatePositions(DocumentEvent event) {
 		List list= new ArrayList(fPositionUpdaters);
@@ -1045,7 +1054,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
 		if (fFindReplaceDocumentAdapter == null)
-			fFindReplaceDocumentAdapter=  new FindReplaceDocumentAdapter(this);
+			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(this);
 		
 		return fFindReplaceDocumentAdapter;
 	}
@@ -1100,7 +1109,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IDocumentExtension.IReplace)
+	 * @see org.eclipse.jface.text.IDocumentExtension#registerPostNotificationReplace(org.eclipse.jface.text.IDocumentListener, org.eclipse.jface.text.IDocumentExtension.IReplace)
 	 * @since 2.0
 	 */
 	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
@@ -1112,7 +1121,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocumentExtension#stopPostNotificationProcessing()
+	 * @see org.eclipse.jface.text.IDocumentExtension#stopPostNotificationProcessing()
 	 * @since 2.0
 	 */
 	public void stopPostNotificationProcessing() {
@@ -1120,7 +1129,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocumentExtension#resumePostNotificationProcessing()
+	 * @see org.eclipse.jface.text.IDocumentExtension#resumePostNotificationProcessing()
 	 * @since 2.0
 	 */
 	public void resumePostNotificationProcessing() {
@@ -1130,14 +1139,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see IDocumentExtension#startSequentialRewrite(boolean)
+	 * @see org.eclipse.jface.text.IDocumentExtension#startSequentialRewrite(boolean)
 	 * @since 2.0
 	 */
 	public void startSequentialRewrite(boolean normalized) {
 	}
 
 	/*
-	 * @see IDocumentExtension#stopSequentialRewrite()
+	 * @see org.eclipse.jface.text.IDocumentExtension#stopSequentialRewrite()
 	 * @since 2.0
 	 */
 	public void stopSequentialRewrite() {

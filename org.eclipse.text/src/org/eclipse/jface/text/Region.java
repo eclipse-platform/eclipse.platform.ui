@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,8 @@
 package org.eclipse.jface.text;
 
 
-
 /**
- * A default implementation of the <code>IRegion</code> interface. 
+ * The default implementation of the {@link org.eclipse.jface.text.IRegion} interface. 
  */
 public class Region implements IRegion {
 	
@@ -34,23 +33,21 @@ public class Region implements IRegion {
 	}
 	
 	/*
-	 * @see IRegion#getLength()
+	 * @see org.eclipse.jface.text.IRegion#getLength()
 	 */
 	public int getLength() {
 		return fLength;
 	}
 	
 	/*
-	 * @see IRegion#getOffset()
+	 * @see org.eclipse.jface.text.IRegion#getOffset()
 	 */
 	public int getOffset() {
 		return fOffset;
 	}
 	
-	/**
-	 * Two regions are equal if they have the same offset and length.
-	 *
-	 * @see Object#equals(Object)
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 	 	if (o instanceof IRegion) {
@@ -61,7 +58,7 @@ public class Region implements IRegion {
 	}
 	 
 	/*
-	 * @see Object#hashCode()
+	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 	 	return (fOffset << 24) | (fLength << 16);

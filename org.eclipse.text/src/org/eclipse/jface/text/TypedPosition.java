@@ -13,7 +13,12 @@ package org.eclipse.jface.text;
 
 
 /**
- * Convenience class for position like typed regions.
+ * Convenience class for positions that have a type, similar to
+ * {@link org.eclipse.jface.text.ITypedRegion}.
+ * <p>
+ * As {@link org.eclipse.jface.text.Position},<code>TypedPosition</code> can
+ * not be used as key in hash tables as it overrides <code>equals</code> and
+ * <code>hashCode</code> as it would be a value object.
  */
 public class TypedPosition extends Position {
 	
@@ -52,7 +57,7 @@ public class TypedPosition extends Position {
 	}
 	
 	/*
-	 * @see Object#equals
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof TypedPosition) {
@@ -64,10 +69,10 @@ public class TypedPosition extends Position {
 		return false;
 	}
 	
-	/*
-	 * @see Object#hashCode
+	 /*
+	 * @see java.lang.Object#hashCode()
 	 */
-	 public int hashCode() {
+	public int hashCode() {
 	 	int type= fType == null ? 0 : fType.hashCode();
 	 	return super.hashCode() | type;
 	 }
