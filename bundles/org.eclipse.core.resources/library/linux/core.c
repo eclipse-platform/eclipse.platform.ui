@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 #include <jni.h>
-#include <sys/io.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include "core.h"
 
@@ -39,24 +39,24 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 	jint code;
 	jbyte *name;
 
-	// get stat
+	/* get stat */
 	name = getByteArray(env, target);
 	code = stat(name, &info);
 	free(name);
 
-	// test if an error occurred
+	/* test if an error occurred */
 	if (code == -1)
 	  return 0;
 
-	// filter interesting bits
-	// lastModified
-	result = ((jlong) info.st_mtime) * 1000; // lower bits
-	// valid stat
+	/* filter interesting bits */
+	/* lastModified */
+	result = ((jlong) info.st_mtime) * 1000; /* lower bits */
+	/* valid stat */
 	result |= STAT_VALID;
-	// is folder?
+	/* is folder? */
 	if ((info.st_mode & S_IFDIR) == S_IFDIR)
 		result |= STAT_FOLDER;
-	// is read-only?
+	/* is read-only? */
 	if ((info.st_mode & S_IWRITE) != S_IWRITE)
 		result |= STAT_READ_ONLY;
 
@@ -74,19 +74,19 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
 	int mask;
 	struct stat info;
 	jbyte *name;
-      	jint code;
+   	jint code;
 
 	name = getByteArray(env, target);
 	code = stat(name, &info);
 	mask = S_IRUSR |
 	       S_IWUSR |
 	       S_IXUSR |
-               S_IRGRP |
-               S_IWGRP |
-               S_IXGRP |
-               S_IROTH |
-               S_IWOTH |
-               S_IXOTH;
+           S_IRGRP |
+           S_IWGRP |
+           S_IXGRP |
+           S_IROTH |
+           S_IWOTH |
+           S_IXOTH;
  
         mask &= info.st_mode;
 
@@ -136,61 +136,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
 JNIEXPORT jboolean JNICALL Java_org_eclipse_ant_core_EclipseProject_internalCopyAttributes
    (JNIEnv *env, jclass clazz, jbyteArray source, jbyteArray destination, jboolean copyLastModified) {
 
-  // use the same implementation for both methods
+  /* use the same implementation for both methods */
   return Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributes
     (env, clazz, source, destination, copyLastModified);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -39,7 +39,10 @@ public abstract class CoreFileSystemLibrary {
 	private static final long STAT_LASTMODIFIED = ~(STAT_RESERVED | STAT_VALID | STAT_FOLDER | STAT_READ_ONLY);
 
 	/** instance of this library */
-	private static final String LIBRARY_NAME = "core203";
+	// The name convention is to get the plugin version at the time
+	// the library is changed. Remember that ant.core uses the same
+	// library.
+	private static final String LIBRARY_NAME = "core_2_0_1";
 	private static boolean hasNatives = false;
 	
 	static {
