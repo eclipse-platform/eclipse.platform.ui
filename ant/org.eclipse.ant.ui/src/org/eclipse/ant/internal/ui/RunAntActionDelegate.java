@@ -23,74 +23,74 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	private IFile selection;
 
-	/*
-	 * @see IWorkbenchWindowActionDelegate
-	 */
-	public void dispose() {
-	}
-	protected EclipseProject extractProject(IFile sourceFile) {
-		// create a project and initialize it
-		EclipseProject antProject = new EclipseProject();
-		antProject.init();
-		antProject.setProperty("ant.file",sourceFile.getLocation().toOSString());
-		
-		try {
-			ProjectHelper.configureProject(antProject,new File(sourceFile.getLocation().toOSString()));
-		} catch (Exception e) {
-			// If the document is not well-formated for example
-			String message = e.getMessage();
-			if (message == null)
-				message = Policy.bind("error.antParsingError");
-			IStatus status = new Status(IStatus.ERROR,AntUIPlugin.PI_ANTUI,IStatus.ERROR,message,e);
-			ErrorDialog.openError(
-				AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(),
-				Policy.bind("error.antScriptError"),
-				Policy.bind("error.antParsingError"),
-				status);
-				
-			return null;
-		}
-		
-		return antProject;
-	}
+/*
+ * @see IWorkbenchWindowActionDelegate
+ */
+public void dispose() {
+}
+protected EclipseProject extractProject(IFile sourceFile) {
+	// create a project and initialize it
+	EclipseProject antProject = new EclipseProject();
+	antProject.init();
+	antProject.setProperty("ant.file",sourceFile.getLocation().toOSString());
 	
-	/**
-	  * Returns the active shell.
-	  */
-	protected Shell getShell() {
-		return AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell();
-	}
-	/*
-	 * @see IWorkbenchWindowActionDelegate
-	 */
-	public void init(IWorkbenchWindow window) {
-	}
-	/*
-	 * @see IActionDelegate
-	 */
-	public void run(IAction action) {
-		EclipseProject project = extractProject(selection);
-		if (project == null)
-			return;
+	try {
+		ProjectHelper.configureProject(antProject,new File(sourceFile.getLocation().toOSString()));
+	} catch (Exception e) {
+		// If the document is not well-formated for example
+		String message = e.getMessage();
+		if (message == null)
+			message = Policy.bind("error.antParsingError");
+		IStatus status = new Status(IStatus.ERROR,AntUIPlugin.PI_ANTUI,IStatus.ERROR,message,e);
+		ErrorDialog.openError(
+			AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(),
+			Policy.bind("error.antScriptError"),
+			Policy.bind("error.antParsingError"),
+			status);
 			
-		AntLaunchWizard wizard = new AntLaunchWizard(project,selection);
-		wizard.setNeedsProgressMonitor(true);
-		WizardDialog dialog = new WizardDialog(getShell(),wizard);
-		dialog.create();
-		dialog.open();
+		return null;
 	}
-	/*
-	 * @see IWorkbenchActionDelegate
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-			if (structuredSelection.size() == 1) {
-				Object selectedResource = structuredSelection.getFirstElement();
-				if (selectedResource instanceof IFile)
-					this.selection = (IFile)selectedResource;
-			}
+	return antProject;
+}
+
+/**
+  * Returns the active shell.
+  */
+protected Shell getShell() {
+	return AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell();
+}
+/*
+ * @see IWorkbenchWindowActionDelegate
+ */
+public void init(IWorkbenchWindow window) {
+}
+/*
+ * @see IActionDelegate
+ */
+public void run(IAction action) {
+	EclipseProject project = extractProject(selection);
+	if (project == null)
+		return;
+		
+	AntLaunchWizard wizard = new AntLaunchWizard(project,selection);
+	wizard.setNeedsProgressMonitor(true);
+	WizardDialog dialog = new WizardDialog(getShell(),wizard);
+	dialog.create();
+	dialog.open();
+}
+/*
+ * @see IWorkbenchActionDelegate
+ */
+public void selectionChanged(IAction action, ISelection selection) {
+	this.selection = null;
+	if (selection instanceof IStructuredSelection) {
+		IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+		if (structuredSelection.size() == 1) {
+			Object selectedResource = structuredSelection.getFirstElement();
+			if (selectedResource instanceof IFile)
+				this.selection = (IFile)selectedResource;
 		}
 	}
+}
+
 }

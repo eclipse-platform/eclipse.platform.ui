@@ -24,23 +24,24 @@ public final class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	private static AntUIPlugin plugin;
 
-	public AntUIPlugin(IPluginDescriptor desc) {
-		super(desc);
-		plugin= this;
+public AntUIPlugin(IPluginDescriptor desc) {
+	super(desc);
+	plugin= this;
+}
+public static AntUIPlugin getPlugin() {
+	return plugin;
+}
+public static ResourceBundle getResourceBundle() {
+	try {
+		return ResourceBundle.getBundle(PROPERTIES_MESSAGES);
+	} catch (MissingResourceException e) {
+		ErrorDialog.openError(
+			plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
+			Policy.bind("exception.missingResourceBundle"),
+			Policy.bind("exception.missingResourceBundle.message"),
+			new Status(IStatus.ERROR,PI_ANTUI,0,Policy.bind("exception.missingResourceBundle.message"),e));
+		return null;
 	}
-	public static AntUIPlugin getPlugin() {
-		return plugin;
-	}
-	public static ResourceBundle getResourceBundle() {
-		try {
-			return ResourceBundle.getBundle(PROPERTIES_MESSAGES);
-		} catch (MissingResourceException e) {
-			ErrorDialog.openError(
-				plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				Policy.bind("exception.missingResourceBundle"),
-				Policy.bind("exception.missingResourceBundle.message"),
-				new Status(IStatus.ERROR,PI_ANTUI,0,Policy.bind("exception.missingResourceBundle.message"),e));
-			return null;
-		}
-	}
+}
+
 }

@@ -97,294 +97,294 @@ public class CommaPatternSet extends PatternSet {
 	private File incl = null;
 	private File excl = null;
 
-	/** 
-	 * Constructs an instance of a <code>CommaPatternSet</code>.
-	 */
-	public CommaPatternSet() {
-		super();
-	}
-	/**
-	 * Adds a name entry to the given list.
-	 * 
-	 * @return the new name entry
-	 * @param list the target list
-	 */
-	private NameEntry addPatternToList(Vector list) {
-		NameEntry result = new NameEntry();
-		list.addElement(result);
-		return result;
-	}
-	
-	/**
-	 * Adds the patterns of another <code>PatternSet</code> to the receiver.
-	 * 
-	 * @param other the other <code>PatternSet</code>
-	 * @param p the target project
-	 */
-	public void append(PatternSet other, Project p) {
-		if (isReference()) {
-			throw new BuildException(Policy.bind("exception.cannotAppendToReference"));
-		}
+/** 
+ * Constructs an instance of a <code>CommaPatternSet</code>.
+ */
+public CommaPatternSet() {
+	super();
+}
+/**
+ * Adds a name entry to the given list.
+ * 
+ * @return the new name entry
+ * @param list the target list
+ */
+private NameEntry addPatternToList(Vector list) {
+	NameEntry result = new NameEntry();
+	list.addElement(result);
+	return result;
+}
 
-		String[] incl = other.getIncludePatterns(p);
-		if (incl != null) {
-			for (int i=0; i<incl.length; i++) {
-				createInclude().setName(incl[i]);
-			}
-		}
-		
-		String[] excl = other.getExcludePatterns(p);
-		if (excl != null) {
-			for (int i=0; i<excl.length; i++) {
-				createExclude().setName(excl[i]);
-			}
-		}
+/**
+ * Adds the patterns of another <code>PatternSet</code> to the receiver.
+ * 
+ * @param other the other <code>PatternSet</code>
+ * @param p the target project
+ */
+public void append(PatternSet other, Project p) {
+	if (isReference()) {
+		throw new BuildException(Policy.bind("exception.cannotAppendToReference"));
 	}
 
-	/**
-	 * Adds a name entry to the receiver's exclude list.
-	 * 
-	 * @return the new name entry
-	 */
-	public NameEntry createExclude() {
-		if (isReference()) {
-			throw noChildrenAllowed();
-		}
-		return addPatternToList(excludeList);
-	}
-
-	/**
-	 * Adds a name entry to the receiver's include list.
-	 * 
-	 * @return the new name entry
-	 */
-	public NameEntry createInclude() {
-		if (isReference()) {
-			throw noChildrenAllowed();
-		}
-		return addPatternToList(includeList);
-	}
-
-	/**
-	 * Returns the receiver's filtered exclude patterns.
-	 * 
-	 * @return the receiver's filtered exclude patterns.
-	 * @param the target project
-	 */
-	public String[] getExcludePatterns(Project p) {
-		if (isReference()) {
-			return getRef(p).getExcludePatterns(p);
-		} else {
-			readFiles(p);
-			return makeArray(excludeList, p);
-		}
-	}
-
-	/**
-	 * Returns the receiver's filtered include patterns.
-	 * 
-	 * @return the receiver's filtered include patterns.
-	 * @param the target project
-	 */
-	public String[] getIncludePatterns(Project p) {
-		if (isReference()) {
-			return getRef(p).getIncludePatterns(p);
-		} else {
-			readFiles(p);
-			return makeArray(includeList, p);
-		}
-	}
-
-	/**
-	 * Performs a check for circular references and returns the
-	 * referenced <code>PatternSet</code>.
-	 * 
-	 * @return the referenced <code>PatternSet</code>
-	 * @param the target project
-	 */
-	private PatternSet getRef(Project p) {
-		if (!checked) {
-			Stack stk = new Stack();
-			stk.push(this);
-			dieOnCircularReference(stk, p);
-		}
-		
-		Object o = ref.getReferencedObject(p);
-		if (!(o instanceof PatternSet))
-			throw new BuildException(Policy.bind("exception.notAPatternSet",ref.getRefId()));
-		else
-			return (PatternSet) o;
-	}
-	
-	/**
-	 * Returns a boolean indicating whether this instance has any patterns.
-	 * 
-	 * @return a boolean indicating whether this instance has any patterns
-	 */
-	boolean hasPatterns() {
-		return incl != null || excl != null
-			|| includeList.size() > 0 || excludeList.size() > 0;
-	}
-	
-	/**
-	 * Returns a given vector of name entries as an array of strings.
-	 * 
-	 * @return a string array of name entries
-	 * @param list the original vector of name entries
-	 * @param p the target project
-	 */
-	private String[] makeArray(Vector list, Project p) {
-		if (list.size() == 0) return null;
-
-		Vector tmpNames = new Vector();
-		for (Enumeration e = list.elements() ; e.hasMoreElements() ;) {
-			NameEntry ne = (NameEntry)e.nextElement();
-			String pattern = ne.evalName(p);
-			if (pattern != null && pattern.length() > 0) {
-				tmpNames.addElement(pattern);
-			}
-		}
-
-		String result[] = new String[tmpNames.size()];
-		tmpNames.copyInto(result);
-		return result;
-	}
-	
-	/**
-	 * Reads includefile and excludefile if not already done.
-	 * 
-	 * @param p the target project
-	 */
-	private void readFiles(Project p) {
-		if (incl != null) {
-			readPatterns(incl, includeList, p);
-			incl = null;
-		}
-		if (excl != null) {
-			readPatterns(excl, excludeList, p);
-			excl = null;
+	String[] incl = other.getIncludePatterns(p);
+	if (incl != null) {
+		for (int i=0; i<incl.length; i++) {
+			createInclude().setName(incl[i]);
 		}
 	}
 	
-	/**
-	 * Reads path matching patterns from a file and adds them to the
-	 * includes or excludes list as appropriate.
-	 * 
-	 * @param patternfile the source file
-	 * @param patternlist the list of patterns
-	 * @param p the target project
-	 * @exception BuildException thrown if the file cannot be read
-	 */
-	private void readPatterns(File patternfile, Vector patternlist, Project p)
-		throws BuildException {
-		
-		try {
-			// Get a FileReader
-			BufferedReader patternReader = 
-				new BufferedReader(new FileReader(patternfile)); 
-		
-			// Create one NameEntry in the appropriate pattern list for each 
-			// line in the file.
-			String line = patternReader.readLine();
-			while (line != null) {
-				if (line.length() > 0) {
-					line = ProjectHelper.replaceProperties(p, line,
-														   p.getProperties());
-					addPatternToList(patternlist).setName(line);
-				}
-				line = patternReader.readLine();
-			}
-		} catch(IOException ioe)  {
-			throw new BuildException(Policy.bind("exception.patternFile",patternfile.toString()),ioe);
+	String[] excl = other.getExcludePatterns(p);
+	if (excl != null) {
+		for (int i=0; i<excl.length; i++) {
+			createExclude().setName(excl[i]);
 		}
+	}
+}
+
+/**
+ * Adds a name entry to the receiver's exclude list.
+ * 
+ * @return the new name entry
+ */
+public NameEntry createExclude() {
+	if (isReference()) {
+		throw noChildrenAllowed();
+	}
+	return addPatternToList(excludeList);
+}
+
+/**
+ * Adds a name entry to the receiver's include list.
+ * 
+ * @return the new name entry
+ */
+public NameEntry createInclude() {
+	if (isReference()) {
+		throw noChildrenAllowed();
+	}
+	return addPatternToList(includeList);
+}
+
+/**
+ * Returns the receiver's filtered exclude patterns.
+ * 
+ * @return the receiver's filtered exclude patterns.
+ * @param the target project
+ */
+public String[] getExcludePatterns(Project p) {
+	if (isReference()) {
+		return getRef(p).getExcludePatterns(p);
+	} else {
+		readFiles(p);
+		return makeArray(excludeList, p);
+	}
+}
+
+/**
+ * Returns the receiver's filtered include patterns.
+ * 
+ * @return the receiver's filtered include patterns.
+ * @param the target project
+ */
+public String[] getIncludePatterns(Project p) {
+	if (isReference()) {
+		return getRef(p).getIncludePatterns(p);
+	} else {
+		readFiles(p);
+		return makeArray(includeList, p);
+	}
+}
+
+/**
+ * Performs a check for circular references and returns the
+ * referenced <code>PatternSet</code>.
+ * 
+ * @return the referenced <code>PatternSet</code>
+ * @param the target project
+ */
+private PatternSet getRef(Project p) {
+	if (!checked) {
+		Stack stk = new Stack();
+		stk.push(this);
+		dieOnCircularReference(stk, p);
 	}
 	
-	/**
-	 * Sets the receiver's set of exclude patterns. Patterns may be separated by a comma
-	 * or a space.
-	 *
-	 * @param excludes the exclude patterns
-	 */
-	public void setExcludes(String excludes) {
-		if (isReference()) {
-			throw tooManyAttributes();
+	Object o = ref.getReferencedObject(p);
+	if (!(o instanceof PatternSet))
+		throw new BuildException(Policy.bind("exception.notAPatternSet",ref.getRefId()));
+	else
+		return (PatternSet) o;
+}
+
+/**
+ * Returns a boolean indicating whether this instance has any patterns.
+ * 
+ * @return a boolean indicating whether this instance has any patterns
+ */
+boolean hasPatterns() {
+	return incl != null || excl != null
+		|| includeList.size() > 0 || excludeList.size() > 0;
+}
+
+/**
+ * Returns a given vector of name entries as an array of strings.
+ * 
+ * @return a string array of name entries
+ * @param list the original vector of name entries
+ * @param p the target project
+ */
+private String[] makeArray(Vector list, Project p) {
+	if (list.size() == 0) return null;
+
+	Vector tmpNames = new Vector();
+	for (Enumeration e = list.elements() ; e.hasMoreElements() ;) {
+		NameEntry ne = (NameEntry)e.nextElement();
+		String pattern = ne.evalName(p);
+		if (pattern != null && pattern.length() > 0) {
+			tmpNames.addElement(pattern);
 		}
-		if (excludes != null && excludes.length() > 0) {
-			StringTokenizer tok = new StringTokenizer(excludes, ",", false);
-			while (tok.hasMoreTokens()) {
-				createExclude().setName(tok.nextToken());
+	}
+
+	String result[] = new String[tmpNames.size()];
+	tmpNames.copyInto(result);
+	return result;
+}
+
+/**
+ * Reads includefile and excludefile if not already done.
+ * 
+ * @param p the target project
+ */
+private void readFiles(Project p) {
+	if (incl != null) {
+		readPatterns(incl, includeList, p);
+		incl = null;
+	}
+	if (excl != null) {
+		readPatterns(excl, excludeList, p);
+		excl = null;
+	}
+}
+
+/**
+ * Reads path matching patterns from a file and adds them to the
+ * includes or excludes list as appropriate.
+ * 
+ * @param patternfile the source file
+ * @param patternlist the list of patterns
+ * @param p the target project
+ * @exception BuildException thrown if the file cannot be read
+ */
+private void readPatterns(File patternfile, Vector patternlist, Project p)
+	throws BuildException {
+	
+	try {
+		// Get a FileReader
+		BufferedReader patternReader = 
+			new BufferedReader(new FileReader(patternfile)); 
+	
+		// Create one NameEntry in the appropriate pattern list for each 
+		// line in the file.
+		String line = patternReader.readLine();
+		while (line != null) {
+			if (line.length() > 0) {
+				line = ProjectHelper.replaceProperties(p, line,
+													   p.getProperties());
+				addPatternToList(patternlist).setName(line);
 			}
+			line = patternReader.readLine();
+		}
+	} catch(IOException ioe)  {
+		throw new BuildException(Policy.bind("exception.patternFile",patternfile.toString()),ioe);
+	}
+}
+
+/**
+ * Sets the receiver's set of exclude patterns. Patterns may be separated by a comma
+ * or a space.
+ *
+ * @param excludes the exclude patterns
+ */
+public void setExcludes(String excludes) {
+	if (isReference()) {
+		throw tooManyAttributes();
+	}
+	if (excludes != null && excludes.length() > 0) {
+		StringTokenizer tok = new StringTokenizer(excludes, ",", false);
+		while (tok.hasMoreTokens()) {
+			createExclude().setName(tok.nextToken());
 		}
 	}
+}
 
-	/**
-	 * Sets the name of the file containing the excludes patterns.
-	 *
-	 * @param excl the file to retrieve the exclude patterns from
-	 * @exception BuildException thrown if the file does not exist
-	 */
-	public void setExcludesfile(File excl) throws BuildException {
-		 if (isReference())
-			 throw tooManyAttributes();
-		 if (!excl.exists())
-			 throw new BuildException(Policy.bind("exception.missingExcludesFile",excl.getAbsolutePath()));
-		 this.excl = excl;
+/**
+ * Sets the name of the file containing the excludes patterns.
+ *
+ * @param excl the file to retrieve the exclude patterns from
+ * @exception BuildException thrown if the file does not exist
+ */
+public void setExcludesfile(File excl) throws BuildException {
+	 if (isReference())
+		 throw tooManyAttributes();
+	 if (!excl.exists())
+		 throw new BuildException(Policy.bind("exception.missingExcludesFile",excl.getAbsolutePath()));
+	 this.excl = excl;
+}
+
+/**
+ * Sets the receiver's id.
+ * 
+ * @param value the id
+ */
+public void setId(String value) {
+}
+
+/**
+ * Sets the receiver's set of include patterns. Patterns may be separated by a comma
+ * or a space.
+ *
+ * @param includes the include patterns
+ */
+public void setIncludes(String includes) {
+	if (isReference()) {
+		throw tooManyAttributes();
 	}
-
-	/**
-	 * Sets the receiver's id.
-	 * 
-	 * @param value the id
-	 */
-	public void setId(String value) {
-	}
-
-	/**
-	 * Sets the receiver's set of include patterns. Patterns may be separated by a comma
-	 * or a space.
-	 *
-	 * @param includes the include patterns
-	 */
-	public void setIncludes(String includes) {
-		if (isReference()) {
-			throw tooManyAttributes();
+	if (includes != null && includes.length() > 0) {
+		StringTokenizer tok = new StringTokenizer(includes, ",", false);
+		while (tok.hasMoreTokens()) {
+			createInclude().setName(tok.nextToken());
 		}
-		if (includes != null && includes.length() > 0) {
-			StringTokenizer tok = new StringTokenizer(includes, ",", false);
-			while (tok.hasMoreTokens()) {
-				createInclude().setName(tok.nextToken());
-			}
-		}
 	}
+}
 
-	/**
-	 * Sets the name of the file containing the includes patterns.
-	 *
-	 * @param incl the file to retrieve the include patterns from
-	 * @exception BuildException thrown if the file does not exist
-	 */
-	public void setIncludesfile(File incl) throws BuildException {
-		 if (isReference())
-			 throw tooManyAttributes();
-		 if (!incl.exists())
-			 throw new BuildException(Policy.bind("exception.missingIncludesFile",incl.getAbsolutePath()));
-		 this.incl = incl;
-	}
+/**
+ * Sets the name of the file containing the includes patterns.
+ *
+ * @param incl the file to retrieve the include patterns from
+ * @exception BuildException thrown if the file does not exist
+ */
+public void setIncludesfile(File incl) throws BuildException {
+	 if (isReference())
+		 throw tooManyAttributes();
+	 if (!incl.exists())
+		 throw new BuildException(Policy.bind("exception.missingIncludesFile",incl.getAbsolutePath()));
+	 this.incl = incl;
+}
 
-	/**
-	 * Makes the receiver effectively a reference to another <code>PatternSet</code>
-	 * instance.
-	 *
-	 * <p>Once this element becomes a reference its internal attributes and nested elements
-	 * must not be modified.</p>
-	 * 
-	 * @param r the other <code>PatternSet</code>
-	 * @exception BuildException
-	 */
-	public void setRefid(Reference r) throws BuildException {
-		if (!includeList.isEmpty() || !excludeList.isEmpty()) {
-			throw tooManyAttributes();
-		}
-		super.setRefid(r);
+/**
+ * Makes the receiver effectively a reference to another <code>PatternSet</code>
+ * instance.
+ *
+ * <p>Once this element becomes a reference its internal attributes and nested elements
+ * must not be modified.</p>
+ * 
+ * @param r the other <code>PatternSet</code>
+ * @exception BuildException
+ */
+public void setRefid(Reference r) throws BuildException {
+	if (!includeList.isEmpty() || !excludeList.isEmpty()) {
+		throw tooManyAttributes();
 	}
+	super.setRefid(r);
+}
 }

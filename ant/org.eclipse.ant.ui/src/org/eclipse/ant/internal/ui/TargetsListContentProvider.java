@@ -21,29 +21,30 @@ public class TargetsListContentProvider implements IStructuredContentProvider {
 		instance = new TargetsListContentProvider();
 	}
 	
-	// private to ensure that it remains a singleton
-	private TargetsListContentProvider() {
-		super();
-	}
-	
-	public static TargetsListContentProvider getInstance() {
-		return instance;
-	}
-	
-	/**
-	 * Returns the targets found in the xml file after parsing.
-	 * 
-	 * @param groupName the name of the group
-	 * @return the array of the targets found
-	 */
-	public Object[] getElements(Object inputElement) {
-		EclipseProject project = (EclipseProject)inputElement;
-		return project.getTargets().values().toArray();
-	}
-	
-	public void dispose() {
-	}
-	
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
+// private to ensure that it remains a singleton
+private TargetsListContentProvider() {
+	super();
+}
+
+public static TargetsListContentProvider getInstance() {
+	return instance;
+}
+
+/**
+ * Returns the targets found in the xml file after parsing.
+ * 
+ * @param groupName the name of the group
+ * @return the array of the targets found
+ */
+public Object[] getElements(Object inputElement) {
+	EclipseProject project = (EclipseProject)inputElement;
+	return project.getTargets().values().toArray();
+}
+
+public void dispose() {
+}
+
+public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+}
+
 }

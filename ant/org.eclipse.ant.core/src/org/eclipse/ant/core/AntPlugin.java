@@ -78,99 +78,99 @@ public final class AntPlugin extends Plugin {
 	 */
 	public static final String NAME = "name";
 
-	/** 
-	 * Constructs an instance of this plug-in runtime class.
-	 * <p>
-	 * Instances of plug-in runtime classes are automatically created 
-	 * by the platform in the course of plug-in activation.
-	 * <b>No client or plug-in should ever explicitly instantiate
-	 * a plug-in runtime class</b>.
-	 * </p>
-	 * 
-	 * @param pluginDescriptor the plug-in descriptor for the
-	 *   Resources plug-in
-	 */
-	public AntPlugin(IPluginDescriptor pluginDescriptor) {
-		super(pluginDescriptor);
-		plugin = this;
-	}
+/** 
+ * Constructs an instance of this plug-in runtime class.
+ * <p>
+ * Instances of plug-in runtime classes are automatically created 
+ * by the platform in the course of plug-in activation.
+ * <b>No client or plug-in should ever explicitly instantiate
+ * a plug-in runtime class</b>.
+ * </p>
+ * 
+ * @param pluginDescriptor the plug-in descriptor for the
+ *   Resources plug-in
+ */
+public AntPlugin(IPluginDescriptor pluginDescriptor) {
+	super(pluginDescriptor);
+	plugin = this;
+}
 
-	/**
-	 * Returns the internal collection of object extensions.
-	 * 
-	 * @return the internal collection of object extensions
-	 */	
-	public Map getObjectExtensions() {
-		return objectExtensions;
-	}
-	
-	/**
-	 * Returns this plug-in.
-	 *
-	 * @return the single instance of this plug-in runtime class
-	 */
-	public static AntPlugin getPlugin() {
-		return plugin;
-	}
+/**
+ * Returns the internal collection of object extensions.
+ * 
+ * @return the internal collection of object extensions
+ */	
+public Map getObjectExtensions() {
+	return objectExtensions;
+}
 
-	/**
-	 * Returns the internal collection of task extensions.
-	 * 
-	 * @return the internal collection of task extensions
-	 */	
-	public Map getTaskExtensions() {
-		return taskExtensions;
-	}
+/**
+ * Returns this plug-in.
+ *
+ * @return the single instance of this plug-in runtime class
+ */
+public static AntPlugin getPlugin() {
+	return plugin;
+}
 
-	/**
-	 * Returns the internal collection of type extensions.
-	 * 
-	 * @return the internal collection of type extensions
-	 */	
-	public Map getTypeExtensions() {
-		return typeExtensions;
-	}
+/**
+ * Returns the internal collection of task extensions.
+ * 
+ * @return the internal collection of task extensions
+ */	
+public Map getTaskExtensions() {
+	return taskExtensions;
+}
 
-	/**
-	 * This implementation of the corresponding <code>Plugin</code> method
-	 * 
-	 * @exception CoreException if this method fails to shut down this plug-in
-	 */
-	public void shutdown() throws CoreException {
-	}
+/**
+ * Returns the internal collection of type extensions.
+ * 
+ * @return the internal collection of type extensions
+ */	
+public Map getTypeExtensions() {
+	return typeExtensions;
+}
 
-	/**
-	 * This implementation of the corresponding <code>Plugin</code> method
-	 * 
-	 * @exception CoreException if this plug-in did not start up properly
-	 */
-	public void startup() throws CoreException {
-		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTASKS);
-		if (extensionPoint != null) {
-			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-			taskExtensions = new HashMap(extensions.length);
-			for (int i = 0; i < extensions.length; i++) {
-				String name = extensions[i].getAttribute(NAME);
-				taskExtensions.put(name, extensions[i]);
-			}
-		}
-		extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTYPES);
-		if (extensionPoint != null) {
-			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-			typeExtensions = new HashMap(extensions.length);
-			for (int i = 0; i < extensions.length; i++) {
-				String name = extensions[i].getAttribute(NAME);
-				typeExtensions.put(name, extensions[i]);
-			}
-		}
-		extensionPoint = getDescriptor().getExtensionPoint(PT_ANTOBJECTS);
-		if (extensionPoint != null) {
-			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-			objectExtensions = new HashMap(extensions.length);
-			for (int i = 0; i < extensions.length; i++) {
-				String name = extensions[i].getAttribute(NAME);
-				objectExtensions.put(name, extensions[i]);
-			}
+/**
+ * This implementation of the corresponding <code>Plugin</code> method
+ * 
+ * @exception CoreException if this method fails to shut down this plug-in
+ */
+public void shutdown() throws CoreException {
+}
+
+/**
+ * This implementation of the corresponding <code>Plugin</code> method
+ * 
+ * @exception CoreException if this plug-in did not start up properly
+ */
+public void startup() throws CoreException {
+	IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTASKS);
+	if (extensionPoint != null) {
+		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+		taskExtensions = new HashMap(extensions.length);
+		for (int i = 0; i < extensions.length; i++) {
+			String name = extensions[i].getAttribute(NAME);
+			taskExtensions.put(name, extensions[i]);
 		}
 	}
+	extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTYPES);
+	if (extensionPoint != null) {
+		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+		typeExtensions = new HashMap(extensions.length);
+		for (int i = 0; i < extensions.length; i++) {
+			String name = extensions[i].getAttribute(NAME);
+			typeExtensions.put(name, extensions[i]);
+		}
+	}
+	extensionPoint = getDescriptor().getExtensionPoint(PT_ANTOBJECTS);
+	if (extensionPoint != null) {
+		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+		objectExtensions = new HashMap(extensions.length);
+		for (int i = 0; i < extensions.length; i++) {
+			String name = extensions[i].getAttribute(NAME);
+			objectExtensions.put(name, extensions[i]);
+		}
+	}
+}
 }

@@ -89,197 +89,196 @@ public class EclipseAnt extends Ant {
 	private Vector properties = new Vector();
 	private Project p1;
 
-	/**
-	 * Creates and returns a new <code>Property</code> for the receiver's
-	 * target project.
-	 * 
-	 * @return the new property
-	 */
-	public Property createProperty() {
+/**
+ * Creates and returns a new <code>Property</code> for the receiver's
+ * target project.
+ * 
+ * @return the new property
+ */
+public Property createProperty() {
+	if (p1 == null) {
+		reinit();
+	}
+
+	Property p=(Property)p1.createTask("property");
+	p.setUserProperty(true);
+	properties.addElement( p );
+	return p;
+}
+
+/**
+ * Performs the execution.
+ * 
+ * @exception BuildException thrown if an execution problem occurs
+ */
+public void execute() throws BuildException {
+	try {
 		if (p1 == null) {
 			reinit();
 		}
-
-		Property p=(Property)p1.createTask("property");
-		p.setUserProperty(true);
-		properties.addElement( p );
-		return p;
-	}
 	
-	/**
-	 * Performs the execution.
-	 * 
-	 * @exception BuildException thrown if an execution problem occurs
-	 */
-	public void execute() throws BuildException {
-		try {
-			if (p1 == null) {
-				reinit();
-			}
+		if (dir == null) 
+			dir = project.getBaseDir();
+
+		initializeProject();
+
+		p1.setBaseDir(dir);
+		p1.setUserProperty("basedir" , dir.getAbsolutePath());
 		
-			if (dir == null) 
-				dir = project.getBaseDir();
-
-			initializeProject();
-
-			p1.setBaseDir(dir);
-			p1.setUserProperty("basedir" , dir.getAbsolutePath());
-			
-			// Override with local-defined properties
-			Enumeration e = properties.elements();
-			while (e.hasMoreElements()) {
-				Property p=(Property) e.nextElement();
-				p.execute();
-			}
-			
-			if (antFile == null) 
-				antFile = DEFAULT_ANTFILE;
-
-			File file = new File(antFile);
-			if (!file.isAbsolute()) {
-				antFile = (new File(dir, antFile)).getAbsolutePath();
-				file = (new File(antFile)) ;
-				if(!file.isFile() ) {
-				  throw new BuildException(Policy.bind("exception.buildFileNotFound",file.toString()));
-				}
-			}
-
-			p1.setUserProperty("ant.file", antFile );
-			ProjectHelper.configureProject(p1, new File(antFile));
-			
-			if (target == null) {
-				target = p1.getDefaultTarget();
-			}
-
-			// Are we trying to call the target in which we are defined?
-			if (p1.getBaseDir().equals(project.getBaseDir()) &&
-				p1.getProperty("ant.file").equals(project.getProperty("ant.file")) &&
-				target.equals(this.getOwningTarget().getName())) { 
-
-				throw new BuildException(Policy.bind("exception.antTaskCallingParentTarget"));
-			}
-
-			p1.executeTarget(target);
-		} finally {
-			// help the gc
-			p1 = null;
-		}
-	}
-	
-	/**
-	 * Initializes the receiver.
-	 */
-	public void init() {
-		p1 = new Project();
-		p1.setJavaVersionProperty();
-		p1.addTaskDefinition("property", 
-							 (Class)project.getTaskDefinitions().get("property"));
-	}
-	
-	/**
-	 * Initializes the target project.
-	 */
-	private void initializeProject() {
-		Vector listeners = project.getBuildListeners();
-		for (int i = 0; i < listeners.size(); i++) {
-			p1.addBuildListener((BuildListener)listeners.elementAt(i));
-		}
-
-		if (output != null) {
-			try {
-				PrintStream out = new PrintStream(new FileOutputStream(output));
-				DefaultLogger logger = new DefaultLogger();
-				logger.setMessageOutputLevel(Project.MSG_INFO);
-				logger.setOutputPrintStream(out);
-				logger.setErrorPrintStream(out);
-				p1.addBuildListener(logger);
-			}
-			catch(IOException ex) {
-				log(Policy.bind("exception.cannotSetOutput",output));
-			}
-		}
-
-		Hashtable taskdefs = project.getTaskDefinitions();
-		Enumeration et = taskdefs.keys();
-		while (et.hasMoreElements()) {
-			String taskName = (String) et.nextElement();
-			Class taskClass = (Class) taskdefs.get(taskName);
-			p1.addTaskDefinition(taskName, taskClass);
-		}
-
-		Hashtable typedefs = project.getDataTypeDefinitions();
-		Enumeration e = typedefs.keys();
+		// Override with local-defined properties
+		Enumeration e = properties.elements();
 		while (e.hasMoreElements()) {
-			String typeName = (String) e.nextElement();
-			Class typeClass = (Class) typedefs.get(typeName);
-			p1.addDataTypeDefinition(typeName, typeClass);
+			Property p=(Property) e.nextElement();
+			p.execute();
+		}
+		
+		if (antFile == null) 
+			antFile = DEFAULT_ANTFILE;
+
+		File file = new File(antFile);
+		if (!file.isAbsolute()) {
+			antFile = (new File(dir, antFile)).getAbsolutePath();
+			file = (new File(antFile)) ;
+			if(!file.isFile() ) {
+			  throw new BuildException(Policy.bind("exception.buildFileNotFound",file.toString()));
+			}
 		}
 
-		// set user-define properties
-		Hashtable prop1 = project.getProperties();
-		e = prop1.keys();
-		while (e.hasMoreElements()) {
-			String arg = (String) e.nextElement();
-			String value = (String) prop1.get(arg);
-			p1.setProperty(arg, value);
+		p1.setUserProperty("ant.file", antFile );
+		ProjectHelper.configureProject(p1, new File(antFile));
+		
+		if (target == null) {
+			target = p1.getDefaultTarget();
 		}
-	}
-	
-	/**
-	 * Reinitializes the receiver.
-	 */
-	private void reinit() {
-		init();
-		for (int i=0; i<properties.size(); i++) {
-			Property p = (Property) properties.elementAt(i);
-			Property newP = (Property) p1.createTask("property");
-			newP.setName(p.getName());
-			if (p.getValue() != null) {
-				newP.setValue(p.getValue());
-			}
-			if (p.getFile() != null) {
-				newP.setFile(p.getFile());
-			} 
-			if (p.getResource() != null) {
-				newP.setResource(p.getResource());
-			}
-			properties.setElementAt(newP, i);
+
+		// Are we trying to call the target in which we are defined?
+		if (p1.getBaseDir().equals(project.getBaseDir()) &&
+			p1.getProperty("ant.file").equals(project.getProperty("ant.file")) &&
+			target.equals(this.getOwningTarget().getName())) { 
+
+			throw new BuildException(Policy.bind("exception.antTaskCallingParentTarget"));
 		}
+
+		p1.executeTarget(target);
+	} finally {
+		// help the gc
+		p1 = null;
 	}
-	
-	/**
-	 * Sets the receiver's target <b>Ant</b> file.
-	 * 
-	 * @param s the <b>Ant</b> file location
-	 */
-	public void setAntfile(String s) {
-		this.antFile = s;
-	}
-	
-	/**
-	 * Sets the receiver's target directory.
-	 * 
-	 * @param s the target directory
-	 */
-	public void setDir(File d) {
-		this.dir = d;
+}
+
+/**
+ * Initializes the receiver.
+ */
+public void init() {
+	p1 = new Project();
+	p1.setJavaVersionProperty();
+	p1.addTaskDefinition("property", 
+						 (Class)project.getTaskDefinitions().get("property"));
+}
+
+/**
+ * Initializes the target project.
+ */
+private void initializeProject() {
+	Vector listeners = project.getBuildListeners();
+	for (int i = 0; i < listeners.size(); i++) {
+		p1.addBuildListener((BuildListener)listeners.elementAt(i));
 	}
 
-	/**
-	 * Sets the receiver's output destination.
-	 * 
-	 * @param s the output destination
-	 */
-	public void setOutput(String s) {
-		this.output = s;
+	if (output != null) {
+		try {
+			PrintStream out = new PrintStream(new FileOutputStream(output));
+			DefaultLogger logger = new DefaultLogger();
+			logger.setMessageOutputLevel(Project.MSG_INFO);
+			logger.setOutputPrintStream(out);
+			logger.setErrorPrintStream(out);
+			p1.addBuildListener(logger);
+		} catch(IOException ex) {
+			log(Policy.bind("exception.cannotSetOutput",output));
+		}
 	}
-	
-	/**
-	 * Sets the receiver's <b>Ant</b> target to invoke.
-	 * 
-	 * @param s the <b>Ant</b> target to invoke
-	 */
-	public void setTarget(String s) {
-		this.target = s;
+
+	Hashtable taskdefs = project.getTaskDefinitions();
+	Enumeration et = taskdefs.keys();
+	while (et.hasMoreElements()) {
+		String taskName = (String) et.nextElement();
+		Class taskClass = (Class) taskdefs.get(taskName);
+		p1.addTaskDefinition(taskName, taskClass);
 	}
+
+	Hashtable typedefs = project.getDataTypeDefinitions();
+	Enumeration e = typedefs.keys();
+	while (e.hasMoreElements()) {
+		String typeName = (String) e.nextElement();
+		Class typeClass = (Class) typedefs.get(typeName);
+		p1.addDataTypeDefinition(typeName, typeClass);
+	}
+
+	// set user-define properties
+	Hashtable prop1 = project.getProperties();
+	e = prop1.keys();
+	while (e.hasMoreElements()) {
+		String arg = (String) e.nextElement();
+		String value = (String) prop1.get(arg);
+		p1.setProperty(arg, value);
+	}
+}
+
+/**
+ * Reinitializes the receiver.
+ */
+private void reinit() {
+	init();
+	for (int i=0; i<properties.size(); i++) {
+		Property p = (Property) properties.elementAt(i);
+		Property newP = (Property) p1.createTask("property");
+		newP.setName(p.getName());
+		if (p.getValue() != null) {
+			newP.setValue(p.getValue());
+		}
+		if (p.getFile() != null) {
+			newP.setFile(p.getFile());
+		} 
+		if (p.getResource() != null) {
+			newP.setResource(p.getResource());
+		}
+		properties.setElementAt(newP, i);
+	}
+}
+
+/**
+ * Sets the receiver's target <b>Ant</b> file.
+ * 
+ * @param s the <b>Ant</b> file location
+ */
+public void setAntfile(String s) {
+	this.antFile = s;
+}
+
+/**
+ * Sets the receiver's target directory.
+ * 
+ * @param s the target directory
+ */
+public void setDir(File d) {
+	this.dir = d;
+}
+
+/**
+ * Sets the receiver's output destination.
+ * 
+ * @param s the output destination
+ */
+public void setOutput(String s) {
+	this.output = s;
+}
+
+/**
+ * Sets the receiver's <b>Ant</b> target to invoke.
+ * 
+ * @param s the <b>Ant</b> target to invoke
+ */
+public void setTarget(String s) {
+	this.target = s;
+}
 }
