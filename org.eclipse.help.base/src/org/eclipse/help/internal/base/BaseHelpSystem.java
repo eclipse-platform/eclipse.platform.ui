@@ -159,10 +159,7 @@ public final class BaseHelpSystem {
 			HelpBasePlugin.getDefault().getLog().log(
 				new Status(
 					IStatus.ERROR,
-					HelpBasePlugin
-						.getDefault()
-						.getDescriptor()
-						.getUniqueIdentifier(),
+					HelpBasePlugin.PLUGIN_ID,
 					0,
 					HelpBaseResources.getString("E005"),
 					e));
@@ -242,9 +239,8 @@ public final class BaseHelpSystem {
 	private static String getWebappPlugin() {
 
 		// get the webapp extension from the system plugin registry
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IExtensionPoint point =
-			pluginRegistry.getExtensionPoint(WEBAPP_EXTENSION_ID);
+			Platform.getExtensionRegistry().getExtensionPoint(WEBAPP_EXTENSION_ID);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
 			if (extensions.length != 0) {
@@ -258,16 +254,14 @@ public final class BaseHelpSystem {
 					if (defaultValue == null || defaultValue.equals("false")) {
 						return elements[i]
 							.getDeclaringExtension()
-							.getDeclaringPluginDescriptor()
-							.getUniqueIdentifier();
+							.getNamespace();
 					}
 				}
 				// if reached this point, then then pick the first (default) webapp
 				if (elements.length > 0)
 					return elements[0]
 						.getDeclaringExtension()
-						.getDeclaringPluginDescriptor()
-						.getUniqueIdentifier();
+						.getNamespace();
 			}
 		}
 
