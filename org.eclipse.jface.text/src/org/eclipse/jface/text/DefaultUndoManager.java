@@ -163,9 +163,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @since 3.1
 		 */
 		public boolean canRedo() {
-			if (fCurrent != this && fCurrent.isValid())
-				return false;
-		    return isConnected();
+		    return isConnected() &&  !(fCurrent != this && fCurrent.isValid());
 		}
 
 		/*
@@ -1136,7 +1134,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @see org.eclipse.jface.text.IUndoManager#connect(org.eclipse.jface.text.ITextViewer)
 	 */
 	public void connect(ITextViewer textViewer) {
-		if (fTextViewer == null && textViewer != null) {
+		if (!isConnected() && textViewer != null) {
 			fTextViewer= textViewer;
 		    if (fUndoContext == null)
 		        fUndoContext= new ObjectUndoContext(this);
@@ -1162,10 +1160,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			removeListeners();
 			
 			fCurrent= null;
+			fTextViewer= null;
 			disposeCommandStack();
 			fTextBuffer= null;
 			fPreservedTextBuffer= null;
-			fTextViewer= null;
 			fUndoContext= null;
 		}
 	}
