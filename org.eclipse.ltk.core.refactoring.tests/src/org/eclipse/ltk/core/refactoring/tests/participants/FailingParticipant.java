@@ -22,7 +22,8 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 public class FailingParticipant extends RenameParticipant {
 
 	public static class Exception extends RuntimeException {
-	};
+		private static final long serialVersionUID= 1L;
+	}
 	
 	/**
 	 * {@inheritDoc}

@@ -23,7 +23,8 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 public class FailingParticipant2 extends RenameParticipant {
 
 	public static class Exception extends RuntimeException {
-	};
+		private static final long serialVersionUID= 1L;
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -51,7 +52,7 @@ public class FailingParticipant2 extends RenameParticipant {
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return new NullChange() {
-			public Change perform(IProgressMonitor pm) throws CoreException {
+			public Change perform(IProgressMonitor monitor) throws CoreException {
 				throw new Exception();
 			}
 		};

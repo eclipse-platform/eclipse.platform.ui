@@ -43,8 +43,8 @@ public class ChangeExceptionHandler {
 	private String fName;
 	
 	private static class RefactorErrorDialog extends ErrorDialog {
-		public RefactorErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask) {
-			super(parentShell, dialogTitle, message, status, displayMask);
+		public RefactorErrorDialog(Shell parentShell, String dialogTitle, String dialogMessage, IStatus status, int displayMask) {
+			super(parentShell, dialogTitle, dialogMessage, status, displayMask);
 		}
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
