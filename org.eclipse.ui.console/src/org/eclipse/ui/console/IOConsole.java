@@ -341,6 +341,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      */
     public void partitionerFinished() {
         partitionerFinished = true;
+        if (matchJob != null) {
+            matchJob.schedule();
+        }
     }
     
     /**
@@ -468,7 +471,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
      */
     public void documentChanged(DocumentEvent event) {
-    	if (event.getOffset() == 0 && event.getLength() == 0) {
+    	if (event.getOffset() == 0 && event.getText().length() == 0) {
     		// buffer has been emptied, reset match listeners
     		synchronized (patterns) {
     			Iterator iter = patterns.iterator();
