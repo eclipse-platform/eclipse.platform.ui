@@ -68,7 +68,8 @@ public class SearchResultsManager implements ISearchResultManager {
 		}
 		Iterator listeners= copiedListeners.iterator();
 		while (listeners.hasNext()) {
-			((ISearchResultManagerListener) listeners.next()).searchResultAdded(search);
+			ISearchResultManagerListener l= (ISearchResultManagerListener) listeners.next();
+			l.searchResultAdded(search);
 		}
 	}
 
@@ -77,9 +78,10 @@ public class SearchResultsManager implements ISearchResultManager {
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
 		}
-		Iterator listeners= fListeners.iterator();
+		Iterator listeners= copiedListeners.iterator();
 		while (listeners.hasNext()) {
-			((ISearchResultManagerListener) listeners.next()).searchResultRemoved(search);
+			ISearchResultManagerListener l= (ISearchResultManagerListener) listeners.next();
+			l.searchResultRemoved(search);
 		}
 	}
 
@@ -87,10 +89,10 @@ public class SearchResultsManager implements ISearchResultManager {
 		Set copiedSearches= new HashSet();
 		synchronized (fSearches) {
 			copiedSearches.addAll(fSearches);
+			fSearches.clear();
 			Iterator iter= copiedSearches.iterator();
 			while (iter.hasNext()) {
 				ISearchResult element= (ISearchResult) iter.next();
-				fSearches.remove(element);
 				fireRemoved(element);
 			}
 		}

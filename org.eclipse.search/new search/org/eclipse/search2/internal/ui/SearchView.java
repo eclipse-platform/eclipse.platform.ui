@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
@@ -113,6 +114,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 
 	
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
+		 */
+		public void init(IPageSite pageSite) {
+			// TODO Auto-generated method stub
+			super.init(pageSite);
+			getSite().setSelectionProvider(null);
+		}
 	}
 
 	public SearchView() {
@@ -262,6 +271,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			showSearchResult(null);
 			partActivated(fDefaultPart);
 		}
+		fSearchViewStates.remove(search);
 	}
 
 	public void searchResultChanged(SearchResultEvent e) {

@@ -281,7 +281,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 
 	private ISearchResult disconnectViewer() {
-		return (ISearchResult) fViewer.getInput();
+		ISearchResult result= (ISearchResult) fViewer.getInput();
+		fViewer.setInput(null);
+		return result;
 	}
 	
 	protected StructuredViewer getViewer() {
@@ -392,7 +394,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
-		disconnectViewer();
+		//disconnectViewer();
 		super.dispose();
 	}
 
