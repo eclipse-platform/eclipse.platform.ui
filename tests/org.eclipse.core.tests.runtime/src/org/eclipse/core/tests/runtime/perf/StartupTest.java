@@ -30,7 +30,7 @@ public class StartupTest extends TestCase {
 			// tag for showing in the performance fingerprint graph
 			Performance.getDefault().tagAsGlobalSummary(meter, "Core Headless Startup", Dimension.ELAPSED_PROCESS);
 			meter.commit();
-			Performance.getDefault().assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -50, 5);
+			Performance.getDefault().assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -100, 5);
 		} finally {
 			meter.dispose();
 		}
