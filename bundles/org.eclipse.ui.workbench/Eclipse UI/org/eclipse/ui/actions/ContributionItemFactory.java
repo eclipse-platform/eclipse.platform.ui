@@ -112,7 +112,7 @@ public abstract class ContributionItemFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			IContributionItem item = new SwitchToWindowMenu(window, getId(), false);
+			IContributionItem item = new SwitchToWindowMenu(window, getId(), true);
 			return item;
 		}
 	};
