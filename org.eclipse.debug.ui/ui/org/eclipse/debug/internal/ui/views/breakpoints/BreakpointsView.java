@@ -123,6 +123,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		    private boolean isFullyExpanded(Object element, ITreeContentProvider provider) {
 		    	Object elementParent= provider.getParent(element);
 		    	if (elementParent == null || elementParent == getRoot()) {
+		    	    if (element instanceof IBreakpoint) {
+		    	        // Breakpoint at the top level counts as "expanded" for our purposes
+		    	        return true;
+		    	    }
 		    		return getExpandedState(element);
 		    	}
 		    	boolean parentExpanded= getExpandedState(elementParent);
