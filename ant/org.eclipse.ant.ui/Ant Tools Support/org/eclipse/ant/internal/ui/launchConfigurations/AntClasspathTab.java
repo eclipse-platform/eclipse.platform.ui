@@ -69,7 +69,9 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	private void createChangeClasspath(Composite top) {
 		Font font= top.getFont();
 		Composite changeClasspath = new Composite(top, SWT.NONE);
-		changeClasspath.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan=2;
+		changeClasspath.setLayoutData(gd);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
