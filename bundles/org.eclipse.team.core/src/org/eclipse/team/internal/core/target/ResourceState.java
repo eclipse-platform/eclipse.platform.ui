@@ -17,8 +17,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -28,6 +33,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -460,5 +466,191 @@ public abstract class ResourceState {
 	private ResourceState getParent() throws TeamException {
 		TargetProvider provider = TargetManager.getProvider(localResource.getProject());
 		return ((SynchronizedTargetProvider)provider).newState(localResource.getParent());
+	}
+	
+	/**
+	 * Get the resource corresponding to the receiver to the specified depth.
+	 */
+	protected final void get(int depth, IProgressMonitor progress) throws TeamException {
+
+		progress = Policy.monitorFor(progress);
+		progress.beginTask(null, 100);
+		try {
+			IResource localResource = getLocal();
+			
+			// If remote does not exist then simply ensure no local resource exists.
+			if (!hasRemote(Policy.subMonitorFor(progress, 10))) {
+				deleteLocal(Policy.subMonitorFor(progress, 90));
+				return;
+			}
+			
+			// If the remote resource is a file.
+			if (getRemoteType() == IResource.FILE) {
+				// Replace any existing local resource with a copy of the remote file.
+				deleteLocal(Policy.subMonitorFor(progress, 10));
+				download(Policy.subMonitorFor(progress, 90));
+				return;
+			}
+			
+			// The remote resource is a container.
+			
+			// If the local resource is a file, we must remove it first.
+			if (localResource.getType() == IResource.FILE)
+				deleteLocal(Policy.subMonitorFor(progress, 5)); // May not exist.
+			
+			// If the local resource does not exist then it is created as a container.
+			if (!localResource.exists()) {
+				// Create a corresponding local directory.
+				mkLocalDirs(Policy.subMonitorFor(progress, 5));
+			}
+			
+			// Finally, resolve the collection membership based upon the depth parameter.
+			switch (depth) {
+				case IResource.DEPTH_ZERO :
+					// If we are not considering members of the collection then we are done.
+					return;
+				case IResource.DEPTH_ONE :
+					// If we are considering only the immediate members of the collection
+					getFolderShallow(Policy.subMonitorFor(progress, 90));
+					return;
+				case IResource.DEPTH_INFINITE :
+					// We are going in deep.
+					getFolderDeep(Policy.subMonitorFor(progress, 90));
+					return;
+				default :
+					// We have covered all the legal cases.
+					Assert.isLegal(false);
+					return; // Never reached.
+			} // end switch
+		} finally {
+			progress.done();
+		}
+	}
+	
+	/**
+	 * Get the folder resource represented by the receiver deeply.
+	 */
+	protected final void getFolderDeep(IProgressMonitor progress) throws TeamException {
+
+		// Could throw if problem getting the folder at this level.
+		ResourceState[] childFolders = getFolderShallow(progress);
+
+		// If there are no further children then we are done.
+		if (childFolders.length == 0)
+			return;
+
+		// Collect the responses in the multistatus.
+		for (int i = 0; i < childFolders.length; i++)
+			childFolders[i].get(IResource.DEPTH_INFINITE, progress);
+
+		return;
+	}
+	
+	/**
+	 * Synchronize from the remote provider to the workspace.
+	 * Assume that the 'remote' folder is correct, and change the local
+	 * folder to look like the remote folder.
+	 * 
+	 * returns an array of children of the remote resource that are themselves
+	 * collections.
+	 */
+	protected final ResourceState[] getFolderShallow(IProgressMonitor progress) throws TeamException {
+
+		// We are assuming that the resource is a container.
+		Assert.isLegal(getLocal() instanceof IContainer);
+		IContainer localContainer = (IContainer)getLocal();
+
+		// Get list of all _remote_ children.
+		ResourceState[] remoteChildren = getRemoteChildren();
+
+		// This will be the list of remote children that are themselves containers.
+		Set remoteChildFolders = new HashSet();
+
+		// Make a list of _local_ children that have not yet been processed,
+		IResource[] localChildren = getLocalChildren();
+		Set surplusLocalChildren = new HashSet(localChildren.length);
+		surplusLocalChildren.addAll(Arrays.asList(localChildren));
+
+		// For each remote child that is a file, make the local file content equivalent.
+		for (int i = 0; i < remoteChildren.length; i++) {
+			ResourceState remoteChildState = remoteChildren[i];
+			// If the remote child is a container add it to the list, and ensure that the local child
+			// is a folder if it exists.
+			if (remoteChildState.getRemoteType() == IResource.FILE) {
+				// The remote resource is a file.  Copy the content of the remote file
+				// to the local file, overwriting any existing content that may exist, and
+				// creating the file if it doesn't.
+				remoteChildState.download(progress);
+				// Remember that we have processed this child.
+				surplusLocalChildren.remove(remoteChildState.getLocal());
+			} else {
+				// The remote resource is a container.
+				remoteChildFolders.add(remoteChildState);
+				// If the local child is not a container then it must be deleted.
+				IResource localChild = remoteChildState.getLocal();
+				if (localChild.exists() && (!(localChild instanceof IContainer)))
+					remoteChildState.deleteLocal(progress);
+			} // end if
+		} // end for
+
+		// Remove each local child that does not have a corresponding remote resource.
+		TargetProvider provider = TargetManager.getProvider(localContainer.getProject());
+		Iterator childrenItr = surplusLocalChildren.iterator();
+		while (childrenItr.hasNext()) {
+			IResource unseenChild = (IResource) childrenItr.next();
+			((SynchronizedTargetProvider)provider).newState(unseenChild).deleteLocal(progress);
+		} // end-while
+
+		// Answer the array of children seen on the remote collection that are
+		// themselves collections (to support depth operations).
+		return (ResourceState[]) remoteChildFolders.toArray(
+			new ResourceState[remoteChildFolders.size()]);
+	}
+
+	/**
+	 * Delete the local resource represented by the resource state.  Do not complain if the resource does not exist.
+	 */
+	protected final void deleteLocal(IProgressMonitor progress) throws TeamException {
+		try {
+			getLocal().delete(IResource.KEEP_HISTORY, progress);
+			removeState();
+		} catch (CoreException exception) {
+			throw TeamPlugin.wrapException(exception);
+		}
+	}
+	
+	/**
+	 * Make local directories matching the description of the local resource state.
+	 * XXX There has to be a better way.
+	 */
+	protected final void mkLocalDirs(IProgressMonitor progress) throws TeamException {	
+		try {
+			IResource resource = getLocal();
+			if (resource.getType() == IResource.FOLDER) {
+				((IFolder)resource).create(false /* force */, true /* make local */, progress);
+				// Mark the folders as having a base
+				storeState();
+			}
+		} catch (CoreException exception) {
+			// The creation failed.
+			throw TeamPlugin.wrapException(exception);
+		}
+	}
+	
+	/**
+	 * Get an array of local children of the given container, or an empty array if the
+	 * container does not exist or has no children.
+	 */
+	protected final IResource[] getLocalChildren() throws TeamException {
+		// We are assuming that the resource is a container.
+		Assert.isLegal(getLocal() instanceof IContainer);
+		IContainer container = (IContainer)getLocal();
+		if (container.exists())
+			try {
+				return container.members();
+			} catch (CoreException exception) {
+				throw TeamPlugin.wrapException(exception);
+			}
+		return new IResource[0];
 	}
 }

@@ -128,8 +128,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		throws TeamException {
 		execute(new IIterativeOperation() {
 			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
-				ResourceState state = getState(resource);
-				new Symmetria().get(state, depth, progress);
+				getState(resource).get(depth, progress);
 			}
 		}, resources, depth, progress);
 	}
@@ -144,8 +143,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		throws TeamException {
 		execute(new IIterativeOperation() {
 			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
-				ResourceState state = getState(resource, remote);
-				new Symmetria().get(state, IResource.DEPTH_INFINITE, progress);
+				getState(resource, remote).get(IResource.DEPTH_INFINITE, progress);
 			}
 		}, new IResource[] {resource}, IResource.DEPTH_ZERO, progress);
 	}
