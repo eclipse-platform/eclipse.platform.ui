@@ -49,9 +49,8 @@ private void performTestRecursiveLoop(Object[][] inputs, Object[] args, int nth)
 	for (int i = 0; i < inputs[nth].length; i++) {
 		args[nth] = inputs[nth][i];
 		if (nth == inputs.length - 1) {
-			if (name.equals("IResourceTest.testDelete") && count==98) {
-				System.out.println("Break");
-			}
+			// breakpoint goes here, may be conditional on name and count, e.g.:
+			// name.equals("IResourceTest.testMove") && count==2886
 			if (shouldFail(args, count)) {
 				try {
 					invokeMethod(args, count);
