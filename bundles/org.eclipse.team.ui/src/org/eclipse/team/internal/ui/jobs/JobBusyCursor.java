@@ -49,6 +49,7 @@ public class JobBusyCursor implements IJobListener {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				synchronized (this) {
+					if (cursor != null && cursor.isDisposed()) return;
 					setCursorDeep(cursor, getComposite());
 				}
 			}
