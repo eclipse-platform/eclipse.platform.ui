@@ -225,7 +225,7 @@ public class Messages extends NLS {
 	public static String projRead_whichValue;
 
 	public static String properties_conversionFailed;
-	public static String properties_conversionSucceded;	
+	public static String properties_conversionSucceeded;	
 	public static String properties_couldNotClose;
 	public static String properties_couldNotDeleteProp;
 	public static String properties_couldNotReadProp;

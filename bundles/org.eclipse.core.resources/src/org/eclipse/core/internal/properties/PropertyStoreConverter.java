@@ -90,7 +90,7 @@ public class PropertyStoreConverter {
 			return Status.OK_STATUS;
 		// conversion actually happened, and everything went fine
 		// leave a note to the user so this does not happen silently			
-		String conversionOk = Messages.properties_conversionSucceded;
+		String conversionOk = Messages.properties_conversionSucceeded;
 		return new Status(IStatus.INFO, ResourcesPlugin.PI_RESOURCES, IStatus.OK, conversionOk, null);
 	}
 }
