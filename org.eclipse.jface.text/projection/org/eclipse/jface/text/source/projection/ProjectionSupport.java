@@ -34,8 +34,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Supports the configuration of projection capabilities for projection viewers.
- * <p>
- * API in progress. Do not yet use.
  * 
  * @since 3.0
  */
@@ -76,33 +74,39 @@ public class ProjectionSupport {
 		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
 		 */
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
-			if (gc != null && annotation instanceof ProjectionAnnotation) {
+			if (annotation instanceof ProjectionAnnotation) {
 				ProjectionAnnotation projectionAnnotation= (ProjectionAnnotation) annotation;
 				if (projectionAnnotation.isCollapsed()) {
 					
-					StyledTextContent content= textWidget.getContent();
-					int line= content.getLineAtOffset(offset);
-					int lineStart= content.getOffsetAtLine(line);
-					String text= content.getLine(line);
-					int lineLength= text == null ? 0 : text.length();
-					int lineEnd= lineStart + lineLength;
-					Point p= textWidget.getLocationAtOffset(lineEnd);
-					
-					Color c= gc.getForeground();
-					gc.setForeground(color);
-					
-					FontMetrics metrics= gc.getFontMetrics();
-					int lineHeight= metrics.getHeight();
-					int verticalMargin= lineHeight/10;
-					int height= lineHeight - 2*verticalMargin;
-					int width= metrics.getAverageCharWidth();
-					gc.drawRectangle(p.x, p.y + verticalMargin, width, height);
-					int third= width/3;
-					int dotsVertical= p.y + metrics.getLeading() + metrics.getAscent();
-					gc.drawPoint(p.x + third, dotsVertical);
-					gc.drawPoint(p.x + 2*third, dotsVertical);
-					
-					gc.setForeground(c);
+					if (gc != null) {
+						
+						StyledTextContent content= textWidget.getContent();
+						int line= content.getLineAtOffset(offset);
+						int lineStart= content.getOffsetAtLine(line);
+						String text= content.getLine(line);
+						int lineLength= text == null ? 0 : text.length();
+						int lineEnd= lineStart + lineLength;
+						Point p= textWidget.getLocationAtOffset(lineEnd);
+						
+						Color c= gc.getForeground();
+						gc.setForeground(color);
+						
+						FontMetrics metrics= gc.getFontMetrics();
+						int lineHeight= metrics.getHeight();
+						int verticalMargin= lineHeight/10;
+						int height= lineHeight - 2*verticalMargin;
+						int width= metrics.getAverageCharWidth();
+						gc.drawRectangle(p.x, p.y + verticalMargin, width, height);
+						int third= width/3;
+						int dotsVertical= p.y + metrics.getLeading() + metrics.getAscent();
+						gc.drawPoint(p.x + third, dotsVertical);
+						gc.drawPoint(p.x + 2*third, dotsVertical);
+						
+						gc.setForeground(c);
+						
+					} else {
+						textWidget.redrawRange(offset, length, true);
+					}
 				}
 			}
 		}
