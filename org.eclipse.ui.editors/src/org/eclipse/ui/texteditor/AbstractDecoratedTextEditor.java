@@ -46,6 +46,7 @@ import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IChangeRulerColumn;
+import org.eclipse.jface.text.source.ILineDifferExtension;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -71,13 +72,12 @@ import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
+import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
-import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
-import org.eclipse.ui.internal.texteditor.quickdiff.RestoreAction;
-import org.eclipse.ui.internal.texteditor.quickdiff.RevertBlockAction;
-import org.eclipse.ui.internal.texteditor.quickdiff.RevertLineAction;
-import org.eclipse.ui.internal.texteditor.quickdiff.RevertSelectionAction;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -419,8 +419,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			ruler.update();
 		}
 		IAnnotationModel model= getDiffer();
-		if (model instanceof DocumentLineDiffer)
-			((DocumentLineDiffer) model).suspend();
+		if (model instanceof ILineDifferExtension)
+			((ILineDifferExtension) model).suspend();
 	}
 
 	/**
@@ -472,8 +472,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 				}
 			}
-		} else if (differ instanceof DocumentLineDiffer && !fIsChangeInformationShown)
-			((DocumentLineDiffer)differ).resume();
+		} else if (differ instanceof ILineDifferExtension && !fIsChangeInformationShown)
+			((ILineDifferExtension) differ).resume();
 		
 		return differ;
 	}

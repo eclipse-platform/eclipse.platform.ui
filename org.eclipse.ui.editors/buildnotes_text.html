@@ -20,6 +20,18 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input January 11th 2005 ==========<br>
+<pre>
+Quick Diff:
+	- added org.eclipse.jface.text.source.ILineDifferExtension extension interface to ILineDiffer
+
+Templates:
+	- deprecated all setters on org.eclipse.jface.text.templates.Template. Template
+	  is really a value object and should not be modified any longer.
+	- In order to handle the above change, deprecated TemplatePreferencePage.createEditTemplateDialog.
+	  Subclasses really don't need to display a dialog if they don't want. Editing or adding a template
+	  can be customized through the new hook method editTemplate method.
+</pre>
 ========== Eclipse Build Input December 14th 2004 ==========<br>
 <pre>
 - added Spelling API to org.eclipse.ui.workbench.texteditor plug-in:

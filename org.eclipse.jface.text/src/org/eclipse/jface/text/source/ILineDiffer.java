@@ -24,6 +24,15 @@ import org.eclipse.jface.text.BadLocationException;
  * <p>
  * This interface may be implemented by clients.
  * </p>
+ * <p>
+ * In order to provide backward compatibility for clients of <code>ILineDiffer</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interface
+ * exists:
+ * <ul>
+ * <li> {@link ILineDifferExtension} (since version 3.1): introducing the concept
+ *      suspending and resuming an <code>ILineDiffer</code>.</li>
+ * </ul>
+ * </p>
  * 
  * @since 3.0
  */

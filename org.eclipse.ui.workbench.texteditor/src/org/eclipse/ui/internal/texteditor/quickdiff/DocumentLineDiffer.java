@@ -42,6 +42,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
+import org.eclipse.jface.text.source.ILineDifferExtension;
 
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
@@ -66,7 +67,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
  * 
  * @since 3.0
  */
-public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel {
+public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel, ILineDifferExtension {
 
 	/**
 	 * Artificial line difference information indicating a change with an empty line as original text.
@@ -1353,8 +1354,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 	
-	/**
-	 * Stops diffing of this differ. All differences are cleared.
+	/*
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.ILineDifferExtension#suspend()
 	 */
 	public synchronized void suspend() {
 		if (fInitializationJob != null) {
@@ -1376,8 +1377,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		fireModelChanged();
 	}
 	
-	/**
-	 * Resumes diffing of this differ. Must only be called after suspend.
+	/*
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.ILineDifferExtension#resume()
 	 */
 	public synchronized void resume() {
 		if (fRightDocument != null)
