@@ -1481,7 +1481,7 @@ public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable
 		shortcutBarControl = shortcutBar.getControl();
 	boolean shortcutbarWasEnabled = false;
 	if (shortcutBarControl != null) 
-		shortcutbarWasEnabled = shortcutBarControl.isEnabled();
+		shortcutbarWasEnabled = shortcutBarControl.getEnabled();
 	try {
 		if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
 			shortcutBarControl.setEnabled(false);
