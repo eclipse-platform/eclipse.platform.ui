@@ -301,4 +301,36 @@ public class FormEngine extends Canvas {
 		}
 		gc.dispose();
 	}
+	/**
+	 * Gets the marginWidth.
+	 * @return Returns a int
+	 */
+	public int getMarginWidth() {
+		return marginWidth;
+	}
+
+	/**
+	 * Sets the marginWidth.
+	 * @param marginWidth The marginWidth to set
+	 */
+	public void setMarginWidth(int marginWidth) {
+		this.marginWidth = marginWidth;
+	}
+
+	/**
+	 * Gets the marginHeight.
+	 * @return Returns a int
+	 */
+	public int getMarginHeight() {
+		return marginHeight;
+	}
+
+	/**
+	 * Sets the marginHeight.
+	 * @param marginHeight The marginHeight to set
+	 */
+	public void setMarginHeight(int marginHeight) {
+		this.marginHeight = marginHeight;
+	}
+
 }
