@@ -193,14 +193,21 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			
 			BreakIterator breakIter= BreakIterator.getWordInstance();
 			breakIter.setText(fDocIter);
-			
+
 			int start= breakIter.preceding(position);
 			if (start == BreakIterator.DONE)
 				start= line.getOffset();
-				
+							
 			int end= breakIter.following(position);
 			if (end == BreakIterator.DONE)
 				end= line.getOffset() + line.getLength();
+			
+			if (breakIter.isBoundary(position)) {
+				if (end - position > position- start)
+					start= position;	
+				else
+					end= position;
+			}
 			
 			if (start != end)
 				text.setSelectedRange(start, end - start);
