@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Event;
  * (or subinterface), if they need to examine the triggering event.
  * Otherwise, they should simply implement <code>IActionDelegate</code> (or subinterface).
  * <p>
- * NOTE: This is experimental API, which may change in the future.
  *
  * @since 2.0
  * @deprecated Use org.eclipse.ui.IActionDelegate2 instead.
