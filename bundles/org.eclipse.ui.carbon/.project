@@ -3,13 +3,9 @@
 	<name>org.eclipse.ui.carbon</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.help</project>
 		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.ide</project>
-		<project>org.eclipse.ui.views</project>
-		<project>org.eclipse.update.core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

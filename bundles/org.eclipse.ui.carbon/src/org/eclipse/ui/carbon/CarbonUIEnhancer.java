@@ -140,20 +140,22 @@ public class CarbonUIEnhancer implements IStartup {
 		if (window != null) {
 			Shell shell= window.getShell();
 			Menu menubar= shell.getMenuBar();
-			for (int i= 0; i < menubar.getItemCount(); i++) {
-				MenuItem mi= menubar.getItem(i);
-				Menu m= mi.getMenu();
-				for (int j= 0; j < m.getItemCount(); j++) {
-					MenuItem mi2= m.getItem(j);
-					Object o= mi2.getData();
-					if (o instanceof ActionContributionItem) {
-						ActionContributionItem aci= (ActionContributionItem) o;
-						String id= aci.getId();
-						if (id != null && id.equals(name)) {
-							IAction action= aci.getAction();
-							if (action != null && action.isEnabled()) {
-								action.run();
-								return OS.noErr;
+			if (menubar != null) {
+				for (int i= 0; i < menubar.getItemCount(); i++) {
+					MenuItem mi= menubar.getItem(i);
+					Menu m= mi.getMenu();
+					for (int j= 0; j < m.getItemCount(); j++) {
+						MenuItem mi2= m.getItem(j);
+						Object o= mi2.getData();
+						if (o instanceof ActionContributionItem) {
+							ActionContributionItem aci= (ActionContributionItem) o;
+							String id= aci.getId();
+							if (id != null && id.equals(name)) {
+								IAction action= aci.getAction();
+								if (action != null && action.isEnabled()) {
+									action.run();
+									return OS.noErr;
+								}
 							}
 						}
 					}
