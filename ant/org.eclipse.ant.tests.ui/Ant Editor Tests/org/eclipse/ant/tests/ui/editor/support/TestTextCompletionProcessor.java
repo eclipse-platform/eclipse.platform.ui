@@ -148,7 +148,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
     	if (antModel != null) {
     		return super.isKnownElement(elementName);
     	} 
-    	return dtd.getElement(elementName) != null ;
+    	return getDtd().getElement(elementName) != null ;
     }
     
 	/* (non-Javadoc)
