@@ -85,7 +85,10 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		
 		projectsWithinScope= new ArrayList();
 		ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
-		if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
+        if (config == null) {
+            throw ExternalToolsPlugin.newError(ExternalToolsModelMessages.getString("ExternalToolBuilder.0"), null); //$NON-NLS-1$
+        }
+		if (buildKindCompatible(kind, config) && configEnabled(config)) {
 			doBuildBasedOnScope(kind, config, monitor);
 		}
 		return getProjectsWithinScope();
