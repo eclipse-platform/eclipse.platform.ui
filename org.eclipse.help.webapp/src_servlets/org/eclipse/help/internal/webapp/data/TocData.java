@@ -197,7 +197,7 @@ public class TocData extends RequestData {
 		} else {
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/plus.gif' style='visibility:hidden;' >");
+			out.write("/plus.gif' class='h'>");
 			out.write(
 				"<a href='"
 					+ UrlUtil.getHelpURL(topic.getHref())
