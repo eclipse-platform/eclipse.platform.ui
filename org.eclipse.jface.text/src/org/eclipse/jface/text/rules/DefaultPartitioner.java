@@ -541,7 +541,8 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				
 				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
 				gap= new Position(gapOffset, current.getOffset() - gapOffset);
-				if ((includeZeroLengthPartitions || gap.getLength() > 0) && gap.overlapsWith(offset, length)) {
+				if ((includeZeroLengthPartitions && overlapsWith(gap, offset, length)) || 
+						(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
 					start= Math.max(offset, gapOffset);
 					end= Math.min(endOffset, gap.getOffset() + gap.getLength());
 					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
@@ -559,7 +560,8 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			if (previous != null) {
 				gapOffset= previous.getOffset() + previous.getLength();
 				gap= new Position(gapOffset, fDocument.getLength() - gapOffset);
-				if ((includeZeroLengthPartitions || gap.getLength() > 0) && ((includeZeroLengthPartitions && offset + length == gapOffset && gap.length == 0) || gap.overlapsWith(offset, length))) {
+				if ((includeZeroLengthPartitions && overlapsWith(gap, offset, length)) ||
+						(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
 					start= Math.max(offset, gapOffset);
 					end= Math.min(endOffset, fDocument.getLength());
 					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
@@ -575,5 +577,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		TypedRegion[] result= new TypedRegion[list.size()];
 		list.toArray(result);
 		return result;
+	}
+
+	private boolean overlapsWith(Position gap, int offset, int length) {
+		return gap.getOffset() <= offset + length && offset <= gap.getOffset() + gap.getLength();
 	}
 }

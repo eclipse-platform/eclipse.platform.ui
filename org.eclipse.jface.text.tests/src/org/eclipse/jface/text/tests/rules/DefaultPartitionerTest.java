@@ -135,19 +135,44 @@ public class DefaultPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
 
+	public void testComputePartitioningSubrangeBeforeBoundaries() {
+		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
+
+		int[] offsets= new int[] { 13, 26, 26 };
+		assertComputePartitioning_InterleavingPartitions(12, 38, offsets, DEFAULT);
+	}
+
+	public void testComputePartitioningSubrangeOnBoundaries() {
+		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
+
+		int[] offsets= new int[] { 13, 26, 26, 39 };
+		assertComputePartitioning_InterleavingPartitions(13, 39, offsets, DEFAULT);
+	}
+
+	public void testComputePartitioningSubrangeAfterBoundaries() {
+		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
+
+		int[] offsets= new int[] { 26, 26, 39 };
+		assertComputePartitioning_InterleavingPartitions(14, 40, offsets, COMMENT);
+	}
+
 	private void assertComputePartitioning_InterleavingPartitions(int[] offsets) {
-		ITypedRegion[] regions= fPartitioner.computePartitioning(0, fDoc.getLength());
+		assertComputePartitioning_InterleavingPartitions(0, fDoc.getLength(), offsets, DEFAULT);
+	}
+	
+	private void assertComputePartitioning_InterleavingPartitions(int startOffset, int endOffset, int[] offsets, String startType) {
+		ITypedRegion[] regions= fPartitioner.computePartitioning(startOffset, endOffset - startOffset);
 		
-		String type= DEFAULT;
-		int previousOffset= 0;
+		String type= startType;
+		int previousOffset= startOffset;
 		
 		int j= 0;
 		for (int i= 0; i <= offsets.length; i++) {
-			int offset= (i == offsets.length) ? fDoc.getLength() : offsets[i];
-			if (offset - previousOffset != 0) { // don't do empty partitions
+			int currentOffset= (i == offsets.length) ? endOffset : offsets[i];
+			if (currentOffset - previousOffset != 0) { // don't do empty partitions
 				ITypedRegion region= regions[j++];
 				
-				assertTypedRegion(region, previousOffset, offset, type);
+				assertTypedRegion(region, previousOffset, currentOffset, type);
 			}
 			
 			// advance
@@ -155,7 +180,7 @@ public class DefaultPartitionerTest extends TestCase {
 				type= COMMENT;
 			else
 				type= DEFAULT;
-			previousOffset= offset;
+			previousOffset= currentOffset;
 		}
 	}
 
