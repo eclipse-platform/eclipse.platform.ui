@@ -12,6 +12,7 @@ package org.eclipse.ant.core;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -93,11 +94,11 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	private void restoreCustomObjects() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
+		restoreAntHome(prefs);
 		restoreTasks(prefs);
 		restoreTypes(prefs);
 		restoreAntURLs(prefs);
 		restoreCustomURLs(prefs);
-		restoreAntHome(prefs);
 		restoreCustomProperties(prefs);
 		restoreCustomPropertyFiles(prefs);
 		prefs.addPropertyChangeListener(this);
@@ -255,6 +256,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			if (antPlugin != null) {
 				IPluginDescriptor descriptor = antPlugin.getDescriptor(); 
 				addLibraries(descriptor, result);
+				//if (antHome == null) {
+			//		try {
+			//			antHome= Platform.asLocalURL(descriptor.getInstallURL()).getFile();
+			//		} catch (IOException e) {
+			//		}
+			//	}
 			}
 			
 			URL toolsURL= getToolsJarURL();
@@ -390,7 +397,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					}
 				}
 			}
-			String library = (String) element.getAttribute(AntCorePlugin.LIBRARY);
+			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
@@ -416,24 +423,23 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Returns the URL for the tools.jar associated with the "java.home"
-	 * location. May return <code>null</code> if no tools.jar is found (e.g. "java.home"
+	 * Returns the URL for the tools.jar associated with the path supplied
+	 * May return <code>null</code> if no tools.jar is found (e.g. the path
 	 * points to a JRE install).
 	 * 
 	 * @return URL tools.jar URL or <code>null</code>
 	 */
-	public URL getToolsJarURL() {
-		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
-		if (path.lastSegment().equalsIgnoreCase("jre")) { //$NON-NLS-1$
-			path = path.removeLastSegments(1);
+	public URL getToolsJarURL(IPath javaHomePath) {
+		if (javaHomePath.lastSegment().equalsIgnoreCase("jre")) { //$NON-NLS-1$
+			javaHomePath = javaHomePath.removeLastSegments(1);
 		}
-		path = path.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
-		File tools = path.toFile();
+		javaHomePath = javaHomePath.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+		File tools = javaHomePath.toFile();
 		if (!tools.exists()) {
 			//attempt to find in the older 1.1.* 
-			path= path.removeLastSegments(1);
-			path= path.append("classes.zip"); //$NON-NLS-1$
-			tools = path.toFile();
+			javaHomePath= javaHomePath.removeLastSegments(1);
+			javaHomePath= javaHomePath.append("classes.zip"); //$NON-NLS-1$
+			tools = javaHomePath.toFile();
 			if (!tools.exists()) {
 				return null;
 			}
@@ -448,7 +454,19 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return null;
 	}
 
-	protected void addLibraries(IPluginDescriptor source, List destination) {
+	/**
+	 * Returns the URL for the tools.jar associated with the "java.home"
+	 * location. May return <code>null</code> if no tools.jar is found (e.g. "java.home"
+	 * points to a JRE install).
+	 * 
+	 * @return URL tools.jar URL or <code>null</code>
+	 */
+	public URL getToolsJarURL() {
+		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
+		return getToolsJarURL(path);
+	}
+
+	private void addLibraries(IPluginDescriptor source, List destination) {
 		URL root = source.getInstallURL();
 		ILibrary[] libraries = source.getRuntimeLibraries();
 		for (int i = 0; i < libraries.length; i++) {
@@ -979,8 +997,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the string that defines the Ant home set by the user.
-	 * May be <code>null</code> if Ant home has not been set.
+	 * Returns the string that defines the Ant home set by the user of the location 
+	 * of the Eclipse Ant plugin if Ant home has not been specifically set by the user.
 	 * 
 	 * @return the fully qualified path to Ant home
 	 */

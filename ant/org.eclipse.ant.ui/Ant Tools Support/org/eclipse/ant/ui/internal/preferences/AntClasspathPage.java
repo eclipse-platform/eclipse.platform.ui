@@ -132,11 +132,20 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#update()
 	 */
 	public void update() {
+		if (antClasspathBlock.isValidated()){
+			return;
+		}
 		setMessage(null);
 		setErrorMessage(null);
 		boolean valid= true;
 		if (antClasspathBlock.isAntHomeEnabled()) {
 			valid= antClasspathBlock.validateAntHome();
+		}
+		if (valid) {
+			valid= antClasspathBlock.validateToolsJAR();
+		}
+		if (valid) {
+			valid= antClasspathBlock.validateXerces();
 		}
 		preferencePage.setValid(valid);
 	}
