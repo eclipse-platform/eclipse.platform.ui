@@ -64,7 +64,9 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      */
     public void setDocument(IDocument doc) {
         document = doc;
-        calculateLines();
+        if (document != null) {
+            calculateLines();
+        }
     }
 
     /* (non-Javadoc)
