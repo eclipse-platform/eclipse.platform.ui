@@ -29,9 +29,9 @@ public abstract class Page {
 	//Colors
 	protected Color backgroundColor;
 	private Color[] colorArray;
-	private final RGB bottomRGB = new RGB(249, 247, 251);
-	private final RGB midRGB = new RGB(234, 234, 252);
-	private final RGB topRGB = new RGB(217, 217, 252);
+	private final RGB bottomRGB = new RGB(255, 255, 255);
+	private final RGB midRGB = new RGB(242, 252, 254);
+	private final RGB topRGB = new RGB(232, 242, 254);
 
 	protected FormToolkit toolkit;
 	protected ScrolledForm form;
@@ -85,7 +85,7 @@ public abstract class Page {
 	private void createTitleArea(Composite parent) {
 		// Message label
 		final CLabel messageLabel = new CLabel(parent, SWT.NONE);
-		messageLabel.setBackground(colorArray, new int[] { 50, 100 });
+		messageLabel.setBackground(colorArray, new int[] { 85, 100 }, true);
 	
 		messageLabel.setText(getTitle());
 		messageLabel.setFont(JFaceResources.getHeaderFont());

@@ -19,11 +19,13 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 
 public class CheatSheetPage extends Page {
-	//Colors
-	private Color darkGrey;
-	private Color lightGrey;
-	private final RGB darkGreyRGB = new RGB(160, 192, 208);
-	private final RGB HIGHLIGHT_RGB = new RGB(230, 230, 230);
+	// Colors
+	// Active color's RGB value
+	protected final RGB activeRGB = new RGB(232, 242, 254);
+	protected Color activeColor;
+	// Alternating color's RGB value
+	protected final RGB alternateRGB = new RGB(244, 244, 244);
+	protected Color alternateColor;
 
 	private CheatSheet cheatSheet;
 	private ArrayList viewItemList;
@@ -53,16 +55,16 @@ public class CheatSheetPage extends Page {
 	protected void createInfoArea(Composite parent) {
 		super.createInfoArea(parent);
 	
-		IntroItem myintro = new IntroItem(toolkit, form, cheatSheet.getIntroItem(), darkGrey, viewer);
+		IntroItem myintro = new IntroItem(toolkit, form, cheatSheet.getIntroItem(), activeColor, viewer);
 	
-		myintro.setItemColor(myintro.lightGrey);
+		myintro.setItemColor(myintro.alternateColor);
 		myintro.setBold(true);
 		viewItemList.add(myintro);
 			
 		//Get the content info from the parser.  This makes up all items except the intro item.
 		ArrayList items = cheatSheet.getItems();
 		for (int i = 0; i < items.size(); i++) {
-			Color color = (i%2) == 0 ? backgroundColor : lightGrey;
+			Color color = (i%2) == 0 ? backgroundColor : alternateColor;
 
 			CoreItem coreItem = new CoreItem(toolkit, form, (org.eclipse.ui.internal.cheatsheets.data.Item)items.get(i), color, viewer);
 			viewItemList.add(coreItem);
@@ -85,17 +87,17 @@ public class CheatSheetPage extends Page {
 	public void dispose() {
 		super.dispose();
 
-		if (lightGrey != null)
-			lightGrey.dispose();
+		if (alternateColor != null)
+			alternateColor.dispose();
 
-		if (darkGrey != null)
-			darkGrey.dispose();
+		if (activeColor != null)
+			activeColor.dispose();
 	}
 
 	protected void init(Display display) {
 		super.init(display);
 
-		lightGrey = new Color(display, HIGHLIGHT_RGB);
-		darkGrey = new Color(display, darkGreyRGB);
+		activeColor = new Color(display, activeRGB);
+		alternateColor = new Color(display, alternateRGB);
 	}
 }

@@ -49,21 +49,25 @@ public abstract class ViewItem {
 	private Image completeImage;
 	protected Item item;
 
-	protected Color darkGrey;
-	private final RGB darkGreyRGB = new RGB(160, 192, 208);
+	// Colors
+	// Active color's RGB value
+	protected final RGB activeRGB = new RGB(232, 242, 254);
+	protected Color activeColor;
+	// Alternating color's RGB value
+	protected final RGB alternateRGB = new RGB(244, 244, 244);
+	protected Color alternateColor;
+
+	protected Color itemColor;
+	protected Color white;
 
 	private Image helpImage;
-	private final RGB HIGHLIGHT_RGB = new RGB(230, 230, 230);
 	private boolean isSkipped = false;
-	protected Color itemColor;
-	protected Color lightGrey;
 	private ExpandableComposite mainItemComposite;
 
 	private Composite parent;
 	private Image skipImage;
 	protected CheatSheetViewer viewer;
 	private Composite titleComposite;
-	protected Color white;
 	protected FormToolkit toolkit;
 	protected ScrolledForm form;
 
@@ -82,8 +86,8 @@ public abstract class ViewItem {
 		this.item = item;
 		this.itemColor = itemColor;
 		this.viewer = viewer;
-		lightGrey = new Color(parent.getDisplay(), HIGHLIGHT_RGB);
-		darkGrey = new Color(parent.getDisplay(), darkGreyRGB);
+		activeColor = new Color(parent.getDisplay(), activeRGB);
+		alternateColor = new Color(parent.getDisplay(), alternateRGB);
 
 		// Initialize the item...
 		init();
@@ -238,10 +242,10 @@ public abstract class ViewItem {
 	}
 
 	public void dispose() {
-		if (lightGrey != null)
-			lightGrey.dispose();
-		if (darkGrey != null)
-			darkGrey.dispose();
+		if (alternateColor != null)
+			alternateColor.dispose();
+		if (activeColor != null)
+			activeColor.dispose();
 		if (checkDoneLabel != null)
 			checkDoneLabel.dispose();
 		if (bodyText != null)
@@ -591,8 +595,8 @@ public abstract class ViewItem {
 
 	private void setColorAsCurrent(boolean active) {
 		if (active) {
-			setTitleColor(darkGrey);
-			setBodyColor(darkGrey);
+			setTitleColor(activeColor);
+			setBodyColor(activeColor);
 		} else {
 			setTitleColor(itemColor);
 			setBodyColor(itemColor);
