@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -63,10 +63,25 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * A launch configuration tab which allows the user to specify
  * which resources should be refreshed when the launch
- * finishes.
+ * terminates.
+ * 
+ * @since 3.0
  */
 public class RefreshTab extends AbstractLaunchConfigurationTab implements IVariableComponentContainer {
 
+	/**
+	 * Boolean attribute indicating if a refresh scope is recursive. Default
+	 * value is <code>false</code>.
+	 */
+	public static final String ATTR_REFRESH_RECURSIVE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
+
+	/**
+	 * String attribute identifying the scope of resources that should be
+	 * refreshed after an external tool is run. The value is either a refresh
+	 * variable or the default value, <code>null</code>, indicating no refresh.
+	 */
+	public static final String ATTR_REFRESH_SCOPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
+	
 	// Check Buttons
 	private Button fRefreshButton;
 	private Button fRecursiveButton;
@@ -232,7 +247,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	private void updateScope(ILaunchConfiguration configuration) {
 		String scope = null;
 		try {
-			scope= configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
+			scope= configuration.getAttribute(ATTR_REFRESH_SCOPE, (String)null);
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
@@ -256,7 +271,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 			} else if (scope.startsWith("${resource:")) { //$NON-NLS-1$
 				fWorkingSetButton.setSelection(true);
 				try {
-					IResource[] resources = expandResources(scope, null);
+					IResource[] resources = getRefreshResources(scope, null);
 					IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 					fWorkingSet = workingSetManager.createWorkingSet(LaunchVariableMessages.getString("RefreshTab.40"), resources);					 //$NON-NLS-1$
 				} catch (CoreException e) {
@@ -276,7 +291,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	private void updateRecursive(ILaunchConfiguration configuration) {
 		boolean recursive= true;
 		try {
-			recursive= configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, true);
+			recursive= configuration.getAttribute(ATTR_REFRESH_RECURSIVE, true);
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
@@ -289,7 +304,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	private void updateRefresh(ILaunchConfiguration configuration) {
 		String scope= null;
 		try {
-			scope= configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
+			scope= configuration.getAttribute(ATTR_REFRESH_SCOPE, (String)null);
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
@@ -302,12 +317,12 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fRefreshButton.getSelection()) {
 			String scope = generateScopeMemento();
-			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, scope);
-			setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, fRecursiveButton.getSelection(), true);
+			configuration.setAttribute(ATTR_REFRESH_SCOPE, scope);
+			setAttribute(ATTR_REFRESH_RECURSIVE, configuration, fRecursiveButton.getSelection(), true);
 		} else {
 			//clear the refresh attributes
-			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
-			setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, true, true);
+			configuration.setAttribute(ATTR_REFRESH_SCOPE, (String)null);
+			setAttribute(ATTR_REFRESH_RECURSIVE, configuration, true, true);
 		}
 	}
 
@@ -434,12 +449,16 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		IResource[] resources= getResourcesForRefreshScope(configuration, monitor);
+		String scope = getRefreshScope(configuration);
+		IResource[] resources= null;
+		if (scope != null) {
+			resources = getRefreshResources(scope, monitor);
+		}
 		if (resources == null || resources.length == 0){
 			return;
 		}
 		int depth = IResource.DEPTH_ONE;
-		if (LaunchVariableUtil.isRefreshRecursive(configuration))
+		if (isRefreshRecursive(configuration))
 			depth = IResource.DEPTH_INFINITE;
 	
 		if (monitor.isCanceled()) {
@@ -470,31 +489,14 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	}
 
 	/**
-	 * Returns the collection of resources for the refresh scope as specified by the given launch configuration.
+	 * Returns a collection of resources referred to by a refresh scope attribute.
 	 * 
-	 * @param configuration launch configuration
-	 * @param context context used to expand variables
-	 * @param monitor progress monitor
-	 * @throws CoreException if an exception occurs while refreshing resources
-	 */
-	public static IResource[] getResourcesForRefreshScope(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String scope = LaunchVariableUtil.getRefreshScope(configuration);
-		if (scope == null) {
-			return null;
-		}
-		return expandResources(scope, monitor);
-	}
-
-	/**
-	 * Returns a collection of resources referred to by the refresh scope attribute
-	 * of a launch configuration.
-	 * 
-	 * @param scope refresh scope attribute
+	 * @param scope refresh scope attribute (<code>ATTR_REFRESH_SCOPE</code>)
 	 * @param monitor progress monitor
 	 * @return collection of resources referred to by the refresh scope attribute
 	 * @throws CoreException if unable to resolve a set of resources
 	 */
-	public static IResource[] expandResources(String scope, IProgressMonitor monitor) throws CoreException {
+	public static IResource[] getRefreshResources(String scope, IProgressMonitor monitor) throws CoreException {
 		if (scope.startsWith("${resource:")) { //$NON-NLS-1$
 			// This is an old format that is replaced with 'working_set'
 			String pathString = scope.substring(11, scope.length() - 1);
@@ -582,5 +584,29 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		}
 			
 		return (IWorkingSet) adaptable;
+	}	
+	
+	/**
+	 * Returns the refresh scope attribute specified by the given launch configuration
+	 * or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return refresh scope attribute (<code>ATTR_REFRESH_SCOPE</code>)
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static String getRefreshScope(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(ATTR_REFRESH_SCOPE, (String) null);
+	}
+
+	/**
+	 * Returns whether the refresh scope specified by the given launch
+	 * configuration is recursive.
+	 * 
+	 * @param configuration
+	 * @return whether the refresh scope is recursive
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(ATTR_REFRESH_RECURSIVE, true);
 	}	
 }

@@ -177,7 +177,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		if (CommonTab.isLaunchInBackground(configuration)) {
 			// refresh resources after process finishes
-			if (LaunchVariableUtil.getRefreshScope(configuration) != null) {
+			if (RefreshTab.getRefreshScope(configuration) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);
 				refresher.startBackgroundRefresh();
 			}				

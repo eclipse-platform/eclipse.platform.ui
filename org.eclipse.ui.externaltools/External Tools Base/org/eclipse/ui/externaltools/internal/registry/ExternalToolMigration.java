@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsUIMessages;
@@ -135,8 +136,8 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(commandArgs.get(TAG_SHOW_CONSOLE)));
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, TRUE.equals(commandArgs.get(TAG_RUN_BKGRND)));
 		config.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, TRUE.equals(commandArgs.get(TAG_PROMPT_ARGS)));
-		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
-		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, TRUE.equals(commandArgs.get(TAG_REFRESH_RECURSIVE)));
+		config.setAttribute(RefreshTab.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
+		config.setAttribute(RefreshTab.ATTR_REFRESH_RECURSIVE, TRUE.equals(commandArgs.get(TAG_REFRESH_RECURSIVE)));
 
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) commandArgs.get(TAG_RUN_BUILD_KINDS));
 		
@@ -198,7 +199,7 @@ public final class ExternalToolMigration {
 			if ("none".equals(varDef.name)) { //$NON-NLS-1$
 				refresh = null;
 			}
-			config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, refresh);
+			config.setAttribute(RefreshTab.ATTR_REFRESH_SCOPE, refresh);
 		}
 
 		// Update the arguments

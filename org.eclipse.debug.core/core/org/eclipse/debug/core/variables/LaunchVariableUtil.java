@@ -69,23 +69,6 @@ public class LaunchVariableUtil {
 	 * @since 3.0 
 	 */
 	public static final String ATTR_APPEND_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".appendEnvironmentVariables"; //$NON-NLS-1$
-
-	/**
-	 * Boolean attribute indicating if a refresh scope is recursive. Default
-	 * value is <code>false</code>.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String ATTR_REFRESH_RECURSIVE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
-
-	/**
-	 * String attribute identifying the scope of resources that should be
-	 * refreshed after an external tool is run. The value is either a refresh
-	 * variable or the default value, <code>null</code>, indicating no refresh.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String ATTR_REFRESH_SCOPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
 	
 	/**
 	 * The collection of native environment variables on the user's system. Cached
@@ -509,30 +492,6 @@ public class LaunchVariableUtil {
 
 	private static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
-	}
-
-	/**
-	 * Returns the refresh scope specified by the given launch configuration or
-	 * <code>null</code> if none.
-	 * 
-	 * @param configuration
-	 * @return refresh scope
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static String getRefreshScope(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String) null);
-	}
-
-	/**
-	 * Returns whether the refresh scope specified by the given launch
-	 * configuration is recursive.
-	 * 
-	 * @param configuration
-	 * @return whether the refresh scope is recursive
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, true);
 	}
 
 }

@@ -207,7 +207,7 @@ public class ExternalToolsUtil {
 			return null;
 		}
 	
-		return RefreshTab.expandResources(scope, monitor);
+		return RefreshTab.getRefreshResources(scope, monitor);
 	
 	}
 
