@@ -191,9 +191,11 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setTitleBarBackground(Color color) {
 		putTitleBarColor(COLOR_BG, color);
+		/*
 		textLabel.setBackground(color);
 		if (toggle != null)
 			toggle.setBackground(color);
+			*/
 	}
 	/**
 	 * Sets the color of the title bar gradient background when TITLE_BAR style
@@ -290,23 +292,42 @@ public final class Section extends ExpandableComposite {
 		Point size = textLabel.getSize();
 		int tvmargin = GAP;
 		int theight = 0;
+		/*
 		if (tsize != null)
 			theight += Math.max(theight, tsize.y);
 		if (tcsize != null)
 			theight = Math.max(theight, tcsize.y);
 		theight = Math.max(theight, size.y);
 		theight += tvmargin + tvmargin;
+		*/
+		theight = 5;
 		int midpoint = (theight * 66) / 100;
 		int rem = theight - midpoint;
 		GC gc = e.gc;
-		gc.setForeground(bg);
-		gc.setBackground(gbg);
+		//gc.setForeground(bg);
+		//gc.setBackground(gbg);
+		/*
 		gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width - 1
 				- marginWidth - marginWidth, midpoint - 1, true);
 		gc.setForeground(gbg);
 		gc.setBackground(getBackground());
 		gc.fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
 				bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
+			*/
+		gc.setForeground(bg);
+		gc.setBackground(getBackground());
+		gc.fillGradientRectangle(marginWidth, marginHeight, 
+				bounds.width - marginWidth - marginWidth, 
+				theight, true);
+		gc.setBackground(getBackground());
+		// repair the upper left corner
+		gc.fillPolygon(new int []{marginWidth, marginHeight, 
+									marginWidth, marginHeight+2, 
+									marginWidth+2, marginHeight});
+		// repair the upper right corner
+		gc.fillPolygon(new int []{bounds.width-marginWidth-3, marginHeight,
+								  bounds.width-marginWidth-1, marginHeight,
+								  bounds.width-marginWidth-1, marginHeight+2});
 		gc.setForeground(border);
 		gc.drawLine(marginWidth, marginHeight + 2, marginWidth, marginHeight
 				+ theight - 1);
@@ -318,9 +339,11 @@ public final class Section extends ExpandableComposite {
 				- marginWidth - 1, marginHeight + 2);
 		gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
 				bounds.width - marginWidth - 1, marginHeight + theight - 1);
+		/*
 		if (toggle != null && !isExpanded()) {
 			gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
 					- marginWidth - 1, marginHeight + theight - 1);
 		}
+		*/
 	}
 }

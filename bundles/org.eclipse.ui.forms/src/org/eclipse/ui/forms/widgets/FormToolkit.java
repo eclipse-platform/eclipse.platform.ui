@@ -462,7 +462,6 @@ public class FormToolkit {
 		section.setFont(boldFontHolder.getBoldFont(parent.getFont()));
 		if ((sectionStyle & Section.TITLE_BAR) != 0) {
 			colors.initializeSectionToolBarColors();
-			// section.setForeground(colors.getColor(COLOR_TB_FG));
 			section.setTitleBarBackground(colors.getColor(FormColors.TB_GBG));
 			section.setTitleBarBorderColor(colors
 					.getColor(FormColors.TB_BORDER));
