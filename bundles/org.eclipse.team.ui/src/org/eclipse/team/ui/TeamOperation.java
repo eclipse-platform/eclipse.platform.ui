@@ -13,17 +13,20 @@ package org.eclipse.team.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * An operation that can be configured to run in the foreground using
@@ -49,6 +52,59 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	private IWorkbenchPart part;
 	private IRunnableContext context;
 	
+	/*
+	 * Job context that configures how the team operation will
+	 * interact with the progress service
+	 */
+	private static class TeamOperationJobContext extends JobRunnableContext {
+
+	    private final TeamOperation operation;
+        private IAction gotoAction;
+
+	    public TeamOperationJobContext(TeamOperation operation) {
+	        super(operation.getJobName(), operation, operation.getSite());
+	        this.operation = operation;
+	    }
+	    
+		protected void configureJob(Job job) {
+		    super.configureJob(job);
+		    if (operation.isKeepOneProgressServiceEntry())
+		        job.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.TRUE); 
+		    else if(operation.getKeepOperation())
+				job.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE); 
+			gotoAction = operation.getGotoAction();
+			if(gotoAction != null)
+				job.setProperty(IProgressConstants.ACTION_PROPERTY, gotoAction);
+			URL icon = operation.getOperationIcon();
+			if(icon != null)
+				job.setProperty(IProgressConstants.ICON_PROPERTY, icon);
+		}
+
+		/* (non-Javadoc)
+         * @see org.eclipse.team.internal.ui.actions.JobRunnableContext#belongsTo(org.eclipse.team.internal.ui.actions.JobRunnableContext.IContextJob, java.lang.Object)
+         */
+        protected boolean belongsTo(IContextJob job, Object family) {
+            if (family instanceof IContextJob) {
+                IContextJob otherJob = (IContextJob)family;
+                IRunnableWithProgress runnable = otherJob.getRunnable();
+                if (runnable instanceof TeamOperation) {
+                    return operation.isSameFamilyAs((TeamOperation)runnable);
+                }
+            }
+            return operation.belongsTo(family);
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ui.actions.JobRunnableContext#getCompletionStatus()
+         */
+        protected IStatus getCompletionStatus() {
+            if (gotoAction != null) {
+                return new Status(IStatus.OK, TeamUIPlugin.ID, IStatus.OK, gotoAction.getText(), null);
+            }
+            return super.getCompletionStatus();
+        }
+	}
+	
 	/**
 	 * Create an team operation associated with the given part.
 	 * @param part the part the operation is associated with or <code>null</code> if the
@@ -57,8 +113,8 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	protected TeamOperation(IWorkbenchPart part) {
 		this(part, null);
 	}
-	
-	/**
+
+    /**
 	 * Create an team operation that will run in the given context.
 	 * @param context a runnable context
 	 */
@@ -185,15 +241,65 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	}
 	
 	/**
-	 * This method is called to allow subclasses to have the operation remain in the progress
-	 * indicator even after the job is done.
-	 * 
-	 * @return <code>true</code> to keep the operation and <code>false</code> otherwise.
-	 */
+     * This method is called to allow subclasses to have the results of the
+     * operation remain available to the user in the progress service even after
+     * the job is done. This method is only relevant if the operation is run as
+     * a job (i.e., <code>canRunAsJob</code> returns <code>true</code>).
+     * 
+     * @return <code>true</code> to keep the operation and <code>false</code>
+     *         otherwise.
+     */
 	protected boolean getKeepOperation() {
 		return false;
 	}
 	
+	/**
+     * This method is similar to <code>getKeepOperation</code> but will
+     * only keep one entry of a particular type available. 
+     * This method is only relevant if the operation is run as
+     * a job (i.e., <code>canRunAsJob</code> returns <code>true</code>).
+     * Subclasses that ovveride this method should also override 
+     * <code>isSameFamilyAs</code> in order to match operations of the same type.
+     * 
+     * @return <code>true</code> to keep the operation and <code>false</code>
+     *         otherwise.
+     * @since 3.1
+     */
+    public boolean isKeepOneProgressServiceEntry() {
+        return false;
+    }
+    
+    /**
+     * Return whether this Team operation belongs to the same family
+     * as the given operation for the purpose of showing only one
+     * operation of the same type in the progress service when
+     * <code>isKeepOneProgressServiceEntry</code> is overridden to
+     * return <code>true</code>. By default,
+     * <code>false</code> is returned. Subclasses may override.
+     * @param operation a team operation
+     * @since 3.1
+     */
+    protected boolean isSameFamilyAs(TeamOperation operation) {
+        return false;
+    }
+    
+    /**
+     * Return whether the job that is running this operation should be considered
+     * a member member of the given family. Subclasses can override this method in
+     * order to support the family based funtionality provided by the {@link IJobManager}.
+     * By default, <code>false</code> s always returned. Subclasses that override the
+     * <code>isKeepOneProgressServiceEntry</code> method do not need to override
+     * this method, but nstead should override <code>isSameFamilyAs</code>.
+     * 
+     * @param family the family being tested.
+     * @return whether the job that is running this operation should be considered
+     * a member member of the given family.
+     * @since 3.1
+     */
+    public boolean belongsTo(Object family) {
+        return false;
+    }
+    
 	/**
 	 * Return a shell that can be used by the operation to display dialogs, etc.
 	 * 
@@ -224,7 +330,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 */
 	private ITeamRunnableContext getRunnableContext() {
 		if (context == null && canRunAsJob()) {
-			JobRunnableContext context = new JobRunnableContext(getJobName(), getOperationIcon(), getGotoAction(), getKeepOperation(), this, getSite());
+			JobRunnableContext context = new TeamOperationJobContext(this);
 			context.setPostponeBuild(isPostponeAutobuild());
 			context.setSchedulingRule(getSchedulingRule());
 			return context;
