@@ -69,7 +69,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		String application = configuration.getApplicationIdentifier();
 		String product = configuration.getPrimaryFeatureIdentifier();
 		
-		if (lastTimeStamp==configuration.getChangeStamp() && System.getProperties().get("osgi.dev") == null) {		
+		if (canRunWithCachedData()) {		
 			Utils.debug("Same last time stamp *****");
 			if (System.getProperty(ECLIPSE_APPLICATION) == null && application != null) {
 				Utils.debug("no eclipse.application, setting it and returning");
@@ -366,6 +366,13 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			context.ungetService(reference);
 		}
 	}
+	
+	private boolean canRunWithCachedData() {
+		return  !"true".equals(System.getProperty("osgi.checkConfiguration")) &&
+				System.getProperties().get("osgi.dev") == null &&
+				lastTimeStamp==configuration.getChangeStamp();
+	}
+				
 	public static BundleContext getBundleContext() {
 		return context;
 	}
