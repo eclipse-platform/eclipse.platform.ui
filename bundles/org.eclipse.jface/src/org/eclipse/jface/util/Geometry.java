@@ -70,16 +70,17 @@ public class Geometry {
 	public static int magnitudeSquared(Point p) {
 		return p.x * p.x + p.y * p.y;
 	}
-
+	
 	/**
-	 * Returns the size of the rectangle, as a Point
+	 * Returns the dot product of the given vectors (expressed as Points)
 	 * 
-	 * @param rectangle rectangle whose size is being computed
-	 * @return the size of the given rectangle
+	 * @param p1 the first vector
+	 * @param p2 the second vector
+	 * @return the dot product of the two vectors
 	 * @since 3.0
 	 */
-	public static Point getSize(Rectangle rectangle) {
-		return new Point(rectangle.width, rectangle.height);
+	public static int dotProduct(Point p1, Point p2) {
+		return p1.x * p2.x + p1.y * p2.y;
 	}
 
 	/**
@@ -141,6 +142,42 @@ public class Geometry {
 		return new Point(rect.x + rect.width / 2, rect.y + rect.height / 2);
 	}
 
+	/**
+	 * Returns a copy of the given point
+	 * 
+	 * @param toCopy point to copy
+	 * @return a copy of the given point
+	 */
+	public static Point copy(Point toCopy) {
+		return new Point(toCopy.x, toCopy.y);
+	}
+	
+	/**
+	 * Adds two points as 2d vectors. Returns a new point whose coordinates are
+	 * the sum of the original two points.
+	 * 
+	 * @param point1 the first point (not null)
+	 * @param point2 the second point (not null)
+	 * @return a new point whose coordinates are the sum of the given points
+	 * @since 3.0
+	 */
+	public static Point add(Point point1, Point point2) {
+		return new Point(point1.x + point2.x, point1.y + point2.y);
+	}
+	
+	/**
+	 * Performs vector subtraction on two points. Returns a new point equal to
+	 * (point1 - point2).
+	 * 
+	 * @param point1 initial point
+	 * @param point2 vector to subtract
+	 * @return the difference (point1 - point2)
+	 * @since 3.0
+	 */
+	public static Point subtract(Point point1, Point point2) {
+		return new Point(point1.x - point2.x, point1.y - point2.y);
+	}
+	
 	/**
 	 * Returns the height or width of the given rectangle.
 	 * 
@@ -331,7 +368,7 @@ public class Geometry {
 	 * Positions are in screen coordinates (ie: a point is to the upper-left of the
 	 * rectangle if its x and y coordinates are smaller than any point in the rectangle)
 	 *  
-	 * @param boundary boundary rectangle 
+	 * @param boundary normalized boundary rectangle 
 	 * @param toTest point whose relative position to the rectangle is being computed
 	 * @return one of SWT.LEFT | SWT.TOP, SWT.TOP, SWT.RIGHT | SWT.TOP, SWT.LEFT, 0,
 	 * SWT.RIGHT, SWT.LEFT | SWT.BOTTOM, SWT.BOTTOM, SWT.RIGHT | SWT.BOTTOM
@@ -384,5 +421,81 @@ public class Geometry {
 		
 		return closestSide;
 	}
+
+	/**
+	 * Returns a copy of the given rectangle
+	 * 
+	 * @param toCopy rectangle to copy
+	 * @return a copy of the given rectangle
+	 * @since 3.0
+	 */
+	public static Rectangle copy(Rectangle toCopy) {
+		return new Rectangle(toCopy.x, toCopy.y, toCopy.width, toCopy.height);
+	}
 	
+	/**
+	 * Returns the size of the rectangle, as a Point
+	 * 
+	 * @param rectangle rectangle whose size is being computed
+	 * @return the size of the given rectangle
+	 * @since 3.0
+	 */
+	public static Point getSize(Rectangle rectangle) {
+		return new Point(rectangle.width, rectangle.height);
+	}
+	
+	/**
+	 * Sets the size of the given rectangle to the given size
+	 * 
+	 * @param rectangle rectangle to modify
+	 * @param newSize new size of the rectangle
+	 * @since 3.0
+	 */
+	public static void setSize(Rectangle rectangle, Point newSize) {
+		rectangle.width = newSize.x;
+		rectangle.height = newSize.y;
+	}
+	
+	/**
+	 * Sets the x,y position of the given rectangle. For a normalized
+	 * rectangle (a rectangle with positive width and height), this will
+	 * be the upper-left corner of the rectangle. 
+	 * 
+	 * @param rectangle rectangle to modify
+	 * @param newSize new size of the rectangle
+	 * 
+	 * @since 3.0
+	 */
+	public static void setLocation(Rectangle rectangle, Point newSize) {
+		rectangle.width = newSize.x;
+		rectangle.height = newSize.y;
+	}
+	
+	/**
+	 * Returns the x,y position of the given rectangle. For normalized rectangles
+	 * (rectangles with positive width and height), this is the upper-left
+	 * corner of the rectangle.
+	 * 
+	 * @param toQuery rectangle to query
+	 * @return a Point containing the x,y position of the rectangle
+	 * 
+	 * @since 3.0
+	 */
+	public static Point getLocation(Rectangle toQuery) {
+		return new Point(toQuery.x, toQuery.y);
+	}
+
+	/**
+	 * Returns a new rectangle with the given position and dimensions, expressed
+	 * as points.
+	 * 
+	 * @param position the (x,y) position of the rectangle
+	 * @param size the size of the new rectangle, where (x,y) -> (width, height)
+	 * @return a new Rectangle with the given position and size
+	 * 
+	 * @since 3.0
+	 */
+	public static Rectangle createRectangle(Point position, Point size) {
+		return new Rectangle(position.x, position.y, size.x, size.y);
+	}
 }
