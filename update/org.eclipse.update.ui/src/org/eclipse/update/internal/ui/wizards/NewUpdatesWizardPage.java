@@ -258,7 +258,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		ArrayList list = new ArrayList();
 		for (int i=0; i<selected.length; i++) {
 			PendingChange job = (PendingChange)selected[i];
-			if (InstallWizard.hasLicense(job))
+			if (UpdateModel.hasLicense(job))
 				list.add(job);
 		}
 		return (PendingChange[])list.toArray(new PendingChange[list.size()]);

@@ -532,6 +532,9 @@ public class DetailsForm extends PropertyWebForm {
 			return false;
 		if (currentAdapter == null || currentAdapter.isIncluded())
 			return false;
+		// Cannot install feature without a license
+		if (!UpdateModel.hasLicense(currentFeature))
+			return false;
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.findRelatedPendingChange(currentFeature) != null)
 			return false;

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class UpdateModel implements IAdaptable {
@@ -163,5 +164,17 @@ public class UpdateModel implements IAdaptable {
 	}
 	public Object getAdapter(Class key) {
 		return null;
+	}
+	
+	public static boolean hasLicense(PendingChange job) {
+		IFeature feature = job.getFeature();
+		return hasLicense(feature);
+	}
+	
+	public static boolean hasLicense(IFeature feature) {
+		IURLEntry info = feature.getLicense();
+		if (info == null)
+			return false;
+		return info.getAnnotation() != null && info.getAnnotation().length() > 0;
 	}
 }

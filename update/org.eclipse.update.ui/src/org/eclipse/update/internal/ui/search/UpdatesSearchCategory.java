@@ -176,6 +176,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 			PendingChange job = hit.getJob();
 			if (job == null)
 				continue;
+			// do not accept updates without a license
+			if (!UpdateModel.hasLicense(job))
+				continue;
 			IStatus status = ActivityConstraints.validatePendingChange(job);
 			if (status == null)
 				return job.getFeature();
