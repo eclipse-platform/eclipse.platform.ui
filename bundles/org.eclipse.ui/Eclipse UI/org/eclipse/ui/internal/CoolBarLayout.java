@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.graphics.Point;
 
 public class CoolBarLayout {
+	public boolean locked = false;
 	public Point[] itemSizes = new Point[0];
 	public int[] itemWrapIndices = new int[0];
 	

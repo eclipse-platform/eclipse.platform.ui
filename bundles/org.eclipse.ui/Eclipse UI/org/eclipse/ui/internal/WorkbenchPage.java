@@ -1141,6 +1141,14 @@ public ArrayList getShowViewActions() {
 	else
 		return new ArrayList();
 }
+/*
+ * Returns the toolbar layout for the active perspective.
+ */
+public CoolBarLayout getToolBarLayout() {
+	Perspective persp = getActivePerspective();
+	if (persp != null) return persp.getToolBarLayout();
+	return null;
+}
 /**
  * Returns the unprotected window.
  */
@@ -1367,6 +1375,19 @@ public boolean isZoomed() {
 	if (persp == null)
 		return false;
 	return persp.getPresentation().isZoomed();
+}
+/**
+ * Locks/unlocks the CoolBar for the specified perspective.
+ * 
+ * @param persp the perspective whose coolbar should be locked or unlocked
+ * @param lock whether the CoolBar should be locked or unlocked
+ */
+/* package */ void lockToolBar(Perspective persp, boolean lock) {
+	IToolBarManager toolsMgr = window.getToolsManager();
+	if (toolsMgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
+		coolBarMgr.lockLayout(lock);
+	}
 }
 /**
  * Returns <code>true</code> if the window needs to unzoom for the given
@@ -1937,7 +1958,13 @@ private void setPerspective(Perspective newPersp) {
 	if (toolsMgr instanceof CoolBarManager) {
 		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
 		if (oldPersp != null) {
-			oldPersp.setToolBarLayout(coolBarMgr.getLayout());
+			CoolBarLayout layout = coolBarMgr.getLayout();
+			boolean locked = false;
+			if (layout != null) {
+				locked = layout.locked;
+			}
+			oldPersp.setToolBarLayout(layout);
+			coolBarMgr.setLayout(null);
 		} 
 	}
 	
@@ -1994,6 +2021,10 @@ private void setPerspective(Perspective newPersp) {
 		CoolBarManager cBarMgr = (CoolBarManager)mgr;
 		if (newPersp != null) {
 			CoolBarLayout layout = newPersp.getToolBarLayout();
+			boolean locked = false;
+			if (layout != null) {
+				locked = layout.locked;
+			}
 			cBarMgr.setLayout(newPersp.getToolBarLayout());
 		}
 	}

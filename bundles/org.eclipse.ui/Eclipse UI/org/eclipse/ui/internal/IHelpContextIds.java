@@ -46,6 +46,7 @@ public interface IHelpContextIds {
 	public static final String SAVE_ACTION = PREFIX + "save_action_context"; //$NON-NLS-1$
 	public static final String ABOUT_ACTION = PREFIX + "about_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_ALL_ACTION = PREFIX + "close_all_action_context"; //$NON-NLS-1$
+	public static final String LOCK_TOOLBAR_ACTION = PREFIX + "lock_toolbar_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_PAGE_ACTION = PREFIX + "close_page_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_PART_ACTION = PREFIX + "close_part_action_context"; //$NON-NLS-1$
 	public static final String EDIT_ACTION_SETS_ACTION = PREFIX + "edit_action_sets_action_context"; //$NON-NLS-1$

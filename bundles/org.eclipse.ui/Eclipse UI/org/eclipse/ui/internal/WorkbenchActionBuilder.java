@@ -78,6 +78,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ResetPerspectiveAction resetPerspectiveAction;
 	private EditActionSetsAction editActionSetAction;
 	private ClosePerspectiveAction closePerspAction;
+	private LockToolBarAction lockToolBarAction;
 	private CloseAllPerspectivesAction closeAllPerspsAction;
 	private PinEditorAction pinEditorAction;
 	private ShowViewMenuAction showViewMenuAction;
@@ -213,9 +214,21 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				enableActions(page.getPerspective() != null);
 			}
 			public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+				CoolBarLayout layout = ((WorkbenchPage) page).getToolBarLayout();
+				boolean locked = false;
+				if (layout != null) {
+					locked = layout.locked;
+				}
+				lockToolBarAction.setChecked(locked);
 			}
 			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				enableActions(true);
+				CoolBarLayout layout = ((WorkbenchPage) page).getToolBarLayout();
+				boolean locked = false;
+				if (layout != null) {
+					locked = layout.locked;
+				}
+				lockToolBarAction.setChecked(locked);
 			}
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			}
@@ -232,6 +245,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		hideShowEditorAction.setEnabled(value);
 		selectWorkingSetAction.setEnabled(value);		
 		savePerspectiveAction.setEnabled(value);
+		lockToolBarAction.setEnabled(value);
 		resetPerspectiveAction.setEnabled(value);
 		editActionSetAction.setEnabled(value);
 		closePerspAction.setEnabled(value);
@@ -431,11 +445,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(subMenu);
 			new ShowViewMenu(subMenu, window, true);
 		}
+		IContributionManager manager = window.getToolsManager();
 		if (usingMenuReorg) {
 			menu.add(new Separator());
 			menu.add(savePerspectiveAction);
 			menu.add(editActionSetAction);
 			menu.add(hideShowEditorAction);
+			if (manager instanceof CoolBarManager) {
+				menu.add(lockToolBarAction);	
+			}
 			menu.add(resetPerspectiveAction);
 			menu.add(new Separator());
 			menu.add(closePerspAction);	
@@ -446,6 +464,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(new Separator());
 			menu.add(savePerspectiveAction);
 			menu.add(editActionSetAction);
+			if (manager instanceof CoolBarManager) {
+				menu.add(lockToolBarAction);	
+			}
 			menu.add(resetPerspectiveAction);
 			menu.add(new Separator());
 			menu.add(closePerspAction);
@@ -850,6 +871,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		hideShowEditorAction = new ToggleEditorsVisibilityAction(window);
 		savePerspectiveAction = new SavePerspectiveAction(window);
 		editActionSetAction = new EditActionSetsAction(window);
+		lockToolBarAction = new LockToolBarAction(window);
 		resetPerspectiveAction = new ResetPerspectiveAction(window);
 		closePerspAction = new ClosePerspectiveAction(window);
 		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
@@ -880,6 +902,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			// either to get the new text or a different mnemonic
 			savePerspectiveAction.setText(WorkbenchMessages.getString("Workbench.savePerspectiveAs")); //$NON-NLS-1$
 			editActionSetAction.setText(WorkbenchMessages.getString("Workbench.customizePerspective")); //$NON-NLS-1$
+			lockToolBarAction.setText(WorkbenchMessages.getString("Workbench.lockPerspectiveToolBar")); //$NON-NLS-1$
 			resetPerspectiveAction.setText(WorkbenchMessages.getString("Workbench.resetPerspective")); //$NON-NLS-1$
 			closePerspAction.setText(WorkbenchMessages.getString("Workbench.closePerspective")); //$NON-NLS-1$
 			closeAllPerspsAction.setText(WorkbenchMessages.getString("Workbench.closeAllPerspectives")); //$NON-NLS-1$

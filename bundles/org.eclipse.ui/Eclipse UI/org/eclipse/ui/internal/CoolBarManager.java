@@ -39,7 +39,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	private CoolBar coolBar = null;
 	
-	private CoolBarLayout coolBarLayout = null;
+	private CoolBarLayout coolBarLayout = new CoolBarLayout();
 	
 	/**
 	 */
@@ -172,9 +172,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			itemsInOrder.add(item);
 // System.out.println("item " + item.getId());
 		}
-		CoolBarLayout layout = new CoolBarLayout(itemsInOrder, coolBar.getWrapIndices(), coolBar.getItemSizes());
-// System.out.println(layout.toString());
-		return layout;
+		coolBarLayout.items = itemsInOrder;
+		coolBarLayout.itemWrapIndices = coolBar.getWrapIndices();
+		coolBarLayout.itemSizes = coolBar.getItemSizes();
+// System.out.println(coolBarLayout.toString());
+		return coolBarLayout;
 	}
 	/**
 	 */
@@ -241,6 +243,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
+	public void lockLayout(boolean value) {
+		coolBarLayout.locked = value;
+		coolBar.setLocked(value);
+	}
+	/**
+	 */
 	public void resetLayout() {
 		CoolItem[] coolItems = coolBar.getItems();
 		for (int i=0; i<coolItems.length; i++) {
@@ -250,6 +258,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			coolItem.dispose();
 		}
 		update(true);
+		lockLayout(false);
 	}
 	/**
 	 * Removes the given contribution item from the contribution items
@@ -273,7 +282,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	public void setLayout(CoolBarLayout layout) {
-		if (layout == null) return;
+		if (layout == null) {
+			coolBarLayout = new CoolBarLayout();
+			coolBar.setLocked(coolBarLayout.locked);
+			return;
+		}
 		// some of the items may not exist on the coolbar if we save
 		// the layout of editor action bars
 // System.out.println("set layout");
@@ -306,6 +319,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		// not working with editor action items, need to revisit this...
 //		coolBar.setItemLayout(itemOrderArray, layout.itemWrapIndices, itemSizesArray);
+		coolBar.setLocked(layout.locked);
+		coolBarLayout = layout;
 	}
 	/**
 	 */
