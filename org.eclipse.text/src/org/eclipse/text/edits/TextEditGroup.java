@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IRegion;
 /**
  * A text edit group combines a list of {@link TextEdit}s
  * and a name into a single object. The name must be a human
- * readable string use to persent the text edit group in the
+ * readable string use to present the text edit group in the
  * user interface.
  * 
  * @since 3.0
