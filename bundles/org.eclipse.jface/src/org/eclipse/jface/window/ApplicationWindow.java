@@ -252,7 +252,7 @@ protected void addToolBar(int style) {
  * @since 3.0
  */
 protected void addCoolBar(int style) {
-	if ((getShell() == null) && (coolBarManager == null) && (coolBarManager == null)) {
+	if ((getShell() == null) && (toolBarManager == null) && (coolBarManager == null)) {
 		coolBarManager = createCoolBarManager(style);
 	} 
 }
