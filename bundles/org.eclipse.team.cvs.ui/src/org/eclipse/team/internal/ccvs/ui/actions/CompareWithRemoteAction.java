@@ -43,7 +43,7 @@ public class CompareWithRemoteAction extends TeamAction {
 			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[0].getProject());
 
 			LocalResource cvsResource = null;
-			if(resources[0].getType()==IResource.FILE) {
+			if (resources[0].getType()==IResource.FILE) {
 				cvsResource = new LocalFile(resource.getLocation().toFile());
 			} else {
 				cvsResource = new LocalFolder(resource.getLocation().toFile());
@@ -51,19 +51,19 @@ public class CompareWithRemoteAction extends TeamAction {
 			
 			
 			CVSTag tag = null;
-			if(cvsResource.isFolder()) {
+			if (cvsResource.isFolder()) {
 				FolderSyncInfo folderInfo = ((LocalFolder)cvsResource).getFolderSyncInfo();
-				if(folderInfo!=null) {
+				if (folderInfo!=null) {
 					tag = folderInfo.getTag();
 				}
 			} else {
 				ResourceSyncInfo info = cvsResource.getSyncInfo();
-				if(info!=null) {					
+				if (info!=null) {					
 					tag = info.getTag();
 				}
 			}
-			if(tag==null) {
-				if(cvsResource.getParent().isCVSFolder()) {
+			if (tag==null) {
+				if (cvsResource.getParent().isCVSFolder()) {
 					tag = cvsResource.getParent().getFolderSyncInfo().getTag();
 				} else {
 					// XXX: this is wrong :> should return an error
