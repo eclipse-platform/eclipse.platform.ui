@@ -59,7 +59,6 @@ public final class ContentAssistAction extends TextEditorAction {
 	 */
 	public ContentAssistAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
-		update();
 	}
 	
 	/**
