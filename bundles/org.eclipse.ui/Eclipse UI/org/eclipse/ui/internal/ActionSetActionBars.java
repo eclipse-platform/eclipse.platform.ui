@@ -12,7 +12,7 @@ import org.eclipse.ui.*;
  */
 public class ActionSetActionBars extends SubActionBars {
 	private String actionSetId;
-	private CoolBarContributionItem coolBarItem;
+	private CoolItemToolBarManager coolItemToolBarMgr;
 /**
  * Constructs a new action bars object
  */
@@ -37,8 +37,8 @@ protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
  */
 public void dispose() {
 	super.dispose();
-	if (coolBarItem != null) 
-		coolBarItem.dispose();
+	if (coolItemToolBarMgr != null)
+		coolItemToolBarMgr.removeAll();
 }
 /**
  * Returns the tool bar manager.  If items are added or
@@ -51,15 +51,17 @@ public IToolBarManager getToolBarManager() {
 	if (parentMgr instanceof ToolBarManager) {
 		return super.getToolBarManager();
 	} else if (parentMgr instanceof CoolBarManager) {
-		if (coolBarItem == null) {
+		if (coolItemToolBarMgr == null) {
 			// Create a CoolBar item for this action bar.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			CoolItemToolBarManager tBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
-			toolBarMgr = createSubToolBarManager(tBarMgr);
-			coolBarItem = new CoolBarContributionItem(cBarMgr, tBarMgr, actionSetId);
-			coolBarItem.setVisible(active);
+			coolItemToolBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
+			toolBarMgr = createSubToolBarManager(coolItemToolBarMgr);
+			// Just create the CoolBarContributionItem, PluginActionSetBuilder will add the item to
+			// the CoolBarManager.
+			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, coolItemToolBarMgr, actionSetId);
+			coolItemToolBarMgr.setVisible(active);
 		}
-		return coolBarItem.getToolBarManager();
+		return coolItemToolBarMgr;
 	}
 	return null;
 }
@@ -68,7 +70,7 @@ public IToolBarManager getToolBarManager() {
  */
 protected void setActive(boolean set) {
 	super.setActive(set);
-	if (coolBarItem != null)
-		coolBarItem.setVisible(set);
+	if (coolItemToolBarMgr != null)
+		coolItemToolBarMgr.setVisible(set);
 }
 }

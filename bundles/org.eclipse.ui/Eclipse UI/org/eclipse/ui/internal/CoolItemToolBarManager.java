@@ -53,4 +53,15 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	protected void setParentMgr(CoolBarManager parentManager) {
 		this.parentManager = parentManager;
 	}
+	
+	protected void setVisible(boolean set) {
+		if (coolBarItem != null) {
+			coolBarItem.setVisible(set);
+		}
+	}
+	protected void setVisible(boolean set, boolean forceVisibility) {
+		if (coolBarItem != null) {
+			coolBarItem.setVisible(set, forceVisibility);
+		}
+	}
 }      

@@ -17,8 +17,7 @@ public class EditorActionBars extends SubActionBars
 	private int refCount;
 	private IEditorActionBarContributor editorContributor;
 	private IEditorActionBarContributor extensionContributor;
-	private CoolBarContributionItem coolBarItem;
-	private static String groupMarkerId = "org.eclipse.ui.internal.editorActionBars";
+	private CoolItemToolBarManager coolItemToolBarMgr;
 /**
  * Constructs the EditorActionBars for an editor.  
  */
@@ -63,8 +62,8 @@ public void dispose() {
 	super.dispose();
 	if (editorContributor != null) 
 		editorContributor.dispose();
-	if (coolBarItem != null)
-		coolBarItem.dispose();
+	if (coolItemToolBarMgr != null)
+		coolItemToolBarMgr.removeAll();
 }
 /**
  * Gets the editor contributor
@@ -90,17 +89,17 @@ public IToolBarManager getToolBarManager() {
 	if (parentMgr instanceof ToolBarManager) {
 		return super.getToolBarManager();
 	} else if (parentMgr instanceof CoolBarManager) {
-		if (coolBarItem == null) {
+		if (coolItemToolBarMgr == null) {
 			// Create a CoolBar item for this action bar.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			CoolItemToolBarManager tBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
-			tBarMgr.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
-			toolBarMgr = createSubToolBarManager(tBarMgr);
-			coolBarItem = new CoolBarContributionItem(cBarMgr, tBarMgr, type);
+			coolItemToolBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
+			coolItemToolBarMgr.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
+			toolBarMgr = createSubToolBarManager(coolItemToolBarMgr);
+			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, coolItemToolBarMgr, type);
 			cBarMgr.add(coolBarItem);
-			coolBarItem.setVisible(active);
+			coolItemToolBarMgr.setVisible(active);
 		}
-		return toolBarMgr;
+		return coolItemToolBarMgr;
 	}
 	return null;
 }
@@ -150,8 +149,8 @@ private void setActive(boolean set, boolean forceVisibility) {
 	if (toolBarMgr != null)
 		((EditorToolBarManager)toolBarMgr).setVisible(set, forceVisibility);
 
-	if (coolBarItem != null)
-		coolBarItem.setVisible(set, forceVisibility);
+	if (coolItemToolBarMgr != null)
+		coolItemToolBarMgr.setVisible(set, forceVisibility);
 }
 /**
  * Sets the editor contributor
