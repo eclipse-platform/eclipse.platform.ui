@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.ui;
@@ -29,6 +29,43 @@ import org.eclipse.ui.IViewPart;
  * </p>
  */
 public interface ISearchResultView extends IViewPart {
+
+	/**
+	 * Informs the view that a search has started.
+	 * Provides all necessary information to create an entry in the search result 
+	 * view.
+	 * If every match should show up in the search result view then the match
+	 * itself can be used as key.	 
+	 *
+	 * @param	pageId					the id of the search page which started the search
+ 	 * @param	singularLabel			the label to be used for this search occurrence
+ 	 * 									  if there is one match
+	 *									  or <code>null</code> if the pluralLabelPattern should be used
+ 	 * @param	pluralLabelPattern		the label pattern to be used for this search occurrence
+ 	 * 									  if there are more than one matches or none.
+ 	 * 									  This string may contain {0} which will be replace by the match count
+ 	 * @param	imageDescriptor			the image descriptor to be used for this search occurrence,
+	 *									  or <code>null</code> if this search should not have an image
+ 	 * @param	groupFactory			the action group factory
+  	 *								  		or <code>null</code> if no factory is provided.
+	 * @param	labelProvider			the label provider used by this search result view
+  	 *									  or <code>null</code> if the default provider should be used.
+	 *									  The default label provider shows the resource name and the corresponding image.
+	 * @param	gotoAction				the action used by the view to go to a marker
+	 * @param	groupByKeyComputer		the computer used by the view to compute the key for a marker
+	 * @param	operation				the runnable used by the view to repeat the search
+ 	 * @since 2.0
+	 */
+	public void searchStarted(
+				String					pageId,
+				String					singularLabel,
+				String					pluralLabelPattern,
+				ImageDescriptor			imageDescriptor,
+				IActionGroupFactory		groupFactory,
+				ILabelProvider			labelProvider,
+				IAction					gotoAction,
+				IGroupByKeyComputer		groupByKeyComputer,
+				IRunnableWithProgress	operation);
 
 	/**
 	 * Returns the current selection of the search result view
@@ -94,6 +131,7 @@ public interface ISearchResultView extends IViewPart {
 	 * @param	groupByKeyComputer		the computer used by the view to compute the key for a marker
 	 * @param	operation				the runnable used by the view to repeat the search
  	 * @since 2.0
+	 * @deprecated	As of build  > 20020514, replaced by the new version which provides an action group factory
 	 */
 	public void searchStarted(
 				String					pageId,
