@@ -110,6 +110,10 @@ private void openHelpTopic(String topic, String href) {
  */
 private void runAction(String pluginId, String className) {
 	IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
+	if (desc == null) {
+		logActionLinkError(pluginId, className);
+		return;
+	}		
 	Class actionClass;
 	IAction action;
 	try {
