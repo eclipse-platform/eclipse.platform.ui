@@ -71,6 +71,12 @@ public Object getEditableValue();
  * The <code>getPropertyValue</code> and <code>setPropertyValue</code> methods
  * are used to read and write the actual property values by specifying
  * the property ids from these property descriptors.
+ * <p>
+ * Implementors should cache the descriptors as they will be asked for 
+ * the descriptors with any edit/update. Since descriptors provide
+ * cell editors, returning the same descriptors if possible allows 
+ * for efficient updating.
+ * </p>
  * 
  * @return the property descriptors 
  */
