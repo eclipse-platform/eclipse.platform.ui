@@ -311,13 +311,4 @@
 	<filter pattern = ".*" selected = "false"/>
 </extension>
 
-<extension 
-	point="org.eclipse.ui.preferencePages">
-	<page id="org.eclipse.ui.preferencePages.TextEditor"
-	      name="%PreferencePages.TextEditor"
-	      class="org.eclipse.ui.editors.text.TextEditorPreferencePage"          
-	      category="org.eclipse.ui.preferencePages.Workbench">
-    	</page>
-</extension>
-
 </plugin>

@@ -271,7 +271,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	/** Key used to look up font preference */
-	public final static String PREFERENCE_FONT= "AbstractTextEditor.Font"; //$NON-NLS-1$
+	public final static String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
 	/** Menu id for the editor context menu. */
 	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
 	/** Menu id for the ruler context menu. */
