@@ -138,7 +138,7 @@ public class DiffTreeViewer extends TreeViewer {
 	/* package */ boolean fLeftIsLocal;
 	private ViewerFilter fViewerFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
-	private IPropertyChangeListener fPreferenceChangeListener;
+	//private IPropertyChangeListener fPreferenceChangeListener;
 
 	private Action fCopyLeftToRightAction;
 	private Action fCopyRightToLeftAction;
@@ -202,6 +202,7 @@ public class DiffTreeViewer extends TreeViewer {
 		}	
 		
 		// register for notification with the Compare plugin's PreferenceStore 
+		/*
 		fPreferenceChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS))
@@ -211,6 +212,7 @@ public class DiffTreeViewer extends TreeViewer {
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null)
 			ps.addPropertyChangeListener(fPreferenceChangeListener);
+		*/
 			
 	
 		setContentProvider(new DiffViewerContentProvider());
@@ -224,7 +226,7 @@ public class DiffTreeViewer extends TreeViewer {
 			}
 		);
 						
-		syncShowPseudoConflictFilter();			
+		// syncShowPseudoConflictFilter();			
 				
 		setSorter(new DiffViewerSorter());
 		
@@ -299,12 +301,14 @@ public class DiffTreeViewer extends TreeViewer {
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
+		/*
 		if (fPreferenceChangeListener != null) {
 			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 			if (ps != null)
 				ps.removePropertyChangeListener(fPreferenceChangeListener);
 			fPreferenceChangeListener= null;
 		}
+		*/
 				
 		if (fCompareConfiguration != null) {
 			if (fPropertyChangeListener != null)
@@ -636,6 +640,7 @@ public class DiffTreeViewer extends TreeViewer {
 		}
 	}
 	
+	/*
 	private void syncShowPseudoConflictFilter() {
 		
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
@@ -654,6 +659,7 @@ public class DiffTreeViewer extends TreeViewer {
 			}
 		}
 	}
+	*/
 		
 	private final boolean isEditable(Object element, boolean left) {
 		if (element instanceof ICompareInput) {
