@@ -59,8 +59,13 @@ public class EmbeddedBrowserDialog {
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		shell.setLayout(layout);
+		
 		webBrowser = new Browser(shell, SWT.NONE);
-		GridData data = new GridData(w, h);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		data.widthHint=w;
+		data.heightHint=h;
 		webBrowser.setLayoutData(data);
 		shell.pack();
 		shell.setLocation(x, y);
