@@ -172,7 +172,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/**
 	 * Constant (bit mask) indicating which the Open Perspective submenu is
 	 * probably present somewhere in this window.
-	 * 
+	 *
 	 * @see #addSubmenu
 	 * @since 3.0
 	 */
@@ -697,9 +697,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    // on the left right and bottom
 		topBar = new CBanner(shell, SWT.NONE);
 	    
-		final CacheWrapper coolbarCacheWrapper = new CacheWrapper(topBar);
+		CacheWrapper coolbarCacheWrapper = new CacheWrapper(topBar);
 		
-		Control coolBar = createCoolBarControl(coolbarCacheWrapper.getControl());
+		final Control coolBar = createCoolBarControl(coolbarCacheWrapper.getControl());
 		// need to resize the shell, not just the coolbar's immediate
 		// parent, if the coolbar wants to grow or shrink
 		
@@ -715,7 +715,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
             	Point newSize = shell.getSize();
             	
             	if (lastShellSize.equals(newSize)) {
-            		LayoutUtil.resize(coolbarCacheWrapper.getControl());
+            		LayoutUtil.resize(coolBar);
             	}
             	
         		lastShellSize.x = newSize.x;

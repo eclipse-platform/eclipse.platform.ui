@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.layout;
 
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
@@ -41,7 +42,15 @@ public class LayoutUtil {
 		if (parent instanceof Shell) {
 			parent.layout(true);
 		} else {
+			Rectangle currentBounds = parent.getBounds();
+
 			resize(parent);
+
+			// If the parent was resized, then it has already triggered a
+			// layout. Otherwise, we need to manually force it to layout again.
+			if (currentBounds.equals(parent.getBounds())) {
+			    parent.layout(true);
+			}
 		}
 	}
 }
