@@ -161,6 +161,9 @@
     <test id="regression.PR_1GHOM0N_Test">
       <run class="org.eclipse.core.tests.resources.regression.PR_1GHOM0N_Test"/>
     </test>
+    <test id="regression.Bug_29116">
+      <run class="org.eclipse.core.tests.resources.regression.Bug_29116"/>
+    </test>
 
 	<test id = "org.eclipse.core.tests.resources.session.SampleSessionTest">
 		<run class="org.eclipse.core.tests.resources.session.SampleSessionTest"/>
@@ -561,5 +564,13 @@
 		<run class="org.eclipse.core.tests.internal.resources.Cycle3Nature"/>
    </runtime>
    <requires-nature id="org.eclipse.core.tests.resources.cycle1"/>
+</extension>
+<extension
+      id="nature29116"
+      name="Test Bug 29116"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.Bug29116Nature"/>
+   </runtime>
 </extension>
 </plugin>
