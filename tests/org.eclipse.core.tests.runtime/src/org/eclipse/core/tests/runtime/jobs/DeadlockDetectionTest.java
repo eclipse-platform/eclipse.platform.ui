@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 
 import junit.framework.TestCase;
@@ -423,6 +424,74 @@ public class DeadlockDetectionTest extends TestCase {
 		}
 		//the underlying graph should now be empty
 		assertTrue("Cancelled job not removed from graph.", manager.getLockManager().isEmpty());
+	}
+	
+	public void testBeginRuleCancelAfterWait() {
+		final JobManager manager = JobManager.getInstance();
+		final ISchedulingRule rule1 = new RuleSetA();
+		final ISchedulingRule rule2 = new RuleSetB();
+		RuleSetA.conflict = true;
+		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
+		final IProgressMonitor canceller = new FussyProgressMonitor();
+		
+		Job ruleOwner = new Job("Test1") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					status[0] = StatusChecker.STATUS_START;
+					manager.beginRule(rule1, null);
+					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 1000);
+					manager.endRule(rule1);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+					status[0] = StatusChecker.STATUS_DONE;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		
+		Job ruleWait = new Job("Test2") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					status[1] = StatusChecker.STATUS_RUNNING;
+					manager.beginRule(rule2, canceller);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+					status[1] = StatusChecker.STATUS_DONE;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		
+		ruleOwner.schedule();
+		StatusChecker.waitForStatus(status, StatusChecker.STATUS_START);
+		
+		//schedule a job that is going to begin a conflicting rule and then cancel the wait
+		ruleWait.schedule();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+		//cancel the wait for the rule
+		canceller.setCanceled(true);
+		//wait until the job completes
+		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
+		
+		//let the first job finish
+		status[0] = StatusChecker.STATUS_RUNNING;
+		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+		int i = 0;
+		while(ruleOwner.getState() != Job.NONE) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			assertTrue("Timeout waiting for job to end.", ++i < 100);
+		}
+		RuleSetA.conflict = false;
+		//the underlying graph should now be empty
+		assertTrue("Cancelled rule not removed from graph.", manager.getLockManager().isEmpty());
 	}
 	
 	private void start(ArrayList allRunnables) {
