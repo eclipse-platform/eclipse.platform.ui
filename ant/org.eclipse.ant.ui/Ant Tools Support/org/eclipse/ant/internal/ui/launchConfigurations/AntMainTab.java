@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,24 +35,42 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class AntMainTab extends ExternalToolsMainTab {
 
 	protected Button captureOutputButton;
+	private String currentLocation= null;
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		super.initializeFrom(configuration);
+		try {
+			currentLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+		} catch (CoreException e) {
+		}
 		updateCaptureOutput(configuration);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		super.performApply(configuration);
+		try {
+			String newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+			if (newLocation != null) {
+				if (!newLocation.equals(currentLocation)) {
+					updateTargetsTab();
+					currentLocation= newLocation;
+				}
+			} else if (currentLocation != null){
+				updateTargetsTab();
+				currentLocation= newLocation;
+			}
+		} catch (CoreException e) {
+		}
 		setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, configuration, captureOutputButton.getSelection(), true);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -101,10 +120,8 @@ public class AntMainTab extends ExternalToolsMainTab {
 		captureOutputButton.setSelection(captureOutput);
 	}
 
-	/**
-	 * Prompts the user for a workspace location within the workspace and sets
-	 * the location as a String containing the workspace_loc variable or
-	 * <code>null</code> if no location was obtained from the user.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#handleWorkspaceLocationButtonSelected()
 	 */
 	protected void handleWorkspaceLocationButtonSelected() {
 		FileSelectionDialog dialog;
@@ -118,10 +135,23 @@ public class AntMainTab extends ExternalToolsMainTab {
 		locationField.setText(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsMainTab#getWorkingDirectoryLabel()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#getWorkingDirectoryLabel()
 	 */
 	protected String getWorkingDirectoryLabel() {
 		return AntLaunchConfigurationMessages.getString("AntMainTab.Base_&Directory__3"); //$NON-NLS-1$
+	}
+	
+	private void updateTargetsTab() {
+		//the location has changed...set the targets tab to 
+		//need to be recomputed
+		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab tab = tabs[i];
+			if (tab instanceof AntTargetsTab) {
+				((AntTargetsTab)tab).setDirty(true);
+				break;
+			}
+		}
 	}
 }
