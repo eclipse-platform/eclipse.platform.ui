@@ -33,7 +33,8 @@ public interface IProjectSetSerializer {
 	 * 
 	 * @param providerProjects  an array of projects that the serializer should create
 	 *   text references for
-	 * @param context  a UI context object
+	 * @param context  a UI context object. This object will either be a 
+	 *                 com.ibm.swt.widgets.Shell or it will be null.
 	 * @param monitor  a progress monitor
 	 * @return an array of serialized reference strings uniquely identifying the projects
 	 */
@@ -51,7 +52,8 @@ public interface IProjectSetSerializer {
 	 * @param referenceStrings  an array of referene strings uniquely identifying the projects
 	 * @param filename  the name of the file that the references were read from. This is included
 	 *   in case the provider needs to deduce relative paths
-	 * @param context  a UI context object
+	 * @param context  a UI context object. This object will either be a 
+	 *                 com.ibm.swt.widgets.Shell or it will be null.
 	 * @param monitor  a progress monitor
 	 * @return an array of projects that were created
 	 */
