@@ -37,11 +37,10 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_na
 	// the result
 	jlong result = org_eclipse_update_configuration_LocalSystemInfo_SIZE_UNKNOWN;
 
-	// first, obtain the Path from the java.io.File parameter
-	cls = jnienv -> GetObjectClass(file);
-	id = jnienv -> GetMethodID(cls, "getAbsolutePath", "()Ljava/lang/String;");
-	obj = jnienv -> CallObjectMethod(file, id);
-	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
+	cls = (*jnienv) -> GetObjectClass(jnienv, file);
+	id = (*jnienv) -> GetMethodID(jnienv, cls, "getAbsolutePath", "()Ljava/lang/String;");
+	obj = (*jnienv) -> CallObjectMethod(jnienv, file, id);
+	lpDirectoryName = (*jnienv) -> GetStringUTFChars(jnienv, (jstring) obj, 0);
 
 	// cast one argument as jlong to have a jlong result
 	int err = statfs(lpDirectoryName,&buffer);
@@ -73,10 +72,10 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 	const char * lpDirectoryName;
 
 	// obtain the String from the parameter
-	cls = jnienv -> GetObjectClass(file);
-	id = jnienv -> GetMethodID(cls, "getAbsolutePath", "()Ljava/lang/String;");
-	obj = jnienv -> CallObjectMethod(file, id);
-	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
+	cls = (*jnienv) -> GetObjectClass(jnienv, file);
+	id = (*jnienv) -> GetMethodID(jnienv, cls, "getAbsolutePath", "()Ljava/lang/String;");
+	obj = (*jnienv) -> CallObjectMethod(jnienv, file, id);
+	lpDirectoryName = (*jnienv) -> GetStringUTFChars(jnienv, (jstring) obj, 0);
 
 	jstring result = NULL;
 
@@ -104,10 +103,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 	const char * lpDirectoryName;
 
 	// obtain the String from the parameter
-	cls = jnienv -> GetObjectClass(file);
-	id = jnienv -> GetMethodID(cls, "getAbsolutePath", "()Ljava/lang/String;");
-	obj = jnienv -> CallObjectMethod(file, id);
-	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
+	cls = (*jnienv) -> GetObjectClass(jnienv, file);
+	id = (*jnienv) -> GetMethodID(jnienv, cls, "getAbsolutePath", "()Ljava/lang/String;");
+	obj = (*jnienv) -> CallObjectMethod(jnienv, file, id);
+	lpDirectoryName = (*jnienv) -> GetStringUTFChars(jnienv, (jstring) obj, 0);
 
 	int result;
 	
@@ -142,17 +141,20 @@ JNIEXPORT jobjectArray JNICALL Java_org_eclipse_update_configuration_LocalSystem
 	// find mount points
 
 	drive = 0;
-	stringClass = jnienv -> FindClass("java/lang/String");
-	empty = jnienv -> NewStringUTF("");
-	//returnArray = jnienv -> NewObjectArray(nDrive, stringClass, empty);
+	stringClass = (*jnienv) -> FindClass(jnienv, "java/lang/String");
+	empty = (*jnienv) -> NewStringUTF(jnienv, "");
+	//returnArray = (*jnienv) -> NewObjectArray(jnienv, nDrive, stringClass, empty);
+
 	// for now return null as method is not implemented
 	returnArray = NULL;
 
-	for (int i = 0; i < drive; i++) {
+	int i;
+	for (i = 0; i < drive; i++) {
 		// Linux implementation, create String for each mount point
 
-		str = jnienv -> NewStringUTF(driveName);
-		jnienv -> SetObjectArrayElement(returnArray, index, str);
+		str = (*jnienv) -> NewStringUTF(jnienv, driveName);
+		(*jnienv) -> SetObjectArrayElement(jnienv, returnArray, index, str);
+
 		index++;
 	}
 

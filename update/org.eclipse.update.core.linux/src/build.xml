@@ -59,8 +59,8 @@
 	  <srcfile/>
 	  <arg value="-static"/>           
       <arg value="-lc"/>	  
-      <fileset dir="${src-path}" includes="*.cpp"/>
-      <mapper type="glob" from="*.cpp" to="*.o"/>
+      <fileset dir="${src-path}" includes="*.c"/>
+      <mapper type="glob" from="*.c" to="*.o"/>
     </apply>
     
 	<move file="${library-file}" todir="${destination}"/>
