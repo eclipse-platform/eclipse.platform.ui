@@ -78,6 +78,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
@@ -405,9 +406,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         fClipboard= new Clipboard(getSite().getShell().getDisplay());
         
         PasteBreakpointsAction paste = new PasteBreakpointsAction(this, fClipboard);
-        configure(paste, IWorkbenchActionDefinitionIds.PASTE, ISharedImages.IMG_TOOL_PASTE);
+        configure(paste, IWorkbenchActionDefinitionIds.PASTE, ActionFactory.PASTE.getId(),ISharedImages.IMG_TOOL_PASTE);
         SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
-        configure(copy, IWorkbenchActionDefinitionIds.COPY, ISharedImages.IMG_TOOL_COPY);        
+        configure(copy, IWorkbenchActionDefinitionIds.COPY, ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);        
 	}
 
 	/**
@@ -416,13 +417,14 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
      * the action with this view.
      * 
      * @param sla action
-     * @param defId global action definition id
+     * @param defId action definition id
+     * @param globalId global action id
      * @param imgId image identifier
      */
-    private void configure(SelectionListenerAction action, String defId, String imgId) {
+    private void configure(SelectionListenerAction action, String defId, String globalId, String imgId) {
         setAction(defId, action);
         action.setActionDefinitionId(defId);
-        getViewSite().getActionBars().setGlobalActionHandler(defId, action);
+        getViewSite().getActionBars().setGlobalActionHandler(globalId, action);
         getViewer().addSelectionChangedListener(action);
         action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
     }
