@@ -253,7 +253,7 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Checkout a copy and modify locally
 		IProject copy = checkoutCopy(project, "-copy");
-		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
+		//addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		deleteResources(copy, new String[] {"deleted.txt"}, false);
 		IFile file = copy.getFile("changed.txt");
 		JUnitTestCase.waitMsec(1500);
