@@ -163,9 +163,7 @@ protected void setUp() throws Exception {
 	super.setUp();
 	//setup the log file
 	if (logFile == null) {
-		File parent = Platform.getLocation().toFile();
-		String logName = Long.toString(System.currentTimeMillis()) + ".log";
-		logFile = new File(parent, logName);
+		logFile = Platform.getLogFileLocation().toFile();
 	}
 }
 protected void tearDown() throws Exception {
@@ -216,7 +214,7 @@ protected void writeLog(IStatus status) {
 protected void writeLog(IStatus[] statuses) {
 	if (logFile.exists())
 		logFile.delete();
-	PlatformLogWriter writer = new PlatformLogWriter(logFile);
+	PlatformLogWriter writer = new PlatformLogWriter();
 	for (int i = 0; i < statuses.length; i++) {
 		writer.logging(statuses[i], "org.eclipse.core.tests.runtime");
 	}
