@@ -46,10 +46,12 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 		for (int i = 0; i < this.nonPluginEntries.length; i++) {
 			ContentReference[] archives =
 				provider.getNonPluginEntryArchiveReferences(nonPluginEntries[i], this.monitor);
-			IVerificationResult result =
-				verifier.verify(this.feature, archives, this.monitor);
-			if (result != null)
-				promptForVerification(result, listener);
+			IVerificationResult result;
+			for (int j = 0; j < archives.length; j++) {
+				result = verifier.verify(this.feature, archives[j], this.monitor);
+				if (result != null)
+					promptForVerification(result, listener);
+			}
 		}
 	}
 

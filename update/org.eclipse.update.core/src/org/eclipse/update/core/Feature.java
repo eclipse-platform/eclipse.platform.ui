@@ -276,10 +276,13 @@ public class Feature extends FeatureModel implements IFeature {
 			// Download and verify feature archive(s)
 			ContentReference[] references =
 				provider.getFeatureEntryArchiveReferences(monitor);
+			IVerificationResult vr;
 			if (verifier != null) {
-				promptForVerification(
-					verifier.verify(this, references, monitor),
-					verificationListener);
+				for (int i = 0; i < references.length; i++) {
+					vr = verifier.verify(this, references[i], monitor);
+					if (vr != null)
+						promptForVerification(vr, verificationListener);
+				}
 			}
 			if (monitor != null)
 				monitor.worked(1);
@@ -289,9 +292,11 @@ public class Feature extends FeatureModel implements IFeature {
 				references =
 					provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
 				if (verifier != null) {
-					promptForVerification(
-						verifier.verify(this, references, monitor),
-						verificationListener);
+					for (int j = 0; j < references.length; j++) {
+						vr = verifier.verify(this, references[j], monitor);
+						if (vr != null)
+							promptForVerification(vr, verificationListener);
+					}
 				}
 				if (monitor != null)
 					monitor.worked(1);
@@ -343,27 +348,26 @@ public class Feature extends FeatureModel implements IFeature {
 				if (monitor != null)
 					monitor.worked(1);
 			}
-			handler.completeInstall(consumer);
 			
-			// install handler processed any non-plugin entries
+			// call handler to complete installation (eg. handle non-plugin entries)
+			handler.completeInstall(consumer);
 			if (monitor != null)
 				monitor.worked(1);
-				
+
 			// indicate install success
-			success = true;			
-			
+			success = true;
+
 		} finally {
 			// ensure we always cleanup
 			if (consumer != null)
 				if (success) {
 					// successful install
 					result = consumer.close();
-					handler.installCompleted(true);					
-				}
-				else {
+					handler.installCompleted(true);
+				} else {
 					// unsuccessful install
 					consumer.abort();
-					handler.installCompleted(false);		
+					handler.installCompleted(false);
 				}
 			if (monitor != null)
 				monitor.done();
