@@ -1604,15 +1604,15 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	
 	/**
-	 * Returns the native system environment variables. On WIN32,
+	 * Returns a copy of the native system environment variables. On WIN32,
 	 * all keys (variable names) are returned in uppercase. Note
 	 * that WIN32's environment is not case sensitive.
 	 * 
-	 * @return the native system environment variables
+	 * @return the a copy of the native system environment variables
 	 */
-	public static HashMap getNativeEnvironment() {
+	public Map getNativeEnvironment() {
 		if (fgNativeEnv != null) {
-			return fgNativeEnv;
+			return new HashMap(fgNativeEnv);
 		}
 		fgNativeEnv= new HashMap();
 		try {
@@ -1684,7 +1684,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			// Native environment-fetching code failed.
 			// This can easily happen and is not useful to log.
 		}
-		return fgNativeEnv;
+		return new HashMap(fgNativeEnv);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#newSourcePathComputer(org.eclipse.debug.core.ILaunchConfiguration)

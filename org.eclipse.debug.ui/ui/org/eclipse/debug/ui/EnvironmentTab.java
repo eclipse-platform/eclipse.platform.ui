@@ -13,11 +13,13 @@ package org.eclipse.debug.ui;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -25,7 +27,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.launchConfigurations.*;
+import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.Dialog;
@@ -34,6 +36,8 @@ import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -58,6 +62,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -93,6 +98,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected Button envRemoveButton;
 	protected Button appendEnvironment;
 	protected Button replaceEnvironment;
+	protected Button envSelectButton;
 	
 	/**
 	 * Content provider for the environment table
@@ -312,6 +318,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvAddButtonSelected();
 			}
+				});
+		envSelectButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("EnvironmentTab.18"), null); //$NON-NLS-1$
+		envSelectButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleEnvSelectButtonSelected();
+			}
 		});
 		envEditButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("EnvironmentTab.Edit_5"), null); //$NON-NLS-1$
 		envEditButton.addSelectionListener(new SelectionAdapter()
@@ -374,6 +386,99 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		environmentTable.add(variable);
 		updateLaunchConfigurationDialog();
 		return true;
+	}
+	
+	/**
+	 * Displays a dialog that allows user to select native environment variables 
+	 * to add to the table.
+	 */
+	private void handleEnvSelectButtonSelected() {
+		//get Environment Variables from the OS
+		Map envVariables = getNativeEnvironment();
+		
+		//get Environment Variables from the table
+		TableItem[] items = environmentTable.getTable().getItems();
+		for (int i = 0; i < items.length; i++) {
+			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
+			envVariables.remove(var.getName());
+		}
+		
+		ListSelectionDialog dialog = new ListSelectionDialog(getShell(), envVariables, createSelectionDialogContentProvider(), createSelectionDialogLabelProvider(), LaunchConfigurationsMessages.getString("EnvironmentTab.19")); //$NON-NLS-1$
+		dialog.setTitle(LaunchConfigurationsMessages.getString("EnvironmentTab.20")); //$NON-NLS-1$
+		
+		int button = dialog.open();
+		if (button == Dialog.OK) {
+			Object[] selected = dialog.getResult();		
+			for (int i = 0; i < selected.length; i++) {
+				environmentTable.add((EnvironmentVariable)selected[i]);				
+			}
+		}
+	}
+
+	/**
+	 * Creates a label provider for the native native environment variable selection dialog.
+	 * @return A label provider for the native native environment variable selection dialog.
+	 */
+	private ILabelProvider createSelectionDialogLabelProvider() {
+		return new ILabelProvider() {
+			public Image getImage(Object element) {
+				return null;
+			}
+			public String getText(Object element) {
+				EnvironmentVariable var = (EnvironmentVariable) element;
+				return var.getName() + " [" + var.getValue() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			public void addListener(ILabelProviderListener listener) {
+			}
+			public void dispose() {
+			}
+			public boolean isLabelProperty(Object element, String property) {
+				return false;
+			}
+			public void removeListener(ILabelProviderListener listener) {
+			}				
+		};
+	}
+
+	/**
+	 * Creates a content provider for the native native environment variable selection dialog.
+	 * @return A content provider for the native native environment variable selection dialog.
+	 */
+	private IStructuredContentProvider createSelectionDialogContentProvider() {
+		return new IStructuredContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				EnvironmentVariable[] elements = null;
+				if (inputElement instanceof HashMap) {
+					HashMap envVars = (HashMap) inputElement;
+					elements = new EnvironmentVariable[envVars.size()];
+					int index = 0;
+					for (Iterator iterator = envVars.keySet().iterator(); iterator.hasNext(); index++) {
+						Object key = iterator.next();
+						elements[index] = (EnvironmentVariable) envVars.get(key);
+					}
+				}
+				return elements;
+			}
+			public void dispose() {	
+			}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+		};
+	}
+
+	/**
+	 * Gets native environment variable from the LaunchManager. Creates EnvironmentVariable objects.
+	 * @return Map of name - EnvironmentVariable pairs based on native environment.
+	 */
+	private Map getNativeEnvironment() {
+		Map stringVars = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment(); //FIXME: LaunchManager is internal!!!
+		HashMap vars = new HashMap();
+		for (Iterator i = stringVars.keySet().iterator(); i.hasNext(); ) {
+			String key = (String) i.next();
+			String value = (String) stringVars.get(key);
+			vars.put(key, new EnvironmentVariable(key, value));
+		}
+		return vars;
 	}
 
 	/**

@@ -11,6 +11,8 @@
 package org.eclipse.debug.core;
 
  
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -362,6 +364,18 @@ public interface ILaunchManager {
 	 * @since 3.0
 	 */
 	public ISourcePathComputer newSourcePathComputer(ILaunchConfiguration configuration) throws CoreException;
+	
+
+	/**
+	 * Returns the native system environment variables as a map of
+	 * variable names and values (Strings). On WIN32,
+	 * all keys (variable names) are returned in uppercase. Note
+	 * that WIN32's environment is not case sensitive.
+	 * 
+	 * @return the native system environment variables
+	 * @since 3.0
+	 */	
+	public Map getNativeEnvironment();
 }
 
 

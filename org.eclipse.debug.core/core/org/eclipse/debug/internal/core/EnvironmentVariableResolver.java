@@ -1,7 +1,7 @@
 
 package org.eclipse.debug.internal.core;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
@@ -24,7 +24,7 @@ public class EnvironmentVariableResolver implements IDynamicVariableResolver {
 		if (argument == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugCoreMessages.getString("EnvironmentVariableResolver.0"), null)); //$NON-NLS-1$
 		}
-		HashMap map= LaunchManager.getNativeEnvironment();
+		Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
 		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 			// On Win32, env variables are case insensitive, so we uppercase everything
 			// for map matches

@@ -73,4 +73,23 @@ public class EnvironmentVariable
 	public String toString() {
 		return getName();
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		boolean equal = false;
+		if (obj instanceof EnvironmentVariable) {
+			EnvironmentVariable var = (EnvironmentVariable)obj;
+			equal = var.getName().equals(name);
+		}
+		return equal;		
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return name.hashCode();
+	}
 }
