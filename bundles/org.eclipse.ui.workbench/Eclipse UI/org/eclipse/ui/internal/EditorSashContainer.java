@@ -255,7 +255,10 @@ public IStatus restoreState(IMemento memento) {
 		// 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
 		workbook.setContainer(this);
 
-		result.add(workbook.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER)));
+		IMemento workbookMemento = childMem.getChild(IWorkbenchConstants.TAG_FOLDER);
+		if (workbookMemento != null) { 
+			result.add(workbook.restoreState(workbookMemento));
+		}
 
 		// Add the part to the layout
 		if (relativeID == null) {
