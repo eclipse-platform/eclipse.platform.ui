@@ -18,7 +18,7 @@ public class HelpPlugin extends Plugin {
 		plugin = this;
 	}
 	/**
-	 * @return com.ibm.ua.HelpViewerPlugin
+	 * @return the singleton instance of the help plugin
 	 */
 	public static HelpPlugin getDefault() {
 		return plugin;
