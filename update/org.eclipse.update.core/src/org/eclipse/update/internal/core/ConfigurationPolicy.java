@@ -121,16 +121,29 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 	/**
 	 * check if the plugins to unconfigure are required by other configured feature and
-	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
+	 * adds the feature to the list of unconfigured features 
 	 */
 	public boolean unconfigure(IFeatureReference featureReference)
 		throws CoreException {
 
-		if (featureReference == null)
+		if (featureReference == null){
+			//DEBUG
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+				UpdateManagerPlugin.getPlugin().debug("The feature reference to unconfigure is null");
+			}
 			return false;
+		}
 		IFeature feature = featureReference.getFeature();
-		if (feature == null)
+		if (feature == null){
+			//DEBUG
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+				URL url = featureReference.getURL();
+				String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
+				UpdateManagerPlugin.getPlugin().debug("The feature to unconfigure is null: feature reference is:"+urlString);
+			}
+			
 			return false;
+		}
 
 		// Setup optional install handler
 		InstallHandlerProxy handler =
@@ -185,7 +198,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 					newException);
 		}
 
-		return true;
+		return success;
 	}
 
 	/**

@@ -1158,7 +1158,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	}
 
 	private void debug(String s) {
-		System.out.println("DefaultSiteParser: " + s); //$NON-NLS-1$
+		UpdateManagerPlugin.getPlugin().debug("DefaultFeatureParser: " + s); //$NON-NLS-1$
 	}
 
 	private void logStatus(SAXParseException ex) {

@@ -152,6 +152,8 @@ public class ConfiguredSite
 		IProgressMonitor monitor)
 		throws CoreException {
 
+System.out.println("in install");
+
 		// ConfigSite is read only
 		if (!isUpdateable()) {
 			String errorMessage=
@@ -180,6 +182,11 @@ public class ConfiguredSite
 
 		try {
 			installedFeature= getSite().install(feature, verificationListener, monitor);
+			
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){
+				UpdateManagerPlugin.getPlugin().debug("Sucessfully installed: "+installedFeature.getURL().toExternalForm());
+			}
+			
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
 			// notify listeners
@@ -306,6 +313,7 @@ public class ConfiguredSite
 	 */
 	public boolean unconfigure(IFeature feature) throws CoreException {
 		IFeatureReference featureReference= getSite().getFeatureReference(feature);
+System.out.println("Feature ref :"+featureReference);		
 		ConfigurationPolicy configPolicy=
 			((ConfigurationPolicy) getConfigurationPolicyModel());
 		if (configPolicy == null)

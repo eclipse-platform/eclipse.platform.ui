@@ -59,7 +59,6 @@ public class Site extends SiteModel implements ISite {
 	 */
 	public static final String SITE_XML = SITE_FILE + ".xml"; //$NON-NLS-1$
 
-	
 	private static final String PACKAGED_FEATURE_TYPE = "packaged"; //$NON-NLS-1$
 	private static final String INSTALLED_FEATURE_TYPE = "installed";
 	//$NON-NLS-1$	
@@ -89,7 +88,7 @@ public class Site extends SiteModel implements ISite {
 
 		return getURL().equals(otherSite.getURL());
 	}
-	
+
 	/**
 	 * Returns the site URL
 	 * 
@@ -185,16 +184,33 @@ public class Site extends SiteModel implements ISite {
 	 * @since 2.0
 	 */
 	public IFeatureReference getFeatureReference(IFeature feature) {
-		IFeatureReference result = null;
+
+		if (feature == null) {
+			// DEBUG
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(
+					"Site:getFeatureReference: The feature is null");
+			}
+			return null;
+		}
+
 		IFeatureReference[] references = getFeatureReferences();
-		boolean found = false;
-		for (int i = 0; i < references.length && !found; i++) {
-			if (references[i].getURL().equals(feature.getURL())) {
-				result = references[i];
-				found = true;
+		IFeatureReference currentReference = null;
+		for (int i = 0; i < references.length; i++) {
+			currentReference = references[i];
+			// do not compare the URL 
+			try {
+				if (feature.equals(currentReference.getFeature()))
+					return currentReference;
+
+			} catch (CoreException e) {
+				// DEBUG
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+					UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+				}
 			}
 		}
-		return result;
+		return null;
 	}
 
 	/**

@@ -650,7 +650,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	}
 
 	private void debug(String s) {
-		UpdateManagerPlugin.getPlugin().debug(s);
+		UpdateManagerPlugin.getPlugin().debug("DefaultSiteParser"+s);
 	}
 
 	private void logStatus(SAXParseException ex) {

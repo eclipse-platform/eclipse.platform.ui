@@ -308,8 +308,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 						+ FeaturePackagedContentProvider.JAR_EXTENSION;
 				archive.setPath(pluginID);
 				location = plugin.getLocation().toURL().toExternalForm();
-				URL url = new URL(location);
-				archive.setURLString(url.toExternalForm());
+				archive.setURLString(location);
 				((Site) site).addArchiveReferenceModel(archive);
 			}
 		} catch (MalformedURLException e) {

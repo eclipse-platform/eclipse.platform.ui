@@ -56,7 +56,7 @@ public class Feature extends FeatureModel implements IFeature {
 		if (!(object instanceof Feature))
 			return false;
 		IFeature f= (IFeature) object;
-		return (super.equals(object) && getURL().equals(f.getURL()));
+		return super.equals(object);
 
 	}
 
@@ -201,6 +201,11 @@ public class Feature extends FeatureModel implements IFeature {
 		IVerificationListener verificationListener,
 		IProgressMonitor progress)
 		throws CoreException {
+
+		//DEBUG
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){
+			UpdateManagerPlugin.getPlugin().debug("Installing...:"+getURL().toExternalForm());
+		}
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;

@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * 
@@ -151,13 +152,21 @@ public class ConfigurationPolicyModel extends ModelObject {
 		
 		if (configuredFeatureReferences == null)
 			this.configuredFeatureReferences = new ArrayList();
-		if (!configuredFeatureReferences.contains(feature))
-			this.add(feature, configuredFeatureReferences);	
+		if (!configuredFeatureReferences.contains(feature)){
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
+				UpdateManagerPlugin.getPlugin().debug("Configuring "+feature.getURLString());
+			}
+			this.add(feature, configuredFeatureReferences);
+		}	
 
 		// when user configure a feature,
 		// we have to remove it from unconfigured feature if it exists
 		// because the user doesn't know...
 		if (unconfiguredFeatureReferences != null) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
+				UpdateManagerPlugin.getPlugin().debug("Removed from unconfigured: "+feature.getURLString());
+			}
 			remove(feature, unconfiguredFeatureReferences);
 		}
 
@@ -171,12 +180,20 @@ public class ConfigurationPolicyModel extends ModelObject {
 		assertIsWriteable();
 		if (unconfiguredFeatureReferences == null)
 			this.unconfiguredFeatureReferences = new ArrayList();
-		if (!unconfiguredFeatureReferences.contains(feature))
-			this.add(feature, unconfiguredFeatureReferences);	
+		if (!unconfiguredFeatureReferences.contains(feature)){
+						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
+				UpdateManagerPlugin.getPlugin().debug("Unconfiguring "+feature.getURLString());
+			}
+			
+			this.add(feature, unconfiguredFeatureReferences);
+		}	
 
 		// an unconfigured feature is always from a configured one no ?
 		// unless it was parsed right ?
 		if (configuredFeatureReferences != null) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
+				UpdateManagerPlugin.getPlugin().debug("Removed from configured: "+feature.getURLString());
+			}
 			remove(feature, configuredFeatureReferences);
 		}
 	}
