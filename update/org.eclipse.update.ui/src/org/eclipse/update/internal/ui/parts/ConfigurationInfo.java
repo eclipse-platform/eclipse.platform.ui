@@ -1,11 +1,27 @@
 package org.eclipse.update.internal.ui.parts;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.*;
+/*
+ * Copyright (c) 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ */
 
-import org.eclipse.core.runtime.*;
+import java.net.URL;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Configuation info class;
@@ -21,83 +37,66 @@ public abstract class ConfigurationInfo {
 
 	private IPluginDescriptor desc;
 	private URL baseURL;
-	private String featureId;
-	private PluginVersionIdentifier versionId;
 	private String iniFilename;
 	private String propertiesFilename;
-	private String mappingsFilename;
 
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	
-	protected ConfigurationInfo(String fId, PluginVersionIdentifier vId, String ini, String properties, String mappings) {
-		featureId = fId;
-		versionId = vId;
+	protected ConfigurationInfo(String ini, String properties) {
 		iniFilename = ini;
 		propertiesFilename = properties;
-		mappingsFilename = mappings;
 	}
 
 	/**
 	 * R1.0 platform.ini handling using "main" plugin and fragments for NL
 	 */
 	public void readINIFile() throws CoreException {
-		if (featureId == null) {
+		// determine the identifier of the "dominant" application 
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		String configName = conf.getPrimaryFeatureIdentifier();
+		if (configName == null) {
 			reportINIFailure(null, "Unknown configuration identifier"); //$NON-NLS-1$
 			return;
 		}
 
-		// attempt to locate the corresponding plugin
+		// attempt to locate its corresponding "main" plugin
 		IPluginRegistry reg = Platform.getPluginRegistry();
 		if (reg == null) {
 			reportINIFailure(null, "Plugin registry is null"); //$NON-NLS-1$
 			return;
 		}
-		if (versionId == null)
-			this.desc = reg.getPluginDescriptor(featureId);
+		int index = configName.lastIndexOf("_"); //$NON-NLS-1$
+		if (index == -1)
+			this.desc = reg.getPluginDescriptor(configName);
 		else {
-			this.desc = reg.getPluginDescriptor(featureId, versionId);
+			String mainPluginName = configName.substring(0, index);
+			PluginVersionIdentifier mainPluginVersion = null;
+			try {
+				mainPluginVersion =
+					new PluginVersionIdentifier(configName.substring(index + 1));
+			} catch (Exception e) {
+				reportINIFailure(e, "Unknown plugin version " + configName); //$NON-NLS-1$
+				return;
+			}
+			this.desc = reg.getPluginDescriptor(mainPluginName, mainPluginVersion);
 		}
 		if (this.desc == null) {
-			reportINIFailure(null, "Missing plugin descriptor for " + featureId); //$NON-NLS-1$
+			reportINIFailure(null, "Missing plugin descriptor for " + configName); //$NON-NLS-1$
 			return;
 		}
 		this.baseURL = desc.getInstallURL();
 
-		// load the ini, properties and mapping files	
-		URL iniURL = null;
-		try {
-			iniURL = desc.find(new Path("$nl$").append(iniFilename));
-			if (iniURL != null)
-				iniURL = Platform.resolve(iniURL);
-		} catch (IOException e) {
-			// null check below
-		}
+		// load the platform.ini and platform.properties file	
+		URL iniURL = desc.find(new Path(iniFilename));
 		if (iniURL == null) {
 			reportINIFailure(null, "Unable to load plugin file: " + iniFilename); //$NON-NLS-1$
 			return;
 		}
 		
-		URL propertiesURL = null;
-		try {
-			propertiesURL = desc.find(new Path("$nl$").append(propertiesFilename));
-			if (propertiesURL != null)
-				propertiesURL = Platform.resolve(propertiesURL);
-		} catch (IOException e) {
-			reportINIFailure(null, "Unable to load plugin file: " + propertiesFilename); //$NON-NLS-1$
-		}
-
-		URL mappingsURL = null;
-		try {
-			mappingsURL = desc.find(new Path("$nl$").append(mappingsFilename));
-			if (mappingsURL != null)
-				mappingsURL = Platform.resolve(mappingsURL);
-		} catch (IOException e) {
-			reportINIFailure(null, "Unable to load mapping file: " + mappingsURL); //$NON-NLS-1$
-		}
-
-		// OK to pass null properties and/or mapping file
-		readINIFile(iniURL, propertiesURL, mappingsURL);
+		URL propertiesURL = desc.find(new Path(propertiesFilename));
+		// OK to pass null properties file
+		readINIFile(iniURL, propertiesURL);
 	}
 		
 	/**
@@ -114,21 +113,6 @@ public abstract class ConfigurationInfo {
 	protected URL getBaseURL() {
 		return baseURL;
 	}
-	/**
-	 * Gets the feature id
-	 * @return the feature id
-	 */
-	public String getFeatureId() {
-		return featureId;
-	}
-	/**
-	 * Gets the version id
-	 * @return the version id
-	 */
-	protected PluginVersionIdentifier getVersionId() {
-		return versionId;
-	}
-
 	/**
 	 * Returns a resource string corresponding to the given argument 
 	 * value and bundle.
@@ -159,10 +143,9 @@ public abstract class ConfigurationInfo {
 	 *
 	 * @param value the value or <code>null</code>
 	 * @param b the resource bundle or <code>null</code>
-	 * @param mappings 
 	 * @return the resource string
 	 */
-	protected String getResourceString(String value, ResourceBundle b, String[] mappings) {
+	protected String getResourceString(String value, ResourceBundle b) {
 		
 		if(value == null)
 			return null;
@@ -181,34 +164,24 @@ public abstract class ConfigurationInfo {
 		if (b == null)
 			return dflt;
 
-		String result = null;
 		try {
-			result = b.getString(key.substring(1));
+			return b.getString(key.substring(1));
 		} catch (MissingResourceException e) {
 			reportINIFailure(e, "Property \"" + key + "\" not found");//$NON-NLS-1$ //$NON-NLS-2$
 			return dflt;
 		}
-		
-		if (result.indexOf('{') != -1) {
-			// We test for the curly braces since due to NL issues we do not
-			// want to use MessageFormat unless we have to.
-			result = MessageFormat.format(result, mappings);
-		}
-		
-		return result;	
 	}
 
 	/**
 	 * Read the ini file.
 	 */
-	protected abstract void readINIFile(URL iniURL, URL propertiesURL, URL mappingURL)
+	protected abstract void readINIFile(URL iniURL, URL propertiesURL)
 		throws CoreException;
 	
 	/**
 	 * Report an ini failure
 	 */
 	protected void reportINIFailure(Exception e, String message) {
-/*
 		if (!WorkbenchPlugin.DEBUG) {
 			// only report ini problems if the -debug command line argument is used
 			return;
@@ -216,7 +189,6 @@ public abstract class ConfigurationInfo {
 		
 		IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 										0, message, e);
-		WorkbenchPlugin.log("Problem reading configuration info for: " + getFeatureId(), iniStatus);//$NON-NLS-1$
-*/
+		WorkbenchPlugin.log("Problem reading configuration info.", iniStatus);//$NON-NLS-1$
 	}
 }

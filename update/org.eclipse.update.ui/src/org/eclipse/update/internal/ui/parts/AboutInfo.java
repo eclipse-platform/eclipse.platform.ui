@@ -3,12 +3,24 @@ package org.eclipse.update.internal.ui.parts;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.zip.CRC32;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.NewConfigurationInfo;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The about info class;
@@ -18,15 +30,20 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * standard java property file.  
  * </p>
  */
-public class AboutInfo extends ConfigurationInfo {
+public class AboutInfo extends NewConfigurationInfo {
 
 	private String appName;
-	private String productName;
 	private ImageDescriptor windowImage;
 	private ImageDescriptor aboutImage;
 	private ImageDescriptor featureImage;
 	private String aboutText;
 	private URL welcomePageURL;
+	private String welcomePerspective;
+	private String tipsAndTricksHref;
+	private String featureImageName;
+	private Long featureImageCRC;
+	private boolean calculatedImageCRC = false;
+	private final static int BYTE_ARRAY_SIZE = 2048;
 
 	/**
 	 * Constructs a new instance of the about info.
@@ -56,7 +73,77 @@ public class AboutInfo extends ConfigurationInfo {
 	public ImageDescriptor getFeatureImage() {
 		return featureImage;
 	}
-	
+
+	/**
+	 * Returns the name of the feature image as supplied in the properties file.
+	 * 
+	 * @return the name of the feature image, or <code>null</code> if none
+	 */
+	public String getFeatureImageName() {
+		return featureImageName;
+	}
+
+	/**
+	 * Returns the CRC of the feature image as supplied in the properties file.
+	 * 
+	 * @return the CRC of the feature image, or <code>null</code> if none
+	 */
+	public Long getFeatureImageCRC() {
+		if (!calculatedImageCRC && featureImageName != null) {
+			featureImageCRC = calculateFeatureImageCRC();
+			calculatedImageCRC = true;
+		}
+		return featureImageCRC;
+	}
+
+	/**
+	 * Calculate a CRC for the feature image
+	 */
+	private Long calculateFeatureImageCRC() {
+		URL url = null;
+		if (featureImageName != null) {
+			IPluginDescriptor desc = getDescriptor();
+			if(desc == null)
+				return null;
+			url = desc.find(new Path("$nl$").append(featureImageName)); //$NON-NLS-1$
+		}
+		if (url == null)
+			return null;
+		// Get the image bytes
+		InputStream in = null;
+		ByteArrayOutputStream out = null;
+		try {
+			in = url.openStream();	
+			out = new ByteArrayOutputStream();
+			byte[] buffer = new byte[BYTE_ARRAY_SIZE];
+			int readResult = BYTE_ARRAY_SIZE;
+			while (readResult == BYTE_ARRAY_SIZE) {
+				readResult = in.read(buffer);
+				if (readResult > 0) 
+					out.write(buffer, 0, readResult);
+			}
+			byte[] contents = out.toByteArray();
+			// Calculate the crc
+			CRC32 crc = new CRC32();
+			crc.update(contents);
+			return new Long(crc.getValue());
+		} catch (IOException e) {
+			return null;
+		} finally {
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
+			if (out != null)
+				try {
+					out.close();
+				} catch (IOException e) {
+				}
+		}
+	}	
+		
+
 	/**
 	 * Returns a label for the feature, we use the descriptor label
 	 */
@@ -100,7 +187,10 @@ public class AboutInfo extends ConfigurationInfo {
 	 * @return the product name, or <code>null</code>
 	 */
 	public String getProductName() {
-		return productName;
+		IPluginDescriptor desc = getDescriptor();
+		if (desc == null)
+			return null;
+		return desc.getLabel();
 	}
 
 	/**
@@ -135,6 +225,25 @@ public class AboutInfo extends ConfigurationInfo {
 	 */
 	public URL getWelcomePageURL() {
 		return welcomePageURL;
+	}
+
+	/**
+	 * Returns the id of a perspective in which to show the welcome page.
+	 * May be <code>null</code>.
+	 * 
+	 * @return the welcome page perspective id, or <code>null</code> if none
+	 */
+	public String getWelcomePerspective() {
+		return welcomePerspective;
+	}
+
+	/**
+	 * Returns a <code>String</code> for the tips and trick href.
+	 * 
+	 * @return the tips and tricks href, or <code>null</code> if none
+	 */
+	public String getTipsAndTricksHref() {
+		return tipsAndTricksHref;
 	}
 
 	/**
@@ -211,10 +320,18 @@ public class AboutInfo extends ConfigurationInfo {
 		ArrayList mappingsList = new ArrayList();
 		if (mappingsBundle != null) {
 			boolean found = true;
+			String readValue;
 			int i = 0;
 			while (found) {
 				try {
-					mappingsList.add(mappingsBundle.getString(new Integer(i).toString()));
+					// Substitute $featureVersion if Applicable
+					readValue = mappingsBundle.getString(Integer.toString(i));
+					if("$featureVersion".equals(readValue)) {  //$NON-NLS-1$
+						readValue = getVersion();
+						if (readValue == null)
+							readValue = WorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$						
+					}
+					mappingsList.add(readValue);
 				} catch (MissingResourceException e) {
 					found = false;
 				}
@@ -223,22 +340,29 @@ public class AboutInfo extends ConfigurationInfo {
 		}
 		String[] mappingsArray = (String[])mappingsList.toArray(new String[mappingsList.size()]);
 
-		productName = (String) ini.get("productName"); //$NON-NLS-1$
-		productName = getResourceString(productName, bundle, mappingsArray);
+		Hashtable runtimeMappings  = new Hashtable();
+		String featureVersion = getVersion();
+		if (featureVersion==null)
+			featureVersion=WorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$
+		runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
 
 		windowImage = getImage(ini, "windowImage"); //$NON-NLS-1$
 
 		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
-		aboutText = getResourceString(aboutText, bundle, mappingsArray);
-
+		aboutText = getResourceString(aboutText, bundle, mappingsArray, runtimeMappings);
+		
 		aboutImage = getImage(ini, "aboutImage"); //$NON-NLS-1$
 
+		featureImageName = (String) ini.get("featureImage"); //$NON-NLS-1$
 		featureImage = getImage(ini, "featureImage"); //$NON-NLS-1$
 
-		welcomePageURL = getURL(ini, "welcomePage");
+		welcomePageURL = getURL(ini, "welcomePage"); //$NON-NLS-1$
+		welcomePerspective = (String) ini.get("welcomePerspective"); //$NON-NLS-1$
+
+		tipsAndTricksHref = (String) ini.get("tipsAndTricksHref"); //$NON-NLS-1$
 
 		appName = (String) ini.get("appName"); //$NON-NLS-1$
-		appName = getResourceString(appName, bundle, mappingsArray);
+		appName = getResourceString(appName, bundle, mappingsArray, null);
 
 	}
 
@@ -251,7 +375,10 @@ public class AboutInfo extends ConfigurationInfo {
 		URL url = null;
 		String fileName = (String) ini.get(key);
 		if (fileName != null) {
-			url = getDescriptor().find(new Path("$nl$").append(fileName));
+			IPluginDescriptor desc = getDescriptor();
+			if(desc == null)
+				return null;
+			url = desc.find(new Path(fileName));
 		}
 		return url;
 	}
@@ -268,5 +395,4 @@ public class AboutInfo extends ConfigurationInfo {
 		}
 		return null;
 	}
-
 }
