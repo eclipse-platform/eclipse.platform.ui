@@ -403,7 +403,12 @@ public interface ILaunchConfiguration extends IAdaptable {
 	/**
 	 * Returns a map containing the attributes in this launch configuration.
 	 * Returns an empty map if this configuration has no attributes.
-	 *
+	 * <p>
+	 * Modifying the map does not affect this launch configuration's attributes.
+	 * A launch configuration is modified by obtaining a working copy of that
+	 * launch configuration, modifying the working copy, and then saving the working
+	 * copy.
+	 * </p>
 	 * @return a map of attribute keys and values
 	 * @exception CoreException unable to generate/retrieve an attribute map
 	 * @since 2.1
