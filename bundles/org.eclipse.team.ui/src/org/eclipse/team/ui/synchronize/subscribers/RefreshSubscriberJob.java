@@ -158,9 +158,9 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		// the scheduling rule containment rules.
 		// Synchronized to ensure only one refresh job is running at a particular time
 		synchronized (getFamily()) {	
-			MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("RefreshSubscriberJob.0"), null); //$NON-NLS-1$
 			Subscriber subscriber = getSubscriber();
 			IResource[] roots = getResources();
+			MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, subscriber.getName(), null); //$NON-NLS-1$
 			
 			// if there are no resources to refresh, just return
 			if(subscriber == null || roots == null) {
