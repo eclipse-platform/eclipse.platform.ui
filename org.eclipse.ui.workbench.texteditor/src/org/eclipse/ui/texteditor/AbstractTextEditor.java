@@ -2070,7 +2070,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				private Runnable fRunnable= new Runnable() {
 					public void run() {
 						// check whether editor has not been disposed yet
-						if (fSourceViewer != null) {
+						if (fSourceViewer != null && fSourceViewer.getDocument() != null) {
 							updateSelectionDependentActions();
 						}
 					}
