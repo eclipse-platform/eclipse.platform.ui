@@ -71,7 +71,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * Used to select the proper message depending on the current mode
 	 * (new/existing variable).
 	 */
-	private String typeKeySuffix;
+	private boolean newVariable;
 
 	/**
 	 * Reference to the path variable manager. It is used for validating
@@ -142,14 +142,17 @@ public class PathVariableDialog extends TitleAreaDialog {
 	public PathVariableDialog(Shell parentShell, int type, int variableType, IPathVariableManager pathVariableManager, Set namesInUse) {
 		super(parentShell);
 		this.type = type;
-		this.typeKeySuffix = type == NEW_VARIABLE ? "newVariable" : "existingVariable"; //$NON-NLS-1$ //$NON-NLS-2$        
+		this.newVariable = type == NEW_VARIABLE;
 		this.variableName = ""; //$NON-NLS-1$
 		this.variableValue = ""; //$NON-NLS-1$
 		this.variableType = variableType;
 		this.pathVariableManager = pathVariableManager;
 		this.namesInUse = namesInUse;
 
-		this.standardMessage = IDEWorkbenchMessages.getString("PathVariableDialog.message." + typeKeySuffix); //$NON-NLS-1$
+		if (newVariable)
+		    this.standardMessage = IDEWorkbenchMessages.getString("PathVariableDialog.message.newVariable"); //$NON-NLS-1$
+		else
+		    this.standardMessage = IDEWorkbenchMessages.getString("PathVariableDialog.message.existingVariable"); //$NON-NLS-1$
 	}
 	/**
 	 * Configures this dialog's shell, setting the shell's text.
@@ -158,7 +161,10 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(IDEWorkbenchMessages.getString("PathVariableDialog.shellTitle." + typeKeySuffix)); //$NON-NLS-1$
+		if (newVariable)
+		    shell.setText(IDEWorkbenchMessages.getString("PathVariableDialog.shellTitle.newVariable")); //$NON-NLS-1$
+		else
+	    	shell.setText(IDEWorkbenchMessages.getString("PathVariableDialog.shellTitle.existingVariable")); //$NON-NLS-1$
 	}
 	/**
 	 * Creates and returns the contents of this dialog (except for the button bar).
@@ -202,7 +208,10 @@ public class PathVariableDialog extends TitleAreaDialog {
 		contents.setLayout(layout);
 		contents.setFont(parentComposite.getFont());
 
-		setTitle(IDEWorkbenchMessages.getString("PathVariableDialog.dialogTitle." + typeKeySuffix)); //$NON-NLS-1$
+		if (newVariable)
+		    setTitle(IDEWorkbenchMessages.getString("PathVariableDialog.dialogTitle.newVariable")); //$NON-NLS-1$
+		else
+		    setTitle(IDEWorkbenchMessages.getString("PathVariableDialog.dialogTitle.existingVariable")); //$NON-NLS-1$
 		setMessage(standardMessage);
 		return contents;
 	}
