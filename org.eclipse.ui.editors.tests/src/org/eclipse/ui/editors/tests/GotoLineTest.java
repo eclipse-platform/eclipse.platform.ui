@@ -85,7 +85,7 @@ public class GotoLineTest extends TestCase {
 	public void testGoToInvalidLine() {
 		goToLine(1, 1);
 		goToLine(-1, 1);
-		goToLine(4, 1);
+		goToLine(3, 1);
 	}
 	
 	private void goToLine(int line, int expectedResult) {

@@ -222,7 +222,10 @@ public abstract class AbstractLineTracker implements ILineTracker {
 			
 		if (line == lines) {
 			Line l= (Line) fLines.get(line - 1);
-			return l.offset + l.length;
+			if (l.delimiter != null)
+				return l.offset + l.length;
+			else
+				throw new BadLocationException();
 		}
 		
 		Line l= (Line) fLines.get(line);
