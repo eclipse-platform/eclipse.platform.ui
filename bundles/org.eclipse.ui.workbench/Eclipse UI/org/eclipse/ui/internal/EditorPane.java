@@ -98,28 +98,6 @@ public void doHide() {
 }
 
 /**
- * User has requested to close all but the current pane.
- * Take appropriate action depending on type.
- */
-public void doHideOthers() {
-	IEditorReference editor = getEditorReference();
-	IEditorReference[] allEditors = getPage().getEditorReferences();
-	IEditorReference[] otherEditors = new IEditorReference[allEditors.length - 1];
-	int j = 0;
-	for (int i = 0; i < allEditors.length; i++) {
-		IEditorReference reference = allEditors[i];
-		if (!reference.equals(editor) && j < otherEditors.length) {
-			otherEditors[j++] = reference;
-		}
-	}
-	getPage().closeEditors(otherEditors, true);
-}
-
-public void doHideAll() {
-    getPage().closeEditors(getPage().getEditorReferences(), true);
-}
-
-/**
  * Answer the editor part child.
  */
 public IEditorReference getEditorReference() {
@@ -177,34 +155,6 @@ public void showFocus(boolean inFocus) {
 		this.workbook.becomeActiveWorkbook(true);
 	else
 		this.workbook.tabFocusHide();
-}
-
-/**
- * Adds the Close Others menu item.
- */
-protected void addCloseOthersItem (Menu menu) {
-	MenuItem item = new MenuItem(menu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.closeOthers")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doHideOthers();
-		}
-	});	
-	item.setEnabled(getPage().getEditorReferences().length > 1);
-}
-
-/**
- * Adds the Close All menu item.
- */
-protected void addCloseAllItem (Menu menu) {
-	MenuItem item = new MenuItem(menu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.closeAll")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doHideAll();
-		}
-	});	
-	item.setEnabled(getPage().getEditorReferences().length >= 1);
 }
 
 /**
