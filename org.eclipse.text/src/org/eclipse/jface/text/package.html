@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <meta content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]" name="GENERATOR"><title>Linked Position Infrastructure</title></head>
+
+<body>
+<p>Provides a framework for creating and manipulating text documents.</p>
+<h3>Package Specification</h3>
+<p><font face="Courier New, Courier, mono">IDocument</font> is the major text 
+  model abstraction. It provides content management, position management using 
+  position categories, document partition management, and change notification. 
+  In order to be notified about document changes, an object must implements <font face="Courier New, Courier, mono">IDocumentListener 
+  </font>and must be registered with the document. <font face="Courier New, Courier, mono">Position</font> 
+  updating in responds to a document change is performed by implementers of <font face="Courier New, Courier, mono">IDocumentPositionUpdater</font>. 
+  Partition updating in responds to a document change is performed by implements 
+  of <font face="Courier New, Courier, mono">IDocumentPartitioner</font>. In order 
+  to be notified about document partition changes, objects must implement <font face="Courier New, Courier, mono">IDocumentParititoningListener</font> 
+  and must be registered with the document.</p>
+<p>The package contains default implementations for document position updaters 
+  and for documents. <font face="Courier New, Courier, mono">AbstractDocument</font> 
+  uses <font face="Courier New, Courier, mono">ITextStorage</font> for storing 
+  and managing its content and <font face="Courier New, Courier, mono">ILineTracker</font> 
+  to maintain a line structure of its content. As defaults a gap text implementation 
+  of <font face="Courier New, Courier, mono">ITextStore</font> is provided, together 
+  with a line tracker understanding the three standard line delimiters (&quot;\r&quot;, 
+  &quot;\n&quot;, &quot;\r\n&quot;) and a line tracker which can be freely configured 
+  to consider any given set of strings as valid line delimiters. </p>
+<p></p>
+</body></html>
