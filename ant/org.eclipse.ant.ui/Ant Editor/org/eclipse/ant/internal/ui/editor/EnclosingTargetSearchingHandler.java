@@ -19,6 +19,7 @@ import java.io.File;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.jface.text.IDocument;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
@@ -46,8 +47,8 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
      * @param aColumnOfCursorPosition the startingColumn where the cursor is located in
      * the document. The first startingColumn is refered to with an index of '0'.
      */
-    public EnclosingTargetSearchingHandler(File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
-    	super(mainFileContainer, aRowOfCursorPosition, aColumnOfCursorPosition);
+    public EnclosingTargetSearchingHandler(IDocument document, File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
+    	super(document, mainFileContainer, aRowOfCursorPosition, aColumnOfCursorPosition);
     }
 
     /* (non-Javadoc)

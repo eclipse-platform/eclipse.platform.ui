@@ -507,7 +507,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testXMLParsingWithAntEditorDefaultHandler() throws ParserConfigurationException, IOException {
         SAXParser parser = getSAXParser();
 		File file= getBuildFile("test1.xml");
-        AntEditorSaxDefaultHandler handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
+		String fileContent= getFileContentAsString(file);
+        AntEditorSaxDefaultHandler handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 4, 8);
         InputStream stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         Element element = handler.getParentElement(true);
@@ -519,7 +520,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		stream.close();
 		
 		file= getBuildFile("test2.xml");
-        handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);
+		fileContent= getFileContentAsString(file);
+        handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 4, 8);
         stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
@@ -534,7 +536,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		stream.close();
 		
 		file= getBuildFile("test3.xml");
-        handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 3, 1);
+		fileContent= getFileContentAsString(file);
+        handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 3, 1);
         stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(true);
@@ -543,7 +546,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		stream.close();
 
 		file= getBuildFile("test4.xml");
-        handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 0, 46);
+		fileContent= getFileContentAsString(file);
+        handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 0, 46);
         stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(true);

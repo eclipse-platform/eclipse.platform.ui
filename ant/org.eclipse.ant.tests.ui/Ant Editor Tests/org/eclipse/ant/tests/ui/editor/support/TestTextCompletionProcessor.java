@@ -17,6 +17,7 @@ import java.io.IOException;
 import junit.framework.Assert;
 
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.w3c.dom.Element;
 
@@ -33,38 +34,25 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.findChildElementNamedOf(anElement, aChildElementName);
     }
 
-    public ICompletionProposal[] getTaskProposals(String aWholeDocumentString, Element aParentTaskElement, String aPrefix) {
-    	cursorPosition= Math.max(0, aWholeDocumentString.length() - 1);
-        return super.getTaskProposals(aWholeDocumentString, aParentTaskElement, aPrefix);
+    public ICompletionProposal[] getTaskProposals(String text, Element aParentTaskElement, String aPrefix) {
+    	cursorPosition= Math.max(0, text.length() - 1);
+        return super.getTaskProposals(new Document(text), aParentTaskElement, aPrefix);
     }
 
-    public int determineProposalMode(String aWholeDocumentString, int aCursorPosition, String aPrefix) {
-        return super.determineProposalMode(
-            aWholeDocumentString,
-            aCursorPosition,
-            aPrefix);
+    public int determineProposalMode(String text, int aCursorPosition, String aPrefix) {
+        return super.determineProposalMode(new Document(text), aCursorPosition, aPrefix);
     }
 
-    public Element findParentElement(
-        String aWholeDocumentString,
-        int aLineNumber,
-        int aColumnNumber) {
-        return super.findParentElement(
-            aWholeDocumentString,
-            aLineNumber,
-            aColumnNumber);
+    public Element findParentElement(String text, int aLineNumber, int aColumnNumber) {
+        return super.findParentElement(new Document(text), aLineNumber, aColumnNumber);
     }
 
-    public String getPrefixFromDocument(
-        String aDocumentText,
-        int anOffset) {
+    public String getPrefixFromDocument(String aDocumentText, int anOffset) {
         return super.getPrefixFromDocument(aDocumentText, anOffset);
     }
 
-    public ICompletionProposal[] getPropertyProposals(
-        String aDocumentText,
-        String aPrefix, int aCursorPosition) {
-        return super.getPropertyProposals(aDocumentText, aPrefix, aCursorPosition);
+    public ICompletionProposal[] getPropertyProposals(String text, String aPrefix, int aCursorPosition) {
+        return super.getPropertyProposals(new Document(text), aPrefix, aCursorPosition);
     }
 
     /**

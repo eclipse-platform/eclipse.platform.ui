@@ -27,6 +27,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ant.internal.ui.editor.EnclosingTargetSearchingHandler;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
+import org.eclipse.jface.text.IDocument;
 import org.w3c.dom.Element;
 
 /**
@@ -56,7 +57,9 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
     public void testParsingOfBuildFileWithoutTargetElement() throws IOException, ParserConfigurationException {
         SAXParser parser = getSAXParser();
 		File file= getBuildFile("test1.xml");
-        EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 4, 8);
+		String fileContent= getFileContentAsString(file);
+		IDocument document= new org.eclipse.jface.text.Document(fileContent);
+        EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(document, file.getParentFile(), 4, 8);
         InputStream stream = getClass().getResourceAsStream("test1.xml");
 		parse(stream, parser, handler, file);
 		
@@ -65,7 +68,7 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
         element = handler.getParentElement(true);
         assertNull(element);
 
-		handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 2, 0);
+		handler = new EnclosingTargetSearchingHandler(document, file.getParentFile(), 2, 0);
         stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
@@ -74,7 +77,7 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
         assertNull(element);
         stream.close();
 
-        handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
+        handler = new EnclosingTargetSearchingHandler(document, file.getParentFile(), 0, 0);
         stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
 		stream.close();
@@ -92,7 +95,9 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
         SAXParser parser = getSAXParser();
 
 		File file= getBuildFile("russianbuild.xml");
-        EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 5, 5);
+		String fileContent= getFileContentAsString(file);
+		IDocument document= new org.eclipse.jface.text.Document(fileContent);
+        EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(document, file.getParentFile(), 5, 5);
         InputStream stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         Element element = handler.getParentElement(false);
@@ -104,7 +109,7 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
 		assertEquals("init", element.getAttribute("name"));
 		stream.close();
 		
-        handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 7, 0);
+        handler = new EnclosingTargetSearchingHandler(document, file.getParentFile(), 7, 0);
         stream = new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
@@ -113,7 +118,7 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
         assertNull(element);
         stream.close();
 
-        handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
+        handler = new EnclosingTargetSearchingHandler(document, file.getParentFile(), 0, 0);
         stream =  new FileInputStream(file);
 		parse(stream, parser, handler, file);
         element = handler.getParentElement(false);
@@ -128,7 +133,9 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
      */
     public void testParsingOfEmptyBuildFile() throws ParserConfigurationException, IOException {
 		File file= getBuildFile("projectOnly.xml");
-        EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
+		String fileContent= getFileContentAsString(file);
+		IDocument document= new org.eclipse.jface.text.Document(fileContent);
+        EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(document, file.getParentFile(), 0, 0);
         InputStream stream= new FileInputStream(file);
         parse(stream, getSAXParser(), handler, file);
         Element element = handler.getParentElement(false);
