@@ -37,6 +37,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	private BufferedReader fResponseReader;
 	
 	private int fRequestPort= -1;
+	private Thread fReaderThread;
 	
 	private AntDebugTarget fTarget;
 	
@@ -118,27 +119,37 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
         fTarget= new AntDebugTarget(fLaunch, process, this);
         fLaunch.addDebugTarget(fTarget);
         
-        connectRequest();
+        if (!connectRequest()) {
+			RemoteAntDebugBuildListener.this.shutDown();
+			return;
+        }
         
         fTarget.buildStarted();
     }
 
-    private void connectRequest() {
-		try {
-			fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
-			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
-			fResponseReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
-			
-			ReaderThread readerThread= new ReaderThread();
-			readerThread.start();
-		} catch (UnknownHostException e) {
-			//TODO
-			//fTarget.abort("Unable to connect to Ant build", e);
-			
-		} catch (IOException e) {
-			//fTarget.abort("Unable to connect to Ant build", e);
-			//TODO
-		}
+    private boolean connectRequest() {
+    	Exception exception= null;
+    	for (int i= 1; i < 20; i++) {
+    		try {
+    			fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
+    			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
+    			fResponseReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
+    			
+    			fReaderThread= new ReaderThread();
+    			fReaderThread.start();
+    			return true;
+    		} catch (UnknownHostException e) {
+    			exception= e;
+    		} catch (IOException e) {
+    			exception= e;
+    		}
+    		try {
+				Thread.sleep(500);
+			} catch(InterruptedException e) {
+			}
+    	}
+    	AntUIPlugin.log("Internal error attempting to connect to debug target", exception); //$NON-NLS-1$
+    	return false;
 	}
 
 	/**
@@ -177,6 +188,12 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		fLaunch= null;
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		try {
+			if (fReaderThread != null)   {
+				// interrupt reader thread so that we don't block on close
+				// on a lock held by the BufferedReader
+				// see bug: 38955
+				fReaderThread.interrupt();
+			}
 			if (fResponseReader != null) {
 				fResponseReader.close();
 				fResponseReader= null;
