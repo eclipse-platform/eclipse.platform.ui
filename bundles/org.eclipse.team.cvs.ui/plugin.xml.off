@@ -348,7 +348,8 @@
              label="%DecoratorStandard.name" 
              state="false" 
 	         class="org.eclipse.team.internal.ccvs.ui.CVSDecorator" 
-             objectClass="org.eclipse.core.resources.IResource"> 
+             objectClass="org.eclipse.core.resources.IResource"
+             adaptable="true"> 
          </decorator> 
 	</extension>    
 </plugin>
