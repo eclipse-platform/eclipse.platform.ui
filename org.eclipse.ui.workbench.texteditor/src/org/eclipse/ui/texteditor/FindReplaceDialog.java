@@ -452,8 +452,8 @@ class FindReplaceDialog extends Dialog {
 	private void setContentAssistsEnablement(boolean enable) {
 		if (enable) {
 			if (fFindContentAssistHandler == null) {
-				fFindContentAssistHandler= ContentAssistHandler.createComboContentAssist(fFindField, createContentAssistant());
-				fReplaceContentAssistHandler= ContentAssistHandler.createComboContentAssist(fReplaceField, createContentAssistant());
+				fFindContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fFindField, createContentAssistant());
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fReplaceField, createContentAssistant());
 			}
 			fFindContentAssistHandler.setEnabled(true);
 			fReplaceContentAssistHandler.setEnabled(true);

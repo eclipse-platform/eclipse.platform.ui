@@ -81,7 +81,7 @@ public class ContentAssistHandler {
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
 	 */
-	public static ContentAssistHandler createComboContentAssist(Combo combo, ContentAssistant contentAssistant) {
+	public static ContentAssistHandler createHandlerForCombo(Combo combo, ContentAssistant contentAssistant) {
 		return new ContentAssistHandler(combo, new ComboContentAssistSubjectAdapter(combo), contentAssistant);
 	}
 	
@@ -94,7 +94,7 @@ public class ContentAssistHandler {
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
 	 */
-	public static ContentAssistHandler createTextContentAssist(Text text, ContentAssistant contentAssistant) {
+	public static ContentAssistHandler createHandlerForText(Text text, ContentAssistant contentAssistant) {
 		return new ContentAssistHandler(text, new TextContentAssistSubjectAdapter(text), contentAssistant);
 	}
 	
