@@ -65,7 +65,7 @@ public abstract class TagAction extends WorkspaceAction {
 		}
 		
 		try {
-			result[0].executeWithProgress();
+			result[0].run();
 		} catch (CVSException e1) {
 			throw new InvocationTargetException(e1);
 		}

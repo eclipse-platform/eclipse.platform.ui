@@ -31,7 +31,7 @@ public class CheckoutAction extends CVSAction {
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		try {
 			new CheckoutMultipleProjectsOperation(getShell(), getSelectedRemoteFolders(), null)
-				.executeWithProgress();
+				.run();
 		} catch (CVSException e) {
 			throw new InvocationTargetException(e);
 		}

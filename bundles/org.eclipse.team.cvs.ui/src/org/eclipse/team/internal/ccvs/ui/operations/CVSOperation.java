@@ -59,7 +59,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	public static void run(Shell shell, CVSOperation operation) throws CVSException, InterruptedException {
 		operation.setShell(shell);
 		operation.setRunnableContext(new ProgressMonitorDialog(shell));
-		operation.execute();
+		operation.run();
 	}
 	
 	/**
@@ -76,8 +76,8 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @throws InterruptedException
 	 * @throws CVSException
 	 */
-	synchronized public void execute(IRunnableContext aRunnableContext) throws InterruptedException, CVSException {
-		if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_OPERATIONS)) {
+	synchronized public void runInContext(IRunnableContext aRunnableContext) throws InterruptedException, CVSException {
+		if(areJobsEnabled()) {
 			runAsJob();
 		} else {
 			if (aRunnableContext == null) {
@@ -97,10 +97,10 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 		Job job = new Job(Policy.bind("CVSOperation.operationJobName", getTaskName())) {
 			public IStatus run(IProgressMonitor monitor) {
 				try {
-					CVSOperation.this.execute(monitor);
+					CVSOperation.this.run(monitor);
 					return Status.OK_STATUS;
-				} catch (CVSException e) {
-					return e.getStatus();
+				} catch (InvocationTargetException e) {
+					return CVSException.wrapException(e).getStatus();
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}
@@ -109,19 +109,35 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 		job.schedule();
 	}
 	
-	public void executeWithProgress() throws CVSException, InterruptedException {
-		execute(new ProgressMonitorDialog(getShell()));
+	/**
+	 * Run the operation. Progress feedback will be provided by one of the following mechanisms
+	 * (in priotiry order):
+	 * <ol>
+	 * <li>the runnable context assigned to the operation 
+	 * <li>a background job (if supported by the operation and enabled through the preferences)
+	 * <li>the workbench active page
+	 * </ol>
+	 * @throws CVSException
+	 * @throws InterruptedException
+	 */
+	public void run() throws CVSException, InterruptedException {
+		if(canRunAsJob() && !hasRunnableContext() && areJobsEnabled()) {
+			runAsJob();
+		} else {
+			runInContext(getRunnableContext());
+		}
 	}
 	
+	protected boolean areJobsEnabled() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_OPERATIONS);
+	}
+
 	/**
-	 * Execute the operation in the runnable context that has been assigned to the operation.
-	 * If a context has not been assigned, the workbench window is used.
-	 * 
-	 * @throws InterruptedException
-	 * @throws CVSException
+	 * Returns true if the operation can be run as a background job
+	 * @return whether operation can be run as a job
 	 */
-	public void execute() throws InterruptedException, CVSException {
-		execute(getRunnableContext());
+	public boolean canRunAsJob() {
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -177,6 +193,10 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 		this.runnableContext = context;
 	}
 
+	public boolean hasRunnableContext() {
+		return runnableContext != null;
+	}
+	
 	/**
 	 * @return
 	 */
