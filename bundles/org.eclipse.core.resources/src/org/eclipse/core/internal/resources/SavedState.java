@@ -54,7 +54,7 @@ public class SavedState implements ISavedState {
 	public void processResourceChangeEvents(IResourceChangeListener listener) {
 		try {
 			try {
-				workspace.prepareOperation();
+				workspace.prepareOperation(workspace.getRoot());
 				if (oldTree == null || newTree == null)
 					return;
 				workspace.beginOperation(true);

@@ -774,6 +774,7 @@ public IProjectDescription newProjectDescription(String projectName);
  * @see WorkspaceJob
  * @see #run
  * @since 3.0
+ * @deprecated IResource now extends ISchedulingRule
  */
 public ISchedulingRule newSchedulingRule(IResource resource);
 

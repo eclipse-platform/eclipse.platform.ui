@@ -22,6 +22,7 @@ import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
 	/* package */ IPath path;
@@ -72,24 +73,18 @@ public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws 
 		proxy.info = null;
 	}
 }
-
-
 /**
  * @see IResource#accept(IResourceVisitor)
  */
 public void accept(IResourceVisitor visitor) throws CoreException {
-	// forward to central method
 	accept(visitor, IResource.DEPTH_INFINITE, 0);
 }
-
 /**
  * @see IResource#accept(IResourceVisitor, int, boolean)
  */
 public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms) throws CoreException {
-	// forward to central method
 	accept(visitor, depth, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
 }
-
 /*
  * @see IResource#accept
  */
@@ -129,7 +124,6 @@ public void accept(final IResourceVisitor visitor, int depth, int memberFlags) t
 	for (int i = 0; i < members.length; i++)
 		members[i].accept(visitor, DEPTH_ZERO, memberFlags);
 }
-
 protected void assertCopyRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
 	IStatus status = checkCopyRequirements(destination, destinationType, updateFlags);
 	if (!status.isOK()) {
@@ -417,6 +411,17 @@ public void checkValidPath(IPath path, int type, boolean lastSegmentOnly) throws
 public void clearHistory(IProgressMonitor monitor) throws CoreException {
 	getLocalManager().getHistoryStore().removeAll(this);
 }
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+ */
+public boolean contains(ISchedulingRule rule) {
+	if (this == rule)
+		return true;
+	if (!(rule instanceof IResource))
+		return false;
+	return path.isPrefixOf(((IResource)rule).getFullPath());
+}
 public void convertToPhantom() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, true);
 	if (info == null || isPhantom(getFlags(info)))
@@ -443,7 +448,7 @@ public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor
 		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(workspace.getRoot());
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			IPath destPath = new Path(destDesc.getName()).makeAbsolute();
@@ -495,7 +500,7 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
 		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(workspace.getRoot());
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			assertCopyRequirements(destination, getType(), updateFlags);
@@ -541,7 +546,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FOLDER, true);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(getProject());
 			assertLinkRequirements(localLocation, updateFlags);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 			workspace.beginOperation(true);
@@ -579,7 +584,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 public IMarker createMarker(String type) throws CoreException {
 	Assert.isNotNull(type);
 	try {
-		workspace.prepareOperation();
+		workspace.prepareOperation(this);
 		ResourceInfo resourceInfo = getResourceInfo(false, false);
 		checkAccessible(getFlags(resourceInfo));
 
@@ -610,7 +615,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 		String message = Policy.bind("resources.deleting", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork*1000);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(getParent());
 			/* if there is no such resource (including type check) then there is nothing
 			   to delete so just return. */
 			if (!exists())
@@ -682,7 +687,7 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  */
 public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 	try {
-		workspace.prepareOperation();
+		workspace.prepareOperation(this);
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 
@@ -978,6 +983,17 @@ protected void internalSetLocal(boolean flag, int depth) throws CoreException {
 public boolean isAccessible() {
 	return exists();
 }
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+ */
+public boolean isConflicting(ISchedulingRule rule) {
+	if (!(rule instanceof IResource))
+		return false;
+	IPath otherPath = ((IResource)rule).getFullPath();
+	return path.isPrefixOf(otherPath) || otherPath.isPrefixOf(path);
+}
+
 /**
  * @see IResource
  */
@@ -1073,7 +1089,7 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(workspace.getRoot());
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			assertMoveRequirements(path, getType(), updateFlags);
@@ -1148,7 +1164,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(getParent());
 			if (getType() != ROOT && !getProject().isAccessible())
 				return;
 			workspace.beginOperation(true);
@@ -1172,7 +1188,7 @@ public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws C
 		String message = Policy.bind("resources.setLocal"); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(this);
 			workspace.beginOperation(true);
 			internalSetLocal(flag, depth);
 			monitor.worked(Policy.opWork);
@@ -1233,7 +1249,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 		String message = Policy.bind("resources.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(this);
 			ResourceInfo info = getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkAccessible(flags);

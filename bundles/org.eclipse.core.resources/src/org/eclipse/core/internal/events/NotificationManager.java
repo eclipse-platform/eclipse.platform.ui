@@ -28,7 +28,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * The state of the workspace at the end of the last POST_BUILD notification
 	 */
-//	protected ElementTree lastPostBuild;
+	protected ElementTree lastPostBuild;
 	/**
 	 * The state of the workspace at the end of the last POST_CHANGE notification
 	 */
@@ -53,23 +53,29 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		// Do the notification if there are listeners for events of the given type.
 		// Be sure to update the state if requested.  This needs to happen regardless of 
 		// whether people are listening.
-		IResourceDelta delta = null;
-		if (listeners.hasListenerFor(type))
-			delta = getDelta(lastState, type);
-		// Remember the current state as the last notified state if requested.
-		// Be sure to clear out the old delta
-		if (type == IResourceChangeEvent.POST_CHANGE) {
-			workspace.getMarkerManager().resetMarkerDeltas();
-			lastState.immutable();
-			lastPostChange = lastState;
-			lastDelta = null;
-			lastDeltaState = lastState;
-			lastMarkerChangeId = 0;
+		try {
+			IResourceDelta delta = null;
+			if (listeners.hasListenerFor(type))
+				delta = getDelta(lastState, type);
+			// if the delta is empty the root's change is undefined, there is nothing to do
+			if ((delta == null || delta.getKind() == 0))
+				return;
+			notify(getListeners(), new ResourceChangeEvent(workspace, type, delta), lockTree);
+			// Remember the current state as the last notified state if requested.
+			// Be sure to clear out the old delta
+		} finally {
+			if (type != IResourceChangeEvent.PRE_AUTO_BUILD) {
+				workspace.getMarkerManager().resetMarkerDeltas();
+				lastState.immutable();
+				if (type == IResourceChangeEvent.POST_CHANGE)
+					lastPostChange = lastState;
+				else
+					lastPostBuild = lastState;
+				lastDelta = null;
+				lastDeltaState = lastState;
+				lastMarkerChangeId = 0;
+			}
 		}
-		// if the delta is empty the root's change is undefined, there is nothing to do
-		if ((delta == null || delta.getKind() == 0))
-			return;
-		notify(getListeners(), new ResourceChangeEvent(workspace, type, delta), lockTree);
 	}
 	/**
 	 * Helper method for the save participant lifecycle computation.  
@@ -83,15 +89,15 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		long id = workspace.getMarkerManager().getChangeId();
 		// if we have a delta from last time and no resources have changed since then, we
 		// can reuse the delta structure
-		if (lastDelta != null && !ElementTree.hasChanges(tree, lastDeltaState, ResourceComparator.getComparator(false), true)) {
+		if (lastDelta != null && !ElementTree.hasChanges(tree, lastDeltaState, ResourceComparator.getComparator(true), true)) {
 			// Markers may have changed since the delta was generated.  If so, get the new
 			// marker state and insert it in to the delta which is being reused.
 			if (id != lastMarkerChangeId)
 				lastDelta.updateMarkers(workspace.getMarkerManager().getMarkerDeltas());
 		} else {
 			// We don't have a delta or something changed so recompute the whole deal.
-//			ElementTree oldTree = type == IResourceChangeEvent.POST_CHANGE ? lastPostChange : lastPostBuild;
-			lastDelta = ResourceDeltaFactory.computeDelta(workspace, lastPostChange, tree, Path.ROOT, true);
+			ElementTree oldTree = type == IResourceChangeEvent.POST_CHANGE ? lastPostChange : lastPostBuild;
+			lastDelta = ResourceDeltaFactory.computeDelta(workspace, oldTree, tree, Path.ROOT, true);
 		}
 		// remember the state of the world when this delta was consistent
 		lastMarkerChangeId = id;
@@ -168,7 +174,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		// get the current state of the workspace as the starting point and
 		// tell the workspace to track changes from there.  This gives the
 		// notificaiton manager an initial basis for comparison.
-		lastPostChange = workspace.getElementTree();
+		lastPostBuild = lastPostChange = workspace.getElementTree();
 		workspace.addLifecycleListener(this);
 	}
 }

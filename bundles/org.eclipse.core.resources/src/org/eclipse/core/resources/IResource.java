@@ -11,6 +11,7 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * The workspace analog of file system files
@@ -64,7 +65,7 @@ import org.eclipse.core.runtime.*;
  * @see IWorkspace
  * @see Platform#getAdapterManager
  */
-public interface IResource extends IAdaptable {
+public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/*====================================================================
 	 * Constants defining resource types:  There are four possible resource types

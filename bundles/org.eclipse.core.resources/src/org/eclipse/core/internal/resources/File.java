@@ -36,7 +36,7 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 		monitor.beginTask(message, Policy.totalWork);
 		Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(this);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 
@@ -105,7 +105,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FILE, true);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(this);
 			checkDoesNotExist();
 			Container parent = (Container) getParent();
 			ResourceInfo info = parent.getResourceInfo(false, false);
@@ -262,7 +262,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 		String message = Policy.bind("resources.settingContents", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(this);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 

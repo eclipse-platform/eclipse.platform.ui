@@ -79,7 +79,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FOLDER, true);
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(this);
 			IPath location = getLocalManager().locationFor(this);
 			assertCreateRequirements(location, updateFlags);
 			workspace.beginOperation(true);

@@ -58,7 +58,7 @@ private void checkInfo(MarkerInfo info) throws CoreException {
  */
 public void delete() throws CoreException {
 	try {
-		getWorkspace().prepareOperation();
+		getWorkspace().prepareOperation(resource);
 		getWorkspace().beginOperation(true);
 		getWorkspace().getMarkerManager().removeMarker(getResource(), getId());
 	} finally {
@@ -207,7 +207,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 	Workspace workspace = getWorkspace();
 	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		workspace.prepareOperation();
+		workspace.prepareOperation(resource);
 		workspace.beginOperation(true);
 		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
@@ -241,7 +241,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 	Workspace workspace = getWorkspace();
 	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		workspace.prepareOperation();
+		workspace.prepareOperation(resource);
 		workspace.beginOperation(true);
 		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
@@ -267,7 +267,7 @@ public void setAttributes(Map values) throws CoreException {
 	Workspace workspace = getWorkspace();
 	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		workspace.prepareOperation();
+		workspace.prepareOperation(resource);
 		workspace.beginOperation(true);
 		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);

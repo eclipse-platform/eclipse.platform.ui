@@ -105,7 +105,6 @@ public Workspace() {
 	tree.immutable();
 	treeLocked = true;
 	tree.setTreeData(newElement(IResource.ROOT));
-	autoBuildJob = new AutoBuildJob(this);
 }
 /**
  * Adds a listener for internal workspace lifecycle events.  There is no way to
@@ -172,7 +171,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	try {
 		monitor.beginTask(null, Policy.opWork);
 		try {
-			prepareOperation();
+			prepareOperation(getRoot());
 			beginOperation(true);
 			getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 		} finally {
@@ -200,7 +199,7 @@ public void checkpoint(boolean build) {
 		if (build && isAutoBuilding())
 			getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.monitorFor(null));
 		broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
-		broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
+		broadcastChanges(IResourceChangeEvent.POST_CHANGE, false);
 		getMarkerManager().resetMarkerDeltas();
 	} catch (CoreException e) {
 		// ignore any CoreException.  There shouldn't be any as the buildmanager and notification manager
@@ -277,7 +276,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 		monitor.subTask(msg);
 		//this operation will never end because the world is going away
 		try {
-			prepareOperation();
+			prepareOperation(getRoot());
 			if (isOpen()) {
 				beginOperation(true);
 				IProject[] projects = getRoot().getProjects();
@@ -503,7 +502,7 @@ public IStatus copy(IResource[] resources, IPath destination, int updateFlags, I
 		message = Policy.bind("resources.copyProblem"); //$NON-NLS-1$
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		try {
-			prepareOperation();
+			prepareOperation(getRoot());
 			beginOperation(true);
 			for (int i = 0; i < resources.length; i++) {
 				Policy.checkCanceled(monitor);
@@ -742,7 +741,7 @@ public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor m
 			return result;
 		resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 		try {
-			prepareOperation();
+			prepareOperation(getRoot());
 			beginOperation(true);
 			for (int i = 0; i < resources.length; i++) {
 				Policy.checkCanceled(monitor);
@@ -796,7 +795,7 @@ public void deleteMarkers(IMarker[] markers) throws CoreException {
 	// clone to avoid outside changes
 	markers = (IMarker[]) markers.clone();
 	try {
-		prepareOperation();
+		prepareOperation(getRoot());
 		beginOperation(true);
 		for (int i = 0; i < markers.length; ++i)
 			if (markers[i] != null && markers[i].getResource() != null)
@@ -838,11 +837,11 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 	// This is done in a try finally to ensure that we always decrement the operation count
 	// and release the workspace lock.  This must be done at the end because snapshot
 	// and "hasChanges" comparison have to happen without interference from other threads.
-	boolean hasTreeChanges = false;
+	boolean hasTreeChanges= false;
 	try {
 		workManager.setBuild(build);
 		// if we are not exiting a top level operation then just decrement the count and return
-		if (workManager.getPreparedOperationDepth() > 1)
+		if (workManager.getPreparedOperationDepth() > 1) 
 			return;
 		// do the following in a try/finally to ensure that the operation tree is nulled at the end
 		// as we are completing a top level operation.
@@ -859,15 +858,8 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			//double check if the tree has actually changed
 			if (hasTreeChanges)
 				hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
-			autoBuildJob.endTopLevel(hasTreeChanges);
-
-			broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
-			if (isAutoBuilding() && autoBuildJob.shouldBuild())
-				getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
-			broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
-			broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
-
 			tree.immutable();
+			broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 			saveManager.snapshotIfNeeded(hasTreeChanges);
 		} finally {
@@ -878,6 +870,8 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 	} finally {
 		workManager.checkOut();
 	}
+	//notify build job after lock is released so there is no contention for the lock
+	autoBuildJob.endTopLevel(hasTreeChanges);
 }
 
 /**
@@ -1299,7 +1293,7 @@ public IStatus move(IResource[] resources, IPath destination, int updateFlags, I
 		message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		try {
-			prepareOperation();
+			prepareOperation(getRoot());
 			beginOperation(true);
 			for (int i = 0; i < resources.length; i++) {
 				Policy.checkCanceled(monitor);
@@ -1431,9 +1425,10 @@ public Resource newResource(IPath path, int type) {
  *  the resource of the other rule.
  * 
  * @return a resource scheduling rule
+ * @deprecated IResource now extends ISchedulingRule
  */
 public ISchedulingRule newSchedulingRule(IResource resource) {
-	return _workManager.newSchedulingRule(resource);
+	return resource;
 }
 /**
  * Opens a new mutable element tree layer, thus allowing 
@@ -1530,7 +1525,11 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 	}
 }
 /**
- * Called before checking the pre-conditions of an operation.
+ * Called before checking the pre-conditions of an operation.  Optionally supply
+ * a scheduling rule to determine when the operation is safe to run.  If a scheduling 
+ * rule is supplied, this method will block until it is safe to run.
+ * 
+ * @param rule the scheduling rule that describes what this operation intends to modify.
  */
 public void prepareOperation(ISchedulingRule rule) throws CoreException {
 	//ask the autobuild to cancel, and it should quickly give up its lock
@@ -1541,10 +1540,6 @@ public void prepareOperation(ISchedulingRule rule) throws CoreException {
 		throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 	}
 }
-public void prepareOperation() throws CoreException {
-	prepareOperation(newSchedulingRule(getRoot()));
-}
-
 protected boolean refreshRequested() {
 	String[] args = Platform.getCommandLineArgs();
 	for (int i = 0; i < args.length; i++) 
@@ -1569,14 +1564,18 @@ public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonito
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(null, Policy.totalWork);
+		int depth = -1;
 		try {
 			prepareOperation(rule);
 			beginOperation(true);
+			depth = getWorkManager().beginUnprotected();
 			action.run(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 		} catch (OperationCanceledException e) {
 			getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			if (depth >= 0)
+				getWorkManager().endUnprotected(depth);
 			endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
@@ -1610,7 +1609,7 @@ public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException
 	// A snapshot was requested.  Start an operation (if not already started) and 
 	// signal that a snapshot should be done at the end.
 	try {
-		prepareOperation();
+		prepareOperation(getRoot());
 		beginOperation(false);
 		saveManager.requestSnapshot();
 		message = Policy.bind("resources.snapRequest"); //$NON-NLS-1$
@@ -1716,7 +1715,7 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 	//must start after save manager, because (read) access to tree is needed
 	aliasManager = new AliasManager(this);
 	aliasManager.startup(null);
-
+	autoBuildJob = new AutoBuildJob(this);
 	treeLocked = false; // unlock the tree.
 }
 /** 

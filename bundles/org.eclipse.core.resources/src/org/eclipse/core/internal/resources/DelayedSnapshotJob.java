@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.events.EventStats;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,8 +33,18 @@ public class DelayedSnapshotJob extends Job {
 			return Status.CANCEL_STATUS;
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				if (!monitor.isCanceled())
-					saveManager.requestSnapshot();
+				if (monitor.isCanceled())
+					return;
+				try {
+					EventStats.startSnapshot();
+					IStatus result = saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
+					if (!result.isOK())
+						ResourcesPlugin.getPlugin().getLog().log(result);
+				} finally {
+					saveManager.operationCount = 0;
+					saveManager.snapshotRequested = false;
+					EventStats.endSnapshot();
+				}
 			}
 		};
 		try {
@@ -42,6 +53,7 @@ public class DelayedSnapshotJob extends Job {
 			if (workspace != null)
 				workspace.run(runnable, monitor);
 		} catch (CoreException e) {
+			e.printStackTrace();
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
 		return Status.OK_STATUS;
