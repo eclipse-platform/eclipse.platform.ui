@@ -289,7 +289,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						}
 					}
 				};
-				execute(r);
+				execute(r, false);
 			}
 		}
 
@@ -305,7 +305,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						firePropertyChange(PROP_DIRTY);
 					}
 				};
-				execute(r);
+				execute(r, false);
 			}
 		}
 		
@@ -321,7 +321,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						resetHighlightRange();
 					}
 				};
-				execute(r);
+				execute(r, false);
 			}
 		}
 		
@@ -338,7 +338,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						handleElementContentReplaced();
 					}
 				};
-				execute(r);
+				execute(r, false);
 			}
 		}
 		
@@ -353,7 +353,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						close(false);
 					}
 				};
-				execute(r);
+				execute(r, false);
 			}
 		}
 		
@@ -386,8 +386,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							setInput((IEditorInput) movedElement);
 							
 							if (changed != null) {
-								d.getDocument(getEditorInput()).set(previousContent);
 								validateState(getEditorInput());
+								d.getDocument(getEditorInput()).set(previousContent);
 								updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 							}					
 								
@@ -395,7 +395,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						}
 					}
 				};
-				execute(r);
+				execute(r, true);
 			}
 		}
 		
@@ -419,18 +419,23 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/**
 		 * Executes the given runnable in the UI thread.
+		 * <p>
+		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=76765 for details
+		 * about why the parameter <code>forcePosting</code> has been
+		 * introduced in the course of 3.1.
 		 * 
 		 * @param runnable runnable to be executed
+		 * @param runnablePerformsValidateState <code>true</code> if the
+		 *            runnable contains a call to {@link AbstractTextEditor#validateState(IEditorInput)}, <code>false</code> otherwise
 		 * @since 3.0
 		 */
-		private void execute(Runnable runnable) {
-			if (Display.getCurrent() != null)
-				runnable.run();
-			else {
+		private void execute(Runnable runnable, boolean runnablePerformsValidateState) {
+			if (runnablePerformsValidateState || Display.getCurrent() == null) {
 				if (fDisplay == null)
 					fDisplay= getSite().getShell().getDisplay();
 				fDisplay.asyncExec(runnable);
-			}
+			} else
+				runnable.run();
 		}
 	}
 	
@@ -674,8 +679,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 		/**
-		 * Sets the keybindings scopes for this editor.
-		 * @param keyBindingScopes the keybinding scopes
+		 * Sets the key binding scopes for this editor.
+		 * @param keyBindingScopes the key binding scopes
 		 * @since 2.1
 		 */
 		public void setScopes(String[] keyBindingScopes) {
