@@ -72,6 +72,12 @@
 				menubarPath="team.main/advancedGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"/>
 			<action 
+				id="org.eclipse.team.ccvs.ui.refreshFromLocal"
+				label="%RefreshFromLocal.label"
+				tooltip="%RefreshFromLocal.tooltip"
+				menubarPath="team.main/checkinGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.RefreshFromLocalAction"/>
+			<action 
 				id="org.eclipse.team.ccvs.ui.add"
 				label="%AddAction.label"
 				tooltip="%AddAction.tooltip"
