@@ -345,7 +345,7 @@ protected void create(final IResource resource, boolean local) throws CoreExcept
  */
 public void createFileInFileSystem(IPath path) throws CoreException {
 	java.io.File file = path.toFile();
-	new java.io.File(file.getParent()).mkdirs();
+	file.getParentFile().mkdirs();
 	FileOutputStream output = null;
 	try {
 		output = new FileOutputStream(file);
@@ -365,7 +365,7 @@ public void createFileInFileSystem(IPath path) throws CoreException {
  */
 public void createFileInFileSystem(IPath path, InputStream contents) throws IOException {
 	java.io.File file = path.toFile();
-	new java.io.File(file.getParent()).mkdirs();
+	file.getParentFile().mkdirs();
 	FileOutputStream output = new FileOutputStream(file);
 	transferData(contents, output);
 }
