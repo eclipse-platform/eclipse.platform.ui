@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.ui.test.harness.util.ActionUtil;
+import org.eclipse.ui.junit.util.*;
 
 
 /**
@@ -27,7 +27,7 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 		// Verify lifecycle.
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assert(delegate.callHistory.contains(delegate, 
+		assertTrue(delegate.callHistory.contains(delegate, 
 			new String [] {"init", "selectionChanged", "run"}));
 	}
 	

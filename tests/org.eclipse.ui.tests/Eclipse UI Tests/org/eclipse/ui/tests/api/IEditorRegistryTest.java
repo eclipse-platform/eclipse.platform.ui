@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.junit.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
 
@@ -36,7 +36,7 @@ public class IEditorRegistryTest extends TestCase {
 
 	public void testGetFileEditorMappings()
 	{
-		assert( ArrayUtil.check( fReg.getFileEditorMappings() ) );
+		assertTrue( ArrayUtil.check( fReg.getFileEditorMappings() ) );
 	}
 	
 	/**

@@ -4,7 +4,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.junit.util.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.*;
@@ -44,10 +44,10 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	 */
 	public void testGet_SetEditorAreaVisible() throws Throwable {
 		fActivePage.setEditorAreaVisible(true);
-		assert(fActivePage.isEditorAreaVisible() == true);
+		assertTrue(fActivePage.isEditorAreaVisible() == true);
 
 		fActivePage.setEditorAreaVisible(false);
-		assert(fActivePage.isEditorAreaVisible() == false);
+		assertTrue(fActivePage.isEditorAreaVisible() == false);
 	}
 
 	public void testGetPerspective() throws Throwable {
@@ -89,14 +89,14 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		callTrace = part2.getCallHistory();
 		callTrace.clear();
 		fActivePage.activate(part2);
-		assert(callTrace.contains("setFocus"));
-		assert(listener.getCallHistory().contains("partActivated"));
+		assertTrue(callTrace.contains("setFocus"));
+		assertTrue(listener.getCallHistory().contains("partActivated"));
 
 		callTrace = part.getCallHistory();
 		callTrace.clear();
 		fActivePage.activate(part);
-		assert(callTrace.contains("setFocus"));
-		assert(listener.getCallHistory().contains("partActivated"));
+		assertTrue(callTrace.contains("setFocus"));
+		assertTrue(listener.getCallHistory().contains("partActivated"));
 	}
 
 	public void testBringToTop() throws Throwable {
@@ -130,7 +130,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	*/		
 		MockViewPart view = (MockViewPart) fActivePage.showView(MockViewPart.ID);
 		assertNotNull(view);
-		assert(
+		assertTrue(
 			view.getCallHistory().verifyOrder(
 				view,
 				new String[] { "init", "createPartControl", "setFocus" }));
@@ -488,7 +488,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 
 		fActivePage.hideView(view);
 		CallHistory callTrace = ((MockViewPart) view).getCallHistory();
-		assert(callTrace.contains( "dispose"));
+		assertTrue(callTrace.contains( "dispose"));
 	}
 
 	public void testClose() throws Throwable {

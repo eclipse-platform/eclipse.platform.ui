@@ -3,13 +3,11 @@ package org.eclipse.ui.tests.dialogs;
 import java.util.ResourceBundle;
 
 import junit.framework.TestCase;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.test.harness.DialogCheck;
+import org.eclipse.ui.junit.util.DialogCheck;
 
 public class UIMessageDialogs extends TestCase {
 	private static final String DUMMY_RESOURCE = "Dummy.resource";

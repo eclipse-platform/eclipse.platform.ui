@@ -7,40 +7,18 @@
    provider-name="Object Technology International"
    class="org.eclipse.ui.tests.TestPlugin">
 <requires>
+   <import plugin="org.eclipse.core.boot"/>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.eclipse.core.resources"/>
-   <import plugin="org.eclipse.ui.test.harness"/>
+   <import plugin="org.eclipse.swt"/>
    <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.ui.junit.util"/>
    <import plugin="org.junit"/>
 </requires>
 
 <runtime>
    <library name="uitests.jar"/>
 </runtime>
-
-<extension 
-	point="org.eclipse.ui.test.harness.uiTests">
-	<uiTest 
-		id="ui.TestSuite"
-		class="org.eclipse.ui.tests.UiTestSuite"/>
-	<uiTest 
-		id="ui.api.TestSuite"
-		class="org.eclipse.ui.tests.api.ApiTestSuite"/>
-	<uiTest 
-		id="ui.api.SessionCreateTest"
-		class="org.eclipse.ui.tests.api.SessionCreateTest"/>
-	<uiTest 
-		id="ui.api.SessionRestoreTest"
-		class="org.eclipse.ui.tests.api.SessionRestoreTest"/>
-	<uiTest
-		id="ui.dialogs.Automated"
-		class="org.eclipse.ui.tests.dialogs.UIAutomatedSuite"/>
-	
-	<!-- Interactive Test Suites -->
-	<uiTest
-		id="ui.dialogs.Interactive"
-		class="org.eclipse.ui.tests.dialogs.UIInteractiveSuite"/>
-</extension>
 
 <extension 
 	point="org.eclipse.ui.perspectives">

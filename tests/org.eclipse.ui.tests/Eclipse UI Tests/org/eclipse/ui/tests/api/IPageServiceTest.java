@@ -44,7 +44,7 @@ public class IPageServiceTest extends AbstractTestCase
 		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		page.close();
-		assert(pageEventReceived);
+		assertTrue(pageEventReceived);
 		
 		// Remove listener.	
 		fWindow.removePageListener(this);		
@@ -67,7 +67,7 @@ public class IPageServiceTest extends AbstractTestCase
 		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
 		page.close();
-		assert(!pageEventReceived);
+		assertTrue(!pageEventReceived);
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class IPageServiceTest extends AbstractTestCase
 		page.setEditorAreaVisible(false);
 		page.setEditorAreaVisible(true);
 		page.close();
-		assert(perspEventReceived);
+		assertTrue(perspEventReceived);
 		
 		// Remove listener.	
 		fWindow.removePerspectiveListener(this);		
@@ -141,7 +141,7 @@ public class IPageServiceTest extends AbstractTestCase
 		page.setEditorAreaVisible(false);
 		page.setEditorAreaVisible(true);
 		page.close();
-		assert(!perspEventReceived);
+		assertTrue(!perspEventReceived);
 	}
 	
 	/**

@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.junit.util.*;
 
 public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 

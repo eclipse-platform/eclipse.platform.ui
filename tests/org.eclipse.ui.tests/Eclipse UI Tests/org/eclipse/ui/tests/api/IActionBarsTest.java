@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.ActionUtil;
+import org.eclipse.ui.junit.util.*;
 
 
 /**
@@ -126,9 +126,9 @@ public class IActionBarsTest extends AbstractTestCase {
 		// above in ViewActionBars does not call the super.  The
 		// following assertions fail.
 		if (false) {
-			assert(cut.hasRun);
-			assert(!copy.hasRun);
-			assert(undo.hasRun);
+			assertTrue(cut.hasRun);
+			assertTrue(!copy.hasRun);
+			assertTrue(undo.hasRun);
 		}
 		cut.hasRun = copy.hasRun = undo.hasRun = false;
 		
@@ -139,9 +139,9 @@ public class IActionBarsTest extends AbstractTestCase {
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.CUT);
 		ActionUtil.runActionUsingPath(this, fWindow, 
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.UNDO);
-		assert(!cut.hasRun);
-		assert(!copy.hasRun);
-		assert(!undo.hasRun);
+		assertTrue(!cut.hasRun);
+		assertTrue(!copy.hasRun);
+		assertTrue(!undo.hasRun);
 		
 		// Reactivate test view and run actions again.
 		// This time our global actions should be invoked.		
@@ -150,9 +150,9 @@ public class IActionBarsTest extends AbstractTestCase {
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.CUT);
 		ActionUtil.runActionUsingPath(this, fWindow, 
 			IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.UNDO);
-		assert(cut.hasRun);
-		assert(!copy.hasRun);
-		assert(undo.hasRun);
+		assertTrue(cut.hasRun);
+		assertTrue(!copy.hasRun);
+		assertTrue(undo.hasRun);
 	}
 }
 

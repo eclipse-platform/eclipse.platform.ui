@@ -2,6 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.junit.util.*;
 
 
 /**
@@ -31,7 +32,7 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 		runAction();
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assert(delegate.callHistory.contains(delegate, "run"));
+		assertTrue(delegate.callHistory.contains(delegate, "run"));
 	}
 	
 	public void testSelectionChanged() throws Throwable {
@@ -46,7 +47,7 @@ public abstract class IActionDelegateTest extends AbstractTestCase {
 		// Now fire a selection.
 		delegate.callHistory.clear();		
 		fireSelection();
-		assert(delegate.callHistory.contains(delegate, "selectionChanged"));
+		assertTrue(delegate.callHistory.contains(delegate, "selectionChanged"));
 	}
 	
 	/**

@@ -5,7 +5,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.junit.util.*;
 
 /**
  * Tests the IWorkbench interface.
@@ -82,7 +82,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 
 		wins = fWorkbench.getWorkbenchWindows();
 		for (int i = 0; i < num; i++)
-			assert(ArrayUtil.has(wins, newWins[i]));
+			assertTrue(ArrayUtil.has(wins, newWins[i]));
 
 		assertEquals(wins.length, oldTotal + num);
 

@@ -83,7 +83,7 @@ public abstract class IWorkbenchPartSiteTest extends AbstractTestCase {
 		
 		IWorkbenchPart part = createTestPart(fPage);
 		IWorkbenchPartSite site = part.getSite();
-		assert(part instanceof MockWorkbenchPart);
+		assertTrue(part instanceof MockWorkbenchPart);
 		MockWorkbenchPart mock = (MockWorkbenchPart)part;
 		assertEquals(mock.getSelectionProvider(), site.getSelectionProvider());
 	}

@@ -3,9 +3,7 @@
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<nature id="org.eclipse.pde.PluginNature"/>
 	<reference project-name="org.eclipse.ui"/>
-	<reference project-name="org.eclipse.core.launcher"/>
-	<reference project-name="org.eclipse.ui.test.harness"/>
-	<reference project-name="org.eclipse.ui.test.harness.launcher"/>
+	<reference project-name="org.eclipse.ui.junit.util"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 	<builder name="org.eclipse.pde.ManifestBuilder">

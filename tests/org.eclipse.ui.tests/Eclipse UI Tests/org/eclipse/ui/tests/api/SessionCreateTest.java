@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.junit.util.*;
 
 /**
  * SessionCreateTest runs the first half of our session
