@@ -16,12 +16,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
@@ -211,11 +213,18 @@ public final class AntUtil {
 		if (classpathString == null) {
 			return null;
 		}
+		
 		List antURLs= new ArrayList();
 		List userURLs= new ArrayList();
-		getCustomClasspaths(config, antURLs, userURLs, true);
-		URL[] custom= new URL[antURLs.size() + userURLs.size()];
-		antURLs.addAll(userURLs);
+		if (classpathString.equals(ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + ANT_GLOBAL_CLASSPATH_PLACEHOLDER )) {
+			//really the default classpath ..just ordered differently
+			antURLs.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries()));
+			antURLs.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries()));
+		} else {
+			getCustomClasspaths(config, antURLs, userURLs, true);
+			antURLs.addAll(userURLs);
+		}
+		URL[] custom= new URL[antURLs.size()];
 		return (URL[])antURLs.toArray(custom);
 	}
 	

@@ -31,7 +31,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public static final int GLOBAL_USER= 1;
 	public static final int USER= 2;
 	
-	private GlobalClasspathEntries globalEntry;
+	private GlobalClasspathEntries antHomeGlobalEntry;
 	private GlobalClasspathEntries userGlobalEntry;
 	
 	public Object addEntry(Object entry) {
@@ -63,16 +63,16 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		IClasspathEntry entryParent= null;
 		switch (entryType) {
 			case GLOBAL :
-				if (globalEntry == null) {
+				if (antHomeGlobalEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
-					globalEntry= createGlobalEntry(new URL[0], name);
+					antHomeGlobalEntry= createGlobalEntry(new URL[0], name, false, true);
 				}
-				entryParent= globalEntry;
+				entryParent= antHomeGlobalEntry;
 				break;
 			case GLOBAL_USER :
 				if (userGlobalEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
-					userGlobalEntry= createGlobalEntry(new URL[0], name);
+					userGlobalEntry= createGlobalEntry(new URL[0], name, true, true);
 				}
 				entryParent= userGlobalEntry;
 				break;
@@ -104,8 +104,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		Object[] classpathEntries= null;
 		switch (entryType) {
 			case GLOBAL :
-				if (globalEntry != null) {
-					classpathEntries= globalEntry.getEntries();
+				if (antHomeGlobalEntry != null) {
+					classpathEntries= antHomeGlobalEntry.getEntries();
 				}
 				break;
 			case GLOBAL_USER :
@@ -137,6 +137,9 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public void remove(Object entry) {
 		childEntries.remove(entry);
+		if (entry == userGlobalEntry) {
+			userGlobalEntry= null;
+		}
 	}
 	
 	public ClasspathEntry createEntry(Object entry, IClasspathEntry entryParent) {
@@ -147,8 +150,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	public void removeAll() {
-		if (globalEntry != null) {
-			globalEntry.removeAll();
+		if (antHomeGlobalEntry != null) {
+			antHomeGlobalEntry.removeAll();
 		} 
 		if (userGlobalEntry != null) {
 			userGlobalEntry.removeAll();
@@ -158,8 +161,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public void removeAll(int entryType) {
 		switch (entryType) {
 			case GLOBAL :
-				if (globalEntry != null) {
-					globalEntry.removeAll();
+				if (antHomeGlobalEntry != null) {
+					antHomeGlobalEntry.removeAll();
 				}
 				break;
 			case GLOBAL_USER :
@@ -192,39 +195,41 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	/**
 	 * @param urls
 	 */
-	public void setGlobalClasspath(URL[] urls) {
-		if (globalEntry == null) {
-			String name= AntPreferencesMessages.getString("ClasspathModel.4"); //$NON-NLS-1$
-			globalEntry= createGlobalEntry(urls, name);
+	public void setAntHomeEntries(URL[] urls) {
+		if (antHomeGlobalEntry == null) {
+			String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
+			antHomeGlobalEntry= createGlobalEntry(urls, name, false, true);
 		} else {
-			globalEntry.removeAll();
+			antHomeGlobalEntry.removeAll();
 			for (int i = 0; i < urls.length; i++) {
 				URL url = urls[i];
-				globalEntry.addEntry(new ClasspathEntry(url, globalEntry));
+				antHomeGlobalEntry.addEntry(new ClasspathEntry(url, antHomeGlobalEntry));
 			}
 		}
 	}
 
-	private GlobalClasspathEntries createGlobalEntry(URL[] urls, String name) {
+	private GlobalClasspathEntries createGlobalEntry(URL[] urls, String name, boolean canBeRemoved, boolean addEntry) {
 		
-		GlobalClasspathEntries global= new GlobalClasspathEntries(name, this);
+		GlobalClasspathEntries global= new GlobalClasspathEntries(name, this, canBeRemoved);
 		
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
 			global.addEntry(new ClasspathEntry(url, global));
 		}
 		
-		addEntry(global);
+		if (addEntry) {
+			addEntry(global);
+		}
 		return global;
 	}
 
 	/**
 	 * @param urls
 	 */
-	public void setGlobalUserClasspath(URL[] urls) {
+	public void setGlobalEntries(URL[] urls) {
 		if (userGlobalEntry == null) {
-			String name= AntPreferencesMessages.getString("ClasspathModel.5"); //$NON-NLS-1$
-			userGlobalEntry= createGlobalEntry(urls, name);
+			String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
+			userGlobalEntry= createGlobalEntry(urls, name, true, true);
 		} else {
 			userGlobalEntry.removeAll();
 			for (int i = 0; i < urls.length; i++) {
@@ -253,7 +258,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		while (itr.hasNext()) {
 			IClasspathEntry element = (IClasspathEntry) itr.next();
 			if (element instanceof GlobalClasspathEntries) {
-				if (element == globalEntry) {
+				if (element == antHomeGlobalEntry) {
 					buff.append(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER);
 				} else {
 					buff.append(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER);
@@ -270,27 +275,55 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 	}
 	
-	public ClasspathModel(String serializedClasspath) {
+	public ClasspathModel(String serializedClasspath, boolean customAntHome) {
 		StringTokenizer tokenizer= new StringTokenizer(serializedClasspath, AntUtil.ATTRIBUTE_SEPARATOR);
+		
 		while (tokenizer.hasMoreTokens()) {
 			String string = tokenizer.nextToken().trim();
 			if (string.equals(AntUtil.ANT_GLOBAL_CLASSPATH_PLACEHOLDER)) {
-				setGlobalClasspath(AntCorePlugin.getPlugin().getPreferences().getAntURLs());
+				URL[] antHomeURLS= new URL[0];
+				if (!customAntHome) {
+					antHomeURLS= AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries();
+				} 
+				setAntHomeEntries(antHomeURLS);
 			} else if (string.equals(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
-				setGlobalUserClasspath(AntCorePlugin.getPlugin().getPreferences().getCustomURLs());
+				setGlobalEntries(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries());
 			} else {
 				Object entry= null;
+				if (string.charAt(0) == '*') {
+					//old customclasspath
+					string= string.substring(1);
+				}
 				try {
 					entry=  new URL("file:" + string); //$NON-NLS-1$
 				} catch (MalformedURLException e) {
 					entry= string;
 				}
-				childEntries.add(createEntry(entry, this));
+				addEntry(entry);
 			}
 		}
+		
 	}
 	
 	public ClasspathModel() {
 		super();
+	}
+
+	/**
+	 * @return
+	 */
+	public Object[] getRemovedGlobalEntries() {
+		if (userGlobalEntry == null) {
+			String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
+			return new Object[] {createGlobalEntry(new URL[] {}, name, true, false)};
+		}
+		return new Object[] {};
+	}
+
+	/**
+	 * @return
+	 */
+	public Object getAntHomeEntry() {
+		return antHomeGlobalEntry;
 	}
 }

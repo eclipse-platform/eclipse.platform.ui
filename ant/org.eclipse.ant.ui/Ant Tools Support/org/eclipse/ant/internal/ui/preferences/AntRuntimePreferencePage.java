@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -111,22 +112,28 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	public boolean performOk() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		
-		List contents = classpathPage.getAntURLs();
-		if (contents != null) {
-			URL[] urls = (URL[]) contents.toArray(new URL[contents.size()]);
-			prefs.setAntURLs(urls);
+		Object[] entries = classpathPage.getAntHomeEntries();
+		if (entries != null) {
+			URL[] urls= new URL[entries.length];
+			for (int i = 0; i < entries.length; i++) {
+				urls[i]= (URL)entries[i];
+			}
+			prefs.setAntHomeClasspathEntries(urls);
 		}
 		
-		contents = classpathPage.getUserURLs();
-		if (contents != null) {
-			URL[] urls = (URL[]) contents.toArray(new URL[contents.size()]);
-			prefs.setCustomURLs(urls);
+		entries = classpathPage.getUserURLs();
+		if (entries != null) {
+			URL[] urls= new URL[entries.length];
+			for (int i = 0; i < entries.length; i++) {
+				urls[i]= (URL)entries[i];
+			}
+			prefs.setAdditionalClasspathEntries(urls);
 		}
 		
 		String antHome= classpathPage.getAntHome();
 		prefs.setAntHome(antHome);
 		
-		contents = tasksPage.getContents(false);
+		List contents = tasksPage.getContents(false);
 		if (contents != null) {
 			Task[] tasks = (Task[]) contents.toArray(new Task[contents.size()]);
 			prefs.setCustomTasks(tasks);
@@ -161,8 +168,8 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	
 	protected List getLibraryURLs() {
 		List urls= new ArrayList();
-		urls.addAll(classpathPage.getAntURLs());
-		urls.addAll(classpathPage.getUserURLs());
+		urls.addAll(Arrays.asList(classpathPage.getAntHomeEntries()));
+		urls.addAll(Arrays.asList(classpathPage.getUserURLs()));
 		return urls;
 	}
 }

@@ -13,12 +13,13 @@ package org.eclipse.ant.internal.ui.preferences;
 
 public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	private String name;
-	/**
-	 * 
-	 */
-	public GlobalClasspathEntries(String name, IClasspathEntry parent) {
+	
+	private boolean canBeRemoved= true;
+	
+	public GlobalClasspathEntries(String name, IClasspathEntry parent, boolean canBeRemoved) {
 		this.parent= parent;
 		this.name= name;
+		this.canBeRemoved= canBeRemoved;
 	}
 		
 	public void addEntry(ClasspathEntry entry) {
@@ -40,5 +41,8 @@ public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	public void removeAll() {
 		childEntries.clear();
 	}
-
+	
+	public boolean canBeRemoved() {
+		return canBeRemoved;
+	}
 }

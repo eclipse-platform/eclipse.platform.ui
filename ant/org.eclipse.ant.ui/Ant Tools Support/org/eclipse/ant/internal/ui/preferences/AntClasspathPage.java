@@ -11,9 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
@@ -34,8 +32,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AntClasspathPage implements IAntBlockContainer {
 
-	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock();
+	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock(false);
 	private AntRuntimePreferencePage preferencePage;
+	private ClasspathModel model;
 	
 	/**
 	 * Creates an instance.
@@ -45,19 +44,19 @@ public class AntClasspathPage implements IAntBlockContainer {
 	}
 	
 	/**
-	 * Returns the specified user classpath URLs
+	 * Returns the specified user classpath entries
 	 * 
-	 * @return List
+	 * @return set of user classpath entries
 	 */
-	protected List getUserURLs() {
-		return antClasspathBlock.getUserURLs();
+	protected Object[] getUserURLs() {
+		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
 	}
 	
 	/**
-	 * Returns the currently listed objects in the table.
+	 * Returns the specified ant home classpath entries
 	 */
-	protected List getAntURLs() {
-		return antClasspathBlock.getAntURLs();
+	protected Object[] getAntHomeEntries() {
+		return model.getURLEntries(ClasspathModel.GLOBAL);
 	}
 	
 	protected String getAntHome() {
@@ -70,9 +69,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 	protected void initialize() {
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		antClasspathBlock.setAntTableInput(prefs.getAntURLs());
-		antClasspathBlock.setUserTableInput(Arrays.asList(prefs.getCustomURLs()));
-		antClasspathBlock.setEnabled(true);
+		createClasspathModel();
+		antClasspathBlock.setInput(model);
 		String antHomeString= prefs.getAntHome();
 		if (antHomeString != null && antHomeString.length() == 0) {
 			antHomeString= null;
@@ -83,12 +81,20 @@ public class AntClasspathPage implements IAntBlockContainer {
 		preferencePage.setValid(true);
 	}
 	
+	protected void createClasspathModel() {
+		model= new ClasspathModel();
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		model.setAntHomeEntries(prefs.getAntHomeClasspathEntries());
+		model.setGlobalEntries(prefs.getAdditionalClasspathEntries());
+	}
+	
 	protected void performDefaults() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		antClasspathBlock.setAntTableInput(Arrays.asList(prefs.getDefaultAntURLs()));
-		antClasspathBlock.setUserTableInput(new ArrayList(0));
+		model= new ClasspathModel();
+		model.setAntHomeEntries(new URL[]{});
+		model.setGlobalEntries(new URL[] {prefs.getToolsJarURL()});
+		antClasspathBlock.setInput(model);
 		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
-		antClasspathBlock.setEnabled(true);
 		update();
 	}
 	

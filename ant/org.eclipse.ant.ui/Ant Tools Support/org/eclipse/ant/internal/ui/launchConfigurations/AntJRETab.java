@@ -251,8 +251,8 @@ public class AntJRETab extends JavaJRETab {
 		}
 		if (urlStrings == null) {
 			//the global settings
-			antURLs.addAll(Arrays.asList(prefs.getAntURLs()));
-			userURLs.addAll(Arrays.asList(prefs.getCustomURLs()));
+			antURLs.addAll(Arrays.asList(prefs.getAntHomeClasspathEntries()));
+			userURLs.addAll(Arrays.asList(prefs.getAdditionalClasspathEntries()));
 		} else {
 			try {
 				AntUtil.getCustomClasspaths(configuration, antURLs, userURLs);

@@ -11,54 +11,192 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Content provider that maintains a list of URLs which are shown in a table
+ * Content provider that maintains a list of classpath entries which are shown in a tree
  * viewer.
  */
-public class AntClasspathContentProvider extends AntContentProvider {
+public class AntClasspathContentProvider implements ITreeContentProvider {
+	private TreeViewer treeViewer;
+	private ClasspathModel model= null;
+	private boolean refreshEnabled= false;
+	private boolean refreshRequested= false;
+		
+	public void add(IClasspathEntry parent, Object child) {
+		Object newEntry= null;
+		if (parent == null || parent == model) {
+			newEntry= model.addEntry(child);
+			parent= model;
+		} else if (parent instanceof GlobalClasspathEntries) {
+			newEntry= model.createEntry(child, parent);
+			((GlobalClasspathEntries)parent).addEntry((ClasspathEntry)newEntry);
+		} 
+		if (newEntry != null) {
+			treeViewer.add(parent, newEntry);
+			treeViewer.setExpandedState(parent, true);
+			treeViewer.reveal(newEntry);
+			refresh();
+		}
+	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.preferences.AntContentProvider#add(java.lang.Object)
-	 */
-	public void add(Object o) {
-		if (o instanceof URL) {
-			URL newURL = (URL) o;
-			File newFile= new File(newURL.getFile());
-			Iterator itr = elements.iterator();
-			File existingFile;
-			while (itr.hasNext()) {
-				URL url = (URL) itr.next();
-				existingFile= new File(url.getFile());
-				if (existingFile.equals(newFile)) {
-					return;
-				}
-			}
-			elements.add(o);
-			tableViewer.add(o);
-			tableViewer.setSelection(new StructuredSelection(o), true);
-		} else {
-			super.add(o);
+	public void add(int entryType, Object child) {
+		Object newEntry= model.addEntry(entryType, child);
+		if (newEntry != null) {
+			treeViewer.add(getParent(newEntry), newEntry);
+			refresh();
 		}
 	}
 
 	public void removeAll() {
-		if (tableViewer != null) {
-			tableViewer.remove(elements.toArray());
-		}
-		elements = new ArrayList(5);
+		model.removeAll();
+		refresh();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.preferences.AntContentProvider#getSorter()
+	
+	private void refresh() {
+		if (refreshEnabled) {
+			treeViewer.refresh();
+			refreshRequested= false;
+		} else {
+			refreshRequested= true;
+		}
+	}
+	
+	public void removeAllGlobalAntClasspathEntries() {
+		model.removeAll(ClasspathModel.GLOBAL);
+		refresh();
+	}
+
+	/**
+	 * @see ITreeContentProvider#getParent(Object)
 	 */
-	protected ViewerSorter getSorter() {
+	public Object getParent(Object element) {
+		if (element instanceof ClasspathEntry) {
+			return ((ClasspathEntry)element).getParent();
+		}
+		if (element instanceof GlobalClasspathEntries) {
+			return model;
+		}
+		
 		return null;
+	}
+
+	/**
+	 * @see ITreeContentProvider#hasChildren(Object)
+	 */
+	public boolean hasChildren(Object element) {
+		if (element instanceof ClasspathEntry) {
+			return false;
+		}
+		if (element instanceof GlobalClasspathEntries) {
+			return ((GlobalClasspathEntries)element).hasEntries();
+			
+		} 
+		
+		if (element instanceof ClasspathModel) {
+			return ((ClasspathModel) element).hasEntries();
+		}
+		return false;
+	}
+
+	/**
+	 * @see IStructuredContentProvider#getElements(Object)
+	 */
+	public Object[] getElements(Object inputElement) {
+		return getChildren(inputElement);
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+	 */
+	public void dispose() {
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		treeViewer = (TreeViewer) viewer;
+		
+		if (newInput != null) {
+			model= (ClasspathModel)newInput;
+		} else {
+			if (model != null) {
+				model.removeAll();
+			}
+			model= null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object parentElement) {
+		if (parentElement instanceof GlobalClasspathEntries) {
+			return ((GlobalClasspathEntries)parentElement).getEntries();
+		}
+		if (parentElement instanceof ClasspathModel) {
+			return ((ClasspathModel)parentElement).getEntries();
+		}
+		if (parentElement == null) {
+			List all= new ArrayList();
+			Object[] topEntries= model.getEntries();
+			for (int i = 0; i < topEntries.length; i++) {
+				Object object = topEntries[i];
+				if (object instanceof ClasspathEntry) {
+					all.add(object);
+				} else if (object instanceof GlobalClasspathEntries) {
+					all.addAll(Arrays.asList(((GlobalClasspathEntries)object).getEntries()));
+				}
+			}
+			return all.toArray();
+		}
+		
+		return null;
+	}
+
+	public void remove(IStructuredSelection selection) {
+		Object[] array= selection.toArray();
+		model.removeAll(array);
+		treeViewer.remove(array);
+		refresh();
+	}
+
+	public Object[] getGlobalUserClasspathEntries() {
+		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
+	}
+	
+	public Object[] getUserClasspathEntries() {
+		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
+	}
+
+	public Object[] getGlobalAntClasspathEntries() {
+		return model.getURLEntries(ClasspathModel.GLOBAL);
+	}
+	
+	public void handleMove(int direction, IClasspathEntry entry) {
+		IClasspathEntry parent = (IClasspathEntry)getParent(entry);
+		parent.moveChild(direction, entry);
+	}
+
+	public ClasspathModel getModel() {
+		return model;
+	}
+
+	public void setRefreshEnabled(boolean refreshEnabled) {
+		this.refreshEnabled = refreshEnabled;
+		treeViewer.getTree().setRedraw(refreshEnabled);
+		if (refreshEnabled && refreshRequested) {
+			refresh();
+		}
 	}
 }
