@@ -22,7 +22,7 @@ import org.eclipse.ui.console.ConsolePlugin;
  *
  */
 public class IOConsoleViewer extends TextViewer implements LineStyleListener {
-    private boolean autoScroll = true;
+    private boolean autoScroll = false;
     
     public IOConsoleViewer(Composite parent, IDocument document) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -131,7 +131,6 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener {
             StyleRange[] styles = new StyleRange[partitions.length];        
             for (int i = 0; i < partitions.length; i++) {                
                 int rangeStart = Math.max(partitions[i].getOffset(), event.lineOffset);
-//                int rangeLength = Math.max(partitions[i].getLength(), event.lineText.length());
                 int rangeLength = partitions[i].getLength();
                 styles[i] = partitions[i].getStyleRange(rangeStart, rangeLength);
             }

@@ -86,12 +86,7 @@ public class IOConsole extends AbstractConsole {
     private IOConsolePartitioner partitioner;
     private IOConsoleInputStream inputStream;
     private int tabWidth = DEFAULT_TAB_SIZE;
-
     private boolean wordWrap;
-
-    
-
-       
 
     public IOConsole(String name, ImageDescriptor imageDescriptor) {
         super(name, imageDescriptor);

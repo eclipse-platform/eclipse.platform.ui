@@ -40,7 +40,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     private IOConsole console;
     private IPageSite site;
     
-    private boolean isLocked = false;
+    private boolean autoScroll = true;
     private Map globalActions = new HashMap();
     private ClearOutputAction clearOutputAction;
     private ScrollLockAction scrollLockAction;
@@ -125,8 +125,8 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		clearOutputAction = new ClearOutputAction(viewer);
 		
 		scrollLockAction = new ScrollLockAction(viewer);
-		scrollLockAction.setChecked(isLocked);
-		viewer.setAutoScroll(!isLocked);
+		scrollLockAction.setChecked(!autoScroll);
+		viewer.setAutoScroll(autoScroll);
 		
 		actionBars.updateActionBars();
     }
