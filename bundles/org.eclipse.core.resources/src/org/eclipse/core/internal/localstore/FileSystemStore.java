@@ -239,7 +239,13 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				}
 			}
-		} 
+		}
+		// for some reason we couldn't move - workaround: copy and delete the source
+		// but if just case-renaming on a case-insensitive FS, there is no workaround 
+		if (caseRenaming) {
+			String message = Policy.bind("localstore.couldNotMove", source.getAbsolutePath()); //$NON-NLS-1$
+			throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
+		}
 		boolean success = false;
 		boolean canceled = false;
 		try {
