@@ -68,7 +68,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 						
 						return new IDropTarget() {
 							public void drop() {
-								addTrim(draggedTrim, dropSide, insertionPoint);
+								draggedTrim.dock(dropSide);
 							}
 
 							public Cursor getCursor() {
@@ -93,12 +93,5 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 		}
 		
 		return getTrimControl(searchSource.getParent());
-	}
-
-	public void addTrim(IWindowTrim trim, int side, Control insertionPoint) {
-		trim.docked(side);
-		layout.addTrim(trim.getControl(), side, insertionPoint);
-		windowComposite.layout();
-	}
-	
+	}	
 }

@@ -21,7 +21,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -29,6 +28,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceColors;
 
 import org.eclipse.ui.IViewReference;
 
@@ -50,6 +50,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 class FastViewBar implements IWindowTrim {
 	private ToolBarManager fastViewBar;
 	private Menu fastViewBarMenu;
+	private Menu sidesMenu; 
 	private WorkbenchWindow window;
 	private MenuItem restoreItem;
 	private IViewReference selection;
@@ -57,9 +58,11 @@ class FastViewBar implements IWindowTrim {
 	private Composite control;
 	private GridData toolBarData;
 	private static final int HIDDEN_WIDTH = 5;
-	private MenuItem showOnLeft;
-	private int side = SWT.LEFT;
-	private Cursor dragCursor;
+	private MenuItem showOn;
+	private MenuItem closeItem;
+	private IntModel side = new IntModel(SWT.LEFT);
+	private RadioMenu radioButtons;
+	private IViewReference selectedView;
 	
 	/**
 	 * Constructs a new fast view bar for the given workbench window.
@@ -70,7 +73,7 @@ class FastViewBar implements IWindowTrim {
 		window = theWindow;
 		
 		fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
-		fastViewBar.add(new ShowFastViewContribution(window));	
+		fastViewBar.add(new ShowFastViewContribution(window));
 	}
 	
 	/**
@@ -82,28 +85,7 @@ class FastViewBar implements IWindowTrim {
 	 */
 	public void createControl(Composite parent) {
 		control = new Composite(parent, SWT.NONE);
-		
-		Label dragHandle = new Label(control, SWT.SEPARATOR | SWT.HORIZONTAL);
-		
-		GridData dragHandleData = new GridData();
-		dragHandleData.horizontalAlignment = GridData.CENTER;
-		dragHandleData.widthHint = HIDDEN_WIDTH;
-		dragHandleData.heightHint = HIDDEN_WIDTH;
-		dragHandle.setLayoutData(dragHandleData);
-		
-		dragCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_SIZEALL);
-		dragHandle.setCursor(dragCursor);
-		
-		DragUtil.addDragSource(dragHandle, new AbstractDragSource() {
-			public Object getDraggedItem(Point position) {
-				return FastViewBar.this;
-			}
-			
-			public Rectangle getDragRectangle(Object dragged) {
-				return DragUtil.getDisplayBounds(control);
-			}
-		});
-		
+					
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				if (event.type == SWT.MenuDetect) {
@@ -113,7 +95,6 @@ class FastViewBar implements IWindowTrim {
 		};
 
 		fastViewBar.createControl(control);
-		//dragHandle.addListener(SWT.MenuDetect, listener);
 		getToolBar().addListener(SWT.MenuDetect, listener);
 		
 		IDragSource fastViewDragSource = new AbstractDragSource() {
@@ -123,8 +104,9 @@ class FastViewBar implements IWindowTrim {
 			public Object getDraggedItem(Point position) {
 				IViewReference ref = getViewAt(position);
 
+				// If no fastview icons here, drag the fastview bar itself
 				if (ref == null) {
-					return null;
+					return FastViewBar.this;
 				}
 				
 				ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
@@ -133,6 +115,11 @@ class FastViewBar implements IWindowTrim {
 			}
 
 			public Rectangle getDragRectangle(Object draggedItem) {
+				// If we're dragging the fastview bar itself..
+				if (draggedItem instanceof FastViewBar) {
+					return DragUtil.getDisplayBounds(control);
+				}
+				
 				ViewPane pane = (ViewPane)draggedItem;
 				
 				Perspective persp = getPerspective(pane);
@@ -141,26 +128,20 @@ class FastViewBar implements IWindowTrim {
 			}
 
 			public void dragFinished(Object draggedItem, boolean success) {
-				ViewPane pane = (ViewPane)draggedItem;
-				
-				Perspective persp = getPerspective(pane);
-				
-				if (oldFastView != pane.getViewReference() || !success) {
-					persp.setActiveFastView(oldFastView);
+
+				if (oldFastView != null) {
+					Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+					
+					if (persp.isFastView(oldFastView)) {
+						persp.setActiveFastView(oldFastView);
+					}
 				}
 				
 				oldFastView = null;
 			}
 
-			public void dragStarted(Object draggedItem) {
-				// If a fast view is active, and the dragged element is the active
-				// fast view or an icon for a fast view, minimize the active fast
-				// view when the drag begins. This is to allow it to be dropped
-				// somewhere that the active fast view was covering.
-				
-				ViewPane pane = (ViewPane)draggedItem;
-				
-				Perspective persp = getPerspective(pane);
+			public void dragStarted(Object draggedItem) {				
+				Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
 				
 				oldFastView = persp.getActiveFastView();
 				
@@ -260,71 +241,53 @@ class FastViewBar implements IWindowTrim {
 	 */
 	private void showFastViewBarPopup(Point pt) {
 		// Get the tool item under the mouse.
-		ToolBar toolBar = fastViewBar.getControl();
-		ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
-		if (toolItem == null)
-			return;
+		
+		ToolBar toolBar = getToolBar();
 
-		// Get the action for the tool item.
-		Object data = toolItem.getData();
-
-		// If the tool item is an icon for a fast view
-		if (data instanceof ShowFastViewContribution) {
-			// The fast view bar menu is created lazily here.
-			if (fastViewBarMenu == null) {
-				Menu menu = new Menu(toolBar);
-				MenuItem closeItem = new MenuItem(menu, SWT.NONE);
-				closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-				closeItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							IViewReference ref =
-								(IViewReference) toolItem.getData(
-										ShowFastViewContribution.FAST_VIEW);
-							window.getActiveWorkbenchPage().hideView(ref);
-						}
+		// The fast view bar menu is created lazily here.
+		if (fastViewBarMenu == null) {
+			Menu menu = new Menu(toolBar);
+			closeItem = new MenuItem(menu, SWT.NONE);
+			closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			closeItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (selectedView != null) {
+						window.getActiveWorkbenchPage().hideView(selectedView);						
 					}
-				});
-				restoreItem = new MenuItem(menu, SWT.CHECK);
-				restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
-				restoreItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							IViewReference ref =
-								(IViewReference) toolItem.getData(
-										ShowFastViewContribution.FAST_VIEW);
-							window.getActiveWorkbenchPage().removeFastView(ref);
-						}
+				}
+			});
+			restoreItem = new MenuItem(menu, SWT.NONE);
+			restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
+			restoreItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (selectedView != null) {
+						window.getActiveWorkbenchPage().removeFastView(selectedView);
 					}
-				});
+				}
+			});
+			
+			showOn = new MenuItem(menu, SWT.CASCADE);
+			{
+				showOn.setText(WorkbenchMessages.getString("FastViewBar.dock_on")); //$NON-NLS-1$
 				
-				showOnLeft = new MenuItem(menu, SWT.CHECK);
-				showOnLeft.setText(WorkbenchMessages.getString("FastViewBar.dock_on_left"));
-				showOnLeft.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						window.getActiveWorkbenchPage().getActivePerspective().setActiveFastView(null, 0);
-						if (showOnLeft.getSelection()) {
-							window.showFastViewBar(SWT.LEFT);
-						} else {
-							window.showFastViewBar(SWT.RIGHT);
-						}
-					}
-				});
-				showOnLeft.setSelection(side == SWT.LEFT);
+				sidesMenu = new Menu(showOn);
+				radioButtons = new RadioMenu(sidesMenu, side);
 				
-				fastViewBarMenu = menu;
+				radioButtons.addMenuItem(WorkbenchMessages.getString("FastViewBar.Left"), new Integer(SWT.LEFT)); //$NON-NLS-1$
+				radioButtons.addMenuItem(WorkbenchMessages.getString("FastViewBar.Right"), new Integer(SWT.RIGHT)); //$NON-NLS-1$
+				
+				showOn.setMenu(sidesMenu);
 			}
-			restoreItem.setSelection(true);
-			fastViewBarMenu.setData(toolItem);
-
-			// Show popup menu.
-			if (fastViewBarMenu != null) {
-				fastViewBarMenu.setLocation(pt.x, pt.y);
-				fastViewBarMenu.setVisible(true);
-			}
+			fastViewBarMenu = menu;
 		}
+
+		selectedView = getViewAt(pt);
+		boolean selectingView = (selectedView != null);
+		restoreItem.setEnabled(selectingView);
+		closeItem.setEnabled(selectingView);
+
+		fastViewBarMenu.setLocation(pt.x, pt.y);
+		fastViewBarMenu.setVisible(true);		
 	}
 		
 	/**
@@ -338,17 +301,22 @@ class FastViewBar implements IWindowTrim {
 		return control;
 	}
 	
+	public void dispose() {
+		if (radioButtons != null) {
+			radioButtons.dispose();
+		}
+	}
+	
 	/**
 	 * Sets the "expanded" state of the fast view bar. This can be called with
 	 * "false" when the fast view bar is empty to conserve space. 
 	 *  
 	 * @param shouldExpand
 	 */
-	private void expand(boolean shouldExpand) {
- 		
+	private void expand(boolean shouldExpand) {	
 		if (shouldExpand != visible) {
 			
-			getToolBar().setVisible(shouldExpand);
+			getToolBar().setVisible(true);
 			if (!shouldExpand) {
 				toolBarData.widthHint = HIDDEN_WIDTH;
 			} else {
@@ -368,8 +336,8 @@ class FastViewBar implements IWindowTrim {
 	 */
 	public void update(boolean force) {
 		fastViewBar.update(force);
-		int items = fastViewBar.getControl().getItems().length;
-		expand(items > 0);
+		ToolItem[] items = fastViewBar.getControl().getItems();
+		expand(items.length > 0);
 	}
 
 	/**
@@ -433,15 +401,21 @@ class FastViewBar implements IWindowTrim {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#docked(int)
 	 */
-	public void docked(int side) {
-		this.side = side;	
-		if (showOnLeft != null) {
-			showOnLeft.setSelection(window.getFastViewBarSide() == SWT.LEFT);
-		}
+	public void dock(int side) {
+		this.side.set(side);
 	}
 
 	public int getSide() {
-		return this.side;
+		return this.side.get();
+	}
+	
+	/**
+	 * Adds a listener that will be notified whenever
+	 * 
+	 * @param listener
+	 */
+	public void addDockingListener(IChangeListener listener) {
+		this.side.addChangeListener(listener);
 	}
 	
 }

@@ -73,6 +73,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -93,8 +94,6 @@ import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.ws.WorkbenchWindowCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.IDragOverListener;
-import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
@@ -1017,7 +1016,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		Integer bigInt;
 		bigInt = memento.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
 		if (bigInt != null) {
-			showFastViewBar(bigInt.intValue()); 
+			fastViewBar.dock(bigInt.intValue()); 
 		}
 		
 		bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
@@ -2020,11 +2019,23 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		layout.setCenterControl(getClientComposite());
 		
-		showFastViewBar(getFastViewBarSide());
-	}
-
-	public void showFastViewBar(int location) {		
-		trimDropTarget.addTrim(fastViewBar, location, null);
+		fastViewBar.addDockingListener(new IChangeListener() {
+			public void update(boolean changed) {
+				layout.addTrim(fastViewBar.getControl(), fastViewBar.getSide(), null);
+				WorkbenchPage page = getActiveWorkbenchPage(); 
+				
+				if (page != null) {
+					Perspective persp = page.getActivePerspective();
+					IViewReference activeFastView = persp.getActiveFastView(); 
+					if (activeFastView != null) {
+						persp.setActiveFastView(null);
+						persp.setActiveFastView(activeFastView);
+					}
+				}
+				
+				getShell().layout();
+			}
+		});
 	}
 	
 	public void hideFastViewBar() {

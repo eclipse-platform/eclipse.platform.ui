@@ -13,10 +13,30 @@ package org.eclipse.ui.internal;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * TODO cleanup and documentation
+ * Interface for trim controls that can be docked to the edge of a Workbench window using
+ * drag-and-drop.
  */
 public interface IWindowTrim {
+	/**
+	 * Returns the control representing this trim widget, or null if it has not yet
+	 * been created.
+	 * 
+	 * @return the control for the trim widget.
+	 */
 	Control getControl();
+	
+	/**
+	 * Returns the set of sides that this trim can be docked onto.
+	 * 
+	 * @return bitwise or of one or more of SWT.TOP, SWT.BOTTOM, SWT.LEFT, and SWT.RIGHT
+	 */
 	int getValidSides();
-	void docked(int side);
+
+	/**
+	 * Called to notify the trim object that it has been docked on the given side of the layout
+	 * 
+	 * @param dropSide
+	 * @param insertionPoint
+	 */
+	void dock(int dropSide);
 }
