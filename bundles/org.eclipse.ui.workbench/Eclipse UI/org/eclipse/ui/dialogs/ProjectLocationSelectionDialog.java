@@ -77,11 +77,12 @@ public ProjectLocationSelectionDialog(
  */
 private void applyValidationResult(String errorMsg) {
 	int code;
+	boolean allowFinish = false;
 	
-	getOkButton().setEnabled(errorMsg == null);
 	if (errorMsg == null) {
 		code = IStatus.OK;
 		errorMsg = "";	//$NON-NLS-1$
+		allowFinish = true;
 	} else if (firstLocationCheck)
 		code = IStatus.OK;
 	else
@@ -94,6 +95,7 @@ private void applyValidationResult(String errorMsg) {
 			code,
 			errorMsg,
 			null));
+	getOkButton().setEnabled(allowFinish);			
 }
 /**
  * Check whether the entries are valid. If so return null. Otherwise
