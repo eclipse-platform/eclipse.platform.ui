@@ -168,6 +168,7 @@ public class WatchExpression implements IWatchExpression {
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
 		watchExpressionChanged();
+		setExpressionContext(fCurrentContext);
 	}
 
 	/**
