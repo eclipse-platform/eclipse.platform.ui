@@ -147,7 +147,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		if(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT)) {
 			setWaterMarks(1000, store.getInt(ICVSUIConstants.PREF_CONSOLE_HIGH_WATER_MARK));
 		} else {
-			setWaterMarks(-1, -1);
+			setWaterMarks(-1, 0);
 		}
 	}
 	
