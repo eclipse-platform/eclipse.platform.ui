@@ -38,6 +38,7 @@ public interface IWorkbenchPartSite {
  * </p>
  * 
  * @return the decorator manager
+ * @deprecated use IWorkbench.getDecoratorManager() instead
  * <p>
  * NOTE: This is experimental API, which may be changed or removed at any point in time.
  * This API should not be called, overridden or otherwise used in production code.

@@ -26,6 +26,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 
@@ -1060,4 +1061,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public void refreshPluginActions(String pluginId) {
 		WWinPluginAction.refreshActionList();
 	}
+	/*
+	 * @see IWorkbench#getDecoratorManager()
+	 */
+	public ILabelDecorator getDecoratorManager() {
+		return WorkbenchPlugin.getDefault().getDecoratorManager();
+	}
+
 }

@@ -6,6 +6,7 @@ package org.eclipse.ui;
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.ILabelDecorator;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -306,4 +307,29 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  */
 public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) 
 	throws WorkbenchException;
+
+/**
+ * Returns the decorator manager.
+ * <p>
+ * Anything using the DecoratorManager should come up with the text and image for the element (including
+ * any of the part's own decorations) before calling the decorator manager.
+ * It should also add a listener to be notified when decorations change.
+ * </p>
+ * <p>
+ * Note that if the element implements <code>IAdaptable</code>, decorators may use this
+ * mechanism to obtain an adapter (for example an <code>IResource</code>), and derive the
+ * decoration from the adapter rather than the element.
+ * Since the adapter may differ from the original element, those using the DecoratorManager
+ * should be prepared to handle notification that the decoration for the adapter has changed, in addition to 
+ * handling notification that the decoration for the element has changed.
+ * That is, it needs to be able to map back from the adapter to the element.
+ * </p>
+ * 
+ * @return the decorator manager
+ * <p>
+ * NOTE: This is experimental API, which may be changed or removed at any point in time.
+ * This API should not be called, overridden or otherwise used in production code.
+ * </p>
+ */
+public ILabelDecorator getDecoratorManager();
 }
