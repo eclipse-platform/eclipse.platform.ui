@@ -1,8 +1,11 @@
 package org.eclipse.ui.views.navigator;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
+ * 
+ * Contributors:  
+ *   Sebastian Davids <sdavids@gmx.de> - Collapse all action
  */
 import org.eclipse.ui.PlatformUI;
 
@@ -26,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 	public static final String SORT_VIEW_ACTION = PREFIX + "sort_view_action_context"; //$NON-NLS-1$
 	public static final String COPY_ACTION = PREFIX + "resource_navigator_copy_action_context"; //$NON-NLS-1$
 	public static final String PASTE_ACTION = PREFIX + "resource_navigator_paste_action_context"; //$NON-NLS-1$
+	public static final String COLLAPSE_ALL_ACTION = PREFIX + "collapse_all_action_context"; //$NON-NLS-1$
 
 
 	// Dialogs
