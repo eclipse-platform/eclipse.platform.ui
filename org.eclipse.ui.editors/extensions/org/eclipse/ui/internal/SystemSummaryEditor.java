@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
@@ -43,12 +44,24 @@ public class SystemSummaryEditor extends AbstractTextEditor {
 	 */
 	public static final String LAST_FILE="last_file"; //$NON-NLS-1$
 	
+	/* 
+	 * The string with which all other defined ids are prefixed to construct help context ids. 
+	 * Value: <code>"org.eclipse.ui."</code>
+	 */
+	private static final String PREFIX= PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
+		
+	/*
+	 * Id for the system summary editor.
+	 * Default value: <code>"system_summary_editor_context"</code>.
+	 */
+	private static final String SYSTEM_SUMMARY_TEXT_EDITOR= PREFIX + "system_summary_editor_context"; //$NON-NLS-1$
 	
 	/**
 	 * Creates a new text editor.
 	 */
 	public SystemSummaryEditor() {
 		super();
+		setHelpContextId(SYSTEM_SUMMARY_TEXT_EDITOR);
 		setDocumentProvider(new SystemSummaryDocumentProvider());
 	}
 		
