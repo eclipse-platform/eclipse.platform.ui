@@ -55,17 +55,17 @@ class FastViewPane {
 	private Composite clientComposite;
 	private static final int SASH_SIZE = 3;
 	private static final int MIN_FASTVIEW_SIZE = 10;
+	private float ratio;
 	
 	private Listener resizeListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (event.type == SWT.Resize && currentPane != null) {
 				ViewPane pane = currentPane;
 				if (pane.isZoomed() == false) {
-					Rectangle bounds = getFastViewBounds();
+					setFastViewSizeUsingRatio();
 					
-					pane.setBounds(bounds);
 					pane.moveAbove(null);
-					updateFastViewSashBounds(bounds);
+					updateFastViewSashBounds(pane.getBounds());
 				}
 			}
 		}
@@ -117,6 +117,8 @@ class FastViewPane {
 				pane.moveAbove(null); 
 				
 				updateFastViewSashBounds(newBounds);
+				
+				ratio = getCurrentRatio();
 			}
 		}
 	};
@@ -139,6 +141,16 @@ class FastViewPane {
 		
 		return (float)currentSize / (float)clientSize;
 	}
+
+	private void setFastViewSizeUsingRatio() {
+		// Set initial bounds
+		boolean isVertical = !Geometry.isHorizontal(side);
+		Rectangle clientArea = clientComposite.getClientArea();
+
+		int defaultSize = (int) (Geometry.getDimension(clientArea, isVertical) * ratio);
+		Rectangle newBounds = Geometry.getExtrudedEdge(clientArea, defaultSize, side);
+		currentPane.setBounds(newBounds);
+	}
 	
 	/**
 	 * Displays the given view as a fastview. The view will be docked to the edge of the
@@ -156,6 +168,7 @@ class FastViewPane {
 		}
 	
 		currentPane = pane;
+		ratio = sizeRatio;
 		
 		clientComposite = newClientComposite;
 	
@@ -173,13 +186,7 @@ class FastViewPane {
 			ctrl = pane.getControl();			
 		}
 		
-		// Set initial bounds
-		boolean isVertical = !Geometry.isHorizontal(side);
-		Rectangle clientArea = clientComposite.getClientArea();
-
-		int defaultSize = (int) (Geometry.getDimension(clientArea, isVertical) * sizeRatio);
-		Rectangle newBounds = Geometry.getExtrudedEdge(clientArea, defaultSize, side);
-		ctrl.setBounds(newBounds);
+		setFastViewSizeUsingRatio();
 		
 		// Show pane fast.
 		ctrl.setEnabled(true); // Add focus support.
