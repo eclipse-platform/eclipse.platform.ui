@@ -688,6 +688,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			OperationCanceledException cancel = null;
 			CoreException signal = null;
 			monitor = Policy.monitorFor(monitor);
+			monitor.subTask(Policy.bind("resources.updating"));
 			broadcastChanges(null, tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
 			if (shouldBuild() && isAutoBuilding()) {
 				try {
@@ -709,6 +710,8 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			if (signal != null)
 				throw signal;
 		} finally {
+			// make sure that the tree is immutable.  Only do this if we are ending a top-level operation.
+			tree.immutable();
 			operationTree = null;
 		}
 	} finally {
@@ -1176,7 +1179,7 @@ public void removeSaveParticipant(Plugin plugin) {
 public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("resources.running"), Policy.totalWork);
+		monitor.beginTask(null, Policy.totalWork);
 		try {
 			prepareOperation();
 			beginOperation(true);

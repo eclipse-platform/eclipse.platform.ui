@@ -776,7 +776,6 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 		// don't need to snapshot if there are no changes 
 		if (tree == lastSnap)
 			return;
-		Assert.isTrue(tree.isImmutable(), "The tree must be immutable in a snapshot."); // sanity check
 		operationCount = 0;
 		IPath snapPath = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
 		ElementTreeWriter writer = new ElementTreeWriter(this);
@@ -784,12 +783,18 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 		try {
 			SafeChunkyOutputStream safeStream = new SafeChunkyOutputStream(localFile);
 			DataOutputStream out = new DataOutputStream(safeStream);
+			boolean wasImmutable = tree.isImmutable();
 			try {
+				// need to make the tree immutable for the writer.  Will make it mutable again in the 
+				// finally if it was mutable to start with.
+				tree.immutable();
 				out.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 				writeWorkspaceFields(out, monitor);
 				writer.writeDelta(tree, lastSnap, Path.ROOT, writer.D_INFINITE, out, ResourceComparator.getComparator());
 				safeStream.succeed();
 			} finally {
+				if (!wasImmutable)
+					workspace.newWorkingTree();
 				out.close();
 			}
 		} catch (IOException e) {
@@ -801,6 +806,7 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 		monitor.done();
 	}
 }
+
 /**
  * Sorts the given array of trees so that the following rules are true:
  * 	 - The first tree has no parent
