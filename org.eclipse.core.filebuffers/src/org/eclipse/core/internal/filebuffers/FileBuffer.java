@@ -168,7 +168,6 @@ public abstract class FileBuffer implements IFileBuffer {
 			protected void update(Runnable runnable) {
 				if (runnable instanceof SafeFileChange)
 					fManager.fireStateChanging(FileBuffer.this);
-				// TODO post behind operation; check necessity
 				runnable.run();			
 			}
 		}

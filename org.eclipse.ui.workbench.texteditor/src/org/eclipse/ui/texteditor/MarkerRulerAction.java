@@ -169,13 +169,16 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	public void update() {
 		//bug 38745
 		int line= getVerticalRuler().getLineOfLastMouseButtonActivity() + 1;
-		if (line > getDocument().getNumberOfLines()) {
-			setEnabled(false);
-			setText(fAddLabel);
-		} else {
-			setEnabled(true);
-			fMarkers= getMarkers();
-			setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
+		IDocument document= getDocument();
+		if (document != null) {
+			if (line > getDocument().getNumberOfLines()) {
+				setEnabled(false);
+				setText(fAddLabel);
+			} else {
+				setEnabled(true);
+				fMarkers= getMarkers();
+				setText(fMarkers.isEmpty() ? fAddLabel : fRemoveLabel);
+			}
 		}
 	}
 
