@@ -60,7 +60,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Button determineVersionEnabled;
 	private Button confirmMoveTag;
 	private Button debugProtocol;
-	private Button showCompareMergeInSyncView;
+	private Button showCompareRevisionInDialog;
 	
 	private Button never;
 	private Button prompt;
@@ -174,7 +174,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
 		debugProtocol = createCheckBox(composite, Policy.bind("CVSPreferencePage.debugProtocol")); //$NON-NLS-1$
 		usePlatformLineend = createCheckBox(composite, Policy.bind("CVSPreferencePage.lineend")); //$NON-NLS-1$
-		showCompareMergeInSyncView = createCheckBox(composite, Policy.bind("CVSPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
+		showCompareRevisionInDialog = createCheckBox(composite, Policy.bind("CVSPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -282,7 +282,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private void initializeValues() {
 		IPreferenceStore store = getPreferenceStore();
 		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
-		showCompareMergeInSyncView.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW));
+		showCompareRevisionInDialog.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		repositoriesAreBinary.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet")); //$NON-NLS-1$
@@ -348,7 +348,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, confirmMoveTag.getSelection());
 		store.setValue(ICVSUIConstants.PREF_DEBUG_PROTOCOL, debugProtocol.getSelection());
-		store.setValue(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW, showCompareMergeInSyncView.getSelection());
+		store.setValue(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, showCompareRevisionInDialog.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -400,7 +400,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		confirmMoveTag.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		debugProtocol.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
-		showCompareMergeInSyncView.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW));
+		showCompareRevisionInDialog.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 	}
 
    private void createSaveCombo(Composite composite) {

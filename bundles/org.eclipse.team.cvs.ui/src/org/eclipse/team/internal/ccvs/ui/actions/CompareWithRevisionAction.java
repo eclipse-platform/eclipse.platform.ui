@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.SaveablePartDialog;
@@ -88,16 +91,16 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				CVSCompareRevisionsInput input = new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]) {
-					public String getTitle() {
-						return CompareWithRevisionAction.this.getActionTitle();
-					}
-				};
-				// running with a null progress monitor is fine because we have already pre-fetched the log entries above.
-				input.run(new NullProgressMonitor());
-				SaveablePartDialog cd = createCompareDialog(getShell(), input);
-				cd.setBlockOnOpen(true);
-				cd.open();
+				CVSCompareRevisionsInput input = new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]);
+				if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG)) {
+					// running with a null progress monitor is fine because we have already pre-fetched the log entries above.
+					input.run(new NullProgressMonitor());
+					SaveablePartDialog cd = createCompareDialog(getShell(), input);
+					cd.setBlockOnOpen(true);
+					cd.open();
+				} else {
+					CompareUI.openCompareEditor(input);
+				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
