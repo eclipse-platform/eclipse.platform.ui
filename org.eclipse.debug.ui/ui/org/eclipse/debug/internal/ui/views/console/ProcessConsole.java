@@ -359,6 +359,15 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             StreamListener listener = (StreamListener) i.next();
             listener.closeStream();
         }
+        if (fFileOutputStream != null) {
+	        synchronized (fFileOutputStream) {
+	            try {
+	                fFileOutputStream.flush();
+	                fFileOutputStream.close();
+	            } catch (IOException e) {
+	            }
+	        }
+        }
         try {
             fInput.close();
         } catch (IOException e) {
@@ -370,15 +379,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
             StreamListener listener = (StreamListener) i.next();
             listener.dispose();
-        }
-        if (fFileOutputStream != null) {
-	        synchronized (fFileOutputStream) {
-	            try {
-	                fFileOutputStream.flush();
-	                fFileOutputStream.close();
-	            } catch (IOException e) {
-	            }
-	        }
         }
         fFileOutputStream = null;
         fInput = null;
