@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkbenchSite;
 /**
  * An operation that can be configured to run in the foreground using
  * the {@link org.eclipse.ui.progress.IProgressService} or the background
- * as a {@link org.eclipse.core.runtime.Job}. The execution context is determined
+ * as a {@link org.eclipse.core.runtime.jobs.Job}. The execution context is determined
  * by what is returned by the {@link #canRunAsJob()} hint which may be overriden by subclasses. 
  * Subsclass must override the <code>run(IProgressMonitor)</code> method to perform 
  * the behavior of the operation in the desired execution context.
@@ -39,7 +39,7 @@ import org.eclipse.ui.IWorkbenchSite;
  * Subsclasses can override the methods of this interface to receive job change notifications.
  * </p>
  * @see org.eclipse.ui.progress.IProgressService
- * @see org.eclipse.core.runtime.Job
+ * @see org.eclipse.core.runtime.jobs.Job
  * @see org.eclipse.core.runtime.ISchedulingRule
  * @see org.eclipse.core.runtime.jobs.IJobChangeListener
  * @since 3.0
@@ -143,7 +143,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	/**
 	 * If this operation can safely be run in the background, then subclasses can
 	 * override this method and return <code>true</code>. This will make their
-	 * action run in a {@link  org.eclipse.core.runtime.Job}. 
+	 * action run in a {@link  org.eclipse.core.runtime.jobs.Job}. 
 	 * Subsclass that override this method should 
 	 * also override the <code>getJobName()</code> method.
 	 * 

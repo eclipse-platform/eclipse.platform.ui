@@ -533,8 +533,8 @@ public final class Team {
 	}
 	/**
 	 * @deprecated 
-	 * 		Use {@link org.eclipse.team.core.RepositoryProviderType#getProjectSetSerializer()}
-	 * 		to obtain an instance of {@link org.eclipse.team.core.ProjectSetSerializer} instead.
+	 * 		Use {@link org.eclipse.team.core.RepositoryProviderType#getProjectSetCapability()}
+	 * 		to obtain an instance of {@link ProjectSetCapability} instead.
 	 */
 	public static IProjectSetSerializer getProjectSetSerializer(String id) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();

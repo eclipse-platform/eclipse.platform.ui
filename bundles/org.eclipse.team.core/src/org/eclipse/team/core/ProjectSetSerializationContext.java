@@ -62,7 +62,7 @@ public class ProjectSetSerializationContext {
 	}
 
 	/**
-	 * Return a {@link org.eclipse.swt.Shell} if there is a UI context 
+	 * Return a org.eclipse.swt.Shell if there is a UI context 
 	 * or <code>null</code> if executing headless.
 	 *
 	 * @return the shell or <code>null</code>

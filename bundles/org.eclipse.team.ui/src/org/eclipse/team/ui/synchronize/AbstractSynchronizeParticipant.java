@@ -294,7 +294,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 * </pre>
 	 * where <code>PARTICIPANT_ID</code> is the id of the particant as defined in the plugin manifest.
 	 * </p>
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(String, org.eclipse.ui.IMemento)
 	 */
 	public void init(String secondaryId, IMemento memento) throws PartInitException {
 		setSecondaryId(secondaryId);
