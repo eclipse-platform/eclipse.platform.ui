@@ -541,7 +541,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		boolean status = true;
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
-		boolean autobuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 		
 		// If we're ignoring dirty editors, check if we need to build
 		if (saveDirty.equals(MessageDialogWithToggle.NEVER)) {
@@ -550,7 +549,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			}
 		} else {
 			status = saveAllEditors(saveDirty.equals(MessageDialogWithToggle.PROMPT));
-			if (status && !autobuilding && buildBeforeLaunch) {
+			if (status && buildBeforeLaunch) {
 				status = doBuild();
 			}
 		}
