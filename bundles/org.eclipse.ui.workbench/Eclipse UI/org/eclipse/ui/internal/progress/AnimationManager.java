@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -33,7 +32,6 @@ import org.eclipse.ui.progress.UIJob;
  */
 class AnimationManager {
 
-	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
 	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
 	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
 	private static final String ERROR_ICON = "error.gif"; //$NON-NLS-1$
@@ -68,32 +66,33 @@ class AnimationManager {
 	AnimationManager() {
 		URL iconsRoot =
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
-				new Path(PROGRESS_FOLDER));
+				new Path(JobProgressManager.PROGRESS_FOLDER));
+		JobProgressManager manager = JobProgressManager.getInstance();
 
 		try {
 			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
 			URL backRoot = new URL(iconsRoot, BACKGROUND_ICON);
 			URL errorRoot = new URL(iconsRoot, ERROR_ICON);
 
-			animatedData = getImageData(runningRoot, runLoader);
+			animatedData = manager.getImageData(runningRoot, runLoader);
 			if (animatedData != null)
 				JFaceResources.getImageRegistry().put(
 					ANIMATED_IMAGE_NAME,
-					getImage(animatedData[0]));
+					manager.getImage(animatedData[0]));
 
-			disabledData = getImageData(backRoot, runLoader);
+			disabledData = manager.getImageData(backRoot, runLoader);
 			if (disabledData != null)
 				JFaceResources.getImageRegistry().put(
 					DISABLED_IMAGE_NAME,
-					getImage(disabledData[0]));
+					manager.getImage(disabledData[0]));
 
-			errorData = getImageData(errorRoot, errorLoader);
+			errorData = manager.getImageData(errorRoot, errorLoader);
 			if (errorData != null)
 				JFaceResources.getImageRegistry().put(
 					ERROR_IMAGE_NAME,
-					getImage(errorData[0]));
+					manager.getImage(errorData[0]));
 
-			getImageData(backRoot, errorLoader);
+			manager.getImageData(backRoot, errorLoader);
 
 			listener = getProgressListener();
 			JobProgressManager.getInstance().addListener(listener);
@@ -120,37 +119,6 @@ class AnimationManager {
 				AnimationManager.this.items.remove(item);
 			}
 		});
-	}
-
-	/**
-	 * Returns the image descriptor with the given relative path.
-	 * @param source
-	 * @return Image
-	 */
-	private Image getImage(ImageData source) {
-		ImageData mask = source.getTransparencyMask();
-		return new Image(null, source, mask);
-	}
-
-	/**
-	 * Returns the image descriptor with the given relative path.
-	 * @param fileSystemPath The URL for the file system to the image.
-	 * @param loader - the loader used to get this data
-	 * @return ImageData[]
-	 */
-	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
-		try {
-			InputStream stream = fileSystemPath.openStream();
-			ImageData[] result = loader.load(stream);
-			stream.close();
-			return result;
-		} catch (FileNotFoundException exception) {
-			ProgressUtil.logException(exception);
-			return null;
-		} catch (IOException exception) {
-			ProgressUtil.logException(exception);
-			return null;
-		}
 	}
 
 	/**
@@ -203,8 +171,7 @@ class AnimationManager {
 			if (isAnimated() && imageDataArray.length > 1) {
 				getAnimateJob().schedule();
 			}
-		}
-		else //Not showing an error if there is no animation
+		} else //Not showing an error if there is no animation
 			showingError = false;
 	}
 
@@ -233,7 +200,7 @@ class AnimationManager {
 		Display display = animationItems[0].getControl().getDisplay();
 		ImageData[] imageDataArray = getImageData();
 		ImageData imageData = imageDataArray[0];
-		Image image = getImage(imageData);
+		Image image = JobProgressManager.getInstance().getImage(imageData);
 		int imageDataIndex = 0;
 
 		ImageLoader loader = getLoader();

@@ -193,4 +193,16 @@ class JobInfo extends JobTreeElement {
 				return 1;
 		}
 	}
+	
+	/**
+	 * Return the amount of progress we have had as a percentage. 
+	 * If there is no progress return -1.
+	 * @return int
+	 */
+	int getPercentDone(){
+		if(hasTaskInfo())
+			return (int) taskInfo.preWork * 100 / taskInfo.totalWork;
+		else return -1;
+		
+	}
 }

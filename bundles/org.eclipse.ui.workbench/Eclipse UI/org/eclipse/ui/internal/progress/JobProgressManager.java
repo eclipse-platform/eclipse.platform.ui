@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 
@@ -27,12 +34,32 @@ public class JobProgressManager
 	implements IProgressProvider {
 
 	private ArrayList listeners = new ArrayList();
+
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 	private Collection filteredJobs =
 		Collections.synchronizedList(new ArrayList());
 	boolean debug = false;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
+	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
+
+	private static final String PROGRESS_25 = "progress25.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_50 = "progress50.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_75 = "progress75.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_100 = "progress100.gif"; //$NON-NLS-1$
+
+	private static final String PROGRESS_25_KEY = "PROGRESS_25"; //$NON-NLS-1$
+	private static final String PROGRESS_50_KEY = "PROGRESS_50"; //$NON-NLS-1$
+	private static final String PROGRESS_75_KEY = "PROGRESS_75"; //$NON-NLS-1$
+	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
+
+	//A list of keys for looking up the images in the image registry
+	static String[] keys =
+		new String[] {
+			PROGRESS_25_KEY,
+			PROGRESS_50_KEY,
+			PROGRESS_75_KEY,
+			PROGRESS_100_KEY };
 
 	/**
 	 * Get the progress manager currently in use.
@@ -155,6 +182,34 @@ public class JobProgressManager
 	JobProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
 		Platform.getJobManager().addJobChangeListener(this);
+		URL iconsRoot =
+			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
+				new Path(JobProgressManager.PROGRESS_FOLDER));
+
+		try {
+			setUpImage(iconsRoot,PROGRESS_25,PROGRESS_25_KEY);
+			setUpImage(iconsRoot,PROGRESS_50,PROGRESS_50_KEY);
+			setUpImage(iconsRoot,PROGRESS_75,PROGRESS_75_KEY);
+			setUpImage(iconsRoot,PROGRESS_100,PROGRESS_100_KEY);
+		} catch (MalformedURLException e) {
+			ProgressUtil.logException(e);
+		}
+
+	}
+
+	/**
+	 * Set up the image in the image regsitry.
+	 * @param iconsRoot
+	 * @param fileName 
+	 * @param key
+	 * @throws MalformedURLException
+	 */
+	private void setUpImage(URL iconsRoot, String fileName, String key)
+		throws MalformedURLException {
+		JFaceResources
+			.getImageRegistry()
+			.put(key, ImageDescriptor.createFromURL(new URL(iconsRoot, fileName)));
+
 	}
 
 	/* (non-Javadoc)
@@ -437,5 +492,53 @@ public class JobProgressManager
 	 */
 	boolean isFiltered(Job job) {
 		return filteredJobs.contains(job);
+	}
+	/**
+	 * Returns the image descriptor with the given relative path.
+	 * @param source
+	 * @return Image
+	 */
+	Image getImage(ImageData source) {
+		ImageData mask = source.getTransparencyMask();
+		return new Image(null, source, mask);
+	}
+
+	/**
+	 * Returns the image descriptor with the given relative path.
+	 * @param fileSystemPath The URL for the file system to the image.
+	 * @param loader - the loader used to get this data
+	 * @return ImageData[]
+	 */
+	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
+		try {
+			InputStream stream = fileSystemPath.openStream();
+			ImageData[] result = loader.load(stream);
+			stream.close();
+			return result;
+		} catch (FileNotFoundException exception) {
+			ProgressUtil.logException(exception);
+			return null;
+		} catch (IOException exception) {
+			ProgressUtil.logException(exception);
+			return null;
+		}
+	}
+	
+	/**
+	 * Get the current image for the receiver. If there is no
+	 * progress yet return null.
+	 * @param element
+	 * @return
+	 */
+	Image getDisplayImage(JobTreeElement element){
+		if(element.isJobInfo()){
+			JobInfo info = (JobInfo) element;
+			int done = info.getPercentDone();
+			if(done > 0){
+				int index = Math.min(3,(done / 25));
+				return JFaceResources.getImage(keys[index]);
+			}				
+		}
+		return null;		
 	}
 }
