@@ -351,7 +351,7 @@ public class RepositoryRoot extends PlatformObject {
 		}
 		String writeLocation = ((CVSRepositoryLocation)root).getWriteLocation();
 		if (writeLocation != null) {
-			attributes.put(RepositoriesViewContentHandler.READ_ID_ATTRIBUTE, writeLocation);
+			attributes.put(RepositoriesViewContentHandler.WRITE_ID_ATTRIBUTE, writeLocation);
 		}
 		
 		writer.startTag(RepositoriesViewContentHandler.REPOSITORY_TAG, attributes, true);
