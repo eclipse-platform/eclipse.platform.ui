@@ -48,7 +48,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
     /**
      * The running jobs progress tree.
      * 
-     * @see org.eclipse.ui.internal.progress.ProgressTreeViewer
+     * @see NewProgressViewer
      */
     private NewProgressViewer viewer;
 
@@ -239,7 +239,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
     /**
      * monitor is done. Clear the receiver.
-     * @param monitor. The monitor that is now cleared.
+     * @param monitor The monitor that is now cleared.
      */
     public static void clear(IProgressMonitor monitor) {
         if (singleton == null)
@@ -262,7 +262,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
      */
     private BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking,
             IStatus blockingStatus) {
-        super(parentShell == null ? ProgressManagerUtil.getNonModalShell()
+        super(parentShell == null ? ProgressManagerUtil.getDefaultParent()
                 : parentShell);
         blockingMonitor = blocking;
         if (blockingStatus instanceof IJobStatus)
@@ -411,7 +411,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
      * Returns the progress monitor being used for this dialog. This allows
      * recursive blockages to also respond to cancelation.
      * 
-     * @return
+     * @return IProgressMonitor
      */
     public IProgressMonitor getProgressMonitor() {
         return blockingMonitor;

@@ -16,18 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -46,10 +34,18 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
-import org.eclipse.ui.progress.IProgressConstants;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * A dialog that can display the errors from multiple jobs at once
@@ -84,6 +80,7 @@ public class JobErrorDialog extends ErrorDialog {
         super(parentShell, title == null ? errorInfo.getJob().getName() : title, msg, errorInfo.getErrorStatus(), displayMask);
         setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.RESIZE |getDefaultOrientation()); // Do not want this one to be modal
         this.selectedError = errorInfo;
+		setBlockOnOpen(false);
     }
    
 

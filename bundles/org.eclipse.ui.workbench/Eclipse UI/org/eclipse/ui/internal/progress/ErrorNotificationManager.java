@@ -106,11 +106,7 @@ public class ErrorNotificationManager {
         // errors are not dropped
         WorkbenchJob job = new WorkbenchJob(ProgressMessages.ErrorNotificationManager_OpenErrorDialogJob) { 
             public IStatus runInUIThread(IProgressMonitor monitor) {
-            	
-            	//Reschedule if there is a modal dialog
-            	 if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
-                    return Status.CANCEL_STATUS;
-            	 
+            	    	 
                 // Add the error in the UI thread to ensure thread safety in the dialog
                 errors.add(errorInfo);
                 if (dialog != null) {
@@ -156,7 +152,7 @@ public class ErrorNotificationManager {
         if (workbench instanceof Workbench
                 && ((Workbench) workbench).isClosing())
             return Status.CANCEL_STATUS;
-        dialog = new JobErrorDialog(null, title, msg, errorInfo, IStatus.OK
+        dialog = new JobErrorDialog(ProgressManagerUtil.getNonModalShell(), title, msg, errorInfo, IStatus.OK
                 | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
         try {
 	        dialog.open();

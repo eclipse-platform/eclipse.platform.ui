@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -27,7 +28,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -50,7 +50,7 @@ public class ProgressManagerUtil {
      * Return a status for the exception.
      * 
      * @param exception
-     * @return
+     * @return IStatus
      */
     static IStatus exceptionStatus(Throwable exception) {
         return StatusUtil.newStatus(IStatus.ERROR,
@@ -111,17 +111,6 @@ public class ProgressManagerUtil {
     }
 
     /**
-     * Return whether or not the progress view is missing.
-     * 
-     * @param window
-     * @return true if there is no progress view.
-     */
-    static boolean missingProgressView(WorkbenchWindow window) {
-        return WorkbenchPlugin.getDefault().getViewRegistry().find(
-                IProgressConstants.PROGRESS_VIEW_ID) == null;
-    }
-
-    /**
      * Shorten the given text <code>t</code> so that its length doesn't exceed
      * the given width. The default implementation replaces characters in the
      * center of the original string with an ellipsis ("..."). Override if you
@@ -168,9 +157,9 @@ public class ProgressManagerUtil {
      * isn't one or 0 if there is no space at all.
      * 
      * @param textValue
-     * @param gc.
+     * @param gc
      *            The GC to test max length
-     * @param maxWidth.
+     * @param maxWidth
      *            The maximim extent
      * @return int
      */
@@ -286,7 +275,7 @@ public class ProgressManagerUtil {
     /**
      * Get the active non modal shell. If there isn't one return
      * null.
-     * @return
+     * @return Shell
      */
     public static Shell getNonModalShell() {
         IWorkbenchWindow window = PlatformUI.getWorkbench()
@@ -342,4 +331,23 @@ public class ProgressManagerUtil {
                 .getShell(), region, endPosition);
         animation.schedule();
     }
+	
+	/**
+	 * Get the shell provider to use in the progress support dialogs. This
+	 * provider will try to always parent off of an existing modal shell. If
+	 * there isn't one it will use the current workbench window.
+	 * 
+	 * @return IShellProvider
+	 */
+	static IShellProvider getShellProvider() {
+		return new IShellProvider() {
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.window.IShellProvider#getShell()
+			 */
+			public Shell getShell() {
+				return getDefaultParent();
+			}
+		};
+	}
 }
