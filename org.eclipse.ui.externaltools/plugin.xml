@@ -371,16 +371,7 @@
 			configTypeID="org.eclipse.ant.AntLaunchConfigurationType"
 			icon="icons/full/obj16/ant_file.gif">
 		</launchConfigurationTypeImage>	
-	</extension>	
-    
-	<extension point="org.eclipse.ui.preferencePages">
-		<page 
-			id="org.eclipse.ui.externaltools.WorkInProgressPreferencePage" 
-			name="Work In Progress"
-			class="org.eclipse.ui.externaltools.internal.ui.WorkInProgressPreferencePage"
-			category="org.eclipse.ui.externaltools.ToolsPreferencePage">
-		</page>
-	</extension>    
+	</extension>
 	
 	<extension point="org.eclipse.debug.ui.consoleContentProviders">
 		<consoleContentProvider 

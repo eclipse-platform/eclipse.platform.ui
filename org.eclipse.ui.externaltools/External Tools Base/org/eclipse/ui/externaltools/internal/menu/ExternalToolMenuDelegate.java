@@ -13,14 +13,12 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchPage;
@@ -49,56 +47,6 @@ public class ExternalToolMenuDelegate extends AbstractLaunchHistoryAction implem
 	 */
 	public ExternalToolMenuDelegate() {
 		super(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IActionDelegate.
-	 */
-	public void run(IAction action) {
-		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
-			super.run(action);
-		} else {
-			if (action.isEnabled())
-				runLastTool();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on IActionDelegate.
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
-			super.selectionChanged(action, selection);
-		} else {
-			if (realAction == null) {
-				realAction = action;
-				realAction.setMenuCreator(this);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on IWorkbenchWindowPulldownDelegate.
-	 */
-	public Menu getMenu(Control parent) {
-		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
-			return super.getMenu(parent);
-		} else {
-			Menu menu= new Menu(parent);
-			return createMenu(menu, false);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on IWorkbenchWindowPulldownDelegate2.
-	 */
-	public Menu getMenu(Menu parent) {
-		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
-			return super.getMenu(parent);
-		} else {
-			Menu menu= new Menu(parent);
-			return createMenu(menu, true);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -189,17 +137,14 @@ public class ExternalToolMenuDelegate extends AbstractLaunchHistoryAction implem
 			}
 		});
 		
-		
-		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
-			// Add a menu item to show the external tools dialog
-			MenuItem configure = new MenuItem(menu, SWT.NONE);
-			configure.setText(ToolMessages.getString("ExternalToolMenuDelegate.configure")); //$NON-NLS-1$
-			configure.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
-				}
-			});
-		}		
+		// Add a menu item to show the external tools dialog
+		MenuItem configure = new MenuItem(menu, SWT.NONE);
+		configure.setText(ToolMessages.getString("ExternalToolMenuDelegate.configure")); //$NON-NLS-1$
+		configure.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
+			}
+		});
 	}
 
 	/**

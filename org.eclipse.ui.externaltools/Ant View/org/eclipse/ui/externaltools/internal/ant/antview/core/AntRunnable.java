@@ -14,7 +14,6 @@ import java.util.ListIterator;
 import java.util.Vector;
 
 import org.apache.tools.ant.Project;
-import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,28 +28,9 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.ant
-	.antview
-	.preferences
-	.Preferences;
 import org.eclipse.ui.externaltools.internal.ant.antview.tree.TreeNode;
 import org.eclipse.ui.externaltools.internal.ant.antview.views.AntView;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.ant
-	.antview
-	.views
-	.AntViewContentProvider;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
+import org.eclipse.ui.externaltools.internal.ant.antview.views.AntViewContentProvider;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 public class AntRunnable implements IRunnableWithProgress {
@@ -63,66 +43,11 @@ public class AntRunnable implements IRunnableWithProgress {
 	public AntRunnable(AntView antView) {
 		this.antView= antView;
 	}
-
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
-			runWithConfigs(monitor);
-			return;
-		}
-		monitor.beginTask(ResourceMgr.getString("Monitor.Title"), TOTAL_WORK_UNITS);
-
-		AntViewContentProvider viewContentProvider = antView.getViewContentProvider();
-		Vector targetVector = viewContentProvider.getTargetVector();
-
-		if (0 == targetVector.size()) {
-			LogConsoleDocument.getInstance().append(ResourceMgr.getString("Error.EmptyTargetVector") + "\n", LogConsoleDocument.MSG_ERR);
-			monitor.done();
-			return;
-		}
-		int workunit = TOTAL_WORK_UNITS / targetVector.size();
-		if (0 == workunit)
-			workunit = 1;
-		ListIterator targets = targetVector.listIterator();
-		while (targets.hasNext()) {
-			TreeNode targetNode = (TreeNode) targets.next();
-
-			String filename = (String) targetNode.getProperty("BuildFile");
-			IPath path = new Path(filename);
-			path = path.setDevice("");
-			int trimCount = path.matchingFirstSegments(Platform.getLocation());
-			if (trimCount > 0)
-				path = path.removeFirstSegments(trimCount);
-			path.removeLastSegments(1);
-
-			AntRunner antRunner = new AntRunner();
-			antRunner.setBuildFileLocation(filename);
-			antRunner.addBuildLogger(ANT_LOGGER_CLASS);
-			antRunner.setInputHandler(INPUT_HANDLER_CLASS);
-			//             antRunner.addUserProperties();
-			antRunner.setExecutionTargets(new String[] { targetNode.getText()});
-			antRunner.setMessageOutputLevel(getAntDisplayLevel(Preferences.getString(IAntViewConstants.PREF_ANT_DISPLAY)));
-
-			monitor.subTask(path.toString() + " -> " + targetNode.getText());
-			try {
-				antRunner.run(new SubProgressMonitor(monitor, workunit));
-			} catch (CoreException e) {
-				Throwable carriedException = e.getStatus().getException();
-				if (carriedException instanceof OperationCanceledException) {
-					throw new InterruptedException(carriedException.getMessage());
-				} else {
-					throw new InvocationTargetException(e);
-				}
-			} catch (OperationCanceledException e) {
-				throw new InvocationTargetException(e);
-			}
-		}
-		monitor.done();
-	}
 	
 	/**
 	 * Use launch configs
 	 */
-	private void runWithConfigs(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+	public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 		monitor.beginTask(ResourceMgr.getString("Monitor.Title"), TOTAL_WORK_UNITS);
 
 		AntViewContentProvider viewContentProvider = antView.getViewContentProvider();

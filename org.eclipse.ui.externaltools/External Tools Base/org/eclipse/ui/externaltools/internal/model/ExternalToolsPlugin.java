@@ -72,13 +72,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns whether the external tools plug-in is in "launch config" mode
-	 * @return boolean	 */
-	public static boolean isLaunchConfigurationMode() {
-		return getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.LAUNCH_CONFIG_MODE);
-	}
-	
-	/**
 	 * Returns the default instance of the receiver.
 	 * This represents the runtime plugin.
 	 */
