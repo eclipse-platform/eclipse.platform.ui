@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -152,6 +153,16 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 			updateFilters();
 		}
 	}
+	class SyncSorter extends ViewerSorter {
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			boolean oneIsFile = e1 instanceof TeamFile;
+			boolean twoIsFile = e2 instanceof TeamFile;
+			if (oneIsFile != twoIsFile) {
+				return oneIsFile ? 1 : -1;
+			}
+			return super.compare(viewer, e1, e2);
+		}
+	}
 	
 	// The current sync mode
 	private int syncMode = SyncView.SYNC_NONE;
@@ -178,6 +189,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	 */
 	protected CatchupReleaseViewer(Composite parent, SyncCompareInput model) {
 		super(parent, model.getCompareConfiguration());
+		setSorter(new SyncSorter());
 		initializeActions(model);
 	}
 	
