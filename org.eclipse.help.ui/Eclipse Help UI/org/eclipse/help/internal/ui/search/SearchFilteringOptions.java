@@ -66,10 +66,11 @@ public class SearchFilteringOptions {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getElement() instanceof InfoView)
 					checkboxTreeViewer.setSubtreeChecked(event.getElement(), event.getChecked());
-				else if (event.getElement() instanceof Topic && event.getChecked())
-					checkboxTreeViewer.setChecked(((Contribution)event.getElement()).getParent(), event.getChecked());
-				// we should add another case for unselecting the last topic to also
-				// unselect the parent view
+				else if (event.getElement() instanceof Topic){
+					if(((Topic)event.getElement()).getParent() instanceof InfoView)
+						updateInfoViewSelection((InfoView)((Topic)event.getElement()).getParent());
+				}
+				
 			}
 		});
 	
@@ -115,13 +116,10 @@ public class SearchFilteringOptions {
 			children[i].setEnabled(enabled);
 	}
 	/**
-	 * Returns a list of Topics (categories) that are to be excluded from search
+	 * Selects checkboxes based on (categories) that are to be excluded from search
 	 */
 	public void setExcludedCategories(List categories)
 	{
-		if (categories == null || categories.isEmpty())
-			return;
-			
 		InfoSet infoset = HelpSystem.getNavigationManager().getCurrentInfoSet();
 		
 		for (Iterator viewIterator = infoset.getChildren(); viewIterator.hasNext();	) {
@@ -130,9 +128,26 @@ public class SearchFilteringOptions {
 			checkboxTreeViewer.setSubtreeChecked(view,true);
 			for (Iterator topicIterator = view.getChildren(); topicIterator.hasNext();) {
 				Contribution topic = (Contribution)topicIterator.next();
-				if (categories.contains(topic))
+				if (categories !=null && categories.contains(topic))
 					checkboxTreeViewer.setChecked(topic, false);
 			}
+			updateInfoViewSelection(view);
 		}
+	}
+	/**
+	 * Selects InfoView if at least one of children topics is selected
+	 * Deselects InfoView if none of children topics is selected
+	 */
+	private void updateInfoViewSelection(InfoView view){
+		boolean viewSelected=false;
+		for (Iterator topicIterator = view.getChildren(); topicIterator.hasNext();) {
+			Contribution topic = (Contribution)topicIterator.next();
+			if (checkboxTreeViewer.getChecked(topic)){
+				viewSelected=true;
+				break;
+			}
+		}
+		if(checkboxTreeViewer.getChecked(view)!=viewSelected)
+			checkboxTreeViewer.setChecked(view, viewSelected);
 	}
 }
