@@ -87,6 +87,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	private Cursor handCursor;
 	private Cursor normalCursor;
 	private Image defaultJobIcon;
+	private Image cancelJobIcon;
+	private Image clearJobIcon;
 	private Font defaultFont= JFaceResources.getDefaultFont();
 	private Font boldFont;
 	private Font smallerFont;
@@ -220,15 +222,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			if (job != null) {
 				Display display= getDisplay();
 				Object property= job.getProperty(ICON_PROPERTY);
-				if (property instanceof ImageDescriptor) {
-					ImageDescriptor id= (ImageDescriptor) property;
-					return id.createImage(display);
-				}
-				if (property instanceof URL) {
-					URL url= (URL) property;
-					ImageDescriptor id= ImageDescriptor.createFromURL(url);
-					return id.createImage(display);
-				}
+				if (property instanceof ImageDescriptor)
+					return ((ImageDescriptor) property).createImage(display);
+				if (property instanceof URL)
+					return ImageDescriptor.createFromURL((URL) property).createImage(display);
 			}
 			return null;
 		}
@@ -457,12 +454,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
 			return false;
 		}
-		public boolean remove() {
-			boolean b= super.remove();
-			return b;
-		}
-	}
-		
+	}		
 
 	/*
 	 * An SWT widget representing a JobModel
@@ -477,8 +469,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 
 		int cachedWidth= -1;
 		int cachedHeight= -1;
-
-		Image image;
+		private Image image;
 		Label nameItem, iconItem;
 		ProgressBar progressBar;
 		ToolBar actionBar;
@@ -500,7 +491,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			if (image != null)
 				iconItem.setImage(image);
 			else
-				iconItem.setImage(defaultJobIcon);			
+				iconItem.setImage(defaultJobIcon);
 			
 			nameItem= new Label(this, SWT.NONE);
 			nameItem.setFont(boldFont);
@@ -509,7 +500,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			actionBar= new ToolBar(this, SWT.FLAT);
 			actionBar.setCursor(normalCursor);	// set cursor to overwrite any busy cursor we might have
 			actionButton= new ToolItem(actionBar, SWT.NONE);
-			actionButton.setImage(getImage(display, "newprogress_cancel.gif")); //$NON-NLS-1$
+			actionButton.setImage(cancelJobIcon); //$NON-NLS-1$
 			actionButton.setToolTipText(ProgressMessages.getString("NewProgressView.CancelJobToolTip")); //$NON-NLS-1$
 			actionButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -541,29 +532,31 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	        switch (event.type) {
 		    case SWT.Dispose:
 		    	super.handleEvent(event);
-	        	if (image != null && !image.isDisposed()) {
-	        		image.dispose();
-	        		image= null;
-	        	}
+	        		if (image != null && !image.isDisposed()) {
+	        		    image.dispose();
+	        		    image= null;
+	        		}
 		        break;
 		    case SWT.KeyDown:
 				//System.err.println("KeyDown0 " + this);
 				select(null, event);
-		    	break;
+		    		break;
 		    case SWT.MouseDown:
-		    	//setFocus();
+		        //setFocus();
 				select(JobItem.this, event);
-	        	break;
+	        		break;
 	        default:
 		        super.handleEvent(event);
-	        	break;
+	        		break;
 	        }
 	    }
 
 		void setImage(Image im) {
-			if (im != null && iconItem != null) {
+			if (im != null && iconItem != null && im != image) {
+			    if (image != null)
+			        image.dispose();
 				image= im;
-				iconItem.setImage(im);
+				iconItem.setImage(image);
 			}
 		}
 		
@@ -580,7 +573,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 					changed= true;
 				}
 				if (!actionButton.isDisposed()) {
-					actionButton.setImage(getImage(actionBar.getDisplay(), "newprogress_clear.gif")); //$NON-NLS-1$
+					actionButton.setImage(clearJobIcon);
 					actionButton.setToolTipText(ProgressMessages.getString("NewProgressView.RemoveJobToolTip")); //$NON-NLS-1$
 					actionButton.setEnabled(true);
 					changed= true;
@@ -770,7 +763,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			// poll for properties
 		    checkKeep();
 		    if (image == null)
-		    	setImage(checkIcon());
+		    		setImage(checkIcon());
 
 			// name
 		    String name;
@@ -899,7 +892,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		handCursor= new Cursor(display, SWT.CURSOR_HAND);
 		normalCursor= new Cursor(display, SWT.CURSOR_ARROW);
 
-		defaultJobIcon= getImage(display, "newprogress_circle.gif"); //$NON-NLS-1$
+		defaultJobIcon= ImageDescriptor.createFromFile(getClass(), "newprogress_circle.gif").createImage(display); //$NON-NLS-1$
+		cancelJobIcon= ImageDescriptor.createFromFile(getClass(), "newprogress_cancel.gif").createImage(display); //$NON-NLS-1$
+		clearJobIcon= ImageDescriptor.createFromFile(getClass(), "newprogress_clear.gif").createImage(display); //$NON-NLS-1$
 		
 		FontData fds[]= defaultFont.getFontData();
 		if (fds.length > 0) {
@@ -946,18 +941,26 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			}			
 		});
 
+		list.addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(Event event) {
+		        FinishedJobs.getInstance().removeListener(NewProgressViewer.this);
+			    ProgressManager.getInstance().removeListener(progressManagerListener);
+			    
+				if (defaultJobIcon != null)
+				    defaultJobIcon.dispose();
+				if (cancelJobIcon != null)
+				    cancelJobIcon.dispose();
+				if (clearJobIcon != null)
+				    clearJobIcon.dispose();
+			}			
+		});
+
 		scroller.setContent(list);
 		
 		// refresh UI
 		refresh(true);
     }
 
-    protected void handleDispose(DisposeEvent event) {
-        super.handleDispose(event);
-        FinishedJobs.getInstance().removeListener(this);
-	    ProgressManager.getInstance().removeListener(progressManagerListener);	
-    }
- 
     public Control getControl() {
         return scroller;
     }
@@ -1115,13 +1118,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		}
 	}
 	
-	private Image getImage(Display display, String name) {
-		ImageDescriptor id= ImageDescriptor.createFromFile(getClass(), name);
-		if (id != null)
-			return id.createImage(display);
-		return null;
-	}
-
 	private void select(JobItem newSelection, Event e) {
 
 		boolean clearAll= false;
