@@ -16,6 +16,33 @@ import org.eclipse.core.runtime.*;
  */
 
 public class EclipseWorkspaceTest extends TestCase {
+	//constants for nature sets	
+	protected static final String SET_STATE = "org.eclipse.core.tests.resources.stateSet";
+	protected static final String SET_OTHER = "org.eclipse.core.tests.resources.otherSet";
+
+	//constants for nature ids
+
+	//simpleNature
+	protected static final String NATURE_SIMPLE = "org.eclipse.core.tests.resources.simpleNature";
+	//snowNature, requires: waterNature, one-of: otherSet
+	protected static final String NATURE_SNOW = "org.eclipse.core.tests.resources.snowNature";
+	//waterNature, oneof: stateSet
+	protected static final String NATURE_WATER = "org.eclipse.core.tests.resources.waterNature";
+	//earthNature, oneof: stateSet
+	protected static final String NATURE_EARTH = "org.eclipse.core.tests.resources.earthNature";
+	//mudNature, requires: waterNature, earthNature, one-of: otherSet
+	protected static final String NATURE_MUD = "org.eclipse.core.tests.resources.mudNature";
+	//invalidNature
+	protected static final String NATURE_INVALID = "org.eclipse.core.tests.resources.invalidNature";
+	//cycle1 requires: cycle2
+	protected static final String NATURE_CYCLE1 = "org.eclipse.core.tests.resources.cycle1";
+	//cycle2 requires: cycle3
+	protected static final String NATURE_CYCLE2 = "org.eclipse.core.tests.resources.cycle2";
+	//cycle3 requires: cycle1
+	protected static final String NATURE_CYCLE3 = "org.eclipse.core.tests.resources.cycle3";
+	//missing nature
+	protected static final String NATURE_MISSING= "no.such.nature.Missing";
+
 	/** delta change listener if requested */
 	public static IResourceChangeListener deltaListener;
 /**
@@ -27,23 +54,11 @@ public EclipseWorkspaceTest() {
 	super(null);
 }
 /**
- * ServerStoreTestCase constructor comment.
+ * Creates a new EclipseWorkspaceTest
  * @param name java.lang.String
  */
 public EclipseWorkspaceTest(String name) {
 	super(name);
-}
-/*
- * @see Assert#assert(boolean)
- */
-public static void assertTrue(boolean arg0) {
-	Assert.assert(arg0);
-}
-/*
- * @see Assert#assert(String, boolean)
- */
-public static void assertTrue(String arg0, boolean arg1) {
-	Assert.assert(arg0, arg1);
 }
 /**
  * Assert that each element of the resource array does not exist in the 
@@ -92,6 +107,16 @@ public void assertDoesNotExistInWorkspace(String message, IResource[] resources)
 	for (int i = 0; i < resources.length; i++) {
 		assertDoesNotExistInWorkspace(message, resources[i]);
 	}
+}
+protected void assertEquals(String message, Object[] expected, Object[] actual) {
+	if (expected == null && actual == null)
+		return;
+	if (expected == null || actual == null)
+		fail(message);
+	if (expected.length != actual.length)
+		fail(message);
+	for (int i = 0; i < expected.length; i++)
+		assertEquals(message, expected[i], actual[i]);
 }
 /**
  * Assert that the given resource does not exist in the workspace 
@@ -545,6 +570,23 @@ public InputStream getContents(java.io.File target, String errorCode) {
 public InputStream getContents(String text) {
 	return new ByteArrayInputStream(text.getBytes());
 }
+/**
+ * Returns invalid sets of natures
+ */
+protected String[][] getInvalidNatureSets() {
+	return new String[][] {
+		{NATURE_SNOW},//missing water pre-req
+		{NATURE_WATER, NATURE_EARTH},//duplicates from state-set
+		{NATURE_WATER, NATURE_MUD},//missing earth pre-req
+		{NATURE_WATER, NATURE_EARTH, NATURE_MUD},//duplicates from state-set
+		{NATURE_SIMPLE, NATURE_SNOW, NATURE_WATER, NATURE_MUD},//dups from other-set, missing pre-req
+		{NATURE_MISSING},//doesn't exist
+		{NATURE_SIMPLE, NATURE_MISSING},//missing doesn't exist
+		{NATURE_CYCLE1},//missing pre-req
+		{NATURE_CYCLE2, NATURE_CYCLE3},//missing pre-req
+		{NATURE_CYCLE1, NATURE_SIMPLE, NATURE_CYCLE2, NATURE_CYCLE3},//cycle
+	};
+}
 public IProgressMonitor getMonitor() {
 	return new FussyProgressMonitor();
 }
@@ -584,6 +626,18 @@ public String getRandomString() {
 		default :
 			return "these are my contents";
 	}
+}
+/**
+ * Returns valid sets of natures
+ */
+protected String[][] getValidNatureSets() {
+	return new String[][] {
+		{},
+		{NATURE_SIMPLE},
+		{NATURE_SNOW, NATURE_WATER},
+		{NATURE_EARTH},
+		{NATURE_WATER, NATURE_SIMPLE, NATURE_SNOW},
+	};
 }
 public static IWorkspace getWorkspace() {
 	return ResourcesPlugin.getWorkspace();
