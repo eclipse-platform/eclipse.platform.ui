@@ -129,9 +129,8 @@ public class ContributionTemplateStore extends TemplateStore {
 				String translations= element.getAttributeAsIs(TRANSLATIONS);
 				if (translations != null) {
 					URL bundleURL= Platform.find(plugin, Path.fromOSString(translations));
-					if (url != null) {
+					if (bundleURL != null)
 						bundle= new PropertyResourceBundle(bundleURL.openStream());
-					}
 				}
 				
 				InputStream stream= new BufferedInputStream(url.openStream());
@@ -207,12 +206,12 @@ public class ContributionTemplateStore extends TemplateStore {
 				String name= element.getAttribute(NAME);
 				if (name != null) {
 					
-					String desc= element.getAttribute(DESCRIPTION);
-					if (desc == null)
-						desc= new String();
-					
 					String pattern= element.getChildren(PATTERN)[0].getValue();
 					if (pattern != null) {
+						
+						String desc= element.getAttribute(DESCRIPTION);
+						if (desc == null)
+							desc= ""; //$NON-NLS-1$
 						
 						Template template= new Template(name, desc, contextTypeId, pattern);
 						TemplatePersistenceData data= new TemplatePersistenceData(template, true, id);

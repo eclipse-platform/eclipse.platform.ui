@@ -113,7 +113,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			StringBuffer notFound= new StringBuffer();
 			for (int i= 0; i < names.length; i++) {
 				File file= new File(fFilterPath + File.separator + names[i]);
-				if (file != null && file.exists()) {
+				if (file.exists()) {
 					IEditorInput input= createEditorInput(file);
 					String editorId= getEditorId(file);
 					IWorkbenchPage page= fWindow.getActivePage();
@@ -122,7 +122,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 					} catch (PartInitException e) {
 						EditorsPlugin.log(e.getStatus());
 					}
-				} else if (file != null) {
+				} else {
 					if (++numberOfFilesNotFound > 1)
 						notFound.append('\n');
 					notFound.append(file.getName());
