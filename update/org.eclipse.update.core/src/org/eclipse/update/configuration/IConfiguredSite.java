@@ -1,134 +1,154 @@
 package org.eclipse.update.configuration;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.ISite;
-
-
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
+
 /**
- * Interface defining the configuration of a site.
+ * Configured Site.
+ * Represents an installation site "filtered" by configuration information.
+ * Configured site is the target of the feature update operations (install
+ * feature, remove feature, configure feature, unconfigure feature).
  * 
- * The SiteConfguration reflects the policy used on a site.
- * It also returns if you can write in this site or not
- */ 
+ * @since 2.0
+ */
 public interface IConfiguredSite extends IAdaptable {
-	
-	
-	/**
-	 * Returns the Site 
-	 * @since 2.0 
-	 */
-
-	ISite getSite();
 
 	/**
-	 * Returns true if features can be installed in this Site
-	 * @since 2.0 
-	 */
-
-	boolean isUpdateable();
-
-	
-	/**
-	 * sets if the site is an installable site
-	 * @since 2.0 
-	 */
-
-	void isUpdateable(boolean installable);
-		
-		
-	/**
+	 * Returns the underlying "unfiltered" site.
 	 * 
-	 * @param feature the Feature to install
-	 * @param verifier FIXME
-	 * @param monitor the Progress Monitor
+	 * @return the underlying site 
 	 * @since 2.0 
 	 */
-
-	IFeatureReference install(IFeature feature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException;
+	public ISite getSite();
 
 	/**
+	 * Indicates whether updates can be applied to the site.
 	 * 
-	 * @param feature the Feature to remove
-	 * @param monitor the Progress Monitor
+	 * @return <code>true</code> if the site can be updated, 
+	 * <code>false</code> otherwise
 	 * @since 2.0 
 	 */
-
-	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	public boolean isUpdatable();
 
 	/**
-	 * returns true if the Feature is broken (a plugin is missing from the running one).
-	 * @return Returns a boolean
+	 * Sets the site as updatable.
+	 * 
+	 * @param value <code>true</code> if the site can be updated, 
+	 * <code>false</code> otherwise
+	 * @since 2.0 
+	 */
+	public void isUpdatable(boolean value);
+
+	/**
+	 * Install the specified feature on this site.
+	 * 
+	 * @param feature feature to install
+	 * @param verificationListener verification listener, or <code>null</code>
+	 * @param monitor progress monitor, or <code>null</code>
+	 * @since 2.0 
+	 */
+	public IFeatureReference install(
+		IFeature feature,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws CoreException;
+
+	/**
+	 * Remove (uninstall) the specified feature from this site
+	 * 
+	 * @param feature feature to remove
+	 * @param monitor progress monitor, or <code>null</code>
+	 * @since 2.0 
+	 */
+	public void remove(IFeature feature, IProgressMonitor monitor)
+		throws CoreException;
+
+	/**
+	 * Indicates if the specified feature is "broken". A feature is considered
+	 * to be broken in the context of this site, if some of the plug-ins
+	 * referenced by the feature are not installed on this site.
+	 * 
+	 * @param feature the feature
+	 * @return <code>true</code> if the feature is broken on this
+	 * site, <code>false</code> otherwise
 	 * @since 2.0
 	 */
-	boolean isBroken(IFeature feature);
+	public boolean isBroken(IFeature feature);
 
 	/**
-	 * returns true if the Feature is configured.
-	 * @return Returns a boolean
+	 * Indicates if the specified feature is configured on this site.
+	 * 
+	 * @param feature the feature
+	 * @return <code>true</code> if the feature is configured,
+	 * <code>false</code> otherwise
 	 * @since 2.0
 	 */
-	boolean isConfigured(IFeature feature);
-		
+	public boolean isConfigured(IFeature feature);
+
 	/**
-	 * Configure the feature to be available at next startup
+	 * Configure the specified feature on this site. The configured
+	 * feature will be included on next startup.
+	 * 
+	 * @param feature the feature
 	 * @since 2.0 
 	 */
-
-	void configure(IFeature feature) throws CoreException;
+	public void configure(IFeature feature) throws CoreException;
 
 	/**
-	 * Unconfigure the feature from the execution path.
-	 * returns false if the unconfigure is not sucessful
+	 * Unconfigure the specified feature from this site. The unconfigured
+	 * feature will be omitted on the next startup.
+	 * 
+	 * @param feature the feature
 	 * @since 2.0 
 	 */
-
-	boolean unconfigure(IFeature feature) throws CoreException;
+	public boolean unconfigure(IFeature feature) throws CoreException;
 
 	/**
-	 * returns the feature used in this configurationSite
-	 * This is a subset of the feature of the site
+	 * Return references to features configured on this site.
+	 * 
+	 * @return an array of feature references, or an empty array.
 	 * @since 2.0 
 	 */
-
-	IFeatureReference[] getConfiguredFeatures();
+	public IFeatureReference[] getConfiguredFeatures();
 
 	/**
-	 * returns the feature references filtered by this ConfigurationSite
-	 * This is the sum of Configured + unconfigured features
-	 * They may not match exactly the FeaturesReferences of teh Site (ie during reconciliation)
+	 * Return all features installed on this site (configured as well
+	 * as unconfigured). Note, that if the site requires reconciliation,
+	 * the result may not match the result of the corresponding method
+	 * on the underlying site.
+	 * 
+	 * @see ISite#getFeatureReferences()
+	 * @return an array of feature references, or an empty array.
 	 * @since 2.0 
 	 */
+	public IFeatureReference[] getFeatureReferences();
 
-	IFeatureReference[] getFeaturesReferences();
-
-
-	
 	/**
-	 * returns the InstallConfiguration this Configuration Site is part of
+	 * Returns the install configuration object this site is part of.
+	 * 
+	 * @return install configuration object
 	 * @since 2.0
 	 */
-	IInstallConfiguration getInstallConfiguration();
-	
+	public IInstallConfiguration getInstallConfiguration();
+
 	/**
+	 * Adds a change listener to the configured site.
+	 * 
+	 * @param listener the listener to add
 	 * @since 2.0 
 	 */
-	void addConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
+	public void addConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
+	
 	/**
+	 * Removes a change listener from the configured site.
+	 * 
+	 * @param listener the listener to remove
 	 * @since 2.0 
 	 */
-	void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
-	
-	
+	public void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
+
 }
-

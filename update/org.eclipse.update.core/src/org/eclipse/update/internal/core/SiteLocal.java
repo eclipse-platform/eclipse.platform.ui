@@ -631,7 +631,7 @@ public class SiteLocal
 				configSite.setPreviousPluginPath(currentSiteEntry.getSitePolicy().getList());
 
 				//the site may not be read-write
-				configSite.isUpdateable(newSiteEntries[siteIndex].isUpdateable());
+				configSite.isUpdatable(newSiteEntries[siteIndex].isUpdateable());
 
 				// Add the features as configured
 				IFeatureReference[] newFeaturesRef = site.getFeatureReferences();
@@ -713,7 +713,7 @@ public class SiteLocal
 		ISite site = oldConfiguredSite.getSite();
 		IFeatureReference[] foundFeatures = site.getFeatureReferences();
 		IFeatureReference[] oldConfiguredFeaturesRef =
-			oldConfiguredSite.getFeaturesReferences();
+			oldConfiguredSite.getFeatureReferences();
 
 		for (int i = 0; i < foundFeatures.length; i++) {
 			boolean newFeatureFound = false;
@@ -956,7 +956,7 @@ public class SiteLocal
 			(ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(
 				siteModel,
 				policy);
-		newConfigurationSite.isUpdateable(cSiteToReconcile.isUpdateable());
+		newConfigurationSite.isUpdatable(cSiteToReconcile.isUpdatable());
 		newConfigurationSite.setPlatformURLString(
 			cSiteToReconcile.getPlatformURLString());
 

@@ -71,14 +71,14 @@ public class ConfiguredSiteModel extends ModelObject {
 	/**
 	 * @since
 	 */
-	public boolean isUpdateable() {
+	public boolean isUpdatable() {
 		return installable;
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public void isUpdateable(boolean installable) {
+	public void isUpdatable(boolean installable) {
 		assertIsWriteable();
 		this.installable = installable;
 	}

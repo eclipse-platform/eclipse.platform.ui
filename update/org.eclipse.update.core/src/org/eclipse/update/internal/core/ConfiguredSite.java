@@ -41,7 +41,7 @@ public class ConfiguredSite
 		setSiteModel((SiteModel) cSite.getSite());
 		setConfigurationPolicyModel(
 			new ConfigurationPolicy(cSite.getConfigurationPolicy()));
-		isUpdateable(cSite.isUpdateable());
+		isUpdatable(cSite.isUpdatable());
 		setPreviousPluginPath(cSite.getPreviousPluginPath());
 		setPlatformURLString(cSite.getPlatformURLString());
 	}
@@ -88,7 +88,7 @@ public class ConfiguredSite
 				+ getConfigurationPolicyModel().getPolicy()
 				+ "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
-		String install= isUpdateable() ? "true" : "false";
+		String install= isUpdatable() ? "true" : "false";
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.print(gap + increment + "install=\"" + install + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
@@ -153,7 +153,7 @@ public class ConfiguredSite
 		throws CoreException {
 
 		// ConfigSite is read only
-		if (!isUpdateable()) {
+		if (!isUpdatable()) {
 			String errorMessage=
 				Policy.bind(
 					"ConfiguredSite.NonInstallableSite",
@@ -218,7 +218,7 @@ public class ConfiguredSite
 		throws CoreException {
 
 		// ConfigSite is read only
-		if (!isUpdateable()) {
+		if (!isUpdatable()) {
 			String errorMessage=
 				Policy.bind(
 					"ConfiguredSite.NonUninstallableSite",
@@ -332,7 +332,7 @@ public class ConfiguredSite
 	/*
 	 * adds configured and unconfigured feature references
 	 */
-	public IFeatureReference[] getFeaturesReferences() {
+	public IFeatureReference[] getFeatureReferences() {
 
 		ConfigurationPolicy configPolicy=
 			((ConfigurationPolicy) getConfigurationPolicyModel());

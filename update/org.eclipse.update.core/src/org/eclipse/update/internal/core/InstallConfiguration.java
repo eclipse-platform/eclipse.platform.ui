@@ -105,7 +105,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			(ConfiguredSite) factory.createConfigurationSiteModel(
 				(SiteModel) site,
 				policy);
-		configSite.isUpdateable(canWrite(file));
+		configSite.isUpdatable(canWrite(file));
 		if (site != null) {
 			configSite.setPlatformURLString(site.getURL().toExternalForm());
 

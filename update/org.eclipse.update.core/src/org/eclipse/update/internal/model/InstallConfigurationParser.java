@@ -142,7 +142,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		// install
 		String installString = attributes.getValue("install"); //$NON-NLS-1$
 		boolean installable = installString.trim().equalsIgnoreCase("true") ? true : false; //$NON-NLS-1$
-		configSite.isUpdateable(installable);
+		configSite.isUpdatable(installable);
 
 		// add to install configuration
 		config.addConfigurationSiteModel(configSite);
