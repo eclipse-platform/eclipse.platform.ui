@@ -779,7 +779,7 @@ public class NewConfigurationView
 		preview = new ConfigurationPreview(this);
 		preview.createControl(rightContainer);
 		preview.getScrollingControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		splitter.setWeights(new int [] {1, 2});
+		splitter.setWeights(new int [] {2, 3});
 		getTreeViewer().expandToLevel(2);
 	}
 	
