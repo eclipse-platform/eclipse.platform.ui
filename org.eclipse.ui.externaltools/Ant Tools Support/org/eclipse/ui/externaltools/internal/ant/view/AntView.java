@@ -124,14 +124,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * XML value for a boolean attribute whose value is <code>false</code>
 	 */
 	private String VALUE_FALSE = "false"; //$NON-NLS-1$
-	/**
-	 * XML tag used to identify the view's persisted alignment
-	 */
-	private String TAG_ORIENTATION = "orientation"; //$NON-NLS-1$
-	/**
-	 * XML key used to store the view's persisted alignment
-	 */
-	private String KEY_ALIGNMENT= "alignment"; //$NON-NLS-1$
 
 	/**
 	 * The sash form containing the project viewer and target viewer

@@ -1,6 +1,8 @@
 package org.eclipse.ui.externaltools.internal.ant.view.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 
 /**
@@ -10,11 +12,23 @@ import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 public class SwitchAntViewOrientation extends Action {
 	
 	private AntView view;
+	private int orientation;
 	
-	public SwitchAntViewOrientation(AntView view) {
-		super("Switch view orientation");
+	public SwitchAntViewOrientation(AntView view, int orientation) {
+		super();
 		this.view= view;
-		setToolTipText("Toggle the orientation of the view between horizontal and vertical splitting");
+		this.orientation= orientation;
+		if (orientation == SWT.HORIZONTAL) {
+			setText("Horizontal View Orientation");
+			setToolTipText("Align the view components horizontally");
+			setDescription("Align the view components horizontally");
+		} else if (orientation == SWT.VERTICAL) {
+			setText("Vertical View Orientation");
+			setToolTipText("Align the view components vertically");
+			setDescription("Align the view components vertically");
+		} else {
+			Assert.isTrue(false, "Invalid orientation specified for Ant view orientation action");
+		}
 	}
 
 	/**
@@ -23,7 +37,7 @@ public class SwitchAntViewOrientation extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		view.switchViewOrientation();
+		view.setViewOrientation(orientation);
 	}
 
 }
