@@ -181,7 +181,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		popup.add(exportResourcesAction);
 		popup.add(new GroupMarker(IWorkbenchActionConstants.IMPORT_EXT));
 		{
-			MenuManager openRecentMenu = new MenuManager(WorkbenchMessages.getString("Workbench.openRecent")); //$NON-NLS-1$
+			MenuManager openRecentMenu = new DynamicMenuManager(WorkbenchMessages.getString("Workbench.openRecent")); //$NON-NLS-1$
 			popup.add(openRecentMenu);
 			openRecentMenu.add(new ReopenEditorMenu(window, ((Workbench) (window.getWorkbench())).getEditorHistory(), false));
 		}
