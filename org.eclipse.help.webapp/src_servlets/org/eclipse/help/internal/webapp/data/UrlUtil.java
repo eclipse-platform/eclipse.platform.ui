@@ -225,7 +225,7 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent").toLowerCase();
 		return agent.indexOf("gecko") >= 0;
 	}
-	
+
 	public static boolean isIE(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
 		return (agent.indexOf("msie") >= 0);
@@ -233,12 +233,25 @@ public class UrlUtil {
 
 	public static boolean isKonqueror(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
-		return agent.indexOf("konqueror") >=0;
+		return agent.indexOf("konqueror") >= 0;
 	}
-	
+
 	public static boolean isMozilla(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
 		return agent.indexOf("mozilla/5") >= 0;
+	}
+
+	public static String getMozillaVersion(HttpServletRequest request) {
+		String agent = request.getHeader("User-Agent").toLowerCase();
+		if (agent.indexOf("mozilla/5") < 0)
+			return "0";
+		int start = agent.indexOf("rv:") + "rv:".length();
+		if (start < "rv:".length() || start >= agent.length())
+			return "0";
+		int end = agent.indexOf(")", start);
+		if (end <= start)
+			return "0";
+		return agent.substring(start, end);
 	}
 
 	public static boolean isOpera(HttpServletRequest request) {
@@ -253,10 +266,10 @@ public class UrlUtil {
 			locale = request.getLocale().toString();
 		else
 			locale = BootLoader.getNL();
-			
+
 		if (locale == null)
 			locale = Locale.getDefault().toString();
-		
+
 		return locale;
 	}
 }

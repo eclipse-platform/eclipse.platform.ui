@@ -118,11 +118,7 @@ HTML {
 
 <script language="JavaScript">
 
-var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
-var isIE = navigator.userAgent.indexOf('MSIE') != -1;
-
 // Preload images
-
 <%
 ToolbarButton[] buttons = data.getButtons();
 for (int i=0; i<buttons.length; i++) {
@@ -137,18 +133,6 @@ for (int i=0; i<buttons.length; i++) {
 }
 %>
 
-function mozillaVersion(){
-	if (!isMozilla)
-		return "0";
-	var start = navigator.userAgent.indexOf('rv:') + 3;
-	if (start < 3 || start>=navigator.userAgent.length)
-		return "0";
-	var end = navigator.userAgent.indexOf(')', start);
-	if (end <= start)
-		return "0";
-	return navigator.userAgent.substr(start, end-start);
-}
-
 function setTitle(label)
 {
 	if( label == null) label = "";
@@ -160,22 +144,14 @@ function setTitle(label)
 }
 
 
-/**
+<% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
+%>/**
  * Handler for double click: maximize/restore this view
  * Note: Mozilla browsers prior to 1.2.1 do not support programmatic frame resizing well.
  */
 function mouseDblClickHandler(e) {
-	if (!isIE && !isMozilla)
-		return;
-	if (isMozilla && mozillaVersion() < "1.2.1")
-		return;
-
 	// ignore double click on buttons
-	var target;
-  	if (isMozilla)
-  		target = e.target;
-	else if (isIE)
-   		target = window.event.srcElement;
+	var target=<%=data.isIE()?"window.event.srcElement":"e.target"%>;
 	if (target.tagName && (target.tagName == "A" || target.tagName == "IMG"))
 		return;
 		
@@ -190,11 +166,11 @@ function mouseDblClickHandler(e) {
 	document.selection.clear;	
 	return false;
 }
-
-if (isMozilla)
-  document.addEventListener('dblclick', mouseDblClickHandler, true);
-else if (isIE)
-   document.ondblclick = mouseDblClickHandler;
+<%=data.isIE()?
+	"document.ondblclick = mouseDblClickHandler;"
+:
+	"document.addEventListener('dblclick', mouseDblClickHandler, true);"%>
+<%}%>
 
 </script>
 
@@ -224,7 +200,7 @@ if(buttons.length > 0){
 
 	<tr>
 		<td nowrap style="font: <%=prefs.getToolbarFont()%>" valign="middle">
-			<div style="overflow:hidden; height:22px;"><table><tr><td nowrap style="font:<%=prefs.getToolbarFont()%>"><div id="titleText" >&nbsp;<%=data.getTitle()%></div></td></tr></table>
+			<div id="titleTextTableDiv" style="overflow:hidden; height:22px;"><table><tr><td nowrap style="font:<%=prefs.getToolbarFont()%>"><div id="titleText" >&nbsp;<%=data.getTitle()%></div></td></tr></table>
 			</div>
 		
 		

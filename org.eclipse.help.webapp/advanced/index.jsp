@@ -37,6 +37,14 @@ FRAMESET {
 
 function onloadHandler(e)
 {
+<% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
+%>	var h=window.SearchFrame.document.getElementById("searchLabel").offsetHeight; <%-- default 13 --%>
+	//alert(h);
+	if(h<=19){
+		return; <%-- no need to resize up to 19px --%>
+	}
+	document.getElementById("indexFrameset").setAttribute("rows", <%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>11+h+",*"); <%-- default 24 --%>
+<%}%>
 <%
 if (data.isMozilla()){
 // restore mozilla from minimized
@@ -51,7 +59,7 @@ if (data.isMozilla()){
 </script>
 </head>
 
-<frameset onload="onloadHandler()" rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0>
+<frameset id="indexFrameset" onload="onloadHandler()" rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0>
 <%
 	if(!("0".equals(data.getBannerHeight()))){
 %>

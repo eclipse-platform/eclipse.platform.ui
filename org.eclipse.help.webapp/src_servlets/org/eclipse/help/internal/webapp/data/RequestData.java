@@ -63,6 +63,10 @@ public class RequestData {
 		return UrlUtil.isMozilla(request);
 	}
 
+	public String getMozillaVersion() {
+		return UrlUtil.getMozillaVersion(request);
+	}
+
 	public boolean isOpera() {
 		return UrlUtil.isOpera(request);
 	}
