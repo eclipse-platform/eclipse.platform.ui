@@ -35,22 +35,46 @@ Application programming interfaces for accessing and managing resource variants.
     fecthing of contents.</li>
   <li>AbstractResourceVariantTree: an IResourceVariantTree that contains logic 
     for performing a refresh of the cached resource variants. The caching mechanism 
-    is delegated to subclasses as is the fetching of the resource variants.</li>
-  <li>ResourceVariantTree: An AbstractResourceVariantTree that uses a ResourceVariantByteStore 
-    to cache the resource variants. Subclasses must still provide the fecthing 
-    of the remote state.</li>
+    is delegated to subclasses as is the fetching of the resource variants.
+    <ul>
+      <li>ResourceVariantTree: An AbstractResourceVariantTree that uses a ResourceVariantByteStore 
+        to cache the resource variants. Subclasses must still provide the fecthing 
+        of the remote state.</li>
+    </ul>
+  </li>
   <li>ResourceVariantByteStore: An abstract class that defines the API required 
-    for caching resource variants as byte arrays.</li>
-  <li>PersistantResourceVariantByteStore: a ResourceVariantByteStore that persists 
-    the bytes accross workbench invocations.</li>
-  <li>SessionResourceVariantByteStore: a ResourceVariantByteStore that caches 
-    the bytes in a session store and does not persist them.</li>
+    for caching resource variants as byte arrays. 
+    <ul>
+      <li>PersistantResourceVariantByteStore: a ResourceVariantByteStore that 
+        persists the bytes accross workbench invocations.</li>
+      <li>SessionResourceVariantByteStore: a ResourceVariantByteStore that caches 
+        the bytes in a session store and does not persist them.</li>
+    </ul>
+  </li>
 </ul>
 <h3>Implementing Subscribers</h3>
-<p>The ResourceVariantTreeSubscriber class is a partial subscriber implementation 
-  that makes use of the IResourceVariantTree interface to provide the remote and 
-  base resesource management.</p>
-<h3>&nbsp;</h3>
+<p>This package also contains two partial subscriber implementations.</p>
+<ul>
+  <li>ResourceVariantTreeSubscriber: a subscriber that makes use of IResourceVariantTree 
+    objects to provide the traversal and refresh of the base and remote trees.</li>
+  <li>ThreeWaySubscriber: a ResourceVariantTreeSubscriber that is build on top 
+    of the following classes. 
+    <ul>
+      <li>ThreeWaySynchronizer: a byte store that maintains the complete synchronization 
+        state (local, base and remote) required by a subscriber. It provides API 
+        to access and set the base and remote bytes corresponding to resource 
+        variants as well as change notification to registered ISynchronizerChangeListener 
+        instances. </li>
+      <li>ThreeWayRemoteTree: A remote tree that uses the ThreeWaySynchronizer 
+        remote slot as its byte store. Subclasses of ResourceVariantTreeSubscriber 
+        must also subclass ThreeWayRemoteTree in order to provide the tree refresh 
+        behavior.</li>
+      <li>ThreeWayResourceComparator: a IResourceVariantComparator that uses the 
+        state from a ThreeWaySynchronizer to compare local resources to their 
+        variants.</li>
+    </ul>
+  </li>
+</ul>
 <p>&nbsp;</p>
 </body>
 </html>
