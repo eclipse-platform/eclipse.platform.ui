@@ -15,8 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -40,7 +38,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -48,8 +45,8 @@ import org.eclipse.jface.resource.JFaceColors;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -60,7 +57,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.FileEditorInput;
 
 /**
  */
@@ -355,14 +351,6 @@ public class OleEditor extends EditorPart {
 	public File getSourceFile() {
 		return source;
 	}
-	/* (non-Javadoc)
-	 * Sets the cursor and selection state for this editor to the passage defined
-	 * by the given marker.
-	 *
-	 * @see IEditorPart
-	 */
-	public void gotoMarker(IMarker marker) {
-	}
 
 	private void handleWord() {
 		OleAutomation dispInterface = new OleAutomation(clientSite);
@@ -396,21 +384,26 @@ public class OleEditor extends EditorPart {
 	 *    it is an <code>IFile</code> but other types are acceptable.
 	 * @see IWorkbenchPart#shutdown
 	 */
-	public void init(IEditorSite site, IEditorInput input)
-		throws PartInitException {
-		// Check input.
-		if (!(input instanceof IFileEditorInput))
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		// check input
+		IPathEditorInput pathInput = null;
+		if (input instanceof IPathEditorInput) {
+			pathInput = (IPathEditorInput) input;
+		} else {
+			pathInput = (IPathEditorInput) input.getAdapter(IPathEditorInput.class);
+		}
+		if (pathInput == null) {
 			throw new PartInitException(
 				WorkbenchMessages.format("OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
-		//$NON-NLS-1$
-		
-		IFile file = (((IFileEditorInput) input).getFile());
-		
-		//Cannot create this with a file and no physical location
-		if(file.getLocation() == null || !(new File(file.getLocation().toOSString()).exists()))
+		}
+
+		// input must have a physical file location
+		IPath filePath = pathInput.getPath();		
+		if (filePath == null || !(new File(filePath.toOSString()).exists())) {
 			throw new PartInitException(
-				WorkbenchMessages.format("OleEditor.noFileInput", new Object[] { file.getLocation() })); //$NON-NLS-1$
-						
+				WorkbenchMessages.format("OleEditor.noFileInput", new Object[] { filePath })); //$NON-NLS-1$
+		}
+		
 		// Save input.
 		setSite(site);
 		setInput(input);
@@ -426,8 +419,8 @@ public class OleEditor extends EditorPart {
 
 		// Listen for part activation.
 		site.getPage().addPartListener(partListener);
-
 	}
+	
 	/**
 	 *	Initialize the workbench menus for proper merging
 	 */
