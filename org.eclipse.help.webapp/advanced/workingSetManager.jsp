@@ -125,7 +125,10 @@ function selectWorkingSet() {
 	}
 
 	search += "workingSet=" + escape(workingSet)+"&encoding=js";
-
+	var searchWord = window.opener.document.forms["searchForm"].searchWord.value;
+	if (searchWord)
+		search += "&searchWord="+escape(searchWord);
+		
 	window.opener.location.replace(
 		window.opener.location.protocol +
 		"//" +
