@@ -57,8 +57,11 @@ class CopyHandler extends ResponseHandler {
 		Assert.isTrue(mParent.exists());
 		Assert.isTrue(mFile.exists() && mFile.isManaged());
 		
-		mFile.moveTo(newFilename);
+		copyFile(mFile, newFilename);
 	}
-
+	
+	protected void copyFile(ICVSFile file, String target) throws CVSException {
+		file.moveTo(target);
+	}
 }
 

@@ -18,6 +18,7 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
+import org.eclipse.team.internal.ccvs.core.response.NullCopyHandler;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -125,6 +126,10 @@ public class Client {
 		if (firstTime) {
 			initialize(responseDispatcher, requestSender, connection, mRoot, monitor, messageOut);
 		}
+		
+		// register a null copy handler for silent update
+		if (Util.isOption(globalOptions, "-n"))
+			responseDispatcher.registerResponseHandler(new NullCopyHandler());
 		
 		commandDispatcher.execute(request,
 								globalOptions,
