@@ -37,15 +37,8 @@ public class Worker extends Thread {
 		return currentJob;
 	}
 	private IStatus handleException(Job job, Throwable t) {
-		String id;
-		try {
-			id = ((PluginClassLoader) job.getClass().getClassLoader()).getPluginDescriptor().getUniqueIdentifier();
-		} catch (ClassCastException e) {
-			//ignore and attribute exception to runtime
-			id = Platform.PI_RUNTIME;
-		}
-		String message = Policy.bind("meta.pluginProblems", id); //$NON-NLS-1$
-		return new Status(IStatus.ERROR, id, Platform.PLUGIN_ERROR, message, t);
+		String message = Policy.bind("jobs.internalError", job.getName()); //$NON-NLS-1$
+		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, t);
 	}
 	private void log(IStatus result) {
 		try {
