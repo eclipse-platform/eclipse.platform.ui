@@ -148,5 +148,18 @@ public class LaunchGroupExtension {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns whether this launch group is public
+	 *  
+	 * @return boolean
+	 */
+	public boolean isPublic() {
+		String string = getConfigurationElement().getAttribute("public");
+		if (string == null) {
+			return true;
+		}
+		return string.equals("true");
+	}
 }
 

@@ -553,7 +553,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			fLaunchHistories = new HashMap(groups.length);
 			for (int i = 0; i < groups.length; i++) {
 				LaunchGroupExtension extension = groups[i];
-				fLaunchHistories.put(extension.getIdentifier(), new LaunchHistory(extension));
+				if (extension.isPublic()) {
+					fLaunchHistories.put(extension.getIdentifier(), new LaunchHistory(extension));
+				}
 			}
 			restoreLaunchHistory();
 			fRestoring = false;

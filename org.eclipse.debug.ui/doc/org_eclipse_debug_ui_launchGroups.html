@@ -20,13 +20,9 @@
 
 <pre>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT launchGroup</tt>&gt;
-<tt>&nbsp;&nbsp; &lt;!ATTLIST launchGroup</tt> 
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mode &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; image&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bannerImage&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;</pre>
+<tt>&nbsp;&nbsp; &lt;!ATTLIST launchGroup</tt> <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt><br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mode &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt><br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt><br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt><br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; image&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bannerImage&nbsp;&nbsp; CDATA #REQUIRED</tt>
+     <tt>public     &nbsp;&nbsp; CDATA #IMPLED</tt>&gt;</pre>
 
 <ul>
   <li><code>id</code> specifies a unique identifier for this launch group.</li>
@@ -39,6 +35,9 @@
     render this group in trees, lists, tabs, etc.</li>
   <li><code>bannerImage</code> specifies a plug-in relative path to an image used 
     to render this group in a wizard or dialog banner area.</li>
+  <li><code>public</code> specifies whether this launch group is public and should 
+    be have a visible launch history tab in the debug preferences. The implied 
+    value is true, when not specified.</li>
 </ul>
 
 <p><b><i>Examples:</i></b> </p>

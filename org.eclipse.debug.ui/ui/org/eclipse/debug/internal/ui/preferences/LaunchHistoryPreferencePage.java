@@ -8,6 +8,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -85,23 +87,24 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		// create tabs (debug and run first) 
 		LaunchConfigurationManager manager = LaunchConfigurationManager.getDefault();
 		LaunchGroupExtension[] groups = manager.getLaunchGroups();
-		fTabs = new LaunchHistoryPreferenceTab[groups.length];
+		List tabList = new ArrayList();
 		LaunchHistory history = manager.getLaunchHistory(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
-		fTabs[0] = createTab(history, tabFolder);
+		tabList.add(createTab(history, tabFolder));
 		history = manager.getLaunchHistory(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
-		fTabs[1] = createTab(history, tabFolder);
+		tabList.add(createTab(history, tabFolder));
 		
 		// create other tabs
-		int index = 2;
 		for (int i = 0; i < groups.length; i++) {
 			LaunchGroupExtension extension = groups[i];
 			String id = extension.getIdentifier();
 			if (!(id.equals(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP) || id.equals(IDebugUIConstants.ID_RUN_LAUNCH_GROUP))) {
 				history = manager.getLaunchHistory(id);
-				fTabs[index] = createTab(history, tabFolder);
-				index++;
+				if (history != null) {
+					tabList.add(createTab(history, tabFolder));
+				}
 			}
 		}				
+		fTabs = (LaunchHistoryPreferenceTab[])tabList.toArray(new LaunchHistoryPreferenceTab[tabList.size()]);
 		return composite;
 	}
 	

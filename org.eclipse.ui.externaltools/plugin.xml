@@ -246,7 +246,8 @@
 			category = "org.eclipse.ui.externaltools.builder"
 			label = "%ExternalToolsLaunchGroup.label"
 			image = "icons/full/obj16/external_tools.gif"
-			bannerImage = "icons/full/wizban/ext_tools_wiz.gif">
+			bannerImage = "icons/full/wizban/ext_tools_wiz.gif"
+			public = "false">
 		</launchGroup>	
 	</extension>	
 	
