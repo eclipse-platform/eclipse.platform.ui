@@ -569,9 +569,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 				IProcess[] processes= launch.getProcesses();
 				for (int i= 0; i < processes.length; i++) {
 					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(processes[i]);
-					doc.removeDocumentListener(DebugUIPlugin.this);
-					doc.close();
-					setConsoleDocument(processes[i], null);
+					if (doc != null) {
+						doc.removeDocumentListener(DebugUIPlugin.this);
+						doc.close();
+						setConsoleDocument(processes[i], null);
+					}
 				}
 				IProcess currentProcess= getCurrentProcess();
 				if (currentProcess != null && currentProcess.getLaunch() == null) {
