@@ -210,6 +210,7 @@ final class KeyAssistDialog extends Dialog {
             completionsTable = null;
         }
 
+        keyBindingState.reset();
         return super.close();
     }
 
