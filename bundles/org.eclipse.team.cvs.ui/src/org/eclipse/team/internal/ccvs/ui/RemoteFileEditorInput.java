@@ -138,8 +138,12 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 * <code>getName</code> is "MyFile.gif".
 	 */
 	public String getName() {
-		// To do: add version information here
-		return file.getName();
+		String name = file.getName();
+		try {
+			return name + " " + file.getRevision();
+		} catch (TeamException e) {
+			return name;
+		}
 	}
 	/**
 	 * Returns the logical parent of the given object in its tree.
