@@ -23,11 +23,8 @@ import org.eclipse.core.runtime.*;
 
 public class HistoryStore {
 	protected Workspace workspace;
-
 	protected BlobStore blobStore;
-
 	IndexedStoreWrapper store;
-
 	Set blobsToRemove = new HashSet();
 
 	private final static String INDEX_FILE = ".index"; //$NON-NLS-1$
@@ -289,7 +286,7 @@ public class HistoryStore {
 	}
 
 	boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid) {
-		final boolean[] rc = new boolean[] { false };
+		final boolean[] rc = new boolean[] {false};
 		IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
 			public boolean visit(HistoryStoreEntry entry) {
 				if (rc[0] || uuid.equals(entry.getUUID())) {
@@ -481,7 +478,7 @@ public class HistoryStore {
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 		} catch (Exception e) {
-			String[] messageArgs = { entry.getPath().toString(), new Date(entry.getLastModified()).toString(), entry.getUUID().toString() };
+			String[] messageArgs = {entry.getPath().toString(), new Date(entry.getLastModified()).toString(), entry.getUUID().toString()};
 			String message = Policy.bind("history.specificProblemsCleaning", messageArgs); //$NON-NLS-1$
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
@@ -609,15 +606,15 @@ public class HistoryStore {
 				IPath memberPath = state.getPath();
 				boolean withinDepthRange = false;
 				switch (depth) {
-				case IResource.DEPTH_ZERO:
-					withinDepthRange = memberPath.segmentCount() == pathLength;
-					break;
-				case IResource.DEPTH_ONE:
-					withinDepthRange = memberPath.segmentCount() <= pathLength + 1;
-					break;
-				case IResource.DEPTH_INFINITE:
-					withinDepthRange = true;
-					break;
+					case IResource.DEPTH_ZERO :
+						withinDepthRange = memberPath.segmentCount() == pathLength;
+						break;
+					case IResource.DEPTH_ONE :
+						withinDepthRange = memberPath.segmentCount() <= pathLength + 1;
+						break;
+					case IResource.DEPTH_INFINITE :
+						withinDepthRange = true;
+						break;
 				}
 				if (withinDepthRange) {
 					allFiles.add(memberPath);
