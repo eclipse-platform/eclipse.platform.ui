@@ -38,6 +38,11 @@ public class CompareWithTagAction extends WorkspaceAction {
 			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, resources[0]);
 			compareSubscriber.dispose();
 		} else {
+			try {
+			compareSubscriber.primeRemoteTree();
+			} catch(CVSException e) {
+				// ignore, the compare will fail if there is a real problem.
+			}
 			//	First check if there is an existing matching participant, if so then re-use it
 			CompareParticipant participant = CompareParticipant.getMatchingParticipant(resources, tag);
 			if (participant == null) {
