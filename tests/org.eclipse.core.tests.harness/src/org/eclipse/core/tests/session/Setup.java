@@ -17,42 +17,50 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 
 /*
- * Implementation note: vmArguments and eclipseArguments are HashMap
- * (and not just Map) because we are interested in features that are
- * specific to HashMap (is Cloneable, allows null values).   
+ * Implementation note: vmArguments and eclipseArguments are HashMap (and not
+ * just Map) because we are interested in features that are specific to HashMap
+ * (is Cloneable, allows null values).
  */
 public class Setup implements Cloneable {
 
 	public static final String APPLICATION = "application";
+
+	private static final String ARCH = "arch";
+
 	public static final String CONFIGURATION = "configuration";
+
 	public static final String DATA = "data";
+
 	public static final String DEBUG = "debug";
+
 	private static final int DEFAULT_TIMEOUT = 0;
+
 	public static final String DEV = "dev";
+
 	public static final String INSTALL = "install";
+
+	private static final String NL = "nl";
+
+	private static final String OS = "os";
+
 	public static final String VM = "vm";
-	private String[] baseSetups;
 
-	private HashMap eclipseArguments = new HashMap();
+	private static final String WS = "ws";
 
-	private String id;
-	private SetupManager manager;
-	private String name;
-	private String[] requiredSets;
-	private HashMap systemProperties = new HashMap();
-	private int timeout;
-	private HashMap vmArguments = new HashMap();
+	public static String getDefaultArchOption() {
+		return System.getProperty(InternalPlatform.PROP_ARCH);
+	}
 
 	public static String getDefaultConfiguration() {
-		return System.getProperty("configuration", System.getProperty(InternalPlatform.PROP_CONFIG_AREA));
+		return System.getProperty(InternalPlatform.PROP_CONFIG_AREA);
 	}
 
 	public static String getDefaultDebugOption() {
-		return System.getProperty("debug", System.getProperty(InternalPlatform.PROP_DEBUG));
+		return System.getProperty(InternalPlatform.PROP_DEBUG);
 	}
 
 	public static String getDefaultDevOption() {
-		return System.getProperty("dev", System.getProperty(InternalPlatform.PROP_DEV));
+		return System.getProperty(InternalPlatform.PROP_DEV);
 	}
 
 	public static String getDefaultInstallLocation() {
@@ -70,9 +78,17 @@ public class Setup implements Cloneable {
 		return new File(System.getProperty("java.io.tmpdir"), "workspace").toString();
 	}
 
+	public static String getDefaultNLOption() {
+		return System.getProperty(InternalPlatform.PROP_NL);
+	}
+
+	public static String getDefaultOSOption() {
+		return System.getProperty(InternalPlatform.PROP_OS);
+	}
+
 	/**
-	 * Creates a setup containing default settings. The default settings will vary 
-	 * depending on the running environment.
+	 * Creates a setup containing default settings. The default settings will
+	 * vary depending on the running environment.
 	 * 
 	 * @see #getDefaultConfiguration()
 	 * @see #getDefaultDebugOption()
@@ -96,27 +112,58 @@ public class Setup implements Cloneable {
 			defaultSetup.setEclipseArgument(INSTALL, Setup.getDefaultInstallLocation());
 		if (Setup.getDefaultInstanceLocation() != null)
 			defaultSetup.setEclipseArgument(DATA, Setup.getDefaultInstanceLocation());
+		if (Setup.getDefaultArchOption() != null)
+			defaultSetup.setEclipseArgument(ARCH, Setup.getDefaultArchOption());
+		if (Setup.getDefaultOSOption() != null)
+			defaultSetup.setEclipseArgument(OS, Setup.getDefaultOSOption());
+		if (Setup.getDefaultWSOption() != null)
+			defaultSetup.setEclipseArgument(WS, Setup.getDefaultWSOption());
+		if (Setup.getDefaultNLOption() != null)
+			defaultSetup.setEclipseArgument(NL, Setup.getDefaultNLOption());
 		defaultSetup.setTimeout(DEFAULT_TIMEOUT);
 		return defaultSetup;
 	}
 
 	public static String getDefaultVMLocation() {
-		String javaVM = (String) System.getProperties().get("eclipse.vm");
+		String javaVM = System.getProperty("eclipse.vm");
 		if (javaVM != null)
 			return javaVM;
-		javaVM = (String) System.getProperties().get("java.home");
+		javaVM = System.getProperty("java.home");
 		if (javaVM == null)
 			return null;
-		//XXX: this is a hack and will not work with some VMs...
+		// XXX: this is a hack and will not work with some VMs...
 		return new File(new File(javaVM, "bin"), "java").toString();
 	}
+
+	public static String getDefaultWSOption() {
+		return System.getProperty(InternalPlatform.PROP_WS);
+	}
+
+	private String[] baseSetups;
+
+	private HashMap eclipseArguments = new HashMap();
+
+	private String id;
+
+	private SetupManager manager;
+
+	private String name;
+
+	private String[] requiredSets;
+
+	private HashMap systemProperties = new HashMap();
+
+	private int timeout;
+
+	private HashMap vmArguments = new HashMap();
 
 	public Setup(SetupManager manager) {
 		this.manager = manager;
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone() {
@@ -134,6 +181,9 @@ public class Setup implements Cloneable {
 	}
 
 	private void fillClassPath(List params) {
+		if (vmArguments.containsKey("cp") || vmArguments.containsKey("classpath"))
+			// classpath was specified as VM argument
+			return;
 		String installLocation = getEclipseArgument(INSTALL);
 		if (installLocation == null)
 			throw new IllegalStateException("No install location set");
@@ -241,7 +291,8 @@ public class Setup implements Cloneable {
 			result.append(i.next());
 			result.append(' ');
 		}
-		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;	}
+		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;
+	}
 
 	public int getTimeout() {
 		return timeout;
