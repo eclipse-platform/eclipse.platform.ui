@@ -69,6 +69,15 @@ public class TargetManager {
 			element.siteAdded(site);
 		}
 	}
+	
+	public static void removeSite(Site site) {
+		sites.remove(site);
+		save();
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			ISiteListener element = (ISiteListener) it.next();
+			element.siteRemoved(site);
+		}
+	}
 
    /**
 	* @see TargetProvider#map(IProject)
