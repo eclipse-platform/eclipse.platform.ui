@@ -122,6 +122,7 @@ protected void doLoadDefault() {
 	if (checkBox != null) {
 		boolean value = getPreferenceStore().getDefaultBoolean(getPreferenceName());
 		checkBox.setSelection(value);
+		wasSelected = value;
 	}
 }
 /* (non-Javadoc)
