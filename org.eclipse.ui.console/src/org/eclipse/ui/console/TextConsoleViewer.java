@@ -72,7 +72,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         styledText.addLineStyleListener(this);
         styledText.addLineBackgroundListener(this);
         styledText.setEditable(true);
-        styledText.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
+        styledText.setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
         styledText.addMouseTrackListener(this);
         styledText.addPaintListener(this);
     }

@@ -36,6 +36,10 @@ public interface IConsoleConstants {
 	
 	/**
 	 * The name of the font to use for the Console (value <code>"org.eclipse.ui.console.ConsoleFont"</code>).
+	 * 
+	 * @deprecated When a console is created, its font is set to the default text font as specified
+	 * by <code>JFaveResources.TEXT_FONT</code>. Clients must provide their own infrastructure to
+	 * manage console specific fonts. 
 	 */ 
 	public static final String CONSOLE_FONT= "org.eclipse.ui.console.ConsoleFont"; //$NON-NLS-1$
 	

@@ -34,7 +34,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -194,10 +193,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
         fViewer.getTextWidget().setFocus();
     }
 
-	protected void setFont(Font font) {
-		fViewer.getTextWidget().setFont(font);
-	}
-
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
@@ -207,7 +202,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		String property = event.getProperty();
 		
 		if (source.equals(fConsole) && IConsoleConstants.P_FONT.equals(property)) {
-			setFont(fConsole.getFont());	
+			fViewer.setFont(fConsole.getFont());	
 		} else if (IConsoleConstants.P_FONT_STYLE.equals(property)) {
 		    fViewer.getTextWidget().redraw();
 		} else if (property.equals(IConsoleConstants.P_STREAM_COLOR)) {
@@ -217,9 +212,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		    fViewer.setTabWidth(tabSize.intValue());
 		} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
 		    fViewer.setConsoleWidth(fConsole.getConsoleWidth()); 
-		} else if (property.equals(IConsoleConstants.CONSOLE_FONT)) {
-		    fViewer.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
-		} 
+		}
 	}
 
     protected void createActions() {

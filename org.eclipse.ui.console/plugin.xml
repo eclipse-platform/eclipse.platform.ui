@@ -57,18 +57,6 @@ M4 = Platform-specific fourth key
       </keyBinding>
    </extension>
     <extension
-         point="org.eclipse.ui.themes">
-      <fontDefinition
-            label="%ConsoleFontDefinition.label"
-            defaultsTo="org.eclipse.jface.textfont"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="org.eclipse.ui.console.ConsoleFont">
-         <description>
-            %ConsoleFontDefinition.description
-         </description>
-      </fontDefinition>
-   </extension>
-    <extension
           point="org.eclipse.core.expressions.propertyTesters">
        <propertyTester
              namespace="org.eclipse.ui.console"
