@@ -138,6 +138,7 @@ public interface IHelpContextIds {
 	public static final String OPEN_RESOURCE_DIALOG = PREFIX + "open_resource_dialog"; //$NON-NLS-1$
 	public static final String NEW_FOLDER_DIALOG = PREFIX + "new_folder_dialog"; //$NON-NLS-1$
 	public static final String PATH_VARIABLE_SELECTION_DIALOG = PREFIX + "path_variable_selection_dialog"; //$NON-NLS-1$
+	public static final String EXIT_PROMPT_ON_CLOSE_LAST_WINDOW = PREFIX + "exit_prompt_on_close_last_window"; //$NON-NLS-1$
 		
 	// Editors
 	public static final String WELCOME_EDITOR = PREFIX + "welcome_editor_context"; //$NON-NLS-1$

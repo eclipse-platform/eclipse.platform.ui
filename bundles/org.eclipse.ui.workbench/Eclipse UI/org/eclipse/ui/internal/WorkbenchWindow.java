@@ -80,6 +80,7 @@ import org.eclipse.ui.internal.commands.KeyBindingMatch;
 import org.eclipse.ui.internal.commands.KeySequence;
 import org.eclipse.ui.internal.commands.KeyStroke;
 import org.eclipse.ui.internal.commands.Manager;
+import org.eclipse.ui.internal.dialogs.PromptOnExitDialog;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSet;
@@ -424,6 +425,11 @@ protected boolean canHandleShellCloseEvent() {
 	boolean promptOnExit = store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
 	if (promptOnExit) {
+		String productName = workbench.getConfigurationInfo().getAboutInfo().getProductName();
+		if (productName == null)
+			productName = ""; //$NON-NLS-1$
+		PromptOnExitDialog dlg = new PromptOnExitDialog(getShell(), productName);
+		return dlg.open() == PromptOnExitDialog.OK;
 	}
 
 	return true;
