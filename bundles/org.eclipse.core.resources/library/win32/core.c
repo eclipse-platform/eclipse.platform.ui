@@ -24,6 +24,24 @@ jlong fileTimeToMillis(FILETIME ft) {
 }
 
 /*
+ * Get a null-terminated byte array from a java byte array.
+ * The returned bytearray needs to be freed whe not used
+ * anymore. Use free(result) to do that.
+ */
+jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
+	jsize n;
+	jbyte *temp, *result;
+	
+	temp = (*env)->GetByteArrayElements(env, target, 0);
+	n = (*env)->GetArrayLength(env, target);
+	result = malloc((n+1) * sizeof(jbyte));
+	memcpy(result, temp, n);
+	result[n] = '\0';
+	(*env)->ReleaseByteArrayElements(env, target, temp, 0);
+	return result;
+}
+
+/*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
  * Signature: ([B)J
@@ -33,38 +51,27 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 
 	HANDLE handle;
 	WIN32_FIND_DATA info;
-	jlong result;
-	jbyte *fileName, *name;
-	jsize n;
+	jlong result = 0; // 0 = failed
+	jbyte *name;
 
-	fileName = (*env)->GetByteArrayElements(env, target, 0);
-
-	n = (*env)->GetArrayLength(env, target);
-	name = malloc((n+1) * sizeof(jbyte));
-	memcpy(name, fileName, n);
-	name[n] = '\0';
-
+	name = getByteArray(env, target);
 	handle = FindFirstFile(name, &info);
-	if (handle == INVALID_HANDLE_VALUE) {
-		FindClose(handle);
-		return 0;
+
+	if (handle != INVALID_HANDLE_VALUE) {
+		// select interesting information
+		// lastModified
+		result = fileTimeToMillis(info.ftLastWriteTime); // lower bits
+		// valid stat
+		result |= STAT_VALID;
+		// folder or file?
+		if (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			result |= STAT_FOLDER;
+		// read-only?
+		if (info.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+			result |= STAT_READ_ONLY;
 	}
-	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
 
 	free(name);
-	
-	// select interesting information
-	// lastModified
-	result = fileTimeToMillis(info.ftLastWriteTime); // lower bits
-	// valid stat
-	result |= STAT_VALID;
-	// folder or file?
-	if (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-		result |= STAT_FOLDER;
-	// read-only?
-	if (info.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
-		result |= STAT_READ_ONLY;
-
 	FindClose(handle);
 	return result;
 }
@@ -78,23 +85,60 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
    (JNIEnv *env, jclass clazz, jbyteArray target, jboolean readOnly) {
 
 	int code, mode;
-	jbyte *fileName, *name;
-	jsize n;
-	
-	fileName = (*env)->GetByteArrayElements(env, target, 0);
+	jbyte *name;
 
-	n = (*env)->GetArrayLength(env, target);
-	name = malloc((n+1) * sizeof(jbyte));
-	memcpy(name, fileName, n);
-	name[n] = '\0';
-
+	name = getByteArray(env, target);
 	if (readOnly)
 		mode = S_IREAD;
 	else
 		mode = S_IWRITE;
 	code = chmod(name, mode);
-	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
+
 	free(name);
-			
 	return code != -1;
+}
+
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalCopyAttributes
+ * Signature: ([B[BZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributes
+   (JNIEnv *env, jclass clazz, jbyteArray source, jbyteArray destination, jboolean copyLastModified) {
+
+	HANDLE handle;
+	WIN32_FIND_DATA info;
+	jbyte *sourceFile, *destinationFile;
+	int success = 1;
+
+	sourceFile = getByteArray(env, source);
+	destinationFile = getByteArray(env, destination);
+
+	handle = FindFirstFile(sourceFile, &info);
+	if (handle != INVALID_HANDLE_VALUE) {
+		success = SetFileAttributes(destinationFile, info.dwFileAttributes);
+		if (success != 0 && copyLastModified) {
+			success = SetFileTime(destinationFile, &info.ftCreationTime, &info.ftLastAccessTime, &info.ftLastWriteTime);
+		}
+	} else {
+		success = 0;
+	}
+
+	free(sourceFile);
+	free(destinationFile);
+	FindClose(handle);
+	return success;
+}
+
+/*
+ * Class:     org_eclipse_ant_core_EclipseProject
+ * Method:    internalCopyAttributes
+ * Signature: ([B[BZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_ant_core_EclipseProject_internalCopyAttributes
+   (JNIEnv *env, jclass clazz, jbyteArray source, jbyteArray destination, jboolean copyLastModified) {
+
+	// use the same implementation for both methods
+	return Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributes
+			(env, clazz, source, destination, copyLastModified);
 }

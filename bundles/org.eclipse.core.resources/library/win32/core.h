@@ -33,6 +33,22 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnly
    (JNIEnv *, jclass, jbyteArray, jboolean);
 
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalCopyAttributes
+ * Signature: ([B[BZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributes
+   (JNIEnv *, jclass, jbyteArray, jbyteArray, jboolean);
+
+/*
+ * Class:     org_eclipse_ant_core_EclipseProject
+ * Method:    internalCopyAttributes
+ * Signature: ([B[BZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_ant_core_EclipseProject_internalCopyAttributes
+   (JNIEnv *, jclass, jbyteArray, jbyteArray, jboolean);
+
 #ifdef __cplusplus
 }
 #endif

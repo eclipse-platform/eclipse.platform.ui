@@ -10,6 +10,7 @@ import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.indexing.*;
+import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
@@ -105,16 +106,18 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
  *
  * @return true if state added to history store and false otherwise.
  */
-public void addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
+public UniversalUniqueIdentifier addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
 	if (!isValid(localFile))
-		return;
+		return null;
+	UniversalUniqueIdentifier uuid = null;
 	try {
-		UniversalUniqueIdentifier uuid = blobStore.addBlob(localFile, moveContents);
+		uuid = blobStore.addBlob(localFile, moveContents);
 		addState(key, uuid, lastModified);
 		store.commit();
 	} catch (CoreException e) {
 		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 	}
+	return uuid;
 }
 /**
  * Add an entry to the history store for the specified resource.
@@ -125,8 +128,8 @@ public void addState(IPath key, java.io.File localFile, long lastModified, boole
  *
  * @return true if state added to history store and false otherwise.
  */
-public void addState(IPath key, IPath localLocation, long lastModified, boolean moveContents) {
-	addState(key, localLocation.toFile(), lastModified, moveContents);
+public UniversalUniqueIdentifier addState(IPath key, IPath localLocation, long lastModified, boolean moveContents) {
+	return addState(key, localLocation.toFile(), lastModified, moveContents);
 }
 /**
  * Clean this store applying the current policies.
@@ -305,5 +308,8 @@ protected void resetIndexedStore() {
 	String message = Policy.bind("history.corrupt");
 	ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
 	ResourcesPlugin.getPlugin().getLog().log(status);
+}
+public File getFileFor(UniversalUniqueIdentifier uuid) {
+	return blobStore.fileFor(uuid);
 }
 }

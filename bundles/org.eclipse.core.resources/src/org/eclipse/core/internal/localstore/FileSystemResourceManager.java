@@ -359,13 +359,16 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 				}
 		}
 		// add entry to History Store.
+		UniversalUniqueIdentifier uuid = null; // uuid to locate the file on history
 		if (keepHistory && localFile.exists())
-			historyStore.addState(target.getFullPath(), location, lastModified, !append);
+			uuid = historyStore.addState(target.getFullPath(), location, lastModified, !append);
 		getStore().write(localFile, content, append, monitor);
 		// get the new last modified time and stash in the info
 		lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 		updateLocalSync(info, lastModified, true);
+		if (uuid != null)
+			CoreFileSystemLibrary.copyAttributes(historyStore.getFileFor(uuid).getAbsolutePath(), localFile.getAbsolutePath(), false);
 	} finally {
 		try {
 			content.close();
