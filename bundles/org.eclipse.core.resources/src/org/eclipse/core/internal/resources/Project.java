@@ -599,7 +599,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			((ProjectInfo) destProject.getResourceInfo(false, true)).setBuilders(null);
 
 			// refresh local
-			monitor.subTask(Policy.bind("resources.syncTree"));
+			monitor.subTask(Policy.bind("resources.updating"));
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -648,8 +648,8 @@ protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMoni
 			for (int i = 0; i < children.length; i++)
 				children[i].copy(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
-			monitor.subTask(Policy.bind("resources.syncTree"));
 			// refresh local
+			monitor.subTask(Policy.bind("resources.updating"));
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -748,7 +748,7 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 
 			// we need to refresh local in case we moved to an existing location
 			// that already had content
-			monitor.subTask(Policy.bind("resources.syncTree"));
+			monitor.subTask(Policy.bind("resources.updating"));
 			destProject.refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -834,8 +834,8 @@ protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMoni
 			getMarkerManager().moved(this, destFolder, IResource.DEPTH_ZERO);
 			monitor.worked(Policy.opWork * 10 / 100);
 
-			monitor.subTask(Policy.bind("resources.syncTree"));
 			// refresh local
+			monitor.subTask(Policy.bind("resources.updating"));
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -1129,8 +1129,6 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
 			// tell the marker manager that we moved so the marker deltas are ok
 			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
 			monitor.worked(Policy.opWork * 10 / 100);
-
-			monitor.subTask(Policy.bind("resources.syncTree"));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
