@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.ide;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Synchronizer;
-import org.eclipse.ui.internal.Semaphore;
 
 public class UISynchronizer extends Synchronizer {
 	protected UIWorkspaceLock uiLock;
@@ -30,7 +29,6 @@ public void syncExec(Runnable runnable) {
 			uiLock.doPendingWork();
 		}
 	};
-	// @issue ref to internal generic workbench class
 	Semaphore work = new Semaphore(runnable);
 	work.setOperationThread(Thread.currentThread());
 	uiLock.addPendingWork(work);

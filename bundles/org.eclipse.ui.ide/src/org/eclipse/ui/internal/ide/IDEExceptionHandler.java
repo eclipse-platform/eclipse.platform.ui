@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 public final class IDEExceptionHandler {
 
 	private int exceptionCount = 0;
-	// @issue InternalErrorDialog should be moved to the IDE package or made public.
 	private InternalErrorDialog dialog;
 	private Shell defaultParent = new Shell();
 	private boolean closing = false;

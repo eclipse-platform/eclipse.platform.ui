@@ -284,7 +284,6 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				message = IDEWorkbenchMessages.format("PromptOnExitDialog.message1", new Object[] { productName }); //$NON-NLS-1$
 			}
 
-			// @issue The MessageDialogWithToggle is private, should it be made public?
 			MessageDialogWithToggle dlg = MessageDialogWithToggle.openConfirm(
 				windowConfigurer.getWindow().getShell(), 
 				IDEWorkbenchMessages.getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
