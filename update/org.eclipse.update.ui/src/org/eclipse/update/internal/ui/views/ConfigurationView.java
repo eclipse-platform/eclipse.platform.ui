@@ -625,8 +625,8 @@ public class ConfigurationView
 		Object obj = getSelectedObject();
 
 		if (obj instanceof ILocalSite) {
-			manager.add(revertAction);
 			manager.add(findUpdatesAction);
+			manager.add(revertAction);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(siteStateAction);
 		}
@@ -641,6 +641,10 @@ public class ConfigurationView
 		} else if (obj instanceof ConfiguredFeatureAdapter) {
 			try {
 				MenuManager mgr = new MenuManager(UpdateUI.getString("ConfigurationView.replaceWith")); //$NON-NLS-1$
+				
+				manager.add(findUpdatesAction);
+				manager.add(new Separator());
+				
 				mgr.add(swapVersionAction);
 				manager.add(mgr);
 
@@ -654,8 +658,7 @@ public class ConfigurationView
 					manager.add(uninstallFeatureAction);
 				}
 				manager.add(new Separator());
-				manager.add(findUpdatesAction);
-				manager.add(new Separator());
+
 			} catch (CoreException e) {
 			}
 		}
