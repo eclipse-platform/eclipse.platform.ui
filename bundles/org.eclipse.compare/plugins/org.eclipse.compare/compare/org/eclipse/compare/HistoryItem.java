@@ -15,8 +15,12 @@ import java.io.BufferedInputStream;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * A combination <code>IFileState</code> and <code>ITypedElement</code> that can be used as
@@ -84,9 +88,13 @@ public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement
 	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
 	 */
 	public String getCharset() throws CoreException {
-	    String charset= fFileState.getCharset();
-	    if (charset == null && fBase instanceof IEncodedStreamContentAccessor)
-	        charset= ((IEncodedStreamContentAccessor)fBase).getCharset();
+	    String charset= fFileState.getCharset(); 
+	    if (charset == null) {
+		    IPath fullPath = fFileState.getFullPath();
+		    IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+		    if (resource instanceof IEncodedStorage)
+		    	charset= ((IEncodedStorage)resource).getCharset();
+	    }
 		return charset;
 	}
 }
