@@ -45,6 +45,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	private Process fProcess;
 	
 	/**
+	 * The exit value
+	 */
+	private int fExitValue;
+	
+	/**
 	 * The monitor which listens for this runtime process' system process
 	 * to terminate.
 	 */
@@ -170,7 +175,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {
 					if (fProcess != null) {
-						fProcess.exitValue(); // throws exception if process not exited
+						fExitValue = fProcess.exitValue(); // throws exception if process not exited
 					}
 					return;
 				} catch (IllegalThreadStateException ie) {
@@ -195,6 +200,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	protected void terminated() {
 		fStreamsProxy.close();
 		fTerminated= true;
+		try {
+			fExitValue = fProcess.exitValue();
+		} catch (IllegalThreadStateException ie) {
+		}
 		fProcess= null;
 		fireTerminateEvent();
 	}
@@ -269,4 +278,15 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		}
 		return super.getAdapter(adapter);
 	}
+	/**
+	 * @see IProcess#getExitValue()
+	 */
+	public int getExitValue() throws DebugException {
+		if (isTerminated()) {
+			return fExitValue;
+		} else {
+			throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.Exit_value_not_available_until_process_terminates._1"), null)); //$NON-NLS-1$
+		}
+	}
+
 }

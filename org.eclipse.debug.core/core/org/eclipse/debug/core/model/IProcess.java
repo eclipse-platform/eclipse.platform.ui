@@ -6,6 +6,7 @@ package org.eclipse.debug.core.model;
  */
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 
 /**
@@ -58,6 +59,13 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @return value the String attribute value, or <code>null</code> if undefined
 	 */
 	public String getAttribute(String key);
+	
+	/**
+	 * Returns the exit value of this process. Conventionally, 0 indicates
+	 * normal termination.
+	 * 
+	 * @return the exit value of this process
+	 * @exception DebugException if this process has not yet terminated
+	 */
+	public int getExitValue() throws DebugException;
 }
-
-
