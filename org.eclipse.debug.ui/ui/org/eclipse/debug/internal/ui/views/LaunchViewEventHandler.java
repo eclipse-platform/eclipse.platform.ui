@@ -60,6 +60,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * @see AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
 	protected void doHandleDebugEvents(DebugEvent[] events) {
+		fThreadTimer.handleDebugEvents(events);
 		Object suspendee = null;
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -370,7 +371,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		return thread;
 	}
 	
-	class ThreadTimer implements IDebugEventSetListener {
+	class ThreadTimer {
 		
 		private Thread fThread;
 		/**
@@ -396,7 +397,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			return fTimedOutThreads;
 		}
 		
+		/**
+		 * Handle debug events dispatched from launch view event handler.
+		 * If there are no running targets, stop this timer.
+		 */
 		public void handleDebugEvents(DebugEvent[] events) {
+			if (fStopped) {
+				return;
+			}
 			DebugEvent event;
 			for (int i= 0, numEvents= events.length; i < numEvents; i++) {
 				event= events[i];
@@ -432,7 +440,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			synchronized (fLock) {
 				fStopped= true;
 				fThread= null;
-				DebugPlugin.getDefault().removeDebugEventListener(this);
 				fStopTimes.clear();
 			}
 		}
@@ -454,7 +461,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				}
 			}, "Thread timer"); //$NON-NLS-1$
 			fThread.start();
-			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
 		
 		private void checkTimers() {
