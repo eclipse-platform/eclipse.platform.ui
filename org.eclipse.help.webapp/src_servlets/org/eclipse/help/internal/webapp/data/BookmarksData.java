@@ -66,7 +66,11 @@ public class BookmarksData extends RequestData {
 		if (bookmarkURL != null
 			&& bookmarkURL.length() > 0
 			&& !bookmarkURL.equals("about:blank")) {
-			String title = request.getParameter("title");
+			String title =
+				UrlUtil.isIE(request)
+					? UrlUtil.unescape(
+						UrlUtil.getRawRequestParameter(request, "title"))
+					: request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 			String removeString = "," + bookmarkURL + "|" + title;
