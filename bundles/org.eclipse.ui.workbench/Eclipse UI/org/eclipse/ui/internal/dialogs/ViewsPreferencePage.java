@@ -15,13 +15,8 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -32,7 +27,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -62,16 +56,10 @@ public class ViewsPreferencePage
 	 * Editors for working with colors in the Views/Appearance preference page 
 	 */
 	private BooleanFieldEditor colorIconsEditor;
-	private ColorThemeDemo colorThemeDemo;
 	private ColorFieldEditor errorColorEditor;
 	private ColorFieldEditor hyperlinkColorEditor;
 	private ColorFieldEditor activeHyperlinkColorEditor;
-	BooleanFieldEditor useDefault;	
-	private ColorFieldEditor colorSchemeTabBGColorEditor;
-	private ColorFieldEditor colorSchemeTabFGColorEditor;
-	private ColorFieldEditor colorSchemeSelectedTabBGColorEditor;
-	private ColorFieldEditor colorSchemeSelectedTabFGColorEditor;
-	
+
 	/*
 	 * No longer supported - removed when confirmed!
 	 * private Button openFloatButton;
@@ -197,111 +185,7 @@ public class ViewsPreferencePage
 		activeHyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 		activeHyperlinkColorEditor.load();
 
-		Group colorSchemeComposite = new Group(composite, SWT.NONE);
-		colorSchemeComposite.setLayout(new GridLayout());
-		
-		colorSchemeComposite.setText("Workbench Color Theme"); 
-		colorSchemeComposite.setFont(font);
-		GridData data2 = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		colorSchemeComposite.setLayoutData(data2); 
-		//Add in an intermediate composite to allow for spacing
-		final Composite spacingComposite2 = new Composite(colorSchemeComposite, SWT.NONE);
-		GridLayout spacingLayout2 = new GridLayout();
-		spacingLayout2.numColumns = 2;
-		spacingComposite2.setLayout(spacingLayout2);
-		spacingComposite2.setFont(font);
-		spacingComposite2.setLayoutData(new GridData());
-		
-		//Add in the demo viewing area for color settings
-		colorThemeDemo = new ColorThemeDemo(spacingComposite2);
-		
-		useDefault =
-		new BooleanFieldEditor(
-				JFacePreferences.USE_DEFAULT_THEME,
-				"Use System Colors",
-				spacingComposite2);
-		useDefault.setPreferencePage(this);
-		useDefault.setPreferenceStore(doGetPreferenceStore());
-		useDefault.load();		
-		
-		// 	dummy label to fill the space
-		Label spacer = new Label(spacingComposite2, SWT.NONE);
-		
-		colorSchemeSelectedTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, "Selected Tab Background", spacingComposite2);
-		colorSchemeSelectedTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		// If the value is still the default, this means the use has been using system colors
-		// Or has not set this particular color from the default.
-		if (store.isDefault(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, JFaceColors.getTabFolderSelectionBackground(composite.getDisplay()).getRGB());
-		}
-		colorSchemeSelectedTabBGColorEditor.load();
-		
-		colorSchemeSelectedTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, "Selected Tab Foreground", spacingComposite2);
-		colorSchemeSelectedTabFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		// If the value is still the default, this means the use has been using system colors
-		// Or has not set this particular color from the default.
-		if (store.isDefault(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, JFaceColors.getTabFolderSelectionForeground(composite.getDisplay()).getRGB());
-		}	
-		colorSchemeSelectedTabFGColorEditor.load();
-		
-		colorSchemeTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_BACKGROUND, "Tab Background", spacingComposite2);
-		colorSchemeTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		// If the value is still the default, this means the use has been using system colors
-		// Or has not set this particular color from the default.
-		if (store.isDefault(JFacePreferences.SCHEME_TAB_BACKGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_BACKGROUND, JFaceColors.getTabFolderBackground(composite.getDisplay()).getRGB());
-		}
-		colorSchemeTabBGColorEditor.load();
-		
-		colorSchemeTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_FOREGROUND, "Tab Foreground", spacingComposite2);
-		colorSchemeTabFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-		// If the value is still the default, this means the use has been using system colors
-		// Or has not set this particular color from the default.
-		if (store.isDefault(JFacePreferences.SCHEME_TAB_FOREGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_FOREGROUND, JFaceColors.getTabFolderForeground(composite.getDisplay()).getRGB());
-		}
-		colorSchemeTabFGColorEditor.load();
-		
-		
-		IPropertyChangeListener colorSettingsListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				updateColorThemeDemo(spacingComposite2);				
-			}
-		};
-
-		useDefault.setPropertyChangeListener(colorSettingsListener);
-		colorSchemeSelectedTabBGColorEditor.setPropertyChangeListener(colorSettingsListener);
-		colorSchemeSelectedTabFGColorEditor.setPropertyChangeListener(colorSettingsListener);
-		colorSchemeTabBGColorEditor.setPropertyChangeListener(colorSettingsListener);
-		colorSchemeTabFGColorEditor.setPropertyChangeListener(colorSettingsListener);
-		//initialize
-		updateColorThemeDemo(spacingComposite2);
-		
 		return composite;
-	}
-
-	void updateColorThemeDemo(Composite parentComposite) {
-		boolean defaultColor = useDefault.getBooleanValue();
-		colorSchemeTabBGColorEditor.setEnabled(!defaultColor, parentComposite);
-		colorSchemeTabFGColorEditor.setEnabled(!defaultColor, parentComposite);
-		colorSchemeSelectedTabBGColorEditor.setEnabled(!defaultColor, parentComposite);
-		colorSchemeSelectedTabFGColorEditor.setEnabled(!defaultColor, parentComposite);
-		
-		if (!defaultColor) {
-			colorThemeDemo.setTabBGColor(new Color(parentComposite.getDisplay(), colorSchemeTabBGColorEditor.getColorSelector().getColorValue()));
-			colorThemeDemo.setTabFGColor(new Color(parentComposite.getDisplay(), colorSchemeTabFGColorEditor.getColorSelector().getColorValue()));
-			colorThemeDemo.setTabSelectionBGColor(new Color(parentComposite.getDisplay(), colorSchemeSelectedTabBGColorEditor.getColorSelector().getColorValue()));
-			colorThemeDemo.setTabSelectionFGColor(new Color(parentComposite.getDisplay(), colorSchemeSelectedTabFGColorEditor.getColorSelector().getColorValue()));
-			colorThemeDemo.redraw();
-		} else {
-			colorThemeDemo.setTabBGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_BACKGROUND));
-			colorThemeDemo.setTabFGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_FOREGROUND));
-			colorThemeDemo.setTabSelectionBGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND));
-			colorThemeDemo.setTabSelectionFGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND));
-			colorThemeDemo.redraw();
-		}
 	}
 	
 	/**
@@ -375,13 +259,7 @@ public class ViewsPreferencePage
 		colorIconsEditor.loadDefault();
 		errorColorEditor.loadDefault();
 		hyperlinkColorEditor.loadDefault();
-		useDefault.loadDefault();
 		activeHyperlinkColorEditor.loadDefault();
-		colorSchemeTabBGColorEditor.loadDefault();
-		colorSchemeTabFGColorEditor.loadDefault();
-		colorSchemeSelectedTabBGColorEditor.loadDefault();
-		colorSchemeSelectedTabFGColorEditor.loadDefault();
-		
 		/*
 		 * No longer supported - remove when confirmed!
 		 * if (openFloatButton != null) 
@@ -404,12 +282,7 @@ public class ViewsPreferencePage
 		errorColorEditor.store();
 		hyperlinkColorEditor.store();
 		activeHyperlinkColorEditor.store();
-		useDefault.store();
-		colorSchemeTabBGColorEditor.store();
-		colorSchemeTabFGColorEditor.store();
-		colorSchemeSelectedTabBGColorEditor.store();
-		colorSchemeSelectedTabFGColorEditor.store();
-		
+	
 		if (Workbench.getInstance() != null) {
 			IWorkbenchWindow[] windows = Workbench.getInstance().getWorkbenchWindows();
 			for (int i = 0; i < windows.length; i++) {
