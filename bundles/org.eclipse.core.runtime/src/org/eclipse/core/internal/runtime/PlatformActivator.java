@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Hashtable;
+import java.util.Locale;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
+import org.eclipse.osgi.service.systembundle.EntryLocator;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -54,6 +56,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		acquireURLConverterService();
 		acquireFrameworkLogService();
 		acquirePackageAdminService();
+		registerResourceFinder();
 		startInternalPlatform();
 		startRegistry(runtimeContext);
 		installPlatformURLSupport();
@@ -286,5 +289,15 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		Hashtable properties = new Hashtable(1);
 		properties.put(PROP_ECLIPSE_APPLICATION, "default"); //$NON-NLS-1$ 
 		context.registerService(ParameterizedRunnable.class.getName(), work, properties);
+	}
+
+	private void registerResourceFinder() {
+		EntryLocator systemResources = new EntryLocator() {
+			public URL getProperties(String basename, Locale locale) {
+				IPath propertiesPath = new Path("$nl$/" + basename.replace('.', '/') + ".properties"); //$NON-NLS-1$ //$NON-NLS-2$
+				return Platform.find(context.getBundle(), propertiesPath);
+			}
+		};
+		context.registerService(EntryLocator.class.getName(), systemResources, null);
 	}
 }
