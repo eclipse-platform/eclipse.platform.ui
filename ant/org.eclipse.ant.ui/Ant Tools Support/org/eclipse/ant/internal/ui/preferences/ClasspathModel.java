@@ -98,7 +98,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		return newEntry;		
 	}
 	
-	public IAntClasspathEntry[] getURLEntries(int entryType) {
+	public IAntClasspathEntry[] getEntries(int entryType) {
 		IAntClasspathEntry[] classpathEntries= null;
 		switch (entryType) {
 			case ANT_HOME :

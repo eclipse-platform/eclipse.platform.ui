@@ -48,14 +48,14 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 * @return set of user classpath entries
 	 */
 	protected IAntClasspathEntry[] getAdditionalEntries() {
-		return model.getURLEntries(ClasspathModel.GLOBAL_USER);
+		return model.getEntries(ClasspathModel.GLOBAL_USER);
 	}
 	
 	/**
 	 * Returns the specified ant home classpath entries
 	 */
 	protected IAntClasspathEntry[] getAntHomeEntries() {
-		return model.getURLEntries(ClasspathModel.ANT_HOME);
+		return model.getEntries(ClasspathModel.ANT_HOME);
 	}
 	
 	protected String getAntHome() {
