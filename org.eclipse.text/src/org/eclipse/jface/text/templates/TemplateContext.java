@@ -96,9 +96,10 @@ public abstract class TemplateContext {
 	 * 
 	 * @param template the template to evaluate
 	 * @return returns the buffer with the evaluated template or <code>null</code> if the buffer could not be created
-	 * @throws BadLocationException if evaluation fails
+	 * @throws BadLocationException if evaluation fails due to concurrently changed documents etc.
+	 * @throws TemplateException if the template specification is not valid
 	 */
-	public abstract TemplateBuffer evaluate(Template template) throws BadLocationException;
+	public abstract TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException;
 	
 	/**
 	 * Tests if the specified template can be evaluated in this context.

@@ -75,7 +75,7 @@ public class TemplateTranslator {
 	 *         if there was an error.
 	 * @see #getErrorMessage()
 	 */
-	public TemplateBuffer translate(Template template) {
+	public TemplateBuffer translate(Template template) throws TemplateException {
 		return translate(template.getPattern());
 	}
 
@@ -89,7 +89,7 @@ public class TemplateTranslator {
 	 *         if there was an error.
 	 * @see #getErrorMessage()
 	 */
-	public TemplateBuffer translate(String string) {
+	public TemplateBuffer translate(String string) throws TemplateException {
 
 	    fBuffer.setLength(0);
 	    fOffsets.clear();
@@ -98,7 +98,7 @@ public class TemplateTranslator {
 	    fErrorMessage= null;
 	    
 		if (!parse(string))
-			return null;
+			throw new TemplateException(fErrorMessage);
 			
 		switch (fState) {
 		case TEXT:
@@ -106,15 +106,11 @@ public class TemplateTranslator {
 		
 		// illegal
 		case ESCAPE:
-			fErrorMessage= TemplateMessages.getString("TemplateTranslator.error.incomplete.variable"); //$NON-NLS-1$
-			fBuffer.append(ESCAPE_CHARACTER);
-			return null;
+			throw new TemplateException(TemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
 				
 		// illegal
 		case IDENTIFIER:
-			fErrorMessage= TemplateMessages.getString("TemplateTranslator.error.incomplete.variable"); //$NON-NLS-1$
-			fBuffer.append(ESCAPE_CHARACTER);
-			return null;		
+			throw new TemplateException(TemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
 		}			
 		
 		int[] offsets= new int[fOffsets.size()];

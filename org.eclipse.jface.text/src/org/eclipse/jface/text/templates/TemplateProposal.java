@@ -106,8 +106,10 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 		try {
 			fContext.setReadOnly(false);
-			TemplateBuffer templateBuffer= fContext.evaluate(fTemplate);
-			if (templateBuffer == null) {
+			TemplateBuffer templateBuffer;
+			try {
+				templateBuffer= fContext.evaluate(fTemplate);
+			} catch (TemplateException e1) {
 				fSelectedRegion= fRegion;
 				return;
 			}
@@ -266,10 +268,12 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	public String getAdditionalProposalInfo() {
 	    try {
 		    fContext.setReadOnly(true);
-			TemplateBuffer templateBuffer= fContext.evaluate(fTemplate);
-			
-			if (templateBuffer == null)
+			TemplateBuffer templateBuffer;
+			try {
+				templateBuffer= fContext.evaluate(fTemplate);
+			} catch (TemplateException e1) {
 				return null;
+			}
 
 			return templateBuffer.getString();
 

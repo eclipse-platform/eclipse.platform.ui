@@ -69,8 +69,11 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 		List matches= new ArrayList();
 		for (int i= 0; i < templates.length; i++) {
 			Template template= templates[i];
-			if (context.getContextType().validate(template.getPattern()) != null)
+			try {
+				context.getContextType().validate(template.getPattern());
+			} catch (TemplateException e) {
 				continue;
+			}
 			if (template.matches(prefix, context.getContextType().getId()))
 				matches.add(new TemplateProposal(template, context, region, getImage(template), getRelevance(template, prefix)));
 		}

@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.templates.ContextType;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateMessages;
 
 /**
@@ -80,7 +81,7 @@ public class TemplateSet {
 	/**
 	 * Convenience method for reading templates from a file.
 	 * 
-	 * @see #addFromStream(InputStream, boolean, boolean)
+	 * @see #addFromStream(InputStream, boolean, boolean, ResourceBundle)
 	 */
 	public void addFromFile(File file, boolean allowDuplicates, ResourceBundle bundle) throws CoreException {
 		InputStream stream= null;
@@ -204,12 +205,17 @@ public class TemplateSet {
 			return TemplateMessages.getString(key); // default messages
 	}
 
-	protected String validateTemplate(Template template) throws CoreException {
+	protected String validateTemplate(Template template) {
 		ContextType type= fRegistry.getContextType(template.getContextTypeId());
 		if (type == null) {
 			return "Unknown context type: " + template.getContextTypeId(); //$NON-NLS-1$
 		}
-		return type.validate(template.getPattern());
+		try {
+			type.validate(template.getPattern());
+			return null;
+		} catch (TemplateException e) {
+			return e.getMessage();
+		}
 	}
 	
 	private String getAttributeValue(NamedNodeMap attributes, String name) {

@@ -50,7 +50,8 @@ public class ContextType {
 	private String fName= null;
 
 	/**
-	 * Creates a context type with an identifier. The identifier must be unique, a qualified name is suggested. The id is also used as name.
+	 * Creates a context type with an identifier. The identifier must be unique,
+	 * a qualified name is suggested. The id is also used as name.
 	 * 
 	 * @param id the unique identifier of the context type
 	 */
@@ -72,6 +73,25 @@ public class ContextType {
 	}
 	
 	/**
+	 * Returns the name of the context type.
+	 * 
+	 * @return the name of the receiver
+	 */
+	public String getId() {
+	    return fId;
+	}
+	
+
+	/**
+	 * Returns the name of the context type.
+	 * 
+	 * @return the name of the context type
+	 */
+	public String getName() {
+		return fName;
+	}
+	
+	/**
 	 * Creates a context type with a <code>null</code> identifier.
 	 * <p>
 	 * This is a framework-only constructor that exists only so that context
@@ -87,26 +107,34 @@ public class ContextType {
 	 * Sets the id of this context.
 	 * <p>
 	 * This is a framework-only method that exists solely so that context types
-	 * can be contributed via an extension point and that should not be called in
-	 * client code; use {@link #ContextType(String)} instead.
+	 * can be contributed via an extension point and that should not be called
+	 * in client code; use {@link #ContextType(String)} instead.
 	 * </p>
 	 * 
-	 * @param id
-	 * @throws RuntimeException an unspecified exception if the id has already been set on this context type
+	 * @param id the identifier of this context
+	 * @throws RuntimeException an unspecified exception if the id has already
+	 *         been set on this context type
 	 */
-	public void setId(String id) throws RuntimeException {
+	final void setId(String id) throws RuntimeException {
 		Assert.isNotNull(id);
 		Assert.isTrue(fId == null); // may only be called once when the context is instantiated
 		fId= id;
 	}
 
 	/**
-	 * Returns the name of the context type.
+	 * Sets the name of the context type.
 	 * 
-	 * @return the name of the receiver
+	 * <p>
+	 * This is a framework-only method that exists solely so that context types
+	 * can be contributed via an extension point and that should not be called
+	 * in client code; use {@link #ContextType(String, String)} instead.
+	 * </p>
+	 * 
+	 * @param name the name of the context type
 	 */
-	public String getId() {
-	    return fId;
+	final void setName(String name) {
+		Assert.isTrue(fName == null); // only initialized by extension code
+		fName= name;
 	}
 	
 	/**
@@ -116,6 +144,7 @@ public class ContextType {
 	 * @param resolver the resolver to be added under its name
 	 */
 	public void addResolver(TemplateVariableResolver resolver) {
+		Assert.isNotNull(resolver);
 		fResolvers.put(resolver.getType(), resolver);   
 	}
 	
@@ -125,6 +154,7 @@ public class ContextType {
 	 * @param resolver the varibable to be removed
 	 */
 	public void removeResolver(TemplateVariableResolver resolver) {
+		Assert.isNotNull(resolver);
 		fResolvers.remove(resolver.getType());
 	}
 
@@ -158,22 +188,23 @@ public class ContextType {
 	 * Validates a pattern and returnes <code>null</code> if the validation was
 	 * a success or an error message if not.
 	 * 
-	 * XXX subject to change - will throw an exception
-	 * 
 	 * @param pattern the template pattern to validate
-	 * @return the translated pattern if successful, or an error message if not TODO what do we return there? throw an exception
+	 * @throws TemplateException if the pattern is invalid
 	 */
-	public String validate(String pattern) {
+	public void validate(String pattern) throws TemplateException {
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(pattern);
-		if (buffer != null) {
-			return validateVariables(buffer.getVariables());
-		}
-		return translator.getErrorMessage();
+		validateVariables(buffer.getVariables());
 	}
 	
-	protected String validateVariables(TemplateVariable[] variables) {
-		return null;
+	/**
+	 * Validates the variables in this context type. If a variable is not valid, e.g. if its type is not known
+	 * in this context type, a <code>TemplateException</code> is thrown.
+	 * 
+	 * @param variables the variables to validate
+	 * @throws TemplateException if one of the variables is not valid in this context type
+	 */
+	protected void validateVariables(TemplateVariable[] variables) throws TemplateException {
 	}
 
 	/**
@@ -186,6 +217,7 @@ public class ContextType {
 	 * @throws BadLocationException if the buffer cannot be successfully modified
 	 */
 	public void resolve(TemplateBuffer buffer, TemplateContext context) throws MalformedTreeException, BadLocationException {
+		Assert.isNotNull(context);
 		TemplateVariable[] variables= buffer.getVariables();
 
 		List positions= variablesToPositions(variables);
@@ -252,30 +284,5 @@ public class ContextType {
 			
 		 	variable.setOffsets(offsets);   
 		}
-	}
-
-	/**
-	 * Returns the name of the context type.
-	 * 
-	 * @return the name of the context type
-	 */
-	public String getName() {
-		return fName;
-	}
-	
-	/**
-	 * Sets the name of the context type.
-	 * 
-	 * <p>
-	 * This is a framework-only method that exists solely so that context types
-	 * can be contributed via an extension point and that should not be called in
-	 * client code; use {@link #ContextType(String, String)} instead.
-	 * </p>
-
-	 * @param name the name of the context type
-	 */
-	public void setName(String name) {
-		Assert.isTrue(fName == null); // only initialized by extension code
-		fName= name;
 	}
 }

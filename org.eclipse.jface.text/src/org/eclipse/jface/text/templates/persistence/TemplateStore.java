@@ -36,6 +36,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateException;
 
 /**
  * Manages templates. Handles reading default templates contributed via XML and
@@ -365,7 +366,16 @@ public class TemplateStore {
 	 */
 	private boolean validateTemplate(Template template) {
 		String contextTypeId= template.getContextTypeId();
-		return contextExists(contextTypeId) && (fRegistry == null || fRegistry.getContextType(contextTypeId).validate(template.getPattern()) == null);
+		if (contextExists(contextTypeId)) {
+			if (fRegistry != null)
+				try {
+					fRegistry.getContextType(contextTypeId).validate(template.getPattern());
+				} catch (TemplateException e) {
+					return false;
+				}
+			return true;
+		} else
+			return false;
 	}
 
 	/**

@@ -137,16 +137,13 @@ public class DocumentTemplateContext extends TemplateContext {
 	/*
 	 * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
 	 */
-	public TemplateBuffer evaluate(Template template) throws BadLocationException {
+	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
 			return null;
 		
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(template);
 		
-		if (buffer == null)
-			return buffer;
-
 		getContextType().resolve(buffer, this);
 		
 		return buffer;
