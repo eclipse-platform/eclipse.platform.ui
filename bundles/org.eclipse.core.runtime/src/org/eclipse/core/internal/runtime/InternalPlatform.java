@@ -661,6 +661,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		}
 	}
 	if (registry == null) {
+		clearRegIndex();
 		long start = System.currentTimeMillis();
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
 		IStatus resolveStatus = registry.resolve(true, true);
@@ -847,5 +848,8 @@ public static void addLastModifiedTime (String pathKey, long lastModTime) {
 }
 public static Map getRegIndex() {
 	return regIndex;
+}
+public static void clearRegIndex() {
+	regIndex = null;
 }
 }
