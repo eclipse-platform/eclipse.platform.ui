@@ -162,7 +162,7 @@ function showTab(tab)
 	     onmouseover="window.status='<%=views[i].getName()%>';return true;" 
 	     onmouseout="window.status='';">
 	     <a  href='javascript:parent.showView("<%=views[i].getName()%>");' 
-	         onclick='this.blur()' 
+	         onclick='this.blur();return false;' 
 	         onmouseover="window.status='<%=title%>';return true;" 
 	         onmouseout="window.status='';">
 	         <img alt="<%=title%>" 
