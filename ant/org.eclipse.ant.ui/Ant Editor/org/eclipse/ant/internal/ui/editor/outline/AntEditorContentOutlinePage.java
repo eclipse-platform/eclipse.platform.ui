@@ -438,7 +438,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		
 		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				postSelectionChanged(event);
+				firePostSelectionChanged(event.getSelection());
 			}
 		});
 	}
@@ -508,11 +508,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			getTreeViewer().expandToLevel(EXPAND_TO_LEVEL);
 		}
 	}
-	
-	public void postSelectionChanged(SelectionChangedEvent event) {
-		firePostSelectionChanged(event.getSelection());
-	}
- 	
 	
 	private void firePostSelectionChanged(ISelection selection) {
 		// create an event
