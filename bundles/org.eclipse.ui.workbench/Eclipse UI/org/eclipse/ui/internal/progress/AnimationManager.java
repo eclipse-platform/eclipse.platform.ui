@@ -390,7 +390,7 @@ class AnimationManager {
 				for (int i = 0; i < currentJobs.length; i++) {
 					jobs.add(currentJobs[i]);
 				}
-				setAnimated(showingError);
+				setAnimated(jobs.size() > 0 || showingError);
 
 			}
 
@@ -406,17 +406,19 @@ class AnimationManager {
 
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if (job.isSystem())
+				if(job == animateJob)
 					return;
-				if (jobs.size() == 0)
+					
+				if (jobs.isEmpty())
 					setAnimated(true);
 				jobs.add(job);
 			}
 
 			private void decrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if (job.isSystem())
-					return;
+				if(job == animateJob)
+					return;				
+					
 				jobs.remove(job);
 				if (jobs.isEmpty())
 					setAnimated(false);
