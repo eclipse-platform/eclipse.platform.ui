@@ -16,28 +16,28 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 
 /** 
- * An action which toggles filtering of internal targets from the Ant outline.
+ * An action which toggles filtering of properties from the Ant outline.
  */
-public class FilterInternalTargetsAction extends Action {
+public class FilterPropertiesAction extends Action {
 	
 	private AntEditorContentOutlinePage fPage;
 	
-	public FilterInternalTargetsAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
+	public FilterPropertiesAction(AntEditorContentOutlinePage page) {
+		super(AntOutlineMessages.getString("FilterPropertiesAction.0")); //$NON-NLS-1$
 		fPage = page;
-		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_INTERNAL_TARGETS));
-		setToolTipText(AntOutlineMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
-		setChecked(fPage.filterInternalTargets());
+		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_PROPERTIES));
+		setToolTipText(AntOutlineMessages.getString("FilterPropertiesAction.0")); //$NON-NLS-1$
+		setChecked(fPage.filterProperties());
 	}
 	
 	/**
-	 * Toggles the filtering of internal targets from the Ant outline
+	 * Toggles the filtering of properties from the Ant outline
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		BusyIndicator.showWhile(fPage.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				fPage.setFilterInternalTargets(isChecked());
+				fPage.setFilterProperties(isChecked());
 			}
 		});
 	}

@@ -61,7 +61,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
 	 * 
-	 * @param pluginDescriptor the plug-in descriptor for the
+	 * @param descriptor the plug-in descriptor for the
 	 *   Ant UI plug-in
 	 */
 	public AntUIPlugin(IPluginDescriptor descriptor) {
@@ -146,6 +146,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING, true);
 		
 		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS, false);
+		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES, false);
 
 		// Ant Editor color preferences
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_DEFAULT, IAntEditorColorConstants.DEFAULT);

@@ -39,6 +39,13 @@ public interface IAntUIPreferenceConstants {
 	 * show internal targets in the Outline.
 	 */
 	public static final String ANTEDITOR_FILTER_INTERNAL_TARGETS= "anteditor.filterInternalTargets"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference identifier constant which specifies whether the Ant editor should
+	 * show properties in the Outline.
+	 */
+	public static final String ANTEDITOR_FILTER_PROPERTIES= "anteditor.filterProperties"; //$NON-NLS-1$
+	
 	/**
 	 * Boolean preference identifier constant which specifies whether the Ant editor should
 	 * sort elements in the Outline.

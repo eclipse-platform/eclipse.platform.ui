@@ -15,13 +15,12 @@
 
 package org.eclipse.ant.internal.ui.editor.outline;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
@@ -51,6 +50,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -83,9 +83,44 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
 	private boolean fFilterInternalTargets;
+	private InternalTargetFilter fInternalTargetFilter= null;
+	private boolean fFilterProperties;
+	private PropertiesFilter fPropertiesFilter= null;
 	private boolean fSort;
 
 	private static ViewerSorter fSorter;
+	
+	/**
+	 * A viewer filter that removes internal targets
+	 */
+	private class InternalTargetFilter extends ViewerFilter {
+		
+		/**
+		 * Returns whether the given target is an internal target. Internal
+		 * targets are targets which have no description. The default target
+		 * is never considered internal.
+		 */
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof AntTargetNode) {
+				Target target= ((AntTargetNode)element).getTarget();
+				return target.getDescription() != null || ((AntTargetNode)element).isDefaultTarget();
+			} 
+			return true;
+		}
+	}
+	
+	/**
+	 * A viewer filter that removes properties
+	 */
+	private class PropertiesFilter extends ViewerFilter {
+		
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof AntPropertyNode) {
+				return false;
+			} 
+			return true;
+		}
+	}
 	
 	private class AntOutlineSorter extends ViewerSorter {
 		/**
@@ -124,43 +159,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 */
 		public Object[] getChildren(Object parentNode) {
 			AntElementNode tempParentElement = (AntElementNode)parentNode;
-			List tempChilds = new ArrayList();
 			List children= tempParentElement.getChildNodes();
-			if (!isFilterInternalTargets()) {
-				tempChilds.addAll(children);
-			} else {
-				// Filter out private targets
-				Iterator iter= children.iterator();
-				while (iter.hasNext()) {
-					AntElementNode element = (AntElementNode) iter.next();
-					if (!isInternalTarget(element)) {
-						tempChilds.add(element);
-					}
-				}
-			}
-			Object[] tempChildObjects = new Object[tempChilds.size()];
-			for(int i=0; i<tempChilds.size(); i++) {
-				tempChildObjects[i] = tempChilds.get(i);
-			}
-			return tempChildObjects;
+			return children.toArray();
 		}
-		
-		/**
-		 * Returns whether the given target is an internal target. Internal
-		 * targets are targets which have no description. The default target
-		 * is never considered internal.
-		 * @param element the target to examine
-		 * @return whether the given target is an internal target
-		 */
-		private boolean isInternalTarget(AntElementNode element) {
-			if (element instanceof AntTargetNode) {
-				Target target= ((AntTargetNode)element).getTarget();
-				String targetName= target.getName();
-				return target.getDescription() == null && targetName != null && !targetName.equals(target.getProject().getDefaultTarget());
-			} 
-			return false;
-		}
-
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(Object)
@@ -314,18 +315,63 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	protected void setFilterInternalTargets(boolean filter) {
 		fFilterInternalTargets= filter;
+		if (filter) {
+			getTreeViewer().addFilter(getInternalTargetsFilter());
+		} else {
+			getTreeViewer().removeFilter(getInternalTargetsFilter());
+		}
 		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS, filter);
 		getTreeViewer().refresh();
 	}
 	
+	/**
+	 * Sets whether internal targets should be filtered out of the outline.
+	 * 
+	 * @param filter whether or not internal targets should be filtered out
+	 */
+	protected void setFilterProperties(boolean filter) {
+		fFilterProperties= filter;
+		if (filter) {
+			getTreeViewer().addFilter(getPropertiesFilter());
+		} else {
+			getTreeViewer().removeFilter(getPropertiesFilter());
+		}
+		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES, filter);
+		getTreeViewer().refresh();
+	}
+	
+	private ViewerFilter getInternalTargetsFilter() {
+		if (fInternalTargetFilter == null) {
+			fInternalTargetFilter= new InternalTargetFilter();
+		}
+		return fInternalTargetFilter;
+	}
+	
+	private ViewerFilter getPropertiesFilter() {
+		if (fPropertiesFilter == null) {
+			fPropertiesFilter= new PropertiesFilter();
+		}
+		return fPropertiesFilter;
+	}
+
 	/**
 	 * Returns whether internal targets are currently being filtered out of
 	 * the outline.
 	 * 
 	 * @return whether or not internal targets are being filtered out
 	 */
-	protected boolean isFilterInternalTargets() {
+	protected boolean filterInternalTargets() {
 		return fFilterInternalTargets;
+	}
+	
+	/**
+	 * Returns whether properties currently being filtered out of
+	 * the outline.
+	 * 
+	 * @return whether or not properties are being filtered out
+	 */
+	protected boolean filterProperties() {
+		return fFilterProperties;
 	}
 	
 	/**
@@ -363,11 +409,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	private boolean isDefaultTargetNode(AntElementNode node) {
 		if (node instanceof AntTargetNode) {
-			Target target= ((AntTargetNode)node).getTarget();
-			String targetName= target.getName();
-			if (targetName != null) {
-				return targetName.equals(target.getProject().getDefaultTarget());
-			}
+			return ((AntTargetNode)node).isDefaultTarget();
 		}
 		return false;
 	}
@@ -379,6 +421,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		super();
 		fCore= core;
 		fFilterInternalTargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);
+		fFilterProperties= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);
 		fSort= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_SORT);
 	}
 
@@ -438,6 +481,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		IToolBarManager tbm= site.getActionBars().getToolBarManager();
 		tbm.add(new ToggleSortAntOutlineAction(this));
 		tbm.add(new FilterInternalTargetsAction(this));
+		tbm.add(new FilterPropertiesAction(this));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
@@ -449,6 +493,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		
 		runTargetImmediately = new AntRunTargetAction(this, AntRunTargetAction.MODE_IMMEDIATE_EXECUTE);
 		runAnt = new AntRunTargetAction(this, AntRunTargetAction.MODE_DISPLAY_DIALOG);
+		setFilterInternalTargets(fFilterInternalTargets);
+		setFilterProperties(fFilterProperties);
 	}
 	
 	private void setViewerInput(Object newInput) {
