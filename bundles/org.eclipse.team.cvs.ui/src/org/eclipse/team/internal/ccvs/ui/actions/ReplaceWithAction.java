@@ -61,7 +61,16 @@ public abstract class ReplaceWithAction extends TeamAction {
 				throw new InterruptedException();
 		}
 	}
+	
 	protected boolean getConfirmOverwrite() {
 		return confirmOverwrite;
+	}
+	
+	/**
+	 * It's important to note that actions have state and subclasses should 
+	 * reset the confirmation setting before calling getConfirmOverwrite().
+	 */
+	protected void setConfirmOverwrite(boolean shouldConfirm) {
+		this.confirmOverwrite = shouldConfirm;
 	}
 }

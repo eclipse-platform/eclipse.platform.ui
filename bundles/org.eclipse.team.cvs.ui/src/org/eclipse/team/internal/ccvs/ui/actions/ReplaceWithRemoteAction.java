@@ -30,6 +30,7 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					// Check if any resource is dirty.
+					setConfirmOverwrite(true);
 					IResource[] candidateResources = getSelectedResources();
 					List targetResources = new ArrayList();
 					for (int i = 0; i < candidateResources.length; i++) {
