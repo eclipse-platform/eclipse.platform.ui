@@ -365,7 +365,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		String name = dialog.getStringValue(NAME_LABEL);
 		String value = dialog.getStringValue(VALUE_LABEL);
 		
-		EnvironmentVariable envVar = null;
 		if (name != null && value != null && name.length() > 0 && value.length() >0) {
 			addVariable(new EnvironmentVariable(name.trim(), value.trim()));
 			updateAppendReplace();
