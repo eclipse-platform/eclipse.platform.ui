@@ -2838,7 +2838,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * Restore the toolbar layout for the active perspective.
 	 */
 	protected void resetToolBarLayout() {
-		window.getCoolBarManager().resetLayout();
+		window.getCoolBarManager().resetItemOrder();
 	}
 	/**
 	 * Sets the active working set for the workbench page. Notifies property

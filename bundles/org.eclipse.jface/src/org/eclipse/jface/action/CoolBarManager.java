@@ -728,7 +728,7 @@ public class CoolBarManager extends ContributionManager implements
      * Restores the canonical order of this cool bar manager. The canonical
      * order is the order in which the contribution items where added.
      */
-    public void resetLayout() {
+    public void resetItemOrder() {
         for (ListIterator iterator = cbItemsCreationOrder.listIterator(); iterator
                 .hasNext();) {
             IContributionItem item = (IContributionItem) iterator.next();
@@ -737,7 +737,9 @@ public class CoolBarManager extends ContributionManager implements
                 iterator.remove();
             }
         }
-        setLayout(cbItemsCreationOrder);
+        IContributionItem[] itemsToSet = new IContributionItem[cbItemsCreationOrder.size()];
+        cbItemsCreationOrder.toArray(itemsToSet);
+        setItems(itemsToSet);
     }
 
     /*
@@ -753,15 +755,12 @@ public class CoolBarManager extends ContributionManager implements
     }
 
     /**
-     * Replaces the internal data structure with the given new order. Then
-     * force and update.
+     * Replaces the current items with the given items.
+     * Forces an update.
      * 
-     * @param newLayout
-     *            a list of new order of contribution items.
+     * @param newItems the items with which to replace the current items
      */
-    public void setLayout(ArrayList newLayout) {
-        IContributionItem[] newItems = new IContributionItem[newLayout.size()];
-        newItems = (IContributionItem[]) newLayout.toArray(newItems);
+    public void setItems(IContributionItem[] newItems) {
         // dispose of all the cool items on the cool bar manager
         if (coolBar != null) {
             CoolItem[] coolItems = coolBar.getItems();

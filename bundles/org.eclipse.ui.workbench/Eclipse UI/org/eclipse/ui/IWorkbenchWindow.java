@@ -157,10 +157,4 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
 	 */
 	public void setActivePage(IWorkbenchPage page);
 
-	/**
-	 * @deprecated please change before next i-build to use the equivalent
-	 *             direct method [get*Support()]
-	 * @since 3.0
-	 */
-	Object getAdapter(Class adapter);
 }

@@ -1369,7 +1369,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				
 				// Set the cool bar layout to the given layout.
 				finalLayout.addAll(coolBarLayout);
-				coolBarMgr.setLayout(finalLayout);
+		        IContributionItem[] itemsToSet = new IContributionItem[finalLayout.size()];
+		        finalLayout.toArray(itemsToSet);
+				coolBarMgr.setItems(itemsToSet);
 			} else {
 				// For older workbenchs
 				coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
@@ -1604,8 +1606,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					coolBarLayout.add(Math.max(Math.min(i,coolBarLayout.size()), 0),item);
 				}
 			}
-			
-			coolBarMgr.setLayout(coolBarLayout);
+	        IContributionItem[] itemsToSet = new IContributionItem[coolBarLayout.size()];
+	        coolBarLayout.toArray(itemsToSet);
+			coolBarMgr.setItems(itemsToSet);
 		}
 		return true;
 	}
@@ -2482,10 +2485,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return perspectiveBar;
 	}
 
-	public Object getAdapter(Class adapter) {
-	    return null;
-	}
-	
 //for dynamic UI
 	protected ActionPresentation getActionPresentation() {
 		return actionPresentation;
