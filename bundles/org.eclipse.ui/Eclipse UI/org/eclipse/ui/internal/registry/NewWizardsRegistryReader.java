@@ -27,6 +27,8 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	
 	// constants
 	public final static String		BASE_CATEGORY = "Base";//$NON-NLS-1$
+	public final static String		EXAMPLES_WIZARD_CATEGORY = "Examples";//$NON-NLS-1$
+	private final static String		FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.uiExamples";//$NON-NLS-1$
 	private final static String		TAG_CATEGORY = "category";	//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other";//$NON-NLS-1$
@@ -301,7 +303,8 @@ private void pruneEmptyCategories(WizardCollectionElement parent) {
 	for (int nX = 0; nX < children.length; nX ++) {
 		WizardCollectionElement child = (WizardCollectionElement)children[nX];
 		pruneEmptyCategories(child);
-		if (child.isEmpty())
+		boolean shouldPrune = projectsOnly || child.getId().equals(FULL_EXAMPLES_WIZARD_CATEGORY);
+		if (child.isEmpty() && shouldPrune)
 			parent.remove(child);
 	}
 }
@@ -330,7 +333,7 @@ protected void readWizards() {
 	super.readWizards();
 	finishCategories();
 	finishWizards();
-	if (projectsOnly && wizards != null) {
+	if (wizards != null) {
 		WizardCollectionElement parent = (WizardCollectionElement)wizards;
 		pruneEmptyCategories(parent);
 	}
