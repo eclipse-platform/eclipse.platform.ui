@@ -12,24 +12,16 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
- * Note: This interface is yet experimental.
- * <p>
  * A launch configuration delegate performs launching for a
  * specific type of launch configuration. A launch configuration
  * delegate is defined by the <code>delegate</code> attribute
  * of a <code>launchConfigurationType</code> extension.
- * </p>
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
- * <p>
- * <b>NOTE:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see org.eclipse.debug.core.ILaunchConfigurationType
  * @see ILaunchConfiguration
+ * @since 2.0
  */
 public interface ILaunchConfigurationDelegate {
 	
@@ -39,6 +31,13 @@ public interface ILaunchConfigurationDelegate {
 	 * configuration. The resulting launch object is registered with the
 	 * launch manager. Returns <code>null</code> if the launch is not
 	 * completed.
+	 * <p>
+	 * [Issue: this API is being changed. A launch object will be created
+	 *  and registered before this method is called, and will be passed
+	 *  as a parameter to this method. This delegate will add targets and
+	 *  processes to the launch as required. This method will not return
+	 *  a value (i.e. will be 'void').]
+	 * </p>
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode the mode in which to launch, one of the mode constants

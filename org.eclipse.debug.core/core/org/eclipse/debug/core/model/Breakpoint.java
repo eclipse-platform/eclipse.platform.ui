@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
@@ -89,6 +90,12 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	public void setRegistered(boolean registered) throws CoreException {
 		if (isRegistered() != registered) {
 			setAttribute(REGISTERED, registered);
+			IBreakpointManager mgr = DebugPlugin.getDefault().getBreakpointManager();
+			if (registered) {
+				mgr.addBreakpoint(this);
+			} else {
+				mgr.removeBreakpoint(this, false);
+			}
 		}
 	}	
 

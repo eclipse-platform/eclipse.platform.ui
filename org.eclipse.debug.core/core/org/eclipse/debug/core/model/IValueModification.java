@@ -13,12 +13,6 @@ import org.eclipse.debug.core.DebugException;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see IVariable
  */
 public interface IValueModification {
@@ -43,6 +37,7 @@ public interface IValueModification {
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
+	 * @since 2.0
 	 */
 	public void setValue(IValue value) throws DebugException;	
 	
@@ -76,6 +71,7 @@ public interface IValueModification {
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
+	 * @since 2.0
 	 */
 	public boolean verifyValue(IValue value) throws DebugException;
 }

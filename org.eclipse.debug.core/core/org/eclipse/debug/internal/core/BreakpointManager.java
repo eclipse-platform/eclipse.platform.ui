@@ -56,6 +56,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * String constants corresponding to XML extension keys
 	 */
 	private final static String CLASS = "class"; //$NON-NLS-1$
+	
+	/**
+	 * Attribute name for the <code>"markerType"</code> attribute of
+	 * a breakpoint extension.
+	 */
+	private static final String MARKER_TYPE= "markerType";	 //$NON-NLS-1$	
 
 	/**
 	 * A collection of breakpoints registered with this manager.
@@ -177,7 +183,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(DebugPlugin.EXTENSION_POINT_BREAKPOINTS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
-			fBreakpointExtensions.put(elements[i].getAttribute(IBreakpoint.MARKER_TYPE), elements[i]);
+			fBreakpointExtensions.put(elements[i].getAttribute(MARKER_TYPE), elements[i]);
 		}
 		
 	}

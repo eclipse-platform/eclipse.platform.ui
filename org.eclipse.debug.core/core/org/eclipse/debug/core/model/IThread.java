@@ -8,11 +8,10 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * A thread is a sequential flow of execution in a debug target. A
- * thread is of element type <code>THREAD</code>. A thread contains
- * stack frames.  Stack frames are only available when the thread is 
- * suspended, and are returned in top-down order.
- * Minimally, a thread supports the following capabilities:
+ * A thread is a sequential flow of execution in a debug target.
+ * A thread contains stack frames.  Stack frames are only available when the
+ * thread is suspended, and are returned in top-down order.
+ * Minimally, a thread supports the following:
  * <ul>
  * <li>suspend/resume
  * <li>stepping
@@ -20,12 +19,6 @@ import org.eclipse.debug.core.DebugException;
  * </ul>
  * <p>
  * Clients may implement this interface.
- * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see ISuspendResume
  * @see IStep
@@ -45,6 +38,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * @since 2.0
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException;
 	

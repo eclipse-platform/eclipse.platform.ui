@@ -8,8 +8,7 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * A value represents the value of a variable.  A value is of element type <code>VALUE</code>.
- * A value does not have a parent - instead it has an associated variable.
+ * A value represents the value of a variable.
  * A value representing a complex data structure contains variables.
  * <p>
  * An implementation may choose to re-use or discard
@@ -27,12 +26,6 @@ import org.eclipse.debug.core.DebugException;
  * </p>
  * <p>
  * Clients may implement this interface.
- * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see IVariable
  */
@@ -85,6 +78,7 @@ public interface IValue extends IDebugElement {
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * @since 2.0
 	 */
 	public IVariable[] getVariables() throws DebugException;
 	

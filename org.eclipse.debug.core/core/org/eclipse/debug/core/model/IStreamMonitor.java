@@ -16,12 +16,6 @@ import org.eclipse.debug.core.IStreamListener;
  * provides an implementation of the <code>IStreamsProxy</code>
  * interface must also provide an implementation of this interface.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see IStreamsProxy
  */
 public interface IStreamMonitor {
@@ -29,7 +23,7 @@ public interface IStreamMonitor {
 	 * Adds the given listener to this stream monitor's registered listeners.
 	 * Has no effect if an identical listener is already registered.
 	 *
-	 * @param the listener to add
+	 * @param listener the listener to add
 	 */
 	public void addListener(IStreamListener listener);
 	/**
@@ -43,7 +37,7 @@ public interface IStreamMonitor {
 	 * Removes the given listener from this stream monitor's registered listeners.
 	 * Has no effect if the listener is not already registered.
 	 *
-	 * @param the listener to remove
+	 * @param listener the listener to remove
 	 */
 	public void removeListener(IStreamListener listener);
 }

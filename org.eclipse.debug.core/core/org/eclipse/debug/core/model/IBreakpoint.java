@@ -18,7 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * <p>
  * A breakpoint is defined in two parts:
  * <ol>
- * <li>By an extension of kind <code>"org.eclipse.debug.core.breakpoints"</li>
+ * <li>By an extension of kind <code>"org.eclipse.debug.core.breakpoints"</code></li>
  * <li>By a marker definition that corresponds to the above breakpoint extension</li>
  * </ol>
  * <p>
@@ -70,7 +70,7 @@ public interface IBreakpoint extends IAdaptable {
 	public static final String BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".breakpointMarker"; //$NON-NLS-1$
 	
 	/**
-	 * Line breakpoint marker type.
+	 * Line breakpoint marker type
 	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
 	 */
 	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".lineBreakpointMarker"; //$NON-NLS-1$
@@ -85,17 +85,16 @@ public interface IBreakpoint extends IAdaptable {
 	public static final String ENABLED= "org.eclipse.debug.core.enabled"; //$NON-NLS-1$
 	
 	/**
-	 * Breakpoint marker attribute (value <code>"org.eclipse.debug.core.id"</code>).
+	 * Debug model identifier breakpoint marker attribute (value <code>"org.eclipse.debug.core.id"</code>).
 	 * The attribute is a <code>String</code> corresponding to the
-	 * identifier of the debug model a breakpoint is
-	 * associated with.
+	 * identifier of the debug model a breakpoint is associated with.
 	 */
 	public static final String ID= "org.eclipse.debug.core.id"; //$NON-NLS-1$
 	
 	/**
 	 * Registered breakpoint marker attribute (value <code>"org.eclipse.debug.core.registered"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to
-	 * whether a breakpoint has been added to the breakpoint manager.
+	 * whether a breakpoint has been registered with the breakpoint manager.
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
@@ -112,17 +111,11 @@ public interface IBreakpoint extends IAdaptable {
 	public static final String PERSISTED= "org.eclipse.debug.core.persisted"; //$NON-NLS-1$		
 	
 	/**
-	 * Attribute name for the <code>"markerType"</code> attribute of
-	 * a breakpoint extension.
-	 */
-	public static final String MARKER_TYPE= "markerType";	 //$NON-NLS-1$
-
-	/**
 	 * Deletes this breakpoint's underlying marker, and removes
 	 * this breakpoint from the breakpoint manager.
 	 *
-	 * @exception CoreException if deleting the underlying marker throws
-	 * 	a <code>CoreException<code>.
+	 * @exception CoreException if unable to delete this breakpoint's
+	 *  underlying marker
 	 */
 	public void delete() throws CoreException;
 	
@@ -154,8 +147,8 @@ public interface IBreakpoint extends IAdaptable {
 	 * Returns whether this breakpoint is enabled
 	 * 
 	 * @return whether this breakpoint is enabled
-	 * @exception CoreException if a <code>CoreException</code> is 
-	 * 	thrown when retrieving the enabled attribute from the underlying marker
+	 * @exception CoreException if unable to access the associated
+	 *  attribute from this breakpoint's underlying marker
 	 */
 	public boolean isEnabled() throws CoreException;
 	/**
@@ -164,8 +157,8 @@ public interface IBreakpoint extends IAdaptable {
 	 * enabled parameter.
 	 * 
 	 * @param enabled  whether this breakpoint should be enabled
-	 * @exception CoreException if a <code>CoreException</code> is thrown
-	 * 	when setting the attribute on the underlying marker.
+	 * @exception CoreException if unable to set the associated attribute on
+	 *  this breakpoint's underlying marker.
 	 */
 	public void setEnabled(boolean enabled) throws CoreException;
 	
@@ -175,22 +168,19 @@ public interface IBreakpoint extends IAdaptable {
 	 * 
 	 * @return whether this breakpoint is currently registered with
 	 *  the breakpoint manager
-	 * @exception CoreException if a <code>CoreException</code> is thrown
-	 * 	when accessing the attribute on the underlying marker
+	 * @exception CoreException if unable to access the associated 
+	 *  attribute on this breakpoint's underlying marker
 	 */
 	public boolean isRegistered() throws CoreException;
 	
 	/**
 	 * Sets whether this breakpoint is currently registered with the
-	 * breakpoint manager. This method is only used by the breakpoint
-	 * manager, such that when breakpoints are restored on workspace
-	 * startup, the breakpoint manager knows which breakpoints should
-	 * be added to the breakpoint manager. 
+	 * breakpoint manager. 
 	 * 
 	 * @param registered whether this breakpoint is registered with the
 	 *   breakpoint manager
-	 * @exception CoreException if a <code>CoreException</code> is thrown
-	 * 	when setting the attribute on the underlying marker.
+	 * @exception CoreException if unable to set the associated attribute
+	 *  on this breakpoint's underlying marker.
 	 */
 	public void setRegistered(boolean registered) throws CoreException;
 	
@@ -202,8 +192,8 @@ public interface IBreakpoint extends IAdaptable {
 	 * specific type), breakpoints define this functionality.
 	 * 
 	 * @return whether this breakpoint is to be persisted
-	 * @exception CoreException if a <code>CoreException</code> is thrown
-	 * 	when accessing the attribute on the underlying marker
+	 * @exception CoreException if unable to access the associated attribute
+	 *  on this breakpoint's underlying marker
 	 */
 	public boolean isPersisted() throws CoreException;
 	
@@ -216,8 +206,8 @@ public interface IBreakpoint extends IAdaptable {
 	 * breakpoint's marker definition is defined as not persisted.
 	 * 
 	 * @param persist whether this breakpoint is to be persisted
-	 * @exception CoreException if a <code>CoreException</code> is thrown
-	 * 	when setting the attribute on the underlying marker.
+	 * @exception CoreException if unable to set the associated attribute on
+	 *  this breakpoint's underlying marker.
 	 */
 	public void setPersisted(boolean registered) throws CoreException;	
 }

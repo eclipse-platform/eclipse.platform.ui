@@ -11,8 +11,8 @@ import org.eclipse.debug.core.IBreakpointListener;
 /**
  * A debug target is a debuggable execution context. For example, a debug target
  * may represent a debuggable process or a virtual machine. A debug target is the root
- * of the debug element hierarchy. A debug target is of element type <code>DEBUG_TARGET</code>,
- * and contains threads. Minimally, a debug target supports the following capabilities:
+ * of the debug element hierarchy. A debug targetcontains threads. Minimally, a debug
+ * target supports the following:
  * <ul>
  * <li>terminate
  * <li>suspend/resume
@@ -26,12 +26,6 @@ import org.eclipse.debug.core.IBreakpointListener;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see ITerminate
  * @see ISuspendResume
  * @see IBreakpointListener
@@ -44,6 +38,9 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * Returns the system process associated with this debug target
 	 * or <code>null</code> if no system process is associated with
 	 * this debug target.
+	 * 
+	 * @return the system process associated with this debug target
+	 *  or <code>null</code> if none
 	 */
 	public IProcess getProcess();
 	/**
@@ -61,9 +58,9 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	public IThread[] getThreads() throws DebugException;
 	
 	/**
-	 * Returns whether this debug target contains any threads.
+	 * Returns whether this debug target currently contains any threads.
 	 * 
-	 * @return whether this debug target contains any threads
+	 * @return whether this debug target currently contains any threads
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for

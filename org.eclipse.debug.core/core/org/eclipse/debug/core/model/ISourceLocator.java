@@ -8,15 +8,15 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
- * A source locator locates source elements for stack frames. Each
- * debug session launch (optionally) specifies a source locator which is
+ * A source locator locates source elements for stack frames. A launch (optionally)
+ * specifies a source locator which is
  * used to locate source for that debug session. If a launch does not
  * provide a source locator, source cannot be displayed.
  * Abstraction of source lookup allows clients to hide implementation
  * details of source location and representation.
  * <p>
- * Generally, an implementor of a debug model will also implement launchers
- * and source locators that work together as a whole. That is, the implementation
+ * Generally, an implementor of a debug model will also implement launch configuration types,
+ * delegates, and source locators that work together as a whole. That is, the implementation
  * of a source locator will have knowledge of how to locate a source element
  * for a stack frame. For example, a Java stack frame could define API which
  * specifies a source file name. A Java source locator would use this information
@@ -31,15 +31,10 @@ import org.eclipse.debug.core.model.IStackFrame;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see org.eclipse.debug.core.ILaunch
- * @see IStackFrame 
+ * @see org.eclipse.debug.core.model.IStackFrame 
  * @see org.eclipse.debug.ui.IDebugModelPresentation
+ * @see org.eclipse.debug.core.model.IPersistableSourceLocator
  */
 public interface ISourceLocator {
 	
