@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.Platform;
+import java.lang.reflect.Method;
+import java.util.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.osgi.framework.Bundle;
 
@@ -22,6 +26,14 @@ import org.osgi.framework.Bundle;
  */
 public final class LegacyResourceSupport {
 
+	private static String[] resourceClassNames = {
+        "org.eclipse.core.resources.IResource", //$NON-NLS-1$
+        "org.eclipse.core.resources.IContainer", //$NON-NLS-1$
+        "org.eclipse.core.resources.IFolder", //$NON-NLS-1$
+        "org.eclipse.core.resources.IProject", //$NON-NLS-1$
+        "org.eclipse.core.resources.IFile", //$NON-NLS-1$
+	};
+	
     /**
      * Cached value of
      * <code>Class.forName("org.eclipse.core.resources.IResource")</code>;
@@ -218,12 +230,190 @@ public final class LegacyResourceSupport {
             return null;
         }
     }
+    
+    /**
+     * Returns <code>true</code> if the provided type name is an
+     * <code>IResource</code>, and <code>false</code> otherwise.
+     * @param objectClassName
+     * @return <code>true</code> if the provided type name is an
+     * <code>IResource</code>, and <code>false</code> otherwise.
+     * 
+     * @since 3.1
+     */
+    public static boolean isResourceType(String objectClassName) {
+        for (int i = 0; i < resourceClassNames.length; i++) {
+            if (resourceClassNames[i].equals(objectClassName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns the class search order starting with <code>extensibleClass</code>.
+     * The search order is defined in this class' comment.
+     * 
+     * @since 3.1
+     */
+    private static boolean isInstanceOf(Object object, String type) {
+        Class clazz = object.getClass();
+        while (clazz != null) {
+            // check the class
+           if(clazz.getName().equals(type)) 
+           		return true;
+            // check all interfaces
+            // TODO: need to recurse over super interfaces, and add a test case
+            Class[] interfaces = clazz.getInterfaces();
+            for (int i = 0; i < interfaces.length; i++) {
+            	if(interfaces[i].getName().equals(type)) 
+               		return true;
+            }
+            // get the superclass
+            clazz = clazz.getSuperclass();
+        }
+        return false;
+    }
+    
+    /**
+     * Returns the adapted resource using the <code>IContributorResourceAdapter</code>
+     * registered for the given object. If the Resources plug-in is not loaded
+     * the object can not be adapted.
+     * 
+     * @param object the object to adapt to <code>IResource</code>.
+     * @return returns the adapted resource using the <code>IContributorResourceAdapter</code>
+     * or <code>null</code> if the Resources plug-in is not loaded.
+     * 
+     * @since 3.1
+     */
+    public static Object getAdaptedContributorResource(Object object) {
+		Class resourceClass = LegacyResourceSupport.getResourceClass();
+		if (resourceClass == null) {
+			return null;
+		}
+		if (resourceClass.isInstance(object)) {
+			return null;
+		}
+		if (object instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) object;
+			Class contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
+			if (contributorResourceAdapterClass == null) {
+				return null;
+			}
+			Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
+			if (resourceAdapter == null) {
+				// reflective equivalent of
+				//    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+				try {
+					Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
+					Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
+					resourceAdapter = m.invoke(null, new Object[0]);
+				} catch (Exception e) {
+					// shouldn't happen - but play it safe
+					return null;
+				}
+			}
+			Object result;
+			// reflective equivalent of
+			//    result = ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
+			try {
+				Method m = contributorResourceAdapterClass.getDeclaredMethod("getAdaptedResource", new Class[]{IAdaptable.class}); //$NON-NLS-1$
+				result = m.invoke(resourceAdapter, new Object[]{adaptable});
+			} catch (Exception e) {
+				// shouldn't happen - but play it safe
+				return null;
+			}
+			return result;
+		}
+		return null;
+	}
+    
+    /**
+     * Adapts a selection to the given objectClass considering the Legacy resource 
+     * support. Non resource objectClasses are adapted using the <code>IAdapterManager</code>
+     * and this may load the plug-in that contributes the adapter factory.
+     * <p>
+     * The returned selection will only contain elements successfully adapted.
+     * </p>
+     * @param selection the selection to adapt
+     * @param objectClass the class name to adapt the selection to
+     * @return an adapted selection
+     * 
+     * @since 3.1
+     */
+    public static IStructuredSelection adaptSelection(IStructuredSelection selection, String objectClass) {
+		List newSelection = new ArrayList(10);
+		IAdapterManager adapterManager = Platform.getAdapterManager();
+		for (Iterator it = selection.iterator(); it.hasNext();) {
+			Object element = (Object) it.next();
+			Object adaptedElement;
+			element = getAdapter(element, objectClass);		
+			if(element != null)
+				newSelection.add(element);
+		}
+		return new StructuredSelection(newSelection);
+	}
+    
+    /**
+     * Adapts an object to a specified objectClass considering the Legacy resource 
+     * support. Non resource objectClasses are adapted using the <code>IAdapterManager</code>
+     * and this may load the plug-in that contributes the adapter factory.
+     * <p>
+     * The returned selection will be of the same size as the original, and elements that could
+     * not be adapted are added to the returned selection as is.
+     * </p>
+     * @param element the element to adapt
+     * @param objectClass the class name to adapt the selection to
+     * @return an adapted element or <code>null</code> if the 
+     * element could not be adapted.
+     * 
+     * @since 3.1
+     */    
+    public static Object getAdapter(Object element, String objectClass) {
+		Object adaptedElement = null;
+		if (isInstanceOf(element, objectClass)) {
+			adaptedElement = element;
+		} else {		
+			// Handle IResource
+			if (LegacyResourceSupport.isResourceType(objectClass)) {
+				adaptedElement = getAdaptedResource(element);
+			} else {
+				// Handle all other types by using the adapter factory.
+				adaptedElement = Platform.getAdapterManager().loadAdapter(element, objectClass);
+			}
+		}
+		return adaptedElement;
+	}
+
+	/**
+     * Adapt the given element to an <code>IResource</code> using the following 
+     * search order:
+     * <ol>
+     * <li> using the IContributorResourceAdapter registered for the given element, or
+     * <li> directly asking the element if it adapts.
+     * </ol>
+     * 
+     * @param element the element to adapt
+     * @return an <code>IResource</code> instance if the element could be adapted or <code>null</code>
+     * otherwise.
+     * @since 3.1
+     */
+    public static Object getAdaptedResource(Object element) {
+		Class resourceClass = LegacyResourceSupport.getResourceClass();
+		Object adaptedValue = null;
+		if (resourceClass != null) {
+			if (resourceClass.isInstance(element)) {
+				adaptedValue = element;
+			} else {
+				adaptedValue = LegacyResourceSupport.getAdaptedContributorResource(element);
+			}
+		}
+		return adaptedValue;
+	}
 
     /**
-     * Prevents construction
-     */
+	 * Prevents construction
+	 */
     private LegacyResourceSupport() {
         // do nothing
     }
-
 }

@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.IAdaptable;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -32,27 +28,6 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
      */
     public ObjectActionContributorManager() {
         loadContributors();
-    }
-
-    /**
-     * Returns the class search order starting with <code>extensibleClass</code>.
-     * The search order is defined in this class' comment.
-     */
-    private List computeCombinedOrder(Class inputClass) {
-        List result = new ArrayList(4);
-        Class clazz = inputClass;
-        while (clazz != null) {
-            // add the class
-            result.add(clazz);
-            // add all the interfaces it implements
-            Class[] interfaces = clazz.getInterfaces();
-            for (int i = 0; i < interfaces.length; i++) {
-                result.add(interfaces[i]);
-            }
-            // get the superclass
-            clazz = clazz.getSuperclass();
-        }
-        return result;
     }
 
     /**
@@ -78,41 +53,35 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
             elements.add(selection);
         }
 
-        // Calculate the common class and interfaces.
-        List commonClasses = getCommonClasses(elements);
-        if (commonClasses == null || commonClasses.isEmpty())
-            return false;
-
+        // Calculate the common class, interfaces, and adapters registered
+        // via the IAdapterManager.
+        List commonAdapters = new ArrayList();
+        List commonClasses = getCommonClasses(elements, commonAdapters);
         // Get the resource class. It will be null if any of the
         // elements are resources themselves or do not adapt to
         // IResource.
         Class resourceClass = getCommonResourceClass(elements);
 
         // Get the contributors.	
-        // If there is a resource class add it in
-        List contributors = null;
-        if (resourceClass == null) {
-            if (commonClasses.size() == 1) {
-                contributors = getContributors((Class) commonClasses.get(0));
-            } else {
-                contributors = new ArrayList();
-                for (int i = 0; i < commonClasses.size(); i++) {
-                    List results = getContributors((Class) commonClasses.get(i));
-                    if (results != null)
-                        contributors.addAll(results);
-                }
-            }
-        } else {
-            contributors = getContributors((Class) commonClasses.get(0),
-                    resourceClass);
-            for (int i = 1; i < commonClasses.size(); i++) {
-                List results = getContributors((Class) commonClasses.get(i));
-                if (results != null)
-                    contributors.addAll(results);
-            }
-        }
-
-        if (contributors == null || contributors.isEmpty())
+        List contributors = new ArrayList();
+		if (resourceClass != null) {
+			contributors.addAll(getResourceContributors(resourceClass));
+		}
+		if (! commonAdapters.isEmpty()) {
+			for (Iterator it = commonAdapters.iterator(); it.hasNext();) {
+				String adapter = (String) it.next();
+				contributors.addAll(getAdaptableContributors(adapter));
+			}
+		}
+		if (commonClasses != null && ! commonClasses.isEmpty()) {
+			for (int i = 0; i < commonClasses.size(); i++) {
+				List results = getObjectContributors((Class) commonClasses.get(i));
+				if (results != null)
+					contributors.addAll(results);
+			}
+		}
+       
+        if (contributors.isEmpty())
             return false;
 
         // Do the contributions.  Add menus first, then actions
@@ -138,7 +107,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         }
         return actualContributions;
     }
-
+    
     /**
      * Returns the common denominator class for
      * two input classes.
@@ -187,82 +156,87 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
     }
 
     /**
-     * Returns the common denominator class and interfaces for the given
-     * collection of objects.
+     * Returns the common denominator class, interfaces, and adapters 
+     * for the given collection of objects.
      */
-    private List getCommonClasses(List objects) {
+    private List getCommonClasses(List objects, List commonAdapters) {
         if (objects == null || objects.size() == 0)
             return null;
 
-        // Quickly handle the easy case...
-        if (objects.size() == 1) {
-            List results = new ArrayList(1);
-            results.add(objects.get(0).getClass());
-            return results;
-        }
-
-        // Compute all the super classes for the first element
-        // and then all of the interfaces for the first element
-        // and it's super classes.
+        // Compute all the super classes, interfaces, and adapters 
+        // for the first element.
         List classes = computeClassOrder(objects.get(0).getClass());
+        List adapters = computeAdapterOrder(classes);
         List interfaces = computeInterfaceOrder(classes);
+        
+        // Cache of all types found in the selection - this is needed
+        // to compute common adapters.
+        List lastCommonTypes = new ArrayList();
+        
         boolean classesEmpty = classes.isEmpty();
         boolean interfacesEmpty = interfaces.isEmpty();
 
+        // Traverse the selection if there is more than one element selected.
         for (int i = 1; i < objects.size(); i++) {
             // Compute all the super classes for the current element
-            List results = computeClassOrder(objects.get(i).getClass());
+            List otherClasses = computeClassOrder(objects.get(i).getClass());
             if (!classesEmpty) {
-                classesEmpty = true;
-                if (results.isEmpty()) {
-                    // When no super classes, then it is obvious there
-                    // are no common super classes with the first element
-                    // so clear its list.
-                    classes.clear();
-                } else {
-                    // Remove any super classes of the first element that 
-                    // are not in the current element's super classes list.
-                    for (int j = 0; j < classes.size(); j++) {
-                        if (classes.get(j) != null) {
-                            classesEmpty = false;
-                            if (!results.contains(classes.get(j))) {
-                                classes.set(j, null);
-                            }
-                        }
-                    }
-                }
+                classesEmpty = extractCommonClasses(classes, otherClasses);
             }
-
+            
+            // Compute all the interfaces for the current element
+            // and all of its super classes.
+            List otherInterfaces = computeInterfaceOrder(otherClasses);
             if (!interfacesEmpty) {
-                // Compute all the interfaces for the current element
-                // and all of its super classes.
-                results = computeInterfaceOrder(results);
-                interfacesEmpty = true;
-                if (results.isEmpty()) {
-                    // When no interfaces, the it is obvious there are
-                    // no common interfaces between this current element
-                    // and the first element, so clear its list.
-                    interfaces.clear();
-                } else {
-                    // Remove any interfaces of the first element that
-                    // are not in the current element's interfaces list.
-                    for (int j = 0; j < interfaces.size(); j++) {
-                        if (interfaces.get(j) != null) {
-                            interfacesEmpty = false;
-                            if (!results.contains(interfaces.get(j))) {
-                                interfaces.set(j, null);
-                            }
-                        }
-                    }
-                }
+                interfacesEmpty = extractCommonClasses(interfaces, otherInterfaces);
             }
+            
+            // Compute all the adapters provided for the calculated
+            // classes and interfaces for this element.
+            List classesAndInterfaces = new ArrayList(otherClasses);
+        	if(otherInterfaces != null) 
+        		classesAndInterfaces.addAll(otherInterfaces);
+			List otherAdapters = computeAdapterOrder(classesAndInterfaces);
+            
+            // Compute common adapters
+            // Note here that an adapter can match a class or interface, that is
+            // that an element in the selection may not adapt to a type but instead
+            // be of that type.
+			// If the selected classes doesn't have adapters, keep
+			// adapters that match the given classes types (classes and interfaces).
+			if (otherAdapters.isEmpty() && ! adapters.isEmpty()) {
+				removeNonCommonAdapters(adapters, classesAndInterfaces);
+			} else {
+				if (adapters.isEmpty()) {
+					removeNonCommonAdapters(otherAdapters, lastCommonTypes);
+					if(! otherAdapters.isEmpty())
+						adapters.addAll(otherAdapters);
+				} else {
+					// Remove any adapters of the first element that
+					// are not in the current element's adapter list.
+					for (Iterator it = adapters.iterator(); it.hasNext();) {
+						String adapter = (String) it.next();
+						if (! otherAdapters.contains(adapter)) {
+							it.remove();
+						}
+					}
+				}
+			}
 
-            if (interfacesEmpty && classesEmpty) {
+            // Remember the common search order up to now, this is
+			// used to match adapters against common classes or interfaces.
+			lastCommonTypes.clear();
+            lastCommonTypes.addAll(classes);
+            lastCommonTypes.addAll(interfaces);
+            
+            if (interfacesEmpty && classesEmpty && adapters.isEmpty()) {
                 // As soon as we detect nothing in common, just exit.
                 return null;
             }
         }
 
+        // Once the common classes, interfaces, and adapters are
+        // calculated, let's prune the lists to remove duplicates.       
         ArrayList results = new ArrayList(4);
         ArrayList superClasses = new ArrayList(4);
         if (!classesEmpty) {
@@ -272,34 +246,89 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
                 }
             }
             // Just keep the first super class
-            if (!superClasses.isEmpty()) {
+            if (!superClasses.isEmpty()) {            	
                 results.add(superClasses.get(0));
             }
         }
 
         if (!interfacesEmpty) {
-            // Do no include the interfaces belonging to the common
-            // super classes as these will be calculated again later
-            // in addContributors method.
-            List dropInterfaces = null;
-            if (!superClasses.isEmpty()) {
-                dropInterfaces = computeInterfaceOrder(superClasses);
-            }
-
-            for (int j = 0; j < interfaces.size(); j++) {
-                if (interfaces.get(j) != null) {
-                    if (dropInterfaces != null
-                            && !dropInterfaces.contains(interfaces.get(j))) {
-                        results.add(interfaces.get(j));
-                    }
-                }
-            }
+           removeCommonInterfaces(superClasses, interfaces, results);
         }
-
-        return results;
+        
+        // Remove adapters already included as common classes
+        if(! adapters.isEmpty()) {
+        	removeCommonAdapters(adapters, results);
+        	commonAdapters.addAll(adapters);
+        }	
+        return results;        
     }
+    
+    private boolean extractCommonClasses(List classes, List otherClasses) {
+		boolean classesEmpty = true;
+		if (otherClasses.isEmpty()) {
+		    // When no super classes, then it is obvious there
+		    // are no common super classes with the first element
+		    // so clear its list.
+		    classes.clear();
+		} else {
+		    // Remove any super classes of the first element that 
+		    // are not in the current element's super classes list.
+		    for (int j = 0; j < classes.size(); j++) {
+		        if (classes.get(j) != null) {
+		            classesEmpty = false;  		            // TODO: should this only be set if item not nulled out?
+		            if (!otherClasses.contains(classes.get(j))) {
+		                classes.set(j, null);
+		            }
+		        }
+		    }
+		}
+		return classesEmpty;
+	}
 
-    /**
+	private void removeNonCommonAdapters(List adapters, List classes) {
+    	for (int i = 0; i < classes.size(); i++) {
+			Object o = classes.get(i);
+			if(o != null) {
+				Class clazz = (Class)o;
+				String name = clazz.getName();
+				if(adapters.contains(name))
+					return;
+			}			
+		}
+    	adapters.clear();
+    }
+    
+    private void removeCommonInterfaces(List superClasses, List types, List results) {
+		List dropInterfaces = null;
+		if (!superClasses.isEmpty()) {
+			dropInterfaces = computeInterfaceOrder(superClasses);
+		}
+		for (int j = 0; j < types.size(); j++) {
+			if (types.get(j) != null) {
+				if (dropInterfaces != null && !dropInterfaces.contains(types.get(j))) {
+					results.add(types.get(j));
+				}
+			}
+		}
+	}
+    
+    private List computeAdapterOrder(List classList) {
+    	Set result = new HashSet(4);       
+        IAdapterManager adapterMgr = Platform.getAdapterManager();
+        for (Iterator list = classList.iterator(); list.hasNext();) {
+            Class clazz = ((Class) list.next());
+            String[] adapters = adapterMgr.getAdapterTypes(clazz);
+            for (int i = 0; i < adapters.length; i++) {
+				String adapter = adapters[i];
+				if(! result.contains(adapter)) {
+					result.add(adapter);
+				}
+			}
+        }
+        return new ArrayList(result);
+	}
+
+	/**
      * Returns the shared instance of this manager.
      */
     public static ObjectActionContributorManager getManager() {
@@ -316,7 +345,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         ObjectActionContributorReader reader = new ObjectActionContributorReader();
         reader.readPopupContributors(this);
     }
-
+    
     /**
      * Returns the common denominator resource class for the given
      * collection of objects.
@@ -343,7 +372,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
                     continue;
                 }
 
-                Object resource = getAdaptedResource((IAdaptable) object);
+                Object resource = LegacyResourceSupport.getAdaptedContributorResource(object);
 
                 if (resource == null) {
                     //Not a resource and does not adapt. No common resource class

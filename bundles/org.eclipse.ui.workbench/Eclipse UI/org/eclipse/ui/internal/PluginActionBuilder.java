@@ -114,6 +114,14 @@ public abstract class PluginActionBuilder extends RegistryReader {
         String value = element.getAttribute(ATT_TARGET_ID);
         return value != null ? value : "???"; //$NON-NLS-1$
     }
+    
+    /**
+     * Returns the id of this contributions.
+     */
+    protected String getID(IConfigurationElement element) {
+        String value = element.getAttribute(ATT_ID);
+        return value != null ? value : "???"; //$NON-NLS-1$
+    }
 
     /**
      * Reads the contributions from the registry for the provided workbench

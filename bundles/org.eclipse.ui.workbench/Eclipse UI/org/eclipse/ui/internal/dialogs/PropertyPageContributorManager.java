@@ -11,15 +11,10 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.text.Collator;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
+import java.util.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.ObjectContributorManager;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
 /**
@@ -79,9 +74,8 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
      * @return true if contribution took place, false otherwise.
      */
     public boolean contribute(PropertyPageManager manager, IAdaptable object) {
-
         List result = getContributors(object);
-
+        
         if (result == null || result.size() == 0)
             return false;
 

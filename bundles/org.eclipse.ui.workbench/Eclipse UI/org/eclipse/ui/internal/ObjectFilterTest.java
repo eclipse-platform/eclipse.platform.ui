@@ -72,27 +72,7 @@ public class ObjectFilterTest {
         // Try out the object.
         if (this.preciselyMatches(object))
             return true;
-
-        // If not adaptable, or the object is a resource, just return.
-        if (!adaptable)
-            return false;
-
-        // be careful to avoid dependence on IResource.class, which may not be present
-        Class resourceClass = LegacyResourceSupport.getResourceClass();
-        if (resourceClass == null) {
-            return false;
-        }
-        if (resourceClass.isInstance(object)) {
-            return false;
-        }
-
-        // Try out the underlying resource.
-        Object res = null;
-        if (object instanceof IAdaptable)
-            res = ((IAdaptable) object).getAdapter(resourceClass);
-        if (res == null)
-            return false;
-        return this.preciselyMatches(res);
+        return false;
     }
 
     /**
