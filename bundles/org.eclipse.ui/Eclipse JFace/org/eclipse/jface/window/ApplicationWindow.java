@@ -213,17 +213,6 @@ protected void configureShell(Shell shell) {
 	shell.setLayout(new ApplicationWindowLayout());
 
 	new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-
-	Font font = getFont();
-	if (toolBarManager != null) {
-		Control control = toolBarManager.createControl(shell);
-		control.setFont(font);
-	}
-
-	if (statusLineManager != null) {
-		Control control = statusLineManager.createControl(shell);
-		control.setFont(font);
-	}
 }
 /**
  * Returns a new menu manager for the window.
@@ -292,6 +281,7 @@ public MenuManager getMenuBarManager() {
 protected StatusLineManager getStatusLineManager() {
 	return statusLineManager;
 }
+
 /**
  * Returns the symbolic font name of the font to be
  * used to display text in this window.
@@ -319,11 +309,6 @@ protected void handleFontChange(final PropertyChangeEvent event) {
 		return;
 	if (event.getProperty() == null)
 		return;
-	if (event.getProperty().equals(getSymbolicFontName()))	{
-		Control control = statusLineManager.getControl();
-		control.setFont(getFont());		
-		getShell().layout();
-	}
 }
 /* (non-Javadoc)
  * Method declared on IRunnableContext.
