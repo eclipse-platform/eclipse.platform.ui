@@ -36,9 +36,6 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.test.harness.DialogCheck;
-import org.eclipse.ui.texteditor.TextEditorTestStub;
-import org.eclipse.ui.views.navigator.NavigatorTestStub;
-import org.eclipse.ui.views.tasklist.TaskListTestStub;
 
 
 public class UIDialogsAuto extends TestCase {
@@ -99,6 +96,9 @@ public class UIDialogsAuto extends TestCase {
 		Dialog dialog = new EditorSelectionDialog( getShell() );
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+/**
+ * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
+ * 
 	public void testFindReplace() {
 		Dialog dialog = TextEditorTestStub.newFindReplaceDialog( getShell() );
 		DialogCheck.assertDialogTexts(dialog, this);
@@ -107,6 +107,7 @@ public class UIDialogsAuto extends TestCase {
 		Dialog dialog = NavigatorTestStub.newGotoResourceDialog(getShell(), new IResource[0]);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+ */
 	public void testNavigatorFilter() {
 		Dialog dialog = new ListSelectionDialog(getShell(), null, new SimpleListContentProvider(), new LabelProvider(), FILTER_SELECTION_MESSAGE);
 		DialogCheck.assertDialogTexts(dialog, this);
@@ -155,10 +156,14 @@ public class UIDialogsAuto extends TestCase {
 		Dialog dialog = new ShowViewDialog( getShell(), WorkbenchPlugin.getDefault().getViewRegistry() );
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+/**
+ * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
+ * 
 	public void testTaskFilters() {
 		Dialog dialog = TaskListTestStub.newFiltersDialog( getShell() );
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+ */
 }
 
 

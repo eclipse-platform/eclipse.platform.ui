@@ -20,7 +20,6 @@ import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.internal.dialogs.ImportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.test.harness.DialogCheck;
-import org.eclipse.ui.wizards.datatransfer.DataTransferTestStub;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
@@ -87,6 +86,9 @@ public class UIWizardsAuto extends TestCase {
 		Dialog dialog = exportWizard(null);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+/**
+ * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
+ * 
 	public void testFileSystemExport() {
 		Dialog dialog = exportWizard( DataTransferTestStub.newFileSystemResourceExportPage1(null) );
 		DialogCheck.assertDialogTexts(dialog, this);
@@ -95,10 +97,14 @@ public class UIWizardsAuto extends TestCase {
 		Dialog dialog = exportWizard( DataTransferTestStub.newZipFileResourceExportPage1(null) );
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+ */
 	public void testImportResources() {//reference: ImportResourcesAction
 		Dialog dialog = importWizard(null);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+/**
+ * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
+ * 
 	public void testFileSystemImport() {
 		Dialog dialog = importWizard( DataTransferTestStub.newFileSystemResourceImportPage1(WorkbenchPlugin.getDefault().getWorkbench(), StructuredSelection.EMPTY) );
 		DialogCheck.assertDialogTexts(dialog, this);
@@ -107,6 +113,7 @@ public class UIWizardsAuto extends TestCase {
 		Dialog dialog = importWizard( DataTransferTestStub.newZipFileResourceImportPage1(null) );
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+ */
 	public void testNewFile() {
 		BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard();
 		wizard.init( PlatformUI.getWorkbench(), new StructuredSelection() );
