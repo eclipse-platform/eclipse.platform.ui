@@ -14,10 +14,15 @@ import org.eclipse.update.core.model.ImportModel;
 import org.eclipse.update.core.model.NonPluginEntryModel;
 import org.eclipse.update.core.model.PluginEntryModel;
 import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class FeatureMain {
+public class FeatureMain extends UpdateManagerTestCase {
 
-	public static void main(String[] args) {
+	public FeatureMain(String testcase){
+		super(testcase);
+	}
+
+	public void testMain() {
 		
 		FeatureModelFactory factory = new FeatureModelFactory();
 		InputStream is = null;

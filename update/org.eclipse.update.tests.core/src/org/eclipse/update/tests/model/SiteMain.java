@@ -12,10 +12,15 @@ import org.eclipse.update.core.model.SiteCategoryModel;
 import org.eclipse.update.core.model.SiteMapModel;
 import org.eclipse.update.core.model.SiteModelFactory;
 import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class SiteMain {
+public class SiteMain extends UpdateManagerTestCase {
+	
+	public SiteMain(String name){
+		super(name);
+	}
 
-	public static void main(String[] args) {
+	public void testMain() {
 		
 		PrintWriter w = new PrintWriter(System.out);
 		process("site_old_format.xml",w);

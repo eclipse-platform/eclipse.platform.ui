@@ -9,6 +9,7 @@ import junit.framework.TestSuite;
 import org.eclipse.update.tests.api.AllAPITests;
 import org.eclipse.update.tests.configurations.AllConfigurationsTests;
 import org.eclipse.update.tests.core.boot.AllPlatformConfigurationTests;
+import org.eclipse.update.tests.model.AllModelTests;
 import org.eclipse.update.tests.parser.AllParserTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
 import org.eclipse.update.tests.regularRemove.AllRegularRemoveTests;
@@ -25,6 +26,7 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllPlatformConfigurationTests.suite());
 		suite.addTest(AllRegularInstallTests.suite());
 		suite.addTest(AllAPITests.suite());
+		suite.addTest(AllModelTests.suite());
 		suite.addTest(AllParserTests.suite());
 		suite.addTest(AllCoreUITests.suite());
 		suite.addTest(AllConfigurationsTests.suite());

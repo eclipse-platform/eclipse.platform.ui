@@ -19,8 +19,6 @@ public class UpdatePerspective implements IPerspectiveFactory {
 
 public UpdatePerspective() {
 	super();
-	MessageDialog.openInformation(UpdateUIPlugin.getActiveWorkbenchShell(), "Update", 
-	"Update Manager 2.0 is in experimental phase. You are free to use it but please refrain from reporting bugs as long as this dialog appears.");
 }
 
 public void createInitialLayout(IPageLayout factory) {
