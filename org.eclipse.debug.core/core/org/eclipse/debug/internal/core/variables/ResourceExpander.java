@@ -93,7 +93,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 		if (resource != null) {
 			return new IResource[] {resource};
 		}
-		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceExpander.1")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceExpander.0")); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -115,7 +115,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 		if (path != null) {
 			return path.toOSString();
 		}
-		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceExpander.2")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceExpander.0")); //$NON-NLS-1$
 		return null;
 	}
 
