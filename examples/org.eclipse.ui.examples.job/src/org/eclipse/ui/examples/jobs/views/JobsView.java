@@ -107,9 +107,139 @@ public class JobsView extends ViewPart {
 		Composite body = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
+		layout.makeColumnsEqualWidth = false;
 		body.setLayout(layout);
 
+		createEntryFieldGroup(body);
+		createPushButtonGroup(body);
+		createCheckboxGroup(body);
+	}
+
+	/**
+	 * Create all push button parts for the jobs view.
+	 * @param parent
+	 */
+	private void createPushButtonGroup(Composite parent) {
+		Composite group = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		//create jobs
+		Button create = new Button(group, SWT.PUSH);
+		create.setText("Create jobs"); //$NON-NLS-1$
+		create.setToolTipText("Creates and schedules jobs according to above parameters"); //$NON-NLS-1$
+		create.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		create.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				createJobs();
+			}
+		});
+
+		//touch workspace
+		Button touch = new Button(group, SWT.PUSH);
+		touch.setText("Touch workspace"); //$NON-NLS-1$
+		touch.setToolTipText("Modifies the workspace in the UI thread"); //$NON-NLS-1$
+		touch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		touch.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				touchWorkspace();
+			}
+		});
+		//busy cursor while
+		Button busyWhile = new Button(group, SWT.PUSH);
+		busyWhile.setText("busyCursorWhile"); //$NON-NLS-1$
+		busyWhile.setToolTipText("Uses IProgressService.busyCursorWhile"); //$NON-NLS-1$
+		busyWhile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		busyWhile.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				busyCursorWhile();
+			}
+		});
+		//progress monitor dialog with fork=false
+		Button noFork = new Button(group, SWT.PUSH);
+		noFork.setText("runInUI"); //$NON-NLS-1$
+		noFork.setToolTipText("Uses IProgressService.runInUI"); //$NON-NLS-1$
+		noFork.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		noFork.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				progressNoFork();
+			}
+		});
+
+		//progress monitor dialog with fork=false
+		Button exception = new Button(group, SWT.PUSH);
+		exception.setText("Runtime Exception"); //$NON-NLS-1$
+		exception.setToolTipText("NullPointerException when running"); //$NON-NLS-1$
+		exception.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		exception.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				jobWithRuntimeException();
+			}
+		});
+
+		//join the running test jobs
+		Button join = new Button(group, SWT.PUSH);
+		join.setText("Join Test Jobs"); //$NON-NLS-1$
+		join.setToolTipText("IJobManager.join() on test jobs"); //$NON-NLS-1$
+		join.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		join.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				joinTestJobs();
+			}
+		});
+
+		//join the running test jobs
+		Button window = new Button(group, SWT.PUSH);
+		window.setText("Runnable in Window"); //$NON-NLS-1$
+		window.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
+		window.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		window.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				runnableInWindow();
+			}
+		});
+
+		//join the running test jobs
+		Button sleep = new Button(group, SWT.PUSH);
+		sleep.setText("Sleep"); //$NON-NLS-1$
+		sleep.setToolTipText("Calls sleep() on all TestJobs"); //$NON-NLS-1$
+		sleep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		sleep.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doSleep();
+			}
+		});
+
+		//join the running test jobs
+		Button wake = new Button(group, SWT.PUSH);
+		wake.setText("WakeUp"); //$NON-NLS-1$
+		wake.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
+		wake.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		wake.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doWakeUp();
+			}
+		});
+	}
+	/**
+	 * Wakes up all sleeping test jobs.
+	 */
+	protected void doWakeUp() {
+		Platform.getJobManager().wakeUp(TestJob.FAMILY_TEST_JOB);
+	}
+	/**
+	 * Puts to sleep all waiting test jobs.
+	 */
+	protected void doSleep() {
+		Platform.getJobManager().sleep(TestJob.FAMILY_TEST_JOB);
+	}
+
+	/**
+	 * @param body
+	 */
+	private void createEntryFieldGroup(Composite body) {
 		//duration
 		Label label = new Label(body, SWT.NONE);
 		label.setText("Duration:"); //$NON-NLS-1$
@@ -141,130 +271,59 @@ public class JobsView extends ViewPart {
 		quantityField.setLayoutData(data);
 		quantityField.setText("1"); //$NON-NLS-1$
 
+	}
+
+	/**
+	 * Creates all of the checkbox buttons.
+	 */
+	private void createCheckboxGroup(Composite parent) {
+		Composite group = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		//lock
-		lockField = new Button(body, SWT.CHECK);
+		lockField = new Button(group, SWT.CHECK);
 		lockField.setText("Lock the workspace"); //$NON-NLS-1$
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		lockField.setLayoutData(data);
 
 		//system
-		systemField = new Button(body, SWT.CHECK);
+		systemField = new Button(group, SWT.CHECK);
 		systemField.setText("System job"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
 		systemField.setLayoutData(data);
 
 		//thread
-		threadField = new Button(body, SWT.CHECK);
+		threadField = new Button(group, SWT.CHECK);
 		threadField.setText("Run in UI thread"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
 		threadField.setLayoutData(data);
 
 		//failure
-		failureField = new Button(body, SWT.CHECK);
+		failureField = new Button(group, SWT.CHECK);
 		failureField.setText("Fail"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
 		failureField.setLayoutData(data);
 
 		//groups
-		groupField = new Button(body, SWT.CHECK);
+		groupField = new Button(group, SWT.CHECK);
 		groupField.setText("Run in Group"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
 		groupField.setLayoutData(data);
 
 		//IProgressMonitor.UNKNOWN
-		unknownField = new Button(body, SWT.CHECK);
+		unknownField = new Button(group, SWT.CHECK);
 		unknownField.setText("Indeterminate Progress"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
 		unknownField.setLayoutData(data);
 
 		//whether the job is a user job
-		userField = new Button(body, SWT.CHECK);
+		userField = new Button(group, SWT.CHECK);
 		userField.setText("User job"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
 		userField.setLayoutData(data);
-
-		//create jobs
-		Button create = new Button(body, SWT.PUSH);
-		create.setText("Create jobs"); //$NON-NLS-1$
-		create.setToolTipText("Creates and schedules jobs according to above parameters"); //$NON-NLS-1$
-		create.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		create.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				createJobs();
-			}
-		});
-
-		//touch workspace
-		Button touch = new Button(body, SWT.PUSH);
-		touch.setText("Touch workspace"); //$NON-NLS-1$
-		touch.setToolTipText("Modifies the workspace in the UI thread"); //$NON-NLS-1$
-		touch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		touch.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				touchWorkspace();
-			}
-		});
-		//busy cursor while
-		Button busyWhile = new Button(body, SWT.PUSH);
-		busyWhile.setText("busyCursorWhile"); //$NON-NLS-1$
-		busyWhile.setToolTipText("Uses IProgressService.busyCursorWhile"); //$NON-NLS-1$
-		busyWhile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		busyWhile.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				busyCursorWhile();
-			}
-		});
-		//progress monitor dialog with fork=false
-		Button noFork = new Button(body, SWT.PUSH);
-		noFork.setText("runInUI"); //$NON-NLS-1$
-		noFork.setToolTipText("Uses IProgressService.runInUI"); //$NON-NLS-1$
-		noFork.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		noFork.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				progressNoFork();
-			}
-		});
-
-		//progress monitor dialog with fork=false
-		Button exception = new Button(body, SWT.PUSH);
-		exception.setText("Runtime Exception"); //$NON-NLS-1$
-		exception.setToolTipText("NullPointerException when running"); //$NON-NLS-1$
-		exception.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		exception.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				jobWithRuntimeException();
-			}
-		});
-
-		//join the running test jobs
-		Button join = new Button(body, SWT.PUSH);
-		join.setText("Join Test Jobs"); //$NON-NLS-1$
-		join.setToolTipText("IJobManager.join() on test jobs"); //$NON-NLS-1$
-		join.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		join.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				joinTestJobs();
-			}
-		});
-		
-		//join the running test jobs
-		Button window = new Button(body, SWT.PUSH);
-		window.setText("Runnable in Window"); //$NON-NLS-1$
-		window.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
-		window.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		window.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				runnableInWindow();
-			}
-		});
-
 	}
 
 	protected void doRun(long duration, IProgressMonitor monitor) {
@@ -394,24 +453,22 @@ public class JobsView extends ViewPart {
 			});
 		}
 	}
-	
+
 	/**
 	 * Run a workspace runnable in the application window.
 	 *
 	 */
-	
-	public void runnableInWindow(){
-		
+
+	public void runnableInWindow() {
+
 		final long time = getDuration();
 		final long sleep = 10;
-		IRunnableWithProgress runnableTest = new WorkspaceModifyOperation(){
-			
+		IRunnableWithProgress runnableTest = new WorkspaceModifyOperation() {
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 			 */
-			protected void execute(IProgressMonitor monitor)
-					throws CoreException, InvocationTargetException,
-					InterruptedException {
+			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 				int ticks = (int) (time / sleep);
 				monitor.beginTask("Spinning inside ApplicationWindow.run()", ticks); //$NON-NLS-1$
 				monitor.setTaskName("Spinning inside ApplicationWindow.run()"); //$NON-NLS-1$
@@ -427,7 +484,7 @@ public class JobsView extends ViewPart {
 					monitor.worked(1);
 				}
 			}
-			
+
 		};
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnableTest);
@@ -435,6 +492,6 @@ public class JobsView extends ViewPart {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }
