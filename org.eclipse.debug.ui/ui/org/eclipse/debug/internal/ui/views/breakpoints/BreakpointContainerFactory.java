@@ -79,7 +79,6 @@ public class BreakpointContainerFactory implements IBreakpointContainerFactory {
 		if (fDelegate == null) {
 			try {
 				fDelegate= (IBreakpointContainerFactoryDelegate) fConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
-				fDelegate.setFactory(this);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
@@ -96,7 +95,7 @@ public class BreakpointContainerFactory implements IBreakpointContainerFactory {
     	if (delegate == null) {
     		return new IBreakpointContainer[] { new BreakpointContainer(breakpoints, this, DebugUIViewsMessages.getString("BreakpointContainerFactory.0")) }; //$NON-NLS-1$
     	}
-        IBreakpointContainer[] containers = delegate.createContainers(breakpoints);
+        IBreakpointContainer[] containers = delegate.createContainers(breakpoints, this);
         if (parentContainer != null) {
             parentContainer.setContainers(containers);
             for (int i = 0; i < containers.length; i++) {

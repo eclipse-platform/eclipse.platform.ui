@@ -17,8 +17,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * Breakpoint container factories are contributed via the
  * <code>org.eclipse.debug.ui.breakpointContainterFactories</code> extension point.
  * <p>
- * Clients implementing this interface must extend
- * <code>AbstractBreakpointContainerFactoryDelegate</code>.
+ * Clients are intended to implement this interface.
  * </p>
  * @since 3.1
  */
@@ -29,23 +28,10 @@ public interface IBreakpointContainerFactoryDelegate {
 	 * Each of the given breakpoints must exist in one and only one of the
 	 * returned containers.
 	 * @param breakpoints the breakpoints
+	 * @param factory the factory that this delegate is working for
 	 * @return a set of containers which divides up the given breakpoints
 	 */
-	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints);
-	
-	/**
-	 * Returns the breakpoint container factory associated with this delegate.
-	 * @return the factory associated with this delegate
-	 */
-	public IBreakpointContainerFactory getFactory();
-	
-	/**
-	 * Sets the breakpoint container factory associated with this delegate.
-	 * This method should only be called by the factory in question during
-	 * initialization.
-	 * @param factory the factory
-	 */
-	public void setFactory(IBreakpointContainerFactory factory);
+	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints, IBreakpointContainerFactory factory);
 	
 	/**
 	 * Disposes this delegate. Allows the delegate to clean up any

@@ -20,25 +20,26 @@ import java.util.Set;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.debug.ui.AbstractBreakpointContainerFactoryDelegate;
 import org.eclipse.debug.ui.IBreakpointContainer;
+import org.eclipse.debug.ui.IBreakpointContainerFactory;
+import org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate;
 import org.eclipse.swt.graphics.Image;
 
 /**
  * A breakpoint container factory delegate that divides breakpoints based on their
  * breakpoint type.
  */
-public class BreakpointTypeContainerFactoryDelegate extends AbstractBreakpointContainerFactoryDelegate {
+public class BreakpointTypeContainerFactoryDelegate implements IBreakpointContainerFactoryDelegate {
 	
 	// The image to use for "breakpoint type" containers.
 	private Image fContainerImage= null;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#createContainers(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer)
+	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#createContainers(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.debug.ui.IBreakpointContainerFactory)
 	 */
-	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints) {
+	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints, IBreakpointContainerFactory factory) {
 		if (fContainerImage == null) {
-			fContainerImage= fFactory.getImageDescriptor().createImage();
+			fContainerImage= factory.getImageDescriptor().createImage();
 		}
 		Map map= new HashMap();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -63,7 +64,7 @@ public class BreakpointTypeContainerFactoryDelegate extends AbstractBreakpointCo
 			List list= (List) map.get(typeName);
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
-					fFactory,
+					factory,
 					typeName);
 			container.setContainerImage(fContainerImage);
 			containers.add(container);

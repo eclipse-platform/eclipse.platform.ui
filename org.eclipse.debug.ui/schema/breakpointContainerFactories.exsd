@@ -7,6 +7,8 @@
       </appInfo>
       <documentation>
          This extension point provides a mechanism for contributing breakpoint container factories. A breakpoint container factory divides breakpoints up into containers based on some specific criteria. For example, a breakpoint container factory is provided to organize breakpoints by project.
+
+Factories with the specified name will be automatically created by the Debug Platform and presented to the user as options for grouping breakpoints. The supplied delegate class, which must implement org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate, will be loaded only as necessary, to avoid early plugin activation.
       </documentation>
    </annotation>
 
@@ -51,7 +53,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Implementation of org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory
+                  Implementation of org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactoryDelegate
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -100,7 +102,7 @@
      icon=&quot;icons/full/obj16/prj_obj.gif&quot;/&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
-In the above example, the supplied factory will be included in the list of options for grouping breakpoints (&quot;Group By &gt; Project&quot;). When the breakpoints view is set to group breakpoints by project, the factory will query the given class, which extends AbstractBreakpointContainerFactoryDelegate.
+In the above example, the supplied factory will be included in the list of options for grouping breakpoints (&quot;Group By &gt; Project&quot;). When the breakpoints view is set to group breakpoints by project, the factory will query the given class, which implements IBreakpointContainerFactoryDelegate.
       </documentation>
    </annotation>
 
@@ -118,7 +120,7 @@ In the above example, the supplied factory will be included in the list of optio
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         AbstractBreakpointContainerFactoryDelegate is provided by the platform. Clients are encouraged to extend this class instead of implementing IBreakpointContainerFactoryDelegate directly.
+         
       </documentation>
    </annotation>
 

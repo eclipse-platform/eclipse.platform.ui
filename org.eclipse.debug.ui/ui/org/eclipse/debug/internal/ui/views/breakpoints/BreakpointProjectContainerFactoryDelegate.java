@@ -20,8 +20,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.debug.ui.AbstractBreakpointContainerFactoryDelegate;
 import org.eclipse.debug.ui.IBreakpointContainer;
+import org.eclipse.debug.ui.IBreakpointContainerFactory;
+import org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
@@ -32,14 +33,14 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * A breakpoint container factory delegate that divides breakpoints based on their
  * containing project.
  */
-public class BreakpointProjectContainerFactoryDelegate extends AbstractBreakpointContainerFactoryDelegate {
+public class BreakpointProjectContainerFactoryDelegate implements IBreakpointContainerFactoryDelegate {
 	
 	private ILabelProvider fImageProvider= new WorkbenchLabelProvider();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#createContainers(org.eclipse.debug.core.model.IBreakpoint[])
+	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#createContainers(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.debug.ui.IBreakpointContainerFactory)
 	 */
-	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints) {
+	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints, IBreakpointContainerFactory factory) {
 		HashMap map= new HashMap();
 		List other= new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -68,7 +69,7 @@ public class BreakpointProjectContainerFactoryDelegate extends AbstractBreakpoin
 			List list= (List) map.get(project);
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
-					fFactory,
+					factory,
 					project.getName());
 			container.setContainerImage(fImageProvider.getImage(project));
 			containers.add(container);
@@ -76,7 +77,7 @@ public class BreakpointProjectContainerFactoryDelegate extends AbstractBreakpoin
 		if (other.size() > 0) {
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) other.toArray(new IBreakpoint[0]),
-					fFactory,
+					factory,
 					DebugUIViewsMessages.getString("BreakpointProjectContainerFactory.0")); //$NON-NLS-1$
 			Image image= PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
 			container.setContainerImage(image);

@@ -20,19 +20,20 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.debug.ui.AbstractBreakpointContainerFactoryDelegate;
 import org.eclipse.debug.ui.IBreakpointContainer;
+import org.eclipse.debug.ui.IBreakpointContainerFactory;
+import org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate;
 
 /**
  * A breakpoint container factory delegate that divides breakpoints based on their
  * "custom group".
  */
-public class BreakpointGroupContainerFactoryDelegate extends AbstractBreakpointContainerFactoryDelegate {
+public class BreakpointGroupContainerFactoryDelegate implements IBreakpointContainerFactoryDelegate {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#createContainers(org.eclipse.debug.core.model.IBreakpoint[])
+	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#createContainers(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.debug.ui.IBreakpointContainerFactory)
 	 */
-	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints) {
+	public IBreakpointContainer[] createContainers(IBreakpoint[] breakpoints, IBreakpointContainerFactory factory) {
 		HashMap map= new HashMap();
 		List other= new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -63,18 +64,24 @@ public class BreakpointGroupContainerFactoryDelegate extends AbstractBreakpointC
 			List list= (List) map.get(group);
 			BreakpointGroupContainer container= new BreakpointGroupContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
-					fFactory,
+					factory,
 					group);
 			containers.add(container);
 		}
 		if (other.size() > 0) {
 			BreakpointGroupContainer container= new BreakpointGroupContainer(
 					(IBreakpoint[]) other.toArray(new IBreakpoint[0]),
-					fFactory,
+					factory,
 					DebugUIViewsMessages.getString("BreakpointGroupContainerFactory.0")); //$NON-NLS-1$
 			containers.add(container);
 		}
 		return (IBreakpointContainer[]) containers.toArray(new IBreakpointContainer[containers.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate#dispose()
+	 */
+	public void dispose() {
 	}
 
 }
