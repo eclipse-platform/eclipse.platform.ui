@@ -96,7 +96,7 @@ public void run() {
 		ISelection workbenchSelection = 
 			workbench.getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if (workbenchSelection instanceof IStructuredSelection)
-			selectionToPass = (IStructuredSelection) selection;
+			selectionToPass = (IStructuredSelection)workbenchSelection;
 		else
 			selectionToPass = StructuredSelection.EMPTY;
 	}
