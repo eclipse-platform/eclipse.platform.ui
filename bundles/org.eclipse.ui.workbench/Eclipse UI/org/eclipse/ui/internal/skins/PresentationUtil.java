@@ -90,7 +90,9 @@ public class PresentationUtil {
 	
 	private static void cancelDrag() {
 		if (dragControl != null) {
-			dragControl.setCapture(false);
+			if (!dragControl.isDisposed()) {
+				dragControl.setCapture(false);
+			}
 			dragControl = null;
 		}
 		
