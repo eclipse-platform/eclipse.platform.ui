@@ -35,7 +35,6 @@ public class FormColors {
 	 * Key for the section separator color.
 	 */
 	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR";
-
 	/**
 	 * Key for the section title bar background.
 	 */
@@ -124,7 +123,7 @@ public class FormColors {
 		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
 		Color bg = getImpliedBackground();
 		RGB formBackground = bg.getRGB();
-			
+		
 		// blend 77% white with the title background gradient
 		tbBg = blend(formBackground, tbBg, 77);
 		createColor(FormColors.TB_BG, tbBg);
@@ -169,7 +168,9 @@ public class FormColors {
 	}
 	/**
 	 * Creates the color for the specified key using the provided RGB values.
-	 * The color object will be returned and also put into the registry. When
+	 * The color object will be returned and also put into the registry. 
+	 * If there is already another color object under the same key in
+	 * the registry, the existing object will be disposed. When
 	 * the class is disposed, the color will be disposed with it.
 	 * 
 	 * @param key
@@ -184,6 +185,9 @@ public class FormColors {
 	 */
 	public Color createColor(String key, int r, int g, int b) {
 		Color c = new Color(display, r, g, b);
+		Color prevC = (Color)colorRegistry.get(key);
+		if (prevC!=null)
+			prevC.dispose();
 		colorRegistry.put(key, c);
 		return c;
 	}
@@ -319,7 +323,8 @@ public class FormColors {
 	 * @return
 	 */
 	private int blend(int v1, int v2, int ratio) {
-		return (ratio*v1 + (100-ratio)*v2)/100;
+		int b = (ratio*v1 + (100-ratio)*v2)/100;
+		return Math.min(255, b);
 	}
 	
 	private Color getImpliedBackground() {
