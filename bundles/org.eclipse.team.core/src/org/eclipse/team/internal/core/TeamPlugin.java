@@ -138,13 +138,12 @@ final public class TeamPlugin extends Plugin {
 	public static IContentDescription getContentDescription(String name, InputStream stream) throws IOException  {
 		// tries to obtain a description for this file contents
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		InputStream contents = null;
 		try {
-			return contentTypeManager.getDescriptionFor(contents, name, IContentDescription.ALL);
+			return contentTypeManager.getDescriptionFor(stream, name, IContentDescription.ALL);
 		} finally {
-			if (contents != null)
+			if (stream != null)
 				try {
-					contents.close();
+					stream.close();
 				} catch (IOException e) {
 					// Ignore exceptions on close
 				}
