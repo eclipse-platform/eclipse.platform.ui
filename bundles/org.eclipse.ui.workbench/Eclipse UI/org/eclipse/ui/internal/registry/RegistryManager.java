@@ -30,6 +30,7 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	public static final int REGISTRY_CACHE_STATE_ACTIVE = 1;
 	public static final int REGISTRY_CACHE_STATE_DELETED = 2;
 	public static final int REGISTRY_CACHE_STATE_MAX = 2;
+	public static final String INTERNAL_REGISTRY_ADDITION = "InternalRegistryAddition"; //$NON-NLS-1$
 	private int numObjects = 0;
 	private class RegistryElement {
 		private int state;
@@ -126,12 +127,24 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	}
 	
 	public void add(Object element, String pluginId) {
-		if (element == null || pluginId == null || pluginId.length() == 0)
+		if (element == null)
+			// Nothing to add, so just return.
 			return;
-		RegistryElement regElement = (RegistryElement)cache.get(pluginId);
+		String toUsePluginId = pluginId;
+		if (pluginId == null || pluginId.length() == 0) {
+			// This element is being added to the registry but is not
+			// associated with a regular plug-in.  Likely, the element
+			// was created programmatically and needs to exist in the
+			// registry.  An example is the 'Other' category for views.
+			// Use the key INTERNAL_REGISTRY_ADDITION for these elements so
+			// they will not be removed from the registry with any plug-in
+			// removal.
+			toUsePluginId = INTERNAL_REGISTRY_ADDITION;
+		}
+		RegistryElement regElement = (RegistryElement)cache.get(toUsePluginId);
 		if (regElement == null) {
 			regElement = new RegistryElement(element);
-			cache.put(pluginId, regElement);
+			cache.put(toUsePluginId, regElement);
 		} else {
 			regElement.addNewObject(element);
 		}
