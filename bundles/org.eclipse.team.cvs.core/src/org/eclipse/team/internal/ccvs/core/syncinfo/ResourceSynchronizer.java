@@ -68,7 +68,12 @@ public abstract class ResourceSynchronizer {
 	 * @throws TeamException
 	 */
 	public IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
-		return new IResource[0];
+		try {
+			monitor.beginTask(null, 100);
+			return new IResource[0];
+		} finally {
+			monitor.done();
+		}
 	}
 
 }

@@ -233,6 +233,8 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];	
 				
+				monitor.setTaskName(Policy.bind("RemoteTagSynchronizer.0", resource.getFullPath().makeRelative().toString())); //$NON-NLS-1$
+				
 				// build the remote tree only if an initial tree hasn't been provided
 				ICVSRemoteResource	tree = buildRemoteTree(resource, depth, cacheFileContentsHint, Policy.subMonitorFor(monitor, 70));
 				

@@ -211,9 +211,12 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, 100);
-			IResource[] remoteChanges = refreshRemote(resources, depth, Policy.subMonitorFor(monitor, 60));
-			IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, getCacheFileContentsHint(), Policy.subMonitorFor(monitor, 40));
+			// Take a guess at the work involved for refreshing the base and remote trees
+			int baseWork = getCacheFileContentsHint() ? 10 : 30;
+			int remoteWork = 100;
+			monitor.beginTask(null, baseWork + remoteWork);
+			IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, getCacheFileContentsHint(), Policy.subMonitorFor(monitor, baseWork));
+			IResource[] remoteChanges = refreshRemote(resources, depth, Policy.subMonitorFor(monitor, remoteWork));
 		
 			Set allChanges = new HashSet();
 			allChanges.addAll(Arrays.asList(remoteChanges));
