@@ -8,7 +8,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ListenerList;
@@ -72,6 +74,8 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	private ScrolledComposite scroller;
 	private Color linkColor;
 	private Color linkColor2;
+	private Color errorColor;
+	private Color errorColor2;
 	private Color darkColor;
 	private Color whiteColor;
 	private Color taskColor;
@@ -135,6 +139,24 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			return keepItem;			
 		}
 		
+		Image checkIcon() {
+			Job job= getJob();
+			if (job != null) {
+				Display display= getDisplay();
+				Object property= job.getProperty(ICON_PROPERTY);
+				if (property instanceof ImageDescriptor) {
+					ImageDescriptor id= (ImageDescriptor) property;
+					return id.createImage(display);
+				}
+				if (property instanceof URL) {
+					URL url= (URL) property;
+					ImageDescriptor id= ImageDescriptor.createFromURL(url);
+					return id.createImage(display);
+				}
+			}
+			return null;
+		}
+		
 		abstract boolean refresh();
 		
 		public boolean remove() {
@@ -157,9 +179,16 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		String text= ""; //$NON-NLS-1$
 		boolean underlined;
 		IAction gotoAction;
+		IStatus result;
+		Color lColor= linkColor;
+		Color lColor2= linkColor2;
+		boolean foundImage;
+		JobItem jobitem;
 		
-		Hyperlink(Composite parent, JobTreeElement info) {
+		Hyperlink(JobItem parent, JobTreeElement info) {
 			super(parent, info, SWT.NO_BACKGROUND);
+			
+			jobitem= parent;
 			
  			setFont(defaultFont);
 			
@@ -187,7 +216,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				hasFocus = true;
 			case SWT.MouseEnter :
 				if (underlined) {
-					setForeground(linkColor2);
+					setForeground(lColor2);
 					redraw();
 				}
 				break;
@@ -195,7 +224,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				hasFocus = false;
 			case SWT.MouseExit :
 				if (underlined) {
-					setForeground(linkColor);
+					setForeground(lColor);
 					redraw();
 				}
 				break;
@@ -210,6 +239,22 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				break;
 			}
 		}
+		void setStatus(IStatus r) {
+			result= r;
+	    	if (result != null) {
+	    		String message= result.getMessage().trim();
+	    		if (message.length() > 0) {
+	    			lColor= errorColor;
+	    			lColor2= errorColor2;
+	    			setText("Error: " + message);
+	    			setAction(new Action() {
+	    				public void run() {
+	    					ErrorDialog.openError(getShell(), "Title", "Error", result);
+	    				}
+	    			});
+	    		}
+	    	}
+		}
 		private void setText(String t) {
 			if (t == null)
 				t= "";	//$NON-NLS-1$
@@ -223,7 +268,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		void setAction(IAction action) {
 			gotoAction= action;
 			underlined= action != null;
-			setForeground(underlined ? linkColor : taskColor);
+			setForeground(underlined ? lColor : taskColor);
 			if (underlined)
 				setCursor(handCursor);
 			redraw();
@@ -269,19 +314,26 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		public boolean refresh() {
 			checkKeep();
 			
-			String text= jobTreeElement.getDisplayString();
-			Job job= getJob();
-			if (job != null) {
-			    	Object property= job.getProperty(GOTO_PROPERTY);
-			    	if (property instanceof IAction && property != gotoAction)
-			    	    setAction((IAction) property);
-			    	
-			    	IStatus status= job.getResult();
-			    	if (status != null)
-			    	    text= "STATUS: " + status.getMessage();
+			// check for icon property and propagate to parent
+			if (jobitem.image == null) {
+				Image image= checkIcon();
+				if (image != null)
+					jobitem.setImage(image);
 			}
 			
-			setText(text);
+			setText(jobTreeElement.getDisplayString());
+			
+			Job job= getJob();
+			if (job != null) {
+		    	Object property= job.getProperty(GOTO_PROPERTY);
+		    	if (property instanceof IAction && property != gotoAction)
+		    	    setAction((IAction) property);
+		    	
+		    	IStatus status= job.getResult();
+		    	if (status != null)
+		    		setStatus(status);
+			}
+			
 			return false;
 		}
 	}
@@ -303,6 +355,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		int cachedWidth= -1;
 		int cachedHeight= -1;
 
+		Image image;
 		Label nameItem, iconItem;
 		ProgressBar progressBar;
 		ToolBar actionBar;
@@ -318,16 +371,17 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			Display display= getDisplay();
 
 			Job job= getJob();
-			Image image= null;
-			if (job != null) {
-				Object property= job.getProperty(ICON_PROPERTY);
-				if (property instanceof ImageDescriptor) {
-					ImageDescriptor id= (ImageDescriptor) property;
-					image= id.createImage(display);
-				} else if (property instanceof URL) {
-					URL url= (URL) property;
-					ImageDescriptor id= ImageDescriptor.createFromURL(url);
-					image= id.createImage(display);
+			if (image != null) {
+				if (job != null) {
+					Object property= job.getProperty(ICON_PROPERTY);
+					if (property instanceof ImageDescriptor) {
+						ImageDescriptor id= (ImageDescriptor) property;
+						image= id.createImage(display);
+					} else if (property instanceof URL) {
+						URL url= (URL) property;
+						ImageDescriptor id= ImageDescriptor.createFromURL(url);
+						image= id.createImage(display);
+					}
 				}
 			}
 			
@@ -340,8 +394,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			iconItem= new Label(this, SWT.NONE);
-			if (image != null)
-				iconItem.setImage(image);				
 			iconItem.addMouseListener(ml);
 			
 			nameItem= new Label(this, SWT.NONE);
@@ -372,6 +424,23 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			
 			refresh();
 		}
+
+		public void handleEvent(Event event) {
+	        super.handleEvent(event);
+	        if (event.type == SWT.Dispose) {
+	        	if (image != null && !image.isDisposed()) {
+	        		image.dispose();
+	        		image= null;
+	        	}
+	    	}
+	    }
+
+		void setImage(Image im) {
+			if (im != null && iconItem != null) {
+				image= im;
+				iconItem.setImage(im);
+			}
+		}
 		
 		public boolean remove() {
 			jobTerminated= true;
@@ -386,7 +455,29 @@ public class NewProgressViewer extends ProgressTreeViewer {
 					actionButton.setToolTipText(ProgressMessages.getString("NewProgressView.RemoveJobToolTip")); //$NON-NLS-1$
 					actionButton.setEnabled(true);
 				}
-				refresh();
+				
+				changed |= refresh();
+
+				IStatus result= getResult();
+				if (result != null) {
+					Control[] c= getChildren();
+					for (int i= 0; i < c.length; i++) {
+						if (c[i] instanceof Hyperlink) {
+							Hyperlink hl= (Hyperlink) c[i];
+							hl.setStatus(result);
+							break;
+						}
+					}
+				} else {
+					Control[] c= getChildren();
+					for (int i= 0; i < c.length; i++) {
+						if (c[i] instanceof Hyperlink) {
+							Hyperlink hl= (Hyperlink) c[i];
+							hl.refresh();
+						}
+					}	
+				}
+
 				return changed;
 			}
 			dispose();
@@ -516,6 +607,15 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				return ((JobInfo)jobTreeElement).isCanceled();
 			return false;
 		}
+	
+		IStatus getResult() {
+			if (jobTerminated) {
+				Job job= getJob();
+				if (job != null)
+			    	return job.getResult();
+			}
+			return null;
+		}
 		
 		/*
 		 * Update the visual item from the model.
@@ -529,8 +629,10 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		    boolean isGroup= jobTreeElement instanceof GroupInfo;
 			Object[] roots= contentProviderGetChildren(jobTreeElement);
 
-			// poll for keep property
+			// poll for properties
 		    checkKeep();
+		    if (image == null)
+		    	setImage(checkIcon());
 
 			// name
 		    String name= jobTreeElement.getDisplayString();
@@ -548,20 +650,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		    }
 		    nameItem.setText(shortenText(nameItem, name));
 
-		    // state
-			if (jobTerminated) {
-//				Job job= getJob();
-//				if (job != null) {
-//				    	IStatus status= job.getResult();
-//				    	if (status != null)
-//				    	    System.err.println("Status: " + status.getMessage());
-//				    	else
-//				    	    System.err.println("Status: null");
-//				}
-			    
-			} else {
-				//actionButton.setEnabled(true || jobTreeElement.isCancellable());				
-			}
 			
 			// percentage
 			if (jobTreeElement instanceof JobInfo) {				
@@ -653,6 +741,8 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		selectedColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
 		linkColor= display.getSystemColor(SWT.COLOR_DARK_BLUE);
 		linkColor2= display.getSystemColor(SWT.COLOR_BLUE);
+		errorColor= display.getSystemColor(SWT.COLOR_DARK_RED);
+		errorColor2= display.getSystemColor(SWT.COLOR_RED);
 				
 		scroller= new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		int height= defaultFont.getFontData()[0].getHeight();
@@ -769,16 +859,14 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	
 	private JobTreeItem findJobItem(Object element, boolean create) {
 		JobTreeItem ji= (JobTreeItem) map.get(element);
-		
-		//System.out.println(element + ": " + ji);
-		
+				
 		if (ji == null && create) {
 			JobTreeElement jte= (JobTreeElement) element;
 			Object parent= jte.getParent();
 			if (parent != null) {
 				JobTreeItem parentji= findJobItem(parent, true);
-				if (parentji != null)
-					ji= new Hyperlink(parentji, jte);
+				if (parentji instanceof JobItem)
+					ji= new Hyperlink((JobItem)parentji, jte);
 			} else {
 				createItem(jte);
 			}
@@ -789,12 +877,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	public void reveal(JobTreeItem jti) {
 		if (jti != null) {
 			Rectangle bounds= jti.getBounds();
-			/*
-			Rectangle visArea= scroller.getClientArea();
-			Point o= scroller.getOrigin();
-			visArea.x= o.x;
-			visArea.y= o.y;
-			*/
 			scroller.setOrigin(0, bounds.y);
 		}
 	}
