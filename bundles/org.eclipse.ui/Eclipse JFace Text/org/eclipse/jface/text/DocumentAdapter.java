@@ -22,6 +22,8 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	/** The line delimiter */
 	private String fLineDelimiter= null;
 	
+	private boolean fInvalidateLineDelimiter;
+	
 	/**
 	 * Creates a new document adapter which is initiallly not connected to
 	 * any document.
@@ -188,12 +190,24 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 		// check whether the given event is the one which was remembered
 		if (fEvent != null && event == fEvent)
 			fireTextChanged();
+
+		if (fInvalidateLineDelimiter) {
+			fLineDelimiter= null;
+			fInvalidateLineDelimiter= false;
+		}			
 	}
 	
 	/*
 	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(DocumentEvent event) {
+		try {
+			// invalidate cached line delimiter if first line of document was changed
+			if (event.getOffset() < fDocument.getLineLength(0))
+				fInvalidateLineDelimiter= true;
+		} catch (BadLocationException e) {
+		}
+
 		// Remember the given event
 	    fEvent= event;
 		fireTextChanging();

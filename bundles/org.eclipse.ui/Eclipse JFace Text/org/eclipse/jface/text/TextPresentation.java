@@ -156,7 +156,8 @@ public class TextPresentation {
 	}
 	
 	/**
-	 * Returns this presentation's default style range.
+	 * Returns this presentation's default style range. The returned <code>StyleRange</code>
+	 * is relative to the start of the result window.
 	 *
 	 * @return this presentation's default style range
 	 */
@@ -285,7 +286,8 @@ public class TextPresentation {
 	
 	/**
 	 * Returns an iterator which enumerates all style ranges of this presentation 
-	 * except the default style range.
+	 * except the default style range. The returned <code>StyleRange</code>s
+	 * are relative to the start of the presentation's result window.
 	 *
 	 * @return a style range iterator
 	 */
@@ -322,9 +324,13 @@ public class TextPresentation {
 	 */
 	public StyleRange getFirstStyleRange() {
 		try {
-			return (StyleRange) fRanges.get(getFirstIndexInWindow(fResultWindow));
+			
+			StyleRange range= (StyleRange) fRanges.get(getFirstIndexInWindow(fResultWindow));
+			return createWindowRelativeRange(fResultWindow, range);
+			
 		} catch (NoSuchElementException x) {
 		}
+		
 		return null;
 	}
 	
@@ -335,20 +341,28 @@ public class TextPresentation {
 	 */
 	public StyleRange getLastStyleRange() {
 		try {
-			return (StyleRange) fRanges.get(getFirstIndexAfterWindow(fResultWindow) - 1);
+			
+			StyleRange range=  (StyleRange) fRanges.get(getFirstIndexAfterWindow(fResultWindow) - 1);
+			return createWindowRelativeRange(fResultWindow, range);
+			
 		} catch (NoSuchElementException x) {
 		}
+		
 		return null;
 	}
 	
 	/**
-	 * Returns the coverage of this presentation.
+	 * Returns the coverage of this presentation as clipped by the presentation's
+	 * result window.
 	 *
 	 * @return the coverage of this presentation
 	 */
 	public IRegion getCoverage() {
-		if (fDefaultRange != null)
-			return new Region(fDefaultRange.start, fDefaultRange.start + fDefaultRange.length);
+		
+		if (fDefaultRange != null) {
+			StyleRange range= getDefaultStyleRange();
+			return new Region(range.start, range.length);
+		}
 		
 		StyleRange first= getFirstStyleRange();
 		StyleRange last= getLastStyleRange();

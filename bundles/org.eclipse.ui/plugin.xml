@@ -1195,7 +1195,7 @@
             name="%Editors.DefaultTextEditor"
             icon="icons/full/obj16/file_obj.gif"
             extensions="txt"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             class="org.eclipse.ui.editors.text.TextEditor"
             id="org.eclipse.ui.DefaultTextEditor">
       </editor>

@@ -47,8 +47,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Context menu group for actions which do not fit
 	 * in one of the other categories. 
 	 */
-	static final String GROUP_REST= "group.rest"; //$NON-NLS-1$
-	
+	static final String GROUP_REST= "group.rest"; //$NON-NLS-1$	
 	
 	
 	/** 
@@ -84,6 +83,18 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the action to incremental find. 
 	 */
 	static final String FIND_INCREMENTAL= "FindIncremental"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to convert line delimiters to DOS. 
+	 */
+	static final String CONVERT_LINE_DELIMITERS_TO_DOS= "ConvertLineDelimitersToDOS"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to convert line delimiters to UNIX. 
+	 */
+	static final String CONVERT_LINE_DELIMITERS_TO_UNIX= "ConvertLineDelimitersToUNIX"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to convert line delimiters to MAC. 
+	 */
+	static final String CONVERT_LINE_DELIMITERS_TO_MAC= "ConvertLineDelimitersToMAC"; //$NON-NLS-1$
 	
 	
 	/** 

@@ -80,7 +80,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 			document.set(buffer.toString());
 		
 		} catch (IOException x) {
-			IStatus s= new Status(IStatus.ERROR, null, IStatus.OK, x.getMessage(), x);
+			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
 			throw new CoreException(s);
 		} finally {
 			if (in != null) {

@@ -39,6 +39,9 @@ public interface IAbstractTextEditorHelpContextIds {
 	public static final String REVERT_TO_SAVED_ACTION= PREFIX + ITextEditorActionConstants.REVERT_TO_SAVED + ACTION_POSTFIX;
 	public static final String GOTO_LINE_ACTION= PREFIX + ITextEditorActionConstants.GOTO_LINE + ACTION_POSTFIX;
 	public static final String PRINT_ACTION= PREFIX + ITextEditorActionConstants.PRINT + ACTION_POSTFIX;
+	public static final String CONVERT_LINE_DELIMITERS_TO_DOS= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_DOS + ACTION_POSTFIX;
+	public static final String CONVERT_LINE_DELIMITERS_TO_UNIX= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX + ACTION_POSTFIX;
+	public static final String CONVERT_LINE_DELIMITERS_TO_MAC= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC + ACTION_POSTFIX;
 	
 	/* Dialogs */
 	public static final String FIND_REPLACE_DIALOG= PREFIX + "find_replace_dialog_context"; //$NON-NLS-1$
