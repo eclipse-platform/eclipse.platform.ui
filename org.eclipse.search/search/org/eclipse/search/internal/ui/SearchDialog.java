@@ -7,6 +7,8 @@ package org.eclipse.search.internal.ui;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -20,8 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,6 +37,7 @@ import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.search.internal.ui.
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
+import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 
 class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
@@ -81,6 +82,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	private IEditorPart fEditorPart;
 	private List fDescriptors;
 	private Point fMinSize;
+	private ScopePart fScopePart;
 
 	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor) {
 		super(shell);
@@ -138,22 +140,30 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		
 		fCurrentPage= getDescriptorAt(pageIndex).createObject();
 		fCurrentPage.setContainer(this);
-		
-		if (numPages == 1)
-			return getControl(fCurrentPage, parent);
+
+		if (numPages == 1) {
+			Control control= getControl(fCurrentPage, parent);
+			if (control instanceof Composite) {
+				// Search scope
+				fScopePart= new ScopePart();
+				fScopePart.createPart((Composite)control);
+			}
+			return control;
+		}
 		else {
 			Composite border= new Composite(parent, SWT.NONE);
 			GridLayout layout= new GridLayout();
-			layout.marginWidth= 7; layout.marginHeight= 7;
+			layout.marginWidth= 7;
+			layout.marginHeight= 7;
 			border.setLayout(layout);
-			
-			TabFolder folder= new TabFolder(border, SWT.NONE);	
+		
+			CTabFolder folder= new CTabFolder(border, SWT.NONE);	
 			folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 			folder.setLayout(new TabFolderLayout());
 
 			for (int i= 0; i < numPages; i++) {			
 				SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
-				final TabItem item= new TabItem(folder, SWT.NONE);
+				final CTabItem item= new CTabItem(folder, SWT.NONE);
 				item.setText(descriptor.getLabel());
 				item.addDisposeListener(new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
@@ -177,8 +187,16 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 					turnToPage(event);
 				}
 			});
-			
+		
 			folder.setSelection(pageIndex);
+			
+			// Search scope
+			Composite spacer= new Composite(border, SWT.NONE);
+			GridLayout spacerLayout= new GridLayout();
+			spacer.setLayout(spacerLayout);
+			spacer.setLayoutData(new GridData(GridData.FILL_BOTH));
+			fScopePart= new ScopePart();
+			fScopePart.createPart(spacer);
 			
 			return border;
 		}	
@@ -228,7 +246,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	private void turnToPage(SelectionEvent event) {
 		// To do. Check if dialog must be resized.
-		TabItem item= (TabItem)event.item;
+		CTabItem item= (CTabItem)event.item;
 		if (item.getControl() == null) {
 			SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
 			ISearchPage page= descriptor.createObject();
@@ -267,11 +285,39 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		return result;
 	}
 
-	/**
-	 * Returns the runnable context for the search operation
+	/*
+	 * Implements method from ISearchPageContainer
 	 */
 	public IRunnableContext getRunnableContext() {
 		return this;
+	}
+
+	/*
+	 * Implements method from ISearchPageContainer
+	 */	
+	public int getSelectedScope() {
+		return fScopePart.getSelectedScope();
+	}
+
+	/*
+	 * Implements method from ISearchPageContainer
+	 */
+	public IWorkingSet getSelectedWorkingSet() {
+		return fScopePart.getSelectedWorkingSet();
+	}
+
+	/*
+	 * Implements method from ISearchPageContainer
+	 */
+	public void setSelectedScope(int scope) {
+		fScopePart.setSelectedScope(scope);
+	}
+
+	/*
+	 * Implements method from ISearchPageContainer
+	 */
+	public void setSelectedWorkingSet(IWorkingSet workingSet) {
+		fScopePart.setSelectedWorkingSet(workingSet);
 	}
 
 	private Control getControl(ISearchPage page, Composite parent) {

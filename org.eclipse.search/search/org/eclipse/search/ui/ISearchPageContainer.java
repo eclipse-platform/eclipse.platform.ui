@@ -17,12 +17,29 @@ import org.eclipse.jface.viewers.ISelection;
  * </p>
  */
 public interface ISearchPageContainer {
+
+	/**
+	 * Workspace scope (value <code>0</code>).
+	 */	
+	public static final int WORKSPACE_SCOPE= 0;
+
+	/**
+	 * Selection scope (value <code>1</code>).
+	 */	
+	public static final int SELECTION_SCOPE= 1;
+
+	/**
+	 * Working set scope (value <code>2</code>).
+	 */	
+	public static final int WORKING_SET_SCOPE= 2;
+
 	/**
 	 * Returns the selection with which this container was opened.
 	 *
 	 * @return the selection passed to this container when it was opened
 	 */
 	public ISelection getSelection(); 
+
 	/**
 	 * Returns the context for the search operation.
 	 * This context allows progress to be shown inside the search dialog.
@@ -30,6 +47,7 @@ public interface ISearchPageContainer {
 	 * @return	the <code>IRunnableContext</code> for the search operation
 	 */
 	public IRunnableContext getRunnableContext();
+
 	/**
 	 * Sets the enable state of the perform action button
 	 * of this container.
@@ -37,4 +55,49 @@ public interface ISearchPageContainer {
 	 * @param	state	<code>true</code> to enable the button which performs the action
 	 */
 	 public void setPerformActionEnabled(boolean state);
+
+
+	/**
+	 * Returns search container's selected scope.
+	 * The scope is WORKSPACE_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
+	 * 
+	 * @return the selected scope
+	 */	
+	public int getSelectedScope();
+
+	/**
+	 * Sets the selected scope of this search page container.
+	 * The scope is WORKSPACE_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
+	 * 
+	 * @return the selected scope
+	 */	
+	public void setSelectedScope(int scope);
+
+	/**
+	 * Returns the selected working set of this container.
+	 * <p>
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @return the selected IWorkingSet or <code>null</code> if the scope is not WORKING_SET_SCOPE
+	 */
+	public IWorkingSet getSelectedWorkingSet();
+
+	/**
+	 * Sets the selected working set of this container.
+	 * <p>
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @param workingSet the IWorkingSet to be selected
+	 */
+	public void setSelectedWorkingSet(IWorkingSet workingSet);
 }

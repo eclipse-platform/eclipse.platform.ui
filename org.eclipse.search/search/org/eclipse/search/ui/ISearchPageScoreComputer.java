@@ -17,14 +17,17 @@ package org.eclipse.search.ui;
  * </p>
  */
 public interface ISearchPageScoreComputer {
+
 	/**
 	 * Invalid score value indicating a score is unknown or undecided.
 	 */
 	public static final int UNKNOWN= -1;
+
 	/**
 	 * Lowest possible valid score.
 	 */
 	public static final int LOWEST= 0;
+
 	/**
 	 * Computes and returns a score indicating how good the page with the given
 	 * id can handle the given input element.

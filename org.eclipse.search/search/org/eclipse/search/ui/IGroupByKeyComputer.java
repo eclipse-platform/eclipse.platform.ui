@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IMarker;
  * are grouped.
  */
 public interface IGroupByKeyComputer {
+	
 	/**
 	 * Computes and returns key by which the given marker is grouped.
 	 *

@@ -20,4 +20,12 @@ public interface ISearchScope {
 	 * 
 	 */
 	public boolean encloses(IResource element);
+
+	/**
+	 * Returns a human readable description of this scope
+	 *
+	 * @return	the description of this scope as <code>String</code>
+	 * 
+	 */
+	public String getDescription();
 }

@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.util.StringMatcher;
 
 /**
@@ -21,6 +22,10 @@ public class TextSearchScope extends SearchScope {
 	
 	private static class WorkspaceScope extends TextSearchScope {
 	
+		private WorkspaceScope(String description) {
+			super(description);
+		}
+		
 		public void add(IResource element) {
 			// do nothing
 		}
@@ -36,6 +41,21 @@ public class TextSearchScope extends SearchScope {
 	}
 	
 	private Set fExtensions= new HashSet(3);
+
+	/**
+	 * Returns a new Workbench scope.
+	 */
+	public static TextSearchScope newWorkspaceScope() {
+		return new WorkspaceScope(SearchMessages.getString("WorkspaceScope"));
+	}
+
+	public TextSearchScope(String description) {
+		super(description);
+	}
+
+	public TextSearchScope(String description, IResource[] resources) {
+		super(description, resources);
+	}
 	
 	/**
 	 * Adds an extension to the scope.
@@ -58,6 +78,7 @@ public class TextSearchScope extends SearchScope {
 				addExtension((String)obj);
 		}
 	}  
+
 	/*
 	 * Implements method from ISearchScope
 	 */
@@ -66,13 +87,7 @@ public class TextSearchScope extends SearchScope {
 			return false;
 		return super.encloses(element);	
 	}
-	/**
-	 * Returns a new Workbench scope.
-	 */
-	public static TextSearchScope newWorkspaceScope() {
-		return new WorkspaceScope();
-	}
-		
+
 	boolean skipFile(IFile file) {
 		if (file != null) {
 			Iterator iter= fExtensions.iterator();

@@ -25,12 +25,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
@@ -267,5 +269,27 @@ public class SearchPlugin extends AbstractUIPlugin {
 		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+	}
+
+	/**
+	 * Creates a selection dialog that lists all working sets and allows to
+	 * add and edit working sets.
+	 * The caller is responsible for opening the dialog with <code>Window.open</code>,
+	 * and subsequently extracting the selected working sets (of type
+	 * <code>IWorkingSet</code>) via <code>SelectionDialog.getResult</code>.
+	 * <p>
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @param parent the parent shell of the dialog to be created
+	 * @return a new selection dialog or <code>null</code> if none available
+	 */
+	public static SelectionDialog createWorkingSetDialog(Shell parent) {
+		MessageDialog.openInformation(getActiveWorkbenchShell(), "Working Set Dialog", "The working set dialog will come soon!");
+		return null;
 	}
 }

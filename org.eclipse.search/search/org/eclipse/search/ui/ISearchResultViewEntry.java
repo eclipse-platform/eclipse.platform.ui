@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
  * </p>
  */
 public interface ISearchResultViewEntry {
+
 	/**
 	 * Returns the key by which this entry's markers
 	 * are logically grouped. A line in a text could be such a key.
@@ -29,6 +30,7 @@ public interface ISearchResultViewEntry {
 	 * @see	ISearchResultView#addMatch
 	 */
 	public Object getGroupByKey();
+
 	/**
 	 * Returns the resource to which this entry's markers are attached.
 	 * This is a convenience method for <code>getSelectedMarker().getResource()</code>.
@@ -36,12 +38,14 @@ public interface ISearchResultViewEntry {
 	 * @return	the common resource of this entry's markers
 	 */
 	public IResource getResource();
+
 	/**
 	 * Returns the number of markers grouped by this entry.
 	 *
 	 * @return	the number of markers
 	 */	
 	public int getMatchCount();
+
 	/**
 	 * Returns the selected marker of this entry, or the first one
 	 * if no marker is selected.
@@ -54,4 +58,3 @@ public interface ISearchResultViewEntry {
 	 */	
 	public IMarker getSelectedMarker();
 }
-

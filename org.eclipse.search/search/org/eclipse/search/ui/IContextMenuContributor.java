@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.IInputSelectionProvider;
  * @see	ISearchResultView#searchStarted
  */
 public interface IContextMenuContributor {
+
 	/**
 	 * Contributes menu items to the given context menu appropriate for the
 	 * given selection.

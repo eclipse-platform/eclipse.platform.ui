@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.IDialogPage;
  * @see org.eclipse.jface.dialogs.DialogPage
  */
 public interface ISearchPage extends IDialogPage {
+
 	/**
 	 * Performs the action for this page.
 	 * The search dialog calls this method when the Search
@@ -28,6 +29,7 @@ public interface ISearchPage extends IDialogPage {
 	 * @return <code>true</code> if the dialog can be closed after execution
 	 */
 	public boolean performAction();
+
 	/**
 	 * Sets the container of this page.
 	 * The search dialog calls this method to initialize this page.

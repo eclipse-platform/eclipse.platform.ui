@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.Set;
@@ -33,9 +34,11 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -53,6 +56,7 @@ import org.eclipse.search.internal.ui.util.RowLayouter;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.internal.ui.SearchMessages;
 
@@ -71,14 +75,20 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	private FileTypeEditor fFileTypeEditor;
 
 	private static class SearchPatternData {
-		public SearchPatternData(String pattern, boolean ignoreCase, Set extensions) {
+
+		boolean		ignoreCase;
+		String		pattern;
+		Set			extensions;
+		int			scope;
+		IWorkingSet	workingSet;
+		
+		public SearchPatternData(String pattern, boolean ignoreCase, Set extensions, int scope, IWorkingSet workingSet) {
 			this.ignoreCase= ignoreCase;
 			this.pattern= pattern;
 			this.extensions= extensions;
+			this.scope= scope;
+			this.workingSet= workingSet;
 		}
-		boolean	ignoreCase;
-		String	pattern;
-		Set		extensions;
 	}
 	//---- Action Handling ------------------------------------------------
 	
@@ -87,8 +97,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		if (patternData.pattern == null || patternData.pattern.length() == 0)
 			return true;
 
-		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
+		// Setup search scope
+		TextSearchScope scope= null;
+		switch (getContainer().getSelectedScope()) {
+			case ISearchPageContainer.WORKSPACE_SCOPE:
+				scope= TextSearchScope.newWorkspaceScope();
+				break;
+			case ISearchPageContainer.SELECTION_SCOPE:
+				scope= getSelectedResourcesScope();
+				break;
+			case ISearchPageContainer.WORKING_SET_SCOPE:
+				IWorkingSet workingSet= getContainer().getSelectedWorkingSet();
+				String desc= SearchMessages.getFormattedString("WorkingSetScope", workingSet.getName());
+				scope= new TextSearchScope(desc, workingSet.getResources());
+		}		
 		scope.addExtensions(patternData.extensions);
+
 		TextSearchResultCollector collector= new TextSearchResultCollector();
 		
 		TextSearchOperation op= new TextSearchOperation(
@@ -139,12 +163,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			match= new SearchPatternData(
 						pattern,
 						ignoreCase(),
-						getExtensions());
+						getExtensions(),
+						getContainer().getSelectedScope(),
+						getContainer().getSelectedWorkingSet());
 			fgPreviousSearchPatterns.add(match);
 		}
 		else {
 			match.ignoreCase= ignoreCase();
 			match.extensions= getExtensions();
+			match.scope= getContainer().getSelectedScope();
+			match.workingSet= getContainer().getSelectedWorkingSet();
 		};
 		return match;
 	}
@@ -262,6 +290,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		fIgnoreCase.setSelection(patternData.ignoreCase);
 		fPattern.setText(patternData.pattern);
 		fFileTypeEditor.setFileTypes(patternData.extensions);
+		if (patternData.workingSet != null)
+			getContainer().setSelectedWorkingSet(patternData.workingSet);
+		else
+			getContainer().setSelectedScope(patternData.scope);
 	}
 
 	private void initializePatternControl() {
@@ -389,7 +421,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	public boolean isValid() {
 		return true;
 	}
-		/**
+
+	/**
 	 * Sets the search page's container.
 	 */
 	public void setContainer(ISearchPageContainer container) {
@@ -408,5 +441,23 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	 */
 	private ISelection getSelection() {
 		return fContainer.getSelection();
+	}
+
+	private TextSearchScope getSelectedResourcesScope() {
+		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope"));
+		if (!getSelection().isEmpty() && getSelection() instanceof IStructuredSelection) {
+			Iterator iter= ((IStructuredSelection)getSelection()).iterator();
+			while (iter.hasNext()) {
+				Object selection= iter.next();
+				if (selection instanceof IResource)
+					scope.add((IResource)selection);
+				else if (selection instanceof IAdaptable) {
+					IResource resource= (IResource)((IAdaptable)selection).getAdapter(IResource.class);
+					if (resource != null)
+						scope.add(resource);
+				}
+			}
+		}
+		return scope;
 	}
 }	

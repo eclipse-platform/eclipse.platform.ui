@@ -24,6 +24,7 @@ public class SearchMessages {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
 	 * 
@@ -40,6 +41,7 @@ public class SearchMessages {
 			arg= ""; //$NON-NLS-1$
 		return MessageFormat.format(format, new Object[] { arg });
 	}
+
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
 	 * 
