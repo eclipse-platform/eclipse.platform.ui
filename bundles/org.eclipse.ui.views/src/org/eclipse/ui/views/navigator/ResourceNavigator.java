@@ -162,13 +162,16 @@ public class ResourceNavigator
 
 		initContextMenu();
 
-		makeActions();
 		initResourceSorter();
 		initWorkingSetFilter();
 		
 		// make sure input is set after sorters and filters,
 		// to avoid unnecessary refreshes
 		viewer.setInput(getInitialInput());
+
+		// make actions after setting input, because some actions
+		// look at the viewer for enablement (e.g. the Up action)
+		makeActions();
 
 		// Fill the action bars and update the global action handlers'
 		// enabled state to match the current selection.
@@ -919,8 +922,11 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	protected void updateActionBars(IStructuredSelection selection) {
-		getActionGroup().setContext(new ActionContext(selection));
-		getActionGroup().updateActionBars();
+		ResourceNavigatorActionGroup group = getActionGroup();
+		if (group != null) {
+			group.setContext(new ActionContext(selection));
+			group.updateActionBars();
+		}
 	}
 
 	/**
