@@ -35,10 +35,10 @@ import org.osgi.service.prefs.Preferences;
 public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 	public static final String DEFAULT_PREFERENCES_DIRNAME = ".settings"; //$NON-NLS-1$
+	public static final String PREFS_FILE_EXTENSION = "prefs"; //$NON-NLS-1$
 	protected static final IEclipsePreferences[] EMPTY_NODE_ARRAY = new IEclipsePreferences[0];
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final String FALSE = "false"; //$NON-NLS-1$
-	public static final String PREFS_FILE_EXTENSION = "prefs"; //$NON-NLS-1$
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	private static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
 	private static final String VERSION_VALUE = "1"; //$NON-NLS-1$
