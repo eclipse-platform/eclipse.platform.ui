@@ -352,15 +352,17 @@ public class JobProgressManager
 	 * Get the jobs currently being displayed.
 	 * @return Object[]
 	 */
-	public Object[] getJobs() {
+	public synchronized Object[] getJobs() {
 
-		Iterator iterator = jobs.keySet().iterator();
+		//Move to an array to prevent concurrent modification of the keySet
+		Job[] jobArray = new Job[jobs.size()];
+		
+		jobs.keySet().toArray(jobArray);
 		Collection result = new ArrayList();
-		while (iterator.hasNext()) {
-			Job next = (Job) iterator.next();
-			if (isNonDisplayableJob(next))
+		for(int i = 0; i < jobArray.length; i++){
+			if (isNonDisplayableJob(jobArray[i]))
 				continue;
-			result.add(jobs.get(next));
+			result.add(jobs.get(jobArray[i]));
 		}
 		return result.toArray();
 	}
