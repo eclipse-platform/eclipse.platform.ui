@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems - Mikhail Khodjaiants - Bug 80857
  *******************************************************************************/
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
@@ -16,6 +17,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -68,13 +70,20 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
 		ArrayList sources = new ArrayList();
-		IContainer container = getContainer();
-		IPath path = new Path(name);
-		IFile file = container.getFile(path);
-		if (file.exists()) {
-			sources.add(file);
+
+		// An IllegalArgumentException is thrown from the "getFile" method 
+		// if the path created by appending the file name to the container 
+		// path doesn't conform with Eclipse resource restrictions.
+		// To prevent the interruption of the search procedure we check 
+		// if the path is valid before passing it to "getFile".
+		if ( validateFile(name) ) {
+			IPath path = new Path(name);
+			IFile file = getContainer().getFile(path);
+			if (file.exists()) {
+				sources.add(file);
+			}			
 		}
-		
+
 		//check subfolders		
 		if ((isFindDuplicates() && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
 			ISourceContainer[] containers = getSourceContainers();
@@ -151,6 +160,15 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 			return containers;
 		}
 		return new ISourceContainer[0];
+	}
+
+	/**
+	 * Validates the given string as a path for a file in this container. 
+	 */
+	private boolean validateFile(String name) {
+		IContainer container = getContainer();
+		IPath path = container.getFullPath().append(name);
+		return ResourcesPlugin.getWorkspace().validatePath(path.toOSString(), IResource.FILE).isOK();
 	}
 
 }
