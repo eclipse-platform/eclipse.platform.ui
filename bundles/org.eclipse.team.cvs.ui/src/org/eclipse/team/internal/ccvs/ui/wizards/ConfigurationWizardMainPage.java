@@ -172,16 +172,26 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		connectionMethodCombo = createCombo(g);
 
 		// Port number
-		useDefaultPort = createRadioButton(g, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 2); //$NON-NLS-1$
-		useCustomPort = createRadioButton(g, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
+		// create a composite to ensure the radio buttons come in the correct order
+		Composite portGroup = new Composite(g, SWT.NONE);
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		portGroup.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		portGroup.setLayout(layout);
+		useDefaultPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 2); //$NON-NLS-1$
+		useCustomPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
 		useCustomPort.addListener(SWT.Selection, listener);
-		portText = createTextField(g);
+		portText = createTextField(portGroup);
 		portText.addListener(SWT.Selection, listener);
 		
 		// create a composite to ensure the validate button is in its own tab group
 		if (showValidate) {
 			Composite validateButtonTabGroup = new Composite(composite, SWT.NONE);
-			GridData data = new GridData();
+			data = new GridData();
 			data.horizontalSpan = 2;
 			validateButtonTabGroup.setLayoutData(data);
 			validateButtonTabGroup.setLayout(new FillLayout());
