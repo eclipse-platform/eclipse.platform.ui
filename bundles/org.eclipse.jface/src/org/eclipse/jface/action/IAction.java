@@ -405,6 +405,7 @@ public void setToolTipText(String text);
  * Use 0 for no accelerator.
  * 
  * @param int the keycode to be accepted.
+ * @deprecated
  */
 public void setAccelerator(int keycode);
 }
