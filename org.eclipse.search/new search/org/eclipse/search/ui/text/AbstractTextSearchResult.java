@@ -279,9 +279,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * 
 	 * @see IEditorMatchAdapter
 	 */
-	public IEditorMatchAdapter getEditorMatchAdapter() {
-		return null;
-	}
+	public abstract IEditorMatchAdapter getEditorMatchAdapter();
+	
 
 	/**
 	 * Returns an implementation of <code>IFileMatchAdapter</code> appropriate
@@ -291,7 +290,5 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * 
 	 * @see IFileMatchAdapter
 	 */
-	public IFileMatchAdapter getFileMatchAdapter() {
-		return null;
-	}
+	public abstract IFileMatchAdapter getFileMatchAdapter();
 }
