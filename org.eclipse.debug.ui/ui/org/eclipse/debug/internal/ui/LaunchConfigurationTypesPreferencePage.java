@@ -274,8 +274,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		getDefaultButton().setLayoutData(gd);
-		
-		//WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE));
+		getDefaultButton().setEnabled(false);
 		
 		return topComp;
 	}
@@ -375,8 +374,10 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 	protected void handleDefaultButtonSelected() {
 		String fileType = getFileTypeSelection();
 		ILaunchConfigurationType configType = getConfigTypeSelection();
-		getDefaultConfigsMap().put(fileType, configType);
-		getConfigTypeTableViewer().refresh();
+		if (configType != null) {
+			getDefaultConfigsMap().put(fileType, configType);
+			getConfigTypeTableViewer().refresh();
+		}
 	}
 	
 	/**
