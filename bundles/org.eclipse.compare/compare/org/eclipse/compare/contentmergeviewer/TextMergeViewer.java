@@ -174,40 +174,29 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private int fTopInset;
 	
 	// Colors to use
-	private static final RGB INCOMING= new RGB(100, 100, 200);
-	private static final RGB INCOMING_FILL= new RGB(230, 230, 240);
-	private static final RGB SELECTED_INCOMING= new RGB(0, 0, 255);
-	private static final RGB SELECTED_INCOMING_FILL= new RGB(255, 255, 255);
 	
-	private static final RGB CONFLICT= new RGB(200, 100, 100);
-	private static final RGB CONFLICT_FILL= new RGB(240, 230, 230);
-	private static final RGB SELECTED_CONFLICT= new RGB(255, 0, 0);
-	private static final RGB SELECTED_CONFLICT_FILL= new RGB(255, 255, 255);
+	private boolean fUseSystemBackground;
 	
-	private static final RGB OUTGOING= new RGB(100, 100, 100);
-	private static final RGB OUTGOING_FILL= new RGB(230, 230, 230);
-	private static final RGB SELECTED_OUTGOING= new RGB(0, 0, 0);
-	private static final RGB SELECTED_OUTGOING_FILL= new RGB(255, 255, 255);
+	private RGB fBackground;
+	private RGB fForeground;
+		
+	private RGB SELECTED_INCOMING;
+	private RGB INCOMING;
+	private RGB INCOMING_FILL;
 	
-//	private static final RGB INCOMING= new RGB(230, 230, 240);
-//	private static final RGB INCOMING_FILL= new RGB(250, 250, 255);
-//	private static final RGB SELECTED_INCOMING= new RGB(0, 0, 255);
-//	private static final RGB SELECTED_INCOMING_FILL= new RGB(255, 255, 255);
-//	
-//	private static final RGB CONFLICT= new RGB(240, 230, 230);
-//	private static final RGB CONFLICT_FILL= new RGB(255, 250, 250);
-//	private static final RGB SELECTED_CONFLICT= new RGB(255, 0, 0);
-//	private static final RGB SELECTED_CONFLICT_FILL= new RGB(255, 255, 255);
-//	
-//	private static final RGB OUTGOING= new RGB(230, 230, 230);
-//	private static final RGB OUTGOING_FILL= new RGB(250, 250, 250);
-//	private static final RGB SELECTED_OUTGOING= new RGB(0, 0, 0);
-//	private static final RGB SELECTED_OUTGOING_FILL= new RGB(255, 255, 255);
+	private RGB SELECTED_CONFLICT;
+	private RGB CONFLICT;
+	private RGB CONFLICT_FILL;
+	
+	private RGB SELECTED_OUTGOING;
+	private RGB OUTGOING;
+	private RGB OUTGOING_FILL;
+	
 
 	private IDocumentListener fDocumentListener;
 	
 	private IPreferenceStore fPreferenceStore;
-	private	IPropertyChangeListener fPreferenceChangeListener;
+	private IPropertyChangeListener fPreferenceChangeListener;
 	
 	/** All diffs for calculating scrolling position (includes line ranges without changes) */
 	private ArrayList fAllDiffs;
@@ -269,7 +258,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	// SWT resources to be disposed
 	private Map fColors;
 	private Font fFont;
-	private Color fBackgroundColor;
 	private Cursor fBirdsEyeCursor;
 					
 					
@@ -565,9 +553,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			};
 			fPreferenceStore.addPropertyChangeListener(fPreferenceChangeListener);
 			
+			fUseSystemBackground= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+
 			Display display= parent.getDisplay();
 			updateFont(fPreferenceStore, display);
-			updateBackgroundColor(fPreferenceStore, display);
+			checkForColorUpdate(display);
 
 			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
@@ -622,13 +612,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 	
-	private void updateBackgroundColor(IPreferenceStore ps, Display display) {
+	private void checkForColorUpdate(Display display) {
+		RGB fg= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
+		if (fForeground == null || !fg.equals(fForeground)) {
+			fForeground= fg;
+			updateColors(fPreferenceStore, display);
+		}
+	}
+	
+	private void updateColors(IPreferenceStore ps, Display display) {
 		
+		fBackground= null;
+		if (! fUseSystemBackground && ps != null)
+			fBackground= createColor(ps, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+		
+		if (fBackground == null)
+			fBackground= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();			
+				
 		Color color= null;
-		if (ps.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT))
-			color= null;
-		else
-			color= createColor(ps, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, display);
+		if (! fUseSystemBackground)
+			color= getColor(display, fBackground);
 		
 		if (fAncestor != null)
 			fAncestor.setBackgroundColor(color);
@@ -636,32 +639,45 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fLeft.setBackgroundColor(color);
 		if (fRight != null)
 			fRight.setBackgroundColor(color);
-				
-		if (fBackgroundColor != null)
-			fBackgroundColor.dispose();
-		fBackgroundColor= color;
+						
+										
+		SELECTED_INCOMING= new RGB(0, 0, 255);
+		INCOMING= interpolate(SELECTED_INCOMING, fBackground, 0.6);
+		INCOMING_FILL= interpolate(SELECTED_INCOMING, fBackground, 0.97);
+
+		SELECTED_CONFLICT= new RGB(255, 0, 0);
+		CONFLICT= interpolate(SELECTED_CONFLICT, fBackground, 0.6);
+		CONFLICT_FILL= interpolate(SELECTED_CONFLICT, fBackground, 0.97);
+	
+		SELECTED_OUTGOING= fForeground;
+		OUTGOING= interpolate(SELECTED_OUTGOING, fBackground, 0.6);
+		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, fBackground, 0.97);
+		
+		// invalidate color cache
+		fColors= null;
+		
+		updateAllDiffBackgrounds(display);
+	}
+	
+	public void invalidateTextPresentation() {
+		if (fAncestor != null)
+			fAncestor.invalidateTextPresentation();
+		if (fLeft != null)
+			fLeft.invalidateTextPresentation();
+		if (fRight != null)
+			fRight.invalidateTextPresentation();
 	}
 	
 	/**
 	 * Creates a color from the information stored in the given preference store.
 	 * Returns <code>null</code> if there is no such information available.
 	 */
-	private static Color createColor(IPreferenceStore store, String key, Display display) {
-	
-		RGB rgb= null;		
-		
-		if (store.contains(key)) {
-			
-			if (store.isDefault(key))
-				rgb= PreferenceConverter.getDefaultColor(store, key);
-			else
-				rgb= PreferenceConverter.getColor(store, key);
-		
-			if (rgb != null)
-				return new Color(display, rgb);
-		}
-		
-		return null;
+	private static RGB createColor(IPreferenceStore store, String key) {
+		if (!store.contains(key))
+			return null;
+		if (store.isDefault(key))
+			return PreferenceConverter.getDefaultColor(store, key);
+		return PreferenceConverter.getColor(store, key);
 	}
 	
 	/**
@@ -747,10 +763,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fFont != null) {
 			fFont.dispose();
 			fFont= null;
-		}
-		if (fBackgroundColor != null) {
-			fBackgroundColor.dispose();
-			fBackgroundColor= null;
 		}
 		if (fBirdsEyeCursor != null) {
 			fBirdsEyeCursor.dispose();
@@ -902,6 +914,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (virtualHeight < getViewportHeight())
 			return;
 				
+		Display display= canvas.getDisplay();
 		int y= 0;
 		if (fAllDiffs != null) {
 			Iterator e= fAllDiffs.iterator();
@@ -916,12 +929,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					if (hh < 3)
 						hh= 3;
 					
-					c= getColor(getFillColor(diff));
+					c= getColor(display, getFillColor(diff));
 					if (c != null) {
 						gc.setBackground(c);
 						gc.fillRectangle(BIRDS_EYE_VIEW_INSET, yy, size.x-(2*BIRDS_EYE_VIEW_INSET),hh);
 					}
-					c= getColor(getStrokeColor(diff));
+					c= getColor(display, getStrokeColor(diff));
 					if (c != null) {
 						gc.setForeground(c);
 						r.x= BIRDS_EYE_VIEW_INSET;
@@ -1058,8 +1071,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		if (fFont != null)
 			te.setFont(fFont);
-		if (fBackgroundColor != null)
-			te.setBackground(fBackgroundColor);
+			
+		if (! fUseSystemBackground)
+			te.setBackground(getColor(parent.getDisplay(), fBackground));			
 		
 		configureTextViewer(part);
 		
@@ -1240,7 +1254,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fShowCurrentOnly && !isCurrentDiff(diff))
 			return;
 						
-		Color c= getColor(getFillColor(diff));
+		Color c= getColor(null, getFillColor(diff));
 		if (c == null)
 			return;
 			
@@ -1248,6 +1262,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fAncestor.setLineBackground(diff.fAncestorPos, c);
 		fLeft.setLineBackground(diff.fLeftPos, c);
 		fRight.setLineBackground(diff.fRightPos, c);
+	}
+	
+	private void updateAllDiffBackgrounds(Display display) {
+		if (fChangeDiffs != null) {
+			boolean threeWay= isThreeWay();
+			Iterator iter= fChangeDiffs.iterator();
+			while (iter.hasNext()) {
+				Diff diff= (Diff) iter.next();
+				Color c= getColor(display, getFillColor(diff));
+				if (threeWay)
+					fAncestor.setLineBackground(diff.fAncestorPos, c);
+				fLeft.setLineBackground(diff.fLeftPos, c);
+				fRight.setLineBackground(diff.fRightPos, c);
+			}
+		}
 	}
 	
 	boolean isCurrentDiff(Diff diff) {
@@ -2461,13 +2490,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					clearStatus();
 			}
 		
-		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)
-						|| key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
 
-			if (fPreferenceStore != null) {
-				updateBackgroundColor(fPreferenceStore, fComposite.getDisplay());
-			}
-			
+			if (DEBUG) System.out.println("prop: PREFERENCE_COLOR_BACKGROUND");
+			updateColors(fPreferenceStore, fComposite.getDisplay());
+						
+		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+
+			fUseSystemBackground= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+			if (DEBUG) System.out.println("prop: PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT: " + fUseSystemBackground);
+			updateColors(fPreferenceStore, fComposite.getDisplay());
+						
 		} else
 			super.propertyChange(event);
 	}
@@ -2600,6 +2633,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private void paintCenter(Canvas canvas, GC g) {
 		
+		Display display= canvas.getDisplay();
+		
+		checkForColorUpdate(display);
+		
 		if (! fSynchronizedScrolling)
 			return;
 
@@ -2615,7 +2652,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		if (!fIsMotif) {
 			// draw thin line between center ruler and both texts
-			g.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+			g.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 			g.fillRectangle(0, 0, 1, size.y);
 			g.fillRectangle(w-1, 0, 1, size.y);
 		}
@@ -2654,11 +2691,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fPts[0]= x;	fPts[1]= ly;	fPts[2]= w;	fPts[3]= ry;
 				fPts[6]= x;	fPts[7]= ly+lh;	fPts[4]= w;	fPts[5]= ry+rh;
 							
-				g.setBackground(getColor(getFillColor(diff)));
+				g.setBackground(getColor(display, getFillColor(diff)));
 				g.fillPolygon(fPts);
 	
 				g.setLineWidth(LW);
-				g.setForeground(getColor(getStrokeColor(diff)));
+				g.setForeground(getColor(display, getStrokeColor(diff)));
 				g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
 				g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
 			}
@@ -2666,6 +2703,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private void paintSides(GC g, MergeSourceViewer tp, Canvas canvas, boolean right) {
+		
+		Display display= canvas.getDisplay();
 		
 		int lineHeight= tp.getTextWidget().getLineHeight();
 		int visibleHeight= tp.getViewportHeight();
@@ -2680,7 +2719,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		if (!fIsMotif) {
 			// draw thin line between ruler and text
-			g.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+			g.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 			if (right)
 				g.fillRectangle(0, 0, 1, size.y);
 			else
@@ -2712,13 +2751,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (y >= visibleHeight)
 					break;
 					
-				g.setBackground(getColor(getFillColor(diff)));
+				g.setBackground(getColor(display, getFillColor(diff)));
 				if (right)
 					g.fillRectangle(x, y, w2, h);
 				else
 					g.fillRectangle(x+w2, y, w2, h);
 	
-				g.setBackground(getColor(getStrokeColor(diff)));
+				g.setBackground(getColor(display, getStrokeColor(diff)));
 				if (right) {
 					g.fillRectangle(x, y-1, w2+1, LW);
 					g.fillRectangle(x+w2, y, LW, h);
@@ -2741,6 +2780,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		Control canvas= (Control) event.widget;
 		GC g= event.gc;
+		
+		Display display= canvas.getDisplay();
 		
 		int lineHeight= tp.getTextWidget().getLineHeight();			
 		int w= canvas.getSize().x;
@@ -2770,7 +2811,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (y > maxh)
 				break;
 			
-			g.setBackground(getColor(getStrokeColor(diff)));
+			g.setBackground(getColor(display, getStrokeColor(diff)));
 			g.fillRectangle(0, y-1, w, LW);
 			g.fillRectangle(0, y+h-1, w, LW);
 		}
@@ -2779,24 +2820,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private RGB getFillColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
 		
+		RGB selected_fill= fBackground;
+
 		if (isThreeWay() && !fIgnoreAncestor) {
 			switch (diff.fDirection) {
 			case RangeDifference.RIGHT:
 				if (fLeftIsLocal)
-					return selected ? SELECTED_INCOMING_FILL : INCOMING_FILL;
-				return selected ? SELECTED_OUTGOING_FILL : OUTGOING_FILL;
+					return selected ? selected_fill : INCOMING_FILL;
+				return selected ? selected_fill : OUTGOING_FILL;
 			case RangeDifference.ANCESTOR:
-				return selected ? SELECTED_CONFLICT_FILL : CONFLICT_FILL;
+				return selected ? selected_fill : CONFLICT_FILL;
 			case RangeDifference.LEFT:
 				if (fLeftIsLocal)
-					return selected ? SELECTED_OUTGOING_FILL : OUTGOING_FILL;
-				return selected ? SELECTED_INCOMING_FILL : INCOMING_FILL;
+					return selected ? selected_fill : OUTGOING_FILL;
+				return selected ? selected_fill : INCOMING_FILL;
 			case RangeDifference.CONFLICT:
-				return selected ? SELECTED_CONFLICT_FILL : CONFLICT_FILL;
+				return selected ? selected_fill : CONFLICT_FILL;
 			}
 			return null;
 		}
-		return selected ? SELECTED_OUTGOING_FILL : OUTGOING_FILL;
+		return selected ? selected_fill : OUTGOING_FILL;
 	}
 	
 	private RGB getStrokeColor(Diff diff) {
@@ -2822,17 +2865,25 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return selected ? SELECTED_OUTGOING : OUTGOING;
 	}
 	
-	private Color getColor(RGB rgb) {
+	private Color getColor(Display display, RGB rgb) {
 		if (rgb == null)
-			return null;
+			return null;		
 		if (fColors == null)
 			fColors= new HashMap(20);
 		Color c= (Color) fColors.get(rgb);
 		if (c == null) {
-			c= new Color(fComposite.getDisplay(), rgb);
+			c= new Color(display, rgb);
 			fColors.put(rgb, c);
 		}
 		return c;
+	}
+			
+	static RGB interpolate(RGB fg, RGB bg, double scale) {
+		return new RGB(
+			(int)((1.0-scale) * fg.red + scale * bg.red),
+			(int)((1.0-scale) * fg.green + scale * bg.green),
+			(int)((1.0-scale) * fg.blue + scale * bg.blue)
+		);
 	}
 	
 	//---- Navigating and resolving Diffs
