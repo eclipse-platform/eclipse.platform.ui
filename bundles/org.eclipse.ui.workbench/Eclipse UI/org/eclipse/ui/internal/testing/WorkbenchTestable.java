@@ -80,12 +80,11 @@ public class WorkbenchTestable extends TestableObject {
 	 * then closes the workbench.
 	 */
 	public void testingFinished() {
-		// force events to be processed
+		// force events to be processed, and ensure the close is done in the UI thread
 		display.syncExec(new Runnable() {
 			public void run() {
-				// do nothing
+				Assert.isTrue(workbench.close());
 			}
 		});
-		Assert.isTrue(workbench.close());
 	}
 }
