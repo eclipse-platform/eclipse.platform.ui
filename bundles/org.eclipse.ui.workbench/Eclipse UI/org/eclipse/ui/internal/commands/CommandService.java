@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.internal.commands.api.ICommandService;
-import org.eclipse.ui.internal.commands.api.ICommandServiceEvent;
-import org.eclipse.ui.internal.commands.api.ICommandServiceListener;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.ICommandServiceEvent;
+import org.eclipse.ui.commands.ICommandServiceListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandService implements ICommandService {

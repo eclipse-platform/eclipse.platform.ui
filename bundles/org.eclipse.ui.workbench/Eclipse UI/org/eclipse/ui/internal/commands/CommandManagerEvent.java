@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.ICommandManager;
-import org.eclipse.ui.internal.commands.api.ICommandManagerEvent;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.ICommandManagerEvent;
 
 final class CommandManagerEvent implements ICommandManagerEvent {
 

@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.ui.internal.commands.api.ICategory;
-import org.eclipse.ui.internal.commands.api.ICategoryEvent;
-import org.eclipse.ui.internal.commands.api.ICategoryListener;
-import org.eclipse.ui.internal.commands.api.NotDefinedException;
+import org.eclipse.ui.commands.ICategory;
+import org.eclipse.ui.commands.ICategoryEvent;
+import org.eclipse.ui.commands.ICategoryListener;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Category implements ICategory {

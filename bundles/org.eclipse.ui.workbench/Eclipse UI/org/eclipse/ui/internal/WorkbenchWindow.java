@@ -84,7 +84,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.commands.Match;
-import org.eclipse.ui.internal.commands.api.IKeySequenceBinding;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;

@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.ICommandService;
-import org.eclipse.ui.internal.commands.api.ICommandServiceEvent;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.ICommandServiceEvent;
 
 final class CommandServiceEvent implements ICommandServiceEvent {
 

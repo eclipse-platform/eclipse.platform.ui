@@ -41,8 +41,8 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.commands.api.ICommand;
-import org.eclipse.ui.internal.commands.api.IKeySequenceBinding;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.keys.KeySequence;
 

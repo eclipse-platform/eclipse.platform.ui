@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.commands.api.IActivityBinding;
+import org.eclipse.ui.commands.IActivityBinding;
 
 final class ActivityBinding implements IActivityBinding {
 
