@@ -117,7 +117,16 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		this.workbench = workbench;
 		keyManager = KeyManager.getInstance();
 		preferenceStore = getPreferenceStore();
-		configurationId = loadConfiguration();		
+		
+		String configurationString = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+		
+		if (configurationString == null || configurationString.length() == 0)
+			configurationString = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+
+		if (configurationString == null)
+			configurationString = ZERO_LENGTH_STRING;
+		
+		configurationId = configurationString;		
 
 		List pathItems = new ArrayList();
 		pathItems.add(KeyManager.systemPlatform());
@@ -201,6 +210,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}	
 	
 	public boolean performOk() {
+		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		List preferenceActiveKeyConfigurations = new ArrayList();
+		
 		if (comboConfiguration != null && comboConfiguration.isEnabled()) {
 			int i = comboConfiguration.getSelectionIndex();
 			
@@ -212,19 +224,21 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					
 					if (configuration != null) {
 						configurationId = configuration.getId();
-						saveConfiguration(configurationId);					
-	
+						
+						preferenceActiveKeyConfigurations.add(ActiveKeyConfiguration.create(null, configurationId));
+
+						preferenceStore.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, configurationId);
+												
 						List preferenceKeyBindings = new ArrayList();
 						preferenceKeyBindings.addAll(preferenceBindingSet);
 
-						PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 						preferenceRegistry.setKeyBindings(preferenceKeyBindings);
 
 						try {
 							preferenceRegistry.save();
 						} catch (IOException eIO) {
 						}
-							
+
 						keyManager.update();
 	
 						if (workbench instanceof Workbench) {
@@ -241,25 +255,5 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	
 	protected IPreferenceStore doGetPreferenceStore() {
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
-	}
-	
-	private String loadConfiguration() {
-		String configuration = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-
-		if (configuration == null || configuration.length() == 0)
-			configuration = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-
-		if (configuration == null)
-			configuration = ZERO_LENGTH_STRING;
-
-		return configuration;
-	}
-	
-	private void saveConfiguration(String configuration)
-		throws IllegalArgumentException {
-		if (configuration == null)
-			throw new IllegalArgumentException();
-
-		preferenceStore.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, configuration);
 	}
 }
