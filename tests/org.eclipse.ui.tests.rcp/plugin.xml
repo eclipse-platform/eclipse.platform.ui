@@ -7,10 +7,10 @@
    provider-name="Eclipse.org">
 
    <runtime>
-      <library name="uitests.jar"/>
+      <library name="rcptests.jar"/>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
    </requires>
