@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -623,5 +625,45 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public void launchRemoved(ILaunch launch) {
 	}
 
+	/**
+	 * Save dirty editors before launching, according to preferences.
+	 * 
+	 * @return whether to proceed with launch 
+	 */
+	public static boolean preLaunchSave() {
+		String saveDirty = getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO);
+		if (saveDirty.equals(IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
+			return true;
+		} else {
+			return saveAllPages(saveDirty.equals(IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH));
+		}
+	}
+	
+	/**
+	 * Builds the workspace (according to preferences) and launches the given launch
+	 * configuration in the specified mode.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode - run or debug
+	 * @param monitor progress monitor
+	 * @exception CoreException if an exception occurrs while building or launching
+	 * @return resulting launch
+	 */
+	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
+		boolean autobuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
+		IProgressMonitor subMonitor = monitor;
+		String message = MessageFormat.format(DebugUIMessages.getString("DebugUIPlugin.Launching_{0}..._1"), new String[]{configuration.getName()}); //$NON-NLS-1$
+		if (!autobuilding && buildBeforeLaunch) {
+			monitor.beginTask(message, 200);
+			subMonitor = new SubProgressMonitor(monitor, 100);
+			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);
+			subMonitor = new SubProgressMonitor(monitor, 100);
+		} else {
+			subMonitor = monitor;
+			subMonitor.beginTask(message, 100);
+		}
+		return configuration.launch(mode, subMonitor);
+	}	
 }
 

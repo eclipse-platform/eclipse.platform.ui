@@ -28,7 +28,6 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -1191,7 +1190,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private int doLaunch(ILaunchConfiguration config) throws CoreException {
 		
-		if (!DebugUITools.saveAndBuildBeforeLaunch()) {
+		if (!DebugUIPlugin.preLaunchSave()) {
 			return CANCEL;
 		}
 		
@@ -1228,7 +1227,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					launchResult[0] = config.launch(getMode(), monitor);
+					launchResult[0] = DebugUIPlugin.buildAndLaunch(config, getMode(), monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}

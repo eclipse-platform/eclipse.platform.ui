@@ -450,19 +450,40 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Launches the given launch configuration in the specified mode with a
+	 * Saves all dirty editors according to current
+	 * preference settings, and returns whether a launch should proceed.
+	 * <p>
+	 * The following preferences effect whether dirty editors are saved,
+	 * and/or if the user is prompted to save dirty edtiors:<ul>
+	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
+	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
+	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return whether a launch should proceed
+	 * @since 2.1
+	 */
+	public static boolean saveBeforeLaunch() {
+		return DebugUIPlugin.preLaunchSave();
+	}	
+	
+	/**
+	 * Saves and builds the workspace according to current preference settings, and
+	 * launches the given launch configuration in the specified mode with a
 	 * progress dialog. Reports any exceptions that occurr in an error dilaog.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
+	 * @since 2.1
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
-		if (saveAndBuildBeforeLaunch()) {
+		if (DebugUIPlugin.preLaunchSave()) {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						configuration.launch(mode, monitor);
+						buildAndLaunch(configuration, mode, monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -492,6 +513,28 @@ public class DebugUITools {
 				// cancelled
 			}
 		}
+	}
+	
+	/**
+	 * Builds the workspace according to current preference settings, and launches
+	 * the given configuration in the specified mode, returning the resulting launch
+	 * object.
+	 * <p>
+	 * The following preference effects whether a build is performed before
+	 * launching (if required):<ul>
+	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode the mode to launch in
+	 * @param monitor progress monitor
+	 * @return the resulting launch object
+	 * @throws CoreException if building or launching fails
+	 * @since 2.1
+	 */
+	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		return DebugUIPlugin.buildAndLaunch(configuration, mode, monitor);
 	}
 	
 }
