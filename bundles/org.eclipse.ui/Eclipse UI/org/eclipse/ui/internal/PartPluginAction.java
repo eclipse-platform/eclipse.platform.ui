@@ -58,4 +58,13 @@ protected void unregisterSelectionListener(IWorkbenchPart aPart) {
 		selectionProvider.removeSelectionChangedListener(this);
 	}
 }
+/**
+ * Refresh the selection.
+ */
+protected void refreshSelection(IWorkbenchPart aPart) {
+	ISelectionProvider selectionProvider = aPart.getSite().getSelectionProvider();
+	if (selectionProvider != null)
+		handleSelection(selectionProvider.getSelection());
+}
+
 }

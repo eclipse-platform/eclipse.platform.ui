@@ -58,8 +58,8 @@ public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu,
 			// Update action for the current selection and part.
 			if (ad.getAction() instanceof ObjectPluginAction) {
 				ObjectPluginAction action = (ObjectPluginAction)ad.getAction();
-				action.selectionChanged(selection);
 				action.setActivePart(part);
+				action.selectionChanged(selection);
 			}
 			actualContributions = true;
 		}

@@ -39,7 +39,8 @@ protected IActionDelegate createDelegate() {
 		return null;
 	if (delegate instanceof IEditorActionDelegate) {
 		IEditorActionDelegate editorDelegate = (IEditorActionDelegate) delegate;
-		editorDelegate.setActiveEditor(this,currentEditor);
+		editorDelegate.setActiveEditor(this, currentEditor);
+		refreshSelection(currentEditor);
 	} else {
 		WorkbenchPlugin.log("Action should implement IEditorActionDelegate: " + getText());//$NON-NLS-1$
 		return null;
