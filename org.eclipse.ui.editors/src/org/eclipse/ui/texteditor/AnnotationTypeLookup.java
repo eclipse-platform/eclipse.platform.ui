@@ -24,7 +24,6 @@ import org.eclipse.jface.resource.StringConverter;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * Provides the strategy for determining annotation types for given markers.
