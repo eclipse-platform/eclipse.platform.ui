@@ -391,6 +391,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		String root = configuration.getProperty("root");
 		if (root == null)
 			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.rootRequired"), null));
+		root = root.replace('\\', '/');
 
 		return new CVSRepositoryLocation(method, user, password, host, port, root, user != null, false);
 	}
