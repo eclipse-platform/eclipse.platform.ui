@@ -205,7 +205,12 @@ public void dispose() {
 
 	// Deref all of the pages.
 	activeRec = null;
-	defaultPageRec = null;
+	if (defaultPageRec != null) {
+		// check for null since the default page may not have
+		// been created (ex. perspective never visible)
+		defaultPageRec.page.dispose();
+		defaultPageRec = null;
+	}
 	Map clone = (Map)((HashMap)mapPartToRec).clone();
 	Iterator enum = clone.values().iterator();
 	while (enum.hasNext()) {
