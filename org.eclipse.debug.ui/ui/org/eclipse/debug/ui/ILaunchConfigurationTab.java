@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Control;
  *      type="com.example.ExampleLaunchConfigurationTypeIdentifier"
  *      class="com.example.ExampleLaunchConfigurationTabClass"
  *      name="Example Tab Page"
+ *      mode="debug"
  *   &lt;/launchConfigurationType&gt;
  * &lt;/extension&gt;
  * </pre>
@@ -65,6 +66,9 @@ import org.eclipse.swt.widgets.Control;
  * <li><code>name</code> specifies a human readable name for this
  *  launch configuration tab that will appear as the title for this
  *  tab, in the tab page.</li>
+ * <li><code>mode</code> optionally specifies the mode for which this tab should
+ *  be displayed - one of "run" or "debug". This tab is displayed for
+ *  both modes if unspecified.</li>
  * </ul>
  * </p>
  * <p>

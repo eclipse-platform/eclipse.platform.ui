@@ -25,6 +25,7 @@ for certain launch configuration types.</p>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED</tt>&gt;
 </pre>
 
 <ul>
@@ -36,6 +37,8 @@ for certain launch configuration types.</p>
  <li><code>class</code> specifies the fully qualified name of the Java class that implements
   <code>ILaunchConfigurationTab</code>.</li>
  <li><code>name</code> specifies a human readable name for this launch configuration tab.</li>
+ <li><code>mode</code> optionally specifies the mode this tab is specific to - "run" or "debug".
+  This tab is displayed for all modes when unspecified.</li>
 </ul>
 
 <p><b><i>Examples:</i></b> </p>

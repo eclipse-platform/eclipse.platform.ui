@@ -100,6 +100,17 @@ public class LaunchConfigurationTabExtension {
 	public String getName() {
 		return getConfigurationElement().getAttribute("name");
 	}
+	
+	/**
+	 * Returns the mode of this tab, or <code>null</code>
+	 * if mode independent.
+	 * 
+	 * @return the mode of this tab, or <code>null</code>
+	 * if mode independent
+	 */
+	public String getMode() {
+		return getConfigurationElement().getAttribute("mode");
+	}	
 
 }
 

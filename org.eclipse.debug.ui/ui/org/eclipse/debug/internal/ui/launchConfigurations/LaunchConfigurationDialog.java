@@ -512,8 +512,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		LaunchConfigurationTabExtension[] exts = LaunchConfigurationPresentationManager.getDefault().getTabs(configType);
  		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[exts.length];
  		for (int i = 0; i < exts.length; i++) {
- 			tabs[i] = (ILaunchConfigurationTab)exts[i].getConfigurationElement().createExecutableExtension("class");
- 			tabs[i].setLaunchConfigurationDialog(this);
+ 			String mode = exts[i].getMode();
+ 			if (mode == null || mode.equals(getMode())) {
+	 			tabs[i] = (ILaunchConfigurationTab)exts[i].getConfigurationElement().createExecutableExtension("class");
+ 				tabs[i].setLaunchConfigurationDialog(this);
+ 			}
  		}	
  		return tabs;
 	}
