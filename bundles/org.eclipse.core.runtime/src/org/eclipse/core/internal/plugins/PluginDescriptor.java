@@ -560,7 +560,7 @@ public ResourceBundle getResourceBundle(Locale targetLocale) throws MissingResou
 	try {
 		newBundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, targetLocale, resourceLoader);
 		if (DelegatingURLClassLoader.MONITOR_BUNDLES) 
-			ClassloaderStats.loadedBundle(getUniqueIdentifier(), new BundleStats(getUniqueIdentifier(), DEFAULT_BUNDLE_NAME+".properties", newBundle));
+			ClassloaderStats.loadedBundle(getUniqueIdentifier(), new BundleStats(getUniqueIdentifier(), DEFAULT_BUNDLE_NAME+".properties", newBundle)); //$NON-NLS-1$
 		bundle = newBundle;
 		locale = targetLocale;
 	} catch (MissingResourceException e) {
