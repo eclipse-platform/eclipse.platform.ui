@@ -11,7 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -187,5 +190,13 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	
 	protected SyncInfo getParent(SyncInfo info) throws TeamException {
 		return getSubscriber().getSyncInfo(info.getLocal().getParent(), new NullProgressMonitor());
+	}
+
+	protected IResource[] getIResourcesFrom(SyncInfo[] nodes) {
+		List resources = new ArrayList(nodes.length);
+		for (int i = 0; i < nodes.length; i++) {
+			resources.add(nodes[i].getLocal());
+		}
+		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}
 }

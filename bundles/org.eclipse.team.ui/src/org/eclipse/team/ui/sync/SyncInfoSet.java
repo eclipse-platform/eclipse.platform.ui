@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ui.sync.views.SyncResource;
 
 public class SyncInfoSet {
 
@@ -110,8 +109,7 @@ public class SyncInfoSet {
 	 */
 	public void selectNodes(SyncInfoFilter filter) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			SyncResource node = (SyncResource)it.next();
-			SyncInfo info = node.getSyncInfo();
+			SyncInfo info = (SyncInfo)it.next();
 			if (info == null || !filter.select(info)) {
 				it.remove();
 			}
