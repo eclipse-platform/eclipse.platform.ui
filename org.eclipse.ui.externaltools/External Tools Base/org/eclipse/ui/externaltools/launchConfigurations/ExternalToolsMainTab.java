@@ -81,7 +81,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void createDescriptionComponent(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText("Description:");
+		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Descri&ption__1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -110,7 +110,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		composite.setLayoutData(gridData);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Location: ");
+		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Location___2")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
 		
@@ -130,13 +130,13 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		
 		createVerticalSpacer(buttonComposite, 1);
 		
-		workspaceLocationButton= createPushButton(buttonComposite, "Browse Workspace...", null);
+		workspaceLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Browse_Workspace..._3"), null); //$NON-NLS-1$
 		workspaceLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkspaceLocationButtonSelected();
 			}
 		});
-		fileLocationButton= createPushButton(buttonComposite, "Browse File System...", null);
+		fileLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Brows&e_File_System..._4"), null); //$NON-NLS-1$
 		fileLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleLocationButtonSelected();
@@ -161,7 +161,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		composite.setLayoutData(gridData);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Working Directory:");
+		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Working_&Directory__5")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
 		
@@ -180,13 +180,13 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		buttonComposite.setLayoutData(gridData);
 		
 		createVerticalSpacer(buttonComposite, 1);
-		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, "Browse Workspace...", null);
+		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_Wor&kspace..._6"), null); //$NON-NLS-1$
 		workspaceWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkspaceWorkingDirectoryButtonSelected();
 			}
 		});
-		fileWorkingDirectoryButton= createPushButton(buttonComposite, "Browse File System...", null);
+		fileWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_F&ile_System..._7"), null); //$NON-NLS-1$
 		fileWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleFileWorkingDirectoryButtonSelected();
@@ -213,22 +213,22 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * @param configuration
 	 */
 	private void updateDescription(ILaunchConfiguration configuration) {
-		String desc= "";
+		String desc= ""; //$NON-NLS-1$
 		try {
-			desc= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_DESCRIPTION, "");
+			desc= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_DESCRIPTION, ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
 		}
 		descriptionField.setText(desc);
 		descriptionField.addModifyListener(modifyListener);
 	}
 	
 	private void updateWorkingDirectory(ILaunchConfiguration configuration) {
-		String workingDir= "";
+		String workingDir= ""; //$NON-NLS-1$
 		try {
-			workingDir= configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, "");
+			workingDir= configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
 		}
 		workDirectoryField.setText(workingDir);
 		workDirectoryField.addModifyListener(modifyListener);
@@ -236,11 +236,11 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void updateLocation(ILaunchConfiguration configuration) {
-		String location= "";
+		String location= ""; //$NON-NLS-1$
 		try {
-			location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, "");
+			location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
 		}
 		locationField.setText(location);
 		locationField.addModifyListener(modifyListener);
@@ -276,7 +276,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Main";
+		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Main_17"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -294,7 +294,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	protected boolean validateLocation() {
 		String value = locationField.getText().trim();
 		if (value.length() < 1) {
-			setErrorMessage("External tool location cannot be empty");
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_cannot_be_empty_18")); //$NON-NLS-1$
 			setMessage(null);
 			return false;
 		}
@@ -314,11 +314,11 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		
 		File file = new File(value);
 		if (!file.exists()) { // The file does not exist.
-			setErrorMessage("External tool location does not exist");
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_does_not_exist_19")); //$NON-NLS-1$
 			return false;
 		}
 		if (!file.isFile()) {
-			setErrorMessage("External tool location specified is not a file");
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_specified_is_not_a_file_20")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -345,7 +345,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 				
 			File file = new File(value);
 			if (!file.exists()) { // The directory does not exist.
-				setErrorMessage("External tool working directory does not exist or is invalid");
+				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_working_directory_does_not_exist_or_is_invalid_21")); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -368,7 +368,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void handleWorkspaceLocationButtonSelected() {
 		ResourceSelectionDialog dialog;
-		dialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), "Select a resource");
+		dialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Select_a_resource_22")); //$NON-NLS-1$
 		dialog.open();
 		Object[] results = dialog.getResult();
 		if (results == null || results.length < 1) {
@@ -389,7 +389,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			getShell(), 
 			ResourcesPlugin.getWorkspace().getRoot(),
 			false,
-			"Select a directory");
+			ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Select_a_directory__23")); //$NON-NLS-1$
 		containerDialog.open();
 		Object[] resource = containerDialog.getResult();
 		String text= null;
@@ -403,7 +403,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	
 	private void handleFileWorkingDirectoryButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
-		dialog.setMessage("Select a directory");
+		dialog.setMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Select_a_directory__23")); //$NON-NLS-1$
 		dialog.setFilterPath(workDirectoryField.getText());
 		String text= dialog.open();
 		if (text != null) {

@@ -146,7 +146,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 		new Label(buttonComposite, SWT.NONE);
 		
-		addButton = createPushButton(buttonComposite, "Add...", null);
+		addButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Add..._1"), null); //$NON-NLS-1$
 		addButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					addTargets();
@@ -154,7 +154,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			});
 			
-		removeButton = createPushButton(buttonComposite, "Remove", null);
+		removeButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.R&emove_2"), null); //$NON-NLS-1$
 		removeButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					removeTargets();
@@ -162,7 +162,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			});
 		
-		upButton = createPushButton(buttonComposite, "Up", null);
+		upButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.U&p_3"), null); //$NON-NLS-1$
 		upButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					handleMove(-1);
@@ -170,7 +170,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			});
 				
-		downButton = createPushButton(buttonComposite, "Down", null);
+		downButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Down_4"), null); //$NON-NLS-1$
 		downButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					handleMove(1);
@@ -196,7 +196,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					if (! AntUtil.isInternalTarget(allTargets[i])) {
 						if (allTargets[i].isDefault()) {
 							defaultTarget = allTargets[i];
-							runDefaultTargetButton.setText(MessageFormat.format("Run default target ({0})", new Object[] {allTargets[i].getName()})); //NON-NLS-1$
+							runDefaultTargetButton.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_({0})_5"), new Object[] {allTargets[i].getName()})); //NON-NLS-1$ //$NON-NLS-1$
 							break;
 						}
 					}
@@ -226,7 +226,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (defaultTarget != null) {
 			labelProvider.setDefaultTargetName(defaultTarget.getName());
 		}					
-		SelectionDialog dialog= new ListSelectionDialog(getShell(), targets, new AntTargetContentProvider(), labelProvider, "Select Ant Targets:");
+		SelectionDialog dialog= new ListSelectionDialog(getShell(), targets, new AntTargetContentProvider(), labelProvider, AntLaunchConfigurationMessages.getString("AntTargetsTab.Select_&Ant_Targets__6")); //$NON-NLS-1$
 		if (dialog.open() == SelectionDialog.OK) {
 			getContentProvider().addAll(Arrays.asList(dialog.getResult()));
 		}
@@ -285,7 +285,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		tableComposite.setLayout(layout);
 				
 		executeLabel = new Label(tableComposite, SWT.LEFT);
-		executeLabel.setText("Targets to execute:"); 
+		executeLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Targets_to_e&xecute__7"));  //$NON-NLS-1$
 		
 		executeTargetsTable = new TableViewer(tableComposite,SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		executeTargetsTable.setContentProvider(new AntTargetContentProvider());
@@ -310,11 +310,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void targetsSelected(TargetInfo target) {
 		updateButtonEnablement();
-		String description= "";
+		String description= ""; //$NON-NLS-1$
 		if (target != null) {
 			description =target.getDescription();
 			if (description == null) {
-				description = "";
+				description = ""; //$NON-NLS-1$
 			}
 		}
 		descriptionField.setText(description);
@@ -325,7 +325,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void createDescriptionField(Composite parent) {
 		descriptionLabel = new Label(parent, SWT.NONE);
-		descriptionLabel.setText("Target description:");
+		descriptionLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Target_description__10")); //$NON-NLS-1$
 		
 		descriptionField = new Text(parent, SWT.READ_ONLY | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -339,7 +339,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private void createRunDefaultTargetButton(Composite parent) {
 		runDefaultTargetButton = new Button(parent, SWT.CHECK);
 		// The label that is applied if the default target is unknown
-		runDefaultTargetButton.setText("Run default target");
+		runDefaultTargetButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_11")); //$NON-NLS-1$
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		runDefaultTargetButton.setLayoutData(gridData);
 		runDefaultTargetButton.addSelectionListener(new SelectionAdapter() {
@@ -369,10 +369,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			configTargets= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
+			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntTargetsTab.Error_reading_configuration_12"), ce); //$NON-NLS-1$
 		}
 		
-		runDefaultTargetButton.setText("Run default target");
+		runDefaultTargetButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_13")); //$NON-NLS-1$
 		
 		if (newLocation == null) {
 			allTargets= null;
@@ -464,7 +464,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Targets";
+		return AntLaunchConfigurationMessages.getString("AntTargetsTab.Tar&gets_14"); //$NON-NLS-1$
 	}
 	
 	/*

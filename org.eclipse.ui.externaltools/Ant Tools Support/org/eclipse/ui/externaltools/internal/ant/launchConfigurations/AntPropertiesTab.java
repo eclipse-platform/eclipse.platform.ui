@@ -82,34 +82,34 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
 		if (editButton == null) {
-			addButton= createPushButton(parent, "Add...", null);
+			addButton= createPushButton(parent, AntLaunchConfigurationMessages.getString("AntPropertiesTab.&Add..._1"), null); //$NON-NLS-1$
 			addButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					addProperty();
 				}
 			});
 			
-			editButton= createPushButton(parent, "Edit...", null); 
+			editButton= createPushButton(parent, AntLaunchConfigurationMessages.getString("AntPropertiesTab.Ed&it..._2"), null);  //$NON-NLS-1$
 			editButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					edit();
 				}
 			});
 			
-			removeButton= createPushButton(parent, "Remove", null); 
+			removeButton= createPushButton(parent, AntLaunchConfigurationMessages.getString("AntPropertiesTab.R&emove_3"), null);  //$NON-NLS-1$
 			removeButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					remove(propertyTableViewer);
 				}
 			});
 		} else {
-			addFileButton= createPushButton(parent, "Add...", null);
+			addFileButton= createPushButton(parent, AntLaunchConfigurationMessages.getString("AntPropertiesTab.A&dd..._4"), null); //$NON-NLS-1$
 			addFileButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					addPropertyFile();
 				}
 			});
-			removeFileButton= createPushButton(parent, "Remove", null);
+			removeFileButton= createPushButton(parent, AntLaunchConfigurationMessages.getString("AntPropertiesTab.Rem&ove_5"), null); //$NON-NLS-1$
 			removeFileButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					remove(fileTableViewer);
@@ -171,7 +171,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());
-		label.setText("Properties:");
+		label.setText(AntLaunchConfigurationMessages.getString("AntPropertiesTab.&Properties__6")); //$NON-NLS-1$
 		
 		createTable(top);
 		createButtonGroup(top);
@@ -181,7 +181,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());
-		label.setText("Property files:");
+		label.setText(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Property_f&iles__7")); //$NON-NLS-1$
 		
 		createTable(top);
 		createButtonGroup(top);
@@ -393,7 +393,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Properties";
+		return AntLaunchConfigurationMessages.getString("AntPropertiesTab.P&roperties_8"); //$NON-NLS-1$
 	}
 
 	/**
@@ -406,19 +406,19 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		try {
 			properties= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
+			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
 		
 		String propertyFiles= null;
 		try {
 			propertyFiles= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
+			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
 		
 		populatePropertyViewer(properties);
 		
-		String[] files= AntUtil.parseString(propertyFiles, ",");
+		String[] files= AntUtil.parseString(propertyFiles, ","); //$NON-NLS-1$
 		fileTableViewer.setInput(files);
 		
 		propertyTableSelectionChanged((IStructuredSelection) propertyTableViewer.getSelection());

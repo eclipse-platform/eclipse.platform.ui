@@ -61,7 +61,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 */
 	protected void createRecursiveComponent(Composite parent) {
 		recursiveField = new Button(parent, SWT.CHECK);
-		recursiveField.setText("Recursively include sub-folders");
+		recursiveField.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Recursively_&include_sub-folders_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		recursiveField.setLayoutData(data);
 		recursiveField.addSelectionListener(new SelectionAdapter() {
@@ -79,7 +79,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 */
 	protected void createRefreshComponent(Composite parent) {
 		refreshField = new Button(parent, SWT.CHECK);
-		refreshField.setText("Refresh resources after running tool"); //$NON-NLS-1$
+		refreshField.setText("R&efresh resources after running tool"); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		refreshField.setLayoutData(data);
 		refreshField.addSelectionListener(new SelectionAdapter() {
@@ -97,7 +97,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createScopeComponent(Composite parent) {
-		String label = "Choose scope variable: ";
+		String label = ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Choose_scope_v&ariable___2"); //$NON-NLS-1$
 		ExternalToolVariable[] vars = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry().getRefreshVariables();
 		variableForm = new ExternalToolVariableForm(label, vars);
 		variableForm.createContents(parent, this);
@@ -127,7 +127,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		try {
 			scope= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Exception_reading_launch_configuration_3"), ce); //$NON-NLS-1$
 		}
 		String varName = null;
 		String varValue = null;
@@ -147,7 +147,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		try {
 			recursive= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, false);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Exception_reading_launch_configuration_3"), ce); //$NON-NLS-1$
 		}
 		recursiveField.setSelection(recursive);
 	}
@@ -160,7 +160,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		try {
 			scope= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Exception_reading_launch_configuration_3"), ce); //$NON-NLS-1$
 		}
 		refreshField.setSelection(scope != null);
 		updateEnabledState();		
@@ -184,7 +184,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Refresh";
+		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Refres&h_6"); //$NON-NLS-1$
 	}
 	
 	/**
