@@ -2155,12 +2155,24 @@ private void setPerspective(Perspective newPersp) {
  * @param persp identifies the new perspective.
  */
 public void setPerspective(final IPerspectiveDescriptor desc) {
+	// Going from multiple to single rows can make the coolbar
+	// and its adjacent views appear jumpy as perspectives are
+	// switched.  Turn off redraw to help with this.
+	boolean useRedraw = false;
+	IToolBarManager mgr = window.getToolsManager();
+	if (mgr instanceof CoolBarManager) {
+		useRedraw = true;
+		((CoolBarManager)mgr).getControl().setRedraw(false);
+	}
 	// Run op in busy cursor.
 	BusyIndicator.showWhile(null, new Runnable() {
 		public void run() {
 			busySetPerspective(desc);
 		}
 	});
+	if (useRedraw) {
+		((CoolBarManager)mgr).getControl().setRedraw(true);
+	}
 }
 /**
  * Restore the toolbar layout for the active perspective.
