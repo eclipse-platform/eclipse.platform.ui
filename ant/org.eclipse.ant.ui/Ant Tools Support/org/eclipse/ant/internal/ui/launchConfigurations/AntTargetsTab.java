@@ -658,13 +658,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		if (fAllTargets == null || isDirty()) {
-			if (getErrorMessage() != null) {
+			if (getErrorMessage() != null && !isDirty()) {
 				//error in parsing;
 				return false;
 			} else {
 				//targets not up to date and no error message...we have not parsed recently
-				setExecuteInput(getTargets());
-				
+				initializeFrom(launchConfig);
 				if (getErrorMessage() != null) {
 					//error in parsing;
 					return false;
