@@ -171,45 +171,47 @@ public class DecorationScheduler implements IResourceChangeListener {
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		try {
-			final List changedObjects = new ArrayList();
-			event.getDelta().accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta)
-					throws CoreException {
-					IResource resource = delta.getResource();
-
-					if (resource.getType() == IResource.ROOT) {
-						// continue with the delta
+		IResourceDelta delta= event.getDelta();
+		if (delta != null) {
+			try {
+				final List changedObjects = new ArrayList();
+				delta.accept(new IResourceDeltaVisitor() {
+					public boolean visit(IResourceDelta delta)
+						throws CoreException {
+						IResource resource = delta.getResource();
+	
+						if (resource.getType() == IResource.ROOT) {
+							// continue with the delta
+							return true;
+						}
+	
+						switch (delta.getKind()) {
+							case IResourceDelta.REMOVED :
+								// remove the cached decoration for any removed resource
+								resultCache.remove(resource);
+								break;
+							case IResourceDelta.CHANGED :
+								// for changed resources remove the result as it will need to 
+								//be recalculated.
+								resultCache.remove(resource);
+						}
+	
 						return true;
 					}
-
-					switch (delta.getKind()) {
-						case IResourceDelta.REMOVED :
-							// remove the cached decoration for any removed resource
-							resultCache.remove(resource);
-							break;
-						case IResourceDelta.CHANGED :
-							// for changed resources remove the result as it will need to 
-							//be recalculated.
-							resultCache.remove(resource);
-					}
-
-					return true;
-				}
-			});
-
-			changedObjects.clear();
-		} catch (CoreException exception) {
-			InternalPlatform.getRuntimePlugin().getLog().log(
-				exception.getStatus());
+				});
+	
+				changedObjects.clear();
+			} catch (CoreException exception) {
+				InternalPlatform.getRuntimePlugin().getLog().log(
+					exception.getStatus());
+			}
 		}
-
 	}
 
 	/**
 	 * Get the next resource to be decorated.
 	 * @return IResource
-		 */
+	 */
 	synchronized DecorationReference next() {
 		try {
 			if (shutdown)
