@@ -20,18 +20,19 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		InputStream featureStream = null;
 		
 		try {		
-			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);
-		
+			
+			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);		
 			ContentReference manifest = contentProvider.getFeatureManifestReference();
 			featureStream = manifest.getInputStream();
-			FeatureModelFactory factory = (FeatureModelFactory) this;
-			feature = (Feature)factory.parseFeature(featureStream);
-			feature.setSite(site);
-			
+			feature = (Feature)parseFeature(featureStream);
 			feature.setFeatureContentProvider(contentProvider);
-			
-			URL manifestUrl = manifest.asURL();
-			feature.resolve(manifestUrl, getResourceBundle(manifestUrl));
+			feature.setSite(site);						
+			URL baseUrl = null;
+			try {
+				baseUrl = new URL(manifest.asURL(),"."); // make sure we have URL to feature directory
+			} catch(IOException e) {
+			}
+			feature.resolve(baseUrl, getResourceBundle(baseUrl));
 			feature.markReadOnly();			
 			
 		} catch (IOException e) {
@@ -42,12 +43,15 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		} catch (Exception e) {
+			// VK: why is this case handled differently ??? What is the significance of
+			//     IOException va Exception (assume SAXException)
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:" + url.toExternalForm(), e);
 			throw new CoreException(status);
 		} finally {
 			try {
-				featureStream.close();
+				if (featureStream!=null)
+					featureStream.close();
 			} catch (Exception e) {
 			}
 		}
