@@ -89,6 +89,9 @@ Natures also have the ability to disallow the creation of linked resources on pr
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

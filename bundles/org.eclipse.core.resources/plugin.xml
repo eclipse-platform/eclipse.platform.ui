@@ -25,7 +25,7 @@
    <extension-point id="teamHook" name="%teamHookName" schema="schema/teamHook.exsd"/>
    <extension-point id="refreshProviders" name="%refreshProvidersName" schema="schema/refreshProviders.exsd"/>
 
-	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="preferences">
+	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="%preferencesExtPtName">
 		<scope name="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
 		<initializer class="org.eclipse.core.internal.resources.PreferenceInitializer"/>
 	</extension>
