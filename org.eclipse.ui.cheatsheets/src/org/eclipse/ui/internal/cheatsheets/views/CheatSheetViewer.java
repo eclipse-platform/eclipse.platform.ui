@@ -366,6 +366,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			props = savedProps;
 		}
 
+		clearBackgrounds(getViewItemArray());
+
 		if (props == null) {
 			getViewItemArray()[0].setAsCurrentActiveItem();
 			/* LP-item event */
@@ -400,7 +402,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		getManager().setData(csmData);
 
 		if (itemNum >= 0) {
-			clearBackgrounds(getViewItemArray());
 			currentItemNum = itemNum;
 			
 			currentItem = (ViewItem) viewItemList.get(itemNum);
