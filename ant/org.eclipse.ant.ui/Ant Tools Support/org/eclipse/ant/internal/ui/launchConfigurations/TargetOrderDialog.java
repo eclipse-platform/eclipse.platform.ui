@@ -12,6 +12,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -58,8 +59,8 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight= 10;
-		layout.marginWidth= 10;
+		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		
 		comp.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
