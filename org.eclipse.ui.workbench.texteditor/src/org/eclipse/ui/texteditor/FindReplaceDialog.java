@@ -1565,9 +1565,10 @@ class FindReplaceDialog extends Dialog {
 	 * Updates this dialog because of a different target.
 	 * @param target the new target
 	 * @param isTargetEditable <code>true</code> if the new target can be modifed
+	 * @param initializeFindString <code>true</code> if the find string of this dialog should be initialized based on the viewer's selection
 	 * @since 2.0
 	 */
-	public void updateTarget(IFindReplaceTarget target, boolean isTargetEditable) {
+	public void updateTarget(IFindReplaceTarget target, boolean isTargetEditable, boolean initializeFindString) {
 		
 		fIsTargetEditable= isTargetEditable;
 		fNeedsInitialFindBeforeReplace= true;
@@ -1577,10 +1578,10 @@ class FindReplaceDialog extends Dialog {
 				((IFindReplaceTargetExtension) fTarget).endSession();
 
 			fTarget= target;
-			if (target != null)
-				fIsTargetSupportingRegEx= target instanceof IFindReplaceTargetExtension3;
+			if (fTarget != null)
+				fIsTargetSupportingRegEx= fTarget instanceof IFindReplaceTargetExtension3;
 
-			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension) {
+			if (fTarget instanceof IFindReplaceTargetExtension) {
 				((IFindReplaceTargetExtension) fTarget).beginSession();
 
 				fGlobalInit= true;
@@ -1602,7 +1603,8 @@ class FindReplaceDialog extends Dialog {
 		if (okToUse(fReplaceLabel)) {
 			fReplaceLabel.setEnabled(isEditable());
 			fReplaceField.setEnabled(isEditable());
-			initFindStringFromSelection();
+			if (initializeFindString)
+				initFindStringFromSelection();
 			initIncrementalBaseLocation();
 			updateButtonState();
 		}

@@ -103,7 +103,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 						ITextEditorExtension2 extension= (ITextEditorExtension2) fPart;
 						isEditable= extension.isEditorInputModifiable();
 					}
-					fDialog.updateTarget(target, isEditable);
+					fDialog.updateTarget(target, isEditable, false);
 				}
 			}
 		}
@@ -228,7 +228,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			isEditable= ((ITextEditorExtension2) fWorkbenchPart).isEditorInputModifiable();
 
 		FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
-		dialog.updateTarget(fTarget, isEditable);
+		dialog.updateTarget(fTarget, isEditable, true);
 		dialog.open();
 	}
 	
