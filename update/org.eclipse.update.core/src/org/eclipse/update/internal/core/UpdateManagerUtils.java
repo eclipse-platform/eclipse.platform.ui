@@ -100,7 +100,7 @@ public class UpdateManagerUtils {
 				return result;
 
 			String rootURLFileString = rootURL.getFile();
-			rootURLFileString.replace(File.separatorChar, '/');
+			rootURLFileString = rootURLFileString.replace(File.separatorChar, '/');
 			if (!rootURLFileString.endsWith("/")) {
 				int index = rootURLFileString.lastIndexOf('/');
 				if (index != -1) {
@@ -111,7 +111,7 @@ public class UpdateManagerUtils {
 
 			if (urlFileString.startsWith(rootURLFileString)) {
 				result = urlFileString.substring(rootURLFileString.length());
-				result.replace(File.separatorChar, '/');
+				result = result.replace(File.separatorChar, '/');
 			} else {
 				// we need to check the following
 				// file:/C:/ and file:C:/
