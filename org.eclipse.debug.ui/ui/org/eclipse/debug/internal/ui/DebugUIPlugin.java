@@ -355,7 +355,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * </p>
 	 */
 	public void shutdown() throws CoreException {
-		super.shutdown();
 		
 		// shutdown the perspective manager
 		PerspectiveManager.getDefault().shutdown();		
@@ -379,6 +378,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		if (fgPresentation != null) {
 			fgPresentation.dispose();
 		}
+		
+		super.shutdown();
 	}
 
 	/**
