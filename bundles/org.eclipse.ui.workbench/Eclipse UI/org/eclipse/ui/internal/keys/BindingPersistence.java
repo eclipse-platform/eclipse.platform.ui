@@ -415,7 +415,7 @@ public final class BindingPersistence {
 	 *         <code>null</code>, but may be empty or point to an undefined
 	 *         scheme.
 	 */
-	public static final String getDefaultSchemeId() {
+	static final String getDefaultSchemeId() {
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
 		return store
 				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
@@ -533,7 +533,7 @@ public final class BindingPersistence {
 	 *            The command service for the workbench; must not be
 	 *            <code>null</code>.
 	 */
-	public static final void read(final BindingManager bindingManager,
+	static final void read(final BindingManager bindingManager,
 			final ICommandService commandService) {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -1377,7 +1377,7 @@ public final class BindingPersistence {
 	 *             If something happens while trying to write to the workbench
 	 *             preference store.
 	 */
-	public static final void write(final Scheme activeScheme,
+	static final void write(final Scheme activeScheme,
 			final Binding[] bindings) throws IOException {
 		// Print out debugging information, if requested.
 		if (DEBUG) {
