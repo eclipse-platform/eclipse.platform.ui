@@ -348,9 +348,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				}
 			}
 			fPattern.setFocus();
-			getContainer().setPerformActionEnabled(getContainer().hasValidScope());
 		}
+		updateOKStatus();
 		super.setVisible(visible);
+	}
+	
+	final void updateOKStatus() {
+		boolean regexStatus= validateRegex();
+		boolean hasFilePattern= fExtensions.getText().length() > 0;
+		getContainer().setPerformActionEnabled(regexStatus && hasFilePattern && getContainer().hasValidScope());
 	}
 
 	//---- Widget creation ------------------------------------------------
@@ -394,20 +400,19 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 }
 	
-	private void checkRegex() {
+	private boolean validateRegex() {
 		if (fIsRegExCheckbox.getSelection()) {
 			try {
 				Pattern.compile(fPattern.getText());
 			} catch (PatternSyntaxException e) {
 				statusMessage(true, e.getLocalizedMessage());
-				getContainer().setPerformActionEnabled(false);
-				return;
+				return false;
 			}
 			statusMessage(false, ""); //$NON-NLS-1$
 		} else {
 			statusMessage(false, SearchMessages.getString("SearchPage.containingText.hint")); //$NON-NLS-1$
 		}
-		getContainer().setPerformActionEnabled(true);
+		return true;
 	}
 
 	private Control createTextSearchComposite(Composite group) {
@@ -428,12 +433,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fPattern.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleWidgetSelected();
+				updateOKStatus();
 			}
 		});
 		// add some listeners for regex syntax checking
 		fPattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				checkRegex();
+				updateOKStatus();
 			}
 		});
 		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -467,7 +473,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsRegExCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fIsRegExSearch= fIsRegExCheckbox.getSelection();
-				checkRegex();
+				updateOKStatus();
 
 				writeConfiguration();
 				setContentAssistsEnablement(fIsRegExSearch);
@@ -594,7 +600,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fExtensions.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
+				updateOKStatus();
 			}
 		});
 		gd= new GridData(GridData.FILL_HORIZONTAL);
