@@ -58,7 +58,12 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	 * Creates a new projection annotation.
 	 */
 	public ProjectionAnnotation() {
+		this(false);
+	}
+	
+	public ProjectionAnnotation(boolean isCollapsed) {
 		super(TYPE, false, null);
+		fIsCollapsed= isCollapsed;
 	}
 	
 	public void setRangeIndication(boolean rangeIndication) {
@@ -94,7 +99,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		int middleY= (upperY + lowerY)/2;
 		
 		if (isCollapsed()) {
-			Point upperLeft= new Point(leftX, upperY-1);
+			Point upperLeft= new Point(leftX, upperY - 1);
 			Point middleRight= new Point(rightX, middleY);
 			Point lowerLeft= new Point(leftX, lowerY);
 			return new int[] {upperLeft.x, upperLeft.y, middleRight.x, middleRight.y, lowerLeft.x, lowerLeft.y};
@@ -107,7 +112,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	}
 	
 	private Rectangle computeRectangle(Rectangle rectangle, int lineHeight) {		
-		final int MARGIN= 1;
+		final int MARGIN= 2;
 		int leftX= rectangle.x + MARGIN;
 		int length= rectangle.width - 2*MARGIN;
 		int yDelta= (lineHeight - length)/2;
@@ -129,15 +134,16 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 			gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
 			gc.drawPolygon(polygon);
 			gc.setForeground(fg);
-			endPoint= new Point(polygon[polygon.length -2], polygon[polygon.length -1]);
+			endPoint= new Point(polygon[polygon.length -2], polygon[polygon.length -1] + 2);
 		}
 		return endPoint;
 	}
 	
 	private void paintRangeIndication(GC gc, Canvas canvas, Rectangle rectangle, Point startPoint) {
-		final int MARGIN= 1;
+		final int MARGIN= 3;
 		Color fg= gc.getForeground();
 		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
+		gc.setLineWidth(1);
 		gc.drawLine(startPoint.x, startPoint.y, startPoint.x, rectangle.y + rectangle.height - MARGIN);
 		gc.drawLine(startPoint.x, rectangle.y + rectangle.height - MARGIN, rectangle.x + rectangle.width - MARGIN, rectangle.y + rectangle.height - MARGIN);
 		gc.setForeground(fg);
