@@ -1428,7 +1428,7 @@ public void hideView(IViewPart view) {
 private void lastPartClosePerspective() {
 	Perspective persp = getActivePerspective();
 	if (persp != null && getActivePart() == null)
-		if(persp.getViewReferences().length == 0 || getEditorReferences().length == 0)
+		if(persp.getViewReferences().length == 0 && getEditorReferences().length == 0)
 			closePerspective(persp, false);
 }
 
