@@ -63,7 +63,8 @@ public class AntTypesPage extends AntPage {
 	 * Allows the user to enter a custom type.
 	 */
 	private void addType() {
-		AddCustomDialog dialog = getCustomDialog();
+		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
+		AddCustomDialog dialog = getCustomDialog(title);
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
@@ -117,7 +118,8 @@ public class AntTypesPage extends AntPage {
 		if (type == null) {
 			return;
 		}
-		AddCustomDialog dialog = getCustomDialog();
+		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
+		AddCustomDialog dialog = getCustomDialog(title);
 		dialog.setClassName(type.getClassName());
 		dialog.setName(type.getTypeName());
 		dialog.setLibrary(type.getLibrary());
@@ -131,9 +133,7 @@ public class AntTypesPage extends AntPage {
 		updateContent(type);
 	}
 	
-	private AddCustomDialog getCustomDialog() {
-		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
-		
+	private AddCustomDialog getCustomDialog(String title) {
 		Iterator types= getContents(true).iterator();
 		List names= new ArrayList();
 		while (types.hasNext()) {

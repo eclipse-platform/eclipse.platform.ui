@@ -63,7 +63,8 @@ public class AntTasksPage extends AntPage {
 	 * Allows the user to enter a custom task.
 	 */
 	private void addTask() {
-		AddCustomDialog dialog = getCustomDialog();
+		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
+		AddCustomDialog dialog = getCustomDialog(title);
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
@@ -75,8 +76,8 @@ public class AntTasksPage extends AntPage {
 		addContent(task);
 	}
 	
-	private AddCustomDialog getCustomDialog() {
-		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
+	private AddCustomDialog getCustomDialog(String title) {
+		
 
 		Iterator tasks= getContents(true).iterator();
 		List names= new ArrayList();
@@ -134,7 +135,8 @@ public class AntTasksPage extends AntPage {
 			return;
 		}
 		
-		AddCustomDialog dialog = getCustomDialog();
+		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
+		AddCustomDialog dialog = getCustomDialog(title);
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());
 		dialog.setLibrary(task.getLibrary());
