@@ -49,6 +49,6 @@ public class Bug43800Test extends UITestCase {
 
 		// Convert the event, and test the resulting accelerator value.
 		int accelerator = KeySupport.convertEventToUnmodifiedAccelerator(event);
-		assertEquals("Arrow_Left key truncated", SWT.ARROW_LEFT, accelerator); //$NON-NLS-1$
+		assertEquals("Arrow_Left key truncated.", SWT.ARROW_LEFT, accelerator); //$NON-NLS-1$
 	}
 }

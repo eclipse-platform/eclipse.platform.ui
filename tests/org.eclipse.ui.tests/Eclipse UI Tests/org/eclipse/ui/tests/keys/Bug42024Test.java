@@ -111,7 +111,7 @@ public class Bug42024Test extends UITestCase {
 		String longerKeySequenceText = "1 2 3 4 5"; //$NON-NLS-1$
 		KeySequence longerKeySequence = KeySequence.getInstance(longerKeySequenceText);
 		text.setKeySequence(longerKeySequence);
-		assertEquals("Limit of four did not truncate to four", length, text.getKeySequence().getKeyStrokes().size()); //$NON-NLS-1$
+		assertEquals("Limit of four did not truncate to four.", length, text.getKeySequence().getKeyStrokes().size()); //$NON-NLS-1$
 	}
 
 	/**
