@@ -67,6 +67,8 @@ public class RefreshJob extends WorkspaceJob {
 	 * @see org.eclipse.core.resources.refresh.IRefreshResult#refresh
 	 */
 	public void refresh(IResource resource) {
+		if (resource == null)
+			return;
 		addRequest(resource);
 		if (active)
 			schedule(UPDATE_DELAY);
