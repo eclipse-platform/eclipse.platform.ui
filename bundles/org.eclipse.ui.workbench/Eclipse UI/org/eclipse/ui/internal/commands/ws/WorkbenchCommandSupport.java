@@ -37,7 +37,6 @@ import org.eclipse.ui.commands.IMutableCommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.handlers.HandlerProxy;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.commands.CommandManagerFactory;
 import org.eclipse.ui.internal.commands.MutableCommandManager;

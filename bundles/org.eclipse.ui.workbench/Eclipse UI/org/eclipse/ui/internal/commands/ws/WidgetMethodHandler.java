@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ui.handlers;
+package org.eclipse.ui.internal.commands.ws;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

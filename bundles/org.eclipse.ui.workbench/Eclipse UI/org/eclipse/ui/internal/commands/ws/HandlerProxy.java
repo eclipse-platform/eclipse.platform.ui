@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.handlers;
+package org.eclipse.ui.internal.commands.ws;
 
 import java.util.Collections;
 import java.util.Map;
