@@ -61,7 +61,7 @@ public abstract class AbstractPresentationFactory {
 	 * 
 	 * @since 3.0
 	 */
-	public PartPresentation createDetachedWindowPresentation(Composite parent, 
+	public PartPresentation createDetachedViewPresentation(Composite parent, 
 			IPartPresentationSite container, IPresentablePart thePart, int flags) {
 		return null;
 	}
