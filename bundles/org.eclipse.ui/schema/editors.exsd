@@ -115,7 +115,7 @@ will use the icon provided by the operating system.
                   the name of a class that implements &lt;samp&gt;org.eclipse.ui.IEditorPart&lt;/samp&gt;. The attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt;, and &lt;samp&gt;launcher&lt;/samp&gt; are mutually exclusive. If this attribute is defined then &lt;samp&gt;contributorClass&lt;/samp&gt; should also be defined.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.part.IEditorPart"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorPart"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -124,7 +124,7 @@ is to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt;
 in order to inherit the default functionality.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.part.IViewPart"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.part.ViewPart"/>
                </appInfo>
             </annotation>
          </attribute>
