@@ -11,6 +11,8 @@
 package org.eclipse.update.internal.configurator;
 import java.io.*;
 import java.util.jar.*;
+
+import org.osgi.framework.*;
 /**
  * Parses MANIFEST.MF
  */
@@ -53,13 +55,13 @@ public class BundleManifest implements IConfigurationConstants {
 			Manifest m = new Manifest(in);
 			Attributes a = m.getMainAttributes();
 			// plugin id
-			String id = a.getValue("Bundle-GlobalName");
+			String id = a.getValue(Constants.BUNDLE_SYMBOLICNAME);
 			if (id == null) {
 				// In Eclipse manifest must have Bundle-GlobalName attribute
 				return;
 			}
-			String version = a.getValue("Bundle-Version");
-			String hostPlugin = a.getValue("Host-Bundle");
+			String version = a.getValue(Constants.BUNDLE_VERSION);
+			String hostPlugin = a.getValue(Constants.FRAGMENT_HOST);
 			pluginEntry = new PluginEntry();
 			pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id,
 					version));
