@@ -33,15 +33,15 @@
     </test>
     
     <test id="cvs.provider">
-      <run class="org.eclipse.team.tests.ccvs.core.provider.AllTests"/>
+      <run class="org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider"/>
     </test>
     
     <test id="cvs.compatibility">
-      <run class="org.eclipse.team.tests.ccvs.core.compatible.AllTests"/>
+      <run class="org.eclipse.team.tests.ccvs.core.compatible.AllTestsCompatibility"/>
     </test>
     
     <test id="cvs.resources">
-      <run class="org.eclipse.team.tests.ccvs.core.cvsresources.AllTests"/>
+      <run class="org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources"/>
     </test>
     
     <test id="cvs.sync">

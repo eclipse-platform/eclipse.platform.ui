@@ -8,10 +8,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
-public class AllTests extends EclipseTest {
+public class AllTestsCVSResource extends EclipseTest {
 
 	public static void main(String[] args) {	
-		TestRunner.run(AllTests.class);
+		TestRunner.run(AllTestsCVSResource.class);
 	}
 	
 	public static Test suite() {	
@@ -20,11 +20,11 @@ public class AllTests extends EclipseTest {
     	return suite; 	
 	}	
 	
-	public AllTests(String name) {
+	public AllTestsCVSResource(String name) {
 		super(name);
 	}
 	
-	public AllTests() {
+	public AllTestsCVSResource() {
 		super();
 	}
 }

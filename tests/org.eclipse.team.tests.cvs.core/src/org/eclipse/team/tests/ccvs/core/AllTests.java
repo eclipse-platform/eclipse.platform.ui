@@ -28,9 +28,9 @@ public class AllTests extends EclipseTest {
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTest(org.eclipse.team.tests.ccvs.core.compatible.AllTests.suite());
-		suite.addTest(org.eclipse.team.tests.ccvs.core.cvsresources.AllTests.suite());
-		suite.addTest(org.eclipse.team.tests.ccvs.core.provider.AllTests.suite());
+		suite.addTest(org.eclipse.team.tests.ccvs.core.compatible.AllTestsCompatibility.suite());
+		suite.addTest(org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResource.suite());
+		suite.addTest(org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider.suite());
 		return new CVSTestSetup(suite);
 	}
 }

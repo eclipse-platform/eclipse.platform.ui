@@ -7,7 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
-public class AllTests extends TestSuite {
+public class AllTestsCompatibility extends TestSuite {
 			
 	public static Test suite() {	
 		TestSuite suite = new TestSuite();
@@ -17,11 +17,11 @@ public class AllTests extends TestSuite {
     	return new CompatibleTestSetup(suite);
 	}	
 	
-	public AllTests(String name) {
+	public AllTestsCompatibility(String name) {
 		super(name);
 	}
 
-	public AllTests() {
+	public AllTestsCompatibility() {
 		super();
 	}
 }

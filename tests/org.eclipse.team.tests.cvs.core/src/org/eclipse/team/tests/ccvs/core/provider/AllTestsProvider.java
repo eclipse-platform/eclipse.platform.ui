@@ -12,12 +12,12 @@ import org.eclipse.team.tests.ccvs.core.EclipseTest;
  * @version 	1.0
  * @author 	${user}
  */
-public class AllTests extends EclipseTest {
+public class AllTestsProvider extends EclipseTest {
 
 	/**
 	 * Constructor for AllTests.
 	 */
-	public AllTests() {
+	public AllTestsProvider() {
 		super();
 	}
 
@@ -25,7 +25,7 @@ public class AllTests extends EclipseTest {
 	 * Constructor for AllTests.
 	 * @param name
 	 */
-	public AllTests(String name) {
+	public AllTestsProvider(String name) {
 		super(name);
 	}
 
