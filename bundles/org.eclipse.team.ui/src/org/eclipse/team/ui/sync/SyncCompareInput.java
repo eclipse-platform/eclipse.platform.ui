@@ -15,6 +15,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -260,25 +261,29 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	void makeParents(IDiffElement element) {
-		IDiffElement node = element;
+	/**
+	 * Builds a DiffFolder tree under the given root for the given resource.
+	 */
+	private DiffContainer buildPath(DiffContainer root, IContainer resource) {
+		DiffContainer parent = root;
+		if (resource.getType() == IResource.ROOT) {
+			return root;
+		}
+		if (resource.getType() != IResource.PROJECT) {
+			parent = buildPath(root, resource.getParent());
+		}
 	
-		IResource resource = ((ITeamNode)element).getResource().getParent();
-		boolean found = false;
-		while (resource.getType() != IResource.ROOT && !found) {
-			DiffContainer container = (DiffContainer)diffRoot.findChild(resource.getName());
-			if (container == null) {
-				container = new UnchangedTeamContainer(null, resource);
-			} else {
-				found = true;
-			}
-			container.add(node);
-			node = container;
-			resource = resource.getParent();
+		DiffContainer c = (DiffContainer)parent.findChild(resource.getName());
+		if (c == null) {
+			c = new UnchangedTeamContainer(parent, resource);
 		}
-		if (!found) {
-			diffRoot.add(node);
-		}
+		return c;
+	}
+	
+	void makeParents(IDiffElement element) {
+		IContainer parent = ((ITeamNode)element).getResource().getParent();
+		DiffContainer container = buildPath(diffRoot, parent);
+		container.add(element);
 	}
 	
 	/**
