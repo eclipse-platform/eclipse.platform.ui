@@ -4,7 +4,7 @@
 <meta NAME="since" content="">
 </head><body><h2>Connections</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Test that authentication, connection errors result in appropriate error messages and that these don't pollute the log file or console. to setup for these tests
 ensure there are a couple of shared projects in your workspace.</p>
@@ -14,8 +14,9 @@ ensure there are a couple of shared projects in your workspace.</p>
 <li>Disconnect from the network.
 <li>Open a file. The CVS quick diff will fail and an error should be in the log.
 <li>Synchronize all the shared projects. One error explaining the failures should be returned.
-<li>Change the connection properties of one of the projects to point to an 
-<li>Expand the location in the CVS repositories view.
+<li>Change the connection properties of one of the projects to point to an non-existing location. Then synchronize again, the error message should indicate that some succeeded and
+others failed. But the user should no that the operation did complete and skipped the failed projects.
+<li>Expand the invalid  location in the CVS repositories view. An appropriate error should be shown.
 </ul>
 
 </body></html>
