@@ -113,8 +113,8 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	}
 
 	public boolean finish() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		BookmarkFolder parentFolder = getFolder();
+		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		//BookmarkFolder parentFolder = getFolder();
 		boolean webBookmark = false;
 		if (localBookmark == null)
 			webBookmark = webButton.getSelection();

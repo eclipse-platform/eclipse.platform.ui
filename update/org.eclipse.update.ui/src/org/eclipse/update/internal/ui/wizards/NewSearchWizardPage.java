@@ -64,7 +64,7 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	}
 
 	public boolean finish() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		SearchObject search = new SearchObject(getName(), descriptor);
 		addToModel(search);
 		return true;

@@ -48,6 +48,12 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 		return container;
 	}
 	
+	public void performDefaults() {
+		IInstallConfiguration config = getConfiguration();
+		nameText.setText(config.getLabel());
+		super.performDefaults();
+	}
+	
 	public boolean performOk() {
 		if (changed) {
 			IInstallConfiguration config = getConfiguration();

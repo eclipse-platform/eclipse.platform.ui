@@ -4,7 +4,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -14,7 +13,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.PendingChange;
-import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -35,8 +34,6 @@ public class DuplicateConflictsDialog extends MessageDialog {
 
 	private TreeViewer treeViewer;
 	private ArrayList conflicts;
-	private Image featureImage;
-	private Image warningFeatureImage;
 
 	static class IdEntry {
 		IConfiguredSite csite;
@@ -112,10 +109,13 @@ public class DuplicateConflictsDialog extends MessageDialog {
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
+			int flags = 0;
 			if (obj instanceof ArrayList)
-				return warningFeatureImage;
-			if (obj instanceof IdEntry)
-				return featureImage;
+				flags = UpdateLabelProvider.F_WARNING;
+			if (obj instanceof IdEntry || obj instanceof ArrayList)
+				return UpdateUIPlugin.getDefault().getLabelProvider().get(
+					UpdateUIPluginImages.DESC_FEATURE_OBJ,
+					flags);
 			return null;
 		}
 	}
@@ -132,21 +132,11 @@ public class DuplicateConflictsDialog extends MessageDialog {
 				IDialogConstants.NO_LABEL },
 			0);
 		this.conflicts = conflicts;
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-		ImageDescriptor desc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_WARNING_CO }
-		});
-		warningFeatureImage = desc.createImage();
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	public boolean close() {
-		featureImage.dispose();
-		warningFeatureImage.dispose();
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
 	}
 
@@ -271,7 +261,8 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		IFeatureReference[] optionalFeatures)
 		throws CoreException {
 		addEntry(feature, csite, table);
-		IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] irefs =
+			feature.getIncludedFeatureReferences();
 		for (int i = 0; i < irefs.length; i++) {
 			IIncludedFeatureReference iref = irefs[i];
 			boolean add = true;
@@ -307,9 +298,9 @@ public class DuplicateConflictsDialog extends MessageDialog {
 			featureTable.put(id, entries);
 		}
 		IdEntry entry = new IdEntry(feature, csite);
-		boolean replaced=false;
-		for (int i=0; i<entries.size(); i++) {
-			IdEntry existingEntry = (IdEntry)entries.get(i);
+		boolean replaced = false;
+		for (int i = 0; i < entries.size(); i++) {
+			IdEntry existingEntry = (IdEntry) entries.get(i);
 			IConfiguredSite existingSite = existingEntry.getConfiguredSite();
 			if (existingSite.equals(entry.getConfiguredSite())) {
 				// same site - replace it if not new

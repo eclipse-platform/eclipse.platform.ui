@@ -93,11 +93,27 @@ public class SiteBookmarkPropertyPage
 		}
 		return true;
 	}
-
-	private void initializeFields() {
+	
+	public void performDefaults() {
+		doInitialize();
+		super.performDefaults();
+	}
+	
+	private void doInitialize() {
 		SiteBookmark site = (SiteBookmark) getElement();
 		siteName.setText(site.getName());
 		siteURL.setText(site.getURL().toString());
+		siteName.setEnabled(site.getType() != SiteBookmark.LOCAL);
+		siteURL.setEnabled(site.getType() == SiteBookmark.USER);
+		updateButton.setSelection(site.isWebBookmark()==false);
+		updateButton.setEnabled(siteURL.isEnabled());
+		webButton.setSelection(site.isWebBookmark());
+		webButton.setEnabled(updateButton.isEnabled());
+	}
+
+	private void initializeFields() {
+		doInitialize();
+
 		siteName.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				checkFields();
@@ -109,13 +125,6 @@ public class SiteBookmarkPropertyPage
 				checkFields();
 			}
 		});
-		siteName.setEnabled(site.getType() != SiteBookmark.LOCAL);
-		siteURL.setEnabled(site.getType() == SiteBookmark.USER);
-		updateButton.setSelection(site.isWebBookmark()==false);
-		updateButton.setEnabled(siteURL.isEnabled());
-		webButton.setSelection(site.isWebBookmark());
-		webButton.setEnabled(updateButton.isEnabled());
-		
 		updateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				typeChanged = true;
@@ -129,6 +138,7 @@ public class SiteBookmarkPropertyPage
 			}
 		});
 	}
+	
 	private void checkFields() {
 		boolean valid = true;
 		if (siteName.getText().length() == 0)

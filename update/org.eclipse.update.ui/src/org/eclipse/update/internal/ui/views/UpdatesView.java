@@ -92,15 +92,6 @@ public class UpdatesView
 	private Action filterEnvironmentAction;
 	private Action showCategoriesAction;
 	private Action linkExtensionAction;
-	private Image siteImage;
-	private Image installSiteImage;
-	private Image featureImage;
-	private Image efixImage;
-	private Image errorFeatureImage;
-	private Image categoryImage;
-	private Image discoveryImage;
-	private Image bookmarkFolderImage;
-	private Image computerImage;
 	private VolumeLabelProvider volumeLabelProvider;
 	private Action refreshAction;
 	private Action showSearchResultAction;
@@ -298,15 +289,16 @@ public class UpdatesView
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
+			UpdateLabelProvider provider = UpdateUIPlugin.getDefault().getLabelProvider();
 			if (obj instanceof SiteBookmark
 				|| obj instanceof SearchResultSite) {
-				return siteImage;
+				return provider.get(UpdateUIPluginImages.DESC_SITE_OBJ);
 			}
 			if (obj instanceof MyComputer) {
-				return computerImage;
+				return provider.get(UpdateUIPluginImages.DESC_COMPUTER_OBJ);
 			}
 			if (obj instanceof DiscoveryFolder) {
-				return discoveryImage;
+				return provider.get(UpdateUIPluginImages.DESC_PLACES_OBJ);
 			}
 			if (obj instanceof MyComputerDirectory) {
 				IVolume volume = ((MyComputerDirectory) obj).getVolume();
@@ -318,38 +310,34 @@ public class UpdatesView
 				return ((MyComputerDirectory) obj).getImage(obj);
 			}
 			if (obj instanceof ExtensionRoot) {
-				return installSiteImage;
+				return provider.get(UpdateUIPluginImages.DESC_LSITE_OBJ);
 			}
 			if (obj instanceof MyComputerFile) {
 				ImageDescriptor desc =
 					((MyComputerFile) obj).getImageDescriptor(obj);
-				Image image = (Image) fileImages.get(desc);
-				if (image == null) {
-					image = desc.createImage();
-					fileImages.put(desc, image);
-				}
-				return image;
+				return provider.get(desc);
 			}
 			if (obj instanceof SiteCategory) {
-				return categoryImage;
+				return provider.get(UpdateUIPluginImages.DESC_CATEGORY_OBJ);
 			}
 			if (obj instanceof BookmarkFolder) {
-				return bookmarkFolderImage;
+				return provider.get(UpdateUIPluginImages.DESC_BFOLDER_OBJ);
 			}
 			if (obj instanceof SearchObject) {
 				return getSearchObjectImage((SearchObject) obj);
 			}
-			if (obj instanceof IFeature) {
-				boolean efix = UpdateUIPlugin.isPatch((IFeature) obj);
-				return efix ? efixImage : featureImage;
-			}
+
 			if (obj instanceof IFeatureAdapter) {
 				IFeatureAdapter adapter = (IFeatureAdapter) obj;
-				IFeature feature = getFeature(adapter);
-				if (feature instanceof MissingFeature)
-					return errorFeatureImage;
-				boolean efix = UpdateUIPlugin.isPatch(feature);
-				return efix ? efixImage : featureImage;
+				obj = getFeature(adapter);
+			}
+			if (obj instanceof IFeature) {
+				int flags=0;
+				if (obj instanceof MissingFeature)
+					flags = UpdateLabelProvider.F_ERROR;
+				boolean efix = false;
+				if (flags==0) efix = UpdateUIPlugin.isPatch((IFeature) obj);
+				return provider.get(efix ? UpdateUIPluginImages.DESC_EFIX_OBJ : UpdateUIPluginImages.DESC_FEATURE_OBJ, flags);
 			}
 			return super.getImage(obj);
 		}
@@ -406,7 +394,8 @@ public class UpdatesView
 		model.addUpdateModelChangedListener(this);
 		selectionListener = new SelectionChangedListener();
 		updateSearchObject = new DefaultUpdatesSearchObject();
-		initializeImages();
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+		volumeLabelProvider = new VolumeLabelProvider();
 	}
 
 	protected TreeViewer createTree(Composite parent, int styles) {
@@ -414,9 +403,10 @@ public class UpdatesView
 	}
 
 	public void dispose() {
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		volumeLabelProvider.dispose();
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(this);
-		disposeImages();
 		if (handCursor != null)
 			handCursor.dispose();
 		if (clipboard != null) {
@@ -742,7 +732,7 @@ public class UpdatesView
 	}
 
 	private void performNewBookmark() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 		NewSiteBookmarkWizardPage page =
 			new NewSiteBookmarkWizardPage(getSelectedFolder());
@@ -767,7 +757,7 @@ public class UpdatesView
 	}
 
 	private void performNewBookmarkFolder() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 		NewFolderWizardPage page = new NewFolderWizardPage(getSelectedFolder());
 		NewWizard wizard =
@@ -781,7 +771,7 @@ public class UpdatesView
 	}
 
 	private void performNewSearch() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 		NewSearchWizardPage page = new NewSearchWizardPage(getSelectedFolder());
 		NewWizard wizard =
@@ -802,8 +792,8 @@ public class UpdatesView
 			if (obj instanceof SiteBookmark) {
 				SiteBookmark bookmark = (SiteBookmark) obj;
 				if (bookmark.getType() == SiteBookmark.LOCAL) {
-					UpdateModel model =
-						UpdateUIPlugin.getDefault().getUpdateModel();
+					//UpdateModel model =
+					//	UpdateUIPlugin.getDefault().getUpdateModel();
 					Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 					NewSiteBookmarkWizardPage page =
 						new NewSiteBookmarkWizardPage(
@@ -915,14 +905,12 @@ public class UpdatesView
 			(Object[]) clipboard.getContents(dataTransfer);
 
 		if (objects != null) {
-			int operation = DND.DROP_COPY;
 			BookmarkFolder parentFolder =
 				(BookmarkFolder) UpdatesDropAdapter.getRealTarget(
 					getSelectedObject());
 			for (int i = 0; i < objects.length; i++) {
 				NamedModelObject object = (NamedModelObject)objects[i];
 				if (!UpdatesDropAdapter.addToModel(viewer.getControl().getShell(),
-					operation,
 					parentFolder,
 					object))
 					return;
@@ -1140,42 +1128,7 @@ public class UpdatesView
 		viewer.setSelection(selection, true);
 	}
 
-	private void initializeImages() {
-		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
-		installSiteImage = UpdateUIPluginImages.DESC_LSITE_OBJ.createImage();
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-		efixImage = UpdateUIPluginImages.DESC_EFIX_OBJ.createImage();
-		discoveryImage = UpdateUIPluginImages.DESC_PLACES_OBJ.createImage();
-		bookmarkFolderImage =
-			UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
-		categoryImage = UpdateUIPluginImages.DESC_CATEGORY_OBJ.createImage();
-		computerImage = UpdateUIPluginImages.DESC_COMPUTER_OBJ.createImage();
-		ImageDescriptor desc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_ERROR_CO }
-		});
-		errorFeatureImage = desc.createImage();
-		volumeLabelProvider = new VolumeLabelProvider();
-	}
 	private void disposeImages() {
-		siteImage.dispose();
-		installSiteImage.dispose();
-		featureImage.dispose();
-		efixImage.dispose();
-		errorFeatureImage.dispose();
-		discoveryImage.dispose();
-		bookmarkFolderImage.dispose();
-		categoryImage.dispose();
-		computerImage.dispose();
-		for (Enumeration enum = fileImages.elements();
-			enum.hasMoreElements();
-			) {
-			((Image) enum.nextElement()).dispose();
-		}
 		volumeLabelProvider.dispose();
 	}
 

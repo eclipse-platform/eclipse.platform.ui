@@ -103,7 +103,6 @@ public class BookmarkUtil {
 	}
 
 	private static SiteBookmark createSite(Node child) {
-		SiteBookmark bookmark = new SiteBookmark();
 		String name = getAttribute(child, "name");
 		URL url = null;
 		try {

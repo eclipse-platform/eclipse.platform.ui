@@ -46,25 +46,6 @@ public class ConfigurationView
 	private static final String STATE_SHOW_UNCONF =
 		"ConfigurationView.showUnconf";
 	private Image eclipseImage;
-	private Image featureImage;
-	private Image updatedFeatureImage;
-	private Image errorFeatureImage;
-	private Image optionalFeatureImage;
-	private Image warningFeatureImage;
-	private Image unconfFeatureImage;
-	private Image errorUnconfFeatureImage;
-	private Image warningUnconfFeatureImage;
-	private Image efixImage;
-	private Image warningEfixImage;
-	private Image errorEfixImage;
-	private Image siteImage;
-	private Image installSiteImage;
-	private Image linkedSiteImage;
-	private Image configImage;
-	private Image currentConfigImage;
-	private Image modConfigImage;
-	private Image historyImage;
-	private Image savedImage;
 	private boolean initialized;
 	private SavedFolder savedFolder;
 	private HistoryFolder historyFolder;
@@ -187,7 +168,6 @@ public class ConfigurationView
 		 */
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof UpdateModel) {
-				UpdateModel model = (UpdateModel) parent;
 				ILocalSite localSite = getLocalSite();
 				if (localSite != null)
 					return new Object[] {
@@ -407,34 +387,34 @@ public class ConfigurationView
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
+			UpdateLabelProvider provider = UpdateUIPlugin.getDefault().getLabelProvider();
 			if (obj instanceof ILocalSite)
 				return eclipseImage;
 			if (obj instanceof IFeatureAdapter) {
-				return getFeatureImage((IFeatureAdapter) obj);
+				return getFeatureImage(provider, (IFeatureAdapter) obj);
 			}
 			if (obj instanceof IConfiguredSiteAdapter) {
 				IConfiguredSite csite =
 					((IConfiguredSiteAdapter) obj).getConfigurationSite();
-				if (csite.isUpdatable())
-					return installSiteImage;
-				else
-					return linkedSiteImage;
+				int flags=csite.isUpdatable()?0 : UpdateLabelProvider.F_LINKED;
+				return provider.get(UpdateUIPluginImages.DESC_LSITE_OBJ, flags);
 			}
 			if (obj instanceof SavedFolder) {
-				return savedImage;
+				return provider.get(UpdateUIPluginImages.DESC_SAVED_OBJ);
 			}
 			if (obj instanceof HistoryFolder) {
-				return historyImage;
+				return provider.get(UpdateUIPluginImages.DESC_HISTORY_OBJ);
 			}
 			if (obj instanceof PreservedConfiguration) {
 				obj = ((PreservedConfiguration) obj).getConfiguration();
 			}
 			if (obj instanceof IInstallConfiguration) {
 				IInstallConfiguration config = (IInstallConfiguration) obj;
-				if (config.isCurrent())
-					return currentConfigImage;
+				int flags = config.isCurrent() ? SharedLabelProvider.F_CURRENT:0;
+				
 				boolean currentTimeline = isCurrentTimeline(config);
-				return currentTimeline?configImage:modConfigImage;
+				if (!currentTimeline) flags |= SharedLabelProvider.F_MOD;
+				return provider.get(UpdateUIPluginImages.DESC_CONFIG_OBJ, flags);
 			}
 			return null;
 		}
@@ -446,7 +426,7 @@ public class ConfigurationView
 			return config.getTimeline()==cconfig.getTimeline();
 		}
 
-		private Image getFeatureImage(IFeatureAdapter adapter) {
+		private Image getFeatureImage(UpdateLabelProvider provider, IFeatureAdapter adapter) {
 			boolean configured = true;
 			boolean updated = false;
 			boolean current = true;
@@ -462,46 +442,40 @@ public class ConfigurationView
 				if (feature instanceof MissingFeature) {
 					MissingFeature mfeature = (MissingFeature) feature;
 					if (mfeature.isOptional() == false)
-						return errorFeatureImage;
-					return optionalFeatureImage;
+						return provider.get(UpdateUIPluginImages.DESC_FEATURE_OBJ, UpdateLabelProvider.F_ERROR);
+					return provider.get(UpdateUIPluginImages.DESC_NOTINST_FEATURE_OBJ);
 				}
 				int code = IFeature.STATUS_HAPPY;
+				ImageDescriptor baseDesc;
+				int flags = 0;
 				if (current) {
 					IStatus status = localSite.getFeatureStatus(feature);
 					code = getStatusCode(feature, status);
 				}
-				if (configured) {
-					boolean efix = UpdateUIPlugin.isPatch(feature);
-					switch (code) {
+				boolean efix = UpdateUIPlugin.isPatch(feature);
+				baseDesc = efix ? UpdateUIPluginImages.DESC_EFIX_OBJ:(
+					configured?UpdateUIPluginImages.DESC_FEATURE_OBJ:UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ);
+				switch (code) {
 						case IFeature.STATUS_UNHAPPY :
-							return efix ? errorEfixImage : errorFeatureImage;
+								flags |= UpdateLabelProvider.F_ERROR;
+								break;
 						case IFeature.STATUS_AMBIGUOUS :
-							return efix
-								? warningEfixImage
-								: warningFeatureImage;
+								flags |= UpdateLabelProvider.F_WARNING;
+								break;
 						default :
-							return updated
-								? updatedFeatureImage
-								: (efix ? efixImage : featureImage);
-					}
-				} else {
-					switch (code) {
-						case IFeature.STATUS_UNHAPPY :
-							return errorUnconfFeatureImage;
-						case IFeature.STATUS_AMBIGUOUS :
-							return warningUnconfFeatureImage;
-						default :
-							return unconfFeatureImage;
-					}
+								if (configured && updated) 
+									flags |= UpdateLabelProvider.F_UPDATED;
+								break;
 				}
+				return provider.get(baseDesc, flags);
 			} catch (CoreException e) {
-				//UpdateUIPlugin.logException(e);
-				return errorFeatureImage;
+				return provider.get(UpdateUIPluginImages.DESC_FEATURE_OBJ, UpdateLabelProvider.F_ERROR);
 			}
 		}
 	}
 
 	public ConfigurationView() {
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 		initializeImages();
 		savedFolder = new SavedFolder();
 		historyFolder = new HistoryFolder();
@@ -512,111 +486,7 @@ public class ConfigurationView
 		AboutInfo info = UpdateUIPlugin.getDefault().getAboutInfo();
 		if (info.getWindowImage() != null)
 			edesc = info.getWindowImage();
-		eclipseImage = edesc.createImage();
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-		optionalFeatureImage =
-			UpdateUIPluginImages.DESC_NOTINST_FEATURE_OBJ.createImage();
-		edesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_ERROR_CO }
-		});
-		errorFeatureImage = edesc.createImage();
-		edesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_WARNING_CO }
-		});
-		warningFeatureImage = edesc.createImage();
-		edesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_FEATURE_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_UPDATED_CO }
-		});
-		updatedFeatureImage = edesc.createImage();
-		unconfFeatureImage =
-			UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ.createImage();
-
-		edesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_ERROR_CO }
-		});
-		errorUnconfFeatureImage = edesc.createImage();
-		edesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_WARNING_CO }
-		});
-		warningUnconfFeatureImage = edesc.createImage();
-
-		efixImage = UpdateUIPluginImages.DESC_EFIX_OBJ.createImage();
-		edesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_EFIX_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_ERROR_CO }
-		});
-		errorEfixImage = edesc.createImage();
-		edesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_EFIX_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_WARNING_CO }
-		});
-		warningEfixImage = edesc.createImage();
-
-		ImageDescriptor siteDesc = UpdateUIPluginImages.DESC_LSITE_OBJ;
-		siteImage = siteDesc.createImage();
-		ImageDescriptor installSiteDesc = UpdateUIPluginImages.DESC_LSITE_OBJ;
-		installSiteImage = installSiteDesc.createImage();
-		ImageDescriptor linkedSiteDesc =
-			new OverlayIcon(
-				siteDesc,
-				new ImageDescriptor[][] { {
-					UpdateUIPluginImages
-					.DESC_LINKED_CO }
-		});
-		linkedSiteImage = linkedSiteDesc.createImage();
-		configImage = UpdateUIPluginImages.DESC_CONFIG_OBJ.createImage();
-		ImageDescriptor cdesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_CONFIG_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-				UpdateUIPluginImages.DESC_CURRENT_CO }
-		});
-		currentConfigImage = cdesc.createImage();
-		cdesc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_CONFIG_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-				UpdateUIPluginImages.DESC_MOD_CO }
-		});
-		modConfigImage = cdesc.createImage();
-		savedImage = UpdateUIPluginImages.DESC_SAVED_OBJ.createImage();
-		historyImage = UpdateUIPluginImages.DESC_HISTORY_OBJ.createImage();
+		eclipseImage = UpdateUIPlugin.getDefault().getLabelProvider().get(edesc);
 	}
 
 	public void initProviders() {
@@ -706,26 +576,7 @@ public class ConfigurationView
 	}
 
 	public void dispose() {
-		eclipseImage.dispose();
-		featureImage.dispose();
-		updatedFeatureImage.dispose();
-		optionalFeatureImage.dispose();
-		unconfFeatureImage.dispose();
-		errorFeatureImage.dispose();
-		warningFeatureImage.dispose();
-		efixImage.dispose();
-		warningEfixImage.dispose();
-		errorEfixImage.dispose();
-		errorUnconfFeatureImage.dispose();
-		warningUnconfFeatureImage.dispose();
-		siteImage.dispose();
-		installSiteImage.dispose();
-		linkedSiteImage.dispose();
-		savedImage.dispose();
-		historyImage.dispose();
-		configImage.dispose();
-		currentConfigImage.dispose();
-		modConfigImage.dispose();
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		if (initialized) {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();

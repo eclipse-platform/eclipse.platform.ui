@@ -60,8 +60,8 @@ public class BrowserControlSite extends OleControlSite {
 
 		addEventListener(WebBrowser.BeforeNavigate2, new OleListener() {
 			public void handleEvent(OleEvent event) {
-				Variant urlVar = event.arguments[1];
-				String strUrl = urlVar.getString();
+				//Variant urlVar = event.arguments[1];
+				//String strUrl = urlVar.getString();
 			}
 		});
 

@@ -6,7 +6,6 @@ package org.eclipse.update.internal.ui.wizards;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.IFeature;
@@ -26,8 +25,6 @@ public class LicensePage extends WizardPage {
 	private PendingChange[] jobs;
 	private Text text;
 	private Table table;
-	private Image featureImage;
-	private Image efixImage;
 
 	/**
 	 * Constructor for LicensePage
@@ -37,19 +34,13 @@ public class LicensePage extends WizardPage {
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setPageComplete(false);
 		this.multiLicenseMode = multiLicenseMode;
-		if (multiLicenseMode) {
-			featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-			efixImage = UpdateUIPluginImages.DESC_EFIX_OBJ.createImage();
-		}
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 		setDescription(
 			UpdateUIPlugin.getResourceString(
 				multiLicenseMode ? KEY_DESC2 : KEY_DESC));
 	}
 	public void dispose() {
-		if (featureImage != null)
-			featureImage.dispose();
-		if (efixImage !=null)
-			efixImage.dispose();
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -102,9 +93,11 @@ public class LicensePage extends WizardPage {
 					| SWT.READ_ONLY);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		if (multiLicenseMode) gd.horizontalSpan = 2;
+		if (multiLicenseMode)
+			gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
-		text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		text.setBackground(
+			text.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		GridLayout buttonLayout = new GridLayout();
@@ -144,7 +137,11 @@ public class LicensePage extends WizardPage {
 					item = new TableItem(table, SWT.NONE);
 					item.setText(feature.getLabel());
 					boolean efix = UpdateUIPlugin.isPatch(feature);
-					item.setImage(efix?efixImage:featureImage);
+					item.setImage(
+						UpdateUIPlugin.getDefault().getLabelProvider().get(
+							efix
+								? UpdateUIPluginImages.DESC_EFIX_OBJ
+								: UpdateUIPluginImages.DESC_FEATURE_OBJ));
 					String license = feature.getLicense().getAnnotation();
 					// Question: Can this ever be null? What is the runtime cost?
 					item.setData(license);

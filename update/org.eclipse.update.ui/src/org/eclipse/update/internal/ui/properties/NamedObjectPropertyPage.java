@@ -47,6 +47,12 @@ public class NamedObjectPropertyPage
 		initializeFields();
 		return container;
 	}
+	
+	public void performDefaults() {
+		NamedModelObject object = (NamedModelObject) getElement();
+		objectName.setText(object.getName());
+		super.performDefaults();
+	}
 
 	public boolean performOk() {
 		if (changed) {

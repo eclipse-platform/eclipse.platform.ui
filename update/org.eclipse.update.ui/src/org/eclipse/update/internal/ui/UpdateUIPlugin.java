@@ -43,6 +43,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	private AboutInfo aboutInfo;
 	private String appServerHost;
 	private int appServerPort;
+	private UpdateLabelProvider labelProvider;
 
 	/**
 	 * The constructor.
@@ -91,6 +92,12 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	
 	public AboutInfo getAboutInfo() {
 		return aboutInfo;
+	}
+	
+	public UpdateLabelProvider getLabelProvider() {
+		if (labelProvider==null)
+			labelProvider = new UpdateLabelProvider();
+		return labelProvider;
 	}
 
 	/**
@@ -173,7 +180,10 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		manager.unregisterAdapters(adapterFactory);
 		model.shutdown();
 		UpdateColors.disposeColors();
+		if (labelProvider!=null)
+			labelProvider.dispose();
 		super.shutdown();
+		
 	}
 
 	public UpdateModel getUpdateModel() {
@@ -291,7 +301,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		IFeature candidate) {
 		VersionedIdentifier vid = target.getVersionedIdentifier();
 		IImport[] imports = candidate.getImports();
-		IImport reference = null;
+
 		for (int i = 0; i < imports.length; i++) {
 			IImport iimport = imports[i];
 			if (iimport.isPatch()) {

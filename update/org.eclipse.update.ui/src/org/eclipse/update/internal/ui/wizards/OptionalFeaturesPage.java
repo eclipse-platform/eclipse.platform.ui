@@ -32,7 +32,6 @@ public class OptionalFeaturesPage extends BannerPage {
 	private CheckboxTreeViewer treeViewer;
 	private IInstallConfiguration config;
 	private PendingChange pendingChange;
-	private Image featureImage;
 	private Object[] elements;
 
 	class TreeContentProvider
@@ -73,7 +72,8 @@ public class OptionalFeaturesPage extends BannerPage {
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
-			return featureImage;
+			return UpdateUIPlugin.getDefault().getLabelProvider().get(
+				UpdateUIPluginImages.DESC_FEATURE_OBJ);
 		}
 	}
 
@@ -88,14 +88,11 @@ public class OptionalFeaturesPage extends BannerPage {
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.config = config;
 		this.pendingChange = pendingChange;
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	public void dispose() {
-		if (featureImage != null) {
-			featureImage.dispose();
-			featureImage = null;
-		}
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -245,8 +242,7 @@ public class OptionalFeaturesPage extends BannerPage {
 				ref.setChecked(value);
 				if (value)
 					selected.add(ref);
-			}
-			else {
+			} else {
 				if (ref.isChecked())
 					selected.add(ref);
 			}
@@ -269,11 +265,10 @@ public class OptionalFeaturesPage extends BannerPage {
 			fe.setChecked(checked);
 		}
 	}
-	
-	public Object [] getOptionalElements() {
+
+	public Object[] getOptionalElements() {
 		return elements;
 	}
-
 
 	public IFeatureReference[] getCheckedOptionalFeatures() {
 		HashSet set = new HashSet();

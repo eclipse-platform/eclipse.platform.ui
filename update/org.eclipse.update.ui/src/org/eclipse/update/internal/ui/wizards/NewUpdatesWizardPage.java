@@ -47,8 +47,6 @@ public class NewUpdatesWizardPage extends BannerPage {
 		"NewUpdatesWizard.MainPage.duplicateWarning";
 	private CheckboxTableViewer tableViewer;
 	private IInstallConfiguration config;
-	private Image featureImage;
-	private Image efixImage;
 	private PendingChange[] pendingChanges;
 	private Label counterLabel;
 	private Button filterCheck;
@@ -77,13 +75,16 @@ public class NewUpdatesWizardPage extends BannerPage {
 				try {
 					IFeature feature = ((IFeatureAdapter) obj).getFeature();
 					boolean patch = UpdateUIPlugin.isPatch(feature);
-					return patch?efixImage:featureImage;
+					return UpdateUIPlugin.getDefault().getLabelProvider().get(
+						patch
+							? UpdateUIPluginImages.DESC_EFIX_OBJ
+							: UpdateUIPluginImages.DESC_FEATURE_OBJ);
+				} catch (CoreException e) {
+					return UpdateUIPlugin.getDefault().getLabelProvider().get(
+						UpdateUIPluginImages.DESC_FEATURE_OBJ,
+						UpdateLabelProvider.F_ERROR);
 				}
-				catch (CoreException e) {
-					return featureImage;
-				}
-			}
-			else
+			} else
 				return null;
 		}
 
@@ -129,9 +130,9 @@ public class NewUpdatesWizardPage extends BannerPage {
 		}
 		private boolean isContained(PendingChange job) {
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
-			Object [] selected = tableViewer.getCheckedElements();
+			Object[] selected = tableViewer.getCheckedElements();
 			for (int i = 0; i < selected.length; i++) {
-				PendingChange candidate = (PendingChange)selected[i];
+				PendingChange candidate = (PendingChange) selected[i];
 				if (candidate.equals(job))
 					continue;
 				IFeature feature = candidate.getFeature();
@@ -171,20 +172,12 @@ public class NewUpdatesWizardPage extends BannerPage {
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.config = config;
 		this.pendingChanges = changes;
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-		efixImage = UpdateUIPluginImages.DESC_EFIX_OBJ.createImage();
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 		setBannerVisible(false);
 	}
 
 	public void dispose() {
-		if (featureImage != null) {
-			featureImage.dispose();
-			featureImage = null;
-		}
-		if (efixImage != null) {
-			efixImage.dispose();
-			efixImage = null;
-		}
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -293,7 +286,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		
+
 		tableViewer =
 			CheckboxTableViewer.newCheckList(
 				parent,

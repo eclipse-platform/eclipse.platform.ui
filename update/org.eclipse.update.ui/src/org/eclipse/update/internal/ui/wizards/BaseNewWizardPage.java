@@ -28,7 +28,6 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	private TreeViewer tree;
 	private Text nameText;
 	private Text containerText;
-	private Image folderImage;
 
 	class ContainerContentProvider
 		extends DefaultContentProvider
@@ -65,7 +64,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	class ContainerLabelProvider extends LabelProvider {
 		public Image getImage(Object obj) {
 			if (obj instanceof BookmarkFolder)
-				return folderImage;
+				return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_BFOLDER_OBJ);
 			return super.getImage(obj);
 		}
 	}
@@ -73,11 +72,11 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	public BaseNewWizardPage(BookmarkFolder folder) {
 		super("");
 		this.folder = folder;
-		folderImage = UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
 	public void dispose() {
-		folderImage.dispose();
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 

@@ -24,7 +24,6 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	private TableViewer viewer;
 	private Action showSearchAction;
 	private ModelListener modelListener;
-	private Image featureImage;
 	private SearchObject currentSearch;
 	private static final String KEY_C_FEATURE =
 		"SearchResultView.column.feature";
@@ -116,7 +115,7 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 			return null;
 		}
 		public Image getImage(Object obj) {
-			return featureImage;
+			return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_FEATURE_OBJ);
 		}
 	}
 	class NameSorter extends ViewerSorter {
@@ -145,8 +144,8 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	 * The constructor.
 	 */
 	public SearchResultView() {
+	UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 		modelListener = new ModelListener();
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	}
 
 	/**
@@ -215,10 +214,10 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 	}
 
 	public void dispose() {
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(modelListener);
 		hookSelectionListener(false);
-		featureImage.dispose();
 		super.dispose();
 	}
 
@@ -297,7 +296,6 @@ public class SearchResultView extends ViewPart implements ISelectionListener {
 		if (currentSearch == null)
 			setTitle(getSite().getRegisteredName());
 		else {
-			String searchLabel = getSearchLabel(currentSearch);
 			int count = viewer.getTable().getItemCount();
 			String title = UpdateUIPlugin.getFormattedMessage(KEY_TITLE, 
 				new String [] {

@@ -440,7 +440,8 @@ public class WebBrowser implements OleListener {
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "Stop" });
 		int dispIdMember = rgdispid[0];
 
-		Variant pVarResult = oleObject.invoke(dispIdMember);
+		//Variant pVarResult = oleObject.invoke(dispIdMember);
+		oleObject.invoke(dispIdMember);
 	}
 	/**
 	 * Gets the forwardEnabled

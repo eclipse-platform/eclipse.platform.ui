@@ -136,7 +136,6 @@ public class SearchForm extends UpdateWebForm {
 
 	public SearchForm(UpdateFormPage page) {
 		super(page);
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		IDialogSettings master =
 			UpdateUIPlugin.getDefault().getDialogSettings();
 		settings = master.getSection(SETTINGS_SECTION);
@@ -148,10 +147,6 @@ public class SearchForm extends UpdateWebForm {
 		if (searchObject != null) {
 			detachFrom(searchObject);
 		}
-		/*
-		if (searchResultSection != null)
-			searchResultSection.dispose();
-		*/
 		super.dispose();
 	}
 

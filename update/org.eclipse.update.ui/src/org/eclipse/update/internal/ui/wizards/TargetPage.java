@@ -47,7 +47,6 @@ public class TargetPage extends BannerPage {
 		"InstallWizard.TargetPage.unknownSize";
 	private TableViewer tableViewer;
 	private IInstallConfiguration config;
-	private Image siteImage;
 	private ConfigListener configListener;
 	private Label requiredSpaceLabel;
 	private Label availableSpaceLabel;
@@ -74,7 +73,7 @@ public class TargetPage extends BannerPage {
 		* @see ITableLabelProvider#getColumnImage(Object, int)
 		*/
 		public Image getColumnImage(Object obj, int col) {
-			return siteImage;
+			return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_SITE_OBJ);
 		}
 
 		/**
@@ -114,7 +113,7 @@ public class TargetPage extends BannerPage {
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.config = config;
 		this.pendingChange = pendingChange;
-		siteImage = UpdateUIPluginImages.DESC_LSITE_OBJ.createImage();
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
 		defaultTargetSite = getDefaultTargetSite(config, pendingChange, false);
 		affinitySite = getAffinitySite(config, pendingChange.getFeature());
@@ -200,10 +199,7 @@ public class TargetPage extends BannerPage {
 	}
 
 	public void dispose() {
-		if (siteImage != null) {
-			siteImage.dispose();
-			siteImage = null;
-		}
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		config.removeInstallConfigurationChangedListener(configListener);
 		super.dispose();
 	}

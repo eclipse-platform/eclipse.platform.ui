@@ -2,15 +2,12 @@ package org.eclipse.update.internal.ui.wizards;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -20,9 +17,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.MissingFeature;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
-import org.eclipse.update.internal.ui.parts.OverlayIcon;
-import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.ui.parts.*;
 
 /**
  * @author dejan
@@ -40,9 +35,6 @@ public class InstallDeltaWizardPage extends WizardPage {
 	private CheckboxTreeViewer deltaViewer;
 	private Button deleteButton;
 	private Button errorsButton;
-	private Image deltaImage;
-	private Image errorDeltaImage;
-	private Image featureImage;
 	private Hashtable features;
 	private ArrayList removed = new ArrayList();
 	private Hashtable statusTable;
@@ -96,13 +88,13 @@ public class InstallDeltaWizardPage extends WizardPage {
 		}
 		public Image getImage(Object obj) {
 			if (obj instanceof ISessionDelta) {
+				int flags = 0; 
 				if (statusTable.get(obj) != null)
-					return errorDeltaImage;
-				else
-					return deltaImage;
+					flags = UpdateLabelProvider.F_ERROR;
+				return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_UPDATES_OBJ, flags);
 			}
 			if (obj instanceof DeltaFeature)
-				return featureImage;
+				return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_FEATURE_OBJ);
 			return super.getImage(obj);
 		}
 	}
@@ -116,24 +108,12 @@ public class InstallDeltaWizardPage extends WizardPage {
 		this.deltas = deltas;
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
-		deltaImage = UpdateUIPluginImages.DESC_UPDATES_OBJ.createImage();
-		ImageDescriptor desc =
-			new OverlayIcon(
-				UpdateUIPluginImages.DESC_UPDATES_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				UpdateUIPluginImages.DESC_ERROR_CO }
-		});
-		errorDeltaImage = desc.createImage();
-		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 		initializeStatusTable();
 	}
 
 	public void dispose() {
-		errorDeltaImage.dispose();
-		deltaImage.dispose();
-		featureImage.dispose();
+		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 

@@ -1,14 +1,10 @@
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.model.BookmarkFolder;
-import org.eclipse.update.internal.ui.model.NamedModelObject;
-import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @author dejan
@@ -19,7 +15,8 @@ import org.eclipse.update.internal.ui.model.UpdateModel;
  * Window>Preferences>Java>Code Generation.
  */
 public class UpdatesDropAdapter extends ViewerDropAdapter {
-	private static final String KEY_CONFLICT = "UpdatesDropAdapter.nameConflict";
+	private static final String KEY_CONFLICT =
+		"UpdatesDropAdapter.nameConflict";
 	private TransferData currentTransfer;
 
 	public UpdatesDropAdapter(Viewer viewer) {
@@ -34,7 +31,8 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 			Object[] objects = (Object[]) data;
 			for (int i = 0; i < objects.length; i++) {
 				Object obj = objects[i];
-				if (!dropObject(obj)) return false;
+				if (!dropObject(obj))
+					return false;
 			}
 			saveModel();
 			return true;
@@ -56,34 +54,43 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.saveBookmarks();
 	}
-	
+
 	private boolean addToModel(NamedModelObject object) {
-		BookmarkFolder parentFolder = (BookmarkFolder) getRealTarget(getCurrentTarget());
-		return addToModel(getViewer().getControl().getShell(), getCurrentOperation(), parentFolder, object);
+		BookmarkFolder parentFolder =
+			(BookmarkFolder) getRealTarget(getCurrentTarget());
+		return addToModel(
+			getViewer().getControl().getShell(),
+			parentFolder,
+			object);
 	}
 
-	static boolean addToModel(Shell shell, int operation, BookmarkFolder parentFolder, NamedModelObject object) {
+	static boolean addToModel(
+		Shell shell,
+		BookmarkFolder parentFolder,
+		NamedModelObject object) {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 
-		Object [] siblings = parentFolder!=null ? parentFolder.getChildren(parentFolder):model.getBookmarks();
-		
+		Object[] siblings =
+			parentFolder != null
+				? parentFolder.getChildren(parentFolder)
+				: model.getBookmarks();
+
 		boolean mustRename = false;
-		
-		if ((operation & DND.DROP_COPY) != 0) {
-		for (int i=0; i<siblings.length; i++) {
-			NamedModelObject sibling = (NamedModelObject)siblings[i];
+
+		for (int i = 0; i < siblings.length; i++) {
+			NamedModelObject sibling = (NamedModelObject) siblings[i];
 			if (sibling.getName().equals(object.getName())) {
 				mustRename = true;
 				break;
 			}
 		}
-		}
 		if (mustRename) {
 			RenameDialog dialog = new RenameDialog(shell, object, siblings);
 			dialog.create();
 			dialog.getShell().setSize(350, 150);
-			dialog.getShell().setText(UpdateUIPlugin.getResourceString(KEY_CONFLICT));
-			if (dialog.open()!=RenameDialog.OK)
+			dialog.getShell().setText(
+				UpdateUIPlugin.getResourceString(KEY_CONFLICT));
+			if (dialog.open() != RenameDialog.OK)
 				return false;
 		}
 		if (parentFolder != null)
@@ -95,7 +102,8 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 	}
 
 	static Object getRealTarget(Object target) {
-		if (target instanceof NamedModelObject && !(target instanceof BookmarkFolder)) {
+		if (target instanceof NamedModelObject
+			&& !(target instanceof BookmarkFolder)) {
 			NamedModelObject sibling = (NamedModelObject) target;
 			return sibling.getParent(sibling);
 		}

@@ -9,7 +9,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.ui.*;
-import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Insert the type's description here.
@@ -35,7 +34,7 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 		IWorkbenchWindow window = page.getWorkbenchWindow();
 
 		try {
-			IAdaptable input = UpdateUIPlugin.getWorkspace();
+			//IAdaptable input = UpdateUIPlugin.getWorkspace();
 			window.getWorkbench().showPerspective(UpdatePerspective.PERSPECTIVE_ID, window);
 		} catch (WorkbenchException e) {
 			UpdateUIPlugin.logException(e, true);

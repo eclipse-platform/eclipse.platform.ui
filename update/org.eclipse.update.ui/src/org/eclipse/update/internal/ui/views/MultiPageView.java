@@ -111,7 +111,6 @@ public void showPage(String id, Object openToObject) {
 }
 
 public IUpdateFormPage showPage(final IUpdateFormPage page) {
-	IUpdateFormPage oldPage = getCurrentPage();
 	formWorkbook.selectPage(page);
 	return page;
 }
