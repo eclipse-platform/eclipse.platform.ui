@@ -126,7 +126,7 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
         if (value == null)
             return null;
         if (parsedValue == null) {
-            parsedValue = JFaceResources.getFontRegistry().bestDataArray(
+            parsedValue = JFaceResources.getFontRegistry().filterData(
                     StringConverter.asFontDataArray(value),
                     Workbench.getInstance().getDisplay());
         }

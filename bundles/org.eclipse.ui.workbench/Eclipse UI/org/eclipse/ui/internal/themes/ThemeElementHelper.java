@@ -102,7 +102,7 @@ public final class ThemeElementHelper {
         if (definition.getValue() != null)
             defaultFont = definition.getValue();
         else if (definition.getDefaultsTo() != null)
-            defaultFont = registry.bestDataArray(registry
+            defaultFont = registry.filterData(registry
                     .getFontData(definition.getDefaultsTo()), Workbench
                     .getInstance().getDisplay());
         else {

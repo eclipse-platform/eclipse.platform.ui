@@ -354,7 +354,7 @@ public class FontFieldEditor extends FieldEditor {
      * @param font The FontData[] to update with.
      */
     private void updateFont(FontData font[]) {
-        FontData[] bestFont = JFaceResources.getFontRegistry().bestDataArray(
+        FontData[] bestFont = JFaceResources.getFontRegistry().filterData(
                 font, valueControl.getDisplay());
 
         //if we have nothing valid do as best we can

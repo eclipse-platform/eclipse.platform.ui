@@ -77,8 +77,8 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
         FontRegistry fontRegistry = JFaceResources.getFontRegistry();
         FontData[] currentTextFonts = PreferenceConverter.getFontDataArray(
                 preferenceStore, JFaceResources.TEXT_FONT);
-        FontData bestFont = fontRegistry.bestData(currentTextFonts, Display
-                .getCurrent());
+        FontData bestFont = fontRegistry.filterData(currentTextFonts, Display
+                .getCurrent())[0];
 
         //Assert that it is the first font that we get as the
         //valid one
@@ -96,8 +96,8 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
         FontRegistry fontRegistry = JFaceResources.getFontRegistry();
         FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
                 preferenceStore, TEST_FONT_ID);
-        FontData bestFont = fontRegistry.bestData(currentTestFonts, Display
-                .getCurrent());
+        FontData bestFont = fontRegistry.filterData(currentTestFonts, Display
+                .getCurrent())[0];
 
         //Assert that it is the second font that we get as the
         //valid one
@@ -115,8 +115,8 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
         FontRegistry fontRegistry = JFaceResources.getFontRegistry();
         FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
                 preferenceStore, MISSING_FONT_ID);
-        FontData bestFont = fontRegistry.bestData(currentTestFonts, Display
-                .getCurrent());
+        FontData bestFont = fontRegistry.filterData(currentTestFonts, Display
+                .getCurrent())[0];
 
         FontData[] systemFontData = Display.getCurrent().getSystemFont()
                 .getFontData();

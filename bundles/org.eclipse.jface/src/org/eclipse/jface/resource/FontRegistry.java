@@ -379,6 +379,8 @@ public class FontRegistry extends ResourceRegistry {
      * Find the first valid fontData in the provided list. 
      * If none are valid return the first one regardless.
      * If the list is empty return null.
+     * @deprecated use filterData in order to preserve 
+     * multiple entry fonts on Motif
      */
     public FontData[] bestDataArray(FontData[] fonts, Display display) {
 
@@ -391,6 +393,49 @@ public class FontRegistry extends ResourceRegistry {
             return datas;
         }
     }
+    
+    /**
+     * Removes from the list all fonts that do not exist in this system.  
+     * If none are valid, return the first irregardless.  If the list is 
+     * empty return <code>null</code>.
+     * 
+     * @param fonts the fonts to check
+     * @param display the display to check against
+     * @return the list of fonts that have been found on this system
+     * @since 3.1
+     */
+    public FontData [] filterData(FontData [] fonts, Display display) {
+    	ArrayList good = new ArrayList(fonts.length);
+    	for (int i = 0; i < fonts.length; i++) {
+            FontData fd = fonts[i];
+
+            if (fd == null)
+                continue;
+
+            FontData[] fixedFonts = display.getFontList(fd.getName(), false);
+            if (isFixedFont(fixedFonts, fd)) {
+                good.add(fd);
+            }
+
+            FontData[] scalableFonts = display.getFontList(fd.getName(), true);
+            if (scalableFonts.length > 0) {
+                good.add(fd);
+            }
+        }
+
+    	
+        //None of the provided datas are valid. Return the
+        //first one as it is at least the first choice.
+        if (good.isEmpty() && fonts.length > 0) {
+        	good.add(fonts[0]);
+        }
+        else if (fonts.length == 0) {
+        	return null;
+        }
+        
+        return (FontData[]) good.toArray(new FontData[good.size()]);    	
+    }
+    
 
     /**
      * Creates a new font with the given font datas or <code>null</code>
@@ -402,8 +447,8 @@ public class FontRegistry extends ResourceRegistry {
         if (display == null)
             return null;
 
-        FontData[] validData = bestDataArray(fonts, display);
-        if (validData == null) {
+        FontData[] validData = filterData(fonts, display);
+        if (validData.length == 0) {
             //Nothing specified 
             return null;
         } else {

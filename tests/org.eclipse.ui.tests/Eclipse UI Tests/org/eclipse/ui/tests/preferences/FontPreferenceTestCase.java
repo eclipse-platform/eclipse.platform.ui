@@ -97,7 +97,7 @@ public class FontPreferenceTestCase extends UITestCase {
         FontRegistry fontRegistry = JFaceResources.getFontRegistry();
         FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
                 preferenceStore, TEST_FONT_ID);
-        FontData[] bestFont = fontRegistry.bestDataArray(currentTestFonts,
+        FontData[] bestFont = fontRegistry.filterData(currentTestFonts,
                 Display.getCurrent());
 
         //Assert that it is the second font that we get as the
@@ -116,7 +116,7 @@ public class FontPreferenceTestCase extends UITestCase {
         FontRegistry fontRegistry = JFaceResources.getFontRegistry();
         FontData[] currentTestFonts = PreferenceConverter.getFontDataArray(
                 preferenceStore, MISSING_FONT_ID);
-        FontData[] bestFont = fontRegistry.bestDataArray(currentTestFonts,
+        FontData[] bestFont = fontRegistry.filterData(currentTestFonts,
                 Display.getCurrent());
 
         FontData[] systemFontData = Display.getCurrent().getSystemFont()
