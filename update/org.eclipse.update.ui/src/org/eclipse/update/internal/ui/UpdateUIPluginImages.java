@@ -25,20 +25,8 @@ public class UpdateUIPluginImages {
 
 	private static ImageRegistry PLUGIN_REGISTRY;
 	
-	public final static String ICONS_PATH;
-	static {
-		Display display = Display.getCurrent();
-		if (display==null) {
-			ICONS_PATH = "icons/full/";
-		}
-		else {
-			if(display.getIconDepth() > 4)
-				ICONS_PATH = "icons/full/";//$NON-NLS-1$
-			else
-				ICONS_PATH = "icons/basic/";//$NON-NLS-1$
-		}
-	}
-
+	public final static String ICONS_PATH = "icons/full/";
+
 	/**
 	 * Set of predefined Image Descriptors.
 	 */
