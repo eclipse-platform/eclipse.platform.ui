@@ -49,4 +49,7 @@ public class ContextImpl implements IContext {
 			return null;
 		return context.getText();
 	}
+	public String getID(){
+		return contextID;
+	}
 }
