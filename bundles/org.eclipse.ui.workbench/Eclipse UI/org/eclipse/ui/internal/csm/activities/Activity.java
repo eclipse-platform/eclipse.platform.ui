@@ -12,7 +12,10 @@
 package org.eclipse.ui.internal.csm.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.ui.activities.ActivityNotDefinedException;
 import org.eclipse.ui.activities.IActivity;
@@ -39,6 +42,7 @@ final class Activity implements IActivity {
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private transient Map matchCache = new HashMap();
 	private transient IPatternBinding[] patternBindingsAsArray;
 	private transient String string;
 	
@@ -172,6 +176,28 @@ final class Activity implements IActivity {
 		return enabled;
 	}
 
+	public boolean match(String string) {
+		Boolean value = (Boolean) matchCache.get(string);
+		
+		if (value != null)
+			return value.booleanValue();
+		
+		boolean match = false;
+			
+		if (isDefined())
+			for (Iterator iterator = patternBindings.iterator(); iterator.hasNext();) {
+				IPatternBinding patternBinding = (IPatternBinding) iterator.next();
+			
+				if (patternBinding.isInclusive() && !match)
+					match = string.matches(patternBinding.getPattern());
+				else if (!patternBinding.isInclusive() && match)
+					match = !string.matches(patternBinding.getPattern());
+			}
+
+		matchCache.put(string, Boolean.valueOf(match));
+		return match;
+	}
+	
 	public void removeActivityListener(IActivityListener activityListener) {
 		if (activityListener == null)
 			throw new NullPointerException();
@@ -234,6 +260,7 @@ final class Activity implements IActivity {
 			this.defined = defined;
 			hashCodeComputed = false;
 			hashCode = 0;
+			matchCache.clear();
 			string = null;
 			return true;
 		}		
@@ -297,6 +324,7 @@ final class Activity implements IActivity {
 			this.patternBindingsAsArray = (IPatternBinding[]) this.patternBindings.toArray(new IPatternBinding[this.patternBindings.size()]);
 			hashCodeComputed = false;
 			hashCode = 0;
+			matchCache.clear();
 			string = null;
 			return true;
 		}		

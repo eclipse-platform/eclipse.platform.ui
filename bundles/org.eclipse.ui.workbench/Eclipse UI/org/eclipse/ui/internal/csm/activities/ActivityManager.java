@@ -106,7 +106,20 @@ public final class ActivityManager implements IActivityManager {
 	public Set getEnabledActivityIds() {
 		return Collections.unmodifiableSet(enabledActivityIds);
 	}	
-	
+
+	public boolean match(String string, Set activityIds) {
+		activityIds = Util.safeCopy(activityIds, String.class);
+		
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {			
+			IActivity activity = getActivity((String) iterator.next());
+						
+			if (activity.match(string))
+				return true;
+		}
+			
+		return false;
+	}	
+
 	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
 		if (activityManagerListener == null)
 			throw new NullPointerException();
