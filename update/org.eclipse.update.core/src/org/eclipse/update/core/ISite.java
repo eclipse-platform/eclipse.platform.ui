@@ -6,6 +6,7 @@ package org.eclipse.update.core;
 import java.net.URL;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.model.InstallAbortedException;
 
 /**
  * Site represents a location containing some number of features (packaged
@@ -212,6 +213,7 @@ public interface ISite extends IAdaptable {
 	 * @param feature feature to install
 	 * @param verificationListener install verification listener
 	 * @param monitor install monitor, can be <code>null</code>
+	 * @exception InstallAbortedException when the user cancels the install
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
@@ -219,7 +221,7 @@ public interface ISite extends IAdaptable {
 		IFeature feature,
 		IVerificationListener verificationListener,
 		IProgressMonitor monitor)
-		throws CoreException;
+		throws InstallAbortedException, CoreException;
 
 	/**
 	 * Removes (uninstalls) the specified feature from this site. This method

@@ -58,6 +58,8 @@ public interface IConfiguredSite extends IAdaptable {
 	 * @param feature feature to install
 	 * @param verificationListener verification listener, or <code>null</code>
 	 * @param monitor progress monitor, or <code>null</code>
+	 * @exception InstallAbortedException when the user cancels the install
+	 * @exception CoreException
 	 * @since 2.0 
 	 */
 	public IFeatureReference install(

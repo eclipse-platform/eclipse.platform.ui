@@ -367,6 +367,8 @@ public class Site extends SiteModel implements ISite {
 	 * because this implementation does not support the install action.
 	 * 
 	 * @see ISite#install(IFeature, IVerificationListener, IProgressMonitor)
+	 * @exception InstallAbortedException when the user cancels the install
+	 * @exception CoreException
 	 * @exception java.jang.UnsupportedOperationException
 	 * @since 2.0
 	 */
@@ -374,7 +376,7 @@ public class Site extends SiteModel implements ISite {
 		IFeature sourceFeature,
 		IVerificationListener verificationListener,
 		IProgressMonitor progress)
-		throws CoreException {
+		throws InstallAbortedException,CoreException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -389,6 +391,7 @@ public class Site extends SiteModel implements ISite {
 	 * @param parentVerifier verifier of the parent feature
 	 * @param verificationListener install verification listener
 	 * @param monitor install monitor, can be <code>null</code>
+	 * @exception InstallAbortedException when the user cancels the install
 	 * @exception CoreException
 	 * @exception java.jang.UnsupportedOperationException 
 	 * @since 2.0 

@@ -8,6 +8,7 @@ package org.eclipse.update.core;
 import java.net.URL;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.model.InstallAbortedException;
 
 /**
  * Feature defines the packaging "container" for a group of related plug-ins,
@@ -246,14 +247,15 @@ public interface IFeature extends IAdaptable {
 	 * @param targetFeature
 	 * @param verificationListener
 	 * @param monitor
-	 * @throws CoreException
+	 * @exception InstallAbortedException when the user cancels the install
+	 * @exception CoreException
 	 * @since 2.0
 	 */
 	public IFeatureReference install(
 		IFeature targetFeature,
 		IVerificationListener verificationListener,
 		IProgressMonitor monitor)
-		throws CoreException;
+		throws InstallAbortedException,CoreException;
 
 	/**
 	 * Returns an array of feature references included by this feature

@@ -206,7 +206,7 @@ public class Feature extends FeatureModel implements IFeature {
 		IFeature targetFeature,
 		IVerificationListener verificationListener,
 		IProgressMonitor progress)
-		throws CoreException {
+		throws InstallAbortedException, CoreException {
 
 		//DEBUG
 		debug("Installing...:" + getURL().toExternalForm());

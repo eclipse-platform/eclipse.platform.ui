@@ -15,6 +15,7 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.*;
@@ -174,7 +175,7 @@ public class ConfiguredSite
 		IFeature feature,
 		IVerificationListener verificationListener,
 		IProgressMonitor monitor)
-		throws CoreException {
+		throws InstallAbortedException, CoreException {
 
 		// ConfigSite is read only
 		if (!isUpdatable()) {

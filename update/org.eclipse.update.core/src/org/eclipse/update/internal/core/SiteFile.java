@@ -82,7 +82,7 @@ public class SiteFile extends Site {
 		IVerifier parentVerifier,
 		IVerificationListener verificationListener,
 		IProgressMonitor progress)
-		throws CoreException {
+		throws InstallAbortedException, CoreException {
 
 		if (sourceFeature == null)
 			return null;
