@@ -12,7 +12,6 @@
 package org.eclipse.ui.commands;
 
 import java.util.SortedMap;
-import java.util.SortedSet;
 
 /**
  * <p>
@@ -40,6 +39,13 @@ public interface ICommandManager {
 	/**
 	 * JAVADOC
 	 *
+	 * @return
+	 */
+	SortedMap getCategoriesById();
+	
+	/**
+	 * JAVADOC
+	 *
 	 * @param categoryId
 	 * @return
 	 * @throws NullPointerException
@@ -61,27 +67,13 @@ public interface ICommandManager {
 	 * @throws NullPointerException
 	 */	
 	ICommandHandle getCommandHandle(String commandId);
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedSet getDefinedCategoryIds();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedSet getDefinedCommandIds();
 	
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedSet getDefinedKeyConfigurationIds();	
+	SortedMap getCommandsById();	
 
 	/**
 	 * JAVADOC
@@ -91,6 +83,13 @@ public interface ICommandManager {
 	 * @throws NullPointerException
 	 */	
 	IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId);
+	
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	SortedMap getKeyConfigurationsById();	
 		
 	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.
@@ -99,38 +98,4 @@ public interface ICommandManager {
 	 * @throws NullPointerException
 	 */
 	void removeCommandManagerListener(ICommandManagerListener commandManagerListener);
-
-	/*
-	List getPluginActiveKeyConfigurations();
-
-	List getPluginCategories();
-	
-	List getPluginCommands();
-
-	List getPluginContextBindings();
-
-	List getPluginImageBindings();
-
-	List getPluginKeyBindings();
-	
-	List getPluginKeyConfigurations();
-
-	List getPreferenceActiveKeyConfigurations();
-
-	List getPreferenceKeyBindings();
-	
-	List getPreferenceKeyConfigurations();
-	
-	void setPreferenceActiveKeyConfigurations(List preferenceActiveKeyConfigurations);
-
-	void setPreferenceKeyBindings(List preferenceKeyBindings);
-
-	void setPreferenceKeyConfigurations(List preferenceKeyConfigurations);
-	
-	SortedMap getDefinedCategoriesById();
-
-	SortedMap getDefinedCommandsById();
-
-	SortedMap getDefinedKeyConfigurationsById();
-	*/
 }

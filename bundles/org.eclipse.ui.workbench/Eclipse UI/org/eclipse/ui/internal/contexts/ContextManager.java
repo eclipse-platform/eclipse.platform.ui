@@ -46,7 +46,6 @@ public final class ContextManager implements IContextManager {
 	private List contextManagerListeners;
 	private SortedMap contextHandlesById = new TreeMap();
 	private SortedMap contextsById = new TreeMap();
-	private SortedSet definedContextIds = new TreeSet();
 	private IRegistry pluginRegistry;
 	private IMutableRegistry preferenceRegistry;
 
@@ -86,8 +85,8 @@ public final class ContextManager implements IContextManager {
 		return contextHandle;
 	}
 
-	public SortedSet getDefinedContextIds() {
-		return Collections.unmodifiableSortedSet(definedContextIds);
+	public SortedMap getContextsById() {
+		return Collections.unmodifiableSortedMap(contextsById);
 	}
 
 	public void removeContextManagerListener(IContextManagerListener contextManagerListener) {
@@ -168,12 +167,7 @@ public final class ContextManager implements IContextManager {
 				
 		if (!contextChanges.isEmpty()) {
 			this.contextsById = contextsById;		
-			SortedSet definedContextIds = new TreeSet(contextsById.keySet());
-	
-			if (!Util.equals(definedContextIds, this.definedContextIds)) {	
-				this.definedContextIds = definedContextIds;
-				contextManagerChanged = true;
-			}
+			contextManagerChanged = true;
 		}
 
 		if (contextManagerChanged)

@@ -53,9 +53,6 @@ public final class CommandManager implements ICommandManager {
 	private ICommandManagerEvent commandManagerEvent;
 	private List commandManagerListeners;
 	private SortedMap commandsById = new TreeMap();
-	private SortedSet definedCategoryIds = new TreeSet();
-	private SortedSet definedCommandIds = new TreeSet();
-	private SortedSet definedKeyConfigurationIds = new TreeSet();
 	private SortedMap keyConfigurationHandlesById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
 	private IRegistry pluginRegistry;
@@ -77,6 +74,10 @@ public final class CommandManager implements ICommandManager {
 		
 		if (!commandManagerListeners.contains(commandManagerListener))
 			commandManagerListeners.add(commandManagerListener);
+	}
+
+	public SortedMap getCategoriesById() {
+		return Collections.unmodifiableSortedMap(categoriesById);
 	}
 
 	public ICategoryHandle getCategoryHandle(String categoryId) {
@@ -110,18 +111,10 @@ public final class CommandManager implements ICommandManager {
 		
 		return commandHandle;
 	}
-
-	public SortedSet getDefinedCategoryIds() {
-		return Collections.unmodifiableSortedSet(definedCategoryIds);
-	}
-
-	public SortedSet getDefinedCommandIds() {
-		return Collections.unmodifiableSortedSet(definedCommandIds);	
-	}
-
-	public SortedSet getDefinedKeyConfigurationIds() {
-		return Collections.unmodifiableSortedSet(definedKeyConfigurationIds);
-	}
+	
+	public SortedMap getCommandsById() {
+		return Collections.unmodifiableSortedMap(commandsById);
+	}	
 
 	public IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId) {
 		if (keyConfigurationId == null)
@@ -135,6 +128,10 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		return keyConfigurationHandle;
+	}
+
+	public SortedMap getKeyConfigurationsById() {
+		return Collections.unmodifiableSortedMap(keyConfigurationsById);
 	}
 
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener) {
@@ -219,32 +216,17 @@ public final class CommandManager implements ICommandManager {
 				
 		if (!categoryChanges.isEmpty()) {
 			this.categoriesById = categoriesById;
-			SortedSet definedCategoryIds = new TreeSet(categoriesById.keySet());
-
-			if (!Util.equals(definedCategoryIds, this.definedCategoryIds)) {	
-				this.definedCategoryIds = definedCategoryIds;
-				commandManagerChanged = true;
-			}
+			commandManagerChanged = true;			
 		}
 
 		if (!commandChanges.isEmpty()) {
 			this.commandsById = commandsById;		
-			SortedSet definedCommandIds = new TreeSet(commandsById.keySet());
-	
-			if (!Util.equals(definedCommandIds, this.definedCommandIds)) {	
-				this.definedCommandIds = definedCommandIds;
-				commandManagerChanged = true;
-			}
+			commandManagerChanged = true;			
 		}
 
 		if (!keyConfigurationChanges.isEmpty()) {
 			this.keyConfigurationsById = keyConfigurationsById;		
-			SortedSet definedKeyConfigurationIds = new TreeSet(keyConfigurationsById.keySet());
-	
-			if (!Util.equals(definedKeyConfigurationIds, this.definedKeyConfigurationIds)) {	
-				this.definedKeyConfigurationIds = definedKeyConfigurationIds;
-				commandManagerChanged = true;
-			}
+			commandManagerChanged = true;
 		}
 
 		if (commandManagerChanged)
