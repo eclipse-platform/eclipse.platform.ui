@@ -20,9 +20,6 @@ import org.eclipse.jface.text.ITextViewer;
  * Clients may implement this interface. A default implementation is provided
  * through {@link org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter}.
  * </p>
- * <p>
- * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
- * </p>
  * 
  * @since 3.1
  */

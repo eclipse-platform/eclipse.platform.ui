@@ -37,9 +37,6 @@ import org.eclipse.jface.text.Region;
 
 /**
  * Default implementation of a hyperlink manager.
- * <p>
- * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
- * </p>
  * 
  * @since 3.1
  */

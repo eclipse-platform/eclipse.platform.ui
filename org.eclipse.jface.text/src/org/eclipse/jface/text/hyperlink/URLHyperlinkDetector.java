@@ -24,9 +24,6 @@ import org.eclipse.jface.text.Region;
 
 /**
  * URL hyperlink detector.
- * <p>
- * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
- * </p>
  * 
  * @since 3.1
  */

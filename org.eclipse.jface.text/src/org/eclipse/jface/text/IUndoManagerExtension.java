@@ -16,9 +16,6 @@ import org.eclipse.core.commands.operations.IUndoContext;
 /**
  * Extension interface for {@link org.eclipse.jface.text.IUndoManager}. 
  * Introduces access to the undo context.
- * <p>
- * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
- * </p>
  * 
  * @see org.eclipse.jface.text.IUndoManager
  * @since 3.1

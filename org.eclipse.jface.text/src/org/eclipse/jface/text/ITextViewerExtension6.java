@@ -15,9 +15,6 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 /**
  * Extension interface for {@link org.eclipse.jface.text.ITextViewer}. 
  * Introduces the concept of text hyperlinks and adds access to the undo manager.
- * <p>
- * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
- * </p>
  *
  * @see org.eclipse.jface.text.hyperlink.IHyperlink
  * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector
