@@ -13,62 +13,64 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.api.search.*;
 
 /**
  * Lists the configured features.
  */
 public class ListConfigFeaturesCommand extends ScriptedCommand {
-
-	private URL remoteSiteURL;
-	private UpdateSearchRequest searchRequest;
-	private IUpdateSearchResultCollector collector;
-
+	private IConfiguredSite[] sites;
+	
 	/**
 	 * @param fromSite if specified, list only the features from the specified local install site
 	 */
-	public ListConfigFeaturesCommand(String fromSite) {
+	public ListConfigFeaturesCommand(String fromSite) throws Exception {
 		try {
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8"));
-			UpdateSearchScope searchScope = new UpdateSearchScope();
-			searchScope.addSearchSite(
-				"remoteSite",
-				remoteSiteURL,
-				new String[0]);
-			searchRequest =
-				new UpdateSearchRequest(new SiteSearchCategory(), searchScope);
-			collector = new UpdateSearchResultCollector();
-		} catch (MalformedURLException e) {
-			StandaloneUpdateApplication.exceptionLogged();
-			UpdateCore.log(e);
-		} catch (UnsupportedEncodingException e) {
-		}
+			if (fromSite != null) {
+				File sitePath = new File(fromSite);
+				if (!sitePath.exists())
+					throw new Exception("Cannot find site: " + fromSite);
+					
+				URL fromSiteURL = sitePath.toURL();
+				ISite site = SiteManager.getSite(fromSiteURL, null);
+				if (site == null) {
+					throw new Exception(
+						"Cannot find site : " + fromSite);
+				}
+				IConfiguredSite csite = site.getCurrentConfiguredSite();
+				if (csite == null)
+					throw new Exception("Cannot find configured site: " + fromSite);
+				sites = new IConfiguredSite[] { csite };
+			} else {
+				sites = getConfiguration().getConfiguredSites();
+			}
+		
+		} catch (Exception e) {
+			throw e;
+		} 
 	}
 
 	/**
 	 */
 	public boolean run(IProgressMonitor monitor) {
-		try {
-			System.out.println("Searching on " + remoteSiteURL.toString());
-			searchRequest.performSearch(collector, monitor);
-			System.out.println("Done.");
-			return true;
-		} catch (CoreException ce) {
-			IStatus status = ce.getStatus();
-			if (status != null
-				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
-				// Just show this but do not throw exception
-				// because there may be results anyway.
-				System.out.println("Connection Error");
-			} else {
+			try {
+				if (sites != null) {
+					for (int i=0; i<sites.length; i++) {
+						System.out.println("Site:" + sites[i].getSite().getURL());
+						IFeatureReference[] features = sites[i].getConfiguredFeatures();
+						for (int f=0; f<features.length; f++)
+							System.out.println("  Feature: " + features[f].getVersionedIdentifier());
+					}
+				}
+				return true;
+			} catch (CoreException e) {
 				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(ce);
+				UpdateCore.log(e);
+				return false;
 			}
-			return false;
-		}
 	}
 
 
