@@ -13,8 +13,8 @@ package org.eclipse.ui.themes;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
- * A theme manager is an object that contains references to usable ITheme 
- * objects.
+ * A theme manager is an object that contains references to usable 
+ * <code>ITheme</code> objects.
  * 
  * @since 3.0
  */
@@ -28,7 +28,7 @@ public interface IThemeManager {
 	/**
 	 * Indicates that the provided theme has changed in some way.
 	 */
-	public static final String CHANGE_THEME = "CHANGE_THEME"; //$NON-NLS-1$
+	//public static final String CHANGE_THEME = "CHANGE_THEME"; //$NON-NLS-1$
 	
 	/**
 	 * Indicates that the current theme has changed to a new theme.
@@ -51,7 +51,11 @@ public interface IThemeManager {
     public abstract ITheme getCurrentTheme();
 
     /**
-	 * Adds a property listener to the manager.
+	 * Adds a property listener to the manager.  Any events fired by the 
+	 * underlying registries of the current theme will cause an event to be 
+	 * fired.  This event is the same event that was fired by the registry.
+	 * Additionally, an event is fired when the current theme changes to a 
+	 * new theme.
 	 * 
 	 * @param listener the listener to add
 	 */

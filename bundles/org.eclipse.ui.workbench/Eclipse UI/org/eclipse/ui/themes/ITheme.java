@@ -24,13 +24,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 public interface ITheme {
 
     /**
-	 * Indicates that the provided theme has changed in some way.
-	 * @since 3.0
-	 */
-	public static final String CHANGE_THEME = "CHANGE_THEME"; //$NON-NLS-1$    
-    
-    /**
-	 * Adds a property listener to the theme.
+	 * Adds a property listener to the theme.  Any events fired by the 
+	 * underlying registries will cause an event to be fired.  This event is the
+	 * same event that was fired by the registry.
 	 * 
 	 * @param listener the listener to add
 	 */

@@ -27,7 +27,9 @@ public interface IWorkbenchPresentationConstants {
     public static final String ACTIVE_TAB_BG_GRADIENT = "org.eclipse.ui.workbench.ACTIVE_TAB_BG_GRADIENT"; //$NON-NLS-1$
     public static final String INACTIVE_TAB_BG_GRADIENT = "org.eclipse.ui.workbench.INACTIVE_TAB_BG_GRADIENT"; //$NON-NLS-1$
     
-    public static final String BACKGROUND = "org.eclipse.ui.workbench.BACKGROUND"; //$NON-NLS-1$
-    public static final String FOREGROUND = "org.eclipse.ui.workbench.FOREGROUND"; //$NON-NLS-1$
+    public static final String VIEW_MENU = "org.eclipse.ui.workbench.VIEW_MENU"; //$NON-NLS-1$
+    
+/*    public static final String BACKGROUND = "org.eclipse.ui.workbench.BACKGROUND"; //$NON-NLS-1$
+    public static final String FOREGROUND = "org.eclipse.ui.workbench.FOREGROUND"; //$NON-NLS-1$*/
     
 }

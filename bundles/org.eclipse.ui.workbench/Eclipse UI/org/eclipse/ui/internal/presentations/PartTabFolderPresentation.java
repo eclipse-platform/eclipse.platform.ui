@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchPresentationConstants;
@@ -36,7 +37,6 @@ import org.eclipse.ui.themes.ITheme;
 public class PartTabFolderPresentation extends BasicStackPresentation {
 	
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
-	private ITheme theme;
 		
 	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -50,11 +50,9 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		}
 	};
 	
-	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite, 
-			int flags, ITheme theme) {
+	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite, int flags) {
 		
 		super(new CTabFolder(parent, SWT.BORDER), newSite);
-		this.theme = theme;
 		CTabFolder tabFolder = getTabFolder();
 		
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
@@ -71,9 +69,9 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
-		ColorSchemeService.setTabColors(getTheme(), tabFolder);
+		ColorSchemeService.setTabAttributes(tabFolder);
 
-		applyTheme(theme);
+		updateGradient();
 		
 		tabFolder.setMinimizeVisible((flags & SWT.MIN) != 0);
 		tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);
@@ -89,18 +87,6 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		getTabFolder().setSimpleTab(traditionalTab);
 	}
 
-	private void applyTheme(ITheme theTheme) {
-		this.theme = theTheme;
-		
-		CTabFolder tabFolder = getTabFolder();
-		    
-	    updateGradient();
-	}
-	
-	private ITheme getTheme() {
-		return theme;
-	}
-	
 	/**
 	 * Update the tab folder's colours to match the current theme settings
 	 * and active state
@@ -110,20 +96,22 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		Color[] bgColors;
 		int[] bgPercents;
 		
-		FontRegistry fontRegistry = getTheme().getFontRegistry();
-	    getTabFolder().setFont(fontRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_FONT)); //$NON-NLS-1$
+		
+		ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+        FontRegistry fontRegistry = currentTheme.getFontRegistry();	    
 
-
-		ColorRegistry colorRegistry = getTheme().getColorRegistry();
-		GradientRegistry gradientRegistry = getTheme().getGradientRegistry();
+		ColorRegistry colorRegistry = currentTheme.getColorRegistry();
+		GradientRegistry gradientRegistry = currentTheme.getGradientRegistry();
 		
 		Gradient gradient = null;
         if (isActive()){
 	        fgColor = colorRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR);
 	        gradient = gradientRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT);
+	        getTabFolder().setFont(fontRegistry.get(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_FONT)); //$NON-NLS-1$
 		} else {
 	        fgColor = colorRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR);
 	        gradient = gradientRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT);
+	        getTabFolder().setFont(fontRegistry.get(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_FONT)); //$NON-NLS-1$
 		}		
 		drawGradient(fgColor, gradient);	
 	}

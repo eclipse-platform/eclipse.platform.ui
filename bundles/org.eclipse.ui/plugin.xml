@@ -1214,7 +1214,7 @@
             %Color.inactiveTabTextDesc
          </description>
       </colorDefinition>
-      <colorDefinition
+<!--      <colorDefinition
             label="%Color.background"
             categoryId="org.eclipse.ui.workbenchMisc"
             value="COLOR_WIDGET_BACKGROUND"
@@ -1231,7 +1231,7 @@
          <description>
             %Color.foregroundDesc
          </description>
-      </colorDefinition>            
+      </colorDefinition>-->
       <gradientDefinition
             label="%Color.activeTabBGGradient"
             categoryId="org.eclipse.ui.workbenchMisc"
@@ -1271,19 +1271,15 @@
 	         %Color.inactiveTabBGGradientDesc
          </description>         
       </gradientDefinition>
-      <gradientDefinition
-            label="%Color.tabBGGradient"
+      
+      <colorDefinition
+            label="%Color.viewMenuColor"
             categoryId="org.eclipse.ui.workbenchMisc"
-            direction="vertical"
-            initialValue="COLOR_WIDGET_LIGHT_SHADOW"
-            id="org.eclipse.ui.workbench.TAB_BG_GRADIENT">
-		 <gradientPart
-               percentage="100"
-               value="COLOR_WHITE">
-         </gradientPart>            
+            id="org.eclipse.ui.workbench.VIEW_MENU"
+            value="COLOR_WIDGET_LIGHT_SHADOW">
          <description>
-	         %Color.tabBGGradientDesc
+	         %Color.viewMenuColorDesc
          </description>
-      </gradientDefinition>      
+      </colorDefinition>      
    </extension>   
 </plugin>

@@ -178,7 +178,7 @@ class FastViewPane {
 			ctrl = pane.getControl();			
 		}
 		
-		StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX, pane.getPage().getTheme());
+		StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX);
 		
 		site.setPresentation(presentation);
 		site.setPresentationState(IPresentationSite.STATE_MAXIMIZED);

@@ -29,7 +29,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -354,12 +353,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	}
 
 	private void recreateToolbars() {
-		// remember the colors and set them later
-		Color color = isvToolBar.getBackground();
 		// create new toolbars based on the locked vs !locked state
 		createToolBars();
-		// set colors for toolbars after re-creating them
-		setToolBarColors(color);
 		// create new toolbars
 		updateActionBars();
 		
@@ -443,8 +438,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			return;
 
 		status = new CLabel(control, SWT.LEFT);
-		status.setBackground(status.getParent().getBackground());
-	
+		ColorSchemeService.setViewColors(status);
+
 		updateTitles();
 
 		// Listen to title changes.
@@ -507,6 +502,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// ISV toolbar.
 		//			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
 		isvToolBar = new ToolBar(parentControl, barStyle);
+		
+		
+		
 		if (locked) {
 			//((ViewForm2)control).setTopCenter(isvToolBar);	
 			isvToolBar.addMouseListener(new MouseAdapter(){
@@ -530,12 +528,30 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			}
 		}
 		setTabList();
-		// only do this once for the non-floating toolbar case.  Otherwise update colors
+        // only do this once for the non-floating toolbar case.  Otherwise update colors
 		// whenever updating the tab colors
-		setToolBarColors(getPage().getTheme().getColorRegistry().get(IWorkbenchPresentationConstants.BACKGROUND));
+		if (viewToolBar != null)
+		    ColorSchemeService.setViewColors(viewToolBar);
+		ColorSchemeService.setViewColors(isvToolBar);
+		ColorSchemeService.setViewColors(isvToolBar.getParent());
 	}
 	
-	public void dispose() {
+	/**
+     * 
+     */
+//    private void setToolBarColors() {
+//        
+//		setToolBarColors(
+//		        getViewReference()
+//		        .getPage()
+//		        .getWorkbenchWindow()
+//		        .getWorkbench()
+//		        .getThemeManager()
+//		        .getCurrentTheme()
+//		        .getColorRegistry()
+//		        .get(IWorkbenchPresentationConstants.BACKGROUND));
+//    }
+    public void dispose() {
 		super.dispose();
 
 		/* Bug 42684.  The ViewPane instance has been disposed, but an attempt is
@@ -698,12 +714,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	/**
 	 * @param color
 	 */
-	private void setToolBarColors(Color color) {
-		if (viewToolBar != null)
-			viewToolBar.setBackground(color);
-		isvToolBar.setBackground(color);
-		isvToolBar.getParent().setBackground(color);
-	}
+//	private void setToolBarColors(Color color) {
+//		if (viewToolBar != null)
+//			viewToolBar.setBackground(color);
+//		isvToolBar.setBackground(color);
+//		isvToolBar.getParent().setBackground(color);
+//	}
 	
 	/**
 	 * Ensure the visible/invisible state of the floating window matches the 

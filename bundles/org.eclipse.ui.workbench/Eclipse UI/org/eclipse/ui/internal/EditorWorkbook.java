@@ -23,6 +23,10 @@ import java.util.Map;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.Gradient;
 import org.eclipse.jface.resource.GradientRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -32,7 +36,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.themes.ITheme;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * Represents a tab folder of editors. This layout part
@@ -109,7 +116,41 @@ public abstract class EditorWorkbook
 
 		if (getControl() != null)
 			return;
+		
+		
+		final IPropertyChangeListener listener = new IPropertyChangeListener() {
 
+            /* (non-Javadoc)
+             * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+             */
+            public void propertyChange(PropertyChangeEvent event) {
+                // refresh if we've switched themes or one of our colors of interest have changed.
+                if (event.getProperty().equals(IThemeManager.CHANGE_CURRENT_THEME)
+                	|| event.getProperty().equals(IWorkbenchPresentationConstants.ACTIVE_TAB_TEXT_COLOR)
+                	|| event.getProperty().equals(IWorkbenchPresentationConstants.INACTIVE_TAB_TEXT_COLOR)
+                	|| event.getProperty().equals(IWorkbenchPresentationConstants.ACTIVE_TAB_BG_GRADIENT)
+                	|| event.getProperty().equals(IWorkbenchPresentationConstants.INACTIVE_TAB_BG_GRADIENT)) {
+                    drawGradient();
+                }
+            }};
+        
+            
+        PlatformUI
+			.getWorkbench()
+			.getThemeManager()
+			.addPropertyChangeListener(listener);
+
+        parent.addDisposeListener(new DisposeListener() {
+
+            /* (non-Javadoc)
+             * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+             */
+            public void widgetDisposed(DisposeEvent e) {
+                PlatformUI
+    			.getWorkbench()
+    			.getThemeManager()
+    			.removePropertyChangeListener(listener);
+         }});
 		this.parent = parent;
 
 		createPresentation(parent);
@@ -200,9 +241,10 @@ public abstract class EditorWorkbook
 		Color fgColor = null;
 		
 		Gradient bgGradient = null;
-
-		ColorRegistry colorRegistry = editorArea.getPage().getTheme().getColorRegistry();
-		GradientRegistry gradientRegistry = editorArea.getPage().getTheme().getGradientRegistry();
+		
+		ITheme currentTheme = getWorkbenchWindow().getWorkbench().getThemeManager().getCurrentTheme();
+        ColorRegistry colorRegistry = currentTheme.getColorRegistry();
+		GradientRegistry gradientRegistry = currentTheme.getGradientRegistry();
 
 		
 		switch (activeState) {

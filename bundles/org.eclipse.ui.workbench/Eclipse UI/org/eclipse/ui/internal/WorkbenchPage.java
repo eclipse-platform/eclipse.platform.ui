@@ -83,7 +83,6 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
-import org.eclipse.ui.themes.ITheme;
 
 /**
  * A collection of views and editors in a workbench.
@@ -3458,12 +3457,5 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 		
 		return new IViewPart [] {part};
-	}
-	
-	public ITheme getTheme() {
-	    Perspective activePerspective = getActivePerspective();
-	    if (activePerspective == null)
-	        return getWorkbenchWindow().getWorkbench().getThemeManager().getCurrentTheme();
-        return activePerspective.getTheme();
 	}
 }

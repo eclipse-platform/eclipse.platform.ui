@@ -292,7 +292,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		// The following line should be redirected to a factory in order to 
 		// support pluggable look-and-feel.
 		presentationSite.setPresentation(new PartTabFolderPresentation(parent, 
-				presentationSite, flags, page.getTheme()));
+				presentationSite, flags));
 
 		active = true;
 		

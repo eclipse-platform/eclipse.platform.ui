@@ -22,7 +22,21 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
@@ -46,21 +60,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -85,7 +84,6 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -280,6 +278,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private Map actionSetHandlersByCommandId = new HashMap();
 	private Map globalActionHandlersByCommandId = new HashMap();
 	List handlerSubmissions = new ArrayList();
+    private IPropertyChangeListener themeListener;
 	
 	void registerActionSets(IActionSet[] actionSets) {
 		actionSetHandlersByCommandId.clear();
@@ -554,7 +553,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-
+		
+//		ColorSchemeService.setControlColors(shell);
+//		ColorSchemeService.setControlColors(getStatusLineManager().getControl());
+		
 		if (!getWindowConfigurer().getShowMenuBar()) {
 			shell.setMenuBar(null);
 		}
@@ -626,14 +628,18 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 		
 		//topBar.setMiddle(newBar.getControl());
+		
+//		ColorSchemeService.setCoolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), getCoolBarControl());
+//		ColorSchemeService.setPerspectiveToolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), perspectiveBar.getControl());
+		
+//		ColorSchemeService.setControlColors(getCoolBarControl());
+//		ColorSchemeService.setControlColors(perspectiveBar.getControl());
+//		ColorSchemeService.setControlColors(topBar);
 
-		//ColorSchemeService.setCBannerColors(topBar);
-		ColorSchemeService.setCoolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), getCoolBarControl());
-		ColorSchemeService.setPerspectiveToolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), perspectiveBar.getControl());
-		//ColorSchemeService.setPerspectiveToolBarColors(newBar.getControl());
-	
 		createStatusLine(parent);
+		
 		fastViewBar.createControl(parent);
+//		ColorSchemeService.setControlColors(fastViewBar.getControl());
 		
 		addPerspectiveListener(new IPerspectiveListener() {
 
@@ -654,7 +660,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		createProgressIndicator(parent);
 	}
 
-	/**
+    /**
 	 * Create the perspective toolbar control
 	 */
 	private void createPerspectiveBar(Composite parent) {
@@ -2270,5 +2276,4 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public void closeFloatingWindow(){
 		progressRegion.getAnimationItem().closeFloatingWindow();
 	}
-	
 }

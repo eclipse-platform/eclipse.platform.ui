@@ -49,22 +49,24 @@ public class Theme implements ITheme {
             if (definitions.length > 0) {	           
                 themeColorRegistry = new CascadingColorRegistry(theme.getColorRegistry());
 	            ThemeElementHelper.populateRegistry(this, definitions, workbench.getPreferenceStore());	            
-	            themeColorRegistry.addListener(getListener());	            
 	        }
 	        
 	        GradientDefinition [] gradientDefinitions = this.descriptor.getGradients();
 	        if (gradientDefinitions.length > 0) {
 	            themeGradientRegistry = new CascadingGradientRegistry(theme.getGradientRegistry());	            
 	            ThemeElementHelper.populateRegistry(this, gradientDefinitions, workbench.getPreferenceStore());
-	            themeGradientRegistry.addListener(getListener());
 	        }
 	        FontDefinition [] fontDefinitions = this.descriptor.getFonts();
 	        if (fontDefinitions.length > 0) {
 	            themeFontRegistry = new CascadingFontRegistry(theme.getFontRegistry());	            
 	            ThemeElementHelper.populateRegistry(this, fontDefinitions, workbench.getPreferenceStore());
-	            themeFontRegistry.addListener(getListener());
-	        }	        	        
+	        }	        	   
+
         }
+        
+        getColorRegistry().addListener(getListener());
+        getFontRegistry().addListener(getListener());
+        getGradientRegistry().addListener(getListener());
     }
     
     /**
@@ -74,7 +76,7 @@ public class Theme implements ITheme {
         if (themeListener == null) {
             themeListener = new IPropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent event) {
-                    firePropertyChange(CHANGE_THEME);
+                    firePropertyChange(event);
                 }                
             };
         }
@@ -142,11 +144,8 @@ public class Theme implements ITheme {
         propertyChangeListeners.remove(listener);        
     }
     
-	private void firePropertyChange(String changeId) {
+	private void firePropertyChange(PropertyChangeEvent event) {
 		Object[] listeners = propertyChangeListeners.getListeners();
-		PropertyChangeEvent event =
-			new PropertyChangeEvent(this, changeId, this, this);
-
 		for (int i = 0; i < listeners.length; i++) {
 			((IPropertyChangeListener) listeners[i]).propertyChange(event);
 		}

@@ -187,4 +187,11 @@ public interface IPreferenceConstants {
 	 */
 	public static String SHOW_TRADITIONAL_STYLE_TABS = "SHOW_TRADITIONAL_STYLE_TABS"; //$NON-NLS-1$
 	
+	/**
+	 * Workbench preference for the current theme.
+	 * 
+	 * @since 3.0
+	 */	
+	public static String CURRENT_THEME_ID = "CURRENT_THEME_ID"; //$NON-NLS-1$
+	
 }

@@ -194,6 +194,7 @@ public void createControl(Composite parent) {
 
 	// Create view form.	
 	control = new ViewForm(parent, getStyle());
+//	ColorSchemeService.setControlColors(control);
 	// the part should never be visible by default.  It will be made visible 
 	// by activation.  This allows us to have views appear in tabs without 
 	// becoming active by default.

@@ -18,6 +18,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -44,7 +46,7 @@ public class WorkbenchThemeManager implements IThemeManager {
 					WorkbenchThemeManager.this.dispose();
 				}	
 			});
-		}
+		}		
 	}
 	
 	/**
@@ -64,7 +66,7 @@ public class WorkbenchThemeManager implements IThemeManager {
 	public void dispose() {		
 		for (Iterator i = themes.values().iterator(); i.hasNext();) {
             ITheme theme = (ITheme) i.next();
-            theme.removePropertyChangeListener(myListener);
+            theme.removePropertyChangeListener(currentThemeListener);
             theme.dispose();
         }
 		themes.clear();
@@ -86,23 +88,22 @@ public class WorkbenchThemeManager implements IThemeManager {
 	    return getTheme(td);
 	}
 
-    // kims prototype
     private ITheme getTheme(IThemeDescriptor td) {        
         ITheme theme = (ITheme) themes.get(td);
         if (theme == null) {
             theme = new Theme(td);
-            theme.addPropertyChangeListener(myListener);
+            //theme.addPropertyChangeListener(myListener);
             themes.put(td, theme);
         }
         return theme;
     }
     
-    private IPropertyChangeListener myListener = new IPropertyChangeListener() {
+    private IPropertyChangeListener currentThemeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent event) {
-            firePropertyChange(event.getProperty(), (ITheme) event.getSource(), (ITheme) event.getSource());            
-        }        
-    };
+            firePropertyChange(event);            
+        }
+    };        
     
     private Map themes = new HashMap(7);
 
@@ -110,8 +111,13 @@ public class WorkbenchThemeManager implements IThemeManager {
      * @return
      */
     public ITheme getCurrentTheme() {
-        if (currentTheme == null)
-            setCurrentTheme(null);
+        if (currentTheme == null) {
+    		String themeId = PlatformUI.getWorkbench().getPreferenceStore().getString(IPreferenceConstants.CURRENT_THEME_ID);
+    		if (themeId.equals("")) //$NON-NLS-1$
+    		    themeId = IThemeManager.DEFAULT_THEME;
+    		
+            setCurrentTheme(themeId);
+        }
         return currentTheme;
     }
 
@@ -119,10 +125,15 @@ public class WorkbenchThemeManager implements IThemeManager {
 	    ITheme oldTheme = currentTheme;
 	    if (WorkbenchThemeManager.getInstance().doSetCurrentTheme(id)) {
 	        firePropertyChange(CHANGE_CURRENT_THEME, oldTheme, getCurrentTheme());
-	    }
+		    if (oldTheme != null) 
+		        oldTheme.removePropertyChangeListener(currentThemeListener);
+		    currentTheme.addPropertyChangeListener(currentThemeListener);	
+		    
+			PlatformUI.getWorkbench().getPreferenceStore().setValue(IPreferenceConstants.CURRENT_THEME_ID, id == null ? "" : id); //$NON-NLS-1$	       
+	    }	    
     }
     
-    public boolean doSetCurrentTheme(String id) {
+    private boolean doSetCurrentTheme(String id) {
         ITheme oldTheme = currentTheme;
         ITheme newTheme = getTheme(id); 
         if (oldTheme != newTheme) {
@@ -135,18 +146,24 @@ public class WorkbenchThemeManager implements IThemeManager {
     
     private ITheme currentTheme;
     
+    protected void firePropertyChange(PropertyChangeEvent event) {
+		Object[] listeners = propertyChangeListeners.getListeners();
+		
+		for (int i = 0; i < listeners.length; i++) {
+			((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		}        
+    }        
+    
+    
 	protected void firePropertyChange(
 			String changeId,
 			ITheme oldTheme,
 			ITheme newTheme) {
-			Object[] listeners = propertyChangeListeners.getListeners();
+
 			PropertyChangeEvent event =
 				new PropertyChangeEvent(this, changeId, oldTheme, newTheme);
-
-			for (int i = 0; i < listeners.length; i++) {
-				((IPropertyChangeListener) listeners[i]).propertyChange(event);
-			}
-		}    
+			firePropertyChange(event);
+	}    
 	    
 	private ListenerList propertyChangeListeners = new ListenerList();
 
