@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.sets;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 
 /**
- * This class translates resource deltas and subscriber events into the effects 
- * on a sync set
+ * Records resource synchronization changes from a Team subscriber. The actual changes 
+ * are calculated via the SubscriberEventHandler and stored in this input.
  */
 public class SyncSetInputFromSubscriber extends SyncSetInput  {
 
@@ -34,14 +33,12 @@ public class SyncSetInputFromSubscriber extends SyncSetInput  {
 		return subscriber;
 	}
 	
-	protected IResource[] getRoots() {
-		return getSubscriber().roots();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.sync.views.SyncSetInput#fetchInput(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void fetchInput(IProgressMonitor monitor) throws TeamException {
-		// don't calculate changes unless 
+		// don't calculate changes. The SubscriberEventHandler will fetch the
+		// input in a job and update this sync set when the changes are 
+		// calculated. 
 	}
 }

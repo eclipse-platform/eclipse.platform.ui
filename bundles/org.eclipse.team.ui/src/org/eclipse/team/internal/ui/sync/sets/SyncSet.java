@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.sync.sets;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,22 +29,22 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
- * This class keeps track of a set of resources that are associated with 
- * a sychronization view/operation. 
+ * This class keeps track of a set of resources and their associated synchronization
+ * information. It is optimized so that retrieving out-of-sync children is fast. 
  */
 public class SyncSet {
 	// fields used to hold resources of interest
 	// {IPath -> SyncInfo}
-	protected Map resources = new HashMap();
+	protected Map resources = Collections.synchronizedMap(new HashMap());
 	
 	// {IPath -> Set of deep out of sync child IResources}
 	// weird thing is that the child set will include the
 	// parent if the parent is out of sync
-	protected Map parents = new HashMap();
+	protected Map parents = Collections.synchronizedMap(new HashMap());
 
 	// fields used for change notification
 	protected SyncSetChangedEvent changes;
-	protected Set listeners = new HashSet();
+	protected Set listeners = Collections.synchronizedSet(new HashSet());
 	
 	protected SyncInfoStatistics statistics = new SyncInfoStatistics();
 	
@@ -85,7 +86,7 @@ public class SyncSet {
 		listeners.remove(listener);
 	}
 
-	public void add(SyncInfo info) {
+	public synchronized void add(SyncInfo info) {
 		internalAddSyncInfo(info);
 		changes.added(info);
 		IResource local = info.getLocal();
@@ -100,7 +101,7 @@ public class SyncSet {
 		}
 	}
 
-	protected void remove(IResource local) {
+	protected synchronized void remove(IResource local) {
 		IPath path = local.getFullPath();
 		SyncInfo info = (SyncInfo)resources.remove(path);
 		changes.removed(local);
@@ -108,7 +109,7 @@ public class SyncSet {
 		removeFromParents(local, local);
 	}
 
-	protected void changed(SyncInfo info) {
+	protected synchronized void changed(SyncInfo info) {
 		internalAddSyncInfo(info);
 		changes.changed(info);
 	}
@@ -116,7 +117,7 @@ public class SyncSet {
 	/**
 	 * Reset the sync set so it is empty
 	 */
-	public void reset() {
+	public synchronized void reset() {
 		resources.clear();
 		parents.clear();
 		changes.reset();
@@ -270,14 +271,10 @@ public class SyncSet {
 		return (SyncInfo[]) resources.values().toArray(new SyncInfo[resources.size()]);
 	}
 
-	protected void removeAllChildren(IResource resource) {
+	protected synchronized void removeAllChildren(IResource resource) {
 		// The parent map contains a set of all out-of-sync children
 		Set allChildren = (Set)parents.get(resource.getFullPath());
 		if (allChildren == null) return;
-		removeAll(allChildren);
-	}
-
-	protected void removeAll(Set allChildren) {
 		IResource [] removed = (IResource[]) allChildren.toArray(new IResource[allChildren.size()]);
 		for (int i = 0; i < removed.length; i++) {
 			remove(removed[i]);
