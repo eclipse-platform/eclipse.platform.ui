@@ -37,11 +37,6 @@ public class FormPage extends EditorPart implements IFormPage {
 	private String title;
 	
 	private static class PageForm extends ManagedForm {
-		/**
-		 * TODO (dejan) missing spec
-		 * @param toolkit
-		 * @param form
-		 */
 		public PageForm(FormPage page, ScrolledForm form) {
 			super(page.getEditor().getToolkit(), form);
 			setContainer(page);
@@ -50,15 +45,9 @@ public class FormPage extends EditorPart implements IFormPage {
 		public FormPage getPage() {
 			return (FormPage)getContainer();
 		}
-	/**
-	 *@see IManagedForm#dirtyStateChanged
-	 */	
 		public void dirtyStateChanged() {
 			getPage().getEditor().editorDirtyStateChanged();
 		}
-	/**
-	 *@see IManagedForm#staleStateChanged
-	 */	
 		public void staleStateChanged() {
 			if (getPage().isActive())
 				refresh();

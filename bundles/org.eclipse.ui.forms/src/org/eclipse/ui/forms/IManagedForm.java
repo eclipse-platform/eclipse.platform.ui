@@ -20,8 +20,11 @@ import org.eclipse.ui.forms.widgets.*;
  * There is no 1/1 mapping between widgets and form parts. A widget like
  * Section can be a part by itself, but a number of widgets can gather around
  * one form part.
- * 
- * TODO (dejan) - state whether clients may implement
+ *<p>
+ * Although many Eclipse Forms classes expect IManagedForm interface,
+ * implementing it is not required. Instead, ManagedForm should
+ * either be used as-is or subclassed.
+ * @see ManagedForm
  * @since 3.0
  */
 public interface IManagedForm {

@@ -8,16 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms;
+package org.eclipse.ui.internal.forms;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Creates a wizard that hosts one or more pages based on forms.
  * 
- * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public abstract class FormWizard extends Wizard {

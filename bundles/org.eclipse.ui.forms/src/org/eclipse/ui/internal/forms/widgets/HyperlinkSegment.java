@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.internal.widgets;
+package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
@@ -51,7 +51,7 @@ public class HyperlinkSegment
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
 		int descent = fm.getDescent();
-		boolean rolloverMode = settings.getHyperlinkUnderlineMode()==HyperlinkSettings.UNDERLINE_ROLLOVER;
+		boolean rolloverMode = settings.getHyperlinkUnderlineMode()==HyperlinkSettings.UNDERLINE_HOVER;
 		for (int i=0; i<areaRectangles.size(); i++) {
 			AreaRectangle areaRectangle = (AreaRectangle)areaRectangles.get(i);
 			Rectangle rect = areaRectangle.rect;

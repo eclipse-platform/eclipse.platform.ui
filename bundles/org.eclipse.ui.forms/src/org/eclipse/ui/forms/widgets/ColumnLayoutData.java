@@ -16,11 +16,10 @@ import org.eclipse.swt.SWT;
  * alignment using instances of this class. As with other layouts, they are not
  * required to get the default behaviour.
  * 
- * TODO (dejan) - spell out subclass contract
  * @see ColumnLayout
  * @since 3.0
  */
-public class ColumnLayoutData {
+public final class ColumnLayoutData {
 	/**
 	 * Width hint that will be used instead of the computed control width when
 	 * used in conjunction with <code>ColumnLayout</code> class (default is

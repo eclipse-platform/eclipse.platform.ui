@@ -13,13 +13,12 @@ package org.eclipse.ui.forms.events;
  * Classes that implement this interface will be notified when hyperlinks are
  * entered, exited and activated.
  * 
- * TODO (dejan) - interface should be named "IHyperlinkListener"
  * @see Hyperlink
  * @see ImageHyperlink
  * @see FormText
  * @since 3.0
  */
-public interface HyperlinkListener {
+public interface IHyperlinkListener {
 	/**
 	 * Sent when hyperlink is entered either by mouse entering the link client
 	 * area, or keyboard focus switching to the hyperlink.

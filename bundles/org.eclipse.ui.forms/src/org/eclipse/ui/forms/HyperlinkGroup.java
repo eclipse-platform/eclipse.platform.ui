@@ -24,18 +24,16 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
  * preference. Hyperlink labels are added to the group after creation and are
  * automatically removed from the group when they are disposed.
  * 
- * TODO (dejan) - spell out subclass contract
- * TODO (dejan) - mark non-overrideable methods as final
  * @since 3.0
  */
 
-public class HyperlinkGroup extends HyperlinkSettings {
+public final class HyperlinkGroup extends HyperlinkSettings {
 	private ArrayList links = new ArrayList();
 	private Hyperlink lastActivated;
 	private Hyperlink lastEntered;
 	private GroupListener listener;
 
-	private class GroupListener implements Listener, HyperlinkListener {
+	private class GroupListener implements Listener, IHyperlinkListener {
 		public void handleEvent(Event e) {
 			switch (e.type) {
 				case SWT.MouseEnter :
@@ -75,7 +73,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 			}
 			Hyperlink link = (Hyperlink) e.widget;
 			link.setCursor(getHyperlinkCursor());
-			if (getHyperlinkUnderlineMode() == UNDERLINE_ROLLOVER)
+			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
 				link.setUnderlined(true);
 			lastEntered = link;
 		}
@@ -85,7 +83,7 @@ public class HyperlinkGroup extends HyperlinkSettings {
 		}
 		private void linkExited(Hyperlink link) {
 			link.setCursor(null);
-			if (getHyperlinkUnderlineMode() == UNDERLINE_ROLLOVER)
+			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
 				link.setUnderlined(false);
 			if (lastEntered == link)
 				lastEntered = null;

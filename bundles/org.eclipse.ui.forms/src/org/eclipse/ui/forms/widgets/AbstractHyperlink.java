@@ -15,7 +15,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.internal.widgets.FormsResources;
+import org.eclipse.ui.internal.forms.widgets.FormsResources;
 /**
  * This is the base class for custom hyperlink widget. It is responsible for
  * processing mouse and keyboard events, and converting them into unified
@@ -48,7 +48,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		addListener(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event e) {
 				if (e.character == '\r') {
-					handleActivate();
+					handleActivate(e);
 				}
 			}
 		});
@@ -76,20 +76,20 @@ public abstract class AbstractHyperlink extends Canvas {
 				switch (e.type) {
 					case SWT.FocusIn :
 						hasFocus = true;
-						handleEnter();
+						handleEnter(e);
 						break;
 					case SWT.FocusOut :
 						hasFocus = false;
-						handleExit();
+						handleExit(e);
 						break;
 					case SWT.DefaultSelection :
-						handleActivate();
+						handleActivate(e);
 						break;
 					case SWT.MouseEnter :
-						handleEnter();
+						handleEnter(e);
 						break;
 					case SWT.MouseExit :
-						handleExit();
+						handleExit(e);
 						break;
 					case SWT.MouseUp :
 						handleMouseUp(e);
@@ -110,7 +110,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * @param listener
 	 *            the event listener to add
 	 */
-	public void addHyperlinkListener(HyperlinkListener listener) {
+	public void addHyperlinkListener(IHyperlinkListener listener) {
 		if (listeners == null)
 			listeners = new Vector();
 		if (!listeners.contains(listener))
@@ -122,7 +122,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * @param listener
 	 *            the event listener to remove
 	 */
-	public void removeHyperlinkListener(HyperlinkListener listener) {
+	public void removeHyperlinkListener(IHyperlinkListener listener) {
 		if (listeners == null)
 			return;
 		listeners.remove(listener);
@@ -142,45 +142,45 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * Called when hyperlink is entered. Subclasses that override this method
 	 * must call 'super'.
 	 */
-	protected void handleEnter() {
+	protected void handleEnter(Event e) {
 		redraw();
 		if (listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
+		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(), e.stateMask);
 		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkEntered(e);
+			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			listener.linkEntered(he);
 		}
 	}
 	/**
 	 * Called when hyperlink is exited. Subclasses that override this method
 	 * must call 'super'.
 	 */
-	protected void handleExit() {
+	protected void handleExit(Event e) {
 		redraw();
 		if (listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
+		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(), e.stateMask);
 		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkExited(e);
+			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			listener.linkExited(he);
 		}
 	}
 	/**
 	 * Called when hyperlink has been activated. Subclasses that override this
 	 * method must call 'super'.
 	 */
-	protected void handleActivate() {
+	protected void handleActivate(Event e) {
 		if (listeners == null)
 			return;
 		int size = listeners.size();
 		setCursor(FormsResources.getBusyCursor());
-		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
+		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(), e.stateMask);
 		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkActivated(e);
+			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			listener.linkActivated(he);
 		}
 		if (!isDisposed())
 			setCursor(FormsResources.getHandCursor());
@@ -261,6 +261,6 @@ public abstract class AbstractHyperlink extends Canvas {
 			return;
 		if (e.y >= size.y)
 			return;
-		handleActivate();
+		handleActivate(e);
 	}
 }

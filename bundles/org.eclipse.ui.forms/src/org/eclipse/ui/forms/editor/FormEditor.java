@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
 import java.util.Vector;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
+import org.eclipse.ui.part.MultiPageEditorPart;
+import org.eclipse.ui.part.MultiPageSelectionProvider;
 /**
  * This class forms a base of multi-page form editors that typically use one or
  * more pages with forms and one page for raw source of the editor input.
@@ -105,7 +113,12 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		addPages();
 	}
 	/**
-	 * Creates the form toolkit.
+	 * Creates the form toolkit. The method can be implemented
+	 * to substitute a subclass of the toolkit that should
+	 * be used for this editor. A typical use of this method
+	 * would be to create the form toolkit using one
+	 * shared <code>FormColors</code> object to share
+	 * resources across the multiple editor instances.
 	 * 
 	 * @param display
 	 *            the display to use when creating the toolkit
@@ -343,6 +356,15 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			super.setActivePage(pageIndex);
 		} else
 			super.setActivePage(pageIndex);
+		updateActionBarContributor(pageIndex);
+	}
+	/**
+	 * Notifies action bar contributor about page change.
+	 * 
+	 * @param pageIndex
+	 *            the index of the new page
+	 */
+	protected void updateActionBarContributor(int pageIndex) {
 		// this is to enable the undo/redo actions before a page change has
 		// occurred
 		IEditorActionBarContributor contributor = getEditorSite()

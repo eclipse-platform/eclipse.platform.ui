@@ -8,18 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms;
+package org.eclipse.ui.internal.forms;
 
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.FormColors;
 
 /**
  * Modifies the standard wizard dialog to accept form wizards. Modification
  * consists of adjusting colors and layout so that scrollable forms can be
  * hosted.
  * 
- * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public class FormWizardDialog extends WizardDialog {

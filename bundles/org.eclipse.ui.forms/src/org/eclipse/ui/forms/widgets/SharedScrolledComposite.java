@@ -13,12 +13,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.internal.widgets.*;
+import org.eclipse.ui.internal.forms.widgets.*;
 /**
  * This class is used to provide common scrolling services to a number
- * of control in the toolkit.
+ * of controls in the toolkit. Classes that extend it are not
+ * required to implement any method. 
  * 
- * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public abstract class SharedScrolledComposite extends ScrolledComposite {

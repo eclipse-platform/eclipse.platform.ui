@@ -17,15 +17,17 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.internal.widgets.*;
+import org.eclipse.ui.internal.forms.widgets.*;
 /**
  * This composite is capable of expanding or collapsing a single client that is
  * its direct child. The composite renders an expansion toggle affordance
  * (according to the chosen style), and a title that also acts as a hyperlink
  * (can be selected and is traversable). The client is layed out below the
  * title when expanded, or hidden when collapsed.
+ * <p>The widget can be instantiated as-is, or subclassed to
+ * modify some aspects of it.
  * 
- * TODO (dejan) - spell out subclass contract
+ * @see Section
  * @since 3.0
  */
 public class ExpandableComposite extends Composite {
@@ -239,6 +241,9 @@ public class ExpandableComposite extends Composite {
 				height += VSPACE;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
+				
+				if (cwHint!=SWT.DEFAULT)
+					cwHint -= tvmargin + tvmargin;
 				if ((expansionStyle & CLIENT_INDENT) != 0)
 					cwHint = innerwHint;
 				Point dsize = null;
@@ -247,7 +252,7 @@ public class ExpandableComposite extends Composite {
 				if (getDescriptionControl() != null) {
 					int dwHint = cwHint;
 					if (dwHint == SWT.DEFAULT) {
-						dwHint = csize.x;
+						dwHint = csize.x - tvmargin - tvmargin;
 						if ((expansionStyle & CLIENT_INDENT) != 0)
 							dwHint -= twidth;
 					}
@@ -598,7 +603,7 @@ public class ExpandableComposite extends Composite {
 	 * @param listener
 	 *            the listener to add
 	 */
-	public void addExpansionListener(ExpansionListener listener) {
+	public void addExpansionListener(IExpansionListener listener) {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
@@ -608,7 +613,7 @@ public class ExpandableComposite extends Composite {
 	 * @param listener
 	 *            the listner to remove
 	 */
-	public void removeExpansionListener(ExpansionListener listener) {
+	public void removeExpansionListener(IExpansionListener listener) {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}
@@ -618,6 +623,13 @@ public class ExpandableComposite extends Composite {
 		internalSetExpanded(!isExpanded());
 		fireExpanding(newState, false);
 	}
+/**
+ * If TITLE_BAR style is used, title bar decoration will
+ * be painted behind the text in this method. The default
+ * implementation does nothing - subclasses are responsible
+ * for rendering the title area.
+ * @param e the paint event
+ */
 	protected void onPaint(PaintEvent e) {
 	}
 	private void fireExpanding(boolean state, boolean before) {
@@ -626,7 +638,7 @@ public class ExpandableComposite extends Composite {
 			return;
 		ExpansionEvent e = new ExpansionEvent(this, state);
 		for (int i = 0; i < size; i++) {
-			ExpansionListener listener = (ExpansionListener) listeners.get(i);
+			IExpansionListener listener = (IExpansionListener) listeners.get(i);
 			if (before)
 				listener.expansionStateChanging(e);
 			else

@@ -9,14 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 /**
  * Section part implements IFormPart interface based on the Section widget. It
  * can either wrap the widget or create one itself.
- * 
- * TODO (dejan) - spell out subclass contract
+ * <p>
+ * Subclasses should extend <code>SectionPart</code> and implement 
+ * life cycle methods like <code>refresh</code>, <code>commit</code>,
+ * <code>setFocus</code> etc. Note that most of these methods
+ * are not empty - calling <code>super</code> is required.
  * @see Section
  * @since 3.0
  */

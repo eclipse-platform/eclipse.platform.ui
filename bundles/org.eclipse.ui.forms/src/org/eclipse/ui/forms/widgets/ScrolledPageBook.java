@@ -14,16 +14,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.internal.widgets.WrappedPageBook;
+import org.eclipse.ui.internal.forms.widgets.WrappedPageBook;
 /**
  * ScrolledPageBook is a class that is capable of stacking several composites
  * (pages), while showing one at a time. The content is scrolled if there is
  * not enough space to fit it in the client area.
  * 
- * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
-public class ScrolledPageBook extends SharedScrolledComposite {
+public final class ScrolledPageBook extends SharedScrolledComposite {
 	private WrappedPageBook pageBook;
 	private Hashtable pages;
 	private Composite emptyPage;

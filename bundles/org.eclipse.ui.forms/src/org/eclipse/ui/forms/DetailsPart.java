@@ -21,11 +21,9 @@ import org.eclipse.ui.forms.widgets.ScrolledPageBook;
  * 'master/details' block. It has a page book that manages pages
  * of details registered for the current selection.
  * 
- * TODO (dejan) - spell out subclass contract
- * TODO (dejan) - mark non-overrideable methods as final
  * @since 3.0
  */
-public class DetailsPart implements IFormPart, IPartSelectionListener {
+public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private IManagedForm managedForm;
 	private ScrolledPageBook pageBook;
 	private IFormPart masterPart;

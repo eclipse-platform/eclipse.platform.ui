@@ -32,12 +32,11 @@ import org.eclipse.swt.widgets.*;
  * will not cause an error. The same behavior does not exist for content from
  * the input stream, however - it must be well formed in that case.
  * </p>
- * 
- * TODO (dejan) - spell out subclass contract
+
  * @since 3.0
  * @see FormText
  */
-public class ScrolledFormText extends SharedScrolledComposite {
+public final class ScrolledFormText extends SharedScrolledComposite {
 	private FormText content;
 	private String text;
 	/**

@@ -21,11 +21,10 @@ import org.eclipse.swt.widgets.Composite;
  * The control is rendered as a triangle that points to the right in the
  * collapsed and down in the expanded state. Triangle color can be changed.
  * 
- * TODO (dejan) - spell out subclass contract
  * @see TreeNode
  * @since 3.0
  */
-public class Twistie extends ToggleHyperlink {
+public final class Twistie extends ToggleHyperlink {
 	private static final int[] onPoints = {0, 2, 8, 2, 4, 6};
 	private static final int[] offPoints = {2, -1, 2, 8, 6, 4};
 	/**

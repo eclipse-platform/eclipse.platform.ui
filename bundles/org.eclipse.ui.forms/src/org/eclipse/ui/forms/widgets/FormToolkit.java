@@ -18,7 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.internal.widgets.*;
+import org.eclipse.ui.internal.forms.widgets.*;
 /**
  * The toolkit is responsible for creating SWT controls adapted to work in
  * Eclipse forms. In addition to changing their presentation properties (fonts,
@@ -40,9 +40,11 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * entire plug-in and share it between several toolkits. The plug-in is
  * responsible for disposing the colors (disposing the toolkit that uses shared
  * color object will not dispose the colors).
- * 
- * TODO (dejan) - spell out subclass contract
- * 
+ *<p> 
+ * FormToolkit is normally instantiated, but can also be 
+ * subclassed if some of the methods needs to be modified.
+ * In those cases, <code>super</code> must be called to 
+ * preserve normal behaviour.
  * @since 3.0
  */
 public class FormToolkit {
@@ -109,8 +111,8 @@ public class FormToolkit {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(colors.getBorderColor());
-					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 2,
-							b.height + 2);
+					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
+							b.height + 1);
 				}
 			}
 		}
@@ -385,7 +387,7 @@ public class FormToolkit {
 			section.setTitleBarBackground(colors.getColor(FormColors.TB_GBG));
 			section.setTitleBarBorderColor(colors
 					.getColor(FormColors.TB_BORDER));
-			section.setTitleGradientBackground(colors
+			section.setTitleBarGradientBackground(colors
 					.getColor(FormColors.TB_GBG));
 			if (section.toggle != null)
 				section.toggle.setDecorationColor(colors
@@ -447,7 +449,7 @@ public class FormToolkit {
 	public Table createTable(Composite parent, int style) {
 		Table table = new Table(parent, style | borderStyle);
 		adapt(table, false, false);
-		hookDeleteListener(table);
+		//hookDeleteListener(table);
 		return table;
 	}
 	/**
@@ -492,7 +494,7 @@ public class FormToolkit {
 	public Tree createTree(Composite parent, int style) {
 		Tree tree = new Tree(parent, borderStyle | style);
 		adapt(tree, false, false);
-		hookDeleteListener(tree);
+		//hookDeleteListener(tree);
 		return tree;
 	}
 	/**
@@ -548,15 +550,6 @@ public class FormToolkit {
 		book.setMenu(parent.getMenu());
 		return book;
 	}
-	//TODO hook delete key
-	/*
-	 * private void deleteKeyPressed(Widget widget) { if (!(widget instanceof
-	 * Control)) return; Control control = (Control) widget; for (Control parent =
-	 * control.getParent(); parent != null; parent = parent.getParent()) { if
-	 * (parent.getData() instanceof SectionPart) { SectionPart section =
-	 * (SectionPart) parent.getData();
-	 * section.doGlobalAction(ActionFactory.DELETE.getId()); break; } } }
-	 */
 	/**
 	 * Disposes the toolkit.
 	 */
@@ -573,19 +566,6 @@ public class FormToolkit {
 	 */
 	public HyperlinkGroup getHyperlinkGroup() {
 		return hyperlinkGroup;
-	}
-	public void hookDeleteListener(Control control) {
-		if (deleteListener == null) {
-			deleteListener = new KeyAdapter() {
-				public void keyPressed(KeyEvent event) {
-					if (event.character == SWT.DEL && event.stateMask == 0) {
-						//TODO hook delete key
-						//deleteKeyPressed(event.widget);
-					}
-				}
-			};
-		}
-		control.addKeyListener(deleteListener);
 	}
 	/**
 	 * Sets the background color for the entire toolkit. The method delegates

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import java.util.Hashtable;
-
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -18,13 +17,20 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 /**
  * A variation of the expandable composite that adds optional description below
- * the title.
- * 
- * TODO (dejan) - spell out subclass contract
+ * the title. Section is often used as a basic building block if forms because
+ * it provides for logical grouping of information.
+ * <p>
+ * In case of the TITLE_BAR style, Section renders the title bar in a way
+ * compatible with the rest of the workbench. Since it is a widget, all the
+ * colors must be supplied directly. When created by the form toolkit, these
+ * colors are supplied by the toolkit. The toolkit initializes these
+ * colors based on the system colors. For this reason, it is 
+ * recommended to create the section by the toolkit instead of
+ * through its own constructor.
  * 
  * @since 3.0
  */
-public class Section extends ExpandableComposite {
+public final class Section extends ExpandableComposite {
 	/**
 	 * Description style. If used, description will be rendered below the title.
 	 */
@@ -155,42 +161,94 @@ public class Section extends ExpandableComposite {
 	protected Control getDescriptionControl() {
 		return descriptionLabel;
 	}
+	/**
+	 * Sets the color of the title bar border when TITLE_BAR style is used.
+	 * 
+	 * @param color
+	 *            the title bar border color
+	 */
 	public void setTitleBarBorderColor(Color color) {
 		putTitleBarColor(COLOR_BORDER, color);
 	}
+	/**
+	 * Sets the color of the title bar foreground when TITLE_BAR style is used.
+	 * 
+	 * @param color
+	 *            the title bar foreground
+	 */
 	public void setTitleBarForeground(Color color) {
 		putTitleBarColor(COLOR_FG, color);
 	}
+	/**
+	 * Sets the color of the title bar background when TITLE_BAR style is used.
+	 * This color is used as a starting color for the vertical gradient.
+	 * 
+	 * @param color
+	 *            the title bar border background
+	 */
 	public void setTitleBarBackground(Color color) {
 		putTitleBarColor(COLOR_BG, color);
 		textLabel.setBackground(color);
-		if (toggle!=null)
+		if (toggle != null)
 			toggle.setBackground(color);
 	}
-	public void setTitleGradientBackground(Color color) {
+	/**
+	 * Sets the color of the title bar gradient background when TITLE_BAR style
+	 * is used. This color is used at the height where title controls end
+	 * (toggle, tool bar).
+	 * 
+	 * @param color
+	 *            the title bar gradient background
+	 */
+	public void setTitleBarGradientBackground(Color color) {
 		putTitleBarColor(COLOR_GBG, color);
 		//textLabel.setBackground(color);
 		//if (toggle!=null)
 		//	toggle.setBackground(color);
 	}
+	/**
+	 * Returns the title bar border color when TITLE_BAR style is used.
+	 * 
+	 * @return the title bar border color
+	 */
 	public Color getTitleBarBorderColor() {
-		if (titleColors==null) return null;
-		return (Color)titleColors.get(COLOR_BORDER);
+		if (titleColors == null)
+			return null;
+		return (Color) titleColors.get(COLOR_BORDER);
 	}
-	public Color getTitleGradientBackground() {
-		if (titleColors==null) return null;
-		return (Color)titleColors.get(COLOR_GBG);
+	/**
+	 * Returns the title bar gradient background color when TITLE_BAR style is
+	 * used.
+	 * 
+	 * @return the title bar gradient background
+	 */
+	public Color getTitleBarGradientBackground() {
+		if (titleColors == null)
+			return null;
+		return (Color) titleColors.get(COLOR_GBG);
 	}
+	/**
+	 * Returns the title bar foreground when TITLE_BAR style is used.
+	 * 
+	 * @return the title bar foreground
+	 */
 	public Color getTitleBarForeground() {
-		if (titleColors==null) return null;
-		return (Color)titleColors.get(COLOR_FG);
+		if (titleColors == null)
+			return null;
+		return (Color) titleColors.get(COLOR_FG);
 	}
+	/**
+	 * Returns the title bar background when TITLE_BAR style is used.
+	 * 
+	 * @return the title bar background
+	 */
 	public Color getTitleBarBackground() {
-		if (titleColors==null) return null;
-		return (Color)titleColors.get(COLOR_BG);
+		if (titleColors == null)
+			return null;
+		return (Color) titleColors.get(COLOR_BG);
 	}
 	private void putTitleBarColor(String key, Color color) {
-		if (titleColors==null)
+		if (titleColors == null)
 			titleColors = new Hashtable();
 		titleColors.put(key, color);
 	}
@@ -199,17 +257,20 @@ public class Section extends ExpandableComposite {
 		Color gbg = null;
 		Color fg = null;
 		Color border = null;
-		if (titleColors!=null) {
-			bg = (Color)titleColors.get(COLOR_BG);
-			gbg = (Color)titleColors.get(COLOR_GBG);
-			fg = (Color)titleColors.get(COLOR_FG);
-			border = (Color)titleColors.get(COLOR_BORDER);
+		if (titleColors != null) {
+			bg = (Color) titleColors.get(COLOR_BG);
+			gbg = (Color) titleColors.get(COLOR_GBG);
+			fg = (Color) titleColors.get(COLOR_FG);
+			border = (Color) titleColors.get(COLOR_BORDER);
 		}
-		if (bg==null) bg = getBackground();
-		if (fg ==null) fg = getForeground();
-		if (border==null) border = fg;
-		if (gbg==null) gbg = bg;
-
+		if (bg == null)
+			bg = getBackground();
+		if (fg == null)
+			fg = getForeground();
+		if (border == null)
+			border = fg;
+		if (gbg == null)
+			gbg = bg;
 		Rectangle bounds = getClientArea();
 		Point tsize = null;
 		Point tcsize = null;
@@ -219,7 +280,8 @@ public class Section extends ExpandableComposite {
 		if (tsize != null)
 			twidth -= tsize.x + GAP;
 		if (getTextClient() != null)
-			tcsize = getTextClient().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			tcsize = getTextClient()
+					.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		if (tcsize != null)
 			twidth -= tcsize.x + GAP;
 		Point size = textLabel.computeSize(twidth, SWT.DEFAULT, true);
@@ -231,28 +293,31 @@ public class Section extends ExpandableComposite {
 			theight = Math.max(theight, tcsize.y);
 		theight = Math.max(theight, size.y);
 		theight += tvmargin + tvmargin;
-		int midpoint = (theight *66)/100;
+		int midpoint = (theight * 66) / 100;
 		int rem = theight - midpoint;
 		GC gc = e.gc;
-		//gc.fillRectangle(marginWidth, marginHeight, bounds.width - 1
-		//		- marginWidth - marginWidth, solidHeight - 1);
 		gc.setForeground(bg);
 		gc.setBackground(gbg);
 		gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width - 1
 				- marginWidth - marginWidth, midpoint - 1, true);
 		gc.setForeground(gbg);
 		gc.setBackground(getBackground());
-		gc.fillGradientRectangle(marginWidth, marginHeight+midpoint-1, bounds.width - 1
-				- marginWidth - marginWidth, rem - 1, true);
+		gc.fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
+				bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
 		gc.setForeground(border);
-		gc.drawLine(marginWidth, marginHeight+2, marginWidth, marginHeight+theight-1);
-		gc.drawLine(marginWidth, marginHeight+2, marginWidth+2, marginHeight);
-		gc.drawLine(marginWidth+2, marginHeight, bounds.width-marginWidth-3, marginHeight);
-		gc.drawLine(bounds.width-marginWidth-3, marginHeight, bounds.width-marginWidth-1, marginHeight+2);
-		gc.drawLine(bounds.width-marginWidth-1, marginHeight+2, bounds.width-marginWidth-1, marginHeight+theight-1);
+		gc.drawLine(marginWidth, marginHeight + 2, marginWidth, marginHeight
+				+ theight - 1);
+		gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
+				marginHeight);
+		gc.drawLine(marginWidth + 2, marginHeight, bounds.width - marginWidth
+				- 3, marginHeight);
+		gc.drawLine(bounds.width - marginWidth - 3, marginHeight, bounds.width
+				- marginWidth - 1, marginHeight + 2);
+		gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
+				bounds.width - marginWidth - 1, marginHeight + theight - 1);
 		if (toggle != null && !isExpanded()) {
-			gc.drawLine(marginWidth, marginHeight+theight-1, bounds.width-marginWidth-1, marginHeight+theight-1);
+			gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
+					- marginWidth - 1, marginHeight + theight - 1);
 		}
-
 	}
 }

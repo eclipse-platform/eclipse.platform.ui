@@ -8,16 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms;
+package org.eclipse.ui.internal.forms;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.*;
 
 /**
- * 
- * TODO (dejan) missing spec
- * @since 3.0
+ *@since 3.0
  */
 public class WizardForm extends ManagedForm {
 	/**

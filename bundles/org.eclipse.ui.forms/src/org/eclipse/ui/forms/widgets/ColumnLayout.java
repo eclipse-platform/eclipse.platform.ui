@@ -28,11 +28,10 @@ import org.eclipse.swt.widgets.*;
  * For 'stretchy' controls that do not have natural preferred size, it is
  * possible to set width and/or height hints using ColumnLayoutData objects.
  * 
- * TODO (dejan) - spell out subclass contract
  * @see ColumnLayoutData
  * @since 3.0
  */
-public class ColumnLayout extends Layout implements ILayoutExtension {
+public final class ColumnLayout extends Layout implements ILayoutExtension {
 	/**
 	 * Minimum number of columns (default is 1).
 	 */

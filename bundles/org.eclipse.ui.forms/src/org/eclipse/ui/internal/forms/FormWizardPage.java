@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms;
+package org.eclipse.ui.internal.forms;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
@@ -18,7 +18,6 @@ import org.eclipse.ui.forms.widgets.*;
  * Form wizard page is a page that hosts a scrollable form. Subclasses
  * are supposed to implement 'fillFormBody' that 
  * 
- * TODO (dejan) - spell out subclass contract
  * @since 3.0
  */
 public abstract class FormWizardPage extends WizardPage {

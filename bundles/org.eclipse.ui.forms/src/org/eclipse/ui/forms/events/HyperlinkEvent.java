@@ -13,12 +13,12 @@ import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.widgets.Widget;
 /**
  * Notifies listeners about a hyperlink change.
- * 
- * TODO (dejan) - spell out subclass contract
+ *
  * @since 3.0
  */
-public class HyperlinkEvent extends TypedEvent {
+public final class HyperlinkEvent extends TypedEvent {
 	private String label;
+	private int stateMask;
 	/**
 	 * Creates a new hyperlink
 	 * 
@@ -31,11 +31,12 @@ public class HyperlinkEvent extends TypedEvent {
 	 *            the name of the hyperlink (the text that is rendered as a
 	 *            link in the source widget).
 	 */
-	public HyperlinkEvent(Widget widget, Object href, String label) {
+	public HyperlinkEvent(Widget widget, Object href, String label, int modifier) {
 		super(widget);
 		this.widget = widget;
 		this.data = href;
 		this.label = label;
+		this.stateMask = modifier;
 	}
 	/**
 	 * The hyperlink reference that will be followed when the hyperlink is
@@ -53,5 +54,13 @@ public class HyperlinkEvent extends TypedEvent {
 	 */
 	public String getLabel() {
 		return label;
+	}
+	/**
+	 * Returns the value of the keyboard state mask present when
+	 * the event occured, or SWT.NULL for no modifiers.
+	 * @return the keyboard state mask or <code>SWT.NULL</code>. 
+	 */
+	public int getStateMask() {
+		return stateMask;
 	}
 }

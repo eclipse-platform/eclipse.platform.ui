@@ -14,8 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.internal.widgets.*;
-import org.eclipse.ui.forms.internal.widgets.FormsResources;
+import org.eclipse.ui.internal.forms.widgets.*;
 /**
  * Form is a custom control that renders a title and
  * an optional background image above the body composite.
@@ -51,8 +50,8 @@ import org.eclipse.ui.forms.internal.widgets.FormsResources;
  * <p>
  * No layout manager has been set on the body. Clients are required to set the
  * desired layout manager explicitly.
- * 
- * TODO (dejan) - spell out subclass contract
+ * <p>
+ * Although the class is not final, it should not be subclassed.
  * @since 3.0
  */
 public class Form extends Composite {
@@ -173,7 +172,7 @@ public class Form extends Composite {
 	 * Fully delegates the size computation to the internal
 	 * layout manager.
 	 */
-	public Point computeSize(int wHint, int hHint, boolean changed) {
+	public final Point computeSize(int wHint, int hHint, boolean changed) {
 		return ((FormLayout) getLayout()).computeSize(this, wHint, hHint,
 				changed);
 	}

@@ -28,9 +28,10 @@ public interface ILayoutExtension {
 	 * wrapping should return the width of the longest word that cannot be
 	 * broken any further.
 	 * 
-	 * @param parent
-	 * @param changed
-	 * @return
+	 * @param parent the parent composite
+	 * @param changed <code>true</code> if the cached information should be
+	 * flushed, <code>false</code> otherwise.
+	 * @return the minimum width of the parent composite
 	 */
 	public int computeMinimumWidth(Composite parent, boolean changed);
 	/**
@@ -38,9 +39,10 @@ public interface ILayoutExtension {
 	 * wrapping should return the length of the entire text with wrapping
 	 * turned off.
 	 * 
-	 * @param parent
-	 * @param changed
-	 * @return
+	 * @param parent the parent composite
+	 * @param changed <code>true</code> if the cached information
+	 * should be flushed, <code>false</code> otherwise.
+	 * @return the maximum width of the parent composite
 	 */
 	public int computeMaximumWidth(Composite parent, boolean changed);
 }

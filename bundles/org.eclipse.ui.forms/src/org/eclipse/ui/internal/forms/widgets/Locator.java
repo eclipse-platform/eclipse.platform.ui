@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.internal.widgets;
+package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.ArrayList;
 

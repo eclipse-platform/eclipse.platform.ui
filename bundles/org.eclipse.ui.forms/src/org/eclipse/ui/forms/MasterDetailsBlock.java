@@ -27,19 +27,39 @@ import org.eclipse.ui.forms.widgets.*;
  * details of the selected object(s) and allows users to edit them.
  * <p>
  * Details pages can be registered statically using 'registerPage' or
- * dynamically through the use of 'IDetailsPageProvider' in case where
- * different pages need to be shown for objects of the same type depending on
- * their state.
+ * dynamically through the use of 'IDetailsPageProvider' in case where different
+ * pages need to be shown for objects of the same type depending on their state.
+ * <p>
+ * Subclasses are required to implement abstract methods of this class. Master
+ * part must be created and at least one details page should be registered in
+ * order to show details of the objects selected in the master part. Tool bar
+ * actions can be optionally added to the tool bar manager.
  * 
- * TODO (dejan) - spell out subclass contract
  * @see DetailsPart
  * @see IDetailsPage
  * @see IDetailsPageProvider
  * @since 3.0
  */
 public abstract class MasterDetailsBlock {
+/**
+ * Details part created by the block. No attempt should be
+ * made to access this field inside <code>createMasterPart</code>
+ * because it has not been created yet and will be <code>null</code>.
+ */
 	protected DetailsPart detailsPart;
+/**
+ * The form that is the parent of both master and details part.
+ * The form allows users to change the ratio between the two
+ * parts.
+ */
 	protected SashForm sashForm;
+	/**
+	 * Creates the content of the master/details block inside the managed form.
+	 * This method should be called as late as possible inside the parent part.
+	 * 
+	 * @param managedForm
+	 *            the managed form to create the block in
+	 */
 	public void createContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -57,8 +77,7 @@ public abstract class MasterDetailsBlock {
 	}
 	/**
 	 * Implement this method to create a master part in the provided parent.
-	 * Typical master parts are section parts that contain tree or table
-	 * viewer.
+	 * Typical master parts are section parts that contain tree or table viewer.
 	 * 
 	 * @param managedForm
 	 *            the parent form
@@ -77,8 +96,8 @@ public abstract class MasterDetailsBlock {
 	 */
 	protected abstract void registerPages(DetailsPart detailsPart);
 	/**
-	 * Implement this method to create form tool bar actions and add them to
-	 * the form tool bar if desired.
+	 * Implement this method to create form tool bar actions and add them to the
+	 * form tool bar if desired.
 	 * 
 	 * @param managedForm
 	 *            the form that owns the tool bar

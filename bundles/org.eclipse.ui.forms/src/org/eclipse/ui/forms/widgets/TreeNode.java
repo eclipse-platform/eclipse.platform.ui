@@ -23,11 +23,10 @@ import org.eclipse.swt.widgets.Composite;
  * expansion state. Focus indication is rendered around the box when the
  * control has keyboard focus.
  * 
- * TODO (dejan) - spell out subclass contract
  * @see Twistie
  * @since 3.0
  */
-public class TreeNode extends ToggleHyperlink {
+public final class TreeNode extends ToggleHyperlink {
 	/**
 	 * Creates a control in a provided composite.
 	 * 

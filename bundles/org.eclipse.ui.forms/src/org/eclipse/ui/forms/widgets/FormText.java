@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.internal.widgets.*;
+import org.eclipse.ui.internal.forms.widgets.*;
 /**
  * This class is a read-only text control that is capable of rendering wrapped
  * text. Text can be rendered as-is or by parsing the formatting XML tags.
@@ -98,7 +98,7 @@ import org.eclipse.ui.forms.internal.widgets.*;
  * @see TableWrapLayout
  * @since 3.0
  */
-public class FormText extends Canvas {
+public final class FormText extends Canvas {
 	/**
 	 * The object ID to be used when registering action to handle URL
 	 * hyperlinks (those that should result in opening the web browser). Value
@@ -288,7 +288,7 @@ public class FormText extends Canvas {
 			}
 			public void mouseExit(MouseEvent e) {
 				if (entered != null) {
-					exitLink(entered);
+					exitLink(entered, e.stateMask);
 					paintLinkHover(entered, false);
 					entered = null;
 					setCursor(null);
@@ -506,7 +506,7 @@ public class FormText extends Canvas {
 	 * @param listener
 	 *            the listener to add
 	 */
-	public void addHyperlinkListener(HyperlinkListener listener) {
+	public void addHyperlinkListener(IHyperlinkListener listener) {
 		if (listeners == null)
 			listeners = new Vector();
 		if (!listeners.contains(listener))
@@ -518,7 +518,7 @@ public class FormText extends Canvas {
 	 * @param listener
 	 *            the listener to remove
 	 */
-	public void removeHyperlinkListener(HyperlinkListener listener) {
+	public void removeHyperlinkListener(IHyperlinkListener listener) {
 		if (listeners == null)
 			return;
 		listeners.remove(listener);
@@ -592,7 +592,7 @@ public class FormText extends Canvas {
 			if (segmentUnder != null) {
 				HyperlinkSegment oldLink = model.getSelectedLink();
 				model.selectLink(segmentUnder);
-				enterLink(segmentUnder);
+				enterLink(segmentUnder, e.stateMask);
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
 			mouseDown = true;
@@ -601,7 +601,7 @@ public class FormText extends Canvas {
 			if (e.button == 1) {
 				HyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 				if (segmentUnder != null) {
-					activateLink(segmentUnder);
+					activateLink(segmentUnder, e.stateMask);
 				}
 			}
 			mouseDown = false;
@@ -617,7 +617,7 @@ public class FormText extends Canvas {
 		TextSegment segmentUnder = model.findSegmentAt(e.x, e.y);
 		if (segmentUnder == null) {
 			if (entered != null) {
-				exitLink(entered);
+				exitLink(entered, e.stateMask);
 				paintLinkHover(entered, false);
 				entered = null;
 			}
@@ -627,13 +627,13 @@ public class FormText extends Canvas {
 				HyperlinkSegment linkUnder = (HyperlinkSegment) segmentUnder;
 				if (entered == null) {
 					entered = linkUnder;
-					enterLink(linkUnder);
+					enterLink(linkUnder, e.stateMask);
 					paintLinkHover(entered, true);
 					setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 				}
 			} else {
 				if (entered != null) {
-					exitLink(entered);
+					exitLink(entered, e.stateMask);
 					paintLinkHover(entered, false);
 					entered = null;
 				}
@@ -644,11 +644,11 @@ public class FormText extends Canvas {
 	private boolean advance(boolean next) {
 		HyperlinkSegment current = model.getSelectedLink();
 		if (current != null)
-			exitLink(current);
+			exitLink(current, SWT.NULL);
 		boolean valid = model.traverseLinks(next);
 		HyperlinkSegment newLink = model.getSelectedLink();
 		if (valid)
-			enterLink(newLink);
+			enterLink(newLink, SWT.NULL);
 		paintFocusTransfer(current, newLink);
 		if (newLink != null)
 			ensureVisible(newLink);
@@ -657,7 +657,7 @@ public class FormText extends Canvas {
 	private void handleFocusChange() {
 		if (hasFocus) {
 			model.traverseLinks(true);
-			enterLink(model.getSelectedLink());
+			enterLink(model.getSelectedLink(), SWT.NULL);
 			paintFocusTransfer(null, model.getSelectedLink());
 			ensureVisible(model.getSelectedLink());
 		} else {
@@ -665,26 +665,26 @@ public class FormText extends Canvas {
 			model.selectLink(null);
 		}
 	}
-	private void enterLink(HyperlinkSegment link) {
+	private void enterLink(HyperlinkSegment link, int stateMask) {
 		if (link == null || listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link
-				.getText());
+		HyperlinkEvent he = new HyperlinkEvent(this, link.getHref(), link
+				.getText(), stateMask);
 		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkEntered(e);
+			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			listener.linkEntered(he);
 		}
 	}
-	private void exitLink(HyperlinkSegment link) {
+	private void exitLink(HyperlinkSegment link, int stateMask) {
 		if (link == null || listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link
-				.getText());
+		HyperlinkEvent he = new HyperlinkEvent(this, link.getHref(), link
+				.getText(), stateMask);
 		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkExited(e);
+			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			listener.linkExited(he);
 		}
 	}
 	private void paintLinkHover(HyperlinkSegment link, boolean hover) {
@@ -705,16 +705,16 @@ public class FormText extends Canvas {
 	private void activateSelectedLink() {
 		HyperlinkSegment link = model.getSelectedLink();
 		if (link != null)
-			activateLink(link);
+			activateLink(link, SWT.NULL);
 	}
-	private void activateLink(HyperlinkSegment link) {
+	private void activateLink(HyperlinkSegment link, int stateMask) {
 		setCursor(model.getHyperlinkSettings().getBusyCursor());
 		if (listeners != null) {
 			int size = listeners.size();
 			HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link
-					.getText());
+					.getText(), stateMask);
 			for (int i = 0; i < size; i++) {
-				HyperlinkListener listener = (HyperlinkListener) listeners
+				IHyperlinkListener listener = (IHyperlinkListener) listeners
 						.get(i);
 				listener.linkActivated(e);
 			}

@@ -13,14 +13,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.internal.widgets.*;
+import org.eclipse.ui.internal.forms.widgets.*;
 /**
  * Hyperlink is a concrete implementation of the abstract base class that draws
  * text in the client area. Text can be wrapped and underlined. Hyperlink is
  * typically added to the hyperlink group so that certain properties are
  * managed for all the hyperlinks that belong to it.
- * 
- * TODO (dejan) - spell out subclass contract
+ * <p>Hyperlink can be extended.
  * @see org.eclipse.ui.forms.HyperlinkGroup
  * @since 3.0
  */

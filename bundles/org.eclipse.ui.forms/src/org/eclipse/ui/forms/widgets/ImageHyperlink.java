@@ -12,6 +12,7 @@ package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 /**
  * This class extends hyperlink widget by adding the capability to render an
  * image relative to the text. If no text has been set, only image will be
@@ -21,8 +22,9 @@ import org.eclipse.swt.widgets.Composite;
  * When image is taller than the text, additional style can be provided to
  * control vertical alignment (supported values are SWT.TOP, SWT.BOTTOM and
  * SWT.CENTER).
- * 
- * TODO (dejan) - spell out subclass contract
+ * <p>The class does not need to be sublassed but it is allowed
+ * to do so if some aspect of the image hyperlink needs to be
+ * modified.
  * @since 3.0
  */
 public class ImageHyperlink extends Hyperlink {
@@ -121,18 +123,18 @@ public class ImageHyperlink extends Hyperlink {
 		height += 2 * marginHeight;
 		return new Point(width, height);
 	}
-	protected void handleEnter() {
+	protected void handleEnter(Event e) {
 		state = HOVER;
-		super.handleEnter();
+		super.handleEnter(e);
 	}
-	protected void handleExit() {
+	protected void handleExit(Event e) {
 		state = 0;
-		super.handleExit();
+		super.handleExit(e);
 	}
-	protected void handleActivate() {
+	protected void handleActivate(Event e) {
 		state &= ACTIVE;
 		redraw();
-		super.handleActivate();
+		super.handleActivate(e);
 		state &= ~ACTIVE;
 		redraw();
 	}

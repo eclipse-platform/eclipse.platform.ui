@@ -31,7 +31,8 @@ package org.eclipse.ui.forms;
  * most appropriate way for the situation (for example, if 
  * form is in a page of the multi-page editor, it may do 
  * nothing for stale parts if the page is currently not showing).
- * <p>When form is disposed, each registered part is disposed as well.
+ * <p>When form is disposed, each registered part is disposed 
+ * as well.
  * Parts are responsible for releasing any system resources
  * they created and for removing themselves as listeners
  * from all event providers.

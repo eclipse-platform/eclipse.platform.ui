@@ -17,11 +17,11 @@ package org.eclipse.ui.forms.events;
  * this class and override only the methods which they are interested in.
  * </p>
  * 
- * @see HyperlinkListener
+ * @see IHyperlinkListener
  * @see HyperlinkEvent
  * @since 3.0
  */
-public class HyperlinkAdapter implements HyperlinkListener {
+public class HyperlinkAdapter implements IHyperlinkListener {
 	/**
 	 * Sent when the link is entered. The default behaviour is to do nothing.
 	 * 
