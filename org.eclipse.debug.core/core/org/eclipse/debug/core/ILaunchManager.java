@@ -357,7 +357,7 @@ public interface ILaunchManager {
 	 *  required
 	 * @return a source path computer that can be used to compute a default source lookup
 	 *  path for the given launch configration, or <code>null</code> if unspecified
-	 * @throws CoreException if an excpetion occurrs while instantiating a source
+	 * @throws CoreException if an exception occurs while instantiating a source
 	 *  path computer
 	 * @since 3.0
 	 */
