@@ -27,7 +27,6 @@ public PlatformClassLoader(URL[] searchPath, URLContentFilter[] filters, ClassLo
 	this.base = base;
 	if (singleton == null)
 		singleton = this;
-	prefixes = getArrayFromList((String)prefixTable.get(getPrefixId()));
 	debugConstruction(); // must have initialized loader
 }
 protected String debugId() {
@@ -37,7 +36,7 @@ protected String debugId() {
 /**
  * Returns the id to use to lookup class prefixes for this loader
  */
-protected String getPrefixId() {
+public String getPrefixId() {
 	return InternalBootLoader.RUNTIMENAME;
 }
 /**

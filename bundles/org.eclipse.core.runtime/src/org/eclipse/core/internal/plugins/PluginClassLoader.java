@@ -42,8 +42,8 @@ public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] r
 	// parent loading from platform loading.
 	super(codePath, codeFilters, resourcePath, resourceFilters, parent);
 	this.descriptor = descriptor;
-	base = descriptor.getInstallURL();
-	initializePrefixes();
+	this.base = descriptor.getInstallURL();
+	this.prefixes = initializePrefixes(descriptor, getPrefixId());
 	debugConstruction(); // must have initialized loader
 
 	//	Note: initializeImportedLoaders() is called by PluginDescriptor.getPluginClassLoader().
@@ -51,24 +51,23 @@ public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] r
 	//	to correctly handle the case where the user defined loops in 
 	//	the prerequisite definitions.
 }
-private void initializePrefixes() {
+public static String[] initializePrefixes(IPluginDescriptor descriptor, String prefixId) {
 	// use the classloader.properties file as an over-ride to what
 	// appears in the plugin.xml
 	if (InternalBootLoader.useClassLoaderProperties()) {
-		String list = (String) prefixTable.get(getPrefixId());
+		String list = (String) prefixTable.get(prefixId);
 		if (list == null)
-			return;
+			return null;
 		// if there is an entry in the file but no value then treat that as
 		// a "don't use any package prefixes"
 		if (list.trim().length() == 0) {
 			if (DEBUG_PROPERTIES)
 				System.out.println("Clearing prefixes for: " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
-			return;
+			return null;
 		}
 		if (DEBUG_PROPERTIES)
 			System.out.println("Using prefixes for " + descriptor.getUniqueIdentifier() + " from classloader.properties: " + list); //$NON-NLS-1$ //$NON-NLS-2$
-		prefixes = getArrayFromList(list);
-		return;
+		return getArrayFromList(list);
 	}
 
 	// setup the package prefixes to use
@@ -83,13 +82,16 @@ private void initializePrefixes() {
 			for (int j=0; entries != null && j < entries.length; j++)
 				set.add(entries[j]);
 		}
+		String[] prefixes = null;
 		if (set.size() != 0)
 			prefixes = (String[]) set.toArray(new String[set.size()]);
 		if (DEBUG_PACKAGE_PREFIXES) {
 			String list = arrayToString(prefixes);
 			System.out.println("Using the following prefixes: " + list); //$NON-NLS-1$
 		}
+		return prefixes;
 	}
+	return null;
 }
 static String arrayToString(String[] array) {
 	if (array == null)
@@ -217,7 +219,7 @@ public PluginDescriptor getPluginDescriptor() {
 /**
  * Returns the id to use to lookup class prefixes for this loader
  */
-protected String getPrefixId() {
+public String getPrefixId() {
 	return descriptor.getUniqueIdentifier();
  }
 public void initializeImportedLoaders() {

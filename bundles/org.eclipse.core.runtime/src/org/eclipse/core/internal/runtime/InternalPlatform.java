@@ -119,11 +119,13 @@ private static void activateDefaultPlugins() throws CoreException {
 	PluginDescriptor descriptor = (PluginDescriptor) registry.getPluginDescriptor(Platform.PI_RUNTIME);
 	DelegatingURLClassLoader loader = PlatformClassLoader.getDefault();
 	descriptor.activateDefaultPlugins(loader);
+	loader.setPackagePrefixes(PluginClassLoader.initializePrefixes(descriptor, loader.getPrefixId()));
 	descriptor.setPluginClassLoader(loader);
 	descriptor.getPlugin();
 
 	descriptor = (PluginDescriptor) registry.getPluginDescriptor(PI_XML, xmlClassLoader.getPluginDescriptor().getVersionIdentifier());
 	descriptor.activateDefaultPlugins(xmlClassLoader);
+	xmlClassLoader.setPackagePrefixes(PluginClassLoader.initializePrefixes(descriptor, xmlClassLoader.getPrefixId()));
 	descriptor.setPluginClassLoader(xmlClassLoader);
 	xmlClassLoader.setPluginDescriptor(descriptor);
 	descriptor.getPlugin();

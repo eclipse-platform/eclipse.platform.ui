@@ -789,11 +789,13 @@ public URL getResource(String name) {
 	}
 	return result;
 }
-
+public void setPackagePrefixes(String[] prefixes) {
+	this.prefixes = prefixes;
+}
 /**
  * Returns the id to use to lookup class prefixes for this loader
  */
-protected abstract String getPrefixId();
+public abstract String getPrefixId();
 private URL getURLforClass(Class clazz) {
 	ProtectionDomain pd = clazz.getProtectionDomain();
 	if (pd != null) {
