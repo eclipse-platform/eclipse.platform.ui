@@ -712,6 +712,7 @@ public final class Platform {
 	 * @exception MissingResourceException if the resource bundle was not found
 	 * @since 3.0
 	 */
+	//TODO Need to change the java doc
 	public static ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
 		return InternalPlatform.getDefault().getResourceBundle(bundle);
 	}
@@ -722,7 +723,7 @@ public final class Platform {
 	 * is looked up in the default resource bundle for the given runtime bundle. If the argument does not
 	 * specify a valid key, the argument itself is returned as the
 	 * resource string. The key lookup is performed in the
-	 * plugin.properties resource bundle. If a resource string 
+	 * file referenced in the Bundle-Localization header of the bundle manifest. If a resource string 
 	 * corresponding to the key is not found in the resource bundle
 	 * the key value, or any default text following the key in the
 	 * argument value is returned as the resource string.
