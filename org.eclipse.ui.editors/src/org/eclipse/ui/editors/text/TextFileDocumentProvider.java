@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -323,6 +324,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	private IProgressMonitor fProgressMonitor;
 	/** The operation runner */
 	private WorkspaceOperationRunner fOperationRunner;
+	/** The rule factory */
+	private IResourceRuleFactory fResourceRuleFactory;
 	
 	
 	public TextFileDocumentProvider()  {
@@ -335,6 +338,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		manager.setSynchronizationContext(new UISynchronizationContext());
 		if (parentProvider != null)
 			setParentDocumentProvider(parentProvider);
+		
+		fResourceRuleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
 	}
 	
 	final public void setParentDocumentProvider(IDocumentProvider parentProvider)  {
@@ -573,7 +578,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 */
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput)
-						return ((IFileEditorInput)info.fElement).getFile();
+						return fResourceRuleFactory.modifyRule(((IFileEditorInput)info.fElement).getFile());
 					else
 						return null;
 				}
@@ -617,7 +622,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 */
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput)
-						return ((IFileEditorInput)info.fElement).getFile().getParent();
+						return fResourceRuleFactory.modifyRule(((IFileEditorInput)info.fElement).getFile());
 					else
 						return null;
 				}
@@ -634,10 +639,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
 				public ISchedulingRule getSchedulingRule() {
-					IResource existingParent= file.getParent();
-					while (!existingParent.exists())
-						existingParent= existingParent.getParent();
-					return existingParent;
+					return fResourceRuleFactory.createRule(file);
 				}
 			};
 		}
@@ -803,12 +805,11 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
 				public ISchedulingRule getSchedulingRule() {
-					// XXX: waiting for clients (e.g. Team providers) to support scheduling rules (see bug 46753)
-					return ResourcesPlugin.getWorkspace().getRoot();
-//					if (info.fElement instanceof IFileEditorInput)
-//						return ((IFileEditorInput)info.fElement).getFile().getParent();
-//					else
-//						return null;
+					if (info.fElement instanceof IFileEditorInput) {
+						IResource resource= ((IFileEditorInput)info.fElement).getFile().getParent(); 
+						return fResourceRuleFactory.validateEditRule(new IResource[] {resource});
+					} else
+						return null;
 				}
 			};
 			executeOperation(operation, getProgressMonitor());
@@ -876,7 +877,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 */
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput)
-						return ((IFileEditorInput)info.fElement).getFile().getParent();
+						return fResourceRuleFactory.refreshRule(((IFileEditorInput)info.fElement).getFile());
 					else
 						return null;
 				}
