@@ -199,22 +199,33 @@ public class TargetProviderTests extends TeamTest {
 		IProject project = getUniqueTestProject("put");
 		IResource[] resources = buildEmptyResources(project, new String[] { "file1.txt", "folder1/", "folder1/b.txt" }, false);
 		TargetProvider target = createProvider(project);
+		target.put(resources, null);
 		for (int i = 0; i < resources.length; i++) {
 			resources[i].delete(true, null);
 		}
 		try {
 			target.put(resources, null);
-			fail("Shouldn't be able to put files that don't exist locally.");
-		} catch (TeamException e) {} catch (RuntimeException e) {}
+			for (int i = 0; i < resources.length; i++) {
+				assertTrue(!target.getRemoteResourceFor(resources[i]).exists(null));
+			}
+		} catch (TeamException e) {} catch (RuntimeException e) {
+			fail("Putting files that don't exist locally should delete them remotely");
+		}
 	}
 	public void testGetWithPhantoms() throws CoreException, TeamException {
 		IProject project = getUniqueTestProject("get");
-		IResource[] resources = buildEmptyResources(project, new String[] { "file1.txt", "folder1/", "folder1/b.txt" }, false);
+		String[] testFileNames=new String[] { "file1.txt", "folder1/", "folder1/b.txt" };
+		IResource[] resources = buildResources(project, testFileNames, false);
 		TargetProvider target = createProvider(project);
 		try {
 			target.get(new IResource[] { project }, null);
-			fail("Shouldn't be able to get files that don't exist");
-		} catch (TeamException e) {}
+			IResource[] phantoms=getResources(project,testFileNames);
+			for (int i = 0; i < phantoms.length; i++) {
+				assertTrue(!project.getFile(testFileNames[i]).exists());
+			}
+		} catch (TeamException e) {
+			fail("Getting files that don't exist remotely should delete them locally");
+		}
 	}
 	/**
 	 * @see TestCase#setUp()

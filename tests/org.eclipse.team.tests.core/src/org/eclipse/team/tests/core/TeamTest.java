@@ -238,4 +238,55 @@ public class TeamTest extends EclipseWorkspaceTest {
 		}
 		return resources;
 	}
+	
+	// Assert that the two containers have equal contents
+	protected void assertEquals(IContainer container1, IContainer container2) throws CoreException {
+		assertEquals(container1.getName(), container2.getName());
+		List members1 = new ArrayList();
+		members1.addAll(Arrays.asList(container1.members()));
+		
+		List members2 = new ArrayList();
+		members2.addAll(Arrays.asList(container2.members()));
+		
+		assertTrue(members1.size() == members2.size());
+		for (int i=0;i<members1.size();i++) {
+			IResource member1 = (IResource)members1.get(i);
+			IResource member2 = container2.findMember(member1.getName());
+			assertNotNull(member2);
+			assertEquals(member1, member2);
+		}
+	}
+	
+	// Assert that the two files have equal contents
+	protected void assertEquals(IFile file1, IFile file2) throws CoreException {
+		assertEquals(file1.getName(), file2.getName());
+		assertTrue(compareContent(file1.getContents(), file2.getContents()));
+	}
+	
+	// Assert that the two projects have equal contents ignoreing the project name
+	// and the .vcm_meta file
+	protected void assertEquals(IProject container1, IProject container2) throws CoreException {
+		List members1 = new ArrayList();
+		members1.addAll(Arrays.asList(container1.members()));
+		members1.remove(container1.findMember(".project"));
+		
+		List members2 = new ArrayList();
+		members2.addAll(Arrays.asList(container2.members()));
+		members2.remove(container2.findMember(".project"));
+		
+		assertTrue("Number of children differs for " + container1.getFullPath(), members1.size() == members2.size());
+		for (int i=0;i<members1.size();i++) {
+			IResource member1 = (IResource)members1.get(i);
+			IResource member2 = container2.findMember(member1.getName());
+			assertNotNull(member2);
+			assertEquals(member1, member2);
+		}
+	}
+	protected void assertEquals(IResource resource1, IResource resource2) throws CoreException {
+		assertEquals(resource1.getType(), resource2.getType());
+		if (resource1.getType() == IResource.FILE)
+			assertEquals((IFile)resource1, (IFile)resource2);
+		else 
+			assertEquals((IContainer)resource1, (IContainer)resource2);
+	}
 }

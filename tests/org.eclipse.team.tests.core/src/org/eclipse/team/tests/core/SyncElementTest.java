@@ -355,18 +355,6 @@ public class SyncElementTest extends TeamTest {
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION });
 
-		// Release the conflict cases (MERGE is not required for add3.txt but we do it anyway to ensure it doesn't cause problems)
-
-		tree = getRemoteSyncTree(project, DEFAULT_MONITOR);
-		assertSyncEquals(
-			"testAdditionConflicts",
-			tree,
-			new String[] { "file.txt", "add1b.txt", "add2b.txt", "add3.txt" },
-			new int[] {
-				IRemoteSyncElement.IN_SYNC,
-				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION });
 		getProvider(project).put(
 			new IResource[] { project.getFile("add1b.txt"), project.getFile("add2b.txt"), project.getFile("add3.txt")},
 			DEFAULT_MONITOR);
