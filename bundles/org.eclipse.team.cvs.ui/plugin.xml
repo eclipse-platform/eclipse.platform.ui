@@ -275,6 +275,25 @@
                id="org.eclipse.team.ccvs.ui.sync">
          </action>
       </objectContribution>
+      
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.ResourceContributions">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="%ShowEditorsAction.label"
+               tooltip="%ShowEditorsAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowEditorsAction"
+               menubarPath="team.main/group4"
+               helpContextId="org.eclipse.team.cvs.ui.team_edit_action_context"
+               id="org.eclipse.team.ccvs.ui.showeditors">
+         </action>
+      </objectContribution>
+      
 
       <!-- ************** Project Menu *************** -->
 
@@ -560,6 +579,13 @@
             class="org.eclipse.team.internal.ccvs.ui.HistoryView"
             id="org.eclipse.team.ccvs.ui.HistoryView">
       </view>
+       <view
+            name="%EditorsView.name"
+            category="org.eclipse.team.ccvs.ui"
+            class="org.eclipse.team.internal.ccvs.ui.EditorsView"
+            id="org.eclipse.team.ccvs.ui.EditorsView">
+      </view>
+      
    </extension>
 <!-- **************** Preferences ******************* -->
    <extension

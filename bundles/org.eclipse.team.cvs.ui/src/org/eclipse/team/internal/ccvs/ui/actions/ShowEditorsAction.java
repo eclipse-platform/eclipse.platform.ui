@@ -1,0 +1,65 @@
+/**********************************************************************
+Copyright (c) 2003 CSC SoftwareConsult GmbH & Co. OHG, Germany and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+CSC - Intial implementation
+
+**********************************************************************/
+
+package org.eclipse.team.internal.ccvs.ui.actions;
+
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.EditorsInfo;
+import org.eclipse.team.internal.ccvs.ui.EditorsView;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+/**
+ * 
+ * 
+ * Action for Show Editors in popup menus
+ * 
+ * @author <a href="mailto:kohlwes@gmx.net">Gregor Kohlwes</a>
+ * 
+ */
+public class ShowEditorsAction extends WorkspaceAction {
+	
+	protected void execute(IAction action)
+		throws InvocationTargetException, InterruptedException {
+		final EditorsAction editorsAction = new EditorsAction();
+		run(new WorkspaceModifyOperation() {
+
+			public void execute(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+				executeProviderAction(editorsAction, monitor);
+			}
+		}, true /* cancelable */
+		, PROGRESS_DIALOG);
+		EditorsInfo[] infos = editorsAction.getEditorsInfo();
+		EditorsView view = EditorsView.openInActivePerspective();
+		if (view != null) {
+			view.setInput(infos);
+		}
+
+	}
+
+	/*
+	 * @see TeamAction#isEnabled()
+	 */
+	protected boolean isEnabled() throws TeamException {
+		IResource[] resources = getSelectedResources();
+		// We support one selected Resource,
+		// because the editors command will
+		// show the editors of all children too.
+		return (resources.length == 1);
+		
+	}
+
+}

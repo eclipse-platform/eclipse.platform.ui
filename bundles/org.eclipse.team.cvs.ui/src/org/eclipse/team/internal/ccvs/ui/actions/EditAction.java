@@ -29,6 +29,22 @@ public class EditAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		// Get the editors
+		final EditorsAction editors = new EditorsAction();
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				executeProviderAction(editors,monitor);
+			}
+		},true /* cancelable */, PROGRESS_DIALOG);
+		
+		// If there are editors show them
+		// and prompt the user to
+		// execute the edit command
+		if (!editors.promptToEdit(shell)) {
+			return;
+		}
+
+		
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				executeProviderAction(new IProviderAction() {

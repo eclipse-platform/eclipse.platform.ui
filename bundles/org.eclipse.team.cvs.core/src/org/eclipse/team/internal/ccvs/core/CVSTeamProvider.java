@@ -60,6 +60,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.AdminKSubstListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.EditorsListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
@@ -1318,5 +1319,68 @@ public class CVSTeamProvider extends RepositoryProvider {
 
 		return super.validateCreateLink(resource, updateFlags, location);
 	}
+	
+	/**
+	 * Get the editors of the resources by calling the <code>cvs editors</code> command.
+	 * 
+	 * @author <a href="mailto:gregor.kohlwes@csc.com,kohlwes@gmx.net">Gregor Kohlwes</a>
+	 * @param resources
+	 * @param progress
+	 * @return IEditorsInfo[]
+	 * @throws CVSException
+	 */
+	public EditorsInfo[] editors(
+		IResource[] resources,
+		IProgressMonitor progress)
+		throws CVSException {
+
+		// Build the local options
+		LocalOption[] commandOptions = new LocalOption[] {
+		};
+
+		// Build the arguments list
+		String[] arguments = getValidArguments(resources, commandOptions);
+
+		// Build the listener for the command
+		EditorsListener listener = new EditorsListener();
+
+		// Check if canceled
+		if (progress.isCanceled()) {
+			return new EditorsInfo[0];
+		}
+		// Build the session
+		Session session =
+			new Session(
+				workspaceRoot.getRemoteLocation(),
+				workspaceRoot.getLocalRoot());
+
+		// Check if canceled
+		if (progress.isCanceled()) {
+			return new EditorsInfo[0];
+		}
+		progress.beginTask(null, 100);
+		try {
+			// Opening the session takes 20% of the time
+			session.open(Policy.subMonitorFor(progress, 20));
+
+			if (!progress.isCanceled()) {
+				// Execute the editors command
+				Command.EDITORS.execute(
+					session,
+					Command.NO_GLOBAL_OPTIONS,
+					commandOptions,
+					arguments,
+					listener,
+					Policy.subMonitorFor(progress, 80));
+			}
+		} finally {
+			session.close();
+			progress.done();
+		}
+		// Return the infos about the editors
+		return listener.getEditorsInfos();
+	}
+
+
 
 }

@@ -1,0 +1,106 @@
+/**********************************************************************
+Copyright (c) 2003 CSC SoftwareConsult GmbH & Co. OHG, Germany and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+CSC - Intial implementation
+
+**********************************************************************/
+
+package org.eclipse.team.internal.ccvs.core.client.listeners;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.EditorsInfo;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.EditorsInfo;
+import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
+
+
+/**
+ * 
+ *
+ * Listener for the Editors command
+ * 
+ * @author <a href="mailto:kohlwes@gmx.net">Gregor Kohlwes</a>
+ * 
+ */
+public class EditorsListener extends CommandOutputListener {
+	/**
+	 *  List to store the EditorsInfos
+	 */
+	private List infos = new LinkedList();
+	
+	/**
+	 *  Name of the current file 
+	 */
+	private String fileName;
+
+	/**
+	 * Constructor EditorsListener.
+	 */
+	public EditorsListener() {
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener#messageLine(java.lang.String, org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, org.eclipse.team.internal.ccvs.core.ICVSFolder, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus messageLine(
+		String line,
+		ICVSRepositoryLocation location,
+		ICVSFolder commandRoot,
+		IProgressMonitor monitor) {
+
+		// If there is a file with multiple editors
+		// then cvs will write the filename only 
+		// in the first line and the following
+		// line will start with a Tab
+		if (line.startsWith("\t")) {
+			line = fileName + line;
+		}
+		EditorsInfo info = new EditorsInfo();
+		StringTokenizer tokenizer = new StringTokenizer(line,"\t");
+		int i = 0;
+		while(tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			switch (i) {
+				case 0:
+					info.setFileName(token);
+					fileName = token;
+					break;
+				case 1:
+					info.setUserName(token);
+					break;
+				case 2:
+					info.setDateString(token);
+					break;
+				case 3:
+					info.setComputerName(token);
+					break;
+				default :
+					break;
+			}
+			i++;			
+		}
+		
+		infos.add(info);
+		return OK;
+
+	}
+	/**
+	 * Method getEditorsInfos.
+	 * @return IEditorsInfo[]
+	 */
+	public EditorsInfo[] getEditorsInfos() {
+		return (EditorsInfo[]) infos.toArray(new EditorsInfo[infos.size()]);
+	}
+
+}

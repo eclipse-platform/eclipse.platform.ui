@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -30,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFileModificationValidator;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.actions.EditorsAction;
 
 /**
  * IFileModificationValidator that is pluged into the CVS Repository Provider
@@ -65,10 +65,7 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	public IStatus validateMoveDelete(IFile[] files, IProgressMonitor monitor) {
 		IFile[] readOnlyFiles = getManagedReadOnlyFiles(files);
 		if (readOnlyFiles.length == 0) return OK;
-		if (isPrompt()) {
-			IStatus status = promptToEditFiles(files, null);
-			if (!status.isOK() || status.getCode() == HIGHJACK) return status;
-		}
+
 		try {
 			edit(readOnlyFiles, monitor);
 			return OK;
@@ -123,10 +120,17 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	}
 		
 	private IStatus edit(final IFile[] files, Shell shell) {
-		if (isPrompt()) {
-			IStatus status = promptToEditFiles(files, shell);
-			if (!status.isOK() || status.getCode() == HIGHJACK) return status;
+		try {
+			if (!promptToEditFiles(files, shell)) {
+				return OK;
+			}
+		} catch (InvocationTargetException e) {
+			return getStatus(e);
+		} catch (InterruptedException e) {
+			// Is it correct to answer OK?????
+			return OK;
 		}
+
 		// Create a runnable to edit the file
 		try {
 			run(shell, new IRunnableWithProgress() {
@@ -146,21 +150,14 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		}
 	}
 
-	private boolean isPrompt() {
-		return WatchEditPreferencePage.PROMPT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_PROMPT_ON_EDIT));
-	}
-	
-	private IStatus promptToEditFiles(IFile[] files, Shell shell) {
-		final IStatus[] result = new IStatus[] { OK };
-		CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
-			public void open(Shell shell) {
-				if (!MessageDialog.openQuestion(shell, Policy.bind("FileModificationValidator.promptTitle"), Policy.bind("FileModificationValidator.promptMessage"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					result[0] = new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$
-				}
-			//todo: need a custom DetailsDialog
-			}
-		}, 0);
-		return result[0];
+	private boolean promptToEditFiles(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
+		if (files.length == 0)
+			return true;
+		
+		EditorsAction editors = new EditorsAction(getProvider(files),files);
+		run(shell, editors);
+		return editors.promptToEdit(shell);
+
 	}
 	
 	private void run(Shell shell, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {

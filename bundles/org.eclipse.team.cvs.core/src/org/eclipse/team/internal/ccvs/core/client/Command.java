@@ -46,6 +46,7 @@ public abstract class Command extends Request {
 	public final static Checkout CHECKOUT = new Checkout();
 	public final static Commit COMMIT = new Commit();
 	public final static Diff DIFF = new Diff();
+	public final static Editors EDITORS = new Editors();
 	public final static Import IMPORT = new Import();
 	public final static Log LOG = new Log();
 	public final static Remove REMOVE = new Remove();
