@@ -630,7 +630,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			 */
 			public void focusLost(FocusEvent e) {
 				if (DEBUG) {
-					System.out.println("Focus Lost: " + e.widget + ", at:"); //$NON-NLS-1$
+					System.out.println("Focus Lost: " + e.widget + ", at:"); //$NON-NLS-1$ //$NON-NLS-2$
 					Thread.dumpStack();
 				}
 
