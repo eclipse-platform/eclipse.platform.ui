@@ -514,7 +514,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			/**
 			 * Put icon relative to this control.
 			 */
-			Control fControl;
+			private Control fControl;
 			/**
 			 * The icon's horizontal screen distance from top-left corner of control (in pixels).
 			 */
@@ -526,7 +526,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			/**
 			 * The HoverHandler (only when control has focus).
 			 */
-			HoverHandler fHoverHandler;
+			private HoverHandler fHoverHandler;
+			
 			/**
 			 * Create a new FieldFocusListener
 			 * @param control the target control
@@ -550,6 +551,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				}
 			}
 			
+			/**
+			 * Paint the cue image.
+			 * @param e the PaintEvent
+			 */
 			void paintControl(PaintEvent e) {
 				if (fControl.isDisposed())
 					return;
@@ -558,8 +563,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				Point local= ((Control) e.widget).toControl(global);
 				e.gc.drawImage(image, local.x, local.y);
 			}
+			
 			/**
-			 * Show/hide the hover
+			 * Show/hide the hover.
 			 * @param e the MouseEvent
 			 */
 			void updateHoverOnCue(MouseEvent e) {
@@ -574,51 +580,74 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				else
 					doHideHover();
 			}
+			
 			/**
 			 * Hide hover.
 			 */
 			private void doHideHover() {
 				showHover(fControl, null);
 			}
+			
 			/**
 			 * Show hover.
 			 */
 			public void doShowHover() {
 				showHover(fControl, fLabelProvider.getText(fControl));
 			}
-			/**
-			 * @inheritDoc
+			
+			/*
+			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusGained(FocusEvent e) {
 				// install a CueHandler on every parent control
-				for (Control c= fControl.getParent(); c != null; c= c.getParent()) {
-					CueHandler cueHandler= new CueHandler(this);
-					c.setData(ANNOTATION_HANDLER, cueHandler);
-					c.addPaintListener(cueHandler);
-					c.addMouseTrackListener(cueHandler);
-					c.redraw();
-				}
-				
+				if (DEBUG)
+					System.out.println("Focus Gained: " + e.widget); //$NON-NLS-1$
+
 				if (fHoverHandler == null) {
 					fHoverHandler= new HoverHandler(this);
 					fControl.addMouseTrackListener(fHoverHandler);
 				}
+				
+				Control c= fControl.getParent();
+				while (c != null) {
+					if (DEBUG)
+						System.out.println("install CueHandler: " + c.toString()); //$NON-NLS-1$
+					CueHandler cueHandler= new CueHandler(this);
+					Assert.isTrue(c.getData(ANNOTATION_HANDLER) == null, "parent control has CueHandler: " + c.toString()); //$NON-NLS-1$
+					c.setData(ANNOTATION_HANDLER, cueHandler);
+					c.addPaintListener(cueHandler);
+					c.addMouseTrackListener(cueHandler);
+					c.redraw();
+					if (c instanceof Shell)
+						break;
+					else
+						c= c.getParent();
+				}
 			}
 			
-			/**
-			 * @inheritDoc
+			/*
+			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusLost(FocusEvent e) {
-				for (Control c= fControl.getParent(); c != null; c= c.getParent()) {
+				if (DEBUG)
+					System.out.println("Focus Lost: " + e.widget); //$NON-NLS-1$
+
+				if (fHoverHandler != null)
+					fControl.removeMouseTrackListener(fHoverHandler);
+				
+				Control c= fControl.getParent();
+				while (c != null) {
+					if (DEBUG)
+						System.out.println("uninstall CueHandler: " + c.toString()); //$NON-NLS-1$
 					CueHandler cueHandler= (CueHandler) c.getData(ANNOTATION_HANDLER);
 					c.setData(ANNOTATION_HANDLER, null);
 					c.removePaintListener(cueHandler);
 					c.removeMouseTrackListener(cueHandler);
 					c.redraw();
-				}
-				
-				if (fHoverHandler != null) {
-					fControl.removeMouseTrackListener(fHoverHandler);
+					if (c instanceof Shell)
+						break;
+					else
+						c= c.getParent();
 				}
 			}
 		}
