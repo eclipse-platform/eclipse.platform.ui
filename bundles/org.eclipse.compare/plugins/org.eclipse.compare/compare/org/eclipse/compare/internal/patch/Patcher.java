@@ -24,6 +24,8 @@ public class Patcher {
 	private static final boolean DEBUG= false;
 	
 	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
+	
+	//private static final String MARKER_TYPE= "rejectedPatchMarker";
 
 	// diff formats
 	private static final int CONTEXT= 0;
@@ -789,7 +791,14 @@ public class Patcher {
 					} else
 						pp= new Path(path.lastSegment() + ".rej");	//$NON-NLS-1$
 					file= createPath(container, pp);
-					updateFile(getRejected(failed), file, pm);
+					if (file != null) {
+						updateFile(getRejected(failed), file, pm);
+//						try {
+//							IMarker marker= file.createMarker(MARKER_TYPE);
+//							marker.setAttribute(marker.MESSAGE, "rejected patch");
+//						} catch (CoreException ex) {
+//						}
+					}
 				}
 			}
 			

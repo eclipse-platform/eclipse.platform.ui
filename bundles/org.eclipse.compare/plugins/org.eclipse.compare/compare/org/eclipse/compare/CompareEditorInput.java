@@ -88,7 +88,7 @@ import org.eclipse.compare.structuremergeviewer.*;
  */
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress {
 	
-	private static final boolean STRUCTURE_COMPARE_ON_SINGLE_CLICK= true;
+	
 	/**
 	 * The name of the "dirty" property.
 	 */
@@ -115,6 +115,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
 	private ShowPseudoConflicts fShowPseudoConflicts;
+	
+	boolean fStructureCompareOnSingleClick= false;
 
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
@@ -137,6 +139,10 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					setDirty(true);
 			}
 		};
+	}
+	
+	private boolean structureCompareOnSingleClick() {
+		return fStructureCompareOnSingleClick;
 	}
 		
 	/* (non Javadoc)
@@ -395,15 +401,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 		
-		/*
-		fStructureInputPane.addDoubleClickListener(
-			new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent e) {
-					feedDefault1(e.getSelection());
+		if (!structureCompareOnSingleClick()) {
+			fStructureInputPane.addDoubleClickListener(
+				new IDoubleClickListener() {
+					public void doubleClick(DoubleClickEvent e) {
+						feedDefault1(e.getSelection());
+					}
 				}
-			}
-		);
-		*/
+			);
+		}
 
 		// setup the wiring for second pane
 		fStructurePane1.addSelectionChangedListener(
@@ -465,7 +471,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						fStructurePane1.setInput(null);
 					} else {
 						Object input= getElement(selection);
-						if (STRUCTURE_COMPARE_ON_SINGLE_CLICK) {
+						if (structureCompareOnSingleClick()) {
 							fStructurePane1.setInput(input);
 							//if (fStructurePane1.isEmpty())
 								fContentInputPane.setInput(input);
@@ -481,7 +487,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		);
 	}
 	
-	/*
 	private void feedDefault1(final ISelection selection) {
 		BusyIndicator.showWhile(fComposite.getDisplay(),
 			new Runnable() {
@@ -492,7 +497,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 	}
-	*/
 	
 	private void feed2(final ISelection selection) {
 		BusyIndicator.showWhile(fComposite.getDisplay(),
