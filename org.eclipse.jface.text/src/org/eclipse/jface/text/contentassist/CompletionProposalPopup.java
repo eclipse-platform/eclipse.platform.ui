@@ -131,7 +131,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.0
 	 */
 	private ContentAssistSubjectAdapter fContentAssistSubjectAdapter;
-
+	/**
+	 * Remembers the size for this completion proposal popup.
+	 * @since 3.0
+	 */
+	private Point fSize;
 	
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -261,23 +265,32 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalShell.setLayout(layout);		
 
 		GridData data= new GridData(GridData.FILL_BOTH);
-		data.heightHint= fProposalTable.getItemHeight() * 10;
-		data.widthHint= 300;
-		fProposalTable.setLayoutData(data);
-
-		fProposalShell.pack();
 		
-		if (fAdditionalInfoController != null) {
-			fProposalShell.addControlListener(new ControlListener() {
-				
-				public void controlMoved(ControlEvent e) {}
-				
-				public void controlResized(ControlEvent e) {
-					// resets the cached resize constraints
+	
+		Point size= fContentAssistant.restoreCompletionProposalPopupSize();
+		if (size != null) {
+			fProposalTable.setLayoutData(data);
+			fProposalShell.setSize(size);
+		} else {
+			data.heightHint= fProposalTable.getItemHeight() * 10;
+			data.widthHint= 300;
+			fProposalTable.setLayoutData(data);
+			fProposalShell.pack();
+		}
+		
+		fProposalShell.addControlListener(new ControlListener() {
+			
+			public void controlMoved(ControlEvent e) {}
+			
+			public void controlResized(ControlEvent e) {
+				if (fAdditionalInfoController != null) {
+					// reset the cached resize constraints
 					fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
 				}
-			});
-		}
+				
+				fSize= fProposalShell.getSize();
+			}
+		});
 		
 		if (!"carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
 			fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
@@ -522,6 +535,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (p.x < 0) p.x= 0;
 		if (p.y < 0) p.y= 0;
 		return p;
+	}
+	
+	Point getSize() {
+		return fSize;
 	}
 
 	/**

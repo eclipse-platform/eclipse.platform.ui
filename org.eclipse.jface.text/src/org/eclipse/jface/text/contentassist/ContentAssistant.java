@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -645,6 +647,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 	}
 	
+	/**
+	 * Dialog store constants.
+	 * @since 3.0
+	 */
+	public static final String STORE_SIZE_X= "size.x"; //$NON-NLS-1$
+	public static final String STORE_SIZE_Y= "size.y"; //$NON-NLS-1$
 	
 	// Content-Assist Listener types
 	final static int CONTEXT_SELECTOR= 0;
@@ -700,8 +708,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * 
 	 * @since 3.0
 	 */
-	private ContentAssistSubjectAdapter fContentAssistSubjectAdapter;
-
+	private ContentAssistSubjectAdapter fContentAssistSubjectAdapter;	
+	/**
+	 * The dialog settings for the control's bounds.
+	 * 
+	 * @since 3.0
+	 */
+	private IDialogSettings fDialogSettings;
 	
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1298,6 +1311,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 2.1 
 	 */
 	protected void possibleCompletionsClosed() {
+		storeCompletionProposalPopupSize();
 	}
 	
 	/*
@@ -1661,5 +1675,98 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			
 		if (fContextInfoPopup != null)
 			fContextInfoPopup.hide();
+	}
+	// ------ control's size handling dialog settings ------
+	
+	/**
+	 * Tells this information control manager to open the information
+	 * control with the values contained in the given dialog settings
+	 * and to store the control's last valid size in the given dialog
+	 * settings.
+	 * <p>
+	 * Note: This API is only valid if the information control implements
+	 * {@link IInformationControlExtension3}. Not following this restriction
+	 * will later result in an {@link UnsupportedOperationException}.
+	 * </p>
+	 * <p>
+	 * The constants used to store the values are:
+	 * <ul>
+	 *  <li>{@link ContentAssistant#STORE_SIZE_X}</li>
+	 *	<li>{@link ContentAssistant#STORE_SIZE_Y}</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param dialogSettings
+	 * @since 3.0
+	 */
+	public void setRestoreCompletionProposalSize(IDialogSettings dialogSettings) {
+		Assert.isTrue(dialogSettings != null);
+		fDialogSettings= dialogSettings;
+	}
+	
+	/**
+	 * Stores the content assist pop-up's size.
+	 */
+	protected void storeCompletionProposalPopupSize() {
+		if (fDialogSettings == null || fProposalPopup == null)
+			return;
+		
+		Point size= fProposalPopup.getSize();
+		if (size == null)
+			return;
+		
+		fDialogSettings.put(STORE_SIZE_X, size.x);
+		fDialogSettings.put(STORE_SIZE_Y, size.y);
+	}
+	
+	/**
+	 * Restores the content assist pop-up's size.
+	 * 
+	 * @return the stored size
+	 * @since 3.0
+	 */
+	protected Point restoreCompletionProposalPopupSize() {
+		if (fDialogSettings == null)
+			return null;
+		
+		Point size= new Point(-1, -1);
+		
+		try {
+			size.x= fDialogSettings.getInt(STORE_SIZE_X);
+			size.y= fDialogSettings.getInt(STORE_SIZE_Y);
+		} catch (NumberFormatException ex) {
+			size.x= -1;
+			size.y= -1;
+		}
+		
+		// sanity check
+		if (size.x == -1 && size.y == -1)
+			return null;
+		
+		Rectangle maxBounds= null;
+		if (fContentAssistSubject != null && !fContentAssistSubject.getControl().isDisposed())
+			maxBounds= fContentAssistSubject.getControl().getDisplay().getBounds();
+		else {
+			// fallback
+			Display display= Display.getCurrent();
+			if (display == null)
+				display= Display.getDefault();
+			if (display != null && !display.isDisposed())
+				maxBounds= display.getBounds();
+		}
+			
+		
+		if (size.x > -1 && size.y > -1) {
+			if (maxBounds != null) {
+				size.x= Math.min(size.x, maxBounds.width);
+				size.y= Math.min(size.y, maxBounds.height);
+			}
+			
+			// Enforce an absolute minimal size
+			size.x= Math.max(size.x, 30);
+			size.y= Math.max(size.y, 30);
+		}
+		
+		return size;
 	}
 }
