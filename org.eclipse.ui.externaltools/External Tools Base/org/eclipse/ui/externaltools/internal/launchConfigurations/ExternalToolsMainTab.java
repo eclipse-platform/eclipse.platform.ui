@@ -228,7 +228,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		variableButton.setLayoutData(gridData);
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				VariableSelectionDialog dialog= new VariableSelectionDialog(ExternalToolsMainTab.this, getShell());
+				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
 				if (dialog.open() == SelectionDialog.OK) {
 					argumentField.insert(dialog.getForm().getSelectedVariable());
 				}

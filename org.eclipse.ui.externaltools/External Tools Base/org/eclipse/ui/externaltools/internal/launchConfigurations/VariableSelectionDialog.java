@@ -14,14 +14,14 @@ import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 
-
+/**
+ * Dialog that prompts the user to select an external tools variable
+ */
 class VariableSelectionDialog extends SelectionDialog {
-	private final ExternalToolsMainTab externalToolsMainTab;
 	private ExternalToolVariableForm form;
-	public VariableSelectionDialog(ExternalToolsMainTab externalToolsMainTab, Shell parent) {
+	public VariableSelectionDialog(Shell parent) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		this.externalToolsMainTab = externalToolsMainTab;
 		setTitle(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Select_variable_10")); //$NON-NLS-1$
 	}
 	protected Control createDialogArea(Composite parent) {
