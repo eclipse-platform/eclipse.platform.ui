@@ -556,6 +556,33 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				// case we will restart with the previous state.
 				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			}
+			
+			// TODO **** Big workaround to deal with platform.xml under configuration.
+			//      **** Remove before M9
+			File M8platformXML = new File(url.getFile().replace('/', File.separatorChar));
+			M8platformXML = new File(M8platformXML, "platform.xml");
+			os = new FileOutputStream(M8platformXML);
+			try {
+				saveAsXML(os);
+				try {
+					os.close();
+					os = null;
+				} catch (IOException e1) {
+					Utils.log("Could not close output stream for " + cfigTmp);
+				}
+				// set file time stamp to match that of the config element
+				M8platformXML.setLastModified(config.getDate().getTime());
+			} catch (Exception e) {
+				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
+			} finally {
+				if (os != null)
+					try {
+						os.close();
+					} catch (IOException e1) {
+						Utils.log("Could not close output stream for temp file " + cfigTmp);
+					}
+			}
+			// TODO *** end workaround
 		}
 	}
 	
@@ -662,7 +689,20 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					return;
 				} catch (Exception ioe) {
 					Utils.debug("Creating default configuration from " + configFileURL.toExternalForm());
-					createDefaultConfiguration(configFileURL);
+					
+					// TODO *** workaround for M8 saving of platform.xml under configuration
+					//      *** remove before M9
+					if (System.getProperty("osgi.dev") != null) {
+						// try loading form configuration/platform.xml
+						try {
+							configFileURL = new URL(platformConfigLocation.getURL(), PLATFORM_XML);
+							config = loadConfig(configFileURL);
+							Utils.debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
+						} catch (Exception tempEx) {
+							createDefaultConfiguration(configFileURL);
+						}
+					} else 
+						createDefaultConfiguration(configFileURL);
 				}
 			}
 		} finally {
