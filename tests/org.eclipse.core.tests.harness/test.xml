@@ -83,6 +83,14 @@
     </ant>
   </target>
   
+  <target name="ResourcesSessionTests" depends="init,cleanup">
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${resources_location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.session.AllTests"/>
+    </ant>
+  </target>  
+  
   <target name="PR_1G1N9GZ_SessionTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location}"/>
@@ -162,7 +170,7 @@
 
 
   <!-- This target defines the tests that need to be run. -->
-  <target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests"/>  
+  <target name="suite" depends="ResourcesTests,ResourcesSessionTests,RuntimeTests,OSGiTests"/>  
   <!--target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests,PR_1G1N9GZ_SessionTests,PR_1GALH44_SessionTests,Snapshot_SessionTests,SaveManager_SessionTests"/-->
   
   <!-- This target defines the performance tests that need to be run. -->
