@@ -13,7 +13,6 @@
 
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.IOException;
 import java.net.URL;
 import java.text.Collator;
 import java.util.Arrays;
