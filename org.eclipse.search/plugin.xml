@@ -46,6 +46,32 @@
 	</imageprovider>
 </extension>
 
+
+<extension point="org.eclipse.ui.actionDefinitions">
+	<actionDefinition
+		id="org.eclipse.search.ui.openSearchDialog"
+		name= "%ActionDefinition.openSearchDialog.name"
+		description="%ActionDefinition.openSearchDialog.description"
+	/>
+	<actionDefinition
+		id="org.eclipse.search.ui.openFileSearchPage"
+		name= "%ActionDefinition.openFileSearchPage.name"
+		description="%ActionDefinition.openFileSearchPage.description"
+	/>
+</extension>
+
+<extension point="org.eclipse.ui.acceleratorSets">
+	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+		<accelerator key="Ctrl+H" id="org.eclipse.search.ui.openSearchDialog" />
+		<accelerator key="" id="org.eclipse.search.ui.openFileSearchPage" />
+	</acceleratorSet>
+	
+	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+		<accelerator key="Ctrl+H" id="org.eclipse.search.ui.openSearchDialog" />
+		<accelerator key="" id="org.eclipse.search.ui.openFileSearchPage" />
+	</acceleratorSet>
+</extension>
+
 <extension point="org.eclipse.ui.actionSets">
 	<actionSet
 		id="org.eclipse.search.searchActionSet"
@@ -67,20 +93,20 @@
       	
       	<!-- dialog group  -->
 		<action id="org.eclipse.search.OpenFileSearchPage"
+			definitionId="org.eclipse.search.ui.openFileSearchPage"
 			menubarPath="org.eclipse.search.menu/internalDialogGroup"
 			label="%openFileSearchPageAction.label"
 			icon="icons/full/obj16/tsearch_obj.gif"
 			class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
 
 		<action id="org.eclipse.search.OpenSearchDialog"
+			definitionId="org.eclipse.search.ui.openSearchDialog"
 			toolbarPath="Normal/Search"			
 			menubarPath="org.eclipse.search.menu/internalDialogGroup"
 			label="%openSearchDialogAction.label"
 			tooltip="%openSearchDialogAction.tooltip"
 			icon="icons/full/ctool16/search.gif"
-			accelerator="Ctrl+H"
 			class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
-
      </actionSet>
 </extension>
 
