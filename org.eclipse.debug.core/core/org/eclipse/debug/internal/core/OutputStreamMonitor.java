@@ -47,9 +47,13 @@ public class OutputStreamMonitor implements IStreamMonitor {
 
 	/**
 	 * The base number of milliseconds to pause
-	 * between reads.
+	 * between reads. The actual delay is calculated
+	 * by incrementing the base delay exponentially, up to a
+	 * maximum delay. The current implementation results in delays
+	 * of 4, 16, 64, 256, 1024 milliseconds as needed. The delay
+	 * increases in response to program output.
 	 */
-	private static final long BASE_DELAY= 5L;
+	private static final long BASE_DELAY= 4L;
 	/**
 	 * Whether or not this monitor has been killed.
 	 * When the monitor is killed, it stops reading
