@@ -157,7 +157,7 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH= PLUGIN_ID + ".prompt_save_dirty_editors_before_launch"; //$NON-NLS-1$
 	/**
-	 * Radio button preference specifyig that dirty editors should never be saved before launching.
+	 * Radio button preference specifying that dirty editors should never be saved before launching.
 	 */
 	public static final String PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH= PLUGIN_ID + ".never_save_dirty_editors_before_launch"; //$NON-NLS-1$
 	/**
@@ -404,7 +404,7 @@ public interface IDebugUIConstants {
 	// menus 
 	
 	/** 
-	 * Identifier for an empty group preceeding an
+	 * Identifier for an empty group preceding an
 	 * edit group in a menu (value <code>"emptyEditGroup"</code>).
 	 */
 	public static final String EMPTY_EDIT_GROUP = "emptyEditGroup"; //$NON-NLS-1$
@@ -415,7 +415,7 @@ public interface IDebugUIConstants {
 	public static final String EDIT_GROUP = "editGroup"; //$NON-NLS-1$
 	
 	/** 
-	 * Identifier for an empty group preceeding a
+	 * Identifier for an empty group preceding a
 	 * step group in a menu (value <code>"emptyStepGroup"</code>).
 	 */
 	public static final String EMPTY_STEP_GROUP = "emptyStepGroup"; //$NON-NLS-1$
@@ -441,7 +441,7 @@ public interface IDebugUIConstants {
 	public static final String STEP_RETURN_GROUP = "stepReturnGroup"; //$NON-NLS-1$
 	
 	/** 
-	 * Identifier for an empty group preceeding a
+	 * Identifier for an empty group preceding a
 	 * thread group in a menu (value <code>"emptyThreadGroup"</code>).
 	 */
 	public static final String EMPTY_THREAD_GROUP = "emptyThreadGroup"; //$NON-NLS-1$
@@ -452,7 +452,7 @@ public interface IDebugUIConstants {
 	public static final String THREAD_GROUP = "threadGroup"; //$NON-NLS-1$
 	
 	/** 
-	 * Identifier for an empty group preceeding a
+	 * Identifier for an empty group preceding a
 	 * launch group in a menu (value <code>"emptyLaunchGroup"</code>).
 	 */
 	public static final String EMPTY_LAUNCH_GROUP = "emptyLaunchGroup"; //$NON-NLS-1$
@@ -463,7 +463,7 @@ public interface IDebugUIConstants {
 	public static final String LAUNCH_GROUP = "launchGroup"; //$NON-NLS-1$
 	
 	/** 
-	 * Identifier for an empty group preceeding a
+	 * Identifier for an empty group preceding a
 	 * variable group in a menu (value <code>"emptyVariableGroup"</code>).
 	 */
 	public static final String EMPTY_VARIABLE_GROUP = "emptyVariableGroup"; //$NON-NLS-1$
@@ -474,7 +474,7 @@ public interface IDebugUIConstants {
 	public static final String VARIABLE_GROUP = "variableGroup"; //$NON-NLS-1$
 	
 	/** 
-	 * Identifier for an empty group preceeding a
+	 * Identifier for an empty group preceding a
 	 * navigation group in a menu (value <code>"emptyNavigationGroup"</code>).
 	 */
 	public static final String EMPTY_NAVIGATION_GROUP = "emptyNavigationGroup"; //$NON-NLS-1$
@@ -485,7 +485,7 @@ public interface IDebugUIConstants {
 	public static final String NAVIGATION_GROUP = "navigationGroup"; //$NON-NLS-1$
 	
 	/** 
-	 * Identifier for an empty group preceeding a
+	 * Identifier for an empty group preceding a
 	 * breakpoint group in a menu (value <code>"emptyBreakpointGroup"</code>).
 	 */
 	public static final String EMPTY_BREAKPOINT_GROUP = "emptyBreakpointGroup"; //$NON-NLS-1$
@@ -496,7 +496,7 @@ public interface IDebugUIConstants {
 	public static final String BREAKPOINT_GROUP = "breakpointGroup"; //$NON-NLS-1$
 	
 	/** 
-	 * Identifier for an empty group preceeding an
+	 * Identifier for an empty group preceding an
 	 * expression group in a menu (value <code>"emptyExpressionGroup"</code>).
 	 * 
 	 * @since 2.0
@@ -510,7 +510,7 @@ public interface IDebugUIConstants {
 	 */
 	public static final String EXPRESSION_GROUP = "expressionGroup"; //$NON-NLS-1$
 	/** 
-	 * Identifier for an empty group preceeding a
+	 * Identifier for an empty group preceding a
 	 * render group in a menu (value <code>"emptyRenderGroup"</code>).
 	 */
 	public static final String EMPTY_RENDER_GROUP = "emptyRenderGroup"; //$NON-NLS-1$
@@ -561,7 +561,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Launch configuartion attribute - the perspective to
 	 * switch to when a launch configuration is launched in
-	 * debug mode (value <code>org.eclipse.debug.ui.target_run_perspective</code>).
+	 * debug mode (value <code>org.eclipse.debug.ui.target_debug_perspective</code>).
 	 * Value is a string corresponding to a perspective identifier,
 	 * or <code>null</code> indicating no perspective change.
 	 * 
