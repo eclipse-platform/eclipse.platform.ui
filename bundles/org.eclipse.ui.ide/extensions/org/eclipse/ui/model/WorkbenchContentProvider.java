@@ -142,7 +142,8 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
         // See ResourceLabelProvider for the aspects it cares about.
         // Notice we don't care about F_CONTENT or F_MARKERS currently.
         int changeFlags = delta.getFlags();
-        if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC)) != 0) {
+        if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC
+                | IResourceDelta.TYPE | IResourceDelta.DESCRIPTION)) != 0) {
             ((StructuredViewer) viewer).update(resource, null);
         }
         // Replacing a resource may affect its label and its children
