@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.texteditor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -33,6 +35,7 @@ import org.eclipse.jface.text.source.Annotation;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -226,7 +229,7 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	/*
 	 * @see IJavaAnnotation#getImage(Display)
 	 */
-	protected Image getImage(Display display) {
+	protected Image getImage(final Display display) {
 		
 		if (!fIsInitialized) {
 			fIsInitialized= true;
@@ -246,25 +249,35 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 			return fImage;
 
 		// XXX: hack since I cannot get the image for a marker type
-		try {
-			IMarker tempMarker= ResourcesPlugin.getWorkspace().getRoot().createMarker(fAnnotationType);
-			if (tempMarker.exists()) {
-				IWorkbenchAdapter adapter= (IWorkbenchAdapter) tempMarker.getAdapter(IWorkbenchAdapter.class);
-				if (adapter != null) {
-					descriptor= adapter.getImageDescriptor(tempMarker);
-					if (descriptor != null) {
-						fImage= getImage(display, (ImageDescriptor)descriptor);
-						fgType2Descriptor.put(fAnnotationType, descriptor);
-					} else {
-						fgType2Descriptor.put(fAnnotationType, NO_DESCRIPTOR);
+		WorkspaceModifyOperation r= new WorkspaceModifyOperation() {
+			/*
+			 * @see WorkspaceModifyOperation
+			 */
+			public void execute(IProgressMonitor monitor) throws CoreException,InvocationTargetException, InterruptedException {
+				IMarker tempMarker= ResourcesPlugin.getWorkspace().getRoot().createMarker(fAnnotationType);
+				if (tempMarker.exists()) {
+					IWorkbenchAdapter adapter= (IWorkbenchAdapter) tempMarker.getAdapter(IWorkbenchAdapter.class);
+					if (adapter != null) {
+						Object imageDescriptor= adapter.getImageDescriptor(tempMarker);
+						if (imageDescriptor != null) {
+							fImage= getImage(display, (ImageDescriptor)imageDescriptor);
+							fgType2Descriptor.put(fAnnotationType, imageDescriptor);
+						} else {
+							fgType2Descriptor.put(fAnnotationType, NO_DESCRIPTOR);
+						}
 					}
+					tempMarker.delete();
 				}
-				tempMarker.delete();
 			}
-		} catch (CoreException ex) {
+		};
+		try {
+			r.run(null);
+		} catch (InvocationTargetException ex) {
+			fgType2Descriptor.put(fAnnotationType, NO_DESCRIPTOR);
+		} catch (InterruptedException ex) {
 			fgType2Descriptor.put(fAnnotationType, NO_DESCRIPTOR);
 		}
-			
+		
 		if (fImage == null)
 			fImage= getImage(fImageName);
 
