@@ -9,8 +9,6 @@
      IBM Corporation - initial API and implementation
 --%>
 <%@ include file="header.jsp"%>
-<%@ page import="org.eclipse.help.internal.webapp.data.*"%>
-
 <% 
 	TocData data = new TocData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
