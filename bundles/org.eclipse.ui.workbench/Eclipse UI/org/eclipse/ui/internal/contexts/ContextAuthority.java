@@ -502,7 +502,7 @@ final class ContextAuthority implements ISourceProviderListener {
 		
 		// Debugging output
 		if (DEBUG) {
-			System.out.print("CONTEXTS >> registerShell " + shell + " as "); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.print("CONTEXTS >> register shell '" + shell + "' as "); //$NON-NLS-1$ //$NON-NLS-2$
 			switch (type) {
 			case IContextService.TYPE_DIALOG:
 				System.out.println("dialog"); //$NON-NLS-1$
