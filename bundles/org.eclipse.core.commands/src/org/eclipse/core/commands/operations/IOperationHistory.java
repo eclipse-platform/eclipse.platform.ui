@@ -231,7 +231,7 @@ public interface IOperationHistory {
 	 *            caller containing additional information. When this API is
 	 *            called from the UI, callers can use this to provide additional
 	 *            info for prompting the user. If an IAdaptable is provided,
-	 *            callers are encourated to provide an adapter for the
+	 *            callers are encouraged to provide an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
 	 * 
 	 * @return the IStatus indicating whether the execution succeeded.
@@ -383,7 +383,7 @@ public interface IOperationHistory {
 	 * @param context -
 	 *            the context to be redone
 	 * @param monitor -
-	 *            the progress monitor to be used for the redo, or null if no
+	 *            the progress monitor to be used for the redo, or <code>null</code> if no
 	 *            progress monitor is provided.
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
@@ -424,7 +424,7 @@ public interface IOperationHistory {
 	 * @param operation -
 	 *            the operation to be redone
 	 * @param monitor -
-	 *            the progress monitor to be used for the redo, or null if no
+	 *            the progress monitor to be used for the redo, or code>null</code> if no
 	 *            progress monitor is provided
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
@@ -481,7 +481,7 @@ public interface IOperationHistory {
 	 * composite is broken up into its atomic parts. The replacements will be
 	 * inserted so that the first replacement will be the first of the
 	 * replacements to be undone or redone. Listeners will be notified about the
-	 * removal of the replaceed element and the addition of each replacement.
+	 * removal of the replaced element and the addition of each replacement.
 	 * 
 	 * @param operation -
 	 *            The IUndoableOperation to be replaced
@@ -509,7 +509,7 @@ public interface IOperationHistory {
 	 * @param context -
 	 *            the context to be undone
 	 * @param monitor -
-	 *            the progress monitor to be used for the undo, or null if no
+	 *            the progress monitor to be used for the undo, or <code>null</code> if no
 	 *            progress monitor is provided.
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
@@ -550,7 +550,7 @@ public interface IOperationHistory {
 	 * @param operation -
 	 *            the operation to be undone
 	 * @param monitor -
-	 *            the progress monitor to be used for the undo, or null if no
+	 *            the progress monitor to be used for the undo, or <code>null</code> if no
 	 *            progress monitor is provided
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the

@@ -60,7 +60,7 @@ public interface IOperationApprover {
 	 *            callers are encourated to provide an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus describing whether the operation is approved. The
-	 *         redo will not proceed if the status severity is no
+	 *         redo will not proceed if the status severity is not
 	 *         <code>OK</code>, and the caller requesting the redo will be
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
