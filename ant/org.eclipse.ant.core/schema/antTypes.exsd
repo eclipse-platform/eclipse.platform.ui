@@ -99,6 +99,8 @@ for the library containing the type.
             <annotation>
                <documentation>
                   indicates whether this type requires the context of the Eclipse runtime to be successfully defined.
+                   If the type does not required the Eclipse runtime, the plugin classloader(s) will not be available to
+                  load classes when the build occurs outside of the Eclipse runtime context.
                   The implied value is true, when not specified.
                </documentation>
             </annotation>
