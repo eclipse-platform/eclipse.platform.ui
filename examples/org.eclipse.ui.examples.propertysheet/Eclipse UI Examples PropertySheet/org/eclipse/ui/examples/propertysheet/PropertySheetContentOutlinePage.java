@@ -39,6 +39,7 @@ public void createControl(Composite parent) {
 	viewer.setContentProvider(new WorkbenchContentProvider());
 	viewer.setLabelProvider(new WorkbenchLabelProvider());
 	viewer.setInput(this.model); 
+	viewer.expandAll();
 	
 	// Configure the context menu.
 	MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
