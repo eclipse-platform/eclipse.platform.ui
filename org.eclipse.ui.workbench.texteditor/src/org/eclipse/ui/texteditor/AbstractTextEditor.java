@@ -103,7 +103,6 @@ import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.ITextViewerExtension6;
@@ -269,7 +268,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					public void run() {
 						enableSanityChecking(true);
 						if (isStateValidated && fValidator != null) {
-							ISourceViewer viewer= getSourceViewer();
+							ISourceViewer viewer= fSourceViewer;
 							if (viewer != null) {
 								StyledText textWidget= viewer.getTextWidget();
 								if (textWidget != null && !textWidget.isDisposed())
@@ -278,7 +277,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 								enableStateValidation(false);
 							}
 						} else if (!isStateValidated && fValidator == null) {
-							ISourceViewer viewer= getSourceViewer();
+							ISourceViewer viewer= fSourceViewer;
 							if (viewer != null) {
 								StyledText textWidget= viewer.getTextWidget();
 								if (textWidget != null && !textWidget.isDisposed()) {
@@ -366,6 +365,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				Runnable r= new Runnable() {
 					public void run() {
 						enableSanityChecking(true);
+						
+						if (fSourceViewer == null)
+							return;
 						
 						if (!canHandleMove((IEditorInput) originalElement, (IEditorInput) movedElement)) {
 							close(true);
@@ -870,17 +872,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IAction#run()
 		 */
 		public void run() {
-			ISourceViewer viewer= getSourceViewer();
-			if (viewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
-				StyledText textWidget= viewer.getTextWidget();
+			if (fSourceViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+				StyledText textWidget= fSourceViewer.getTextWidget();
 				int topIndex= textWidget.getTopIndex();
 				int newTopIndex= Math.max(0, topIndex + fScrollIncrement);
-				viewer.setTopIndex(extension.widgetLine2ModelLine(newTopIndex));
+				fSourceViewer.setTopIndex(extension.widgetLine2ModelLine(newTopIndex));
 			} else {
-				int topIndex= viewer.getTopIndex();
+				int topIndex= fSourceViewer.getTopIndex();
 				int newTopIndex= Math.max(0, topIndex + fScrollIncrement);
-				viewer.setTopIndex(newTopIndex);
+				fSourceViewer.setTopIndex(newTopIndex);
 			}
 		}
 	}
@@ -965,7 +966,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (store != null)
 				isSmartHomeEndEnabled= store.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
 
-			StyledText st= getSourceViewer().getTextWidget();
+			StyledText st= fSourceViewer.getTextWidget();
 			if (st == null || st.isDisposed())
 				return;
 			int caretOffset= st.getCaretOffset();
@@ -974,8 +975,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			int lineLength;
 			try {
-				int caretOffsetInDocument= widgetOffset2ModelOffset(getSourceViewer(), caretOffset);
-				lineLength= getSourceViewer().getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
+				int caretOffsetInDocument= widgetOffset2ModelOffset(fSourceViewer, caretOffset);
+				lineLength= fSourceViewer.getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
 			} catch (BadLocationException ex) {
 				return;
 			}
@@ -1087,7 +1088,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (store != null)
 				isSmartHomeEndEnabled= store.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
 
-			StyledText st= getSourceViewer().getTextWidget();
+			StyledText st= fSourceViewer.getTextWidget();
 			if (st == null || st.isDisposed())
 				return;
 		
@@ -1097,10 +1098,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 			int lineLength;
 			int caretOffsetInDocument;
-			final IDocument document= getSourceViewer().getDocument();
+			final IDocument document= fSourceViewer.getDocument();
 
 			try {
-				caretOffsetInDocument= widgetOffset2ModelOffset(getSourceViewer(), caretOffset);
+				caretOffsetInDocument= widgetOffset2ModelOffset(fSourceViewer, caretOffset);
 				lineLength= document.getLineInformationOfOffset(caretOffsetInDocument).getLength();
 			} catch (BadLocationException ex) {
 				return;
@@ -2804,7 +2805,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		if (fInitialCaret == null)
-			fInitialCaret= getSourceViewer().getTextWidget().getCaret();
+			fInitialCaret= fSourceViewer.getTextWidget().getCaret();
 		
 		if (fIsOverwriting)
 			fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
@@ -3220,22 +3221,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fSourceViewer.invalidateTextPresentation();
 		
 		if (PREFERENCE_HYPERLINKS_ENABLED.equals(property)) {
-			ITextViewer viewer= getSourceViewer();
-			if (viewer instanceof ITextViewerExtension6) {
-				IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(getSourceViewer());
-				int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(getSourceViewer());
-				ITextViewerExtension6 textViewer6= (ITextViewerExtension6)viewer;
+			if (fSourceViewer instanceof ITextViewerExtension6) {
+				IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(fSourceViewer);
+				int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(fSourceViewer);
+				ITextViewerExtension6 textViewer6= (ITextViewerExtension6)fSourceViewer;
 				textViewer6.setHyperlinkDetectors(detectors, stateMask);
 			}
 			return;
 		}
 		
 		if (PREFERENCE_HYPERLINK_KEY_MODIFIER.equals(property)) {
-			ITextViewer viewer= getSourceViewer();
-			if (viewer instanceof ITextViewerExtension6) {
-				ITextViewerExtension6 textViewer6= (ITextViewerExtension6)viewer;
-				IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(getSourceViewer());
-				int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(getSourceViewer());
+			if (fSourceViewer instanceof ITextViewerExtension6) {
+				ITextViewerExtension6 textViewer6= (ITextViewerExtension6)fSourceViewer;
+				IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(fSourceViewer);
+				int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(fSourceViewer);
 				textViewer6.setHyperlinkDetectors(detectors, stateMask);
 			}
 			return;
@@ -3530,7 +3529,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (enabled) {
 			
-			ISourceViewer viewer= getSourceViewer();
+			ISourceViewer viewer= fSourceViewer;
 			if (viewer == null)
 				return false;
 
@@ -4024,7 +4023,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		IAction action;
 		
-		StyledText textWidget= getSourceViewer().getTextWidget();
+		StyledText textWidget= fSourceViewer.getTextWidget();
 		for (int i= 0; i < ACTION_MAP.length; i++) {
 			IdMapEntry entry= ACTION_MAP[i];
 			action= new TextNavigationAction(textWidget, entry.getAction());
@@ -4916,10 +4915,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	private void updateCaret() {
 		
-		if (getSourceViewer() == null)
+		if (fSourceViewer == null)
 			return;
 			
-		StyledText styledText= getSourceViewer().getTextWidget();
+		StyledText styledText= fSourceViewer.getTextWidget();
 		
 		InsertMode mode= getInsertMode();
 		
