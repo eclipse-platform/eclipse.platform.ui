@@ -226,6 +226,9 @@ public class AnimatedCanvas {
 
 			if (loader.repeatCount > 0) {
 				while (isAnimated()) {
+					
+					if(getControl().isDisposed())
+						return;
 					if (imageData.disposalMethod == SWT.DM_FILL_BACKGROUND) {
 						// Fill with the background color before drawing.
 						Color bgColor = null;

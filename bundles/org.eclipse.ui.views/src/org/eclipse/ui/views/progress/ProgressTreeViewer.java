@@ -93,7 +93,6 @@ public class ProgressTreeViewer extends TreeViewer {
 		final Label displayLabel = new Label(editorComposite, SWT.NONE);
 		displayLabel.setBackground(tree.getBackground());
 		displayLabel.setText(item.getText());
-		job.setLabel(displayLabel);
 		
 		FormData data = new FormData();
 		data.top = new FormAttachment(0, 0);

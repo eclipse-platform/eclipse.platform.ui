@@ -1,13 +1,11 @@
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 
 public class JobInfoWithProgress extends JobInfo {
 	int multiplier;
 	int preWork = 0;
 	ProgressBar indicator;
-	Label label;
 
 	JobInfoWithProgress(String taskName, int total) {
 		super(taskName);
@@ -24,6 +22,8 @@ public class JobInfoWithProgress extends JobInfo {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
+				if (indicator == null || indicator.isDisposed())
+					return;
 				indicator.setSelection(preWork);
 			}
 		});
@@ -40,20 +40,11 @@ public class JobInfoWithProgress extends JobInfo {
 		this.indicator.setSelection(preWork);
 	}
 
-	/**
-	 * Set the label to use for this job info.
-	 * @param indicator
-	 */
-	public void setLabel(Label newLabel) {
-		label = newLabel;
-	}
-
+	
 	public ProgressBar getProgressBar() {
 		return indicator;
 	}
 
-	public Label getLabel() {
-		return label;
-	}
+
 
 }

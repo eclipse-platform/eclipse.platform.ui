@@ -19,6 +19,11 @@ public abstract class UIJob extends NotifyingJob {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final IStatus run(final IProgressMonitor monitor) {
+
+		if (display == null) {
+			System.out.println("No display");
+			return new Status(IStatus.ERROR,"org.eclipse.jface",IStatus.ERROR,"Display must be set",null);
+		}
 		display.asyncExec(new Runnable() {
 			public void run() {
 				IStatus result = null;
@@ -26,7 +31,13 @@ public abstract class UIJob extends NotifyingJob {
 					result = runInUIThread(monitor);
 				} finally {
 					if (result == null)
-						result = new Status(IStatus.ERROR, "org.eclipse.ui", 1, "Error", null);
+						result =
+							new Status(
+								IStatus.ERROR,
+								"org.eclipse.ui",
+								1,
+								"Error",
+								null);
 					done(result);
 				}
 			}
