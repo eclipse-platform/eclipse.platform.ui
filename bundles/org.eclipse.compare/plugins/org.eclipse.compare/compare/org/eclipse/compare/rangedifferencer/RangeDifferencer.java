@@ -322,7 +322,6 @@ public final class RangeDifferencer {
 	 * If the ancestor range comparator is <code>null</code>, a two-way
 	 * comparison is performed.
 	 * 
-	 * @param pm if not <code>null</code> used to report progress
 	 * @param ancestor the ancestor range comparator or <code>null</code>
 	 * @param left the left range comparator
 	 * @param right the right range comparator

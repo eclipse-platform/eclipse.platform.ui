@@ -39,7 +39,7 @@ public class CompareViewerPane extends ViewForm {
 	 * Constructs a new instance of this class given its parent
 	 * and a style value describing its behavior and appearance.
 	 *
-	 * @param parent a widget which will be the parent of the new instance (cannot be null)
+	 * @param container a widget which will be the container of the new instance (cannot be null)
 	 * @param style the style of widget to construct
 	 *
 	 * @exception IllegalArgumentException <ul>
@@ -81,7 +81,7 @@ public class CompareViewerPane extends ViewForm {
 	 * Set the pane's title text.
 	 * The value <code>null</code> clears it.
 	 * 
-	 * @param text the text to be displayed in the pane or null
+	 * @param label the text to be displayed in the pane or null
 	 */
 	public void setText(String label) {
 		CLabel cl= (CLabel) getTopLeft();

@@ -261,8 +261,8 @@ public class CompareConfiguration {
 	 * If the new value differs from the old a <code>PropertyChangeEvent</code>
 	 * is sent to registered listeners.
 	 *
-	 * @param propertyName the name of the property to set
-	 * @param value the new value of the property
+	 * @param key the name of the property to set
+	 * @param newValue the new value of the property
 	 */
 	public void setProperty(String key, Object newValue) {
 		Object oldValue= fProperties.get(key);
@@ -275,7 +275,7 @@ public class CompareConfiguration {
 	 * Returns the property with the given name, or <code>null</code>
 	 * if no such property exists.
 	 *
-	 * @param propertyName the name of the property to retrieve
+	 * @param key the name of the property to retrieve
 	 * @return the property with the given name, or <code>null</code> if not found
 	 */
 	public Object getProperty(String key) {

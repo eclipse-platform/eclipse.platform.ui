@@ -43,7 +43,9 @@ This interface is used by the hierarchical differencing engine
 (<b>org.eclipse.compare.structuremergeviewer.Differencer</b>) to walk the tree.
 <br>
 In addition every leaf of the tree must implement the <b>IStreamContentAccessor</b>
-interface in order to give the differencing engine access to its stream content.
+or <b>IEncodedStreamContentAccessor</b>
+interfaces in order to give the differencing engine access to its stream content
+and to its encoding (with IEncodedStreamContentAccessor).
 <p>
 
 The abstract class <b>BufferedContent</b> provides a default implementation
@@ -93,6 +95,18 @@ viewer switching</i>, that is the viewer installed in the pane is dynamically
 determined by the pane's input object.
 Both classes are useful if you want to use compare viewers outside the context of
 a compare editor, for example in a dialog or wizard.
+<p>
+
+A <b>Splitter</b> is an extension of a SashForm that supports nesting, maximizing of panes,
+and propagating the visibility state of panes.
+<p>
+
+The interface <b>IStreamMerger</b> defines a single operation for performing a three-way merge on three
+input streams. The merged result is written to an output stream.
+<br>
+Clients must implement this interface when contributing new mergers to the
+<code>org.eclipse.compare.streamMergers</code> extension point.
+New <b>IStreamMerger</b>s can be created for registered types with the createStreamMerger methods of CompareUI.
 
 
 </body>

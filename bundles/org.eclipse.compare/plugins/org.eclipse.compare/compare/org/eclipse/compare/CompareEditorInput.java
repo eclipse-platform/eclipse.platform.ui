@@ -771,7 +771,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * Empty implementation.
 	 * Subclasses must override to save any changes.
 	 *
-	 * @param progressMonitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
+	 * @param pm an <code>IProgressMonitor</code> that the implementation of save may use to show progress
 	 * @deprecated Override method saveChanges instead.
 	 */
 	public void save(IProgressMonitor pm) {
@@ -783,7 +783,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * This implementation tries to flush changes in all viewers by
 	 * calling <code>ISavable.save</code> on them.
 	 *
-	 * @param progressMonitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
+	 * @param pm an <code>IProgressMonitor</code> that the implementation of save may use to show progress
 	 * @since 2.0
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {

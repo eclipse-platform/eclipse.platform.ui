@@ -27,7 +27,6 @@ public abstract class DiffContainer extends DiffElement implements IDiffContaine
 	 * Creates a new container with the specified kind under the given parent. 
 	 *
 	 * @param parent under which the new container is added as a child or <code>null</code>.
-	 * @param name of the container
 	 * @param kind of difference (defined in <code>Differencer</code>).
 	 */
 	public DiffContainer(IDiffContainer parent, int kind) {

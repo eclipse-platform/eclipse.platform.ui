@@ -250,8 +250,8 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * Select the previous edition (presenting a UI).
 	 *
 	 * @param target the input object against which the editions are compared; must not be <code>null</code>
-	 * @param editions the list of editions (element type: <code>ITypedElement</code>s)
-	 * @param path If <code>null</code> dialog shows full input; if non <code>null</code> it extracts a subsection
+	 * @param inputEditions the list of editions (element type: <code>ITypedElement</code>s)
+	 * @param ppath If <code>null</code> dialog shows full input; if non <code>null</code> it extracts a subsection
 	 * @return returns the selected edition or <code>null</code> if error occurred.
 	 * The returned <code>ITypedElement</code> is one of the original editions
 	 * if <code>path</code> was <code>null</code>; otherwise
@@ -321,8 +321,8 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * Presents this modal dialog with the functionality described in the class comment above.
 	 *
 	 * @param target the input object against which the editions are compared; must not be <code>null</code>
-	 * @param editions the list of editions (element type: <code>ITypedElement</code>s)
-	 * @param path If <code>null</code> dialog shows full input; if non <code>null</code> it extracts a subsection
+	 * @param inputEditions the list of editions (element type: <code>ITypedElement</code>s)
+	 * @param ppath If <code>null</code> dialog shows full input; if non <code>null</code> it extracts a subsection
 	 * @return returns the selected edition or <code>null</code> if dialog was cancelled.
 	 * The returned <code>ITypedElement</code> is one of the original editions
 	 * if <code>path</code> was <code>null</code>; otherwise
@@ -507,7 +507,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * Controls whether the <code>EditionSelectionDialog</code> is in 'compare' mode
 	 * or 'add/replace' (the default) mode. 
 	 *
-	 * @param addMode if true dialog is in 'add' mode.
+	 * @param compareMode if true dialog is in 'add' mode.
 	 * @since 2.0
 	 */
 	public void setCompareMode(boolean compareMode) {
