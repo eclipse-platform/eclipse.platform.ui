@@ -130,19 +130,21 @@ if (data.isIE()){
 			// do not show
 			continue;
 		}
-		String icon = isSelected ?
-						prefs.getImagesDirectory()+"/toc_open.gif" :
-						prefs.getImagesDirectory()+"/toc_closed.gif";
+		if(isSelected) {
 %>
 		<li>
-		<img src="<%=icon%>" alt=""><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" alt=""><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick=''><%=data.getTocLabel(toc)%></a>
 <%
-		// Only generate the selected toc
-		if (isSelected) {
+			// Only generate the selected toc
 			data.generateToc(toc, out);
 			// keep track of the selected toc id
 %>
 			<script language="JavaScript">tocId="b"+<%=toc%></script>
+<%
+		} else {
+%>
+		<li>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" alt=""><a id="b<%=toc%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
 <%
 		}
 %>
