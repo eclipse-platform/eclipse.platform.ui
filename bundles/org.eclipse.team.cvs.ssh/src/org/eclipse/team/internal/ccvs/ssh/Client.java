@@ -107,6 +107,9 @@ public class Client {
 
 			if (available == 0 && socketIn.available() > 0) {
 				fill();
+				if (atEnd) {
+					return 0;
+				}
 				available = buffer.available();
 			}
 
@@ -188,8 +191,11 @@ public class Client {
 					send(SSH_CMSG_EXIT_CONFIRMATION, null);
 					break;
 				case SSH_MSG_DISCONNECT :
+					buffer = null;
+					buflen = 0;
 					atEnd = true;
 					handleDisconnect(packet.getInputStream());
+					break;
 				default :
 					throw new IOException(Policy.bind("Client.packetType", new Object[] {new Integer(packetType)} ));//$NON-NLS-1$
 			}
