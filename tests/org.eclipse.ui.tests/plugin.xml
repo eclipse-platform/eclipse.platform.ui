@@ -881,4 +881,33 @@
       </context>
    </extension>
 
+   <!-- Marker Image Provider tests -->
+   <extension
+         id="testmarker"
+         name="Test Marker"
+         point="org.eclipse.core.resources.markers">
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerImageProviders">
+      <imageprovider
+            markertype="org.eclipse.ui.tests.testmarker"
+            icon="icons/anything.gif"
+            id="testmarker.imageProvider">
+      </imageprovider>
+   </extension>
+
+   <extension
+         id="testmarker2"
+         name="Test Marker 2"
+         point="org.eclipse.core.resources.markers">
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerImageProviders">
+      <imageprovider
+            markertype="org.eclipse.ui.tests.testmarker2"
+            class="org.eclipse.ui.tests.adaptable.TestMarkerImageProvider"
+            id="testmarker.imageProvider2">
+      </imageprovider>
+   </extension>
+   
 </plugin>
