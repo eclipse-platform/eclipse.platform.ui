@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="org.eclipse.ui.externaltools" default="build" basedir="..">
 
-	<property name="bootclasspath" value=""/>
-
-	<target name="build">
+	<target name="build" description="Cleans, builds and refreshes">
 		<antcall target="clean"/>
 		<antcall target="lib/antbuilderlib.jar"/>
 		<antcall target="refresh"/>
 	</target>
 
 	<target name="init" depends="properties">
+		<property name="bootclasspath" value=""/>
 		<property name="plugin" value="org.eclipse.ui.externaltools"/>
 		<property name="version.suffix" value="_2.1.0"/>
 		<property name="full.name" value="${plugin}${version.suffix}"/>
@@ -27,13 +26,31 @@
 	<target name="properties" if="eclipse.running">
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
-
-	<target name="lib/antbuilderlib.jar" depends="init">
+	
+	<target name="lib/antbuilderlib.jar" description= "Creates the antrunner.jar" depends="init">
 		<property name="destdir" value="${temp.folder}/lib/antrunner.jar.bin"/>
 		<delete dir="${temp.folder}/lib/antrunner.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antrunner.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/lib/antrunner.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.debug.core/dtcore.jar;${basedir}/../org.eclipse.debug.ui/dtui.jar;${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.eclipse.core.resources/resources.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${swt.jar};${basedir}/../org.eclipse.jface/jface.jar;${basedir}/../org.eclipse.jface.text/jfacetext.jar;${basedir}/../org.eclipse.text/text.jar;${basedir}/../org.eclipse.ui.workbench/workbench.jar;${basedir}/../org.eclipse.ant.core/bin;${basedir}/../org.eclipse.debug.core/bin;${basedir}/../org.eclipse.debug.ui/bin">
+		<javac destdir="${temp.folder}/lib/antrunner.jar.bin" failonerror="false" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="no"
+			 	bootclasspath="${bootclasspath}" 
+			 	classpath="${basedir}/../org.eclipse.debug.core/dtcore.jar;
+			 		${basedir}/../org.eclipse.debug.ui/dtui.jar;
+			 		${basedir}/../org.eclipse.core.runtime/runtime.jar;
+			 		${basedir}/../org.eclipse.core.resources/resources.jar;
+			 		${basedir}/../org.apache.ant/ant.jar;
+			 		${basedir}/../org.apache.xerces/xercesImpl.jar;
+			 		${basedir}/../org.apache.xerces/xmlParserAPIs.jar;
+			 		${basedir}/bin;
+			 		${basedir}/../org.eclipse.core.boot/boot.jar;
+			 		${swt.jar};
+			 		${basedir}/../org.eclipse.jface/jface.jar;
+			 		${basedir}/../org.eclipse.jface.text/jfacetext.jar;
+			 		${basedir}/../org.eclipse.text/text.jar;
+			 		${basedir}/../org.eclipse.ui.workbench/workbench.jar;
+			 		${basedir}/../org.eclipse.ant.core/bin;
+			 		${basedir}/../org.eclipse.debug.core/bin;
+			 		${basedir}/../org.eclipse.debug.ui/bin">
 			<src path="Ant Runner Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
@@ -45,12 +62,12 @@
 		<delete dir="${temp.folder}"/>
 	</target>
 
-	<target name="clean" depends="init">
+	<target name="clean" description="Deletes previous build remnants" depends="init">
 		<delete file="${build.result.folder}/lib/antrunner.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
-	<target name="refresh" depends="init" if="eclipse.running">
+	<target name="refresh" description= "Re-synchs resources" depends="init" if="eclipse.running">
 		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
 	</target>
 
