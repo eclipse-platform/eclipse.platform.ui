@@ -326,7 +326,9 @@ public class ToolBarContributionItem extends ContributionItem {
 				control.dispose();
 				coolItem.setControl(null);
 			}
-			coolItem.dispose();
+			if (!coolItem.isDisposed()) {
+				coolItem.dispose();
+			}
 			return;
 		}
 		Point toolBarSize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
