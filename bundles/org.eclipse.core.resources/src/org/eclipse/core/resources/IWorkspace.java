@@ -836,7 +836,7 @@ public void setWorkspaceLock(WorkspaceLock lock);
  * </p>
  * 
  * @param files the files that are to be modified; these files must all exist in the workspace
- * @param context the <code>org.eclipse.swt.Shell</code> that is to be used to
+ * @param context the <code>org.eclipse.swt.widgets.Shell</code> that is to be used to
  *    parent any dialogs with the user, or <code>null</code> if there is no UI context (declared
  *   as an Object to avoid any direct references on the SWT component)
  * @return a status object that is OK if things are fine, otherwise a status describing
