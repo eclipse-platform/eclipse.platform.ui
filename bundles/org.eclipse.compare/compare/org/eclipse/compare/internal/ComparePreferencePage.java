@@ -241,6 +241,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		Composite c2= new Composite(composite, SWT.NONE);
 		c2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		layout= new GridLayout(2, false);
+		layout.marginWidth= 0;
 		c2.setLayout(layout);
 		
 		l= new Label(c2, SWT.NONE);
