@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -106,10 +107,18 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * Handle a request to load preferences
 	 */
 	protected void loadPressed() {
-		IPath filePath = getFilePath(false);
+		final IPath filePath = getFilePath(false);
 		if (filePath == null)
 			return;
-		importPreferences(filePath);
+		BusyIndicator.showWhile(getShell().getDisplay(),new Runnable(){
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				importPreferences(filePath);
+			}
+		});
+		
 		close();
 	}
 
