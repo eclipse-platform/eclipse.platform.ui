@@ -4,22 +4,25 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.update.core.*;
 import org.eclipse.update.core.IActivity;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.IInstallConfigurationChangedListener;
+import org.eclipse.update.core.ISite;
 
 public class InstallConfiguration implements IInstallConfiguration {
 
 	private ListenersList listeners = new ListenersList();
 	private boolean isCurrent;
+	private URL location;
 	private List installSites;
 	private List linkedSites;
 	private List features;
@@ -27,14 +30,15 @@ public class InstallConfiguration implements IInstallConfiguration {
 	/*
 	 * default constructor. Create
 	 */
-	public InstallConfiguration() {
-		this.isCurrent = true;
+	public InstallConfiguration(URL location) {
+		this.location = location;
+		this.isCurrent = false;
 	}
 
 	/*
 	 * @see IInstallConfiguration#getFeatures()
 	 */
-	public IFeatureReference[] getFeatures() {
+	private IFeatureReference[] getFeatures() {
 
 		IFeatureReference[] result = new IFeatureReference[0];
 

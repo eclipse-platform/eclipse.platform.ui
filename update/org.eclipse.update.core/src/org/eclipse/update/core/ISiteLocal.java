@@ -20,7 +20,16 @@ import java.io.File;
  * on local installation sites and linked sites)
  * </ul>
  */ 
-public interface ILocalSite {
+public interface ISiteLocal {
+	
+	
+	/**
+	 * return the label of teh local site
+	 * 
+	 * @return teh label
+	 */
+	String getLabel();
+	
 
 	/**
 	 * Return the current configuration object

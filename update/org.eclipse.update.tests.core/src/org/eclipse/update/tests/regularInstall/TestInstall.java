@@ -146,7 +146,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		
 
 		assertNotNull("Cannot find help.jar on site", remoteFeature);
-		ILocalSite localSite = SiteManager.getLocalSite();
+		ISiteLocal localSite = SiteManager.getLocalSite();
 		ISite site = localSite.getCurrentConfiguration().getInstallSites()[0];
 		Listener listener = new Listener();
 		site.addSiteChangedListener(listener);

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.ILocalSite;
+import org.eclipse.update.core.ISiteLocal;
 import org.eclipse.update.core.ISite;
 
 /**
@@ -28,7 +28,7 @@ public class InternalSiteManager {
 	private Map sites;
 	private Map sitesTypes;
 	private static InternalSiteManager inst;
-	private static ILocalSite localSite;
+	private static ISiteLocal localSite;
 
 	private static void init() {
 		inst = new InternalSiteManager();
@@ -48,7 +48,7 @@ public class InternalSiteManager {
 	 * Returns the LocalSite i.e the different sites
 	 * the user has access to (either read only or read write)
 	 */
-	public static ILocalSite getLocalSite() throws CoreException {
+	public static ISiteLocal getLocalSite() throws CoreException {
 		if (localSite==null) localSite = new SiteLocal();
 		return localSite;
 	}

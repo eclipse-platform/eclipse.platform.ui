@@ -4,8 +4,11 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
@@ -16,12 +19,14 @@ import org.eclipse.update.core.ILocalSiteChangedListener;
  * This class manages the configurations.
  */
 
-public class SiteLocal implements ILocalSite {
+public class SiteLocal implements ISiteLocal {
 
 	private ListenersList listeners = new ListenersList();
+	private String label;
+	private URL location;
 	public static final String INSTALL_CONFIGURATION_FILE = "Local_site.config";
 
-	private IInstallConfiguration[] configurations;
+	private List configurations;
 	private IInstallConfiguration currentConfiguration;
 
 	/*
@@ -33,19 +38,34 @@ public class SiteLocal implements ILocalSite {
 	}
 
 	/*
-	 * @see ILocalSite#getCurrentConfiguration()
+	 * @see ISiteLocal#getCurrentConfiguration()
 	 */
 	public IInstallConfiguration getCurrentConfiguration() {
 		return currentConfiguration;
 	}
 
 	/*
-	 * @see ILocalSite#getConfigurationHistory()
+	 * @see ISiteLocal#getConfigurationHistory()
 	 */
 	public IInstallConfiguration[] getConfigurationHistory() {
-		return configurations;
+		IInstallConfiguration[] result = new IInstallConfiguration[0];
+		if (configurations!=null && !configurations.isEmpty() ){
+			result = new IInstallConfiguration[configurations.size()];
+			configurations.toArray(result);
+		}
+		return result;
 	}
-
+	
+	/**
+	 * adds a new configuration to the LocalSite
+	 *  the newly added configuration is teh current one
+	 */
+	public void addConfiguration(IInstallConfiguration config){
+		if (configurations==null) configurations = new ArrayList(0);
+		configurations.add(config);
+		currentConfiguration = config;
+		//FIXME: notify listeners
+	}
 	/**
 	 * initialize the configurations from the persistent model.
 	 * The configurations are per user, so we save the data in the 
@@ -54,8 +74,17 @@ public class SiteLocal implements ILocalSite {
 	 */
 	private void initialize() throws CoreException {
 		File config = UpdateManagerPlugin.getPlugin().getStateLocation().append( INSTALL_CONFIGURATION_FILE).toFile();
+		
+		// FIXME... call VK API getConfigurationLocation which will return a URL
+		try {
+		location = new URL("file",null,config.getAbsolutePath());
+		} catch (MalformedURLException e){
+			e.printStackTrace();
+		}
+		
 		if (config.exists()) {
 			//if the file exists, parse it
+			
 			
 		} else {
 			// FIXME: VK: in the first pass, we always return as the only install
@@ -68,7 +97,7 @@ public class SiteLocal implements ILocalSite {
 			try {
 				URL execURL = BootLoader.getInstallURL();
 				ISite site = SiteManager.getSite(execURL);
-				currentConfiguration = new InstallConfiguration();
+				currentConfiguration = new InstallConfiguration(location);
 
 				// notify listeners
 				Object[] localSiteListeners = listeners.getListeners();
@@ -87,7 +116,7 @@ public class SiteLocal implements ILocalSite {
 
 	}
 	/*
-	 * @see ILocalSite#addLocalSiteChangedListener(ILocalSiteChangedListener)
+	 * @see ISiteLocal#addLocalSiteChangedListener(ILocalSiteChangedListener)
 	 */
 	public void addLocalSiteChangedListener(ILocalSiteChangedListener listener) {
 		synchronized (listeners) {
@@ -96,7 +125,7 @@ public class SiteLocal implements ILocalSite {
 	}
 
 	/*
-	 * @see ILocalSite#removeLocalSiteChangedListener(ILocalSiteChangedListener)
+	 * @see ISiteLocal#removeLocalSiteChangedListener(ILocalSiteChangedListener)
 	 */
 	public void removeLocalSiteChangedListener(ILocalSiteChangedListener listener) {
 		synchronized (listeners) {
@@ -105,17 +134,40 @@ public class SiteLocal implements ILocalSite {
 	}
 
 	/*
-	 * @see ILocalSite#setCurrentConfiguration(IInstallConfiguration)
+	 * @see ISiteLocal#setCurrentConfiguration(IInstallConfiguration)
 	 */
 	public void setCurrentConfiguration(IInstallConfiguration configuration) {
 		//FIXME: revert
 	}
 
 	/*
-	 * @see ILocalSite#importConfiguration(File)
+	 * @see ISiteLocal#importConfiguration(File)
 	 */
 	public IInstallConfiguration importConfiguration(File importFile) {
 		return null;
+	}
+
+	/**
+	 * Gets the location.
+	 * @return Returns a URL
+	 */
+	public URL getLocation() {
+		return location;
+	}
+
+	/*
+	 * @see ISiteLocal#getLabel()
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * Sets the label.
+	 * @param label The label to set
+	 */
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 }
