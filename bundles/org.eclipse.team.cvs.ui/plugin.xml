@@ -179,6 +179,13 @@
                id="org.eclipse.team.ccvs.ui.compareWithRemote">
          </action>
          <action
+               label="%ReplaceWithTagAction.label"
+               tooltip="%ReplaceWithTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               id="org.eclipse.team.ccvs.ui.replaceWithTag">
+         </action>
+         <action
                label="%ReplaceWithAction.label"
                tooltip="%ReplaceWithAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"
@@ -227,13 +234,6 @@
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.eclipse.team.ccvs.ui.compareWithTag">
          </action>      
-         <action
-               label="%ReplaceWithTagAction.label"
-               tooltip="%ReplaceWithTagAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
-               menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.eclipse.team.ccvs.ui.replaceWithTag">
-         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
