@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
@@ -390,11 +391,8 @@ public class DecoratorManager
 		//Do nothing as this is not viewer dependant
 	}
 
-	/**
-	 * Reset the cachedDecorators and fire listeners as
-	 * the enabled state of some decorators has changed.
-	 * Also store the currently enabled decorators as
-	 * a workbench preference.
+	/*
+	 * @see IDecoratorManager.reset()
 	 */
 	public void reset() {
 		cachedDecorators = new HashMap();
@@ -515,6 +513,25 @@ public class DecoratorManager
 		if (definition != null)
 			definition.setEnabled(enabled);
 	}
+	
+	/**
+	 * @see IDecoratorManager#getLabelDecorator(String)
+	 */
+	public ILabelDecorator getLabelDecorator(String decoratorId) {
+		DecoratorDefinition definition = 
+			getDecoratorDefinition(decoratorId);
+			
+		//Do not return for a disabled decorator
+		if(definition.isEnabled()){
+			try{
+				return definition.getDecorator();
+			}
+			catch (CoreException exception){
+				//Could not instantiate - return null
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Get the DecoratorDefinition with the supplied id
@@ -528,5 +545,4 @@ public class DecoratorManager
 		}
 		return null;
 	}
-
 }

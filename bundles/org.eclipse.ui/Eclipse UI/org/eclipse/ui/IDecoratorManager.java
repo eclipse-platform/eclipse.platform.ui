@@ -8,18 +8,28 @@ import org.eclipse.jface.viewers.ILabelDecorator;
  * decorator returned by <code>getLabelDecorator()</code>.
  */
 
-public interface IDecoratorManager extends ILabelDecorator{
+public interface IDecoratorManager extends ILabelDecorator {
 
 	/**
-	* Returns the label decorator which applies the decorations from all
-	* enabled decorators.
-	* Views which allow decoration of their elements should use this 
-	* label decorator.
-	*
-	* @return the label decorator
-	* @see DecoratingLabelProvider
-	*/
+	 * Returns the label decorator which applies the decorations from all
+	 * enabled decorators.
+	 * Views which allow decoration of their elements should use this 
+	 * label decorator.
+	 *
+	 * @return the label decorator
+	 * @see DecoratingLabelProvider
+	 */
 	ILabelDecorator getLabelDecorator();
+
+	/**
+	 * Returns the label decorator for the specified decoratorID if it
+	 * exists.
+	 * 
+	 * @return ILabelDecorator
+	 * @param decoratorId String
+	 * @see DecoratingLabelProvider
+	 */
+	ILabelDecorator getLabelDecorator(String decoratorId);
 
 	/**
 	 * Returns whether the specified decorator is enabled.
@@ -38,7 +48,7 @@ public interface IDecoratorManager extends ILabelDecorator{
 	 * <code>false</code> to disable it
 	 */
 	void setEnabled(String decoratorId, boolean enabled);
-	
+
 	/**
 	 * Reset the cachedDecorators and fire listeners as
 	 * the enabled state of some decorators has changed.

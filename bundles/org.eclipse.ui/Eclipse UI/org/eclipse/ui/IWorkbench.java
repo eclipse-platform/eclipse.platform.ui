@@ -375,6 +375,6 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  * This API should not be called, overridden or otherwise used in production code.
  * </p>
  */
-public DecoratorManager getDecoratorManager();
+public IDecoratorManager getDecoratorManager();
 
 }
