@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSLocalSyncElement;
@@ -73,12 +74,20 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
-			return edition.getName();
-			/*if (edition.isTeamStreamResource()) {
-				return Policy.bind("VCMCompareEditorInput.inStream", new Object[] {edition.getName(), edition.getTeamStream().getName()} );
-			} else {
-				return Policy.bind("VCMCompareEditorInput.repository", new Object[] {edition.getName(), edition.getVersionName()} );
-			}*/
+			ICVSResource resource = (ICVSResource)edition;
+			try {
+				CVSTag tag = resource.getSyncInfo().getTag();
+				if (tag == null) {
+					return Policy.bind("CVSCompareEditorInput.inHead", edition.getName());
+				} else if (tag.getType() == CVSTag.BRANCH) {
+					return Policy.bind("CVSCompareEditorInput.inBranch", new Object[] {edition.getName(), tag.getName()});
+				} else {
+					return Policy.bind("CVSCompareEditorInput.repsitory", new Object[] {edition.getName(), tag.getName()});
+				}
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
+				// Fall through and get the default label
+			}
 		}
 		return element.getName();
 	}
@@ -92,12 +101,20 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
-			/*if (edition.isTeamStreamResource()) {
-				return Policy.bind("CVSCompareEditorInput.streamLabel", new Object[] {edition.getTeamStream().getName()} );
-			} else {
-				return edition.getVersionName();
-			}*/
-			return edition.getName();
+			ICVSResource resource = (ICVSResource)edition;
+			try {
+				CVSTag tag = resource.getSyncInfo().getTag();
+				if (tag == null) {
+					return Policy.bind("CVSCompareEditorInput.headLabel");
+				} else if (tag.getType() == CVSTag.BRANCH) {
+					return Policy.bind("CVSCompareEditorInput.branchLabel", tag.getName());
+				} else {
+					return tag.getName();
+				}
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
+				// Fall through and get the default label
+			}
 		}
 		return element.getName();
 	}
@@ -276,7 +293,6 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		if (!leftEdition.getRepository().getLocation().equals(rightEdition.getRepository().getLocation())) {
 			return NODE_UNKNOWN;
 		}
-		// Non-API hack
 		try {
 			ResourceSyncInfo leftInfo = ((ICVSResource)leftEdition).getSyncInfo();
 			ResourceSyncInfo rightInfo = ((ICVSResource)rightEdition).getSyncInfo();
