@@ -113,8 +113,7 @@ public class IDEWorkbenchActivityHelper {
         for (int i = 0; i < extensions.length; i++) {
             IExtension extension = extensions[i];
             final String localId = extension.getSimpleIdentifier();
-            final String pluginId = extension.getDeclaringPluginDescriptor()
-                    .getUniqueIdentifier();
+            final String pluginId = extension.getNamespace();
             String natureId = extension.getUniqueIdentifier();
             natureMap.put(natureId, new IPluginContribution() {
                 public String getLocalId() {
