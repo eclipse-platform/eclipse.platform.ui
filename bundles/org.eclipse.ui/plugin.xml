@@ -1014,6 +1014,20 @@
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyConfiguration>
    </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="%context.editingText.name"
+            description="%context.editingText.description"
+            id="org.eclipse.ui.textEditorScope">
+      </context>
+      <context
+            name="%context.editingJavaSource.name"
+            description="%context.editingJavaSource.description"
+            id="org.eclipse.jdt.ui.javaEditorScope"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
+   </extension>
     <extension
          point="org.eclipse.ui.views">
       <category
