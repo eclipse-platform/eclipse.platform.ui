@@ -53,9 +53,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	public static Test suite() {
 		return new TestSuite(IJobManagerTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IJobManagerTest("testJobFamilyWakeUp"));
-		//		return suite;
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new IJobManagerTest("testSuspendMultiThreadAccess"));
+//		return suite;
 	}
 
 	/**
@@ -358,7 +358,59 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		job.cancel();
 	}
 
-	/**
+public void testSuspendMultiThreadAccess() {
+		PathRule rule = new PathRule("testSuspend");
+		manager.suspend(rule, null);
+		
+		//should not be able to run a job that uses the rule
+		Job job = new Job("TestSuspend") {
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+		job.setRule(rule);
+		job.schedule();
+		//give the job a chance to run
+		sleep(200);
+		assertNull("1.0", job.getResult());
+
+		//should be able to run a thread that begins the rule
+		int[] status = new int[1];
+		SimpleRuleRunner runner = new SimpleRuleRunner(rule, status, null);
+		new Thread(runner).start();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+
+		//now begin the rule in this thread
+		manager.beginRule(rule, null);
+		
+		//should still be able to run a thread that begins the rule
+		status[0] = 0;
+		runner = new SimpleRuleRunner(rule, status, null);
+		new Thread(runner).start();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+		
+		//our job should still not have executed
+		sleep(100);
+		assertNull("1.1", job.getResult());
+		
+		//even ending the rule in this thread should not allow the job to continue
+		manager.endRule(rule);
+		sleep(100);
+		assertNull("1.2", job.getResult());
+		
+		//should still be able to run a thread that begins the rule
+		status[0] = 0;
+		runner = new SimpleRuleRunner(rule, status, null);
+		new Thread(runner).start();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+		
+		//finally resume the rule in this thread
+		manager.resume(rule);
+		
+		//job should now complete
+		waitForCompletion(job);
+
+	}	/**
 	 * Tests a batch of jobs that use two mutually exclusive rules.
 	 */
 	public void testTwoRules() {
@@ -1299,9 +1351,18 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			try {
 				wait(500);
 			} catch (InterruptedException e) {
+				//ignore
 			}
 			//sanity test to avoid hanging tests
 			assertTrue("Timeout waiting for job to complete", i++ < 1000);
+		}
+	}
+	private void waitForCompletion(Job job) {
+		int i = 0;
+		while (job.getState() != Job.NONE) {
+			sleep(10);
+			//sanity test to avoid hanging tests
+			assertTrue("Timeout waiting for job to complete", i++ < 100);
 		}
 	}
 
