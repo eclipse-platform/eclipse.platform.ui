@@ -893,26 +893,29 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public synchronized void modelChanged(final AnnotationModelEvent event) {
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			Display d= fTextWidget.getDisplay();
-			if (fIsSettingModel || d == Display.getCurrent()) {
+			if (fIsSettingModel) {
 				// inside the UI thread -> no need for posting
 				updatePainting(event);
-			} else if (d != null) {
+			} else {
+				Display d= fTextWidget.getDisplay();
 				if (DEBUG && event != null && event.isWorldChange()) {
 					System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
 					new Throwable().printStackTrace(System.out);
 				}
+				
 				// TODO posting here is a problem for annotations that are being
 				// removed and the positions of which are not updated to document
 				// changes any more. If the document gets modified between
 				// now and running the posted runnable, the position information
 				// is not accurate any longer.
-				d.asyncExec(new Runnable() {
-					public void run() {
-						if (fTextWidget != null && !fTextWidget.isDisposed())
-							updatePainting(event);
-					}
-				});
+				if (d != null) {
+					d.asyncExec(new Runnable() {
+						public void run() {
+							if (fTextWidget != null && !fTextWidget.isDisposed())
+								updatePainting(event);
+						}
+					});
+				}
 			}
 		}
 	}
