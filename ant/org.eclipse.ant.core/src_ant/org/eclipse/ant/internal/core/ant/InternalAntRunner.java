@@ -712,7 +712,8 @@ public class InternalAntRunner {
 
 				StringBuffer msg = new StringBuffer();
 				msg.append(InternalAntMessages.getString("InternalAntRunner.Ant_version__7")); //$NON-NLS-1$
-				msg.append(props.getProperty("VERSION") + ' '); //$NON-NLS-1$ 
+				msg.append(props.getProperty("VERSION")); //$NON-NLS-1$
+				msg.append(' ');
 				msg.append(InternalAntMessages.getString("InternalAntRunner.compiled_on__8")); //$NON-NLS-1$
 				msg.append(props.getProperty("DATE")); //$NON-NLS-1$
 				antVersion= msg.toString();
@@ -753,6 +754,9 @@ public class InternalAntRunner {
 		
 		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
+			if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
+			}
 			if (args.length == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-inputhandler_argument_1")); //$NON-NLS-1$
 			} 
@@ -803,7 +807,10 @@ public class InternalAntRunner {
 		}
 		
 		if (commands.remove("-diagnostics")) { //$NON-NLS-1$
-			 //Diagnostics.doReport(System.out);
+			if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.The_diagnositics_options_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._4")); //$NON-NLS-1$
+			}
+			//Diagnostics.doReport(System.out);
 			logMessage(currentProject, "-diagnostics option not yet implemented", Project.MSG_INFO); //$NON-NLS-1$
 			return false;
 		}
@@ -847,7 +854,7 @@ public class InternalAntRunner {
 		
 		args= getArgument(commands, "-find"); //$NON-NLS-1$
 		if (args != null) {
-			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_option_not_yet_implemented_10"), Project.MSG_INFO); //$NON-NLS-1$
+			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.find_option_not_yet_implemented_10"), Project.MSG_ERR); //$NON-NLS-1$
 			return false;
 		}
 
@@ -931,6 +938,10 @@ public class InternalAntRunner {
 		//MULTIPLE property files are allowed
 		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while(args != null) {
+			if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
+				break;
+			}
 			if (args.length == 0) {
 				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
@@ -1189,6 +1200,9 @@ public class InternalAntRunner {
      *                           implementation could not be loaded.
      */
     private void addInputHandler(Project project) {
+    	if (antVersion.indexOf("1.5") == -1) { //$NON-NLS-1$
+			return;
+		}
         InputHandler handler = null;
         if (inputHandlerClassname == null) {
             handler = new DefaultInputHandler();
