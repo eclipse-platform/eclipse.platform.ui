@@ -740,6 +740,7 @@ public class RichText extends Canvas {
 	}
 
 	private void ensureVisible(HyperlinkSegment segment) {
+		if (segment==null) return;
 		Rectangle bounds = segment.getBounds();
 		ScrolledComposite scomp = getScrolledComposite();
 		if (scomp == null)
