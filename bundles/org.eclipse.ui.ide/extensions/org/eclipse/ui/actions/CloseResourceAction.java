@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,16 +14,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -167,13 +170,10 @@ public class CloseResourceAction extends WorkspaceAction implements
         return IDEWorkbenchMessages.getString("CloseResourceAction.title"); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     void invokeOperation(IResource resource, IProgressMonitor monitor)
-            throws CoreException {
-        ((IProject) resource).close(monitor);
-    }
+	        throws CoreException {
+	    ((IProject) resource).close(monitor);
+	}
 
     /** 
      * The implementation of this <code>WorkspaceAction</code> method
@@ -183,7 +183,16 @@ public class CloseResourceAction extends WorkspaceAction implements
     public void run() {
         if (!saveDirtyEditors())
             return;
-        super.run();
+        //be conservative and include all projects in the selection - projects
+        //can change state between now and when the job starts
+    	ISchedulingRule rule = null;
+    	IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
+        Iterator resources = getSelectedResources().iterator();
+        while (resources.hasNext()) {
+            IProject project = (IProject) resources.next();
+       		rule = MultiRule.combine(rule, factory.modifyRule(project));
+        }
+        runInBackground(rule);
     }
 
     /**
