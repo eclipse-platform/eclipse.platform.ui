@@ -34,6 +34,7 @@ public class FormWidgetFactory {
 	private BorderPainter borderPainter;
 	private Color borderColor;
 	private HyperlinkHandler hyperlinkHandler;
+	VisibilityHandler visibilityHandler;
 
 
 	class BorderPainter implements PaintListener {
@@ -66,15 +67,43 @@ public class FormWidgetFactory {
 			}
 		}
 	}
+	
+	class VisibilityHandler extends FocusAdapter {
+		public void focusGained(FocusEvent e) {
+			Widget w = e.widget;
+			if (w instanceof Control) {
+				ensureVisible((Control)w);
+			}
+		}
+	}
 
 
 public FormWidgetFactory() {
 	this(Display.getCurrent());
 }
+
 public FormWidgetFactory(Display display) {
 	this.display = display;
 	initialize();
 }
+
+public static void ensureVisible(Control c) {
+	Composite parent = c.getParent();
+	
+	ScrolledComposite scomp = null;
+	
+	while (parent!=null) {
+		if (parent instanceof ScrolledComposite) {
+			scomp = (ScrolledComposite)parent;
+			break;
+		}
+		parent = parent.getParent();
+	}
+	if (scomp!=null) {
+		AbstractSectionForm.ensureVisible(scomp, c);
+	}
+}
+
 public Button createButton(Composite parent, String text, int style) {
 	int flatStyle = BORDER_STYLE == SWT.BORDER ? SWT.NULL : SWT.FLAT;
 	//int flatStyle = SWT.NULL;
@@ -82,6 +111,7 @@ public Button createButton(Composite parent, String text, int style) {
 	button.setBackground(backgroundColor);
 	button.setForeground(foregroundColor);
 	if (text!=null) button.setText(text);
+	button.addFocusListener(visibilityHandler);
 	return button;
 }
 public Composite createComposite(Composite parent) {
@@ -152,6 +182,7 @@ public SelectableFormLabel createSelectableLabel(Composite parent, String text, 
 	if (text!=null) label.setText(text);
 	label.setBackground(backgroundColor);
 	label.setForeground(foregroundColor);
+	label.addFocusListener(visibilityHandler);
 	return label;	
 }
 
@@ -186,6 +217,7 @@ public Text createText(Composite parent, String value, int style) {
 	if (value!=null) text.setText(value);
 	text.setBackground(clientAreaColor);
 	text.setForeground(foregroundColor);
+	text.addFocusListener(visibilityHandler);
 	return text;
 }
 public Tree createTree(Composite parent, int style) {
@@ -275,6 +307,7 @@ private void initialize() {
 	hyperlinkHandler = new HyperlinkHandler();
 	hyperlinkHandler.setForeground(registerColor(COLOR_HYPERLINK, 0, 0, 153));
 	hyperlinkHandler.setBackground(backgroundColor);
+	visibilityHandler = new VisibilityHandler();
 }
 
 public void paintBordersFor(Composite parent) {

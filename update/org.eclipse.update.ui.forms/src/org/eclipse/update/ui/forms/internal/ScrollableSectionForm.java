@@ -114,4 +114,10 @@ public void updateScrolledComposite() {
 	formControl.setSize(newSize);
 	sc.setMinSize(newSize);
 }
+
+public void ensureVisible(Control c) {
+	if (container instanceof ScrolledComposite) {
+		ensureVisible((ScrolledComposite)container, c);
+	}
+}
 }

@@ -6,6 +6,7 @@ package org.eclipse.update.ui.forms.internal;
 import java.util.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.custom.ScrolledComposite;
 
 /**
  * This form class understands form sections.
@@ -120,6 +121,10 @@ public void dispose() {
 		}
 	}
 	super.dispose();
+}
+
+public static void ensureVisible(ScrolledComposite scomp, Control control) {
+	// pending on the implementation of feature #10511
 }
 
 }
