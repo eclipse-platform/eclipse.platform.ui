@@ -345,7 +345,7 @@ private void cleanup() throws IOException {
  */
 public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
 	// If we're already connected, just ignore the invokation
-	if (connected)
+	if (connected || monitor.isCanceled())
 		return;
 		
 	// Otherwise, set up the connection
@@ -379,7 +379,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		// socket to be closed at this point.
 		// Don't allow cancellation during the initial handshake and login since this
 		// can potentially cause the SSH server to think that it is being hacked and
-		// disable the account.
+		// disable the account.		
 		socketOut.setIsCancellable(false /* don't allow cancellation */);
 		pollingInputStream.setIsCancellable(false);
 		StringBuffer buf = new StringBuffer();
