@@ -145,10 +145,31 @@
       </command>
       <command
 			categoryId="org.eclipse.ui.category.file"
+            name="%command.import.name"
+            icon="icons/full/ctool16/import_wiz.gif"
+            description="%command.import.description"
+            id="org.eclipse.ui.file.import">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.file"
+            name="%command.export.name"
+            icon="icons/full/ctool16/export_wiz.gif"
+            description="%command.export.description"
+            id="org.eclipse.ui.file.export">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.file"
             name="%command.save.name"
             icon="icons/full/ctool16/save_edit.gif"
             description="%command.save.description"
             id="org.eclipse.ui.file.save">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.file"
+            name="%command.saveAs.name"
+            icon="icons/full/ctool16/saveas_edit.gif"
+            description="%command.saveAs.description"
+            id="org.eclipse.ui.file.saveAs">
       </command>
       <command
 			categoryId="org.eclipse.ui.category.file"
@@ -492,6 +513,60 @@
             name="%command.previousPerspective.name"
             description="%command.previousPerspective.description"
             id="org.eclipse.ui.window.previousPerspective">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.closeAllPerspectives.name"
+            description="%command.closeAllPerspectives.description"
+            id="org.eclipse.ui.window.closeAllPerspectives">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.closePerspective.name"
+            description="%command.closePerspective.description"
+            id="org.eclipse.ui.window.closePerspective">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.customizePerspective.name"
+            description="%command.customizePerspective.description"
+            id="org.eclipse.ui.window.customizePerspective">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.hideShowEditors.name"
+            description="%command.hideShowEditors.description"
+            id="org.eclipse.ui.window.hideShowEditors">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.lockToolBar.name"
+            description="%command.lockToolBar.description"
+            id="org.eclipse.ui.window.lockToolBar">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.pinEditor.name"
+            description="%command.pinEditor.description"
+            id="org.eclipse.ui.window.pinEditor">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.preferences.name"
+            description="%command.preferences.description"
+            id="org.eclipse.ui.window.preferences">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.resetPerspective.name"
+            description="%command.resetPerspective.description"
+            id="org.eclipse.ui.window.resetPerspective">
+      </command>
+      <command
+			categoryId="org.eclipse.ui.category.window"
+            name="%command.savePerspective.name"
+            description="%command.savePerspective.description"
+            id="org.eclipse.ui.window.savePerspective">
       </command>
       <command
 			categoryId="org.eclipse.ui.category.edit"

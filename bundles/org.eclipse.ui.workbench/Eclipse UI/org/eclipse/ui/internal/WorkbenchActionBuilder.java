@@ -52,6 +52,19 @@ public class WorkbenchActionBuilder {
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
 	private static final String projectPropertiesActionDefId = "org.eclipse.ui.project.properties"; //$NON-NLS-1$
 
+	private static final String CLOSE_ALL_PERSPECTIVES_ACTION_DEFINITION_ID = "org.eclipse.ui.window.closeAllPerspectives"; //$NON-NLS-1$
+	private static final String CLOSE_PERSPECTIVE_ACTION_DEFINITION_ID = "org.eclipse.ui.window.closePerspective"; //$NON-NLS-1$
+	private static final String EDIT_ACTION_SET_ACTION_DEFINITION_ID = "org.eclipse.ui.window.customizePerspective"; //$NON-NLS-1$
+	private static final String EXPORT_RESOURCES_ACTION_DEFINITION_ID = "org.eclipse.ui.file.export"; //$NON-NLS-1$
+	private static final String HIDE_SHOW_EDITOR_ACTION_DEFINITION_ID = "org.eclipse.ui.window.hideShowEditors"; //$NON-NLS-1$
+	private static final String IMPORT_RESOURCES_ACTION_DEFINITION_ID = "org.eclipse.ui.file.import"; //$NON-NLS-1$
+	private static final String LOCK_TOOL_BAR_ACTION_DEFINITION_ID = "org.eclipse.ui.window.lockToolBar"; //$NON-NLS-1$
+	private static final String OPEN_PREFERENCES_ACTION_DEFINITION_ID = "org.eclipse.ui.window.preferences"; //$NON-NLS-1$
+	private static final String PIN_EDITOR_ACTION_DEFINITION_ID = "org.eclipse.ui.window.pinEditor"; //$NON-NLS-1$
+	private static final String RESET_PERSPECTIVE_ACTION_DEFINITION_ID = "org.eclipse.ui.window.resetPerspective"; //$NON-NLS-1$
+	private static final String SAVE_PERSPECTIVE_ACTION_DEFINITION_ID = "org.eclipse.ui.window.savePerspective"; //$NON-NLS-1$
+	private static final String SAVE_AS_ACTION_DEFINITION_ID = "org.eclipse.ui.file.saveAs"; //$NON-NLS-1$
+
 	/**
 	 * The window to which this is contributing.
 	 */
@@ -316,7 +329,7 @@ public class WorkbenchActionBuilder {
 			cBarMgr.insertBefore(refItem.getId(), coolBarItem);
 		}
 		coolBarItem.setVisible(true);
-		tBarMgr =(CoolItemToolBarManager) coolBarItem.getToolBarManager();
+		tBarMgr = coolBarItem.getToolBarManager();
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.HISTORY_GROUP, true);
 		tBarMgr.add(backwardHistoryAction);
 		tBarMgr.add(forwardHistoryAction);
@@ -679,6 +692,8 @@ public class WorkbenchActionBuilder {
 		importResourcesAction.setDisabledImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
+		importResourcesAction.setActionDefinitionId(IMPORT_RESOURCES_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(importResourcesAction);
 
 		exportResourcesAction = new ExportResourcesAction(getWindow(), WorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
 		exportResourcesAction.setImageDescriptor(
@@ -690,6 +705,8 @@ public class WorkbenchActionBuilder {
 		exportResourcesAction.setDisabledImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
+		exportResourcesAction.setActionDefinitionId(EXPORT_RESOURCES_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(exportResourcesAction);
 
 		rebuildAllAction =
 			new GlobalBuildAction(window, IncrementalProjectBuilder.FULL_BUILD);
@@ -737,6 +754,8 @@ public class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
 		partService.addPartListener(saveAsAction);
+		saveAsAction.setActionDefinitionId(SAVE_AS_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(saveAsAction);
 
 		saveAllAction = new SaveAllAction(window);
 		saveAllAction.setImageDescriptor(
@@ -838,6 +857,8 @@ public class WorkbenchActionBuilder {
 		pinEditorAction.setDisabledImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
+		pinEditorAction.setActionDefinitionId(PIN_EDITOR_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(pinEditorAction);
 
 		aboutAction = new AboutAction(window);
 		aboutAction.setImageDescriptor(
@@ -846,6 +867,8 @@ public class WorkbenchActionBuilder {
 		getWindow().registerGlobalAction(aboutAction);
 
 		openPreferencesAction = new OpenPreferencesAction(window);
+		openPreferencesAction.setActionDefinitionId(OPEN_PREFERENCES_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(openPreferencesAction);
 
 		addBookmarkAction = createGlobalAction(IWorkbenchActionConstants.BOOKMARK, "addBookMark", "edit", "addBookmark", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
@@ -949,12 +972,26 @@ public class WorkbenchActionBuilder {
 		getWindow().registerGlobalAction(workbenchEditorsAction);
 
 		hideShowEditorAction = new ToggleEditorsVisibilityAction(window);
+		hideShowEditorAction.setActionDefinitionId(HIDE_SHOW_EDITOR_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(hideShowEditorAction);
 		savePerspectiveAction = new SavePerspectiveAction(window);
+		savePerspectiveAction.setActionDefinitionId(SAVE_PERSPECTIVE_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(savePerspectiveAction);
 		editActionSetAction = new EditActionSetsAction(window);
+		editActionSetAction.setActionDefinitionId(EDIT_ACTION_SET_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(editActionSetAction);
 		lockToolBarAction = new LockToolBarAction(window);
+		lockToolBarAction.setActionDefinitionId(LOCK_TOOL_BAR_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(lockToolBarAction);
 		resetPerspectiveAction = new ResetPerspectiveAction(window);
+		resetPerspectiveAction.setActionDefinitionId(RESET_PERSPECTIVE_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(resetPerspectiveAction);
 		closePerspAction = new ClosePerspectiveAction(window);
+		closePerspAction.setActionDefinitionId(CLOSE_PERSPECTIVE_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(closePerspAction);
 		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
+		closeAllPerspsAction.setActionDefinitionId(CLOSE_ALL_PERSPECTIVES_ACTION_DEFINITION_ID);
+		getWindow().registerGlobalAction(closeAllPerspsAction);
 
 		backwardHistoryAction = new NavigationHistoryAction(window, false);
 		backwardHistoryAction.setImageDescriptor(
@@ -1064,7 +1101,7 @@ public class WorkbenchActionBuilder {
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
 			pinEditorAction.updateState();
 		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
-			Workbench wb = (Workbench) (Workbench) getWindow().getWorkbench();
+			Workbench wb = (Workbench) getWindow().getWorkbench();
 			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
 			wb.getEditorHistory().reset(newValue);
 			if (newValue == 0) {

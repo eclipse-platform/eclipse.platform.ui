@@ -35,6 +35,12 @@ public class ActionHandler implements org.eclipse.ui.commands.IAction {
 	}
 
 	public void execute(Event event) {
+		/* A more sophisticated approach might be to test for the action style
+		 * before attempting to update, but this doesn't seem to give any
+		 * benefit.  See ActionContributionItem.handleWidgetSelection.
+		 */
+		action.setChecked(!action.isChecked());
+		
 		action.runWithEvent(event);
 	}
 
