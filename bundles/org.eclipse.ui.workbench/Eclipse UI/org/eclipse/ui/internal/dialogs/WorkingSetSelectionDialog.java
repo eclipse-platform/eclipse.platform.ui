@@ -94,6 +94,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	private List addedWorkingSets;	
 	private List removedWorkingSets;
 	private Map editedWorkingSets;
+	private List removedMRUWorkingSets;
 
 	/**
 	 * Creates a working set selection dialog.
@@ -324,6 +325,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		addedWorkingSets = new ArrayList();
 		removedWorkingSets = new ArrayList();
 		editedWorkingSets = new HashMap();
+		removedMRUWorkingSets = new ArrayList();
 		return super.open();
 	}
 	/**
@@ -337,13 +339,20 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 			Iterator iter = ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext()) {
 				IWorkingSet workingSet = (IWorkingSet) iter.next();
-				manager.removeWorkingSet(workingSet);
 				if (addedWorkingSets.contains(workingSet)) {
 					addedWorkingSets.remove(workingSet);
 				}
 				else {
+					IWorkingSet[] recentWorkingSets = manager.getRecentWorkingSets();
+					for (int i = 0; i < recentWorkingSets.length; i++) {
+						if (workingSet.equals(recentWorkingSets[i])) {
+							removedMRUWorkingSets.add(workingSet);
+							break;
+						}
+					}
 					removedWorkingSets.add(workingSet);
 				}
+				manager.removeWorkingSet(workingSet);
 			}
 			listViewer.remove(((IStructuredSelection) selection).toArray());
 		}			
@@ -387,7 +396,11 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		
 		while (iterator.hasNext()) {
 			manager.addWorkingSet(((IWorkingSet) iterator.next()));
-		}		
+		}
+		iterator = removedMRUWorkingSets.iterator();
+		while (iterator.hasNext()) {
+			manager.addRecentWorkingSet(((IWorkingSet) iterator.next()));
+		}
 	}
 	/**
 	 * Implements IWorkingSetSelectionDialog.
