@@ -86,14 +86,15 @@ public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participan
 	return saveManager.addParticipant(plugin, participant);
 }
 public void beginOperation(boolean createNewTree) throws CoreException {
-	getWorkManager().incrementNestedOperations();
-	if (getWorkManager().getNestedOperationDepth() != getWorkManager().getPreparedOperationDepth())
+	WorkManager workManager = getWorkManager();
+	workManager.incrementNestedOperations();
+	if (!workManager.isBalanced())
 		Assert.isTrue(false, "Operation was not prepared.");
 	if (treeLocked && createNewTree) {
 		String message = Policy.bind("resources.cannotModify");
 		throw new ResourceException(IResourceStatus.ERROR, null, message, null);
 	}
-	if (getWorkManager().getPreparedOperationDepth() > 1) {
+	if (workManager.getPreparedOperationDepth() > 1) {
 		if (createNewTree && tree.isImmutable())
 			newWorkingTree();
 		return;
@@ -692,10 +693,11 @@ public void dumpStats() {
  * is enabled, a build is run.
  */
 public void endOperation(boolean build, IProgressMonitor monitor) throws CoreException {
+	WorkManager workManager = getWorkManager();
 	try {
-		getWorkManager().setBuild(build);
+		workManager.setBuild(build);
 		// if we are not exiting a top level operation then just decrement the count and return
-		if (getWorkManager().getPreparedOperationDepth() > 1) 
+		if (workManager.getPreparedOperationDepth() > 1) 
 			return;
 			
 		// do the following in a try/finally to ensure that the operation tree is null'd at the end
@@ -703,13 +705,13 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 		try {
 			// if the tree is locked we likely got here in some finally block after a failed begin.
 			// Since the tree is locked, nothing could have been done so there is nothing to do.
-			Assert.isTrue(!(treeLocked && getWorkManager().shouldBuild()), "The tree should not be locked.");
+			Assert.isTrue(!(treeLocked && workManager.shouldBuild()), "The tree should not be locked.");
 			// check for a programming error on using beginOperation/endOperation
-			Assert.isTrue(getWorkManager().getPreparedOperationDepth() > 0, "Mismatched begin/endOperation");
+			Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation");
 	
 			// At this time we need to rebalance the nested operations. It is necessary because
 			// build() and snapshot() should not fail if they are called.
-			getWorkManager().rebalanceNestedOperations();
+			workManager.rebalanceNestedOperations();
 	
 			// If autobuild is on, give each open project a chance to build.  We have to tell each one
 			// because there is no way of knowing whether or not there is a relevant change
@@ -757,7 +759,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			operationTree = null;
 		}
 	} finally {
-		getWorkManager().checkOut();
+		workManager.checkOut();
 	}
 }
 private static List findRootNodes(HashMap counts) {

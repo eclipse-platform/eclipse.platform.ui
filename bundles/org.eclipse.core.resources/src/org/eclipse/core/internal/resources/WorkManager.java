@@ -131,6 +131,14 @@ private WorkspaceLock getWorkspaceLock() throws CoreException {
 		workspaceLock = workspaceLock = new WorkspaceLock(workspace);
 	return workspaceLock;
 }
+/**
+ * Returns true if the nested operation depth is the same
+ * as the prepared operation depth, and false otherwise.
+ */
+boolean isBalanced() {
+	Identifier identifier = getIdentifier();
+	return identifier.nestedOperations == identifier.preparedOperations;
+}
 void incrementNestedOperations() {
 	getIdentifier().nestedOperations++;
 }
