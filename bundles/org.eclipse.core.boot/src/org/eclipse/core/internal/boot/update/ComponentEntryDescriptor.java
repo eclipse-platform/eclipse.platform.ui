@@ -131,11 +131,15 @@ public boolean isAllowedToUpgrade() {
  */
 public int isInstallable(IComponentDescriptor compInstalled) {
 
+	// sometimes the server doesn't have one of the config's compEntry installed 
+	if (!isInstalled())
+		return UpdateManagerConstants.NOT_AVAILABLE;
+		
 	// Ok if component is not currently installed
 	//-------------------------------------------
 	if (compInstalled == null)
 		return UpdateManagerConstants.OK_TO_INSTALL;
-
+		
 	VersionIdentifier newVer = getVersionIdentifier();
 	// Check whether the installed component's parent products allow it to be upgraded
 	// if not upgradeable, can still install service

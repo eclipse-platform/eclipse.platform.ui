@@ -216,7 +216,8 @@ public ComponentDescriptorModel _loadComponentManifest(String compDir, String di
 		cd = (ComponentDescriptorModel) factory.createComponentDescriptor();
 		cd._setDirName(dirName);
 		cd._setInstallURL(compDir + dirName);
-		cd._loadManifest(new URL(cd._getInstallManifestURL()), this, factory);
+		if (!cd._loadManifest(new URL(cd._getInstallManifestURL()), this, factory))
+			return null;
 	} catch (java.net.MalformedURLException e) {
 	}
 	return cd;
@@ -309,7 +310,8 @@ public ProductDescriptorModel _loadProductManifest(String prodDir, String dirNam
 		pd = (ProductDescriptorModel) factory.createProductDescriptor();
 		pd._setDirName(dirName);
 		pd._setInstallURL(prodDir + dirName);
-		pd._loadManifest(new URL(pd._getInstallManifestURL()), this, factory, filtered);
+		if (!pd._loadManifest(new URL(pd._getInstallManifestURL()), this, factory, filtered))
+			return null;
 	} catch (java.net.MalformedURLException e) {
 	}
 	return pd;

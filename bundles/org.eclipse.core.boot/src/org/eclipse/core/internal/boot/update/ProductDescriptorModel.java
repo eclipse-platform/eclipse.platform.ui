@@ -145,7 +145,7 @@ public String _getVersion() {
 /**
  *
  */
-public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory, boolean filtered) {
+public boolean _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory, boolean filtered) {
 
 	// Parse configuration xml file
 	//-----------------------------
@@ -155,13 +155,13 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory, b
 		parser.load(url);
 	}
 	catch (XmlLiteException ex) {
-		return;
+		return false;
 	}
 
 	XmlLiteElement elementConfiguration = parser.getChildElement(CONFIGURATION);
 
 	if (elementConfiguration == null) {
-		return;
+		return false;
 	}
 
 	// Set configuration attributes
@@ -185,7 +185,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory, b
 		try {
 			new VersionIdentifier(attribute.getValue());
 		} catch (Exception ex) {
-			return;
+			return false;
 		}
 		_setVersion(attribute.getValue());
 	}
@@ -269,7 +269,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory, b
 			try {
 				new VersionIdentifier(attribute.getValue());
 			} catch (Exception ex) {
-				return;
+				return false;
 			}
 			componentEntryDescriptor._setVersion(attribute.getValue());
 		}
@@ -313,6 +313,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory, b
 	//---------
 	_setUMRegistry(parent);
 	parent._addToProductProxysRel(this);
+	return true;
 }
 public ComponentEntryDescriptorModel _lookupComponentEntry(String compId, String version) {
 

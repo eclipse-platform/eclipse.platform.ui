@@ -150,7 +150,8 @@ public void _isLoose(boolean loose) {
 	
 	_isLoose = loose;
 }
-public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
+public boolean _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
+
 
 	// Parse component xml file
 	//-------------------------
@@ -160,14 +161,14 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 		parser.load(url);
 	}
 	catch (XmlLiteException ex) {
-		return;
+		return false;
 	}
 
 	XmlLiteElement elementComponent = parser.getChildElement(COMPONENT);
 
 	if( elementComponent == null )
 	{
-	    return;
+	    return false;
 	}
 	
 	// Set component attributes
@@ -191,7 +192,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 		try {
 			new VersionIdentifier(attribute.getValue());
 		} catch (Exception ex) {
-			return;
+			return false;
 		}
 		_setVersion(attribute.getValue());
 	}
@@ -268,7 +269,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 			try {
 				new VersionIdentifier(attribute.getValue());
 			} catch (Exception ex) {
-				return;
+				return false;
 			}
 			pluginDescriptor._setVersion( attribute.getValue() );
 		}	       
@@ -310,7 +311,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 			try {
 				new VersionIdentifier(attribute.getValue());
 			} catch (Exception ex) {
-				return;
+				return false;
 			}
 			fragmentDescriptor._setVersion( attribute.getValue() );
 		}	  
@@ -332,6 +333,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 	//---------
 	_setUMRegistry(parent);
 	parent._addToComponentProxysRel(this);
+	return true;
 
 }
 public ProductDescriptorModel _lookupContainingProducts(String key) {

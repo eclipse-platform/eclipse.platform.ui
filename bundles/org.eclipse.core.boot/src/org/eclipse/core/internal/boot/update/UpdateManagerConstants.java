@@ -55,19 +55,23 @@ public interface UpdateManagerConstants {
 	public static final String STRING_TIMESTAMP        = "timestamp";
 	public static final String STRING_UNDO_SUCCESSFUL  = "undo successful";
 
-	public static final int OK              =  0;
-	public static final int OK_TO_INSTALL   =  0;
-	public static final int COMMAND_INVALID =  1;
-	public static final int COMMAND_MISSING =  2;
-	public static final int ID_MISSING      =  3;
-	public static final int ID_NOT_FOUND    =  4;
-	public static final int NOT_COMPATIBLE  =  5;
-	public static final int NOT_NEWER       =  6;
-	public static final int NOT_UPDATABLE   =  7;
-	public static final int OTHER_ERROR     =  8;
-	public static final int URL_INVALID     =  9;
-	public static final int URL_MISSING     = 10;
-	public static final int URL_NOT_FOUND   = 11;
+	public static final int OK              	=  0;
+	public static final int OK_TO_INSTALL   	=  0;
+	public static final int COMMAND_INVALID 	=  1;
+	public static final int COMMAND_MISSING 	=  2;
+	public static final int ID_MISSING      	=  3;
+	public static final int ID_NOT_FOUND    	=  4;
+	public static final int NOT_COMPATIBLE  	=  5;
+	public static final int NOT_NEWER       	=  6;
+	public static final int NOT_UPDATABLE   	=  7;
+	public static final int NOT_AVAILABLE   	=  8;
+	public static final int OTHER_ERROR     	=  9;
+	public static final int URL_INVALID     	=  10;
+	public static final int URL_MISSING     	=  11;
+	public static final int URL_NOT_FOUND   	=  12;
+	public static final int INSTALL_XML_MISSING =  13;
+	public static final int UNDEFINED_CONTENTS  =  14;
+	public static final int MISSING_CONTENTS    =  15;
 
 	public static final int CURRENT_REGISTRY = 0;
 	public static final int LOCAL_REGISTRY = 1;
