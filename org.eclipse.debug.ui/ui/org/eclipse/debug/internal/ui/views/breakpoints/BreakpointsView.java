@@ -13,15 +13,19 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
  
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ListIterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.actions.LinkBreakpointsWithDebugViewAction;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
@@ -34,16 +38,22 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
  */
-public class BreakpointsView extends AbstractDebugView {
+public class BreakpointsView extends AbstractDebugView implements ISelectionListener {
 
 	private BreakpointsViewEventHandler fEventHandler;
 	private ICheckStateListener fCheckListener= new ICheckStateListener() {
@@ -51,6 +61,12 @@ public class BreakpointsView extends AbstractDebugView {
 			handleCheckStateChanged(event);
 		}
 	};
+	private boolean fIsTrackingSelection= true;
+	// Persistance constants
+	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
+	private static String KEY_VALUE="value"; //$NON-NLS-1$
+	private static String VALUE_FALSE= "false"; //$NON-NLS-1$
+	private static String VALUE_TRUE= "true"; //$NON-NLS-1$
 	
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -74,10 +90,29 @@ public class BreakpointsView extends AbstractDebugView {
 		viewer.addCheckStateListener(fCheckListener);
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
+		initIsTrackingSelection();
 		setEventHandler(new BreakpointsViewEventHandler(this));
 		return viewer;
 	}	
 	
+	/**
+	 * Initializes whether this view tracks selection in the
+	 * debug view from the persisted state.
+	 */
+	private void initIsTrackingSelection() {
+		IMemento memento= getMemento();
+		if (memento != null) {
+			IMemento node= memento.getChild(KEY_IS_TRACKING_SELECTION);
+			if (node != null) {
+				if (VALUE_FALSE.equals(node.getString(KEY_VALUE))) {
+					setTrackSelection(false);
+					return;
+				}
+			}
+		}
+		setTrackSelection(true);
+	}
+
 	/**
 	 * Sets the initial checked state of the items in the viewer and hooks
 	 * up the listener to maintain future state.
@@ -153,6 +188,7 @@ public class BreakpointsView extends AbstractDebugView {
 		if (action != null) {
 			((ShowSupportedBreakpointsAction)action).dispose(); 
 		}
+		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		
 		super.dispose();
 		
@@ -169,6 +205,7 @@ public class BreakpointsView extends AbstractDebugView {
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		setAction("ShowBreakpointsForModel", new ShowSupportedBreakpointsAction(getStructuredViewer(),this)); //$NON-NLS-1$
+		setAction("LinkWithDebugView", new LinkBreakpointsWithDebugViewAction(this)); //$NON-NLS-1$
 	}
 
 	/**
@@ -194,6 +231,7 @@ public class BreakpointsView extends AbstractDebugView {
 		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
 		tbm.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		tbm.add(getAction("GotoMarker")); //$NON-NLS-1$
+		tbm.add(getAction("LinkWithDebugView")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}
 	
@@ -221,6 +259,67 @@ public class BreakpointsView extends AbstractDebugView {
 		super.becomesVisible();
 		getViewer().refresh();
 		initializeCheckedState();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+		if (sel.isEmpty() || !isTrackingSelection()) {
+			return;
+		}
+		IStructuredSelection selection= (IStructuredSelection) sel;
+		Iterator iter= selection.iterator();
+		Object firstElement= iter.next();
+		if (firstElement == null || iter.hasNext()) {
+			return;
+		}
+		IThread thread= null;
+		if (firstElement instanceof IStackFrame) {
+			thread= ((IStackFrame) firstElement).getThread();
+		} else if (firstElement instanceof IThread) {
+			thread= (IThread) firstElement;
+		} else {
+			return;
+		}
+		IBreakpoint[] breakpoints= thread.getBreakpoints();
+		getViewer().setSelection(new StructuredSelection(breakpoints), true);
+	}
+	
+	/**
+	 * Returns whether this view is currently tracking the
+	 * selection from the debug view.
+	 * 
+	 * @return whether this view is currently tracking the
+	 *   debug view's selection
+	 */
+	public boolean isTrackingSelection() {
+		return fIsTrackingSelection;
+	}
+	
+	/**
+	 * Sets whether this view should track the selection from
+	 * the debug view.
+	 * 
+	 * @param trackSelection whether or not this view should
+	 *   track the debug view's selection.
+	 */
+	public void setTrackSelection(boolean trackSelection) {
+		fIsTrackingSelection= trackSelection;
+		if (trackSelection) {
+			getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		} else {
+			getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		IMemento node= memento.createChild(KEY_IS_TRACKING_SELECTION);
+		node.putString(KEY_VALUE, fIsTrackingSelection ? VALUE_TRUE : VALUE_FALSE);
 	}
 
 }
