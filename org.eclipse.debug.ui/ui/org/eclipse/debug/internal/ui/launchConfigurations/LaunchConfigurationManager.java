@@ -571,6 +571,37 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			return getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 		}
 	}
+	
+	/**
+	 * Returns the launch group the given launch configuration belongs to, in
+	 * the specified mode, or <code>null</code> if none.
+	 * 
+	 * @param configuration
+	 * @param mode
+	 * @return the launch group the given launch configuration belongs to, in
+	 * the specified mode, or <code>null</code> if none
+	 */
+	public LaunchGroupExtension getLaunchGroup(ILaunchConfiguration configuration, String mode) {
+		try {
+			String category = configuration.getCategory();
+			LaunchGroupExtension[] groups = getLaunchGroups();
+			for (int i = 0; i < groups.length; i++) {
+				LaunchGroupExtension extension = groups[i];
+				if (category == null && extension.getCategory() == null) {
+					if (extension.getMode().equals(mode)) {
+						return extension;
+					}
+				} else if (category.equals(extension.getCategory())) {
+					if (extension.getMode().equals(mode)) {
+						return extension;
+					}
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+		return null;
+	}
 
 }
 
