@@ -601,6 +601,11 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.eclipse.ui.edit.delete"
+            keySequence="DEL"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.edit.findReplace"
             keySequence="Ctrl+F"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">

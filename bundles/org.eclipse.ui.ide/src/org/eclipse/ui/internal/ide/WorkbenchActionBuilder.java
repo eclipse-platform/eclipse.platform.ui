@@ -1037,10 +1037,7 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(addTaskAction);
 
 		deleteAction = ActionFactory.DELETE.create(getWindow());
-		// don't register the delete action with the key binding service.
-		// doing so would break cell editors that listen for keyPressed SWT 
-		// events.
-		// registerGlobalAction(deleteAction);
+		registerGlobalAction(deleteAction);
 
 		AboutInfo[] infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 		// See if a welcome page is specified
