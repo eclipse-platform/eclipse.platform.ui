@@ -310,11 +310,15 @@
    
    <extension
          point="org.eclipse.compare.streamMergers">
-      <structureCreator
+      <streamMerger
             extensions="txt"
-            class="org.eclipse.compare.internal.merge.TextMerger"
-            id="org.eclipse.compare.internal.merge.TextMerger">
-      </structureCreator>
+            class="org.eclipse.compare.internal.merge.TextStreamMerger"
+            id="org.eclipse.compare.internal.merge.TextStreamMerger">
+      </streamMerger>
+      <contentTypeBinding
+      		contentTypeId="org.eclipse.core.runtime.text"
+      		streamMergerId="org.eclipse.compare.internal.merge.TextStreamMerger">
+      </contentTypeBinding>
    </extension>
    
    <extension
@@ -343,6 +347,10 @@
             class="org.eclipse.compare.internal.ImageMergeViewerCreator"
             id="org.eclipse.compare.ImageMergeViewerCreator">
       </viewer>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.core.runtime.text"
+            contentMergeViewerId="org.eclipse.compare.TextMergeViewerCreator">
+	  </contentTypeBinding>
    </extension>
    
    <extension
@@ -352,6 +360,18 @@
             class="org.eclipse.compare.internal.TextViewerCreator"
             id="org.eclipse.compare.TextViewerCreator">
       </viewer>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.core.runtime.text"
+            contentViewerId="org.eclipse.compare.TextViewerCreator">
+	  </contentTypeBinding>
    </extension>
+
+
+	<extension point="org.eclipse.core.runtime.contentTypes">
+		<content-type id="foo" name="Foo Type" 	
+			base-type="org.eclipse.core.runtime.javaProperties"
+			file-extensions="foo"
+		/>
+	</extension>		 
 
 </plugin>
