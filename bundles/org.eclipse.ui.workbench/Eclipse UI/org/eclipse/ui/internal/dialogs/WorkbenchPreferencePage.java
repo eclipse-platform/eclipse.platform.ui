@@ -10,30 +10,34 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
+/**
+ * Generic workbench main preference page
+ */
 public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private Button autoBuildButton;
-	private Button autoSaveAllButton;
-	private Button refreshButton;
-	private Button showTasks;
-	private Button exitPromptButton;
-	private IntegerFieldEditor saveInterval;
-
 	private Button doubleClickButton;
 	private Button singleClickButton;
 	private Button selectOnHoverButton;
@@ -62,41 +66,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		composite.setFont(font);
 
-		autoBuildButton = new Button(composite, SWT.CHECK);
-		autoBuildButton.setText(WorkbenchMessages.getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
-		autoBuildButton.setFont(font);
-
-		autoSaveAllButton = new Button(composite, SWT.CHECK);
-		autoSaveAllButton.setText(WorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
-		autoSaveAllButton.setFont(font);
-
-		refreshButton = new Button(composite, SWT.CHECK);
-		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
-		refreshButton.setFont(font);
-		
-		exitPromptButton = new Button(composite, SWT.CHECK);
-		exitPromptButton.setText(WorkbenchMessages.getString("WorkbenchPreference.exitPromptButton")); //$NON-NLS-1$
-		exitPromptButton.setFont(font);
-		
-		showTasks = new Button(composite, SWT.CHECK);
-		showTasks.setText(WorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
-		showTasks.setFont(font);
-
-		createSpace(composite);
-		createSaveIntervalGroup(composite);
-		
-		createSpace(composite);
 		createSingleClickGroup(composite);
 
-		// set initial values
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		// @issue auto build pref is IDE specific
-		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
-		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
-		exitPromptButton.setSelection(store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
-		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
-		
 		return composite;
 	}
 	
@@ -111,7 +82,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setText(WorkbenchMessages.getString("WorkbenchPreference.openMode")); //$NON-NLS-1$
 		buttonComposite.setFont(font);
-		
 
 		String label = WorkbenchMessages.getString("WorkbenchPreference.doubleClick"); //$NON-NLS-1$	
 		doubleClickButton = createRadioButton(buttonComposite,label);
@@ -146,7 +116,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalIndent = 20;
 		selectOnHoverButton.setLayoutData(data);
 		
-		
 		label = WorkbenchMessages.getString("WorkbenchPreference.singleClick_OpenAfterDelay"); //$NON-NLS-1$				
 		openAfterDelayButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
 		openAfterDelayButton.setText(label);
@@ -173,43 +142,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		openOnSingleClick = singleClick;
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setEnabled(openOnSingleClick);
-	}	
-	/**
-	 * Create a composite that contains entry fields specifying save interval preference.
-	 */
-	private void createSaveIntervalGroup(Composite composite) {
-		Composite groupComposite = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		groupComposite.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);	
-		groupComposite.setFont(composite.getFont());
-		
-		saveInterval = new IntegerFieldEditor(IPreferenceConstants.SAVE_INTERVAL, WorkbenchMessages.getString("WorkbenchPreference.saveInterval"), groupComposite); //$NON-NLS-1$
+	}
 
-		saveInterval.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		saveInterval.setPreferencePage(this);
-		saveInterval.setTextLimit(Integer.toString(IPreferenceConstants.MAX_SAVE_INTERVAL).length());
-		saveInterval.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.saveIntervalError", new Object[] { new Integer(IPreferenceConstants.MAX_SAVE_INTERVAL)})); //$NON-NLS-1$
-		saveInterval.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		saveInterval.setValidRange(1, IPreferenceConstants.MAX_SAVE_INTERVAL);
-
-		// @issue save interval pref is IDE specific
-		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
-		long interval = description.getSnapshotInterval() / 60000;
-		saveInterval.setStringValue(Long.toString(interval));
-
-		saveInterval.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(saveInterval.isValid());
-			}
-		});
-		
-	}	
 	/**
 	 * Utility method that creates a radio button instance
 	 * and sets the default layout data.
@@ -224,6 +158,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		button.setFont(parent.getFont());
 		return button;
 	}
+	
 	/**
 	 * Utility method that creates a combo box
 	 *
@@ -238,6 +173,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		combo.setFont(parent.getFont());
 		return combo;
 	}
+	
 	/**
 	 * Utility method that creates a label instance
 	 * and sets the default layout data.
@@ -256,6 +192,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		label.setLayoutData(data);
 		return label;
 	}
+	
 	/**
 	 * Creates a tab of one horizontal spans.
 	 *
@@ -271,6 +208,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		gridData.grabExcessVerticalSpace = false;
 		vfiller.setLayoutData(gridData);
 	}
+	
 	/**
 	 * Returns preference store that belongs to the our plugin.
 	 *
@@ -279,30 +217,25 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	protected IPreferenceStore doGetPreferenceStore() {
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
+	
 	/**
 	 *	@see IWorkbenchPreferencePage
 	 */
 	public void init(IWorkbench aWorkbench) {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
-		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
-		openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
+		IPreferenceStore store = getPreferenceStore();
+		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
+		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
+		openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
 	}
+	
 	/**
 	 * The default button has been pressed. 
 	 */
 	protected void performDefaults() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		autoBuildButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.AUTO_BUILD));
-		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
-		exitPromptButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
-		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
-		saveInterval.loadDefault();
-		
-		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
-		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
-		openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
+		IPreferenceStore store = getPreferenceStore();
+		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
+		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER);
+		openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
 		singleClickButton.setSelection(openOnSingleClick);
 		doubleClickButton.setSelection(!openOnSingleClick);
 		selectOnHoverButton.setSelection(selectOnHover);
@@ -312,61 +245,24 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		
 		super.performDefaults();
 	}
+	
 	/**
 	 *	The user has pressed Ok.  Store/apply this page's values appropriately.
 	 */
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 
-		// inform the workbench of whether it should do autobuilds or not
-		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
-		boolean coreAutoBuildSetting = description.isAutoBuilding();
-		boolean preferenceStoreCurrentSetting = store.getBoolean(IPreferenceConstants.AUTO_BUILD);
-		boolean newAutoBuildSetting = autoBuildButton.getSelection();
-		
-		//As older versions of Eclipse did not use the preference store for this
-		//setting it is possible that the setting in Core will be false 
-		//and the preference store will have the default value of true.
-		//Do a second setValue if required here to synch them up
-		if(preferenceStoreCurrentSetting && !coreAutoBuildSetting)		
-			store.setValue(IPreferenceConstants.AUTO_BUILD, coreAutoBuildSetting);
-		
-		// store the auto build in the preference store so that we can enable import and export
-		store.setValue(IPreferenceConstants.AUTO_BUILD, newAutoBuildSetting);
-
-		// store the save all prior to build setting
-		store.setValue(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, autoSaveAllButton.getSelection());
-
-		// store the refresh workspace on startup setting
-		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
-
-		// store the exit prompt on last window close setting
-		store.setValue(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
-
-		//store the preference for bringing task view to front on build
-		store.setValue(IPreferenceConstants.SHOW_TASKS_ON_BUILD, showTasks.getSelection());
-
-		long oldSaveInterval = description.getSnapshotInterval() / 60000;
-		long newSaveInterval = new Long(saveInterval.getStringValue()).longValue();
-		if(oldSaveInterval != newSaveInterval) {
-			try {
-				description.setSnapshotInterval(newSaveInterval * 60000);
-				ResourcesPlugin.getWorkspace().setDescription(description);
-				store.firePropertyChangeEvent(IPreferenceConstants.SAVE_INTERVAL, new Integer((int)oldSaveInterval), new Integer((int)newSaveInterval));
-			} catch (CoreException e) {
-				WorkbenchPlugin.log("Error changing save interval preference", e.getStatus()); //$NON-NLS-1$
-			}
-		}
-
-		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK,openOnSingleClick); //$NON-NLS-1$
-		store.setValue(IPreferenceConstants.SELECT_ON_HOVER,selectOnHover); //$NON-NLS-1$
-		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY,openAfterDelay); //$NON-NLS-1$
+		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, openOnSingleClick);
+		store.setValue(IPreferenceConstants.SELECT_ON_HOVER, selectOnHover);
+		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
 		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
-		if(openOnSingleClick) {
-			if(selectOnHover)
+		if (openOnSingleClick) {
+			if (selectOnHover) {
 				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
-			if(openAfterDelay)
+			}
+			if (openAfterDelay) {
 				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
+			}
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
 

@@ -35,7 +35,6 @@ public class SelectPerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 	private IPerspectiveRegistry perspReg;
 	private IPerspectiveDescriptor perspDesc;
 	private Button okButton;
-	private Button cancelButton;
 
 	final private static int LIST_WIDTH = 200;
 	final private static int LIST_HEIGHT = 200;
@@ -73,7 +72,7 @@ protected void configureShell(Shell shell) {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 }
 /**
  * Creates and returns the contents of the upper part 

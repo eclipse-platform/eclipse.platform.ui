@@ -260,7 +260,7 @@ public final class Workbench implements IWorkbench {
 		}
 
 		IPreferenceStore store = getPreferenceStore();
-		boolean closeEditors = store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
+		boolean closeEditors = store.getBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
 			Platform.run(new SafeRunnable() {
 				public void run() {

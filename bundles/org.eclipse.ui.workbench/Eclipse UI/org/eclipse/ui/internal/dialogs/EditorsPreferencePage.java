@@ -11,23 +11,13 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -42,6 +32,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -52,13 +43,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * The Editors preference page of the workbench.
  */
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private IWorkbench workbench;
-	
-	// State for encoding group
-	private String defaultEnc;
-	private Button defaultEncodingButton;
-	private Button otherEncodingButton;
-	private Combo encodingCombo;
+	private static final int REUSE_INDENT = 10;
 
 	private Composite editorReuseGroup;
 	private Button reuseEditors;
@@ -70,10 +55,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button openNewEditor;
 	private Button promptToReuseEditor;
 	
-	private static final int REUSE_INDENT = 10;
-
 	private IntegerFieldEditor recentFilesEditor;
-			
 	private IPropertyChangeListener validityChangeListener =
 		new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -100,14 +82,11 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		closeEditorsOnExit = new Button(composite, SWT.CHECK);
 		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
 		closeEditorsOnExit.setFont(composite.getFont());
-		closeEditorsOnExit.setSelection(store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
+		closeEditorsOnExit.setSelection(store.getBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT));
 		setButtonLayoutData(closeEditorsOnExit);
 		
 		createEditorReuseGroup(composite);
 		
-		WorkbenchPreferencePage.createSpace(composite);
-		createEncodingGroup(composite);
-
 		updateValidState();
 		
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
@@ -115,14 +94,12 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		return composite;
 	}
 	
-	public void init(IWorkbench aWorkbench) {
-		workbench = aWorkbench;
+	public void init(IWorkbench workbench) {
 	}
 	
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
-		updateEncodingState(true);
-		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
+		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT));
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
 		openNewEditor.setSelection(!store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
@@ -137,17 +114,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();	
-		Preferences resourcePrefs = ResourcesPlugin.getPlugin().getPluginPreferences();
-		if (defaultEncodingButton.getSelection()) {
-			resourcePrefs.setToDefault(ResourcesPlugin.PREF_ENCODING);
-		}
-		else {
-			String enc = encodingCombo.getText();
-			resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
-		}
-		
-		ResourcesPlugin.getPlugin().savePluginPreferences();
-		store.setValue(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT,closeEditorsOnExit.getSelection());
+		store.setValue(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT, closeEditorsOnExit.getSelection());
 
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
@@ -158,6 +125,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		recentFilesEditor.store();		
 		return super.performOk();
 	}
+	
 	/**
 	 * Returns preference store that belongs to the our plugin.
 	 *
@@ -167,84 +135,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 		
-	private void createEncodingGroup(Composite parent) {
-		
-		Font font = parent.getFont();
-		Group group = new Group(parent, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(data);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
-		group.setText(WorkbenchMessages.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
-		group.setFont(font);
-		
-		SelectionAdapter buttonListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateEncodingState(defaultEncodingButton.getSelection());
-				updateValidState();
-			}
-		};
-		
-		defaultEncodingButton = new Button(group, SWT.RADIO);
-		defaultEnc = System.getProperty("file.encoding", "UTF-8");  //$NON-NLS-1$  //$NON-NLS-2$
-		defaultEncodingButton.setText(WorkbenchMessages.format("WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalSpan = 2;
-		defaultEncodingButton.setLayoutData(data);
-		defaultEncodingButton.addSelectionListener(buttonListener);
-		defaultEncodingButton.setFont(font);
-		
-		otherEncodingButton = new Button(group, SWT.RADIO);
-		otherEncodingButton.setText(WorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
-		otherEncodingButton.addSelectionListener(buttonListener);
-		otherEncodingButton.setFont(font);
-		
-		encodingCombo = new Combo(group, SWT.NONE);
-		data = new GridData();
-		data.widthHint = convertWidthInCharsToPixels(15);
-		encodingCombo.setFont(font);
-		encodingCombo.setLayoutData(data);
-		encodingCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateValidState();
-			}
-		});
-
-		ArrayList encodings = new ArrayList();
-		int n = 0;
-		try {
-			n = Integer.parseInt(WorkbenchMessages.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
-		}
-		catch (NumberFormatException e) {
-			// Ignore;
-		}
-		for (int i = 0; i < n; ++i) {
-			String enc = WorkbenchMessages.getString("WorkbenchPreference.defaultEncoding" + (i+1), null); //$NON-NLS-1$
-			if (enc != null) {
-				encodings.add(enc);
-			}
-		}
-		
-		if (!encodings.contains(defaultEnc)) {
-			encodings.add(defaultEnc);
-		}
-
-		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
-		boolean isDefault = enc == null || enc.length() == 0;
-
-	 	if (!isDefault && !encodings.contains(enc)) {
-			encodings.add(enc);
-		}
-		Collections.sort(encodings);
-		for (int i = 0; i < encodings.size(); ++i) {
-			encodingCombo.add((String) encodings.get(i));
-		}
-
-		encodingCombo.setText(isDefault ? defaultEnc : enc);
-		
-		updateEncodingState(isDefault);
-	}
 	private void updateValidState() {
 		if (!recentFilesEditor.isValid()) {
 			setErrorMessage(recentFilesEditor.getErrorMessage());
@@ -254,36 +144,12 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 			setErrorMessage(reuseEditorsThreshold.getErrorMessage());
 			setValid(false);
 		}
-		else if (!isEncodingValid()) {
-			setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
-			setValid(false);
-		}
 		else {
 			setErrorMessage(null);
 			setValid(true);
 		}
 	}
-	
-	private boolean isEncodingValid() {
-		return defaultEncodingButton.getSelection() ||
-			isValidEncoding(encodingCombo.getText());
-	}
-	
-	private boolean isValidEncoding(String enc) {
-		try {
-			new String(new byte[0], enc);
-			return true;
-		} catch (UnsupportedEncodingException e) {
-			return false;
-		}
-	}
-	
-	private void updateEncodingState(boolean useDefault) {
-		defaultEncodingButton.setSelection(useDefault);
-		otherEncodingButton.setSelection(!useDefault);
-		encodingCombo.setEnabled(!useDefault);
-		updateValidState();
-	}		
+
 	/**
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */

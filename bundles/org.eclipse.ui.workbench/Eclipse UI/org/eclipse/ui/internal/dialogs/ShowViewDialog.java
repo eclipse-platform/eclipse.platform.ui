@@ -33,7 +33,6 @@ public class ShowViewDialog extends org.eclipse.jface.dialogs.Dialog
 	private IViewRegistry viewReg;
 	private IViewDescriptor[] viewDescs = new IViewDescriptor[0];
 	private Button okButton;
-	private Button cancelButton;
 
 	private static final int LIST_WIDTH = 250;
 	private static final int LIST_HEIGHT = 300;
@@ -87,7 +86,7 @@ protected void configureShell(Shell shell) {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 }
 /**
  * Creates and returns the contents of the upper part 

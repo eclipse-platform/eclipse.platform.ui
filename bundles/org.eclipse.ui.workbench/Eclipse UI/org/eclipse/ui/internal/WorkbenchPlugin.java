@@ -386,11 +386,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
 			
 		// @issue most of these are IDE-specific
-		store.setDefault(IPreferenceConstants.AUTO_BUILD, true);
-		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
-		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
-		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
@@ -413,11 +409,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
-		store.setDefault(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		
-		// Set the default behaviour for showing the task list when there are compiles errors in the build
-		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);
-
 		// Set the default configuration for the key binding service
 		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
 
