@@ -15,8 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -43,38 +47,35 @@ public class UpdateOperation extends SingleCommandOperation {
 	 * local options using the appropriate argument (-r or -D). If the tag is <code>null</code>
 	 * then the tag will be omitted from the local options and the tags on the local resources
 	 * will be used.
-	 * @param shell
-	 * @param resources
-	 * @param options
-	 * @param tag
 	 */
 	public UpdateOperation(IWorkbenchPart part, IResource[] resources, LocalOption[] options, CVSTag tag) {
-		super(part, resources, options);
-		this.tag = tag;
+		this(part, asResourceMappers(resources), options, tag);
 	}
 
-	/* (non-Javadoc)
+    /**
+     * Create an UpdateOperation that will perform on update on the given resources
+     * using the given local option. If a tag is provided, it will be added to the 
+     * local options using the appropriate argument (-r or -D). If the tag is <code>null</code>
+     * then the tag will be omitted from the local options and the tags on the local resources
+     * will be used.
+     */
+    public UpdateOperation(IWorkbenchPart part, ResourceMapping[] mappings, LocalOption[] options, CVSTag tag) {
+        super(part, mappings, options);
+        this.tag = tag;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.SingleCommandOperation#executeCommand(org.eclipse.team.internal.ccvs.core.client.Session, org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus executeCommand(
 		Session session,
 		CVSTeamProvider provider,
 		ICVSResource[] resources,
-		IProgressMonitor monitor)
+		boolean recurse, IProgressMonitor monitor)
 		throws CVSException, InterruptedException {
 			
-			// Build the local options
-			List localOptions = new ArrayList();
+			LocalOption[] commandOptions = getLocalOptions(recurse);
 		
-			// Use the appropriate tag options
-			if (tag != null) {
-				localOptions.add(Update.makeTagOption(tag));
-			}
-		
-			// Build the arguments list
-			localOptions.addAll(Arrays.asList(getLocalOptions()));
-			LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
-
 			monitor.beginTask(null, 100);
 			IStatus execute = getUpdateCommand().execute(
 				session,
@@ -84,10 +85,23 @@ public class UpdateOperation extends SingleCommandOperation {
 				getCommandOutputListener(),
 				Policy.subMonitorFor(monitor, 95));
 			
-			updateWorkspaceSubscriber(provider, resources, Policy.subMonitorFor(monitor, 5));
+			updateWorkspaceSubscriber(provider, resources, recurse, Policy.subMonitorFor(monitor, 5));
 			monitor.done();
 			return execute;
 	}
+
+    protected LocalOption[] getLocalOptions(boolean recurse) {
+        // Build the local options
+        List localOptions = new ArrayList();
+        // Use the appropriate tag options
+        if (tag != null) {
+        	localOptions.add(Update.makeTagOption(tag));
+        }
+        // Build the arguments list
+        localOptions.addAll(Arrays.asList(super.getLocalOptions(recurse)));
+        LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+        return commandOptions;
+    }
 
 	protected Update getUpdateCommand() {
 		return Command.UPDATE;
@@ -129,4 +143,11 @@ public class UpdateOperation extends SingleCommandOperation {
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
 		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
 	}
+    
+    protected ResourceMappingContext getResourceMappingContext() {
+        if (Update.IGNORE_LOCAL_CHANGES.isElementOf(getLocalOptions(false))) {
+            return SubscriberResourceMappingContext.getReplaceContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+        }
+        return SubscriberResourceMappingContext.getUpdateContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+    }
 }

@@ -31,18 +31,18 @@ public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 	List skippedFiles = new ArrayList();
 	
 	public UpdateOnlyMergableOperation(IWorkbenchPart part, IResource[] resources, LocalOption[] localOptions) {
-		super(part, resources, localOptions);
+		super(part, asResourceMappers(resources), localOptions);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.SingleCommandOperation#executeCommand(org.eclipse.team.internal.ccvs.core.client.Session, org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStatus executeCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	protected IStatus executeCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		UpdateMergableOnly update = new UpdateMergableOnly();
 		IStatus status = update.execute(
 			session,
 			Command.NO_GLOBAL_OPTIONS, 
-			getLocalOptions(), 
+			getLocalOptions(recurse), 
 			resources,
 			null, 
 			monitor);

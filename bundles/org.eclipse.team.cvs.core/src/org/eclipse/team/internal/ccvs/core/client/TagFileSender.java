@@ -11,9 +11,8 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
  
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -22,8 +21,8 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 class TagFileSender extends FileStructureVisitor {
 
-	public TagFileSender(Session session) {
-		super(session, false, false);
+	public TagFileSender(Session session, LocalOption[] localOptions) {
+		super(session, localOptions, false, false);
 	}
 	
 	/** 

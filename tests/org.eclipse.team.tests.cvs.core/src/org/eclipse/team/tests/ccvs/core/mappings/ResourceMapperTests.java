@@ -1,0 +1,491 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.tests.ccvs.core.mappings;
+
+import java.io.IOException;
+import java.util.*;
+
+import junit.framework.Test;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.tests.ccvs.core.EclipseTest;
+
+/**
+ * Tests for using CVS operations with deep and shallow resource mappings.
+ */
+public class ResourceMapperTests extends EclipseTest {
+
+    public ResourceMapperTests() {
+        super();
+    }
+
+    public ResourceMapperTests(String name) {
+        super(name);
+    }
+
+    public static Test suite() {
+        return suite(ResourceMapperTests.class);
+    }
+    
+    /**
+     * Update the resources contained in the given mappers and ensure that the
+     * update was performed properly by comparing the result with the reference projects.
+     * @throws Exception 
+     */
+    protected void update(ResourceMapping mapper, LocalOption[] options) throws Exception {
+        SyncInfoTree incomingSet = getIncoming(mapper.getProjects());
+        update(new ResourceMapping[] { mapper }, options);
+        assertUpdate(mapper, incomingSet);
+    }
+
+    /**
+     * Commit and check that all resources in containing project that should have been committed were and
+     * that any not contained by the mappers were not.
+     * @throws CoreException 
+     * @see org.eclipse.team.tests.ccvs.core.EclipseTest#commit(org.eclipse.core.resources.mapping.IResourceMapper[], java.lang.String)
+     */
+    protected void commit(ResourceMapping mapper, String message) throws CoreException {
+        SyncInfoTree set = getOutgoing(mapper.getProjects());
+        commit(new ResourceMapping[] { mapper }, message);
+        assertCommit(mapper, set);
+    }
+    
+    /**
+     * Tag the given resource mappings and assert that only the resources
+     * within the mapping were tagged.
+     * @throws CoreException 
+     */
+    protected void tag(ResourceMapping mapping, CVSTag tag) throws CoreException {
+        tag(new ResourceMapping[] { mapping }, tag, false);
+        assertTagged(mapping, tag);
+    }
+    
+    /**
+     * Branch the resources in the given mapping.
+     * @throws CoreException 
+     * @throws IOException 
+     */
+    protected void branch(ResourceMapping mapping, CVSTag branch) throws CoreException, IOException {
+        CVSTag version = new CVSTag("Root_" + branch.getName(), CVSTag.VERSION);
+        branch(new ResourceMapping[] { mapping }, version, branch, true /* update */);
+        assertTagged(mapping, version);
+        assertBranched(mapping, branch);
+    }
+    
+    /**
+     * Add any resources contained by the mapping
+     * @param mapping
+     * @throws CoreException 
+     */
+    protected void add(ResourceMapping mapping) throws CoreException {
+        SyncInfoTree set = getUnaddedResource(mapping);
+        add(new ResourceMapping[] { mapping });
+        assertAdded(mapping, set);
+    }
+
+    private void assertAdded(ResourceMapping mapping, final SyncInfoTree set) throws CoreException {
+        // Assert that all resources covered by the mapping are now under version control (i.e. are in-sync)
+        // Remove the resources contained in the mapping from the set of unadded resources.
+        visit(mapping, null, new IResourceVisitor() {
+            public boolean visit(IResource resource) throws CoreException {
+                ICVSResource cvsResource = getCVSResource(resource);
+                assertTrue("Resource was not added but should have been: " + resource.getFullPath(), 
+                        (cvsResource.isManaged() 
+                                || (cvsResource.isFolder() 
+                                        && ((ICVSFolder)cvsResource).isCVSFolder())));
+                set.remove(resource);
+                return true;
+            }
+        });
+        // Assert that the remaining unadded resources are still unadded
+        SyncInfo[] infos = set.getSyncInfos();
+        for (int i = 0; i < infos.length; i++) {
+            SyncInfo info = infos[i];
+            ICVSResource cvsResource = getCVSResource(info.getLocal());
+            assertTrue("Resource was added but should not have been: " + info.getLocal().getFullPath(), !cvsResource.isManaged());
+        }
+    }
+
+    /*
+     * Need to ensure that only the resources contained in the mapping
+     * have the branch tag associated with them.
+     */
+    private void assertBranched(ResourceMapping mapping, CVSTag branch) throws CoreException, IOException {
+        // First, make sure the proper resources are tagged in the repo
+        assertTagged(mapping, branch);
+        // Now make sure the proper local files are tagged
+        final Map remotes = getTaggedRemoteFilesByPath(mapping, branch);
+        final Map locals = getTaggedLocalFilesByPath(mapping, branch);
+        for (Iterator iter = remotes.keySet().iterator(); iter.hasNext();) {
+            String key = (String)iter.next();
+            ICVSRemoteFile remote = (ICVSRemoteFile)remotes.get(key);
+            ICVSFile local = (ICVSFile)locals.get(key);
+            assertNotNull("Remotely tagged resource was not tagged locally: " + remote.getRepositoryRelativePath(), local);
+            assertEquals(local.getIResource().getParent().getFullPath(), remote, local, false, false /* include tags */);
+            assertEquals("Remotely tagged resource was not tagged locally: " + remote.getRepositoryRelativePath(), branch, local.getSyncInfo().getTag());
+            locals.remove(key);
+            iter.remove();
+        }
+        // The remote map should be empty after traversal
+        for (Iterator iter = remotes.keySet().iterator(); iter.hasNext();) {
+            String path = (String) iter.next();
+            fail("Remote file " + path + " was tagged remotely but not locally.");
+        }
+        // The local map should be empty after traversal
+        for (Iterator iter = locals.keySet().iterator(); iter.hasNext();) {
+            String path = (String) iter.next();
+            fail("Local file " + path + " was tagged locally but not remotely.");
+        }
+    }
+
+    private void assertTagged(ResourceMapping mapping, final CVSTag tag) throws CoreException {
+        final Map tagged = getTaggedRemoteFilesByPath(mapping, tag);
+        // Visit all the resources in the traversal and ensure that they are tagged
+        visit(mapping, null, new IResourceVisitor() {
+            public boolean visit(IResource resource) throws CoreException {
+                if (resource.getType() == IResource.FILE) {
+                    ICVSRemoteFile file = popRemote(resource, tagged);
+                    assertNotNull("Resource was not tagged: " + resource.getFullPath(), file);
+                }
+                return true;
+            }
+        });
+        
+        // The tagged map should be empty after traversal
+        for (Iterator iter = tagged.keySet().iterator(); iter.hasNext();) {
+            String path = (String) iter.next();
+            fail("Remote file " + path + " was tagged but should not have been.");
+        }
+    }
+
+    private Map getTaggedLocalFilesByPath(ResourceMapping mapping, final CVSTag branch) throws CoreException {
+        final Map tagged = new HashMap();
+        IProject[] projects = mapping.getProjects();
+        for (int i = 0; i < projects.length; i++) {
+            IProject project = projects[i];
+            project.accept(new IResourceVisitor() {
+                public boolean visit(IResource resource) throws CoreException {
+                    if (resource.getType() == IResource.FILE) {
+                        ICVSFile file = (ICVSFile)getCVSResource(resource);
+                        ResourceSyncInfo info = file.getSyncInfo();
+                        if (info != null && info.getTag() != null && info.getTag().equals(branch)) {
+                            tagged.put(file.getRepositoryRelativePath(), file);
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
+        return tagged;
+    }
+    
+    private Map getTaggedRemoteFilesByPath(ResourceMapping mapping, final CVSTag tag) throws CVSException {
+        IProject[] projects = mapping.getProjects();
+        ICVSResource[] remotes = getRemoteTrees(projects, tag);
+        final Map tagged = getFilesByPath(remotes);
+        return tagged;
+    }
+
+    private ICVSResource[] getRemoteTrees(IProject[] projects, CVSTag tag) throws CVSException {
+        List result = new ArrayList();
+        for (int i = 0; i < projects.length; i++) {
+            IProject project = projects[i];
+            RemoteFolderTree tree = RemoteFolderTreeBuilder.buildRemoteTree(getRepository(), project, tag, DEFAULT_MONITOR);
+            result.add(tree);
+        }
+        return (ICVSResource[]) result.toArray(new ICVSResource[result.size()]);
+    }
+
+    private Map getFilesByPath(ICVSResource[] remotes) throws CVSException {
+        Map result = new HashMap();
+        for (int i = 0; i < remotes.length; i++) {
+            ICVSResource resource = remotes[i];
+            collectFiles(resource, result);
+        }
+        return result;
+    }
+
+    private void collectFiles(ICVSResource resource, Map result) throws CVSException {
+        if (resource.isFolder()) {
+            ICVSResource[] members = ((ICVSFolder)resource).members(ICVSFolder.ALL_EXISTING_MEMBERS);
+            for (int i = 0; i < members.length; i++) {
+                ICVSResource member = members[i];
+                collectFiles(member, result);
+            }
+        } else {
+            result.put(resource.getRepositoryRelativePath(), resource);
+        } 
+    }
+
+    private ICVSRemoteFile popRemote(IResource resource, Map tagged) throws CVSException {
+        ICVSResource cvsResource = getCVSResource(resource);
+        ICVSRemoteFile remote = (ICVSRemoteFile)tagged.get(cvsResource.getRepositoryRelativePath());
+        if (remote != null) {
+            tagged.remove(remote.getRepositoryRelativePath());
+        }
+        return remote;
+    }
+    
+    private ResourceMapping asResourceMapping(final IResource[] resources, final int depth) {
+        return new ResourceMapping() {
+            public Object getModelObject() {
+                return ResourcesPlugin.getWorkspace();
+            }
+            public IProject[] getProjects() {
+                return getProjects(resources);
+            }
+            private IProject[] getProjects(IResource[] resources) {
+                Set projects = new HashSet();
+                for (int i = 0; i < resources.length; i++) {
+                    IResource resource = resources[i];
+                    projects.add(resource.getProject());
+                }
+                return (IProject[]) projects.toArray(new IProject[projects.size()]);
+            }
+            public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+                return new ResourceTraversal[] {
+                        new ResourceTraversal(resources, depth, IResource.NONE)
+                    };
+            }
+        };
+    }
+    
+    private void assertUpdate(ResourceMapping mapper, final SyncInfoTree set) throws Exception {
+        final Exception[] exception = new Exception[] { null };
+        visit(mapper, new SyncInfoSetTraveralContext(set), new IResourceVisitor() {
+            public boolean visit(IResource resource) throws CoreException {
+                SyncInfo info = set.getSyncInfo(resource);
+                if (info != null) {
+                    set.remove(resource);
+                    try {
+                        // Assert that the local sync info matches the remote info
+                        assertEquals(resource.getParent().getFullPath(), getCVSResource(resource), (ICVSResource)info.getRemote(), false, false);
+                    } catch (CVSException e) {
+                        exception[0] = e;
+                    } catch (CoreException e) {
+                        exception[0] = e;
+                    } catch (IOException e) {
+                        exception[0] = e;
+                    }
+                }
+                return true;
+            }
+        });
+        if (exception[0] != null) throw exception[0];
+        
+        // check the the state of the remaining resources has not changed
+        assertUnchanged(set);
+    }
+
+    private void assertCommit(ResourceMapping mapper, final SyncInfoTree set) throws CoreException {
+        visit(mapper, new SyncInfoSetTraveralContext(set), new IResourceVisitor() {
+            public boolean visit(IResource resource) throws CoreException {
+                SyncInfo info = set.getSyncInfo(resource);
+                if (info != null) {
+                    set.remove(resource);
+                    assertTrue("Committed resource is not in-sync: " + resource.getFullPath(), getSyncInfo(resource).getKind() == SyncInfo.IN_SYNC);
+                }
+                return true;
+            }
+        });
+        // check the the state of the remaining resources has not changed
+        assertUnchanged(set);
+    }
+
+    /*
+     * Assert that the state of the resources in the set have not changed
+     */
+    private void assertUnchanged(SyncInfoTree set) throws TeamException {
+        //TODO: Need to refresh the subscriber since flush of remote state is deep
+        CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().refresh(set.getResources(), IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+        SyncInfo[] infos = set.getSyncInfos();
+        for (int i = 0; i < infos.length; i++) {
+            SyncInfo info = infos[i];
+            assertUnchanged(info);
+        }
+    }
+
+    private void assertUnchanged(SyncInfo info) throws TeamException {
+        SyncInfo current = getSyncInfo(info.getLocal());
+        assertEquals("The sync info changed for " + info.getLocal().getFullPath(), info, current);
+    }
+
+    private SyncInfo getSyncInfo(IResource local) throws TeamException {
+        return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getSyncInfo(local);
+    }
+
+    private SyncInfoTree getIncoming(IProject[] projects) throws TeamException {
+        CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().refresh(projects, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+        SyncInfoTree set = getAllOutOfSync(projects);
+        set.removeOutgoingNodes();
+        set.removeConflictingNodes();
+        return set;
+    }
+    
+    private SyncInfoTree getOutgoing(IProject[] projects) {
+        SyncInfoTree set = getAllOutOfSync(projects);
+        set.removeIncomingNodes();
+        set.removeConflictingNodes();
+        return set;
+    }
+
+    private SyncInfoTree getUnaddedResource(ResourceMapping mapping) {
+        SyncInfoTree set = getAllOutOfSync(mapping.getProjects());
+        set.selectNodes(new FastSyncInfoFilter() {
+            public boolean select(SyncInfo info) {
+                try {
+                    if (info.getLocal().getType() != IResource.PROJECT && info.getRemote() == null && info.getBase() == null) {
+                        ICVSResource resource = getCVSResource(info.getLocal());
+                        return !resource.isManaged();
+                    }
+                } catch (CVSException e) {
+                    fail(e.getMessage());
+                }
+                return false;
+            }
+        });
+        return set;
+    }
+    
+    private SyncInfoTree getAllOutOfSync(IProject[] projects) {
+        SyncInfoTree set = new SyncInfoTree();
+        CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().collectOutOfSync(projects, IResource.DEPTH_INFINITE, set, DEFAULT_MONITOR);
+        return set;
+    }
+    
+    private void visit(ResourceMapping mapper, ResourceMappingContext context, IResourceVisitor visitor) throws CoreException {
+        ResourceTraversal[] traversals = mapper.getTraversals(context, null);
+        for (int i = 0; i < traversals.length; i++) {
+            ResourceTraversal traversal = traversals[i];
+            visit(traversal, context, visitor);
+        }
+    }
+
+    private void visit(ResourceTraversal traversal, ResourceMappingContext context, IResourceVisitor visitor) throws CoreException {
+        IResource[] resources = traversal.getResources();
+        for (int i = 0; i < resources.length; i++) {
+            IResource resource = resources[i];
+            visit(resource, visitor, context, traversal.getDepth());
+        }
+    }
+
+    private void visit(IResource resource, IResourceVisitor visitor, ResourceMappingContext context, int depth) throws CoreException {
+       if (!visitor.visit(resource) || depth == IResource.DEPTH_ZERO || resource.getType() == IResource.FILE) return;
+       Set members = new HashSet();
+       members.addAll(Arrays.asList(((IContainer)resource).members(false)));
+       if (context != null)
+           members.addAll(Arrays.asList(context.fetchMembers((IContainer)resource, DEFAULT_MONITOR)));
+       for (Iterator iter = members.iterator(); iter.hasNext();) {
+           IResource member = (IResource) iter.next();
+           visit(member, visitor, context, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE);
+       }
+    }
+
+    public void testUpdate() throws Exception {
+        // Create a test project, import it into cvs and check it out
+        IProject project = createProject("testUpdate", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder1/subfolder1/c.txt" });
+
+        // Check the project out under a different name
+        IProject copy = checkoutCopy(project, "-copy");
+        
+        // Perform some operations on the copy and commit them all
+        addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
+        setContentsAndEnsureModified(copy.getFile("changed.txt"));
+        deleteResources(new IResource[] {copy.getFile("deleted.txt")});
+        setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
+        setContentsAndEnsureModified(copy.getFile("folder1/subfolder1/c.txt"));
+        commit(asResourceMapping(new IResource[] { copy }, IResource.DEPTH_INFINITE), "A commit message");
+        
+        // Update the project using depth one and ensure we got only what was asked for
+        update(asResourceMapping(new IResource[] { project }, IResource.DEPTH_ONE), null);
+        
+        // Update a subfolder using depth one and ensure we got only what was asked for
+        update(asResourceMapping(new IResource[] { project.getFolder("folder1") }, IResource.DEPTH_ONE), null);
+        
+        // Update the specific file
+        update(asResourceMapping(new IResource[] { project.getFile("folder1/subfolder1/c.txt") }, IResource.DEPTH_ZERO), null);
+        
+        // Update the remaining resources
+        update(asResourceMapping(new IResource[] { project.getFolder("folder2") }, IResource.DEPTH_INFINITE), null);
+        assertEquals(project, copy);
+    }
+
+    public void testCommit() throws Exception {
+        // Create a test project, import it into cvs and check it out
+        IProject project = createProject("testCommit", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder1/subfolder1/c.txt" });
+        
+        // Perform some operations on the copy and commit only the top level
+        addResources(project, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
+        setContentsAndEnsureModified(project.getFile("changed.txt"));
+        deleteResources(new IResource[] {project.getFile("deleted.txt")});
+        setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
+        setContentsAndEnsureModified(project.getFile("folder1/subfolder1/c.txt"));
+        
+        // Commit the project shallow
+        commit(asResourceMapping(new IResource[] { project }, IResource.DEPTH_ONE), "A commit message");
+        
+        // Commit a subfolder shallow
+        commit(asResourceMapping(new IResource[] { project.getFolder("folder1") }, IResource.DEPTH_ONE), "A commit message");
+        
+        // Now commit the file specifically
+        commit(asResourceMapping(new IResource[] { project.getFile("folder1/subfolder1/c.txt") }, IResource.DEPTH_ZERO), "A commit message");
+        
+        // Now commit the rest
+        commit(asResourceMapping(new IResource[] { project.getFolder("folder2") }, IResource.DEPTH_INFINITE), "A commit message");
+        
+        // Check the project out under a different name
+        IProject copy = checkoutCopy(project, "-copy");
+        assertEquals(project, copy);
+    }
+    
+    public void testTag() throws Exception {
+        // Create a test project, import it into cvs and check it out
+        IProject project = createProject("testTag", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder1/subfolder1/c.txt" });
+
+        tag(asResourceMapping(new IResource[] { project }, IResource.DEPTH_ONE), new CVSTag("v1", CVSTag.VERSION));
+        tag(asResourceMapping(new IResource[] { project.getFolder("folder1") }, IResource.DEPTH_ONE), new CVSTag("v2", CVSTag.VERSION));
+        tag(asResourceMapping(new IResource[] { project.getFile("folder1/subfolder1/c.txt") }, IResource.DEPTH_ZERO), new CVSTag("v3", CVSTag.VERSION));
+        tag(asResourceMapping(new IResource[] { project}, IResource.DEPTH_INFINITE), new CVSTag("v4", CVSTag.VERSION));
+    }
+    
+    public void testBranch() throws Exception {
+        // Create a test project, import it into cvs and check it out
+        IProject project = createProject("testBranch", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder1/subfolder1/c.txt"  });
+
+        branch(asResourceMapping(new IResource[] { project }, IResource.DEPTH_ONE), new CVSTag("b1", CVSTag.BRANCH));
+        branch(asResourceMapping(new IResource[] { project.getFolder("folder1") }, IResource.DEPTH_ONE), new CVSTag("b2", CVSTag.BRANCH));
+        branch(asResourceMapping(new IResource[] { project.getFile("folder1/subfolder1/c.txt") }, IResource.DEPTH_ZERO), new CVSTag("b3", CVSTag.BRANCH));
+        branch(asResourceMapping(new IResource[] { project }, IResource.DEPTH_INFINITE), new CVSTag("b4", CVSTag.BRANCH));
+    }
+    
+    public void testAdd() throws TeamException, CoreException {
+        // Create an empty project
+        IProject project = createProject("testAdd", new String[] { });
+        // add some resources
+        buildResources(project, new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder1/subfolder1/c.txt"  }, false);
+        // add them to CVS
+        add(asResourceMapping(new IResource[] { project }, IResource.DEPTH_ONE));
+        add(asResourceMapping(new IResource[] { project.getFolder("folder1") }, IResource.DEPTH_ONE));
+        add(asResourceMapping(new IResource[] { project.getFile("folder1/subfolder1/c.txt") }, IResource.DEPTH_ZERO));
+        add(asResourceMapping(new IResource[] { project }, IResource.DEPTH_INFINITE));
+    }
+    
+}

@@ -24,6 +24,9 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.core.expressions"/>
    </requires>
 
 
@@ -113,7 +116,7 @@
                enablesFor="1"
                id="nonbound.org.eclipse.team.ui.ConfigureProject">
          </action>
-      </objectContribution>
+      </objectContribution>      
    </extension>
 <!-- ************** Views ********************** -->
    <extension

@@ -11,26 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -38,18 +22,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 
@@ -305,7 +285,7 @@ public abstract class WorkspaceAction extends CVSAction {
 		if(enabled) return true;
 		
 		// invoke the inherited method so that overlaps are maintained
-		IResource[] resources = super.getSelectedResources();
+		IResource[] resources = getSelectedResourcesWithOverlap();
 		
 		// disable if no resources are selected
 		if(resources.length==0) return false;
@@ -363,6 +343,14 @@ public abstract class WorkspaceAction extends CVSAction {
 	}
 	
 	/**
+	 * Return all the selected resources even if some overlap with others.
+     * @return all the selected resources even if some overlap with others.
+     */
+    protected IResource[] getSelectedResourcesWithOverlap() {
+        return super.getSelectedResources();
+    }
+
+    /**
 	 * Method isEnabledForCVSResource.
 	 * @param cvsResource
 	 * @return boolean
@@ -486,8 +474,8 @@ public abstract class WorkspaceAction extends CVSAction {
 	 * 
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
 	 */
-	protected IResource[] getSelectedResources() {
-		return getNonOverlapping(super.getSelectedResources());
+	protected final IResource[] getSelectedResources() {
+		return getNonOverlapping(getSelectedResourcesWithOverlap());
 	}
 
 	protected void executeProviderAction(IProviderAction action, IResource[] resources, IProgressMonitor monitor) throws InvocationTargetException {

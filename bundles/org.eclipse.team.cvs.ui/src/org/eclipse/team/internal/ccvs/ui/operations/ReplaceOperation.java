@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -29,26 +30,15 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ReplaceOperation extends UpdateOperation {
 
-	boolean recurse = true; 
-
 	public ReplaceOperation(IWorkbenchPart part, IResource[] resources, CVSTag tag, boolean recurse) {
-		super(part, resources, getReplaceOptions(recurse), tag);
-		this.recurse = recurse;
+		super(part, resources, new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, tag);
 	}
 
-	/*
-	 * Create the local options required to do a replace
-	 */
-	private static LocalOption[] getReplaceOptions(boolean recurse) {
-		List options = new ArrayList();
-		options.add(Update.IGNORE_LOCAL_CHANGES);
-		if(!recurse) {
-			options.add(Command.DO_NOT_RECURSE);
-		}
-		return (LocalOption[]) options.toArray(new LocalOption[options.size()]);
-	}
+	public ReplaceOperation(IWorkbenchPart part, ResourceMapping[] mappings, CVSTag tag, boolean b) {
+        super(part, mappings, new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, tag);
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {
@@ -62,7 +52,7 @@ public class ReplaceOperation extends UpdateOperation {
 		Session session,
 		CVSTeamProvider provider,
 		ICVSResource[] resources,
-		IProgressMonitor monitor)
+		boolean recurse, IProgressMonitor monitor)
 		throws CVSException, InterruptedException {
 			
 			monitor.beginTask(null, 100);
@@ -80,7 +70,7 @@ public class ReplaceOperation extends UpdateOperation {
 				IStatus status = OK;
 				if (managedResources.length > 0) {
 					// Perform an update, ignoring any local file modifications
-					status = super.executeCommand(session, provider, managedResources, Policy.subMonitorFor(monitor, 70));
+					status = super.executeCommand(session, provider, managedResources, recurse, Policy.subMonitorFor(monitor, 70));
 				}
 				
 				// Prune any empty folders left after the resources were purged.

@@ -73,7 +73,8 @@ public abstract class Command extends Request {
 	/*** Local options: common to many commands ***/
 	// Empty local option array
 	public static final LocalOption[] NO_LOCAL_OPTIONS = new LocalOption[0];
-	// valid for: annotate checkout commit diff export log rdiff remove rtag status tag update  
+	// valid for: annotate checkout commit diff export log rdiff remove rtag status tag update
+    public static final LocalOption RECURSE = new LocalOption("-R"); //$NON-NLS-1$
 	public static final LocalOption DO_NOT_RECURSE = new LocalOption("-l"); //$NON-NLS-1$	
 	// valid for: checkout export update
 	public static final LocalOption PRUNE_EMPTY_DIRECTORIES = new LocalOption("-P"); //$NON-NLS-1$
@@ -242,14 +243,15 @@ public abstract class Command extends Request {
 
 	/**
 	 * Send an array of Resources.
+	 * @param localOptions 
 	 * 
 	 * @see Command#sendFileStructure(ICVSResource,IProgressMonitor,boolean,boolean,boolean)
 	 */
 	protected void sendFileStructure(Session session, ICVSResource[] resources,
-		boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
+		LocalOption[] localOptions, boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
 		checkResourcesManaged(resources);
 		
-		new FileStructureVisitor(session, emptyFolders, true).visit(session, resources, monitor);
+		new FileStructureVisitor(session, localOptions, emptyFolders, true).visit(session, resources, monitor);
 	}
 
 	/**
@@ -547,6 +549,28 @@ public abstract class Command extends Request {
 			session.sendArgument(option);
 			if (argument != null) session.sendArgument(argument);
 		}
+        public LocalOption[] addTo(LocalOption[] options) {
+            if (this.isElementOf(options)) {
+                return options;
+            }
+            LocalOption[] newOptions = new LocalOption[options.length + 1];
+            System.arraycopy(options, 0, newOptions, 0, options.length);
+            newOptions[options.length] = this;
+            return newOptions;
+        }
+        public LocalOption[] removeFrom(LocalOption[] options) {
+            if (!this.isElementOf(options)) {
+                return options;
+            }
+            List result = new ArrayList();
+            for (int i = 0; i < options.length; i++) {
+                Command.LocalOption option = options[i];
+                if (!option.equals(this)) {
+                    result.add(option);
+                }
+            }
+            return (LocalOption[]) result.toArray(new LocalOption[result.size()]);
+        }
 	}
 	/**
 	 * Options subtype for keyword substitution options.

@@ -31,7 +31,7 @@ public class NOOPCommand extends Command {
 		throws CVSException {
 		
 		// The noop visitor will send any pending notifications
-		new NOOPVisitor(session).visit(session, resources, monitor);
+		new NOOPVisitor(session, localOptions).visit(session, resources, monitor);
 		return resources;
 	}
 

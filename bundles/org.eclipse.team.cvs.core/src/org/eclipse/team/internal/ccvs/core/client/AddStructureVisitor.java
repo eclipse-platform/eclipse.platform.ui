@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
@@ -22,8 +23,8 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 class AddStructureVisitor extends AbstractStructureVisitor {
 	
-	public AddStructureVisitor(Session session) {
-		super(session, false, true);
+	public AddStructureVisitor(Session session, LocalOption[] localOptions) {
+		super(session, localOptions, false, true);
 	}
 
 	/**

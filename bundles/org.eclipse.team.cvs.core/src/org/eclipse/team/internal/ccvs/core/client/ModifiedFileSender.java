@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
 /**
  * Visit the CVS file structure, only sending files if they are modified.
@@ -24,8 +25,8 @@ class ModifiedFileSender extends FileStructureVisitor {
 
 	private final Set modifiedFiles;
 	
-	public ModifiedFileSender(Session session) {
-		super(session, false, true);
+	public ModifiedFileSender(Session session, LocalOption[] localOptions) {
+		super(session, localOptions, false, true);
 		modifiedFiles = new HashSet();
 	}
 	

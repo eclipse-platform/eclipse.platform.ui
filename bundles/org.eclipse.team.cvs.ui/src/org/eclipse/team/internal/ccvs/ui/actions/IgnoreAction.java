@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class IgnoreAction extends WorkspaceAction {
+public class IgnoreAction extends WorkspaceTraversalAction {
     
     /**
      * Define an operation that can be run in the background.
@@ -53,7 +53,7 @@ public class IgnoreAction extends WorkspaceAction {
         /* (non-Javadoc)
          * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
          */
-        protected void execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
+        protected void execute(CVSTeamProvider provider, IResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
 			try {
 			    monitor.beginTask(null, resources.length);
 				for (int i = 0; i < resources.length; i++) {

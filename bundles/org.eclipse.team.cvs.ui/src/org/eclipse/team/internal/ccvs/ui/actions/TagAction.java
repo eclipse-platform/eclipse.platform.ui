@@ -34,7 +34,7 @@ import org.eclipse.team.internal.ccvs.ui.tags.TagAsVersionDialog;
 /**
  * TagAction tags the selected resources with a version tag specified by the user.
  */
-public abstract class TagAction extends WorkspaceAction {
+public abstract class TagAction extends WorkspaceTraversalAction {
 	
 	// remember if the execute action was cancelled
 	private boolean wasCancelled = false;
@@ -79,7 +79,7 @@ public abstract class TagAction extends WorkspaceAction {
 	protected ITagOperation configureOperation() {
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		ITagOperation operation = createTagOperation();
-		if (operation.getCVSResources().length == 0) {
+		if (operation.isEmpty()) {
 		    return null;
 		}
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),

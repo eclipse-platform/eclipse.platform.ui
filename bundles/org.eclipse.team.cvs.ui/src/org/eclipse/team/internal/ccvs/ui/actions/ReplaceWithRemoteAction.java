@@ -12,46 +12,41 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 
-public class ReplaceWithRemoteAction extends WorkspaceAction {
+public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
+    
 	public void execute(IAction action)  throws InvocationTargetException, InterruptedException {
-		
-		final IResource[][] resources = new IResource[][] {null};
+        final ResourceMapping[][] resourceMappings = new ResourceMapping[][] {null};
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					monitor = Policy.monitorFor(monitor);
-					monitor.beginTask(null, 100);					
-					resources[0] = checkOverwriteOfDirtyResources(getSelectedResources(), new InfiniteSubProgressMonitor(monitor, 100));
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
+					monitor.beginTask(null, 100);
+                    resourceMappings[0] = ReplaceWithTagAction.checkOverwriteOfDirtyResources(getShell(), getCVSResourceMappings(), new InfiniteSubProgressMonitor(monitor, 100));
+                } finally {
 					monitor.done();
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 		
-		if (resources[0] == null || resources[0].length == 0) return;
+        if(resourceMappings[0] == null || resourceMappings[0].length == 0) {
+            // nothing to do
+            return;
+        }
 		
 		// Peform the replace in the background
-		new ReplaceOperation(getTargetPart(), resources[0], null, true).run();
+		new ReplaceOperation(getTargetPart(), resourceMappings[0], null, true).run();
 	}
-	
-	protected IPromptCondition getPromptCondition(IResource[] dirtyResources) {
-		return getOverwriteLocalChangesPrompt(dirtyResources);
-	}	
 	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()

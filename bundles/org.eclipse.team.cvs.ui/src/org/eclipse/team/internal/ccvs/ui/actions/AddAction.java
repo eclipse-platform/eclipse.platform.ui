@@ -26,21 +26,23 @@ import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
  * AddAction performs a 'cvs add' command on the selected resources. If a
  * container is selected, its children are recursively added.
  */
-public class AddAction extends WorkspaceAction {
+public class AddAction extends WorkspaceTraversalAction {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		if (!promptForAddOfIgnored()) return;
-		new AddOperation(getTargetPart(), getSelectedResources()).run();
+		new AddOperation(getTargetPart(), getCVSResourceMappings()).run();
 	}
-	
-	/**
-	 * Method promptForAddOfIgnored.
+
+    /*
+	 * Prompt whether explicitly selected ignored resources should be added
 	 */
 	private boolean promptForAddOfIgnored() {
-		IResource[] resources = getSelectedResources();
+	    // Prompt if any of the traversal roots are ignored
+	    // TODO: What about non-root resources that are part of the model but would be ignored?
+		IResource[] resources = getSelectedResourcesWithOverlap();
 		boolean prompt = false;
 		for (int i = 0; i < resources.length; i++) {
 			ICVSResource resource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
@@ -58,8 +60,8 @@ public class AddAction extends WorkspaceAction {
 		}
 		return true;
 	}
-
-	/**
+	
+    /**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForManagedResources()
 	 */
 	protected boolean isEnabledForManagedResources() {

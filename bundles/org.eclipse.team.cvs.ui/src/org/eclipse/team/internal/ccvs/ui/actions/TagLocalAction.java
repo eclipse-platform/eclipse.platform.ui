@@ -10,29 +10,33 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
-import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
-import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
+import org.eclipse.team.internal.ui.dialogs.ResourceMappingResourceDisplayArea;
+
 
 public class TagLocalAction extends TagAction {
-
-	IResource[] resources;
+    
+    ResourceMapping[] mappings;
 	
 	protected boolean performPrompting()  {
 		// Prompt for any uncommitted changes
-		PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
-			getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));//$NON-NLS-1$
-		try {
-			 resources = prompt.promptForMultiple();
-		} catch(InterruptedException e) {
-			return false;
-		}
-		if(resources.length == 0) {
+        mappings = getCVSResourceMappings();
+        UncommittedChangesDialog dialog = new UncommittedChangesDialog(getShell(), Policy.bind("TagLocalAction.4"), mappings) { //$NON-NLS-1$
+            protected String getSingleMappingMessage(ResourceMapping mapping) {
+                String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
+                return Policy.bind("TagLocalAction.0", label); //$NON-NLS-1$
+            }
+
+            protected String getMultipleMappingsMessage() {
+                return Policy.bind("TagLocalAction.1"); //$NON-NLS-1$
+            }
+        };
+		mappings = dialog.promptToSelectMappings();
+		if(mappings.length == 0) {
 			// nothing to do
 			return false;						
 		}
@@ -40,35 +44,13 @@ public class TagLocalAction extends TagAction {
 		return true;
 	}
 
-	protected ITagOperation createTagOperation() {
-		return new TagOperation(getTargetPart(), resources);
+    protected ITagOperation createTagOperation() {
+        if (mappings == null)
+            mappings = getCVSResourceMappings();
+		return new TagOperation(getTargetPart(), mappings);
 	}
 	
-	/**
-	 * Note: This method is designed to be overridden by test cases.
-	 */
-	protected IPromptCondition getPromptCondition() {
-		return new IPromptCondition() {
-			public boolean needsPrompt(IResource resource) {
-				return CVSLightweightDecorator.isDirty(resource);
-			}
-			public String promptMessage(IResource resource) {
-				return Policy.bind("TagAction.uncommittedChanges", resource.getName());//$NON-NLS-1$
-			}
-		};
-	}
-	
-	/**
-	 * Return the resources that have been selected by the user. The user has been given 
-	 * a chance to remove any resources with outgoing changes so all provided resources
-	 * are to be tagged.
-	 * @return Returns the resources.
-	 */
-	protected IResource[] getResources() {
-		return resources;
-	}
-
-	/* (non-Javadoc)
+		/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
 	 */
 	public String getId() {

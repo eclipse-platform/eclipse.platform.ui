@@ -53,7 +53,7 @@ public class Diff extends Command {
 		throws CVSException {			
 
 		checkResourcesManaged(resources);
-		DiffStructureVisitor visitor = new DiffStructureVisitor(session);
+		DiffStructureVisitor visitor = new DiffStructureVisitor(session, localOptions);
 		visitor.visit(session, resources, monitor);
 		return resources;
 	}

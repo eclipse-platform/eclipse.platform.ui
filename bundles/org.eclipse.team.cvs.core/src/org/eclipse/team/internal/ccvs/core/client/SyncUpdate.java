@@ -21,11 +21,11 @@ public class SyncUpdate extends Update {
 	/*
 	 * @see Command#sendFileStructure(ICVSResource,IProgressMonitor,boolean,boolean,boolean)
 	 */
-	protected void sendFileStructure(Session session, ICVSResource[] resources,
-		boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
+    protected void sendFileStructure(Session session, ICVSResource[] resources,
+            LocalOption[] localOptions, boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
 			
 		checkResourcesManaged(resources);
-		new FileStructureVisitor(session, emptyFolders, true, false).visit(session, resources, monitor);
+		new FileStructureVisitor(session, localOptions, emptyFolders, true, false).visit(session, resources, monitor);
 	}
 	
 	/* (non-Javadoc)

@@ -11,26 +11,15 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -50,16 +39,20 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	protected boolean sendQuestionable;
 	protected boolean sendModifiedContents;
 	private boolean sendBinary;
+    
+    private boolean recurse = true;
 
-	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents) {
-		this(session, sendQuestionable, sendModifiedContents, true);
+	public AbstractStructureVisitor(Session session, LocalOption[] localOptions, boolean sendQuestionable, boolean sendModifiedContents) {
+		this(session, localOptions, sendQuestionable, sendModifiedContents, true);
 	}
 
-	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents, boolean sendBinary) {
+	public AbstractStructureVisitor(Session session, LocalOption[] localOptions, boolean sendQuestionable, boolean sendModifiedContents, boolean sendBinary) {
 		this.session = session;
 		this.sendQuestionable = sendQuestionable;
 		this.sendModifiedContents = sendModifiedContents;
 		this.sendBinary = sendBinary;
+        if (Command.DO_NOT_RECURSE.isElementOf(localOptions))
+            recurse = false;
 	}
 		
 	/** 
@@ -289,4 +282,10 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	protected String getSendFileTitleKey() {
 		return "AbstractStructureVisitor.sendingFile"; //$NON-NLS-1$
 	}
+    public boolean isRecurse() {
+        return recurse;
+    }
+    public void setRecurse(boolean recurse) {
+        this.recurse = recurse;
+    }
 }

@@ -23,26 +23,12 @@ import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
  * resolve the conflicts. This action is temporary code; it will be removed
  * when a functional synchronize view has been implemented.
  */
-public class UpdateAction extends WorkspaceAction {
+public class UpdateAction extends UpdateSilentAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		UpdateWizard.run(getTargetPart(), getSelectedResources());
-	}
-
-	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
-	 */
-	protected boolean isEnabledForAddedResources() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForNonExistantResources()
-	 */
-	protected boolean isEnabledForNonExistantResources() {
-		return true;
+		UpdateWizard.run(getTargetPart(), getCVSResourceMappings());
 	}
 	
 	public String getId() {

@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -27,19 +27,19 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CommitOperation extends SingleCommandOperation {
 
-	public CommitOperation(IWorkbenchPart part, IResource[] resources, LocalOption[] options, String comment) {
-		super(part, resources, options);
+	public CommitOperation(IWorkbenchPart part, ResourceMapping[] mappers, LocalOption[] options, String comment) {
+		super(part, mappers, options);
 		addLocalOption(Commit.makeArgumentOption(Command.MESSAGE_OPTION, comment));
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.SingleCommandOperation#executeCommand(org.eclipse.team.internal.ccvs.core.client.Session, org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.team.internal.ccvs.core.ICVSResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStatus executeCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	protected IStatus executeCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		return Command.COMMIT.execute(session,
 				Command.NO_GLOBAL_OPTIONS,
-				getLocalOptions(),
-				resources,
+				getLocalOptions(recurse),
+				resources, 
 				null,
 				monitor);
 	}

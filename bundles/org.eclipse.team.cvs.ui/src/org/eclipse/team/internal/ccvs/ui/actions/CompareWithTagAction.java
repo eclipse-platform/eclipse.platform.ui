@@ -21,7 +21,7 @@ import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
-public class CompareWithTagAction extends WorkspaceAction {
+public class CompareWithTagAction extends WorkspaceTraversalAction {
 
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		final IResource[] resources = getSelectedResources();

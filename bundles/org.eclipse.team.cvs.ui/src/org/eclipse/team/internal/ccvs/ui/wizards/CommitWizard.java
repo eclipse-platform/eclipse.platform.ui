@@ -81,11 +81,11 @@ public class CommitWizard extends ResizableWizard {
         
         protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
             try {
-                final AddOperation op= new AddOperation(getPart(), fNewResources);
+                final AddOperation op= new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fNewResources));
                 op.addModesForExtensions(fModesForExtensionsForOneTime);
                 op.addModesForNames(fModesForNamesForOneTime);
                 op.run(monitor);
-                new CommitOperation(getPart(), fAllResources, new Command.LocalOption[0], fComment).run(monitor);
+                new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fAllResources), new Command.LocalOption[0], fComment).run(monitor);
             } catch (InvocationTargetException e) {
                 throw CVSException.wrapException(e);
             }

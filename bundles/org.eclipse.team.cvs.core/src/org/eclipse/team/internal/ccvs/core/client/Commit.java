@@ -50,7 +50,7 @@ public class Commit extends Command {
 		checkResourcesManaged(resources);
 		
 		// Send all changed files to the server	
-		ModifiedFileSender visitor = new ModifiedFileSender(session);
+		ModifiedFileSender visitor = new ModifiedFileSender(session, localOptions);
 		visitor.visit(session, resources, monitor);
 		
 		// Send the changed files as arguments (because this is what other cvs clients do)

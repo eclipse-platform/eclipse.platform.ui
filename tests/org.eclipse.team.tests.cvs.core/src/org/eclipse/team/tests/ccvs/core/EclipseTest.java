@@ -16,6 +16,7 @@ import java.util.*;
 import junit.framework.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -92,8 +93,13 @@ public class EclipseTest extends ResourceTest {
 	
 	protected void addResources(IResource[] newResources) throws CoreException {
 		if (newResources.length == 0) return;
-		executeHeadless(new AddOperation(null, newResources));
+		ResourceMapping[] mappings = asResourceMappers(newResources, IResource.DEPTH_INFINITE);
+        add(mappings);
 	}
+
+    protected void add(ResourceMapping[] mappings) throws CVSException {
+        executeHeadless(new AddOperation(null, mappings));
+    }
 	
 	/**
 	 * Perform a CVS edit of the given resources
@@ -173,7 +179,7 @@ public class EclipseTest extends ResourceTest {
 		IResource[] resources = getResources(container, hierarchy);
 		deleteResources(resources);
 		if (checkin)
-			commitResources(resources, IResource.DEPTH_ZERO);
+			commitResources(resources, IResource.DEPTH_INFINITE);
 		return resources;
 	}
 	
@@ -219,8 +225,18 @@ public class EclipseTest extends ResourceTest {
 		if(ignoreLocalChanges) {
 			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
 		}
-		executeHeadless(new UpdateOperation(null, resources, options, null));
+        ResourceMapping[] mappers = asResourceMappers(resources, IResource.DEPTH_INFINITE);
+		update(mappers, options);
 		return resources;
+    }
+
+    /**
+     * Update the resources contained in the given mappers.
+     */
+    protected void update(ResourceMapping[] mappers, LocalOption[] options) throws CVSException {
+        if (options == null)
+            options = Command.NO_LOCAL_OPTIONS;
+        executeHeadless(new UpdateOperation(null, mappers, options, null));
     }
 
     protected void replace(IContainer container, String[] hierarchy, CVSTag tag, boolean recurse) throws CoreException {
@@ -266,17 +282,47 @@ public class EclipseTest extends ResourceTest {
 	 * Commit the provided resources which must all be in the same project
 	 */
 	protected void commitResources(IResource[] resources, int depth, String message) throws TeamException, CoreException {
-		if (resources.length == 0) return; 
-		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[0], message));
+		if (resources.length == 0) return;
+		ResourceMapping[] resourceMappers = asResourceMappers(resources, depth);
+        commit(resourceMappers, message);
 	}
-	
+
+    /**
+     * Commit the resources contained by the mappers.
+     */
+    protected void commit(ResourceMapping[] mappers, String message) throws CVSException {
+        executeHeadless(new CommitOperation(null, mappers, new Command.LocalOption[0], message));
+    }
+
+    /**
+     * Convert the resources to a resource mapper that traverses the resources
+     * to the specified depth.
+     * @param resources the resource
+     * @return a resource mapper for traversing the resources to the depth specified
+     */
+    protected ResourceMapping[] asResourceMappers(IResource[] resources, int depth) {
+        return WorkspaceResourceMapper.asResourceMappers(resources, depth);
+    }
+    
+    protected ICVSResource asCVSResource(IResource resource) {
+        return CVSWorkspaceRoot.getCVSResourceFor(resource);
+    }
+    
 	/**
 	 * Commit the resources from an existing container to the CVS repository
 	 */
 	public void tagProject(IProject project, CVSTag tag, boolean force) throws TeamException {
-		ITagOperation op = new TagOperation((IWorkbenchPart)null, new IResource[] {project});
-		runTag(op, tag, force);
+		ResourceMapping[] mappings = RepositoryProviderOperation.asResourceMappers(new IResource[] {project});
+        tag(mappings, tag, force);
 	}
+
+    /**
+     * Tag the resources contained in the given mappings
+     */
+    protected void tag(ResourceMapping[] mappings, CVSTag tag, boolean force) throws TeamException {
+        ITagOperation op = new TagOperation((IWorkbenchPart)null, mappings);
+        runTag(op, tag, force);
+    }
 	
 	public void tagRemoteResource(ICVSRemoteResource resource, CVSTag tag, boolean force) throws TeamException  {
 		ITagOperation op = new TagInRepositoryOperation(null, new ICVSRemoteResource[] {resource});
@@ -300,10 +346,16 @@ public class EclipseTest extends ResourceTest {
 		}
 	}
 	public void makeBranch(IResource[] resources, CVSTag version, CVSTag branch, boolean update) throws CVSException {
-		BranchOperation op = new BranchOperation(null, resources);
-		op.setTags(version, branch, update);
-		executeHeadless(op);
+		ResourceMapping[] mappings = asResourceMappers(resources, IResource.DEPTH_INFINITE);
+        branch(mappings, version, branch, update);
 	}
+
+    protected void branch(ResourceMapping[] mappings, CVSTag version, CVSTag branch, boolean update) throws CVSException {
+        BranchOperation op = new BranchOperation(null, mappings);
+        op.setTags(version, branch, update);
+        executeHeadless(op);
+    }
+    
 	/**
 	 * Return a collection of resources defined by hierarchy. The resources
 	 * are added to the workspace and to the file system. If the manage flag is true, the
@@ -429,6 +481,10 @@ public class EclipseTest extends ResourceTest {
 	 * Compare resources by casting them to their prpoer type
 	 */
 	protected void assertEquals(IPath parent, ICVSResource resource1, ICVSResource resource2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
+        if ((resource1 == null && resource2 == null) 
+                || (resource1 == null && ! resource2.exists())
+                || (resource2 == null && ! resource1.exists()))
+            return;
 		assertEquals("Resource types do not match for " + parent.append(resource1.getName()), resource1.isFolder(), resource2.isFolder());
 		if (!resource1.isFolder())
 			assertEquals(parent, (ICVSFile)resource1, (ICVSFile)resource2, includeTimestamps, includeTags);

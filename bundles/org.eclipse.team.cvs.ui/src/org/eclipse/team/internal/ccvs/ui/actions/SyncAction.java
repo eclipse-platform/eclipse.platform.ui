@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Action to initiate a CVS workspace synchronize
  */
-public class SyncAction extends WorkspaceAction {
+public class SyncAction extends WorkspaceTraversalAction {
 	
 	public void execute(IAction action) throws InvocationTargetException {
 		final IResource[] resources = getResourcesToSync();

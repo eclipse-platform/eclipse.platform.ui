@@ -13,15 +13,16 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
 /**
  * Send the contents of the CVS/Notify files to the server
  */
 public class NOOPVisitor extends AbstractStructureVisitor {
 
-	public NOOPVisitor(Session session) {
+	public NOOPVisitor(Session session, LocalOption[] localOptions) {
 		// Only send non-empty folders
-		super(session, false, false);
+		super(session, localOptions, false, false);
 	}
 	
 	/**
@@ -35,7 +36,7 @@ public class NOOPVisitor extends AbstractStructureVisitor {
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor#visitFolder(ICVSFolder)
 	 */
 	public void visitFolder(ICVSFolder folder) throws CVSException {
-		if (folder.isCVSFolder()) {
+		if (isRecurse() && folder.isCVSFolder()) {
 			folder.acceptChildren(this);
 		}
 	}

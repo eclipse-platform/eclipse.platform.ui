@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
@@ -30,16 +31,16 @@ import org.eclipse.ui.IWorkbenchPart;
  * Performs a "cvs add"
  */
 public class AddOperation extends RepositoryProviderOperation {
-	
+		
 	private Map fModesForExtensions;
 	private Map fModesForFiles;
-
-    public AddOperation(IWorkbenchPart part, IResource[] resources) {
-		super(part, resources);
+	
+	public AddOperation(IWorkbenchPart part, ResourceMapping[] mappers) {
+		super(part, mappers);
 		fModesForExtensions= Collections.EMPTY_MAP;
 		fModesForFiles= Collections.EMPTY_MAP;
-    }
-    
+	}
+
     public void addModesForExtensions(Map modes) {
 		fModesForExtensions= modes;
     }
@@ -47,14 +48,13 @@ public class AddOperation extends RepositoryProviderOperation {
     public void addModesForNames(Map modes) {
         fModesForFiles= modes;
 	}
-	
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	protected void execute(CVSTeamProvider provider, IResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
 	    if (resources.length == 0)
 	        return;
-		add(provider, resources, IResource.DEPTH_INFINITE, monitor);
+		add(provider, resources, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, monitor);
 	}
 	
 	/* (non-Javadoc)
@@ -135,7 +135,7 @@ public class AddOperation extends RepositoryProviderOperation {
 										files.put(ksubst, set);
 									}
 									set.add(mResource);
-								} else {
+								} else if (!isManagedProject(resource, mResource)){
 									folders.add(mResource);
 								}
 							}
@@ -207,6 +207,13 @@ public class AddOperation extends RepositoryProviderOperation {
 	}
 	
 	/*
+     * Return true if the resource is a project that is already a CVS folder
+     */
+    protected boolean isManagedProject(IResource resource, ICVSResource resource2) throws CVSException {
+        return resource.getType() == IResource.PROJECT && ((ICVSFolder)resource2).isCVSFolder();
+    }
+
+    /*
 	 * Consider a folder managed only if it's also a CVS folder
 	 */
 	protected boolean isManaged(ICVSResource cvsResource) throws CVSException {

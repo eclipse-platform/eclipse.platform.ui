@@ -15,6 +15,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
 /**
  * Visitor to send the local file structure to the CVS Server.
@@ -31,12 +32,12 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 
 	private boolean sendEmptyFolders;
 
-	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents) {
-		this(session, sendEmptyFolders, sendModifiedContents, true);
+	public FileStructureVisitor(Session session, LocalOption[] localOptions, boolean sendEmptyFolders, boolean sendModifiedContents) {
+		this(session, localOptions, sendEmptyFolders, sendModifiedContents, true);
 	}
 
-	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, boolean sendBinary) {
-		super(session, true, sendModifiedContents, sendBinary);
+	public FileStructureVisitor(Session session, LocalOption[] localOptions, boolean sendEmptyFolders, boolean sendModifiedContents, boolean sendBinary) {
+		super(session, localOptions, true, sendModifiedContents, sendBinary);
 		this.sendEmptyFolders = sendEmptyFolders;
 	}
 
@@ -73,7 +74,9 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		ICVSResource[] children = mFolder.members(ICVSFolder.ALL_UNIGNORED_MEMBERS);
 		sendFiles(children);
 		sendQuestionableFolders(children);
-		sendManagedFolders(children);
+        if (isRecurse()) {
+    		sendManagedFolders(children);
+        }
 	}
 
 	/**

@@ -15,13 +15,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
@@ -32,16 +32,8 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	private Set localOptions = new HashSet();
 	private CVSTag tag;
 
-	public TagOperation(IWorkbenchPart part, IResource[] resources) {
-		super(part, resources);
-	}
-
-	/**
-	 * TODO: needed to prevent re-release of releng tool.
-	 * Shoudl eb able to remove eventually
-	 */
-	public TagOperation(Shell shell, IResource[] resources) {
-		super(null, resources);
+	public TagOperation(IWorkbenchPart part, ResourceMapping[] mappers) {
+		super(part, mappers);
 	}
 
 	public CVSTag getTag() {
@@ -55,8 +47,8 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
-		IStatus status = tag(provider, resources, monitor);
+	protected void execute(CVSTeamProvider provider, IResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
+		IStatus status = tag(provider, resources, recurse, monitor);
 		collectStatus(status);
 	}
 
@@ -82,10 +74,17 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	 *    CVSStatus.OK - Nothing to report
 	 *    CVSStatus.SERVER_ERROR - The server reported an error
 	 *    any other code - warning messages received from the server
+	 * @param recurse 
 	 */
-	public IStatus tag(CVSTeamProvider provider, IResource[] resources, IProgressMonitor progress) throws CVSException {
+	public IStatus tag(CVSTeamProvider provider, IResource[] resources, boolean recurse, IProgressMonitor progress) throws CVSException {
 						
 		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+        if (recurse) {
+            commandOptions = Command.DO_NOT_RECURSE.removeFrom(commandOptions);
+        } else {
+            commandOptions = Command.RECURSE.removeFrom(commandOptions);
+            commandOptions = Command.DO_NOT_RECURSE.addTo(commandOptions);
+        }
 				
 		// Build the arguments list
 		String[] arguments = getStringArguments(resources);
@@ -153,15 +152,46 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 		}
 	}
 
+    private ICVSResource[] getCVSResources() {
+        try {
+            IResource[] resources = getTraversalRoots();
+            ICVSResource[] cvsResources = new ICVSResource[resources.length];
+            for (int i = 0; i < resources.length; i++) {
+                cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+            }
+            return cvsResources;
+        } catch (CoreException e) {
+            CVSUIPlugin.log(e);
+            return new ICVSResource[0];
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#getTagSource()
      */
     public TagSource getTagSource() {
-        return TagSource.create(getResources());
+        try {
+            return TagSource.create(getTraversalRoots());
+        } catch (CoreException e) {
+            CVSUIPlugin.log(e);
+            return null;
+        }
     }
 
     protected boolean isReportableError(IStatus status) {
         return super.isReportableError(status)
         	|| status.getCode() == CVSStatus.TAG_ALREADY_EXISTS;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#isEmpty()
+     */
+    public boolean isEmpty() {
+        try {
+            return getTraversals().length == 0;
+        } catch (CoreException e) {
+            CVSUIPlugin.log(e);
+            return true;
+        }
     }
 }

@@ -28,7 +28,7 @@ abstract class AbstractMessageCommand extends Command {
 		throws CVSException {			
 		
 		// Send all folders that are already managed to the server
-		new FileStructureVisitor(session, false, false).visit(session, resources, monitor);
+		new FileStructureVisitor(session, localOptions, false, false).visit(session, resources, monitor);
 		return resources;
 	}
 

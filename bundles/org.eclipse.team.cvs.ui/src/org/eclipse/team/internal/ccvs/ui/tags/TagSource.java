@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.tags;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.team.core.TeamException;
@@ -118,6 +119,24 @@ public abstract class TagSource {
         return create(getCVSResources(getProjects(resources)));
     }
     
+    /**
+     * Create a tag source for the given mappers.
+     * @param mappers the mappers
+     * @return a tag source 
+     */
+    public static TagSource create(ResourceMapping[] mappers) {
+        return create(getCVSResources(getProjects(mappers)));
+    }
+    
+    private static IResource[] getProjects(ResourceMapping[] mappers) {
+        Set projects = new HashSet();
+        for (int i = 0; i < mappers.length; i++) {
+            ResourceMapping mapper = mappers[i];
+            projects.addAll(Arrays.asList(mapper.getProjects()));
+        }
+        return (IResource[]) projects.toArray(new IResource[projects.size()]);
+    }
+
     private static IResource[] getProjects(IResource[] resources) {
         Set result = new HashSet();
         for (int i = 0; i < resources.length; i++) {

@@ -35,7 +35,7 @@ public class Log extends AbstractMessageCommand {
 		
 		// Send all folders that are already managed to the server
 		boolean sendEmptyFolders = Command.findOption(localOptions, RCS_FILE_NAMES_ONLY.getOption()) != null;
-		new FileStructureVisitor(session, sendEmptyFolders, false /* send modified contents */).visit(session, resources, monitor);
+		new FileStructureVisitor(session, localOptions, sendEmptyFolders, false /* send modified contents */).visit(session, resources, monitor);
 		return resources;
 	}
 }

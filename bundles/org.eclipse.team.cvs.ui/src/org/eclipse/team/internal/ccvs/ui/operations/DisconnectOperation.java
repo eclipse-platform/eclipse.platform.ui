@@ -39,7 +39,7 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 	protected void execute(
 		CVSTeamProvider provider,
 		IResource[] resources,
-		IProgressMonitor monitor)
+		boolean recurse, IProgressMonitor monitor)
 		throws CVSException, InterruptedException {
 		
 		// This method will be invoked for each provider being disconnected

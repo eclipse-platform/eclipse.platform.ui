@@ -10,24 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -48,8 +39,8 @@ public class BranchOperation extends RepositoryProviderOperation {
 	private CVSTag rootVersionTag;
 	private CVSTag branchTag;
 	
-	public BranchOperation(IWorkbenchPart part, IResource[] resources) {
-		super(part, resources);
+	public BranchOperation(IWorkbenchPart part, ResourceMapping[] mappers) {
+		super(part, mappers);
 	}
 	
 	public void setTags(CVSTag rootVersionTag, CVSTag branchTag, boolean updateToBranch) {
@@ -62,51 +53,57 @@ public class BranchOperation extends RepositoryProviderOperation {
 	 * @see org.eclipse.team.ui.TeamOperation#shouldRun()
 	 */
 	protected boolean shouldRun() {
-		IResource[] resources = getResources();
-		boolean allSticky = areAllResourcesSticky(resources);
-		String initialVersionName = calculateInitialVersionName(resources,allSticky);
-		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
-											Policy.bind("BranchWizard.title"), //$NON-NLS-1$
-											getResources(), 
-											allSticky, 
-											initialVersionName);
-		if (dialog.open() != InputDialog.OK) return false;		
-		
-		// Capture the dialog info in local variables
-		final String tagString = dialog.getBranchTagName();
-		update = dialog.getUpdate();
-		branchTag = new CVSTag(tagString, CVSTag.BRANCH);
-		
-		// Only set the root version tag if the name from the dialog differs from the initial name
-		String versionString = dialog.getVersionTagName();
-		if (versionString != null 
-				&& (initialVersionName == null || !versionString.equals(initialVersionName))) {
-			rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
-		}
-								
-		// For non-projects determine if the tag being loaded is the same as the resource's parent
-		// If it's not, warn the user that they will be mixing tags
-		if (update) {
-			try {
-				if(!CVSAction.checkForMixingTags(getShell(), resources, branchTag)) {
-					return false;
-				}
-			} catch (CVSException e) {
-				CVSUIPlugin.log(e);
-			}
-		}
-		return super.shouldRun();
+        try {
+            IResource[] resources = getTraversalRoots();
+    		boolean allSticky = areAllResourcesSticky(resources);
+    		String initialVersionName = calculateInitialVersionName(resources,allSticky);
+    		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
+    											Policy.bind("BranchWizard.title"), //$NON-NLS-1$
+    											resources, 
+    											allSticky, 
+    											initialVersionName);
+    		if (dialog.open() != InputDialog.OK) return false;		
+    		
+    		// Capture the dialog info in local variables
+    		final String tagString = dialog.getBranchTagName();
+    		update = dialog.getUpdate();
+    		branchTag = new CVSTag(tagString, CVSTag.BRANCH);
+    		
+    		// Only set the root version tag if the name from the dialog differs from the initial name
+    		String versionString = dialog.getVersionTagName();
+    		if (versionString != null 
+    				&& (initialVersionName == null || !versionString.equals(initialVersionName))) {
+    			rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
+    		}
+    								
+    		// For non-projects determine if the tag being loaded is the same as the resource's parent
+    		// If it's not, warn the user that they will be mixing tags
+    		if (update) {
+    			try {
+    				if(!CVSAction.checkForMixingTags(getShell(), resources, branchTag)) {
+    					return false;
+    				}
+    			} catch (CVSException e) {
+    				CVSUIPlugin.log(e);
+    			}
+    		}
+    		return super.shouldRun();
+        } catch (CoreException e) {
+            CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
+            return false;
+        }
 	}
-	/* (non-Javadoc)
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(CVSTeamProvider provider, IResource[] providerResources, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	protected void execute(CVSTeamProvider provider, IResource[] providerResources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		try {
 			monitor.beginTask(null, 100);
-			makeBranch(provider, providerResources, rootVersionTag, branchTag, update, Policy.subMonitorFor(monitor, 90));										
+			makeBranch(provider, providerResources, rootVersionTag, branchTag, update, recurse, Policy.subMonitorFor(monitor, 90));										
 			updateRememberedTags(providerResources);
 			if (update) {
-				updateWorkspaceSubscriber(provider, getCVSArguments(providerResources), Policy.subMonitorFor(monitor, 10));
+				updateWorkspaceSubscriber(provider, getCVSArguments(providerResources), recurse, Policy.subMonitorFor(monitor, 10));
 			}
 			collectStatus(Status.OK_STATUS);
 		} catch (TeamException e) {
@@ -117,14 +114,15 @@ public class BranchOperation extends RepositoryProviderOperation {
 		}
 	}
 
-	private void makeBranch(CVSTeamProvider provider, IResource[] resources, final CVSTag versionTag, final CVSTag branchTag, boolean moveToBranch, IProgressMonitor monitor) throws TeamException {
+	private void makeBranch(CVSTeamProvider provider, IResource[] resources, final CVSTag versionTag, final CVSTag branchTag, boolean moveToBranch, boolean recurse, IProgressMonitor monitor) throws TeamException {
 		
 		// Determine the total amount of work
 		int totalWork = (versionTag!= null ? 60 : 40) + (moveToBranch ? 20 : 0);
 		monitor.beginTask(Policy.bind("CVSTeamProvider.makeBranch"), totalWork);  //$NON-NLS-1$
 		try {
 			// Build the arguments list
-			final ICVSResource[] arguments = getCVSArguments(resources);
+			ICVSResource[] arguments = getCVSArguments(resources);
+            LocalOption[] localOptions = getLocalOptions(recurse);
 			
 			// Tag the remote resources
 			IStatus status = null;
@@ -136,7 +134,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 					status = Command.CUSTOM_TAG.execute(
 						session,
 						Command.NO_GLOBAL_OPTIONS,
-						Command.NO_LOCAL_OPTIONS,
+						localOptions,
 						versionTag,
 						arguments,
 						null,
@@ -152,7 +150,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 						status = Command.CUSTOM_TAG.execute(
 							session,
 							Command.NO_GLOBAL_OPTIONS,
-							Command.NO_LOCAL_OPTIONS,
+							localOptions,
 							branchTag,
 							arguments,
 							null,
@@ -166,10 +164,10 @@ public class BranchOperation extends RepositoryProviderOperation {
 				Session session = new Session(getRemoteLocation(provider), getLocalRoot(provider), true /* output to console */);
 				session.open(Policy.subMonitorFor(monitor, 5), true /* open for modification */);
 				try {
-					status = Command.CUSTOM_TAG.execute(
+                    status = Command.CUSTOM_TAG.execute(
 						session,
 						Command.NO_GLOBAL_OPTIONS,
-						Command.NO_LOCAL_OPTIONS,
+						localOptions,
 						branchTag,
 						arguments,
 						null,
@@ -186,7 +184,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 			// Set the tag of the local resources to the branch tag (The update command will not
 			// properly update "cvs added" and "cvs removed" resources so a custom visitor is used
 			if (moveToBranch) {
-				setTag(provider, resources, branchTag, Policy.subMonitorFor(monitor, 20));
+				setTag(provider, resources, branchTag, recurse, Policy.subMonitorFor(monitor, 20));
 			}
 		} finally {
 			monitor.done();
@@ -197,8 +195,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 	 * This method sets the tag for a project.
 	 * It expects to be passed an InfiniteSubProgressMonitor
 	 */
-	private void setTag(final CVSTeamProvider provider, final IResource[] resources, final CVSTag tag, IProgressMonitor monitor) throws TeamException {
-	
+	private void setTag(final CVSTeamProvider provider, final IResource[] resources, final CVSTag tag, final boolean recurse, IProgressMonitor monitor) throws TeamException {
 		getLocalRoot(provider).run(new ICVSRunnable() {
 			public void run(IProgressMonitor progress) throws CVSException {
 				try {
@@ -225,10 +222,9 @@ public class BranchOperation extends RepositoryProviderOperation {
 								if (info != null) {
 									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
 									folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic()));
-									folder.acceptChildren(this);
 								}
 							}
-						});
+						}, recurse);
 					}
 				} finally {
 					progress.done();

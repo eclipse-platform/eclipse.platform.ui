@@ -21,9 +21,24 @@ import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
  * 
  * @since 3.1
  */
-public class UpdateSilentAction extends UpdateAction {
+public class UpdateSilentAction extends WorkspaceTraversalAction {
+    
+    /*
+     * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
+     */
+    protected boolean isEnabledForAddedResources() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForNonExistantResources()
+     */
+    protected boolean isEnabledForNonExistantResources() {
+        return true;
+    }
+    
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-			new UpdateOperation(getTargetPart(), getSelectedResources(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
+		new UpdateOperation(getTargetPart(), getCVSResourceMappings(), Command.NO_LOCAL_OPTIONS, null /* no tag */).run();
 	}
 	
 	public String getId() {

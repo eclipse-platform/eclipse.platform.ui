@@ -9,9 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -22,8 +21,8 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 class DiffStructureVisitor extends FileStructureVisitor {
 	
-	public DiffStructureVisitor(Session session) {
-		super(session, false, true);
+	public DiffStructureVisitor(Session session, LocalOption[] localOptions) {
+		super(session, localOptions, false, true);
 	}
 	
 	/**

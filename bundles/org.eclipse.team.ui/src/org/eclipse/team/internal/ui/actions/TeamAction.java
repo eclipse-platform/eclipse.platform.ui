@@ -15,8 +15,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -150,6 +150,73 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 */
 	protected IResource[] getSelectedResources() {
 		return (IResource[])getSelectedResources(IResource.class);
+	}
+	
+	protected IStructuredSelection getSelection() {
+		return selection;
+	}
+	
+	/**
+     * Return the selected resource mappins that contain resources in 
+     * projects that are associated with a repository of the given id.
+     * @param providerId the repository provider id
+     * @return the resource mappings that contain resources associated with the given provider
+	 */
+    protected ResourceMapping[] getSelectedResourceMappings(String providerId) {
+        Object[] elements = getSelectedAdaptables(selection, ResourceMapping.class);
+        ArrayList providerMappings = new ArrayList();
+        for (int i = 0; i < elements.length; i++) {
+            ResourceMapping element = (ResourceMapping) elements[i];
+            if (providerId == null || isMappedToProvider(element, providerId)) {
+                providerMappings.add(element);
+            }
+        }
+        return (ResourceMapping[]) providerMappings.toArray(new ResourceMapping[providerMappings.size()]);
+    }
+    
+    private boolean isMappedToProvider(ResourceMapping element, String providerId) {
+        IProject[] projects = element.getProjects();
+        for (int k = 0; k < projects.length; k++) {
+            IProject project = projects[k];
+            RepositoryProvider provider = RepositoryProvider.getProvider(project);
+            if (provider.getID().equals(providerId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+	 * Returns the selected resource based on the available traversals.
+	 * 
+	 * @return the selected resources based on the available traversals.
+	 */
+	public ResourceTraversal[] getSelectedTraversals(ResourceMappingContext context, String providerId) throws TeamException {
+		try {
+			Object[] elements = getSelectedAdaptables(selection, ResourceMapping.class);
+			ArrayList providerTraversals = new ArrayList();
+			if(elements.length > 0) {
+				for (int i = 0; i < elements.length; i++) {
+					ResourceMapping element = (ResourceMapping) elements[i];
+                    boolean addIt = true;
+                    if(providerId != null) {
+                        IProject[] projects = element.getProjects();
+                        for (int k = 0; k < projects.length; k++) {
+                            IProject project = projects[k];
+                            RepositoryProvider provider = RepositoryProvider.getProvider(project);
+                            addIt = (providerId != null && provider.getID().equals(providerId));
+                        }               
+                    }
+                    if(addIt) {
+    					ResourceTraversal[] traversals = element.getTraversals(context, null);
+                        providerTraversals.addAll(Arrays.asList(traversals));
+                    }
+				}
+            }
+			return (ResourceTraversal[]) providerTraversals.toArray(new ResourceTraversal[providerTraversals.size()]);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
 	}
 	
 	/**

@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
@@ -209,7 +210,9 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	
 	private void commit(IResource[] commits, IProgressMonitor monitor) throws TeamException {
 		try {
-			new CommitOperation(getPart(), commits, new Command.LocalOption[0], comment).run(monitor);
+			new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(commits),
+					new Command.LocalOption[0], comment)
+						.run(monitor);
 		} catch (InvocationTargetException e) {
 			throw TeamException.asTeamException(e);
 		} catch (InterruptedException e) {
@@ -219,7 +222,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 
 	private void add(IResource[] additions, IProgressMonitor monitor) throws TeamException {
 		try {
-			new AddOperation(getPart(), additions).run(monitor);
+			new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(additions)).run(monitor);
 		} catch (InvocationTargetException e1) {
 			throw TeamException.asTeamException(e1);
 		} catch (InterruptedException e1) {

@@ -175,24 +175,6 @@
                value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
          <action
-               helpContextId="org.eclipse.team.cvs.ui.team_ignore_action_context"
-               label="%IgnoreAction.label"
-               definitionId="org.eclipse.team.cvs.ui.ignore"
-               tooltip="%IgnoreAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
-               menubarPath="team.main/group3"
-               id="org.eclipse.team.cvs.ui.ignore">
-         </action>
-         <action
-               helpContextId="org.eclipse.team.cvs.ui.team_add_action_context"
-               label="%AddAction.label"
-               definitionId="org.eclipse.team.cvs.ui.add"
-               tooltip="%AddAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
-               menubarPath="team.main/group3"
-               id="org.eclipse.team.cvs.ui.add">
-         </action>
-         <action
                helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                label="%ShowHistoryAction.label"
                definitionId="org.eclipse.team.cvs.ui.showHistory"
@@ -248,13 +230,18 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
-            id="org.eclipse.team.ccvs.ui.ResourceContributions">
-         <filter
+            id="org.eclipse.team.ccvs.ui.ResourceMapperContributions">
+<!--         <filter
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
-         </filter>
+         </filter> -->
+		 <enablement>
+           <adapt type="org.eclipse.core.resources.mapping.ResourceMapping">
+              <test property="org.eclipse.ui.ide.projectPersistentProperty" args="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature" />
+           </adapt>
+         </enablement>
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_set_keyword_mode_action_context"
                label="%SetKeywordSubstitutionAction.label"
@@ -374,22 +361,31 @@
                menubarPath="team.main/group1"
                id="org.eclipse.team.cvs.ui.sync">
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
-            adaptable="true"
-            id="org.eclipse.team.ccvs.ui.ResourceContributions">
-         <filter
-               name="projectPersistentProperty"
-               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
-         </filter>
-         <action
-               label="%ShowEditorsAction.label"
-               helpContextId="org.eclipse.team.cvs.ui.team_show_editors_action_context"
-               tooltip="%ShowEditorsAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.ShowEditorsAction"
+                  <action
+               label="%RestoreFromRepositoryAction.label"
+               helpContextId="org.eclipse.team.cvs.ui.team_restore_from_repository_action_context"
+               tooltip="%RestoreFromRepositoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.RestoreFromRepositoryAction"
                menubarPath="team.main/group4"
-               id="org.eclipse.team.ccvs.ui.showeditors">
+               id="org.eclipse.team.ccvs.ui.restoreFromRepository">
+         </action>
+         <action
+               helpContextId="org.eclipse.team.cvs.ui.team_ignore_action_context"
+               label="%IgnoreAction.label"
+               definitionId="org.eclipse.team.cvs.ui.ignore"
+               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
+               tooltip="%IgnoreAction.tooltip"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.cvs.ui.ignore">
+         </action>
+         <action
+               helpContextId="org.eclipse.team.cvs.ui.team_add_action_context"
+               label="%AddAction.label"
+               definitionId="org.eclipse.team.cvs.ui.add"
+               class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
+               tooltip="%AddAction.tooltip"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.cvs.ui.add">
          </action>
       </objectContribution>
 <!-- ************** Project Menu *************** -->
@@ -408,50 +404,6 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"
                menubarPath="team.main/projectGroup"
                id="org.eclipse.team.ccvs.ui.unmanage">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IContainer"
-            adaptable="true"
-            id="org.eclipse.team.ccvs.ui.IContainerContributions">
-         <filter
-               name="projectPersistentProperty"
-               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
-         </filter>
-         <action
-               label="%RestoreFromRepositoryAction.label"
-               helpContextId="org.eclipse.team.cvs.ui.team_restore_from_repository_action_context"
-               tooltip="%RestoreFromRepositoryAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.RestoreFromRepositoryAction"
-               menubarPath="team.main/group4"
-               id="org.eclipse.team.ccvs.ui.restoreFromRepository">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFolder"
-            adaptable="true"
-            id="org.eclipse.team.ccvs.ui.IFolderContributions">
-         <filter
-               name="projectPersistentProperty"
-               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
-         </filter>
-         <action
-               helpContextId="org.eclipse.team.cvs.ui.team_ignore_action_context"
-               label="%IgnoreAction.label"
-               definitionId="org.eclipse.team.cvs.ui.ignore"
-               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
-               tooltip="%IgnoreAction.tooltip"
-               menubarPath="team.main/group3"
-               id="org.eclipse.team.cvs.ui.ignore">
-         </action>
-         <action
-               helpContextId="org.eclipse.team.cvs.ui.team_add_action_context"
-               label="%AddAction.label"
-               definitionId="org.eclipse.team.cvs.ui.add"
-               class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
-               tooltip="%AddAction.tooltip"
-               menubarPath="team.main/group3"
-               id="org.eclipse.team.cvs.ui.add">
          </action>
       </objectContribution>
       <objectContribution
@@ -664,6 +616,9 @@
          </action>
       </objectContribution>
    </extension>
+   
+<!-- ************** Model Element Contributions ********************** -->   
+   
 <!-- ************** Views ********************** -->
    <extension
          point="org.eclipse.ui.views">

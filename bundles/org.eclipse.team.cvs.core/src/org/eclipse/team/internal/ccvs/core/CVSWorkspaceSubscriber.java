@@ -261,8 +261,9 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	/**
 	 * Update the remote tree to the base
 	 * @param folder
+	 * @param recurse 
 	 */
-	public void updateRemote(CVSTeamProvider provider, ICVSFolder folder, IProgressMonitor monitor) throws TeamException {
+	public void updateRemote(CVSTeamProvider provider, ICVSFolder folder, boolean recurse, IProgressMonitor monitor) throws TeamException {
 		try {
 			monitor.beginTask(null, 100);
 			IResource resource = folder.getIResource();

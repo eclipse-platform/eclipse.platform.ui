@@ -122,4 +122,11 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
         return super.isReportableError(status)
         	|| status.getCode() == CVSStatus.TAG_ALREADY_EXISTS;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#isEmpty()
+     */
+    public boolean isEmpty() {
+        return getCVSResources().length == 0;
+    }
 }
