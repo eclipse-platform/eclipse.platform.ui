@@ -7,7 +7,7 @@
 	name="%pluginName"
 	id= "org.eclipse.search"
 	version= "2.0.0"
-	provider-name= "Object Technology International, Inc."
+	provider-name= "Eclipse.org"
 	class= "org.eclipse.search.internal.ui.SearchPlugin">
 
 <requires>
