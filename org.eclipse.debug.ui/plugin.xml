@@ -266,6 +266,15 @@
 
 <!-- Thread Group -->
 		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
+			toolbarPath = "threadGroup"
+			icon = "icons/full/clcl16/rem_all_co.gif"
+			helpContextId = "remove_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveTerminatedAction"
+			tooltip="%RemoveTerminatedAction.tooltip"
+			label="%RemoveTerminatedAction.label">
+		</action>
+		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
 			toolbarPath = "threadGroup"
 			icon = "icons/full/clcl16/disconnect_co.gif"
@@ -339,6 +348,15 @@
 		id = "org.eclipse.debug.ui.debugview.popupMenu"
 		targetID = "org.eclipse.debug.ui.DebugView">
 <!-- Thread Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
+			menubarPath = "launchGroup"
+			icon = "icons/full/clcl16/rem_all_co.gif"
+			helpContextId = "remove_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveTerminatedAction"
+			tooltip="%RemoveTerminatedAction.tooltip"
+			label="%RemoveTerminatedAction.label">
+		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
 			menubarPath = "threadGroup"
