@@ -53,7 +53,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This class can be subclassed and contributed as an object contribution pop-up
  * menu extension action. When invoked, it becomes a sub-menu that dynamically
  * builds a list of applicable launch shortcuts for the current selection.
- * Each launch shortcut may have optional information to support a context menu action. The extra
+ * Each launch shortcut may have optional information to support a context menu action.
  * </p>
  * <p>
  * Clients may subclass this class.
