@@ -382,7 +382,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
 		while (e.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
-			if (annotation.isFolded()) {
+			if (annotation.isCollapsed()) {
 				Position position= fProjectionAnnotationModel.getPosition(annotation);
 				if (includes(expanded, position))
 					positions.add(position);
@@ -402,7 +402,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		Annotation[] annotations= event.getRemovedAnnotations();
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
-			if (annotation.isFolded()) {
+			if (annotation.isCollapsed()) {
 				Position expanded= fProjectionAnnotationModel.getPosition(annotation);
 				Position[] collapsed= computeCollapsedRanges(expanded);
 				expand(expanded, collapsed, false);
@@ -431,7 +431,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		Annotation[] annotations= event.getAddedAnnotations();
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
-			if (annotation.isFolded()) {
+			if (annotation.isCollapsed()) {
 				Position position= fProjectionAnnotationModel.getPosition(annotation);
 				IRegion region= adaptCollapsedRegion(position);
 				if (region != null)
@@ -445,7 +445,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
-			if (annotation.isFolded()) {
+			if (annotation.isCollapsed()) {
 				IRegion region= adaptCollapsedRegion(position);
 				if (region != null)
 					collapse(region.getOffset(), region.getLength(), fireRedraw);
@@ -478,7 +478,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
 			while (e.hasNext()) {
 				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
-				if (annotation.isFolded()) {
+				if (annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					projection.removeMasterDocumentRange(position.getOffset(), position.getLength());
 				}

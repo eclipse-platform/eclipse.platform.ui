@@ -37,7 +37,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	/**
 	 * The type of projection annotations.
 	 */
-	public static final String TYPE= "org.eclipse.folding";
+	public static final String TYPE= "org.eclipse.projection";
 		
 	private static final boolean PLUS= false;
 	private static final int COLOR= SWT.COLOR_DARK_GRAY;
@@ -50,7 +50,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	private static final int SIZE= 2 * MIDDLE + PIXELS;
 
 	/** The state of this annotation */
-	private boolean fIsFolded= false;
+	private boolean fIsCollapsed= false;
 	/** Indicates whether this annotation should be painted as range */
 	private boolean fIsRangeIndication= false;
 	
@@ -73,7 +73,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		Rectangle r= new Rectangle(rectangle.x + OUTER_MARGIN, rectangle.y + OUTER_MARGIN, SIZE -1 , SIZE -1);
 		gc.drawRectangle(r);
 		gc.drawLine(r.x + PIXELS + INNER_MARGIN, r.y + MIDDLE, r.x + r.width - PIXELS - INNER_MARGIN , r.y + MIDDLE);
-		if (fIsFolded) {
+		if (fIsCollapsed) {
 			gc.drawLine(r.x + MIDDLE, r.y + PIXELS + INNER_MARGIN, r.x + MIDDLE, r.y + r.height - PIXELS - INNER_MARGIN);
 		} else {
 			gc.drawLine(r.x + MIDDLE, r.y + r.height, r.x + MIDDLE, rectangle.y + rectangle.height - OUTER_MARGIN);
@@ -93,7 +93,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		int lowerY= rectangle.y + rectangle.height;
 		int middleY= (upperY + lowerY)/2;
 		
-		if (isFolded()) {
+		if (isCollapsed()) {
 			Point upperLeft= new Point(leftX, upperY-1);
 			Point middleRight= new Point(rightX, middleY);
 			Point lowerLeft= new Point(leftX, lowerY);
@@ -119,7 +119,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		Point endPoint= null;
 		int lineHeight= gc.getFontMetrics().getHeight();
 		int[] polygon= computePolygon(computeRectangle(rectangle, lineHeight));
-		if (isFolded()) {
+		if (isCollapsed()) {
 			Color bg= gc.getBackground();
 			gc.setBackground(canvas.getDisplay().getSystemColor(COLOR));
 			gc.fillPolygon(polygon);
@@ -161,21 +161,21 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	 * 
 	 * @return <code>true</code> if collapsed 
 	 */
-	public boolean isFolded() {
-		return fIsFolded;
+	public boolean isCollapsed() {
+		return fIsCollapsed;
 	}
 
 	/**
-	 * Marks this annotation as being folded.
+	 * Marks this annotation as being collapsed.
 	 */
-	public void markFolded() {
-		fIsFolded= true;
+	public void markCollapsed() {
+		fIsCollapsed= true;
 	}
 
 	/**
 	 * Marks this annotation as being unfolded.
 	 */
-	public void markUnfolded() {
-		fIsFolded= false;
+	public void markExpanded() {
+		fIsCollapsed= false;
 	}
 }

@@ -68,7 +68,7 @@ public class ProjectionSupport {
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null && annotation instanceof ProjectionAnnotation) {
 				ProjectionAnnotation projectionAnnotation= (ProjectionAnnotation) annotation;
-				if (projectionAnnotation.isFolded()) {
+				if (projectionAnnotation.isCollapsed()) {
 					
 					StyledTextContent content= textWidget.getContent();
 					int line= content.getLineAtOffset(offset);

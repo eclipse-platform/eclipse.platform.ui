@@ -150,7 +150,7 @@ public class ProjectionRulerColumn extends AnnotationRulerColumn {
 			public void mouseHover(MouseEvent e) {
 				boolean redraw= clearCurrentAnnotation();
 				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y));
-				if (annotation != null && !annotation.isFolded()) {
+				if (annotation != null && !annotation.isCollapsed()) {
 					annotation.setRangeIndication(true);
 					fCurrentAnnotation= annotation;
 					redraw= true;

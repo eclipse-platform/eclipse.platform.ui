@@ -32,11 +32,11 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 * 
 	 * @param annotation the annotation
 	 */
-	public void collaps(Annotation annotation) {
+	public void collapse(Annotation annotation) {
 		if (annotation instanceof ProjectionAnnotation) {
 			ProjectionAnnotation projection= (ProjectionAnnotation) annotation;
-			if (!projection.isFolded()) {
-				projection.markFolded();
+			if (!projection.isCollapsed()) {
+				projection.markCollapsed();
 				modifyAnnotation(projection, true);
 			}
 		}
@@ -51,8 +51,8 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	public void expand(Annotation annotation) {
 		if (annotation instanceof ProjectionAnnotation) {
 			ProjectionAnnotation projection= (ProjectionAnnotation) annotation;
-			if (projection.isFolded()) {
-				projection.markUnfolded();
+			if (projection.isCollapsed()) {
+				projection.markExpanded();
 				modifyAnnotation(projection, true);
 			}
 		}
@@ -68,10 +68,10 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 		if (annotation instanceof ProjectionAnnotation) {
 			ProjectionAnnotation projection= (ProjectionAnnotation) annotation;
 			
-			if (projection.isFolded())
-				projection.markUnfolded();
+			if (projection.isCollapsed())
+				projection.markExpanded();
 			else
-				projection.markFolded();
+				projection.markCollapsed();
 	
 			modifyAnnotation(projection, true);
 		}
@@ -86,24 +86,24 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 */
 	public boolean expandAll(int offset, int length) {
 		
-		boolean unfolded= false;
+		boolean expanding= false;
 		
 		Iterator iterator= getAnnotationIterator();
 		while (iterator.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
-			if (annotation.isFolded()) {
+			if (annotation.isCollapsed()) {
 				Position position= getPosition(annotation);
 				if (position.overlapsWith(offset, length) /* || is a delete at the boundary */ ) {
-					annotation.markUnfolded();
+					annotation.markExpanded();
 					modifyAnnotation(annotation, false);
-					unfolded= true;
+					expanding= true;
 				}
 			}
 		}
 		
-		if (unfolded)
+		if (expanding)
 			fireModelChanged();
 		
-		return unfolded;
+		return expanding;
 	}
 }

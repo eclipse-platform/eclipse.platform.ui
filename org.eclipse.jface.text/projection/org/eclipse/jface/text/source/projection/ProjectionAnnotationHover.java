@@ -20,6 +20,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -68,7 +69,7 @@ public class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationH
 	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int, int, int)
 	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber, int first, int number) {
-		return getProjectionTextAtLine(sourceViewer, lineNumber);
+		return getProjectionTextAtLine(sourceViewer, lineNumber, number);
 	}
 	
 	private int compareRulerLine(Position position, IDocument document, int line) {
@@ -85,8 +86,8 @@ public class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationH
 		return 0;
 	}
 	
-	private String getProjectionTextAtLine(ISourceViewer viewer, int line) {
-		
+	private String getProjectionTextAtLine(ISourceViewer viewer, int line, int numberOfLines) {
+				
 		IAnnotationModel model= null;
 		if (viewer instanceof ISourceViewerExtension2) {
 			ISourceViewerExtension2 viewerExtension= (ISourceViewerExtension2) viewer;
@@ -103,7 +104,7 @@ public class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationH
 				Iterator e= model.getAnnotationIterator();
 				while (e.hasNext()) {
 					ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
-					if (!annotation.isFolded())
+					if (!annotation.isCollapsed())
 						continue;
 					
 					Position position= model.getPosition(annotation);
@@ -111,12 +112,20 @@ public class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationH
 						continue;
 					
 					if (1 == compareRulerLine(position, document, line))
-						return document.get(position.getOffset(), position.getLength());
+						return getText(document, position.getOffset(), position.getLength(), numberOfLines);
+						
 				}
 			} catch (BadLocationException x) {
 			}
 		}
 		
 		return null;
+	}
+
+	private String getText(IDocument document, int offset, int length, int numberOfLines) throws BadLocationException {
+		int endLine= document.getLineOfOffset(offset) + Math.max(0, numberOfLines -1);
+		IRegion lineInfo= document.getLineInformation(endLine);
+		int endOffset= Math.min(offset + length, lineInfo.getOffset() + lineInfo.getLength());
+		return document.get(offset, endOffset - offset);
 	}	
 }
