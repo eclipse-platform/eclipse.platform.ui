@@ -10,6 +10,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 /**
  * A dialog that has a title area for displaying a title and an image as well as
  * a common area for displaying a description, a message, or an error message.
@@ -43,7 +44,10 @@ public class TitleAreaDialog extends Dialog {
 	private static final int MIN_TITLE_IMAGE_HEIGHT = 64;
 	//Minimum width of the title image
 	private static final int MIN_TITLE_IMAGE_WIDTH = 64;
-
+	//Minimun dialog width (in dialog units)
+	private static final int MIN_DIALOG_WIDTH = 350;
+	//Minimun dialog height (in dialog units)
+	private static final int MIN_DIALOG_HEIGHT = 150;
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_error.gif"));//$NON-NLS-1$
@@ -207,6 +211,7 @@ private Composite createTitleArea(Composite parent) {
 	// add a dispose listener
 	titleArea.addDisposeListener(new DisposeListener() {
 		public void widgetDisposed(DisposeEvent e) {
+
 			if (titleAreaColor != null)
 				titleAreaColor.dispose();
 			if (errorMsgAreaBackground != null)
@@ -275,6 +280,19 @@ private Composite createTitleArea(Composite parent) {
 	titleImage.setLayoutData(gd);
 	
 	return titleArea;
+}
+/**
+ * The <code>TitleAreaDialog</code> implementation of this 
+ * <code>Window</code> methods returns an initial size which
+ * is at least some reasonable minimum.
+ *
+ * @return the initial size of the dialog
+ */
+protected Point getInitialSize() {
+	Point shellSize = super.getInitialSize();
+	return new Point(
+		Math.max(convertHorizontalDLUsToPixels(MIN_DIALOG_WIDTH), shellSize.x),
+		Math.max(convertVerticalDLUsToPixels(MIN_DIALOG_HEIGHT), shellSize.y));
 }
 /**
  * Returns the title area composite.
