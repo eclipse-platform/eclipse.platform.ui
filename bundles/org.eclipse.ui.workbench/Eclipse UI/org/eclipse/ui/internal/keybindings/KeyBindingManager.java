@@ -261,9 +261,14 @@ public final class KeyBindingManager {
 	}
 
 	public SortedMap getKeySequenceActionMap() {
-		if (keySequenceActionMap == null && tree != null)
-			keySequenceActionMap = Collections.unmodifiableSortedMap(
-				Node.toKeySequenceActionMap(tree));
+		if (keySequenceActionMap == null) {
+			if (tree != null)
+				keySequenceActionMap = Collections.unmodifiableSortedMap(
+					Node.toKeySequenceActionMap(tree));
+		
+			//if (keySequenceActionMapForMode == null)
+			//	keySequenceActionMapForMode = new TreeMap();
+		}
 		
 		return keySequenceActionMap;
 	}
@@ -294,12 +299,17 @@ public final class KeyBindingManager {
 	}		
 	
 	public SortedMap getKeySequenceActionMapForMode() {
-		if (keySequenceActionMapForMode == null && tree != null) {
-			SortedMap tree = Node.find(this.tree, mode);
+		if (keySequenceActionMapForMode == null) {
+			if (tree != null) {
+				SortedMap tree = Node.find(this.tree, mode);
 			
-			if (tree != null)	
-				keySequenceActionMapForMode = Collections.unmodifiableSortedMap(
-					Node.toKeySequenceActionMap(tree));
+				if (tree != null)	
+					keySequenceActionMapForMode = Collections.unmodifiableSortedMap(
+						Node.toKeySequenceActionMap(tree));
+			}
+			
+			//if (keySequenceActionMapForMode == null)
+			//	keySequenceActionMapForMode = new TreeMap();
 		}
 		
 		return keySequenceActionMapForMode;

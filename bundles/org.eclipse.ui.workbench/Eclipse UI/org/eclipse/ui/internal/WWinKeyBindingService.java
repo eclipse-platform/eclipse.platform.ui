@@ -105,9 +105,9 @@ public class WWinKeyBindingService {
 		KeySequence sequence = KeySequence.create(stroke);
 	
 		if (sequenceActionMapForMode.containsKey(sequence)) {
+			clear();			
 			invoke(((org.eclipse.ui.internal.keybindings.Action) 
-				sequenceActionMapForMode.get(sequence)).getValue());
-			clear();	
+				sequenceActionMapForMode.get(sequence)).getValue());	
 		} else {
 			List strokes = new ArrayList(mode.getKeyStrokes());
 			strokes.add(stroke);
@@ -118,7 +118,7 @@ public class WWinKeyBindingService {
 			keyBindingManager.setMode(mode);
 			setStatusLineMessage(mode);
 			
-			if (keyBindingManager.getKeySequenceActionMapForMode().size() == 0)				
+			if (keyBindingManager.getKeySequenceActionMapForMode() == null)				
 				clear();	
 			else
 				updateAccelerators();
