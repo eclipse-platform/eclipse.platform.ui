@@ -143,7 +143,9 @@ function setTitle(label)
 	text.nodeValue = label;
 }
 
-<% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
+<% if (data.isIE()
+	|| data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0
+	|| (data.isSafari() && "120".compareTo(data.getSafariVersion()) <= 0) ){
 %>
 function registerMaximizedChangedListener(){
 	// get to the frameset
@@ -200,7 +202,7 @@ function maximizedChanged(maximizedNotRestored){
 	}
 }
 
-<%=data.isIE()?
+<%=( data.isIE() || data.isSafari() )?
 	"document.ondblclick = mouseDblClickHandler;"
 :
 	"document.addEventListener('dblclick', mouseDblClickHandler, true);"%>
