@@ -262,7 +262,7 @@ public class AntRunner implements IPlatformRunnable {
 			
 			if (buildLoggerClassName == null) {
 				//indicate that the default logger is not to be used
-				buildLoggerClassName= "";
+				buildLoggerClassName= ""; //$NON-NLS-1$
 			}
 			// add build logger
 			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$

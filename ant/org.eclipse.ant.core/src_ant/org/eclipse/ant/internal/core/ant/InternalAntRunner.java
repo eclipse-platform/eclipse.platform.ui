@@ -511,7 +511,7 @@ public class InternalAntRunner {
 	protected BuildLogger createLogger() {
 		if (loggerClassname == null) {
 			buildLogger= new DefaultLogger();
-		} else if (!"".equals(loggerClassname)) {
+		} else if (!"".equals(loggerClassname)) { //$NON-NLS-1$
 			try {
 				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 			} catch (ClassCastException e) {
