@@ -17,6 +17,9 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.osgi.framework.*;
+import org.osgi.service.packageadmin.*;
+import org.osgi.util.tracker.*;
 
 /**
  * 
@@ -24,7 +27,7 @@ import org.eclipse.update.core.model.*;
 public class UpdateManagerUtils {
 
 	private static boolean OS_UNIX = BootLoader.OS_HPUX.equals(BootLoader.getOS()) || BootLoader.OS_AIX.equals(BootLoader.getOS()) || BootLoader.OS_LINUX.equals(BootLoader.getOS()) || BootLoader.OS_SOLARIS.equals(BootLoader.getOS());
-
+	private static FragmentEntry[] noFragments = new FragmentEntry[0];
 	private static Map table;
 
 	static {
@@ -896,5 +899,38 @@ public static class Writer {
 		if (bufferPool == null)
 			bufferPool = new Stack();
 		bufferPool.push(buf);
+	}
+	
+	
+	/**
+	 * Returns a list of fragments. Zero length if no fragments.
+	 * @param id the id of the plugin to get fragments for
+	 * @param version the plugin version, or null if higher version selected
+	 */
+	public static FragmentEntry[] getFragments(IPluginDescriptor desc) {
+		
+		ServiceTracker tracker = new ServiceTracker(UpdateCore.getPlugin().getBundleContext(), PackageAdmin.class.getName(), null);
+		tracker.open();
+		PackageAdmin pkgAdmin = (PackageAdmin)tracker.getService();
+		Bundle[] bundles = pkgAdmin.getBundles(desc.getUniqueIdentifier(), desc.getVersionIdentifier().toString(), Constants.VERSION_MATCH_QUALIFIER);
+		if (bundles == null || bundles.length == 0)
+			return noFragments;
+
+		Bundle[] fragmentBundles = bundles[0].getFragments();
+		if (fragmentBundles == null) 
+			return noFragments;
+		
+		FragmentEntry[] fragments = new FragmentEntry[fragmentBundles.length];
+		for (int i = 0; i < fragments.length; i++) {
+			fragments[i] = new FragmentEntry((String) fragmentBundles[i]
+					.getHeaders().get(Constants.BUNDLE_SYMBOLICNAME),
+					(String) fragmentBundles[i].getHeaders().get(
+							Constants.BUNDLE_VERSION), Platform
+							.getResourceString(fragmentBundles[i],
+									(String) fragmentBundles[i].getHeaders()
+											.get(Constants.BUNDLE_VERSION)),
+					fragmentBundles[i].getLocation());
+		}
+		return fragments;	
 	}
 }

@@ -320,7 +320,7 @@ public class SiteStatusAnalyzer {
 					new PluginIdentifier(versionID, desc[i].getLabel(), false);
 				allRunningPlugins.add(pluginIdentifier);
 				// check fragments
-				FragmentEntry[] fragments = FragmentEntry.getFragments(id);
+				FragmentEntry[] fragments = UpdateManagerUtils.getFragments(desc[i]);
 				for (int j = 0; j < fragments.length; j++) {
 					VersionedIdentifier fragVersionID =
 						new VersionedIdentifier(fragments[j].getPluginIdentifier(), fragments[j].getPluginVersion());

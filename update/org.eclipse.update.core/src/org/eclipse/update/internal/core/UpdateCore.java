@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
+import org.osgi.framework.*;
 
 
 /**
@@ -58,6 +59,9 @@ public class UpdateCore extends Plugin {
 	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port";
 	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable";
 
+	// bundle data
+	private BundleContext context;
+	
 	/**
 	 * The constructor.
 	 */
@@ -339,5 +343,23 @@ public class UpdateCore extends Plugin {
 			getPluginPreferences().setDefault(HTTP_PROXY_HOST, proxyHost);
 			getPluginPreferences().setDefault(HTTP_PROXY_PORT, proxyPort);
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		this.context = context;
+	}
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		this.context = null;
+	}
+	
+	BundleContext getBundleContext() {
+		return context;
 	}
 }

@@ -717,7 +717,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		IPluginDescriptor desc = reg.getPluginDescriptor(vid.getIdentifier());
 		ArrayList list = new ArrayList();
 		if (desc != null) {
-			FragmentEntry[] fragments = FragmentEntry.getFragments(desc.getUniqueIdentifier());
+			FragmentEntry[] fragments = UpdateManagerUtils.getFragments(desc);
 			for (int i = 0; fragments != null && i < fragments.length; i++) {
 				String location = fragments[i].getLocation();
 				try {
