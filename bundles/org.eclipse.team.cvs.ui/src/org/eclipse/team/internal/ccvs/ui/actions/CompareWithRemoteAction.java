@@ -13,17 +13,12 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -50,11 +45,15 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tags));
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);		
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);		
 	}
 	
 	protected CVSTag getTag(IResource resource) throws CVSException {
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+		return getTag(cvsResource);
+	}
+		
+	protected CVSTag getTag(ICVSResource cvsResource) throws CVSException {
 		CVSTag tag = null;
 		if (cvsResource.isFolder()) {
 			FolderSyncInfo folderInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
@@ -81,45 +80,31 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 		return tag;
 	}
 	
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if(resources.length>0) {
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
-					return false;
-				}
-				if(getTag(resource) == null) {
-					return false;
-				}
-				// Don't enable if there are sticky file revisions in the lineup
-				if (resources[i].getType() == IResource.FILE) {
-					ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)resources[i]);
-					ResourceSyncInfo info = file.getSyncInfo();
-					if (info != null && info.getTag() != null) {
-						String revision = info.getRevision();
-						String tag = info.getTag().getName();
-						if (revision.equals(tag)) return false;
-					}
-				}
-			}
-			return super.isEnabled();
-		}
-		return false;
-	}
-	
-	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
-	 */
-	protected boolean isEnabledForUnmanagedResources() {
-		return true;
-	}
-	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
 		return Policy.bind("CompareWithRemoteAction.compare"); //$NON-NLS-1$
 	}
-
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
+	 */
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		if (super.isEnabledForCVSResource(cvsResource)) {
+			// Don't enable if there are sticky file revisions in the lineup
+			if (!cvsResource.isFolder()) {
+				ResourceSyncInfo info = cvsResource.getSyncInfo();
+				if (info != null && info.getTag() != null) {
+					String revision = info.getRevision();
+					String tag = info.getTag().getName();
+					if (revision.equals(tag)) return false;
+				}
+			}
+			return true;
+		} else {
+			return getTag(cvsResource) != null;
+		}
+	}
+	
 }

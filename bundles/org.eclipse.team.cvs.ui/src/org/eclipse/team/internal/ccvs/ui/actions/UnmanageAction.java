@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,11 +34,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
@@ -182,24 +181,19 @@ public class UnmanageAction extends WorkspaceAction {
 		return result[0] == 0;  // YES
 	}
 	
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 0) return false;
-		for (int i = 0; i < resources.length; i++) {
-			if(resources[i].getType()!=IResource.PROJECT) return false;
-			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
-			if (provider == null) return false;
-		}
-		return true;
-	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
 		return Policy.bind("Unmanage.unmanagingError");//$NON-NLS-1$
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
+	 */
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		IResource resource = cvsResource.getIResource();
+		return resource != null && resource.getType() == IResource.PROJECT;
 	}
 
 }

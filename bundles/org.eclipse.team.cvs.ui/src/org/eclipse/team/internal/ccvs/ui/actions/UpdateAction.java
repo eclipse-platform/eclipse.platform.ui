@@ -20,15 +20,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -65,34 +59,22 @@ public class UpdateAction extends WorkspaceAction {
 					monitor.done();
 				}
 			}
-		}, true /* cancelable */, this.PROGRESS_DIALOG);
+		}, true /* cancelable */, PROGRESS_DIALOG);
 
 	}
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 0) return false;
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-			if (provider == null) return false;
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			ResourceSyncInfo info = cvsResource.getSyncInfo();
-			if(cvsResource.isFolder()) {
-				if(!((ICVSFolder)cvsResource).isCVSFolder()) return false;
-			} else {
-				if (!cvsResource.isManaged() || info.isAdded()) return false;
-			}
-		}
-		return super.isEnabled();
-	}
+
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
 		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
+	 */
+	protected boolean isEnabledForAddedResources() {
+		return false;
 	}
 
 }

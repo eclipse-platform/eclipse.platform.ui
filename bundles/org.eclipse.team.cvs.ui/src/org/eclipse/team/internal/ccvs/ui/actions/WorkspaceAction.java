@@ -11,6 +11,9 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
@@ -201,62 +205,100 @@ public abstract class WorkspaceAction extends CVSAction {
 		return true;
 	}
 
-	/*
+	/**
+	 * The action is enabled for the appropriate resources. This method checks
+	 * that:
+	 * <ol>
+	 * <li>there is no overlap between a selected file and folder (overlapping
+	 * folders is allowed because of logical vs. physical mapping problem in
+	 * views)
+	 * <li>the state of the resources match the conditions provided by:
+	 * <ul>
+	 * <li>isEnabledForIgnoredResources()
+	 * <li>isEnabledForManagedResources()
+	 * <li>isEnabledForUnManagedResources() (i.e. not ignored and not managed)
+	 * </ul>
+	 * </ol>
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		return isSelectionNonOverlapping();
+		
+		// invoke the inherited method so that overlaps are maintained
+		IResource[] resources = super.getSelectedResources();
+		
+		// disable if no resources are selected
+		if(resources.length==0) return false;
+		
+		// disable properly for single resource enablement
+		if (!isEnabledForMultipleResources() && resources.length != 1) return false;
+		
+		// validate enabled for each resource in the selection
+		List folderPaths = new ArrayList();
+		List filePaths = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			
+			// only enable for accessible resources
+			if (! resource.isAccessible()) return false;
+			
+			// only enable for resources in a project shared with CVS
+			if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
+				return false;
+			}
+			
+			// collect files and folders separately to check for overlap later	
+			IPath resourceFullPath = resource.getFullPath();
+			if(resource.getType() == IResource.FILE) {
+				filePaths.add(resourceFullPath);
+			} else {
+				folderPaths.add(resourceFullPath);
+			}
+			
+			// ensure that resource management state matches what the action requires
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			if (!isEnabledForCVSResource(cvsResource)) {
+				return false;
+			}
+		}
+		// Ensure that there is no overlap between files and folders
+		// NOTE: folder overlap must be allowed because of logical vs. physical
+		if(!folderPaths.isEmpty()) {
+			for (Iterator fileIter = filePaths.iterator(); fileIter.hasNext();) {
+				IPath resourcePath = (IPath) fileIter.next();
+				for (Iterator it = folderPaths.iterator(); it.hasNext();) {
+					IPath folderPath = (IPath) it.next();
+					if (folderPath.isPrefixOf(resourcePath)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 	
 	/**
-	 * Answers <code>true</code> if the current selection contains only 
-	 * managed resource that don't have overlapping paths and <code>false</code>
-	 * otherwise. 
+	 * Method isEnabledForCVSResource.
+	 * @param cvsResource
+	 * @return boolean
 	 */
-	protected boolean isSelectionNonOverlapping() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		// allow operation for non-overlapping resource selections
-		if(resources.length>0) {
-			List validPaths = new ArrayList(2);
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				
-				// only allow cvs resources to be selected
-				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
-					return false;
-				}
-				
-				// check if this resource overlaps other selections		
-				IPath resourceFullPath = resource.getFullPath();
-				if(!validPaths.isEmpty()) {
-					for (Iterator it = validPaths.iterator(); it.hasNext();) {
-						IPath path = (IPath) it.next();
-						if(path.isPrefixOf(resourceFullPath) || 
-					       resourceFullPath.isPrefixOf(path)) {
-							return false;
-						}
-					}
-				}
-				validPaths.add(resourceFullPath);
-				
-				// ensure that resource management state matches what the action requires
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				boolean managed = false;
-				boolean ignored = false;
-				if (cvsResource.isIgnored()) {
-					ignored = true;
-				} else if (cvsResource.isFolder()) {
-					managed = ((ICVSFolder)cvsResource).isCVSFolder();
-				} else {
-					managed = cvsResource.isManaged();
-				}
-				if (managed && ! isEnabledForManagedResources()) return false;
-				if ( ! managed && ! isEnabledForUnmanagedResources()) return false;
-				if ( ignored && ! isEnabledForIgnoredResources()) return false;
-			}
-			return true;
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		boolean managed = false;
+		boolean ignored = false;
+		boolean added = false;
+		if (cvsResource.isIgnored()) {
+			ignored = true;
+		} else if (cvsResource.isFolder()) {
+			managed = ((ICVSFolder)cvsResource).isCVSFolder();
+		} else {
+			ResourceSyncInfo info = cvsResource.getSyncInfo();
+			managed = info != null;
+			if (managed) added = info.isAdded();
 		}
-		return false;
+		if (managed && ! isEnabledForManagedResources()) return false;
+		if ( ! managed && ! isEnabledForUnmanagedResources()) return false;
+		if ( ignored && ! isEnabledForIgnoredResources()) return false;
+		if (added && ! isEnabledForAddedResources()) return false;
+		return true;
 	}
 	
 	/**
@@ -281,6 +323,76 @@ public abstract class WorkspaceAction extends CVSAction {
 	 */
 	protected boolean isEnabledForManagedResources() {
 		return true;
+	}
+
+	/**
+	 * Method isEnabledForAddedResources.
+	 * @return boolean
+	 */
+	protected boolean isEnabledForAddedResources() {
+		return true;
+	}
+	
+	/**
+	 * Method isEnabledForAddedResources.
+	 * @return boolean
+	 */
+	protected boolean isEnabledForMultipleResources() {
+		return true;
+	}
+	
+	/**
+	 * Method getNonOverlapping ensures that a resource is not covered more than once.
+	 * @param resources
+	 * @return IResource[]
+	 */
+	public static IResource[] getNonOverlapping(IResource[] resources) {
+		// Sort the resources so the shortest paths are first
+		List sorted = new ArrayList();
+		sorted.addAll(Arrays.asList(resources));
+		Collections.sort(sorted, new Comparator() {
+			public int compare(Object arg0, Object arg1) {
+				IResource resource0 = (IResource) arg0;
+				IResource resource1 = (IResource) arg1;
+				return resource0.getFullPath().segmentCount() - resource1.getFullPath().segmentCount();
+			}
+			public boolean equals(Object arg0) {
+				return false;
+			}
+		});
+		// Collect all non-overlapping resources
+		List coveredPaths = new ArrayList();
+		for (Iterator iter = sorted.iterator(); iter.hasNext();) {
+			IResource resource = (IResource) iter.next();
+			IPath resourceFullPath = resource.getFullPath();
+			boolean covered = false;
+			for (Iterator it = coveredPaths.iterator(); it.hasNext();) {
+				IPath path = (IPath) it.next();
+				if(path.isPrefixOf(resourceFullPath)) {
+					covered = true;
+				}
+			}
+			if (covered) {
+				// if the resource is covered by a parent, remove it
+				iter.remove();
+			} else {
+				// if the resource is a non-covered folder, add it to the covered paths
+				if (resource.getType() == IResource.FOLDER) {
+					coveredPaths.add(resource.getFullPath());
+				}
+			}
+		}
+		return (IResource[]) sorted.toArray(new IResource[sorted.size()]);
+	}
+	
+	/**
+	 * Override to ensure that the selected resources so not overlap.
+	 * This method assumes that all actions are deep.
+	 * 
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
+	 */
+	protected IResource[] getSelectedResources() {
+		return getNonOverlapping(super.getSelectedResources());
 	}
 
 }

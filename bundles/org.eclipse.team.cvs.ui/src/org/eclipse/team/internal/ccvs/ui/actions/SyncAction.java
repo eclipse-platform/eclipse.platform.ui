@@ -12,9 +12,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
@@ -25,6 +24,7 @@ import org.eclipse.ui.PartInitException;
  * Action for catchup/release in popup menus.
  */
 public class SyncAction extends WorkspaceAction {
+	
 	public void execute(IAction action) {
 		IResource[] resources = getResourcesToSync();
 		if (resources == null || resources.length == 0) return;
@@ -41,28 +41,6 @@ public class SyncAction extends WorkspaceAction {
 			view.showSync(getCompareInput(resources));
 		}
 	}
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (!resource.isAccessible()) return false;
-			if (resource.getType() == IResource.PROJECT) continue;
-			// If the resource is not managed and its parent is not managed, disable.
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			if (!cvsResource.isManaged()) {
-				// The resource is not managed. See if its parent is managed.
-				if (!cvsResource.getParent().isCVSFolder()) return false;
-			}
-		}
-		return super.isEnabled();
-	}
-	
-	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
-	 */
-	protected boolean isEnabledForUnmanagedResources() {
-		return true;
-	}
 	
 	protected SyncCompareInput getCompareInput(IResource[] resources) {
 		return new CVSSyncCompareInput(resources);
@@ -71,4 +49,15 @@ public class SyncAction extends WorkspaceAction {
 	protected IResource[] getResourcesToSync() {
 		return getSelectedResources();
 	}
+	
+	/**
+	 * Enable for resources that are managed (using super) or whose parent is a
+	 * CVS folder.
+	 * 
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
+	 */
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		return super.isEnabledForCVSResource(cvsResource) || cvsResource.getParent().isCVSFolder();
+	}
+
 }

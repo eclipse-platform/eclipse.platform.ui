@@ -24,16 +24,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -134,27 +129,6 @@ public class TagAction extends WorkspaceAction {
 		}
 		return combinedStatus;
 	}
-	
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 0) return false;
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-			if (provider == null) return false;
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			if(cvsResource.isFolder()) {
-				if (! ((ICVSFolder)cvsResource).isCVSFolder()) return false;
-			} else {
-				ResourceSyncInfo info = cvsResource.getSyncInfo();
-				if(info==null || info.isAdded()) return false;
-			}
-		}
-		return super.isEnabled();
-	}
 
 	/**
 	 * Prompts the user for a tag name.
@@ -189,5 +163,13 @@ public class TagAction extends WorkspaceAction {
 	protected String getWarningTitle() {
 		return Policy.bind("TagAction.tagWarningTitle"); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
+	 */
+	protected boolean isEnabledForAddedResources() {
+		return false;
+	}
+
 }
 

@@ -14,10 +14,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
 
@@ -28,21 +24,6 @@ import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
  * by a create patch command in the compare viewer.
  */
 public class GenerateDiffFileAction extends WorkspaceAction {
-	/**
-	 * Makes sure that the projects of all selected resources are shared.
-	 * Returns true if all resources are shared, and false otherwise.
-	 */
-	protected boolean checkSharing(IResource[] resources) {
-		for (int i = 0; i < resources.length; i++) {
-			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(
-						resources[i].getProject(), 
-						CVSProviderPlugin.getTypeId());
-			if (provider==null) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	/** (Non-javadoc)
 	 * Method declared on IActionDelegate.
@@ -56,16 +37,19 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 		dialog.setMinimumPageSize(350, 250);
 		dialog.open();
 	}
-
-	/** (Non-javadoc)
-	 * Method declared on IActionDelegate.
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
 	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if(resources.length != 1) {
-			return false;
-		}
-		if (!resources[0].isAccessible() || !checkSharing(new IResource[] {resources[0]})) return false;
+	protected boolean isEnabledForMultipleResources() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
+	 */
+	protected boolean isEnabledForUnmanagedResources() {
 		return true;
 	}
+
 }

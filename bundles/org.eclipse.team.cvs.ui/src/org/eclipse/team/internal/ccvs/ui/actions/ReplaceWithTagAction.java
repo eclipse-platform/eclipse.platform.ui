@@ -23,16 +23,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
@@ -93,7 +87,7 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
 		
 		if (tag[0] == null) return;
 		
@@ -120,7 +114,7 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 					monitor.done();
 				}
 			}
-		}, true /* cancelable */, this.PROGRESS_DIALOG);
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 	
 	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {

@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.merge.MergeWizard;
 
 public class MergeAction extends WorkspaceAction {

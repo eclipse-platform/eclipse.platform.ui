@@ -20,10 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -148,24 +146,6 @@ public class CommitAction extends WorkspaceAction {
 			}
 		}
 		return (IResource[]) shared.toArray(new IResource[shared.size()]);
-	}
-
-	
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 0) return false;
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-			if (provider == null) return false;
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			// enable commit for any non-ignored resources
-			if (resource.getType()!=IResource.PROJECT&&cvsResource.isIgnored()) return false;
-		}
-		return super.isEnabled();
 	}
 	
 	/**

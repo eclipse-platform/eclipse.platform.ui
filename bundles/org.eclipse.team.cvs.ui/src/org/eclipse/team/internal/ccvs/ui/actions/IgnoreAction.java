@@ -24,19 +24,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class IgnoreAction extends WorkspaceAction {
 	
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 0) return false;
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (resource.getType() == IResource.PROJECT) return false;
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			if (cvsResource.isManaged()) return false;
-			if (cvsResource.isIgnored()) return false;
-		}
-		return super.isEnabled();
-	}
-	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {

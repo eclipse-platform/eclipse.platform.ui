@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -59,7 +60,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				file[0] = getSelectedRemoteFile();
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 		
 		if (file[0] == null) {
 			// No revisions for selected file
@@ -78,7 +79,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, true /* cancelable */, this.PROGRESS_DIALOG);
+		}, true /* cancelable */, PROGRESS_DIALOG);
 		
 		if (entries[0] == null) return;
 		
@@ -87,17 +88,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				CompareUI.openCompareEditor(new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]));
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
-	}
-	
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if (resources.length != 1) return false;
-		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
-		return cvsResource.isManaged();
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 	
 	/**
@@ -105,6 +96,27 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	 */
 	protected String getErrorTitle() {
 		return Policy.bind("CompareWithRevisionAction.compare"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
+	 */
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		return (!cvsResource.isFolder() && super.isEnabledForCVSResource(cvsResource));
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
+	 */
+	protected boolean isEnabledForMultipleResources() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
+	 */
+	protected boolean isEnabledForAddedResources() {
+		return false;
 	}
 
 }
