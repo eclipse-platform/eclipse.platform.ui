@@ -65,11 +65,12 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * <b>li </b> elements:
  * <ul>
  * <li><b>img </b>- to render an image. Element accepts attribute 'href' that
- * is a key to the Image set using 'setImage' method.</li>
+ * is a key to the <code>Image</code> set using 'setImage' method.</li>
  * <li><b>a </b>- to render a hyperlink. Element accepts attribute 'href' that
  * will be provided to the hyperlink listeners via HyperlinkEvent object. The
  * element also accepts 'nowrap' attribute (default is false). When set to
- * 'true', the hyperlink will not be wrapped.</li>
+ * 'true', the hyperlink will not be wrapped. Hyperlinks automatically
+ * created when 'http://' is encountered in text are not wrapped.</li>
  * <li><b>b </b>- the enclosed text will use bold font.</li>
  * <li><b>br </b>- forced line break (no attributes).</li>
  * <li><b>span </b>- the enclosed text will have the color and font specified
@@ -394,10 +395,9 @@ public final class FormText extends Canvas {
 			}
 		});
 		initAccessible();
-		makeActions();
 		ensureBoldFontPresent(getFont());
 		createMenu();
-		//we will handle traversal
+		//we will handle traversal of controls, if any
 		setTabList(new Control[] {});
 	}
 
@@ -544,7 +544,8 @@ public final class FormText extends Canvas {
 	 *            attribute.
 	 * @param control
 	 *            an object of the type <samp>Control</samp> or <samp>null</samp>
-	 *            if the key needs to be cleared.
+	 *            if the existing control at the specified key needs to be 
+	 *            removed.
 	 * @since 3.1
 	 */
 	public void setControl(String key, Control control) {
@@ -679,7 +680,7 @@ public final class FormText extends Canvas {
 		Composite parent = c.getParent();
 		if (parent==this) {
 			hasFocus = true;
-			setFocus();
+			super.forceFocus();
 			model.select(segment);
 			return advance(next);
 		}
@@ -740,19 +741,13 @@ public final class FormText extends Canvas {
 	public boolean isWhitespaceNormalized() {
 		return model.isWhitespaceNormalized();
 	}
-
+	
 	/**
-	 * Sets the focus to the first segment capable of accepting focus, or the widget 
-	 * itself if there are no hyperlinks.
+	 * Disposes the internal menu if created and sets the menu
+	 * provided as a parameter.
 	 * 
-	 * @return <samp>true </samp> if the control got focus, <samp>false </samp>
-	 *         otherwise.
+	 *@param menu the menu to associate with this text control
 	 */
-	public boolean setFocus() {
-		//return super.setFocus();
-		return super.forceFocus();
-	}
-
 	public void setMenu(Menu menu) {
 		Menu currentMenu = super.getMenu();
 		if (currentMenu != null && INTERNAL_MENU.equals(currentMenu.getData())) {
@@ -839,8 +834,6 @@ public final class FormText extends Canvas {
 	 * Adds a selection listener. A Selection event is sent by the widget when
 	 * the selection has changed.
 	 * <p>
-	 * When <code>widgetSelected</code> is called, the event x amd y fields
-	 * contain the start and end caret indices of the selection.
 	 * <code>widgetDefaultSelected</code> is not called for FormText.
 	 * </p>
 	 * 
@@ -885,6 +878,7 @@ public final class FormText extends Canvas {
 	 *                <ul>
 	 *                <li>ERROR_NULL_ARGUMENT when listener is null</li>
 	 *                </ul>
+	 * @since 3.1
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
 		checkWidget();
@@ -929,9 +923,11 @@ public final class FormText extends Canvas {
 	}
 
 	/**
-	 * Copies the selected text into the clipboard.
+	 * Copies the selected text into the clipboard. Does nothing
+	 * if no text is selected or the text cannot be copied
+	 * for any other reason.
 	 * 
-	 * @since. 3.1
+	 * @since 3.1
 	 */
 
 	public void copy() {
@@ -971,23 +967,12 @@ public final class FormText extends Canvas {
 	 * 
 	 * @param manager
 	 *            the pop-up menu manager
+	 * @since 3.1
 	 */
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 		IHyperlinkSegment link = getSelectedLink();
 		if (link != null)
 			contributeLinkActions(manager, link);
-	}
-
-	private void makeActions() {
-		/*
-		 * openAction = new Action() { public void run() {
-		 * activateSelectedLink(); } }; openAction.setText(
-		 * FormsPlugin.getResourceString("FormEgine.linkPopup.open"));
-		 * copyShortcutAction = new Action() { public void run() {
-		 * copyShortcut(model.getSelectedLink()); } };
-		 * copyShortcutAction.setText(
-		 * FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
-		 */
 	}
 
 	private String getAcessibleText() {
@@ -1084,6 +1069,7 @@ public final class FormText extends Canvas {
 		event.display = this.getDisplay();
 		event.type = SWT.Selection;
 		notifyListeners(SWT.Selection, event);
+		getAccessible().selectionChanged();
 	}
 
 	private void handleDrag(MouseEvent e) {
@@ -1196,6 +1182,8 @@ public final class FormText extends Canvas {
 			paintFocusTransfer(oldLink, newLink);
 		if (newLink != null)
 			ensureVisible(newLink);
+		if (newLink!=null)
+			getAccessible().setFocus(model.getSelectedSegmentIndex());
 		return !valid;
 	}
 
@@ -1361,12 +1349,6 @@ public final class FormText extends Canvas {
 		manager.add(new Separator());
 	}
 
-	/*
-	 * private void copyShortcut(HyperlinkSegment link) { String text =
-	 * link.getText(); Clipboard clipboard = new Clipboard(getDisplay());
-	 * clipboard.setContents(new Object[]{text}, new Transfer[]{TextTransfer
-	 * .getInstance()}); }
-	 */
 	private void ensureVisible(IHyperlinkSegment segment) {
 		if (mouseFocus) {
 			mouseFocus = false;
@@ -1388,6 +1370,10 @@ public final class FormText extends Canvas {
 	/**
 	 * Overrides the method by fully trusting the layout manager (computed width
 	 * or height may be larger than the provider width or height hints).
+	 * Callers should be prepared that the computed width is larger
+	 * than the provided wHint.
+	 * 
+	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
 	 */
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();

@@ -579,6 +579,10 @@ public class FormTextModel {
 		return selectableSegments[selectedSegmentIndex];
 	}
 	
+	public int getSelectedSegmentIndex() {
+		return selectedSegmentIndex;
+	}
+	
 	public boolean linkExists(IHyperlinkSegment link) {
 		if (selectableSegments==null)
 			return false;

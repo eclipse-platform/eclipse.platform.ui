@@ -20,10 +20,12 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 	
 	public Control getControl(Hashtable resourceTable) {
 		Object obj = resourceTable.get(getObjectId());
-		if (obj instanceof Control)
-			return (Control)obj;
-		else
-			return null;
+		if (obj instanceof Control) {
+			Control c = (Control)obj;
+			if (!c.isDisposed())
+				return c;
+		}
+		return null;
 	}
 
 	protected Point getObjectSize(Hashtable resourceTable, int wHint) {
@@ -43,7 +45,7 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		if (control!=null)
 			control.setBounds(getBounds());
 	}
-	
+
 	public void setFocus(Hashtable resourceTable, boolean next) {
 		Control c = getControl(resourceTable);
 		if (c!=null) {
@@ -73,7 +75,7 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		}
 		return c.setFocus();
 	}
-	
+
 	public boolean isFocusSelectable(Hashtable resourceTable) {
 		Control c = getControl(resourceTable);
 		if (c!=null)
