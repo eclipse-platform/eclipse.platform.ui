@@ -15,6 +15,18 @@
 	<jsp:param name="script" value="navActions.js"/>
 	<jsp:param name="view" value="bookmarks"/>
 
+	<jsp:param name="name"     value="deleteBookmark"/>
+	<jsp:param name="tooltip"  value='deleteBookmark'/>
+	<jsp:param name="image"    value="bookmark_rem.gif"/>
+	<jsp:param name="action"   value="removeBookmark"/>
+	<jsp:param name="state"    value='off'/>
+
+	<jsp:param name="name"     value="deleteAllBookmarks"/>
+	<jsp:param name="tooltip"  value='deleteAllBookmarks'/>
+	<jsp:param name="image"    value="bookmark_remall.gif"/>
+	<jsp:param name="action"   value="removeAllBookmarks"/>
+	<jsp:param name="state"    value='off'/>
+
 	<jsp:param name="name"     value="synchnav"/>
 	<jsp:param name="tooltip"  value='SynchNav'/>
 	<jsp:param name="image"    value="synch_nav.gif"/>
