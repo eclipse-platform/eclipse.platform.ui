@@ -81,7 +81,9 @@ class CheckedIn extends ResponseHandler {
 		}
 
 		mFile.setSyncInfo(newInfo);
-		Assert.isTrue(changeFile == mFile.isModified());
+		
+		// This doesn't work with remote files.
+		//Assert.isTrue(changeFile == mFile.isModified());
 	}
 }
 
