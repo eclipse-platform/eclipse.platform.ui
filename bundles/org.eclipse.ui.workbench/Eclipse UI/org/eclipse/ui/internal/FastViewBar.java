@@ -58,6 +58,7 @@ class FastViewBar implements IWindowTrim {
 	private GridData toolBarData;
 	private static final int HIDDEN_WIDTH = 5;
 	private MenuItem showOn;
+	private Cursor moveCursor;
 	private MenuItem closeItem;
 	private IntModel side = new IntModel(SWT.LEFT);
 	private RadioMenu radioButtons;
@@ -98,6 +99,12 @@ class FastViewBar implements IWindowTrim {
 		createChildControls();
 	}
 	
+	/**
+	 * Create the contents of the fast view bar. The top-level control (created by createControl) is a 
+	 * composite that is created once over the lifetime of the fast view bar. This method creates the 
+	 * rest of the widgetry inside that composite. The controls created by this method will be 
+	 * destroyed and recreated if the fast view bar is docked to a different side of the window.
+	 */
 	protected void createChildControls() {
 		int newSide = getSide();
 		int flags = Geometry.isHorizontal(newSide) ? SWT.HORIZONTAL : SWT.VERTICAL;
@@ -121,11 +128,15 @@ class FastViewBar implements IWindowTrim {
 		controlLayout.marginWidth = 0;
 		control.setLayout(controlLayout);
 		
+		// When we're on the bottom, add a drag handle. Otherwise, it's impossible to drag the fast view
+		// bar if there's nothing in it.
 		if (newSide == SWT.BOTTOM) {
 			controlLayout.numColumns = 2;
 			fastViewLabel = new Label(control, SWT.NONE);
-			fastViewLabel.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER));
+			fastViewLabel.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
 			fastViewLabel.addListener(SWT.MenuDetect, listener);
+			moveCursor = new Cursor(control.getDisplay(), SWT.CURSOR_SIZEALL);
+			fastViewLabel.setCursor(moveCursor);
 		}
 		fastViewBar.createControl(control);
 		getToolBar().addListener(SWT.MenuDetect, listener);
@@ -224,9 +235,10 @@ class FastViewBar implements IWindowTrim {
 				if (draggedObject instanceof ViewPane) {
 					ViewPane pane = (ViewPane) draggedObject;
 					ToolItem targetItem = getToolItem(position);
-					ToolItem sourceItem = itemFor(pane.getViewReference());
+					//ToolItem sourceItem = itemFor(pane.getViewReference());
 					
-					if (sourceItem != null && (sourceItem == targetItem || targetItem == null)) {
+					// Can't drag views between windows
+					if (pane.getWorkbenchWindow() != window) {
 						return null;
 					}
 					
@@ -249,7 +261,6 @@ class FastViewBar implements IWindowTrim {
 		if (fastViewLabel != null) {
 			DragUtil.addDragSource(fastViewLabel, fastViewDragSource);
 		}
-		
 		
 		update(true);
 	}
@@ -385,6 +396,12 @@ class FastViewBar implements IWindowTrim {
 			fastViewLabel.dispose();
 			fastViewLabel = null;
 		}
+		
+		if (moveCursor != null) {
+			moveCursor.dispose();
+			moveCursor = null;
+		}
+		
 		oldLength = 0;
 	}
 	
