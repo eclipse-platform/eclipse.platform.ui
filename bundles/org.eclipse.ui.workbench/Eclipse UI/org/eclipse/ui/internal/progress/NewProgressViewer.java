@@ -533,8 +533,12 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 						taskName= info.getTaskName();
 						int percent = info.getPercentDone();
 						if (percent >= 0 && percent <= 100) {
-							taskName= ProgressMessages.format("JobInfo.Percent", //$NON-NLS-1$
-										new Object[]{ Integer.toString(percent), taskName});
+						    if (taskName != null)
+						        taskName= ProgressMessages.format("JobInfo.Percent", //$NON-NLS-1$
+											new Object[]{ Integer.toString(percent), taskName});
+						    else
+						        taskName= ProgressMessages.format("JobInfo.Percent2", //$NON-NLS-1$
+						                		new Object[]{ Integer.toString(percent) });
 						}
 					}
 					
