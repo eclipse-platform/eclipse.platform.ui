@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.internal.runtime.CompatibilityHelper;
-import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
@@ -167,6 +166,8 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 					result = CompatibilityHelper.getPluginDescriptor(hosts[0].getSymbolicName());
 			}
 		}
+		if (CompatibilityHelper.DEBUG && result == null)
+			Policy.debug("Could not obtain plug-in descriptor for bundle " + ((Namespace) getParent()).getName()); //$NON-NLS-1$
 		return result;
 	}
 

@@ -24,6 +24,9 @@ org.eclipse.core.runtime/timing/startup=false
 # Prints time taken by Plugin.shutdown() methods.
 org.eclipse.core.runtime/timing/shutdown=false
 
+# Turn on debugging for the compatibility layer
+org.eclipse.core.runtime/compatibility/debug=false
+
 # Turn on debugging for the registry.
 org.eclipse.core.runtime/registry/debug=false
 # Specify a filename for a user-readable form of the plugin registry to be written to.
