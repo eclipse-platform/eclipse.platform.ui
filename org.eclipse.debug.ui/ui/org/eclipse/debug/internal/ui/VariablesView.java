@@ -444,7 +444,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		}				
 	}
 	
-	/*
+	/**
 	 * @see IValueDetailListener#detailComputed(IValue, String)
 	 */
 	public void detailComputed(IValue value, final String result) {
@@ -453,7 +453,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 				getDetailDocument().set(result);
 			}
 		};
-		getViewer().getControl().getDisplay().asyncExec(runnable);		
+		asyncExec(runnable);		
 	}
 	
 	/**

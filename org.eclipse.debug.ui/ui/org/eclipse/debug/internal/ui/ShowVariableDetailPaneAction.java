@@ -6,7 +6,6 @@ package org.eclipse.debug.internal.ui;
  */
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ShowVariableDetailPaneAction extends Action {
@@ -15,7 +14,7 @@ public class ShowVariableDetailPaneAction extends Action {
 
 	public ShowVariableDetailPaneAction(VariablesView view) {
 		super(DebugUIMessages.getString("ShowVariableDetailPaneAction.Show_Variable_Detail_Pane_1")); //$NON-NLS-1$
-		fVariablesView = view;
+		setVariablesView(view);
 		setToolTipText(DebugUIMessages.getString("ShowVariableDetailPaneAction.Show_detail_pane_2")); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE));
 		WorkbenchHelp.setHelp(
@@ -35,8 +34,8 @@ public class ShowVariableDetailPaneAction extends Action {
 	 * tooltip as appropriate.
 	 */
 	private void toggleDetailPane(final boolean on) {
-		fVariablesView.toggleDetailPane(on);
-		setToolTipText(on ? DebugUIMessages.getString("ShowVariableDetailPaneAction.Hide_detail_pane_3") : DebugUIMessages.getString("ShowVariableDetailPaneAction.Show_detail_pane_4")); //$NON-NLS-2$ //$NON-NLS-1$
+		getVariablesView().toggleDetailPane(on);
+		setToolTipText(on ? DebugUIMessages.getString("ShowVariableDetailPaneAction.Hide_detail_pane_3") : DebugUIMessages.getString("ShowVariableDetailPaneAction.Show_detail_pane_2")); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	/**
@@ -45,6 +44,14 @@ public class ShowVariableDetailPaneAction extends Action {
 	public void setChecked(boolean value) {
 		super.setChecked(value);
 		toggleDetailPane(value);
+	}
+	
+	protected VariablesView getVariablesView() {
+		return fVariablesView;
+	}
+
+	protected void setVariablesView(VariablesView variablesView) {
+		fVariablesView = variablesView;
 	}
 }
 
