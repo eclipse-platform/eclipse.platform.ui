@@ -668,7 +668,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		// actually some additional development time class path entries.  This will be processed below.
 		if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
 			inDevelopmentMode = true;
-			// do not mark the arg as found so it will be passed through
+			found = true;
 			continue;
 		}
 
@@ -700,7 +700,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		if (args[i - 1].equalsIgnoreCase(DEV)) {
 			inDevelopmentMode = true;
 			devClassPath = arg;
-			// do not mark the arg as found so it will be passed through
+			found = true;
 			continue;
 		}
 
