@@ -70,7 +70,7 @@ public class WelcomeEditor extends EditorPart {
 		public void keyReleased(KeyEvent event){
 			
 			StyledText text = lastNavigatedText;
-			if(event.character == '\t' && event.keyCode == SWT.NULL){
+			if(event.character == '\t' && event.stateMask == SWT.NULL){
 				StyleRange nextRange = findStartRange(text,false);
 				if(nextRange == null){
 					if(text != null)
@@ -89,22 +89,21 @@ public class WelcomeEditor extends EditorPart {
 				}
 				return;
 			}
-			if(event.character == ' '){
-				WelcomeItem item = (WelcomeItem)text.getData();
+			if(event.character == ' ' || event.character == SWT.CR){
+				if(text != null){
+					WelcomeItem item = (WelcomeItem)text.getData();
 	
-				//Be sure we are in the selection
-				int offset = text.getSelection().x + 1;
+					//Be sure we are in the selection
+					int offset = text.getSelection().x + 1;
 				
-				if (item.isLinkAt(offset)) {	
-					text.setCursor(busyCursor);
-					item.triggerLinkAt(offset);
-					text.setCursor(null);
+					if (item.isLinkAt(offset)) {	
+						text.setCursor(busyCursor);
+						item.triggerLinkAt(offset);
+						text.setCursor(null);
+					}
 				}
 				return;
-			}
-			
-			//Any other character clears
-			lastNavigatedText = null;			
+			}	
 			
 		}
 		
