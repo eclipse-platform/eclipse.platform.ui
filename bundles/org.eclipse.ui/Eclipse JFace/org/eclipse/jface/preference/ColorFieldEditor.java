@@ -18,10 +18,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
  */
 public class ColorFieldEditor extends FieldEditor {
 
-	/**
-	 * The color selector, or <code>null</code> if none.
-	 */
-	private ColorSelector colorSelector;
+/**
+ * The color selector, or <code>null</code> if none.	 
+ */
+private ColorSelector colorSelector;
 
 /**
  * Creates a new color field editor 
@@ -119,6 +119,14 @@ protected Button getChangeControl(Composite parent) {
  */
 public int getNumberOfControls() {
 	return 2;
+}
+
+/*
+ * @see FieldEditor.setEnabled
+ */
+public void setEnabled(boolean enabled, Composite parent){
+	super.setEnabled(enabled,parent);
+	getChangeControl(parent).setEnabled(enabled);
 }
 
 }

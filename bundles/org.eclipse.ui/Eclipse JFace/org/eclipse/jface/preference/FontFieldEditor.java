@@ -319,4 +319,13 @@ private FontData getDefaultFontData(){
 	return valueControl.getDisplay().getSystemFont().getFontData()[0];
 }
 
+/*
+ * @see FieldEditor.setEnabled(boolean,Composite).
+ */
+public void setEnabled(boolean enabled, Composite parent){
+	super.setEnabled(enabled,parent);
+	getChangeControl(parent).setEnabled(enabled);
+	getValueControl(parent).setEnabled(enabled);
+}
+
 }

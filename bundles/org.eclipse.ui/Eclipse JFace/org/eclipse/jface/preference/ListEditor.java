@@ -388,4 +388,16 @@ private void swap(boolean up) {
 private void upPressed() {
 	swap(true);
 }
+
+/*
+ * @see FieldEditor.setEnabled(boolean,Composite).
+ */
+public void setEnabled(boolean enabled, Composite parent){
+	super.setEnabled(enabled,parent);
+	getListControl(parent).setEnabled(enabled);
+	addButton.setEnabled(enabled);
+	removeButton.setEnabled(enabled);
+	upButton.setEnabled(enabled);
+	downButton.setEnabled(enabled);
+}
 }

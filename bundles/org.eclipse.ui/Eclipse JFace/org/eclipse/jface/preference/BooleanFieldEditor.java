@@ -206,4 +206,13 @@ protected void valueChanged(boolean oldValue, boolean newValue) {
 	if (oldValue != newValue)
 		fireStateChanged(VALUE, oldValue, newValue);
 }
+
+/*
+ * @see FieldEditor.setEnabled
+ */
+public void setEnabled(boolean enabled, Composite parent){
+	super.setEnabled(enabled,parent);
+	getChangeControl(parent).setEnabled(enabled);
+}
+
 }

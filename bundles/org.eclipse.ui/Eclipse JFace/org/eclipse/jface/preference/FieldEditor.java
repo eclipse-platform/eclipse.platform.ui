@@ -602,4 +602,16 @@ protected void setButtonLayoutData(Button button) {
 	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
 }
+
+/**
+ * Set whether or not the controls in the field editor
+ * are enabled.
+ * @param boolean. The enabled state.
+ * @param parent. The parent of the controls in the group.
+ *  Used to create the controls if required.
+ */
+public void setEnabled(boolean enabled, Composite parent){
+	getLabelControl(parent).setEnabled(enabled);
+}
+
 }

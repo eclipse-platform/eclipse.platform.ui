@@ -465,4 +465,12 @@ protected void valueChanged() {
 		oldValue = newValue;
 	}
 }
+
+/*
+ * @see FieldEditor.setEnabled(boolean,Composite).
+ */
+public void setEnabled(boolean enabled, Composite parent){
+	super.setEnabled(enabled,parent);
+	getTextControl(parent).setEnabled(enabled);
+}
 }
