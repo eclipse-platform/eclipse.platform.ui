@@ -170,6 +170,31 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 					oldLocation = location;
 					location = null;
 				}
+				if (event.widget == hostCombo) {
+					String hostText = hostCombo.getText(); 
+					if (hostText.length() > 0 && hostText.charAt(0) == ':') {
+						try {
+							CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(hostText);
+							connectionMethodCombo.setText(newLocation.getMethod().getName());
+							repositoryPathCombo.setText(newLocation.getRootDirectory());
+							int port = newLocation.getPort();
+							if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
+								useDefaultPort.setSelection(true);
+								useCustomPort.setSelection(false);
+							} else {
+								useCustomPort.setSelection(true);
+								useDefaultPort.setSelection(false);
+								portText.setText(String.valueOf(port));	
+							}
+							
+							userCombo.setText(newLocation.getUsername());
+							//passwordText.setText(newLocation.xxx);
+							hostCombo.setText(newLocation.getHost());
+						} catch (CVSException e) {
+							CVSUIPlugin.log(e);
+						}
+					}
+				}
 				updateWidgetEnablements();
 			}
 		};
