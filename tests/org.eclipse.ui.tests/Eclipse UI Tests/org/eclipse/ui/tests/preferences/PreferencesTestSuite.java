@@ -8,24 +8,29 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.viewers;
+package org.eclipse.ui.tests.preferences;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllTests {
+/**
+ * Test suite for preferences.
+ */
+public class PreferencesTestSuite extends TestSuite {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+	/**
+	 * Returns the suite.  This is required to
+	 * use the JUnit Launcher.
+	 */
 	public static Test suite() {
-		TestSuite suite= new TestSuite();
-		suite.addTest(new TestSuite(TreeViewerTest.class));
-		suite.addTest(new TestSuite(TableViewerTest.class));
-		suite.addTest(new TestSuite(TableTreeViewerTest.class));
-		suite.addTest(new TestSuite(ListViewerTest.class));
-		suite.addTest(new TestSuite(CheckboxTableViewerTest.class));
-		suite.addTest(new TestSuite(CheckboxTreeViewerTest.class));
-		return suite;
+		return new PreferencesTestSuite();
+	}
+	
+	/**
+	 * Construct the test suite.
+	 */
+	public PreferencesTestSuite() {
+		addTest(new TestSuite(FontPreferenceTestCase.class));		
+		addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));		
 	}
 }

@@ -50,7 +50,7 @@ public abstract class StructuredViewerTest extends TestCase {
 		public boolean isFilterProperty(Object element, String property) {
 			return property.equals(IBasicPropertyConstants.P_TEXT);
 		}
-	};
+	}
 
 	public static class TestLabelSorter extends ViewerSorter {
 		public int compare(Viewer v, Object e1, Object e2) {
@@ -62,7 +62,7 @@ public abstract class StructuredViewerTest extends TestCase {
 		public boolean isSorterProperty(Object element, String property) {
 			return property.equals(IBasicPropertyConstants.P_TEXT);
 		}
-	};
+	}
 
 	public static class TestLabelProvider extends LabelProvider {
 		public static String fgSuffix = "";
@@ -81,7 +81,7 @@ public abstract class StructuredViewerTest extends TestCase {
 			fgSuffix = suffix;
 			fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 		}
-	};
+	}
 
 	public TestModel fModel;
 	public StructuredViewerTest(String name) {

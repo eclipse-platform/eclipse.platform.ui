@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.preferences;
+package org.eclipse.ui.tests.preferences;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -30,7 +30,7 @@ import org.eclipse.ui.tests.util.UITestCase;
  * are bogus
  */
 
-public class DeprecatedFontPreferenceTestCase extends UITestCase {
+public class FontPreferenceTestCase extends UITestCase {
 
 	public String BAD_FONT_DEFINITION = "BadFont-regular-10";
 	public String TEST_FONT_ID = "org.eclipse.jface.tests.preference.testfont";
@@ -43,7 +43,7 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 	 * Constructor for FontPreferenceTestCase.
 	 * @param testName
 	 */
-	public DeprecatedFontPreferenceTestCase(String testName) {
+	public FontPreferenceTestCase(String testName) {
 		super(testName);
 	}
 
@@ -83,12 +83,12 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
 		FontData[] currentTextFonts = 
 			PreferenceConverter.getFontDataArray(preferenceStore, JFaceResources.TEXT_FONT);
-		FontData bestFont = fontRegistry.bestData(currentTextFonts,Display.getCurrent());
+		FontData[] bestFont = fontRegistry.bestDataArray(currentTextFonts,Display.getCurrent());
 		
 		//Assert that it is the first font that we get as the
 		//valid one
-		assertEquals(bestFont.getName(),currentTextFonts[0].getName());
-		assertEquals(bestFont.getHeight(),currentTextFonts[0].getHeight());
+		assertEquals(bestFont[0].getName(),currentTextFonts[0].getName());
+		assertEquals(bestFont[0].getHeight(),currentTextFonts[0].getHeight());
 	}
 	
 	/**
@@ -101,12 +101,12 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
 		FontData[] currentTestFonts = 
 			PreferenceConverter.getFontDataArray(preferenceStore, TEST_FONT_ID);
-		FontData bestFont = fontRegistry.bestData(currentTestFonts,Display.getCurrent());
+		FontData[] bestFont = fontRegistry.bestDataArray(currentTestFonts,Display.getCurrent());
 		
 		//Assert that it is the second font that we get as the
 		//valid one
-		assertEquals(bestFont.getName(),currentTestFonts[1].getName());
-		assertEquals(bestFont.getHeight(),currentTestFonts[1].getHeight());
+		assertEquals(bestFont[0].getName(),currentTestFonts[1].getName());
+		assertEquals(bestFont[0].getHeight(),currentTestFonts[1].getHeight());
 	}
 	
 	/**
@@ -119,12 +119,12 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
 		FontData[] currentTestFonts = 
 			PreferenceConverter.getFontDataArray(preferenceStore, MISSING_FONT_ID);
-		FontData bestFont = fontRegistry.bestData(currentTestFonts,Display.getCurrent());
+		FontData[] bestFont = fontRegistry.bestDataArray(currentTestFonts,Display.getCurrent());
 		
 		FontData[] systemFontData = Display.getCurrent().getSystemFont().getFontData();
 		
 		//Assert that the first font is the system font
-		assertEquals(bestFont.getName(),systemFontData[0].getName());
-		assertEquals(bestFont.getHeight(),systemFontData[0].getHeight());
+		assertEquals(bestFont[0].getName(),systemFontData[0].getName());
+		assertEquals(bestFont[0].getHeight(),systemFontData[0].getHeight());
 	}
 }

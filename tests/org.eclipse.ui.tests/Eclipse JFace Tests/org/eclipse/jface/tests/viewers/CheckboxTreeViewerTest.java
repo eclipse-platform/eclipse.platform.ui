@@ -93,7 +93,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		assertTrue(elements.length == 3);
 		for (int i = 0; i < elements.length; ++i) {
 			assertTrue(ctv.getGrayed(elements[i]));
-		};
+		}
 
 		assertTrue(elements[0] == first);
 		assertTrue(elements[1] == firstfirst);

@@ -43,6 +43,7 @@ public class UiTestSuite extends TestSuite {
 		addTest(new org.eclipse.ui.tests.adaptable.AdaptableTestSuite());
 		addTest(new org.eclipse.ui.tests.zoom.ZoomTestSuite());
 		addTest(new org.eclipse.ui.tests.datatransfer.DataTransferTestSuite());
+		addTest(new org.eclipse.ui.tests.preferences.PreferencesTestSuite());
 		addTest(new KeysTestSuite());
 	}
 }
