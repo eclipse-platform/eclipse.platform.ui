@@ -1114,7 +1114,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/*
 	 * @see IWorkbench#getDecoratorManager()
 	 */
-	public IDecoratorManager getDecoratorManager() {
+	public DecoratorManager getDecoratorManager() {
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
