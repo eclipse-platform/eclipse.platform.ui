@@ -126,6 +126,10 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	private static final String NATURE_ID = ID + ".cvsnature"; //$NON-NLS-1$
 
+	// File used to idicate if the workbench was shut down properly or not
+	private static final String CRASH_INDICATION_FILE  = ".crash"; //$NON-NLS-1$
+	private boolean crash;
+
 	public synchronized CVSWorkspaceSubscriber getCVSWorkspaceSubscriber() {
 		if (cvsWorkspaceSubscriber == null) {
 			cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
@@ -307,6 +311,7 @@ public class CVSProviderPlugin extends Plugin {
 
 		// load the state which includes the known repositories
 		loadState();
+		crash = createCrashFile();
 		
 		// Initialize CVS change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -344,6 +349,8 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.removeSaveParticipant(this);
 		
 		RemoteContentsCache.disableCache(ID);
+		
+		deleteCrashFile();
 	}
 		
 	/**
@@ -728,5 +735,34 @@ public class CVSProviderPlugin extends Plugin {
 
 	public void setDebugProtocol(boolean value) {
 		Policy.DEBUG_CVS_PROTOCOL = value;		
+	}
+	
+	/*
+	 * Create the crash indicator file. This method returns true if the file
+	 * already existed, indicating that a crash occurred on the last invokation of
+	 * the platform.
+	 */
+	private boolean createCrashFile() {
+		IPath pluginStateLocation = CVSProviderPlugin.getPlugin().getStateLocation();
+		File crashFile = pluginStateLocation.append(CRASH_INDICATION_FILE).toFile();
+		if (crashFile.exists()) {
+			return true;
+		}
+		try {
+			crashFile.createNewFile();
+		} catch (IOException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
+		}
+		return false;
+	}
+	
+	private void deleteCrashFile() {
+		IPath pluginStateLocation = CVSProviderPlugin.getPlugin().getStateLocation();
+		File crashFile = pluginStateLocation.append(CRASH_INDICATION_FILE).toFile();
+		crashFile.delete();
+	}
+	
+	public boolean crashOnLastRun() {
+		return crash;
 	}
 }
