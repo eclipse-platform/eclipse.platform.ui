@@ -71,53 +71,7 @@ public class AutoDefineTagsAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
-				for (int i = 0; i < files.length; i++) {
-					ICVSRemoteFile file = files[i];
-					ICVSRepositoryLocation root = file.getRepository();
-					Set tagSet = new HashSet();
-					ILogEntry[] entries = null;
-					try {
-						entries = file.getLogEntries(monitor);
-					} catch (TeamException e) {
-						CVSUIPlugin.log(e.getStatus());
-						return;
-					}
-					for (int j = 0; j < entries.length; j++) {
-						CVSTag[] tags = entries[j].getTags();
-						for (int k = 0; k < tags.length; k++) {
-							tagSet.add(tags[k]);
-						}
-					}
-					
-					// Break tags up into version tags and branch tags.
-					List branchTags = new ArrayList();
-					List versionTags = new ArrayList();
-					Iterator it = tagSet.iterator();
-					while (it.hasNext()) {
-						CVSTag tag = (CVSTag)it.next();
-						if (tag.getType() == CVSTag.BRANCH) {
-							branchTags.add(new BranchTag(tag, root));
-						} else {
-							versionTags.add(tag);
-						}
-					}
-					if (branchTags.size() > 0) {
-						manager.addBranchTags(root, (BranchTag[])branchTags.toArray(new BranchTag[0]));
-					}
-					if (versionTags.size() > 0) {
-						// Current behaviour for version tags is to match the behaviour in VCM 1.0, 
-						// which is to attach them to the top-most folder in CVS. This may change in the future
-						// to allow a more flexible scheme of attaching 'project' semantics to arbitrary
-						// cvs folders. Get the top-most folder now to optimize.
-						ICVSRemoteResource current = file.getRemoteParent();
-						ICVSRemoteResource next = current.getRemoteParent();
-						while (next != null && next.getRemoteParent() != null) {
-							current = next;
-							next = current.getRemoteParent();
-						}
-						manager.addVersionTags(current, (CVSTag[])versionTags.toArray(new CVSTag[0]));
-					}
-				}
+				manager.autoDefineTags(files, monitor);
 			}
 		}, Policy.bind("AutoDefineTagsAction.defineTags"), this.PROGRESS_DIALOG);
 	}
