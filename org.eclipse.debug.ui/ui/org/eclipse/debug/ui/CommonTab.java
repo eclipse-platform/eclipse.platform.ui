@@ -20,12 +20,10 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -260,14 +258,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 updateLaunchConfigurationDialog();
             }
         });
-    }
-
-    private boolean isValidFile(String file) {
-        IStatus status = ResourcesPlugin.getWorkspace().validatePath(file, IResource.FILE);
-		if (status.getCode() != IStatus.OK) {
-		    return false;
-		}
-		return true;
     }
 
     protected void addEncodingBlock(Composite parent) {
@@ -597,19 +587,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setMessage(null);
 		setErrorMessage(null);
 		
-		return validateLocalShared() && validateConsoleOutputFile();
+		return validateLocalShared();
 	}
 	
-    private boolean validateConsoleOutputFile() {
-        if (fFileOutput.getSelection()) {
-            String file = fFileText.getText();
-            if (!isValidFile(file)) {
-                setErrorMessage(LaunchConfigurationsMessages.getString("CommonTab.8"));  //$NON-NLS-1$
-                return false;
-            }
-        }
-        return true;
-    }
 
     private boolean validateLocalShared() {
 		if (isShared()) {

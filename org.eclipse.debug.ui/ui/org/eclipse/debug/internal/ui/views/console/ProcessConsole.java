@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -110,27 +111,28 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
         if (file != null) {
+            String message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.1"), new String[] {file}); //$NON-NLS-1$
             try {
                 fOutput = new FileOutputStream(file);
-            } catch (IOException e) {
+                addPatternMatchListener(new ConsoleLogFilePatternMatcher(file));
+            } catch (FileNotFoundException e) {
                 DebugUIPlugin.log(e);
+                message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.2"), new String[] {file}); //$NON-NLS-1$
             }
-        }
-        if (fOutput != null) {
-            IOConsoleOutputStream stream = newOutputStream();
-            addPatternMatchListener(new ConsoleLogFilePatternMatcher(file));
-            try {
+            try { 
+                IOConsoleOutputStream stream = newOutputStream();
                 file = new File(file).getAbsolutePath();
-                String message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.1"), new String[] {file}); //$NON-NLS-1$
+                
                 stream.write(message);
                 stream.close();
             } catch (IOException e) {
+                DebugUIPlugin.log(e);
             }
-        }
-
-        try {
-            fAllocateConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
-        } catch (CoreException e) {
+            
+            try {
+                fAllocateConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+            } catch (CoreException e) {
+            }
         }
 
         fColorProvider = colorProvider;
