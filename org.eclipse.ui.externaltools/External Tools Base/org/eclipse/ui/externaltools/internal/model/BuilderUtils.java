@@ -77,7 +77,9 @@ public class BuilderUtils {
 			// This is the format used in 3.0.
 			IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
 			IFile file= project.getFile(path);
-			configuration= manager.getLaunchConfiguration(file);
+			if (file.exists()) {
+				configuration= manager.getLaunchConfiguration(file);
+			}
 		}
 		return configuration;
 	}
