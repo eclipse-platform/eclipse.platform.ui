@@ -33,6 +33,10 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private final int PLUGIN_REQUIRES_IMPORT_STATE = 9;
 	private final int CONFIGURATION_ELEMENT_STATE = 10;
 	private final int FRAGMENT_STATE = 11;
+	private final int CONFIGURATION_STATE = 12;
+	private final int COMPONENT_STATE = 13;
+	private final int DESCRIPTION_STATE = 14;
+	private final int URL_STATE = 15;
 
 	// Current State Information
 	Stack stateStack = new Stack();
@@ -58,6 +62,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 	public static final String[] from = { "&", "<", ">" };
 	public static final String[] to = { "&amp;", "&lt;", "&gt;" };
+	
 public PluginParser(Factory factory) {
 	super();
 	this.factory = factory;
@@ -68,15 +73,26 @@ public PluginParser(Factory factory) {
 	parser.setErrorHandler(this);
 }
 public void characters(char[] ch, int start, int length) {
-	if (((Integer) stateStack.peek()).intValue() == CONFIGURATION_ELEMENT_STATE) {
-		// The only time we accept character data within an element, is when it is
+	int state = ((Integer) stateStack.peek()).intValue();
+	if (state == CONFIGURATION_ELEMENT_STATE) {
+		// Accept character data within an element, is when it is
 		// part of a configuration element (i.e. an element within an EXTENSION element
 		ConfigurationElementModel currentConfigElement = (ConfigurationElementModel) objectStack.peek();
 		String value = new String(ch, start, length);
 		String newValue = value.trim();
 		if (!newValue.equals("") || newValue.length() != 0)
 			currentConfigElement.setValue(newValue);
-	}
+		return;
+	} 
+	if (state == DESCRIPTION_STATE) {
+		// Accept character data within an element, is when it is part of a component or configuration 
+		// description element (i.e. an element within a COMPONENT or CONFIGURATION element
+		InstallModel model = (InstallModel) objectStack.peek();
+		String value = new String(ch, start, length).trim();
+		if (!value.equals("") || value.length() != 0)
+			model.setDescription(value);
+		return;
+	} 		
 }
 public void endDocument() {
 }
@@ -214,6 +230,56 @@ public void fatalError(SAXParseException ex) throws SAXException {
 	logStatus(ex);
 	throw ex;
 }
+
+public void handleComponentState(String elementName, Attributes attributes) {
+
+	if (elementName.equals(COMPONENT_DESCRIPTION)) {
+		stateStack.push(new Integer(DESCRIPTION_STATE));
+		return;
+	}
+	if (elementName.equals(COMPONENT_URL)) {
+		stateStack.push(new Integer(URL_STATE));
+		return;
+	}
+	if (elementName.equals(COMPONENT_PLUGIN)) {
+		parseComponentPluginAttributes(attributes);
+		return;
+	}
+	if (elementName.equals(COMPONENT_FRAGMENT)) {
+		parseComponentFragmentAttributes(attributes);
+		return;
+	}
+	// If we get to this point, the element name is one we don't currently accept.
+	// Set the state to indicate that this element will be ignored
+	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+}
+
+public void handleConfigurationState(String elementName, Attributes attributes) {
+
+	if (elementName.equals(CONFIGURATION_DESCRIPTION)) {
+		stateStack.push(new Integer(DESCRIPTION_STATE));
+		return;
+	}
+	if (elementName.equals(CONFIGURATION_URL)) {
+		stateStack.push(new Integer(URL_STATE));
+		return;
+	}
+	if (elementName.equals(CONFIGURATION_COMPONENT)) {
+		parseComponentAttributes(attributes);
+		return;
+	}
+	// If we get to this point, the element name is one we don't currently accept.
+	// Set the state to indicate that this element will be ignored
+	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+}
+
+
+public void handleDescriptionState(String elementName, Attributes attributes) {
+
+	// We ignore all elements under extension points (if there are any)
+	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+}
+
 public void handleExtensionPointState(String elementName, Attributes attributes) {
 
 	// We ignore all elements under extension points (if there are any)
@@ -269,13 +335,23 @@ public void handleFragmentState(String elementName, Attributes attributes) {
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 }
 public void handleInitialState(String elementName, Attributes attributes) {
-	if (elementName.equals(PLUGIN))
-		processPlugin(elementName, attributes);
-	else
-		if (elementName.equals(FRAGMENT))
-			processFragment(elementName, attributes);
-		else
-			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	if (elementName.equals(PLUGIN)) {
+		stateStack.push(new Integer(PLUGIN_STATE));
+		parsePluginAttributes(attributes);
+	} else
+		if (elementName.equals(FRAGMENT)) {
+			stateStack.push(new Integer(FRAGMENT_STATE));
+			parseFragmentAttributes(attributes);
+		} else
+			if (elementName.equals(COMPONENT)) {
+				stateStack.push(new Integer(COMPONENT_STATE));
+				parseComponentAttributes(attributes);
+			} else
+				if (elementName.equals(CONFIGURATION)) {
+					stateStack.push(new Integer(CONFIGURATION_STATE));
+					parseConfigurationAttributes(attributes);
+				} else
+					stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 }
 public void handleLibraryExportState(String elementName, Attributes attributes) {
 
@@ -376,6 +452,31 @@ public void handleRuntimeState(String elementName, Attributes attributes) {
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 }
+
+private URLModel[] addURL(URLModel url, URLModel[] container) {
+	URLModel[] result = new URLModel[container == null ? 1 : container.length];
+	if (container != null) 
+		System.arraycopy(container, 0, result, 0, container.length);
+	result[result.length - 1] = url;
+	return result;
+}
+
+public void handleURLState(String elementName, Attributes attributes) {
+	URLModel url = null;
+	InstallModel model = (InstallModel)objectStack.peek();
+	if (elementName.equals(URL_UPDATE)) {
+		url = parseURLAttributes(attributes);
+		model.setUpdates(addURL(url, model.getUpdates()));
+		return; 
+	} else
+		if (elementName.equals(URL_DISCOVERY)) {
+			url = parseURLAttributes(attributes);
+			model.setDiscoveries(addURL(url, model.getDiscoveries()));
+			return; 
+		}
+	// We ignore all elements under extension points (if there are any)
+	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+}
 public void ignoreableWhitespace(char[] ch, int start, int length) {
 }
 private void logStatus(SAXParseException ex) {
@@ -392,10 +493,118 @@ private void logStatus(SAXParseException ex) {
 		msg = Policy.bind("parseErrorNameLineColumn", new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
-public PluginModel parse(InputSource in) throws Exception {
+public InstallModel parseInstall(InputSource in) throws Exception {
+	parser.parse(in);
+	return (InstallModel) objectStack.pop();
+}
+
+public PluginModel parsePlugin(InputSource in) throws Exception {
 	parser.parse(in);
 	return (PluginModel) objectStack.pop();
 }
+
+public void parseComponentAttributes(Attributes attributes) {
+
+	ComponentModel current = factory.createComponentModel();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(COMPONENT_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(COMPONENT_LABEL))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(COMPONENT_VERSION))
+					current.setVersion(attrValue);
+				else
+					if (attrName.equals(COMPONENT_PROVIDER))
+						current.setProviderName(attrValue);
+	}
+}
+
+public void parseComponentFragmentAttributes(Attributes attributes) {
+
+	PluginFragmentModel current = factory.createPluginFragment();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(COMPONENT_FRAGMENT_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(COMPONENT_FRAGMENT_LABEL))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(COMPONENT_FRAGMENT_VERSION))
+					current.setVersion(attrValue);
+	}
+}
+
+
+public void parseComponentPluginAttributes(Attributes attributes) {
+
+	PluginDescriptorModel current = factory.createPluginDescriptor();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(COMPONENT_PLUGIN_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(COMPONENT_PLUGIN_LABEL))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(COMPONENT_PLUGIN_VERSION))
+					current.setVersion(attrValue);
+	}
+}
+
+public void parseConfigurationAttributes(Attributes attributes) {
+
+	ConfigurationModel current = factory.createConfiguration();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(CONFIGURATION_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(CONFIGURATION_LABEL))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(CONFIGURATION_VERSION))
+					current.setVersion(attrValue);
+				else
+					if (attrName.equals(CONFIGURATION_PROVIDER))
+						current.setProviderName(attrValue);
+					else
+						if (attrName.equals(CONFIGURATION_APPLICATION))
+							current.setApplication(attrValue);
+	}
+}
+
 public void parseConfigurationElementAttributes(Attributes attributes) {
 
 	ConfigurationElementModel parentConfigurationElement = (ConfigurationElementModel) objectStack.peek();
@@ -422,7 +631,6 @@ public void parseConfigurationElementAttributes(Attributes attributes) {
 public void parseExtensionAttributes(Attributes attributes) {
 
 	PluginModel parent = (PluginModel) objectStack.peek();
-
 	ExtensionModel currentExtension = factory.createExtension();
 	objectStack.push(currentExtension);
 
@@ -478,6 +686,38 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 	// Now populate the the vector just below us on the objectStack with this extension point
 	scratchVectors[EXTENSION_POINT_INDEX].addElement(currentExtPoint);
 }
+
+public void parseFragmentAttributes(Attributes attributes) {
+	PluginFragmentModel current = factory.createPluginFragment();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(FRAGMENT_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(FRAGMENT_NAME))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(FRAGMENT_VERSION))
+					current.setVersion(attrValue);
+				else
+					if (attrName.equals(FRAGMENT_PROVIDER))
+						current.setProviderName(attrValue);
+					else
+						if (attrName.equals(FRAGMENT_PLUGIN_ID))
+							current.setPlugin(attrValue);
+						else
+							if (attrName.equals(FRAGMENT_PLUGIN_VERSION))
+								current.setPluginVersion(attrValue);
+	}
+}
+
 public void parseLibraryAttributes(Attributes attributes) {
 	LibraryModel current = factory.createLibrary();
 	objectStack.push(current);
@@ -499,6 +739,35 @@ public void parseLibraryAttributes(Attributes attributes) {
 					current.setSource(attrValue);
 	}
 }
+public void parsePluginAttributes(Attributes attributes) {
+
+	PluginDescriptorModel current = factory.createPluginDescriptor();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(PLUGIN_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(PLUGIN_NAME))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(PLUGIN_VERSION))
+					current.setVersion(attrValue);
+				else
+					if (attrName.equals(PLUGIN_VENDOR) || (attrName.equals(PLUGIN_PROVIDER)))
+						current.setProviderName(attrValue);
+					else
+						if (attrName.equals(PLUGIN_CLASS))
+							current.setPluginClass(attrValue);
+	}
+}
+
 public void parsePluginRequiresImport(Attributes attributes) {
 	PluginPrerequisiteModel current = factory.createPluginPrerequisite();
 
@@ -555,68 +824,25 @@ public void parseRequiresAttributes(Attributes attributes) {
 	}
 	*/
 }
-public void processFragment(String elementName, Attributes attributes) {
-	// Change State
-	stateStack.push(new Integer(FRAGMENT_STATE));
-	PluginFragmentModel current = factory.createPluginFragment();
-	objectStack.push(current);
+
+public URLModel parseURLAttributes(Attributes attributes) {
+	URLModel current = factory.createURL();
 
 	// process attributes
-	int len = attributes.getLength();
+	int len = (attributes != null) ? attributes.getLength() : 0;
 	for (int i = 0; i < len; i++) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
-		if (attrName.equals(FRAGMENT_ID))
-			current.setId(attrValue);
+		if (attrName.equals(URL_URL))
+			current.setURL(attrValue);
 		else
-			if (attrName.equals(FRAGMENT_NAME))
+			if (attrName.equals(URL_LABEL))
 				current.setName(attrValue);
-			else
-				if (attrName.equals(FRAGMENT_VERSION))
-					current.setVersion(attrValue);
-				else
-					if (attrName.equals(FRAGMENT_PROVIDER))
-						current.setProviderName(attrValue);
-					else
-						if (attrName.equals(FRAGMENT_PLUGIN_ID))
-							current.setPlugin(attrValue);
-						else
-							if (attrName.equals(FRAGMENT_PLUGIN_VERSION))
-								current.setPluginVersion(attrValue);
 	}
+	return current;
 }
-public void processPlugin(String elementName, Attributes attributes) {
 
-	// Change State
-	stateStack.push(new Integer(PLUGIN_STATE));
-	PluginDescriptorModel current = factory.createPluginDescriptor();
-	objectStack.push(current);
-
-	// process attributes
-	int len = attributes.getLength();
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		// common (manifest and cached registry)
-		if (attrName.equals(PLUGIN_ID))
-			current.setId(attrValue);
-		else
-			if (attrName.equals(PLUGIN_NAME))
-				current.setName(attrValue);
-			else
-				if (attrName.equals(PLUGIN_VERSION))
-					current.setVersion(attrValue);
-				else
-					if (attrName.equals(PLUGIN_VENDOR) || (attrName.equals(PLUGIN_PROVIDER)))
-						current.setProviderName(attrValue);
-					else
-						if (attrName.equals(PLUGIN_CLASS))
-							current.setPluginClass(attrValue);
-	}
-}
 static String replace(String s, String from, String to) {
 	String str = s;
 	int fromLen = from.length();
@@ -666,6 +892,18 @@ public void startElement(String uri, String elementName, String qName, Attribute
 			break;
 		case PLUGIN_REQUIRES_IMPORT_STATE :
 			handleRequiresImportState(elementName, attributes);
+			break;
+		case COMPONENT_STATE:
+			handleComponentState(elementName, attributes);
+			break;
+		case CONFIGURATION_STATE :
+			handleConfigurationState(elementName, attributes);
+			break;
+		case DESCRIPTION_STATE :
+			handleDescriptionState(elementName, attributes);
+			break;
+		case URL_STATE :
+			handleURLState(elementName, attributes);
 			break;
 		default :
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));

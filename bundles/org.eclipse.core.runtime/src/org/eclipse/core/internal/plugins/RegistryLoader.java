@@ -71,7 +71,7 @@ private PluginModel processManifestFile(URL manifest) {
 	PluginModel result = null;
 	try {
 		try {
-			result = new PluginParser((Factory) factory).parse(new InputSource(is));
+			result = new PluginParser((Factory) factory).parsePlugin(new InputSource(is));
 		} finally {
 			is.close();
 		}
