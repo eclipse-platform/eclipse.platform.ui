@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.ui.manager;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.*;
 
 public class DetailsHistory {
@@ -16,12 +19,13 @@ public class DetailsHistory {
 	}
 	
 	public void add(DetailsHistoryItem item) {
-		if (!history.isEmpty() &&
-		    history.getLast().equals(item)) return;
-		System.out.println("Item added: "+item);
-		history.addLast(item);
-		if (history.size() > MAX_SIZE)
-		   history.removeFirst();
+		if (history.isEmpty() ||
+		    history.getLast().equals(item)==false) {
+			System.out.println("Item added: "+item);
+			history.addLast(item);
+			if (history.size() > MAX_SIZE)
+		   		history.removeFirst();
+		    }
 		resetIterator();
 	}
 	public void add(String pageId, Object input) {

@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.ui.manager;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.SWT;
@@ -61,12 +64,14 @@ public void createPages() {
 }
 
 private void addWebBrowser() {
-	BrowserPage browser = new BrowserPage(this);
+	final BrowserPage browser = new BrowserPage(this);
 	browser.setBrowserListener(new IBrowserListener () {
 		public void downloadComplete(String url) {
 			System.out.println("Complete: inHistory="+inHistory+", url="+url);
-			if (inHistory)
-				inHistory = false;
+			if (inHistory) {
+				if (!url.equals(browser.getBrowser().getLocationName()))
+				   	inHistory = false;
+			}
 			else
 		   		history.add(BROWSER_PAGE, url);
 		   	backAction.update();
@@ -206,9 +211,9 @@ private boolean canPerformBackward() {
 private void performBackward() {
 	DetailsHistoryItem item = history.getPrevious();
 	if (item!=null) {
-		if (item.getPageId() == BROWSER_PAGE)
-		   inHistory=true;
+		inHistory = true;
 	   	showPage(item.getPageId(), item.getInput());
+	   	//inHistory = false;
 		if (item.getPageId() != BROWSER_PAGE) {
 		   	backAction.update();
 		   	forwardAction.update();
@@ -219,9 +224,9 @@ private void performBackward() {
 private void performForward() {
 	DetailsHistoryItem item = history.getNext();
 	if (item!=null) {
-		if (item.getPageId() == BROWSER_PAGE)
-		   inHistory=true;
+	  	inHistory=true;
 		showPage(item.getPageId(), item.getInput());
+		//inHistory = false;
 		if (item.getPageId() != BROWSER_PAGE) {
 		   	backAction.update();
 		   	forwardAction.update();

@@ -1,5 +1,8 @@
 package org.eclipse.update.ui.internal.model;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.*;
 import org.eclipse.update.core.*;
 import org.eclipse.jface.dialogs.*;

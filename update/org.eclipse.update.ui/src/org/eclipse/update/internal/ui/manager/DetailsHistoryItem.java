@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.ui.manager;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 public class DetailsHistoryItem {
 	private String pageId;
 	private Object input;

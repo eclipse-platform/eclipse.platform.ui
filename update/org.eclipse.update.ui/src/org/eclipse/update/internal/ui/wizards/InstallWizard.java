@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.ui.wizards;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.wizard.*;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.*;

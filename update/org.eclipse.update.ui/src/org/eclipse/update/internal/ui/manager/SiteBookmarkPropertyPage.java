@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.ui.manager;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.IWorkbenchPropertyPage;

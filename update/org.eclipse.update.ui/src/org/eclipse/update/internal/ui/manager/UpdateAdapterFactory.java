@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.ui.manager;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.update.ui.internal.model.*;

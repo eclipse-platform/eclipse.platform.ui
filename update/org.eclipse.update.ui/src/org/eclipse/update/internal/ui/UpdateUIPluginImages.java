@@ -3,7 +3,7 @@ package org.eclipse.update.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 import java.net.MalformedURLException;
 import org.eclipse.core.runtime.*;
 import java.io.File;

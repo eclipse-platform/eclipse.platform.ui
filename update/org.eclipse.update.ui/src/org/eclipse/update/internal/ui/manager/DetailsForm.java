@@ -1,5 +1,8 @@
 package org.eclipse.update.internal.ui.manager;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.widgets.*;
@@ -251,19 +254,6 @@ public void expandTo(Object obj) {
 }
 
 private void inputChanged(IFeature feature) {
-/*
-	if (feature==null) {
-		providerLabel.setText("");
-		versionLabel.setText("");
-		sizeLabel.setText("");
-		descriptionText.setText("");
-		infoLinkLabel.setVisible(false);
-		doButton.setVisible(false);
-		imageLabel.setImage(null);
-		currentFeature = null;
-		return;
-	}
-*/
 	if (feature==null) feature = currentFeature;
 	if (feature==null) return;
 	
@@ -277,12 +267,6 @@ private void inputChanged(IFeature feature) {
 		*/
 	imageLabel.setImage(providerImage);
 	infoLinkURL = feature.getDescription().getURL();
-	//Temp. - should not use internal classes
-	try {
-		infoLinkURL = org.eclipse.update.internal.core.UpdateManagerUtils.resolveAsLocal(infoLinkURL);
-	}
-	catch (Exception e) {
-	}
 	infoLinkLabel.setVisible(infoLinkURL!=null);
 	if (feature.getSite() instanceof ILocalSite) {
 		doButton.setText("Uninstall");
@@ -296,6 +280,7 @@ private void inputChanged(IFeature feature) {
 	
 	licenseGroup.setInfo(feature.getLicense());
 	copyrightGroup.setInfo(feature.getCopyright());
+	System.out.println("Reflow starts...");
 	reflow();
 	updateSize();
 	((Composite)getControl()).redraw();
@@ -305,6 +290,7 @@ private void inputChanged(IFeature feature) {
 	doButton.setVisible(true);
 
 	currentFeature = feature;
+	System.out.println("Done.");
 }
 
 private void reflow() {

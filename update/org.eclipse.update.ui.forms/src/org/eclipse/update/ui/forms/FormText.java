@@ -1,9 +1,9 @@
 package org.eclipse.update.ui.forms;
-
-/**
- * FormText is a windowless control that
- * draws text in the provided context.
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
@@ -11,6 +11,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import java.text.*;
 
+/**
+ * FormText is a windowless control that
+ * draws text in the provided context.
+ */
 public class FormText extends Canvas {
 	private Image backgroundImage;
 	private String text="";

@@ -1,5 +1,10 @@
 package org.eclipse.update.internal.ui;
-
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.ui.plugin.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
@@ -11,20 +16,19 @@ import org.eclipse.update.internal.ui.manager.*;
 import org.eclipse.update.core.*;
 import java.lang.reflect.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-
+
+
 /**
  * The main plugin class to be used in the desktop.
  */
 public class UpdateUIPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.update.ui";
-	public static final String UPDATE_MANAGER_ID = PLUGIN_ID+".updateManager";
 	//The shared instance.
 	private static UpdateUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	private UpdateAdapterFactory adapterFactory;
 	private UpdateModel model;
-	private Hashtable urlActions = new Hashtable();
 	
 	/**
 	 * The constructor.
@@ -38,7 +42,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 			resourceBundle = null;
 		}
 	}
-
+
 	/**
 	 * Returns the shared instance.
 	 */
@@ -72,7 +76,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-
+
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
@@ -85,7 +90,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 			return key;
 		}
 	}
-
+
+
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
