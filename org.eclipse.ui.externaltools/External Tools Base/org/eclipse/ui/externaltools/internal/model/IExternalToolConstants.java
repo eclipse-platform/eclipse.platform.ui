@@ -28,13 +28,6 @@ public interface IExternalToolConstants {
 	 * created when duplicating an existing configuration as a project builder.
 	 */
 	public static final String EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS = "configurationDuplicationMaps"; //$NON-NLS-1$
-	/**
-	 * Extension point to declare refresh scope variables. Refresh scope
-	 * variables are external tool variables that are only valid for
-	 * specifying a refresh scope.
-	 * (value <code>refreshVariables</code>).
-	 */
-	public static final String EXTENSION_POINT_REFRESH_VARIABLES = "refreshVariables"; //$NON-NLS-1$}
 	// ------- Refresh Variables -------
 	/**
 	 * Variable that expands to the workspace root object (value <code>workspace</code>).
@@ -89,10 +82,6 @@ public interface IExternalToolConstants {
 	public static final String BUILD_TYPE_NONE = "none"; //$NON-NLS-1$
 
 	// ------- Images -------
-	/**
-	 * Refresh tab image
-	 */
-	public static final String IMG_TAB_REFRESH = PLUGIN_ID + ".IMG_TAB_REFRESH"; //$NON-NLS-1$
 
 	/**
 	 * Main tab image.
@@ -110,7 +99,7 @@ public interface IExternalToolConstants {
 	 * builders are of this type.
 	 */
 	public static final String ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"; //$NON-NLS-1$	
-
+	
 	// ------- Launch configuration category --------
 	/**
 	 * Identifier for external tools launch configuration category. Launch
