@@ -567,8 +567,12 @@ private void getMatchingResources(final ArrayList resources) {
 				if ((typeMask & type) != 0) {
 					if(match(proxy.getName())) {
 						IResource res = proxy.requestResource();
-						if (select(res)) resources.add(res);
-						return true;
+						if (select(res)) {
+							resources.add(res);
+							return true;
+						} else {
+							return false;
+						}
 					} 
 				}
 				if (type == IResource.FILE) return false;
@@ -588,8 +592,7 @@ private String getParentLabel(IResource resource) {
 	if (parent.getType() == IResource.ROOT) {
 		// Get readable name for workspace root ("Workspace"), without duplicating language-specific string here.
 		text = labelProvider.getText(parent);
-	}
-	else {
+	} else {
 		text = parent.getFullPath().makeRelative().toString();
 	}
 	return text;
@@ -669,7 +672,7 @@ protected void okPressed() {
  * Use this method to further filter resources.  As resources are gathered,
  * if a resource matches the current pattern string, this method will be called.
  * If this method answers false, the resource will not be included in the list
- * of matches.
+ * of matches and the resource's children will NOT be considered for matching.
  */
 protected boolean select(IResource resource) {
 	return true;
