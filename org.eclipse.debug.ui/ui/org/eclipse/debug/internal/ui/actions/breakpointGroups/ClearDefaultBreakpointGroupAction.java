@@ -12,14 +12,13 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 
 /**
  * An action which clears (sets the null) the default breakpoint group.
  * @see org.eclipse.debug.core.IBreakpointManager#setAutoGroup(String)
  */
-public class ClearDefaultBreakpointGroupAction extends AbstractBreakpointsViewAction {
-
+public class ClearDefaultBreakpointGroupAction extends BreakpointWorkingSetAction {
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
@@ -27,10 +26,7 @@ public class ClearDefaultBreakpointGroupAction extends AbstractBreakpointsViewAc
         WorkingSetBreakpointOrganizer.setDefaultWorkingSet(null);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-     */
-    public void selectionChanged(IAction action, ISelection selection) {
+    protected void update() {
+        fAction.setEnabled(WorkingSetBreakpointOrganizer.getDefaultWorkingSet() != null);
     }
-
 }

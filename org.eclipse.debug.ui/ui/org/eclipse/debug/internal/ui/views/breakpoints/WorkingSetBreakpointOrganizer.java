@@ -16,13 +16,14 @@ import java.util.List;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractBreakpointOrganizer;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkingSet;
@@ -35,8 +36,6 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.1
  */
 public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizer implements IPropertyChangeListener, IBreakpointsListener {
-    
-    private static final String MEMENTO_BREAKPOINT_WORKING_SET_NAME = DebugUIPlugin.getUniqueIdentifier() + ".MEMENTO_BREAKPOINT_WORKING_SET_NAME"; //$NON-NLS-1$
     
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
@@ -178,8 +177,8 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizer i
      * @return the active default breakpoint working set, or <code>null</code>
      */
     public static IWorkingSet getDefaultWorkingSet() {
-        Preferences preferences = DebugUIPlugin.getDefault().getPluginPreferences();
-        String name = preferences.getString(MEMENTO_BREAKPOINT_WORKING_SET_NAME);
+        IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
+        String name = preferenceStore.getString(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME);
         if (name != null) {
             return PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
         }
@@ -200,6 +199,6 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizer i
                 name = set.getName();
             }
         }
-        DebugUIPlugin.getDefault().getPluginPreferences().setValue(MEMENTO_BREAKPOINT_WORKING_SET_NAME, name);
+        DebugUIPlugin.getDefault().getPluginPreferences().setValue(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME, name);
     }    
 }

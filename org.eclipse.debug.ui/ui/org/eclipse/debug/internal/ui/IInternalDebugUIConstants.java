@@ -257,4 +257,12 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String PREF_TRACK_VIEWS= IDebugUIConstants.PLUGIN_ID + ".track_views"; //$NON-NLS-1$
+
+    /**
+     * Preference storing memento for the default breakpoint working set in
+     * the breakpoints view.
+     * 
+     * @since 3.1
+     */
+    public static final String MEMENTO_BREAKPOINT_WORKING_SET_NAME = DebugUIPlugin.getUniqueIdentifier() + ".MEMENTO_BREAKPOINT_WORKING_SET_NAME"; //$NON-NLS-1$
 }
