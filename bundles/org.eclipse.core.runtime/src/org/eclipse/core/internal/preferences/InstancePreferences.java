@@ -60,6 +60,7 @@ public class InstancePreferences extends EclipsePreferences {
 		super.flush();
 		// TODO move this to superclass?
 		if (!isLoadLevel()) {
+			// TODO need to flush in the right direction. 
 			// flush children
 			for (Iterator i = children.values().iterator(); i.hasNext();) {
 				IEclipsePreferences child = (IEclipsePreferences) i.next();
@@ -79,7 +80,7 @@ public class InstancePreferences extends EclipsePreferences {
 			return;
 		}
 		node.save(location);
-		dirty = false;
+		makeClean();
 	}
 
 	/*

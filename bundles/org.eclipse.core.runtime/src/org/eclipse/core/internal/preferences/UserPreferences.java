@@ -70,6 +70,8 @@ public class UserPreferences extends EclipsePreferences {
 	 */
 	public void flush() throws BackingStoreException {
 		super.flush();
+		if (!dirty)
+			return;
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
@@ -82,6 +84,7 @@ public class UserPreferences extends EclipsePreferences {
 			return;
 		}
 		node.save(location);
+		makeClean();
 	}
 
 	/*

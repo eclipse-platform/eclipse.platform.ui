@@ -41,8 +41,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected ListenerList nodeListeners;
 	protected ListenerList preferenceListeners;
 	protected boolean isLoading = false;
-	private String cachedPath;
 	protected boolean dirty = false;
+	private String cachedPath;
 
 	public EclipsePreferences() {
 		this(null, null);
@@ -531,6 +531,24 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public Preferences node(String pathName) {
 		return node(new Path(pathName));
+	}
+
+	protected void makeClean() {
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) {
+				((EclipsePreferences) node).dirty = false;
+				return true;
+			}
+		};
+		try {
+			accept(visitor);
+		} catch (BackingStoreException e) {
+			// shouldn't happen
+			if (InternalPlatform.DEBUG_PREFERENCES) {
+				System.out.println("Exception visiting nodes during #makeClean"); //$NON-NLS-1$
+				e.printStackTrace();
+			}
+		}
 	}
 
 	protected void makeDirty() {
