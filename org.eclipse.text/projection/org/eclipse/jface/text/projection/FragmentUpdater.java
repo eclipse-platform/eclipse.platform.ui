@@ -118,8 +118,8 @@ class FragmentUpdater extends DefaultPositionUpdater {
 				Position fragment= fragments[index - 1];
 				if (fragment.overlapsWith(event.getOffset(), event.getLength()))
 					return true;
-				if (fragment.offset + fragment.length == event.getOffset())
-					return index == fragments.length;
+				if (index == fragments.length && fragment.offset + fragment.length == event.getOffset())
+					return true;
 			}
 			
 			if (index < fragments.length) {
