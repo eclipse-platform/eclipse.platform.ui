@@ -573,6 +573,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// build the new tabs
  		ILaunchConfigurationTabGroup group = LaunchConfigurationPresentationManager.getDefault().getTabGroup(configType);
  		group.createTabs(this, getMode());
+ 		ILaunchConfigurationTab[] tabs = group.getTabs();
+ 		for (int i = 0; i < tabs.length; i++) {
+ 			tabs[i].setLaunchConfigurationDialog(this);
+ 		}
  		return group;
 	}
 	
