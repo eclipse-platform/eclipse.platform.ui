@@ -256,7 +256,7 @@
             disabledIcon="icons/full/dtool16/run_exc.gif"
             hoverIcon="icons/full/ctool16/run_exc.gif"
             helpContextId="run_action_context"
-            class="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
+            class="org.eclipse.debug.internal.ui.actions.RunToolbarAction"
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.actions.RunDropDownAction">
       </action>
@@ -288,7 +288,7 @@
             disabledIcon="icons/full/dtool16/debug_exc.gif"
             hoverIcon="icons/full/ctool16/debug_exc.gif"
             helpContextId="debug_action_context"
-            class="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
+            class="org.eclipse.debug.internal.ui.actions.DebugToolbarAction"
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction">
       </action>
