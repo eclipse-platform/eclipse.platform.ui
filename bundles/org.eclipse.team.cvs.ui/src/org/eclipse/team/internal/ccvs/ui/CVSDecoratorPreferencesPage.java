@@ -135,7 +135,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		GridLayout layout= new GridLayout();
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData());
-		setControl(composite);
 
 		// file text decoration options
 
