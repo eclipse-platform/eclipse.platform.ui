@@ -150,7 +150,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("testMoreDepends", proposals);
     	//comma separated depends
     	lineNumber= 17;
-    	columnNumber= 54;
+    	columnNumber= 53;
     	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
     	processor.setLineNumber(lineNumber);
     	processor.setColumnNumber(columnNumber);

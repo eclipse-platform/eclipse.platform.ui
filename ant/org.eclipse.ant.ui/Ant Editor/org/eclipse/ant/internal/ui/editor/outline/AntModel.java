@@ -470,8 +470,26 @@ public class AntModel {
 	}
 	
 	public void error(Exception exception, int start, int count) {
-		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
-		generateExceptionOutline(fLastNode);
+		error(exception, fLastNode, start, count);
+	}
+	
+	public void error(Exception exception, AntElementNode node, int start, int count) {
+		if (node == null) {
+			if (!fStillOpenElements.empty()) {
+				node= (AntElementNode)fStillOpenElements.pop();
+			} else {
+				node= fLastNode;
+			}
+		}
+		
+		computeEndLocationForErrorNode(node, start, count);
+		
+		if (start > -1 && count > -1) {
+			notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
+		} else {
+			notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
+		}
+		generateExceptionOutline(node);
 	}
 
 	private AntElementNode createProblemElement(SAXParseException exception) {
@@ -494,15 +512,17 @@ public class AntModel {
 			return;
 		}
 		
+		int line= exception.getLineNumber();
+		int startColumn= exception.getColumnNumber();
+		computeEndLocationForErrorNode(element, line, startColumn);	
+	}
+	
+	private void computeEndLocationForErrorNode(AntElementNode element, int line, int startColumn) {
 		try {
-			int line= exception.getLineNumber();
-			int startColumn= exception.getColumnNumber();
-			int endColumn;
-			
 			if (line <= 0) {
 				line= 1;
 			}
-
+			int endColumn;
 			if (startColumn <= 0) {
 				startColumn= 1;
 				endColumn= getLastCharColumn(line) + 1;
@@ -517,26 +537,43 @@ public class AntModel {
 				}
 			}
 			
-			int offset= getOffset(line, startColumn);
-			element.setOffset(offset);
-			element.setLength(endColumn - startColumn);
+			int correction= 0;
+			if (element.getOffset() == -1) {
+				int nonWhitespaceOffset= getNonWhitespaceOffset(line, startColumn);
+				int originalOffset= getOffset(line, startColumn);
+				element.setOffset(nonWhitespaceOffset);
+				correction= nonWhitespaceOffset - originalOffset;
+			}
+			if (endColumn - startColumn == 0) {
+				int offset= getOffset(line, startColumn);
+				element.setLength(offset - element.getOffset() - correction);
+			} else {
+				element.setLength(endColumn - startColumn - correction);
+			}
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
-		}		
+		}
 	}
-	
+
 	public void fatalError(Exception exception) {
 		AntElementNode node= (AntElementNode)fStillOpenElements.pop();
 		generateExceptionOutline(node);
 		if (exception instanceof SAXParseException) {
 			SAXParseException parseException= (SAXParseException)exception;
-			computeLength(node, parseException.getLineNumber(), parseException.getColumnNumber());
+			if (node.getOffset() == -1) { 
+				computeEndLocationForErrorNode(node, parseException.getLineNumber() - 1, parseException.getColumnNumber());
+			} else {
+				node= createProblemElement(parseException);
+			}
 		}
+		
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_FATAL_ERROR);
 		
 		while (node.getParentNode() != null) {
 			AntElementNode parentNode= node.getParentNode();
-			parentNode.setLength(node.getOffset() - parentNode.getOffset() + node.getLength());
+			if (parentNode.getLength() == -1) {
+				parentNode.setLength(node.getOffset() - parentNode.getOffset() + node.getLength());
+			}
 			node= parentNode;
 		}
 	}

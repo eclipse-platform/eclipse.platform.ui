@@ -240,7 +240,7 @@ public class AntElementNode {
 	 * Returns a string representation of this element.
 	 */
 	public String toString() {
-		return "Ant Element Node: Offset: " + getOffset() + " Length: " + getLength();  //$NON-NLS-1$//$NON-NLS-2$
+		return "Ant Element Node: " + getLabel() + " Offset: " + getOffset() + " Length: " + getLength();  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	/**

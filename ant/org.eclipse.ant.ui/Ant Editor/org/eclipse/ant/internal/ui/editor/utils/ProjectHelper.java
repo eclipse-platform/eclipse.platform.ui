@@ -376,7 +376,7 @@ public class ProjectHelper extends ProjectHelper2 {
 			Target newTarget= context.getCurrentTarget();
 			Locator locator= context.getLocator();
 			fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
-			fAntModel.error(e);
+			fAntModel.error(e, null, locator.getLineNumber(), locator.getColumnNumber());
 		}
 		/* (non-Javadoc)
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onEndElement(java.lang.String, java.lang.String, org.apache.tools.ant.helper.AntXMLContext)

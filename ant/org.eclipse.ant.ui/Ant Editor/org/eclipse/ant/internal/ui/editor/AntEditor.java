@@ -218,16 +218,6 @@ public class AntEditor extends TextEditor {
                 if (!moveCursor) {
                     return;
                 }
-
-//				XmlAttribute attrType= reference.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-//				if (!reference.isErrorNode() ||
-//					 (attrType != null &&
-//					  IAntEditorConstants.TYPE_PROJECT.equalsIgnoreCase(attrType.getValue()))) {
-//					//NOTE: type is checked because isErrorNode() is true for an error node *and*
-//					// the root node, which - in this case - should be handled as an normal node  
-//	                offset= reference.getOffset()+1;
-//	                length= reference.getName().length();
-//				}
                                             
                 if (offset > -1 && length > 0) {
                     sourceViewer.revealRange(offset, length);
