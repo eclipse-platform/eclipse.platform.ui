@@ -94,6 +94,12 @@
 				menubarPath="team.main/group2"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
 			<action 
+				id="org.eclipse.team.ccvs.ui.ignore"
+				label="%IgnoreAction.label"
+				tooltip="%IgnoreAction.tooltip"
+				menubarPath="team.main/group1"
+				class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
+			<action 
 				id="org.eclipse.team.ccvs.ui.branch"
 				label="%BranchAction.label"
 				tooltip="%BranchAction.tooltip"
