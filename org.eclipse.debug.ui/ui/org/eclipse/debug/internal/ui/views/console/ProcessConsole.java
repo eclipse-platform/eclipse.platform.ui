@@ -413,19 +413,22 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	                DebugUIPlugin.log(e);
 	            }
         	} else {
-        		synchronized (monitor) {
-	        		flushed = true;
-	        		try {
-						stream.write(monitor.getContents());
-					} catch (IOException e) {
-						DebugUIPlugin.log(e);
-					}
-	                if (streamMonitor instanceof IFlushableStreamMonitor) {
-	                    IFlushableStreamMonitor m = (IFlushableStreamMonitor) streamMonitor;
-	                    m.flushContents();
-	                    m.setBuffered(false);
-	                }
-        		}
+        	    synchronized (monitor) {
+        	        flushed = true;
+        	        try {
+        	            String contents = monitor.getContents();
+        	            if (contents.length() > 0) {
+        	                stream.write(contents);
+        	            }
+        	        } catch (IOException e) {
+        	            DebugUIPlugin.log(e);
+        	        }
+        	        if (streamMonitor instanceof IFlushableStreamMonitor) {
+        	            IFlushableStreamMonitor m = (IFlushableStreamMonitor) streamMonitor;
+        	            m.flushContents();
+        	            m.setBuffered(false);
+        	        }
+        	    }
         	}
         }   
         
