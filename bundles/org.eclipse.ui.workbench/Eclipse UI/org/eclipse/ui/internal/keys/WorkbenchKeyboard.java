@@ -309,7 +309,7 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
-	 * Closes the multi-stroke key binding assistant shell, if it exists and 
+	 * Closes the multi-stroke key binding assistant shell, if it exists and
 	 * isn't already disposed.
 	 */
 	private void closeMultiKeyAssistShell() {
@@ -411,22 +411,24 @@ public class WorkbenchKeyboard {
 		boolean dialogOnly = false;
 		if (event.widget instanceof Control) {
 			Shell shell = ((Control) event.widget).getShell();
-			if ((shell != null) && (shell.getParent() != null)) {
-				// There is a parent shell. Partially-managed.
-				dialogOnly = true;
-
-			} else {
-				Boolean dialog = (Boolean) managedShells.get(shell);
-				if (dialog == null) {
-					// The window is unmanaged.
-					return;
-				} else if (dialog.booleanValue()) {
-					// The window is managed, but request partial management
+			Boolean dialog = (Boolean) managedShells.get(shell);
+			if (dialog == null) {
+				// The shell has not been registered.
+				if ((shell != null) && (shell.getParent() != null)) {
+					// There is a parent shell. Partially-managed.
 					dialogOnly = true;
 				} else {
-					// The window is fully-managed; leave dialogOnly=false.
+					// There is no parent shell. The shell is unmanaged.
+					return;
 				}
 
+			} else if (dialog.booleanValue()) {
+				// The window is managed, but requested partial management.
+				dialogOnly = true;
+				
+			} else {
+				// The window is fully-managed; leave dialogOnly=false.
+				
 			}
 		}
 
