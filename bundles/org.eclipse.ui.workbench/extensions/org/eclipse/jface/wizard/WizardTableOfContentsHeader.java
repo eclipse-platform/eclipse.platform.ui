@@ -46,11 +46,20 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 			newNodes[0] = new WizardTableOfContentsNode(pages[0]);
 		}
 
+		Display display = wizard.getContainer().getShell().getDisplay();
+		addNodes(newNodes, display);
+
+	}
+	/**
+	 * Add the newNodes to the collection of nodes being displayed.
+	 */
+
+	private void addNodes(ITableOfContentsNode[] newNodes, Display display) {
+
 		int oldSize = nodes.length;
 		ITableOfContentsNode[] mergeNodes =
 			new ITableOfContentsNode[oldSize + newNodes.length];
 		System.arraycopy(nodes, 0, mergeNodes, 0, oldSize);
-		Display display = wizard.getContainer().getShell().getDisplay();
 		Color foreground = getTitleForeground(display);
 		Color background = getTitleBackground(display);
 
@@ -59,7 +68,7 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 			mergeNodes[i + oldSize] = newNodes[i];
 		}
 		nodes = mergeNodes;
-
+		tableComposite.pack();
 	}
 
 	/**
@@ -95,7 +104,6 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 				}
 			}
 			addNodesForWizard(newWizard);
-			tableComposite.pack();
 		}
 	}
 
@@ -107,14 +115,23 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 
 		//We may not have created anything yet
 		int index = indexOfPage(page);
-		if (index == -1)
-			return;
+		if (index == -1) {
+			//If there is nothing return. If not we have a new page added
+			if (tableComposite == null)
+				return;
+			ITableOfContentsNode[] newNodes = new ITableOfContentsNode[1];
+			ITableOfContentsNode newNode = new WizardTableOfContentsNode(page);
+			newNodes[0] = newNode;
+			currentNode = newNode;
+			addNodes(newNodes, page.getControl().getDisplay());
 
-		currentNode = nodes[index];
-		ITableOfContentsNode checkNode = currentNode;
-		for (int i = index + 1; i < nodes.length; i++) {
-			nodes[i].setEnabled(checkNode.getPage().canFlipToNextPage());
-			checkNode = nodes[i];
+		} else {
+			currentNode = nodes[index];
+			ITableOfContentsNode checkNode = currentNode;
+			for (int i = index + 1; i < nodes.length; i++) {
+				nodes[i].setEnabled(checkNode.getPage().canFlipToNextPage());
+				checkNode = nodes[i];
+			}
 		}
 	}
 
@@ -148,7 +165,8 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 		int horizontalSpacing) {
 
 		tableComposite = new Composite(parent, SWT.NULL);
-		tableComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+		tableComposite.setLayout(layout);
 		tableComposite.setForeground(getTitleForeground(parent.getDisplay()));
 		tableComposite.setBackground(getTitleBackground(parent.getDisplay()));
 
