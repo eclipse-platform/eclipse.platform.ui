@@ -210,12 +210,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			waitForBrowser();
 			if (exitRequested)
 				return;
-			//workaround for bug 23750, mozilla bug 159092
-			// instead of simply -remote openURL(" + url + ")", call a javascript
-			if (openBrowser(executable
-				+ " -remote openURL(javascript:window.focus();window.location=\'"
-				+ url
-				+ "\')")
+			if (openBrowser(executable + " -remote openURL(" + url + ")")
 				== 0) {
 				return;
 			}
