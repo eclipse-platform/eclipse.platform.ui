@@ -153,7 +153,7 @@ public class ProgressRegion {
 				JobInfo info = (JobInfo) items[0];
 				if (info.getJob().isUser()) {
 					workbenchWindow.getWorkbench().getProgressService()
-							.runInDialog(workbenchWindow.getShell(),
+							.showInDialog(workbenchWindow.getShell(),
 									info.getJob(), true);
 					return;
 				}

@@ -74,6 +74,6 @@ public interface IProgressService {
 	 * If false then add a job listener and do not open the dialog
 	 * until it is about to run.
 	 */
-	public void runInDialog(Shell shell, Job job, boolean runImmediately);
+	public void showInDialog(Shell shell, Job job, boolean runImmediately);
 
 }

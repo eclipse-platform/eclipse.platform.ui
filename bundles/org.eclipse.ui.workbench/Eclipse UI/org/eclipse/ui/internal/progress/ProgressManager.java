@@ -335,7 +335,7 @@ public class ProgressManager extends ProgressProvider
 							.getBoolean(
 									IPreferenceConstants.SHOW_USER_JOBS_IN_DIALOG);
 					if (inDialog) {
-						runInDialog(null,event.getJob(),false);
+						showInDialog(null,event.getJob(),false);
 						return;
 					}
 				}
@@ -924,9 +924,9 @@ public class ProgressManager extends ProgressProvider
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IProgressService#runInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job, boolean)
+	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job, boolean)
 	 */
-	public void runInDialog(Shell shell, Job job, boolean runImmediately) {
+	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
 		ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(
 				shell);
 		dialog.setJobAndOpen(job, runImmediately);

@@ -261,11 +261,11 @@ public class WorkbenchSiteProgressService
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.progress.IProgressService#runInDialog(org.eclipse.swt.widgets.Shell,
+	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
 	 *      org.eclipse.core.runtime.jobs.Job, boolean)
 	 */
-	public void runInDialog(Shell shell, Job job, boolean runImmediately) {
+	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
 		site.getWorkbenchWindow().getWorkbench().getProgressService()
-				.runInDialog(shell, job, runImmediately);
+				.showInDialog(shell, job, runImmediately);
 	}
 }
