@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
@@ -20,13 +21,15 @@ import org.eclipse.swt.widgets.Composite;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class ImageHyperlink extends AbstractHyperlink {
+public class ImageHyperlink extends Hyperlink {
 	private Image image;
 	private Image hoverImage;
 	private Image activeImage;
 	private int state;
 	private static final int HOVER = 1 << 1;
 	private static final int ACTIVE = 1 << 2;
+	
+	public int textSpacing = 5;
 	/**
 	 * @param parent
 	 * @param style
@@ -48,18 +51,42 @@ public class ImageHyperlink extends AbstractHyperlink {
 			image = hoverImage;
 		if (image==null) image = this.image;
 		if (image==null) return;
-		Rectangle bounds = image.getBounds();
-		int x = clientArea.width/2-bounds.width/2;
-		int y = clientArea.height/2-bounds.height/2;
+		Rectangle ibounds = image.getBounds();
+		Point maxsize = computeImageSize();
+		int x = marginWidth + maxsize.x/2-ibounds.width/2;
+		int y = marginHeight + maxsize.y/2-ibounds.height/2;
 		gc.drawImage(image, x, y);
+		if (getText()!=null) {
+			Rectangle tbounds = new Rectangle(marginWidth+maxsize.x+textSpacing,
+					marginHeight,
+					clientArea.width-maxsize.x-marginWidth-marginWidth,
+					clientArea.height-marginHeight-marginHeight);
+			paintText(gc, tbounds);
+		}
 	}
 	
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();
+
 		Point isize = computeImageSize();
-		int textWidth = isize.x + 2 * marginWidth;
-		int textHeight = isize.y + 2 * marginHeight;
-		return new Point(textWidth, textHeight);
+		Point textSize = null;
+		if (getText()!=null) {
+			int innerWHint = wHint;
+			if (wHint!=SWT.DEFAULT) {
+				innerWHint = wHint - 2*marginWidth;
+			}
+			textSize = super.computeSize(innerWHint, hHint, changed);
+		}
+		int width = isize.x;
+		int height = isize.y;
+		if (textSize!=null) {
+			width += textSpacing;
+			width += textSize.x;
+			height = Math.max(height, textSize.y);
+		}
+		width += 2 * marginWidth;
+		height += 2 * marginHeight;
+		return new Point(width, height);
 	}	
 	
 	private Point computeImageSize() {
@@ -83,13 +110,11 @@ public class ImageHyperlink extends AbstractHyperlink {
 	protected void handleEnter() {
 		state = HOVER;
 		super.handleEnter();
-		redraw();
 	}
 
 	protected void handleExit() {
 		state = 0;
 		super.handleExit();
-		redraw();
 	}
 
 	protected void handleActivate() {

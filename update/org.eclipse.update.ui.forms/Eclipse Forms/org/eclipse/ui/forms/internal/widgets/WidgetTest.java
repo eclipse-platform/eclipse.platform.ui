@@ -86,6 +86,51 @@ public class WidgetTest {
 		//td.colspan = 2;
 		td.align = TableWrapData.LEFT;
 		link.setLayoutData(td);
+		
+		ImageHyperlink ilink =
+			new ImageHyperlink(form.getBody(), SWT.WRAP);
+		ilink.setText("Sample hyperlink with an image and text.");
+		ilink.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ex) {
+				}
+			}
+		});
+		URL iURL = WidgetTest.class.getResource("test.gif");
+		ImageDescriptor id = ImageDescriptor.createFromURL(iURL);
+		ilink.setImage(id.createImage());
+		toolkit.adapt(ilink, true, true);
+		toolkit.getHyperlinkGroup().add(ilink);
+		td = new TableWrapData();
+		//td.colspan = 2;
+		td.align = TableWrapData.LEFT;
+		ilink.setLayoutData(td);
+		
+		ImageHyperlink ilink2 =
+			new ImageHyperlink(form.getBody(), SWT.WRAP);
+		ilink2.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ex) {
+				}
+			}
+		});
+		URL i2URL = WidgetTest.class.getResource("migrate_30_wiz.gif");
+		ImageDescriptor i2d = ImageDescriptor.createFromURL(i2URL);
+		URL i2hURL = WidgetTest.class.getResource("image1.gif");
+		ImageDescriptor i2hd = ImageDescriptor.createFromURL(i2hURL);
+		ilink2.setImage(i2d.createImage());
+		ilink2.setHoverImage(i2hd.createImage());
+		ilink2.setToolTipText("Image only hyperlink");
+		toolkit.adapt(ilink2, true, true);
+		toolkit.getHyperlinkGroup().add(ilink2);
+		td = new TableWrapData();
+		//td.colspan = 2;
+		td.align = TableWrapData.LEFT;
+		ilink2.setLayoutData(td);
 		createExpandable(form, toolkit);
 		createRichTextSection(form, toolkit);
 		return form;

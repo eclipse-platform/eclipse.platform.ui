@@ -285,8 +285,8 @@ public class Form extends SharedScrolledComposite {
 			gc.setBackground(getBackground());
 			gc.setForeground(getForeground());
 			gc.setFont(getFont());
-			FormUtil.paintWrapText(gc, new Point(carea.width, carea.height),
-					text, TITLE_HMARGIN, TITLE_VMARGIN);
+			Rectangle tbounds = new Rectangle(TITLE_VMARGIN, TITLE_HMARGIN,carea.width-TITLE_HMARGIN-TITLE_HMARGIN, carea.height-TITLE_VMARGIN-TITLE_VMARGIN);
+			FormUtil.paintWrapText(gc, text, tbounds);
 		}
 	}
 }

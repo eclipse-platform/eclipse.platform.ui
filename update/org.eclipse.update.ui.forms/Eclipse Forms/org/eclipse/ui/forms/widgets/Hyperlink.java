@@ -148,19 +148,25 @@ public class Hyperlink extends AbstractHyperlink {
 	 */
 	protected void paintHyperlink(PaintEvent e) {
 		GC gc = e.gc;
+		int x = marginWidth;
+		int y = marginHeight;
 		Point size = getSize();
+		Rectangle bounds =  new Rectangle(x, y, size.x - marginWidth - marginWidth, size.y
+				- marginHeight - marginHeight);
+		paintText(gc, bounds);
+	}
+	protected void paintText(GC gc, Rectangle bounds) {
 		gc.setFont(getFont());
 		gc.setForeground(getForeground());
 		if ((getStyle() & SWT.WRAP) != 0) {
-			FormUtil.paintWrapText(gc, size, text, marginWidth, marginHeight,
-					underlined);
+			FormUtil.paintWrapText(gc, text, bounds, underlined);
 		} else {
 			gc.drawText(getText(), marginWidth, marginHeight, true);
 			if (underlined) {
 				FontMetrics fm = gc.getFontMetrics();
 				int descent = fm.getDescent();
-				int lineY = size.y - marginHeight - descent + 1;
-				gc.drawLine(marginWidth, lineY, size.x - marginWidth, lineY);
+				int lineY = bounds.y + bounds.height - descent + 1;
+				gc.drawLine(marginWidth, lineY, bounds.width, lineY);
 			}
 		}
 	}

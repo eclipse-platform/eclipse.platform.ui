@@ -129,18 +129,14 @@ public class FormUtil {
 	}
 	static void paintWrapText(
 		GC gc,
-		Point size,
 		String text,
-		int marginWidth,
-		int marginHeight) {
-		paintWrapText(gc, size, text, marginWidth, marginHeight, false);
+		Rectangle bounds) {
+		paintWrapText(gc, text, bounds, false);
 	}
 	static void paintWrapText(
 		GC gc,
-		Point size,
 		String text,
-		int marginWidth,
-		int marginHeight,
+		Rectangle bounds,
 		boolean underline) {
 		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
@@ -150,8 +146,8 @@ public class FormUtil {
 
 		int saved = 0;
 		int last = 0;
-		int y = marginHeight;
-		int width = size.x - marginWidth * 2;
+		int y = bounds.y;
+		int width = bounds.width;
 
 		for (int loc = wb.first();
 			loc != BreakIterator.DONE;
@@ -161,11 +157,11 @@ public class FormUtil {
 			if (extent.x > width) {
 				// overflow
 				String prevLine = text.substring(saved, last);
-				gc.drawString(prevLine, marginWidth, y, true);
+				gc.drawString(prevLine, bounds.x, y, true);
 				if (underline) {
 					Point prevExtent = gc.textExtent(prevLine);
 					int lineY = y + lineHeight - descent + 1;
-					gc.drawLine(marginWidth, lineY, prevExtent.x, lineY);
+					gc.drawLine(bounds.x, lineY, bounds.x+prevExtent.x, lineY);
 				}
 
 				saved = last;
@@ -175,11 +171,11 @@ public class FormUtil {
 		}
 		// paint the last line
 		String lastLine = text.substring(saved, last);
-		gc.drawString(lastLine, marginWidth, y, true);
+		gc.drawString(lastLine, bounds.x, y, true);
 		if (underline) {
 			int lineY = y + lineHeight - descent + 1;
 			Point lastExtent = gc.textExtent(lastLine);
-			gc.drawLine(marginWidth, lineY, marginWidth + lastExtent.x, lineY);
+			gc.drawLine(bounds.x, lineY, bounds.x + lastExtent.x, lineY);
 		}
 	}
 	static ScrolledComposite getScrolledComposite(Control c) {
