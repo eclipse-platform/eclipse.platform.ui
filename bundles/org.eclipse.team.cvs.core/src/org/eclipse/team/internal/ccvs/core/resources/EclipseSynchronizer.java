@@ -827,6 +827,7 @@ public class EclipseSynchronizer {
 			}
 			
 			/*** broadcast events ***/
+			monitor.subTask(Policy.bind("EclipseSynchronizer.NotifyingListeners")); //$NON-NLS-1$
 			changedResources.addAll(changedFolders);
 			changedResources.addAll(dirtyParents);	
 			IResource[] resources = (IResource[]) changedResources.toArray(
