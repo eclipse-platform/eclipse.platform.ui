@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 
@@ -27,7 +28,7 @@ import org.eclipse.core.runtime.*;
  * @see IResource
  * @since 3.1
  */
-public abstract class ResourceMapping implements IAdaptable {
+public abstract class ResourceMapping extends PlatformObject {
 
 	/**
 	 * Returns the application model element associated with this
@@ -37,6 +38,14 @@ public abstract class ResourceMapping implements IAdaptable {
 	 * resource mapping.
 	 */
 	public abstract Object getModelObject();
+
+	/**
+	 * Returns the projects that contain the resources that constitute this 
+	 * application model.
+	 * 
+	 * @return the projects
+	 */
+	public abstract IProject[] getProjects();
 
 	/**
 	 * Returns one or more traversals that can be used to access all the

@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
  * A model element traversal is simply a set of resources and the depth to which
- * each are to be traversed. A set of traversals is used to describe the
+ * each is to be traversed. A set of traversals is used to describe the
  * resources that constitute a model element.
  *
- * TODO Could this entire class be replaced with something simpler, such as an Iterator?
  * <p>
  * NOTE: This API is work in progress and will likely change before the final API freeze.
  * </p>
@@ -26,7 +24,7 @@ import org.eclipse.core.resources.IResource;
  * @see org.eclipse.core.resources.IResource
  * @since 3.1
  */
-public abstract class ResourceTraversal {
+public class ResourceTraversal {
 	private int depth;
 	private IResource[] resources;
 
@@ -50,15 +48,6 @@ public abstract class ResourceTraversal {
 	public int getDepth() {
 		return depth;
 	}
-
-	/**
-	 * Returns the projects that contain the resources that make up this
-	 * traversal.
-	 * TODO Is this method needed?
-	 * 
-	 * @return the projects
-	 */
-	public abstract IProject[] getProjects();
 
 	/**
 	 * Returns the file system resource(s) for this traversal. The returned
