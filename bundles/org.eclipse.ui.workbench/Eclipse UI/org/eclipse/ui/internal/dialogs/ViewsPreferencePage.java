@@ -55,8 +55,6 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
-import com.sun.rsasign.p;
-
 /**
  * The ViewsPreferencePage is the page used to set preferences for the look of the
  * views in the workbench.
