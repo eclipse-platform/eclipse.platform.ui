@@ -127,5 +127,6 @@ public interface IInstallConfiguration extends IAdaptable {
 
 	void setLabel(String label);
 
+
 }
 

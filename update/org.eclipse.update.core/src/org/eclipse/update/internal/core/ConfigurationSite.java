@@ -182,8 +182,8 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	/*
 	 * @see IConfigurationSite#unconfigure(IFeatureReference)
 	 */
-	public void unconfigure(IFeatureReference feature) throws CoreException {
-		((ConfigurationPolicy) getConfigurationPolicy()).unconfigure(feature);
+	public void unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
+		((ConfigurationPolicy) getConfigurationPolicy()).unconfigure(feature, handler);
 	}
 
 	/*

@@ -250,6 +250,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	public void save() throws CoreException {
 		// save the file
 		saveConfigurationFile();
+		
 		// Write info for the next runtime
 		IPlatformConfiguration runtimeConfiguration = UpdateManagerUtils.getRuntimeConfiguration();
 		Iterator iterConfigurationSites = configurationSites.iterator();
@@ -268,6 +269,10 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			}
 		}
 	}
+	
+	/**
+	 * 
+	 */
 	public void saveConfigurationFile() throws CoreException {
 		// save the configuration
 		if (location.getProtocol().equalsIgnoreCase("file")) {
@@ -353,4 +358,5 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
+
 }

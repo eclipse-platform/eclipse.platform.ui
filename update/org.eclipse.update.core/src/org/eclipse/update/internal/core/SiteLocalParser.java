@@ -37,7 +37,7 @@ public class SiteLocalParser extends DefaultHandler {
 	private String text;
 	public static final String SITE = "localsite";
 	public static final String CONFIG = "config";
-	public static final String PRESERVED_CONFIGURATIONS = "config";
+	public static final String PRESERVED_CONFIGURATIONS = "preservedConfigurations";
 
 	private ResourceBundle bundle;
 

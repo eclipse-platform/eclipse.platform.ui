@@ -68,7 +68,7 @@ public interface IConfigurationSite {
 	 * @since 2.0 
 	 */
 
-	void unconfigure(IFeatureReference feature) throws CoreException;
+	void unconfigure(IFeatureReference feature,IProblemHandler handler) throws CoreException;
 	
 	/**
 	 * sets if the site is an installable site

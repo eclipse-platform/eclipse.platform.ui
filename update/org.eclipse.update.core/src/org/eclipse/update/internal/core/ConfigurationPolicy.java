@@ -132,7 +132,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
 	/*package*/
-	void unconfigure(IFeatureReference feature) throws CoreException {
+	void unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
 
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);

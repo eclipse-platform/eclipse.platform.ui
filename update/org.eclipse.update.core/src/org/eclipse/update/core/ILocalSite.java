@@ -146,17 +146,22 @@ public interface ILocalSite {
 	/**
 	 * @since 2.0 
 	 */
-	void preserve(IInstallConfiguration configuration) throws CoreException;
+	void addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException;
 
 	/**
 	 * @since 2.0 
 	 */
-	void remove (IInstallConfiguration configuration);
+	void removeFromPreservedConfigurations(IInstallConfiguration configuration);
 
 	/**
 	 * @since 2.0 
 	 */	
 	IInstallConfiguration[] getPreservedConfigurations();
+	
+	/**
+	 * @since 2.0 
+	 */	
+	IInstallConfiguration getPreservedConfigurationFor(IInstallConfiguration configuration);
 
 }
 
