@@ -95,12 +95,15 @@ public final class Util {
 		if (resourceBundle == null || key == null)
 			throw new IllegalArgumentException();
 
+		String value = key;
+
 		try {
-			return resourceBundle.getString(key);
+			value = resourceBundle.getString(key);
 		} catch (MissingResourceException eMissingResource) {
 			System.err.println(eMissingResource);
-			return key;
 		}
+		
+		return value != null ? value.trim() : null;
 	}
 
 	public static boolean isChildOf(Object[] left, Object[] right, boolean equals) {

@@ -159,6 +159,10 @@ public class Manager {
 		keyMachine.setBindingSet(Collections.unmodifiableSortedSet(keyBindingSet));
 	}
 
+	static boolean validateStroke(Stroke stroke) {
+		return stroke.getValue() != 0;
+	}
+
 	static boolean validateSequence(Sequence sequence) {
 		List strokes = sequence.getStrokes();
 		int size = strokes.size();
@@ -169,7 +173,7 @@ public class Manager {
 			for (int i = 0; i < size; i++) {
 				Stroke stroke = (Stroke) strokes.get(i);	
 
-				if (stroke.getValue() == 0)
+				if (!validateStroke(stroke))
 					return false;
 			}
 			
