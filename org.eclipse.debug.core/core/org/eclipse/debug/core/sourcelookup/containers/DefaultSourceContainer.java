@@ -86,8 +86,12 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * @return the source path computer to use, or <code>null</code>
 	 * if none
 	 */
-	private ISourcePathComputer getSourcePathComputer() {	
-		return getDirector().getSourcePathComputer();
+	private ISourcePathComputer getSourcePathComputer() {
+		ISourceLookupDirector director = getDirector();
+		if (director != null) {
+			return director.getSourcePathComputer();
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -102,9 +106,13 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		ISourcePathComputer sourcePathComputer = getSourcePathComputer();
-		if (sourcePathComputer == null) {
-			return new ISourceContainer[0];
+		if (sourcePathComputer != null) {
+			ILaunchConfiguration config= getLaunchConfiguration();
+			if (config != null) {
+				return sourcePathComputer.computeSourceContainers(config, null);
+			}
 		}
-		return sourcePathComputer.computeSourceContainers(getLaunchConfiguration(), null);
+		
+		return new ISourceContainer[0];
 	}
 }
