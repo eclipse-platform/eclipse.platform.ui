@@ -667,7 +667,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	}
 	
 	private String openInEditor(String path, File buildFile) {
-		IFile file= AntUtil.getFileForLocation(path, buildFile.getParentFile());
+		File buildFileParent= null;
+		if (buildFile != null) {
+			buildFileParent= buildFile.getParentFile();
+		}
+		IFile file= AntUtil.getFileForLocation(path, buildFileParent);
 		if (file != null && file.exists()) {
 			try {
 				IWorkbenchPage p= getEditorSite().getPage();
