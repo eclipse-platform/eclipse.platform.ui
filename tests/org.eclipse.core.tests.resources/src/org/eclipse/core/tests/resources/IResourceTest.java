@@ -21,33 +21,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.*;
 
 public class IResourceTest extends EclipseWorkspaceTest {
-	static boolean noSideEffects = false;
+	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
+	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
 	protected static Set nonExistingResources = new HashSet();
-	protected static Set unsynchronizedResources = new HashSet();
-	protected static IPath[] interestingPaths;
-	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
-	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
+	static boolean noSideEffects = false;
 	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
-
-	/* the delta verifier */
-	ResourceDeltaVerifier verifier;
-
-	/**
-	 * Resource only exists in the workspace. It has been deleted from the
-	 * filesystem manually
-	 */
-	protected static final int S_WORKSPACE_ONLY = 0;
-
-	/**
-	 * Resource exists in the filesystem only. It has been added to the
-	 * filesystem manually since the last local refresh.
-	 */
-	protected static final int S_FILESYSTEM_ONLY = 1;
-
-	/**
-	 * Resource exists in the filesytem and workspace, and is in sync */
-	protected static final int S_UNCHANGED = 2;
 
 	/**
 	 * Resource exists in both filesystem and workspace, but has been changed
@@ -60,16 +39,116 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	protected static final int S_DOES_NOT_EXIST = 4;
 
 	/**
+	 * Resource is a file in the workspace, but has been converted to a folder
+	 * in the filesystem.
+	 */
+	protected static final int S_FILE_TO_FOLDER = 6;
+
+	/**
+	 * Resource exists in the filesystem only. It has been added to the
+	 * filesystem manually since the last local refresh.
+	 */
+	protected static final int S_FILESYSTEM_ONLY = 1;
+
+	/**
 	 * Resource is a folder in the workspace, but has been converted to a file
 	 * in the filesystem.
 	 */
 	protected static final int S_FOLDER_TO_FILE = 5;
 
 	/**
-	 * Resource is a file in the workspace, but has been converted to a folder
-	 * in the filesystem.
+	 * Resource exists in the filesytem and workspace, and is in sync */
+	protected static final int S_UNCHANGED = 2;
+
+	/**
+	 * Resource only exists in the workspace. It has been deleted from the
+	 * filesystem manually
 	 */
-	protected static final int S_FILE_TO_FOLDER = 6;
+	protected static final int S_WORKSPACE_ONLY = 0;
+	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
+	protected static Set unsynchronizedResources = new HashSet();
+
+	/* the delta verifier */
+	ResourceDeltaVerifier verifier;
+
+	/**
+	 * @return Set
+	 * @param dir 
+	 */
+	static protected Set getAllFilesForDirectory(File dir) {
+		Set result = new HashSet(50);
+		String[] members = dir.list();
+		if (members != null) {
+			for (int i = 0; i < members.length; i++) {
+				File member = new File(dir, members[i]);
+				result.add(member);
+				if (member.isDirectory()) {
+					result.addAll(getAllFilesForDirectory(member));
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @return Set
+	 * @param resource IResource
+	 */
+	static protected Set getAllFilesForResource(IResource resource, boolean considerUnsyncLocalFiles) throws CoreException {
+		Set result = new HashSet(50);
+		if (resource.getLocation() != null && (resource.getType() != IResource.PROJECT || ((IProject) resource).isOpen())) {
+			java.io.File file = resource.getLocation().toFile();
+			if (considerUnsyncLocalFiles) {
+				if (file.exists()) {
+					result.add(file);
+					if (file.isDirectory()) {
+						result.addAll(getAllFilesForDirectory(file));
+					}
+				}
+			} else {
+				if (resource.exists()) {
+					result.add(file);
+					if (resource.getType() != IResource.FILE) {
+						IContainer container = (IContainer) resource;
+						IResource[] children = container.members();
+						for (int i = 0; i < children.length; i++) {
+							IResource member = children[i];
+							result.addAll(getAllFilesForResource(member, considerUnsyncLocalFiles));
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @return Set
+	 * @param resource IResource
+	 */
+	static protected Set getAllResourcesForResource(IResource resource) throws CoreException {
+		Set result = new HashSet(50);
+		if (resource.exists()) {
+			result.add(resource);
+			if (resource.getType() != IResource.FILE) {
+				IContainer container = (IContainer) resource;
+				IResource[] children = container.members();
+				for (int i = 0; i < children.length; i++) {
+					IResource member = children[i];
+					result.addAll(getAllResourcesForResource(member));
+				}
+			}
+		}
+		return result;
+	}
+
+	public static Test suite() {
+		return new TestSuite(IResourceTest.class);
+
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new IResourceTest("testAttributeArchive"));
+		//		return suite;
+	}
 
 	public IResourceTest() {
 		super();
@@ -188,77 +267,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	}
 
 	/**
-	 * @return Set
-	 * @param File
-	 */
-	static protected Set getAllFilesForDirectory(File dir) {
-		Set result = new HashSet(50);
-		String[] members = dir.list();
-		if (members != null) {
-			for (int i = 0; i < members.length; i++) {
-				File member = new File(dir, members[i]);
-				result.add(member);
-				if (member.isDirectory()) {
-					result.addAll(getAllFilesForDirectory(member));
-				}
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * @return Set
-	 * @param resource IResource
-	 */
-	static protected Set getAllFilesForResource(IResource resource, boolean considerUnsyncLocalFiles) throws CoreException {
-		Set result = new HashSet(50);
-		if (resource.getLocation() != null && (resource.getType() != IResource.PROJECT || ((IProject) resource).isOpen())) {
-			java.io.File file = resource.getLocation().toFile();
-			if (considerUnsyncLocalFiles) {
-				if (file.exists()) {
-					result.add(file);
-					if (file.isDirectory()) {
-						result.addAll(getAllFilesForDirectory(file));
-					}
-				}
-			} else {
-				if (resource.exists()) {
-					result.add(file);
-					if (resource.getType() != IResource.FILE) {
-						IContainer container = (IContainer) resource;
-						IResource[] children = container.members();
-						for (int i = 0; i < children.length; i++) {
-							IResource member = children[i];
-							result.addAll(getAllFilesForResource(member, considerUnsyncLocalFiles));
-						}
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * @return Set
-	 * @param resource IResource
-	 */
-	static protected Set getAllResourcesForResource(IResource resource) throws CoreException {
-		Set result = new HashSet(50);
-		if (resource.exists()) {
-			result.add(resource);
-			if (resource.getType() != IResource.FILE) {
-				IContainer container = (IContainer) resource;
-				IResource[] children = container.members();
-				for (int i = 0; i < children.length; i++) {
-					IResource member = children[i];
-					result.addAll(getAllResourcesForResource(member));
-				}
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * Returns an array of all projects in the given resource array. */
 	protected IProject[] getProjects(IResource[] resources) {
 		ArrayList list = new ArrayList();
@@ -350,6 +358,27 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		return true;
+	}
+
+	private void setArchive(IResource resource, boolean value) throws CoreException {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		assertNotNull("setAchive for null attributes", attributes);
+		attributes.setArchive(value);
+		resource.setResourceAttributes(attributes);
+	}
+
+	private void setExecutable(IResource resource, boolean value) throws CoreException {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		assertNotNull("setExecutable for null attributes", attributes);
+		attributes.setExecutable(value);
+		resource.setResourceAttributes(attributes);
+	}
+
+	private void setReadOnly(IResource resource, boolean value) throws CoreException {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		assertNotNull("setReadOnly for null attributes", attributes);
+		attributes.setReadOnly(value);
+		resource.setResourceAttributes(attributes);
 	}
 
 	protected void setUp() throws Exception {
@@ -503,14 +532,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 	}
 
-	public static Test suite() {
-		return new TestSuite(IResourceTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IResourceTest("testSetLocalTimeStamp"));
-		//		return suite;
-	}
-
 	protected void tearDown() throws Exception {
 		if (noSideEffects)
 			return;
@@ -563,12 +584,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		LoggingResourceVisitor[] interestingVisitors = new LoggingResourceVisitor[] {shallowVisitor, deepVisitor};
 		Object[][] inputs = new Object[][] {interestingResources, interestingVisitors, TRUE_AND_FALSE,};
 		new TestPerformer("IResourceTest.testAccept2") {
-			public boolean shouldFail(Object[] args, int count) {
-				deepVisitor.clear();
-				shallowVisitor.clear();
-				IResource resource = (IResource) args[0];
-				return nonExistingResources.contains(resource);
-			}
 
 			public Object[] interestingOldState(Object[] args) {
 				return null;
@@ -580,6 +595,13 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				Boolean includePhantoms = (Boolean) args[2];
 				resource.accept(visitor, IResource.DEPTH_INFINITE, includePhantoms.booleanValue());
 				return null;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				deepVisitor.clear();
+				shallowVisitor.clear();
+				IResource resource = (IResource) args[0];
+				return nonExistingResources.contains(resource);
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
@@ -626,6 +648,107 @@ public class IResourceTest extends EclipseWorkspaceTest {
 
 		project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		project2.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+	}
+
+	public void testAttributeArchive() {
+		// archive bit only implemented on windows
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFile file = project.getFile("target");
+		ensureExistsInWorkspace(file, getRandomContents());
+
+		try {
+			// file 
+			// bit is set already for a new file
+			assertTrue("1.0", file.getResourceAttributes().isArchive());
+			setArchive(file, false);
+			assertTrue("1.2", !file.getResourceAttributes().isArchive());
+			setArchive(file, true);
+			assertTrue("1.4", file.getResourceAttributes().isArchive());
+
+			// folder
+			// bit is not set already for a new folder
+			assertTrue("2.0", !project.getResourceAttributes().isArchive());
+			setArchive(project, true);
+			assertTrue("2.2", project.getResourceAttributes().isArchive());
+			setArchive(project, false);
+			assertTrue("2.4", !project.getResourceAttributes().isArchive());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+	}
+
+	public void testAttributeExecutable() {
+		// executable bit not implemented on windows
+		if (Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFile file = project.getFile("target");
+		ensureExistsInWorkspace(file, getRandomContents());
+
+		try {
+			// file
+			assertTrue("1.0", !file.getResourceAttributes().isExecutable());
+			setExecutable(file, true);
+			assertTrue("1.2", file.getResourceAttributes().isExecutable());
+			setExecutable(file, false);
+			assertTrue("1.4", !file.getResourceAttributes().isExecutable());
+
+			// folder
+			assertTrue("2.0", !project.getResourceAttributes().isExecutable());
+			setExecutable(project, true);
+			assertTrue("2.2", project.getResourceAttributes().isExecutable());
+			setExecutable(project, false);
+			assertTrue("2.4", !project.getResourceAttributes().isExecutable());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+	}
+
+	public void testAttributeReadOnly() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFile file = project.getFile("target");
+		ensureExistsInWorkspace(file, getRandomContents());
+
+		try {
+			// file
+			assertTrue("1.0", !file.getResourceAttributes().isReadOnly());
+			setReadOnly(file, true);
+			assertTrue("1.2", file.getResourceAttributes().isReadOnly());
+			setReadOnly(file, false);
+			assertTrue("1.4", !file.getResourceAttributes().isReadOnly());
+
+			// folder
+			assertTrue("2.0", !project.getResourceAttributes().isReadOnly());
+			setReadOnly(project, true);
+			assertTrue("2.2", project.getResourceAttributes().isReadOnly());
+			setReadOnly(project, false);
+			assertTrue("2.4", !project.getResourceAttributes().isReadOnly());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
 	}
 
 	/**
@@ -677,18 +800,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 
 		Object[][] inputs = new Object[][] {interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IResourceTest.testCopy") {
-			public boolean shouldFail(Object[] args, int count) {
-				IResource resource = (IResource) args[0];
-				IPath destination = (IPath) args[1];
-				//Boolean force = (Boolean) args[2];
-				if (!resource.isAccessible())
-					return true;
-				if (isProject(resource) && destination.segmentCount() > 1 && !getWorkspace().validatePath(destination.toString(), IResource.FOLDER).isOK())
-					return true;
-				java.io.File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
-				java.io.File destinationFile = destination.isAbsolute() ? destination.toFile() : resource.getLocation().removeLastSegments(1).append(destination).removeTrailingSeparator().toFile();
-				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
-			}
 
 			public Object[] interestingOldState(Object[] args) {
 				return null;
@@ -705,6 +816,19 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				if (monitor instanceof FussyProgressMonitor)
 					((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				IResource resource = (IResource) args[0];
+				IPath destination = (IPath) args[1];
+				//Boolean force = (Boolean) args[2];
+				if (!resource.isAccessible())
+					return true;
+				if (isProject(resource) && destination.segmentCount() > 1 && !getWorkspace().validatePath(destination.toString(), IResource.FOLDER).isOK())
+					return true;
+				java.io.File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
+				java.io.File destinationFile = destination.isAbsolute() ? destination.toFile() : resource.getLocation().removeLastSegments(1).append(destination).removeTrailingSeparator().toFile();
+				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws CoreException {
@@ -735,6 +859,29 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		Object[][] inputs = new Object[][] {FALSE_AND_TRUE, PROGRESS_MONITORS, interestingResources};
 		final String CANCELED = "canceled";
 		new TestPerformer("IResourceTest.testDelete") {
+
+			public Object[] interestingOldState(Object[] args) throws Exception {
+				Boolean force = (Boolean) args[0];
+				IResource resource = (IResource) args[2];
+				return new Object[] {new Boolean(resource.isAccessible()), getAllFilesForResource(resource, force.booleanValue()), getAllResourcesForResource(resource)};
+			}
+
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				Boolean force = (Boolean) args[0];
+				IProgressMonitor monitor = (IProgressMonitor) args[1];
+				IResource resource = (IResource) args[2];
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).prepare();
+				try {
+					resource.delete(force.booleanValue(), monitor);
+				} catch (OperationCanceledException e) {
+					return CANCELED;
+				}
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).sanityCheck();
+				return null;
+			}
+
 			public boolean shouldFail(Object[] args, int count) {
 				Boolean force = (Boolean) args[0];
 				IResource resource = (IResource) args[2];
@@ -794,28 +941,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					throw new RuntimeException("there is a problem in the testing method 'shouldFail'");
 				}
 				return hasUnsynchronizedResources[0];
-			}
-
-			public Object[] interestingOldState(Object[] args) throws Exception {
-				Boolean force = (Boolean) args[0];
-				IResource resource = (IResource) args[2];
-				return new Object[] {new Boolean(resource.isAccessible()), getAllFilesForResource(resource, force.booleanValue()), getAllResourcesForResource(resource)};
-			}
-
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				Boolean force = (Boolean) args[0];
-				IProgressMonitor monitor = (IProgressMonitor) args[1];
-				IResource resource = (IResource) args[2];
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).prepare();
-				try {
-					resource.delete(force.booleanValue(), monitor);
-				} catch (OperationCanceledException e) {
-					return CANCELED;
-				}
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).sanityCheck();
-				return null;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
@@ -977,9 +1102,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		noSideEffects = true;
 		Object[][] inputs = new Object[][] {interestingResources, interestingResources};
 		new TestPerformer("IResourceTest.testEquals") {
-			public boolean shouldFail(Object[] args, int count) {
-				return false;
-			}
 
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
@@ -989,6 +1111,10 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				IResource resource0 = (IResource) args[0];
 				IResource resource1 = (IResource) args[1];
 				return resource0.equals(resource1) ? Boolean.TRUE : Boolean.FALSE;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				return false;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
@@ -1011,9 +1137,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 
 		Object[][] inputs = new Object[][] {interestingResources};
 		new TestPerformer("IResourceTest.testExists") {
-			public boolean shouldFail(Object[] args, int count) {
-				return false;
-			}
 
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
@@ -1022,6 +1145,10 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				return resource.exists() ? Boolean.TRUE : Boolean.FALSE;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				return false;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
@@ -1040,9 +1167,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		noSideEffects = true;
 		Object[][] inputs = new Object[][] {interestingResources};
 		new TestPerformer("IResourceTest.testGetLocation") {
-			public boolean shouldFail(Object[] args, int count) {
-				return false;
-			}
 
 			public Object[] interestingOldState(Object[] args) {
 				return null;
@@ -1051,6 +1175,10 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			public Object invokeMethod(Object[] args, int count) throws Exception {
 				IResource resource = (IResource) args[0];
 				return resource.getLocation();
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				return false;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
@@ -1066,141 +1194,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				return resultPath != null;
 			}
 		}.performTest(inputs);
-	}
-
-	/**
-	 * Performs black box testing of the following method: IPath
-	 * getRawLocation()
-	 */
-	public void testGetRawLocation() {
-		IProject project = getWorkspace().getRoot().getProject("Project");
-		IFolder topFolder = project.getFolder("TopFolder");
-		IFile topFile = project.getFile("TopFile");
-		IFile deepFile = topFolder.getFile("DeepFile");
-		IResource[] allResources = new IResource[] {project, topFolder, topFile, deepFile};
-
-		//non existing project
-		assertNull("2.0", project.getRawLocation());
-
-		//resources in non-existing project
-		assertNull("2.1", topFolder.getRawLocation());
-		assertNull("2.2", topFile.getRawLocation());
-		assertNull("2.3", deepFile.getRawLocation());
-
-		ensureExistsInWorkspace(allResources, true);
-		//open project
-		assertNull("2.0", project.getRawLocation());
-		//resources in open project
-		assertEquals("2.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
-		assertEquals("2.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
-		assertEquals("2.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
-
-		try {
-			project.close(getMonitor());
-		} catch (CoreException e) {
-			fail("1.99", e);
-		}
-		//closed project
-		assertNull("3.0", project.getRawLocation());
-		//resource in closed project
-		assertEquals("3.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
-		assertEquals("3.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
-		assertEquals("3.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
-
-		IPath projectLocation = getRandomLocation();
-		IPath folderLocation = getRandomLocation();
-		IPath fileLocation = getRandomLocation();
-		IPath variableLocation = getRandomLocation();
-		final String variableName = "IResourceTest_VariableName";
-		IPathVariableManager varMan = getWorkspace().getPathVariableManager();
-		try {
-			varMan.setValue(variableName, variableLocation);
-			project.open(getMonitor());
-			IProjectDescription description = project.getDescription();
-			description.setLocation(projectLocation);
-			project.move(description, IResource.NONE, getMonitor());
-
-			//open project not in default location
-			assertEquals("4.0", projectLocation, project.getRawLocation());
-			//resource in open project not in default location
-			assertEquals("4.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
-			assertEquals("4.2", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
-			assertEquals("4.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
-
-			project.close(getMonitor());
-
-			//closed project not in default location
-			assertEquals("5.0", projectLocation, project.getRawLocation());
-			//resource in closed project not in default location
-			assertEquals("5.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
-			assertEquals("5.2", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
-			assertEquals("5.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
-
-			project.open(getMonitor());
-			ensureDoesNotExistInWorkspace(topFolder);
-			ensureDoesNotExistInWorkspace(topFile);
-			createFileInFileSystem(fileLocation);
-			folderLocation.toFile().mkdirs();
-			topFolder.createLink(folderLocation, IResource.NONE, getMonitor());
-			topFile.createLink(fileLocation, IResource.NONE, getMonitor());
-			ensureExistsInWorkspace(deepFile, true);
-
-			//linked file
-			assertEquals("6.0", fileLocation, topFile.getRawLocation());
-			//linked folder
-			assertEquals("6.1", folderLocation, topFolder.getRawLocation());
-			//resource below linked folder
-			assertEquals("6.2", folderLocation.append(deepFile.getName()), deepFile.getRawLocation());
-
-			project.close(getMonitor());
-
-			//linked file in closed project (should default to project
-			// location)
-			assertEquals("7.0", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
-			//linked folder in closed project
-			assertEquals("7.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
-			//resource below linked folder in closed project
-			assertEquals("7.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
-
-			project.open(getMonitor());
-			IPath variableFolderLocation = new Path(variableName).append("/VarFolderName");
-			IPath variableFileLocation = new Path(variableName).append("/VarFileName");
-			ensureDoesNotExistInWorkspace(topFolder);
-			ensureDoesNotExistInWorkspace(topFile);
-			createFileInFileSystem(varMan.resolvePath(variableFileLocation));
-			varMan.resolvePath(variableFolderLocation).toFile().mkdirs();
-			topFolder.createLink(variableFolderLocation, IResource.NONE, getMonitor());
-			topFile.createLink(variableFileLocation, IResource.NONE, getMonitor());
-			ensureExistsInWorkspace(deepFile, true);
-
-			//linked file with variable
-			assertEquals("8.0", variableFileLocation, topFile.getRawLocation());
-			//linked folder with variable
-			assertEquals("8.1", variableFolderLocation, topFolder.getRawLocation());
-			//resource below linked folder with variable
-			assertEquals("8.3", varMan.resolvePath(variableFolderLocation).append(deepFile.getName()), deepFile.getRawLocation());
-
-			project.close(getMonitor());
-
-			//linked file in closed project with variable
-			assertEquals("9.0", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
-			//linked folder in closed project with variable
-			assertEquals("9.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
-			//resource below linked folder in closed project with variable
-			assertEquals("9.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
-		} catch (CoreException e) {
-			fail("99.99", e);
-		} finally {
-			try {
-				getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
-				varMan.setValue(variableName, null);
-			} catch (CoreException e) {
-			}
-			Workspace.clear(projectLocation.toFile());
-			Workspace.clear(folderLocation.toFile());
-			Workspace.clear(fileLocation.toFile());
-			Workspace.clear(variableLocation.toFile());
-		}
 	}
 
 	public void testGetModificationStamp() {
@@ -1433,6 +1426,141 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	}
 
 	/**
+	 * Performs black box testing of the following method: IPath
+	 * getRawLocation()
+	 */
+	public void testGetRawLocation() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFolder topFolder = project.getFolder("TopFolder");
+		IFile topFile = project.getFile("TopFile");
+		IFile deepFile = topFolder.getFile("DeepFile");
+		IResource[] allResources = new IResource[] {project, topFolder, topFile, deepFile};
+
+		//non existing project
+		assertNull("2.0", project.getRawLocation());
+
+		//resources in non-existing project
+		assertNull("2.1", topFolder.getRawLocation());
+		assertNull("2.2", topFile.getRawLocation());
+		assertNull("2.3", deepFile.getRawLocation());
+
+		ensureExistsInWorkspace(allResources, true);
+		//open project
+		assertNull("2.0", project.getRawLocation());
+		//resources in open project
+		assertEquals("2.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
+		assertEquals("2.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
+		assertEquals("2.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
+
+		try {
+			project.close(getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//closed project
+		assertNull("3.0", project.getRawLocation());
+		//resource in closed project
+		assertEquals("3.1", Platform.getLocation().append(topFolder.getFullPath()), topFolder.getRawLocation());
+		assertEquals("3.2", Platform.getLocation().append(topFile.getFullPath()), topFile.getRawLocation());
+		assertEquals("3.3", Platform.getLocation().append(deepFile.getFullPath()), deepFile.getRawLocation());
+
+		IPath projectLocation = getRandomLocation();
+		IPath folderLocation = getRandomLocation();
+		IPath fileLocation = getRandomLocation();
+		IPath variableLocation = getRandomLocation();
+		final String variableName = "IResourceTest_VariableName";
+		IPathVariableManager varMan = getWorkspace().getPathVariableManager();
+		try {
+			varMan.setValue(variableName, variableLocation);
+			project.open(getMonitor());
+			IProjectDescription description = project.getDescription();
+			description.setLocation(projectLocation);
+			project.move(description, IResource.NONE, getMonitor());
+
+			//open project not in default location
+			assertEquals("4.0", projectLocation, project.getRawLocation());
+			//resource in open project not in default location
+			assertEquals("4.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+			assertEquals("4.2", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+			assertEquals("4.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+
+			project.close(getMonitor());
+
+			//closed project not in default location
+			assertEquals("5.0", projectLocation, project.getRawLocation());
+			//resource in closed project not in default location
+			assertEquals("5.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+			assertEquals("5.2", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+			assertEquals("5.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+
+			project.open(getMonitor());
+			ensureDoesNotExistInWorkspace(topFolder);
+			ensureDoesNotExistInWorkspace(topFile);
+			createFileInFileSystem(fileLocation);
+			folderLocation.toFile().mkdirs();
+			topFolder.createLink(folderLocation, IResource.NONE, getMonitor());
+			topFile.createLink(fileLocation, IResource.NONE, getMonitor());
+			ensureExistsInWorkspace(deepFile, true);
+
+			//linked file
+			assertEquals("6.0", fileLocation, topFile.getRawLocation());
+			//linked folder
+			assertEquals("6.1", folderLocation, topFolder.getRawLocation());
+			//resource below linked folder
+			assertEquals("6.2", folderLocation.append(deepFile.getName()), deepFile.getRawLocation());
+
+			project.close(getMonitor());
+
+			//linked file in closed project (should default to project
+			// location)
+			assertEquals("7.0", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+			//linked folder in closed project
+			assertEquals("7.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+			//resource below linked folder in closed project
+			assertEquals("7.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+
+			project.open(getMonitor());
+			IPath variableFolderLocation = new Path(variableName).append("/VarFolderName");
+			IPath variableFileLocation = new Path(variableName).append("/VarFileName");
+			ensureDoesNotExistInWorkspace(topFolder);
+			ensureDoesNotExistInWorkspace(topFile);
+			createFileInFileSystem(varMan.resolvePath(variableFileLocation));
+			varMan.resolvePath(variableFolderLocation).toFile().mkdirs();
+			topFolder.createLink(variableFolderLocation, IResource.NONE, getMonitor());
+			topFile.createLink(variableFileLocation, IResource.NONE, getMonitor());
+			ensureExistsInWorkspace(deepFile, true);
+
+			//linked file with variable
+			assertEquals("8.0", variableFileLocation, topFile.getRawLocation());
+			//linked folder with variable
+			assertEquals("8.1", variableFolderLocation, topFolder.getRawLocation());
+			//resource below linked folder with variable
+			assertEquals("8.3", varMan.resolvePath(variableFolderLocation).append(deepFile.getName()), deepFile.getRawLocation());
+
+			project.close(getMonitor());
+
+			//linked file in closed project with variable
+			assertEquals("9.0", projectLocation.append(topFile.getProjectRelativePath()), topFile.getRawLocation());
+			//linked folder in closed project with variable
+			assertEquals("9.1", projectLocation.append(topFolder.getProjectRelativePath()), topFolder.getRawLocation());
+			//resource below linked folder in closed project with variable
+			assertEquals("9.3", projectLocation.append(deepFile.getProjectRelativePath()), deepFile.getRawLocation());
+		} catch (CoreException e) {
+			fail("99.99", e);
+		} finally {
+			try {
+				getWorkspace().getRoot().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+				varMan.setValue(variableName, null);
+			} catch (CoreException e) {
+			}
+			Workspace.clear(projectLocation.toFile());
+			Workspace.clear(folderLocation.toFile());
+			Workspace.clear(fileLocation.toFile());
+			Workspace.clear(variableLocation.toFile());
+		}
+	}
+
+	/**
 	 * This method tests the IResource.isSynchronized() operation */
 	public void testIsSynchronized() {
 		//don't need auto-created resources
@@ -1445,6 +1573,11 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		interestingResources = buildInterestingResources();
 		Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
+
+			public void cleanUp(Object[] args, int count) {
+				cleanUpAfterRefreshTest(args);
+			}
+
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
 				IResource target = (IResource) args[1];
@@ -1455,6 +1588,10 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				setupBeforeState(receiver, target, state, depth, false);
 				boolean result = receiver.isSynchronized(depth);
 				return result ? Boolean.TRUE : Boolean.FALSE;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				return false;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
@@ -1486,14 +1623,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 						return false;
 				}
 			}
-
-			public boolean shouldFail(Object[] args, int count) {
-				return false;
-			}
-
-			public void cleanUp(Object[] args, int count) {
-				cleanUpAfterRefreshTest(args);
-			}
 		}.performTest(args);
 	}
 
@@ -1504,21 +1633,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	public void testMove() {
 		Object[][] inputs = new Object[][] {interestingResources, interestingPaths, TRUE_AND_FALSE, PROGRESS_MONITORS};
 		new TestPerformer("IResourceTest.testMove") {
-			public boolean shouldFail(Object[] args, int count) {
-				IResource resource = (IResource) args[0];
-				IPath destination = (IPath) args[1];
-				//			Boolean force = (Boolean) args[2];
-				if (!resource.isAccessible())
-					return true;
-				if (isProject(resource)) {
-					if (destination.isAbsolute() ? destination.segmentCount() != 2 : destination.segmentCount() != 1)
-						return true;
-					return !getWorkspace().validateName(destination.segment(0), IResource.PROJECT).isOK();
-				}
-				File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
-				File destinationFile = destination.isAbsolute() ? destination.toFile() : resource.getLocation().removeLastSegments(1).append(destination).removeTrailingSeparator().toFile();
-				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
-			}
 
 			public Object[] interestingOldState(Object[] args) {
 				return null;
@@ -1535,6 +1649,22 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				if (monitor instanceof FussyProgressMonitor)
 					((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				IResource resource = (IResource) args[0];
+				IPath destination = (IPath) args[1];
+				//			Boolean force = (Boolean) args[2];
+				if (!resource.isAccessible())
+					return true;
+				if (isProject(resource)) {
+					if (destination.isAbsolute() ? destination.segmentCount() != 2 : destination.segmentCount() != 1)
+						return true;
+					return !getWorkspace().validateName(destination.segment(0), IResource.PROJECT).isOK();
+				}
+				File destinationParent = destination.isAbsolute() ? destination.removeLastSegments(1).toFile() : resource.getLocation().removeLastSegments(1).append(destination.removeLastSegments(1)).toFile();
+				File destinationFile = destination.isAbsolute() ? destination.toFile() : resource.getLocation().removeLastSegments(1).append(destination).removeTrailingSeparator().toFile();
+				return !destinationParent.exists() || !destinationParent.isDirectory() || destinationFile.exists() || destinationFile.toString().startsWith(resource.getLocation().toFile().toString());
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
@@ -1650,6 +1780,11 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		interestingResources = buildInterestingResources();
 		Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
+
+			public void cleanUp(Object[] args, int count) {
+				cleanUpAfterRefreshTest(args);
+			}
+
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
 				IResource target = (IResource) args[1];
@@ -1662,6 +1797,10 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				return Boolean.TRUE;
 			}
 
+			public boolean shouldFail(Object[] args, int count) {
+				return false;
+			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 				if (result == null)
 					return true; //permutation didn't make sense
@@ -1670,14 +1809,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				int state = ((Integer) args[2]).intValue();
 				int depth = ((Integer) args[3]).intValue();
 				return checkAfterState(receiver, target, state, depth);
-			}
-
-			public boolean shouldFail(Object[] args, int count) {
-				return false;
-			}
-
-			public void cleanUp(Object[] args, int count) {
-				cleanUpAfterRefreshTest(args);
 			}
 		}.performTest(args);
 	}
@@ -1741,11 +1872,20 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		Long[] interestingTimes = new Long[] {new Long(-1), new Long(System.currentTimeMillis() - 1000), new Long(System.currentTimeMillis() - 100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 512L)};
 		Object[][] args = new Object[][] {interestingResources, interestingTimes};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
+
+			public void cleanUp(Object[] args, int count) {
+			}
+
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
 				IResource receiver = (IResource) args[0];
 				long time = ((Long) args[1]).longValue();
 				long actual = receiver.setLocalTimeStamp(time);
 				return new Long(actual);
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				long time = ((Long) args[1]).longValue();
+				return time < 0;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
@@ -1759,14 +1899,6 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				if (Math.abs(actual - time) > 2000)
 					return false;
 				return true;
-			}
-
-			public boolean shouldFail(Object[] args, int count) {
-				long time = ((Long) args[1]).longValue();
-				return time < 0;
-			}
-
-			public void cleanUp(Object[] args, int count) {
 			}
 		}.performTest(args);
 	}
