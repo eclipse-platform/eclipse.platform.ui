@@ -253,7 +253,7 @@ public WorkspaceDescription readOldWorkspace() {
 	IPath path = getOldWorkspaceDescriptionLocation();
 	IPath tempPath = getBackupLocationFor(path);
 	try {
-		WorkspaceDescription oldDescription = (WorkspaceDescription) new OldModelObjectReader().read(path, tempPath);
+		WorkspaceDescription oldDescription = (WorkspaceDescription) new WorkspaceDescriptionReader().read(path, tempPath);
 		// if one of those files exist, get rid of them
 		Workspace.clear(path.toFile());
 		Workspace.clear(tempPath.toFile());		

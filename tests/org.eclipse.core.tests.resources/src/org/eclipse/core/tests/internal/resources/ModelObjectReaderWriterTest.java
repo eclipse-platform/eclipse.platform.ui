@@ -48,7 +48,7 @@ protected String getInvalidWorkspaceDescription() {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new ModelObjectReaderWriterTest("testMultiLineCharFields"));
+//	suite.addTest(new ModelObjectReaderWriterTest("testMultipleProjectDescriptions"));
 //	return suite;
 	return new TestSuite(ModelObjectReaderWriterTest.class);
 }
@@ -162,7 +162,7 @@ public void testProjectDescription2() throws Throwable {
 }
 public void testInvalidWorkspaceDescription() {
 	/* initialize common objects */
-	OldModelObjectReader reader = new OldModelObjectReader();
+	WorkspaceDescriptionReader reader = new WorkspaceDescriptionReader();
 	IPath root = getWorkspace().getRoot().getLocation();
 	IPath location = root.append("ModelObjectWriterTest2.pbs");
 
@@ -249,7 +249,7 @@ private void compareBuildSpecs (int errorTag, ICommand[] commands, ICommand[] co
 		Map args = commands[i].getArguments();
 		Map args2 = commands2[i].getArguments();
 		assertEquals (errorTag + ".2." + (i + 1) + "0", args.size(), args2.size());
-		Set keys = args.entrySet();
+		Set keys = args.keySet();
 		int x = 1;
 		for (Iterator j = keys.iterator(); j.hasNext(); x++) {
 			Object key = j.next();
@@ -558,38 +558,139 @@ public void testMultipleProjectDescriptions() throws Throwable {
 	} catch (java.net.MalformedURLException e) {
 		assertTrue("Bad URL for " + pluginPath, true);
 	}
-	String[] members = getPathMembers(whereToLook);
-	OldModelObjectReader reader = new OldModelObjectReader();
-	ProjectDescriptionReader reader2 = new ProjectDescriptionReader();
+	String[] members = {"abc.project","def.project",
+		"org.apache.lucene.project", "org.eclipse.ant.core.project"};
+	HashMap baselines = buildBaselineDescriptors(new Path(pluginPath));
+	ProjectDescriptionReader reader = new ProjectDescriptionReader();
 	
 	for (int i = 0; i < members.length; i++) {
-		URL currentURL = new URL(whereToLook, members[i] + "/.project"); //$NON-NLS-1$
-
+		URL currentURL = null;
+		currentURL = new URL(whereToLook, members[i]);
+		InputStream is = null;
 		try {
-			FileInputStream input = new FileInputStream(currentURL.getFile());
-			ProjectDescription description = (ProjectDescription) reader.read(input);
-	
-			InputStream is = null;
-			try {
-				is = currentURL.openStream();
-			} catch (IOException e) {
-				fail("0.5");
-			}
-			InputSource in = new InputSource(is);
-			ProjectDescription description2 = reader2.read(in);
-			
-			compareProjectDescriptions(i + 1, description, description2);
-		} catch (FileNotFoundException notFound) {
-			// Leave this catch clause blank.  We just want to ignore
-			// the directories that have no .project file
+			is = currentURL.openStream();
+		} catch (IOException e) {
+			fail("0.5");
 		}
+		InputSource in = new InputSource(is);
+		ProjectDescription description = reader.read(in);
+		
+		compareProjectDescriptions(i + 1, description, (ProjectDescription)baselines.get(members[i]));
 	}
+}
+private HashMap buildBaselineDescriptors(IPath pluginPath) {
+	HashMap result = new HashMap();
+	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+	ProjectDescription desc = new ProjectDescription();
+	desc.setName("abc.project");
+	ICommand[] commands = new ICommand[1];
+	commands[0] = desc.newCommand();
+	commands[0].setBuilderName("org.eclipse.jdt.core.javabuilder");
+	desc.setBuildSpec(commands);
+	String[] natures = new String[1];
+	natures[0] = "org.eclipse.jdt.core.javanature";
+	desc.setNatureIds(natures);
+	HashMap linkMap = new HashMap();
+	LinkDescription link = new LinkDescription("newLink", 2, new Path("d:/abc/def"));
+	linkMap.put(link.getName(), link);
+	desc.setLinkDescriptions(linkMap);
+	result.put(desc.getName(), desc);
+	commands = null;
+	natures = null;
+	link = null;
+	linkMap = null;
+	desc = null;
+
+	desc = new ProjectDescription();
+	desc.setName("def.project");
+	commands = new ICommand[1];
+	commands[0] = desc.newCommand();
+	commands[0].setBuilderName("org.eclipse.jdt.core.javabuilder");
+	desc.setBuildSpec(commands);
+	natures = new String[1];
+	natures[0] = "org.eclipse.jdt.core.javanature";
+	desc.setNatureIds(natures);
+	linkMap = new HashMap();
+	link = new LinkDescription("newLink", 2, new Path("d:/abc/def"));
+	linkMap.put(link.getName(), link);
+	link = new LinkDescription("link2", 2, new Path("d:/abc"));
+	linkMap.put(link.getName(), link);
+	link = new LinkDescription("link3", 2, new Path("d:/abc/def/ghi"));
+	linkMap.put(link.getName(), link);
+	link = new LinkDescription("link4", 1, new Path("d:/abc/def/afile.txt"));
+	linkMap.put(link.getName(), link);
+	desc.setLinkDescriptions(linkMap);
+	result.put(desc.getName(), desc);
+	commands = null;
+	natures = null;
+	link = null;
+	linkMap = null;
+	desc = null;
+
+	desc = new ProjectDescription();
+	desc.setName("org.apache.lucene.project");
+	IProject[] refProjects = new Project[2];
+	refProjects[0] = root.getProject("org.eclipse.core.boot");
+	refProjects[1] = root.getProject("org.eclipse.core.runtime");
+	desc.setReferencedProjects(refProjects);
+	commands = new ICommand[3];
+	commands[0] = desc.newCommand();
+	commands[0].setBuilderName("org.eclipse.jdt.core.javabuilder");
+	commands[1] = desc.newCommand();
+	commands[1].setBuilderName("org.eclipse.pde.ManifestBuilder");
+	commands[2] = desc.newCommand();
+	commands[2].setBuilderName("org.eclipse.pde.SchemaBuilder");
+	desc.setBuildSpec(commands);
+	natures = new String[2];
+	natures[0] = "org.eclipse.jdt.core.javanature";
+	natures[1] = "org.eclipse.pde.PluginNature";
+	desc.setNatureIds(natures);
+	result.put(desc.getName(), desc);
+	refProjects = null;
+	commands = null;
+	natures = null;
+	desc = null;
+
+	desc = new ProjectDescription();
+	desc.setName("org.eclipse.ant.core.project");
+	refProjects = new Project[4];
+	refProjects[0] = root.getProject("org.apache.ant");
+	refProjects[1] = root.getProject("org.apache.xerces");
+	refProjects[2] = root.getProject("org.eclipse.core.boot");
+	refProjects[3] = root.getProject("org.eclipse.core.runtime");
+	desc.setReferencedProjects(refProjects);
+	commands = new ICommand[2];
+	commands[0] = desc.newCommand();
+	commands[0].setBuilderName("org.eclipse.jdt.core.javabuilder");
+	commands[1] = desc.newCommand();
+	commands[1].setBuilderName("org.eclipse.ui.externaltools.ExternalToolBuilder");
+	Map argMap = new HashMap();
+	argMap.put("!{tool_show_log}", "true");
+	argMap.put("!{tool_refresh}", "${none}");
+	argMap.put("!{tool_name}", "org.eclipse.ant.core extra builder");
+	argMap.put("!{tool_dir}", "");
+	argMap.put("!{tool_args}", "-DbuildType=${build_type}");
+	argMap.put("!{tool_loc}", "${workspace_loc:/org.eclipse.ant.core/scripts/buildExtraJAR.xml}");
+	argMap.put("!{tool_type}", "org.eclipse.ui.externaltools.type.ant");
+	commands[1].setArguments(argMap);
+	desc.setBuildSpec(commands);
+	natures = new String[1];
+	natures[0] = "org.eclipse.jdt.core.javanature";
+	desc.setNatureIds(natures);
+	result.put(desc.getName(), desc);
+	refProjects = null;
+	commands = null;
+	natures = null;
+	desc = null;
+	
+	return result;
 }
 public void testWorkspaceDescription() throws Throwable {
 
 	/* initialize common objects */
 	ModelObjectWriter writer = new ModelObjectWriter();
-	OldModelObjectReader reader = new OldModelObjectReader();
+	WorkspaceDescriptionReader reader = new WorkspaceDescriptionReader();
 	IPath root = getWorkspace().getRoot().getLocation();
 	IPath location = root.append("ModelObjectWriterTest.pbs");
 
