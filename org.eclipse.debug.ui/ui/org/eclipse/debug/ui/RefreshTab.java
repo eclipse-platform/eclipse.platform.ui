@@ -79,6 +79,9 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 */
 	public static final String ATTR_REFRESH_SCOPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
 	
+	// indicates no working set has been selected
+	private static final String NO_WORKING_SET = "NONE"; //$NON-NLS-1$
+	
 	// Check Buttons
 	private Button fRefreshButton;
 	private Button fRecursiveButton;
@@ -148,36 +151,44 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 2;
 		fGroup.setLayoutData(gd);
 
+		SelectionAdapter adapter = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button)e.getSource()).getSelection()) {
+					updateEnabledState();
+					updateLaunchConfigurationDialog();
+				}
+			}
+		};
+		
 		fWorkspaceButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.32")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fWorkspaceButton.setLayoutData(gd);
+		fWorkspaceButton.addSelectionListener(adapter);
 
 		fResourceButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.33")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fResourceButton.setLayoutData(gd);
+		fResourceButton.addSelectionListener(adapter);
 
 		fProjectButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.34")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fProjectButton.setLayoutData(gd);		
+		fProjectButton.addSelectionListener(adapter);
 
 		fContainerButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.35")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fContainerButton.setLayoutData(gd);
+		fContainerButton.addSelectionListener(adapter);
 				
 		fWorkingSetButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.36")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		fWorkingSetButton.setLayoutData(gd);
-		fWorkingSetButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateEnabledState();
-				updateLaunchConfigurationDialog();
-			}
-		});		
+		fWorkingSetButton.addSelectionListener(adapter);		
 		
 		fSelectButton = createPushButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.37"), null); //$NON-NLS-1$
 		gd = (GridData)fSelectButton.getLayoutData();
@@ -516,6 +527,9 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * working set.
 	 */
 	private static IWorkingSet restoreWorkingSet(String mementoString) {
+		if (NO_WORKING_SET.equals(mementoString)) {
+			return null;
+		}
 		StringReader reader= new StringReader(mementoString);
 		XMLMemento memento= null;
 		try {
@@ -574,38 +588,42 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * Creates and returns a memento for the given working set, to be used as a
-	 * refresh attribute, or <code>null</code> if the working set is empty or
-	 * <code>null</code>.
+	 * refresh attribute.
 	 * 
 	 * @param workingSet a working set, or <code>null</code>
-	 * @return an equivalent refresh attribute, or <code>null</code>
+	 * @return an equivalent refresh attribute
 	 */
 	public static String getRefreshAttribute(IWorkingSet workingSet) {
+		String set = null;
 		if (workingSet == null || workingSet.getElements().length == 0) {
-			return null;
-		}
-		XMLMemento workingSetMemento = XMLMemento.createWriteRoot(TAG_LAUNCH_CONFIGURATION_WORKING_SET);
-		IPersistableElement persistable = null;
-		if (workingSet instanceof IPersistableElement) {
-			persistable = (IPersistableElement) workingSet;
-		} else if (workingSet instanceof IAdaptable) {
-			persistable = (IPersistableElement) ((IAdaptable) workingSet).getAdapter(IPersistableElement.class);
-		}
-		if (persistable != null) {
-			workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, persistable.getFactoryId());
-			persistable.saveState(workingSetMemento);
-			StringWriter writer= new StringWriter();
-			try {
-				workingSetMemento.save(writer);
-			} catch (IOException e) {
-				DebugUIPlugin.log(e);
+			set = NO_WORKING_SET;
+		} else {
+			XMLMemento workingSetMemento = XMLMemento.createWriteRoot(TAG_LAUNCH_CONFIGURATION_WORKING_SET);
+			IPersistableElement persistable = null;
+			if (workingSet instanceof IPersistableElement) {
+				persistable = (IPersistableElement) workingSet;
+			} else if (workingSet instanceof IAdaptable) {
+				persistable = (IPersistableElement) ((IAdaptable) workingSet).getAdapter(IPersistableElement.class);
 			}
+			if (persistable != null) {
+				workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, persistable.getFactoryId());
+				persistable.saveState(workingSetMemento);
+				StringWriter writer= new StringWriter();
+				try {
+					workingSetMemento.save(writer);
+				} catch (IOException e) {
+					DebugUIPlugin.log(e);
+				}
+				set = writer.toString();
+			}
+		}
+		if (set != null) {
 			StringBuffer memento = new StringBuffer();
 			memento.append("${working_set:"); //$NON-NLS-1$
-			memento.append(writer.toString());
+			memento.append(set);
 			memento.append("}"); //$NON-NLS-1$
 			return memento.toString();
-		}		
+		}
 		return null;
 	}
 	

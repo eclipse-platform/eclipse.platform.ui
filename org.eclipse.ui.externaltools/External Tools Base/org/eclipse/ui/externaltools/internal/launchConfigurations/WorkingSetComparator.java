@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.launchConfigurations;
+package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 import java.util.Comparator;
 
