@@ -29,11 +29,13 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -42,6 +44,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -59,6 +62,7 @@ import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.AntOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
@@ -77,9 +81,9 @@ import org.xml.sax.SAXParseException;
  */
 public class PlantyContentOutlinePage extends ContentOutlinePage implements IShowInSource, IAdaptable {
 	
-	private Object fInput;
+	private Object input;
 	private Menu menu;
-	private IAction openEditorAction;
+	private AntOpenWithMenu openWithMenu;
 	
 	/**
 	 * The content provider for the objects shown in the outline view.
@@ -87,13 +91,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	private class PlantyContentProvider implements ITreeContentProvider {
 
 		/**
-		 * do nothing
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
-			if (menu != null) {
-				menu.dispose();
-			}
 		}
 
         
@@ -267,6 +267,18 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		super();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#dispose()
+	 */
+	public void dispose() {
+		if (menu != null) {
+			menu.dispose();
+		}
+		if (openWithMenu != null) {
+			openWithMenu.dispose();
+		}
+	}
+	
 	/**  
 	 * Creates the control (outline view) for this page
 	 */
@@ -304,7 +316,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		site.registerContextMenu(IExternalToolConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
 				
 		updateColor();
-		openEditorAction= new OpenEditorForExternalEntityAction(this);
+		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
 		viewer.getTree().addTreeListener(new TreeListener() {
 			public void treeCollapsed(TreeEvent e) {
@@ -317,10 +329,47 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	}
 	
 	private void contextMenuAboutToShow(IMenuManager menu) {	
-		if (openEditorAction.isEnabled()) {
-			menu.add(openEditorAction);
+		if (shouldAddOpenWithMenu()) {
+			addOpenWithMenu(menu);
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+	
+	private void addOpenWithMenu(IMenuManager menu) {
+		IStructuredSelection selection= (IStructuredSelection)getSelection();
+		XmlElement element= (XmlElement)selection.getFirstElement();
+		String path= element.getFilePath();
+		if (path != null) {
+			IPath resourcePath= new Path(path);
+			//resourcePath.
+			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+			IResource resource= root.getFileForLocation(resourcePath);
+			if (resource != null && resource.getType() == IResource.FILE) {
+				IFile buildFile= (IFile)resource;
+				if (buildFile.exists()) {
+					menu.add(new Separator("group.open")); //$NON-NLS-1$
+					IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("PlantyContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
+					openWithMenu.setFile(buildFile);
+					submenu.add(openWithMenu);
+					menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
+				}
+			}
+		}
+	}
+	
+	private boolean shouldAddOpenWithMenu() {
+		ISelection iselection= getSelection();
+		if (iselection instanceof IStructuredSelection) {
+			IStructuredSelection selection= (IStructuredSelection)iselection;
+			if (selection.size() == 1) {
+				Object selected= selection.getFirstElement();
+				if (selected instanceof XmlElement) {
+					XmlElement element= (XmlElement)selected;
+					return element.isExternal() && !element.isRootExternal();
+				}
+			}
+		}
+		return false;
 	}
     
 	/**
@@ -484,23 +533,28 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 					tempLine = tempLine.substring(0, tempStartingColumn-2);
 				}
 			}
-			int tempLessThanIndex = tempLine.lastIndexOf('<');
-			while(tempLessThanIndex == -1) {
-				/*
-				 * must be found in this loop since, this element exists.
-				 */
-				tempLine = (String)tempLineList.get(--tempStartingRow);
-				tempLessThanIndex = tempLine.lastIndexOf('<');
+			int startingColumn= 0;
+			if (tempElement.isRootExternal()) {
+				startingColumn= tempLine.lastIndexOf('&');
+			} else {
+				startingColumn= tempLine.lastIndexOf('<');
+				while(startingColumn == -1) {
+					/*
+					 * must be found in this loop since, this element exists.
+					 */
+					tempLine = (String)tempLineList.get(--tempStartingRow);
+					startingColumn = tempLine.lastIndexOf('<');
+				}
 			}
-            
-			tempElement.setStartingColumn(tempLessThanIndex+1); // 0-based -> 1-based
-			tempElement.setStartingRow(tempStartingRow+1);
-			int tempStartingIndex = (tempStartingRow > 0 ? tempLineLengths[tempStartingRow-1] : 0);
+			
+			tempElement.setStartingColumn(startingColumn + 1); // 0-based -> 1-based
+			tempElement.setStartingRow(tempStartingRow + 1);
+			int tempStartingIndex = (tempStartingRow > 0 ? tempLineLengths[tempStartingRow - 1] : 0);
 			tempStartingIndex = (isLineSeparatorMulticharacter()) ? tempStartingIndex + tempStartingRow : tempStartingIndex; // add one char for ever \r
-			tempStartingIndex += tempLessThanIndex;
+			tempStartingIndex += startingColumn;
 			int tempOffset = tempStartingIndex;
 			if (!tempElement.isErrorNode()) {
-				tempOffset= findIndexOfSubstringAfterIndex(aWholeDocumentString, tempElement.getName(), tempStartingIndex)-1;
+				tempOffset= findIndexOfSubstringAfterIndex(aWholeDocumentString, tempElement.getName(), tempStartingIndex) - 1;
 			}
 			if(isLineSeparatorMulticharacter()) {
 				tempOffset += tempStartingRow; // add one char for every \r
@@ -514,11 +568,11 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				if(tempElement.getEndingColumn() > 0) {
 					tempStartingIndex += tempElement.getEndingColumn();
 				} else {
-					tempStartingIndex += ((String)tempLineList.get(tempElement.getEndingRow()-1)).length();
+					tempStartingIndex += ((String)tempLineList.get(tempElement.getEndingRow() - 1)).length();
 				}
 				tempStartingIndex += -2;
 				if(tempElement.getEndingRow() > 1) {
-					tempStartingIndex += tempLineLengths[tempElement.getEndingRow()-2];
+					tempStartingIndex += tempLineLengths[tempElement.getEndingRow() - 2];
 				}
 				tempLength = findIndexOfSubstringAfterIndex(aWholeDocumentString, ">", tempStartingIndex)+1; //$NON-NLS-1$
 				tempLength -= tempOffset;
@@ -699,11 +753,10 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	}
 	
 	public Object getInput() {
-		return fInput;
+		return input;
 	}
 
 	public void setInput(Object input) {
-		fInput= input;
+		this.input= input;
 	}
-
 }
