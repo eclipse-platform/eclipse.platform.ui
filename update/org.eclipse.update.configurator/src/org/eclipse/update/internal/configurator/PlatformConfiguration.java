@@ -998,7 +998,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				return; // need to be able to do "dir"
 
 			copy(new File(source.getFile()), new File(target));
-
+			
 		} catch (IOException e) {
 			// this is an optimistic copy. If we fail, the state will be reconciled
 			// when the update manager is triggered.
@@ -1009,7 +1009,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (src.isDirectory()) {
 			// copy content of directories
 			tgt.mkdir();
-			File[] list = src.listFiles();
+			FilenameFilter filter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return !name.equals(ConfigurationActivator.LAST_CONFIG_STAMP);
+				}
+			};
+			File[] list = src.listFiles(filter);
 			if (list == null)
 				return;
 			for (int i = 0; i < list.length; i++) {

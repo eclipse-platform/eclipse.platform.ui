@@ -27,7 +27,7 @@ public class ConfigurationActivator implements BundleActivator {
 
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
 	public static final String INSTALL_LOCATION = "osgi.installLocation";
-	
+	public static final String LAST_CONFIG_STAMP = "last.config.stamp";
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
 	// debug values
@@ -96,7 +96,7 @@ public class ConfigurationActivator implements BundleActivator {
 			throw Utils.newCoreException("Cannot create configuration in " + configArea, null);
 
 		try {
-			DataInputStream stream = new DataInputStream(new FileInputStream(configArea + "/last.config.stamp"));
+			DataInputStream stream = new DataInputStream(new FileInputStream(configArea + File.separator + LAST_CONFIG_STAMP));
 			lastTimeStamp = stream.readLong();
 		} catch (FileNotFoundException e) {
 			lastTimeStamp = configuration.getChangeStamp() - 1;
@@ -135,7 +135,7 @@ public class ConfigurationActivator implements BundleActivator {
 
 	private void writePlatformConfigurationTimeStamp() {
 		try {
-			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + "/last.config.stamp"));
+			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + File.separator + LAST_CONFIG_STAMP));
 			stream.writeLong(configuration.getChangeStamp());
 		} catch (FileNotFoundException e) {
 			Utils.log(e.getLocalizedMessage());
