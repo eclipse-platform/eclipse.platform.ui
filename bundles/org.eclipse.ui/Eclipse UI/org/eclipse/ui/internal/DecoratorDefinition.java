@@ -5,11 +5,11 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
@@ -96,7 +96,7 @@ public class DecoratorDefinition {
 		final CoreException[] exceptions = new CoreException[1];
 
 		if (decorator == null) {
-			Platform.run(new SafeRunnableAdapter(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
+			Platform.run(new SafeRunnable(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
 				public void run() {
 					try {
 						decorator =

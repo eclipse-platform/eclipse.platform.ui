@@ -8,16 +8,19 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 
-import org.eclipse.ui.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.WorkbenchPart;
 
 
 /**
@@ -128,7 +131,7 @@ protected void createChildControl() {
 	content.setLayout(new FillLayout());
 	
 	String error = WorkbenchMessages.format("PartPane.unableToCreate", new Object[] {partReference.getTitle()}); //$NON-NLS-1$
-	Platform.run(new SafeRunnableAdapter(error) {
+	Platform.run(new SafeRunnable(error) {
 		public void run() {
 			part[0].createPartControl(content);
 		}

@@ -4,10 +4,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.*;
 
 /**
  * Perspective listener list.
@@ -33,7 +33,7 @@ public void firePerspectiveActivated(final IWorkbenchPage page, final IPerspecti
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPerspectiveListener l = (IPerspectiveListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.perspectiveActivated(page, perspective);
 			}
@@ -53,7 +53,7 @@ public void firePerspectiveChanged(final IWorkbenchPage page, final IPerspective
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPerspectiveListener l = (IPerspectiveListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.perspectiveChanged(page, perspective, changeId);
 			}

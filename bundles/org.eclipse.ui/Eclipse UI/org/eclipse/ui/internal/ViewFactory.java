@@ -4,12 +4,16 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.HashMap;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import java.util.*;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * The ViewFactory is used to control the creation and disposal of views.  
@@ -72,7 +76,7 @@ private void restoreView(final IViewReference ref) throws PartInitException {
 	mementoTable.remove(viewID);
 	
 	final PartInitException ex[] = new PartInitException[1];
-	Platform.run(new SafeRunnableAdapter() {
+	Platform.run(new SafeRunnable() {
 		public void run() {
 			try {
 				IViewDescriptor desc = viewReg.find(viewID);
@@ -124,7 +128,7 @@ public void saveState(IMemento memento) {
 		final IViewPart view = (IViewPart)refs[i].getPart(false);
 		if(view != null) {
 			final boolean result[] = new boolean[1];
-			Platform.run(new SafeRunnableAdapter() {
+			Platform.run(new SafeRunnable() {
 				public void run() {
 					view.saveState(viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
 					result[0] = true;

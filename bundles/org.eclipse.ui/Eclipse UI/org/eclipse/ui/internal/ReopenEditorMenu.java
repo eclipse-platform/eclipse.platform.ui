@@ -4,19 +4,15 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.dialogs.MessageDialog;
-
 import org.eclipse.ui.*;
 
 /**
@@ -161,7 +157,7 @@ public class ReopenEditorMenu extends ContributionItem {
 		for (int i = 0; i < array.length; i++) {
 			final EditorHistoryItem item = array[i];
 			final int historyIndex = i;
-			Platform.run(new SafeRunnableAdapter() {
+			Platform.run(new SafeRunnable() {
 				public void run() throws Exception {
 					String text = calcText(historyIndex, item);
 					MenuItem mi = new MenuItem(menu, SWT.PUSH, menuIndex[0]);

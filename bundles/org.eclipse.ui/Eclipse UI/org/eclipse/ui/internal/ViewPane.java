@@ -15,6 +15,7 @@ Contributors:
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
@@ -22,6 +23,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.PartPane.Sashes;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 
@@ -188,7 +190,7 @@ public void createControl(Composite parent) {
 		control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
 	}
 	
-	Platform.run(new SafeRunnableAdapter() {
+	Platform.run(new SafeRunnable() {
 		public void run() { 
 			// Install the part's tools and menu
 			ViewActionBuilder builder = new ViewActionBuilder();

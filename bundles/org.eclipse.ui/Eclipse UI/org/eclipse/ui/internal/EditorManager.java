@@ -7,23 +7,18 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.util.Assert;
-
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
@@ -31,7 +26,6 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 
@@ -599,7 +593,7 @@ public class EditorManager {
 	private IEditorPart createPart(final EditorDescriptor desc) throws PartInitException {
 		final IEditorPart editor[] = new IEditorPart[1];
 		final Throwable ex[] = new Throwable[1];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() throws CoreException {
 				editor[0] = (IEditorPart) WorkbenchPlugin.createExtension(desc.getConfigurationElement(), "class"); //$NON-NLS-1$
 			}
@@ -726,7 +720,7 @@ public class EditorManager {
 			}
 		}
 
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				// Update each workbook with its visible editor.
 				for (int i = 0; i < activeEditors.size(); i++)
@@ -768,7 +762,7 @@ public class EditorManager {
 		if(ref != null)
 			result[0] = ref;
 			
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				// Get the input factory.
 				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
@@ -990,7 +984,7 @@ public class EditorManager {
 			if(site.getPane() instanceof MultiEditorInnerPane)
 				continue;
 				
-			Platform.run(new SafeRunnableAdapter() {
+			Platform.run(new SafeRunnable() {
 				public void run() {
 					// Get the input.
 					IEditorInput input = editor.getEditorInput();

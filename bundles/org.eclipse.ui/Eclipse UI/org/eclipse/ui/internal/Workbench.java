@@ -30,8 +30,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
@@ -147,13 +146,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private boolean busyClose(final boolean force) {
 		isClosing = true;
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				XMLMemento mem = recordWorkbenchState();
 				//Save the IMemento to a file.
 				saveWorkbenchState(mem);
 			}
 			public void handleException(Throwable e) {
+				String message;
 				if (e.getMessage() == null) {
 					message = WorkbenchMessages.getString("ErrorClosingNoArg"); //$NON-NLS-1$
 				} else {
@@ -167,7 +167,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (!isClosing && !force)
 			return false;
 
-		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
+		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
 				//Collect dirtyEditors
 				ArrayList dirtyEditors = new ArrayList();
@@ -742,7 +742,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			return RESTORE_CODE_RESET;
 
 		final int result[] = { RESTORE_CODE_OK };
-		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
+		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
 			public void run() throws Exception {
 				FileInputStream input = new FileInputStream(stateFile);
 				InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
@@ -1024,7 +1024,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				IPluginDescriptor descriptors[] = getEarlyActivatedPlugins();
 				for (int i = 0; i < descriptors.length; i++) {
 					final IPluginDescriptor pluginDescriptor = descriptors[i]; 
-					SafeRunnableAdapter code = new SafeRunnableAdapter() {
+					SafeRunnable code = new SafeRunnable() {
 						public void run() throws Exception {
 							String id = pluginDescriptor.getUniqueIdentifier() + IPreferenceConstants.SEPARATOR;
 							if(pref.indexOf(id) < 0) {

@@ -8,9 +8,9 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Abstract selection service.
@@ -132,7 +132,7 @@ protected void fireSelection(final IWorkbenchPart part, final ISelection sel) {
 	for (int i = 0; i < array.length; i ++) {
 		final ISelectionListener l = (ISelectionListener)array[i];
 		if ((part != null && sel != null) || l instanceof INullSelectionListener) {
-			Platform.run(new SafeRunnableAdapter() {
+			Platform.run(new SafeRunnable() {
 				public void run() {
 					l.selectionChanged(part, sel);
 				}
@@ -157,7 +157,7 @@ protected void firePostSelection(final IWorkbenchPart part, final ISelection sel
 	for (int i = 0; i < array.length; i ++) {
 		final ISelectionListener l = (ISelectionListener)array[i];
 		if ((part != null && sel != null) || l instanceof INullSelectionListener) {
-			Platform.run(new SafeRunnableAdapter() {
+			Platform.run(new SafeRunnable() {
 				public void run() {
 					l.selectionChanged(part, sel);
 				}

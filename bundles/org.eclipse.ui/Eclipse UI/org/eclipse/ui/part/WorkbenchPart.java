@@ -4,15 +4,18 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import java.net.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.ReferenceCounter;
+import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -87,7 +90,7 @@ protected void firePropertyChange(final int propertyId) {
 	Object [] array = propChangeListeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPropertyListener l = (IPropertyListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.propertyChanged(WorkbenchPart.this, propertyId);
 			}

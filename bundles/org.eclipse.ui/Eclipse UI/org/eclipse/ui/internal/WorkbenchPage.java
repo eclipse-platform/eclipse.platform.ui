@@ -372,7 +372,7 @@ public void activate(IWorkbenchPart part) {
  * Activates a part.  The part is given focus, the pane is hilighted.
  */
 private void activatePart(final IWorkbenchPart part) {
-	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
+	Platform.run(new SafeRunnable(WorkbenchMessages.getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
 		public void run() {
 			if (part != null) {
 				part.setFocus();
@@ -960,7 +960,7 @@ public void dispose() {
 		final IViewPart view = (IViewPart)refs[i].getPart(false);
 		if(view != null) {
 			firePartClosed(view);
-			Platform.run(new SafeRunnableAdapter() {
+			Platform.run(new SafeRunnable() {
 				public void run() {
 					view.dispose();
 				}

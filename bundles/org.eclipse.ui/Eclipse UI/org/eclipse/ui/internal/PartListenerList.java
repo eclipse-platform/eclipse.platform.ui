@@ -4,9 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Part listener list.
@@ -32,7 +34,7 @@ public void firePartActivated(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPartListener l = (IPartListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partActivated(part);
 			}
@@ -52,7 +54,7 @@ public void firePartBroughtToTop(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPartListener l = (IPartListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partBroughtToTop(part);
 			}
@@ -72,7 +74,7 @@ public void firePartClosed(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPartListener l = (IPartListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partClosed(part);
 			}
@@ -92,7 +94,7 @@ public void firePartDeactivated(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPartListener l = (IPartListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partDeactivated(part);
 			}
@@ -112,7 +114,7 @@ public void firePartOpened(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPartListener l = (IPartListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partOpened(part);
 			}

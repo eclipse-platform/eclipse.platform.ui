@@ -4,23 +4,22 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.*;
+import java.text.Collator;
+import java.util.*;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.program.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.widgets.*;
-
-import java.io.*;
-import java.text.Collator;
-import java.util.*;
-import java.util.List;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.misc.*;
 
 /**
  * Provides access to the collection of defined editors for
@@ -161,7 +160,7 @@ private void firePropertyChange(final int type) {
 	Object [] array = propChangeListeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPropertyListener l = (IPropertyListener)array[nX];
-		Platform.run(new SafeRunnableAdapter() {
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.propertyChanged(EditorRegistry.this, type);
 			}
