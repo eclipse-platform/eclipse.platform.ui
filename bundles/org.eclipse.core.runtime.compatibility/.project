@@ -3,7 +3,6 @@
 	<name>org.eclipse.core.runtime.compatibility</name>
 	<comment></comment>
 	<projects>
-		<project>_org.eclipse.core.runtime</project>
 		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.osgi</project>
 		<project>org.eclipse.osgi.services</project>
