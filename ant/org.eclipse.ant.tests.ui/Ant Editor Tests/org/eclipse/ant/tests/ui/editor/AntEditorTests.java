@@ -48,7 +48,7 @@ public class AntEditorTests extends AbstractAntUITest {
             IRegion region= hover.getHoverRegion(editor.getViewer(), 555);
             
             assertNotNull(region);
-            assertTrue("Region incorrect. Expected length of 7 and offset of 552. Got length of " + region.getLength() + "and offset of " + region.getOffset(), region.getLength() == 7 && region.getOffset() == 552);
+            assertTrue("Region incorrect. Expected length of 7 and offset of 552. Got length of " + region.getLength() + " and offset of " + region.getOffset(), region.getLength() == 7 && region.getOffset() == 552);
             
         } finally {
             EditorTestHelper.closeAllEditors();    
