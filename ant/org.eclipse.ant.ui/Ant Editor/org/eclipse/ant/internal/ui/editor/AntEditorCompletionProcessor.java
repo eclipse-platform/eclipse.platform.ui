@@ -10,7 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383, 58299
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383, 58299, 59024
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
@@ -221,11 +221,31 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
-        this.viewer = refViewer;
-        return mergeProposals(determineProposals(), super.computeCompletionProposals(refViewer, documentOffset));
+        this.viewer = refViewer;   
+        ICompletionProposal[] matchingTemplateProposals = determineTemplateProposals(refViewer, documentOffset);
+        return mergeProposals(determineProposals(), matchingTemplateProposals);
     }
+	
+	private ICompletionProposal[] determineTemplateProposals(ITextViewer refViewer, int documentOffset) {
+        String prefix = getCurrentPrefix();
+        ICompletionProposal[] matchingTemplateProposals;
+        if (prefix.length() == 0) {
+            matchingTemplateProposals = super.computeCompletionProposals(refViewer, documentOffset);
+        } else {
+            ICompletionProposal[] templateProposals = super.computeCompletionProposals(refViewer, documentOffset);
+            List templateProposalList = new ArrayList(templateProposals.length);
+            for (int i = 0; i < templateProposals.length; i++) {
+                if (templateProposals[i].getDisplayString().toLowerCase().startsWith(prefix)) {
+                    templateProposalList.add(templateProposals[i]);
+                }
+            }
+            matchingTemplateProposals = 
+                (ICompletionProposal[]) templateProposalList.toArray(new ICompletionProposal[templateProposalList.size()]);
+        }
+		return matchingTemplateProposals;
+	}
 
-    private ICompletionProposal[] mergeProposals(ICompletionProposal[] proposals1, ICompletionProposal[] proposals2) {
+	private ICompletionProposal[] mergeProposals(ICompletionProposal[] proposals1, ICompletionProposal[] proposals2) {
 
         ICompletionProposal[] combinedProposals = new ICompletionProposal[proposals1.length + proposals2.length];
                 
@@ -736,7 +756,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			Project project= antModel.getProjectNode().getProject();
 			Map tasksAndTypes= ComponentHelper.getComponentHelper(project).getAntTypeTable();
 			createProposals(document, prefix, proposals, tasksAndTypes);
-			if (parentName.equals("project")) { //$NON-NLS-1$
+			if (parentName.equals("project") && "target".startsWith(prefix)) { //$NON-NLS-1$ //$NON-NLS-2$
 				proposals.add(newCompletionProposal(document, prefix, "target")); //$NON-NLS-1$
 			}
 		} else {
