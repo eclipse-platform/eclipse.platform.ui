@@ -3,17 +3,14 @@ package org.eclipse.help.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
 import java.net.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.navigation.*;
-import org.eclipse.help.internal.server.HelpServer;
-import org.eclipse.help.internal.contributors.xml.*;
-import org.eclipse.help.internal.search.ISearchEngine;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.contributors.*;
-
+import org.eclipse.help.internal.contributors.xml.*;
+import org.eclipse.help.internal.navigation.HelpNavigationManager;
+import org.eclipse.help.internal.search.ISearchEngine;
+import org.eclipse.help.internal.server.HelpServer;
+import org.eclipse.help.internal.util.*;
 /**
  * The actual implementation of the help system plugin.
  */
@@ -23,35 +20,27 @@ public final class HelpSystem {
 	protected HelpNavigationManager navigationManager;
 	protected ContextManager contextManager;
 	protected ISearchEngine searchManager;
-
 	int debug_level;
 	private String browserPath;
-
 	// constants
 	private static final String SEARCH_ENGINE_EXTENSION_POINT =
 		"org.eclipse.help.searchEngine";
 	private static final String SEARCH_ENGINE_CONFIG = "config";
-	private static final String SEARCH_ENGINE_CLASS = "class";
-
 	// public constants (preferences)
 	public static final int INSTALL_LOCAL = 0;
 	public static final int INSTALL_CLIENT = 1;
 	public static final int INSTALL_SERVER = 2;
-
 	// Contants indicating level of logging
 	public static final int LOG_ERROR = 0; // log errors
 	public static final int LOG_WARNING = 1; // log errors and warnings
 	public static final int LOG_DEBUG = 2;
 	// log errors, warning, debug messages, and information messages
-
 	// configuration settings
 	int install = INSTALL_LOCAL;
 	private String remoteServerPath;
 	private URL remoteServerURL;
-
 	private String localServerAddress;
 	private String localServerPort;
-
 	/**
 	 * HelpSystem constructor comment.
 	 */
@@ -104,12 +93,10 @@ public final class HelpSystem {
 	 */
 	public static HelpNavigationManager getNavigationManager() {
 		if (getInstance().navigationManager == null) {
-			
 			getInstance().navigationManager = new HelpNavigationManager();
 		}
 		return getInstance().navigationManager;
 	}
-
 	/**
 	 * Returns the path to the help server.
 	 * This is usually empty, but for remote install it can be
@@ -123,42 +110,6 @@ public final class HelpSystem {
 	 */
 	public static URL getRemoteHelpServerURL() {
 		return getInstance().remoteServerURL;
-	}
-	/**
-	 * Used to obtain Search Manager
-	 * @return instance of SearchManager
-	 */
-	public static synchronized ISearchEngine getSearchManager() {
-		if (getInstance().searchManager == null) {
-			// obtain searchengine configuration from registry
-			IPluginRegistry registry = Platform.getPluginRegistry();
-			IExtensionPoint xpt = registry.getExtensionPoint(SEARCH_ENGINE_EXTENSION_POINT);
-			if (xpt == null)
-				return null;
-
-			IExtension[] extList = xpt.getExtensions();
-			if (extList.length == 0)
-				return null;
-
-			// only one pluggable viewer allowed ... always take first (only)
-			// extension and its first (only) element
-			IConfigurationElement[] cfigList = extList[0].getConfigurationElements();
-			if (cfigList.length == 0)
-				return null;
-
-			if (!cfigList[0].getName().equals(SEARCH_ENGINE_CONFIG))
-				return null;
-			IConfigurationElement searchCfig = cfigList[0];
-
-			// create executable engine and cache it
-			try {
-				getInstance().searchManager =
-					(ISearchEngine) searchCfig.createExecutableExtension(SEARCH_ENGINE_CLASS);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-		return getInstance().searchManager;
 	}
 	public static boolean isClient() {
 		return getInstance().install == INSTALL_CLIENT;
@@ -188,15 +139,12 @@ public final class HelpSystem {
 		// to cleanup the managers
 		if (oldInstall != install) {
 			// contextManager stays the same
-
 			// need new contribution manager
 			if (getInstance().contributionManager != null)
 				getInstance().contributionManager = null;
-
 			// need new navigation manager
 			if (getInstance().navigationManager != null)
 				getInstance().navigationManager = null;
-
 			// need new search manager
 			if (getInstance().searchManager != null)
 				getInstance().searchManager = null;
@@ -207,10 +155,9 @@ public final class HelpSystem {
 		getInstance().localServerPort = port;
 		HelpServer.setAddress(addr, port);
 	}
-
 	public static void setRemoteServerInfo(String url) {
-		URL oldURL=getInstance().remoteServerURL;
-		String oldPath=getInstance().remoteServerPath;
+		URL oldURL = getInstance().remoteServerURL;
+		String oldPath = getInstance().remoteServerPath;
 		try {
 			if (url != null) {
 				URL fullURL = new URL(url);
@@ -220,23 +167,20 @@ public final class HelpSystem {
 			}
 		} catch (MalformedURLException mue) {
 		}
-		if (getInstance().install == 1) {// remote
-			if((oldURL==null || !oldURL.equals(getInstance().remoteServerURL)
-				|| (oldPath==null || !oldPath.equals(getInstance().remoteServerPath))) ){
+		if (getInstance().install == 1) { // remote
+			if ((oldURL == null
+				|| !oldURL.equals(getInstance().remoteServerURL)
+				|| (oldPath == null || !oldPath.equals(getInstance().remoteServerPath)))) {
 				// contextManager stays the same
-	
 				// contribution manager stays the same
-
 				// need new navigation manager
 				if (getInstance().navigationManager != null)
 					getInstance().navigationManager = null;
-	
 				// need new search manager
 				if (getInstance().searchManager != null)
 					getInstance().searchManager = null;
 			}
 		}
-
 	}
 	/**
 	 * Shuts down the Help System.
@@ -256,7 +200,6 @@ public final class HelpSystem {
 			// launch the help server to serve documents
 			// Do this first to ensure that the HelpSystem server info is valid.
 			HelpServer.instance();
-
 			if (isServer()) {
 				// This is a server install, so need to generate navigation first
 				getNavigationManager();
