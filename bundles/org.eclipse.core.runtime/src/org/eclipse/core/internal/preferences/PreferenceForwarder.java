@@ -228,10 +228,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, boolean value) {
-		if (value == BOOLEAN_DEFAULT_DEFAULT)
-			defaults.remove(name);
-		else
-			defaults.putBoolean(name, value);
+		defaults.putBoolean(name, value);
 	}
 
 	/**
@@ -310,10 +307,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setDefault(String name, double value) {
 		if (Double.isNaN(value))
 			throw new IllegalArgumentException();
-		if (value == DOUBLE_DEFAULT_DEFAULT)
-			defaults.remove(name);
-		else
-			defaults.putDouble(name, value);
+		defaults.putDouble(name, value);
 	}
 
 	/**
@@ -392,10 +386,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setDefault(String name, float value) {
 		if (Float.isNaN(value))
 			throw new IllegalArgumentException();
-		if (value == FLOAT_DEFAULT_DEFAULT)
-			defaults.remove(name);
-		else
-			defaults.putFloat(name, value);
+		defaults.putFloat(name, value);
 	}
 
 	/**
@@ -468,10 +459,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, int value) {
-		if (value == INT_DEFAULT_DEFAULT)
-			defaults.remove(name);
-		else
-			defaults.putInt(name, value);
+		defaults.putInt(name, value);
 	}
 
 	/**
@@ -544,10 +532,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param value the new default value for the property
 	 */
 	public void setDefault(String name, long value) {
-		if (value == LONG_DEFAULT_DEFAULT)
-			defaults.remove(name);
-		else
-			defaults.putLong(name, value);
+		defaults.putLong(name, value);
 	}
 
 	/**
@@ -623,10 +608,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	public void setDefault(String name, String value) {
 		if (value == null)
 			throw new IllegalArgumentException();
-		if (STRING_DEFAULT_DEFAULT.equals(value))
-			defaults.remove(name);
-		else
-			defaults.put(name, value);
+		defaults.put(name, value);
 	}
 
 	/**
