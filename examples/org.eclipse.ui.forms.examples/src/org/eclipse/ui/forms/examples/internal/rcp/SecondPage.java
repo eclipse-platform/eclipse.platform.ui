@@ -27,7 +27,7 @@ public class SecondPage extends FormPage {
 	public SecondPage(FormEditor editor) {
 		super(editor, "second", "Section Page");
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Title for the second page");

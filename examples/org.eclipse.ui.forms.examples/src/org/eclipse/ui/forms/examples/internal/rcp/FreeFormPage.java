@@ -31,7 +31,7 @@ public class FreeFormPage extends FormPage {
 	public FreeFormPage(FormEditor editor) {
 		super(editor, "first", "First Page");
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Free-form text with links");

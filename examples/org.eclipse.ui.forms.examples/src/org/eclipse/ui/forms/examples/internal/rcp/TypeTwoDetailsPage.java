@@ -6,10 +6,10 @@
  */
 package org.eclipse.ui.forms.examples.internal.rcp;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -83,9 +83,10 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void inputChanged(IStructuredSelection selection) {
-		if (selection.size()==1) {
-			input = (TypeTwo)selection.getFirstElement();
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size()==1) {
+			input = (TypeTwo)ssel.getFirstElement();
 		}
 		else
 			input = null;
@@ -94,7 +95,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
-	public void commit() {
+	public void commit(boolean onSave) {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
@@ -122,5 +123,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 	 */
 	public void refresh() {
 		update();
+	}
+	public void setFormInput(Object input) {
 	}
 }

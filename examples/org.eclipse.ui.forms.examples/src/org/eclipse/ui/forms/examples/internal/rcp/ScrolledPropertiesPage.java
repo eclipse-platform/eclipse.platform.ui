@@ -5,7 +5,7 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.ui.forms.examples.internal.rcp;
-import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
@@ -21,7 +21,7 @@ public class ScrolledPropertiesPage extends FormPage {
 		super(editor, "fourth", "Master Details");
 		block = new ScrolledPropertiesBlock(this);
 	}
-	protected void createFormContent(final ManagedForm managedForm) {
+	protected void createFormContent(final IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with scrolled sections");

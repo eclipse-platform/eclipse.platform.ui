@@ -8,7 +8,7 @@ package org.eclipse.ui.forms.examples.internal.rcp;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
@@ -27,7 +27,7 @@ public class ThirdPage extends FormPage {
 	public ThirdPage(FormEditor editor) {
 		super(editor, "third", "Flow Page");
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with wrapped controls");
@@ -76,14 +76,14 @@ public class ThirdPage extends FormPage {
 		createSectionWithControls(managedForm, "Control Section",
 				"An example of a section with form controls");
 	}
-	private void createSectionWithLinks(ManagedForm mform, String title,
+	private void createSectionWithLinks(IManagedForm mform, String title,
 			String desc, int nlinks) {
 		Composite client = createSection(mform, title, desc, 1);
 		FormToolkit toolkit = mform.getToolkit();
 		for (int i = 1; i <= nlinks; i++)
 			toolkit.createHyperlink(client, "Hyperlink text " + i, SWT.WRAP);
 	}
-	private void createSectionWithControls(ManagedForm mform, String title,
+	private void createSectionWithControls(IManagedForm mform, String title,
 			String desc) {
 		Composite client = createSection(mform, title, desc, 1);
 		FormToolkit toolkit = mform.getToolkit();
@@ -93,7 +93,7 @@ public class ThirdPage extends FormPage {
 				SWT.RADIO);
 		toolkit.createButton(client, "A checkbox button", SWT.CHECK);
 	}
-	private void createMixedSection(ManagedForm mform, String title, String desc) {
+	private void createMixedSection(IManagedForm mform, String title, String desc) {
 		Composite client = createSection(mform, title, desc, 2);
 		FormToolkit toolkit = mform.getToolkit();
 		Hyperlink link = toolkit.createHyperlink(client,
@@ -113,7 +113,7 @@ public class ThirdPage extends FormPage {
 		text.setLayoutData(gd);
 		//toolkit.paintBordersFor(client);
 	}
-	private Composite createSection(ManagedForm mform, String title,
+	private Composite createSection(IManagedForm mform, String title,
 			String desc, int numColumns) {
 		final ScrolledForm form = mform.getForm();
 		FormToolkit toolkit = mform.getToolkit();

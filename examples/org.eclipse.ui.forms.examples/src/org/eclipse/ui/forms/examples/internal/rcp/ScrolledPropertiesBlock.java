@@ -24,7 +24,6 @@ import org.eclipse.ui.forms.widgets.*;
  */
 public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 	private FormPage page;
-	
 	public ScrolledPropertiesBlock(FormPage page) {
 		this.page = page;
 	}
@@ -35,7 +34,8 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 	class MasterContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof SimpleFormEditorInput) {
-				SimpleFormEditorInput input = (SimpleFormEditorInput) page.getEditor().getEditorInput();
+				SimpleFormEditorInput input = (SimpleFormEditorInput) page
+						.getEditor().getEditorInput();
 				return input.getModel().getContents();
 			}
 			return new Object[0];
@@ -63,14 +63,14 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 			return null;
 		}
 	}
-
-	protected void createMasterPart(final ManagedForm managedForm,
+	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
 		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
 		section.setText("Model Objects");
-		section.setDescription("The list contains objects from the model whose details are editable on the right");
+		section
+				.setDescription("The list contains objects from the model whose details are editable on the right");
 		section.marginWidth = 10;
 		section.marginHeight = 5;
 		toolkit.createCompositeSeparator(section);
@@ -102,9 +102,8 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 		viewer.setLabelProvider(new MasterLabelProvider());
 		viewer.setInput(page.getEditor().getEditorInput());
 	}
-	protected void createToolBarActions(ManagedForm managedForm) {
+	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-
 		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
 			public void run() {
 				sashForm.setOrientation(SWT.HORIZONTAL);

@@ -36,7 +36,7 @@ public class PageWithSubPages extends FormPage {
 	public PageWithSubPages(FormEditor editor) {
 		super(editor, "composite", "Composite Page");
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with subpages");
