@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -73,14 +74,18 @@ public class DefineTagAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
+				final ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 				if (roots.length != 1) return;
-				ICVSRepositoryLocation root = roots[0];
-				InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineTagAction.enterTag"), Policy.bind("DefineTagAction.enterTagLong"), null, null);
-				// To do: assume it's a branch tag for now
-				if (dialog.open() == InputDialog.OK) {
-					CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTag(root, new Tag(dialog.getValue(), true, root));
-				}
+				Shell shell = getShell();
+				shell.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineTagAction.enterTag"), Policy.bind("DefineTagAction.enterTagLong"), null, null);
+						// To do: assume it's a branch tag for now
+						if (dialog.open() == InputDialog.OK) {
+							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTag(roots[0], new Tag(dialog.getValue(), true, roots[0]));
+						}
+					}
+				});
 			}
 		}, Policy.bind("DefineTagAction.tag"), this.PROGRESS_DIALOG);
 
