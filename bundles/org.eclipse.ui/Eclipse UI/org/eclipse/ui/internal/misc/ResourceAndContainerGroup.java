@@ -1,9 +1,20 @@
 package org.eclipse.ui.internal.misc;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+/**
+ * Copyright (c) 2000, 2002 IBM Corp. and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ *  Randy Giffen: Added initial file selection
+ * 	Eduardo Pereira: Fix for 1GIT1G6
+ *  Karice McIntyre: Fix for 1GF68LO and pruint support
+ *  Leon J. Breedt: Added multiple folder creation support
+ *  Tod Creasey: Integration of patches and fonts   
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
@@ -293,20 +304,14 @@ protected boolean validateFullResourcePath(IPath resourcePath) {
  * @return <code>boolean</code> indicating validity of the resource name
  */
 protected boolean validateResourceName() {
-	String resourceName = resourceNameField.getText();
+    String resourceName = resourceNameField.getText();
 
-	if (resourceName.equals("")) {//$NON-NLS-1$
-		problemType = PROBLEM_RESOURCE_EMPTY;
-		problemMessage = WorkbenchMessages.format("ResourceGroup.emptyName", new Object[] {resourceType}); //$NON-NLS-1$
-		return false;
-	}
-
-	if (resourceName.indexOf(IPath.SEPARATOR) != -1) {
-		problemType = PROBLEM_RESOURCE_CONTAINS_SEPARATOR;
-		problemMessage = WorkbenchMessages.format("ResourceGroup.containsSeparator", new Object[] {resourceType}); //$NON-NLS-1$
-		return false;
-	}
-
-	return true;
+    if (resourceName.equals("")) {//$NON-NLS-1$
+        problemType = PROBLEM_RESOURCE_EMPTY;
+        problemMessage = WorkbenchMessages.format("ResourceGroup.emptyName", new Object[] {resourceType}); //$NON-NLS-1$
+        return false;
+    }
+    return true;
 }
+
 }
