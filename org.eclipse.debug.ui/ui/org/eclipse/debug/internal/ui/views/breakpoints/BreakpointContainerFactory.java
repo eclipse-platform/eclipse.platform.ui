@@ -76,7 +76,7 @@ public class BreakpointContainerFactory implements IBreakpointContainerFactory {
 	public IBreakpointContainerFactoryDelegate getDelegate() {
 		if (fDelegate == null) {
 			try {
-				fDelegate= (IBreakpointContainerFactoryDelegate) fConfigurationElement.createExecutableExtension("delegateClass"); //$NON-NLS-1$
+				fDelegate= (IBreakpointContainerFactoryDelegate) fConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 				fDelegate.setFactory(this);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);

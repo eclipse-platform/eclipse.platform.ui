@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.ui" id="breakpointContainerFactories" name="Breakpoint Container Factories"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for contributing breakpoint container factories. A breakpoint container factories divides breakpoints up into containers based on some specific criteria. For example, breakpoint container factories are provided which organize breakpoints by project.
+         This extension point provides a mechanism for contributing breakpoint container factories. A breakpoint container factory divides breakpoints up into containers based on some specific criteria. For example, a breakpoint container factory is provided to organize breakpoints by project.
       </documentation>
    </annotation>
 
@@ -48,7 +48,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="delegateClass" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   Implementation of org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory
@@ -94,7 +94,7 @@
 &lt;extension
     point=&quot;org.eclipse.debug.ui.breakpointContainerFactories&quot;&gt;
     &lt;breakpointContainerFactory
-      delegateClass=&quot;org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactoryDelegate&quot;
+     class=&quot;org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactoryDelegate&quot;
      id=&quot;org.eclipse.debug.ui.breakpointProjectContainerFactory&quot;
      label=&quot;Project&quot;
      icon=&quot;icons/full/obj16/prj_obj.gif&quot;/&gt;
@@ -109,7 +109,7 @@ In the above example, the supplied factory will be included in the list of optio
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;delegateClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate&lt;/b&gt;.
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate&lt;/b&gt;.
       </documentation>
    </annotation>
 

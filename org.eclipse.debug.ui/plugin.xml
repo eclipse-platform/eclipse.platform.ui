@@ -2164,22 +2164,22 @@ M4 = Platform-specific fourth key
     <extension
           point="org.eclipse.debug.ui.breakpointContainerFactories">
           <breakpointContainerFactory
-          	delegateClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactoryDelegate"
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactoryDelegate"
           	id="org.eclipse.debug.ui.breakpointProjectContainerFactory"
           	label="%Project.label"
           	icon="icons/full/obj16/prj_obj.gif"/>
           <breakpointContainerFactory
-          	delegateClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFileContainerFactoryDelegate"
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFileContainerFactoryDelegate"
           	id="org.eclipse.debug.ui.breakpointFileContainerFactory"
           	label="%File.label"
           	icon="icons/full/obj16/file_obj.gif"/>
           <breakpointContainerFactory
-          	delegateClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeContainerFactoryDelegate"
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeContainerFactoryDelegate"
           	id="org.eclipse.debug.ui.breakpointTypeContainerFactory"
           	label="%BreakpointType.label"
           	icon="icons/full/obj16/brkp_type.gif"/>
           <breakpointContainerFactory
-          	delegateClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointGroupContainerFactoryDelegate"
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointGroupContainerFactoryDelegate"
           	id="org.eclipse.debug.ui.breakpointGroupContainerFactory"
           	label="%CustomGroups.label"
           	icon="icons/full/obj16/brkp_grp.gif"/>

@@ -16,10 +16,12 @@ import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFacto
 
 /**
  * A delegate which creates containers for a breakpoint container factory.
- * 
- * Clients may implement this interface, but they are encouraged to extend
- * AbstractBreakpointContainerFactoryDelegate instead.
- * 
+ * Breakpoint container factories are contributed via the
+ * <code>org.eclipse.debug.ui.breakpointContainterFactories</code> extension point.
+ * <p>
+ * Clients implementing this interface must extend
+ * <code>AbstractBreakpointContainerFactoryDelegate</code>.
+ * </p>
  * @since 3.1
  */
 public interface IBreakpointContainerFactoryDelegate {
