@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
  * Default variable expander implementation. Does nothing.
@@ -40,7 +41,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * @see IVariableExpander#getResources(String, String, ExpandVariableContext)
 	 */
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format(VariablesMessages.getString("DefaultVariableExpander.0"), new String[] {varTag})); //$NON-NLS-1$
+		throwExpansionException(varTag, MessageFormat.format(DebugCoreMessages.getString("DefaultVariableExpander.0"), new String[] {varTag})); //$NON-NLS-1$
 		return null;
 	}
 
@@ -48,7 +49,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * @see IVariableExpander#getText(String, String, ExpandVariableContext)
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format(VariablesMessages.getString("DefaultVariableExpander.0"), new String[] {varTag})); //$NON-NLS-1$
+		throwExpansionException(varTag, MessageFormat.format(DebugCoreMessages.getString("DefaultVariableExpander.0"), new String[] {varTag})); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -57,7 +58,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * while expanding the given variable tag.
 	 */
 	public static void throwExpansionException(String varTag, String reason) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(VariablesMessages.getString("DefaultVariableExpander.2"), new String[] {varTag, reason}), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(DebugCoreMessages.getString("DefaultVariableExpander.2"), new String[] {varTag, reason}), null)); //$NON-NLS-1$
 	}
 
 }
