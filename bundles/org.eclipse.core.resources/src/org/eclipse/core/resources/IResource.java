@@ -204,6 +204,16 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 */
 	public static final int SHALLOW = 0x20;
 
+	/**
+	 * Update flag constant (bit mask value 64) indicating that setting the
+	 * project description should not attempt to configure and deconfigure
+	 * natures.
+	 *
+	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+	 * @since 3.0
+	 */
+	public static final int AVOID_NATURE_CONFIG= 0x40;
+
 	/*====================================================================
 	 * Other constants:
 	 *====================================================================*/
