@@ -153,9 +153,6 @@ public class PageWidgetFactory {
     private Composite createGroup(Composite parent, IntroGroup group) {
         String label = group.getLabel();
         String description = styleManager.getDescription(group);
-        int numColumns = styleManager.getNumberOfColumns(group);
-        numColumns = numColumns < 1 ? 1 : numColumns;
-        int vspacing = styleManager.getVerticalLinkSpacing();
         Composite client = null;
         Composite control = null;
         if (description != null || label != null) {
@@ -175,6 +172,9 @@ public class PageWidgetFactory {
         }
 
         TableWrapLayout layout = new TableWrapLayout();
+        int numColumns = styleManager.getNumberOfColumns(group);
+        numColumns = numColumns < 1 ? 1 : numColumns;
+        int vspacing = styleManager.getVerticalLinkSpacing();
         layout.numColumns = numColumns;
         layout.verticalSpacing = vspacing;
         client.setLayout(layout);

@@ -193,7 +193,7 @@ public class RootPageForm implements IIntroConstants {
         layout.verticalSpacing = rootPageStyleManager.getVerticalLinkSpacing();
         // set number of columns.
         int numColumns = rootPageStyleManager.getPageNumberOfColumns();
-        numColumns = numColumns < 1 ? numChildren : numColumns;
+        numColumns = numColumns == 0 ? numChildren : numColumns;
         layout.numColumns = numColumns;
         contentComposite.setLayout(layout);
         for (int i = 0; i < children.length; i++) {

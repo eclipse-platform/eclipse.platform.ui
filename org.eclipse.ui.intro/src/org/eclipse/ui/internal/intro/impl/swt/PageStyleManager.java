@@ -115,48 +115,41 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
 
-
+    /*
+     * For number of columns, do not return 1 as the default, to allow for
+     * further processing. At the root page level, getting a 0 as ncolumns means
+     * that the number of columns is the number of children. At the page level,
+     * default is 1.
+     */
     public int getPageNumberOfColumns() {
-        String key = page.getId() + ".layout.ncolumns"; //$NON-NLS-1$
-        return getIntProperty(key);
+        String key = page.getId() + ".layout.ncolumns";
+        return getIntProperty(key, 0);
     }
 
 
     public int getNumberOfColumns(IntroGroup group) {
-        StringBuffer buff = createPathToElementKey(group);
-        if (buff == null)
-            // must return 0.
-            return 0;
-        String key = buff.append(".layout.ncolumns").toString(); //$NON-NLS-1$
-        return getIntProperty(key);
+        return getIntProperty(group, ".layout.ncolumns", 0);
     }
 
     public int getColSpan(AbstractBaseIntroElement element) {
-        StringBuffer buff = createPathToElementKey(element);
-        if (buff == null)
-            return 1;
-        String key = buff.append(".layout.colspan").toString(); //$NON-NLS-1$
-        int colspan = getIntProperty(key);
-        if (colspan != 0)
-            return colspan;
-        else
-            return 1;
+        return getIntProperty(element, ".layout.colspan", 1);
     }
 
     public int getRowSpan(AbstractBaseIntroElement element) {
-        StringBuffer buff = createPathToElementKey(element);
-        if (buff == null)
-            return 1;
-        String key = buff.append(".layout.rowspan").toString(); //$NON-NLS-1$
-        int rowspan = getIntProperty(key);
-        if (rowspan != 0)
-            return rowspan;
-        else
-            return 1;
+        return getIntProperty(element, ".layout.rowspan", 1);
     }
 
-    private int getIntProperty(String key) {
-        int intValue = 0;
+    private int getIntProperty(AbstractBaseIntroElement element,
+            String qualifier, int defaultValue) {
+        StringBuffer buff = createPathToElementKey(element);
+        if (buff == null)
+            return defaultValue;
+        String key = buff.append(qualifier).toString();
+        return getIntProperty(key, defaultValue);
+    }
+
+    private int getIntProperty(String key, int defaulValue) {
+        int intValue = defaulValue;
         String value = getProperty(key);
         try {
             intValue = Integer.parseInt(value);
