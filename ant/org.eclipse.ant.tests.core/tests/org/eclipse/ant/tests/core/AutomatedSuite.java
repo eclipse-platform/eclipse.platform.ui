@@ -17,6 +17,14 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Test all areas of Ant.
+ * 
+ * To run this test suite:
+ * <ol>
+ * <li>Create a new Run-time Workbench launch configuration</li>
+ * <li>Append "org.eclipse.ant.tests.core.AutomatedSuite" to the Program Arguments</li>
+ * <li>Set the Application Name to "org.eclipse.ant.tests.core.app"</li>
+ * <li>Run the launch configuration. Output from the tests will be written to the debug console</li>
+ * </ol>
  */
 public class AutomatedSuite extends TestSuite {
 	
