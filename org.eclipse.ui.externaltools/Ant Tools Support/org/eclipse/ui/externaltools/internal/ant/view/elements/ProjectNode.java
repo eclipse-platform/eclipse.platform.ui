@@ -249,6 +249,7 @@ public class ProjectNode extends AntNode {
 		targets= new ArrayList();
 		setIsErrorNode(false);
 		setDefaultTarget(null);
+		setDefaultTargetName(null);
 	}
 	
 	/**
