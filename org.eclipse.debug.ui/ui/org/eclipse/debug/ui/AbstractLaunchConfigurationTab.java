@@ -55,6 +55,16 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * Current message, or <code>null</code>
 	 */
 	private String fMessage;
+	
+	/**
+	 * Whether this tab needs to apply changes. This attribute is initialized to
+	 * <code>true</code> to be backwards compatible. If clients want to take adavantage
+	 * of such a feature, they should set the flag to false, and check it before
+	 * applying changes to the lanuch configuration working copy.
+	 * 
+	 * @since 2.1
+	 */
+	private boolean fDirty = true;	
 		
 	/**
 	 * Returns the dialog this tab is contained in, or
@@ -244,6 +254,30 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		} else {
 			configuration.setAttribute(attribute, value);
 		}
+	}
+
+
+
+	/**
+	 * Returns whether this tab is dirty. It is up to clients to set/reset and consult
+	 * this attribute as required. By default, a tab is initialized to dirty.
+	 * 
+	 * @return whether this tab is dirty
+	 * @since 2.1
+	 */
+	protected boolean isDirty() {
+		return fDirty;
+	}
+
+	/**
+	 * Returns whether this tab is dirty. It is up to clients to set/reset and consult
+	 * this attribute as required. By default, a tab is initialized to dirty.
+	 * 
+	 * @param dirty whether this tab is dirty
+	 * @since 2.1
+	 */
+	protected void setDirty(boolean dirty) {
+		fDirty = dirty;
 	}
 }
 
