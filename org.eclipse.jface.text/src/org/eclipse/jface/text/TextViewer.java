@@ -93,8 +93,11 @@ public class TextViewer extends Viewer implements
 	 */
 	protected class WidgetCommand {
 		
+		/** The document event encapsulated by this command. */
 		public DocumentEvent event;
+		/** The start and length fields of <code>event</code>. */
 		public int start, length;
+		/** The inserted and replaced text segments of <code>event</code>. */ 
 		public String text, preservedText;
 				
 		/**
@@ -323,7 +326,11 @@ public class TextViewer extends Viewer implements
 	/**
 	 * The viewer's manager reponsible for registered verify key listeners.
 	 * Uses batches rather than robust iterators because of performance issues.
-	 * 
+	 * <p>
+	 * The implementation is reentrant, i.e. installed listeners may trigger 
+	 * further <code>VerifyKeyEvent</code>s that may cause other listeners to be
+	 * installed, but not threadsafe.
+	 * </p>
 	 * @since 2.0
 	 */
 	class VerifyKeyListenersManager implements VerifyKeyListener {
@@ -353,7 +360,7 @@ public class TextViewer extends Viewer implements
 		private List fListeners= new ArrayList();
 		/** List of pending batches. */
 		private List fBatched= new ArrayList();
-		/** The currently active iterator. */
+		/** The reentrance count. */
 		private int fReentranceCount= 0;
 		
 		/*
@@ -677,7 +684,6 @@ public class TextViewer extends Viewer implements
 		/**
 		 * Resets the find/replace document adapter.
 		 * 
-		 * @return the find/replace document adapter.
 		 * @since 3.0
 		 */
 		void resetFindRepalceDocumentAdapter() {
