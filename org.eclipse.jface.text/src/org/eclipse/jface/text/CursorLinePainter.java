@@ -23,7 +23,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.ISourceViewer;
 
 
 /**
@@ -36,7 +35,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class CursorLinePainter implements IPainter, LineBackgroundListener {
 
 	/** The viewer the painter works on */
-	private final ISourceViewer fViewer;
+	private final ITextViewer fViewer;
 	/** The cursor line back ground color */
 	private Color fHighlightColor;
 	/** The paint position manager for managing the line coordinates */
@@ -54,10 +53,10 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	/**
 	 * Creates a new painter for the given source viewer.
 	 * 
-	 * @param sourceViewer the source viewer for which to create a painter
+	 * @param textViewer the source viewer for which to create a painter
 	 */
-	public CursorLinePainter(ISourceViewer sourceViewer) {
-		fViewer= sourceViewer;
+	public CursorLinePainter(ITextViewer textViewer) {
+		fViewer= textViewer;
 	}
 	
 	/**

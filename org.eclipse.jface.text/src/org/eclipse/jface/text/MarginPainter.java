@@ -20,11 +20,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 
-import org.eclipse.jface.text.source.ISourceViewer;
-
 
 /**
- * Paints a vertical line (margin line) after a given column respecting the source viewer's font.
+ * Paints a vertical line (margin line) after a given column respecting the text viewer's font.
  * Clients usually instantiate and configure objects of this class. <p>
  * This class is not intended to be subclassed.
  * 
@@ -32,7 +30,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class MarginPainter implements IPainter, PaintListener {
 	
-	/** The widget of the source viewer */
+	/** The widget of the text viewer */
 	private StyledText fTextWidget;
 	
 	/** The column after which to paint the line, default value <code>60</code> */
@@ -49,12 +47,12 @@ public class MarginPainter implements IPainter, PaintListener {
 	private boolean fIsActive= false;
 	
 	/**
-	 * Creates a new painter for the given source viewer.
+	 * Creates a new painter for the given text viewer.
 	 * 
-	 * @param sourceViewer the source viewer
+	 * @param textViewer the text viewer
 	 */
-	public MarginPainter(ISourceViewer sourceViewer) {
-		fTextWidget= sourceViewer.getTextWidget();
+	public MarginPainter(ITextViewer textViewer) {
+		fTextWidget= textViewer.getTextWidget();
 	}
 	
 	/**
