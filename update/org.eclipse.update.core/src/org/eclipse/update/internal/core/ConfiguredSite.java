@@ -99,9 +99,8 @@ public class ConfiguredSite
 				+ increment
 				+ "policy=\""
 				+ getConfigurationPolicy().getPolicy()
-				+ "\" ");
+				+ "\" >");
 		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(">"); //$NON-NLS-1$
 
 		// configured features ref
 		IFeatureReference[] featuresReferences = getConfiguredFeatures();

@@ -30,7 +30,7 @@ public class InstallConfigurationModel extends ModelObject {
 			new InstallConfigurationParser(resolvedURL.openStream(), this);
 		} catch (FileNotFoundException exception) {
 			UpdateManagerPlugin.warn(getLocationURLString() + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.",exception); //$NON-NLS-1$
-			this.setLabel(Policy.bind("InstallConfiguration.DeletedConfiguration")); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess",getLocationURLString()), exception); //$NON-NLS-1$			
 		} catch (SAXException exception) {
 			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", getLocationURLString(),"\r\n"+exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException exception) {

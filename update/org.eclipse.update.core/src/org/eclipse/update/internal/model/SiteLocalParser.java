@@ -157,12 +157,16 @@ public class SiteLocalParser extends DefaultHandler {
 		config.setLocationURLString(url.toExternalForm());
 		config.setLabel(label);
 		config.resolve(url,getResourceBundle());
-		config.initialize();
-		// add the config
-		if (preserved) {
-			site.addPreservedInstallConfigurationModel(config);
-		} else {
-			site.addConfigurationModel(config);
+		try {
+			config.initialize(); 
+			// add the config
+			if (preserved) {
+				site.addPreservedInstallConfigurationModel(config);
+			} else {
+				site.addConfigurationModel(config);
+			}
+		} catch (CoreException e){
+			UpdateManagerPlugin.warn("Error processing configuration history:"+url.toExternalForm(),e);
 		}
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
