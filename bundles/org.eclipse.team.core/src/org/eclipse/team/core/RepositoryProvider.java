@@ -421,11 +421,22 @@ public abstract class RepositoryProvider implements IProjectNature {
 				}
 			}
 		} catch(CoreException e) {
-			TeamPlugin.log(e);
+			if (!isAcceptableException(e)) {
+				TeamPlugin.log(e);
+			}
 		}
 		return null;
 	}
 	
+	/*
+	 * Return whether the given exception is acceptable during a getProvider().
+	 * If the exception is acceptable, it is assumed that there is no provider
+	 * on the project.
+	 */
+	private static boolean isAcceptableException(CoreException e) {
+		return e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND;
+	}
+
 	/**
 	 * Returns a provider of type with the given id if associated with the given project 
 	 * or <code>null</code> if the project is not associated with a provider of that type
@@ -473,8 +484,9 @@ public abstract class RepositoryProvider implements IProjectNature {
 				}
 			}
 		} catch(CoreException e) {
-			// would happen if provider nature id is not registered with the resources plugin
-			TeamPlugin.log(IStatus.WARNING, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3", id), e); //$NON-NLS-1$
+			if (!isAcceptableException(e)) {
+				TeamPlugin.log(e);
+			}
 		}
 		return null;
 	}
