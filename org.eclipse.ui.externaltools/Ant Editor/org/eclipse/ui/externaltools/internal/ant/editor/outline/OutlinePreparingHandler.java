@@ -351,7 +351,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
      * @see org.xml.sax.ErrorHandler#error(SAXParseException)
      */
     public void error(SAXParseException anException) throws SAXException {
-        super.error(anException);
+		generateErrorElementHierarchy(anException);
     }
 
     /**
@@ -361,17 +361,21 @@ public class OutlinePreparingHandler extends DefaultHandler {
      * @see org.xml.sax.ErrorHandler#fatalError(SAXParseException)
      */
     public void fatalError(SAXParseException anException) throws SAXException {
-    	if (rootElement == null) {
-    		rootElement= new XmlElement(anException.getSystemId());
-    	}
+    	generateErrorElementHierarchy(anException);
+    }
+
+	private void generateErrorElementHierarchy(SAXParseException exception) {
+		if (rootElement == null) {
+			rootElement= new XmlElement(exception.getSystemId());
+		}
 		rootElement.setIsErrorNode(true);
-		
-		int lineNumber= anException.getLineNumber();
-		StringBuffer message= new StringBuffer(anException.getMessage());
+
+		int lineNumber= exception.getLineNumber();
+		StringBuffer message= new StringBuffer(exception.getMessage());
 		if (lineNumber != -1){
 			message.append(" line: " + lineNumber);
 		}
-		
+
 		XmlElement errorNode= new XmlElement(message.toString());
 		errorNode.setIsErrorNode(true);
 		if(locator != null) {
@@ -379,8 +383,8 @@ public class OutlinePreparingHandler extends DefaultHandler {
 			errorNode.setStartingRow(locator.getLineNumber());
 		}
 		rootElement.addChildNode(errorNode);
-    }
-
+	}
+	
 	/**
 	 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
 	 */
