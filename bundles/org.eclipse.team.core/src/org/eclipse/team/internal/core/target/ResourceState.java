@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.target.TargetLocation;
+import org.eclipse.team.core.target.Site;
 
 /**
  * This abstract class implements the state of a local and corresponding remote resource,
@@ -59,8 +59,6 @@ public abstract class ResourceState {
 	 */
 	protected IResource localResource;
 	
-	protected TargetLocation location;
-	
 	protected QualifiedName stateKey;
 
 	protected IPath root;
@@ -77,7 +75,6 @@ public abstract class ResourceState {
 		this.stateKey = new QualifiedName(getType(), root.toString());
 		SynchronizedTargetProvider.getSynchronizer().add(stateKey);
 		this.localResource = localResource;
-		this.location = location;
 	}
 	
 	public abstract String getType();
@@ -439,15 +436,6 @@ public abstract class ResourceState {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
-	/**
-	 * Gets the location.
-	 * @return Returns a TargetLocation
-	 */
-	public TargetLocation getLocation() {
-		return location;
-	}
-
-	
 	/**
 	 * Gets the root.
 	 * @return Returns a IPath

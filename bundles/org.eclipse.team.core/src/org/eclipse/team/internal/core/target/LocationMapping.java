@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.target.TargetLocation;
+import org.eclipse.team.core.target.Site;
 
 public class LocationMapping {
 	
@@ -18,9 +18,9 @@ public class LocationMapping {
 	private String locationId;
 	private IPath  path;
 	
-	public LocationMapping(TargetLocation location, IPath path) {
-		this.type = location.getType();
-		this.locationId = location.getUniqueIdentifier();
+	public LocationMapping(Site site, IPath path) {
+		this.type = site.getType();
+		this.locationId = site.getUniqueIdentifier();
 		this.path = path;
 	}
 	
@@ -90,13 +90,6 @@ public class LocationMapping {
 		return path;
 	}
 
-	/**
-	 * Sets the path.
-	 * @param path The path to set
-	 */
-	public void setPath(IPath path) {
-		this.path = path;
-	}
 
 	public byte[] encode() throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -2,16 +2,34 @@ package org.eclipse.team.core.target;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 
 public abstract class TargetProvider {
 	/**
-	 * Answers the location for this target.
+	 * Answers the site which this target is associated with
 	 * @return a printable string
 	 */	
-	public abstract TargetLocation getLocation();
+	public abstract Site getSite();
+
+	/**
+	 * Answers the path describing the place within the site itself
+	 * where the provider stores/retrieves to/from (ie. the target root).
+	 * @return a printable string
+	 */	
+	public abstract IPath getIntrasitePath();
+
+	/**
+	 * Answers the full path where the provider stores/retrieves to/from.
+	 * The target root is the location + the intra site path.
+	 * @return a printable string
+	 */	
+	public IPath getFullPath() {
+		return getSite().getPath().append(getIntrasitePath());
+	}
+
 	
 	/**
 	 * Updates the local resource to have the same content as the corresponding remote
@@ -55,6 +73,6 @@ public abstract class TargetProvider {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return getLocation().toString();
+		return getFullPath().toString();
 	}
 }

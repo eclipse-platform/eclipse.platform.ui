@@ -12,25 +12,25 @@ package org.eclipse.team.core.target;
 
 import java.util.Properties;
 
-public interface ILocationFactory {
+public interface ISiteFactory {
 	
 	/**
-	 * Returns a new target location for the given target specific 
+	 * Returns a new target site for the given target specific 
 	 * description.
 	 * 
 	 * @param description the target specific description encoded
 	 * as a string
-	 * @return a new target location
+	 * @return a new target site
 	 */	
-	public TargetLocation newLocation(String description);
+	public Site newSite(String description);
 	
 	/**
-	 * Returns a new target location for the given target specific 
+	 * Returns a new target site for the given target specific 
 	 * properties.
 	 * 
 	 * @param properties the target specific location encoded
 	 * in properties
-	 * @return a new target location
+	 * @return a new target site
 	 */	
-	public TargetLocation newLocation(Properties properties);
+	public Site newSite(Properties properties);
 }

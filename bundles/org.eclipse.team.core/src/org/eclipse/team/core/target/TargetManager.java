@@ -29,40 +29,40 @@ import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.target.LocationMapping;
 
 public class TargetManager {
-	private static final String TARGET_LOCATIONS_FILE = ".targetLocations";
+	private static final String TARGET_SITES_FILE = ".targetSites";
 
 	private static QualifiedName TARGET_MAPPINGS =
 		new QualifiedName("org.eclipse.team.core.target", "mappings");
 
 	private static Map factories = new Hashtable();
-	private static List locations = new ArrayList();
+	private static List sites = new ArrayList();
 
 	public static void startup() {
 		ResourcesPlugin.getWorkspace().getSynchronizer().add(TARGET_MAPPINGS);
 		readLocations();
 	}
 
-	public static TargetLocation[] getLocations() {
-		return (TargetLocation[]) locations.toArray(
-			new TargetLocation[locations.size()]);
+	public static Site[] getSites() {
+		return (Site[]) sites.toArray(
+			new Site[sites.size()]);
 	}
 
-	public static void addLocation(TargetLocation location) {
-		locations.add(location);
+	public static void addSite(Site site) {
+		sites.add(site);
 		save();
 	}
 
 	/**
 	* @see TargetProvider#map(IProject)
 	*/
-	public static void map(IProject project, TargetLocation location, IPath path) throws TeamException {
+	public static void map(IProject project, Site site, IPath path) throws TeamException {
 		try {
 			ISynchronizer s = ResourcesPlugin.getWorkspace().getSynchronizer();
 			byte[] mappingBytes = s.getSyncInfo(TARGET_MAPPINGS, project);
 			if (mappingBytes != null) {
 				throw new TeamException("Problems mapping project. Project is already mapped.", null);
 			}
-			LocationMapping mapping = new LocationMapping(location, path);
+			LocationMapping mapping = new LocationMapping(site, path);
 			s.setSyncInfo(
 				TARGET_MAPPINGS,
 				project,
@@ -101,10 +101,10 @@ public class TargetManager {
 				return null;
 			} else {
 				LocationMapping mapping = new LocationMapping(mappingBytes);
-				TargetLocation location =
-					getLocation(mapping.getType(), mapping.getLocationId());
-				if (location != null) {
-					return location.newProvider(mapping.getPath());
+				Site site =
+					getSite(mapping.getType(), mapping.getLocationId());
+				if (site != null) {
+					return site.newProvider(mapping.getPath());
 				}
 			}
 			return null;
@@ -115,9 +115,9 @@ public class TargetManager {
 		}
 	}
 
-	public static TargetLocation getLocation(String type, String id) {
-		for (Iterator it = locations.iterator(); it.hasNext();) {
-			TargetLocation element = (TargetLocation) it.next();
+	public static Site getSite(String type, String id) {
+		for (Iterator it = sites.iterator(); it.hasNext();) {
+			Site element = (Site) it.next();
 			if (element.getType().equals(type)
 				&& element.getUniqueIdentifier().equals(id)) {
 				return element;
@@ -130,7 +130,7 @@ public class TargetManager {
 		// read saved locations list from disk, only if the file exists
 		IPath pluginStateLocation =
 			TeamPlugin.getPlugin().getStateLocation().append(
-				TARGET_LOCATIONS_FILE);
+				TARGET_SITES_FILE);
 		File f = pluginStateLocation.toFile();
 		if (f.exists()) {
 			try {
@@ -146,9 +146,9 @@ public class TargetManager {
 	private static void writeLocations() {
 		// save repositories to disk
 		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation();
-		File tempFile = pluginStateLocation.append(TARGET_LOCATIONS_FILE + ".tmp").toFile(); //$NON-NLS-1$
+		File tempFile = pluginStateLocation.append(TARGET_SITES_FILE + ".tmp").toFile(); //$NON-NLS-1$
 		File stateFile =
-			pluginStateLocation.append(TARGET_LOCATIONS_FILE).toFile();
+			pluginStateLocation.append(TARGET_SITES_FILE).toFile();
 		try {
 			DataOutputStream dos =
 				new DataOutputStream(new FileOutputStream(tempFile));
@@ -173,30 +173,30 @@ public class TargetManager {
 		int repoCount = dis.readInt();
 		for (int i = 0; i < repoCount; i++) {
 			String id = dis.readUTF();
-			String locationData = dis.readUTF();
-			ILocationFactory factory =
-				(ILocationFactory) getLocationFactory(id);
+			String siteData = dis.readUTF();
+			ISiteFactory factory =
+				(ISiteFactory) getSiteFactory(id);
 			if (factory == null) {
 				//todo: log error
 				return;
 			}
-			TargetLocation loc = factory.newLocation(locationData);
-			locations.add(loc);
+			Site site = factory.newSite(siteData);
+			sites.add(site);
 		}
 	}
 
 	private static void writeLocations(DataOutputStream dos)
 		throws IOException {
-		dos.writeInt(locations.size());
-		Iterator iter = locations.iterator();
+		dos.writeInt(sites.size());
+		Iterator iter = sites.iterator();
 		while (iter.hasNext()) {
-			TargetLocation loc = (TargetLocation) iter.next();
-			dos.writeUTF(loc.getType());
-			dos.writeUTF(loc.encode());
+			Site site = (Site) iter.next();
+			dos.writeUTF(site.getType());
+			dos.writeUTF(site.encode());
 		}
 	}
 
-	public static ILocationFactory getLocationFactory(String id) {
+	public static ISiteFactory getSiteFactory(String id) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
 			IExtensionPoint extension =
@@ -211,7 +211,7 @@ public class TargetManager {
 						String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
 						if (extensionId != null && extensionId.equals(id)) {
 							try {
-								return (ILocationFactory) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
+								return (ISiteFactory) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
 								TeamPlugin.log(e.getStatus());
 								return null;

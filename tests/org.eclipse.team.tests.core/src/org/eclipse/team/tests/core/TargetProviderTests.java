@@ -11,13 +11,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.ILocationFactory;
-import org.eclipse.team.core.target.TargetLocation;
+import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
 
 public class TargetProviderTests extends TeamTest {
 
-	private final String location = "http://paris.ott.oti.com/dav/";
+	private final String test_url = "http://paris.ott.oti.com/dav/";
 
 	public TargetProviderTests() {
 		super();
@@ -33,15 +33,15 @@ public class TargetProviderTests extends TeamTest {
 		//return new testSetup(new RepositoryProviderTests("test"));
 	}
 	
-	TargetLocation getDavLocation() {
-		return TargetManager.getLocation("org.eclipse.team.webdav", location);
+	Site getDavSite() {
+		return TargetManager.getSite("org.eclipse.team.webdav", test_url);
 	} 
 	
 	public void testWebDavProjectMapping() throws CoreException, TeamException {
 		IProject project = getUniqueTestProject("webdav-projectmapping");
-		TargetManager.map(project, getDavLocation(), Path.EMPTY);
+		TargetManager.map(project, getDavSite(), Path.EMPTY);
 		TargetProvider target = TargetManager.getProvider(project);
-		assertTrue(getDavLocation().equals(target.getLocation()));
+		assertTrue(getDavSite().equals(target.getSite()));
 		
 		TargetManager.unmap(project);
 		assertNull(TargetManager.getProvider(project));
@@ -51,9 +51,9 @@ public class TargetProviderTests extends TeamTest {
 		IProject project = getUniqueTestProject("webdav-put");
 		IResource[] resources = buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/b.txt"});
 		ensureExistsInWorkspace(resources, true);
-		TargetManager.map(project, getDavLocation(), new Path("noauth"));
+		TargetManager.map(project, getDavSite(), new Path("noauth"));
 		TargetProvider target = TargetManager.getProvider(project);
-		assertTrue(getDavLocation().equals(target.getLocation()));
+		assertTrue(getDavSite().equals(target.getSite()));
 		
 		target.put(resources, null);
 		
@@ -66,23 +66,23 @@ public class TargetProviderTests extends TeamTest {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		ILocationFactory factory = TargetManager.getLocationFactory("org.eclipse.team.webdav");		
+		ILocationFactory factory = TargetManager.getSiteFactory("org.eclipse.team.webdav");		
 		assertNotNull(factory);
 		Properties properties = new Properties();
-		properties.put("location", location);
+		properties.put("location", test_url);
 		properties.put("httpClient.username", "myUsername");
 		properties.put("httpClient.password", "myPassword");
 		properties.put("httpClient.proxyURL", "");
 		properties.put("httpClient.connectionTimeout", "2000"); 
 		
-		TargetLocation[] locations = TargetManager.getLocations();
-		TargetLocation location;
+		Site[] locations = TargetManager.getSites();
+		Site location;
 		if(locations.length == 0) {
-			TargetLocation l = factory.newLocation(properties);
-			TargetManager.addLocation(l);
+			Site l = factory.newSite(properties);
+			TargetManager.addSite(l);
 		}
-		location = getDavLocation();
-		TargetProvider target = location.newProvider(Path.EMPTY);
+		location = getDavSite();
+		TargetProvider target = location.newProvider(new Path("noauth"));
 		assertNotNull(target);
 	}
 }
