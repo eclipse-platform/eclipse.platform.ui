@@ -315,7 +315,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 							}
 						}
 					}
-				} else if (cvsResource.getParent().isCVSFolder()) {
+				} else if (cvsResource.exists() && cvsResource.getParent().isCVSFolder()) {
 					// If the parent is a CVS folder, place an addition marker on the resource
 					IMarker marker = getAdditionMarker(resource);
 					if (marker == null) {
