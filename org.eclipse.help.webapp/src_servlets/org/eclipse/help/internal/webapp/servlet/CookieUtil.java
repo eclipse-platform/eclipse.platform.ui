@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
-import java.util.*;
 
 import javax.servlet.http.*;
 
@@ -148,8 +147,7 @@ public class CookieUtil {
 			// no cookie
 			return null;
 		}
-		//String lengthAndSubstring1[] = value1.split("<");
-		String lengthAndSubstring1[] = CookieUtil.split(value1, '<');
+		String lengthAndSubstring1[] = value1.split("<");
 		if (lengthAndSubstring1.length < 2) {
 			return null;
 		}
@@ -187,23 +185,4 @@ public class CookieUtil {
 
 		return data.toString();
 	}
-	/**
-	 * Splits string around given character
-	 * @param s String
-	 * @param c separator
-	 * @return String[]
-	 */
-	public static String[] split(String s, char c) {
-		// TODO Delete this method as soon as not need to support Java 1.3
-		ArrayList fragments = new ArrayList();
-		int i = s.indexOf(c);
-		while (i >= 0) {
-			fragments.add(s.substring(0, i));
-			s = s.substring(i + 1);
-			i = s.indexOf(c);
-		}
-		fragments.add(s);
-		return (String[]) fragments.toArray(new String[fragments.size()]);
-	}
-
 }

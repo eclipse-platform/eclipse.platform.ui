@@ -17,7 +17,6 @@ import javax.servlet.http.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.toc.*;
-import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * Helper class for tocView.jsp initialization
@@ -75,8 +74,7 @@ public class TocData extends RequestData {
 		// initialize rootPath
 		String pathStr = request.getParameter("path");
 		if (pathStr != null && pathStr.length() > 0) {
-			// TODO use Java 1.4 API to do this
-			String[] paths = CookieUtil.split(pathStr, '_');
+			String[] paths = pathStr.split("_", -1);
 			int[] indexes = new int[paths.length];
 			boolean indexesOK = true;
 			for (int i = 0; i < paths.length; i++) {

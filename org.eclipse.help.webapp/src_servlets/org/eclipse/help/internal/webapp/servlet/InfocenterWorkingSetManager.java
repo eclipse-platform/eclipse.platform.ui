@@ -123,16 +123,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			return;
 		}
 
-		//String[] values = data.split("\\|", -1);
-		String[] values = CookieUtil.split(data, '|');
+		String[] values = data.split("\\|", -1);
 		if (values.length < 1) {
 			return;
 		}
 		currentWorkingSet = URLCoder.decode(values[0] /*, "UTF8"*/
 		);
 		i : for (int i = 1; i < values.length; i++) {
-			//String[] nameAndHrefs = values[i].split("&", -1);
-			String[] nameAndHrefs = CookieUtil.split(values[i], '&');
+			String[] nameAndHrefs = values[i].split("&", -1);
 
 			String name = URLCoder.decode(nameAndHrefs[0] /*, "UTF8"*/
 			);
