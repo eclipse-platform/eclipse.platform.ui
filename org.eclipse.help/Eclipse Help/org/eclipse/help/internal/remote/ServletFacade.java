@@ -99,12 +99,22 @@ public class ServletFacade implements IPlatformRunnable {
 		}
 
 	}
+	/**
+	 * @param args array of objects
+	 *  first is String command
+	 *  rest are command parameters
+	 */
 	public Object run(Object args) {
-		if(args!=null && args instanceof Object[]){
-			Object[] argsArray= (Object[])args;
-			if(argsArray.length==2)
-				if(argsArray[0] instanceof String && argsArray[1] instanceof OutputStream)
-					fillContent((String)argsArray[0], (OutputStream)argsArray[1]);
+		if(args==null || !(args instanceof Object[]))
+			return null;
+		Object[] argsArray= (Object[])args;
+		if(argsArray.length<1 || !(argsArray[0] instanceof String) || argsArray[0]==null)
+			return null;
+		String command=(String)argsArray[0];
+		if(command=="fillContent"){//(URL, OutpuString)
+			if(argsArray.length==3)
+				if(argsArray[1] instanceof String && argsArray[2] instanceof OutputStream)
+					fillContent((String)argsArray[1], (OutputStream)argsArray[2]);
 		}
 		return this;
 	}
