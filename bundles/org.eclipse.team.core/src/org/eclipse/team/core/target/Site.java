@@ -12,8 +12,10 @@ package org.eclipse.team.core.target;
 
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.security.Provider;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 
@@ -68,6 +70,16 @@ public abstract class Site {
 	 * @param os the object stream into which to write it's state
 	 */
 	public abstract void writeObject(ObjectOutputStream os);
+	
+	/**
+	 * Returns a handle to the remote resource that represents this site
+	 * on the server.
+	 * 
+	 * @return a remote handle to this site that may or may not exist
+	 */
+	public IRemoteTargetResource getRemoteResource() throws TeamException {
+		return newProvider(Path.EMPTY).getRemoteResource();
+	}
 		
 	/**
 	 * Compares two Sites. The result is <code>true</code> if and only if 
@@ -98,10 +110,4 @@ public abstract class Site {
 	public String toString() {
 		return getDisplayName();
 	}
-	
-	/**
-	 * Returns a remote resource handle for this site. The handle can be used to 
-	 * browse the remote site.
-	 */
-	public abstract IRemoteTargetResource getRemoteResource() throws TeamException;
 }

@@ -1,6 +1,5 @@
 package org.eclipse.team.internal.core.target;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,18 +8,13 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-
 import org.eclipse.team.core.TeamException;
-import sun.security.action.GetLongAction;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * Synchronizes the given folder between the workspace and provider.

@@ -67,7 +67,23 @@ public abstract class TargetProvider {
 	 */
 	public abstract void put(IResource[] resources, IProgressMonitor progress) throws TeamException;
 	
+	/**
+	 * Returns a remote resource handle at the path of the given local resource. The remote
+	 * resource handles URL will be:
+	 * <blockquote><pre>
+	 * getURL() + resource.getProjectRelativePath()
+	 * </pre></blockquote>
+	 * 
+	 * @param resource local resource path to be used to construct the remote handle's path
+	 * @return a handle to a remote resource that may or may not exist
+	 */
 	public abstract IRemoteTargetResource getRemoteResourceFor(IResource resource);
+	
+	/**
+	 *Returns a remote resource handle at the path of this target provider's URL.
+	 * @return a handle to a remote resource that may or may not exist
+	 */
+	public abstract IRemoteTargetResource getRemoteResource();
 	
 	/**
 	 * Replies true if its believed possible to get the given resource.

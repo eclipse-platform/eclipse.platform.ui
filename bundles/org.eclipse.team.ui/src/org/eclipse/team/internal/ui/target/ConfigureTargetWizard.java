@@ -264,7 +264,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	
 	public static boolean validateSite(final Site site, final IWizardContainer container) {
 		final boolean[] valid = new boolean[] {true};
-		final String[] message = new String[] {"ok"};
+		final String[] message = new String[] {"URL doesn't exist on the server"};
 		final int[] code = new int[] {-1};
 		try {
 			container.run(true, false, new IRunnableWithProgress() {
@@ -273,6 +273,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 						try {
 							monitor.beginTask("Validating connection to Site...", monitor.UNKNOWN);
 							IRemoteTargetResource remote = site.getRemoteResource();
+							valid[0] = remote.exists();
 						} catch(TeamException e) {
 							message[0] = e.getStatus().getMessage();
 							code[0] = e.getStatus().getCode();
