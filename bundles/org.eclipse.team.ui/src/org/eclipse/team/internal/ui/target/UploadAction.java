@@ -19,12 +19,10 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.IPromptCondition;
@@ -109,6 +107,6 @@ public class UploadAction extends TargetAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("UploadAction.problemMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("UploadAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 }

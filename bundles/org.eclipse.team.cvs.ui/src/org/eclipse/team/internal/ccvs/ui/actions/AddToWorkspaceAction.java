@@ -96,7 +96,7 @@ public class AddToWorkspaceAction extends CheckoutAction {
 					monitor.done();
 				}
 			}
-		}, true /* cancelable */, this.PROGRESS_DIALOG);
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 		
 	/*

@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Updates a progress monitor as bytes are read from the input stream.

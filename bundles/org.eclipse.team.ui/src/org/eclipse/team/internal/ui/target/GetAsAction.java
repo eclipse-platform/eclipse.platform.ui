@@ -65,7 +65,7 @@ public class GetAsAction extends GetAsProjectAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("GetAs.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("GetAs.checkoutFailed"), PROGRESS_DIALOG); //$NON-NLS-1$
 		if (errorOccured[0]) return;
 		
 		// Prompt outside a workspace runnable so that the project creation delta can be heard
@@ -138,7 +138,7 @@ public class GetAsAction extends GetAsProjectAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("GetAs.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("GetAs.checkoutFailed"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/*

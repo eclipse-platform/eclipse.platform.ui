@@ -11,7 +11,6 @@ package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -23,7 +22,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.AuthenticatedSite;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class AuthenticatedTargetSitePropertiesPage extends PropertyPage {

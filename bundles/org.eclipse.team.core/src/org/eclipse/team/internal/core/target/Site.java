@@ -10,23 +10,13 @@
  ******************************************************************************/
 package org.eclipse.team.internal.core.target;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.Assert;
 
 /**
  * A <code>Site</code> is a place where resources can be deployed and 

@@ -10,20 +10,11 @@
  ******************************************************************************/
 package org.eclipse.team.examples.filesystem.ui;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 import org.eclipse.team.examples.filesystem.FileSystemProvider;

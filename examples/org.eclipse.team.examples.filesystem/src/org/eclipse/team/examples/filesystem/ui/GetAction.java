@@ -49,6 +49,6 @@ public class GetAction extends FileSystemAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("GetAction.problemMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("GetAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 }

@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,9 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;

@@ -5,11 +5,8 @@ package org.eclipse.team.tests.ccvs.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveFactory;
 
 /**
  * This perspective is used for testing api.  It defines an initial

@@ -70,7 +70,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		createLabel(composite, location.getHost());
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.port")); //$NON-NLS-1$
 		int port = location.getPort();
-		if (port == location.USE_DEFAULT_PORT) {
+		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
 			createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.default")); //$NON-NLS-1$
 		} else {
 			createLabel(composite, "" + port); //$NON-NLS-1$

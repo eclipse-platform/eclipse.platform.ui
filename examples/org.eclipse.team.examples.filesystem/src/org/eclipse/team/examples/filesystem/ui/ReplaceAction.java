@@ -12,22 +12,17 @@ package org.eclipse.team.examples.filesystem.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.examples.filesystem.FileSystemProvider;
 import org.eclipse.team.examples.filesystem.FileSystemRemoteResource;
 import org.eclipse.team.examples.filesystem.Policy;
@@ -77,6 +72,6 @@ public class ReplaceAction extends FileSystemAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("ReplaceAction.problemMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("ReplaceAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 }

@@ -67,7 +67,7 @@ public class AddSyncAction extends MergeAction {
 						makeAdded(changed[i]);
 					}
 				} else {	
-					if (resource.getType() == resource.FILE) {
+					if (resource.getType() == IResource.FILE) {
 						additions.add(resource);
 					}
 				}
@@ -83,7 +83,7 @@ public class AddSyncAction extends MergeAction {
 			for (int i = 0; i < changed.length; i++) {
 				ITeamNode node = changed[i];
 				IResource resource = changed[i].getResource();
-				if (resource.getType() == resource.FILE) {
+				if (resource.getType() == IResource.FILE) {
 					syncSet.remove(node);
 				}
 			}

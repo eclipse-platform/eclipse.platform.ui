@@ -13,16 +13,12 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.*;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -55,7 +51,7 @@ public class PutAction extends TargetAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("PutAction.title"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("PutAction.title"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	/**
 	 * @see TeamAction#isEnabled()

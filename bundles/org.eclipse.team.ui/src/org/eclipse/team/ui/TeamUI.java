@@ -10,12 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.ui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
@@ -31,7 +26,7 @@ public class TeamUI {
 	 * @param listener  the listener to add
 	 */
 	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
-		TeamUIPlugin.getPlugin().addPropertyChangeListener(listener);
+		TeamUIPlugin.addPropertyChangeListener(listener);
 	}
 	
 	/**
@@ -40,6 +35,6 @@ public class TeamUI {
 	 * @param listener  the listener to remove
 	 */
 	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
-		TeamUIPlugin.getPlugin().removePropertyChangeListener(listener);
+		TeamUIPlugin.removePropertyChangeListener(listener);
 	}
 }

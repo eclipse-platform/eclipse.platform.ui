@@ -301,7 +301,7 @@ public abstract class JUnitTestCase extends TestCase {
 		try {
 			int wait = CVSTestSetup.WAIT_FACTOR * msec;
 			long start = System.currentTimeMillis();
-			Thread.currentThread().sleep(wait);
+			Thread.sleep(wait);
 			long end = System.currentTimeMillis();
 			// Allow a 100 ms error in waiting
 			assertTrue("Error in thread class. Did not wait long enough", (end - start) > (wait - 100));

@@ -78,7 +78,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 					}
 				});
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 
 	/*

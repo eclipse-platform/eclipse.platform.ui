@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 

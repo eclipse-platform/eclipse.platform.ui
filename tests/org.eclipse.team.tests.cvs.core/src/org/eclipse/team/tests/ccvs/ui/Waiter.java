@@ -5,7 +5,6 @@ package org.eclipse.team.tests.ccvs.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * Abstract listener used for the generic problem of waiting for

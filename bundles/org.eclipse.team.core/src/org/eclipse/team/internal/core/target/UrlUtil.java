@@ -74,7 +74,7 @@ public class UrlUtil {
 		int segments = path.segmentCount();
 		if(segments>split) {				
 			IPath last = path.removeFirstSegments(segments - split);
-			return "..." + path.SEPARATOR + last.toString(); //$NON-NLS-1$
+			return "..." + IPath.SEPARATOR + last.toString(); //$NON-NLS-1$
 		}
 		return path.toString();
 	}

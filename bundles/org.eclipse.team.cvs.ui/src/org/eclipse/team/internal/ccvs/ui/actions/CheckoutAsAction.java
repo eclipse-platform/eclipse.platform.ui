@@ -84,7 +84,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					}
 				}
 			}
-		}, true /* cancelable */, this.PROGRESS_DIALOG);
+		}, true /* cancelable */, PROGRESS_DIALOG);
 		
 		// Prompt outside a workspace runnable so that the project creation delta can be heard
 		IProject newProject = null;
@@ -156,7 +156,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					monitor.done();
 				}
 			}
-		}, true /* cancelable */, this.PROGRESS_DIALOG);
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 	
 	/*

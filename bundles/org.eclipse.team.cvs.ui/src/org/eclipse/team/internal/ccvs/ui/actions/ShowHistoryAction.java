@@ -14,20 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
 
 public class ShowHistoryAction extends CVSAction {
 	/**
@@ -73,7 +68,7 @@ public class ShowHistoryAction extends CVSAction {
 					view.showHistory(files[0], null /* no current revision */);
 				}
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 	/*
 	 * @see TeamAction#isEnabled()

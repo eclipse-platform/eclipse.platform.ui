@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.ui.Policy;

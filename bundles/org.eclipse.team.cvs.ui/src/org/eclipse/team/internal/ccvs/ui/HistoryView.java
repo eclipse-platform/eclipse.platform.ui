@@ -7,9 +7,7 @@ package org.eclipse.team.internal.ccvs.ui;
  
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
@@ -39,7 +37,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
@@ -52,9 +49,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -62,7 +56,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -74,6 +67,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
@@ -174,7 +168,7 @@ public class HistoryView extends ViewPart {
 						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
 						
 						if(CVSAction.checkForMixingTags(getSite().getShell(), new IResource[] {file}, revisionTag)) {							
-							provider.update(new IResource[] {file}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
+							provider.update(new IResource[] {file}, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, 
 													   revisionTag, true /*create backups*/, monitor);
 							historyTableProvider.setFile(remoteFile);
 							tableViewer.refresh();

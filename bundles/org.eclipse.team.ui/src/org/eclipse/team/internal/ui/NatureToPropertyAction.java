@@ -19,7 +19,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -78,7 +77,7 @@ public class NatureToPropertyAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("NatureToPropertyAction.label"), this.PROGRESS_DIALOG);  //$NON-NLS-1$
+		}, Policy.bind("NatureToPropertyAction.label"), PROGRESS_DIALOG);  //$NON-NLS-1$
 	}
 }
 

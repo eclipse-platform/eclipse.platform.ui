@@ -55,7 +55,7 @@ public class CompareRemoteWithTagAction extends CVSAction {
 				ResourceEditionNode right = new ResourceEditionNode(editions[0].forTag(tag));
 				CompareUI.openCompareEditor(new CVSCompareEditorInput(left, right));
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 
 	/**

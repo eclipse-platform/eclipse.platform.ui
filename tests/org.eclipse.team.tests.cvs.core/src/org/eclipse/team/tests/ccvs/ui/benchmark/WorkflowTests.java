@@ -9,13 +9,12 @@ import java.io.File;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.tests.ccvs.ui.CVSUITestCase;
-import org.eclipse.team.tests.ccvs.ui.LoggingTestResult;
 import org.eclipse.team.tests.ccvs.ui.SequenceGenerator;
 import org.eclipse.team.tests.ccvs.ui.Util;
 

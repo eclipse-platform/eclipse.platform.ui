@@ -11,19 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
@@ -46,7 +41,7 @@ public class CompareRemoteResourcesAction extends CVSAction {
 				ResourceEditionNode right = new ResourceEditionNode(editions[1]);
 				CompareUI.openCompareEditor(new CVSCompareEditorInput(left, right));
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 	
 	/*

@@ -12,9 +12,7 @@ package org.eclipse.team.internal.ui;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -38,7 +36,6 @@ import org.eclipse.team.core.IProjectSetSerializer;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;

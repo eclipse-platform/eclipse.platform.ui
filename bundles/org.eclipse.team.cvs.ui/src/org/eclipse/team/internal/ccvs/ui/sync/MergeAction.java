@@ -11,13 +11,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -309,7 +307,7 @@ abstract class MergeAction extends Action {
 			}
 		}
 		// For folders, check their children (if we didn't get a match above)
-		if (node.getType() == node.FOLDER_TYPE) {
+		if (node.getType() == ITypedElement.FOLDER_TYPE) {
 			IDiffElement[] children = ((IDiffContainer)node).getChildren();
 			for (int i = 0; i < children.length; i++) {
 				if (hasRealChanges(children[i], changeDirections)) {

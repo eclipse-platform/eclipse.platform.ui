@@ -15,7 +15,7 @@ public class MergeRunsVisitor implements ILogEntryVisitor {
 	 * @param root the root of an existing log to merge into, or null
 	 */
 	public MergeRunsVisitor(RootEntry root) {
-		this.defaultRoot = defaultRoot;
+		this.defaultRoot = root;
 		this.parent = null;
 	}
 	

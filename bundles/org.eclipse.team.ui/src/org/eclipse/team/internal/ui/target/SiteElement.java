@@ -10,23 +10,14 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Used to show Site instances in the UI. Sites are really just remote

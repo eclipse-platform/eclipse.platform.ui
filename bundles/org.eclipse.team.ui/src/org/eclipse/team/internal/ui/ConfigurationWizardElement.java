@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.team.ui.*;
 
 /**
  * ConfigurationWizardElement represents an item in the configuration wizard table,

@@ -13,32 +13,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.DetailsDialog;
-import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -124,7 +114,7 @@ public class GetAction extends TargetAction {
 						monitor.done();
 					}
 				}
-			}, Policy.bind("GetAction.title"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+			}, Policy.bind("GetAction.title"), PROGRESS_DIALOG); //$NON-NLS-1$
 		}
 	}
 	
@@ -148,7 +138,7 @@ public class GetAction extends TargetAction {
 				final boolean okToContinue[] = {true};
 				getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						if(dialog.open() != dialog.OK) {
+						if(dialog.open() != OutgoingChangesDialog.OK) {
 							okToContinue[0] = false;
 						}
 					}

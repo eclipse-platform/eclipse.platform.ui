@@ -10,11 +10,9 @@
  ******************************************************************************/
 package org.eclipse.team.core.sync;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

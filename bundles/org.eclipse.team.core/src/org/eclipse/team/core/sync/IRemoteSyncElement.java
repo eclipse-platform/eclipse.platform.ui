@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.team.core.sync;
 
-import org.eclipse.team.core.TeamException;
 
 /**
  * <b>Note:</b> This class/interface is part of an interim API that is still under 

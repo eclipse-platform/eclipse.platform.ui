@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -138,7 +137,7 @@ public class DiscardSiteAction extends TargetAction {
 				IProject[] mappedProjects = projectsMappedToSite(sites);
 				if( mappedProjects.length > 0 ) {
 					AlreadyMappedDialog dialog = new AlreadyMappedDialog(getShell(), mappedProjects);
-					if(dialog.open() == dialog.OK) {
+					if(dialog.open() == AlreadyMappedDialog.OK) {
 						for (int i = 0; i < mappedProjects.length; i++) {
 							TargetManager.unmap(mappedProjects[i]);
 						}
@@ -155,7 +154,7 @@ public class DiscardSiteAction extends TargetAction {
 								new String[] {
 									IDialogConstants.YES_LABEL,
 									IDialogConstants.CANCEL_LABEL }, 0);
-					if( d.open() != d.OK ) {
+					if( d.open() != MessageDialog.OK ) {
 						return;
 					}
 				}

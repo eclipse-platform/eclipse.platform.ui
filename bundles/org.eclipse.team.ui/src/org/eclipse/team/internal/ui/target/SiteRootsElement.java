@@ -11,10 +11,8 @@
 package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;

@@ -12,8 +12,6 @@ package org.eclipse.team.examples.filesystem.ui;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,8 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.examples.filesystem.FileSystemProvider;
-import org.eclipse.team.examples.filesystem.Policy;
 import org.eclipse.ui.dialogs.PropertyPage;
 /*
  * A property page which displays the  file system specific properties 

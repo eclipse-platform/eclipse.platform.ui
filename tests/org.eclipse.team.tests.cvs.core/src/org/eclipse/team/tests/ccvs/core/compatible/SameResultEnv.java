@@ -3,7 +3,6 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -25,9 +24,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.tests.ccvs.core.CVSClientException;
 import org.eclipse.team.tests.ccvs.core.CommandLineCVSClient;
 import org.eclipse.team.tests.ccvs.core.EclipseCVSClient;
 import org.eclipse.team.tests.ccvs.core.ICVSClient;

@@ -78,7 +78,7 @@ public class CreateNewFolderAction extends TargetAction {
 									suggestedName,
 									null);
 								Policy.checkCanceled(monitor);
-								if(dialog.open() == dialog.OK) {
+								if(dialog.open() == InputDialog.OK) {
 									folderName[0] = dialog.getValue();
 								}
 							}

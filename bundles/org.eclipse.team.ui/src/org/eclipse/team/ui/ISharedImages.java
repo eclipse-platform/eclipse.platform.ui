@@ -5,7 +5,6 @@ package org.eclipse.team.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Images that are available for providers to re-use. They include

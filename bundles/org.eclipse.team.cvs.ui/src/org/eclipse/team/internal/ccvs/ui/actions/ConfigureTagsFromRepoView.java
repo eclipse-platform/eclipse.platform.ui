@@ -107,7 +107,7 @@ public class ConfigureTagsFromRepoView extends CVSAction {
 				});
 				if (exception[0] != null) throw new InvocationTargetException(exception[0]);
 			}
-		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 
 	/*

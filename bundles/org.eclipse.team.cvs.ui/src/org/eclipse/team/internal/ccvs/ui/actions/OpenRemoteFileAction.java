@@ -18,13 +18,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -113,7 +111,7 @@ public class OpenRemoteFileAction extends CVSAction {
 					}
 				}
 			}
-		}, false, this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()

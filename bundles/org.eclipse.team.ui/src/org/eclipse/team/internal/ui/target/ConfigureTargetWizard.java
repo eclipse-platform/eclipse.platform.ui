@@ -277,7 +277,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 						try {
-							monitor.beginTask(Policy.bind("ConfigureTargetWizardValidating_connection_to_Site..._9"), monitor.UNKNOWN); //$NON-NLS-1$
+							monitor.beginTask(Policy.bind("ConfigureTargetWizardValidating_connection_to_Site..._9"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 							IRemoteTargetResource remote = site.getRemoteResource();
 							valid[0] = remote.canBeReached(monitor);
 						} catch(TeamException e) {

@@ -10,12 +10,10 @@
  ******************************************************************************/
 package org.eclipse.team.internal.core.simpleAccess;
 
-import org.eclipse.team.core.*;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.TeamException;
 
 /*
  * This class represents provisional API.  Its here to allow experimentation with 3rd party tools

@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,6 +52,6 @@ public class PutAction extends FileSystemAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("PutAction.problemMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("PutAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 }

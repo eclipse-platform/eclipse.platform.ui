@@ -5,7 +5,6 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  */
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 public class AllTestsCompatibility extends TestSuite {
 			

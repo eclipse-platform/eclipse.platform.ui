@@ -5,7 +5,6 @@ package org.eclipse.team.internal.core;
  * All Rights Reserved.
  */
  
-import org.eclipse.team.core.*;
 
 public final class Assert {
 	public static class AssertionFailedException extends RuntimeException {
