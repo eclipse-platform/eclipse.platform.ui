@@ -120,11 +120,11 @@ private InternalBootLoader() {
 }
 private static void assertNotRunning() {
 	if (running)
-		throw new RuntimeException("The Platform must not be running");
+		throw new RuntimeException(Policy.bind("platform.mustNotBeRunning")); //$NON-NLS-1$
 }
 private static void assertRunning() {
 	if (!running)
-		throw new RuntimeException("The Platform is not running");
+		throw new RuntimeException(Policy.bind("platform.notRunning")); //$NON-NLS-1$
 }
 /**
  * Configure the class loader for the runtime plug-in.  
@@ -225,7 +225,7 @@ public static URL getInstallURL() {
 		if (debugRequested) 
 			System.out.println("Install URL: "+installURL.toExternalForm()); //$NON-NLS-1$
 	} catch (MalformedURLException e) {
-		throw new RuntimeException("Fatal Error: Unable to determine platform installation URL "+e);
+		throw new RuntimeException(Policy.bind("error.fatal", e.getMessage())); //$NON-NLS-1$
 	}
 	return installURL;
 }
@@ -477,7 +477,7 @@ public static boolean inDevelopmentMode() {
 }
 private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/, String location, String[] args) throws Exception {
 	if (running)
-		throw new RuntimeException("The platform is already running");
+		throw new RuntimeException(Policy.bind("platform.running")); //$NON-NLS-1$
 	baseLocation = location;
 	String[] appArgs = processCommandLine(args);
 	// Do setupSystemContext() ASAP after processCommandLine
@@ -547,11 +547,11 @@ private static void loadOptions() {
 	try {
 		optionsFile = new URL(debugOptionsFilename);
 	} catch (MalformedURLException e) {
-		System.out.println("Unable to construct URL for options file: " + debugOptionsFilename);
+		System.out.println("Unable to construct URL for options file: " + debugOptionsFilename); //$NON-NLS-1$
 		e.printStackTrace(System.out);
 		return;
 	}
-	System.out.println("Debug-Options:\n    " + debugOptionsFilename);
+	System.out.println("Debug-Options:\n    " + debugOptionsFilename); //$NON-NLS-1$
 	try {
 		InputStream input = optionsFile.openStream();
 		try {
@@ -562,7 +562,7 @@ private static void loadOptions() {
 	} catch (FileNotFoundException e) {
 		//	Its not an error to not find the options file
 	} catch (IOException e) {
-		System.out.println("Could not parse the options file: " + optionsFile);
+		System.out.println("Could not parse the options file: " + optionsFile); //$NON-NLS-1$
 		e.printStackTrace(System.out);
 	}
 	// trim off all the blanks since properties files don't do that.
@@ -701,7 +701,7 @@ private static URL[] readPluginPath(InputStream input) {
 					result.addElement(new URL(entry));
 				} catch (MalformedURLException e) {
 					//intentionally ignore bad URLs
-					System.err.println("Ignoring invalid plugin location: " + entry);
+					System.err.println(Policy.bind("ignore.plugin", entry)); //$NON-NLS-1$
 				}
 		}
 	}
@@ -734,7 +734,7 @@ public static Object run(String applicationName/*R1.0 compatibility*/, URL plugi
 	String application = getCurrentPlatformConfiguration().getApplicationIdentifier();
 	IPlatformRunnable runnable = getRunnable(application);
 	if (runnable == null)
-		throw new IllegalArgumentException("Application not found: " + application);
+		throw new IllegalArgumentException(Policy.bind("application.notFound", application)); //$NON-NLS-1$
 	try {
 		result = runnable.run(applicationArgs);
 	} catch (Throwable e) {

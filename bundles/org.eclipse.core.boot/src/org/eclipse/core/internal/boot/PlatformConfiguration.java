@@ -2136,7 +2136,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// locate runtime plugin matching the import from boot
 		URL runtimePluginPath = getPluginPath(runtimeImport);
 		if (runtimePluginPath == null) 
-			throw new RuntimeException("Fatal Error: Unable to locate matching org.eclipse.core.runtime plugin");
+			throw new RuntimeException(Policy.bind("error.runtime")); //$NON-NLS-1$
 		
 		// get boot descriptor for runtime plugin
 		runtimeDescriptor = createPluginBootDescriptor(runtimePluginPath);
@@ -2147,7 +2147,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// locate xml plugin matching the import from runtime plugin
 		URL xmlPluginPath = getPluginPath(xmlImport);
 		if (xmlPluginPath == null) 
-			throw new RuntimeException("Fatal Error: Unable to locate matching org.apache.xerces plugin");
+			throw new RuntimeException(Policy.bind("error.xerces")); //$NON-NLS-1$
 				
 		// get boot descriptor for xml plugin
 		xmlDescriptor = createPluginBootDescriptor(xmlPluginPath);
@@ -2171,7 +2171,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			base = base.getParentFile();
 		}		
 		if (xml == null)		
-			throw new RuntimeException("Fatal Error: Unable to locate boot.xml file for executing org.eclipse.core.boot");
+			throw new RuntimeException(Policy.bind("error.boot")); //$NON-NLS-1$
 			
 		try {
 			return getImport(xml.toURL(), RUNTIME_PLUGIN_ID);
