@@ -15,6 +15,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -169,12 +171,37 @@ public class ErrorNotificationManager {
      */
     void removeErrors(Collection errorsToRemove) {
         errors.removeAll(errorsToRemove);
+        removeFromFinishedJobs(errorsToRemove);
     }
 
     /**
+     * Remove all of the errors from the finished jobs
+	 * @param errorsToRemove The ErrorInfos that will be deleted.
+	 */
+	private void removeFromFinishedJobs(Collection errorsToRemove) {
+		Iterator errorIterator = errorsToRemove.iterator();
+		Set errorStatuses = new HashSet();
+		while(errorIterator.hasNext()){
+			ErrorInfo next = (ErrorInfo) errorIterator.next();
+			errorStatuses.add(next.getErrorStatus());			
+		}
+		
+		JobTreeElement[] infos = FinishedJobs.getInstance().getJobInfos();
+		for (int i = 0; i < infos.length; i++) {
+			if(infos[i].isJobInfo()){
+				JobInfo info = (JobInfo) infos[i];
+				if(errorStatuses.contains(info.getJob().getResult()))
+					FinishedJobs.getInstance().remove(info);
+			}
+		}
+		
+	}
+
+	/**
      * Clear all of the errors held onto by the receiver.
      */
     void clearAllErrors() {
+    	removeFromFinishedJobs(errors);
         errors.clear();
     }
 
