@@ -133,6 +133,15 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			}
 		});
 		
+		control.addMouseMoveListener(new MouseMoveListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseMove(MouseEvent e) {
+				window.closeFloatingWindow();	
+			}
+		});
+		
 		return viewer.getControl();
 	}
 	/**
