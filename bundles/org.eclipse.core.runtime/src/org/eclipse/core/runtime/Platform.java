@@ -1078,4 +1078,14 @@ public final class Platform {
 	}
 
 	
+	/**
+	 * Returns whether the platform is running.
+	 *
+	 * @return <code>true</code> if the platform is running, 
+	 *		and <code>false</code> otherwise
+	 */
+	public boolean isRunning() {
+		return InternalPlatform.getDefault().isRunning();
+	}
+	
 }

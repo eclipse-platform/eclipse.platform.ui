@@ -769,6 +769,13 @@ public interface IPlatform {
 	 * @deprecated will be removed before 3.0 ships.  
 	 */
 	public String[] getFrameworkArgs();
-	
+
+	/**
+	 * Returns whether the platform is running.
+	 *
+	 * @return <code>true</code> if the platform is running, 
+	 *		and <code>false</code> otherwise
+	 */
+	public boolean isRunning();
 }
 
