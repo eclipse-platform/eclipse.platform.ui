@@ -980,9 +980,32 @@ public void testValidateProjectLocation() {
 	IPath anotherDevice = platformLocation.setDevice("nowear:");
 	assertTrue("6.1", workspace.validateProjectLocation(project, new Path("nowear:", "/")).isOK());
 	assertTrue("6.2", workspace.validateProjectLocation(project, new Path("nowear:", "\\")).isOK());
-	assertTrue("6.3", workspace.validateProjectLocation(project, new Path("nowear:", "")).isOK());
 	assertTrue("6.4", workspace.validateProjectLocation(project, anotherDevice).isOK());
 	assertTrue("6.5", workspace.validateProjectLocation(project, anotherDevice.append("foo")).isOK());
+	
+	//cannot be a relative path
+	assertTrue("7.1", !workspace.validateProjectLocation(project, new Path("nowear:", "")).isOK());
+	assertTrue("7.2", !workspace.validateProjectLocation(project, new Path("c:")).isOK());
+	assertTrue("7.3", !workspace.validateProjectLocation(project, new Path("c:foo")).isOK());
+	assertTrue("7.4", !workspace.validateProjectLocation(project, new Path("foo/bar")).isOK());
+	assertTrue("7.5", !workspace.validateProjectLocation(project, new Path("c:foo/bar")).isOK());
+	
+	//may be relative to an existing path variable
+	final String PATH_VAR_NAME = "FOOVAR";
+	final IPath PATH_VAR_VALUE = getRandomLocation();
+	try {
+		try {
+			IPath varPath = new Path(PATH_VAR_NAME);
+			workspace.getPathVariableManager().setValue(PATH_VAR_NAME, PATH_VAR_VALUE);
+			assertTrue("8.1", workspace.validateProjectLocation(project, varPath).isOK());
+			assertTrue("8.2", workspace.validateProjectLocation(project, varPath.append("test")).isOK());
+			assertTrue("8.3", workspace.validateProjectLocation(project, varPath.append("test/ing")).isOK());
+		} finally {
+			workspace.getPathVariableManager().setValue(PATH_VAR_NAME, null);
+		}
+	} catch (CoreException e) {
+		fail("8.99", e);
+	}
 	
 	//cannot overlap with another project's location
 	IPath openProjectLocation = new Path("c:/temp/openProject");
@@ -998,7 +1021,7 @@ public void testValidateProjectLocation() {
 		open.open(null);
 		closed.create(closedDesc, null);
 	} catch (CoreException e) {
-		fail("7.99", e);
+		fail("9.99", e);
 	}
 	try {
 		//indirect test: setting the project description may validate location, which shouldn't complain
@@ -1006,15 +1029,15 @@ public void testValidateProjectLocation() {
 		desc.setReferencedProjects(new IProject[] {project});
 		open.setDescription(desc, IResource.FORCE, getMonitor());
 		
-		assertTrue("7.1", !workspace.validateProjectLocation(project, openProjectLocation).isOK());
-		assertTrue("7.2", !workspace.validateProjectLocation(project, closedProjectLocation).isOK());
+		assertTrue("9.1", !workspace.validateProjectLocation(project, openProjectLocation).isOK());
+		assertTrue("9.2", !workspace.validateProjectLocation(project, closedProjectLocation).isOK());
 		
 		//for an existing project, it cannot overlap itself, but it its own location is valid
-		assertTrue("7.3", workspace.validateProjectLocation(open, openProjectLocation).isOK());
-		assertTrue("7.4", !workspace.validateProjectLocation(open, openProjectLocation.append("sub")).isOK());
+		assertTrue("9.3", workspace.validateProjectLocation(open, openProjectLocation).isOK());
+		assertTrue("9.4", !workspace.validateProjectLocation(open, openProjectLocation.append("sub")).isOK());
 		
 	} catch (CoreException e) {
-		fail("7.5", e);
+		fail("9.5", e);
 	} finally {
 		//make sure we clean up project directories
 		try {
