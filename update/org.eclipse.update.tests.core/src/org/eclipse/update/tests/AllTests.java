@@ -5,6 +5,7 @@ package org.eclipse.update.tests;
  */
 import junit.framework.*;
 import org.eclipse.update.tests.api.AllAPITests;
+import org.eclipse.update.tests.core.boot.AllPlatformConfigurationTests;
 import org.eclipse.update.tests.parser.AllParserTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
 import org.eclipse.update.tests.uivalues.AllCoreUITests;
@@ -16,6 +17,7 @@ public AllTests(String name) {
 public static Test suite() throws Exception {
 	TestSuite suite = new TestSuite();
 	suite.setName("All Update Manager Tests");
+	suite.addTest(AllPlatformConfigurationTests.suite());
 	suite.addTest(AllRegularInstallTests.suite());
 	suite.addTest(AllAPITests.suite());	
 	suite.addTest(AllParserTests.suite());
