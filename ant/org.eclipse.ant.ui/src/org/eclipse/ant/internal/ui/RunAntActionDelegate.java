@@ -1,22 +1,21 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ant.internal.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import org.apache.tools.ant.*;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.*;import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 
 public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate {

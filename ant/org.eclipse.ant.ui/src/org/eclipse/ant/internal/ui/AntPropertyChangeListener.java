@@ -1,10 +1,5 @@
-package org.eclipse.ant.internal.ui;/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
-import org.eclipse.jface.util.*;import org.eclipse.swt.graphics.*;import org.eclipse.swt.widgets.Display;
-public class AntPropertyChangeListener implements IPropertyChangeListener {
+/********************************************************************** * Copyright (c) 2002 IBM Corporation and others. * All rights reserved.   This program and the accompanying materials * are made available under the terms of the Common Public License v0.5 * which accompanies this distribution, and is available at * http://www.eclipse.org/legal/cpl-v05.html *  * Contributors:  * IBM - Initial API and implementation **********************************************************************/package org.eclipse.ant.internal.ui;import java.util.Iterator;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.swt.graphics.*;import org.eclipse.swt.widgets.Display;
+public class AntPropertyChangeListener implements IPropertyChangeListener {
 		// unique instance	private static AntPropertyChangeListener instance = new AntPropertyChangeListener();	// private constructor to ensure the singletonprivate AntPropertyChangeListener() {}// access to the singletonpublic static AntPropertyChangeListener getInstance() {	return instance;}
 /**
  * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)

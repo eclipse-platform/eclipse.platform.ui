@@ -1,22 +1,22 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ant.internal.ui;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
-import java.io.File;
-import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
 
 /**
  * Superclass of run & debug pulldown actions.
