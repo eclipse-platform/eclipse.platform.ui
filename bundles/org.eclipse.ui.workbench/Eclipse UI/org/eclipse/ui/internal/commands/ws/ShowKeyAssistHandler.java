@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.commands.ws;
 import java.util.Map;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ExecutionException;
 
 /**
  * A handler that displays the key assist dialog when executed.
@@ -31,7 +30,7 @@ public class ShowKeyAssistHandler extends WorkbenchWindowHandlerDelegate {
      *            Ignored
      * @return <code>null</code>
      */
-    public Object execute(Map parameterValuesByName) throws ExecutionException {
+    public Object execute(Map parameterValuesByName) {
         PlatformUI.getWorkbench().getContextSupport().openKeyAssistDialog();
         return null;
     }
