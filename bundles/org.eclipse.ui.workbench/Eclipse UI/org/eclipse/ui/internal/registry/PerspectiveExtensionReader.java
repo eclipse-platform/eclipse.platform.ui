@@ -18,8 +18,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.DirtyPerspectiveMarker;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PageLayout;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -52,7 +54,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     private static final String ATT_ID = "id";//$NON-NLS-1$
 
-    private static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
+    public static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
 
     private static final String ATT_RELATIVE = "relative";//$NON-NLS-1$
 
@@ -88,6 +90,8 @@ public class PerspectiveExtensionReader extends RegistryReader {
     // VAL_FALSE added by dan_rubel@instantiations.com  
     private static final String VAL_FALSE = "false";//$NON-NLS-1$	
 
+	private IExtensionTracker tracker;
+
     /**
      * PerspectiveExtensionReader constructor..
      */
@@ -98,8 +102,9 @@ public class PerspectiveExtensionReader extends RegistryReader {
     /**
      * Read the view extensions within a registry.
      */
-    public void extendLayout(String id, PageLayout out) {
-        targetID = id;
+    public void extendLayout(IExtensionTracker extensionTracker, String id, PageLayout out) {
+    	tracker = extensionTracker;
+    	targetID = id;
         pageLayout = out;
         readRegistry(Platform.getExtensionRegistry(), PlatformUI.PLUGIN_ID,
                 IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
@@ -313,8 +318,11 @@ public class PerspectiveExtensionReader extends RegistryReader {
         String type = element.getName();
         if (type.equals(TAG_EXTENSION)) {
             String id = element.getAttribute(ATT_TARGET_ID);
-            if (targetID.equals(id))
+            if (targetID.equals(id)) {
+            	if (tracker != null)
+            		tracker.registerObject(element.getDeclaringExtension(), new DirtyPerspectiveMarker(id), IExtensionTracker.REF_STRONG);
                 return processExtension(element);
+            }
             return true;
         }
         return false;

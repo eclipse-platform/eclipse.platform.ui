@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -180,11 +179,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name
-                .equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS)) {
-            loadPerspectiveExtensions(ext);
-            return;
-        }
         if (name
                 .equalsIgnoreCase(IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS)) {
             loadActionSetPartAssociation(ext);
@@ -607,46 +601,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                     .getString("Workbench.problemsSaving"), //$NON-NLS-1$
                     WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
                     result);
-        }
-    }
-
-    private void loadPerspectiveExtensions(IExtension ext) {
-        IWorkbenchWindow window = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
-        if (window == null)
-            return;
-        IWorkbenchPage page = window.getActivePage();
-        if (page == null)
-            return;
-
-        // Get the current perspective.
-        IPerspectiveDescriptor persp = page.getPerspective();
-        if (persp == null)
-            return;
-        String currentId = persp.getId();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            // If any of these refer to the current perspective, output
-            // a message saying this perspective will need to be reset
-            // in order to see the changes.  For any other case, the
-            // perspective extension registry will be rebuilt anyway so
-            // just ignore it.
-            String id = elements[i].getAttribute(ATT_TARGET_ID);
-            if (id == null)
-                continue;
-            if (id.equals(currentId)) {
-                // Display message
-                changeList
-                        .add(MessageFormat
-                                .format(
-                                        ExtensionEventHandlerMessages
-                                                .getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
-                                        new Object[] {
-                                                ext.getNamespace(),
-                                                ExtensionEventHandlerMessages
-                                                        .getString("ExtensionEventHandler.newPerspectiveExtension") })); //$NON-NLS-1$ 				
-                break;
-            }
         }
     }
 

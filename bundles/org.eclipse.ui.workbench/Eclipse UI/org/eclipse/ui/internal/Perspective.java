@@ -722,7 +722,7 @@ public class Perspective {
         // Run layout engine.
         factory.createInitialLayout(layout);
         PerspectiveExtensionReader extender = new PerspectiveExtensionReader();
-        extender.extendLayout(descriptor.getId(), layout);
+        extender.extendLayout(page.getExtensionTracker(), descriptor.getId(), layout);
 
         // Retrieve view layout info stored in the page layout.
         mapIDtoViewLayoutRec.putAll(layout.getIDtoViewLayoutRecMap());
@@ -1242,7 +1242,7 @@ public class Perspective {
         reader
                 .setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_ACTION_SET });
         PageLayout layout = new PageLayout();
-        reader.extendLayout(descriptor.getOriginalId(), layout);
+        reader.extendLayout(null, descriptor.getOriginalId(), layout);
         return layout.getActionSets();
     }
 
@@ -1254,7 +1254,7 @@ public class Perspective {
         reader
                 .setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_SHOW_IN_PART });
         PageLayout layout = new PageLayout();
-        reader.extendLayout(descriptor.getOriginalId(), layout);
+        reader.extendLayout(null, descriptor.getOriginalId(), layout);
         return layout.getShowInPartIds();
     }
 

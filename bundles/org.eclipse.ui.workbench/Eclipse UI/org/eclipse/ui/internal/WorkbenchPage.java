@@ -22,11 +22,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -47,6 +52,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -63,6 +69,7 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -82,6 +89,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
@@ -92,6 +100,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  */
 public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPage {
+	
     private WorkbenchWindow window;
 
     private IAdaptable input;
@@ -133,6 +142,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     //for dynamic UI - saving state for editors, views and perspectives
     private HashMap stateMap = new HashMap();
 
+    /**
+     * Contains a list of perspectives that may be dirty due to plugin 
+     * installation and removal. 
+     */
+    private Set dirtyPerspectives = new HashSet();
+    
     private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
         /*
          * Remove the working set from the page if the working set is deleted.
@@ -182,6 +197,75 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
 	private IExtensionTracker tracker;
+
+	private IExtensionRemovalHandler removalHandler = new IExtensionRemovalHandler() {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+		 */
+		public void removeInstance(IExtension extension, Object[] objects) {
+			boolean suggestReset = false;
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof DirtyPerspectiveMarker) {
+					String id = ((DirtyPerspectiveMarker)objects[i]).perspectiveId;
+					if (!dirtyPerspectives.remove(id)) //if we are dirty, cancel the dirty state
+						dirtyPerspectives.add(id); // otherwise we will be dirty
+					PerspectiveDescriptor persp = (PerspectiveDescriptor) getPerspective();
+					if (persp == null || persp.hasCustomDefinition())
+						continue;
+					if (persp.getId().equals(id))
+						suggestReset = true;
+				}
+			}
+			if (suggestReset)
+				suggestReset();
+		}
+	};
+	private IExtensionAdditionHandler additionHandler = new IExtensionAdditionHandler() {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+		 */
+		public void addInstance(IExtensionTracker tracker, IExtension extension) {
+			if (WorkbenchPage.this != getWorkbenchWindow().getActivePage()) 
+				return;
+			
+	        // Get the current perspective.
+	        PerspectiveDescriptor persp = (PerspectiveDescriptor) getPerspective();
+	        if (persp == null)
+	            return;
+	        String currentId = persp.getId();
+	        IConfigurationElement[] elements = extension.getConfigurationElements();
+	        boolean suggestReset = false;
+	        for (int i = 0; i < elements.length; i++) {
+	            // If any of these refer to the current perspective, output
+	            // a message saying this perspective will need to be reset
+	            // in order to see the changes.  For any other case, the
+	            // perspective extension registry will be rebuilt anyway so
+	            // just ignore it.
+	            String id = elements[i].getAttribute(PerspectiveExtensionReader.ATT_TARGET_ID);
+	            if (id == null)
+	                continue;
+	            if (id.equals(currentId) && !persp.hasCustomDefinition()) {
+	            	suggestReset = true;
+	            }
+	            else {
+	            	dirtyPerspectives.add(id);
+	            }
+	            DirtyPerspectiveMarker marker = new DirtyPerspectiveMarker(id);
+	            tracker.registerObject(extension, marker, IExtensionTracker.REF_STRONG);
+	        }
+	        if (suggestReset) 
+	        	suggestReset();
+
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
+		 */
+		public IExtensionPoint getExtensionPointFilter() {
+			return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
+		}};
 
     /**
      * Manages editor contributions and action set part associations.
@@ -847,9 +931,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         BusyIndicator.showWhile(null, new Runnable() {
             public void run() {
                 ret[0] = window.closePage(WorkbenchPage.this, true);
-                if (ret[0] && tracker != null) 
+                if (ret[0] && tracker != null)
                 	tracker.close();
-                
             }
         });
         return ret[0];
@@ -1148,6 +1231,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 if (ref != null)
                     addPart(ref);
             }
+            //if the perspective is fresh and uncustomzied then it is not dirty
+            //no reset will be prompted for
+            if (!desc.hasCustomDefinition())
+            	dirtyPerspectives.remove(desc.getId());
             return persp;
         } catch (WorkbenchException e) {
             if (!((Workbench) window.getWorkbench()).isStarting()) {
@@ -1953,6 +2040,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             perspList.setActive(persp);
             window.firePerspectiveActivated(this, desc);
         }
+        
+        getExtensionTracker().registerAdditionHandler(additionHandler);
+        getExtensionTracker().registerRemovalHandler(removalHandler);
     }
 
     /**
@@ -2877,10 +2967,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	        }
         } finally {
             window.largeUpdateEnd();
+            if (newPersp == null)
+            	return;
+            IPerspectiveDescriptor desc = newPersp.getDesc();
+            if (desc == null)
+            	return;
+            if (dirtyPerspectives.remove(desc.getId())) {
+            	suggestReset();
+            }
         }
     }
 
-    /*
+	/*
      * Update visibility state of all views.
      */
     private void updateVisibility(Perspective oldPersp, Perspective newPersp) {
@@ -3574,7 +3672,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             usedList = new ArrayList(15);
         }
 
-        /**
+		/**
          * Return all perspectives in the order they were activated.
          */
         public Perspective[] getSortedPerspectives() {
@@ -3991,4 +4089,38 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         return persp.getShowViewShortcuts();
     }
+    
+    /**
+	 * @since 3.1
+	 */
+	private void suggestReset() {
+		final IWorkbench workbench = getWorkbenchWindow().getWorkbench();
+        workbench.getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                Shell parentShell = null;
+                
+				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+                if (window == null) {
+                    if (workbench.getWorkbenchWindowCount() == 0)
+                        return;
+                    window = workbench.getWorkbenchWindows()[0];
+                }
+
+                parentShell = window.getShell();
+
+                if (MessageDialog
+                        .openQuestion(
+                                parentShell,
+                                WorkbenchMessages.getString("Dynamic.resetPerspectiveTitle"), //$NON-NLS-1$
+                                WorkbenchMessages.getString("Dynamic.resetPerspectiveMessage"))) { //$NON-NLS-1$
+                    IWorkbenchPage page = window.getActivePage();
+                    if (page == null)
+                        return;
+                    page.resetPerspective();
+                }
+            }
+        });
+
+		
+	}
 }
