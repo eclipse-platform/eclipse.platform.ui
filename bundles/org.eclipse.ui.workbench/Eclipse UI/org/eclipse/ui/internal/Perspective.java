@@ -1444,7 +1444,7 @@ protected void showEditorArea() {
 private void setEditorAreaVisible(boolean visible) {
 	ArrayList workbooks = ((EditorArea)editorArea).getEditorWorkbooks();
 	for (Iterator iter = workbooks.iterator(); iter.hasNext();) {
-		EditorWorkbook workbook = (EditorWorkbook) iter.next();
+		EditorStack workbook = (EditorStack) iter.next();
 		workbook.setVisible(visible);
 		EditorPane pane = workbook.getVisibleEditor();
 		if(pane != null)

@@ -25,7 +25,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class EditorList {
 	private WorkbenchWindow window;
-	private EditorWorkbook workbook;
+	private EditorStack workbook;
 	private Table editorsTable;
 	private static List editorListViews = new ArrayList();
 	private List elements = new ArrayList();
@@ -135,7 +135,7 @@ public class EditorList {
 		}				
 	};
 
-public EditorList(IWorkbenchWindow window, EditorWorkbook workbook) {
+public EditorList(IWorkbenchWindow window, EditorStack workbook) {
 	this.window = (WorkbenchWindow) window;
 	this.workbook = workbook;
 	

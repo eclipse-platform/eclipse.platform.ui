@@ -66,7 +66,7 @@ public class PerspectivePresentation {
 
 		public IDropTarget drag(Control currentControl, Object draggedObject, Point position, final Rectangle dragRectangle) {
 
-			if (!(draggedObject instanceof ViewPane || draggedObject instanceof PartTabFolder)) {
+			if (!(draggedObject instanceof ViewPane || draggedObject instanceof ViewStack)) {
 				return null;
 			}
 			final LayoutPart part = (LayoutPart)draggedObject;
@@ -82,14 +82,14 @@ public class PerspectivePresentation {
 					if (window instanceof DetachedWindow) {
 						// only one tab folder in a detach window, so do window
 						// move
-						if (part instanceof PartTabFolder) {
+						if (part instanceof ViewStack) {
 							window.getShell().setLocation(dragRectangle.x, dragRectangle.y);
 							return;
 						}
 						// if only one view in tab folder then do a window move
 						ILayoutContainer container = part.getContainer();
-						if (container instanceof PartTabFolder) {
-							if (((PartTabFolder) container).getItemCount() == 1) {
+						if (container instanceof ViewStack) {
+							if (((ViewStack) container).getItemCount() == 1) {
 								window.getShell().setLocation(dragRectangle.x, dragRectangle.y);
 								return;
 							}
@@ -251,7 +251,7 @@ public class PerspectivePresentation {
 					}
 
 					// reparent part.
-					if (!(container instanceof PartTabFolder)) {
+					if (!(container instanceof ViewStack)) {
 						// We don't need to reparent children of PartTabFolders since they will automatically
 						// reparent their children when they become visible. This if statement used to be 
 						// part of an else branch. Investigate if it is still necessary.
@@ -316,8 +316,8 @@ public class PerspectivePresentation {
 		if (container != null && container instanceof ContainerPlaceholder)
 			return false;
 
-		if (container != null && container instanceof PartTabFolder) {
-			PartTabFolder folder = (PartTabFolder) container;
+		if (container != null && container instanceof ViewStack) {
+			ViewStack folder = (ViewStack) container;
 			if (folder.getVisiblePart() == null)
 				return false;
 			return part.getID().equals(folder.getVisiblePart().getID());
@@ -341,8 +341,8 @@ public class PerspectivePresentation {
 				(ILayoutContainer) ((ContainerPlaceholder) container)
 					.getRealContainer();
 
-		if (container != null && container instanceof PartTabFolder) {
-			PartTabFolder folder = (PartTabFolder) container;
+		if (container != null && container instanceof ViewStack) {
+			ViewStack folder = (ViewStack) container;
 			if (folder.getVisiblePart() == null)
 				return false;
 			return part.getID().equals(folder.getVisiblePart().getID());
@@ -527,8 +527,8 @@ public class PerspectivePresentation {
 						childVisible++;
 
 				// none visible, then reprarent and remove container
-				if (oldContainer instanceof PartTabFolder) {
-					PartTabFolder folder = (PartTabFolder) oldContainer;
+				if (oldContainer instanceof ViewStack) {
+					ViewStack folder = (ViewStack) oldContainer;
 					if (childVisible == 0) {
 						ILayoutContainer parentContainer =
 							folder.getContainer();
@@ -623,11 +623,11 @@ public class PerspectivePresentation {
 		window.getShell().setBounds(x, y, width, height);
 		window.open();
 
-		if (part instanceof PartTabFolder) {
+		if (part instanceof ViewStack) {
 			window.getShell().setRedraw(false);
 			parentWidget.setRedraw(false);
-			LayoutPart visiblePart = ((PartTabFolder) part).getVisiblePart();
-			LayoutPart children[] = ((PartTabFolder) part).getChildren();
+			LayoutPart visiblePart = ((ViewStack) part).getVisiblePart();
+			LayoutPart children[] = ((ViewStack) part).getChildren();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] instanceof ViewPane) {
 					// remove the part from its current container
@@ -984,7 +984,7 @@ public class PerspectivePresentation {
 	 * after it is docked
 	 */
 	public static float getDockingRatio(LayoutPart source, LayoutPart target) {
-		if ((source instanceof ViewPane || source instanceof PartTabFolder) && target instanceof EditorArea) {
+		if ((source instanceof ViewPane || source instanceof ViewStack) && target instanceof EditorArea) {
 			return 0.25f;
 		}
 		return 0.5f;
@@ -1056,10 +1056,10 @@ public class PerspectivePresentation {
 					LayoutPart cPart = (LayoutPart) container;
 					Window oldWindow = cPart.getWindow();
 					if (oldWindow instanceof WorkbenchWindow) {
-						// PR 1GDFVBY: PartTabFolder not disposed when page
+						// PR 1GDFVBY: ViewStack not disposed when page
 						// closed.
-						if (container instanceof PartTabFolder)
-							 ((PartTabFolder) container).dispose();
+						if (container instanceof ViewStack)
+							 ((ViewStack) container).dispose();
 
 						// replace the real container with a
 						// ContainerPlaceholder
@@ -1210,12 +1210,12 @@ public class PerspectivePresentation {
 			parentWidget.setRedraw(false);
 
 			ILayoutContainer parentContainer = ((ViewPane) pane).getContainer();
-			if (parentContainer instanceof PartTabFolder) {
-				//Check if it is a PartTabFolder as we only want to zoom
+			if (parentContainer instanceof ViewStack) {
+				//Check if it is a ViewStack as we only want to zoom
 				//the folder. 
-				//TODO: Remove once all views are in PartTabFolder
+				//TODO: Remove once all views are in ViewStack
 				//TODO: See Bug 48794
-				PartTabFolder parent = (PartTabFolder) parentContainer;
+				ViewStack parent = (ViewStack) parentContainer;
 				Perspective persp = page.getActivePerspective();
 				if (persp != null
 					&& ref instanceof IViewReference
@@ -1231,7 +1231,7 @@ public class PerspectivePresentation {
 		// If editor ..
 		else if (pane instanceof EditorPane) {
 			parentWidget.setRedraw(false);
-			EditorWorkbook wb = ((EditorPane) pane).getWorkbook();
+			EditorStack wb = ((EditorPane) pane).getWorkbook();
 			EditorArea ea = wb.getEditorArea();
 			mainLayout.zoomIn(ea);
 			ea.zoomIn(wb);
@@ -1269,7 +1269,7 @@ public class PerspectivePresentation {
 			parentWidget.setRedraw(true);
 		} else if (pane instanceof EditorPane) {
 			parentWidget.setRedraw(false);
-			EditorWorkbook wb = ((EditorPane) pane).getWorkbook();
+			EditorStack wb = ((EditorPane) pane).getWorkbook();
 			EditorArea ea = wb.getEditorArea();
 			wb.setZoomed(false);
 			ea.zoomOut();

@@ -1943,7 +1943,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			}
 			EditorSite site = (EditorSite) part.getSite();
 			EditorPane pane = (EditorPane) site.getPane();
-			EditorWorkbook book = pane.getWorkbook();
+			EditorStack book = pane.getWorkbook();
 			return !book.equals(book.getEditorArea().getActiveWorkbook());
 		}
 		// part is a view
@@ -3470,8 +3470,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			return null;		
 		
 		ILayoutContainer container = ((PartSite)part.getSite()).getPane().getContainer();
-		if (container instanceof PartTabFolder) {
-			PartTabFolder folder = (PartTabFolder) container;
+		if (container instanceof ViewStack) {
+			ViewStack folder = (ViewStack) container;
 			final ArrayList list = new ArrayList(folder.getChildren().length);
 			for (int i = 0; i < folder.getChildren().length; i++) {
 				LayoutPart layoutPart = folder.getChildren()[i];
@@ -3511,7 +3511,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		SashInfo sashInfo = new SashInfo();
 		PartPane pane = ((PartSite)part.getSite()).getPane();
 		ILayoutContainer container = pane.getContainer();
-		LayoutTree tree = getPerspectivePresentation().getLayout().root.find(((PartTabFolder)container));
+		LayoutTree tree = getPerspectivePresentation().getLayout().root.find(((ViewStack)container));
 		
 		// retrieve our layout sashes from the layout tree
 		findSashParts(tree, pane.findSashes(), sashInfo);

@@ -36,12 +36,12 @@ import org.eclipse.ui.presentations.IPresentablePart;
 public class EditorPane extends PartPane {
 	private PresentableEditorPart presentableAdapter = new PresentableEditorPart(this);	
 	
-	private EditorWorkbook workbook;
+	private EditorStack workbook;
 
 /**
  * Constructs an editor pane for an editor part.
  */
-public EditorPane(IEditorReference ref, WorkbenchPage page, EditorWorkbook workbook) {
+public EditorPane(IEditorReference ref, WorkbenchPage page, EditorStack workbook) {
 	super(ref, page);
 	this.workbook = workbook;
 }
@@ -112,7 +112,7 @@ int getStyle() {
 /**
  * Answer the editor workbook container
  */
-public EditorWorkbook getWorkbook() {
+public EditorStack getWorkbook() {
 	return workbook;
 }
 
@@ -131,7 +131,7 @@ protected void requestActivation() {
 /**
  * Set the editor workbook container
  */
-public void setWorkbook(EditorWorkbook editorWorkbook) {
+public void setWorkbook(EditorStack editorWorkbook) {
 	workbook = editorWorkbook;
 }
 /* (non-Javadoc)
@@ -209,8 +209,8 @@ public void updateTitles() {
 public void showPaneMenu() {
 	ILayoutContainer container = getContainer();
 	
-	if (container instanceof EditorWorkbook) {
-		EditorWorkbook folder = (EditorWorkbook) container;
+	if (container instanceof EditorStack) {
+		EditorStack folder = (EditorStack) container;
 		
 		folder.showSystemMenu();
 	}

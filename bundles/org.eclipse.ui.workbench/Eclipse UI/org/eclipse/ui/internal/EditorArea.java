@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Represents the area set aside for editor workbooks.
- * This container only accepts EditorWorkbook and PartSash
+ * This container only accepts EditorStack and PartSash
  * as layout parts.
  *
  * Note no views are allowed within this container.
@@ -37,7 +37,7 @@ public class EditorArea extends PartSashContainer {
 	
 	private static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";//$NON-NLS-1$
 	private ArrayList editorWorkbooks = new ArrayList(3);
-	private EditorWorkbook activeEditorWorkbook;
+	private EditorStack activeEditorWorkbook;
 	private DropTarget dropTarget;
 	private WorkbenchPage page;
 	
@@ -52,7 +52,7 @@ public EditorArea(String editorId, WorkbenchPage page) {
  * Add an editor to the active workbook.
  */
 public void addEditor(EditorPane pane) {
-	EditorWorkbook workbook = getActiveWorkbook();
+	EditorStack workbook = getActiveWorkbook();
 	workbook.add(pane);
 }
 /**
@@ -62,7 +62,7 @@ public void addEditor(EditorPane pane) {
  * work.
  */
 protected void childAdded(LayoutPart child) {
-	if (child instanceof EditorWorkbook)
+	if (child instanceof EditorStack)
 		editorWorkbooks.add(child);
 }
 /**
@@ -72,14 +72,14 @@ protected void childAdded(LayoutPart child) {
  * work.
  */
 protected void childRemoved(LayoutPart child) {
-	if (child instanceof EditorWorkbook) {
+	if (child instanceof EditorStack) {
 		editorWorkbooks.remove(child);
 		if (activeEditorWorkbook == child)
 			setActiveWorkbook(null, false);
 	}
 }
-protected EditorWorkbook createDefaultWorkbook() {
-	EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(this, page);
+protected EditorStack createDefaultWorkbook() {
+	EditorStack newWorkbook = EditorStack.newEditorWorkbook(this, page);
 	newWorkbook.setID(DEFAULT_WORKBOOK_ID);
 	add(newWorkbook);
 	return newWorkbook;
@@ -99,7 +99,7 @@ public void dispose() {
 	// Free editor workbooks.
 	Iterator iter = editorWorkbooks.iterator();
 	while (iter.hasNext()) {
-		EditorWorkbook wb = (EditorWorkbook)iter.next();
+		EditorStack wb = (EditorStack)iter.next();
 		wb.dispose();
 	}
 	editorWorkbooks.clear();
@@ -117,12 +117,12 @@ protected void disposeParent() {
 /**
  * Return the editor workbook which is active.
  */
-public EditorWorkbook getActiveWorkbook() {
+public EditorStack getActiveWorkbook() {
 	if (activeEditorWorkbook == null) {
 		if (editorWorkbooks.size() < 1)
 			setActiveWorkbook(createDefaultWorkbook(), false);
 		else 
-			setActiveWorkbook((EditorWorkbook)editorWorkbooks.get(0), false);
+			setActiveWorkbook((EditorStack)editorWorkbooks.get(0), false);
 	}
 
 	return activeEditorWorkbook;
@@ -149,7 +149,7 @@ public int getEditorWorkbookCount() {
  * Return true is the workbook specified
  * is the active one.
  */
-protected boolean isActiveWorkbook(EditorWorkbook workbook) {
+protected boolean isActiveWorkbook(EditorStack workbook) {
 	return activeEditorWorkbook == workbook;
 }
 /**
@@ -169,12 +169,12 @@ public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
  * Remove all the editors
  */
 public void removeAllEditors() {
-	EditorWorkbook currentWorkbook = getActiveWorkbook();
+	EditorStack currentWorkbook = getActiveWorkbook();
 
 	// Iterate over a copy so the original can be modified.	
 	Iterator workbooks = ((ArrayList)editorWorkbooks.clone()).iterator();
 	while (workbooks.hasNext()) {
-		EditorWorkbook workbook = (EditorWorkbook)workbooks.next();
+		EditorStack workbook = (EditorStack)workbooks.next();
 		workbook.removeAll();
 		if (workbook != currentWorkbook) {
 			remove(workbook);
@@ -186,7 +186,7 @@ public void removeAllEditors() {
  * Remove an editor from its' workbook.
  */
 public void removeEditor(EditorPane pane) {
-	EditorWorkbook workbook = pane.getWorkbook();
+	EditorStack workbook = pane.getWorkbook();
 	if (workbook == null)
 		return;
 	workbook.remove(pane);
@@ -204,11 +204,11 @@ public IStatus restoreState(IMemento memento) {
 	// Remove the default editor workbook that is
 	// initialy created with the editor area.
 	if (children != null) {
-		EditorWorkbook defaultWorkbook = null;
+		EditorStack defaultWorkbook = null;
 		for (int i = 0; i < children.size(); i++) {
 			LayoutPart child = (LayoutPart)children.get(i);
 			if (child.getID() == DEFAULT_WORKBOOK_ID) {
-				defaultWorkbook = (EditorWorkbook)child;
+				defaultWorkbook = (EditorStack)child;
 				if (defaultWorkbook.getItemCount() > 0)
 					defaultWorkbook = null;
 			}
@@ -243,7 +243,7 @@ public IStatus restoreState(IMemento memento) {
 		}
 
 		// Create the part.
-		EditorWorkbook workbook = EditorWorkbook.newEditorWorkbook(this, page);
+		EditorStack workbook = EditorStack.newEditorWorkbook(this, page);
 		workbook.setID(partID);
 		// 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
 		workbook.setContainer(this);
@@ -296,8 +296,8 @@ public IStatus saveState(IMemento memento) {
 /**
  * Set the editor workbook which is active.
  */
-public void setActiveWorkbook(EditorWorkbook newWorkbook, boolean hasFocus) {
-	EditorWorkbook oldWorkbook = activeEditorWorkbook;
+public void setActiveWorkbook(EditorStack newWorkbook, boolean hasFocus) {
+	EditorStack oldWorkbook = activeEditorWorkbook;
 	activeEditorWorkbook = newWorkbook;
 	
 	if (oldWorkbook != null && oldWorkbook != newWorkbook)
@@ -313,7 +313,7 @@ public void setActiveWorkbook(EditorWorkbook newWorkbook, boolean hasFocus) {
  */
 public void setActiveWorkbookFromID(String id) {
 	for (int i = 0; i < editorWorkbooks.size(); i++) {
-		EditorWorkbook workbook = (EditorWorkbook) editorWorkbooks.get(i);
+		EditorStack workbook = (EditorStack) editorWorkbooks.get(i);
 		if (workbook.getID().equals(id))
 			setActiveWorkbook(workbook, false);
 	}
@@ -326,7 +326,7 @@ public void setActiveWorkbookFromID(String id) {
 public void updateTabList() {
 	Composite parent = getParent();
 	if (parent != null) {  // parent may be null on startup
-		EditorWorkbook wb = getActiveWorkbook();
+		EditorStack wb = getActiveWorkbook();
 		if (wb == null) {
 			parent.setTabList(new Control[0]);
 		}
@@ -379,7 +379,7 @@ public void updateTabList() {
 	 * @see org.eclipse.ui.internal.PartSashContainer#isStackType(org.eclipse.ui.internal.LayoutPart)
 	 */
 	public boolean isStackType(LayoutPart toTest) {
-		return (toTest instanceof EditorWorkbook);
+		return (toTest instanceof EditorStack);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PartSashContainer#isPaneType(org.eclipse.ui.internal.LayoutPart)
@@ -391,7 +391,7 @@ public void updateTabList() {
 	 * @see org.eclipse.ui.internal.PartSashContainer#createStack(org.eclipse.ui.internal.LayoutPart)
 	 */
 	protected LayoutPart createStack(LayoutPart sourcePart) {
-		EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(this, page);
+		EditorStack newWorkbook = EditorStack.newEditorWorkbook(this, page);
 		newWorkbook.add((EditorPane)sourcePart);
 		newWorkbook.setVisibleEditor((EditorPane)sourcePart);
 		
@@ -401,7 +401,7 @@ public void updateTabList() {
 	 * @see org.eclipse.ui.internal.PartSashContainer#setVisiblePart(org.eclipse.ui.internal.ILayoutContainer, org.eclipse.ui.internal.LayoutPart)
 	 */
 	protected void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart) {
-		EditorWorkbook refPart = (EditorWorkbook)container;
+		EditorStack refPart = (EditorStack)container;
 		
 		refPart.becomeActiveWorkbook(true);
 		refPart.setVisibleEditor((EditorPane)visiblePart);
@@ -410,7 +410,7 @@ public void updateTabList() {
 	 * @see org.eclipse.ui.internal.PartSashContainer#getVisiblePart(org.eclipse.ui.internal.ILayoutContainer)
 	 */
 	protected LayoutPart getVisiblePart(ILayoutContainer container) {
-		EditorWorkbook refPart = (EditorWorkbook)container;
+		EditorStack refPart = (EditorStack)container;
 
 		return refPart.getVisibleEditor();
 	}

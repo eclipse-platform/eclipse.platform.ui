@@ -339,7 +339,7 @@ public class PageLayout implements IPageLayout {
 				addPlaceholder(viewId, relationship, ratio, refId);
 				LayoutHelper.addViewActivator(this, viewId);
 			} else {
-				PartTabFolder newFolder = new PartTabFolder(rootLayoutContainer.page);
+				ViewStack newFolder = new ViewStack(rootLayoutContainer.page);
 				newFolder.setStandalone(standalone, showTitle);
 				newFolder.add(newPart);
 				setFolderPart(viewId, newFolder);
@@ -381,11 +381,11 @@ public class PageLayout implements IPageLayout {
 		if (checkPartInLayout(folderId))
 			return new FolderLayout(
 				this,
-				(PartTabFolder) getRefPart(folderId),
+				(ViewStack) getRefPart(folderId),
 				viewFactory);
 
 		// Create the folder.
-		PartTabFolder folder = new PartTabFolder(rootLayoutContainer.page);
+		ViewStack folder = new ViewStack(rootLayoutContainer.page);
 		folder.setID(folderId);
 		addPart(folder, folderId, relationship, ratio, refId);
 
@@ -409,7 +409,7 @@ public class PageLayout implements IPageLayout {
 		// Create the folder.
 		ContainerPlaceholder folder = new ContainerPlaceholder(null);
 		folder.setContainer(rootLayoutContainer);
-		folder.setRealContainer(new PartTabFolder(rootLayoutContainer.page));
+		folder.setRealContainer(new ViewStack(rootLayoutContainer.page));
 		folder.setID(folderId);
 		addPart(folder, folderId, relationship, ratio, refId);
 
@@ -481,8 +481,8 @@ public class PageLayout implements IPageLayout {
 	 * @return the folder part containing the given view ID or <code>null</code>
 	 * if none (i.e. part of the page layout instead of a folder layout).
 	 */
-	private PartTabFolder getFolderPart(String viewId) {
-		return (PartTabFolder) mapIDtoFolder.get(viewId);
+	private ViewStack getFolderPart(String viewId) {
+		return (ViewStack) mapIDtoFolder.get(viewId);
 	}
 
 	/**
@@ -631,10 +631,10 @@ public class PageLayout implements IPageLayout {
 	 * Map the folder part containing the given view ID.
 	 * 
 	 * @param viewId the part ID.
-	 * @param folder the <code>PartTabFolder</code>.
+	 * @param folder the <code>ViewStack</code>.
 	 */
 	/*package*/
-	void setFolderPart(String viewId, PartTabFolder folder) {
+	void setFolderPart(String viewId, ViewStack folder) {
 		mapIDtoFolder.put(viewId, folder);
 	}
 
@@ -664,7 +664,7 @@ public class PageLayout implements IPageLayout {
 
 		// If ref part is in a folder than just add the
 		// new view to that folder.
-		PartTabFolder folder = getFolderPart(refId);
+		ViewStack folder = getFolderPart(refId);
 		if (folder != null) {
 			folder.add(newPart);
 			setFolderPart(viewId, folder);
@@ -675,7 +675,7 @@ public class PageLayout implements IPageLayout {
 		// a new folder and add the new view.
 		LayoutPart refPart = getRefPart(refId);
 		if (refPart != null) {
-			PartTabFolder newFolder = new PartTabFolder(rootLayoutContainer.page);
+			ViewStack newFolder = new ViewStack(rootLayoutContainer.page);
 			rootLayoutContainer.replace(refPart, newFolder);
 			newFolder.add(refPart);
 			newFolder.add(newPart);

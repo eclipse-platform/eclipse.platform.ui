@@ -36,7 +36,7 @@ import org.eclipse.ui.presentations.StackPresentation;
  * TODO: Make PartStack non-abstract and delete this class. The differences between
  * editors and views should be handled by the presentation or the editors/views themselves.
  */
-public class EditorWorkbook extends PartStack {
+public class EditorStack extends PartStack {
 	
     private EditorArea editorArea;
 
@@ -45,14 +45,14 @@ public class EditorWorkbook extends PartStack {
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
     private SystemMenuPinEditor pinEditorItem = new SystemMenuPinEditor(null);
 	 
-    public EditorWorkbook(EditorArea editorArea, WorkbenchPage page) {
+    public EditorStack(EditorArea editorArea, WorkbenchPage page) {
         super(); //$NON-NLS-1$
         this.editorArea = editorArea;
         setID(this.toString());
         // Each folder has a unique ID so relative positioning is unambiguous.
         // save off a ref to the page
         //@issue is it okay to do this??
-        //I think so since a PartTabFolder is
+        //I think so since a ViewStack is
         //not used on more than one page.
         this.page = page;
     }
@@ -82,9 +82,9 @@ public class EditorWorkbook extends PartStack {
     /**
      * Factory method for editor workbooks.
      */
-    public static EditorWorkbook newEditorWorkbook(EditorArea editorArea,
+    public static EditorStack newEditorWorkbook(EditorArea editorArea,
             WorkbenchPage page) {
-        return new EditorWorkbook(editorArea, page);
+        return new EditorStack(editorArea, page);
     }
     
     protected void add(LayoutPart newChild, IPresentablePart position) {

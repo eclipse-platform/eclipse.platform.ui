@@ -23,19 +23,19 @@ import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
- * Manages a set of ViewPanes that are docked into the workbench window. The container for a PartTabFolder
+ * Manages a set of ViewPanes that are docked into the workbench window. The container for a ViewStack
  * is always a PartSashContainer (or null), and its children are always either PartPlaceholders or ViewPanes.
  * This contains the real behavior and state for stacks of views, although the widgets for the tabs are contributed
  * using a StackPresentation.
  * 
- * TODO: eliminate PartTabFolder and EditorWorkbook. PartStack should be general enough to handle editors 
+ * TODO: eliminate ViewStack and EditorStack. PartStack should be general enough to handle editors 
  * and views without any specialization for editors and views. The differences should be in the 
  * presentation and in the PartPanes themselves.
  * 
- * TODO: eliminate PartPlaceholder. Placeholders should not be children of the PartTabFolder.
+ * TODO: eliminate PartPlaceholder. Placeholders should not be children of the ViewStack.
  *  
  */
-public class PartTabFolder extends PartStack {
+public class ViewStack extends PartStack {
 
     private boolean allowStateChanges;
     private WorkbenchPage page;
@@ -51,11 +51,11 @@ public class PartTabFolder extends PartStack {
 		appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
 	}
     
-    public PartTabFolder(WorkbenchPage page) {
+    public ViewStack(WorkbenchPage page) {
     	this(page, true);
     }
     
-    public PartTabFolder(WorkbenchPage page, boolean allowsStateChanges) {
+    public ViewStack(WorkbenchPage page, boolean allowsStateChanges) {
 
     	this.page = page;
         setID(this.toString());
@@ -73,7 +73,7 @@ public class PartTabFolder extends PartStack {
         Perspective perspective = page.getActivePerspective();
 
         if (perspective == null) {
-            // Shouldn't happen -- can't have a PartTabFolder without a
+            // Shouldn't happen -- can't have a ViewStack without a
             // perspective
             return false; 
         }        	
@@ -115,7 +115,7 @@ public class PartTabFolder extends PartStack {
         ViewPane pane = (ViewPane)getPaneFor(part);
         Perspective perspective = page.getActivePerspective();
         if (perspective == null) {
-            // Shouldn't happen -- can't have a PartTabFolder without a
+            // Shouldn't happen -- can't have a ViewStack without a
             // perspective
             return true; 
         }
@@ -129,7 +129,7 @@ public class PartTabFolder extends PartStack {
         ViewPane pane = (ViewPane)getPaneFor(part);
         Perspective perspective = page.getActivePerspective();
         if (perspective == null) {
-            // Shouldn't happen -- can't have a PartTabFolder without a
+            // Shouldn't happen -- can't have a ViewStack without a
             // perspective
             return true; 
         }

@@ -1014,9 +1014,9 @@ public class EditorManager {
 		ArrayList workbooks = editorPresentation.getWorkbooks();
 		
 		for (Iterator iter = workbooks.iterator(); iter.hasNext();) {
-			EditorWorkbook workbook = (EditorWorkbook) iter.next();
+			EditorStack workbook = (EditorStack) iter.next();
 			
-			// Use the list of editors found in EditorWorkbook; fix for 24091
+			// Use the list of editors found in EditorStack; fix for 24091
 			EditorPane editorPanes[] = workbook.getEditors();
 			
 			for (int i = 0; i < editorPanes.length; i++) {

@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
  * </p>
  */
 public class FolderLayout implements IFolderLayout {
-	private PartTabFolder folder;
+	private ViewStack folder;
 	private PageLayout pageLayout;
 	private ViewFactory viewFactory;
 
@@ -38,7 +38,7 @@ public class FolderLayout implements IFolderLayout {
 	 */
 	public FolderLayout(
 		PageLayout pageLayout,
-		PartTabFolder folder,
+		ViewStack folder,
 		ViewFactory viewFactory) {
 		super();
 		this.folder = folder;

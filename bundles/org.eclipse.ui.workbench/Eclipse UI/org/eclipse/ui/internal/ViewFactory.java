@@ -202,8 +202,11 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 		Platform.run(new SafeRunnable() {
 			public void handleException(Throwable e) {
 				if (resetPart[0]) {
-					((ViewReference) ref).setPart(null);
-					page.hideView(ref);
+					ViewReference viewRef = ((ViewReference) ref); 
+					viewRef.setPart(null);
+					if (viewRef.getPane() != null) {
+						page.hideView(ref);						
+					}
 				}
 				//Execption is already logged.
 				result[0] = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("Perspective.exceptionRestoringView", new String[] { viewID }), //$NON-NLS-1$

@@ -19,7 +19,7 @@ public class MultiEditorOuterPane extends EditorPane {
 	/**
 	 * Constructor for MultiEditorOuterPane.
 	 */
-	public MultiEditorOuterPane(IEditorReference ref, WorkbenchPage page, EditorWorkbook workbook) {
+	public MultiEditorOuterPane(IEditorReference ref, WorkbenchPage page, EditorStack workbook) {
 		super(ref, page, workbook);
 	}
 	/*

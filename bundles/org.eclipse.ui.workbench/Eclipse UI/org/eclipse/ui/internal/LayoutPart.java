@@ -91,8 +91,8 @@ abstract public class LayoutPart {
 	 * <p>
 	 * In general, this is non-null if the object has been added to a container and the
 	 * container's widgetry exists. The exception to this rule is PartPlaceholders
-	 * created when restoring a PartTabFolder using restoreState, which point to the 
-	 * PartTabFolder even if its widgetry doesn't exist yet. Returns null in the remaining
+	 * created when restoring a ViewStack using restoreState, which point to the 
+	 * ViewStack even if its widgetry doesn't exist yet. Returns null in the remaining
 	 * cases.
 	 * </p> 
 	 * <p>

@@ -348,8 +348,8 @@ public class FastViewBar implements IWindowTrim {
 					
 					return new ViewDropTarget(newList, targetItem);
 				}
-				if (draggedObject instanceof PartTabFolder) {
-					PartTabFolder folder = (PartTabFolder)draggedObject;
+				if (draggedObject instanceof ViewStack) {
+					ViewStack folder = (ViewStack)draggedObject;
 					
 					if (folder.getWorkbenchWindow() != window) {
 						return null;

@@ -39,7 +39,7 @@ import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
- * Implements the common behavior for stacks of Panes (ie: EditorWorkbook and PartTabFolder)
+ * Implements the common behavior for stacks of Panes (ie: EditorStack and ViewStack)
  * This layout container has PartPanes as children and belongs to a PartSashContainer.
  * 
  * @since 3.0

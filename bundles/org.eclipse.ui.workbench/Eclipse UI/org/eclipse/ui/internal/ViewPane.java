@@ -378,8 +378,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	public Control[] getTabList() {
 		Control c = getControl();
-		if (getContainer() instanceof PartTabFolder) {
-			PartTabFolder tf = (PartTabFolder) getContainer();
+		if (getContainer() instanceof ViewStack) {
+			ViewStack tf = (ViewStack) getContainer();
 			return tf.getTabList(this);
 		}
 		return new Control[] { c };
@@ -441,8 +441,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	void setActive(boolean active){
 		hasFocus = active;
 		
-		if(getContainer() instanceof PartTabFolder){
-			((PartTabFolder) getContainer()).setActive(active);
+		if(getContainer() instanceof ViewStack){
+			((ViewStack) getContainer()).setActive(active);
 		}
 	}
 	
@@ -459,8 +459,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public void showPaneMenu() {
 		ILayoutContainer container = getContainer();
 		
-		if (container instanceof PartTabFolder) {
-			PartTabFolder folder = (PartTabFolder) container;
+		if (container instanceof ViewStack) {
+			ViewStack folder = (ViewStack) container;
 			
 			folder.showSystemMenu();
 		}		
@@ -515,8 +515,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public void showViewMenu() {
 		ILayoutContainer container = getContainer();
 		
-		if (container instanceof PartTabFolder) {
-			PartTabFolder folder = (PartTabFolder) container;
+		if (container instanceof ViewStack) {
+			ViewStack folder = (ViewStack) container;
 			
 			folder.showPaneMenu();
 		}		
@@ -579,12 +579,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public void setContainer(ILayoutContainer container) {
 		ILayoutContainer oldContainer = getContainer();
 		if (hasFocus) {
-			if (oldContainer != null && oldContainer instanceof PartTabFolder) {
-				((PartTabFolder)oldContainer).setActive(false);
+			if (oldContainer != null && oldContainer instanceof ViewStack) {
+				((ViewStack)oldContainer).setActive(false);
 			}
 			
-			if (container != null && container instanceof PartTabFolder) {
-				((PartTabFolder)container).setActive(true);
+			if (container != null && container instanceof ViewStack) {
+				((ViewStack)container).setActive(true);
 			}
 		}
 

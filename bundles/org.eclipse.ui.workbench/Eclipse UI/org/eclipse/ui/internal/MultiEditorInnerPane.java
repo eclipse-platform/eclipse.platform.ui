@@ -22,7 +22,7 @@ public class MultiEditorInnerPane extends EditorPane {
 	/**
 	 * Constructor for MultiEditorInnerPane.
 	 */
-	public MultiEditorInnerPane(EditorPane pane,IEditorReference ref, WorkbenchPage page, EditorWorkbook workbook) {
+	public MultiEditorInnerPane(EditorPane pane,IEditorReference ref, WorkbenchPage page, EditorStack workbook) {
 		super(ref, page, workbook);
 		parentPane = pane;
 	}

@@ -48,7 +48,7 @@ public class EditorPresentation {
         IHandler openEditorDropDownHandler = new AbstractHandler() {
 
             public Object execute(Map parameterValuesByName) throws ExecutionException {
-            	EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
+            	EditorStack activeWorkbook = editorArea.getActiveWorkbook();
             	if (activeWorkbook != null) {
             		activeWorkbook.showPartList();
             	}
@@ -179,7 +179,7 @@ public class EditorPresentation {
 	 * @return the active editor, or <code>null</code> if no editor is active
 	 */
 	public IEditorReference getVisibleEditor() {
-		EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
+		EditorStack activeWorkbook = editorArea.getActiveWorkbook();
 		EditorPane pane = activeWorkbook.getVisibleEditor();
 		if (pane != null) {
 			IEditorReference result = pane.getEditorReference();
@@ -198,7 +198,7 @@ public class EditorPresentation {
 	 * and make it visible.
 	 */
 	public void fixVisibleEditor() {
-		EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
+		EditorStack activeWorkbook = editorArea.getActiveWorkbook();
 		EditorPane pane = activeWorkbook.getVisibleEditor();
 		if (pane == null) {
 			LayoutPart editors[] = activeWorkbook.getChildren();
@@ -288,7 +288,7 @@ public class EditorPresentation {
 	 * Makes sure the visible editor's tab is visible.
 	 */
 	public void showVisibleEditor() {
-		EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
+		EditorStack activeWorkbook = editorArea.getActiveWorkbook();
 		if (activeWorkbook != null)
 			activeWorkbook.showVisibleEditor();
 	}
@@ -309,7 +309,7 @@ public class EditorPresentation {
 			if (pane != null) {
 				if (pane instanceof MultiEditorInnerPane) {
 					EditorPane parentPane = ((MultiEditorInnerPane) pane).getParentPane();
-					EditorWorkbook activeWorkbook = parentPane.getWorkbook();
+					EditorStack activeWorkbook = parentPane.getWorkbook();
 					EditorPane activePane = activeWorkbook.getVisibleEditor();
 					if (activePane != parentPane)
 						parentPane.getWorkbook().setVisibleEditor(parentPane);

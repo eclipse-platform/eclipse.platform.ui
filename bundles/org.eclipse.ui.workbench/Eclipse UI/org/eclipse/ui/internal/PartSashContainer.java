@@ -425,7 +425,7 @@ public void dispose() {
 			child.setContainer(null);
 			// In PartSashContainer dispose really means deactivate, so we
 			// only dispose PartTabFolders.
-			if (child instanceof PartTabFolder)
+			if (child instanceof ViewStack)
 				child.dispose();
 		}
 	}

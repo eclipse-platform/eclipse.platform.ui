@@ -32,7 +32,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class DetachedWindow extends Window   {
 
-	private PartTabFolder folder;
+	private ViewStack folder;
 	private WorkbenchPage page;
 
 	//Keep the state of a DetachedWindow when switching perspectives.
@@ -46,7 +46,7 @@ public class DetachedWindow extends Window   {
 		setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
 			SWT.RESIZE );
 		this.page = workbenchPage;
-		folder = new PartTabFolder(page, false);
+		folder = new ViewStack(page, false);
 	}
 	/**
 	 * Adds a visual part to this window.

@@ -120,7 +120,7 @@ public IStatus restoreState(IMemento memento)
 		if (strFolder == null)
 			part = new PartPlaceholder(partID);
 		else {
-			PartTabFolder folder = new PartTabFolder(page);
+			ViewStack folder = new ViewStack(page);
 			folder.setID(partID);
 			result.add(folder.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER)));
 			ContainerPlaceholder placeholder = new ContainerPlaceholder(partID);
@@ -181,13 +181,13 @@ public IStatus saveState(IMemento memento) {
 		}
 
 		// Is this part a folder or a placeholder for one?
-		PartTabFolder folder = null;
-		if (info.part instanceof PartTabFolder) {
-			folder = (PartTabFolder)info.part;
+		ViewStack folder = null;
+		if (info.part instanceof ViewStack) {
+			folder = (ViewStack)info.part;
 		} else if (info.part instanceof ContainerPlaceholder) {
 			LayoutPart part = ((ContainerPlaceholder)info.part).getRealContainer();
-			if (part instanceof PartTabFolder)
-				folder = (PartTabFolder)part;
+			if (part instanceof ViewStack)
+				folder = (ViewStack)part;
 		}
 
 		// If this is a folder save the contents.
@@ -220,11 +220,11 @@ protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
  * @see org.eclipse.ui.internal.PartSashContainer#isStackType(org.eclipse.ui.internal.LayoutPart)
  */
 public boolean isStackType(LayoutPart toTest) {
-	if (!(toTest instanceof PartTabFolder)) { 
+	if (!(toTest instanceof ViewStack)) { 
 		return false;
 	}
 	
-	PartTabFolder folder = (PartTabFolder)toTest;
+	ViewStack folder = (ViewStack)toTest;
 	
 	return folder.getParent() == getParent();  
 }
@@ -238,7 +238,7 @@ public boolean isPaneType(LayoutPart toTest) {
  * @see org.eclipse.ui.internal.PartSashContainer#createStack(org.eclipse.ui.internal.LayoutPart)
  */
 protected LayoutPart createStack(LayoutPart sourcePart) {
-	PartTabFolder result = new PartTabFolder(page);
+	ViewStack result = new ViewStack(page);
 	result.add(sourcePart);
 	return result;
 }
@@ -248,8 +248,8 @@ protected LayoutPart createStack(LayoutPart sourcePart) {
  * @see org.eclipse.ui.internal.PartSashContainer#setVisiblePart(org.eclipse.ui.internal.ILayoutContainer, org.eclipse.ui.internal.LayoutPart)
  */
 protected void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart) {
-	if (container instanceof PartTabFolder) {
-		PartTabFolder tabFolder = (PartTabFolder)container;
+	if (container instanceof ViewStack) {
+		ViewStack tabFolder = (ViewStack)container;
 		
 		tabFolder.setSelection(visiblePart);
 	}
@@ -260,7 +260,7 @@ protected void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart
  * @see org.eclipse.ui.internal.PartSashContainer#getVisiblePart(org.eclipse.ui.internal.ILayoutContainer)
  */
 protected LayoutPart getVisiblePart(ILayoutContainer container) {
-	return ((PartTabFolder)container).getVisiblePart();
+	return ((ViewStack)container).getVisiblePart();
 }
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.PartSashContainer#derefPart(org.eclipse.ui.internal.LayoutPart)
@@ -279,7 +279,7 @@ protected void addChild(RelationshipInfo info) {
 	// Since the view title is provided by the tab folder, this ensures
 	// that views don't get created without a title tab.
 	if (child instanceof ViewPane) {
-		PartTabFolder folder = new PartTabFolder(page);
+		ViewStack folder = new ViewStack(page);
 		folder.add(child);
 		info.part = folder;
 	}
@@ -299,7 +299,7 @@ public void replace(LayoutPart oldChild, LayoutPart newChild) {
 	// Since the view title is provided by the tab folder, this ensures
 	// that views don't get created without a title tab.
 	if (newChild instanceof ViewPane) {
-		PartTabFolder folder = new PartTabFolder(page);
+		ViewStack folder = new ViewStack(page);
 		folder.add(newChild);
 		newChild = folder;
 	}
