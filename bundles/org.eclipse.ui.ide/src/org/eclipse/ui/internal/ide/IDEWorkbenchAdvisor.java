@@ -39,10 +39,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -51,7 +47,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageLayout;
@@ -74,18 +71,14 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.EditorInputTransfer;
-import org.eclipse.ui.part.MarkerTransfer;
-import org.eclipse.ui.part.ResourceTransfer;
-
 import org.eclipse.ui.internal.AboutInfo;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
-
+import org.eclipse.ui.part.EditorInputTransfer;
+import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -195,12 +188,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
 	 */
-	public void preStartup() {
-	    // Override the default for "traditional" tabs to get curvy tabs by default for the SDK.
-	    // The user can still change the actual value via the Appearance pref page.
-	    // @issue this is internal to the generic workbench
-	    WorkbenchPlugin.getDefault().getPreferenceStore().setDefault(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
-	    
+	public void preStartup() {	    
 		// collect the welcome perspectives of the new installed features
 		initializeFeatureSets();
 		Set s = getNewlyAddedFeatures();
