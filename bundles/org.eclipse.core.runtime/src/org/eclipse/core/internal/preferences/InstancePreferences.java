@@ -95,8 +95,6 @@ public class InstancePreferences extends EclipsePreferences {
 			// no preference file - that's fine
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("Legacy plug-in preference file not found: " + prefFile); //$NON-NLS-1$ //$NON-NLS-2$
-			// convert pre-M9 prefs before returning
-			loadLegacyPreM9();
 			return;
 		}
 
@@ -148,29 +146,6 @@ public class InstancePreferences extends EclipsePreferences {
 			//Only print out message in failure case if we are debugging.
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("Unable to delete legacy preferences file: " + prefFile); //$NON-NLS-1$
-
-		loadLegacyPreM9();
-	}
-
-	/*
-	 * TODO: Remove this method after M9 but before the 3.0 release.
-	 * It converts from the interim format used in integration builds (pre M9).
-	 */
-	private void loadLegacyPreM9() {
-		if (qualifier == null)
-			return;
-		IPath oldLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(qualifier).append(DEFAULT_PREFERENCES_FILENAME);
-		if (!oldLocation.toFile().exists())
-			return;
-		try {
-			load(oldLocation);
-		} catch (BackingStoreException e) {
-			String message = "IOException encountered loading legacy preference file " + oldLocation; //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
-			log(status);
-			return;
-		}
-		oldLocation.toFile().delete();
 	}
 
 	protected IPath getLocation() {
