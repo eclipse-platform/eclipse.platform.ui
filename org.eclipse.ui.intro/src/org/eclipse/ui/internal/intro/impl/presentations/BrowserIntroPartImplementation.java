@@ -32,69 +32,6 @@ public class BrowserIntroPartImplementation extends
     private BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
             this);
 
-    // Global actions
-    private Action backAction = new Action() {
-
-        {
-            setToolTipText(IntroPlugin
-                    .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
-            setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
-        }
-
-        public void run() {
-            // dynamic case. Uses navigation history.
-            if (getModelRoot().isDynamic()) {
-                if (canNavigateBackward()) {
-                    navigateBackward();
-                    if (isURL(getCurrentLocation())) {
-                        browser.setUrl(getCurrentLocation());
-                    } else
-                        // we need to regen HTML. Set current page, and this
-                        // will triger regen.
-                        getModelRoot().setCurrentPageId(getCurrentLocation());
-                }
-            } else
-                // static HTML case. use browser real Back.
-                browser.back();
-
-            updateNavigationActionsState();
-        }
-    };
-
-    private Action forwardAction = new Action() {
-
-        {
-            setToolTipText(IntroPlugin
-                    .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
-            setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
-        }
-
-        public void run() {
-            // dynamic case. Uses navigation history.
-            if (getModelRoot().isDynamic()) {
-                if (canNavigateForward()) {
-                    navigateForward();
-                    if (isURL(getCurrentLocation())) {
-                        browser.setUrl(getCurrentLocation());
-                    } else
-                        // we need to regen HTML. Set current page, and this
-                        // will triger regen.
-                        getModelRoot().setCurrentPageId(getCurrentLocation());
-
-                }
-            } else
-                // static HTML case. use browser real Forward.
-                browser.forward();
-
-            updateNavigationActionsState();
-        }
-    };
 
     private Action homeAction = new Action() {
 
@@ -147,9 +84,9 @@ public class BrowserIntroPartImplementation extends
         // with history.
         browser.addLocationListener(urlListener);
 
-        // add a location listener that will clear a flagf at the end of any
-        // navigation to a page. This is used in conjuntion with the location
-        // listener to filter out redundant navigations die to frames.
+        // add a location listener that will clear a flag at the end of any
+        // navigation to a page. This is used in conjunction with the location
+        // listener to filter out redundant navigations due to frames.
         browser.addProgressListener(new ProgressListener() {
 
             public void changed(ProgressEvent event) {
@@ -369,6 +306,65 @@ public class BrowserIntroPartImplementation extends
         } else {
             super.saveCurrentPage(memento);
         }
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateBackward()
+     */
+    public boolean navigateBackward() {
+        boolean success = false;
+        if (getModelRoot().isDynamic()) {
+            // dynamic case. Uses navigation history.
+            if (canNavigateBackward()) {
+                navigateHistoryBackward();
+                if (isURL(getCurrentLocation())) {
+                    success = browser.setUrl(getCurrentLocation());
+                } else
+                    // we need to regen HTML. Set current page, and this
+                    // will triger regen.
+                    success = getModelRoot().setCurrentPageId(
+                            getCurrentLocation());
+            } else
+                success = false;
+        } else
+            // static HTML case. use browser real Back.
+            success = browser.back();
+
+        updateNavigationActionsState();
+        return success;
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateForward()
+     */
+    public boolean navigateForward() {
+        boolean success = false;
+        if (getModelRoot().isDynamic()) {
+            // dynamic case. Uses navigation history.
+            if (canNavigateForward()) {
+                navigateHistoryForward();
+                if (isURL(getCurrentLocation())) {
+                    success = browser.setUrl(getCurrentLocation());
+                } else
+                    // we need to regen HTML. Set current page, and this
+                    // will triger regen.
+                    success = getModelRoot().setCurrentPageId(
+                            getCurrentLocation());
+
+            } else
+                success = false;
+        } else
+            // static HTML case. use browser real Forward.
+            success = browser.forward();
+
+        updateNavigationActionsState();
+        return success;
     }
 
 

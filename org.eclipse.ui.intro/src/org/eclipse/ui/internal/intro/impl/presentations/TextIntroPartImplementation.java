@@ -40,5 +40,23 @@ public class TextIntroPartImplementation extends
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateBackward()
+     */
+    public boolean navigateBackward() {
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateForward()
+     */
+    public boolean navigateForward() {
+        return false;
+    }
+
 
 }

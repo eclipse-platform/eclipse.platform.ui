@@ -394,6 +394,21 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation.updateHistory(location);
     }
 
+    public boolean navigateForward() {
+        if (implementation != null)
+            return implementation.navigateForward();
+        else
+            return false;
+    }
+
+    public boolean navigateBackward() {
+        if (implementation != null)
+            return implementation.navigateBackward();
+        else
+            return false;
+    }
+
+
     /**
      * Called when the IntroPart is disposed. Forwards the call to the
      * implementation class.

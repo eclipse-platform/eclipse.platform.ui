@@ -66,7 +66,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     IAdapterFactory factory = new IAdapterFactory() {
 
         public Class[] getAdapterList() {
-            return new Class[] { StandbyPart.class };
+            return new Class[] { StandbyPart.class, IntroPartPresentation.class };
         }
 
         public Object getAdapter(Object adaptableObject, Class adapterType) {
@@ -75,6 +75,8 @@ public final class CustomizableIntroPart extends IntroPart implements
 
             if (adapterType.equals(StandbyPart.class)) {
                 return getStandbyPart();
+            } else if (adapterType.equals(IntroPartPresentation.class)) {
+                return getPresentation();
             } else
                 return null;
         }
@@ -218,6 +220,9 @@ public final class CustomizableIntroPart extends IntroPart implements
         return null;
     }
 
+    private IntroPartPresentation getPresentation() {
+        return presentation;
+    }
 
 
     /*

@@ -53,8 +53,8 @@ public class IntroURL implements IIntroURL {
     public static final String RUN_ACTION = "runAction"; //$NON-NLS-1$
     public static final String SHOW_PAGE = "showPage"; //$NON-NLS-1$
     public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
-    public static final String NAVIGATE_FORWARD = "navigateForward";
-    public static final String NAVIGATE_BACKWARD = "navigateBackward";
+    public static final String NAVIGATE_FORWARD = "navigateForward"; //$NON-NLS-1$
+    public static final String NAVIGATE_BACKWARD = "navigateBackward"; //$NON-NLS-1$
 
     /**
      * Constants that represent valid action keys.
@@ -154,6 +154,10 @@ public class IntroURL implements IIntroURL {
             return showPage(getParameter(KEY_ID));
         } else if (action.equals(SHOW_MESSAGE))
             return showMessage(getParameter(KEY_MESSAGE));
+        else if (action.equals(NAVIGATE_FORWARD))
+            return navigateForward();
+        else if (action.equals(NAVIGATE_BACKWARD))
+            return navigateBackward();
 
         else
             return handleCustomAction();
@@ -311,8 +315,43 @@ public class IntroURL implements IIntroURL {
     }
 
 
-    
+    /**
+     * Navigate foward in the presentation, whichever one it is.
+     * 
+     * @return
+     */
+    private boolean navigateForward() {
+        // set intro to standby mode. we know we have a customizable part.
+        CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
+                .getIntro();
+        if (introPart == null)
+            // intro is closed. Do nothing.
+            return false;
 
+        IntroPartPresentation presentation = (IntroPartPresentation) introPart
+                .getAdapter(IntroPartPresentation.class);
+
+        return presentation.navigateForward();
+    }
+
+    /**
+     * Navigate back in the presentation, whichever one it is.
+     * 
+     * @return
+     */
+    private boolean navigateBackward() {
+        // set intro to standby mode. we know we have a customizable part.
+        CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
+                .getIntro();
+        if (introPart == null)
+            // intro is closed. Do nothing.
+            return false;
+
+        IntroPartPresentation presentation = (IntroPartPresentation) introPart
+                .getAdapter(IntroPartPresentation.class);
+
+        return presentation.navigateBackward();
+    }
 
 
     /**

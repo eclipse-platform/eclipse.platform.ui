@@ -43,7 +43,41 @@ public abstract class AbstractIntroPartImplementation {
 
     private int navigationLocation = 0;
 
-    private Action viewIntroModelAction = new Action() {
+    //  Global actions
+    protected Action backAction = new Action() {
+
+        {
+            setToolTipText(IntroPlugin
+                    .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
+            setImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
+        }
+
+        public void run() {
+            navigateBackward();
+        }
+    };
+
+    protected Action forwardAction = new Action() {
+
+        {
+            setToolTipText(IntroPlugin
+                    .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
+            setImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
+        }
+
+        public void run() {
+            navigateForward();
+        }
+    };
+
+
+    protected Action viewIntroModelAction = new Action() {
 
         {
             setToolTipText(IntroPlugin
@@ -156,7 +190,7 @@ public abstract class AbstractIntroPartImplementation {
             return history.size() - 1;
     }
 
-    protected void navigateBackward() {
+    protected void navigateHistoryBackward() {
         if (badNavigationLocation(navigationLocation - 1))
             // do nothing. We are at the begining.
             return;
@@ -164,17 +198,16 @@ public abstract class AbstractIntroPartImplementation {
     }
 
     /**
-     * Navigate forward in the history. Returns true if you can navigate forward
+     * Navigate forward in the history.
      * 
      * @return
      */
-    protected void navigateForward() {
+    protected void navigateHistoryForward() {
         if (badNavigationLocation(navigationLocation + 1))
             // do nothing. We are at the begining.
             return;
         ++navigationLocation;
     }
-
 
 
     private boolean badNavigationLocation(int navigationLocation) {
@@ -194,10 +227,17 @@ public abstract class AbstractIntroPartImplementation {
 
 
     /**
-     * Subclasses must implement to set the focus to the correct control.
+     * Subclasses must implement to update the intro view actions when history
+     * is updated.
      *  
      */
     protected abstract void updateNavigationActionsState();
+
+
+    public abstract boolean navigateBackward();
+
+    public abstract boolean navigateForward();
+
 
     /**
      * Called when the IntroPart is disposed. Subclasses should override to

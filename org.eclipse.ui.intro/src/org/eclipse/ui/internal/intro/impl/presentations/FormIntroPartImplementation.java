@@ -48,72 +48,6 @@ public class FormIntroPartImplementation extends
     }
 
 
-    // Global actions
-    private Action backAction = new Action() {
-
-        {
-            setToolTipText(IntroPlugin
-                    .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
-            setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
-        }
-
-        public void run() {
-            // dynamic case. Uses navigation history.
-            if (getModelRoot().isDynamic()) {
-                if (canNavigateBackward()) {
-                    navigateBackward();
-                    if (isURL(getCurrentLocation()))
-                        Util.openBrowser(getCurrentLocation());
-                    else {
-                        // Set current page, and this will triger regen.
-                        CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                                .getIntro();
-                        currentIntroPart.getControl().setRedraw(false);
-                        getModelRoot().setCurrentPageId(getCurrentLocation());
-                        currentIntroPart.getControl().setRedraw(true);
-                    }
-                }
-            }
-
-            updateNavigationActionsState();
-        }
-    };
-
-    private Action forwardAction = new Action() {
-
-        {
-            setToolTipText(IntroPlugin
-                    .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
-            setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
-        }
-
-        public void run() {
-            // dynamic case. Uses navigation history.
-            if (getModelRoot().isDynamic()) {
-                if (canNavigateForward()) {
-                    navigateForward();
-                    if (isURL(getCurrentLocation()))
-                        Util.openBrowser(getCurrentLocation());
-                    else {
-                        // Set current page, and this will triger regen.
-                        CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                                .getIntro();
-                        currentIntroPart.getControl().setRedraw(false);
-                        getModelRoot().setCurrentPageId(getCurrentLocation());
-                        currentIntroPart.getControl().setRedraw(true);
-                    }
-                }
-            }
-            updateNavigationActionsState();
-        }
-    };
-
 
     private Action homeAction = new Action() {
 
@@ -330,6 +264,66 @@ public class FormIntroPartImplementation extends
             if (mainPageBook.getCurrentPage() != null)
                 mainPageBook.getCurrentPage().setFocus();
         }
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateBackward()
+     */
+    public boolean navigateBackward() {
+        boolean success = false;
+        if (getModelRoot().isDynamic()) {
+            // dynamic case. Uses navigation history.
+            if (canNavigateBackward()) {
+                navigateHistoryBackward();
+                if (isURL(getCurrentLocation()))
+                    success = Util.openBrowser(getCurrentLocation());
+                else {
+                    // Set current page, and this will triger regen.
+                    CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                            .getIntro();
+                    currentIntroPart.getControl().setRedraw(false);
+                    success = getModelRoot().setCurrentPageId(
+                            getCurrentLocation());
+                    currentIntroPart.getControl().setRedraw(true);
+                }
+            }
+        }
+
+        updateNavigationActionsState();
+        return success;
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateForward()
+     */
+    public boolean navigateForward() {
+        boolean success = false;
+
+        if (getModelRoot().isDynamic()) {
+            // dynamic case. Uses navigation history.
+            if (canNavigateForward()) {
+                navigateHistoryForward();
+                if (isURL(getCurrentLocation()))
+                    success = Util.openBrowser(getCurrentLocation());
+                else {
+                    // Set current page, and this will triger regen.
+                    CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                            .getIntro();
+                    currentIntroPart.getControl().setRedraw(false);
+                    success = getModelRoot().setCurrentPageId(
+                            getCurrentLocation());
+                    currentIntroPart.getControl().setRedraw(true);
+                }
+            }
+        }
+        updateNavigationActionsState();
+        return success;
     }
 
 
