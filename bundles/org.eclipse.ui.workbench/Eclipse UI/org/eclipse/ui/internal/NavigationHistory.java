@@ -94,7 +94,7 @@ public void markEditor(IEditorPart part) {
 		return;
 		
 	NavigationHistoryEntry e = getEntry(activeEntry);
-	if(part.getEditorInput() != e.editorInput)
+	if (e != null && part.getEditorInput() != e.editorInput)
 		updateEntry(e);
 	addEntry(part,false);
 }
@@ -216,7 +216,8 @@ private void addEntry(IEditorPart part, boolean markLocation) {
 		
 	NavigationHistoryEntry e= new NavigationHistoryEntry(page, part, location);
 	NavigationHistoryEntry current= getEntry(activeEntry);
-	current.restoreEditor();
+	if (current != null)
+		current.restoreEditor();
 	if (current == null || !e.mergeInto(current)) {
 		add(e);
 	} else {
