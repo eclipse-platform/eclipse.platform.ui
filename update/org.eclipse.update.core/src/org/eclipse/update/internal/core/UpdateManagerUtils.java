@@ -20,6 +20,7 @@ public class UpdateManagerUtils {
 	private static boolean OS_UNIX = BootLoader.OS_HPUX.equals(BootLoader.getOS()) || BootLoader.OS_AIX.equals(BootLoader.getOS()) || BootLoader.OS_LINUX.equals(BootLoader.getOS()) || BootLoader.OS_SOLARIS.equals(BootLoader.getOS());
 
 	private static Map table;
+
 	static {
 		table = new HashMap();
 		table.put("compatible", new Integer(IImport.RULE_COMPATIBLE)); //$NON-NLS-1$
@@ -575,6 +576,18 @@ public class UpdateManagerUtils {
 		if (ruleInt == IImport.RULE_NONE)
 			return IImport.RULE_PERFECT;
 		return ruleInt;
+	}
+	
+	/**
+	 * returns the mapping of matching id rules
+	 * the default returns perfect
+	 * 
+	 * @since 2.0.2
+	 */
+	public static int getMatchingIdRule(String rule) {
+		if (rule!=null && rule.equalsIgnoreCase("prefix"))
+			return IImport.RULE_PREFIX;
+		return IImport.RULE_PERFECT;
 	}
 	
 	/**

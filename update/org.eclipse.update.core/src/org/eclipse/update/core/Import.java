@@ -52,6 +52,19 @@ public class Import extends ImportModel implements IImport {
 	public int getRule() {
 		return UpdateManagerUtils.getMatchingRule(getMatchingRuleName());
 	}
+	
+	/**
+	 * Returns the matching rule for the dependency identifier.
+	 * @see IImport#getIdRule()
+	 */
+	public int getIdRule() {
+		return UpdateManagerUtils.getMatchingIdRule(getMatchingIdRuleName());
+	}
+	
+	/**
+	 * 
+	 * @see org.eclipse.update.core.IImport#getKind()
+	 */
 
 	/**
 	 * Returns the dependency kind

@@ -47,6 +47,13 @@ public interface IUpdateConstants {
 	 * @since 2.0
 	 */
 	public static final int RULE_GREATER_OR_EQUAL = 4;
+	
+	/**
+	 * Dependency can be satisfied only if the required identifier
+	 * is a prefix of the specified identifier.
+	 * @since 2.1
+	 */
+	public static final int RULE_PREFIX = 1;
 
 	/**
 	 * The search location for updates is defined by the root feature.

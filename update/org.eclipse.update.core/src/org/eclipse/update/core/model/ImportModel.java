@@ -18,6 +18,7 @@ public class ImportModel extends ModelObject {
 
 	private String id;
 	private String version;
+	private String matchingIdRuleName;
 	private String matchingRuleName;
 	private boolean featureImport;
 	private boolean patch;
@@ -86,6 +87,16 @@ public class ImportModel extends ModelObject {
 	public String getMatchingRuleName() {
 		return matchingRuleName;
 	}
+	
+	/**
+	 * Returns the dependent id matching rule name.
+	 *
+	 * @return matching rule name, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getMatchingIdRuleName() {
+		return matchingIdRuleName;
+	}
 
 	/**
 	 * Sets the dependent plug-in identifier.
@@ -147,6 +158,17 @@ public class ImportModel extends ModelObject {
 	public void setMatchingRuleName(String matchingRuleName) {
 		assertIsWriteable();
 		this.matchingRuleName = matchingRuleName;
+	}
+	/**
+	 * Sets the dependent id matching rule name. 
+	 * Throws a runtime exception if this object is marked read-only.
+	 *
+	 * @param matchingIdRuleName dependent id matching rule.
+	 * @since 2.1
+	 */
+	public void setMatchingIdRuleName(String matchingIdRuleName) {
+		assertIsWriteable();
+		this.matchingIdRuleName = matchingIdRuleName;
 	}
 	/**
 	 * Returns the isFeatureImport.

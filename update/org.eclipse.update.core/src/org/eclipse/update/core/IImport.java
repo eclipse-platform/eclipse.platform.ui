@@ -51,6 +51,14 @@ public interface IImport extends IAdaptable, IUpdateConstants, IPlatformEnvironm
 	public int getRule();
 	
 	/**
+	 * Returns the matching rule for the dependency identifier.
+	 * 
+	 * @return matching id rule
+	 * @since 2.1 
+	 */
+	public int getIdRule();
+	
+	/**
 	 * Returns the dependency kind
 	 * 
 	 * @see KIND_PLUGIN
