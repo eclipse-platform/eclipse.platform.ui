@@ -14,7 +14,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -47,10 +46,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
 		
-		boolean onlyProjectsSelected =
-			!selection.isEmpty()
-				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
-
 		if (!selection.isEmpty()) {
 			// Allow manual incremental build only if auto build is off.
 			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
@@ -60,14 +55,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			rebuildAction.selectionChanged(selection);
 			menu.add(rebuildAction);
 		}
-		
-		if (onlyProjectsSelected) {
-			openProjectAction.selectionChanged(selection);
-			menu.add(openProjectAction);
-			closeProjectAction.selectionChanged(selection);
-			menu.add(closeProjectAction);
-		}
-		
 		menu.add(new Separator());
 		
 		refreshAction.selectionChanged(selection);
