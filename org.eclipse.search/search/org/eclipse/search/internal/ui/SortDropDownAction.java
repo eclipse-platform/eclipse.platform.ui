@@ -45,12 +45,13 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		fViewer= viewer;
 		setToolTipText(SearchMessages.getString("SortDropDownAction.tooltip")); //$NON-NLS-1$
 		setMenuCreator(this);
-		fLastCheckedForType= new HashMap(5);		
+		fLastCheckedForType= new HashMap(5);
 	}
 
 	public void dispose() {
-		if (fMenu != null)
+		if (fMenu != null && !fMenu.isDisposed())
 			fMenu.dispose();
+		fMenu= null;
 	}
 
 	public Menu getMenu(Control parent) {
@@ -74,9 +75,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public Menu getMenu(final Menu parent) {
-		if (fMenu != null)
-			fMenu.dispose();
-		
+		dispose(); // ensure old menu gets disposed
+	
 		boolean hasEntries= false;
 		fMenu= new Menu(parent);
 		
@@ -150,6 +150,17 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private void setChecked(SorterDescriptor sorterDesc) {
 		fLastCheckedForType.put(fPageId, sorterDesc);
 		fgLastCheckedForType.put(fPageId, sorterDesc);
+	}
+
+	/**
+	 * Disposes this action's menu and returns a new unused instance.
+	 */
+	SortDropDownAction renew() {
+		SortDropDownAction action= new SortDropDownAction(fViewer);
+		action.fLastCheckedForType= fLastCheckedForType;
+		action.fPageId= fPageId;
+		dispose();
+		return action;
 	}
 
 	//--- Persistency -------------------------------------------------

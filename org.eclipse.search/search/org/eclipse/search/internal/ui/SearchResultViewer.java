@@ -309,8 +309,10 @@ public class SearchResultViewer extends TableViewer {
 			menu.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, new RemoveAllResultsAction());
 	
 		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSearchAgainAction);
-		if (!selection.isEmpty())
+		if (getItemCount() > 0) {
+			fSortDropDownAction= fSortDropDownAction.renew();
 			menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
+		}
 	}
 
 	private boolean isPotentialMatchSelected() {
