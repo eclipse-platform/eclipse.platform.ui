@@ -95,13 +95,6 @@ public class NewConfigurationView
 
 			return super.category(obj);
 		}
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			if (e1 instanceof IInstallConfiguration
-				&& e2 instanceof IInstallConfiguration) {
-				return 0;
-			}
-			return super.compare(viewer, e1, e2);
-		}
 	}
 
 	class LocalSiteProvider
@@ -130,10 +123,6 @@ public class NewConfigurationView
 				return openLocalSite();
 			}
 
-			if (parent instanceof PreservedConfiguration) {
-				// resolve the adapter
-				parent = ((PreservedConfiguration) parent).getConfiguration();
-			}
 			if (parent instanceof IInstallConfiguration) {
 				return getConfigurationSites((IInstallConfiguration) parent);
 			}
