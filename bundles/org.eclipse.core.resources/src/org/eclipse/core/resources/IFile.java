@@ -191,13 +191,8 @@ public InputStream getContents() throws CoreException;
  * returns an open input stream on the contents of this file.
  * The client is responsible for closing the stream when finished.
  * If force is <code>true</code> the file is opened and an input
- * stream returned regardless of the sync state of the file.  For out of sync
- * files, the new state is recorded and a resource change event generated 
- * only if this method is not called from a resource change listener
- * (i.e., during a resource change notification).  During resource change
- * notification modifications to the workspace state are prohibited so the
- * discovered change is ignored and will be discovered in subsequent
- * accesses to the resource.
+ * stream returned regardless of the sync state of the file. The file
+ * is not synchronized with the workspace.
  * If force is <code>false</code> the method fails if not in sync.
  *
  * @param force a flag controlling how to deal with resources that

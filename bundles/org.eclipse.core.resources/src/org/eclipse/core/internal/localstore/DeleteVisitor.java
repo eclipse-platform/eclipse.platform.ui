@@ -77,8 +77,7 @@ protected boolean shouldSkip(IResource resource) throws CoreException {
 	return false;
 }
 public boolean visit(UnifiedTreeNode node) throws CoreException {
-	if (monitor.isCanceled())
-		throw new OperationCanceledException();
+	Policy.checkCanceled(monitor);
 	Resource target = (Resource) node.getResource();
 	try {
 		if (shouldSkip(target)) {

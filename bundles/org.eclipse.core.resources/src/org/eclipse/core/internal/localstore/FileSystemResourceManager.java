@@ -221,16 +221,6 @@ public InputStream read(IFile target, boolean force, IProgressMonitor monitor) t
 		((Resource) target).checkExists(flags, true);
 		if (CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath()) != info.getLocalSyncInfo())
 			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), Policy.bind("fileChanged", null), null);
-	} else {
-		// If we are the current operation, we should not call refresh local but
-		// only give back the contents of the file. It might happen that we are
-		// inside a delta notification and the tree is locked, so we cannot change
-		// it through an operation like refresh local.
-		// Also, we need to call IResource.refreshLocal instead of FileSystemResourceManager.refresh
-		// because this method is called by IFile.getContents that is not an operation and
-		// FSRM.refresh is not an operation either.
-		if (!(workspace.getWorkManager().isCurrentOperation() && workspace.isTreeLocked()))
-			target.refreshLocal(IResource.DEPTH_ZERO, null);
 	}
 	return getStore().read(localFile);
 }

@@ -34,6 +34,7 @@ public class Marker extends PlatformObject implements IMarker {
  * Constructs a new marker object. 
  */
 Marker(IResource resource, long id) {
+	Assert.isLegal(resource != null);
 	this.resource = resource;
 	this.id = id;
 }

@@ -83,7 +83,10 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 	getWorkManager().incrementNestedOperations();
 	if (getWorkManager().getNestedOperationDepth() != getWorkManager().getPreparedOperationDepth())
 		Assert.isTrue(false, "Operation was not prepared.");
-	Assert.isTrue(!(treeLocked && createNewTree), Policy.bind("cannotModify", null));
+	if (treeLocked && createNewTree) {
+		String message = Policy.bind("cannotModify", null);
+		throw new ResourceException(IResourceStatus.ERROR, null, message, null);
+	}
 	if (getWorkManager().getPreparedOperationDepth() > 1)
 		return;
 	if (createNewTree)
@@ -322,8 +325,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 			prepareOperation();
 			beginOperation(true);
 			for (int i = 0; i < resources.length; i++) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
+				Policy.checkCanceled(monitor);
 				IResource resource = resources[i];
 				if (resource == null || isDuplicate(resources, i)) {
 					monitor.worked(1);
@@ -481,8 +483,7 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 			prepareOperation();
 			beginOperation(true);
 			for (int i = 0; i < resources.length; i++) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
+				Policy.checkCanceled(monitor);
 				Resource resource = (Resource) resources[i];
 				if (resource == null) {
 					monitor.worked(1);
@@ -839,8 +840,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 			prepareOperation();
 			beginOperation(true);
 			for (int i = 0; i < resources.length; i++) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
+				Policy.checkCanceled(monitor);
 				if (resources[i] == null || isDuplicate(resources, i)) {
 					monitor.worked(1);
 					continue;

@@ -43,7 +43,7 @@ public Map getArguments() {
 	return getArguments(true);
 }
 public Map getArguments(boolean makeCopy) {
-	return makeCopy ? (Map) arguments.clone() : arguments;
+	return arguments == null ? null : (makeCopy ? (Map) arguments.clone() : arguments);
 }
 /**
  * @see ICommand#getBuilderName
@@ -59,9 +59,8 @@ public int hashCode() {
  * @see ICommand#setArguments
  */
 public void setArguments(Map value) {
-	Assert.isLegal(value != null);
 	// copy parameter for safety's sake
-	arguments = new HashMap(value);
+	arguments = value == null ? null : new HashMap(value);
 }
 /**
  * @see ICommand#setBuilderName

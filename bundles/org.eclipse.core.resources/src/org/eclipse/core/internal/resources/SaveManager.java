@@ -1175,7 +1175,10 @@ public void visitAndWrite(IResource root) throws CoreException {
 	// Create the output streams
 	try {
 		o1 = new DataOutputStream(new SafeFileOutputStream(markersLocation.toOSString(), markersTempLocation.toOSString()));
-		o2 = new DataOutputStream(new SafeFileOutputStream(syncInfoLocation.toOSString(), syncInfoTempLocation.toOSString()));
+		// we don't store the sync info for the workspace root so don't create
+		// an empty file
+		if (root.getType() != IResource.ROOT)
+			o2 = new DataOutputStream(new SafeFileOutputStream(syncInfoLocation.toOSString(), syncInfoTempLocation.toOSString()));
 	} catch (IOException e) {
 		if (o1 != null)
 			try {
@@ -1194,7 +1197,9 @@ public void visitAndWrite(IResource root) throws CoreException {
 		public boolean visit(IResource resource) throws CoreException {
 			try {
 				markerManager.write(resource, markersOutput, writtenTypes);
-				synchronizer.writeSyncInfo(resource, syncInfoOutput, writtenPartners);
+				// if we have the workspace root then the output stream will be null
+				if (syncInfoOutput != null)
+					synchronizer.writeSyncInfo(resource, syncInfoOutput, writtenPartners);
 			} catch (IOException e) {
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), "Failed to write meta info for resource.", e);
 			}
@@ -1207,7 +1212,10 @@ public void visitAndWrite(IResource root) throws CoreException {
 		int depth = root.getType() == IResource.ROOT ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		root.accept(visitor, depth, true);
 		removeGarbage(markersOutput, markersLocation, markersTempLocation);
-		removeGarbage(syncInfoOutput, syncInfoLocation, syncInfoTempLocation);
+		// if we have the workspace root the output stream will be null and we
+		// don't have to perform cleanup code
+		if (syncInfoOutput != null)
+			removeGarbage(syncInfoOutput, syncInfoLocation, syncInfoTempLocation);
 	} catch (IOException e) {
 		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);

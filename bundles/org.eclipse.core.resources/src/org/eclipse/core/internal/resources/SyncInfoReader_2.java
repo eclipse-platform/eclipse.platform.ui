@@ -24,7 +24,7 @@ public void readSyncInfo(DataInputStream input) throws CoreException {
 	try {
 		while (input.available() != 0) {
 			IPath path = new Path(input.readUTF());
-			Resource resource = (Resource) workspace.getRoot().findMember(path);
+			Resource resource = (Resource) workspace.getRoot().findMember(path, true);
 			if (resource == null)
 				return;
 			readSyncInfo(resource, input, readPartners);
@@ -61,7 +61,7 @@ private void readSyncInfo(Resource resource, DataInputStream input, List readPar
 		table.put(name, bytes);
 	}
 	// set the table on the resource info
-	ResourceInfo info = resource.getResourceInfo(false, true);
+	ResourceInfo info = resource.getResourceInfo(true, true);
 	info.setSyncInfo(table);
 }
 }

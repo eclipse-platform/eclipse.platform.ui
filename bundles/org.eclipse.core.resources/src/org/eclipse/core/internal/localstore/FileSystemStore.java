@@ -20,8 +20,7 @@ public void copy(File source, File destination, int depth, IProgressMonitor moni
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("copying", new String[] {source.getAbsolutePath()}), 1);
-		if (monitor.isCanceled())
-			throw new OperationCanceledException();
+		Policy.checkCanceled(monitor);
 		if (source.isDirectory())
 			copyDirectory(source, destination, depth, Policy.subMonitorFor(monitor, 1));
 		else

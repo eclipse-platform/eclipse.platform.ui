@@ -119,8 +119,7 @@ protected void synchronize(UnifiedTreeNode node) throws CoreException {
 	getRefreshLocalVisitor().visit(node);
 }
 public boolean visit(UnifiedTreeNode node) throws CoreException {
-	if (monitor.isCanceled())
-		throw new OperationCanceledException();
+	Policy.checkCanceled(monitor);
 	try {
 		boolean wasSynchronized = isSynchronized(node);
 		if (!wasSynchronized)

@@ -79,6 +79,10 @@ public static String bind(String id, String[] bindings) {
 	}
 	return output.toString();
 }
+public static void checkCanceled(IProgressMonitor monitor) {
+	if (monitor.isCanceled())
+		throw new OperationCanceledException();
+}
 public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 	if (monitor == null)
 		return new NullProgressMonitor();

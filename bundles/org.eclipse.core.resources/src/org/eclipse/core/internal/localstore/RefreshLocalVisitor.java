@@ -8,6 +8,7 @@ package org.eclipse.core.internal.localstore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Policy;
 //
 public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreConstants {
 	protected IProgressMonitor monitor;
@@ -148,8 +149,7 @@ protected boolean synchronizeLastModified(UnifiedTreeNode node, Resource target)
 	return false;
 }
 public boolean visit(UnifiedTreeNode node) throws CoreException {
-	if (monitor.isCanceled())
-		throw new OperationCanceledException();
+	Policy.checkCanceled(monitor);
 	try {
 		Resource target = (Resource) node.getResource();
 		if (node.existsInWorkspace() && node.existsInFileSystem()) {
