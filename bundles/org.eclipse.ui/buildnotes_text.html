@@ -13,8 +13,62 @@ Eclipse Platform Build Notes</h1>
 
 <h1>
 Text Editor Support (including JFace Text)</h1>
+&nbsp;
+<p>&nbsp;
+<br>&nbsp;
+<p>Eclipse SDK Build 203
+<h2>
+Breaking API changes</h2>
+&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
+<br>&nbsp; interface:&nbsp;&nbsp; IHoverInfoPresenter
+<br>&nbsp; change:&nbsp;&nbsp; removed interface
+<br>&nbsp; change type: breaking API change for implementers of IHoverInfoPresenter
+<h2>
+Other highlights</h2>
+For more information about the following issue please see JavaDoc of the
+classes
+<ul>
+<li>
+Complete rework of hover popups (previously a package private mechanism
+hidden from clients). There is now the concept of an IInformationControl
+and an IInformationControlCreator. Everywhere where floating windows are
+used to present some kind of information, now IInformationControl is used.
+More precise, the according component is equiped with an IInformationControlCreator
+and creates the IInformationControl instance when needed. So clients can
+set an IInformationControlCreator on a TextViewer and a SourceViewer. They&nbsp;
+use it&nbsp; to create the text hover window and the annotation bar hover
+window respectively. DefaultInformationControl&nbsp; is a StyledText-based
+default implementation of IInformationControl. Clients may implement IInformationControl
+directly and inject their custom information control creator.</li>
 
-<p><br>Eclipse SDK Build 200
+<li>
+AbstractInformationControlManager and its subclasses abstractly&nbsp; implement
+the process of providing a SWT control with support for floating information
+windows. This covers layout, positioning, content, and visibility of the
+floating window. They offer a broad customization space such as layout
+strategies, colors, etc.</li>
+
+<li>
+TextViewer hovers, annotation bar hovers, additional info on completion
+proposals in the content assistant, etc. benefit from the new infrastructure.
+UI improvements are especially visible in the layout behavior.</li>
+
+<li>
+Introduced the concept of an information presenter. An information presenter
+shows information on a context derivved subject on request. See IInformationPresenter
+for details as well as SourceViewer and SourceViewerConfiguration for how
+to use it.</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+Instances of DefaultInformationControl are wider than necessary.
+<h2>
+Problem reports fixed</h2>
+
+<p><br>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 200
 <h2>
 Breaking API changes</h2>
 &nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
