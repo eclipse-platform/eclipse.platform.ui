@@ -89,6 +89,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IContextService;
@@ -96,6 +97,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ContextService;
@@ -215,7 +217,7 @@ public final class Workbench implements IWorkbench {
 	 * <code>largeUpdateStart()</code> and <code>largeUpdateEnd()</code>.
 	 */
 	private int largeUpdates = 0;
-	
+
 	/**
 	 * The map of services maintained by the workbench. These services are
 	 * initialized during workbench during the <code>init</code> method.
@@ -862,10 +864,9 @@ public final class Workbench implements IWorkbench {
 		 * Phase 1 of the initialization of commands. When this phase completes,
 		 * all the services and managers will exist, and be accessible via the
 		 * getService(Object) method.
-		 */  
+		 */
 		commandManager = new CommandManager();
-		final CommandService commandService = new CommandService(
-				commandManager);
+		final CommandService commandService = new CommandService(commandManager);
 		services.put(ICommandService.class, commandService);
 		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
 		contextManager = new ContextManager();
@@ -890,7 +891,7 @@ public final class Workbench implements IWorkbench {
 		handlerService.readRegistry();
 		contextService.readRegistry();
 		bindingService.readRegistryAndPreferences(commandService);
-		
+
 		/*
 		 * Phase 3 of the initialization of commands. The source providers that
 		 * the workbench provides are creating and registered with the above
@@ -918,10 +919,10 @@ public final class Workbench implements IWorkbench {
 		showPerspectiveCommand.setHandler(new ShowPerspectiveHandler());
 
 		/*
-		 * Phase 4 of the initialization of commands.  This handles the creation
-		 * of wrappers for legacy APIs.  By the time this phase completes, any
+		 * Phase 4 of the initialization of commands. This handles the creation
+		 * of wrappers for legacy APIs. By the time this phase completes, any
 		 * code trying to access commands through legacy APIs should work.
-		 *  
+		 * 
 		 * TODO This is the deprecated support. It would be nice to pull out all
 		 * of this except for the Workbench*Support constructors.
 		 */
@@ -2209,9 +2210,9 @@ public final class Workbench implements IWorkbench {
 	public final void largeUpdateStart() {
 		if (largeUpdates++ == 0) {
 			// TODO Consider whether these lines still need to be here.
-			//workbenchCommandSupport.setProcessing(false);
-			//workbenchContextSupport.setProcessing(false);
-			
+			// workbenchCommandSupport.setProcessing(false);
+			// workbenchContextSupport.setProcessing(false);
+
 			final IWorkbenchWindow[] windows = getWorkbenchWindows();
 			for (int i = 0; i < windows.length; i++) {
 				IWorkbenchWindow window = windows[i];
@@ -2237,8 +2238,8 @@ public final class Workbench implements IWorkbench {
 	public final void largeUpdateEnd() {
 		if (--largeUpdates == 0) {
 			// TODO Consider whether these lines still need to be here.
-			//workbenchCommandSupport.setProcessing(true);
-			//workbenchContextSupport.setProcessing(true);
+			// workbenchCommandSupport.setProcessing(true);
+			// workbenchContextSupport.setProcessing(true);
 
 			// Perform window-specific blocking.
 			final IWorkbenchWindow[] windows = getWorkbenchWindows();
@@ -2282,6 +2283,20 @@ public final class Workbench implements IWorkbench {
 		return WorkbenchHelpSystem.getInstance();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbench#getHelpSystem()
+	 */
+	public IWorkbenchBrowserSupport getBrowserSupport() {
+		return WorkbenchBrowserSupport.getInstance();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbench#getViewRegistry()
+	 */
 	public IViewRegistry getViewRegistry() {
 		return WorkbenchPlugin.getDefault().getViewRegistry();
 	}

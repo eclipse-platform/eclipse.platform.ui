@@ -16,6 +16,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
@@ -482,6 +483,15 @@ public interface IWorkbench extends IAdaptable {
      */
     public IWorkbenchHelpSystem getHelpSystem();
     
+		
+	/**
+	  * Return the browser support for this workbench.
+	  * 
+	  * @return the browser support system
+	  * @since 3.1
+	  */
+	public IWorkbenchBrowserSupport getBrowserSupport();
+	
     /**
      * Returns a boolean indicating whether the workbench is in the process
      * of closing.
