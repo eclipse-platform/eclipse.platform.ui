@@ -13,6 +13,7 @@ package org.eclipse.search2.internal.ui.text;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -92,10 +93,20 @@ public class MarkerHighlighter extends Highlighter {
 	public  void removeAll() {
 		try {
 			fFile.deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
+			fMatchesToAnnotations.clear();
 		} catch (CoreException e) {
 			// just log the thing. There's nothing we can do anyway.
 			SearchPlugin.log(e.getStatus());
 		}
+	}
+
+	protected void handleContentReplaced(IFileBuffer buffer) {
+		if (!buffer.getLocation().equals(fFile.getLocation()))
+			return;
+		Match[] matches= new Match[fMatchesToAnnotations.keySet().size()];
+		fMatchesToAnnotations.keySet().toArray(matches);
+		removeAll();
+		addHighlights(matches);
 	}
 
 }

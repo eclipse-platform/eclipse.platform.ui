@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -174,6 +176,26 @@ public class EditorAccessHighlighter extends Highlighter {
 		Set matchSet= fMatchesToAnnotations.keySet();
 		Match[] matches= new Match[matchSet.size()];
 		removeHighlights((Match[]) matchSet.toArray(matches));
+	}
+
+	protected void handleContentReplaced(IFileBuffer buffer) {
+		if (!(buffer instanceof ITextFileBuffer))
+			return;
+		IDocument document= null;
+		ITextFileBuffer textBuffer= (ITextFileBuffer) buffer;
+		for (Iterator matches = fMatchesToAnnotations.keySet().iterator(); matches.hasNext();) {
+			Match match = (Match) matches.next();
+			document= fEditorAcess.getDocument(match);
+			if (document != null)
+				break;
+		}
+		
+		if (document != null && document.equals(textBuffer.getDocument())) {
+			Match[] matches= new Match[fMatchesToAnnotations.keySet().size()];
+			fMatchesToAnnotations.keySet().toArray(matches);
+			removeAll();
+			addHighlights(matches);			
+		}
 	}
 
 }

@@ -44,8 +44,10 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	public EditorAnnotationManager(IEditorPart editorPart) {
 		fEditor= editorPart;
 		fHighlighter= createHighlighter(editorPart);
+
 	}
 	
+
 	public static final void debugSetHighlighterType(int type) {
 		fgHighlighterType= type;
 	}
@@ -53,6 +55,8 @@ public class EditorAnnotationManager implements ISearchResultListener {
 
 	void dispose() {
 		removeAnnotations();
+		if (fHighlighter != null)
+			fHighlighter.dispose();
 		if (fResult != null)
 			fResult.removeListener(this);
 	}
