@@ -1,7 +1,7 @@
 package org.eclipse.team.core.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -46,38 +46,37 @@ public class FileModificationValidator implements IFileModificationValidator {
 			IFile file = files[i];
 			RepositoryProvider provider = RepositoryProvider.getProvider(file.getProject());
 			
-			if(! providersToFiles.containsKey(provider)) {
+			if (!providersToFiles.containsKey(provider)) {
 				providersToFiles.put(provider, new ArrayList());
 			}
 			
-			((ArrayList) providersToFiles.get(provider)).add(file);
+			((ArrayList)providersToFiles.get(provider)).add(file);
 		}
 		
-		Iterator providersIterator = (providersToFiles.keySet()).iterator();
+		Iterator providersIterator = providersToFiles.keySet().iterator();
 		
 		//for each provider, validate its files
 		while(providersIterator.hasNext()) {
-			RepositoryProvider provider = (RepositoryProvider) providersIterator.next();
-			ArrayList filesList = (ArrayList) providersToFiles.get(provider);
-			IFile[] filesArray = (IFile[]) filesList.toArray(new IFile[filesList.size()]);
+			RepositoryProvider provider = (RepositoryProvider)providersIterator.next();
+			ArrayList filesList = (ArrayList)providersToFiles.get(provider);
+			IFile[] filesArray = (IFile[])filesList.toArray(new IFile[filesList.size()]);
 			IFileModificationValidator validator = DEFAULT_VALIDATOR;
 
 			//if no provider or no validator use the default validator
-			if(provider != null) {
+			if (provider != null) {
 				IFileModificationValidator v = provider.getFileModificationValidator();
-				if(v != null) 
-					validator = v;
+				if (v != null) validator = v;
 			}
 			
 			returnStati.add(validator.validateEdit(filesArray, context));
 		}				
 
 		if (returnStati.size() == 1) {
-			return (IStatus) returnStati.get(0);
+			return (IStatus)returnStati.get(0);
 		} 
 		return new MultiStatus(TeamPlugin.ID,
 			0, 
-			(IStatus[]) returnStati.toArray(new IStatus[returnStati.size()]),
+			(IStatus[])returnStati.toArray(new IStatus[returnStati.size()]),
 			Policy.bind("FileModificationValidator.validateEdit"),
 			null); //$NON-NLS-1$
 	}
@@ -90,10 +89,9 @@ public class FileModificationValidator implements IFileModificationValidator {
 		IFileModificationValidator validator = DEFAULT_VALIDATOR;
 
 		//if no provider or no validator use the default validator
-		if(provider != null) {
+		if (provider != null) {
 			IFileModificationValidator v = provider.getFileModificationValidator();
-			if(v != null) 
-				validator = v;
+			if (v != null) validator = v;
 		}
 
 		return validator.validateSave(file);
