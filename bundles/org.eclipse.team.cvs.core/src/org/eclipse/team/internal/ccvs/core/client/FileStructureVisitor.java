@@ -77,7 +77,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 			sendFolder(mFolder);
 		}
 
-		if (!mFolder.isCVSFolder() || !mFolder.exists()) {
+		if ( ! mFolder.isCVSFolder() || ! mFolder.exists() || isOrphanedSubtree(mFolder)) {
 			return;
 		}
 
