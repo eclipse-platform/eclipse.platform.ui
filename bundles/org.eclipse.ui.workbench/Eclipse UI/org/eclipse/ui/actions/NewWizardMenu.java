@@ -1,9 +1,15 @@
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
@@ -21,7 +27,7 @@ import java.util.List;
  * from the Perspective Customize dialog.
  */
 public class NewWizardMenu extends ContributionItem {
-	private Action showDlgAction = new NewWizardAction();
+	private Action showDlgAction;
 	private Action newProjectAction;
 	private Action newExampleAction;
 	private Map actions = new HashMap(21);
@@ -52,10 +58,7 @@ public class NewWizardMenu extends ContributionItem {
 	 * @param register if <code>true</code> the menu listens to perspective changes in
 	 * 		the window
 	 */
-	public NewWizardMenu(
-		IMenuManager innerMgr,
-		IWorkbenchWindow window,
-		boolean register) {
+	public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean register) {
 		this(window);
 		fillMenu(innerMgr);
 		// Must be done after constructor to ensure field initialization.
@@ -64,6 +67,7 @@ public class NewWizardMenu extends ContributionItem {
 	public NewWizardMenu(IWorkbenchWindow window) {
 		super();
 		this.window = window;
+		showDlgAction = new NewWizardAction(window);
 		newProjectAction = new NewProjectAction(window);
 		newExampleAction = new NewExampleAction(window);
 	}

@@ -89,9 +89,11 @@ public boolean performFinish() {
 	// Open editor on new file.
 	IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
 	try {
-		IWorkbenchPage page = dw.getActivePage();
-		if (page != null)
-			page.openEditor(file);
+		if (dw != null) {
+			IWorkbenchPage page = dw.getActivePage();
+			if (page != null)
+				page.openEditor(file);
+		}
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			dw.getShell(),

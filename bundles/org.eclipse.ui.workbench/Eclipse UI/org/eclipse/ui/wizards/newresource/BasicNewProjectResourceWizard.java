@@ -268,11 +268,13 @@ private static void openInNewWindow(IPerspectiveDescriptor desc) {
 			ResourcesPlugin.getWorkspace().getRoot());
 	} catch (WorkbenchException e) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		ErrorDialog.openError(
-			window.getShell(),
-			WINDOW_PROBLEMS_TITLE,
-			e.getMessage(),
-			e.getStatus());
+		if (window != null) {
+			ErrorDialog.openError(
+				window.getShell(),
+				WINDOW_PROBLEMS_TITLE,
+				e.getMessage(),
+				e.getStatus());
+		}
 	}
 }
 /* (non-Javadoc)

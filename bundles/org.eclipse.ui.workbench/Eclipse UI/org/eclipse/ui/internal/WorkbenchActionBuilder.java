@@ -646,7 +646,7 @@ public class WorkbenchActionBuilder {
 		// Many actions need the workbench.
 		IWorkbench workbench = getWindow().getWorkbench();
 
-		newWizardAction = new NewWizardAction();
+		newWizardAction = new NewWizardAction(getWindow());
 		// images for this action are set in its constructor
 		keyBindingService.registerGlobalAction(newWizardAction);
 

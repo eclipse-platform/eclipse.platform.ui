@@ -23,7 +23,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
@@ -58,8 +57,7 @@ public class NewExampleAction extends Action {
 	 * This default constructor allows the the action to be called from the welcome page.
 	 */
 	public NewExampleAction() {
-		this(
-			((Workbench) PlatformUI.getWorkbench()).getActiveWorkbenchWindow());
+		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 	}
 
 	/**
