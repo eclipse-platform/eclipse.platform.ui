@@ -20,7 +20,10 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
@@ -236,6 +239,7 @@ public EditorHistory getEditorHistory() {
 	}
 	return editorHistory;
 }
+
 /**
  * Returns the editor registry for the workbench.
  *
@@ -372,6 +376,7 @@ private boolean init(String[] commandLineArgs) {
 	addAdapters();
 	windowManager = new WindowManager();
 	WorkbenchColors.startup();
+	initializeFonts();
 
 	// deadlock code
 	boolean avoidDeadlock = true;
@@ -392,9 +397,34 @@ private boolean init(String[] commandLineArgs) {
 	
 	openWindows();
 	openWelcomeDialog();
-	
+
 	isStarting = false;
 	return true;
+}
+/**
+ * Initialize the workbench fonts with the stored values.
+ */
+private void initializeFonts() {
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	FontRegistry registry = JFaceResources.getFontRegistry();
+	String locale = Locale.getDefault().toString();
+	initializeFont(JFaceResources.DEFAULT_FONT,locale,registry,store);
+	initializeFont(JFaceResources.DIALOG_FONT,locale,registry,store);
+	initializeFont(JFaceResources.BANNER_FONT,locale,registry,store);
+	initializeFont(JFaceResources.VIEWER_FONT,locale,registry,store);
+	initializeFont(JFaceResources.TEXT_FONT,locale,registry,store);
+	initializeFont(JFaceResources.WINDOW_FONT,locale,registry,store);
+}
+/**
+ * Initialize the specified font with the stored value.
+ */
+private void initializeFont(String fontKey,String locale,FontRegistry registry,IPreferenceStore store) {
+	String font_Locale = fontKey + "_" + locale;
+	if(store.isDefault(font_Locale))
+		return;
+	FontData[] font = new FontData[1];
+	font[0] = PreferenceConverter.getFontData(store,font_Locale);
+	registry.put(fontKey,font);
 }
 /**
  * Initialize the product image obtained from the product info file
@@ -551,6 +581,45 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
 }
+
+/**
+ * Opens a new page. 
+ */
+public IWorkbenchPage openPage(String perspID,IAdaptable input) 
+	throws WorkbenchException 
+{
+	String openBehavior =
+		WorkbenchPlugin.getDefault().getPreferenceStore().getString(
+			IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+
+	if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
+		IWorkbenchWindow ww = openWorkbenchWindow(perspID,input);
+		return ww.getActivePage();
+	} else if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
+		return getActiveWorkbenchWindow().openPage(input);
+	} else if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
+	// Add the default perspective first.
+		IPerspectiveRegistry reg =
+			WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+		IPerspectiveDescriptor defDesc =
+			reg.findPerspectiveWithId(IWorkbenchConstants.DEFAULT_LAYOUT_ID);
+		if (defDesc != null) {
+			IWorkbenchPage page = getActiveWorkbenchWindow().getActivePage();
+			if (page != null)
+				page.setPerspective(defDesc);
+			return page;
+		}
+	}
+	return null;
+}
+/**
+ * Opens a new page. 
+ */
+public IWorkbenchPage openPage(IAdaptable input)
+	throws WorkbenchException 
+{
+	return openPage(getPerspectiveRegistry().getDefaultPerspective(),input);
+}
 /**
  * Reads the product info.
  * The product info contains the product name, product images,
@@ -586,7 +655,7 @@ private XMLMemento recordWorkbenchState() {
 /**
  * @see IPersistable
  */
-public void restoreState(IMemento memento) {
+private void restoreState(IMemento memento) {
 	// Get the child windows.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 	
@@ -631,7 +700,7 @@ public Object run(Object arg) {
 /**
  * run an event loop for the workbench.
  */
-protected void runEventLoop() {
+private void runEventLoop() {
 	Display display = Display.getCurrent();
 	runEventLoop = true;
 	while (runEventLoop) {
@@ -658,7 +727,7 @@ protected void runEventLoop() {
 /**
  * @see IPersistable
  */
-public void saveState(IMemento memento) {
+private void saveState(IMemento memento) {
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	
