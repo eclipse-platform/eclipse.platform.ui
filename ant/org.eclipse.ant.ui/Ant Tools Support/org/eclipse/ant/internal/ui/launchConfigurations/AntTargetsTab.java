@@ -58,7 +58,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -137,7 +136,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -451,7 +450,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			if (expandedLocation != null) {
 				final CoreException[] exceptions= new CoreException[1];
 				try {
-					final String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration);
+					final String[] arguments = AntUtil.parseString(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null), ","); //$NON-NLS-1$
 					IRunnableWithProgress operation= new IRunnableWithProgress() {
 						/* (non-Javadoc)
 						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -496,13 +495,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		return fAllTargets;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
@@ -588,7 +587,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		updateSelectionCount();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
@@ -631,21 +630,21 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targets);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return AntLaunchConfigurationMessages.getString("AntTargetsTab.Tar&gets_14"); //$NON-NLS-1$
 	}
 		
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return AntUIImages.getImage(IAntUIConstants.IMG_TAB_ANT_TARGETS);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
@@ -662,6 +661,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 		return super.isValid(launchConfig);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
 	 */
