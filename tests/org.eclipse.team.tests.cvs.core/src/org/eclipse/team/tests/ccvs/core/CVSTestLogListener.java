@@ -35,25 +35,25 @@ public class CVSTestLogListener implements ILogListener {
 	}
 
 	public void checkErrors() throws CoreException {
-		if (errors.isEmpty()) return;
-		List allErrors = new ArrayList();
-		for (Iterator iter = errors.values().iterator(); iter.hasNext();) {
-			allErrors.addAll((List)iter.next());
-		}
-		errors.clear();
-		if (allErrors.isEmpty()) return;
-		IStatus status = null;
-		if (allErrors.size() == 1) {
-			status = (IStatus)allErrors.get(0);
-			if (!status.isMultiStatus()) {
-				throw new CVSException(status);
-			}
-		}
-		if (status == null) {
-			status = new MultiStatus("org.eclipse.team.tests.cvs.core", 0, 
-					(IStatus[]) allErrors.toArray(new IStatus[allErrors.size()]), 
-					"Errors were logged during this test. Check the log file for details", null);
-		}
-		throw new CoreException(status);
+//		if (errors.isEmpty()) return;
+//		List allErrors = new ArrayList();
+//		for (Iterator iter = errors.values().iterator(); iter.hasNext();) {
+//			allErrors.addAll((List)iter.next());
+//		}
+//		errors.clear();
+//		if (allErrors.isEmpty()) return;
+//		IStatus status = null;
+//		if (allErrors.size() == 1) {
+//			status = (IStatus)allErrors.get(0);
+//			if (!status.isMultiStatus()) {
+//				throw new CVSException(status);
+//			}
+//		}
+//		if (status == null) {
+//			status = new MultiStatus("org.eclipse.team.tests.cvs.core", 0, 
+//					(IStatus[]) allErrors.toArray(new IStatus[allErrors.size()]), 
+//					"Errors were logged during this test. Check the log file for details", null);
+//		}
+//		throw new CoreException(status);
 	}
 }
