@@ -131,7 +131,7 @@ public class AdaptedResourceNavigator
 		viewer.setLabelProvider(
 			new DecoratingLabelProvider(
 				new TestAdaptableWorkbenchAdapter(), 
-				getViewSite().getDecoratorManager()));
+				getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager()));
 
 		viewer.setInput(getInitialInput());
 		updateTitle();
@@ -503,7 +503,7 @@ public class AdaptedResourceNavigator
 		DecoratingLabelProvider provider =
 			(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
 		if(decorator == null)
-			provider.setLabelDecorator(getViewSite().getDecoratorManager());
+			provider.setLabelDecorator(getSite().getWorkbenchWindow().getWorkbench().getDecoratorManager());
 		else
 			provider.setLabelDecorator(decorator);
 	}
