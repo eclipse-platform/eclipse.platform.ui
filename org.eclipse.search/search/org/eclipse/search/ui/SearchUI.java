@@ -11,6 +11,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.search.internal.ui.OpenSearchDialogAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 
 /**
  * The central class for access to the Search Plug-in's User Interface. 
@@ -48,10 +49,27 @@ public final class SearchUI {
 	public static final String LINE= "line"; //$NON-NLS-1$
 
 	/** 
+	 * Potential match marker attribute
+	 * (value <code>"org.eclipse.search.potentialMatch"</code>).
+	 *  <p>
+	 * This optional marker attribute tells whether a marker is
+	 * a potential or an exact match.
+	 * The marker is considered an exact match if the attribute is missing.
+	 * </p>
+	 * <p>
+	 * Potential matches are shown with a different background color in
+	 * the Search view.
+	 * </p>
+	 *
+	 * @see org.eclipse.core.resources.IMarker#getAttribute
+	 */
+	public static final String POTENTIAL_MATCH= "org.eclipse.search.potentialMatch"; //$NON-NLS-1$
+
+	/** 
 	 * Id of the Search result view
 	 * (value <code>"org.eclipse.search.SearchResultView"</code>).
 	 */
-	public static final String SEARCH_RESULT_VIEW_ID= PLUGIN_ID + ".SearchResultView"; //$NON-NLS-1$
+	public static final String SEARCH_RESULT_VIEW_ID= "org.eclipse.search.SearchResultView"; //$NON-NLS-1$
 
 	/**
 	 * Id of the Search action set
@@ -128,7 +146,7 @@ public final class SearchUI {
 	 * @since 2.0
 	 */
 	public static boolean reuseEditor() {
-		return false;
+		return SearchPreferencePage.isEditorReused();
 	}
 
 	/**
