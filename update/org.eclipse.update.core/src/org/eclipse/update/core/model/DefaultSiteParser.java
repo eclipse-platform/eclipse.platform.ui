@@ -253,9 +253,8 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				text = ""; //$NON-NLS-1$
 				while (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop() + " " + text;
+					text = (String) objectStack.pop() + text;
 				}
-				text=text.trim();
 
 				info = (URLEntryModel) objectStack.pop();
 				if (text != null)
@@ -276,9 +275,8 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				text = ""; //$NON-NLS-1$
 				while (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop() + " " + text;
+					text = (String) objectStack.pop() + text;
 				}
-				text=text.trim();
 
 				info = (URLEntryModel) objectStack.pop();
 				if (text != null)
@@ -480,8 +478,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		feature.setURLString(urlInfo);
 
 		String type = attributes.getValue("type"); //$NON-NLS-1$
-		feature.setType(
-			type != null ? type : ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
+		feature.setType(type);
 
 		// identifier and version
 		String id = attributes.getValue("id"); //$NON-NLS-1$
