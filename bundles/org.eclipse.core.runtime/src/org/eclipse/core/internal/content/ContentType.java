@@ -20,7 +20,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class ContentType implements IContentType {
-
 	/* A placeholder for missing/invalid describers. */
 	private class InvalidDescriber implements IContentDescriber {
 		public int describe(InputStream contents, IContentDescription description) throws IOException {
@@ -31,6 +30,8 @@ public class ContentType implements IContentType {
 			return new QualifiedName[0];
 		}
 	}
+	final static byte ASSOCIATED_BY_EXTENSION = 2;
+	final static byte ASSOCIATED_BY_NAME = 1;
 
 	final static String CONTENT_TYPE_CHARSET_PREF = "charset"; //$NON-NLS-1$	
 	final static String CONTENT_TYPE_FILE_EXTENSIONS_PREF = "file-extensions"; //$NON-NLS-1$
@@ -39,14 +40,11 @@ public class ContentType implements IContentType {
 	final static byte INVALID = 2;
 	final static byte LOW = -1;
 	final static byte NORMAL = 0;
+	final static byte NOT_ASSOCIATED = 0;
 	static final int PRE_DEFINED_SPEC = IGNORE_PRE_DEFINED;
 	final static byte UNKNOWN = 3;
 	private static final int USER_DEFINED_SPEC = IGNORE_USER_DEFINED;
 	final static byte VALID = 1;
-	final static byte NOT_ASSOCIATED = 0;
-	final static byte ASSOCIATED_BY_NAME = 1;
-	final static byte ASSOCIATED_BY_EXTENSION = 2;
-
 	private ContentType aliasTarget;
 	private String baseTypeId;
 	private IContentType[] children;
@@ -164,11 +162,14 @@ public class ContentType implements IContentType {
 		try {
 			return selectedDescriber.describe(contents, description);
 		} catch (IOException ioe) {
+			// I/O exceptions are expected, and will flow to the caller
 			throw ioe;
 		} catch (RuntimeException re) {
+			// describer seems to be buggy. just disable it (logging the reason) 
 			invalidateDescriber(re);
-			throw re;
+			return IContentDescriber.INVALID;
 		} catch (Error e) {
+			// describer got some serious problem. disable it (logging the reason) and throw the error again 
 			invalidateDescriber(e);
 			throw e;
 		} finally {
@@ -180,11 +181,14 @@ public class ContentType implements IContentType {
 		try {
 			return ((ITextContentDescriber) selectedDescriber).describe(contents, description);
 		} catch (IOException ioe) {
+			// I/O exceptions are expected, and will flow to the caller
 			throw ioe;
-		} catch (RuntimeException re) {
+		} catch (RuntimeException re) {		
+			// describer seems to be buggy. just disable it (logging the reason)			
 			invalidateDescriber(re);
-			throw re;
+			return IContentDescriber.INVALID;
 		} catch (Error e) {
+			// describer got some serious problem. disable it (logging the reason) and throw the error again			
 			invalidateDescriber(e);
 			throw e;
 		} finally {
@@ -372,6 +376,19 @@ public class ContentType implements IContentType {
 		return description;
 	}
 
+	public byte internalIsAssociatedWith(String fileName) {
+		if (aliasTarget != null)
+			return getTarget().internalIsAssociatedWith(fileName);
+		if (fileSpecs == null) {
+			IContentType baseType = getBaseType();
+			return baseType == null ? NOT_ASSOCIATED : ((ContentType) baseType).internalIsAssociatedWith(fileName);
+		}
+		if (hasFileSpec(fileName, FILE_NAME_SPEC))
+			return ASSOCIATED_BY_NAME;
+		String fileExtension = ContentTypeManager.getFileExtension(fileName);
+		return (fileExtension == null || !hasFileSpec(fileExtension, FILE_EXTENSION_SPEC)) ? NOT_ASSOCIATED : ASSOCIATED_BY_EXTENSION;
+	}
+
 	void internalRemoveFileSpec(String fileSpec, int typeMask) {
 		if (aliasTarget != null) {
 			aliasTarget.internalRemoveFileSpec(fileSpec, typeMask);
@@ -395,19 +412,6 @@ public class ContentType implements IContentType {
 		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
 		InternalPlatform.getDefault().log(status);
 		return describer = new InvalidDescriber();
-	}
-
-	public byte internalIsAssociatedWith(String fileName) {
-		if (aliasTarget != null)
-			return getTarget().internalIsAssociatedWith(fileName);
-		if (fileSpecs == null) {
-			IContentType baseType = getBaseType();
-			return baseType == null ? NOT_ASSOCIATED : ((ContentType) baseType).internalIsAssociatedWith(fileName);
-		}
-		if (hasFileSpec(fileName, FILE_NAME_SPEC))
-			return ASSOCIATED_BY_NAME;
-		String fileExtension = ContentTypeManager.getFileExtension(fileName);
-		return (fileExtension == null || !hasFileSpec(fileExtension, FILE_EXTENSION_SPEC)) ? NOT_ASSOCIATED : ASSOCIATED_BY_EXTENSION;
 	}
 
 	public boolean isAssociatedWith(String fileName) {

@@ -12,10 +12,12 @@ package org.eclipse.core.runtime.content;
 
 import java.io.*;
 import java.util.Hashtable;
+import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.internal.content.XMLContentDescriber;
 import org.eclipse.core.internal.content.XMLRootHandler;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
+import org.xml.sax.InputSource;
 
 /**
  * A content describer for detecting the name of the top-level element of the
@@ -37,10 +39,8 @@ import org.eclipse.core.runtime.*;
  * @since 3.0
  */
 public final class XMLRootElementContentDescriber extends XMLContentDescriber implements IExecutableExtension {
-
 	private static final String DTD_TO_FIND = "dtd"; //$NON-NLS-1$
 	private static final String ELEMENT_TO_FIND = "element"; //$NON-NLS-1$
-
 	/* (Intentionally not included in javadoc)
 	 * The system identifier that we wish to find. This value will be
 	 * initialized by the <code>setInitializationData</code> method. If no
@@ -48,7 +48,6 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * identifier will be.
 	 */
 	private String dtdToFind = null;
-
 	/* (Intentionally not included in javadoc)
 	 * The top-level element we are looking for. This value will be initialized
 	 * by the <code>setInitializationData</code> method. If no value is
@@ -56,6 +55,24 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * will be.
 	 */
 	private String elementToFind = null;
+
+	private int checkCriteria(InputSource contents) throws IOException {
+		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
+		try {
+			if (!xmlHandler.parseContents(contents))
+				return INVALID;
+		} catch (ParserConfigurationException e) {
+			// some bad thing happened - force this describer to be disabled
+			throw new RuntimeException(e);
+		}
+		// Check to see if we matched our criteria.
+		if ((elementToFind != null) && (!elementToFind.equals(xmlHandler.getRootName())))
+			return INVALID;
+		if ((dtdToFind != null) && (!dtdToFind.equals(xmlHandler.getDTD())))
+			return INVALID;
+		// We must be okay then.		
+		return VALID;
+	}
 
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
@@ -66,16 +83,8 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 			return INVALID;
 		// super.describe will have consumed some chars, need to rewind		
 		contents.reset();
-		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
-		if (!xmlHandler.parseContents(contents))
-			return INVALID;
-		// Check to see if we matched our criteria.
-		if ((elementToFind != null) && (!elementToFind.equals(xmlHandler.getRootName())))
-			return INVALID;
-		if ((dtdToFind != null) && (!dtdToFind.equals(xmlHandler.getDTD())))
-			return INVALID;
-		// We must be okay then.		
-		return VALID;
+		// Check to see if we matched our criteria.		
+		return checkCriteria(new InputSource(contents));
 	}
 
 	/* (Intentionally not included in javadoc)
@@ -87,16 +96,8 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 			return INVALID;
 		// super.describe will have consumed some chars, need to rewind
 		contents.reset();
-		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
-		if (!xmlHandler.parseContents(contents))
-			return INVALID;
 		// Check to see if we matched our criteria.
-		if ((elementToFind != null) && (!elementToFind.equals(xmlHandler.getRootName())))
-			return INVALID;
-		if ((dtdToFind != null) && (!dtdToFind.equals(xmlHandler.getDTD())))
-			return INVALID;
-		// We must be okay then.		
-		return VALID;
+		return checkCriteria(new InputSource(contents));
 	}
 
 	/* (Intentionally not included in javadoc)

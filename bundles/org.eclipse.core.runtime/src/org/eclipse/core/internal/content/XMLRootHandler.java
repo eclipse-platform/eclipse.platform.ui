@@ -10,11 +10,9 @@
  ******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import java.io.*;
+import java.io.IOException;
 import javax.xml.parsers.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.runtime.*;
 import org.osgi.framework.ServiceReference;
 import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
@@ -31,7 +29,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 3.0
  */
 public final class XMLRootHandler extends DefaultHandler implements LexicalHandler {
-
 	/**
 	 * An exception indicating that the parsing should stop. This is usually
 	 * triggered when the top-level element has been found.
@@ -39,7 +36,6 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * @since 3.0
 	 */
 	private class StopParsingException extends SAXException {
-
 		/**
 		 * Constructs an instance of <code>StopParsingException</code> with a
 		 * <code>null</code> detail message.
@@ -53,20 +49,20 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * Should we check the root element?
 	 */
 	private boolean checkRoot;
-
 	/**
 	 * The system identifier for the DTD that was found while parsing the XML.
 	 * This member variable is <code>null</code> unless the file has been
 	 * parsed successful to the point of finding the DTD's system identifier.
 	 */
 	private String dtdFound = null;
-
 	/**
 	 * This is the name of the top-level element found in the XML file. This
 	 * member variable is <code>null</code> unless the file has been parsed
 	 * successful to the point of finding the top-level element.
 	 */
 	private String elementFound = null;
+	private SAXParserFactory factory;
+	private boolean factoryFailed = false;
 
 	public XMLRootHandler(boolean checkRoot) {
 		this.checkRoot = checkRoot;
@@ -136,64 +132,40 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		return dtdFound;
 	}
 
+	private SAXParserFactory getFactory() {
+		synchronized (this) {
+			if (factoryFailed)
+				return null;
+			if (factory != null)
+				return factory;
+			ServiceReference parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
+			if (parserReference == null)
+				return null;
+			factory = (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);
+			if (factory == null)
+				return null;
+			factory.setNamespaceAware(true);
+		}
+		return factory;
+	}
+
 	public String getRootName() {
 		return elementFound;
 	}
 
-	public boolean parseContents(InputStream contents) throws IOException {
-		ServiceReference parserReference = null;
+	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException {
 		// Parse the file into we have what we need (or an error occurs).
 		try {
-			parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
-			if (parserReference == null)
-				return false;
-			SAXParserFactory factory = (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);
+			factory = getFactory();
 			if (factory == null)
 				return false;
-			factory.setNamespaceAware(true);
 			final SAXParser parser = createParser(factory);
 			parser.parse(contents, this);
-		} catch (final ParserConfigurationException e) {
-			String message = Policy.bind("content.parsingError"); //$NON-NLS-1$
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, message, e));
-			return false;
 		} catch (final StopParsingException e) {
 			// Abort the parsing normally.  Fall through...
 		} catch (final SAXException e) {
 			// we may be handed any kind of contents... it is normal we fail to parse
 			return false;
-		} finally {
-			if (parserReference != null)
-				InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
-		}
-		return true;
-	}
-
-	public boolean parseContents(Reader contents) throws IOException {
-		ServiceReference parserReference = null;
-		// Parse the file into we have what we need (or an error occurs).
-		try {
-			parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
-			if (parserReference == null)
-				return false;
-			SAXParserFactory factory = (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);
-			if (factory == null)
-				return false;
-			factory.setNamespaceAware(true);
-			final SAXParser parser = createParser(factory);
-			parser.parse(new InputSource(contents), this);
-		} catch (final ParserConfigurationException e) {
-			String message = Policy.bind("content.parsingError"); //$NON-NLS-1$
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, message, e));
-			return false;
-		} catch (final StopParsingException e) {
-			// Abort the parsing normally.  Fall through...
-		} catch (final SAXException e) {
-			// we may be handed any kind of contents... it is normal we fail to parse
-			return false;
-		} finally {
-			if (parserReference != null)
-				InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
 		}
 		return true;
 	}
@@ -214,9 +186,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 *      java.lang.String, java.lang.String)
 	 */
 	public final void startDTD(final String name, final String publicId, final String systemId) throws SAXException {
-
 		dtdFound = systemId;
-
 		// If we don't care about the top-level element, we can stop here.
 		if (!checkRoot)
 			throw new StopParsingException();
