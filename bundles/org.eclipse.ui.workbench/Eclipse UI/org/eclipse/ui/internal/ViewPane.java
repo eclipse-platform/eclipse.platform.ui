@@ -27,7 +27,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -39,7 +38,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
@@ -130,22 +128,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			return;
 
 		super.createControl(parent);
-
-		DragUtil.addDragSource(control, new AbstractDragSource() {
-			
-			public Object getDraggedItem(Point position) {
-				return ViewPane.this;
-			}
-
-			public void dragStarted(Object draggedItem) {
-				getPage().getActivePerspective().setActiveFastView(null, 0);
-			}
-
-			public Rectangle getDragRectangle(Object draggedItem) {
-				return DragUtil.getDisplayBounds(control);
-			}
-			
-		});
 	}
 
 	

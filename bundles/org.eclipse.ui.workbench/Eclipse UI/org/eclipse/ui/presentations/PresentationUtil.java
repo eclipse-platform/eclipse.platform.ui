@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
  * Contains various utility methods for Presentation authors
@@ -40,17 +41,8 @@ public class PresentationUtil {
 	 * opening a tracker.
 	 */
 	private static boolean hasMovedEnough(Event event) {		
-		return Geometry.distanceSquared(getEventLoc(event), anchor) 
+		return Geometry.distanceSquared(DragUtil.getEventLoc(event), anchor) 
 			>= HYSTERESIS * HYSTERESIS; 		
-	}
-	
-	/**
-	 * Returns the location of the given event, in display coordinates
-	 * @return
-	 */
-	private static Point getEventLoc(Event event) {
-		Control ctrl = (Control)event.widget;
-		return ctrl.toDisplay(new Point(event.x, event.y));		
 	}
 	
 	private static Listener moveListener = new Listener() {
@@ -70,7 +62,7 @@ public class PresentationUtil {
 			if (event.widget instanceof Control) {
 				Control dragControl = (Control)event.widget;
 				currentListener = (Listener)dragControl.getData(LISTENER_ID);
-				anchor = getEventLoc(event);	
+				anchor = DragUtil.getEventLoc(event);	
 			}
 		}
 	};

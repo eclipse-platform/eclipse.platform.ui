@@ -100,7 +100,6 @@ private void checkDragLimit(SelectionEvent event) {
 public void createControl(Composite parent) {
 	if (sash == null) {
 		sash = new Sash(parent, style);
-		sash.addListener(SWT.MouseDown, rootContainer.getMouseDownListener());
 		sash.addSelectionListener(selectionListener);
 	}
 }

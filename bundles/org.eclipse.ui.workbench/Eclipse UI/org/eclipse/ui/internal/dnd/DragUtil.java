@@ -298,5 +298,14 @@ public class DragUtil {
 		// No controls could handle this event -- check for default targets
 		return getDropTarget(defaultTargets, toSearch, draggedObject, position, dragRectangle);
 	}
+
+	/**
+	 * Returns the location of the given event, in display coordinates
+	 * @return
+	 */
+	public static Point getEventLoc(Event event) {
+		Control ctrl = (Control)event.widget;
+		return ctrl.toDisplay(new Point(event.x, event.y));		
+	}
 	
 }

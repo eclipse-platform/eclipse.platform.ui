@@ -253,4 +253,41 @@ protected void derefPart(LayoutPart sourcePart) {
 	page.getActivePerspective().getPresentation().derefPart(sourcePart);
 }
 
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#addChild(org.eclipse.ui.internal.PartSashContainer.RelationshipInfo)
+ */
+protected void addChild(RelationshipInfo info) {
+	LayoutPart child = info.part;
+	
+	// Nasty hack: ensure that all views end up inside a tab folder.
+	// Since the view title is provided by the tab folder, this ensures
+	// that views don't get created without a title tab.
+	if (child instanceof ViewPane) {
+		PartTabFolder folder = new PartTabFolder(page);
+		folder.add(child);
+		info.part = folder;
+	}
+	
+	super.addChild(info);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.ILayoutContainer#replace(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart)
+ */
+public void replace(LayoutPart oldChild, LayoutPart newChild) {
+	if (!isChild(oldChild)) {
+		return;
+	}
+	
+	// Nasty hack: ensure that all views end up inside a tab folder.
+	// Since the view title is provided by the tab folder, this ensures
+	// that views don't get created without a title tab.
+	if (newChild instanceof ViewPane) {
+		PartTabFolder folder = new PartTabFolder(page);
+		folder.add(newChild);
+		newChild = folder;
+	}
+	
+	super.replace(oldChild, newChild);
+}
 }

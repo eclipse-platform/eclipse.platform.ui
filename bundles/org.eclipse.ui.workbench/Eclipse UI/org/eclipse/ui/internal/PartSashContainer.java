@@ -25,8 +25,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
@@ -47,7 +45,6 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 	protected ControlListener resizeListener;
 	protected LayoutTree root;
 	protected LayoutTree unzoomRoot;
-	protected Listener mouseDownListener;
 	protected WorkbenchPage page;
 	boolean active = false;
 	
@@ -112,14 +109,6 @@ public PartSashContainer(String id,final WorkbenchPage page) {
 			resizeSashes(parent.getClientArea());
 		}
 	};
-	// Mouse down listener to hide fast view when
-	// user clicks on empty editor area or sashes.
-	mouseDownListener = new Listener() {
-		public void handleEvent(Event event) {
-			if (event.type == SWT.MouseDown)
-				page.toggleFastView(null);
-		}
-	};	
 }
 /**
  * Find the sashs around the specified part.
@@ -205,17 +194,8 @@ public void add(LayoutPart child, int relationship, float ratio, LayoutPart rela
 	info.relative = relative;
 	addChild(info);
 }
-private void addChild(RelationshipInfo info) {
+protected void addChild(RelationshipInfo info) {
 	LayoutPart child = info.part;
-	
-	// Nasty hack: ensure that all views end up inside a tab folder.
-	// Since the view title is provided by the tab folder, this ensures
-	// that views don't get created without a title tab.
-	if (child instanceof ViewPane) {
-		PartTabFolder folder = new PartTabFolder(page);
-		folder.add(child);
-		child = folder;
-	}
 	
 	children.add(child);
 	
@@ -436,19 +416,13 @@ public WorkbenchPage getPage() {
     return page;
 }
 /**
- * Return the interested listener of mouse down events.
- */
-protected Listener getMouseDownListener() {
-	return mouseDownListener;
-}
-/**
  * Returns the composite used to parent all the
  * layout parts contained within.
  */
 public Composite getParent() {
 	return parent;
 }
-private boolean isChild(LayoutPart part) {
+protected boolean isChild(LayoutPart part) {
 	return children.indexOf(part) >= 0;
 }
 private boolean isRelationshipCompatible(int relationship,boolean isVertical) {
@@ -524,16 +498,7 @@ public void replace(LayoutPart oldChild, LayoutPart newChild) {
 		zoomOut();
 
 	if (!isChild(oldChild))return;
-		
-	// Nasty hack: ensure that all views end up inside a tab folder.
-	// Since the view title is provided by the tab folder, this ensures
-	// that views don't get created without a title tab.
-	if (newChild instanceof ViewPane) {
-		PartTabFolder folder = new PartTabFolder(page);
-		folder.add(newChild);
-		newChild = folder;
-	}
-	
+			
 	children.remove(oldChild);
 	children.add(newChild);
 

@@ -25,11 +25,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuClose;
 import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
@@ -76,7 +78,7 @@ public class FastViewPane {
 			ViewPane pane = currentPane;
 			switch(newState) {
 				case IStackPresentationSite.STATE_MINIMIZED: 
-					currentPane.getPage().toggleFastView(currentPane.getViewReference());
+					currentPane.getPage().toggleFastView(null);//currentPane.getViewReference());
 					break;
 				case IStackPresentationSite.STATE_MAXIMIZED:
 					sash.setVisible(false);
@@ -168,6 +170,35 @@ public class FastViewPane {
 			return true;
 		}
     }
+    
+    private Listener mouseDownListener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event.widget instanceof Control) {
+				Control control = (Control)event.widget;
+				
+				if (control.getShell() != clientComposite.getShell()) {
+					return;
+				}
+				
+				if (event.widget instanceof ToolBar) {
+					// Ignore mouse down on actual tool bar buttons
+					Point pt = new Point(event.x, event.y);
+					ToolBar toolBar = (ToolBar) event.widget;
+					if (toolBar.getItem(pt) != null)
+						return;
+				}
+				
+				Point loc = DragUtil.getEventLoc(event);
+				
+				Rectangle bounds = DragUtil.getDisplayBounds(clientComposite); 
+				bounds = Geometry.getExtrudedEdge(bounds, size + SASH_SIZE, side);
+				
+				if (!bounds.contains(loc)) {
+					site.setState(IStackPresentationSite.STATE_MINIMIZED);
+				}
+			}
+		}
+    };
     
     private IContributionItem systemMenuContribution;
     	
@@ -357,6 +388,9 @@ public class FastViewPane {
 
 		setSize((int)(Geometry.getDimension(clientArea, !horizontal) * sizeRatio));
 
+		Display display = sash.getDisplay();
+		
+		display.addFilter(SWT.MouseDown, mouseDownListener);
 	}
 	
 	/**
@@ -382,6 +416,12 @@ public class FastViewPane {
 	 * of the view itself.
 	 */
 	public void dispose() {
+		if (clientComposite != null) {
+			Display display = clientComposite.getDisplay();
+			
+			display.removeFilter(SWT.MouseDown, mouseDownListener);
+		}
+		
 		if (sash != null) {
 			sash.dispose();
 		}
@@ -439,6 +479,12 @@ public class FastViewPane {
 	 * Hides the currently visible fastview.
 	 */
 	public void hideView() {
+		
+		if (clientComposite != null) {
+			Display display = clientComposite.getDisplay();
+			
+			display.removeFilter(SWT.MouseDown, mouseDownListener);
+		}
 		
 		if (currentPane == null) {
 			return;

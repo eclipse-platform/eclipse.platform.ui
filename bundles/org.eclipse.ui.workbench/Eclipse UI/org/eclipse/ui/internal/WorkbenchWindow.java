@@ -674,37 +674,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		trimDropTarget = new TrimDropTarget(shell, this);		
 		DragUtil.addDragTarget(shell, trimDropTarget);
 		
-		// If the user clicks on toolbar, status bar, or shortcut bar
-		// hide the fast view.
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				WorkbenchPage currentPage = getActiveWorkbenchPage();
-				if (currentPage != null) {
-					if (event.type == SWT.MouseDown) {
-						if (event.widget instanceof ToolBar) {
-							// Ignore mouse down on actual tool bar buttons
-							Point pt = new Point(event.x, event.y);
-							ToolBar toolBar = (ToolBar) event.widget;
-							if (toolBar.getItem(pt) != null)
-								return;
-						}
-						currentPage.toggleFastView(null);
-					}
-				}
-			}
-		};
-		topBar.addListener(SWT.MouseDown, listener);
-		getCoolBarControl().addListener(SWT.MouseDown, listener);
-		Control[] children = ((Composite) getStatusLineManager().getControl()).getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] != null)
-				children[i].addListener(SWT.MouseDown, listener);
-		}
-		//fastViewBar.getControl().addListener(SWT.MouseDown, listener);
-		if (perspectiveBar.getControl() != null) {
-		    perspectiveBar.getControl().addListener(SWT.MouseDown, listener);
-		}
-		
 		// Create the client composite area (where page content goes).
 		createPageComposite(shell);
 		
