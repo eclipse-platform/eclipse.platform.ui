@@ -23,9 +23,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Abtract representation of the different variables.
+ * Abtract representation of launch configuration variables.
+ * @since 3.0
  */
-public class ExternalToolVariable {
+public class LaunchConfigurationVariable {
 	private static final IVariableComponent defaultComponent = new DefaultVariableComponent(false);
 	
 	private String tag;
@@ -40,7 +41,7 @@ public class ExternalToolVariable {
 	 * @param description a short description of what the variable will expand to
 	 * @param element the configuration element
 	 */
-	/*package*/ ExternalToolVariable(String tag, String description, IConfigurationElement element) {
+	public LaunchConfigurationVariable(String tag, String description, IConfigurationElement element) {
 		super();
 		this.tag = tag;
 		this.description = description;
@@ -53,7 +54,7 @@ public class ExternalToolVariable {
 	public IVariableExpander getExpander() {
 		if (expander == null) {
 			try {
-				expander = (IVariableExpander) createObject(ExternalToolVariableRegistry.TAG_EXPANDER_CLASS);
+				expander = (IVariableExpander) createObject(LaunchConfigurationVariableRegistry.TAG_EXPANDER_CLASS);
 			} catch (ClassCastException exception) {
 			}
 			if (expander == null) {
@@ -83,11 +84,11 @@ public class ExternalToolVariable {
 	 * visual editing of the variable's value.
 	 */
 	public final IVariableComponent getComponent() {
-		String className = element.getAttribute(ExternalToolVariableRegistry.TAG_COMPONENT_CLASS);
+		String className = element.getAttribute(LaunchConfigurationVariableRegistry.TAG_COMPONENT_CLASS);
 		if (className == null || className.trim().length() == 0)
 			return defaultComponent;
 			
-		Object component = createObject(ExternalToolVariableRegistry.TAG_COMPONENT_CLASS);
+		Object component = createObject(LaunchConfigurationVariableRegistry.TAG_COMPONENT_CLASS);
 		if (component == null)
 			return new DefaultVariableComponent(true);
 		else
@@ -113,7 +114,7 @@ public class ExternalToolVariable {
 	 * Default variable component implementation which does not
 	 * allow variable value editing visually.
 	 */	
-	private static final class DefaultVariableComponent extends AbstractVariableComponent {
+	protected static final class DefaultVariableComponent extends AbstractVariableComponent {
 		private boolean showError = false;
 		private Label message = null;
 		
@@ -138,7 +139,7 @@ public class ExternalToolVariable {
 				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 				message.setLayoutData(data);
 				message.setFont(parent.getFont());
-				message.setText(LaunchConfigurationsMessages.getString("ExternalToolVariable.Problem_displaying_UI_component_of_selected_variable._1")); //$NON-NLS-1$
+				message.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationVariable.Problem_displaying_UI_component_of_selected_variable._1")); //$NON-NLS-1$
 				message.setForeground(JFaceColors.getErrorText(message.getDisplay()));
 			}
 		}

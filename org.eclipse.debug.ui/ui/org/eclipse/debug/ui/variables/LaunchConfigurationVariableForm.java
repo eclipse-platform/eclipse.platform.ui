@@ -26,12 +26,13 @@ import org.eclipse.swt.widgets.List;
  * Visual grouping of controls that allows the user to
  * select a variable and configure it with extra
  * information.
+ * @since 3.0
  */
-public class ExternalToolVariableForm {
+public class LaunchConfigurationVariableForm {
 	private static final int VISIBLE_ITEM_COUNT = 6;
 	
 	private String variableListLabelText;
-	private ExternalToolVariable[] variables;
+	private LaunchConfigurationVariable[] variables;
 	private IVariableComponent[] components;
 	private IVariableComponentContainer dialogPage;
 	
@@ -47,7 +48,7 @@ public class ExternalToolVariableForm {
 	 * @param variableListLabelText the label text to use for identifying the list of variables
 	 * @param variables the collection of variables to display to the user
 	 */
-	public ExternalToolVariableForm(String variableListLabelText, ExternalToolVariable[] variables) {
+	public LaunchConfigurationVariableForm(String variableListLabelText, LaunchConfigurationVariable[] variables) {
 		super();
 		this.variableListLabelText = variableListLabelText;
 		this.variables = variables;
@@ -111,7 +112,7 @@ public class ExternalToolVariableForm {
 	 */
 	private void createVariableComponents() {
 		for (int i = 0; i < variables.length; i++) {
-			ExternalToolVariable var = variables[i];
+			LaunchConfigurationVariable var = variables[i];
 			components[i] = var.getComponent();
 			components[i].createContents(variableComposite, var.getTag(), dialogPage);
 		}

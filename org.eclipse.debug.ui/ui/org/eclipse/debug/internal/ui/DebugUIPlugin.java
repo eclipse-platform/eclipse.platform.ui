@@ -48,7 +48,7 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.variables.ExternalToolVariableRegistry;
+import org.eclipse.debug.ui.variables.LaunchConfigurationVariableRegistry;
 import org.eclipse.debug.ui.variables.VariableContextManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -118,7 +118,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Collection of launch configuration variables
 	 */
-	private ExternalToolVariableRegistry toolVariableRegistry;
+	private LaunchConfigurationVariableRegistry toolVariableRegistry;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -191,9 +191,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Returns the registry of launch configuration variables.
 	 */
-	public ExternalToolVariableRegistry getToolVariableRegistry() {
+	public LaunchConfigurationVariableRegistry getToolVariableRegistry() {
 		if (toolVariableRegistry == null) {
-			toolVariableRegistry = new ExternalToolVariableRegistry();
+			toolVariableRegistry = new LaunchConfigurationVariableRegistry();
 		}
 		return toolVariableRegistry;
 	}

@@ -24,16 +24,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**
- * General registry reader for external tool variables.
+ * General registry for launch configuration variables.
+ * @since 3.0
  */
-public class ExternalToolVariableRegistry {
+public class LaunchConfigurationVariableRegistry {
 	// Format of the variable extension points
-	// <extension point="org.eclipse.ui.externalTools.***Variables>
+	// <extension point="org.eclipse.debug.ui.launchConfigurationVariables>
 	//		<variable
 	//			tag={string}
 	//			description={string}
 	//			componentClass={string:IVariableComponent}
-	//			expanderClass={string:IVariable***Expander}>
+	//			expanderClass={string:IVariableExpander}>
 	//		</variable>
 	// </extension>
 	//
@@ -41,11 +42,11 @@ public class ExternalToolVariableRegistry {
 	/**
 	 * Element and attribute tags of a variable extension.
 	 */
-	/*package*/ static final String TAG_VARIABLE = "variable"; //$NON-NLS-1$
-	/*package*/ static final String TAG_TAG = "tag"; //$NON-NLS-1$
-	/*package*/ static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-	/*package*/ static final String TAG_COMPONENT_CLASS = "componentClass"; //$NON-NLS-1$
-	/*package*/ static final String TAG_EXPANDER_CLASS = "expanderClass"; //$NON-NLS-1$
+	protected static final String TAG_VARIABLE = "variable"; //$NON-NLS-1$
+	protected static final String TAG_TAG = "tag"; //$NON-NLS-1$
+	protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+	protected static final String TAG_COMPONENT_CLASS = "componentClass"; //$NON-NLS-1$
+	protected static final String TAG_EXPANDER_CLASS = "expanderClass"; //$NON-NLS-1$
 
 
 	/**
@@ -63,14 +64,14 @@ public class ExternalToolVariableRegistry {
 	 */
 	protected String pluginId;
 	
-	public ExternalToolVariableRegistry() {
+	public LaunchConfigurationVariableRegistry() {
 		this(DebugUIPlugin.getUniqueIdentifier(), IVariableConstants.EXTENSION_POINT_TOOL_VARIABLES);
 	}
 	
 	/**
 	 * Creates a new registry and loads the variables.
 	 */
-	protected ExternalToolVariableRegistry(String pluginId, String extensionPointId) {
+	protected LaunchConfigurationVariableRegistry(String pluginId, String extensionPointId) {
 		this.pluginId= pluginId;
 		this.extensionPointId = extensionPointId;
 		loadVariables();
@@ -80,8 +81,8 @@ public class ExternalToolVariableRegistry {
 	 * Returns the variable for the specified tag, or
 	 * <code>null</code> if none found.
 	 */
-	protected final ExternalToolVariable findVariable(String tag) {
-		return (ExternalToolVariable) variables.get(tag);
+	protected final LaunchConfigurationVariable findVariable(String tag) {
+		return (LaunchConfigurationVariable) variables.get(tag);
 	}
 
 	/**
@@ -95,15 +96,15 @@ public class ExternalToolVariableRegistry {
 	/**
 	 * Returns the variable for the given tag or <code>null</code> if none.
 	 */
-	public ExternalToolVariable getVariable(String tag) {
+	public LaunchConfigurationVariable getVariable(String tag) {
 		return findVariable(tag);
 	}
 	
 	/**
 	 * Returns the list of argument variables in the registry.
 	 */
-	public ExternalToolVariable[] getVariables() {
-		ExternalToolVariable[] results = new ExternalToolVariable[getVariableCount()];
+	public LaunchConfigurationVariable[] getVariables() {
+		LaunchConfigurationVariable[] results = new LaunchConfigurationVariable[getVariableCount()];
 		variables.values().toArray(results);
 		return results;
 	}
@@ -151,8 +152,8 @@ public class ExternalToolVariableRegistry {
 	/**
 	 * Creates a new variable from the specified information.
 	 */
-	protected ExternalToolVariable newVariable(String tag, String description, IConfigurationElement element) {
-		return new ExternalToolVariable(tag, description, element);
+	protected LaunchConfigurationVariable newVariable(String tag, String description, IConfigurationElement element) {
+		return new LaunchConfigurationVariable(tag, description, element);
 	}
 	
 }
