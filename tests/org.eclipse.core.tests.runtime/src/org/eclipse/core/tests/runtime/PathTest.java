@@ -461,6 +461,15 @@ public void testRegression() {
 	} catch (Exception e) {
 		fail("1.0", e);
 	}
+	try {
+		IPath path = new Path("d:\\\\ive");
+		assertTrue("2.0", !path.isUNC());
+		assertEquals("2.1", 1, path.segmentCount());
+		assertEquals("2.2", "ive", path.segment(0));
+	} catch (Exception e) {
+		fail("2.99", e);
+	}
+
 }
 public void testRemoveFirstSegments() {
 	assertEquals("1.0", new Path("second"), new Path("/first/second").removeFirstSegments(1));
