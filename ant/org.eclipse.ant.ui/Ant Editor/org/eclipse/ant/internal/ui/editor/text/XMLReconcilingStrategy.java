@@ -14,15 +14,17 @@ package org.eclipse.ant.internal.ui.editor.text;
 
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
-public class XMLReconcilingStrategy implements IReconcilingStrategy {
+public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 	/**
 	 * How long the reconciler will wait for further text changes before reconciling
@@ -68,5 +70,18 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy {
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setProgressMonitor(IProgressMonitor monitor) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
+	 */
+	public void initialReconcile() {
+		internalReconcile(null);
 	}
 }
