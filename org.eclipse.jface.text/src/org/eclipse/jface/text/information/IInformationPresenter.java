@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.information;
-
 
 import org.eclipse.jface.text.ITextViewer;
 
@@ -18,23 +16,35 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * An information presenter shows information available at the text viewer's
  * current document position. An <code>IInformationPresenter</code> is a 
- * <code>ITextViewer</code> add-on.<p>
- * An information presenters has a list of  <code>IInformationProvider</code> objects 
- * each of which is registered for a  particular document content type. 
- * The presenter uses the strategy objects to retrieve the information to present.<p>
+ * {@link org.eclipse.jface.text.ITextViewer} add-on.
+ * <p>
+ * An information presenters has a list of  {@link org.eclipse.jface.text.information.IInformationProvider} objects 
+ * each of which is registered for a  particular document content type.
+ * The presenter uses the strategy objects to retrieve the information to present.
+ * </p>
+ * <p>
+ * In order to provide backward compatibility for clients of <code>IInformationPresenter</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li> {@link IInformationPresenterExtension} since version 3.0 introducing 
+ *		the ability to handle documents with multiple partitions</li>
+ * </ul>
+ * </p>
+ * <p>
  * The interface can be implemented by clients. By default, clients use
- * <code>InformationPresenter</code> as the standard implementer of this interface. 
+ * {@link org.eclipse.jface.text.information.InformationPresenter} as the standard implementer of this interface.
+ * </p> 
  *
- * @see ITextViewer
- * @see IInformationProvider
+ * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.information.IInformationProvider
  * @since 2.0
  */
 public interface IInformationPresenter {
 	
 	/**
 	 * Installs the information presenter on the given text viewer. After this method has been
-	 * finished, the presenter is operational. I.e., the method <code>showInformation</code>
-	 * can be called until <code>uninstall</code> is called.
+	 * finished, the presenter is operational, i.e. the method {@link #showInformation()}
+	 * can be called until {@link #uninstall()} is called.
 	 * 
 	 * @param textViewer the viewer on which the presenter is installed
 	 */
@@ -56,9 +66,7 @@ public interface IInformationPresenter {
 	 * Returns the information provider to be used for the given content type.
 	 *
 	 * @param contentType the type of the content for which information will be requested
-	 * @return an information provider or
-	 *         <code>null</code> if none exists for the specified content type
+	 * @return an information provider or <code>null</code> if none exists for the specified content type
 	 */
 	IInformationProvider getInformationProvider(String contentType);
 }
-

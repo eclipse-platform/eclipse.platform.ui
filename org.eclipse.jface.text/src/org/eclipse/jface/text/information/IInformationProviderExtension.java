@@ -16,8 +16,8 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * Extension interface for <code>IInformationProvider</code> to provide
- * the element for a given subject.
+ * Extends {@link org.eclipse.jface.text.information.IInformationProvider} with 
+ * the ability to provide the element for a given subject.
  *
  * @see org.eclipse.jface.text.information.IInformationProvider
  * @since 2.1
@@ -28,7 +28,7 @@ public interface IInformationProviderExtension {
 	 * Returns the element for the given subject or <code>null</code> if
 	 * no element is available.
 	 * <p>
-	 * Implementers should ignore the text returned by <code>IInformationProvider.getInformation()</code>.
+	 * Implementers should ignore the text returned by {@link IInformationProvider#getInformation(ITextViewer, IRegion)}.
 	 * </p>
 	 * 
 	 * @param textViewer the viewer in whose document the subject is contained

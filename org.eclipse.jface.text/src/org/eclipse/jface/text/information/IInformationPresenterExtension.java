@@ -11,8 +11,8 @@
 package org.eclipse.jface.text.information;
 
 /**
- * Extension interface for <code>IInformationPresenter</code>.
- * Updates the information presenter to be aware of documents with multiple partitions.
+ * Extends {@link org.eclipse.jface.text.information.IInformationPresenter} with 
+ * the ability to handle documents with multiple partitions.
  * 
  * @since 3.0
  */

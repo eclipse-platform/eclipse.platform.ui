@@ -50,11 +50,13 @@ import org.eclipse.jface.text.TextUtilities;
  * Standard implementation of <code>IInformationPresenter</code>.
  * This implementation extends <code>AbstractInformationControlManager</code>.
  * The information control is made visible on request by calling 
- * <code>showInformation</code>.<p>
+ * {@link #showInformationControl(Rectangle)}.
+ * <p>
  * Usually, clients instantiate this class and configure it before using it. The configuration
- * must be consistent: This means the used <code>IInformationControlCreator</code>
+ * must be consistent: This means the used {@link org.eclipse.jface.text.IInformationControlCreator}
  * must create an information control expecting information in the same format the configured
- * <code>IInformationProvider</code>s  use to encode the information they provide.
+ * {@link org.eclipse.jface.text.information.IInformationProvider}s  use to encode the information they provide.
+ * </p>
  * 
  * @since 2.0
  */
@@ -63,7 +65,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	
 	/** 
 	 * Priority of the info controls managed by this information presenter.
-	 * Default value: <code>5</code> in order to beat the hovers of <code>TextViewerHoverManager</code>
+	 * Default value: <code>5</code> in order to beat the hovers of {@link org.eclipse.jface.text.TextViewerHoverManager}
+	 * 
 	 * @since 3.0
 	 */
 	public static final int WIDGET_PRIORITY= 5;
@@ -75,11 +78,11 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 */
 	class Closer implements IInformationControlCloser, ControlListener, MouseListener, FocusListener, IViewportListener, KeyListener {
 		
-		/** The subject control */
+		/** The subject control. */
 		private Control fSubjectControl;
-		/** The information control */
+		/** The information control. */
 		private IInformationControl fInformationControl;
-		/** Indicates whether this closer is active */
+		/** Indicates whether this closer is active. */
 		private boolean fIsActive= false;
 		
 		/*
@@ -235,8 +238,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * control closer is set that closes the information control in the event of key strokes, 
 	 * resizing, moves, focus changes, mouse clicks, and disposal - all of those applied to
 	 * the information control's parent control. Also, the setup ensures that the information 
-	 * control when made visible will request thel focus. By default, the default document
-	 * partitioning <code>IDocumentExtension3.DEFAULT_PARTITIONING</code> is used.
+	 * control when made visible will request the focus. By default, the default document
+	 * partitioning {@link IDocumentExtension3#DEFAULT_PARTITIONING} is used.
 	 * 
 	 * @param creator the information control creator to be used
 	 */
