@@ -122,4 +122,5 @@ public class IntroPlugin extends AbstractUIPlugin {
         return introPart;
     }
 
+
 }

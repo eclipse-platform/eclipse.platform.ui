@@ -204,7 +204,7 @@ public class BaseExtensionPointManager {
     }
 
     /**
-     * Loads all shared config extebnsions (ie: standby parts).
+     * Loads all shared config extennsions (ie: standby parts).
      */
     protected void loadSharedExtensions() {
         // simply create model classes for all standbyPart elements under a
@@ -232,6 +232,8 @@ public class BaseExtensionPointManager {
             return null;
         return (StandbyPartContent) standbyParts.get(partId);
     }
+
+
 
     // ========================================
     //   Util Methods for Extensions
@@ -282,10 +284,8 @@ public class BaseExtensionPointManager {
             configElement = configElements[0];
             for (int i = 1; i < configElements.length; i++)
                 // log each extra extension.
-                Logger
-                        .logWarning(getLogString(configElements[i],
-                                logAttribute)
-                                + " ignored due to multiple contributions");
+                Logger.logWarning(getLogString(configElements[i], logAttribute)
+                        + " ignored due to multiple contributions");
         }
         return configElement;
     }

@@ -20,17 +20,13 @@ import org.eclipse.core.runtime.*;
 public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     protected static final String PAGE_ELEMENT = "page";
-
+    
     private static final String TITLE_ATTRIBUTE = "title";
-
     private static final String STYLE_ATTRIBUTE = "style";
-
     private static final String ALT_STYLE_ATTRIBUTE = "alt-style";
-
+    
     private String title;
-
     private String style;
-
     private String altStyle;
 
     /**
