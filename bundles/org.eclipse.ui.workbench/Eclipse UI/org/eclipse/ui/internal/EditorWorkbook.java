@@ -15,12 +15,12 @@ package org.eclipse.ui.internal;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.internal.presentations.SystemMenuCloseAllEditors;
-import org.eclipse.ui.internal.presentations.SystemMenuCloseOtherEditors;
 import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
@@ -44,8 +44,6 @@ public class EditorWorkbook extends PartStack {
     
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
     private SystemMenuPinEditor pinEditorItem = new SystemMenuPinEditor(null);
-    private SystemMenuCloseAllEditors closeAllItem = new SystemMenuCloseAllEditors(null);
-    private SystemMenuCloseOtherEditors closeAllOthersItem = new SystemMenuCloseOtherEditors(null);
 	 
     public EditorWorkbook(EditorArea editorArea, WorkbenchPage page) {
         super(); //$NON-NLS-1$
@@ -64,10 +62,6 @@ public class EditorWorkbook extends PartStack {
 		appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(pinEditorItem)); //$NON-NLS-1$
 		sizeItem = new SystemMenuSize((PartPane)getVisiblePart());
 		appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
-		closeAllOthersItem = new SystemMenuCloseOtherEditors((EditorPane)getVisiblePart());
-		appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllOthersItem)); //$NON-NLS-1$
-		closeAllItem = new SystemMenuCloseAllEditors((EditorPane)getVisiblePart());
-		appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllItem)); //$NON-NLS-1$
 	}
 
     public boolean isMoveable(IPresentablePart part) {
@@ -128,8 +122,6 @@ public class EditorWorkbook extends PartStack {
         
         sizeItem.setPane(pane);
         pinEditorItem.setPane(pane);
-        closeAllItem.setPane(pane);
-        closeAllOthersItem.setPane(pane);
     }
 
     /**
@@ -202,7 +194,7 @@ public class EditorWorkbook extends PartStack {
 
         setActive(hasFocus);
     }
-
+	
     public EditorPane[] getEditors() {
     	LayoutPart[] children = getChildren();
     	
@@ -267,5 +259,28 @@ public class EditorWorkbook extends PartStack {
 	public void setFocus() {
 		super.setFocus();
 		becomeActiveWorkbook(true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#close(org.eclipse.ui.presentations.IPresentablePart[])
+	 */
+	protected void close(IPresentablePart[] parts) {
+
+		if (parts.length == 1) {
+			close(parts[0]);
+			return;
+		}
+		
+		IEditorReference[] toClose = new IEditorReference[parts.length];
+		for (int idx = 0; idx < parts.length; idx++) {
+			EditorPane part = (EditorPane)getPaneFor(parts[idx]);
+			toClose[idx] = part.getEditorReference();
+		}
+		
+		WorkbenchPage page = getPage();
+		
+		if (page != null) {
+			page.closeEditors(toClose, true);
+		}
 	}
 }

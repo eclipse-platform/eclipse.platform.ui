@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
@@ -56,6 +57,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         public void close(IPresentablePart part) {
             PartStack.this.close(part);
         }
+        
+		public void close(IPresentablePart[] parts) {
+			PartStack.this.close(parts);
+		}
 
         public void dragStart(IPresentablePart beingDragged, Point initialLocation, boolean keyboard) {
         	PartStack.this.dragStart(beingDragged, initialLocation, keyboard);
@@ -99,7 +104,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     };
     
     protected abstract boolean isMoveable(IPresentablePart part);
-    protected abstract boolean isCloseable(IPresentablePart part);
+	protected abstract boolean isCloseable(IPresentablePart part);
 	protected abstract void addSystemActions(IMenuManager menuManager);
 	protected abstract boolean supportsState(int newState);
     protected abstract boolean canMoveFolder();
@@ -179,6 +184,18 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return true;
     }
 
+    /**
+	 * @param parts
+	 */
+	protected void close(IPresentablePart[] parts) {
+		for (int idx = 0; idx < parts.length; idx++) {
+			IPresentablePart part = parts[idx];
+			
+			close(part);
+		}
+	}
+
+    
     /**
      * @param part
      */
@@ -615,7 +632,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 
-    private WorkbenchPage getPage() {
+    protected WorkbenchPage getPage() {
     	WorkbenchWindow window = (WorkbenchWindow)getWorkbenchWindow();
     	
     	if (window == null) {

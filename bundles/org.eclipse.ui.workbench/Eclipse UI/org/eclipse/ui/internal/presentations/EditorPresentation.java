@@ -104,8 +104,10 @@ public class EditorPresentation extends BasicStackPresentation {
         // set basic colors       
         updateGradient();
 
+        getSystemMenuManager().add(new UpdatingActionContributionItem(new SystemMenuCloseOthers(this)));
+        getSystemMenuManager().add(new UpdatingActionContributionItem(new SystemMenuCloseAll(this)));
     }
-
+    
     public void dispose() {
 
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
