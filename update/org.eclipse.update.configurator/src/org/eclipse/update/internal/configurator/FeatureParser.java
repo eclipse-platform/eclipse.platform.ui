@@ -52,6 +52,7 @@ public class FeatureParser extends DefaultHandler {
 	 * Parses the specified url and constructs a feature
 	 */
 	public FeatureEntry parse(URL featureURL){
+		feature=null;
 		InputStream in = null;
 		try {
 			this.url = featureURL;
