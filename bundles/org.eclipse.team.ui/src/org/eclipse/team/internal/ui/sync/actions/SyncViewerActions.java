@@ -181,11 +181,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		layoutMenu.add(toggleLayoutHierarchicalAction);
 		dropDownMenu.add(layoutMenu);		
 		dropDownMenu.add(new Separator());
-		dropDownMenu.add(new SyncViewerShowPreferencesAction(getSyncView().getSite().getShell()));
-		
-		dropDownMenu.add(gotoNext);
-		dropDownMenu.add(gotoPrevious);
-		
+		dropDownMenu.add(new SyncViewerShowPreferencesAction(getSyncView().getSite().getShell()));		
 		refactoringActions.fillActionBars(actionBars);
 	}
 
