@@ -20,8 +20,8 @@ import org.eclipse.ui.intro.config.*;
 /**
  * Class for handling/caching all the loaded Intro Content providers, from all
  * loaded models. <br>
- * For now, content provider model classes are used as keys in the hashtable,
- * and their corresponding classes as values.
+ * Content provider ids are used as keys in the hashtable, and their
+ * corresponding classes as values.
  */
 
 public class ContentProviderManager {
@@ -31,8 +31,11 @@ public class ContentProviderManager {
 
 
     // Holds all created content providers, to prevent the need to recreate the
-    // class on each navigation. Key is the contentProvider model class, value
-    // is the actual Intro content provider instance.
+    // class on each navigation. Key is the contentProvider id, value is the
+    // actual Intro content provider instance. We use id as key because in both
+    // the swt and XHTML modes a page is refreshed (reflowed) by clearing all
+    // children and recreating them. So we do not want to recreate the content
+    // provider class too.
     private Hashtable contentProviders = new Hashtable();
 
     /*
@@ -57,9 +60,18 @@ public class ContentProviderManager {
      */
     public IIntroContentProvider getContentProvider(
             IntroContentProvider provider) {
+        if (provider.getId() == null) {
+            // no id defined. return null to create a new instance each time.
+            // bad, so log fact.
+            Log
+                .info("Intro content provider from class: " //$NON-NLS-1$
+                        + provider.getClassName()
+                        + " does not have an id defined. An id is required for a content provider."); //$NON-NLS-1$
+            return null;
+        }
         // safe to cast since we know the object class in table.
         IIntroContentProvider providerClass = (IIntroContentProvider) contentProviders
-                .get(provider);
+            .get(provider.getId());
         return providerClass;
     }
 
@@ -77,14 +89,16 @@ public class ContentProviderManager {
         // the content provider has never been created before. Create and cache
         // one.
         String pluginId = (provider.getPluginId() != null) ? provider
-                .getPluginId() : provider.getBundle().getSymbolicName();
+            .getPluginId() : provider.getBundle().getSymbolicName();
         Object aClass = (IIntroContentProvider) ModelLoaderUtil
-                .createClassInstance(pluginId, provider.getClassName());
+            .createClassInstance(pluginId, provider.getClassName());
         IIntroContentProvider providerClass = null;
         if (aClass != null && aClass instanceof IIntroContentProvider) {
             providerClass = ((IIntroContentProvider) aClass);
             providerClass.init(site);
-            contentProviders.put(provider, providerClass);
+            if (provider.getId() != null)
+                // cache only when an id is defined.
+                contentProviders.put(provider.getId(), providerClass);
         } else
             Log.warning("Failed to create Intro model content provider: " //$NON-NLS-1$
                     + provider.getClassName());

@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Copyright (c) 2004, 2005 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
 import org.eclipse.core.runtime.*;
@@ -37,7 +35,7 @@ public class BrowserIntroPartImplementation extends
     private IntroHTMLGenerator htmlGenerator = null;
 
     private BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
-            this);
+        this);
 
 
     protected void updateNavigationActionsState() {
@@ -155,7 +153,7 @@ public class BrowserIntroPartImplementation extends
             content = generateXHTMLPage(page, this);
         else {
             HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
-                    this);
+                this);
             if (html != null)
                 content = html.toString();
         }
@@ -175,7 +173,7 @@ public class BrowserIntroPartImplementation extends
         // print the HTML if we are in debug mode and have tracing turned on
         if (IntroPlugin.getDefault().isDebugging()) {
             String printHtml = Platform
-                    .getDebugOption("org.eclipse.ui.intro/trace/printHTML"); //$NON-NLS-1$
+                .getDebugOption("org.eclipse.ui.intro/trace/printHTML"); //$NON-NLS-1$
             if (printHtml != null && printHtml.equalsIgnoreCase("true")) { //$NON-NLS-1$
                 System.out.println(content);
             }
@@ -205,28 +203,28 @@ public class BrowserIntroPartImplementation extends
         Document dom = page.getResolvedDocument();
         // get all content provider elements in DOM.
         NodeList includes = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
-                IntroContentProvider.TAG_CONTENT_PROVIDER);
+            IntroContentProvider.TAG_CONTENT_PROVIDER);
         // get the array version of the nodelist to work around DOM api design.
         Node[] nodes = ModelUtil.getArray(includes);
         for (int i = 0; i < nodes.length; i++) {
             Element contentProviderElement = (Element) nodes[i];
             IntroContentProvider provider = new IntroContentProvider(
-                    contentProviderElement, page.getBundle());
+                contentProviderElement, page.getBundle());
             // If we've already loaded the content provider for this element,
             // retrieve it, otherwise load the class.
             IIntroXHTMLContentProvider providerClass = (IIntroXHTMLContentProvider) ContentProviderManager
-                    .getInst().getContentProvider(provider);
+                .getInst().getContentProvider(provider);
             if (providerClass == null)
                 // content provider never created before, create it.
                 providerClass = (IIntroXHTMLContentProvider) ContentProviderManager
-                        .getInst().createContentProvider(provider, site);
+                    .getInst().createContentProvider(provider, site);
 
             if (providerClass != null) {
                 // create the specialized content, and remove content tag.
                 providerClass.createContent(provider.getId(),
-                        (Element) contentProviderElement.getParentNode());
+                    (Element) contentProviderElement.getParentNode());
                 contentProviderElement.getParentNode().removeChild(
-                        contentProviderElement);
+                    contentProviderElement);
             } else {
                 // we couldn't load the content provider, so add any alternate
                 // text content if there is any.
@@ -256,9 +254,9 @@ public class BrowserIntroPartImplementation extends
         IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
-                forwardAction);
+            forwardAction);
         actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
-                backAction);
+            backAction);
         toolBarManager.add(homeAction);
         toolBarManager.add(backAction);
         toolBarManager.add(forwardAction);
@@ -334,7 +332,8 @@ public class BrowserIntroPartImplementation extends
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */
     public void reflow(IIntroContentProvider provider, boolean incremental) {
-        // getModel().getCurrentPage().
+        // clear loaded flags to force a reload of all children.
+        getModel().getCurrentPage().clearChildren();
         updateContent();
     }
 
@@ -356,7 +355,7 @@ public class BrowserIntroPartImplementation extends
             String currentURL = browser.getUrl();
             if (currentURL != null) {
                 memento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT,
-                        currentURL);
+                    currentURL);
             }
         } else {
             super.saveCurrentPage(memento);
@@ -383,8 +382,8 @@ public class BrowserIntroPartImplementation extends
                     // an url will trigger regen since current page would be the
                     // same.
                     AbstractIntroPage page = (AbstractIntroPage) getModel()
-                            .findChild(getCurrentLocation(),
-                                    AbstractIntroElement.ABSTRACT_PAGE);
+                        .findChild(getCurrentLocation(),
+                            AbstractIntroElement.ABSTRACT_PAGE);
                     success = generateDynamicContentForPage(page);
                     getModel().setCurrentPageId(getCurrentLocation(), false);
                 }
@@ -415,8 +414,8 @@ public class BrowserIntroPartImplementation extends
                     success = browser.setUrl(getCurrentLocation());
                 } else {
                     AbstractIntroPage page = (AbstractIntroPage) getModel()
-                            .findChild(getCurrentLocation(),
-                                    AbstractIntroElement.ABSTRACT_PAGE);
+                        .findChild(getCurrentLocation(),
+                            AbstractIntroElement.ABSTRACT_PAGE);
                     success = generateDynamicContentForPage(page);
                     getModel().setCurrentPageId(getCurrentLocation(), false);
                 }
@@ -468,7 +467,7 @@ public class BrowserIntroPartImplementation extends
             // case.
             getModel().addPropertyListener(this);
             getModel().firePropertyChange(
-                    IntroModelRoot.CURRENT_PAGE_PROPERTY_ID);
+                IntroModelRoot.CURRENT_PAGE_PROPERTY_ID);
         }
     }
 
@@ -512,7 +511,7 @@ public class BrowserIntroPartImplementation extends
         boolean success = browser.setUrl(url);
         if (!success) {
             Log.error("Unable to set the following ULR in browser: " + url, //$NON-NLS-1$
-                    null);
+                null);
             return;
         }
     }

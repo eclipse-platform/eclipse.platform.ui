@@ -38,7 +38,7 @@ public final class ImageUtil {
     public static final String HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
     
     // Launch bar image
-    public static final String RESTORE_WELCOME = "restoreWelcome";
+    public static final String RESTORE_WELCOME = "restoreWelcome"; //$NON-NLS-1$
 
     // Viewer images
     public static final String INTRO_MODEL_LEAF = "leaf"; //$NON-NLS-1$

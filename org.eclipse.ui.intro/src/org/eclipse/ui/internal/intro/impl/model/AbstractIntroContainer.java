@@ -29,7 +29,6 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected Vector children;
     protected boolean loaded = false;
     protected boolean resolved = false;
-
     protected Element element;
 
     /**
@@ -66,7 +65,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             resolveChildren();
 
         AbstractIntroElement[] childrenElements = (AbstractIntroElement[]) convertToModelArray(
-                children, AbstractIntroElement.ELEMENT);
+            children, AbstractIntroElement.ELEMENT);
         return childrenElements;
     }
 
@@ -103,8 +102,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * </code>
      * 
      * @return An array of elements of the right type. If the container has no
-     *         children, or no children of the specified types, returns an empty
-     *         array.
+     *               children, or no children of the specified types, returns an empty
+     *               array.
      */
     public Object[] getChildrenOfType(int elementMask) {
 
@@ -194,7 +193,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * they appear in the xml content file.
      */
     protected void loadChildren() {
-        // init the children vector.
+        // init the children vector. old children are disposed automatically.
         children = new Vector();
 
         NodeList nodeList = element.getChildNodes();
@@ -209,8 +208,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         // add the elements at the end children's vector.
         insertElementsBefore(filteredElements, getBundle(), children.size());
         loaded = true;
-        // free DOM model for memory performance.
-        element = null;
+        // we cannot free DOM model element because a page's children may be
+        // nulled when reflowing a content provider.
     }
 
     /**
@@ -263,25 +262,25 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         if (childElement.getNodeName().equalsIgnoreCase(IntroGroup.TAG_GROUP))
             child = new IntroGroup(childElement, bundle);
         else if (childElement.getNodeName()
-                .equalsIgnoreCase(IntroLink.TAG_LINK))
+            .equalsIgnoreCase(IntroLink.TAG_LINK))
             child = new IntroLink(childElement, bundle);
         else if (childElement.getNodeName()
-                .equalsIgnoreCase(IntroText.TAG_TEXT))
+            .equalsIgnoreCase(IntroText.TAG_TEXT))
             child = new IntroText(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
-                IntroImage.TAG_IMAGE))
+            IntroImage.TAG_IMAGE))
             child = new IntroImage(childElement, bundle);
         else if (childElement.getNodeName()
-                .equalsIgnoreCase(IntroHTML.TAG_HTML))
+            .equalsIgnoreCase(IntroHTML.TAG_HTML))
             child = new IntroHTML(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
-                IntroInclude.TAG_INCLUDE))
+            IntroInclude.TAG_INCLUDE))
             child = new IntroInclude(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
-                IntroAnchor.TAG_ANCHOR))
+            IntroAnchor.TAG_ANCHOR))
             child = new IntroAnchor(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
-                IntroContentProvider.TAG_CONTENT_PROVIDER))
+            IntroContentProvider.TAG_CONTENT_PROVIDER))
             child = new IntroContentProvider(childElement, bundle);
         return child;
     }
@@ -294,7 +293,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected void resolveChildren() {
         for (int i = 0; i < children.size(); i++) {
             AbstractIntroElement child = (AbstractIntroElement) children
-                    .elementAt(i);
+                .elementAt(i);
             if (child.getType() == AbstractIntroElement.INCLUDE)
                 resolveInclude((IntroInclude) child);
         }
@@ -335,11 +334,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     private AbstractIntroElement findIncludeTarget(IntroInclude include) {
         String path = include.getPath();
         IntroModelRoot targetModelRoot = (IntroModelRoot) getParentPage()
-                .getParent();
+            .getParent();
         String targetConfigID = include.getConfigId();
         if (targetConfigID != null)
             targetModelRoot = ExtensionPointManager.getInst().getModel(
-                    targetConfigID);
+                targetConfigID);
         if (targetModelRoot == null)
             // if the target config was not found, skip this include.
             return null;
@@ -407,7 +406,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
         for (int i = 0; i < children.size(); i++) {
             AbstractIntroElement aChild = (AbstractIntroElement) children
-                    .elementAt(i);
+                .elementAt(i);
             if (!aChild.isOfType(ID_ELEMENT))
                 // includes and heads do not have ids, and so can not be
                 // referenced directly. This means that they can not be
@@ -523,6 +522,16 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     }
 
     /**
+     * Sets the loaded/resolved flags to false. This is needed to be able to
+     * clear the loaded falg, and force a reload of all children.
+     */
+    public void clearChildren() {
+        this.loaded = false;
+        this.resolved = false;
+    }
+
+
+    /**
      * Deep copy since class has mutable objects. Leave DOM element as a shallow
      * reference copy since DOM is immutable.
      */
@@ -532,7 +541,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         if (children != null) {
             for (int i = 0; i < children.size(); i++) {
                 AbstractIntroElement cloneChild = (AbstractIntroElement) ((AbstractIntroElement) children
-                        .elementAt(i)).clone();
+                    .elementAt(i)).clone();
                 cloneChild.setParent(clone);
                 clone.children.add(i, cloneChild);
             }

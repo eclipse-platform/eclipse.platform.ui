@@ -47,21 +47,16 @@ public class IntroPartPresentation extends AbstractIntroElement {
     protected static final String TAG_PRESENTATION = "presentation"; //$NON-NLS-1$
     private static final String TAG_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
     private static final String TAG_LAUNCH_BAR = "launchBar"; //$NON-NLS-1$    
-    
 
-    /*
-     * type attribute can only be org.eclipse.platform.intro.FormsPresentation
-     * or org.eclipse.platform.intro.BrowserPresentation
-     */
     private static final String ATT_KIND = "kind"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_OS = "os"; //$NON-NLS-1$
     private static final String ATT_WS = "ws"; //$NON-NLS-1$
     protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
     protected static final String ATT_STANDBY_PAGE_ID = "standby-page-id"; //$NON-NLS-1$
-    
-    private static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
-    private static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
+
+    protected static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
+    protected static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
     // this implementation kind if not public api. Only used internally for
     // debugging.
     private static final String TEXT_IMPL_KIND = "text"; //$NON-NLS-1$
@@ -78,7 +73,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private IntroHead head;
 
     private AbstractIntroPartImplementation implementation;
-    
+
     private LaunchBarElement launchBar;
 
     // CustomizableIntroPart and memento instances. Passed to the Implementation
@@ -106,7 +101,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             head = getHead(element);
             // Resolve.
             implementationStyle = ModelUtil.resolveURL(implementationStyle,
-                    element);
+                element);
         }
     }
 
@@ -143,7 +138,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             // There should only be one head element. Since elements where
             // obtained by name, no point validating name.
             IConfigurationElement[] headElements = element
-                    .getChildren(IntroHead.TAG_HEAD);
+                .getChildren(IntroHead.TAG_HEAD);
             if (headElements.length == 0)
                 // no contributions. done.
                 return null;
@@ -155,23 +150,24 @@ public class IntroPartPresentation extends AbstractIntroElement {
             return null;
         }
     }
-    
-/**
- * Returns the launch bar element if defined in this presentation,
- * or <code>null</code> otherwise.
- * 
- * @since 3.1
- * @return
- */
-    
+
+    /**
+     * Returns the launch bar element if defined in this presentation, or
+     * <code>null</code> otherwise.
+     * 
+     * @since 3.1
+     * @return
+     */
+
     public LaunchBarElement getLaunchBar() {
-    	if (launchBar!=null)
-    		return launchBar;
-    	IConfigurationElement [] children = getCfgElement().getChildren(TAG_LAUNCH_BAR);
-    	if (children.length>0) {
-    		launchBar = new LaunchBarElement(children[0]);
-    	}
-    	return launchBar;
+        if (launchBar != null)
+            return launchBar;
+        IConfigurationElement[] children = getCfgElement().getChildren(
+            TAG_LAUNCH_BAR);
+        if (children.length > 0) {
+            launchBar = new LaunchBarElement(children[0]);
+        }
+        return launchBar;
     }
 
     /**
@@ -197,7 +193,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         IConfigurationElement implementationElement = null;
         for (int i = 0; i < validImplementations.size(); i++) {
             implementationElement = (IConfigurationElement) validImplementations
-                    .elementAt(i);
+                .elementAt(i);
             // you want to pass primed model.
             updatePresentationAttributes(implementationElement);
             try {
@@ -210,18 +206,18 @@ public class IntroPartPresentation extends AbstractIntroElement {
                 implementation.createPartControl(parent);
                 Log.info("Loaded config implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                                "class")); //$NON-NLS-1$
+                            "class")); //$NON-NLS-1$
                 break;
             } catch (SWTError e) {
                 Log.error("Failed to create implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                                "class"), e); //$NON-NLS-1$
+                            "class"), e); //$NON-NLS-1$
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
                 Log.error("Failed to create implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                                "class"), e); //$NON-NLS-1$
+                            "class"), e); //$NON-NLS-1$
                 implementation = null;
                 implementationElement = null;
             }
@@ -257,7 +253,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         // There can be more than one implementation contribution. Add each
         // valid one. First start with OS, then WS then no OS.
         IConfigurationElement[] implementationElements = configElement
-                .getChildren(TAG_IMPLEMENTATION);
+            .getChildren(TAG_IMPLEMENTATION);
         IConfigurationElement implementationElement = null;
 
         if (implementationElements.length == 0)
@@ -337,7 +333,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
         // There can be more than one implementation contribution.
         IConfigurationElement[] implementationElements = getCfgElement()
-                .getChildren(TAG_IMPLEMENTATION);
+            .getChildren(TAG_IMPLEMENTATION);
         IConfigurationElement implementationElement = null;
 
         if (implementationElements.length == 0)
@@ -350,7 +346,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             if (aKind.equals(kind)) {
                 // found implementation with matching kind.
                 String style = implementationElements[i]
-                        .getAttribute(ATT_STYLE);
+                    .getAttribute(ATT_STYLE);
                 return ModelUtil.resolveURL(style, getCfgElement());
             }
         }
@@ -371,7 +367,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         AbstractIntroPartImplementation implementation = null;
         try {
             implementation = (AbstractIntroPartImplementation) configElement
-                    .createExecutableExtension("class"); //$NON-NLS-1$
+                .createExecutableExtension("class"); //$NON-NLS-1$
         } catch (Exception e) {
             Util.handleException("Could not instantiate implementation class " //$NON-NLS-1$
                     + configElement.getAttribute("class"), e); //$NON-NLS-1$
@@ -423,7 +419,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * the work, as different implementations may have different requirements.
      * 
      * @param memento
-     *            the memento in which to store state information
+     *                   the memento in which to store state information
      */
     public void saveState(IMemento memento) {
         if (implementation != null)
@@ -513,7 +509,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     /**
      * @return Returns the HTML head conttent to be added to each dynamic html
-     *         page in this presentation..
+     *               page in this presentation..
      */
     public IntroHead getHead() {
         return head;

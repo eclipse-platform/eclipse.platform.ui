@@ -42,6 +42,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     // DOM representing XHTML content. DOM is only cached in the case of XHTML
     // content.
     private Document dom;
+
     // set when the content file is loaded (ie: loadChildren is called)
     private boolean isXHTMLPage;
 
@@ -67,6 +68,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * </ul>
      */
     private Vector styles;
+
     private Hashtable altStyles;
 
     /**
@@ -78,8 +80,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (content == null)
             init(element, bundle);
         else
-            // Content is not null. Resolve it. Other attributes will be loaded
-            // when xml content file is loaded
+            // Content is not null. Resolve it. Other page attributes (style,
+            // ...) will be loaded when xml content file is loaded since we need
+            // to pick them up from external xml content file. In the case where
+            // this external content file is XHTML and we have HTML
+            // presentation, page attributes are simply not loaded. In the case
+            // where we have XHTML in a UI forms presentation, we need to load
+            // initial page attributes.
             content = BundleUtil.getResolvedBundleLocation(content, bundle);
     }
 
@@ -270,7 +277,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (childElement.getNodeName().equalsIgnoreCase(IntroHead.TAG_HEAD)) {
             child = new IntroHead(childElement, bundle);
         } else if (childElement.getNodeName().equalsIgnoreCase(
-                IntroPageTitle.TAG_TITLE)) {
+            IntroPageTitle.TAG_TITLE)) {
             // if we have a title, only add it as a child if we did not load one
             // before. A page can only have one title.
             if (title == null) {
@@ -297,10 +304,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * load the children of this container. Override parent behavior because we
      * want to support loading content from other xml files. The design is that
      * only the id and content from the existing page are honored. All other
-     * attributes are what they are defined in the external page, for 3.0 style
-     * content. For XHTML content, all info is in the xhtml page. If we fail to
-     * load the page, display the Invalid Page page.
-     *  
+     * attributes are what they are defined in the external paget. For XHTML
+     * content, all info is in the xhtml page. If we fail to load the page,
+     * display the Invalid Page page.
      */
     protected void loadChildren() {
         if (content == null) {
@@ -311,15 +317,17 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         // content attribute is defined. It either points to an XHTML file, or a
         // introContent.xml file. Process each case. Assume it is an
-        // introContent
+        // introContent file.
+        // INTRO: XHTML file is loaded needlessly when we have XHTML content and
+        // SWT presentation.
         IntroContentParser parser = new IntroContentParser(content);
         Document dom = parser.getDocument();
         if (dom == null) {
             // bad xml. This could be bad XHTML or bad intro XML. Parser would
             // have logged fact. Load dom for invalid page.
             String invalidContentFilePath = BundleUtil
-                    .getResolvedBundleLocation(INVALID_CONTENT, IntroPlugin
-                            .getDefault().getBundle());
+                .getResolvedBundleLocation(INVALID_CONTENT, IntroPlugin
+                    .getDefault().getBundle());
             parser = new IntroContentParser(invalidContentFilePath);
             dom = parser.getDocument();
             // make sure to override content attribute to resolve the Invalid
@@ -327,11 +335,20 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             content = invalidContentFilePath;
         }
 
-        // parser content depending on type. Make sure to set the loaded flag
+        // parse content depending on type. Make sure to set the loaded flag
         // accordongly, otherwise content file will always be parsed.
-        if (parser.hasXHTMLContent())
-            loadXHTMLContent(dom);
-        else
+        IntroModelRoot model = (IntroModelRoot) getParent();
+        String presentationStyle = model.getPresentation()
+            .getImplementationKind();
+        if (parser.hasXHTMLContent()) {
+            if (presentationStyle
+                .equals(IntroPartPresentation.BROWSER_IMPL_KIND))
+                loadXHTMLContent(dom);
+            else {
+                init(element, getBundle());
+                super.loadChildren();
+            }
+        } else
             // load the first page with correct id, from content xml file.
             loadXMLContent(dom);
     }
@@ -345,7 +362,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     private void loadXMLContent(Document dom) {
         Element[] pages = ModelUtil.getElementsByTagName(dom,
-                IntroPage.TAG_PAGE);
+            IntroPage.TAG_PAGE);
         if (pages.length == 0) {
             Log.warning("Content file has no pages."); //$NON-NLS-1$
             return;
@@ -361,12 +378,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                 // call init on the new element. the filtering and the style-id
                 // are loaded by the parent class.
                 init(pageElement, getBundle());
-                // TODO: revisit. Special processing here should be made more
+                // INTRO: revisit. Special processing here should be made more
                 // general. we know id is correct.
                 style_id = element
-                        .getAttribute(AbstractBaseIntroElement.ATT_STYLE_ID);
+                    .getAttribute(AbstractBaseIntroElement.ATT_STYLE_ID);
                 filteredFrom = element
-                        .getAttribute(AbstractBaseIntroElement.ATT_FILTERED_FROM);
+                    .getAttribute(AbstractBaseIntroElement.ATT_FILTERED_FROM);
                 foundMatchingPage = true;
             }
         }
@@ -397,7 +414,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Returns the DOM representing an external XHTML file. May return null if
      * extension content is 3.0 format. The page is resolved before returning,
-     * meaning includes are resolved, and the basde of the page is defined.
+     * meaning includes are resolved, and the base of the page is defined.
      * 
      * @return
      */
@@ -508,7 +525,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     protected void resolveIncludes() {
         // get all includes elements in DOM.
         NodeList includes = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
-                IntroInclude.TAG_INCLUDE);
+            IntroInclude.TAG_INCLUDE);
         // get the array version of the include nodelist to work around
         // replaceChild() DOM api design.
         Node[] nodes = ModelUtil.getArray(includes);
@@ -522,7 +539,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                 // INTRO: fix log strings.
                 String message = "Could not resolve following include:  " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(includeElement,
-                                IntroInclude.ATT_PATH);
+                            IntroInclude.ATT_PATH);
                 Log.warning(message);
                 return;
             }
@@ -532,14 +549,14 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             // update the src attribute of this node, if defined by w3
             // specs.
             String targetContentFilePath = ((AbstractIntroPage) results[0])
-                    .getContent();
+                .getContent();
             ModelUtil.updateResourceAttributes((Element) targetNode,
-                    targetContentFilePath);
+                targetContentFilePath);
             // use of replace API to remove include element is tricky. It
             // confuses the NodeList used in the loop above. Removing an include
             // removes it from the NodeList. Used cloned Array instead.
             includeElement.getParentNode().replaceChild(targetNode,
-                    includeElement);
+                includeElement);
         }
     }
 
@@ -556,11 +573,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private Object[] findDOMIncludeTarget(IntroInclude include) {
         String path = include.getPath();
         IntroModelRoot targetModelRoot = (IntroModelRoot) getParentPage()
-                .getParent();
+            .getParent();
         String targetConfigID = include.getConfigId();
         if (targetConfigID != null)
             targetModelRoot = ExtensionPointManager.getInst().getModel(
-                    targetConfigID);
+                targetConfigID);
         if (targetModelRoot == null)
             // if the target config was not found, skip this include.
             return null;
@@ -595,7 +612,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         // save to cast.
         AbstractIntroPage targetPage = (AbstractIntroPage) model.findChild(
-                pathSegments[0], ABSTRACT_PAGE);
+            pathSegments[0], ABSTRACT_PAGE);
 
         if (targetPage != null) {
             results[0] = targetPage;

@@ -85,10 +85,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
     // org.eclipse.ui.into.config extension point. Start off with true, and set
     // to false whenever something bad happens.
     private boolean hasValidConfig = true;
+
     private boolean isdynamicIntro;
+
     private IntroPartPresentation introPartPresentation;
+
     private IntroHomePage homePage;
+
     private String currentPageId;
+
     private IntroHomePage standbyPage;
 
 
@@ -193,7 +198,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         IConfigurationElement presentationElement = ModelLoaderUtil
                 .validateSingleContribution(presentationElements,
-                        IntroPartPresentation.ATT_HOME_PAGE_ID);
+                    IntroPartPresentation.ATT_HOME_PAGE_ID);
         return presentationElement;
     }
 
@@ -206,7 +211,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         String homePageId = getPresentation().getHomePageId();
         String standbyPageId = getPresentation().getStandbyPageId();
         Element[] pages = ModelUtil.getElementsByTagName(dom,
-                IntroPage.TAG_PAGE);
+            IntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
             if (pageElement.getAttribute(IntroPage.ATT_ID).equals(homePageId)) {
@@ -216,7 +221,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 currentPageId = homePage.getId();
                 children.add(homePage);
             } else if (pageElement.getAttribute(IntroPage.ATT_ID).equals(
-                    standbyPageId)) {
+                standbyPageId)) {
                 // Create the model class for the standby Page.
                 standbyPage = new IntroHomePage(pageElement, bundle);
                 standbyPage.setParent(this);
@@ -237,7 +242,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     private void loadSharedGroups(Document dom, Bundle bundle) {
         Element[] groups = ModelUtil.getElementsByTagName(dom,
-                IntroGroup.TAG_GROUP);
+            IntroGroup.TAG_GROUP);
         for (int i = 0; i < groups.length; i++) {
             IntroGroup group = new IntroGroup(groups[i], bundle);
             group.setParent(this);
@@ -280,7 +285,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 // INTRO: fix log strings.
                 Log.warning("Could not resolve the following configExtension: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(extensionContentElement,
-                                ATT_CONTENT));
+                            ATT_CONTENT));
                 continue;
             }
 
@@ -288,7 +293,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // only if we resolved this extension. No point adding pages that
             // will never be referenced.
             Element[] pages = ModelUtil.getElementsByTagName(dom,
-                    IntroPage.TAG_PAGE);
+                IntroPage.TAG_PAGE);
             for (int j = 0; j < pages.length; j++) {
                 // Create the model class for an intro Page.
                 IntroPage page = new IntroPage(pages[j], bundle);
@@ -318,13 +323,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     private Element loadExtensionContent(Document dom, Bundle bundle) {
         Element[] extensionContents = ModelUtil.getElementsByTagName(dom,
-                IntroExtensionContent.TAG_CONTAINER_EXTENSION);
+            IntroExtensionContent.TAG_CONTAINER_EXTENSION);
         // INTRO: change this. we need to load more than one extension content
         // here.
         // There should only be one container extension. (ver3.0)
         Element extensionContentElement = ModelLoaderUtil
                 .validateSingleContribution(extensionContents,
-                        IntroExtensionContent.ATT_PATH);
+                    IntroExtensionContent.ATT_PATH);
         if (extensionContentElement == null)
             // no extensionContent defined.
             return null;
@@ -361,7 +366,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // path does not have correct format.
             return false;
         AbstractIntroPage targetPage = (AbstractIntroPage) findChild(
-                pathSegments[0], ABSTRACT_PAGE);
+            pathSegments[0], ABSTRACT_PAGE);
         if (targetPage == null)
             // target could not be found. Signal failure.
             return false;
@@ -372,7 +377,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // plugins to contribute. Find the target node.
             Document pageDom = targetPage.getDocument();
             Element targetAnchor = targetPage.findDomChild(pathSegments[1],
-                    IntroAnchor.TAG_ANCHOR);
+                IntroAnchor.TAG_ANCHOR);
             if (targetAnchor == null)
                 return false;
 
@@ -383,7 +388,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
             Element extensionBody = ModelUtil.getBodyElement(extensionDom);
             Element[] children = ModelUtil.getElementsByTagName(extensionBody,
-                    "*"); //$NON-NLS-1$
+                "*"); //$NON-NLS-1$
             // insert all children before anchor in page body.
             for (int i = 0; i < children.length; i++) {
                 Node targetNode = pageDom.importNode(children[i], true);
@@ -391,9 +396,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 // specs.
                 String localContentFilePath = extensionContent.getContent();
                 ModelUtil.updateResourceAttributes((Element) targetNode,
-                        localContentFilePath);
+                    localContentFilePath);
                 targetAnchor.getParentNode().insertBefore(targetNode,
-                        targetAnchor);
+                    targetAnchor);
             }
             return true;
         }
@@ -421,7 +426,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // resolved, to enable other plugins to contribute.
             IntroAnchor targetAnchor = (IntroAnchor) target;
             insertAnchorChildren(targetAnchor, extensionContent,
-                    extensionContent.getBundle());
+                extensionContent.getBundle());
             handleExtensionStyleInheritence(targetAnchor, extensionContent);
             return true;
         }
@@ -434,7 +439,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .getParent();
         // insert the elements of the extension before the anchor.
         anchorParent.insertElementsBefore(extensionContent.getChildren(),
-                bundle, anchor);
+            bundle, anchor);
     }
 
 
@@ -528,13 +533,6 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * @return Returns the isLoaded.
-     */
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    /**
      * @return Returns the isdynamicIntro.
      */
     public boolean isDynamic() {
@@ -568,7 +566,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return true;
 
         AbstractIntroPage page = (AbstractIntroPage) findChild(pageId,
-                ABSTRACT_PAGE);
+            ABSTRACT_PAGE);
         if (page == null) {
             // not a page. Test for root page.
             if (!pageId.equals(homePage.getId())) {
@@ -632,7 +630,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return null;
 
         AbstractIntroPage page = (AbstractIntroPage) findChild(currentPageId,
-                ABSTRACT_PAGE);
+            ABSTRACT_PAGE);
         if (page != null)
             return page;
         // not a page. Test for root page.
