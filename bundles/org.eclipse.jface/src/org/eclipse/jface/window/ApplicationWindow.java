@@ -210,10 +210,8 @@ protected void addToolBar(int style) {
 /* (non-Javadoc)
  * Method declared on Window.
  */ 
-protected void handleShellCloseEvent() {
-	if(operationInProgress)
-		return;
-	super.handleShellCloseEvent();
+protected boolean canHandleShellCloseEvent() {
+	return super.canHandleShellCloseEvent() && !operationInProgress;
 }
 /* (non-Javadoc)
  * Method declared on Window.

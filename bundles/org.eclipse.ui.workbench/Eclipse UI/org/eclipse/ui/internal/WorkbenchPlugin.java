@@ -429,6 +429,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
+		store.setDefault(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		
 		// Set the default behaviour for showing the task list when there are compiles errors in the build
 		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);

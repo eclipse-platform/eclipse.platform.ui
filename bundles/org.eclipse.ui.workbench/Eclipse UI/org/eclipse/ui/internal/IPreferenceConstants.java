@@ -143,4 +143,6 @@ public interface IPreferenceConstants {
 	public static final String PSPM_ALWAYS = "always"; //$NON-NLS-1$
 	public static final String PSPM_NEVER = "never"; //$NON-NLS-1$
 	
+	// Prompt for exit confirmation when last window closed.
+	public static final String EXIT_PROMPT_ON_CLOSE_LAST_WINDOW = "EXIT_PROMPT_ON_CLOSE_LAST_WINDOW"; //$NON-NLS-1$
 }

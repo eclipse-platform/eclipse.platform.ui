@@ -26,6 +26,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoSaveAllButton;
 	private Button refreshButton;
 	private Button showTasks;
+	private Button exitPromptButton;
 	private IntegerFieldEditor saveInterval;
 
 	private Button doubleClickButton;
@@ -68,6 +69,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
 		refreshButton.setFont(font);
 		
+		exitPromptButton = new Button(composite, SWT.CHECK);
+		exitPromptButton.setText(WorkbenchMessages.getString("WorkbenchPreference.exitPromptButton")); //$NON-NLS-1$
+		exitPromptButton.setFont(font);
+		
 		showTasks = new Button(composite, SWT.CHECK);
 		showTasks.setText(WorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
 		showTasks.setFont(font);
@@ -83,6 +88,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
+		exitPromptButton.setSelection(store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
 		
 		return composite;
@@ -284,6 +290,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.AUTO_BUILD));
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
+		exitPromptButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
 		saveInterval.loadDefault();
 		
@@ -324,8 +331,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the save all prior to build setting
 		store.setValue(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, autoSaveAllButton.getSelection());
 
-		// store the link navigator to editor setting
+		// store the refresh workspace on startup setting
 		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
+
+		// store the exit prompt on last window close setting
+		store.setValue(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
 
 		//store the preference for bringing task view to front on build
 		store.setValue(IPreferenceConstants.SHOW_TASKS_ON_BUILD, showTasks.getSelection());

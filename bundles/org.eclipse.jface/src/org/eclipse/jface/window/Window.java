@@ -198,6 +198,21 @@ protected Window(Shell parentShell) {
 	this.parentShell = parentShell;
 }
 /**
+ * Determines if the window should handle the close event
+ * or do nothing.
+ * <p>
+ * The default implementation of this framework method
+ * returns <code>true</code>, which will allow the
+ * <code>handleShellCloseEvent</code> method to be called.
+ * Subclasses may extend or reimplement.
+ * </p>
+ * 
+ * @return whether the window should handle the close event.
+ */
+protected boolean canHandleShellCloseEvent() {
+	return true;
+}
+/**
  * Closes this window, disposes its shell, and removes this
  * window from its window manager (if it has one).
  * <p>
@@ -430,7 +445,8 @@ protected ShellListener getShellListener() {
 	return new ShellAdapter() {
 		public void shellClosed(ShellEvent event) {
 			event.doit= false;	// don't close now
-			handleShellCloseEvent();
+			if (canHandleShellCloseEvent())
+				handleShellCloseEvent();
 		}
 	};
 }

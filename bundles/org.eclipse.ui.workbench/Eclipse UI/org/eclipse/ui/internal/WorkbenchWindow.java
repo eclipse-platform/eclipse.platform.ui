@@ -409,6 +409,25 @@ public int open() {
 	workbench.fireWindowOpened(this);
 	return r;
 }
+/* (non-Javadoc)
+ * Method declared on Window.
+ */ 
+protected boolean canHandleShellCloseEvent() {
+	if (!super.canHandleShellCloseEvent())
+		return false;
+		
+	// When closing the last window, prompt for confirmation
+	if (workbench.getWorkbenchWindowCount() > 1)
+		return true;
+	
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	boolean promptOnExit = store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
+
+	if (promptOnExit) {
+	}
+
+	return true;
+}
 /**
  * @see IWorkbenchWindow
  */
