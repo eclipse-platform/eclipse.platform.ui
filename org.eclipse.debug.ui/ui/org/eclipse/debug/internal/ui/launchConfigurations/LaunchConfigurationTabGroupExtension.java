@@ -72,7 +72,7 @@ public class LaunchConfigurationTabGroupExtension {
 	 *  tab group is associated with
 	 */	
 	protected String getTypeIdentifier() {
-		return getConfigurationElement().getAttribute("type");
+		return getConfigurationElement().getAttribute("type"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class LaunchConfigurationTabGroupExtension {
 	 * 	the tab group
 	 */
 	public ILaunchConfigurationTabGroup newTabGroup() throws CoreException {
-		return (ILaunchConfigurationTabGroup)getConfigurationElement().createExecutableExtension("class");
+		return (ILaunchConfigurationTabGroup)getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
 	}
 
 

@@ -47,7 +47,7 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 		} else {
 			imageDescriptor = DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);			
 		}	
-		setText("Edit Configurations...");
+		setText(ActionMessages.getString("OpenLaunchConfigurationsAction.Edit_Configurations_1")); //$NON-NLS-1$
 		setImageDescriptor(imageDescriptor);	
 	}
 	

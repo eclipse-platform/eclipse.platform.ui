@@ -18,14 +18,14 @@ public class RunHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	 * @see LaunchHistoryPreferenceTab#getFavoritesLabel()
 	 */
 	protected String getFavoritesLabel() {
-		return "Favorite Run Confi&gurations:";
+		return LaunchConfigurationsMessages.getString("RunHistoryPreferenceTab.Favorite_Run_Confi&gurations__1"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see LaunchHistoryPreferenceTab#getRecentLabel()
 	 */
 	protected String getRecentLabel() {
-		return "Recent Run &Launches:";
+		return LaunchConfigurationsMessages.getString("RunHistoryPreferenceTab.Recent_Run_&Launches__2"); //$NON-NLS-1$
 	}
 
 	/**

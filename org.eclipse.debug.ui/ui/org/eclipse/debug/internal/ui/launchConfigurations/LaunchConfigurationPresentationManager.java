@@ -73,7 +73,7 @@ public class LaunchConfigurationPresentationManager {
 			if (typeId == null) {
 				IExtension ext = groups[i].getDeclaringExtension();
 				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format("Launch configuration tab group extension {0} does not specify launch configuration type.", (new String[] {ext.getUniqueIdentifier()})), null);
+					 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.Launch_configuration_tab_group_extension_{0}_does_not_specify_launch_configuration_type_1"), (new String[] {ext.getUniqueIdentifier()})), null); //$NON-NLS-1$
 					DebugUIPlugin.log(status);
 			} else {
 				// verify it references a valid launch configuration type
@@ -81,7 +81,7 @@ public class LaunchConfigurationPresentationManager {
 				if (lct == null) {
 					IExtension ext = groups[i].getDeclaringExtension();
 					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format("Launch configuration tab group extension {0} refers to non-existant launch configuration type {1}", (new String[] {ext.getUniqueIdentifier(), typeId})), null);
+					 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.Launch_configuration_tab_group_extension_{0}_refers_to_non-existant_launch_configuration_type_{1}_2"), (new String[] {ext.getUniqueIdentifier(), typeId})), null); //$NON-NLS-1$
 					DebugUIPlugin.log(status);
 				}
 			}
@@ -101,7 +101,7 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension ext = (LaunchConfigurationTabGroupExtension)fTabGroupExtensions.get(type.getIdentifier());
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format("No tab group defined for launch configuration type {0}", (new String[] {type.getIdentifier()})), null);			;
+			 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.No_tab_group_defined_for_launch_configuration_type_{0}_3"), (new String[] {type.getIdentifier()})), null);			; //$NON-NLS-1$
 			 throw new CoreException(status);
 		} else {
 			return ext.newTabGroup();

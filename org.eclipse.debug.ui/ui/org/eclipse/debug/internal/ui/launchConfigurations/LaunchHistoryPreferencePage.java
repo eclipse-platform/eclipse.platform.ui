@@ -53,12 +53,12 @@ public class LaunchHistoryPreferencePage
 		tabFolder.setLayoutData(gd);
 		
 		TabItem tab = new TabItem(tabFolder, SWT.NONE);
-		tab.setText("De&bug");
+		tab.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.De&bug_1")); //$NON-NLS-1$
 		tab.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ACT_DEBUG));
 		tab.setControl(createDebugTab(tabFolder));
 		
 		tab = new TabItem(tabFolder, SWT.NONE);
-		tab.setText("&Run");
+		tab.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.&Run_2")); //$NON-NLS-1$
 		tab.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ACT_RUN));
 		tab.setControl(createRunTab(tabFolder));
 				

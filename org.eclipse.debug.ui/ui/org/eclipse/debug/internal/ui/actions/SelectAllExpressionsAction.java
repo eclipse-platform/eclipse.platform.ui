@@ -16,6 +16,6 @@ public class SelectAllExpressionsAction extends SelectAllAction {
 	}
 	
 	protected String getActionId() {
-		return AbstractDebugView.SELECT_ALL_ACTION + ".Variables";
+		return AbstractDebugView.SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	}
 }

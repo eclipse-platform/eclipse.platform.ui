@@ -88,7 +88,7 @@ public class LaunchConfigurationTabExtension {
 	 *  tab is intended for, or <code>null</code> if this tab is generic
 	 */	
 	protected String getTypeIdentifier() {
-		return getConfigurationElement().getAttribute("type");
+		return getConfigurationElement().getAttribute("type"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class LaunchConfigurationTabExtension {
 	 *  specified
 	 */
 	public String getName() {
-		return getConfigurationElement().getAttribute("name");
+		return getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class LaunchConfigurationTabExtension {
 	 * if mode independent
 	 */
 	public String getMode() {
-		return getConfigurationElement().getAttribute("mode");
+		return getConfigurationElement().getAttribute("mode"); //$NON-NLS-1$
 	}	
 
 }

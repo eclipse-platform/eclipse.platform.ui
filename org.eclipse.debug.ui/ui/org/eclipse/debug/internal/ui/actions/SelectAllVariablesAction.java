@@ -20,6 +20,6 @@ import org.eclipse.jface.viewers.Viewer;
 	}
 	
 	protected String getActionId() {
-		return AbstractDebugView.SELECT_ALL_ACTION + ".Variables";
+		return AbstractDebugView.SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	}
 }

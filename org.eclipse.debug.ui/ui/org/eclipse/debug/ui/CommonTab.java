@@ -12,13 +12,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -95,7 +93,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Constant for perspective Combo widgets
 	 */
-	private static final String PERSPECTIVE_NONE = "none";
+	private static final String PERSPECTIVE_NONE = LaunchConfigurationsMessages.getString("CommonTab.none_1"); //$NON-NLS-1$
 		
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -117,12 +115,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		radioComp.setLayout(radioLayout);
 		
 		setLocalSharedLabel(new Label(radioComp, SWT.NONE));
-		getLocalSharedLabel().setText("Type of launch configuration:");
+		getLocalSharedLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Type_of_launch_configuration__2")); //$NON-NLS-1$
 		
 		setLocalRadioButton(new Button(radioComp, SWT.RADIO));
-		getLocalRadioButton().setText("L&ocal");
+		getLocalRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.L&ocal_3")); //$NON-NLS-1$
 		setSharedRadioButton(new Button(radioComp, SWT.RADIO));
-		getSharedRadioButton().setText("S&hared");
+		getSharedRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.S&hared_4")); //$NON-NLS-1$
 		getSharedRadioButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
@@ -139,7 +137,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		locationComp.setLayoutData(gd);
 		
 		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
-		getSharedLocationLabel().setText("Location of shared confi&guration:");
+		getSharedLocationLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Location_of_shared_confi&guration__5")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getSharedLocationLabel().setLayoutData(gd);
@@ -153,7 +151,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		setSharedLocationButton(createPushButton(locationComp, "&Browse...", null));	
+		setSharedLocationButton(createPushButton(locationComp, LaunchConfigurationsMessages.getString("CommonTab.&Browse_6"), null));	 //$NON-NLS-1$
 		getSharedLocationButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
@@ -167,7 +165,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp);
 		
 		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
-		getSwitchToLabel().setText("Switch to/Open perspective when launched in:");
+		getSwitchToLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Switch_to/Open_perspective_when_launched_in__7")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 3;
@@ -179,7 +177,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		perspComp.setLayout(perspLayout);
 		
 		setRunPerspectiveLabel(new Label(perspComp, SWT.NONE));
-		getRunPerspectiveLabel().setText("Run mode");
+		getRunPerspectiveLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Run_mode_8")); //$NON-NLS-1$
 		
 		setRunPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN | SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
@@ -187,7 +185,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fillWithPerspectives(getRunPerspectiveCombo());
 		
 		setDebugPerspectiveLabel(new Label(perspComp, SWT.NONE));
-		getDebugPerspectiveLabel().setText("Debug mode");
+		getDebugPerspectiveLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Debug_mode_9")); //$NON-NLS-1$
 		
 		setDebugPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN |SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
@@ -203,13 +201,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		favComp.setLayout(favLayout);
 		
 		Label favLabel = new Label(favComp, SWT.HORIZONTAL | SWT.LEFT);
-		favLabel.setText("Display in favorites menu:");
+		favLabel.setText(LaunchConfigurationsMessages.getString("CommonTab.Display_in_favorites_menu__10")); //$NON-NLS-1$
 		
 		setRunFavoriteButton(new Button(favComp, SWT.CHECK));
-		getRunFavoriteButton().setText("&Run");
+		getRunFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.&Run_11")); //$NON-NLS-1$
 						
 		setDebugFavoriteButton(new Button(favComp, SWT.CHECK));
-		getDebugFavoriteButton().setText("Debu&g");
+		getDebugFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.Debu&g_12")); //$NON-NLS-1$
 		
 
 	}
@@ -352,7 +350,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
 																	   getWorkspaceRoot(),
 																	   false,
-																	   "Select a location for the launch configuration");
+																	   LaunchConfigurationsMessages.getString("CommonTab.Select_a_location_for_the_launch_configuration_13")); //$NON-NLS-1$
 		
 		String currentContainerString = getSharedLocationText().getText();
 		IContainer currentContainer = getContainer(currentContainerString);
@@ -602,7 +600,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);
 			if (container == null || container.equals(ResourcesPlugin.getWorkspace().getRoot())) {
-				setErrorMessage("Invalid shared configuration location.");
+				setErrorMessage(LaunchConfigurationsMessages.getString("CommonTab.Invalid_shared_configuration_location_14")); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -681,7 +679,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "&Common";
+		return LaunchConfigurationsMessages.getString("CommonTab.&Common_15"); //$NON-NLS-1$
 	}
 	
 	/**

@@ -135,8 +135,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 						window.getWorkbench().showPerspective(id, window);
 					} catch (WorkbenchException e) {
 						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
-						"Error", 
-						MessageFormat.format("Unable to switch to perspective: {0}", new String[]{id}),
+						LaunchConfigurationsMessages.getString("PerspectiveManager.Error_1"),  //$NON-NLS-1$
+						MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.Unable_to_switch_to_perspective__{0}_2"), new String[]{id}), //$NON-NLS-1$
 						e);
 					}
 				}
@@ -174,8 +174,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	protected void switchFailed(final Throwable t, final String launchName) {
 		sync(new Runnable() {
 			public void run() {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", 
-				 MessageFormat.format("Unable to switch perpsectives as specified by launch: {0}", new String[] {launchName}),
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("PerspectiveManager.Error_1"),  //$NON-NLS-1$
+				 MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.Unable_to_switch_perpsectives_as_specified_by_launch__{0}_4"), new String[] {launchName}), //$NON-NLS-1$
 				 t);
 			}});
 	}

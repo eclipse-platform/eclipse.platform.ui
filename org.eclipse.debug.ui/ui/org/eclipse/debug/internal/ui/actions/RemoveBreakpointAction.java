@@ -29,8 +29,8 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 		IStructuredSelection selection= getSelection();
 		final Iterator itr= selection.iterator();
 		final MultiStatus ms = new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-			DebugException.REQUEST_FAILED, ActionMessages.getString("RemoveBreakpointAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
- 
+			DebugException.REQUEST_FAILED, 
+			ActionMessages.getString("RemoveBreakpointAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 				IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();

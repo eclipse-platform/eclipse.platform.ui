@@ -98,6 +98,6 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.getString("RelaunchActionDelegate.Launch_failed_2"); //$NON-NLS-1$
+		return ActionMessages.getString("RelaunchActionDelegate.Launch_Failed_1"); //$NON-NLS-1$
 	}
 }

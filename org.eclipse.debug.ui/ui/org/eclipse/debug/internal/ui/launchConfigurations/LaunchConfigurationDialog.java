@@ -231,14 +231,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected static final Object[] EMPTY_ARRAY = new Object[0];	
 	
-	protected static final String DEFAULT_NEW_CONFIG_NAME = "New_configuration";
+	protected static final String DEFAULT_NEW_CONFIG_NAME = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.New_configuration_1"); //$NON-NLS-1$
 	
 	/**
 	 * Status area messages
 	 */
-	protected static final String LAUNCH_STATUS_OK_MESSAGE = "Ready to launch";
+	protected static final String LAUNCH_STATUS_OK_MESSAGE = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2"); //$NON-NLS-1$
 	protected static final String LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE 
-										= "Select a configuration to launch or a config type to create a new configuration";
+										= LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_configuration_to_launch_or_a_config_type_to_create_a_new_configuration_3"); //$NON-NLS-1$
 
 	private String fCantSaveErrorMessage;
 	
@@ -302,9 +302,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected String getLaunchButtonText() {
 		if (getMode() == ILaunchManager.DEBUG_MODE) {
-			return "Deb&ug";
+			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Deb&ug_4"); //$NON-NLS-1$
 		} else {
-			return "R&un";
+			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.R&un_5"); //$NON-NLS-1$
 		}
 	}
 
@@ -400,7 +400,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				}
 			}	
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred processing launch configuration. See log for more information.", e);
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return super.open();
 	}
@@ -427,8 +427,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		topComp.setLayout(topLayout);
 
 		// Set the things that TitleAreaDialog takes care of
-		setTitle("Create, manage, and run launch configurations");
-		setMessage("Ready to launch");
+		setTitle(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Create,_manage,_and_run_launch_configurations_8")); //$NON-NLS-1$
+		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2")); //$NON-NLS-1$
 		setModeLabelState();
 
 		// Build the launch configuration selection area
@@ -538,7 +538,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		if (workingCopy.getName().trim().length() == 0) {
 	 			// assign a name if not done yet
 	 			IResource res = getResourceContext();
-	 			String name = "";
+	 			String name = ""; //$NON-NLS-1$
 	 			if (res != null) {
 	 				name = res.getName();
 	 			}
@@ -664,7 +664,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			throw new CoreException(new Status(IStatus.ERROR,
 												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
-												 "Name required for launch configuration.",
+												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Name_required_for_launch_configuration_11"), //$NON-NLS-1$
 												 null));			
 		}
 
@@ -688,7 +688,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			throw new CoreException(new Status(IStatus.ERROR,
 												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
-												 "Launch configuration already exists with this name.",
+												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_configuration_already_exists_with_this_name_12"), //$NON-NLS-1$
 												 null));						
 		}						
 	}
@@ -748,7 +748,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.expandAll();
 		tree.addDoubleClickListener(this);
 		
-		Button newButton = SWTUtil.createPushButton(c, "Ne&w", null);
+		Button newButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setNewButton(newButton);
 		newButton.addSelectionListener(
 			new SelectionAdapter() { 
@@ -758,7 +758,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		);				
 		
-		Button deleteButton = SWTUtil.createPushButton(c, "Dele&te", null);
+		Button deleteButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
 		setDeleteButton(deleteButton);
 		deleteButton.addSelectionListener(
 			new SelectionAdapter() { 
@@ -768,7 +768,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		);			
 		
-		Button copyButton = SWTUtil.createPushButton(c, "Cop&y", null);
+		Button copyButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cop&y_15"), null); //$NON-NLS-1$
 		setCopyButton(copyButton);		
 		copyButton.addSelectionListener(
 			new SelectionAdapter() { 
@@ -801,7 +801,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		GridData gd;
 		
 		Label nameLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
-		nameLabel.setText("&Name:");
+		nameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		nameLabel.setLayoutData(gd);
 		
@@ -837,7 +837,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		});
 		
 		Button saveButton = new Button(c, SWT.PUSH);
-		saveButton.setText("&Apply");
+		saveButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Apply_17")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
 		saveButton.setLayoutData(gd);
@@ -880,7 +880,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("Launch Configurations");
+		shell.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_18")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			shell,
 			IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG);
@@ -946,7 +946,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					}
 					return filteredConfigs.toArray();
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e);
+					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations_20"), e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} else {
 				return getLaunchManager().getLaunchConfigurationTypes();
@@ -965,7 +965,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				try {
 					return ((ILaunchConfiguration)element).getType();
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e);
+					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations_20"), e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} else if (element instanceof ILaunchConfigurationType) {
 				return ResourcesPlugin.getWorkspace().getRoot();
@@ -1215,7 +1215,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		refreshStatus();
 	 		
 		} catch (CoreException ce) {
- 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred setting launch configuration", ce);
+ 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_setting_launch_configuration_24"), ce); //$NON-NLS-1$ //$NON-NLS-2$
  			clearLaunchConfiguration();
  			return;					
 		}
@@ -1229,7 +1229,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		setWorkingCopy(null);
  		fUnderlyingConfig = null;
  		setLastSavedName(null);
- 		getNameTextWidget().setText(""); 
+ 		getNameTextWidget().setText("");  //$NON-NLS-1$
  		refreshStatus();
  	}
  	
@@ -1253,7 +1253,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		try {
 	 		group = createGroup(configType);
  		} catch (CoreException ce) {
- 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating launch configuration tabs.",ce);
+ 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_creating_launch_configuration_tabs_27"),ce); //$NON-NLS-1$ //$NON-NLS-2$
  			return;
  		}
  		
@@ -1262,7 +1262,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
  			String name = tabs[i].getName();
  			if (name == null) {
- 				name = "unspecified";
+ 				name = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.unspecified_28"); //$NON-NLS-1$
  			}
  			tab.setText(name);
  			tabs[i].createControl(tab.getParent());
@@ -1509,15 +1509,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * <code>false</code> otherwise.
 	 */
 	protected boolean showSaveChangesDialog() {
-		StringBuffer buffer = new StringBuffer("The configuration \"");
+		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___29")); //$NON-NLS-1$
 		buffer.append(getLaunchConfiguration().getName());
-		buffer.append("\" has unsaved changes.  Do you wish to save them?");
+		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes.__Do_you_wish_to_save_them__30")); //$NON-NLS-1$
 		MessageDialog dialog = new MessageDialog(getShell(), 
-												 "Save changes?",
+												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Save_changes__31"), //$NON-NLS-1$
 												 null,
 												 buffer.toString(),
 												 MessageDialog.QUESTION,
-												 new String[] {"Yes", "No", "Cancel"},
+												 new String[] {LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Yes_32"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.No_33"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_34")}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 												 0);
 		// If user clicked 'Cancel' or closed dialog, return false
 		int selectedButton = dialog.open();
@@ -1539,17 +1539,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * <code>false</code> otherwise.
 	 */
 	protected boolean showDiscardChangesDialog() {
-		StringBuffer buffer = new StringBuffer("The configuration \"");
+		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___35")); //$NON-NLS-1$
 		buffer.append(getNameTextWidget().getText());
-		buffer.append("\" has unsaved changes that CANNOT be saved because of the following error:\n");
+		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes_that_CANNOT_be_saved_because_of_the_following_error_36")); //$NON-NLS-1$
 		buffer.append(fCantSaveErrorMessage);
-		buffer.append("\nDo you wish to discard changes?");
+		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_discard_changes_37")); //$NON-NLS-1$
 		MessageDialog dialog = new MessageDialog(getShell(), 
-												 "Discard changes?",
+												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Discard_changes__38"), //$NON-NLS-1$
 												 null,
 												 buffer.toString(),
 												 MessageDialog.QUESTION,
-												 new String[] {"Yes", "No"},
+												 new String[] {LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Yes_32"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.No_33")}, //$NON-NLS-1$ //$NON-NLS-2$
 												 1);
 		// If user clicked 'Yes', return true
 		int selectedButton = dialog.open();
@@ -1581,7 +1581,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// Next, make sure none of the tabs object to saving the config
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (tabs == null) {
-			fCantSaveErrorMessage = "No tabs found";
+			fCantSaveErrorMessage = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.No_tabs_found_41"); //$NON-NLS-1$
 			return false;
 		}
 		for (int i = 0; i < tabs.length; i++) {
@@ -1615,7 +1615,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			constructNewConfig(configType);
 			getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
 		} catch(CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception getting configuration type for new launch configuration.", ce);
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_getting_configuration_type_for_new_launch_configuration_43"), ce); //$NON-NLS-1$ //$NON-NLS-2$
  			clearLaunchConfiguration();
 		}		
 	}	
@@ -1633,7 +1633,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			setLaunchConfiguration(wc, true);
 			doSave();
 		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception creating new launch configuration.", ce);
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_creating_new_launch_configuration_45"), ce); //$NON-NLS-1$ //$NON-NLS-2$
  			clearLaunchConfiguration();
  			return;			
 		}		
@@ -1737,7 +1737,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			widget.setText(widget.getText().trim());
 			doSave();
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while saving launch configuration.", e);
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_46"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_saving_launch_configuration_47"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		
@@ -1808,7 +1808,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			doSave();
 			result = doLaunch(getLaunchConfiguration());
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while launching configuration. See log for more information.", e);
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_configuration._See_log_for_more_information_49"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		if (result == OK) {
@@ -1893,7 +1893,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			if (t instanceof CoreException) {
 				throw (CoreException)t;
 			} else {
-				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Exception occurred while launching.", t);
+				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, DebugException.INTERNAL_ERROR, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_50"), t); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -2249,7 +2249,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		if (getLaunchConfiguration() == null) {
 			setErrorMessage(null);
-			setMessage("Select a type of configuration to create, and press 'new'.");
+			setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_type_of_configuration_to_create,_and_press___new__51")); //$NON-NLS-1$
 			return;
 		}
 		
@@ -2325,7 +2325,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	public void setName(String name) {
 		if (isVisible()) {
 			if (name == null) {
-				name = "";
+				name = ""; //$NON-NLS-1$
 			}
 			fNameText.setText(name.trim());
 			refreshStatus();
@@ -2337,7 +2337,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	public String generateName(String name) {
 		if (name == null) {
-			name = "";
+			name = ""; //$NON-NLS-1$
 		}
 		return generateUniqueNameFrom(name);
 	}

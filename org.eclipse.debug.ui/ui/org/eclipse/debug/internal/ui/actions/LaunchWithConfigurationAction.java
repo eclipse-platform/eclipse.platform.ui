@@ -48,7 +48,7 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	
 	public LaunchWithConfigurationAction() {
 		super();
-		setText("New Configuration");
+		setText(ActionMessages.getString("LaunchWithConfigurationAction.New_Configuration_1")); //$NON-NLS-1$
 		setMenuCreator(this);
 	}
 	

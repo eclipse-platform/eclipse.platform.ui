@@ -55,7 +55,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 			try {
 				part= page.openEditor(input, editorId);
 			} catch (PartInitException e) {
-				DebugUIPlugin.errorDialog(dwindow.getShell(), "Go to Breakpoint", "Exceptions occurred attempting to open the editor for the breakpoint resource", e);
+				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.getString("OpenBreakpointMarkerAction.Go_to_Breakpoint_1"), ActionMessages.getString("OpenBreakpointMarkerAction.Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		if (part != null) {

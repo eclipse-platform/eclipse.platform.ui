@@ -18,14 +18,14 @@ public class DebugHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	 * @see LaunchHistoryPreferenceTab#getFavoritesLabel()
 	 */
 	protected String getFavoritesLabel() {
-		return "Favorite Debug Confi&gurations:";
+		return LaunchConfigurationsMessages.getString("DebugHistoryPreferenceTab.Favorite_Debug_Confi&gurations__1"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see LaunchHistoryPreferenceTab#getRecentLabel()
 	 */
 	protected String getRecentLabel() {
-		return "Recent Debug &Launches:";
+		return LaunchConfigurationsMessages.getString("DebugHistoryPreferenceTab.Recent_Debug_&Launches__2"); //$NON-NLS-1$
 	}
 
 	/**

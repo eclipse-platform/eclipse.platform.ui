@@ -62,7 +62,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		Iterator enum= selection.iterator();
-		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableDisableBreakpointAction.Enable/Disable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
+		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableBreakpointAction.Enable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
 		while (enum.hasNext()) {
 			IBreakpoint breakpoint = (IBreakpoint) enum.next();
 			try {
@@ -80,7 +80,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			}
 		}
 		if (!ms.isOK()) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableDisableBreakpointAction.Enabling/disabling_breakpoints_3"), ActionMessages.getString("EnableDisableBreakpointAction.Exceptions_occurred_enabling/disabling_the_breakpoint(s)._4"), ms); //$NON-NLS-2$ //$NON-NLS-1$
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ms); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
 
@@ -132,7 +132,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 					action.setEnabled(isEnableAction());
 				}
 			} catch (CoreException ce) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableDisableBreakpointAction.Enabling/disabling_breakpoints_3"), ActionMessages.getString("EnableDisableBreakpointAction.Exceptions_occurred_enabling/disabling_the_breakpoint(s)._4"), ce); //$NON-NLS-2$ //$NON-NLS-1$
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableBreakpointAction.Enabling_breakpoints_3"), ActionMessages.getString("EnableBreakpointAction.Exceptions_occurred_enabling_the_breakpoint(s)._4"), ce); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 		}
 	}

@@ -65,7 +65,7 @@ public class TerminateAllAction extends AbstractListenerActionDelegate {
 			}
 		}
 		if (!ms.isOK()) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("TerminateAllAction.Terminate_all_2"),ActionMessages.getString("TerminateAllAction.Exceptions_occurred_attempting_to_terminate_all._5") , ms); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("TerminateAllAction.Terminate_All_2"),ActionMessages.getString("TerminateAllAction.Exceptions_occurred_attempting_to_terminate_all._5") , ms); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

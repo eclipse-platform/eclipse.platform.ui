@@ -102,7 +102,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		buttonComp.setLayout(layout);
 		
 		Button addFav = new Button(buttonComp, SWT.PUSH);
-		addFav.setText("Add &Config...");
+		addFav.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.Add_&Config_1")); //$NON-NLS-1$
 		addFav.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleAddFavoriteButtonSelected();
@@ -112,7 +112,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		addFav.setLayoutData(gd);		
 		
 		fRemoveFavoritesButton = new Button(buttonComp, SWT.PUSH);
-		fRemoveFavoritesButton.setText("Re&move");
+		fRemoveFavoritesButton.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.Re&move_2")); //$NON-NLS-1$
 		fRemoveFavoritesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleRemoveFavoriteButtonSelected();
@@ -123,7 +123,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		fRemoveFavoritesButton.setEnabled(false);
 		
 		fMoveUpButton = new Button(buttonComp, SWT.PUSH);
-		fMoveUpButton.setText("U&p");
+		fMoveUpButton.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.U&p_3")); //$NON-NLS-1$
 		fMoveUpButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleMoveUpButtonSelected();
@@ -134,7 +134,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		fMoveUpButton.setEnabled(false);
 		
 		fMoveDownButton = new Button(buttonComp, SWT.PUSH);
-		fMoveDownButton.setText("Do&wn");
+		fMoveDownButton.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.Do&wn_4")); //$NON-NLS-1$
 		fMoveDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleMoveDownButtonSelected();
@@ -173,7 +173,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		buttonComp.setLayout(layout);
 		
 		fAddToFavoritesButton = new Button(buttonComp, SWT.PUSH);
-		fAddToFavoritesButton.setText("Make &Favorite");
+		fAddToFavoritesButton.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.Make_&Favorite_5")); //$NON-NLS-1$
 		fAddToFavoritesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleMakeFavoriteButtonSelected();
@@ -184,7 +184,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		fAddToFavoritesButton.setEnabled(false);
 		
 		fRemoveRecentButton = new Button(buttonComp, SWT.PUSH);
-		fRemoveRecentButton.setText("Remo&ve");
+		fRemoveRecentButton.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.Remo&ve_6")); //$NON-NLS-1$
 		fRemoveRecentButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleRemoveRecentButtonSelected();
@@ -291,7 +291,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		
 		ListSelectionDialog dialog = new ListSelectionDialog(fFavoritesTable.getControl().getShell(),
 		 getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
-		 "Select Launch Configurations");
+		 LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.Select_Launch_Configurations_7")); //$NON-NLS-1$
 		dialog.open();
 		Object[] selection = dialog.getResult();
 		if (selection != null) {
