@@ -16,46 +16,29 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ant.ui.internal.editor.AntEditorCompletionProcessor;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.w3c.dom.Element;
 
 public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
-    
-    public TestTextCompletionProcessor() {
-        cursorPosition = 10;
-    }
-    
-    public ICompletionProposal[] getAttributeProposals(
-        String aTaskName,
-        String aPrefix) {
+
+	private File editedFile;
+
+    public ICompletionProposal[] getAttributeProposals(String aTaskName, String aPrefix) {
+    	cursorPosition= aTaskName.length();
         return super.getAttributeProposals(aTaskName, aPrefix);
     }
-    
-    /**
-     * Returns always 10.
-     */
-    public int getCursorPosition(ITextEditor textEditor) {
-        return 10;
-    }
 
-    public Element findChildElementNamedOf(
-        Element anElement,
-        String aChildElementName) {
+    public Element findChildElementNamedOf(Element anElement, String aChildElementName) {
         return super.findChildElementNamedOf(anElement, aChildElementName);
     }
 
-    public ICompletionProposal[] getTaskProposals(String aWholeDocumentString,
-        Element aParentTaskElement,
-        String aPrefix) {
+    public ICompletionProposal[] getTaskProposals(String aWholeDocumentString, Element aParentTaskElement, String aPrefix) {
+    	cursorPosition= Math.max(0, aWholeDocumentString.length() - 1);
         return super.getTaskProposals(aWholeDocumentString, aParentTaskElement, aPrefix);
     }
 
-    public int determineProposalMode(
-        String aWholeDocumentString,
-        int aCursorPosition,
-        String aPrefix) {
+    public int determineProposalMode(String aWholeDocumentString, int aCursorPosition, String aPrefix) {
         return super.determineProposalMode(
             aWholeDocumentString,
             aCursorPosition,
@@ -84,15 +67,16 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.getPropertyProposals(aDocumentText, aPrefix, aCursorPosition);
     }
 
-	File editedFile;
-
     /**
-     * Returns the edited File that org.eclipse.ui.externaltools.internal.ant.editorfore or a temporary 
+     * Returns the edited File that org.eclipse.ant.ui.internal.editor.AntEditorCompletionProcessor sets or a temporary 
      * file, which only serves as a dummy.
-     * @see org.eclipse.ui.externaltools.internal.ant.editor.AntEditorCompletionProcessor#getEditedFile()
+     * @see org.eclipse.ant.ui.internal.editor.AntEditorCompletionProcessor#getEditedFile()
      */
 	public File getEditedFile() {
-        File tempFile = null;
+		if (editedFile != null){
+			return editedFile;
+		}
+		File tempFile = null;
         try {
             tempFile = File.createTempFile("test", null);
         } catch (IOException e) {
@@ -101,11 +85,6 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         tempFile.deleteOnExit();
         return tempFile;
     }
-    
-
-	public void setEditedFile(File aFile) {
-		editedFile = aFile;
-	}
 
 	public void setLineNumber(int aLineNumber) {
     	lineNumber = aLineNumber;
@@ -114,5 +93,8 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	public void setColumnNumber(int aColumnNumber) {
     	columnNumber = aColumnNumber;
     }
-
+    
+	public void setEditedFile(File aFile) {
+		editedFile= aFile;
+	}
 }
