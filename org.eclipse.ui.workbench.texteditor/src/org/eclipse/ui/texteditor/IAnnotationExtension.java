@@ -22,7 +22,7 @@ package org.eclipse.ui.texteditor;
  * <li> an optional message
  * </ul>
  * <p>
- * Note: This is work in progress and can change anytime until API for 3.0 is frozen.
+ * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
  * </p>
  * 
  * @see org.eclipse.core.resources.IMarker
