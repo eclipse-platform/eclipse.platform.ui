@@ -9,6 +9,7 @@ import java.net.URL;
 
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Base implementation of a feature content provider.
@@ -86,43 +87,51 @@ public abstract class FeatureContentProvider
 
 		// check to see if we already have a local file for this reference
 		String key = ref.toString();
+		
+		// need to synch on the local file as another thread my have created it but
+		// is still copying into it
 		File localFile = Utilities.lookupLocalFile(key);
-		if (localFile != null)
-			return ref.createContentReference(ref.getIdentifier(), localFile);
-
-		// download the referenced file into local temporary area
-		localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/
-		);
-		InputStream is = null;
-		OutputStream os = null;
-		try {
-			if (monitor != null) {
-				monitor.saveState();
-				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
-				//$NON-NLS-1$
-				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
-				monitor.setTotalCount(ref.getInputSize());
-				monitor.showCopyDetails(true);
+		if (localFile != null){
+			synchronized(localFile){
+				return ref.createContentReference(ref.getIdentifier(), localFile);
 			}
-			is = ref.getInputStream();
-			os = new FileOutputStream(localFile);
-			Utilities.copy(is, os, monitor);
-		} catch (IOException e) {
-			Utilities.removeLocalFile(key);
-			throw e;
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (IOException e) {
+		}
+	
+		// 
+		// download the referenced file into local temporary area
+		localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/);		
+		synchronized(localFile){
+			InputStream is = null;
+			OutputStream os = null;
+			try {
+				if (monitor != null) {
+					monitor.saveState();
+					monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
+					//$NON-NLS-1$
+					monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
+					monitor.setTotalCount(ref.getInputSize());
+					monitor.showCopyDetails(true);
 				}
-			if (os != null)
-				try {
-					os.close();
-				} catch (IOException e) {
-				}
-			if (monitor != null)
-				monitor.restoreState();
+				is = ref.getInputStream();
+				os = new FileOutputStream(localFile);
+				Utilities.copy(is, os, monitor);
+			} catch (IOException e) {
+				Utilities.removeLocalFile(key);
+				throw e;
+			} finally {
+				if (is != null)
+					try {
+						is.close();
+					} catch (IOException e) {
+					}
+				if (os != null)
+					try {
+						os.close();
+					} catch (IOException e) {
+					}
+				if (monitor != null)
+					monitor.restoreState();
+			}
 		}
 		return ref.createContentReference(ref.getIdentifier(), localFile);
 	}

@@ -4,6 +4,9 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,7 +33,7 @@ public class UpdateManagerPlugin extends Plugin {
 
 	//The shared instance.
 	private static UpdateManagerPlugin plugin;
-
+	private static DateFormat formatter = DateFormat.getTimeInstance(DateFormat.FULL);
 	// web install
 	private static String appServerHost =null;
 	private static int appServerPort = 0;
@@ -112,8 +115,17 @@ public class UpdateManagerPlugin extends Plugin {
 	 * dumps a String in the trace
 	 */
 	public static void debug(String s) {
-		String msg = getPlugin().toString() + "^" + Integer.toHexString(Thread.currentThread().hashCode()) + " " + s; //$NON-NLS-1$ //$NON-NLS-2$
-		System.out.println(msg);
+		Date d = new Date();
+		String dateString = formatter.format(d);
+		StringBuffer msg = new StringBuffer();
+		msg.append(getPlugin().toString());
+		msg.append("^");
+		msg.append(Integer.toHexString(Thread.currentThread().hashCode()));
+		msg.append("@");		
+		msg.append(dateString);		
+		msg.append(" ");
+		msg.append(s);
+		System.out.println(msg.toString());
 	}
 	
 	/**

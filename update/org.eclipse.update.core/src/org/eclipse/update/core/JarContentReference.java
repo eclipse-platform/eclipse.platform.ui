@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
@@ -109,9 +110,14 @@ public class JarContentReference extends ContentReference {
 	 */
 	protected JarFile asJarFile() throws IOException {
 		if (this.jarFile == null){
+			File file = asFile();
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-				UpdateManagerPlugin.debug("asJarFile :"+asFile());			
-			this.jarFile = new JarFile(asFile());
+				UpdateManagerPlugin.debug("asJarFile :"+file);
+			if(file!=null && !file.exists()){
+				UpdateManagerPlugin.warn("JarFile does not exits:"+file);
+				throw new FileNotFoundException(file.getAbsolutePath());
+			}
+			this.jarFile = new JarFile(file);
 		}
 		return jarFile;
 	}

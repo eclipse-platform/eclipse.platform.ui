@@ -5,7 +5,9 @@ package org.eclipse.update.core;
  */
 
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * Versioned Identifier. This is a utility class combining an identification
@@ -20,32 +22,6 @@ public class VersionedIdentifier {
 	private String id;
 	private PluginVersionIdentifier version;
 	private static final String SEPARATOR = "_"; //$NON-NLS-1$
-
-	/**
-	 * Construct a versioned identifier by parsing its string representation
-	 * 
-	 * @see #toString()
-	 * @param idWithVersion string representation of versioned identifier
-	 * @since 2.0
-	 */
-	public VersionedIdentifier(String idWithVersion) {
-
-		if (idWithVersion == null
-			|| (idWithVersion = idWithVersion.trim()).equals("")) { //$NON-NLS-1$
-			this.id = ""; //$NON-NLS-1$
-			this.version = new PluginVersionIdentifier(0, 0, 0);
-		}
-
-		int loc = idWithVersion.lastIndexOf(SEPARATOR);
-		if (loc != -1) {
-			id = idWithVersion.substring(0, loc);
-			String versionName = idWithVersion.substring(loc + 1);
-			version = new PluginVersionIdentifier(versionName);
-		} else {
-			this.id = ""; //$NON-NLS-1$
-			version = new PluginVersionIdentifier(0, 0, 0);
-		}
-	}
 
 	/**
 	 * Construct a versioned identifier from an identifier and a string
@@ -63,9 +39,15 @@ public class VersionedIdentifier {
 		//$NON-NLS-1$
 		this.id = id;
 		// 15707
-		if (versionName != null)
-			this.version = new PluginVersionIdentifier(versionName);
-		else
+		if (versionName != null){
+			// if (PluginVersionIdentifier.validateVersionIdentifier(versionName).isOk())
+			try {
+				this.version = new PluginVersionIdentifier(versionName);
+			} catch (RuntimeException e){
+				UpdateManagerPlugin.warn("Invalid Version:"+versionName,e);
+			}
+		}
+		if (this.version==null)
 			version = new PluginVersionIdentifier(0, 0, 0);
 	}
 

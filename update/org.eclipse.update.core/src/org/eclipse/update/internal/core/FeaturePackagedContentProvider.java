@@ -63,11 +63,12 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		ContentReference[] featureArchiveReference =
 			getFeatureEntryArchiveReferences(monitor);
+		JarContentReference featureJarReference=null;
 		try {
 
 			// force feature archive to local.
 			// This content provider always assumes exactly 1 archive file (index [0])		
-			JarContentReference featureJarReference =
+			featureJarReference =
 				(JarContentReference) asLocalReference(featureArchiveReference[0],
 					null);
 
@@ -78,8 +79,8 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 					null,
 					monitor);
 		} catch (IOException e) {
-			String[] values =
-				new String[] { Feature.FEATURE_XML, getURL().toExternalForm()};
+			Object[] values =
+				new Object[] { Feature.FEATURE_XML, getURL(), featureJarReference};
 			throw Utilities.newCoreException(
 				Policy.bind(
 					"FeaturePackagedContentProvider.ErrorRetrieving",

@@ -69,7 +69,6 @@ public class Utilities {
 		String key,
 		String name)
 		throws IOException {
-
 		// create the local file
 		File temp;
 		String filePath;
@@ -92,7 +91,6 @@ public class Utilities {
 				entryMap = new HashMap();
 			entryMap.put(key, temp);
 		}
-
 		return temp;
 	}
 
