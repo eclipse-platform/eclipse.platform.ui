@@ -46,22 +46,6 @@ public class PartTabFolder extends PartStack {
 		appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
 	}
     
-    public boolean isCloseable(IPresentablePart part) {
-    	if (part == null) {
-    		return canMoveFolder();
-    	}
-    	
-        ViewPane pane = (ViewPane)getPaneFor(part);
-
-        if (pane == null) {
-            // Shouldn't happen -- this should only be called for ViewPanes
-            // that are already in the tab folder
-            return false; 
-        }
-        
-        return !isFixedView(pane);
-    }
-    
     public PartTabFolder(WorkbenchPage page) {
     	this(page, true);
     }
@@ -116,24 +100,33 @@ public class PartTabFolder extends PartStack {
         fastViewAction.setPane(pane);        
         sizeItem.setPane(pane);
     }
-	
-	public boolean isFixedView(ViewPane pane) {
-        Perspective perspective = page.getActivePerspective();
 
+    public boolean isCloseable(IPresentablePart part) {
+        ViewPane pane = (ViewPane)getPaneFor(part);
+        Perspective perspective = page.getActivePerspective();
         if (perspective == null) {
             // Shouldn't happen -- can't have a PartTabFolder without a
             // perspective
             return true; 
         }
-
-        return perspective.isFixedView(pane.getViewReference());
-	}
-
+        return perspective.isCloseable(pane.getViewReference());
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PartStack#isMoveable(org.eclipse.ui.presentations.IPresentablePart)
 	 */
 	protected boolean isMoveable(IPresentablePart part) {
-		return isCloseable(part);
+	    if (part == null) {
+	        return canMoveFolder();
+	    }
+        ViewPane pane = (ViewPane)getPaneFor(part);
+        Perspective perspective = page.getActivePerspective();
+        if (perspective == null) {
+            // Shouldn't happen -- can't have a PartTabFolder without a
+            // perspective
+            return true; 
+        }
+        return perspective.isMoveable(pane.getViewReference());
 	}
 
 	/* (non-Javadoc)

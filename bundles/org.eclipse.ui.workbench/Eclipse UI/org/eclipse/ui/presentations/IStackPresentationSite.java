@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Point;
 
 
 /**
- * Represents the main interface between an StackPresentation and the workbench.
+ * Represents the main interface between a StackPresentation and the workbench.
  * 
  * Not intended to be implemented by clients.
  * 

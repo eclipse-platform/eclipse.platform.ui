@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.ui.IPlaceholderFolderLayout;
+import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.internal.registry.*;
 
 /**
@@ -55,18 +56,14 @@ public class PlaceholderFolderLayout implements IPlaceholderFolderLayout{
 	
 		// Add it to the placeholder layout.
 		placeholder.add(newPart);		
-
-		// if page layout is fixed, add to fixed view list
-		if (pageLayout.isFixed()) {
-			pageLayout.markAsFixed(viewId);
-		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPlaceholderFolderLayout#addFixedPlaceholder(java.lang.String)
 	 */
 	public void addFixedPlaceholder(String viewId) {
 		addPlaceholder(viewId);
-		pageLayout.markAsFixed(viewId);
+		IViewLayout layout = pageLayout.getViewLayout(viewId);
+		layout.setCloseable(false);
 	}
 	/**
 	 * Inform the page layout of the new part created
@@ -74,6 +71,9 @@ public class PlaceholderFolderLayout implements IPlaceholderFolderLayout{
 	 */
 	private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
 		pageLayout.setRefPart(viewId, newPart);
+		// force creation of the view layout rec
+		pageLayout.getViewLayoutRec(viewId, true);
+
 		pageLayout.setFolderPart(viewId, placeholder);
 		newPart.setContainer(placeholder);
 	}

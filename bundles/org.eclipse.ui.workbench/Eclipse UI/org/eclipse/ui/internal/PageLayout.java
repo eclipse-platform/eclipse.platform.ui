@@ -10,18 +10,19 @@
  *  	Dan Rubel <dan_rubel@instantiations.com>
  *        - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
 ************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
+import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -62,10 +63,9 @@ public class PageLayout implements IPageLayout {
 	private boolean editorVisible = true;
 	private boolean fixed;
 	private ArrayList fastViews = new ArrayList(3);
-	private ArrayList fixedViews = new ArrayList(3);
-	private Map mapFastViewToWidthRatio = new HashMap(10);
 	private Map mapIDtoFolder = new HashMap(10);
 	private Map mapIDtoPart = new HashMap(10);
+	private Map mapIDtoViewLayoutRec = new HashMap(10);
 	private ArrayList newWizardActionIds = new ArrayList(3);
 	private ArrayList perspectiveActionIds = new ArrayList(3);
 	private RootLayoutContainer rootLayoutContainer;
@@ -146,16 +146,44 @@ public class PageLayout implements IPageLayout {
 			try {
 				IViewReference ref = viewFactory.createView(id);
 				fastViews.add(ref);
+				
+				// force creation of the view layout rec
+				ViewLayoutRec rec = getViewLayoutRec(id, true);
+				
+				// remember the ratio, if valid
 				if (ratio >= IPageLayout.RATIO_MIN
-					&& ratio <= IPageLayout.RATIO_MAX)
-					mapFastViewToWidthRatio.put(id, new Float(ratio));
+						&& ratio <= IPageLayout.RATIO_MAX) {
+				    rec.fastViewWidthRatio = ratio;
+				}
 			} catch (PartInitException e) {
 				WorkbenchPlugin.log(e.getMessage());
 			}
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * Returns the view layout record for the given view id, or null if not found.
+	 * If create is true, the record is created if it doesn't already exist.
+	 * 
+     * @since 3.0
+     */
+    ViewLayoutRec getViewLayoutRec(String id, boolean create) {
+        Assert.isNotNull(getRefPart(id));
+        
+        ViewLayoutRec rec = (ViewLayoutRec) mapIDtoViewLayoutRec.get(id);
+        if (rec == null && create) {
+            rec = new ViewLayoutRec();
+            // set up the view layout appropriately if the page layout is fixed
+            if (isFixed()) {
+                rec.isCloseable = false;
+                rec.isMoveable = false;
+            }
+            mapIDtoViewLayoutRec.put(id, rec);
+        }
+        return rec;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#addFixedView(java.lang.String, int, float, java.lang.String)
 	 */
 	public void addFixedView(		
@@ -164,7 +192,8 @@ public class PageLayout implements IPageLayout {
 			float ratio,
 			String refId) {
 		addView(viewId, relationship, ratio, refId);
-		markAsFixed(viewId);
+		IViewLayout layout = getViewLayout(viewId);
+		layout.setCloseable(false);
 	}
 
 	/**
@@ -189,6 +218,7 @@ public class PageLayout implements IPageLayout {
 		int relationship,
 		float ratio,
 		String refId) {
+	    
 		setRefPart(partId, newPart);
 
 		// If the referenced part is inside a folder,
@@ -238,21 +268,24 @@ public class PageLayout implements IPageLayout {
 		// Create the placeholder.
 		PartPlaceholder newPart = new PartPlaceholder(viewId);
 		addPart(newPart, viewId, relationship, ratio, refId);
+		// force creation of the view layout rec
+		getViewLayoutRec(viewId, true);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#addFixedPlaceholder(java.lang.String, int, float, java.lang.String)
 	 */
 	public void addFixedPlaceholder(
-			String viewId,
-			int relationship,
-			float ratio,
-			String refId) {
-			if (checkPartInLayout(viewId))
-				return;
+		String viewId,
+		int relationship,
+		float ratio,
+		String refId) {
+		if (checkPartInLayout(viewId))
+			return;
 
-			addPlaceholder(viewId, relationship, ratio, refId);
-			markAsFixed(viewId);
-		}
+		addPlaceholder(viewId, relationship, ratio, refId);
+		IViewLayout layout = getViewLayout(viewId);
+		layout.setCloseable(false);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#addShowInPart(java.lang.String)
@@ -297,14 +330,11 @@ public class PageLayout implements IPageLayout {
 				newFolder.add(newPart);
 				setFolderPart(viewId, newFolder);
 				addPart(newFolder, viewId, relationship, ratio, refId);
+				// force creation of the view layout rec
+				getViewLayoutRec(viewId, true);
 			}
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
-		}
-		
-		// add view to fixed list if we are a fixed layout
-		if (fixed) {
-		    markAsFixed(viewId);
 		}
 	}
 
@@ -343,8 +373,6 @@ public class PageLayout implements IPageLayout {
 		// Create the folder.
 		PartTabFolder folder = new PartTabFolder(rootLayoutContainer.page);
 		folder.setID(folderId);
-		// @issue should the folder capture the current theme?
-		//folder.setTheme(theme);
 		addPart(folder, folderId, relationship, ratio, refId);
 
 		// Create a wrapper.
@@ -392,7 +420,6 @@ public class PageLayout implements IPageLayout {
 				viewFactory.getViewRegistry().find(partID);
 			if (WorkbenchActivityHelper.filterItem(viewDescriptor))
 				return null;
-			// @issue view should refer to current perspective for theme setting
 			return LayoutHelper.createView(getViewFactory(), partID);
 		}
 	}
@@ -430,26 +457,10 @@ public class PageLayout implements IPageLayout {
 	}
 
 	/**
-	 * @return <code>ArrayList</code> of fixed view id.
-	 */
-	/*package*/
-	ArrayList getFixedViews() {
-		return fixedViews;
-	}
-	
-	/**
 	 * @return <code>ArrayList</code>
 	 */
 	public ArrayList getFastViews() {
 		return fastViews;
-	}
-
-	/**
-	 * @return a map of fast view ids to width ratios.
-	 */
-	/*package*/
-	Map getFastViewToWidthRatioMap() {
-		return mapFastViewToWidthRatio;
 	}
 
 	/**
@@ -530,16 +541,6 @@ public class PageLayout implements IPageLayout {
 		return editorVisible;
 	}
 
-	/**
-	 * Marks the specified view as being a fixed view.
-	 * 
-	 * @param viewId the view id
-	 */
-	void markAsFixed(String viewId) {
-	    if (!fixedViews.contains(viewId)) {
-	        fixedViews.add(viewId);
-	    }
-	}
 	/**
 	 * Trim the ratio so that direct manipulation of parts is easy.
 	 * 
@@ -644,6 +645,8 @@ public class PageLayout implements IPageLayout {
 	 */
 	private void stackPart(LayoutPart newPart, String viewId, String refId) {
 		setRefPart(viewId, newPart);
+		// force creation of the view layout rec
+		getViewLayoutRec(viewId, true);
 
 		// If ref part is in a folder than just add the
 		// new view to that folder.
@@ -738,4 +741,34 @@ public class PageLayout implements IPageLayout {
 		
 		return -1;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPageLayout#addStandaloneView(java.lang.String, boolean, int, float, java.lang.String)
+	 * @since 3.0
+     */
+    public void addStandaloneView(String viewId, boolean showTitle, int relationship, float ratio, String refId) {
+		addView(viewId, relationship, ratio, refId);
+	    ViewLayoutRec rec = getViewLayoutRec(viewId, true);
+        rec.isStandalone = true;
+        rec.showTitle = showTitle;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPageLayout#getViewLayout(java.lang.String)
+	 * @since 3.0
+     */
+    public IViewLayout getViewLayout(String viewId) {
+        ViewLayoutRec rec = getViewLayoutRec(viewId, true);
+        if (rec == null) {
+            return null;
+        }
+        return new ViewLayout(this, rec);
+    }
+
+    /**
+     * @since 3.0
+     */
+    public Map getIDtoViewLayoutRecMap() {
+       return mapIDtoViewLayoutRec;
+    }
 }

@@ -450,7 +450,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	public void showFocus(boolean inFocus) {
 		setActive(inFocus);
-
 	}
 
 	/**
@@ -471,12 +470,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private boolean isFastView() {
 		return page.isFastView(getViewReference());
 	}
-	/**
-	 * Return true if this view can be closed or is fixed.
-	 */
-	boolean isCloseable() {
-		return !page.isFixedView(getViewReference());
-	}
+	
 	/**
 	 * Return true if the view may be moved.
 	 */

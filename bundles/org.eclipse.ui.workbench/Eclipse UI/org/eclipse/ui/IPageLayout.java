@@ -419,4 +419,49 @@ public void setFixed(boolean isFixed);
  * @since 3.0
  */
 public boolean isFixed();
+
+/**
+ * Returns the layout for the view or placeholder with the given id in
+ * this page layout.
+ * Returns <code>null</code> if the specified view or placeholder is unknown to the layout.
+ * 
+ * @param viewId the view id
+ * @return the view layout, or <code>null</code>
+ * @since 3.0
+ */
+public IViewLayout getViewLayout(String viewId);
+
+/**
+ * Adds a standalone view with the given id to this page layout.
+ * A standalone view cannot be docked together with other views.
+ * A standalone view's title can optionally be hidden.  If hidden,
+ * then any controls typically shown with the title (such as the close button) 
+ * are also hidden.
+ * <p>
+ * The id must name a view contributed to the workbench's view extension point 
+ * (named <code>"org.eclipse.ui.views"</code>).
+ * </p>
+ *
+ * @param viewId the view id
+ * @param showTitle <code>true</code> to show the title and related controls,
+ *  <code>false</code> to hide them
+ * @param relationship the position relative to the reference part;
+ *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+ *  or <code>RIGHT</code>
+ * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
+ *    in the range <code>0.05f</code> to <code>0.95f</code>.
+ *    Values outside this range will be clipped to facilitate direct manipulation.
+ *    For a vertical split, the part on top gets the specified ratio of the current space
+ *    and the part on bottom gets the rest.
+ *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
+ *    and the part at right gets the rest.
+ * @param refId the id of the reference part; either a view id, a folder id,
+ *   or the special editor area id returned by <code>getEditorArea</code>
+ * 
+ * @since 3.0
+ * @issue should we allow regular views' titles to be hidden?
+ */
+public void addStandaloneView(String viewId, boolean showTitle,
+        int relationship, float ratio, String refId);
+
 }

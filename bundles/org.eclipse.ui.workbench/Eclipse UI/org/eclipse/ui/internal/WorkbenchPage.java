@@ -1886,16 +1886,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			return false;
 	}
 	/**
-	 * Returns whether the view is fixed.
-	 */
-	public boolean isFixedView(IViewReference ref) {
-		Perspective persp = getActivePerspective();
-		if (persp != null)
-			return persp.isFixedView(ref);
-		else
-			return false;
-	}
-	/**
 	 * Returns whether the layout of the active
 	 * perspective is fixed.
 	 */
@@ -1906,6 +1896,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		else
 			return false;
 	}
+
 	/**
 	 * Return the active fast view or null if there are no fast views or if
 	 * there are all minimized.

@@ -69,7 +69,7 @@ public class Perspective
 	private ArrayList showViewActionIds;
 	private ArrayList perspectiveActionIds;
 	private ArrayList fastViews;
-	private ArrayList fixedViews;
+	private Map mapIDtoViewLayoutRec;
 	private boolean fixed;
 	private ArrayList showInPartIds;
 	private HashMap showInTimes = new HashMap();
@@ -82,8 +82,6 @@ public class Perspective
 	// fields used by fast view resizing via a sash
 	private static final int FASTVIEW_HIDE_STEPS = 5;
 
-	private Map mapFastViewToWidthRatio = new HashMap();
-	
 	private String oldPartID = null;
 	private boolean shouldHideEditorsOnActivate = false;
 
@@ -109,7 +107,7 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
 	alwaysOnActionSets = new ArrayList(2);
 	alwaysOffActionSets = new ArrayList(2);
 	fastViews = new ArrayList(2);
-	fixedViews = new ArrayList(2);
+	mapIDtoViewLayoutRec = new HashMap();
 }
 
 /**
@@ -212,7 +210,7 @@ public void dispose() {
 
 	fastViewPane.dispose();
 
-	mapFastViewToWidthRatio.clear();
+	mapIDtoViewLayoutRec.clear();
 }
 /**
  * Finds the view with the given ID that is open in this page, or <code>null</code>
@@ -318,17 +316,14 @@ public PerspectivePresentation getPresentation() {
  * the ratio is not known, the default ratio for the view is returned.
  */
 private float getFastViewWidthRatio(String id) {
-	
-	Float f = (Float)mapFastViewToWidthRatio.get(id);
-	if (f != null) {
-		return f.floatValue();
-	} else {
-		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();	
-		float ratio = reg.find(id).getFastViewWidthRatio();
-		mapFastViewToWidthRatio.put(id, new Float(ratio));
-		return ratio;
+	ViewLayoutRec rec = getViewLayoutRec(id, true);
+	if (rec.fastViewWidthRatio == IPageLayout.INVALID_RATIO) {
+	    IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();	
+	    rec.fastViewWidthRatio = reg.find(id).getFastViewWidthRatio();
 	}
+	return rec.fastViewWidthRatio;
 }
+
 /**
  * Returns the ids of the parts to list in the Show In... dialog.
  * This is a List of Strings.
@@ -480,12 +475,25 @@ public boolean isFastView(IViewReference ref) {
 	return fastViews.contains(ref);
 }
 /**
- * Returns true if a view is fixed.
- * 
- * @since 3.0
+ * Returns the view layout rec for the given view reference,
+ * or null if not found.  If create is true, it creates the record
+ * if not already created.
  */
-public boolean isFixedView(IViewReference ref) {
-    return fixedViews.contains(ViewFactory.getKey(ref));
+private ViewLayoutRec getViewLayoutRec(IViewReference ref, boolean create) {
+    return getViewLayoutRec(ViewFactory.getKey(ref), create);
+}
+/**
+ * Returns the view layout record for the given view id
+ * or null if not found.  If create is true, it creates the record
+ * if not already created.
+ */
+private ViewLayoutRec getViewLayoutRec(String viewId, boolean create) {
+    ViewLayoutRec rec = (ViewLayoutRec) mapIDtoViewLayoutRec.get(viewId);
+    if (rec == null && create) {
+        rec = new ViewLayoutRec();
+        mapIDtoViewLayoutRec.put(viewId, rec);
+    }
+    return rec;
 }
 /**
  * Returns true if a layout or perspective is fixed.
@@ -500,6 +508,26 @@ public boolean isFixedLayout() {
 	//WorkbenchPage delegates to the perspective.
 	return fixed;
 }
+/**
+ * Returns true if a view is standalone.
+ * 
+ * @since 3.0
+ */
+public boolean isStandaloneView(IViewReference ref) {
+    ViewLayoutRec rec = getViewLayoutRec(ref, false);
+    return rec != null && rec.isStandalone;
+}
+/**
+ * Returns whether the title for a view should
+ * be shown.  This applies only to standalone views.
+ * 
+ * @since 3.0
+ */
+public boolean getShowTitleView(IViewReference ref) {
+    ViewLayoutRec rec = getViewLayoutRec(ref, false);
+    return rec != null && rec.showTitle;
+}
+
 /**
  * Creates a new presentation from a persistence file.
  * Note: This method should not modify the current state of the perspective.
@@ -620,8 +648,8 @@ private void loadPredefinedPersp(
 	PerspectiveExtensionReader extender = new PerspectiveExtensionReader();
 	extender.extendLayout(descriptor.getId(), layout);
 
-	// Retrieve fast view width ratios stored in the page layout.
-	mapFastViewToWidthRatio.putAll(layout.getFastViewToWidthRatioMap());
+	// Retrieve view layout info stored in the page layout.
+	mapIDtoViewLayoutRec.putAll(layout.getIDtoViewLayoutRecMap());
 
 	// Create action sets.
 	createInitialActionSets(layout.getActionSets());
@@ -631,15 +659,12 @@ private void loadPredefinedPersp(
 	perspectiveActionIds = layout.getPerspectiveActionIds();
 	showInPartIds = layout.getShowInPartIds();
 	
-	// Create fast views
+	// Retrieve fast views
 	fastViews = layout.getFastViews();
 		
-	// Create fixed views
-	fixedViews = layout.getFixedViews();
-	
 	// Is the layout fixed
 	fixed = layout.isFixed();
-				
+	
 	// Create presentation.	
 	presentation = new PerspectivePresentation(page, container);
 
@@ -851,7 +876,8 @@ public IStatus restoreState() {
 			continue;
 
 		// Create and open the view.
-		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.getView(primaryId, secondaryId);
+		IViewReference viewRef = viewFactory.getView(primaryId, secondaryId);
+		WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;
 		
 		// report error
 		if(ref == null) {
@@ -863,13 +889,13 @@ public IStatus restoreState() {
 			continue;
 		}
 		if(ref.getPane() == null) {
-			ViewPane vp = new ViewPane((IViewReference)ref,page);
+			ViewPane vp = new ViewPane(viewRef,page);
 			ref.setPane(vp);
 		}
 		page.addPart(ref);
 		boolean willPartBeVisible = pres.willPartBeVisible(ref.getId(), secondaryId);
 		if(willPartBeVisible) {
-			IStatus restoreStatus = viewFactory.restoreView((IViewReference)ref);
+			IStatus restoreStatus = viewFactory.restoreView(viewRef);
 			result.add(restoreStatus);
 			if(restoreStatus.getSeverity() == IStatus.OK) {
 				IViewPart view = (IViewPart)ref.getPart(true);
@@ -884,6 +910,8 @@ public IStatus restoreState() {
 		} else {
 			pres.replacePlaceholderWithPart(ref.getPane());			
 		}
+		
+		restoreViewLayoutRec(childMem, viewRef);
 	}
 
 	// Load the fast views
@@ -895,18 +923,9 @@ public IStatus restoreState() {
 			IMemento childMem = views[x];
 			String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 			String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
-			Float ratio = childMem.getFloat(IWorkbenchConstants.TAG_RATIO);
-			if (ratio == null) {
-				Integer viewWidth = childMem.getInteger(IWorkbenchConstants.TAG_WIDTH);
-				if (viewWidth == null)
-					ratio = new Float(IPageLayout.DEFAULT_FASTVIEW_RATIO);
-				else
-					ratio = new Float((float)viewWidth.intValue() / (float)getClientComposite().getSize().x);
-			}
-			// FIXME: this needs to work with mutliple view instances
-			mapFastViewToWidthRatio.put(viewID, ratio);
 				
-			WorkbenchPartReference ref = (WorkbenchPartReference) viewFactory.getView(viewID, secondaryId);
+			IViewReference viewRef = viewFactory.getView(viewID, secondaryId);
+			WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;
 			if(ref == null) {
 				String key = ViewFactory.getKey(viewID, secondaryId);
 				WorkbenchPlugin.log("Could not create view: '" + key + "'."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -916,29 +935,29 @@ public IStatus restoreState() {
 					null));
 				continue;
 			}
+			
+			// Restore fast view width ratio
+			Float ratio = childMem.getFloat(IWorkbenchConstants.TAG_RATIO);
+			if (ratio == null) {
+				Integer viewWidth = childMem.getInteger(IWorkbenchConstants.TAG_WIDTH);
+				if (viewWidth == null)
+					ratio = new Float(IPageLayout.DEFAULT_FASTVIEW_RATIO);
+				else
+					ratio = new Float((float)viewWidth.intValue() / (float)getClientComposite().getSize().x);
+			}
+			ViewLayoutRec rec = getViewLayoutRec(viewRef, true);
+			rec.fastViewWidthRatio = ratio.floatValue();
+
 			// Add to fast view list because creating a view pane
 			// will come back to check if its a fast view. We really
 			// need to clean up this code.		
 			fastViews.add(ref);
 			if(ref.getPane() == null) {
-				ref.setPane(new ViewPane((IViewReference)ref,page));
+				ref.setPane(new ViewPane(viewRef,page));
 			}
 			page.addPart(ref);
-		}
-	}
-		
-	// Load the fixed views
-	IMemento fixedViewsMem = memento.getChild(IWorkbenchConstants.TAG_FIXED_VIEWS);
-	if(fixedViewsMem != null) {
-		views = fixedViewsMem.getChildren(IWorkbenchConstants.TAG_VIEW);
-		for (int x = 0; x < views.length; x ++) {
-			// Get the view details.
-			IMemento childMem = views[x];
-			String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
-			
-			// we don't really need to create a view here
-			// we are just adding it to a list
-			fixedViews.add(viewID);
+
+			restoreViewLayoutRec(childMem, viewRef);
 		}
 	}
 		
@@ -1032,6 +1051,20 @@ public IStatus restoreState() {
 	return result;
 }
 
+/**
+ * Restores the layout rec for the given view.
+ */
+private void restoreViewLayoutRec(IMemento childMem, IViewReference viewRef) {
+    ViewLayoutRec rec = getViewLayoutRec(viewRef, true);
+    if (IWorkbenchConstants.FALSE.equals(childMem.getString(IWorkbenchConstants.TAG_CLOSEABLE)))
+        rec.isCloseable = false;
+    if (IWorkbenchConstants.FALSE.equals(childMem.getString(IWorkbenchConstants.TAG_MOVEABLE)))
+        rec.isMoveable = false;
+    if (IWorkbenchConstants.TRUE.equals(childMem.getString(IWorkbenchConstants.TAG_STANDALONE)))
+        rec.isStandalone = true;
+    if (IWorkbenchConstants.FALSE.equals(childMem.getString(IWorkbenchConstants.TAG_SHOW_TITLE)))
+        rec.showTitle = false;
+}
 /**
  * Returns the Show In... part ids read from the registry.  
  */
@@ -1186,8 +1219,10 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		IViewReference ref = pane.getViewReference();
 		IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
 		viewMemento.putString(IWorkbenchConstants.TAG_ID, ref.getId());
-		if (ref.getSecondaryId() != null)
+		if (ref.getSecondaryId() != null) {
 			viewMemento.putString(IWorkbenchConstants.TAG_SECONDARY_ID, ref.getSecondaryId());
+		}
+		saveViewLayoutRec(ref, viewMemento);
 	}
 
 	if(fastViews.size() > 0) {
@@ -1200,15 +1235,7 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
 			float ratio = getFastViewWidthRatio(id);
 			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
-		}
-	}
-	if(fixedViews.size() > 0) {
-		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_FIXED_VIEWS);
-		enum = fixedViews.iterator();
-		while (enum.hasNext()) {
-			String id = (String)enum.next();
-			IMemento viewMemento = childMem.createChild(IWorkbenchConstants.TAG_VIEW);
-			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
+			saveViewLayoutRec(ref, viewMemento);
 		}
 	}
 	if(errors > 0) {
@@ -1235,6 +1262,25 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		memento.putInteger(IWorkbenchConstants.TAG_FIXED, 0);
 	
 	return result;
+}
+/**
+ * @param ref
+ * @param viewMemento
+ */
+private void saveViewLayoutRec(IViewReference ref, IMemento viewMemento) {
+    ViewLayoutRec rec = getViewLayoutRec(ref, false);
+    if (rec != null) {
+        if (!rec.isCloseable) {
+            viewMemento.putString(IWorkbenchConstants.TAG_CLOSEABLE, IWorkbenchConstants.FALSE);
+        }
+        if (!rec.isMoveable) {
+            viewMemento.putString(IWorkbenchConstants.TAG_MOVEABLE, IWorkbenchConstants.FALSE);
+        }
+        if (rec.isStandalone) {
+            viewMemento.putString(IWorkbenchConstants.TAG_STANDALONE, IWorkbenchConstants.TRUE);
+   	        viewMemento.putString(IWorkbenchConstants.TAG_SHOW_TITLE, Boolean.toString(rec.showTitle));
+        }
+    }
 }
 /**
  * Sets the visible action sets. 
@@ -1437,9 +1483,9 @@ boolean showFastView(IViewReference ref) {
 
 private void saveFastViewWidthRatio() {
 	ViewPane pane = fastViewPane.getCurrentPane();
-	
 	if (pane != null) {
-		mapFastViewToWidthRatio.put(pane.getViewReference().getId(), new Float(fastViewPane.getCurrentRatio()));
+	    ViewLayoutRec rec = getViewLayoutRec(pane.getViewReference(), true);
+	    rec.fastViewWidthRatio = fastViewPane.getCurrentRatio();
 	}
 }
 
@@ -1568,5 +1614,29 @@ public void setOldPartID(String oldPartID) {
 
 public void toggleFastViewZoom() {
 	fastViewPane.toggleZoom();
+}
+
+/**
+ * Returns whether the given view is closeable in this perspective.
+ * 
+ * @since 3.0
+ */
+public boolean isCloseable(IViewReference reference) {
+    ViewLayoutRec rec = getViewLayoutRec(reference, false);
+    if (rec != null)
+        return rec.isCloseable;
+    return true;
+}
+
+/**
+ * Returns whether the given view is closeable in this perspective.
+ * 
+ * @since 3.0
+ */
+public boolean isMoveable(IViewReference reference) {
+    ViewLayoutRec rec = getViewLayoutRec(reference, false);
+    if (rec != null)
+        return rec.isMoveable;
+    return true;
 }
 }

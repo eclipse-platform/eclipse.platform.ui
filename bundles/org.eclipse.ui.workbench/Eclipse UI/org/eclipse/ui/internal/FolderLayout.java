@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IFolderLayout;
+import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
@@ -76,7 +77,8 @@ public class FolderLayout implements IFolderLayout {
 	 */
 	public void addFixedPlaceholder(String viewId) {
 		addPlaceholder(viewId);
-		pageLayout.markAsFixed(viewId);
+		IViewLayout viewLayout = pageLayout.getViewLayout(viewId);
+		viewLayout.setCloseable(false);
 	}
 
 	/* (non-Javadoc)
@@ -105,11 +107,6 @@ public class FolderLayout implements IFolderLayout {
 			// cannot safely open the dialog so log the problem
 			WorkbenchPlugin.log(e.getMessage());
 		}
-		
-		// if page layout is fixed, add to fixed view list
-		if (pageLayout.isFixed()) {
-			pageLayout.markAsFixed(viewId);
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -117,7 +114,8 @@ public class FolderLayout implements IFolderLayout {
 	 */
 	public void addFixedView(String viewId) {
 		addView(viewId);
-		pageLayout.markAsFixed(viewId);
+		IViewLayout layout = pageLayout.getViewLayout(viewId);
+		layout.setCloseable(false);
 	}
 
 	/**
@@ -127,5 +125,7 @@ public class FolderLayout implements IFolderLayout {
 	private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
 		pageLayout.setRefPart(viewId, newPart);
 		pageLayout.setFolderPart(viewId, folder);
+		// force creation of the view layout rec
+		pageLayout.getViewLayoutRec(viewId, true);
 	}
 }

@@ -80,6 +80,8 @@ public interface IWorkbenchConstants {
 	public static final String DEFAULT_CATEGORY_ID = PlatformUI.PLUGIN_ID;
 
 	// Persistance tags.
+	public static final String TRUE = "true"; //$NON-NLS-1$
+	public static final String FALSE = "false"; //$NON-NLS-1$
 	public static final String TAG_ID = "id"; //$NON-NLS-1$
 	public static final String TAG_SECONDARY_ID = "secondaryId"; //$NON-NLS-1$
 	public static final String TAG_FOCUS = "focus"; //$NON-NLS-1$
@@ -151,7 +153,11 @@ public interface IWorkbenchConstants {
 	public static final String TAG_OPEN_IN_PLACE = "open_in_place"; //$NON-NLS-1$
 	public static final String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
-	public static final String TAG_FIXED_VIEWS = "fixedViews"; //$NON-NLS-1$
+	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$
+	public static final String TAG_CLOSEABLE = "closeable";//$NON-NLS-1$
+	public static final String TAG_MOVEABLE = "moveable";//$NON-NLS-1$
+	public static final String TAG_STANDALONE = "standalone";//$NON-NLS-1$
+	public static final String TAG_SHOW_TITLE = "showTitle";//$NON-NLS-1$
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$
 	public static final String TAG_SINGLETON="singleton"; //$NON-NLS-1$
 	public static final String TAG_EDITOR_REUSE_THRESHOLD="editorReuseThreshold"; //$NON-NLS-1$
@@ -196,7 +202,6 @@ public interface IWorkbenchConstants {
 	//Fonts
 	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
-	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$
 	
 	//Colors
 	public static final String COLOR_HIGHLIGHT = "org.eclipse.ui.highlight"; //$NON-NLS-1$
