@@ -283,6 +283,7 @@ private Composite createTitleArea(Composite parent) {
 	layout.numColumns = 2;
 	titleArea.setLayout(layout);
 	titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	titleArea.setBackground(bg);
 
 	// Message label
 	final CLabel messageLabel = new CLabel(titleArea, SWT.LEFT);
