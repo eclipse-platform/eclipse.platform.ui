@@ -240,7 +240,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 * are loaded lazily as they are needed.
 	 */
 	private void registerFactoryProxies() {
-		IPluginRegistry registry = Platform.getPluginRegistry();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_ADAPTERS);
 		if (point == null)
 			return;

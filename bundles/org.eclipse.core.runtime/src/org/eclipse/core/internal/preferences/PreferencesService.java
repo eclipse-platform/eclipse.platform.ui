@@ -101,7 +101,7 @@ public class PreferencesService implements IPreferencesService {
 	 * See who is plugged into the extension point.
 	 */
 	private static void initializeScopes() {
-		IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(Platform.PI_RUNTIME, PT_PREFERENCES);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Platform.PI_RUNTIME, PT_PREFERENCES);
 		if (point == null)
 			return;
 		IExtension[] extensions = point.getExtensions();
