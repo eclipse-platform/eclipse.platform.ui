@@ -291,13 +291,20 @@ private boolean isValidContainer() {
 	if (container.getType() != IResource.PROJECT)
 		return false;
 		
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-	IFolder linkHandle = createFolderHandle("a");	//$NON-NLS-1$
-	IStatus status = workspace.validateLinkLocation(linkHandle,	Path.EMPTY);
-	
-	if (status.getCode() == IResourceStatus.LINKING_NOT_ALLOWED)
-		return false;
+	try {
+		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IProject project = (IProject) container;
+		String[] natureIds = project.getDescription().getNatureIds();
 		
+		for (int i = 0; i < natureIds.length; i++) {
+			IProjectNatureDescriptor descriptor = workspace.getNatureDescriptor(natureIds[i]);
+			if (descriptor != null && descriptor.isLinkingAllowed() == false)
+				return false;
+		}
+	} catch (CoreException exception) {
+		// project does not exist or is closed
+		return false;
+	}
 	return true;
 }
 /**
