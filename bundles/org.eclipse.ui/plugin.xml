@@ -80,6 +80,16 @@
    </extension>
    
    <extension
+         id="ide"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.ui.internal.ide.IDEApplication">
+         </run>
+      </application>
+   </extension>
+   
+   <extension
          point="org.eclipse.ui.commands">
       <activeKeyConfiguration
             value="org.eclipse.ui.defaultAcceleratorConfiguration">
