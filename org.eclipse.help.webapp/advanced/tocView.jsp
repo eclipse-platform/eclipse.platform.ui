@@ -122,7 +122,7 @@ function onloadHandler()
 }
 
 var askShowAllDialog;
-var w = 350;
+var w = 400;
 var h = 200;
 
 function askShowAll(){
