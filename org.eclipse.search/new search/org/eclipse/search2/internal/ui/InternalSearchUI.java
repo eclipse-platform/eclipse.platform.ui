@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
@@ -5,28 +15,34 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.ui.IQueryListener;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.search2.internal.ui.text.PositionTracker;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+
+import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 public class InternalSearchUI {
 	//The shared instance.
@@ -35,8 +51,6 @@ public class InternalSearchUI {
 	
 	private QueryManager fSearchResultsManager;
 	private PositionTracker fPositionTracker;
-
-	public static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
 
 	public static final Object FAMILY_SEARCH = new Object();
 	
@@ -111,7 +125,7 @@ public class InternalSearchUI {
 	}
 
 	public ISearchResultViewPart getSearchView() {
-		return (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SEARCH_VIEW_ID);
+		return (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SearchUI.SEARCH_VIEW_ID);
 	}
 
 	public boolean runSearchInBackground(ISearchQuery query) {
@@ -245,9 +259,9 @@ public class InternalSearchUI {
 		}
 
 		try {
-			ISearchResultViewPart viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SEARCH_VIEW_ID);
+			ISearchResultViewPart viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SearchUI.SEARCH_VIEW_ID);
 			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
-				viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().showView(SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+				viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().showView(SearchUI.SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			}
 			return viewPart;
 		} catch (PartInitException ex) {

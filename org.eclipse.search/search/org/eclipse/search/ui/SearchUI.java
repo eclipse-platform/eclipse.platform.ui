@@ -78,6 +78,12 @@ public final class SearchUI {
 	 */
 	public static final String SEARCH_RESULT_VIEW_ID= "org.eclipse.search.SearchResultView"; //$NON-NLS-1$
 
+	/** 
+	 * Id of the new Search view
+	 * (value <code>"org.eclipse.search.ui.views.SearchView"</code>).
+	 */
+	public static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
+	
 	/**
 	 * Id of the Search action set
 	 * (value <code>"org.eclipse.search.searchActionSet"</code>).
