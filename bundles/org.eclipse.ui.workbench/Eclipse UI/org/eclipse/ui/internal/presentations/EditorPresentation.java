@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.StackPresentation;
 import org.eclipse.ui.themes.ITheme;
 
 /**
@@ -153,29 +154,29 @@ public class EditorPresentation extends BasicStackPresentation {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.StackPresentation#setActive(int)
      */
-    public void setActive(boolean isActive) {
-        super.setActive(isActive);
-
+    public void setActive(int newState) {
+        super.setActive(newState);
+       
         updateGradient();
-        /*
+
+		/*
          * this following is to fix bug 57715
          * when activating the EditorPresentation, add support for drop down list
          * when disactivating the EditorPresentation, remove support for drop down list
+         * when focus is lost, do nothing so that the action remains enabled even in views
          */
         if (openEditorDropDownHandlerSubmission != null)
-	        if (isActive)
+	        if (newState == StackPresentation.AS_ACTIVE_FOCUS)
 	        	PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
 	                openEditorDropDownHandlerSubmission);
-	        else
+	        else if (newState == StackPresentation.AS_INACTIVE)
 	        	PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
 	                    openEditorDropDownHandlerSubmission);
-    }
 
+    }
     /**
      * Set the tab folder tab style to a tradional style tab
      * 
