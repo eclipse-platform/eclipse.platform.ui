@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.ide;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -1001,20 +1003,10 @@ public final class WorkbenchActionBuilder {
 		closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(getWindow());
 		registerGlobalAction(closeAllSavedAction);
 
-		aboutAction = IDEActionFactory.ABOUT.create(getWindow());
-		AboutInfo aboutInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
-		String productName = null;
-		if (aboutInfo != null) {
-			productName = aboutInfo.getProductName();
-		}
-		if (productName == null) {
-			productName = ""; //$NON-NLS-1$
-		}
-		aboutAction.setText(IDEWorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
-		aboutAction.setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
-		aboutAction.setImageDescriptor(
-			IDEInternalWorkbenchImages.getImageDescriptor(
-				IDEInternalWorkbenchImages.IMG_OBJS_DEFAULT_PROD));
+		aboutAction = ActionFactory.ABOUT.create(getWindow());
+		aboutAction
+				.setImageDescriptor(IDEInternalWorkbenchImages
+				        .getImageDescriptor(IDEInternalWorkbenchImages.IMG_OBJS_DEFAULT_PROD));
 		registerGlobalAction(aboutAction);
 
 		openPreferencesAction = ActionFactory.PREFERENCES.create(getWindow());

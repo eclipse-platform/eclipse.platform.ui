@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide;
+package org.eclipse.ui.internal.about;
 
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;

@@ -8,14 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.internal.about;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.ui.internal.ide.AboutBundleGroupData;
 
 /**
  * Utility class used to associate BundleInfo's that have the same provider and

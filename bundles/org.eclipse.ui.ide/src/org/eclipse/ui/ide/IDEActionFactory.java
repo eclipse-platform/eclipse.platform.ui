@@ -19,7 +19,6 @@ import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.NewWizardDropDownAction;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
-import org.eclipse.ui.internal.ide.actions.AboutAction;
 import org.eclipse.ui.internal.ide.actions.BuildCleanAction;
 import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
 import org.eclipse.ui.internal.ide.actions.ToggleAutoBuildAction;
@@ -48,22 +47,6 @@ public final class IDEActionFactory {
 	private IDEActionFactory() {
 		// do nothing
 	}
-	
-	/**
-	 * Workbench action: Displays the About dialog.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory ABOUT = new ActionFactory("about") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new AboutAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
 
 	/**
 	 * IDE-specific workbench action: Add task.

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -38,9 +38,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.AboutBundleGroupData;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.about.AboutBundleGroupData;
+import org.eclipse.ui.internal.about.AboutFeaturesButtonManager;
 
 /**
  * Displays information about the product.
@@ -74,14 +75,14 @@ public class AboutDialog extends ProductInfoDialog {
 	    IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 	    
 		String productId = ""; //$NON-NLS-1$
-        if (product == null)
-            productName = IDEWorkbenchMessages
-                    .getString("AboutDialog.defaultProductName"); //$NON-NLS-1$
-        else {
+        if (product != null) {
             productId = product.getId();
             productName = product.getName();
         }
-
+        if (productName == null)
+            productName = WorkbenchMessages
+            				.getString("AboutDialog.defaultProductName"); //$NON-NLS-1$
+		
         // create a descriptive object for each BundleGroup, putting the primary
         // first if it can be found
         LinkedList groups = new LinkedList();
@@ -116,7 +117,7 @@ public class AboutDialog extends ProductInfoDialog {
             new AboutPluginsDialog(getShell(), productName).open();
             break;
         case INFO_ID:
-            new SystemSummaryDialog(getShell()).open();
+            new AboutSystemDialog(getShell()).open();
             break;
         default:
             super.buttonPressed(buttonId);
@@ -139,8 +140,8 @@ public class AboutDialog extends ProductInfoDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(IDEWorkbenchMessages.format("AboutDialog.shellTitle", //$NON-NLS-1$
-                new Object[] { productName }));
+        newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", //$NON-NLS-1$
+                new Object[] { productName == null ? "" : productName })); //$NON-NLS-1$
         WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
     }
 
@@ -155,11 +156,11 @@ public class AboutDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        createButton(parent, FEATURES_ID, IDEWorkbenchMessages
+        createButton(parent, FEATURES_ID, WorkbenchMessages
                 .getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
-        createButton(parent, PLUGINS_ID, IDEWorkbenchMessages
+        createButton(parent, PLUGINS_ID, WorkbenchMessages
                 .getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
-        createButton(parent, INFO_ID, IDEWorkbenchMessages
+        createButton(parent, INFO_ID, WorkbenchMessages
                 .getString("AboutDialog.systemInfo"), false); //$NON-NLS-1$
 
         Label l = new Label(parent, SWT.NONE);

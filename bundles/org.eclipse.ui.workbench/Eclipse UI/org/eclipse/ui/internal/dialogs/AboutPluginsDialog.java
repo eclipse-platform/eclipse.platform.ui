@@ -10,16 +10,12 @@
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * 		font should be activated and used by other components.
 ************************************************************************/
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.internal.dialogs;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IBundleGroup;
-import org.eclipse.core.runtime.IBundleGroupProvider;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -36,13 +32,14 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.AboutBundleData;
-import org.eclipse.ui.internal.ide.AboutData;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.about.AboutBundleData;
+import org.eclipse.ui.internal.about.AboutData;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * Displays information about the product plugins.
@@ -67,10 +64,10 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	private String helpContextId;
 
 	private String columnTitles[] = {
-		IDEWorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
 	};
 
 	private String productName;
@@ -87,7 +84,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		this(
 			parentShell,
 			productName,
-			getAllBundles(),
+			WorkbenchPlugin.getDefault().getBundles(),
 			null,
 			null,
 			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
@@ -122,24 +119,6 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		AboutData.sortByProvider(reverseSort, bundleInfos);
 	}
 
-	private static Bundle[] getAllBundles() {
-        LinkedList result = new LinkedList();
-
-        IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-        if (providers != null)
-            for (int i = 0; i < providers.length; ++i) {
-	            IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
-	            for (int j = 0; j < bundleGroups.length; ++j) {
-	                Bundle[] bundles = bundleGroups[i].getBundles();
-	                for (int k = 0; k < bundles.length; ++k) {
-	                    result.add(bundles[k]);
-	                }
-	            }
-	        }
-
-        return (Bundle[]) result.toArray(new Bundle[result.size()]);
-    }
-	
 	/*
      * (non-Javadoc) Method declared on Dialog.
      */
@@ -160,7 +139,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (title == null && productName != null)
-            title = IDEWorkbenchMessages.format(
+            title = WorkbenchMessages.format(
                     "AboutPluginsDialog.shellTitle", //$NON-NLS-1$
                     new Object[] { productName });
 
@@ -181,7 +160,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        moreInfo = createButton(parent, MORE_ID, IDEWorkbenchMessages
+        moreInfo = createButton(parent, MORE_ID, WorkbenchMessages
                 .getString("AboutPluginsDialog.moreInfo"), false); //$NON-NLS-1$
         moreInfo.setEnabled(tableHasSelection() && selectionHasInfo());
 
@@ -287,8 +266,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         URL infoURL = BundleUtility.find(bundleInfo.getId(), PLUGININFO);
 
         // only report ini problems if the -debug command line argument is used
-        if (infoURL == null && IDEWorkbenchPlugin.DEBUG)
-            IDEWorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
+        if (infoURL == null && WorkbenchPlugin.DEBUG)
+            WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
                     + bundleInfo.getName());
 
         return infoURL != null;
@@ -321,9 +300,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
         if (!openBrowser(BundleUtility.find(bundleInfo.getId(), PLUGININFO)))
             MessageDialog
-                    .openError(getShell(), IDEWorkbenchMessages
+                    .openError(getShell(), WorkbenchMessages
                             .getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages.format(
+                            WorkbenchMessages.format(
                                     "AboutPluginsDialog.unableToOpenFile", //$NON-NLS-1$
                                     new Object[] { PLUGININFO,
                                             bundleInfo.getId()}));

@@ -119,6 +119,7 @@ public interface IHelpContextIds {
 	public static final String ABOUT_PLUGINS_DIALOG = PREFIX + "about_plugins_dialog_context"; //$NON-NLS-1$
 	public static final String ABOUT_FEATURES_PLUGINS_DIALOG = PREFIX + "about_features_plugins_dialog_context"; //$NON-NLS-1$
 	public static final String ABOUT_FEATURES_DIALOG = PREFIX + "about_features_dialog_context"; //$NON-NLS-1$
+	public static final String SYSTEM_SUMMARY_DIALOG = PREFIX + "system_summary_dialog_context"; //$NON-NLS-1$
 	public static final String ACTION_SET_SELECTION_DIALOG = PREFIX + "action_set_selection_dialog_context"; //$NON-NLS-1$
 	public static final String EDITOR_SELECTION_DIALOG = PREFIX + "editor_selection_dialog_context"; //$NON-NLS-1$
 	public static final String FILE_EXTENSION_DIALOG = PREFIX + "file_extension_dialog_context"; //$NON-NLS-1$

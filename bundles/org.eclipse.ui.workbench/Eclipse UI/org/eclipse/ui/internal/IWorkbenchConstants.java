@@ -43,6 +43,7 @@ public interface IWorkbenchConstants {
 	public static final String PL_COLOR_DEFINITIONS = "colorDefinitions"; //$NON-NLS-1$
 	public static final String PL_PRESENTATION_FACTORIES = "presentationFactories"; //$NON-NLS-1$
 	public static final String PL_DECORATORS = "decorators"; //$NON-NLS-1$
+	public static final String PL_SYSTEM_SUMMARY_SECTIONS = "systemSummarySections"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated

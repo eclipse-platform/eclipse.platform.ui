@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.internal.dialogs;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,8 +34,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.ide.AboutItem;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.about.AboutItem;
  
 /**
  * Abstract superclass of about dialogs 
@@ -315,8 +315,8 @@ private Process openWebBrowser(String href) throws IOException{
 private void openWebBrowserError(Display display) {
 	display.asyncExec(new Runnable() {
 		public void run() {
-			MessageDialog.openError(getShell(), IDEWorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-			IDEWorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
+			MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
 		}
 	});
 }

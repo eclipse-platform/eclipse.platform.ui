@@ -513,5 +513,13 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
+   <extension
+         point="org.eclipse.ui.systemSummarySections">
+      <configurationLogEntry
+      		id="15.UpdateSection"
+            sectionTitle="Update Manager Log"
+            class="org.eclipse.ui.internal.ide.dialogs.ConfigurationLogUpdateSection">
+      </configurationLogEntry>
+   </extension>
 
 </plugin>

@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -87,7 +88,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private WorkingSetManager workingSetManager;
 	// Working set registry, stores working set dialogs
 	private WorkingSetRegistry workingSetRegistry;	
-	
+	// The context within which this plugin was started.
+	private BundleContext bundleContext;
+
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
 	public static boolean DEBUG = false;
@@ -605,9 +608,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// this empty impl. has been left to continue to prevent the parent behaviour
 		// from being invoked.
 	}
-	
+
     public void start(BundleContext context) throws Exception {
     	super.start(context);
+    	bundleContext = context;
     	Policy.setLog(getLog());
     	
     	// Start the UI plugin so that it can install the callback in PrefUtil,
@@ -615,7 +619,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     	// accesses any API preferences.
     	Platform.getBundle(PlatformUI.PLUGIN_ID).start();
     }
-    
+
+    /**
+     * Return an array of all bundles contained in this workbench.
+     * 
+     * @return an array of bundles in the workbench or an empty array if none
+     * @since 3.0
+     */
+    public Bundle[] getBundles() {
+        return bundleContext == null ? new Bundle[0] : bundleContext.getBundles();
+    }
+
 	/**
 	 * Returns the application name.
 	 * <p>

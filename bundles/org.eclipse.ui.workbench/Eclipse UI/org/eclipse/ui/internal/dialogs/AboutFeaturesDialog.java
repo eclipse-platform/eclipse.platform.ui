@@ -10,21 +10,18 @@
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *      font should be activated and used by other components.
 ************************************************************************/
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.internal.dialogs;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IBundleGroup;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -44,17 +41,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.AboutBundleGroupData;
-import org.eclipse.ui.internal.ide.AboutData;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IURLEntry;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.about.AboutBundleGroupData;
+import org.eclipse.ui.internal.about.AboutData;
 import org.osgi.framework.Bundle;
 
 /**
@@ -82,10 +72,10 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	private Map cachedImages = new HashMap();
 
 	private String columnTitles[] = {
-	    IDEWorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
-		IDEWorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
+	    WorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
 	};
 
 	private String productName;
@@ -129,12 +119,10 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
             return;
 
         AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
-        IFeature feature = getFeatureFor(info);
-        IURLEntry entry = feature == null ? null : feature.getLicense();
-        if (feature == null || entry == null || !openBrowser(entry.getURL())) {
-            MessageDialog.openInformation(getShell(), IDEWorkbenchMessages
+        if (info == null || !openBrowser(info.getLicenseUrl())) {
+            MessageDialog.openInformation(getShell(), WorkbenchMessages
                     .getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
+                    WorkbenchMessages
                             .getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
         }
     }
@@ -154,9 +142,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
                 .getBundles();
 
         AboutPluginsDialog d = new AboutPluginsDialog(getShell(), productName,
-                bundles, IDEWorkbenchMessages
+                bundles, WorkbenchMessages
                         .getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
-                IDEWorkbenchMessages.format(
+                WorkbenchMessages.format(
                         "AboutFeaturesDialog.pluginInfoMessage", //$NON-NLS-1$
                         new Object[] { bundleGroup.getIdentifier()}),
                 IHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
@@ -186,7 +174,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (productName != null)
-            newShell.setText(IDEWorkbenchMessages.format(
+            newShell.setText(WorkbenchMessages.format(
                     "AboutFeaturesDialog.shellTitle", //$NON-NLS-1$
                     new Object[] { productName }));
 
@@ -204,9 +192,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        moreButton = createButton(parent, MORE_ID, IDEWorkbenchMessages
+        moreButton = createButton(parent, MORE_ID, WorkbenchMessages
                 .getString("AboutFeaturesDialog.moreInfo"), false); //$NON-NLS-1$
-        pluginsButton = createButton(parent, PLUGINS_ID, IDEWorkbenchMessages
+        pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages
                 .getString("AboutFeaturesDialog.pluginsInfo"), false); //$NON-NLS-1$
 
         Label l = new Label(parent, SWT.NONE);
@@ -374,70 +362,6 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     }
 
 	/**
-     * Returns a mapping from feature id to feature.
-     */
-    private Map getFeaturesMap() {
-        if (featuresMap != null) return featuresMap;
-
-        featuresMap = new HashMap();
-
-        final ILocalSite[] localSiteArray = new ILocalSite[1];
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            public void run() {
-                // this may take a few seconds
-                try {
-                    localSiteArray[0] = SiteManager.getLocalSite();
-                } catch (CoreException e) {
-                    MessageDialog
-                    	.openError(
-                    	        getShell(),
-                                IDEWorkbenchMessages
-                                	.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
-                                IDEWorkbenchMessages
-                                	.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
-                }
-            }
-        });
-        if (localSiteArray[0] == null)
-            return featuresMap;
-
-        IInstallConfiguration installConfiguration = localSiteArray[0]
-                .getCurrentConfiguration();
-        IConfiguredSite[] configuredSites = installConfiguration
-                .getConfiguredSites();
-
-        for (int i = 0; i < configuredSites.length; i++) {
-            IFeatureReference[] featureReferences = configuredSites[i]
-                    .getConfiguredFeatures();
-
-            for (int j = 0; j < featureReferences.length; j++) {
-                try {
-                    IFeature feature = featureReferences[j]
-                            .getFeature(new NullProgressMonitor());
-
-                    String key = feature.getVersionedIdentifier().toString();
-                    featuresMap.put(key, feature);
-                } catch (CoreException e) {
-                    // do nothing
-                }
-            }
-        }
-
-        return featuresMap;
-    }
-
-	/**
-     * Return the feature for the given bundle group.
-     */
-    private IFeature getFeatureFor(AboutBundleGroupData info) {
-        Map map = getFeaturesMap();
-        if (map == null)
-            return null;
-
-        return (IFeature) map.get(info.getVersionedId());
-    }
-
-	/**
      * Update the button enablement
      */
     private void updateButtons(AboutBundleGroupData info) {
@@ -456,9 +380,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
             return;
         }
 
-        IFeature feature = getFeatureFor(info);
-        moreButton.setEnabled(feature != null && feature.getLicense() != null);
-        pluginsButton.setEnabled(feature != null);
+        moreButton.setEnabled(info.getLicenseUrl() != null);
+        pluginsButton.setEnabled(true);
     }
 
 	/**
@@ -485,7 +408,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
             setItem(scan(aboutText));
 
         if (getItem() == null)
-            text.setText(IDEWorkbenchMessages
+            text.setText(WorkbenchMessages
                     .getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
         else {
             text.setText(getItem().getText());

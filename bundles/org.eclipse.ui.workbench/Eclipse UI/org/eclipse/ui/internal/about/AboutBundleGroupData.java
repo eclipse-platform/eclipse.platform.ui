@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide;
+package org.eclipse.ui.internal.about;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
@@ -28,6 +30,7 @@ import org.eclipse.ui.branding.IProductConstants;
 public class AboutBundleGroupData extends AboutData {
     private IBundleGroup bundleGroup;
 
+    private URL licenseUrl;
     private URL featureImageUrl;
     private Long featureImageCrc;
     private ImageDescriptor featureImage;
@@ -43,6 +46,25 @@ public class AboutBundleGroupData extends AboutData {
 	public IBundleGroup getBundleGroup() {
 	    return bundleGroup;
 	}
+
+	public URL getLicenseUrl() {
+	    if(licenseUrl == null) {
+		    try {
+		        licenseUrl = new File("features/" //$NON-NLS-1$
+            			+ bundleGroup.getIdentifier() + "_" //$NON-NLS-1$
+            			+ bundleGroup.getVersion()+ "/license.html").toURL(); //$NON-NLS-1$
+		    }
+		    catch(MalformedURLException e) {
+		        // do nothing
+		    }
+
+		    // TODO replace above with this when 60434 is resolved
+//	        licenseUrl = getURL(bundleGroup
+//	                    .getProperty(IBundleGroupConstants.LICENSE_PAGE));
+	    }
+
+	    return licenseUrl;
+    }
 
 	public URL getFeatureImageUrl() {
         if (featureImageUrl == null)

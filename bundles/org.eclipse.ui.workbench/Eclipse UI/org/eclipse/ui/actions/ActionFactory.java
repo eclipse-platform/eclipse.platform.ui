@@ -8,9 +8,12 @@
  ******************************************************************************/
 package org.eclipse.ui.actions;
 
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ActivateEditorAction;
 import org.eclipse.ui.internal.CloseAllAction;
@@ -42,6 +45,7 @@ import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.about.AboutAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -79,6 +83,36 @@ public abstract class ActionFactory {
 		 */
 		public void dispose();
 	}
+
+	/**
+     * Workbench action: Displays the About dialog. This action maintains its
+     * enablement state.
+     * 
+     * @since 3.0
+     */
+    public static final ActionFactory ABOUT = new ActionFactory("about") { //$NON-NLS-1$
+        /* (non-javadoc) method declared on ActionFactory */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) 
+                throw new IllegalArgumentException();
+            IWorkbenchAction action = new AboutAction(window);
+            action.setId(getId());
+
+            IProduct product = Platform.getProduct();
+            String productName = null;
+            if (product != null)
+                productName = product.getName();
+            if (productName == null)
+                productName = ""; //$NON-NLS-1$
+
+            action.setText(WorkbenchMessages.format(
+                    "AboutAction.text", new Object[] { productName})); //$NON-NLS-1$
+            action.setToolTipText(WorkbenchMessages.format(
+                    "AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
+
+            return action;
+        }
+    };
 
 	/**
 	 * Workbench action (id "activateEditor"): Activate the most recently used
