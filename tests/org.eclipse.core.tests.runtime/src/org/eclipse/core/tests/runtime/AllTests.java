@@ -37,6 +37,7 @@ public static Test suite() {
 	suite.addTest(PreferenceExportTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
 	suite.addTest(ConfigurationElementModelTest.suite());
+	suite.addTest(IRegistryChangeEventTest.suite());
 //	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
 //	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
