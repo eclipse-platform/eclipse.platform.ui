@@ -114,7 +114,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 			}
 			
 			int start= getReplaceOffset();
-			int end= getReplaceEndOffset();
+			int end= Math.max(getReplaceEndOffset(), offset);
 			
 			// insert template string
 			String templateString= templateBuffer.getString();	
@@ -352,9 +352,8 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {
 			int replaceOffset= getReplaceOffset();
-			int replaceEndOffset= getReplaceEndOffset();
-			if (replaceEndOffset >= offset) {
-				String content= document.get(replaceOffset, replaceEndOffset - replaceOffset);
+			if (offset >= replaceOffset) {
+				String content= document.get(replaceOffset, offset - replaceOffset);
 				return fTemplate.getName().startsWith(content);
 			}
 		} catch (BadLocationException e) {
