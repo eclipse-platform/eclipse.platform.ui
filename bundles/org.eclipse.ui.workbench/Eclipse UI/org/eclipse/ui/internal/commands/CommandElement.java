@@ -106,20 +106,20 @@ final class CommandElement implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		CommandElement item = (CommandElement) object;
-		int compareTo = id.compareTo(item.id);
+		CommandElement commandElement = (CommandElement) object;
+		int compareTo = id.compareTo(commandElement.id);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(item.name);			
+			compareTo = name.compareTo(commandElement.name);			
 		
 			if (compareTo == 0) {
-				Util.compare(description, item.description);
+				Util.compare(description, commandElement.description);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, item.parentId);
+					compareTo = Util.compare(parentId, commandElement.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, item.pluginId);								
+						compareTo = Util.compare(pluginId, commandElement.pluginId);								
 				}							
 			}
 		}

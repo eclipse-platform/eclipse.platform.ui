@@ -39,4 +39,11 @@ public interface IContextBinding {
 	 * @return
 	 */	
 	String getContextId();
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	String getPluginId();
 }

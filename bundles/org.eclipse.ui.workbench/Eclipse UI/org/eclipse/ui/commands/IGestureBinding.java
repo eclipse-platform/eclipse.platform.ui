@@ -66,5 +66,12 @@ public interface IGestureBinding {
 	 * 
 	 * @return
 	 */	
-	String getPlatform();	
+	String getPlatform();
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	String getPluginId();		
 }

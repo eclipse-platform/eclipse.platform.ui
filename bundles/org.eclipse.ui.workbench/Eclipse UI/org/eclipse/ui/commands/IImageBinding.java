@@ -38,19 +38,33 @@ public interface IImageBinding {
 	 * 
 	 * @return
 	 */	
+	String getImageStyle();
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
 	String getImageUri();
-	
+
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
 	 */	
 	String getLocale();
-	
+
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
 	 */	
 	String getPlatform();
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	String getPluginId();	
 }
