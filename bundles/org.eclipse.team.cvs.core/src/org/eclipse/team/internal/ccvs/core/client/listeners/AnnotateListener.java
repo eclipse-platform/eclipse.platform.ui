@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSAnnotateBlock;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 
 public class AnnotateListener extends CommandOutputListener {
@@ -34,13 +29,10 @@ public class AnnotateListener extends CommandOutputListener {
 	int lineNumber;
 	String error;
 	
-	/**
-	 * @return
-	 */
 	public String getError() {
 		return error;
 	}
-
+	
 	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
 
 		CVSAnnotateBlock aBlock = new CVSAnnotateBlock(line, lineNumber++);
@@ -89,11 +81,18 @@ public class AnnotateListener extends CommandOutputListener {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean hasError() {
 		return (error != null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener#errorLine(java.lang.String, org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, org.eclipse.team.internal.ccvs.core.ICVSFolder, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
+		if(line.startsWith("Skipping binary file")) {
+			error = "Cannot annotate a binary file.";
+			return new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, commandRoot, error);
+		}
+		return super.errorLine(line, location, commandRoot, monitor);
+	}
 }

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -26,6 +27,8 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -267,9 +270,8 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	private IEditorPart openEditor() throws InvocationTargetException {
 		// Open the editor
 		IEditorPart part;
-		
-		IEditorRegistry registry = CVSUIPlugin.getPlugin().getWorkbench().getEditorRegistry();
-		ICVSRemoteFile file;
+		ICVSRemoteFile file;		
+		IEditorRegistry registry;
 
 		try {
 			file = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource);
@@ -277,12 +279,34 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 			throw new InvocationTargetException(e1);
 		}
 		
+		registry = CVSUIPlugin.getPlugin().getWorkbench().getEditorRegistry();
 		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName());
+
+		// Determine if the registered editor is an ITextEditor.	
+		// There is currently no support from UI to determine this information. This
+		// problem has been logged in: https://bugs.eclipse.org/bugs/show_bug.cgi?id=47362
+		// For now, use internal classes.
+		String id;
+		
+		if (descriptor == null || !(descriptor instanceof EditorDescriptor) || !(((EditorDescriptor)descriptor).isInternal())) {
+			id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID; //$NON-NLS-1$
+		} else {
+			try {
+				Object obj = IDEWorkbenchPlugin.createExtension(((EditorDescriptor) descriptor).getConfigurationElement(), "class"); //$NON-NLS-1$
+				if (obj instanceof ITextEditor) {
+					id = descriptor.getId();
+				} else {
+					id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID;
+				}
+			} catch (CoreException e) {
+				id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID;
+			}
+		}
 		
 		// Either reuse an existing editor or open a new editor of the correct type.
 		try {
 			try {
-				if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(descriptor.getId())) {
+				if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
 					// We can reuse the editor
 					((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(file, contents));
 					part = editor;
@@ -292,7 +316,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 						page.closeEditor(editor, false);
 						editor = null;
 					}
-					part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), descriptor.getId());
+					part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), id);
 				}
 			} catch (PartInitException e) {
 				throw e;
