@@ -475,11 +475,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Determine the first configuration for this dialog.  If single-click launching is 
-	 * enabled, launch the configuration WITHOUT realizing the dialog.  If single-click 
-	 * launching was successful, this method returns 
-	 * <code>ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED</code>.  Otherwise, open the
-	 * dialog in the specified mode.
+	 * Determine the initial configuration for this dialog.  If the open mode is
+	 * set to 'LAUNCH_LAST', relaunch the last config and return
+	 * <code>ILaunchConfigurationDialog.LAUNCHED_BEFORE_OPENING</code>.
+	 * Otherwise, open the dialog in the specified mode and return one of
+	 * <code>Window. OK</code> or <code>Window.CANCEL</code>.
 	 * 
 	 * @see Window#open()
 	 */
