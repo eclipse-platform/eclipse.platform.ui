@@ -227,6 +227,7 @@ public class ExtensionsParser extends DefaultHandler {
 				// We don't care what the element name was
 				stateStack.pop();
 				// Now finish up the configuration element object
+				configurationElementValue = null;
 				ConfigurationElement currentConfigElement = (ConfigurationElement) objectStack.pop();
 
 				String value = currentConfigElement.getValueAsIs();
