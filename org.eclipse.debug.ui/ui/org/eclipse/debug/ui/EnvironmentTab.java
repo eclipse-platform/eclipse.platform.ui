@@ -21,8 +21,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -469,4 +471,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public String getName() {
 		return LaunchConfigurationsMessages.getString("EnvironmentTab.Environment_7"); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_ENVIRONMENT);
+	}
+
 }

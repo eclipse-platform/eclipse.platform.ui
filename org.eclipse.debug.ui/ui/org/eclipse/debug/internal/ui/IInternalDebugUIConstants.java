@@ -66,6 +66,7 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_OBJS_COMMON_TAB = "IMG_OBJS_COMMON_TAB"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PERSPECTIVE_TAB = "IMG_OBJS_PERSPECTIVE_TAB"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENVIRONMENT = "IMG_OBJS_ENVIRONMENT"; //$NON-NLS-1$
 	
 	// internal preferenes
 	/**
