@@ -30,9 +30,9 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * control colors.
  * <p>
  * The toolkit creates some of the most common controls used to populate Eclipse
- * forms. Controls that must be created using their constructors, <samp>adapt
- * </samp> method is available to change its properties in the same way as with
- * the supported toolkit controls.
+ * forms. Controls that must be created using their constructors, 
+ * <code>adapt()</samp> method is available to change its properties in the 
+ * same way as with the supported toolkit controls.
  * <p>
  * Typically, one toolkit object is created per workbench part (for example, an
  * editor or a form wizard). The toolkit is disposed when the part is disposed.
