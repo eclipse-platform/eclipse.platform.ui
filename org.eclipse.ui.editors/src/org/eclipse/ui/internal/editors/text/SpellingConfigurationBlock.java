@@ -17,7 +17,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
@@ -358,9 +360,16 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (sel.isEmpty())
 					return;
 				if (fCurrentBlock != null && fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR))
-					if (isPerformRevert())
-						fCurrentBlock.performRevert();
-					else {
+					if (isPerformRevert()) {
+						ISafeRunnable runnable= new ISafeRunnable() {
+							public void run() throws Exception {
+								fCurrentBlock.performRevert();
+							}
+							public void handleException(Throwable x) {
+							}
+						};
+						Platform.run(runnable);
+					} else {
 						revertSelection();
 						return;
 					}
@@ -392,14 +401,22 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private void updateCheckboxDependencies() {
-		boolean enabled= fEnablementCheckbox.getSelection();
+		final boolean enabled= fEnablementCheckbox.getSelection();
 		if (fComboGroup != null)
 			setEnabled(fComboGroup, enabled);
 		SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
 		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
-		ISpellingPreferenceBlock preferenceBlock= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
-		if (preferenceBlock != null)
-			preferenceBlock.setEnabled(enabled);
+		final ISpellingPreferenceBlock preferenceBlock= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
+		if (preferenceBlock != null) {
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					preferenceBlock.setEnabled(enabled);
+				}
+				public void handleException(Throwable x) {
+				}
+			};
+			Platform.run(runnable);
+		}
 	}
 	
 	private void setEnabled(Control control, boolean enabled) {
@@ -434,7 +451,16 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		
 		Control control= (Control) fProviderControls.get(id);
 		if (control == null) {
-			control= fCurrentBlock.createControl(fGroup);
+			final Control[] result= new Control[1];
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					result[0]= fCurrentBlock.createControl(fGroup);
+				}
+				public void handleException(Throwable x) {
+				}
+			};
+			Platform.run(runnable);
+			control= result[0];
 			if (control == null) {
 				String message= TextEditorMessages.getString("SpellingConfigurationBlock.info.no_preferences"); //$NON-NLS-1$
 				EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
@@ -450,7 +476,14 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		fGroup.getParent().layout();
 		
 		fStatusMonitor.statusChanged(new StatusInfo());
-		fCurrentBlock.initialize(fStatusMonitor);
+		ISafeRunnable runnable= new ISafeRunnable() {
+			public void run() throws Exception {
+				fCurrentBlock.initialize(fStatusMonitor);
+			}
+			public void handleException(Throwable x) {
+			}
+		};
+		Platform.run(runnable);
 	}
 
 	public void initialize() {
@@ -458,26 +491,60 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	public void performOk() {
-		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();)
-			if (!((ISpellingPreferenceBlock) it.next()).canPerformOk())
+		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
+			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
+			final Boolean[] result= new Boolean[] { Boolean.TRUE };
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					result[0]= Boolean.valueOf(block.canPerformOk());
+				}
+				public void handleException(Throwable x) {
+				}
+			};
+			Platform.run(runnable);
+			if (!result[0].booleanValue())
 				return;
+		}
 		
-		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();)
-			((ISpellingPreferenceBlock) it.next()).performOk();
+		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
+			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					block.performOk();
+				}
+				public void handleException(Throwable x) {
+				}
+			};
+			Platform.run(runnable);
+		}
 	}
 	
 	public void performDefaults() {
 		restoreFromPreferences();
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ISpellingPreferenceBlock prefs= (ISpellingPreferenceBlock) it.next();
-			prefs.performDefaults();
+			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					block.performDefaults();
+				}
+				public void handleException(Throwable x) {
+				}
+			};
+			Platform.run(runnable);
 		}
 	}
 	
 	public void dispose() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ISpellingPreferenceBlock prefs= (ISpellingPreferenceBlock) it.next();
-			prefs.dispose();
+			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					block.dispose();
+				}
+				public void handleException(Throwable x) {
+				}
+			};
+			Platform.run(runnable);
 		}
 	}
 
