@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An authenticator that prompts the user for authentication info,
@@ -82,7 +84,9 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		userinfo.setPassword(result[1]);
 		
 		if(location != null) {
-			location.setUsername(result[0]);
+			if (userinfo.isUsernameMutable()) {
+				location.setUsername(result[0]);
+			}
 			location.setPassword(result[1]);
 			location.setAllowCaching(allowCaching[0]);
 		}
@@ -101,14 +105,14 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * @param result  a String array of length two in which to put the result
 	 */
 	private boolean promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) {
-		Display display = Display.getCurrent();
-		Shell shell = new Shell(display);
+		Shell shell = getShell();
+		if(shell == null) {
+			return false;
+		}
 		String domain = location == null ? null : location.getLocation();
 		UserValidationDialog dialog = new UserValidationDialog(shell, domain, (username==null)?"":username, message);//$NON-NLS-1$
 		dialog.setUsernameMutable(userMutable);
-		dialog.open();
-		shell.dispose();
-		
+		dialog.open();	
 		result[0] = dialog.getUsername();
 		result[1] = dialog.getPassword();
 		return dialog.getAllowCaching();
@@ -153,8 +157,9 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 						   final String instruction,
 						   final String[] prompt,
 						   final boolean[] echo) {
-		Display display = Display.getCurrent();
-		Shell shell = new Shell(display);
+	
+		Shell shell = getShell();
+		if(shell == null) return new String[0];
 		String domain = location == null ? null : location.getLocation();
 		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(shell, 
 										 domain,
@@ -164,7 +169,6 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 										 prompt,
 										 echo);
 		dialog.open();
-		shell.dispose();
 		return dialog.getResult();
 	}
 	
@@ -172,12 +176,13 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * Special alternate prompting. Returns the password. Username must be fixed.
 	 */
 	private String alternatePromptForPassword(final String username) {
-		Display display = Display.getCurrent();
-		Shell shell = new Shell(display);
+		Shell shell = getShell();
+		if(shell == null) {
+			return null;
+		}
 		AlternateUserValidationDialog dialog = new AlternateUserValidationDialog(shell, (username == null) ? "" : username); //$NON-NLS-1$
 		dialog.setUsername(username);
 		int result = dialog.open();
-		shell.dispose();
 		if (result == Dialog.CANCEL) return null;
 		return dialog.getPassword();
 	}
@@ -239,5 +244,18 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 			}
 		});
 		return retval[0];
+	}
+	
+	private Shell getShell( ) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window != null) {
+			return window.getShell();
+		}
+		Display display= Display.getCurrent();
+		if (display == null) {
+			display= Display.getDefault();
+			return display.getActiveShell();
+		}
+		return null;	
 	}
 }
