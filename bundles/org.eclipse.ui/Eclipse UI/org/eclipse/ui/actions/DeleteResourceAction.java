@@ -244,6 +244,9 @@ public void run() {
 		return;
 
 	final IResource[] resourcesToDelete = getResourcesToDelete();
+	
+	if (resourcesToDelete.length == 0)
+		return;
 
 	try {
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {

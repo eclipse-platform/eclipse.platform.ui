@@ -23,7 +23,8 @@ class ReadOnlyStateChecker {
 	private Shell shell;
 	private String titleMessage;
 	private String mainMessage;
-	private boolean yesToAllNotSelected = true;
+	private boolean yesToAllSelected = false;
+	private boolean cancelSelected = false;
 
 	private String READ_ONLY_EXCEPTION_MESSAGE = WorkbenchMessages.getString("ReadOnlyCheck.problems"); //$NON-NLS-1$
 	
@@ -116,15 +117,15 @@ private int checkReadOnlyResources(IResource[] itemsToCheck, List allSelected)
 	throws CoreException {
 
 	//Shortcut. If the user has already selected yes to all then just return it
-	if (!this.yesToAllNotSelected)
+	if (yesToAllSelected)
 		return IDialogConstants.YES_TO_ALL_ID;
-
+		
 	boolean noneSkipped = true;
 	List selectedChildren = new ArrayList();
 
 	for (int i = 0; i < itemsToCheck.length; i++) {
 		IResource resourceToCheck = itemsToCheck[i];
-		if (this.yesToAllNotSelected && resourceToCheck.isReadOnly()) {
+		if (!yesToAllSelected && resourceToCheck.isReadOnly()) {
 			int action = queryYesToAllNoCancel(resourceToCheck);
 			if (action == IDialogConstants.YES_ID) {
 				boolean childResult = checkAcceptedResource(resourceToCheck, selectedChildren);
@@ -133,14 +134,18 @@ private int checkReadOnlyResources(IResource[] itemsToCheck, List allSelected)
 			}
 			if (action == IDialogConstants.NO_ID)
 				noneSkipped = false;
-			if (action == IDialogConstants.CANCEL_ID)
+			if (action == IDialogConstants.CANCEL_ID) {
+				cancelSelected = true;
 				return IDialogConstants.CANCEL_ID;
+			}
 			if (action == IDialogConstants.YES_TO_ALL_ID) {
-				this.yesToAllNotSelected = false;
+				yesToAllSelected = true;
 				selectedChildren.add(resourceToCheck);
 			}
 		} else {
 			boolean childResult = checkAcceptedResource(resourceToCheck, selectedChildren);
+			if (cancelSelected)
+				return IDialogConstants.CANCEL_ID;
 			if (!childResult)
 				noneSkipped = false;
 		}
