@@ -93,7 +93,7 @@ public class CompareNavigator {
 	
 	public static void handleNavigationKeys(KeyEvent e) {
 		if ((e.stateMask & SWT.ALT) != 0 &&
-				e.character == ('N'-0x40) || e.character == ('P'-0x40)) { // Control-N/P
+				e.character == ('N'-0x40) || e.character == ('P'-0x40)) { // Control-Alt-N/P
 			if (e.widget instanceof Control) {
 				CompareNavigator nav= findNavigator((Control)e.widget);
 				if (nav != null)
