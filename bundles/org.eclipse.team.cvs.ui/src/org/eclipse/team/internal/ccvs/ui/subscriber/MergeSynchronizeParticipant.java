@@ -265,4 +265,18 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 		configuration.addActionContribution(new MergeParticipantActionContribution());
 		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getLongTaskName()
+	 */
+	protected String getLongTaskName() {
+		return getName();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getShortTaskName()
+	 */
+	protected String getShortTaskName() {
+		return Policy.bind("Participant.merging"); //$NON-NLS-1$
+	}
 }

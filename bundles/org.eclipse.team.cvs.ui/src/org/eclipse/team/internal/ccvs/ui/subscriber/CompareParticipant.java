@@ -173,6 +173,19 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 				setSyncInfoFilter(new FastSyncInfoFilter());
 			}
 		}
-		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getLongTaskName()
+	 */
+	protected String getLongTaskName() {
+		return getName();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#getShortTaskName()
+	 */
+	protected String getShortTaskName() {
+		return Policy.bind("Participant.comparing"); //$NON-NLS-1$
 	}
 }
