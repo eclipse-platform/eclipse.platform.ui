@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;

@@ -11,7 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
-import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.AntUtil;
 
 public class ClasspathModel extends AbstractClasspathEntry {
 	

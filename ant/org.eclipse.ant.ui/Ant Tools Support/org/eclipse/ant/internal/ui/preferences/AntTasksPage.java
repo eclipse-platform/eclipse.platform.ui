@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Task;
-import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;

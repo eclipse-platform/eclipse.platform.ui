@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.console;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamsProxy;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;

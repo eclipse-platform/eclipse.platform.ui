@@ -12,7 +12,7 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.List;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;

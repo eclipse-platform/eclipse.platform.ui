@@ -14,7 +14,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;

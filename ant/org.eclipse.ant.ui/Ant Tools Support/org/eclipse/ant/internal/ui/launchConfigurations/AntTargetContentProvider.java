@@ -16,7 +16,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,19 +31,15 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	private int fNumFilteredTargets= 0;
 	private int fNumTotalTargets= 0;
 
-	public void add(Object o) {
-		elements.add(o);
-		viewer.add(o);
-	}
-	
-	public void addAll(List list) {
-		elements.addAll(list);
-		viewer.add(list.toArray());
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+	 */
 	public void dispose() {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	 */
 	public Object[] getElements(Object inputElement) {
 		fNumTotalTargets= elements.size();
 		fNumFilteredTargets= 0;
@@ -53,7 +51,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 		}
 		Iterator iter= elements.iterator();
 		while (iter.hasNext()) { 
-			if (isInternal((TargetInfo) iter.next())) {
+			if (isInternal((AntTargetNode) iter.next())) {
 				fNumFilteredTargets++;
 			}
 		}
@@ -61,7 +59,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 		iter= elements.iterator();
 		int i= 0;
 		while (iter.hasNext()) {
-			TargetInfo target= (TargetInfo) iter.next(); 
+			AntTargetNode target= (AntTargetNode) iter.next(); 
 			if (!isInternal(target)) {
 				targets[i++]= target;  
 			}
@@ -76,27 +74,20 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 * @param target the target to examine
 	 * @return whether the given target is an internal target
 	 */
-	public boolean isInternal(TargetInfo target) {
-		return !target.isDefault() && target.getDescription() == null;
+	public boolean isInternal(AntTargetNode node) {
+		Target target= node.getTarget();
+		return target.getDescription() != null || node.isDefaultTarget();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
 	public void inputChanged(Viewer newViewer, Object oldInput, Object newInput) {
 		this.viewer = (TableViewer) newViewer;
 		elements.clear();
 		if (newInput != null && ((Object[]) newInput).length != 0) {
 			elements.addAll(Arrays.asList((Object[]) newInput));
 		}
-	}
-	
-	/**
-	 * Removes the given target from the list of targets. Has no effect if the
-	 * given target does not exist in the list.
-	 * 
-	 * @param target the target to remove
-	 */
-	public void removeTarget(Object target) {
-		elements.remove(target);
-		viewer.remove(target);
 	}
 
 	/**
@@ -160,5 +151,18 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 */
 	public void setFilterInternalTargets(boolean filter) {
 		fFilterInternalTargets= filter;
+	}
+	
+	/**
+	 * Returns whether the given target is an internal target. Internal
+	 * targets are targets which has no description. The default target
+	 * is never considered internal.
+	 * @param target the target to examine
+	 * @return whether the given target is an internal target
+	 * @deprecated to be deleted
+	 */
+	public boolean isInternal(TargetInfo target) {
+		//TODO to be deleted
+		return !target.isDefault() && target.getDescription() == null;
 	}
 }

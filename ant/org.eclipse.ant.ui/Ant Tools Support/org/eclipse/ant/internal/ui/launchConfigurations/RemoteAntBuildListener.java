@@ -23,9 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.Project;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntUtil;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;

@@ -34,7 +34,7 @@ import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;

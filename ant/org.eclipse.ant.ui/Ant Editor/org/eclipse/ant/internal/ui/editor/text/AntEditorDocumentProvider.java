@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorMarkerUpdater;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.outline.IProblem;
-import org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor;
-import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
-import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.IProblem;
+import org.eclipse.ant.internal.ui.model.IProblemRequestor;
+import org.eclipse.ant.internal.ui.model.LocationProvider;
+import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -276,9 +276,9 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 	}
 	
 	
-	private XMLCore fCore;
+	private AntModelCore fCore;
 
-	public AntEditorDocumentProvider(XMLCore core) {
+	public AntEditorDocumentProvider(AntModelCore core) {
 		IDocumentProvider provider= new TextFileDocumentProvider(new AntStorageDocumentProvider());
 		provider= new ForwardingDocumentProvider(AntDocumentSetupParticipant.ANT_PARTITIONING, new AntDocumentSetupParticipant(), provider);
 		setParentDocumentProvider(provider);

@@ -17,20 +17,20 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
-import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.outline.AntModelChangeEvent;
-import org.eclipse.ant.internal.ui.editor.outline.IAntModelListener;
-import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.AntFoldingStructureProvider;
 import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntUtil;
-import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
-import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.IAntModelListener;
+import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -344,8 +344,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
     public AntEditor() {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
-		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
-		XMLCore.getDefault().addAntModelListener(fAntModelListener);
+		setDocumentProvider(new AntEditorDocumentProvider(AntModelCore.getDefault()));
+		AntModelCore.getDefault().addAntModelListener(fAntModelListener);
 		
 		if (isFoldingEnabled()) {
 			fFoldingStructureProvider= new AntFoldingStructureProvider(this);
@@ -406,7 +406,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 
 	private AntEditorContentOutlinePage getOutlinePage() {
 		if (fOutlinePage == null) {
-			fOutlinePage= new AntEditorContentOutlinePage(XMLCore.getDefault(), this);
+			fOutlinePage= new AntEditorContentOutlinePage(AntModelCore.getDefault(), this);
 			fOutlinePage.addPostSelectionChangedListener(fSelectionChangedListener);
 			setOutlinePageInput(getEditorInput());
 		}
@@ -725,7 +725,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 			fProjectionSupport= null;
 		}
 		
-		XMLCore.getDefault().removeAntModelListener(fAntModelListener);
+		AntModelCore.getDefault().removeAntModelListener(fAntModelListener);
 	}
 	
 	/* (non-Javadoc)

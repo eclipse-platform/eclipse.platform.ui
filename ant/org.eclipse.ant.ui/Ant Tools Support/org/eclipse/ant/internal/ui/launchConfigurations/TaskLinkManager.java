@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;

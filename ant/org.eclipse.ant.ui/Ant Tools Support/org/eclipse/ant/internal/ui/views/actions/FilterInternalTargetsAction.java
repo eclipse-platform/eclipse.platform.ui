@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.views.actions;
 
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.jface.action.Action;
 

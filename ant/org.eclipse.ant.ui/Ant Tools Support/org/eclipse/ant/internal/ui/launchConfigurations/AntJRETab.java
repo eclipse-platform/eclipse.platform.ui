@@ -11,8 +11,8 @@
 
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
-import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;

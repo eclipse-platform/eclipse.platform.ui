@@ -16,6 +16,8 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.ColorManager;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
@@ -25,8 +27,6 @@ import org.eclipse.ant.internal.ui.editor.text.NotifyingReconciler;
 import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.ColorManager;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;

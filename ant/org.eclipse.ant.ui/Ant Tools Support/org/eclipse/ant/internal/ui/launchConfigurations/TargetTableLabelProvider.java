@@ -11,9 +11,9 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.ant.core.TargetInfo;
-import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.AntImageDescriptor;
+import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;

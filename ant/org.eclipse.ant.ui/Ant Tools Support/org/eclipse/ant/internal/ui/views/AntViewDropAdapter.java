@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.views;
 
-import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.custom.BusyIndicator;

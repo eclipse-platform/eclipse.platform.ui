@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ant.core.Property;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntUtil;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
-import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.preferences.AntPropertiesBlock;
 import org.eclipse.ant.internal.ui.preferences.IAntBlockContainer;
 import org.eclipse.core.runtime.CoreException;

@@ -11,7 +11,7 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 

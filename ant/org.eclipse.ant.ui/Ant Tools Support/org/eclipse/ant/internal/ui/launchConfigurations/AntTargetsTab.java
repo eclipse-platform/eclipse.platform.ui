@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.ant.core.TargetInfo;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntUtil;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
-import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -476,14 +476,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 			final CoreException[] exceptions= new CoreException[1];
 			try {
-				final String[] arguments = AntUtil.parseString(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null), ","); //$NON-NLS-1$
 				IRunnableWithProgress operation= new IRunnableWithProgress() {
 					/* (non-Javadoc)
 					 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					public void run(IProgressMonitor monitor) {
 						try {
-							fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
+							fAllTargets = AntUtil.getTargets(expandedLocation, fLaunchConfiguration);
 						} catch (CoreException ce) {
 							exceptions[0]= ce;
 						}
@@ -501,8 +500,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					rule= AntUtil.getFileForLocation(expandedLocation, null);
 				}
 				PlatformUI.getWorkbench().getProgressService().runInUI(context, operation, rule);
-			} catch (CoreException ce) {
-				exceptions[0]= ce;
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			}

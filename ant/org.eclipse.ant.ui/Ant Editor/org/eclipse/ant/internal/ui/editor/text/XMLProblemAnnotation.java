@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.ant.internal.ui.editor.outline.IProblem;
+import org.eclipse.ant.internal.ui.model.IProblem;
 import org.eclipse.jface.text.source.Annotation;
 
 /**

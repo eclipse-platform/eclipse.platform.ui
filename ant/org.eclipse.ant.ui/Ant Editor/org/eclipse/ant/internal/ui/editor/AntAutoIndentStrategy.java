@@ -10,10 +10,10 @@
  *******************************************************************************/
  
 package org.eclipse.ant.internal.ui.editor;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
-import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.Document;

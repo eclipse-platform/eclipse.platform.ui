@@ -14,7 +14,7 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.ant.core.IAntClasspathEntry;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
 

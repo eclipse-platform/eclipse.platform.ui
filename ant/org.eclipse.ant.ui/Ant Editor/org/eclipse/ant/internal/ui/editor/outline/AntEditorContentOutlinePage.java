@@ -18,16 +18,22 @@ package org.eclipse.ant.internal.ui.editor.outline;
 import java.util.List;
 
 import org.apache.tools.ant.Target;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
-import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
-import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
-import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
-import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
-import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
-import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
-import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntImportNode;
+import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
+import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
+import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.AntPropertyNode;
+import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.AntTaskNode;
+import org.eclipse.ant.internal.ui.model.IAntModelListener;
+import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
@@ -37,23 +43,17 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
@@ -73,7 +73,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private IAntModelListener fListener;
 	private AntModel fModel;
-	private XMLCore fCore;
+	private AntModelCore fCore;
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
 	private boolean fFilterInternalTargets;
@@ -87,8 +87,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private boolean fSort;
 
 	private ViewerSorter fSorter;
-	
-	private static final Object[] EMPTY_ARRAY= new Object[0];
 	
 	private AntEditor fEditor;
 	
@@ -190,94 +188,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 	}
 
-	/**
-	 * The content provider for the objects shown in the outline view.
-	 */
-	private class ContentProvider implements ITreeContentProvider {
-
-		/**
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-        
-		/**
-		 * do nothing
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
-		 */
-		public Object[] getChildren(Object parentNode) {
-			AntElementNode parentElement = (AntElementNode)parentNode;
-			if (parentElement.hasChildren()) {
-				List children= parentElement.getChildNodes();
-				return children.toArray();
-			} 
-			return EMPTY_ARRAY;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(Object)
-		 */
-		public Object getParent(Object aNode) {
-			AntElementNode tempElement = (AntElementNode)aNode;
-			return tempElement.getParentNode();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
-		 */
-		public boolean hasChildren(Object aNode) {
-			return ((AntElementNode)aNode).hasChildren();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
-		 */
-		public Object[] getElements(Object anInputElement) {
-			return ((AntModel) anInputElement).getRootElements();
-		}
-
-	}
-    
-	/**
-	 * The label provider for the objects shown in the outline view.
-	 */
-	private class LabelProvider extends org.eclipse.jface.viewers.LabelProvider implements IColorProvider {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
-		 */
-		public Image getImage(Object anElement) {
-			AntElementNode node = (AntElementNode)anElement;
-			return node.getImage();
-		}
-        
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
-		 */
-		public String getText(Object node) {
-			AntElementNode element= (AntElementNode) node;
-			return element.getLabel();
-		}
-
-		public Color getForeground(Object node) {
-			if (node instanceof AntTargetNode && ((AntTargetNode)node).isDefaultTarget() ) {
-				return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
-			}
-			
-			return null;
-		}
-
-		public Color getBackground(Object element) {
-			return null;
-		}
-	}
-	
 	/**
 	 * Sets whether internal targets should be filtered out of the outline.
 	 * 
@@ -428,7 +338,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/**
 	 * Creates a new AntEditorContentOutlinePage.
 	 */
-	public AntEditorContentOutlinePage(XMLCore core, AntEditor editor) {
+	public AntEditorContentOutlinePage(AntModelCore core, AntEditor editor) {
 		super();
 		fCore= core;
 		fFilterInternalTargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);
@@ -468,13 +378,13 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * This content provider should be able to work on a dom like tree
 		 * structure that resembles the file contents.
 		 */
-		viewer.setContentProvider(new ContentProvider());
+		viewer.setContentProvider(new AntModelContentProvider());
 		setSort(fSort);
 
 		/*
 		 * We probably also need our own label provider.
 		 */ 
-		viewer.setLabelProvider(new LabelProvider());
+		viewer.setLabelProvider(new AntModelLabelProvider());
 		if (fModel != null) {
 			setViewerInput(fModel);
 		}

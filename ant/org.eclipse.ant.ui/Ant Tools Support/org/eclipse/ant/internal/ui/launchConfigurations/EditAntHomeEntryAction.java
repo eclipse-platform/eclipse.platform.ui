@@ -12,8 +12,8 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.preferences.AntPreferencesMessages;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;

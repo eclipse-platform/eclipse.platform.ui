@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.views;
 
-import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.AntImageDescriptor;
+import org.eclipse.ant.internal.ui.AntUIImages;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.ant.internal.ui.views.elements.TargetNode;
 import org.eclipse.jface.resource.CompositeImageDescriptor;

@@ -11,7 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
 

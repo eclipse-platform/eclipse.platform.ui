@@ -26,14 +26,14 @@ import java.util.List;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Javac;
-import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
-import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
-import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
-import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
-import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.AntTaskNode;
+import org.eclipse.ant.internal.ui.model.LocationProvider;
+import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -454,7 +454,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		if (doc == null) {
 			return null;
 		}
-		AntModel model= new AntModel(XMLCore.getDefault(), doc, null, new LocationProvider(null) {
+		AntModel model= new AntModel(AntModelCore.getDefault(), doc, null, new LocationProvider(null) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
 			 */
