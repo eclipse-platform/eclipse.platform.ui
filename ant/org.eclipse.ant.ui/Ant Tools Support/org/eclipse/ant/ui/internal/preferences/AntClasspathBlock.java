@@ -670,4 +670,8 @@ public class AntClasspathBlock {
 	public boolean isValidated() {
 		return validated >= 3;
 	}
+	
+	public void setValidated() {
+		validated= 3;
+	}
 }
