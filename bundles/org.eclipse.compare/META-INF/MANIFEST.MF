@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.compare; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: compare.jar
+Bundle-Activator: org.eclipse.compare.internal.CompareUIPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.compare,
+ org.eclipse.compare.contentmergeviewer,
+ org.eclipse.compare.internal,
+ org.eclipse.compare.internal.merge,
+ org.eclipse.compare.internal.patch,
+ org.eclipse.compare.rangedifferencer,
+ org.eclipse.compare.structuremergeviewer
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.resources,
+ org.eclipse.jface.text,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.views,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.core.runtime
+Eclipse-AutoStart: true
