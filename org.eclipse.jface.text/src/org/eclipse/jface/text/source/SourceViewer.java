@@ -480,27 +480,15 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fIndentChars= null;
 		fDefaultPrefixChars= null;
 
-		if (fVisualAnnotationModel != null && getDocument() != null) {
-			fVisualAnnotationModel.disconnect(getDocument());
-			fVisualAnnotationModel= null;
-		}
-		
-		fVerticalRuler= null;
-				
 		if (fVerticalRulerHoveringController != null) {
 			fVerticalRulerHoveringController.dispose();
 			fVerticalRulerHoveringController= null;
 		}
 		
-		fOverviewRuler= null;
-					
 		if (fOverviewRulerHoveringController != null) {
 			fOverviewRulerHoveringController.dispose();
 			fOverviewRulerHoveringController= null;
 		}
-		
-		// http://dev.eclipse.org/bugs/show_bug.cgi?id=15300
-		fComposite= null;
 	}
 	
 	/*
@@ -508,6 +496,19 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	protected void handleDispose() {
 		unconfigure();
+
+		if (fVisualAnnotationModel != null && getDocument() != null) {
+			fVisualAnnotationModel.disconnect(getDocument());
+			fVisualAnnotationModel= null;
+		}
+		
+		fVerticalRuler= null;
+		
+		fOverviewRuler= null;
+				
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=15300
+		fComposite= null;
+		
 		super.handleDispose();
 	}
 	
