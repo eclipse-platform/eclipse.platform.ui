@@ -43,6 +43,9 @@ public class OccurrencesFinder {
 		}
 		AntElementNode container= fAntModel.getNode(fOffset, false);
 	
+		if (container == null) {
+			return null;
+		}
 		IRegion region= XMLTextHover.getRegion(fEditor.getViewer(), fOffset);
 		if (region != null) {
 			if (!container.isRegionPotentialReference(region)) {
