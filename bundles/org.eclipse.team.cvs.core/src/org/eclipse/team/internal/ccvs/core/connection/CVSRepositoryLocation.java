@@ -124,10 +124,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	
 	/*
 	 * Field that indicates that the last connection attempt made to 
-	 * this repository location failed. When this is set, subsequent 
-	 * attempts should prompt before attempting to connect
+	 * this repository location failed due to an authentication failure. 
+	 * When this is set, subsequent attempts should prompt before attempting to connect
 	 */
-	private boolean previousConnectFailed;
+	private boolean previousAuthenticationFailed = false;
 	
 	static {
 		URL temp = null;
@@ -789,7 +789,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				ensureLocationCached();
 				boolean cacheNeedsUpdate = false;
 				// If the previous connection failed, prompt before attempting to connect
-				if (previousConnectFailed) {
+				if (previousAuthenticationFailed) {
 					promptForUserInfo(null);
 					// The authentication information has been change so update the cache
 					cacheNeedsUpdate = true;
@@ -812,8 +812,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 						if (cacheNeedsUpdate)
 						    updateCachedLocation();
 						connected = true;
+						previousAuthenticationFailed = false;
                         return connection;
 					} catch (CVSAuthenticationException ex) {
+						previousAuthenticationFailed = true;
 						if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
 							String message = ex.getMessage();
 							promptForUserInfo(message);
@@ -825,7 +827,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					}
 				}
 			} finally {
-				previousConnectFailed = !connected;
 				monitor.done();
 			}
 		}
