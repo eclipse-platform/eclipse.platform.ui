@@ -12,13 +12,12 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 
 
 import java.util.Date;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class TagElement implements IWorkbenchAdapter, IAdaptable {
@@ -46,7 +45,7 @@ public class TagElement implements IWorkbenchAdapter, IAdaptable {
 		if(tag.getType() == CVSTag.DATE){
 			Date date = tag.asDate();
 			if (date != null){
-				return CVSDateFormatter.repoViewTimeStamp(date);
+				return CVSTagElement.toDisplayString(date);
 			}
 		}
 		return tag.getName();

@@ -11,10 +11,12 @@
 package org.eclipse.team.internal.ccvs.core;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.Locale;
+import java.util.TimeZone;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 
 /**
  * A tag in CVS gives a label  to a collection of revisions. The labels can represent a version, a branch, 
@@ -33,6 +35,22 @@ public class CVSTag {
 	protected String name;
 	protected int type;
 	
+	private static final String DATE_TAG_NAME_FORMAT = "dd MMM yyyy HH:mm:ss Z";//$NON-NLS-1$
+	private static final SimpleDateFormat tagNameFormat = new SimpleDateFormat(DATE_TAG_NAME_FORMAT, Locale.US);
+	protected static synchronized String dateToTagName(Date date){
+		tagNameFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
+		return tagNameFormat.format(date); //$NON-NLS-1$
+	}
+	protected static Date tagNameToDate(String name){
+		if (name == null) return null;		
+		try {
+			return tagNameFormat.parse(name);
+		} catch (ParseException e) {
+			CVSProviderPlugin.log(new CVSException("Tag name " + name + " is not of the expected format " + DATE_TAG_NAME_FORMAT, e));
+			return null;
+		}
+	}
+	
 	public CVSTag() {
 		this("HEAD", HEAD); //$NON-NLS-1$
 	}
@@ -43,7 +61,7 @@ public class CVSTag {
 	}
 	//Write a date in local date tag format
 	public CVSTag(Date date) {
-		this(CVSDateFormatter.dateToTagName(date), DATE);
+		this(dateToTagName(date), DATE);
 	}
 
 	public boolean equals(Object other) {
@@ -107,7 +125,7 @@ public class CVSTag {
 	 * @return the date of the tag or <code>null</code>
 	 */
 	public Date asDate(){
-		return CVSDateFormatter.tagNameToDate(name);
+		return tagNameToDate(name);
 	}
 
 }

@@ -11,21 +11,45 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.Locale;
+import java.util.TimeZone;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 
 public class CVSEntryLineTag extends CVSTag {
 	
+	private static final String ENTRY_LINE_DATE_TAG_FORMAT = "yyyy.MM.dd.HH.mm.ss";
+	private static SimpleDateFormat entryLineDateTagFormatter = new SimpleDateFormat(ENTRY_LINE_DATE_TAG_FORMAT, Locale.getDefault());
+	
 	private static String getNameInInternalFormat(CVSTag tag) {
 		if(tag.getType() == DATE){
-			String s = CVSDateFormatter.tagNametoInternalName(tag.getName());
+			String s = ensureEntryLineFormat(tag.getName());
 			if(s != null){
 				return s;
 			}
 		}
 		return tag.getName();
+	}
+	
+	private static synchronized String ensureEntryLineFormat(String text){
+		if(text.length() == ENTRY_LINE_DATE_TAG_FORMAT.length()) return text;
+		Date date = tagNameToDate(text);
+		if (date == null) return text;
+		entryLineDateTagFormatter.setTimeZone(TimeZone.getDefault());
+		return entryLineDateTagFormatter.format(date);
+	}
+	
+	static synchronized public Date entryLineToDate(String text){
+		try {
+			 return entryLineDateTagFormatter.parse(text);
+		} catch (ParseException e) {
+			CVSProviderPlugin.log(new CVSException("Tag name " + text + " is not of the expected format " + ENTRY_LINE_DATE_TAG_FORMAT, e));
+			return null;
+		}		
 	}
 	
 	/*
@@ -52,7 +76,7 @@ public class CVSEntryLineTag extends CVSTag {
 			// Use same format as CVSTag when the name is requested
 			Date date = asDate();
 			if(date != null){
-				return CVSDateFormatter.dateToTagName(date);
+				return dateToTagName(date);
 			}
 		}
 		return name;
@@ -85,7 +109,7 @@ public class CVSEntryLineTag extends CVSTag {
 	 * @see org.eclipse.team.internal.ccvs.core.CVSTag#asDate()
 	 */
 	public Date asDate() {
-		return CVSDateFormatter.parseEntryLineName(name);
+		return entryLineToDate(name);
 	}
 }
 
