@@ -507,22 +507,21 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		}
 	}
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		/*if (CVSUIPlugin.getDefault().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION)) {
+		if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION)) {
 			if (selection == null) return;
 			if (!(selection instanceof IStructuredSelection)) return;
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if (ss.size() != 1) {
-				showHistory(null);
+				showHistory((IResource)null);
 				return;
 			}
 			Object first = ss.getFirstElement();
-			try {
-				IVersionHistory history = getHistory(first);
-				showHistory(history);
-			} catch (CoreException e) {
-				showHistory(null);
+			if (first instanceof IResource) {
+				showHistory((IResource)first);
+			} else if (first instanceof ICVSRemoteFile) {
+				showHistory((ICVSRemoteFile)first);
 			}
-		}*/
+		}
 	}
 	/** (Non-javadoc)
 	 * Method declared on IWorkbenchPart
@@ -542,24 +541,32 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	 * Only files are supported for now.
 	 */
 	public void showHistory(IResource resource) {
-		if (!(resource instanceof IFile)) return;
-		IFile file = (IFile)resource;
-		this.file = file;
-		ITeamProvider teamProvider = TeamPlugin.getManager().getProvider(file.getProject());
-		if (teamProvider == null) return;
-		if (!(teamProvider instanceof CVSTeamProvider)) return;
-		this.provider = (CVSTeamProvider)teamProvider;
-		try {
-			tableViewer.setInput(provider.getRemoteResource(file));
-		} catch (TeamException e) {
-			ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
+		if (resource instanceof IFile) {
+			IFile file = (IFile)resource;
+			this.file = file;
+			ITeamProvider teamProvider = TeamPlugin.getManager().getProvider(file.getProject());
+			if (teamProvider != null && teamProvider instanceof CVSTeamProvider) {
+				this.provider = (CVSTeamProvider)teamProvider;
+				try {
+					tableViewer.setInput(provider.getRemoteResource(file));
+				} catch (TeamException e) {
+					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
+				}				
+			}
+			return;
 		}
+		this.file = null;
+		tableViewer.setInput(null);
 	}
 	
 	/**
 	 * Shows the history for the given ICVSRemoteFile in the view.
 	 */
 	public void showHistory(ICVSRemoteFile file) {
+		if (file == null) {
+			tableViewer.setInput(null);
+			return;
+		}
 		this.file = null;
 		tableViewer.setInput(file);
 	}

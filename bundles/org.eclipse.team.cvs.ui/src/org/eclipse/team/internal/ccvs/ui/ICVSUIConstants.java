@@ -32,7 +32,8 @@ public interface ICVSUIConstants {
 	public final String PREF_TIMEOUT = "pref_timeout";	
 	public final String PREF_QUIETNESS = "pref_quietness";
 	public final String PREF_SHOW_MODULES = "pref_show_modules";
-	
+	public final String PREF_HISTORY_TRACKS_SELECTION = "pref_history_tracks_selection";
+		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration";
 	public final String PREF_FOLDERTEXT_DECORATION = "pref_foldertext_decoration";

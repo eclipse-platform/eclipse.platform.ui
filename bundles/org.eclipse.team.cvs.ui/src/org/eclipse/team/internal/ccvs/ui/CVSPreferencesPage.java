@@ -43,7 +43,8 @@ public class CVSPreferencesPage
 	private Button pruneEmptyDirectoriesField;
 	private Text timeoutValue;
 	private Combo quietnessCombo;
-
+	private Button historyTracksSelectionButton;
+	
 	/**
 	 * Utility method that creates a combo box
 	 *
@@ -105,14 +106,9 @@ public class CVSPreferencesPage
 		Composite composite = createComposite(parent, 2);
 
 		// set F1 help
-//		WorkbenchHelp.setHelp(
-//			composite,
-//			new DialogPageContextComputer(this, ICVSHelpContextIds.CVS_PREFERENCE_PAGE));
+//		WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, ICVSHelpContextIds.CVS_PREFERENCE_PAGE));
 
-		pruneEmptyDirectoriesField =
-			createCheckBox(
-				composite,
-				Policy.bind("CVSPreferencePage.pruneEmptyDirectories"));
+		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories"));
 
 		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue"));
 		timeoutValue = createTextField(composite);
@@ -130,6 +126,8 @@ public class CVSPreferencesPage
 		
 		createLabel(composite, Policy.bind("CVSPreferencePage.quietness"));
 		quietnessCombo = createCombo(composite);
+		
+		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection"));
 		
 		initializeValues();
 
@@ -169,13 +167,13 @@ public class CVSPreferencesPage
 	 */
 	private void initializeValues() {
 		IPreferenceStore store = getPreferenceStore();
-		pruneEmptyDirectoriesField.setSelection(
-			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
+		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet"));
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet"));
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet"));
 		quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
+		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 	}
 
 	/**
@@ -196,23 +194,18 @@ public class CVSPreferencesPage
 		
 		IPreferenceStore store = getPreferenceStore();
 		
-		store.setValue(
-			ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES,
-			pruneEmptyDirectoriesField.getSelection());
-		store.setValue(
-			ICVSUIConstants.PREF_TIMEOUT,
-			timeout);
-		store.setValue(
-			ICVSUIConstants.PREF_QUIETNESS,
-			quietnessCombo.getSelectionIndex());
-			
+		store.setValue(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, pruneEmptyDirectoriesField.getSelection());
+		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
+		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
+		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());	
+		
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		CVSProviderPlugin.getPlugin().setTimeout(
 			store.getInt(ICVSUIConstants.PREF_TIMEOUT));
 		CVSProviderPlugin.getPlugin().setQuietness(
 			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
-		
+
 		return true;
 	}
 
@@ -227,6 +220,7 @@ public class CVSPreferencesPage
 			store.getDefaultBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getDefaultInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
+		historyTracksSelectionButton.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 	}
 
 	/**

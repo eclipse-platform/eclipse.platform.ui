@@ -33,10 +33,7 @@ import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -188,6 +185,7 @@ public class RepositoriesView extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new RemoteContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		getSite().setSelectionProvider(viewer);
 		viewer.setInput(root);
 		viewer.setSorter(new RepositorySorter());
 		viewer.getControl().addKeyListener(new KeyAdapter() {
