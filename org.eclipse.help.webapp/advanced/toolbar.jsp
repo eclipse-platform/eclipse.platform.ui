@@ -37,30 +37,11 @@ BODY {
 #titleText {
 	font-weight:bold;
 }
-
-
-td.button {
-<%
-if (data.isIE()) {
-	// IE already has 3px padding
-%>
-	padding-left:2;
-	padding-right:2;
-<%
-} else {
-%>
-	padding-left:5;
-	padding-right:5;
-<%
-}
-%>
-}
  
-A {
-	display:block; 
-}
 .button a { 
-	display:block; 
+	display:block;
+	margin-left:2px;
+	margin-right:2px;
 	width:<%=data.isMozilla()?18:20%>px;
 	height:<%=data.isMozilla()?18:20%>px;
 	border:1px solid <%=prefs.getToolbarBackground()%>;
