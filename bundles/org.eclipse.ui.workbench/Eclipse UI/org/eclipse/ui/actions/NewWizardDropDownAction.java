@@ -152,6 +152,9 @@ public class NewWizardDropDownAction extends Action implements
         workbenchWindow = null;
     }
 
+    /**
+     * Runs the action, which opens the New wizard dialog.
+     */
     public void run() {
         if (workbenchWindow == null) {
             // action has been disposed
