@@ -27,7 +27,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	private IVerifier jarVerifier = null;
 
 	/*
-	 * filer for file with .jar
+	 * filter for file with .jar
 	 */
 	public static final FilenameFilter filter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
