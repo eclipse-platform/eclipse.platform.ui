@@ -43,17 +43,13 @@ import org.xml.sax.SAXException;
  * <P>
  * Check out the documentation for the public methods of this class. 
  * 
- * @author Alf Schiefelbein
- * @author HJ
  */
 public class TaskDescriptionProvider {
 
     /**
      * The file that contains all task descriptions.
-     * <P>
-     * The value is "/anttasks_1.5b.xml".
      */
-    public static String TASKS_DESCRIPTION_XML_FILE_NAME = "/anttasks_1.5b.xml"; //$NON-NLS-1$
+    public static String TASKS_DESCRIPTION_XML_FILE_NAME = "/anttasks_1.6.0.xml"; //$NON-NLS-1$
 
     public static String XML_TAG_TASKS = "tasks"; //$NON-NLS-1$
     public static String XML_TAG_TASK = "task"; //$NON-NLS-1$
@@ -62,7 +58,7 @@ public class TaskDescriptionProvider {
     public static String XML_TAG_ATTRIBUTES = "attributes"; //$NON-NLS-1$
     public static String XML_TAG_ELEMENT = "element"; //$NON-NLS-1$
     public static String XML_TAG_STRUCTURE = "structure"; //$NON-NLS-1$
-    public static String XML_TAG_DESCRIPTION = "short-description"; //$NON-NLS-1$
+    public static String XML_TAG_DESCRIPTION = "description"; //$NON-NLS-1$
     public static String XML_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
     public static String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
     
@@ -150,9 +146,9 @@ public class TaskDescriptionProvider {
      * no description available.
      */
     public String getDescriptionForTask(String aTaskName) {
-        Element tempTaskElement = (Element)taskNodes.get(aTaskName);
-        if(tempTaskElement != null) {
-            return getDescriptionOfNode(tempTaskElement);
+        Element taskElement = (Element)taskNodes.get(aTaskName);
+        if(taskElement != null) {
+            return getDescriptionOfNode(taskElement);
         }
         return null;
     }
@@ -206,7 +202,7 @@ public class TaskDescriptionProvider {
 
     
     /**
-     * Returns the description string for the specified attribute of the the 
+     * Returns the description string for the specified attribute of the 
      * specified task.
      * 
      * @return description string or <code>null</code> if task or attribute 
@@ -320,12 +316,12 @@ public class TaskDescriptionProvider {
      * @return The Structure Node of the Task.
      */        
     protected Node getStructureNode(String aTaskName) {	
-    	Element tempTaskElement = (Element)taskNodes.get(aTaskName);
-        if(tempTaskElement != null) {
+    	Element taskElement = (Element)taskNodes.get(aTaskName);
+        if(taskElement != null) {
         	//Dig us down to the Structure node
-        	Node tmpStructureNode = getChildNodeNamedOfTypeFromNode(XML_TAG_STRUCTURE, Node.ELEMENT_NODE,
-        	                                                     tempTaskElement);
-        	return tmpStructureNode;
+        	Node structureNode = getChildNodeNamedOfTypeFromNode(XML_TAG_STRUCTURE, Node.ELEMENT_NODE,
+        	                                                     taskElement);
+        	return structureNode;
         }
         else {
         	return null;
@@ -413,7 +409,5 @@ public class TaskDescriptionProvider {
         
         //Not found
         return null;																 	
-	}
-
-
+    }
 }

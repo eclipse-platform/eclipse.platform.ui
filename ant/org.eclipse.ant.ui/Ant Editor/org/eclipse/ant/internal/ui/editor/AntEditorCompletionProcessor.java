@@ -110,7 +110,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	 */
 	private int additionalProposalOffset = -1;
     
-    private static final String ANT_1_5_DTD_FILENAME = "/ant1.5b.dtd"; //$NON-NLS-1$
+    private static final String ANT_DTD_FILENAME = "/ant1.6.0.dtd"; //$NON-NLS-1$
 
     /**
      * The dtd.
@@ -165,7 +165,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * Parses the dtd.
      */
     private ISchema parseDtd() throws ParseError, IOException {
-        InputStream stream = getClass().getResourceAsStream(ANT_1_5_DTD_FILENAME);
+        InputStream stream = getClass().getResourceAsStream(ANT_DTD_FILENAME);
         InputStreamReader reader = new InputStreamReader(stream, "UTF-8"); //$NON-NLS-1$
         Parser parser = new Parser();
         ISchema schema= parser.parseDTD(reader, "project"); //$NON-NLS-1$
