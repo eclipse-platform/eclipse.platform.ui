@@ -143,9 +143,11 @@ class KeyBindingState {
 			IStatusLineManager statusLine = window.getStatusLineManager();
 			// TODO implicit dependency on IDE's action builder
 			// @issue implicit dependency on IDE's action builder
-			IContributionItem item = statusLine.find("ModeContributionItem"); //$NON-NLS-1$
-			if (item instanceof StatusLineContributionItem) {
-				return ((StatusLineContributionItem) item);
+			if (statusLine != null) { // this can be null if we're exiting
+				IContributionItem item = statusLine.find("ModeContributionItem"); //$NON-NLS-1$
+				if (item instanceof StatusLineContributionItem) {
+					return ((StatusLineContributionItem) item);
+				}
 			}
 		}
 
