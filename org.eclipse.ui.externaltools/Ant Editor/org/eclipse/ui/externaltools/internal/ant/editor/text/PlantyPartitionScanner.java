@@ -1,8 +1,11 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 //
 // Copyright:
@@ -19,10 +22,11 @@ package org.eclipse.ui.externaltools.internal.ant.editor.text;
  * after copying.
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.IPredicateRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.MultiLineRule;
+import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
+import org.eclipse.jface.text.rules.Token;
 
 /**
  * Scanner that scans the document and partitions the document into the three 
@@ -45,16 +49,14 @@ public class PlantyPartitionScanner extends RuleBasedPartitionScanner {
      */
 	public PlantyPartitionScanner() {
 
-		List rules = new ArrayList();
+		IPredicateRule[] rules =new IPredicateRule[2];
 
         IToken xmlComment = new Token(XML_COMMENT);
-		rules.add(new MultiLineRule("<!--", "-->", xmlComment)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[0]= new MultiLineRule("<!--", "-->", xmlComment); //$NON-NLS-1$ //$NON-NLS-2$
 
         IToken tag = new Token(XML_TAG);
-		rules.add(new TagRule(tag));
-
-		IPredicateRule[] result= new IPredicateRule[rules.size()];
-		rules.toArray(result);
-		setPredicateRules(result);
+		rules[1]= new TagRule(tag);
+	
+		setPredicateRules(rules);
 	}
 }
