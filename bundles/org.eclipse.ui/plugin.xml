@@ -2126,12 +2126,6 @@
             id="org.eclipse.ui.preferencePages.FileEditors">
       </page>
       <page
-            name="%PreferencePages.FileStates"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.FileStatesPage"
-            id="org.eclipse.ui.preferencePages.FileStates">
-      </page>
-      <page
             name="%PreferencePages.Perspectives"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage"
