@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,7 +24,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IContributorResourceAdapter;
 
 /**
  * This class is a default implementation of <code>IObjectContributorManager</code>.
@@ -62,8 +62,25 @@ public abstract class ObjectContributorManager {
 	 * Cached value of
 	 * <code>Class.forName("org.eclipse.core.resources.IResource")</code>;
 	 * <code>null</code> if not initialized or not present.
+	 * @since 3.0
 	 */
 	private static Class iresourceClass = null;
+
+	/**
+	 * Cached value of
+	 * <code>Class.forName("org.eclipse.ui.IContributorResourceAdapter")</code>;
+	 * <code>null</code> if not initialized or not present.
+	 * @since 3.0
+	 */
+	private static Class icontributorResourceAdapterClass = null;
+
+	/**
+	 * Cached value of
+	 * <code>Class.forName("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter")</code>;
+	 * <code>null</code> if not initialized or not present.
+	 * @since 3.0
+	 */
+	private static Class defaultContributorResourceAdapterClass = null;
 
 	/**
 	 * Indicates whether the resources plug-in is even around.
@@ -72,8 +89,18 @@ public abstract class ObjectContributorManager {
 	private static boolean resourcesPossible = true;
 
 	/**
+	 * Indicates whether the IDE plug-in (which supplies the
+	 * resource contribution adapters) is even around.
+	 */
+	private static boolean resourceAdapterPossible = true;
+
+	/**
 	 * Returns <code>IResource.class</code> or <code>null</code> if the
 	 * class is not available.
+	 * <p>
+	 * This method exists to avoid explicit references from the generic
+	 * workbench to the resources plug-in.
+	 * </p>
 	 * 
 	 * @return <code>IResource.class</code> or <code>null</code> if class
 	 * not available
@@ -120,6 +147,115 @@ public abstract class ObjectContributorManager {
 			return null;
 		}
 	}
+
+	/**
+	 * Returns <code>IContributorResourceAdapter.class</code> or
+	 * <code>null</code> if the class is not available.
+	 * <p>
+	 * This method exists to avoid explicit references from the generic
+	 * workbench to the IDE plug-in.
+	 * </p>
+	 * 
+	 * @return <code>IContributorResourceAdapter.class</code> or
+	 * <code>null</code> if class not available
+	 * @since 3.0
+	 */
+	public static Class getIContributorResourceAdapterClass() {
+		if (icontributorResourceAdapterClass != null) {
+			// tried before and succeeded
+			return icontributorResourceAdapterClass;
+		}
+		if (!resourceAdapterPossible) {
+			// tried before and failed
+			return null;
+		}
+		
+		// IDE plug-in is not on prereq chain of generic wb plug-in
+		// hence: IContributorResourceAdapter.class won't compile
+		// and Class.forName("org.eclipse.ui.IContributorResourceAdapter") won't find it
+		// need to be trickier...
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.ui.ide"); //$NON-NLS-1$
+		if (desc == null) {
+			// IDE plug-in is not around
+			// assume that it will never be around
+			resourceAdapterPossible = false;
+			return null;
+		}
+		// IDE plug-in is around
+		// it's not our job to activate the plug-in
+		if (!desc.isPluginActivated()) {
+			// assume it might come alive later
+			resourceAdapterPossible = true;
+			return null;
+		}
+		ClassLoader rcl = desc.getPluginClassLoader();
+		try {
+			Class c = rcl.loadClass("org.eclipse.ui.IContributorResourceAdapter"); //$NON-NLS-1$
+			// remember for next time
+			icontributorResourceAdapterClass = c;
+			return icontributorResourceAdapterClass;
+		} catch (ClassNotFoundException e) {
+			// unable to load IContributorResourceAdapter - sounds pretty serious
+			// treat as if IDE plug-in were unavailable
+			resourceAdapterPossible = false;
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns <code>DefaultContributorResourceAdapter.class</code> or
+	 * <code>null</code> if the class is not available.
+	 * <p>
+	 * This method exists to avoid explicit references from the generic
+	 * workbench to the IDE plug-in.
+	 * </p>
+	 * 
+	 * @return <code>DefaultContributorResourceAdapter.class</code> or
+	 * <code>null</code> if class not available
+	 * @since 3.0
+	 */
+	public static Class getDefaultContributorResourceAdapterClass() {
+		if (defaultContributorResourceAdapterClass != null) {
+			// tried before and succeeded
+			return defaultContributorResourceAdapterClass;
+		}
+		if (!resourceAdapterPossible) {
+			// tried before and failed
+			return null;
+		}
+	
+		// IDE plug-in is not on prereq chain of generic wb plug-in
+		// hence: DefaultContributorResourceAdapter.class won't compile
+		// and Class.forName("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter") won't find it
+		// need to be trickier...
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.ui.ide"); //$NON-NLS-1$
+		if (desc == null) {
+			// IDE plug-in is not around
+			// assume that it will never be around
+			resourceAdapterPossible = false;
+			return null;
+		}
+		// IDE plug-in is around
+		// it's not our job to activate the plug-in
+		if (!desc.isPluginActivated()) {
+			// assume it might come alive later
+			resourceAdapterPossible = true;
+			return null;
+		}
+		ClassLoader rcl = desc.getPluginClassLoader();
+		try {
+			Class c = rcl.loadClass("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter"); //$NON-NLS-1$
+			// remember for next time
+			defaultContributorResourceAdapterClass = c;
+			return defaultContributorResourceAdapterClass;
+		} catch (ClassNotFoundException e) {
+			// unable to load DefaultContributorResourceAdapter - sounds pretty serious
+			// treat as if IDE plug-in were unavailable
+			resourceAdapterPossible = false;
+			return null;
+		}
+	}
+
 
 	/** 
 	 * Constructs a new contributor manager.
@@ -403,13 +539,37 @@ public abstract class ObjectContributorManager {
 		if (object instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) object;
 
-			Object resourceAdapter = adaptable.getAdapter(IContributorResourceAdapter.class);
+			Class contributorResourceAdapterClass = getIContributorResourceAdapterClass();
+			if (contributorResourceAdapterClass == null) {
+				return null;
+			}
+			Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
 			if (resourceAdapter == null) {
-				resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+				// reflective equivalent of
+				//    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+				try {
+					Class c = getDefaultContributorResourceAdapterClass();
+					Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
+					resourceAdapter = m.invoke(null, new Object[0]);
+				} catch (Exception e) {
+					// shouldn't happen - but play it safe
+					return null;
+				}
 			}
 
-			return ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
+			Object result;
+			// reflective equivalent of
+			//    result = ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
+			try {
+				Method m = contributorResourceAdapterClass.getDeclaredMethod("getAdaptedResource", new Class[] {IAdaptable.class});  //$NON-NLS-1$
+				result = m.invoke(resourceAdapter, new Object[] {adaptable});
+			} catch (Exception e) {
+				// shouldn't happen - but play it safe
+				return null;
+			}
+			return result;
 		}
+		
 		return null;
 	}
 }
