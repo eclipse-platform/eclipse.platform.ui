@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import org.eclipse.core.runtime.Preferences;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
@@ -125,5 +127,16 @@ public final class EditorsUI {
 	
 	private EditorsUI() {
 		// block instantiation
+	}
+
+	/**
+	 * Returns the preferences of this plug-in.
+	 * 
+	 * @return the plug-in preferences
+	 * @see org.eclipse.core.runtime.Plugin#getPluginPreferences()
+	 * 
+	 */
+	public static Preferences getPluginPreferences() {
+		return EditorsPlugin.getDefault().getPluginPreferences();
 	}
 }
