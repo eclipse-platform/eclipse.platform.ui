@@ -12,7 +12,7 @@ import java.util.*;
  * of a particular plugin.  PluginStats objects are used internally
  * by the CoreStats mechanism.
  */
-class PluginStats {
+public class PluginStats {
 	protected String pluginID;
 	protected long notificationRunningTime = 0;
 	protected long buildRunningTime = 0;
@@ -36,13 +36,13 @@ void addNotify(long elapsed) {
 	notificationCount++;
 	notificationRunningTime += elapsed;
 }
-int getBuildCount() {
+public int getBuildCount() {
 	return buildCount;
 }
-long getBuildRunningTime() {
+public long getBuildRunningTime() {
 	return buildRunningTime;
 }
-Enumeration getCoreExceptions() {
+public Enumeration getCoreExceptions() {
 	Vector runtime = new Vector();
 	for (Enumeration e = exceptions.elements(); e.hasMoreElements();) {
 		Exception next = (Exception)e.nextElement();
@@ -52,19 +52,19 @@ Enumeration getCoreExceptions() {
 	}
 	return runtime.elements();
 }
-int getExceptionCount() {
+public int getExceptionCount() {
 	return exceptions.size();
 }
-String getName() {
+public String getName() {
 	return pluginID;
 }
-int getNotifyCount() {
+public int getNotifyCount() {
 	return notificationCount;
 }
-long getNotifyRunningTime() {
+public long getNotifyRunningTime() {
 	return notificationRunningTime;
 }
-Enumeration getRuntimeExceptions() {
+public Enumeration getRuntimeExceptions() {
 	Vector runtime = new Vector();
 	for (Enumeration e = exceptions.elements(); e.hasMoreElements();) {
 		Exception next = (Exception) e.nextElement();
@@ -74,7 +74,7 @@ Enumeration getRuntimeExceptions() {
 	}
 	return runtime.elements();
 }
-long getTotalRunningTime() {
+public long getTotalRunningTime() {
 	return notificationRunningTime + buildRunningTime;
 }
 }

@@ -7,6 +7,7 @@ package org.eclipse.core.internal.utils;
 
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.resources.IResourceChangeListener;
 /**
  * This class is used to gather stats on various aspects of
  * core and plugin behaviour.  The Policy class determines whether
@@ -165,13 +166,38 @@ public static void endSnapshot() {
 public static int getSnapcount() {
 	return snapshotCount;
 }
-private static PluginStats getStats(String pluginID) {
+/**
+ * Returns the stats object for the given plugin ID.
+ */
+public static PluginStats getStats(String pluginID) {
 	PluginStats stats = (PluginStats) pluginTable.get(currentPlugin);
 	if (stats == null) {
 		stats = new PluginStats(pluginID);
 		pluginTable.put(currentPlugin, stats);
 	}
 	return stats;
+}
+/**
+ * Returns stats objects for all plugins that are registered
+ * for statistics (either notification listeners or builders).
+ */
+public static PluginStats[] getAllStats() {
+	Collection values = pluginTable.values();
+	return (PluginStats[])values.toArray(new PluginStats[values.size()]);
+}
+/**
+ * Notifies the stats tool that a resource change listener has been removed.
+ */
+public static void listenerRemoved(IResourceChangeListener listener) {
+	if (listener != null && pluginTable != null)
+		pluginTable.remove(listener.toString());
+}
+/**
+ * Notifies the stats tool that a resource change listener has been added.
+ */
+public static void listenerAdded(IResourceChangeListener listener) {
+	if (listener != null && pluginTable != null)
+		getStats(listener.toString());
 }
 public static void notifyException(Exception e) {
 	if (currentPlugin == null) {
