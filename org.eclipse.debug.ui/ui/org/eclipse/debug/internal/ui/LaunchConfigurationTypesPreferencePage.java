@@ -408,6 +408,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 	public void init(IWorkbench aWorkbench){
 		readDefaultLaunchConfigs();
 		noDefaultAndApplyButton();
+		setDescription(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.description"));
 	}
 
 	/**

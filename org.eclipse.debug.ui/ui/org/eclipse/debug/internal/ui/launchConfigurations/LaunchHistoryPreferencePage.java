@@ -82,10 +82,11 @@ public class LaunchHistoryPreferencePage
 		return getRunTab().createControl(parent);
 	}
 	
-	/*
+	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+		setDescription(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.description"));
 	}
 
 	/**
@@ -134,19 +135,19 @@ public class LaunchHistoryPreferencePage
 		
 		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
 		// debug favorites
-		Vector list = convertToHisotryElements(getDebugTab().getFavorites(), ILaunchManager.DEBUG_MODE);
+		Vector list = convertToHistoryElements(getDebugTab().getFavorites(), ILaunchManager.DEBUG_MODE);
 		plugin.setDebugFavorites(list);
 		
 		// debug recent history
-		list = convertToHisotryElements(getDebugTab().getRecents(), ILaunchManager.DEBUG_MODE);
+		list = convertToHistoryElements(getDebugTab().getRecents(), ILaunchManager.DEBUG_MODE);
 		plugin.setDebugHistory(list);
 		
 		// run favorites
-		list = convertToHisotryElements(getRunTab().getFavorites(), ILaunchManager.RUN_MODE);
+		list = convertToHistoryElements(getRunTab().getFavorites(), ILaunchManager.RUN_MODE);
 		plugin.setRunFavorites(list);
 		
 		// run recent history
-		list = convertToHisotryElements(getRunTab().getRecents(), ILaunchManager.RUN_MODE);
+		list = convertToHistoryElements(getRunTab().getRecents(), ILaunchManager.RUN_MODE);
 		plugin.setRunHistory(list);	
 		
 		// update config attributes for favorites
@@ -203,7 +204,7 @@ public class LaunchHistoryPreferencePage
 	 * @return vector of history elements corresponding to the
 	 *  given launch configurations
 	 */
-	protected Vector convertToHisotryElements(List configs, String mode) {
+	protected Vector convertToHistoryElements(List configs, String mode) {
 		Vector  v = new Vector(configs.size());
 		Iterator iter = configs.iterator();
 		while (iter.hasNext()) {
