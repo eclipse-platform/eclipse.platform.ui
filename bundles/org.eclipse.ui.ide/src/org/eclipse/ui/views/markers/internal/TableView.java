@@ -155,9 +155,11 @@ public abstract class TableView extends ViewPart {
 		
 		MenuManager mgr = initContextMenu();
 		Menu menu = mgr.createContextMenu(viewer.getControl());
-		
 		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(mgr, viewer);
+		getSite().registerContextMenu(mgr, getSelectionProvider());
+		
+		getSite().setSelectionProvider(getSelectionProvider());
+		
 		initActionBars(getViewSite().getActionBars());
 		registerGlobalActions(getViewSite().getActionBars());
 		
