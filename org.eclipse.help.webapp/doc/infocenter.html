@@ -5,231 +5,231 @@
                                                                         
                                                                         
                                                                         
+      
   <meta http-equiv="Content-Type"
  content="text/html; charset=iso-8859-1">
                                                                         
-                                                   
+                                                       
   <meta content="eclipse.org" name="Author">
                                                                         
-                                                   
+                                                       
   <meta content="MSHTML 5.50.4916.2300" name="GENERATOR">
                                                                         
-                                                  
+                                                      
   <link href="default_style.css" type="text/css" rel="stylesheet">
 </head>
   <body>
-                        
+                          
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
-              <tbody>
-               <tr>
-                 <td align="left" width="60%"><font class="indextop">infocenter<br>
-         setup</font><br>
-                  <font class="indexsub">installing infocenter web application 
-  on a server</font></td>
-                <td width="40%"><img src="images/Idea.jpg" hspace="50"
+               <tbody>
+                <tr>
+                  <td align="left" width="60%"><font class="indextop">infocenter<br>
+          setup</font><br>
+                   <font class="indexsub">installing infocenter web application
+   on a server</font></td>
+                 <td width="40%"><img src="images/Idea.jpg" hspace="50"
  height="86" width="120" align="middle">
-                 </td>
-              </tr>
-                                             
-  </tbody>           
+                  </td>
+               </tr>
+                                                 
+  </tbody>            
 </table>
-                                        
+                                          
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
-                    <tbody>
-                       <tr>
-                    <td>You can enable users to access the help system over 
- the  Internet or an intranet, by installing the help system web application 
- on  a web server. Users open a URL in the web browser, which results in help
- system displayed. The infocenter help system can be also used for client 
-applications and for web applications, that wish to have their help accessed 
-remotely. All features except infopops and active help are supported.<br>
-     &nbsp;<br>
-     The instructions provided go over installing and configuring  the  
-infocenter       application. &nbsp;Steps are  provided   for IBM WebSphere
-   Application     Server 4.0.3 Advanced Edition  Single Server,  and Apache
+                     <tbody>
+                        <tr>
+                     <td>You can enable users to access the help system over
+  the  Internet or an intranet, by installing the help system web application
+  on  a web server. Users open a URL in the web browser, which results in
+help  system displayed. The infocenter help system can be also used for client
+ applications and for web applications, that wish to have their help accessed
+ remotely. All features except infopops and active help are supported.<br>
+      &nbsp;<br>
+      The instructions provided go over installing and configuring  the 
+ infocenter       application. &nbsp;Steps are  provided   for IBM WebSphere 
+   Application     Server 4.0.3 Advanced Edition  Single Server,  and Apache 
 Tomcat    4.0.4   on Windows. &nbsp;Other servers should be similar.<br>
-                <br>
-           </td>
-                       </tr>
-                          <tr>
-                            <td align="left" valign="top" colspan="2"
- bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">1. Install
-       Eclipse</font></b></td>
-                         </tr>
-                          <tr>
-                            <td>        Download Eclipse SDK or Platform
-Runtime     Binary      from    <a
- href="http://www.eclipse.org/downloads/">http://www.eclipse.org/downloads/</a>.
-             Unzip Eclipse on a system. The directory called "<tt>eclipse</tt>"
- will   be   created.       Documentation contributed by plugins in Eclipse
- installation will be made available for remote browsing. &nbsp;Let us assume
- you unzipped Eclipse to "<tt>d:\</tt>".<br>
-           <br>
-       </td>
-                         </tr>
+                 <br>
+            </td>
+                        </tr>
                            <tr>
-                            <td align="left" valign="top" colspan="2"
- bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">2. Download
-       Infocenter</font></b></td>
-                         </tr>
-                          <tr>
-                            <td>        Download an Infocenter build, corresponding 
-     to  the  Eclipse build  installed.     Extract contents of the zip to 
- the    temporary    directory.  The  zip contains    the Infocenter web archive
-    file, with "<tt>.war</tt>"   extension .<br>
-           <br>
-           </td>
-                         </tr>
-                            <tr>
-                            <td align="left" valign="top" colspan="2"
- bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">3. Register
-       URL handlers with the  server</font></b></td>
-                         </tr>
-                          <tr>
-                            <td>                                        
-                             <b>WebSphere Application Server</b>        
-                                       
-      <blockquote>Log into the Administrative Console, expand Resources, select
-"URL Providers" in the tree. &nbsp;In URL Providers document form click New
-button, input values:                  
-        <ul>
-            <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
-            <li>                      Name: <tt>help</tt></li>
-            <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.help.Handler</tt></li>
-            <li>                      Protocol: <tt>help</tt></li>
-                   
-        </ul>
-  Click OK button. &nbsp;In URL Providers document form click New button, 
-input values:                  
-        <ul>
-            <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
-            <li>Name: <tt>platform</tt></li>
-            <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.platform.Handler</tt></li>
-            <li>Protocol: <tt>platform</tt></li>
-                   
-        </ul>
-                        Click OK button. &nbsp;In URL Providers document
-form click New button, input values:                  
-        <ul>
-            <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
-            <li>                      Name: <tt>search</tt></li>
-            <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.search.Handler</tt></li>
-            <li>                      Protocol: <tt>search</tt></li>
-                   
-        </ul>
-                        Click OK button.<br>
-                        </blockquote>
-                                                                        
-                                            <b>Tomcat</b>               
-                                                                        
-                                                
-      <blockquote> Edit TOMCAT_HOME\bin\setclasspath.bat file and after the
-        line:<br>
-                        <tt>set CLASSPATH=%JAVA_HOME%\lib\tools.jar</tt><br>
-  insert the line:<br>
-          <tt>set CLASSPATH=%CLASSPATH%;D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar<br>
-         <br>
-         </tt>                                       </blockquote>
+                             <td align="left" valign="top" colspan="2"
+ bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">1. Install 
+       Eclipse</font></b></td>
+                          </tr>
+                           <tr>
+                             <td>        Download Eclipse SDK or Platform 
+Runtime     Binary      from    <a
+ href="http://www.eclipse.org/downloads/">http://www.eclipse.org/downloads/</a>. 
+             Unzip Eclipse on a system. The directory called "<tt>eclipse</tt>" 
+ will   be   created.       Documentation contributed by plugins in Eclipse 
+ installation will be made available for remote browsing. &nbsp;Let us assume 
+ you unzipped Eclipse to "<tt>d:\</tt>".<br>
+            <br>
         </td>
-      </tr>
-                                       <tr>
-                    <td align="left" valign="top" colspan="2"
- bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">4. Point
+                          </tr>
+                            <tr>
+                             <td align="left" valign="top" colspan="2"
+ bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">2. Download 
+       Infocenter</font></b></td>
+                          </tr>
+                           <tr>
+                             <td>        Download Eclipse Infocenter web
+module archive     file, with "<tt>.war</tt>"   extension .<br>
+            <br>
+            </td>
+                          </tr>
+                             <tr>
+                             <td align="left" valign="top" colspan="2"
+ bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">3. Register 
+       URL handlers with the  server</font></b></td>
+                          </tr>
+                           <tr>
+                             <td>                                       
+                              <b>WebSphere Application Server</b>       
+                                               
+      <blockquote>Log into the Administrative Console, expand Resources,
+select "URL Providers" in the tree. &nbsp;In URL Providers document form
+click New button, input values:                           
+        <ul>
+             <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
+             <li>                      Name: <tt>help</tt></li>
+             <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.help.Handler</tt></li>
+             <li>                      Protocol: <tt>help</tt></li>
+                             
+        </ul>
+   Click OK button. &nbsp;In URL Providers document form click New button,
+ input values:                           
+        <ul>
+             <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
+             <li>Name: <tt>platform</tt></li>
+             <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.platform.Handler</tt></li>
+             <li>Protocol: <tt>platform</tt></li>
+                             
+        </ul>
+                         Click OK button. &nbsp;In URL Providers document 
+form click New button, input values:                           
+        <ul>
+             <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
+             <li>                      Name: <tt>search</tt></li>
+             <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.search.Handler</tt></li>
+             <li>                      Protocol: <tt>search</tt></li>
+                             
+        </ul>
+                         Click OK button.<br>
+                         </blockquote>
+                                                                        
+                                             <b>Tomcat</b>              
+                                                                        
+                                                        
+      <blockquote> Edit TOMCAT_HOME\bin\setclasspath.bat file and after the 
+        line:<br>
+                         <tt>set CLASSPATH=%JAVA_HOME%\lib\tools.jar</tt><br>
+   insert the line:<br>
+           <tt>set CLASSPATH=%CLASSPATH%;D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar<br>
+          <br>
+          </tt>                                       </blockquote>
+         </td>
+       </tr>
+                                        <tr>
+                     <td align="left" valign="top" colspan="2"
+ bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">4. Point 
    Infocenter application to    the Eclipse installation</font></b></td>
-                         </tr>
-                          <tr>
-                            <td>                                        
-                                 <b>WebSphere Application Server</b>    
+                          </tr>
+                           <tr>
+                             <td>                                       
+                                  <b>WebSphere Application Server</b>   
                                                                         
-                                    
-      <blockquote>Open eclipseinfocenter.war using Application Assembly Tool<br>
-                        Select help -&gt; Context Parameters in the tree<br>
-                        Set the value of ECLIPSE_HOME parameter to <tt>D:\eclipse</tt><br>
-                        click Apply, and save the application archive.</blockquote>
+                                            
+      <blockquote>Open downloaded WAR file using Application Assembly Tool<br>
+                         Select help -&gt; Context Parameters in the tree<br>
+                         Set the value of ECLIPSE_HOME parameter to <tt>D:\eclipse</tt><br>
+                         click Apply, and save the application archive.</blockquote>
                                                                         
-           <b>Tomcat</b>                                                
-                                                               
+            <b>Tomcat</b>                                               
+                                                                       
       <blockquote>Create eclipseinfocenter directory in a temporary location<br>
-                       Unjar eclipseinfocenter.war to the eclipseinfocenter 
- directory<br>
-                       In the file WEB-INF/web.xml replace lines<br>
-          <tt>                     &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+                        Unjar&nbsp;downloaded WAR to the eclipseinfocenter
+  directory<br>
+                        In the file WEB-INF/web.xml replace lines<br>
+           <tt>                     &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
 &lt;param-name&gt;ECLIPSE_HOME&lt;/param-name&gt;<br>
-                       &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;param-value&gt;&lt;/param-value&gt;</tt><br>
-                       with<br>
-          <tt>                     &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;param-value&gt;&lt;/param-value&gt;</tt><br>
+                        with<br>
+           <tt>                     &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
 &lt;param-name&gt;ECLIPSE_HOME&lt;/param-name&gt;<br>
-                       &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;param-value&gt;D:/eclipse&lt;/param-value&gt;</tt><br>
-                 <br>
-                  </blockquote>
-                 </td>
-                         </tr>
-                                 <tr>
-                    <td align="left" valign="top" colspan="2"
- bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">5. Deploy
+                        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;param-value&gt;D:/eclipse&lt;/param-value&gt;</tt><br>
+                  <br>
+                   </blockquote>
+                  </td>
+                          </tr>
+                                  <tr>
+                     <td align="left" valign="top" colspan="2"
+ bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">5. Deploy 
    the application on the server</font></b></td>
-                         </tr>
-                          <tr>
-                            <td>                                        
-                       <b>WebSphere Application Server</b>              
+                          </tr>
+                           <tr>
+                             <td>                                       
+                        <b>WebSphere Application Server</b>             
                                                                         
-                         
-      <blockquote>In WebSphere Administrative Console, expand Nodes -&gt;
+                                 
+      <blockquote>In WebSphere Administrative Console, expand Nodes -&gt; 
       HOST_NAME,      select Enterprise Applications in the tree, click Install.<br>
-                       Browse the Path to select location of the downloaded 
- infocenter.war        file<br>
-                       Edit the following two fields as follows:<br>
-                       Application Name : <tt>Eclipse Infocenter</tt><br>
-                       Context Root : <tt>help</tt><br>
-                       Leave the bottom section of the install from blank.<br>
-                       Click Next, Next, Finish.<br>
-                       Click Save in the Console header, click OK.<br>
-                       Expand Nodes -&gt; HOST_NAME -&gt; Application Servers,
+                        Browse the Path to select location of the downloaded
+WAR        file<br>
+                        Edit the following two fields as follows:<br>
+                        Application Name : <tt>Eclipse Infocenter</tt><br>
+                        Context Root : <tt>help</tt><br>
+                        Leave the bottom section of the install from blank.<br>
+                        Click Next, Next, Finish.<br>
+                        Click Save in the Console header, click OK.<br>
+                        Expand Nodes -&gt; HOST_NAME -&gt; Application Servers, 
    select    Default     Server.<br>
-                       Click Web Server Plug-In Configuration link, click 
-Generate.<br>
-                       Restart the server.<br>
-                       </blockquote>
-                                                                        
-          <b>Tomcat</b>                                                 
-                                                               
-      <blockquote>Copy eclipse infocenter directory created in step 4 from
-      the temporary folder to D:\jakarta-tomcat-4.0.4\webapps. &nbsp;Add
-the   following       line to the tomcat\conf\server.xml   file:<em><span
- style="font-style: normal;"></span></em>                          <br>
-   <tt><em><span style="font-style: normal;">&lt;</span></em>Context path="/help"&nbsp;
- docBase="D:\jakarta-tomcat-4.0.4\webapps\eclipseinfocenter" /&gt;</tt><br>
-as the last element inside the Host section.&nbsp; <br>
-If you use jdk1.4 to run Tomcat, you need to delete file D:\jakarta-tomcat-4.0.4\common\lib\xerces.jar
-        <br>
-Restart the server.<br>
-                 <br>
-                        </blockquote>
-                </td>
-                         </tr>
-                                 <tr>
-                    <td align="left" valign="top" colspan="2"
- bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">6. Point
-   a web browser to the path    of the web application.</font></b></td>
-                         </tr>
-                          <tr>
-                            <td>                                        
-                                                             <b>WebSphere</b> 
-                                                                         
-                                         
-      <blockquote>Open the following URL <tt>http://localhost/help/</tt>
-or <tt>http://localhost:9080/help/</tt>.<br>
+                        Click Web Server Plug-In Configuration link, click
+ Generate.<br>
+                        Restart the server.<br>
                         </blockquote>
                                                                         
            <b>Tomcat</b>                                                
-                                                                 
-      <blockquote>Open the following URL <tt>http://localhost:8080/help/</tt>.</blockquote>
+                                                                       
+      <blockquote>Copy eclipse infocenter directory created in step 4 from 
+      the temporary folder to D:\jakarta-tomcat-4.0.4\webapps. &nbsp;Add the
+  following       line to the tomcat\conf\server.xml   file:<em><span
+ style="font-style: normal;"></span></em>                          <br>
+    <tt><em><span style="font-style: normal;">&lt;</span></em>Context path="/help"&nbsp; 
+ docBase="D:\jakarta-tomcat-4.0.4\webapps\eclipseinfocenter" /&gt;</tt><br>
+ as the last element inside the Host section.&nbsp; <br>
+ If you use jdk1.4 to run Tomcat, you need to delete file D:\jakarta-tomcat-4.0.4\common\lib\xerces.jar 
+        <br>
+ Restart the server.<br>
+                  <br>
+                         </blockquote>
                  </td>
-                         </tr>
-           
-  </tbody>                      
+                          </tr>
+                                  <tr>
+                     <td align="left" valign="top" colspan="2"
+ bgcolor="#0080c0"><b><font color="#ffffff" face="Arial,Helvetica">6. Point 
+   a web browser to the path    of the web application.</font></b></td>
+                          </tr>
+                           <tr>
+                             <td>                                       
+                                                              <b>WebSphere</b>
+                                                                        
+                                                  
+      <blockquote>Open the following URL <tt>http://localhost/help/</tt> or
+        <tt>http://localhost:9080/help/</tt>.<br>
+                         </blockquote>
+                                                                        
+            <b>Tomcat</b>                                               
+                                                                        
+      <blockquote>Open the following URL <tt>http://localhost:8080/help/</tt>.</blockquote>
+                  </td>
+                          </tr>
+               
+  </tbody>                       
 </table>
-       <br>
-     <br>
+        <br>
+      <br>
+ <br>
 </body>
 </html>
