@@ -687,15 +687,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the image descriptor for the window image to use for this product.
+	 * Returns the image descriptors for the window image to use for this product.
 	 * 
-	 * @return the image descriptor for the window image, or <code>null</code> if none
+	 * @return an array of the image descriptors for the window image, or
+	 *         <code>null</code> if none
 	 * @since 3.0
 	 */
-	public ImageDescriptor getWindowImage() {
-		if (aboutInfo == null) {
+	public ImageDescriptor[] getWindowImages() {
+		if (aboutInfo == null)
 			initializeProductInfo();
-		}
-		return aboutInfo.getWindowImage();
+		return aboutInfo.getWindowImages();
 	}
 }

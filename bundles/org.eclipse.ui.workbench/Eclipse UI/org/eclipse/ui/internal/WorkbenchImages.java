@@ -62,7 +62,7 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 public /*final*/ class WorkbenchImages {
 	
 	private static Map descriptors = new HashMap();
-	private static ImageRegistry imageRegistry;
+	private static ImageRegistry imageRegistry = null;
 	
 	//Key: ImageDescriptor
 	//Value: Image
@@ -95,6 +95,10 @@ public /*final*/ class WorkbenchImages {
 	//private final static String PATH_STAT = ICONS_PATH+"stat/";
 	//private final static String PATH_MISC = ICONS_PATH+"misc/";
 	//private final static String PATH_OVERLAY = ICONS_PATH+"ovr16/";
+	
+	static {
+	    initializeImageRegistry();
+	}
 	
 /**
  * Returns the image cache used internally by the workbench.
@@ -343,9 +347,6 @@ public static ImageDescriptor getImageDescriptorFromProgram(String filename, int
  * Returns the ImageRegistry.
  */
 public static ImageRegistry getImageRegistry() {
-	if (imageRegistry == null) {
-		initializeImageRegistry();
-	}
 	return imageRegistry;
 }
 

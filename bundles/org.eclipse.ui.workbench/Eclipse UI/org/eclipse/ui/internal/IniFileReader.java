@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
@@ -154,6 +155,7 @@ public class IniFileReader {
 			return getResourceString(value, runtimeMappings);
 		return value;
 	}
+
 	/**
 	 * Returns an image descriptor for the given key, or <code>null</code>.
 	 * 
@@ -168,6 +170,29 @@ public class IniFileReader {
 			return ImageDescriptor.createFromURL(url);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns an array of image descriptors for the given key, or <code>null</code>.
+	 * The property value should be a comma separated list of image paths.
+	 *
+	 * @param key name of the property containing the requested images
+	 * @return an array of image descriptors for the given key, or <code>null</code>
+	 * @since 3.0
+	 */
+	public ImageDescriptor[] getImages(String key) {
+		if (ini == null)
+			return null;
+
+		URL[] urls = getURLs(key);
+		if (urls == null || urls.length <= 0)
+			return null;
+
+		ImageDescriptor[] images = new ImageDescriptor[urls.length];
+		for (int i = 0; i < images.length; ++i)
+			images[i] = ImageDescriptor.createFromURL(urls[i]);
+
+		return images;
 	}
 
 	/**
@@ -187,6 +212,35 @@ public class IniFileReader {
 			url = pluginDescriptor.find(new Path(fileName));
 		}
 		return url;
+	}
+
+	/**
+	 * Returns a array of URL for the given key, or <code>null</code>. The
+	 * property value should be a comma separated list of urls, tokens for
+	 * which pluginDescriptor cannot build an url will have a null entry.
+	 * 
+	 * @param key name of the property containing the requested urls
+	 * @return a URL for the given key, or <code>null</code>
+	 * @since 3.0
+	 */
+	public URL[] getURLs(String key) {
+		if (ini == null || pluginDescriptor == null)
+			return null;
+
+		String value = ini.getProperty(key);
+		if (value == null)
+			return null;
+
+		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
+		ArrayList array = new ArrayList(10);
+		while (tokens.hasMoreTokens()) {
+			String str = tokens.nextToken().trim();
+			array.add(pluginDescriptor.find(new Path(str)));
+		}
+
+		URL[] urls = new URL[array.size()];
+		array.toArray(urls);
+		return urls;
 	}
 
 	/**

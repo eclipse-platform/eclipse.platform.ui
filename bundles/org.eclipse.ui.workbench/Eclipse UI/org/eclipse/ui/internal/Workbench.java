@@ -733,12 +733,14 @@ public final class Workbench implements IWorkbench {
 	/**
 	 * Initializes the workbench now that the display is created.
 	 * 
-	 * @param windowImage
-	 *            the descriptor of the image to be used in the corner of each
-	 *            window, or <code>null</code> if none
+	 * @param windowImages
+	 *            An array of the descriptors of the images to be used in the
+	 *            corner of each window, or <code>null</code> if none. It is
+	 *            expected that the array will contain the same icon, rendered
+	 *            at different sizes.
 	 * @return true if init succeeded.
 	 */
-	private boolean init(ImageDescriptor windowImage, Display display) {
+	private boolean init(ImageDescriptor[] windowImages, Display display) {
 		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
@@ -858,7 +860,7 @@ public final class Workbench implements IWorkbench {
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();
 
-		initializeImages(windowImage);
+		initializeImages(windowImages);
 		initializeFonts();
 		initializeColors();
 		initializeApplicationColors();
@@ -960,25 +962,26 @@ public final class Workbench implements IWorkbench {
 
 	/*
 	 * Initialize the workbench images.
-	 * 
+	 *
+	 * @param windowImages
+	 *            An array of the descriptors of the images to be used in the
+	 *            corner of each window, or <code>null</code> if none. It is
+	 *            expected that the array will contain the same icon, rendered
+	 *            at different sizes.
 	 * @since 3.0
 	 */
-	private void initializeImages(ImageDescriptor windowImage) {
-		if (windowImage != null) {
-			WorkbenchImages.getImageRegistry().put(
-				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD,
-				windowImage);
-			Image image =
-				WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
-			if (image != null) {
-				Window.setDefaultImage(image);
-			}
-		} else {
-			// Avoid setting a missing image as the window default image
-			WorkbenchImages.getImageRegistry().put(
-				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD,
-				ImageDescriptor.getMissingImageDescriptor());
-		}
+	private void initializeImages(ImageDescriptor[] windowImages) {
+		// WorkbenchImages.imageRegistry before WorkbenchImages.declareImage is
+		// called later on.
+//		WorkbenchImages.getImageRegistry();
+
+		if(windowImages == null)
+			return;
+
+		Image[] images = new Image[windowImages.length];
+		for(int i = 0; i < windowImages.length; ++i)
+			images[i] = windowImages[i].createImage();
+		Window.setDefaultImages(images);
 	}
 
 	/*
@@ -987,7 +990,6 @@ public final class Workbench implements IWorkbench {
 	 * @since 3.0
 	 */
 	private void uninitializeImages() {
-		WorkbenchImages.getImageRegistry().remove(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
 		Window.setDefaultImage(null);
 	}
 
@@ -1395,8 +1397,7 @@ public final class Workbench implements IWorkbench {
 			Window.setExceptionHandler(handler);
 
 			// initialize workbench and restore or open one window
-
-			boolean initOK = init(WorkbenchPlugin.getDefault().getWindowImage(), display);
+			boolean initOK = init(WorkbenchPlugin.getDefault().getWindowImages(), display);
 
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();

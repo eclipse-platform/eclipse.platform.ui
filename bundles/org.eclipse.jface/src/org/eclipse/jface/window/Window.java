@@ -688,7 +688,7 @@ public static void setDefaultImage(Image image) {
  * It is expected that the array will contain the same icon rendered at
  * different resolutions.
  * 
- * @see Decorations.setImages
+ * @see org.eclipse.swt.widgets.Decorations#setImages
  * 
  * @param images
  *            the array of images to be used when the receiver window is
