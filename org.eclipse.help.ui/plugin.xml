@@ -129,31 +129,5 @@
             id="org.eclipse.help.ui.localSearch"
             label="%LocalHelp.label">
       </engine>
-      <engine
-            enabled="true"
-            engineTypeId="org.eclipse.help.ui.web"
-            id="org.eclipse.help.ui.web.Google"
-            label="%Google.label">
-      		<description>
-	      		%Google.desc
-      		</description>
-      		<param 
-      			name="url" 
-      			value="http://www.google.com/search?hl=en&amp;q={expression}&amp;btnG=Google+Search&amp;meta=">
-      		</param>
-      </engine>
-      <engine
-            enabled="true"
-            engineTypeId="org.eclipse.help.ui.web"
-            id="org.eclipse.help.ui.web.Eclipse"
-            label="%Eclipse.label">
-      		<description>
-	      		%Eclipse.desc
-      		</description>
-      		<param 
-      			name="url" 
-      			value="http://eclipse.org/search/search.cgi?q={expression}&amp;ul=&amp;ps=20&amp;m=all">
-      		</param>
-      </engine>
     </extension>
 </plugin>
