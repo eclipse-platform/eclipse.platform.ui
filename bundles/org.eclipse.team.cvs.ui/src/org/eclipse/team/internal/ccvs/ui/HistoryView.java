@@ -93,8 +93,10 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -151,14 +153,40 @@ public class HistoryView extends ViewPart {
 				editorActivated((IEditorPart) part);
 		}
 		public void partBroughtToTop(IWorkbenchPart part) {
+			if(part == HistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partOpened(IWorkbenchPart part) {
+			if(part == HistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
 		}
 		public void partClosed(IWorkbenchPart part) {
 		}
 		public void partDeactivated(IWorkbenchPart part) {
 		}
-		public void partOpened(IWorkbenchPart part) {
+	};
+	
+	private IPartListener2 partListener2 = new IPartListener2() {
+		public void partActivated(IWorkbenchPartReference ref) {
+		}
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+		}
+		public void partClosed(IWorkbenchPartReference ref) {
+		}
+		public void partDeactivated(IWorkbenchPartReference ref) {
+		}
+		public void partOpened(IWorkbenchPartReference ref) {
+		}
+		public void partHidden(IWorkbenchPartReference ref) {
+		}
+		public void partVisible(IWorkbenchPartReference ref) {
+			if(ref.getPart(true) == HistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partInputChanged(IWorkbenchPartReference ref) {
 		}
 	};
+	
 	private QualifiedName HISTORY_VIEW_JOB_TYPE = new QualifiedName(VIEW_ID, "jobs"); //$NON-NLS-1$
 
 	private class FetchLogEntriesJob extends Job {
@@ -420,7 +448,8 @@ public class HistoryView extends ViewPart {
 		 jobBusyCursor = new JobBusyCursor(parent, HISTORY_VIEW_JOB_TYPE);
 		 
 		// add listener for editor page activation - this is to support editor linking
-		getSite().getPage().addPartListener(partListener);		
+		getSite().getPage().addPartListener(partListener);	
+		getSite().getPage().addPartListener(partListener2);	
 	}
 	private void initializeImages() {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
@@ -569,6 +598,7 @@ public class HistoryView extends ViewPart {
 		}
 		
 		getSite().getPage().removePartListener(partListener);
+		getSite().getPage().removePartListener(partListener2);
 		jobBusyCursor.dispose();
 	}	
 	/**
@@ -641,8 +671,11 @@ public class HistoryView extends ViewPart {
 	 */
 	public void showHistory(IResource resource) {
 		if (resource instanceof IFile) {
-			IFile file = (IFile)resource;
-			this.file = file;
+			IFile newfile = (IFile)resource;
+			if(this.file != null && newfile.equals(this.file)) {
+				return;
+			}  
+			this.file = newfile;
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
 			if (teamProvider != null) {
 				try {
@@ -668,16 +701,17 @@ public class HistoryView extends ViewPart {
 	}
 	
 	/**
-	 * An editor has been activated.  Sets the selection in this navigator to be the editor's input, if 
-	 * linking is enabled.
+	 * An editor has been activated.  Fetch the history if it is shared with CVS and the history view
+	 * is visible in the current page.
 	 * 
 	 * @param editor the active editor
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	protected void editorActivated(IEditorPart editor) {
-		if (!isLinkingEnabled()) {
+		// Only fetch contents if the view is shown in the current page.
+		if (!isLinkingEnabled() || !checkIfPageIsVisible()) {
 			return;
-		}
+		}		
 		IEditorInput input = editor.getEditorInput();
 		// Handle compare editors opened from the Synchronize View
 		if (input instanceof SyncInfoCompareInput) {
@@ -706,6 +740,9 @@ public class HistoryView extends ViewPart {
 		}
 	}
 	
+	private boolean checkIfPageIsVisible() {
+		return getViewSite().getPage().isPartVisible(this);
+	}
 	/**
 	 * Shows the history for the given ICVSRemoteFile in the view.
 	 */
