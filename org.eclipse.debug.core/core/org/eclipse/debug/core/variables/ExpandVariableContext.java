@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.core.variables;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -19,7 +18,6 @@ import org.eclipse.core.resources.IResource;
  */
 public class ExpandVariableContext {
 	
-	private IProject project = null;
 	private IResource selectedResource = null;
 	
 	/**
@@ -33,20 +31,7 @@ public class ExpandVariableContext {
 		super();
 		if (selectedResource != null) {
 			this.selectedResource = selectedResource;
-			this.project = selectedResource.getProject();
 		}
-	}
-	
-	/**
-	 * Returns the project which the variable can use. This
-	 * will the the project being built if the tool is being
-	 * run as a builder. Otherwise, it is the project of the
-	 * selected resource, or <code>null</code> if none.
-	 * 
-	 * @return the <code>IProject</code> or <code>null</code> if none
-	 */
-	public IProject getProject() {
-		return project;
 	}
 	
 	/**
