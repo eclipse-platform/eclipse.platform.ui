@@ -172,9 +172,10 @@ public class AnimatedCanvas {
 			public void run() {
 				if (imageCanvas.isDisposed())
 					return;
+				boolean started = animated;
 				animated = bool;
 				imageCanvas.redraw();
-				if (bool)
+				if (!started && bool)
 					animate();
 
 			}
