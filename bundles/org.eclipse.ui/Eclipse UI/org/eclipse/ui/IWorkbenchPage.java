@@ -181,9 +181,8 @@ public IViewPart findView(String viewId);
 /**
  * Returns the active editor open in this page.
  * <p>
- * When editors are presented in a workbook, this would be the visible editor;
- * when editors are scattered around, the active one would be the one that most
- * recently held focus.
+ * This is the visible editor on the page, or, if there is more than one
+ * visible editor, this is the one most recently brought to top.
  * </p>
  *
  * @return the active editor, or <code>null</code> if no editor is active
