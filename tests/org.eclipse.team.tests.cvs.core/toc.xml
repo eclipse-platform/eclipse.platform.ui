@@ -21,12 +21,18 @@
             <topic label="Merging" href="html/00012.html">
                 <topic label="Sync View operations and selection" href="html/00013.html">
                 </topic>
-            </topic>
-            <topic label="Resource History" href="html/00014.html">
-                <topic label="Editor linking" href="html/00015.html">
+                <topic label="Persistance and deletion" href="html/00022.html">
                 </topic>
             </topic>
-            <topic label="Crash Recovery" href="html/00017.html">
+            <topic label="Resource History" href="html/00014.html">
+                <topic label="Editor Linking" href="html/00018.html">
+                </topic>
+            </topic>
+            <topic label="Crash Recovery" href="html/00019.html">
+            </topic>
+            <topic label="Concurrency" href="html/00020.html">
+                <topic label="Close and disconnect" href="html/00021.html">
+                </topic>
             </topic>
         </topic>
 </toc>
