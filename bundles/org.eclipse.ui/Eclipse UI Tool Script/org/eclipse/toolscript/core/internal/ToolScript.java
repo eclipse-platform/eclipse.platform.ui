@@ -43,8 +43,8 @@ public class ToolScript implements IToolScript {
 	public static final String SCRIPT_TYPE_ANT = "org.eclipse.toolscript.type.ant"; //$NON-NLS-1$
 	
 	// Variable names the tool script will expand
-	private static final String VAR_DIR_WORKSPACE = "${workspace}"; //$NON-NLS-1$
-	private static final String VAR_DIR_PROJECT = "${project}"; //$NON-NLS-1$
+	public static final String VAR_DIR_WORKSPACE = "${workspace}"; //$NON-NLS-1$
+	public static final String VAR_DIR_PROJECT = "${project}"; //$NON-NLS-1$
 
 	private static final String EMPTY_VALUE = ""; //$NON-NLS-1$;
 	

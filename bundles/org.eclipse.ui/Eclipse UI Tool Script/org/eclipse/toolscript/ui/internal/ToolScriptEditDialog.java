@@ -9,8 +9,13 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -23,8 +28,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.toolscript.core.internal.ToolScript;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Dialog box to enter the required information for running
@@ -155,7 +164,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		locButtonComp.setLayoutData(data);
 		
-		createPushButton(locButtonComp, "ToolScriptEditDialog.browseWkspButton1", true); //$NON-NLS-1$
+		locationBrowseWorkspace = createPushButton(locButtonComp, "ToolScriptEditDialog.browseWkspButton1", true); //$NON-NLS-1$
 		createPushButton(locButtonComp, "ToolScriptEditDialog.browseFileSysButton1", true); //$NON-NLS-1$
 
 		// Build the script arguments field
@@ -291,17 +300,24 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	 * Hooks the action handler for when a button is pressed
 	 */
 	private void hookButtonActions() {
-/*		newButton.addSelectionListener(new SelectionAdapter() {
+		locationBrowseWorkspace.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ToolScriptEditDialog dialog;
-				dialog = new ToolScriptEditDialog(getShell(), null);
+				ResourceSelectionDialog dialog;
+				dialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot());
 				dialog.open();
-				ToolScript script = dialog.getToolScript();
-				scripts.add(script);
-				listViewer.add(script);
+				Object[] results = dialog.getResult();
+				if (results == null || results.length < 1)
+					return;
+				IResource resource = (IResource)results[0];
+				locationField.setText(ToolScript.VAR_DIR_WORKSPACE + resource.getFullPath());
 			}
 		});
-*/	}
+		
+		locationBrowseFileSystem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+	}
 	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
@@ -312,12 +328,60 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			script.setType(script.SCRIPT_TYPE_ANT);
 		else
 			script.setType(script.SCRIPT_TYPE_PROGRAM);
-		script.setName(nameField.getText());
+		script.setName(nameField.getText().trim());
 		script.setLocation(command);
-		script.setArguments(argumentsField.getText());
-		script.setWorkingDirectory(directoryField.getText());
-		script.setRefreshScope(refreshField.getText());
+		script.setArguments(argumentsField.getText().trim());
+		script.setWorkingDirectory(directoryField.getText().trim());
+		script.setRefreshScope(refreshField.getText().trim());
 		
 		super.okPressed();
+	}
+	
+	private class ResourceSelectionDialog extends SelectionDialog {
+		// sizing constants
+		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
+		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
+
+		IContainer root;
+		TreeViewer wsTree;
+		
+		public ResourceSelectionDialog(Shell parent, IContainer root) {
+			super(parent);
+			this.root = root;
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+		}
+
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected Control createDialogArea(Composite parent) {
+			// create composite 
+			Composite dialogArea = (Composite)super.createDialogArea(parent);
+			
+			Label label = new Label(dialogArea, SWT.LEFT);
+			label.setText(ToolScriptMessages.getString("ToolScriptEditDialog.selectResource")); //$NON-NLS-1$
+			
+			Tree tree = new Tree(dialogArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+			tree.setLayoutData(data);
+			wsTree = new TreeViewer(tree);
+			wsTree.setContentProvider(new WorkbenchContentProvider());
+			wsTree.setLabelProvider(new WorkbenchLabelProvider());
+			wsTree.setInput(root);
+			
+			return dialogArea;
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected void okPressed() {
+			IStructuredSelection sel = (IStructuredSelection)wsTree.getSelection();
+			if (sel != null)
+				setSelectionResult(sel.toArray());
+			super.okPressed();
+		}
 	}
 }
