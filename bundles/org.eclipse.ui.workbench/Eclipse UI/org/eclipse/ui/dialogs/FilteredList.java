@@ -484,20 +484,19 @@ public class FilteredList extends Composite {
             for (int i = 0; i != fFilteredCount; i++)
                 fFoldedIndices[i] = i; // identity mapping
             return fFilteredCount;
-        } else {
-            int k = 0;
-            Label last = null;
-            for (int i = 0; i != fFilteredCount; i++) {
-                int j = fFilteredIndices[i];
-                Label current = fLabels[j];
-                if (!current.equals(last)) {
-                    fFoldedIndices[k] = i;
-                    k++;
-                    last = current;
-                }
-            }
-            return k;
         }
+        int k = 0;
+        Label last = null;
+        for (int i = 0; i != fFilteredCount; i++) {
+            int j = fFilteredIndices[i];
+            Label current = fLabels[j];
+            if (!current.equals(last)) {
+                fFoldedIndices[k] = i;
+                k++;
+                last = current;
+            }
+        }
+        return k;
     }
 
     /*
