@@ -56,10 +56,7 @@ public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 		}
 		
 		if (update) {
-			getView().updateObjects();
-			getConsoleView().updateTitle();
-			IProcess process = getConsoleView().getProcess();
-			((ConsoleViewer)getViewer()).setEditable(process != null && !process.isTerminated());
+			refresh();
 		}
 	}
 	
@@ -71,4 +68,17 @@ public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 	protected ConsoleView getConsoleView() {
 		return (ConsoleView)getView();
 	}
+	
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#refresh()
+	 */
+	public void refresh() {
+		if (isAvailable()) {
+			getView().updateObjects();
+			getConsoleView().updateTitle();
+			IProcess process = getConsoleView().getProcess();
+			((ConsoleViewer)getViewer()).setEditable(process != null && !process.isTerminated());			
+		}
+	}
+
 }
