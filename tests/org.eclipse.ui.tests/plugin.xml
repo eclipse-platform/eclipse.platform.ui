@@ -507,7 +507,7 @@
 	point="org.eclipse.ui.decorators">
 	<decorator 
         id="org.eclipse.ui.tests.adaptable.decorator" 
-        label="Old Test Decorator" 
+        label="Test Decorator" 
         state="true"
         tooltip="No tip" 
         class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
@@ -516,14 +516,14 @@
     </decorator> 
     <decorator 
         id="org.eclipse.ui.tests.adaptable.nulldecorator" 
-        label="Null Test Decorator" 
+        label="Null Decorator" 
         state="true"
         tooltip="No tip" 
         adaptable="true"
         description="A null test decorator"
         class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
         objectClass="org.eclipse.core.resources.IResource">
-    </decorator>
+    </decorator> 
     <decorator 
         id="org.eclipse.ui.tests.navigator.lightweightdecorator" 
         label="Lightweight Test Decorator" 
@@ -532,25 +532,25 @@
         adaptable="true"
         description="A lightweight test decorator"
         class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
-        lightweight="true"
+        lightweight="true">
         <enablement>
-        	<objectClass="org.eclipse.core.resources.IResource"/>
-        </enablement>
+	        <objectClass name="org.eclipse.core.resources.IResource"/>
+	     </enablement>
     </decorator>
     <decorator 
         id="org.eclipse.ui.tests.navigator.declareddecorator" 
-        label="Declared Test Decorator" 
+        label="Lightweight Test Decorator" 
         state="true"
         tooltip="No tip" 
         adaptable="true"
-        description="A declared test decorator"
-        lightweight="true"
-        icon="icons/binary_co.gif"
-        quadrant="TOP_LEFT"
+        description="A lightweight test decorator"
+       	icon="icons/binary_co.gif"
+       	quadrant="TOP_LEFT"
+        lightweight="true">
         <enablement>
-        	<objectClass="org.eclipse.core.resources.IResource"/>
-        </enablement>
-    </decorator> 
+	        <objectClass name="org.eclipse.core.resources.IResource"/>
+	     </enablement>
+    </decorator>
 </extension>
 
 <!-- Working set tests -->

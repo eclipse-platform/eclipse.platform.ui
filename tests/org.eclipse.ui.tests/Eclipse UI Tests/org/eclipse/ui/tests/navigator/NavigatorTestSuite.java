@@ -21,6 +21,7 @@ public class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(ResourceNavigatorTest.class));
 		addTest(new TestSuite(NavigatorTest.class));
 		addTest(new TestSuite(DecoratorTestCase.class));
+		addTest(new TestSuite(LightweightDecoratorTestCase.class));
 		addTest(new TestSuite(DuplicateMenuItemTest.class));
 	}
 
