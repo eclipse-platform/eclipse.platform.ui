@@ -1116,7 +1116,7 @@ public String[] sortNatureSet(String[] natureIds);
  *    parent any dialogs with the user, or <code>null</code> if there is no UI context (declared
  *   as an <code>Object</code> to avoid any direct references on the SWT component)
  * @return a status object that is OK if things are fine, otherwise a status describing
- *    reasons why modifying the given files is not a reasonable
+ *    reasons why modifying the given files is not reasonable
  * @since 2.0
  */
 public IStatus validateEdit(IFile[] files, Object context);
