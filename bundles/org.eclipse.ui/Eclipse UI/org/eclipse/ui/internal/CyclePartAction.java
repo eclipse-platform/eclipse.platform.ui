@@ -171,6 +171,12 @@ private void openDialog(WorkbenchPage page) {
 	
 	dialog.setBounds(dialogBounds);
 
+	table.removeHelpListener(getHelpListener());
+	table.addHelpListener(new HelpListener() {
+		public void helpRequested(HelpEvent event) {
+		}
+	});
+	
 	addMouseListener(table,dialog);
 	addKeyListener(table,dialog);
 	
