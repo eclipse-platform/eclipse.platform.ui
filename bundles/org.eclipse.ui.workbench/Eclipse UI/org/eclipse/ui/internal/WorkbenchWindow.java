@@ -67,6 +67,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -92,6 +93,7 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * A window within the workbench.
@@ -676,7 +678,21 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
         Assert.isNotNull(pageComposite, "createWindowContents must call configurer.createPageComposite"); //$NON-NLS-1$
         return pageComposite;
     }
-    
+
+    /**
+     * If the perspective bar is drawn on the top right corner of the window,
+     * then this method changes its appearance from curved to square. This
+     * should have its own preference, but for now it piggy-backs on the
+     * SHOW_TRADITIONAL_STYLE_TABS preference.
+     * 
+     * @param square
+     *            true for a square banner and false otherwise
+     */
+    public void setBannerCurve(boolean square) {
+        if (topBar != null)
+            topBar.setSimple(square);
+    }
+
     /**
      * Creates the default contents and layout of the shell. 
      * 
@@ -696,9 +712,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    // and the perspective switcher, and supports some configurations
 	    // on the left right and bottom
 		topBar = new CBanner(shell, SWT.NONE);
-		//TODO: temporary remove this and listen on the property
-	    topBar.setSimple(false);
-	    
+
+		// the banner gets a curve along with the new tab style
+		// TODO create a dedicated preference for this
+		setBannerCurve(PrefUtil.getAPIPreferenceStore().getBoolean(
+                IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+
 		CacheWrapper coolbarCacheWrapper = new CacheWrapper(topBar);
 		
 		final Control coolBar = createCoolBarControl(coolbarCacheWrapper.getControl());
@@ -734,8 +753,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		fastViewBar = new FastViewBar(this);
 		fastViewBar.createControl(shell);
 
-		addPerspectiveBar(perspectiveBarStyle());
-		perspectiveSwitcher.createControl(shell);
+	    if (getWindowConfigurer().getShowPerspectiveBar()) {
+			addPerspectiveBar(perspectiveBarStyle());
+			perspectiveSwitcher.createControl(shell);
+	    }
 
 		createProgressIndicator(shell);
 
