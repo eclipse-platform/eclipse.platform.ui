@@ -426,7 +426,17 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			assertTrue("4.0", newFolder.isLinked());
 			assertEquals("4.1", folder.getLocation(), newFolder.getLocation());
 			
-			//TODO: need test for deep project copy
+			//test project deep copy
+			try {
+				destination.delete(IResource.NONE, getMonitor());
+				existingProject.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("5.0", e);
+			}
+			assertTrue("5.1", !newFile.isLinked());
+			assertEquals("5.2", destination.getLocation().append(newFile.getProjectRelativePath()), newFile.getLocation());
+			assertTrue("5.3", !newFolder.isLinked());
+			assertEquals("5.4", destination.getLocation().append(newFolder.getProjectRelativePath()), newFolder.getLocation());
 
 		} finally {
 			Workspace.clear(resolvePath(fileLocation).toFile());
