@@ -363,7 +363,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	protected abstract String getHelpContextId();
 	
 	/**
-	 * IWorkbenchPart#dispose()
+	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
 		saveAllCheckedActionStates();
