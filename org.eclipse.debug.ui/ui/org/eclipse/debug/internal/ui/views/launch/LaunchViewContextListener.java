@@ -195,7 +195,7 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		while (iterator.hasNext()) {
 			String viewId = (String) iterator.next();
 			try {
-				viewsToActivate.add(page.createView(viewId));
+				viewsToActivate.add(page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE));
 			} catch (PartInitException e) {
 				DebugUIPlugin.log(e.getStatus());
 			}
