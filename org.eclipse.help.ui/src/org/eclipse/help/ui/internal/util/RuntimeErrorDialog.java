@@ -71,6 +71,7 @@ public class RuntimeErrorDialog extends MessageDialog {
 			if (System.getProperty("os.name").startsWith("Linux"))
 				data.heightHint = convertVerticalDLUsToPixels(100);
 			text.setLayoutData(data);
+			text.setFont(parent.getFont());
 			text.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		}
 		return composite;

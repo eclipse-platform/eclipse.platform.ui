@@ -8,6 +8,7 @@ import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.tomcat.internal.*;
@@ -28,6 +29,8 @@ public class TomcatPreferencePage
 	 * @param parent the parent for the preference page
 	 */
 	protected Control createContents(Composite parent) {
+		Font font = parent.getFont();
+		
 		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_APPSERVER);
 
 		Composite mainComposite = new Composite(parent, SWT.NULL);
@@ -44,12 +47,14 @@ public class TomcatPreferencePage
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		// Spacer
 		label = new Label(mainComposite, SWT.NONE);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
@@ -64,6 +69,7 @@ public class TomcatPreferencePage
 		//	WorkbenchResources.getString("TomcatPreferencePage.host"));
 		//data = new GridData();
 		//labelHost.setLayoutData(data);
+		//labelHost.setFont(font);
 
 		textServerAddr = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		//text.addListener(SWT.Modify, this);
@@ -72,12 +78,14 @@ public class TomcatPreferencePage
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 2;
 		textServerAddr.setLayoutData(data);
+		textServerAddr.setFont(font);
 
 		// Spacer
 		label = new Label(mainComposite, SWT.NONE);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
@@ -86,12 +94,14 @@ public class TomcatPreferencePage
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		//Label labelPort = new Label(mainComposite, SWT.LEFT);
 		//labelPort.setText(
 		//	WorkbenchResources.getString("TomcatPreferencePage.port"));
 		//data = new GridData();
 		//labelPort.setLayoutData(data);
+		//labelPort.setFont(font);
 
 		textServerPort = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		textServerPort.setTextLimit(5);
@@ -101,12 +111,14 @@ public class TomcatPreferencePage
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 2;
 		textServerPort.setLayoutData(data);
+		textServerPort.setFont(font);
 
 		// Spacer
 		label = new Label(mainComposite, SWT.NONE);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
@@ -115,6 +127,7 @@ public class TomcatPreferencePage
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(

@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -32,6 +33,8 @@ public class BrowsersPreferencePage
 	 * @param parent the parent for the preference page
 	 */
 	protected Control createContents(Composite parent) {
+		Font font = parent.getFont();
+		
 		noDefaultAndApplyButton();
 		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_BROWSERS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
@@ -40,14 +43,20 @@ public class BrowsersPreferencePage
 		data.horizontalAlignment = GridData.FILL;
 		//data.grabExcessHorizontalSpace = true;
 		mainComposite.setLayoutData(data);
+		mainComposite.setFont(font);
+		
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		mainComposite.setLayout(layout);
+		
 		Label description = new Label(mainComposite, SWT.NULL);
+		description.setFont(font);
 		description.setText(WorkbenchResources.getString("select_browser"));
 		createSpacer(mainComposite);
+		
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
+		tableDescription.setFont(font);
 		tableDescription.setText(
 			WorkbenchResources.getString("current_browser"));
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -56,6 +65,7 @@ public class BrowsersPreferencePage
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = convertHeightInCharsToPixels(6);
 		browsersTable.setLayoutData(gd);
+		browsersTable.setFont(font);
 		browsersTable.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent selEvent) {
 				if (selEvent.detail == SWT.CHECK) {
@@ -100,6 +110,8 @@ public class BrowsersPreferencePage
 		return mainComposite;
 	}
 	protected void createCustomBrowserPathPart(Composite mainComposite) {
+		Font font = mainComposite.getFont();
+		
 		// vertical space
 		new Label(mainComposite, SWT.NULL);
 
@@ -114,15 +126,18 @@ public class BrowsersPreferencePage
 		bPathComposite.setLayout(layout);
 		bPathComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		customBrowserPathLabel = new Label(bPathComposite, SWT.LEFT);
+		customBrowserPathLabel.setFont(font);
 		customBrowserPathLabel.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Program")); //$NON-NLS-1$
 
 		customBrowserPath = new Text(bPathComposite, SWT.BORDER);
 		customBrowserPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		customBrowserPath.setFont(font);
 		customBrowserPath.setText(
 			WorkbenchHelpPlugin.getDefault().getPluginPreferences().getString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
 
 		customBrowserBrowse = new Button(bPathComposite, SWT.NONE);
+		customBrowserBrowse.setFont(font);
 		customBrowserBrowse.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Browse")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;

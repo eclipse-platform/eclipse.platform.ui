@@ -13,6 +13,7 @@ import org.eclipse.jface.window.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -44,6 +45,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		searchQueryData = new SearchQueryData();
 	}
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		Composite control = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -52,12 +54,14 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		control.setLayoutData(gd);
 		// Search Expression
 		Label expressionLabel = new Label(control, SWT.LEFT);
+		expressionLabel.setFont(font);
 		expressionLabel.setText(WorkbenchResources.getString("expression"));
 		// Pattern combo
 		searchWordCombo = new Combo(control, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(30);
 		searchWordCombo.setLayoutData(gd);
+		searchWordCombo.setFont(font);
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
 		searchWordCombo.addSelectionListener(new SelectionAdapter() {
@@ -90,6 +94,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		label.setLayoutData(gd);
+		label.setFont(font);
 		label.setText(WorkbenchResources.getString("expression_label"));
 		// Headings only button
 		//		headingsButton = new Button(control, SWT.CHECK);
@@ -98,6 +103,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		//		gd = new GridData();
 		//		gd.verticalAlignment = gd.VERTICAL_ALIGN_BEGINNING;
 		//		headingsButton.setLayoutData(gd);
+		//      headingsButton.setFont(font);
 		//		headingsButton.setText(WorkbenchResources.getString("Search_headers_only"));
 		// Filtering group
 		Group filteringGroup = new Group(control, SWT.NONE);
@@ -114,6 +120,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		//
 		all = new Button(filteringGroup, SWT.RADIO);
 		all.setSelection(!searchQueryData.isBookFiltering());
+		all.setFont(font);
 		all.setText(WorkbenchResources.getString("HelpSearchPage.allBooks"));
 		gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -126,6 +133,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		//
 		selected = new Button(filteringGroup, SWT.RADIO);
 		selected.setSelection(searchQueryData.isBookFiltering());
+		selected.setFont(font);
 		selected.setText(
 			WorkbenchResources.getString("HelpSearchPage.selectedBooks"));
 		selected.addSelectionListener(new SelectionAdapter() {
@@ -140,6 +148,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		//
 		Button chooseWorkingSet = new Button(filteringGroup, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
+		chooseWorkingSet.setFont(font);
 		chooseWorkingSet.setText(
 			WorkbenchResources.getString("HelpSearchPage.choose"));
 		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
