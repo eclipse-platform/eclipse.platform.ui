@@ -77,8 +77,12 @@ function onloadHandler() {
 <%if(dataSaveError != null){%>
 	alert("<%=dataSaveError%>");
 	window.location="workingSetManager.jsp"
-<%}%>
+<%}
+if(!data.isMozilla() || "1.3.1".compareTo(data.getMozillaVersion()) <=0){
+// buttons are not resized immediately on mozilla before 1.3
+%>
 	sizeButtons();
+<%}%>
 	enableButtons();
 	document.getElementById("alldocs").focus();
 }
@@ -229,7 +233,7 @@ function closeWorkingSetDialog()
 			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><label for="selectws" accesskey="<%=ServletResources.getAccessKey("selectWorkingSet", request)%>"><%=ServletResources.getLabel("selectWorkingSet", request)%>:</label>	
 		</td></tr>
 		<tr><td>
-			<div id="workingSetContainer" style="overflow:auto; height:150px; background:<%=prefs.getViewBackground()%>;">
+			<div id="workingSetContainer" style="overflow:auto; height:140px; background:<%=prefs.getViewBackground()%>;">
 
 <table id='list'  cellspacing='0' style="width:100%;">
 <% 
@@ -282,10 +286,10 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
-						<input type="submit" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<button type="submit" id="ok"><%=ServletResources.getString("OK", request)%></button>
 					</td>
 					<td>
-					  	<input type="reset" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
+					  	<button type="reset" onclick="window.close()" id="cancel"><%=ServletResources.getString("Cancel", request)%></button>
 					</td>
 				</tr>
   			</table>
