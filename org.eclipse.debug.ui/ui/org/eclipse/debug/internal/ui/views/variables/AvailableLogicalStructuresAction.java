@@ -104,7 +104,15 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		if (types != null && types.length > 0) {
 			for (int i = 0; i < types.length; i++) {
 				Action action = new SelectLogicalStructureAction(getView(), types, i);
-				action.setText("&"+(i+1)+". " + action.getText());  //$NON-NLS-1$//$NON-NLS-2$
+				StringBuffer label= new StringBuffer();
+				//add the numerical accelerator
+				if (i < 9) {
+					label.append('&');
+					label.append(i + 1);
+					label.append(' ');
+				}
+				label.append(action.getText());
+				action.setText(label.toString());
 				String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId();
 				if (i == 0) {
 					firstAction = action;
