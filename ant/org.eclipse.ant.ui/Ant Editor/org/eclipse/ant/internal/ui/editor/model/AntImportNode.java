@@ -14,7 +14,9 @@ package org.eclipse.ant.internal.ui.editor.model;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
 
@@ -66,5 +68,16 @@ public class AntImportNode extends AntTaskNode {
 			getAntModel().handleBuildException(be, this);
 		}
 		return false;
+	}
+	
+	public IFile getIFile() {
+		IFile file;
+		if (isExternal()) {
+			file= AntUtil.getFileForLocation(getFilePath(), null);
+		} else {
+			String path= getFile();
+			file= AntUtil.getFileForLocation(path, getAntModel().getEditedFile().getParentFile());
+		}
+		return file;
 	}
 }

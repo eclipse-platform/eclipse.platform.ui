@@ -25,10 +25,13 @@ import java.util.List;
 
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
+import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
 import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -237,7 +240,8 @@ public class AntElementNode {
 	
 	/**
 	 * Returns the absolute file system path of the file this element is defined
-     * within.
+     * within. Only relevant for nodes that are external
+     * @see #isExternal()
      */
 	public String getFilePath() {
 		return filePath;
@@ -537,5 +541,16 @@ public class AntElementNode {
 	
 	public int[] getExternalInfo() {
 		return new int[] {fLine, fColumn};
+	}
+	
+	public IFile getIFile() {
+		IFile file;
+		if (isExternal()) {
+			file= AntUtil.getFileForLocation(filePath, null);
+		} else {
+			LocationProvider locationProvider= getAntModel().getLocationProvider();
+			file= locationProvider.getFile();
+		}
+		return file;
 	}
 }

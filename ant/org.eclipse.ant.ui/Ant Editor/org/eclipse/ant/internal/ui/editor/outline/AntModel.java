@@ -543,7 +543,7 @@ public class AntModel {
 		handleBuildException(e, node, XMLProblem.SEVERITY_ERROR);
 	}
 
-	protected File getEditedFile() {
+	public File getEditedFile() {
 		if (fLocationProvider != null && fEditedFile == null) {
         	fEditedFile= fLocationProvider.getLocation().toFile();
 		}

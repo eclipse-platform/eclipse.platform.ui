@@ -26,7 +26,6 @@ import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
@@ -594,7 +593,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private void addOpenWithMenu(IMenuManager menuManager) {
 		AntElementNode element= getSelectedNode();
-		IFile file = getFileForNavigation(element);
+		IFile file = element.getIFile();
 		if (file != null) {
 			menuManager.add(new Separator("group.open")); //$NON-NLS-1$
 			IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
@@ -606,21 +605,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			submenu.add(openWithMenu);
 			menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
 		}
-	}
-	
-	private IFile getFileForNavigation(AntElementNode node) {
-		IFile file;
-		if (node.isExternal()) {
-			String filePath= node.getFilePath();
-			file= AntUtil.getFileForLocation(filePath, null);
-		} else if (node instanceof AntImportNode) {
-			String path= ((AntImportNode)node).getFile();
-			file= AntUtil.getFileForLocation(path, fModel.getEditedFile().getParentFile());
-		} else {
-			LocationProvider locationProvider= fModel.getLocationProvider();
-			file= locationProvider.getFile();
-		}
-		return file;
 	}
 
 	private void addRunTargetMenu(IMenuManager menuManager) {
@@ -681,7 +665,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		IFile file= null;
 		if (fModel != null) {
 			AntElementNode node= getSelectedNode();
-			file= getFileForNavigation(node);
+			file= node.getIFile();
 		}
 		if (file != null) {
 			ISelection selection= new StructuredSelection(file);
