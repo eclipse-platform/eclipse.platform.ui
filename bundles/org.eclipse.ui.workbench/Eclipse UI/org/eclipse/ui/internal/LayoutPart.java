@@ -237,14 +237,14 @@ abstract public class LayoutPart {
 		    if (makeVisible == ctrl.getVisible())
 		        return;
 
-		    if (!makeVisible) {
+		    if (!makeVisible && isFocusAncestor(ctrl)) {
 		        // Workaround for Bug 60970 [EditorMgmt] setActive() called on an editor when it does not have focus.
 		        // Force focus on the shell so that when ctrl is hidden,
 		        // SWT does not try to send focus elsewhere, which may cause
 		        // some other part to be activated, which affects the part
 		        // activation order and can cause flicker.
 		        ctrl.getShell().forceFocus();
-		    }
+	        }
 		    
 			ctrl.setVisible(makeVisible);
 			final Object[] listeners = propertyListeners.getListeners();
@@ -258,7 +258,19 @@ abstract public class LayoutPart {
 			}
 		}
 	}
+	
 	/**
+     * Returns <code>true</code> if the given control or any of its descendents has focus.
+     */
+    private boolean isFocusAncestor(Control ctrl) {
+    	Control f = ctrl.getDisplay().getFocusControl();
+    	while (f != null && f != ctrl) {
+    		f = f.getParent();
+    	}
+    	return f == ctrl;
+    }
+    
+    /**
 	 * Sets the presentation bounds.
 	 */
 	public void setBounds(Rectangle r) {
@@ -372,5 +384,4 @@ public String getPlaceHolderId() {
  */
 public void testInvariants() {
 }
-
 }
