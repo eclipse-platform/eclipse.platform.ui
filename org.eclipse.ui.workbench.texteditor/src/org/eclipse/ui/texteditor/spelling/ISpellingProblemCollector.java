@@ -13,10 +13,14 @@ package org.eclipse.ui.texteditor.spelling;
 
 /**
  * A collector of {@link SpellingProblem}s. The {@link SpellingService} service
- * will report its results to such a collector.
+ * will report its results to such a collector. The collector must be thread
+ * aware, i.e., problems can be reported by any thread, potentially in parallel.
+ * Thus, multiple reporting sessions may be active at the same time.
+ * Implementers can differentiate such session using thread locals.
  * <p>
  * This interface is intended to be implemented by clients.
- * </p><p>
+ * </p>
+ * <p>
  * Not yet for public use. API under construction.
  * </p>
  * 

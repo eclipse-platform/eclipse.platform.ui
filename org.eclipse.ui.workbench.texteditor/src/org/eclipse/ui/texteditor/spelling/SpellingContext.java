@@ -14,11 +14,13 @@ package org.eclipse.ui.texteditor.spelling;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
- * Spelling context that allows a {@link ISpellingEngine} to retrieve
- * information about the spelling check it has to perform.
+ * A spelling context allows a {@link ISpellingEngine} to retrieve information
+ * about the spelling check it has to perform.
  * <p>
- * This class is not intended to be subclassed by clients.
- * </p><p>
+ * This class is not intended to be subclassed by clients. The amount of
+ * information provided in this context may grow over time.
+ * </p>
+ * <p>
  * Not yet for public use. API under construction.
  * </p>
  * 
@@ -28,6 +30,12 @@ public class SpellingContext {
 	
 	/** Content type of the document */
 	private IContentType fContentType;
+	
+	/**
+	 * Creates a new, uninitialized spelling context.
+	 */
+	public SpellingContext() {
+	}
 	
 	/**
 	 * Sets the content type of the document.

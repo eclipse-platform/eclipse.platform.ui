@@ -26,7 +26,9 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
  * Spelling problem collector.
  * <p>
  * This class is not intended to be subclassed by clients.
- * </p><p>
+ * </p>
+ * TODO Not yet thread aware.
+ * <p>
  * Not yet for public use. API under construction.
  * </p>
  * 
