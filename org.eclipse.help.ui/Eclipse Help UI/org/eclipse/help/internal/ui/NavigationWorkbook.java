@@ -12,7 +12,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.help.internal.contributions.*;
-import org.eclipse.help.internal.ui.search.SearchPage;
 import org.eclipse.help.internal.*;
 
 /**
@@ -90,8 +89,6 @@ public class NavigationWorkbook implements ISelectionProvider {
 
 			while (views.hasNext())
 				new TopicsPage(this, views.next());
-			if (HelpSystem.getSearchManager() != null)
-				new SearchPage(this);
 
 			addSelectionChangedListenersToPages();
 			setSelectedPage(getPages()[0]);
@@ -104,8 +101,6 @@ public class NavigationWorkbook implements ISelectionProvider {
 						views = ((InfoSet) ((Contribution[]) input)[i]).getChildren();
 						while (views.hasNext())
 							new TopicsPage(this, views.next());
-						if (HelpSystem.getSearchManager() != null)
-							new SearchPage(this);
 					} else
 						if (((Contribution[]) input)[i] instanceof InfoView) {
 							new TopicsPage(this, ((Contribution[]) input)[i]);

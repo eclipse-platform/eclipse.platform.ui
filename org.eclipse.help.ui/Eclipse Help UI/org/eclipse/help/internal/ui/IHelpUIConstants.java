@@ -34,9 +34,6 @@ public interface IHelpUIConstants {
 		HELP_UI_ID + "localServerConfig";
 	public static final String BROWSER = HELP_UI_ID + "browser";
 	public static final String NAVIGATION_VIEWER = HELP_UI_ID + "navigationViewer";
-	public static final String SEARCH_PAGE = HELP_UI_ID + "searchPage";
-	public static final String ADVANCED_SEARCH = HELP_UI_ID + "advancedSearch";
 	public static final String TOPICS_VIEWER = HELP_UI_ID + "topicsViewer";
-	public static final String RESULTS_VIEWER = HELP_UI_ID + "resultsViewer";
 
 }
