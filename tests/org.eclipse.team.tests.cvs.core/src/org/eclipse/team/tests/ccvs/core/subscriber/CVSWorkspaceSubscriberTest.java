@@ -243,14 +243,23 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 * @param syncResources
 	 */
 	private void updateResources(SyncInfo[] syncResources) throws TeamException {
-		new WorkspaceUpdateAction().run(new SyncInfoSet(syncResources), DEFAULT_MONITOR);	
+		WorkspaceUpdateAction action = new WorkspaceUpdateAction() {
+			protected boolean promptForOverwrite(SyncInfoSet syncSet) {
+				// Agree to overwrite any conflicting resources
+				return true;
+			}
+		};
+		action.setSubscriber(getSubscriber());
+		action.run(new SyncInfoSet(syncResources), DEFAULT_MONITOR);	
 	}
 
 	/**
 	 * @param syncResources
 	 */
 	private void commitResources(SyncInfo[] syncResources) throws TeamException {
-		new SubscriberCommitAction().run(new SyncInfoSet(syncResources), DEFAULT_MONITOR);	
+		SubscriberCommitAction action = new SubscriberCommitAction();
+		action.setSubscriber(getSubscriber());
+		action.run(new SyncInfoSet(syncResources), DEFAULT_MONITOR);	
 	}
 	
 	/*
