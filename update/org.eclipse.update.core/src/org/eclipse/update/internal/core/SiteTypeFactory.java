@@ -64,8 +64,8 @@ public final class SiteTypeFactory {
 		ISiteFactory result = null;
 		
 		String pluginID = UpdateCore.getPlugin().getBundle().getSymbolicName();
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){
 			throw Utilities.newCoreException(Policy.bind("SiteTypeFactory.UnableToFindSiteFactory",type),null); //$NON-NLS-1$
 		} else {

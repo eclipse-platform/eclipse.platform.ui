@@ -331,9 +331,9 @@ public class InternalSiteManager {
 
 		String pluginID = UpdateCore.getPlugin().getBundle().getSymbolicName();
 
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
 
-		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID, SIMPLE_EXTENSION_ID);
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(pluginID, SIMPLE_EXTENSION_ID);
 
 		if (elements == null || elements.length == 0) {
 			throw Utilities.newCoreException(Policy.bind("SiteReconciler.UnableToFindInstallDeltaFactory", pluginID + "." + SIMPLE_EXTENSION_ID), null);

@@ -171,7 +171,7 @@ public class UpdateUI extends AbstractUIPlugin {
 
 		if (labelProvider != null)
 			labelProvider.dispose();
-		super.shutdown();
+		super.stop(context);
 
 	}
 
@@ -215,7 +215,10 @@ public class UpdateUI extends AbstractUIPlugin {
 					null,
 					status);
 			//ResourcesPlugin.getPlugin().getLog().log(status);
-			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status); //$NON-NLS-1$
+//			 Should log on the update plugin's log
+//			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
+			Bundle bundle = Platform.getBundle("org.eclipse.update.ui");  //$NON-NLS-1$
+			Platform.getLog(bundle).log(status);
 		} else {
 			MessageDialog.openInformation(
 				getActiveWorkbenchShell(),

@@ -104,7 +104,9 @@ public class UpdateUtils {
 //			if (showErrorDialog)
 //				ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
 			//ResourcesPlugin.getPlugin().getLog().log(status);
-			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
+// Should log on the update plugin's log
+//			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
+			UpdateCore.getPlugin().getLog().log(status);
 		} else {
 //			MessageDialog.openInformation(getActiveWorkbenchShell(), null, status.getMessage());
 		}

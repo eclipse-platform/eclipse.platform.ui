@@ -61,9 +61,9 @@ public final class FeatureTypeFactory {
 
 		String pluginID =
 			UpdateCore.getPlugin().getBundle().getSymbolicName();
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements =
-			pluginRegistry.getConfigurationElementsFor(pluginID, SIMPLE_EXTENSION_ID, type);
+			registry.getConfigurationElementsFor(pluginID, SIMPLE_EXTENSION_ID, type);
 
 		if (elements == null || elements.length == 0) {
 			throw Utilities.newCoreException(

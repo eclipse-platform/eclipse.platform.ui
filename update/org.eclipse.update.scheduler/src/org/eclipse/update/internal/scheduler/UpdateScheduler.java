@@ -127,7 +127,10 @@ public class UpdateScheduler extends AbstractUIPlugin{
 					null,
 					null,
 					status);
-			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status); //$NON-NLS-1$
+//			 Should log on the update plugin's log
+//			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status); //$NON-NLS-1$
+			Bundle bundle = Platform.getBundle("org.eclipse.update.scheduler");  //$NON-NLS-1$
+			Platform.getLog(bundle).log(status);
 		} else {
 			MessageDialog.openInformation(
 				getActiveWorkbenchShell(),

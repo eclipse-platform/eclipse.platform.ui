@@ -25,6 +25,12 @@
    <extension-point id="deltaHandler" name="Install/Update Delta Handler"/>
 
    <extension
+         id="preferenceInitializer"
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.update.internal.core.UpdatePreferencesInitializer"/>
+   </extension>
+
+   <extension
          id="packaged"
          point="org.eclipse.update.core.featureTypes">
       <feature-factory

@@ -490,7 +490,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 	 */
 	private IInstallHandler getGlobalHandler(String name) throws Exception {
 
-		IPluginRegistry reg = Platform.getPluginRegistry();
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IConfigurationElement[] handlerExtension =
 			reg.getConfigurationElementsFor(EXT_PLUGIN, EXT_POINT, name);
 		if (handlerExtension == null || handlerExtension.length <= 0)
