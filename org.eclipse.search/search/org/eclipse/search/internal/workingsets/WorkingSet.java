@@ -28,6 +28,9 @@ import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
+/**
+ * @deprecated use org.eclipse.ui.IWorkingSet support - this class will be removed soon
+ */
 public class WorkingSet implements IWorkingSet {
 
 	private static SortedSet fgWorkingSets= new TreeSet(new WorkingSetComparator());

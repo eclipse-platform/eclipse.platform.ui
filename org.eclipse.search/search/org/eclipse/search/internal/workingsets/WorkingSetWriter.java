@@ -30,6 +30,8 @@ import org.apache.xml.serialize.SerializerFactory;
 
 /**
  * Writes working sets to an underlying OutputStream
+ * 
+ * @deprecated use org.eclipse.ui.IWorkingSet support - this class will be removed soon
  */
 public class WorkingSetWriter extends Object {
 	

@@ -9,6 +9,9 @@ import java.util.Comparator;
 
 import org.eclipse.search.ui.IWorkingSet;
 
+/**
+ * @deprecated use org.eclipse.ui.IWorkingSet support - this class will be removed soon
+ */
 class WorkingSetComparator implements Comparator {
 
 	private Collator fCollator= Collator.getInstance();

@@ -38,6 +38,8 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 
 /**
  * Reads data from an InputStream and returns the working sets
+ * 
+ * @deprecated use org.eclipse.ui.IWorkingSet support - this class will be removed soon
  */
 public class WorkingSetReader extends Object {
 

@@ -40,6 +40,9 @@ import org.eclipse.search.ui.IWorkingSet;
 
 import org.eclipse.search.internal.ui.util.ListContentProvider;
 
+/**
+ * @deprecated use org.eclipse.ui.IWorkingSet support - this class will be removed soon
+ */
 public class WorkingSetSelectionDialog extends SelectionDialog {
 
 	private static class WorkingSetLabelProvider extends LabelProvider {

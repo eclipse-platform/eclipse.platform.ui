@@ -114,6 +114,7 @@ public final class SearchUI {
 	 * @param parent the parent shell of the dialog to be created
 	 * @return a new selection dialog or <code>null</code> if none available
 	 * @since 2.0
+	 * @deprecated use org.eclipse.ui.IWorkingSet support - this method will be removed soon
 	 */
 	public static SelectionDialog createWorkingSetDialog(Shell parent) {
 		return new WorkingSetSelectionDialog(parent);
@@ -131,6 +132,7 @@ public final class SearchUI {
 	 * 
 	 * @return an array of IWorkingSet
 	 * @since 2.0
+	 * @deprecated use org.eclipse.ui.IWorkingSet support - this method will be removed soon
 	 */
 	public static IWorkingSet[] getWorkingSets() {
 		return WorkingSet.getWorkingSets();
@@ -149,6 +151,7 @@ public final class SearchUI {
 	 * @param name the name the working set
 	 * @return the working set with the given name or <code>null</code> if not found
 	 * @since 2.0
+	 * @deprecated use org.eclipse.ui.IWorkingSet support - this method will be removed soon
 	 */
 	public static IWorkingSet findWorkingSet(String name) {
 		return WorkingSet.find(name);

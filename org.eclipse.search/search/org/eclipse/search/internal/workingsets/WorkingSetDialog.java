@@ -41,7 +41,9 @@ import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
-
+/**
+ * @deprecated use org.eclipse.ui.IWorkingSet support - this class will be removed soon
+ */
 class WorkingSetDialog extends InputDialog {
 
 	private static class WorkingSetNameInputValidator implements IInputValidator {

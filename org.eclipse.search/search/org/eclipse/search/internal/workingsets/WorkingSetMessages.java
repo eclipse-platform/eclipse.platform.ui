@@ -8,6 +8,9 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * @deprecated use org.eclipse.ui.IWorkingSet support - this class will be removed soon
+ */
 public class WorkingSetMessages {
 
 	private static final String RESOURCE_BUNDLE= WorkingSetMessages.class.getName();
