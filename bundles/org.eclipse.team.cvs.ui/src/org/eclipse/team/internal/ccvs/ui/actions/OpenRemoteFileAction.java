@@ -95,7 +95,15 @@ public class OpenRemoteFileAction extends TeamAction {
 						id = descriptor.getId();
 					}
 					try {
-						page.openEditor(new RemoteFileEditorInput(files[i]), id);
+						try {
+							page.openEditor(new RemoteFileEditorInput(files[i]), id);
+						} catch (PartInitException e) {
+							if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
+								throw e;
+							} else {
+								page.openEditor(new RemoteFileEditorInput(files[i]), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+							}
+						}
 					} catch (PartInitException e) {
 						throw new InvocationTargetException(e);
 					}
