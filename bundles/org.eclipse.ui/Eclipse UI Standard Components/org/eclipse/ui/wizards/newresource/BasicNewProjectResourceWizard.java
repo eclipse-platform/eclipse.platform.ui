@@ -31,7 +31,7 @@ import java.net.*;
  * <p>
  * Example:
  * <pre>
- * IWizard wizard = new BasicNewProjectResourceWizard();
+ * IWorkbenchWizard wizard = new BasicNewProjectResourceWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();

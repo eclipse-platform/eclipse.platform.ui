@@ -25,7 +25,7 @@ import java.net.*;
  * <p>
  * Example:
  * <pre>
- * INewWizard wizard = new BasicNewFileResourceWizard();
+ * IWorkbenchWizard wizard = new BasicNewFileResourceWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
