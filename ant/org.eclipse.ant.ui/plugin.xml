@@ -201,6 +201,9 @@
             adaptable="true"
             nameFilter="*.xml"
             id="org.eclipse.ant.ui.RunAnt">
+            <visibility>
+	          <objectState name="xmlFirstTag" value="project"/>
+		    </visibility>        
          <action
                label="%PopupMenu.runAnt"
                tooltip="%PopupMenu.runAntTip"
