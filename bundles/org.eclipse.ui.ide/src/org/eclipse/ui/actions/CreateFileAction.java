@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -56,7 +55,7 @@ public CreateFileAction(Shell shell) {
 	}
 	this.shell = shell;
 	setToolTipText(IDEWorkbenchMessages.getString("CreateFileAction.toolTip")); //$NON-NLS-1$
-	setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
+	setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 	setId(ID);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CREATE_FILE_ACTION);
 }

@@ -24,9 +24,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -99,14 +98,14 @@ public class ExportResourcesAction
 
 		setText(IDEWorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
 		setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_EXPORT_WIZ));
 		setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_EXPORT_WIZ_HOVER));
 		setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 	}
 
 	/**

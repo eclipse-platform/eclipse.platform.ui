@@ -24,9 +24,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.ImportWizard;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -92,14 +91,14 @@ public class ImportResourcesAction
 		workbenchWindow.getSelectionService().addSelectionListener(selectionListener);
 		
 		setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_IMPORT_WIZ));
 		setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_HOVER));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_IMPORT_WIZ_HOVER));
 		setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_IMPORT_WIZ_DISABLED));
 	}
 
 	/**

@@ -22,6 +22,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -74,11 +75,11 @@ public class NewExampleAction extends Action {
 		this.window = window;
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(
-			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+			images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD));
 		setHoverImageDescriptor(
-			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+			images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
 		setDisabledImageDescriptor(
-			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+			images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 		setToolTipText(IDEWorkbenchMessages.getString("NewExampleAction.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	}

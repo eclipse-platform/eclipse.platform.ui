@@ -16,8 +16,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IMarkerActionFilter;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SimpleWildcardTester;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Model object for adapting IMarker objects to the IWorkbenchAdapter
@@ -32,7 +32,7 @@ public class WorkbenchMarker
 public ImageDescriptor getImageDescriptor(Object o) {
 	if(!(o instanceof IMarker))
 			return null;
-	return PlatformUI.getWorkbench().getMarkerImageProviderRegistry().getImageDescriptor((IMarker)o);
+	return IDEWorkbenchPlugin.getDefault().getMarkerImageProviderRegistry().getImageDescriptor((IMarker)o);
 }
 /**
  * Returns the name of this element.  This will typically

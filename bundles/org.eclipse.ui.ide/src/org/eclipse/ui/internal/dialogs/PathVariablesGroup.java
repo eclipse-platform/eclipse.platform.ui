@@ -75,9 +75,9 @@ public class PathVariablesGroup {
 	private IPathVariableManager pathVariableManager;
 	
 	// file image
-	private final Image FILE_IMG = WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FILE);
+	private final Image FILE_IMG = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	// folder image
-	private final Image FOLDER_IMG = WorkbenchImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
+	private final Image FOLDER_IMG = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 	// unknown (non-existent) image. created locally, dispose locally
 	private Image imageUnkown;
 
@@ -150,6 +150,7 @@ public class PathVariablesGroup {
 		Font font = parent.getFont();
 
 		if (imageUnkown == null ) {
+			// @issue direct access to an image 
 			ImageDescriptor descriptor = WorkbenchImages.getImageDescriptorFromPluginID(
 				PlatformUI.PLUGIN_ID, 
 				"icons/full/obj16/warning.gif");	//$NON-NLS-1$

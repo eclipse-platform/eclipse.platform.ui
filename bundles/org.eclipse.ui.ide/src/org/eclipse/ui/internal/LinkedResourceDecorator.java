@@ -30,6 +30,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	private static final ImageDescriptor LINK_WARNING;	
 
 	static {
+		// @issue direct access to image files
 		String fileName;
 		IPluginDescriptor descriptor = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor(); 
 

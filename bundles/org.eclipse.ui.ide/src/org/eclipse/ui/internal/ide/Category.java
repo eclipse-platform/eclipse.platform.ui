@@ -16,8 +16,8 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -119,7 +119,7 @@ public class Category extends WorkbenchAdapter {
 	 * Method declared on IWorkbenchAdapter.
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
 
 	/* (non-Javadoc)

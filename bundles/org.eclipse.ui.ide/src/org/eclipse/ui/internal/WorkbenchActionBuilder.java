@@ -33,10 +33,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -681,8 +682,8 @@ public final class WorkbenchActionBuilder {
 			aboutAction.setText(IDEWorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
 			aboutAction.setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
 			aboutAction.setImageDescriptor(
-				WorkbenchImages.getImageDescriptor(
-					IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
+				IDEInternalWorkbenchImages.getImageDescriptor(
+					IDEInternalWorkbenchImages.IMG_OBJS_DEFAULT_PROD));
 			registerGlobalAction(aboutAction);
 		} catch (WorkbenchException e) {
 			// do nothing
@@ -802,14 +803,14 @@ public final class WorkbenchActionBuilder {
 
 		nextAction = ActionFactory.NEXT.create(getWindow());
 		nextAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_NEXT_NAV));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_NEXT_NAV));
 		registerGlobalAction(nextAction);
 
 		previousAction = ActionFactory.PREVIOUS.create(getWindow());
 		previousAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PREVIOUS_NAV));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_CTOOL_PREVIOUS_NAV));
 		registerGlobalAction(previousAction);
 
 				

@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.model;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -26,8 +26,7 @@ public class WorkbenchFolder extends WorkbenchResource {
  *	passed resource
  */
 protected ImageDescriptor getBaseImage(IResource resource) {
-	// @issue move IDE specific images
-	return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+	return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 }
 /**
  * Returns the children of this container.

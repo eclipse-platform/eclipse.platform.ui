@@ -19,6 +19,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -70,11 +71,11 @@ public NewProjectAction(IWorkbenchWindow window) {
 	this.window = window;
 	ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 	setImageDescriptor(
-		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD));
 	setHoverImageDescriptor(
-		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+		images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
 	setDisabledImageDescriptor(
-		images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+		images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 	setToolTipText(IDEWorkbenchMessages.getString("NewProjectAction.toolTip"));	 //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 }

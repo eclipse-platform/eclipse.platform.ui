@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -61,7 +62,10 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * Creates a new instance of the receiver.
 	 */
 	public ResourceWorkingSetPage() {
-		super("resourceWorkingSetPage", IDEWorkbenchMessages.getString("ResourceWorkingSetPage.title"), WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ)); //$NON-NLS-1$ //$NON-NLS-2$
+		super("resourceWorkingSetPage", //$NON-NLS-1$ 
+			IDEWorkbenchMessages.getString("ResourceWorkingSetPage.title"), //$NON-NLS-1$ 
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ));
 		setDescription(IDEWorkbenchMessages.getString("ResourceWorkingSetPage.description")); //$NON-NLS-1$
 	}
 	/**

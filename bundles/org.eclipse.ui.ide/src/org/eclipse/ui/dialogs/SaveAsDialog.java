@@ -21,8 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
@@ -79,7 +78,7 @@ protected Control createContents(Composite parent) {
 	validatePage();
 	resourceGroup.setFocus();
 	setTitle(IDEWorkbenchMessages.getString("SaveAsDialog.title")); //$NON-NLS-1$
-	dlgTitleImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG).createImage();
+	dlgTitleImage = IDEInternalWorkbenchImages.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG).createImage();
 	setTitleImage(dlgTitleImage);
 	setMessage(IDEWorkbenchMessages.getString("SaveAsDialog.message")); //$NON-NLS-1$
 	

@@ -233,4 +233,71 @@ public final class IDE {
 		
 		return editor;
 	}
+	
+	/**
+	 * Standard shared images defined by the IDE. These are over and about the
+	 * standard workbench images declared in {@link org.eclipse.ui.ISharedImages
+	 * ISharedImages}.
+	 * <p>
+	 * This interface is not intended to be implemented by clients.
+	 * </p>
+	 * 
+	 * @see org.eclipse.ui.ISharedImages
+	 */
+	public interface SharedImages {
+		/**
+		 * Identifies a project image.
+		 */
+		public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
+
+		/**
+		 * Identifies a closed project image.
+		 */
+		public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
+	
+		/**
+		 * Identifies the image used for "open marker".
+		 */
+		public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
+	
+		/**
+		 * Identifies the default image used to indicate errors.
+		 */
+		public final static String IMG_OBJS_ERROR_TSK = "IMG_OBJS_ERROR_TSK"; //$NON-NLS-1$
+
+		/**
+		 * Identifies the default image used to indicate warnings.
+		 */
+		public final static String IMG_OBJS_WARN_TSK = "IMG_OBJS_WARN_TSK"; //$NON-NLS-1$
+
+		/**
+		 * Identifies the default image used to indicate information only.
+		 */
+		public final static String IMG_OBJS_INFO_TSK = "IMG_OBJS_INFO_TSK"; //$NON-NLS-1$
+
+		/**
+		 * Identifies the default image used to indicate a task.
+		 */
+		public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
+		/**
+		 * Identifies the default image used to indicate a bookmark.
+		 */
+		public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
+	
+		/**
+		 * Identifies the new wizard image in the enabled state.
+		 */
+		public final static String IMG_TOOL_NEW_WIZARD = "IMG_TOOL_NEW_WIZARD"; //$NON-NLS-1$
+
+		/**
+		 * Identifies the new wizard image in the hover (colored) state.
+		 */
+		public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
+
+		/**
+		 * Identifies the new wizard image in the disabled state.
+		 */
+		public final static String IMG_TOOL_NEW_WIZARD_DISABLED = "IMG_TOOL_NEW_WIZARD_DISABLED"; //$NON-NLS-1$
+	
+	}
 }

@@ -20,6 +20,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
+import org.eclipse.ui.internal.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -53,6 +56,21 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * The IDE workbench plugin ID.
 	 */
 	public static String IDE_WORKBENCH = "org.eclipse.ui.ide";
+
+	/**
+	 * Project image registry; lazily initialized.
+	 */	
+	private ProjectImageRegistry projectImageRegistry = null;
+
+	/**
+	 * Marker image registry; lazily initialized.
+	 */	
+	private MarkerImageProviderRegistry markerImageProviderRegistry = null;
+
+	/**
+	 * Capability registry; lazily initialized.
+	 */	
+	private CapabilityRegistry capabilityRegistry;
 
 	/**
 	 * Create an instance of the IDEWorkbenchPlugin.
@@ -202,5 +220,41 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
 		store.setDefault(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);
+	}
+
+	/**
+	 * Return the manager that maps project nature ids to images.
+	 */
+	public ProjectImageRegistry getProjectImageRegistry() {
+		if (projectImageRegistry == null) {
+			projectImageRegistry = new ProjectImageRegistry();
+			projectImageRegistry.load();
+		}
+		return projectImageRegistry;
+	}
+
+	/**
+	 * Returns the marker image provider registry for the workbench.
+	 *
+	 * @return the marker image provider registry
+	 */
+	public MarkerImageProviderRegistry getMarkerImageProviderRegistry() {
+		if (markerImageProviderRegistry == null) {
+			markerImageProviderRegistry = new MarkerImageProviderRegistry();
+		}
+		return markerImageProviderRegistry;
+	}
+
+	/**
+	 * Returns the capability registry for the workbench.
+	 * 
+	 * @return the capability registry
+	 */
+	public CapabilityRegistry getCapabilityRegistry() {
+		if (capabilityRegistry == null) {
+			capabilityRegistry = new CapabilityRegistry();
+			capabilityRegistry.load();
+		}
+		return capabilityRegistry;
 	}
 }

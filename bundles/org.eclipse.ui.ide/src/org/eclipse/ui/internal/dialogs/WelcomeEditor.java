@@ -34,8 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -497,7 +496,9 @@ private Composite createInfoArea(Composite parent) {
 	for (int i = 0; i < items.length; i++) {
 		Label image = new Label(infoArea, SWT.NONE);
 		image.setBackground(background);
-		image.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_ITEM));
+		image.setImage(
+			PlatformUI.getWorkbench().getSharedImages().getImage(
+				IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM));
 		GridData gd = new GridData(); 
 		gd.horizontalIndent = 20;
 		gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
@@ -694,7 +695,9 @@ private Composite createTitleArea(Composite parent) {
 	// Title image
 	Label titleImage = new Label(titleArea, SWT.LEFT);
 	titleImage.setBackground(background);
-	titleImage.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_BANNER));
+	titleImage.setImage(
+		PlatformUI.getWorkbench().getSharedImages().getImage(
+			IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_BANNER));
 	gd = new GridData(); 
 	gd.horizontalAlignment = GridData.END;
 	titleImage.setLayoutData(gd);

@@ -16,8 +16,7 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
@@ -110,8 +109,8 @@ public class NewWizard extends Wizard {
 		else
 			setWindowTitle(IDEWorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
+			IDEInternalWorkbenchImages.getImageDescriptor(
+				IDEInternalWorkbenchImages.IMG_WIZBAN_NEW_WIZ));
 		setNeedsProgressMonitor(true);
 	}
 	/**

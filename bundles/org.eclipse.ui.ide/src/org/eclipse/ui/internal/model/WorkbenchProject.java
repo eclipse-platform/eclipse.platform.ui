@@ -11,12 +11,15 @@
 package org.eclipse.ui.internal.model;
 
 import java.util.HashMap;
-import org.eclipse.core.resources.*;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.IProjectActionFilter;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.misc.OverlayIcon;
 
@@ -35,7 +38,7 @@ public class WorkbenchProject extends WorkbenchResource
 protected ImageDescriptor getBaseImage(IResource resource) {
 	IProject project = (IProject) resource;
 	boolean isOpen = project.isOpen();
-	String baseKey = isOpen ? ISharedImages.IMG_OBJ_PROJECT : ISharedImages.IMG_OBJ_PROJECT_CLOSED;
+	String baseKey = isOpen ? IDE.SharedImages.IMG_OBJ_PROJECT : IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED;
 	if (isOpen) {
 		try {
 			String[] natureIds = project.getDescription().getNatureIds();
@@ -47,10 +50,10 @@ protected ImageDescriptor getBaseImage(IResource resource) {
 				if (overlayImage != null) {
 					return overlayImage;
 				}
-				ImageDescriptor natureImage = PlatformUI.getWorkbench().getProjectImageRegistry().getNatureImage(natureIds[i]);
+				ImageDescriptor natureImage = IDEWorkbenchPlugin.getDefault().getProjectImageRegistry().getNatureImage(natureIds[i]);
 				if (natureImage != null) {
 					// @issue move IDE specific images
-					ImageDescriptor baseImage = WorkbenchImages.getImageDescriptor(baseKey);
+					ImageDescriptor baseImage = IDEInternalWorkbenchImages.getImageDescriptor(baseKey);
 					overlayImage = new OverlayIcon(baseImage, new ImageDescriptor[][] {{ natureImage }}, new Point(16, 16));
 					imageCache.put(imageKey, overlayImage);
 					return overlayImage;
@@ -60,7 +63,7 @@ protected ImageDescriptor getBaseImage(IResource resource) {
 		catch (CoreException e) {
 		}
 	}
-	return WorkbenchImages.getImageDescriptor(baseKey);
+	return IDEInternalWorkbenchImages.getImageDescriptor(baseKey);
 }
 /**
  * Returns the children of this container.
