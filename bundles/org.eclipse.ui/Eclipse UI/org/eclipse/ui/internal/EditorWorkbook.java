@@ -151,8 +151,10 @@ public void createControl(Composite parent) {
 				CTabItem item = getTab(visibleEditor);
 				Rectangle bounds = item.getBounds();
 				if(bounds.contains(e.x,e.y)) {
-					if ((e.button == 3) || ((e.button == 1) && overImage(item,e.x)))
-						visibleEditor.showTitleLabelMenu(tabFolder,new Point(e.x, e.y),false);
+					if (e.button == 3)
+						visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y),false);
+					else if((e.button == 1) && overImage(item,e.x))
+						visibleEditor.showPaneMenu();
 				}
 			}
 		}
@@ -180,6 +182,17 @@ public void createControl(Composite parent) {
 	else
 		if (getItemCount() > 0)
 			setVisibleEditor((EditorPane) editors.get(0));
+}
+
+/**
+ * Show a title label menu for this pane.
+ */
+public void showPaneMenu() {
+	if (visibleEditor != null) {
+		CTabItem item = getTab(visibleEditor);
+		Rectangle bounds = item.getBounds();
+		visibleEditor.showPaneMenu(tabFolder,new Point(bounds.x,bounds.height),false);
+	}
 }
 
 /*

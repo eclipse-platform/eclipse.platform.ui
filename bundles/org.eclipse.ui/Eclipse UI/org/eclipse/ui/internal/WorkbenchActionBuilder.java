@@ -51,6 +51,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
 	private PinEditorAction pinEditorAction;
+	private ShowMenuAction showMenuAction;
 	private CyclePartAction nextPartAction;
 	private CyclePartAction prevPartAction;
 	private CycleEditorAction nextEditorAction;
@@ -262,6 +263,7 @@ private void createMenuBar() {
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
 /*	popup.add(activateEditorAction); */  // can't use Esc
+	popup.add(showMenuAction);
 	popup.add(nextEditorAction);
 	popup.add(prevEditorAction);
 	popup.add(nextPartAction);
@@ -488,6 +490,7 @@ private void makeActions() {
 		quickStartAction = new QuickStartAction(workbench);
 	
 	// Actions for invisible accelerators
+	showMenuAction = new ShowMenuAction(window);
 	nextEditorAction = new CycleEditorAction(window, true);
 	prevEditorAction = new CycleEditorAction(window, false);
 	nextPartAction = new CyclePartAction(window, true);

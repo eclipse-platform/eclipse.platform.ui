@@ -264,7 +264,7 @@ public abstract void showPaneMenu();
 /**
  * Show a title label menu for this pane.
  */
-protected void showTitleLabelMenu(Control parent,Point point,boolean isFastView) {
+protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 	Menu aMenu = new Menu(parent);
 	MenuItem item; 
 

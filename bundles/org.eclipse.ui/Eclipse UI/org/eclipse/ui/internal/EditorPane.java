@@ -136,5 +136,6 @@ public void updateTitles() {
  * Show a title label menu for this pane.
  */
 public void showPaneMenu() {
+	workbook.showPaneMenu();
 }
 }

@@ -232,8 +232,10 @@ protected void createTitleBar() {
 	titleLabel.setBackground(null, null);
 	titleLabel.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
-			if ((e.button == 3) || ((e.button == 1) && overImage(e.x)))
-				showTitleLabelMenu(titleLabel,new Point(e.x, e.y),isFastView());
+			if (e.button == 3)
+				showPaneMenu(titleLabel,new Point(e.x, e.y),isFastView());
+			else if ((e.button == 1) && overImage(e.x))
+				showPaneMenu();
 		}
 		public void mouseDoubleClick(MouseEvent event){
 			doZoom();
@@ -414,8 +416,8 @@ public void showFocus(boolean inFocus) {
  * Show a title label menu for this pane.
  */
 public void showPaneMenu() {
-	int y = titleLabel.getBounds().height / 2;
-	showTitleLabelMenu(titleLabel,new Point(y,y),isFastView());
+	Rectangle bounds = titleLabel.getBounds();
+	showPaneMenu(titleLabel,new Point(0,bounds.height),isFastView());
 }
 
 private boolean isFastView() {
