@@ -130,7 +130,7 @@ public final class RefreshSubscriberJob extends Job {
         		text = gotoAction.getText();
         	}
         	if (text == null || text.length() == 0) {
-        	    text = getText();
+        	    text = super.getText();
 	        	if (text == null || text.length() == 0) {
 	        	    text = getToolTipText();
 	        	}
