@@ -341,28 +341,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @see Window#open()
 	 */
-	public int open() {
-		if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {
-			try {
-				fFirstConfig = determineConfigFromContext();
-				if (fFirstConfig != null) {
-					if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
-						setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
-					} else {
-						fUnderlyingConfig = fFirstConfig;
-					}
+	public int open() {		
+		try {
+			fFirstConfig = determineConfigFromContext();
+			if (fFirstConfig != null) {
+				if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
+					setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
+				} else {
+					fUnderlyingConfig = fFirstConfig;
+				}
+				if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {
 					doLaunch(fFirstConfig);
 					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;					
-				}	
-			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred while launching configuration.", e.getStatus());
-			}
-		} else {
-			// select the most recent launch
-			LaunchConfigurationHistoryElement hist = DebugUIPlugin.getDefault().getLastLaunch();
-			if (hist != null) {
-				fFirstConfig = hist.getLaunchConfiguration();
-			}
+				}
+			}	
+		} catch (CoreException e) {
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred while launching configuration.", e.getStatus());
 		}
 		return super.open();
 	}
