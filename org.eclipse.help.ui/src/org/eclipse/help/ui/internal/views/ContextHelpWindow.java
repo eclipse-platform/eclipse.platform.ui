@@ -51,8 +51,9 @@ public class ContextHelpWindow extends Window {
 		listener = new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
-				case SWT.Activate:
-					update(e.display.getFocusControl());
+				case SWT.FocusIn:
+				case SWT.Selection:
+					update((Control)e.widget);
 					break;
 				case SWT.Move:
 					if (onWindowMove())
@@ -146,18 +147,48 @@ public class ContextHelpWindow extends Window {
 		Shell shell = getShell();
 		shell.addListener(SWT.Move, listener);
 		shell.addListener(SWT.Resize, listener);
-		shell.getParent().addListener(SWT.Activate, listener);
+		hookFocusListener(shell.getParent(), listener);
 		shell.getParent().addControlListener(parentListener);
 	}
 
 	private void unhookListeners() {
 		Shell shell = getShell();
-		shell.getParent().removeListener(SWT.Activate, listener);
 		shell.getParent().removeControlListener(parentListener);
+		unhookFocusListener(shell.getParent(), listener);		
 		shell.removeListener(SWT.Move, listener);
 		shell.removeListener(SWT.Resize, listener);
 	}
 	
+	private void hookFocusListener(Composite parent, Listener listener) {
+		Control [] children = parent.getChildren();
+		for (int i=0; i<children.length; i++) {
+			Control child = children[i];
+			if (child.equals(getShell()))
+				continue;
+			if (child instanceof Composite) {
+				hookFocusListener((Composite)child, listener);
+			}
+			child.addListener(SWT.FocusIn, listener);
+			child.addListener(SWT.Selection, listener);
+		}
+	}
+
+	private void unhookFocusListener(Composite parent, Listener listener) {
+		Control [] children = parent.getTabList();
+		for (int i=0; i<children.length; i++) {
+			Control child = children[i];
+			if (child.equals(getShell()))
+				continue;
+			if (child instanceof Composite) {
+				unhookFocusListener((Composite)child, listener);
+			}
+			else {
+				child.removeListener(SWT.FocusIn, listener);
+				child.removeListener(SWT.Selection, listener);
+			}
+		}
+	}
+
 	public void dock(boolean changeSides) {
 		getShell().setBounds(computeDockedBounds(changeSides));
 	}
