@@ -292,7 +292,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
 		IDocument document= viewer.getDocument();
 		if (document != null) {
-			Point range= computeLineRange(viewer, lineNumber, 0, document.getNumberOfLines());
+			Point range= computeLineRange(viewer, lineNumber, 0, Math.max(0, document.getNumberOfLines() - 1));
 			if (range.x != -1 && range.y != -1)
 				return new LineRange(range.x, range.y - range.x + 1);
 		}

@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.DocLineComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifferencer;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LinkedRangeFactory.LowMemoryException;
 
 /**
  * Standard implementation of <code>ILineDiffer</code> as an incremental diff engine. A 
@@ -67,13 +68,66 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
  */
 public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel {
 
+	/**
+	 * Artificial line difference information indicating a change with an empty line as original text.
+	 */
+	private static class LineChangeInfo implements ILineDiffInfo {
+
+		private static final String[] ORIGINAL_TEXT= new String[] { "\n" }; //$NON-NLS-1$
+
+		/*
+		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesBelow()
+		 */
+		public int getRemovedLinesBelow() {
+			return 0;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesAbove()
+		 */
+		public int getRemovedLinesAbove() {
+			return 0;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getChangeType()
+		 */
+		public int getChangeType() {
+			return CHANGED;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.ILineDiffInfo#hasChanges()
+		 */
+		public boolean hasChanges() {
+			return true;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getOriginalText()
+		 */
+		public String[] getOriginalText() {
+			return ORIGINAL_TEXT;
+		}
+	}
+
 	/** Tells whether this class is in debug mode. */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.ui.workbench.texteditor/debug/DocumentLineDiffer"));  //$NON-NLS-1$//$NON-NLS-2$
 
+	/** Suspended state */
+	private static final int SUSPENDED= 0;
+	/** Initializing state */
+	private static final int INITIALIZING= 1;
+	/** Synchronized state */
+	private static final int SYNCHRONIZED= 2;
+
+	/** This differ's state */
+	private int fState= SUSPENDED;
+	/** Artificial line difference information indicating a change with an empty line as original text. */
+	private final ILineDiffInfo fLineChangeInfo= new LineChangeInfo();
+	
 	/** The provider for the reference document. */
 	IQuickDiffReferenceProvider fReferenceProvider;
-	/** Whether this differ is in sync with the model. */
-	private boolean fIsSynchronized;
 	/** The number of clients connected to this model. */
 	private int fOpenConnections;
 	/** The current document being tracked. */
@@ -135,6 +189,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.source.ILineDiffer#getLineInfo(int)
 	 */
 	public ILineDiffInfo getLineInfo(int line) {
+		
+		if (isSuspended())
+			return fLineChangeInfo;
 		
 		// try cache first / speeds up linear search
 		RangeDifference last= fLastDifference;
@@ -282,7 +339,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @return <code>true</code> if we are initialized and in sync with the document.
 	 */
 	private boolean isInitialized() {
-		return fIsSynchronized;
+		return fState == SYNCHRONIZED;
 	}
 	
 	/**
@@ -291,7 +348,16 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @return <code>true</code> if we are initialized and in sync with the document.
 	 */
 	public synchronized boolean isSynchronized() {
-		return fIsSynchronized;
+		return fState == SYNCHRONIZED;
+	}
+
+	/**
+	 * Returns <code>true</code> if the differ is suspended.
+	 * 
+	 * @return <code>true</code> if the differ is suspended
+	 */
+	private synchronized boolean isSuspended() {
+		return fState == SUSPENDED;
 	}
 
 	/**
@@ -324,7 +390,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	synchronized void initialize() {
 		// make new incoming changes go into the queue of stored events, plus signal we can't restore.
-		fIsSynchronized= false;
+		fState= INITIALIZING;
 		
 		if (fRightDocument == null)
 			return;
@@ -454,7 +520,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// 6:	Do Da Diffing
 				DocLineComparator ref= new DocLineComparator(reference, null, false);
 				DocLineComparator act= new DocLineComparator(actual, null, false);
-				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
+				List diffs;
+				try {
+					diffs= RangeDifferencer.findRanges(monitor, ref, act);
+				} catch (LowMemoryException e) {
+					handleLowMemory(e);
+					return Status.CANCEL_STATUS;
+				}
 				
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
@@ -477,7 +549,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 							if (fStoredEvents.isEmpty()) {
 								// we are done
 								fInitializationJob= null;
-								fIsSynchronized= true;
+								fState= SYNCHRONIZED;
 								fLastDifference= null;
 								
 								// inform blocking calls.
@@ -499,6 +571,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					left.removeDocumentListener(DocumentLineDiffer.this);
 					clearModel();
 					initialize();
+					return Status.CANCEL_STATUS;
+				} catch (LowMemoryException e) {
+					handleLowMemory(e);
 					return Status.CANCEL_STATUS;
 				}
 				
@@ -634,6 +709,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		} catch (ConcurrentModificationException e) {
 			reinitOnError(e);
 			return;
+		} catch (LowMemoryException e) {
+			handleLowMemory(e);
+			return;
 		}
 		
 		// inform listeners about change
@@ -672,8 +750,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * Implementation of documentChanged, non synchronized.
 	 * 
 	 * @param event the document event
+	 * @throws LowMemoryException if the differ runs out of memory
 	 */
-	void handleChanged(DocumentEvent event) throws BadLocationException {
+	void handleChanged(DocumentEvent event) throws BadLocationException, LowMemoryException {
 		/*
 		 * Now, here we have a great example of object oriented programming.
 		 */
@@ -1177,7 +1256,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private void uninstall() {
 		synchronized (this) {
-			fIsSynchronized= false;
+			fState= SUSPENDED;
 			fIgnoreDocumentEvents= true;
 			if (fInitializationJob != null)
 				fInitializationJob.cancel();
@@ -1293,10 +1372,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			fRightDocument.removeDocumentListener(this);
 		if (fLeftDocument != null)
 			fLeftDocument.removeDocumentListener(this);
+		fLeftDocument= null;
 		
+		fLastDifference= null;
+		fStoredEvents.clear();
 		fDifferences.clear();
 		
-		fIsSynchronized= false;
+		fState= SUSPENDED;
 		
 		fireModelChanged();
 	}
@@ -1308,5 +1390,16 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fRightDocument != null)
 			fRightDocument.addDocumentListener(this);
 		initialize();
+	}
+
+	/**
+	 * Handle low memory situation during diffing. Called from UI and jobs.
+	 * 
+	 * @param e the low memory exception
+	 */
+	private void handleLowMemory(LowMemoryException e) {
+		if (DEBUG)
+			System.err.println("Disabling QuickDiff:\n" + e);  //$NON-NLS-1$
+		suspend();
 	}
 }

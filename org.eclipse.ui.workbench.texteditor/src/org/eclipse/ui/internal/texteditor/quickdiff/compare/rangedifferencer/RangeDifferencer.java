@@ -14,6 +14,8 @@ import java.util.*;
 
 import org.eclipse.jface.util.Assert;
 
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LinkedRangeFactory.LowMemoryException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -56,8 +58,9 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 */
-	public static RangeDifference[] findDifferences(IRangeComparator left, IRangeComparator right) {
+	public static RangeDifference[] findDifferences(IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 		return findDifferences((IProgressMonitor)null, left, right);
 	}
 	
@@ -70,9 +73,10 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 * @since 2.0
 	 */
-	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 
 		// assert that both IRangeComparators are of the same class
 		Assert.isTrue(right.getClass().equals(left.getClass()));
@@ -107,6 +111,7 @@ public final class RangeDifferencer {
 			return EMPTY_RESULT;
 			
 		//System.out.println("findDifferences: " + maxDiagonal + " " + lower + " " + upper);
+		LinkedRangeFactory factory= new LinkedRangeFactory();
 		
 		// for each value of the edit distance
 		for (int d= 1; d <= maxDiagonal; ++d) { // d is the current edit distance
@@ -129,13 +134,13 @@ public final class RangeDifferencer {
 					// move down
 					//
 					row= lastDiagonal[k + 1] + 1;
-					edit= new LinkedRangeDifference(script[k + 1], LinkedRangeDifference.DELETE);
+					edit= factory.newRange(script[k + 1], LinkedRangeDifference.DELETE);
 				} else {
 					//
 					// move right
 					//
 					row= lastDiagonal[k - 1];
-					edit= new LinkedRangeDifference(script[k - 1], LinkedRangeDifference.INSERT);
+					edit= factory.newRange(script[k - 1], LinkedRangeDifference.INSERT);
 				}
 				col= row + k - origin;
 				edit.fRightStart= row;
@@ -180,8 +185,9 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 */
-	public static RangeDifference[] findDifferences(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+	public static RangeDifference[] findDifferences(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 		return findDifferences(null, ancestor, left, right);
 	}
 	
@@ -197,9 +203,10 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 * @since 2.0
 	 */
-	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 
 		if (ancestor == null)
 			return findDifferences(pm, left, right);
@@ -273,8 +280,9 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 */
-	public static List findRanges(IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 		return findRanges((IProgressMonitor)null, left, right);
 	}
 	
@@ -287,9 +295,10 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 * @since 2.0
 	 */
-	public static List findRanges(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 		RangeDifference[] in= findDifferences(pm, left, right);
 		List out= new ArrayList();
 
@@ -329,8 +338,9 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 */
-	public static List findRanges(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 		return findRanges(null, ancestor, left, right);
 	}
 	
@@ -346,9 +356,10 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
+	 * @throws LowMemoryException if the differencer runs out of memory
 	 * @since 2.0
 	 */
-	public static List findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
+	public static List findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) throws LowMemoryException {
 
 		if (ancestor == null)
 			return findRanges(pm, left, right);
