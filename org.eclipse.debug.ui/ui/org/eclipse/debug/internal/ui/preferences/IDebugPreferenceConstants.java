@@ -154,14 +154,14 @@ public interface IDebugPreferenceConstants {
 	 * Default ASCII code page if ASCII code page preference is not set.
 	 * @since 3.1
 	 */
-	public static final String DEFAULT_ASCII_CP = "windows-1252"; //$NON-NLS-1$
+	public static final String DEFAULT_ASCII_CP = "CP1252"; //$NON-NLS-1$
 	
 	
 	/**
 	 * Default EBCDIC code page if EBCDIC code page preference is not set.
 	 * @since 3.1
 	 */
-	public static final String DEFAULT_EBCDIC_CP = "IBM-1047"; //$NON-NLS-1$
+	public static final String DEFAULT_EBCDIC_CP = "CP1047"; //$NON-NLS-1$
 }
 
 
