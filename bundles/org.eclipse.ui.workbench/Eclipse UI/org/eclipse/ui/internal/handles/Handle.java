@@ -22,10 +22,9 @@ public class Handle implements IHandle {
 		this.id = id;
 	}
 	
-	public void addHandleListener(IHandleListener handleListener)
-		throws IllegalArgumentException {
+	public void addHandleListener(IHandleListener handleListener) {
 		if (handleListener == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		if (handleListeners == null)
 			handleListeners = new ArrayList();
@@ -57,10 +56,9 @@ public class Handle implements IHandle {
 		return defined;
 	}
 
-	public void removeHandleListener(IHandleListener handleListener)
-		throws IllegalArgumentException {
+	public void removeHandleListener(IHandleListener handleListener) {
 		if (handleListener == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		if (handleListeners != null) {
 			handleListeners.remove(handleListener);

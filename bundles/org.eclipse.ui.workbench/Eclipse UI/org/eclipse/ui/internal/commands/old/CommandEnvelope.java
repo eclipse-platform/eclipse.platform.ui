@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands.old;
 
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.util.Util;
 
 final class CommandEnvelope implements Comparable {
 

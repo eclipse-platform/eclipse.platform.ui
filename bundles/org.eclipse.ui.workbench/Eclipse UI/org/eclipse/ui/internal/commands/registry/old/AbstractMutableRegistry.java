@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.commands.registry.old;
 import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.util.Util;
 
 abstract class AbstractMutableRegistry extends AbstractRegistry
 	implements IMutableRegistry {

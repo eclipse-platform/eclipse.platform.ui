@@ -30,10 +30,9 @@ public interface IHandle {
 	 * Registers an IHandleListener instance with this handle.
 	 *
 	 * @param handleListener the IHandleListener instance to register.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	void addHandleListener(IHandleListener handleListener)
-		throws IllegalArgumentException;
+	void addHandleListener(IHandleListener handleListener);
 	
 	/**
 	 * JAVADOC
@@ -62,8 +61,7 @@ public interface IHandle {
 	 * Unregisters an IHandleListener instance with this handle.
 	 *
 	 * @param handleListener the IHandleListener instance to unregister.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */
-	void removeHandleListener(IHandleListener handleListener)
-		throws IllegalArgumentException;
+	void removeHandleListener(IHandleListener handleListener);
 }

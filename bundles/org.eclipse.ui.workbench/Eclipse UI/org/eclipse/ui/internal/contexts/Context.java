@@ -28,59 +28,46 @@ final class Context implements Comparable, IContext {
 
 	private static Comparator nameComparator;
 	
-	static Context create(String description, String id, String name, String parentId, String pluginId)
-		throws IllegalArgumentException {
-		return new Context(description, id, name, parentId, pluginId);
-	}
-
 	static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((Context) left).name, ((Context) right).name);
+					return Collator.getInstance().compare(((IContext) left).getName(), ((IContext) right).getName());
 				}	
 			};		
 		
 		return nameComparator;
 	}
 
-	static SortedMap sortedMapById(List contextElements)
-		throws IllegalArgumentException {
-		if (contextElements == null)
-			throw new IllegalArgumentException();
+	static SortedMap sortedMapById(List contexts) {
+		if (contexts == null)
+			throw new NullPointerException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = contextElements.iterator();
+		Iterator iterator = contexts.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			
-			if (!(object instanceof Context))
-				throw new IllegalArgumentException();
-				
-			Context contextElement = (Context) object;
-			sortedMap.put(contextElement.id, contextElement);									
+			Util.assertInstance(object, IContext.class);
+			IContext context = (IContext) object;
+			sortedMap.put(context.getId(), context);									
 		}			
 		
 		return sortedMap;
 	}
 
-	static SortedMap sortedMapByName(List contextElements)
-		throws IllegalArgumentException {
-		if (contextElements == null)
-			throw new IllegalArgumentException();
+	static SortedMap sortedMapByName(List contexts) {
+		if (contexts == null)
+			throw new NullPointerException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = contextElements.iterator();
+		Iterator iterator = contexts.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			
-			if (!(object instanceof Context))
-				throw new IllegalArgumentException();
-				
-			Context contextElement = (Context) object;
-			sortedMap.put(contextElement.name, contextElement);									
+			Util.assertInstance(object, IContext.class);			
+			IContext context = (IContext) object;
+			sortedMap.put(context.getName(), context);									
 		}			
 		
 		return sortedMap;
@@ -92,12 +79,11 @@ final class Context implements Comparable, IContext {
 	private String parentId;
 	private String pluginId;
 	
-	private Context(String description, String id, String name, String parentId, String pluginId)
-		throws IllegalArgumentException {
+	Context(String description, String id, String name, String parentId, String pluginId) {
 		super();
 		
 		if (id == null || name == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.description = description;
 		this.id = id;
@@ -107,20 +93,20 @@ final class Context implements Comparable, IContext {
 	}
 	
 	public int compareTo(Object object) {
-		Context item = (Context) object;
-		int compareTo = id.compareTo(item.id);
+		Context context = (Context) object;
+		int compareTo = id.compareTo(context.id);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(item.name);			
+			compareTo = name.compareTo(context.name);			
 		
 			if (compareTo == 0) {
-				Util.compare(description, item.description);
+				compareTo = Util.compare(description, context.description);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, item.parentId);
+					compareTo = Util.compare(parentId, context.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, item.pluginId);								
+						compareTo = Util.compare(pluginId, context.pluginId);								
 				}							
 			}
 		}
@@ -132,8 +118,8 @@ final class Context implements Comparable, IContext {
 		if (!(object instanceof Context))
 			return false;
 
-		Context contextElement = (Context) object;	
-		return Util.equals(description, contextElement.description) && id.equals(contextElement.id) && name.equals(contextElement.name) && Util.equals(parentId, contextElement.parentId) && Util.equals(pluginId, contextElement.pluginId);
+		Context context = (Context) object;	
+		return Util.equals(description, context.description) && id.equals(context.id) && name.equals(context.name) && Util.equals(parentId, context.parentId) && Util.equals(pluginId, context.pluginId);
 	}
 
 	public String getDescription() {
@@ -167,6 +153,6 @@ final class Context implements Comparable, IContext {
 	}
 
 	public String toString() {
-		return id;
+		return '[' + id + ',' + name + ',' + description + ',' + parentId + ',' + pluginId + ']';
 	}
 }

@@ -11,149 +11,148 @@
 
 package org.eclipse.ui.internal.commands;
 
-import java.util.ArrayList;
+import java.text.Collator;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.SortedSet;
+import java.util.TreeMap;
 
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandEvent;
-import org.eclipse.ui.commands.ICommandHandler;
-import org.eclipse.ui.commands.ICommandListener;
-import org.eclipse.ui.commands.NotHandledException;
-import org.eclipse.ui.handles.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
-final class Command implements ICommand {
+final class Command implements Comparable, ICommand {
 
-	private ICommandEvent commandEvent;
-	private List commandListeners;
-	private CommandManager commandManager;
+	private final static int HASH_FACTOR = 89;
+	private final static int HASH_INITIAL = Command.class.getName().hashCode();
+
+	private static Comparator nameComparator;
+	
+	static Comparator nameComparator() {
+		if (nameComparator == null)
+			nameComparator = new Comparator() {
+				public int compare(Object left, Object right) {
+					return Collator.getInstance().compare(((ICommand) left).getName(), ((ICommand) right).getName());
+				}	
+			};		
+		
+		return nameComparator;
+	}
+
+	static SortedMap sortedMapById(List commands) {
+		if (commands == null)
+			throw new NullPointerException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = commands.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, ICommand.class);				
+			ICommand command = (ICommand) object;
+			sortedMap.put(command.getId(), command);									
+		}			
+		
+		return sortedMap;
+	}
+
+	static SortedMap sortedMapByName(List commands) {
+		if (commands == null)
+			throw new NullPointerException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = commands.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, ICommand.class);
+			ICommand command = (ICommand) object;
+			sortedMap.put(command.getName(), command);									
+		}			
+		
+		return sortedMap;
+	}
+
+	private String categoryId;
+	private String description;
 	private String id;
-
-	Command(CommandManager commandManager, String id) {
+	private String name;
+	private String pluginId;
+	
+	Command(String categoryId, String description, String id, String name, String pluginId) {
 		super();
-		this.commandManager = commandManager;
+		
+		if (id == null || name == null)
+			throw new NullPointerException();
+		
+		this.categoryId = categoryId;
+		this.description = description;
 		this.id = id;
-	}
-
-	public void addCommandListener(ICommandListener commandListener)
-		throws IllegalArgumentException {
-		if (commandListener == null)
-			throw new IllegalArgumentException();
-		
-		if (commandListeners == null)
-			commandListeners = new ArrayList();
-		
-		if (!commandListeners.contains(commandListener))
-			commandListeners.add(commandListener);
-	}
-
-	public ICommandHandler getCommandHandler()
-		throws NotHandledException {
-		SortedMap commandHandlersById = commandManager.getCommandHandlersById();
-		ICommandHandler commandHandler = (ICommandHandler) commandHandlersById.get(id);
-		
-		if (commandHandlersById.containsKey(id))
-			return commandHandler;
-		else 		
-			throw new NotHandledException();
-	}
-
-	public String getDescription() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getDescription();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public SortedSet getContextBindings() {
-		return Util.EMPTY_SORTED_SET;
-	}
-
-	public SortedSet getGestureBindings() {
-		return Util.EMPTY_SORTED_SET;
-	}
-		
-	public String getId() {
-		return id;
-	}
-
-	public SortedSet getImageBindings() {
-		return Util.EMPTY_SORTED_SET;		
-	}
-
-	public SortedSet getKeyBindings() {
-		return Util.EMPTY_SORTED_SET;		
-	}
-
-	public String getName() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getName();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public String getParentId() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getParentId();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public String getPluginId() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getPluginId();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public boolean isDefined() {
-		return commandManager.getCommandElement(id) != null && commandManager.getDefinedCommandIds().contains(id);
-	}
-
-	public boolean isHandled() {
-		return commandManager.getCommandHandlersById().containsKey(id);
-	}
-
-	public void removeCommandListener(ICommandListener commandListener)
-		throws IllegalArgumentException {
-		if (commandListener == null)
-			throw new IllegalArgumentException();
-
-		if (commandListeners != null) {
-			commandListeners.remove(commandListener);
-			
-			if (commandListeners.isEmpty())
-				commandListeners = null;
-		}
+		this.name = name;
+		this.pluginId = pluginId;
 	}
 	
-	void fireCommandChanged() {
-		if (commandListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(commandListeners).iterator();
-			
-			if (iterator.hasNext()) {
-				if (commandEvent == null)
-					commandEvent = new CommandEvent(this);
+	public int compareTo(Object object) {
+		Command command = (Command) object;
+		int compareTo = id.compareTo(command.id);
+		
+		if (compareTo == 0) {		
+			compareTo = name.compareTo(command.name);			
+		
+			if (compareTo == 0) {
+				compareTo = Util.compare(categoryId, command.categoryId);
 				
-				while (iterator.hasNext())	
-					((ICommandListener) iterator.next()).commandChanged(commandEvent);
-			}							
-		}			
-	}		
+				if (compareTo == 0) {
+					compareTo = Util.compare(description, command.description);
+
+					if (compareTo == 0)
+						compareTo = Util.compare(pluginId, command.pluginId);								
+				}							
+			}
+		}
+		
+		return compareTo;	
+	}
+	
+	public boolean equals(Object object) {
+		if (!(object instanceof Command))
+			return false;
+
+		Command command = (Command) object;	
+		return Util.equals(categoryId, command.categoryId) && Util.equals(description, command.description) && id.equals(command.id) && name.equals(command.name) && Util.equals(pluginId, command.pluginId);
+	}
+
+	public String getCategoryId() {
+		return categoryId;
+	}
+
+	public String getDescription() {
+		return description;	
+	}
+	
+	public String getId() {
+		return id;	
+	}
+	
+	public String getName() {
+		return name;
+	}	
+
+	public String getPluginId() {
+		return pluginId;
+	}
+
+	public int hashCode() {
+		int result = HASH_INITIAL;
+		result = result * HASH_FACTOR + Util.hashCode(categoryId);
+		result = result * HASH_FACTOR + Util.hashCode(description);
+		result = result * HASH_FACTOR + id.hashCode();
+		result = result * HASH_FACTOR + name.hashCode();
+		result = result * HASH_FACTOR + Util.hashCode(pluginId);
+		return result;
+	}
+
+	public String toString() {
+		return '[' + id + ',' + name + ',' + categoryId + ',' + description + ',' + pluginId + ']';
+	}
 }

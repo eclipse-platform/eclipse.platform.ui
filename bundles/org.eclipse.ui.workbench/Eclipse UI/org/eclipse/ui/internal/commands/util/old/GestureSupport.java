@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
+import org.eclipse.ui.internal.util.Util;
+
 public final class GestureSupport {
 
 	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(GestureSupport.class.getName());
@@ -33,10 +35,9 @@ public final class GestureSupport {
 	public final static Stroke STROKE_RIGHT = Stroke.create(6);  
 	public final static Stroke STROKE_UP = Stroke.create(8);
 
-	public static String formatSequence(Sequence sequence, boolean localize)
-		throws IllegalArgumentException {
+	public static String formatSequence(Sequence sequence, boolean localize) {
 		if (sequence == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		int i = 0;
 		Iterator iterator = sequence.getStrokes().iterator();
@@ -53,10 +54,9 @@ public final class GestureSupport {
 		return stringBuffer.toString();
 	}
 
-	public static String formatStroke(Stroke stroke, boolean localize)
-		throws IllegalArgumentException {
+	public static String formatStroke(Stroke stroke, boolean localize) {
 		if (stroke == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		if (STROKE_DOWN.equals(stroke))
 			return localize ? Util.getString(resourceBundle, DOWN) : DOWN;
@@ -70,10 +70,9 @@ public final class GestureSupport {
 			return localize ? Util.getString(resourceBundle, UNKNOWN) : UNKNOWN;	
 	}
 	
-	public static Sequence parseSequence(String string)
-		throws IllegalArgumentException {
+	public static Sequence parseSequence(String string) {
 		if (string == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		List strokes = new ArrayList();
 		StringTokenizer stringTokenizer = new StringTokenizer(string);
@@ -84,10 +83,9 @@ public final class GestureSupport {
 		return Sequence.create(strokes);
 	}	
 	
-	public static Stroke parseStroke(String string)
-		throws IllegalArgumentException {
+	public static Stroke parseStroke(String string) {
 		if (string == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		if (DOWN.equals(string))
 			return STROKE_DOWN;

@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ui.internal.util.Util;
+
 public final class Sequence implements Comparable {
 
 	private final static int HASH_FACTOR = 89;

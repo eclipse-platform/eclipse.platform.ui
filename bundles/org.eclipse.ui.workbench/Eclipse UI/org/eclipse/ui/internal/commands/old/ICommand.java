@@ -12,8 +12,7 @@
 package org.eclipse.ui.internal.commands.old;
 
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.commands.ICommandListener;
-import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.commands.NotDelegatedException;
 import org.eclipse.ui.handles.NotDefinedException;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
 
@@ -34,7 +33,7 @@ public interface ICommand {
 	 *
 	 * @param commandListener the ICommandListener instance to register.
 	 */	
-	void addCommandListener(ICommandListener commandListener);
+	//void addCommandListener(ICommandListener commandListener);
 
 	/**
 	 * JAVADOC
@@ -43,7 +42,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	void execute()
-		throws NotDefinedException, NotHandledException;
+		throws NotDefinedException, NotDelegatedException;
 
 	/**
 	 * TODO temporary method
@@ -53,7 +52,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	void execute(Event event)
-		throws NotDefinedException, NotHandledException;
+		throws NotDefinedException, NotDelegatedException;
 
 	/**
 	 * JAVADOC
@@ -134,7 +133,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	Object getProperty(String propertyName)
-		throws NotDefinedException, NotHandledException;
+		throws NotDefinedException, NotDelegatedException;
 
 	/**
 	 * JAVADOC
@@ -144,7 +143,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	String[] getPropertyNames()
-		throws NotDefinedException, NotHandledException;
+		throws NotDefinedException, NotDelegatedException;
 
 	/**
 	 * JAVADOC
@@ -160,7 +159,7 @@ public interface ICommand {
 	 * @throws NotHandledException
 	 */	
 	boolean isEnabled()
-		throws NotDefinedException, NotHandledException;
+		throws NotDefinedException, NotDelegatedException;
 	
 	/**
 	 * JAVADOC
@@ -176,5 +175,5 @@ public interface ICommand {
 	 *
 	 * @param commandListener the ICommandListener instance to unregister.
 	 */
-	void removeCommandListener(ICommandListener commandListener);
+	//void removeCommandListener(ICommandListener commandListener);
 }

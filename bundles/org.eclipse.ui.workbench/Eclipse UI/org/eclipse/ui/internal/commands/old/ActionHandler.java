@@ -13,9 +13,9 @@ package org.eclipse.ui.internal.commands.old;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.commands.ICommandHandler;
+import org.eclipse.ui.commands.ICommandDelegate;
 
-public class ActionHandler implements ICommandHandler {
+public class ActionHandler implements ICommandDelegate {
 
 	private IAction action;
 

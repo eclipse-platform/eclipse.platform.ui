@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.commands.registry.old.Configuration;
 import org.eclipse.ui.internal.commands.registry.old.Context;
 import org.eclipse.ui.internal.commands.registry.old.SequenceBinding;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.util.Util;
 
 public final class SequenceMachine {
 

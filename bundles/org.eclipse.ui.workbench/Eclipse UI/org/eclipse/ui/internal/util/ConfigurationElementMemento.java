@@ -14,22 +14,15 @@ package org.eclipse.ui.internal.util;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IMemento;
 
-public class ConfigurationElementMemento 
-	implements IMemento {
-
-	public static ConfigurationElementMemento create(IConfigurationElement configurationElement)
-		throws IllegalArgumentException {
-		return new ConfigurationElementMemento(configurationElement);
-	}		
+public final class ConfigurationElementMemento implements IMemento {
 
 	private IConfigurationElement configurationElement;
 
-	private ConfigurationElementMemento(IConfigurationElement configurationElement)
-		throws IllegalArgumentException {
+	public ConfigurationElementMemento(IConfigurationElement configurationElement) {
 		super();
 		
 		if (configurationElement == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.configurationElement = configurationElement;
 	}
@@ -46,7 +39,7 @@ public class ConfigurationElementMemento
 		IConfigurationElement[] configurationElements = configurationElement.getChildren(type);
 		
 		if (configurationElements != null && configurationElements.length >= 1)
-			return create(configurationElements[0]);
+			return new ConfigurationElementMemento(configurationElements[0]);
 		
 		return null;
 	}
@@ -58,7 +51,7 @@ public class ConfigurationElementMemento
 			IMemento mementos[] = new ConfigurationElementMemento[configurationElements.length];
 			
 			for (int i = 0; i < configurationElements.length; i++)
-				mementos[i] = create(configurationElements[i]);
+				mementos[i] = new ConfigurationElementMemento(configurationElements[i]);
 				
 			return mementos;			
 		}

@@ -20,36 +20,37 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
-	private List contextElements;
+	private List contexts;
 	private IPluginRegistry pluginRegistry;
-	private List unmodifiableContextElements;
+	private List unmodifiableContexts;
 	
 	RegistryReader(IPluginRegistry pluginRegistry) {
 		super();	
 		this.pluginRegistry = pluginRegistry;
-		unmodifiableContextElements = Collections.EMPTY_LIST;
+		unmodifiableContexts = Collections.EMPTY_LIST;
 	}
 
-	List getContextElements() {
-		return unmodifiableContextElements;
+	List getContexts() {
+		return unmodifiableContexts;
 	}
 
 	void load() {
-		if (contextElements == null)
-			contextElements = new ArrayList();
+		if (contexts == null)
+			contexts = new ArrayList();
 		else 
-			contextElements.clear();
+			contexts.clear();
 
 		if (pluginRegistry != null)	
 			readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 			
-		unmodifiableContextElements = Collections.unmodifiableList(new ArrayList(contextElements));
+		unmodifiableContexts = Collections.unmodifiableList(new ArrayList(contexts));
 	}
 
 	protected boolean readElement(IConfigurationElement element) {
@@ -79,10 +80,10 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	}
 
 	private boolean readContext(IConfigurationElement element) {
-		ContextElement contextElement = Persistence.readContextElement(ConfigurationElementMemento.create(element), getPluginId(element));
+		IContext context = Persistence.readContext(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (contextElement != null)
-			contextElements.add(contextElement);	
+		if (context != null)
+			contexts.add(context);	
 		
 		return true;
 	}

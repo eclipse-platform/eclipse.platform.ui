@@ -111,15 +111,15 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.commands.ICommandHandlerService;
-import org.eclipse.ui.commands.ICommandHandlerServiceEvent;
-import org.eclipse.ui.commands.ICommandHandlerServiceListener;
+import org.eclipse.ui.commands.ICommandDelegateService;
+import org.eclipse.ui.commands.ICommandDelegateServiceEvent;
+import org.eclipse.ui.commands.ICommandDelegateServiceListener;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
 import org.eclipse.ui.contexts.IContextManager;
-import org.eclipse.ui.internal.commands.CommandHandlerService;
+import org.eclipse.ui.internal.commands.CommandDelegateService;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.contexts.ContextManager;
@@ -177,8 +177,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 	/* begin command and context support */
 
-	private ICommandHandlerServiceListener commandHandlerServiceListener = new ICommandHandlerServiceListener() {
-		public void commandHandlerServiceChanged(ICommandHandlerServiceEvent commandHandlerServiceEvent) {
+	private ICommandDelegateServiceListener commandDelegateServiceListener = new ICommandDelegateServiceListener() {
+		public void commandDelegateServiceChanged(ICommandDelegateServiceEvent commandDelegateServiceEvent) {
 			updateCommandsAndContexts();
 		}
 	}; 
@@ -261,26 +261,26 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	};
 
 	private IWorkbenchWindow activeWorkbenchWindow;
-	//private ICommandHandlerService activeWorkbenchWindowCommandHandlerService;
+	//private ICommandDelegateService activeWorkbenchWindowCommandDelegateService;
 	//private IContextActivationService activeWorkbenchWindowContextActivationService;
 	private	IWorkbenchPage activeWorkbenchPage;
-	private ICommandHandlerService activeWorkbenchPageCommandHandlerService;
+	private ICommandDelegateService activeWorkbenchPageCommandDelegateService;
 	private	IContextActivationService activeWorkbenchPageContextActivationService;
 	private	IWorkbenchPart activeWorkbenchPart;;
-	private ICommandHandlerService activeWorkbenchPartCommandHandlerService;
+	private ICommandDelegateService activeWorkbenchPartCommandDelegateService;
 	private	IContextActivationService activeWorkbenchPartContextActivationService;
-	private ICommandHandlerService commandHandlerService;
+	private ICommandDelegateService commandDelegateService;
 	private ICommandManager commandManager;
 	private IContextActivationService contextActivationService;
 	private IContextManager contextManager;
 
-	public ICommandHandlerService getCommandHandlerService() {
-		if (commandHandlerService == null) {
-			commandHandlerService = new CommandHandlerService();
-			commandHandlerService.addCommandHandlerServiceListener(commandHandlerServiceListener);
+	public ICommandDelegateService getCommandDelegateService() {
+		if (commandDelegateService == null) {
+			commandDelegateService = new CommandDelegateService();
+			commandDelegateService.addCommandDelegateServiceListener(commandDelegateServiceListener);
 		}
 		
-		return commandHandlerService;
+		return commandDelegateService;
 	}
 
 	public ICommandManager getCommandManager() {
@@ -313,16 +313,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (activeWorkbenchWindow != null && !(activeWorkbenchWindow instanceof WorkbenchWindow))
 			activeWorkbenchWindow = null;
 		
-		//ICommandHandlerService activeWorkbenchWindowCommandHandlerService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getCommandHandlerService() : null;
+		//ICommandDelegateService activeWorkbenchWindowCommandDelegateService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getCommandDelegateService() : null;
 		//IContextActivationService activeWorkbenchWindowContextActivationService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getContextActivationService() : null;
 		
 		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
-		ICommandHandlerService activeWorkbenchPageCommandHandlerService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getCommandHandlerService() : null;
+		ICommandDelegateService activeWorkbenchPageCommandDelegateService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getCommandDelegateService() : null;
 		IContextActivationService activeWorkbenchPageContextActivationService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getContextActivationService() : null;		
 		IPartService activePartService = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService() : null;
 		IWorkbenchPart activeWorkbenchPart = activePartService != null ? activePartService.getActivePart() : null;
 		IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
-		ICommandHandlerService activeWorkbenchPartCommandHandlerService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getCommandHandlerService() : null;
+		ICommandDelegateService activeWorkbenchPartCommandDelegateService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getCommandDelegateService() : null;
 		IContextActivationService activeWorkbenchPartContextActivationService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getContextActivationService() : null;
 
 		if (activeWorkbenchWindow != this.activeWorkbenchWindow) {
@@ -342,58 +342,58 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 
 		/*
-		if (activeWorkbenchWindowCommandHandlerService != this.activeWorkbenchWindowCommandHandlerService) {
-			if (this.activeWorkbenchWindowCommandHandlerService != null)
-				this.activeWorkbenchWindowCommandHandlerService.removeCommandHandlerServiceListener(commandHandlerServiceListener);
+		if (activeWorkbenchWindowCommandDelegateService != this.activeWorkbenchWindowCommandDelegateService) {
+			if (this.activeWorkbenchWindowCommandDelegateService != null)
+				this.activeWorkbenchWindowCommandDelegateService.removeCommandDelegateServiceListener(commandDelegateServiceListener);
 					
 			this.activeWorkbenchWindow = activeWorkbenchWindow;
-			this.activeWorkbenchWindowCommandHandlerService = activeWorkbenchWindowCommandHandlerService;
+			this.activeWorkbenchWindowCommandDelegateService = activeWorkbenchWindowCommandDelegateService;
 
-			if (this.activeWorkbenchWindowCommandHandlerService != null)
-				this.activeWorkbenchWindowCommandHandlerService.addCommandHandlerServiceListener(commandHandlerServiceListener);
+			if (this.activeWorkbenchWindowCommandDelegateService != null)
+				this.activeWorkbenchWindowCommandDelegateService.addCommandDelegateServiceListener(commandDelegateServiceListener);
 		}
 		*/
 		
-		if (activeWorkbenchPageCommandHandlerService != this.activeWorkbenchPageCommandHandlerService) {
-			if (this.activeWorkbenchPageCommandHandlerService != null)
-				this.activeWorkbenchPageCommandHandlerService.removeCommandHandlerServiceListener(commandHandlerServiceListener);
+		if (activeWorkbenchPageCommandDelegateService != this.activeWorkbenchPageCommandDelegateService) {
+			if (this.activeWorkbenchPageCommandDelegateService != null)
+				this.activeWorkbenchPageCommandDelegateService.removeCommandDelegateServiceListener(commandDelegateServiceListener);
 					
 			this.activeWorkbenchPage = activeWorkbenchPage;
-			this.activeWorkbenchPageCommandHandlerService = activeWorkbenchPageCommandHandlerService;
+			this.activeWorkbenchPageCommandDelegateService = activeWorkbenchPageCommandDelegateService;
 
-			if (this.activeWorkbenchPageCommandHandlerService != null)
-				this.activeWorkbenchPageCommandHandlerService.addCommandHandlerServiceListener(commandHandlerServiceListener);
+			if (this.activeWorkbenchPageCommandDelegateService != null)
+				this.activeWorkbenchPageCommandDelegateService.addCommandDelegateServiceListener(commandDelegateServiceListener);
 		}
 
-		if (activeWorkbenchPartCommandHandlerService != this.activeWorkbenchPartCommandHandlerService) {
-			if (this.activeWorkbenchPartCommandHandlerService != null)
-				this.activeWorkbenchPartCommandHandlerService.removeCommandHandlerServiceListener(commandHandlerServiceListener);
+		if (activeWorkbenchPartCommandDelegateService != this.activeWorkbenchPartCommandDelegateService) {
+			if (this.activeWorkbenchPartCommandDelegateService != null)
+				this.activeWorkbenchPartCommandDelegateService.removeCommandDelegateServiceListener(commandDelegateServiceListener);
 					
 			this.activeWorkbenchPart = activeWorkbenchPart;
-			this.activeWorkbenchPartCommandHandlerService = activeWorkbenchPartCommandHandlerService;
+			this.activeWorkbenchPartCommandDelegateService = activeWorkbenchPartCommandDelegateService;
 
-			if (this.activeWorkbenchPartCommandHandlerService != null)
-				this.activeWorkbenchPartCommandHandlerService.addCommandHandlerServiceListener(commandHandlerServiceListener);		
+			if (this.activeWorkbenchPartCommandDelegateService != null)
+				this.activeWorkbenchPartCommandDelegateService.addCommandDelegateServiceListener(commandDelegateServiceListener);		
 		}
 		
-		SortedMap commandHandlersById = new TreeMap();
-		commandHandlersById.putAll(getCommandHandlerService().getCommandHandlersById());
+		SortedMap commandDelegatesById = new TreeMap();
+		commandDelegatesById.putAll(getCommandDelegateService().getCommandDelegatesById());
 
-		//if (this.activeWorkbenchWindowCommandHandlerService != null)
-		//	commandHandlersById.putAll(this.activeWorkbenchWindowCommandHandlerService.getCommandHandlersById());
+		//if (this.activeWorkbenchWindowCommandDelegateService != null)
+		//	commandDelegatesById.putAll(this.activeWorkbenchWindowCommandDelegateService.getCommandDelegatesById());
 
 		if (this.activeWorkbenchWindow != null) {
-			commandHandlersById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getCommandHandlersForGlobalActions());
-			commandHandlersById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getCommandHandlersForActionSets());			
+			commandDelegatesById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getCommandDelegatesForGlobalActions());
+			commandDelegatesById.putAll(((WorkbenchWindow) this.activeWorkbenchWindow).getCommandDelegatesForActionSets());			
 		}
 		
-		if (this.activeWorkbenchPageCommandHandlerService != null)
-			commandHandlersById.putAll(this.activeWorkbenchPageCommandHandlerService.getCommandHandlersById());
+		if (this.activeWorkbenchPageCommandDelegateService != null)
+			commandDelegatesById.putAll(this.activeWorkbenchPageCommandDelegateService.getCommandDelegatesById());
 
-		if (this.activeWorkbenchPartCommandHandlerService != null)
-			commandHandlersById.putAll(this.activeWorkbenchPartCommandHandlerService.getCommandHandlersById());
+		if (this.activeWorkbenchPartCommandDelegateService != null)
+			commandDelegatesById.putAll(this.activeWorkbenchPartCommandDelegateService.getCommandDelegatesById());
 			
-		((CommandManager) getCommandManager()).setCommandHandlersById(commandHandlersById);
+		((CommandManager) getCommandManager()).setCommandDelegatesById(commandDelegatesById);
 
 		/*
 		if (activeWorkbenchWindowContextActivationService != this.activeWorkbenchWindowContextActivationService) {

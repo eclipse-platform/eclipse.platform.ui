@@ -18,12 +18,11 @@ final class HandleEvent implements IHandleEvent {
 
 	private IHandle handle;
 
-	HandleEvent(IHandle handle)
-		throws IllegalArgumentException {		
+	HandleEvent(IHandle handle) {
 		super();
 		
 		if (handle == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.handle = handle;
 	}

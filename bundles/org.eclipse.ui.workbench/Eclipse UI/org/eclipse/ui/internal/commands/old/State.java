@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.util.Util;
 
 public final class State implements Comparable {
 

@@ -19,12 +19,11 @@ final class CommandManagerEvent implements ICommandManagerEvent {
 
 	private ICommandManager commandManager;
 
-	CommandManagerEvent(ICommandManager commandManager)
-		throws IllegalArgumentException {		
+	CommandManagerEvent(ICommandManager commandManager) {
 		super();
 		
 		if (commandManager == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.commandManager = commandManager;
 	}

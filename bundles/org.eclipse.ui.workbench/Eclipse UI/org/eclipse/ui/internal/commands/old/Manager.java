@@ -31,7 +31,8 @@ import org.eclipse.ui.internal.commands.registry.old.SequenceBinding;
 import org.eclipse.ui.internal.commands.util.old.GestureSupport;
 import org.eclipse.ui.internal.commands.util.old.KeySupport;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.commands.util.old.SequenceUtil;
+import org.eclipse.ui.internal.util.Util;
 
 public class Manager {
 
@@ -179,7 +180,7 @@ public class Manager {
 		while (iterator.hasNext()) {
 			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
 			
-			if (!Util.validateSequence(sequenceBinding.getSequence()))
+			if (!SequenceUtil.validateSequence(sequenceBinding.getSequence()))
 				iterator.remove();
 		}
 	}

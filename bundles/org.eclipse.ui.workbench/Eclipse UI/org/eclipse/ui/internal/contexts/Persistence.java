@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
@@ -29,10 +30,9 @@ final class Persistence {
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 
-	static ContextElement readContextElement(IMemento memento, String pluginIdOverride)
-		throws IllegalArgumentException {
+	static IContext readContext(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
-			throw new IllegalArgumentException();			
+			throw new NullPointerException();			
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
@@ -47,55 +47,57 @@ final class Persistence {
 		
 		String parentId = memento.getString(TAG_PARENT_ID);
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return ContextElement.create(description, id, name, parentId, pluginId);
+		return new Context(description, id, name, parentId, pluginId);
 	}
 
-	static List readContextElements(IMemento memento, String name, String pluginIdOverride)
-		throws IllegalArgumentException {		
+	static List readContexts(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
-			throw new IllegalArgumentException();			
+			throw new NullPointerException();			
 	
 		IMemento[] mementos = memento.getChildren(name);
 	
 		if (mementos == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 	
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readContextElement(mementos[i], pluginIdOverride));
+			list.add(readContext(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
 
-	static void writeContextElement(IMemento memento, ContextElement contextElement)
-		throws IllegalArgumentException {
-		if (memento == null || contextElement == null)
-			throw new IllegalArgumentException();
+	static void writeContext(IMemento memento, IContext context) {
+		if (memento == null || context == null)
+			throw new NullPointerException();
 
-		memento.putString(TAG_DESCRIPTION, contextElement.getDescription());
-		memento.putString(TAG_ID, contextElement.getId());
-		memento.putString(TAG_NAME, contextElement.getName());
-		memento.putString(TAG_PARENT_ID, contextElement.getParentId());
-		memento.putString(TAG_PLUGIN_ID, contextElement.getPluginId());
+		memento.putString(TAG_DESCRIPTION, context.getDescription());
+		memento.putString(TAG_ID, context.getId());
+		memento.putString(TAG_NAME, context.getName());
+		memento.putString(TAG_PARENT_ID, context.getParentId());
+		memento.putString(TAG_PLUGIN_ID, context.getPluginId());
 	}
 
-	static void writeContextElements(IMemento memento, String name, List contextElements)
-		throws IllegalArgumentException {
-		if (memento == null || name == null || contextElements == null)
-			throw new IllegalArgumentException();
+	static void writeContexts(IMemento memento, String name, List contexts) {
+		if (memento == null || name == null || contexts == null)
+			throw new NullPointerException();
 		
-		contextElements = new ArrayList(contextElements);
-		Iterator iterator = contextElements.iterator();
-		
-		while (iterator.hasNext()) 
-			if (!(iterator.next() instanceof ContextElement))
+		contexts = new ArrayList(contexts);
+		Iterator iterator = contexts.iterator();
+
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (object == null)
+				throw new NullPointerException();
+			else if (!(iterator.next() instanceof IContext))
 				throw new IllegalArgumentException();
+		}		
 
-		iterator = contextElements.iterator();
+		iterator = contexts.iterator();
 
 		while (iterator.hasNext()) 
-			writeContextElement(memento.createChild(name), (ContextElement) iterator.next());
+			writeContext(memento.createChild(name), (IContext) iterator.next());
 	}
 
 	private Persistence() {

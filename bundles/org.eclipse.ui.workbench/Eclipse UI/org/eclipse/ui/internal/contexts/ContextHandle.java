@@ -27,11 +27,12 @@ final class ContextHandle extends Handle implements IContextHandle {
 		return (IContext) getObject();
 	}
 		
-	public void define(Object object)
-		throws IllegalArgumentException {
-		if (!(object instanceof IContext))
+	public void define(Object object) {
+		if (object == null)
+			throw new NullPointerException();
+		else if (!(object instanceof IContext))
 			throw new IllegalArgumentException();
 			
-		super.define(object);	
+		super.define(object);
 	}
 }

@@ -26,12 +26,19 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class Util {
+public final class Util {
 
 	public final static SortedMap EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap());
 	public final static SortedSet EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet());
 	public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
+	public static void assertInstance(Object object, Class c) {
+		if (object == null || c == null)
+			throw new NullPointerException();
+		else if (!c.isInstance(object))
+			throw new IllegalArgumentException();
+	}
+	
 	public static int compare(Comparable left, Comparable right) {
 		if (left == null && right == null)
 			return 0;	
@@ -96,14 +103,38 @@ public class Util {
 		}
 	}
 
+	public static void diff(Map left, Map right, Set leftOnly, Set different, Set rightOnly) {
+		if (left == null || right == null || leftOnly == null || different == null || rightOnly == null)
+			throw new NullPointerException();
+	
+		Iterator iterator = left.keySet().iterator();
+			
+		while (iterator.hasNext()) {
+			Object key = iterator.next();
+				
+			if (!right.containsKey(key))
+				leftOnly.add(key);
+			else if (!Util.equals(left.get(key), right.get(key)))
+				different.add(key);								
+		}
+	
+		iterator = right.keySet().iterator();
+			
+		while (iterator.hasNext()) {
+			Object key = iterator.next();
+				
+			if (!left.containsKey(key))
+				rightOnly.add(key);		
+		}
+	}
+
 	public static boolean equals(Object left, Object right) {
 		return left == null ? right == null : left.equals(right);
 	}
 
-	public static String getString(ResourceBundle resourceBundle, String key)
-		throws IllegalArgumentException {
+	public static String getString(ResourceBundle resourceBundle, String key) {
 		if (resourceBundle == null || key == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		String value = key;
 
@@ -156,88 +187,78 @@ public class Util {
 		return object != null ? object.hashCode() : 0;	
 	}
 
-	public static List safeCopy(List list, Class c)
-		throws IllegalArgumentException {
+	public static List safeCopy(List list, Class c) {
 		if (list == null || c == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		list = Collections.unmodifiableList(new ArrayList(list));
 		Iterator iterator = list.iterator();
 	
 		while (iterator.hasNext())
-			if (!c.isInstance(iterator.next()))
-				throw new IllegalArgumentException();		
+			assertInstance(iterator.next(), c);
 
 		return list;
 	}
 
-	public static Map safeCopy(Map map, Class keyClass, Class valueClass)
-		throws IllegalArgumentException {
+	public static Map safeCopy(Map map, Class keyClass, Class valueClass) {
 		if (map == null || keyClass == null || valueClass == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		map = Collections.unmodifiableMap(new HashMap(map));
 		Iterator iterator = map.entrySet().iterator();
 	
 		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();			
-			
-			if (!keyClass.isInstance(entry.getKey()) || !valueClass.isInstance(entry.getValue()))
-				throw new IllegalArgumentException();
+			Map.Entry entry = (Map.Entry) iterator.next();
+			assertInstance(entry.getKey(), keyClass);
+			assertInstance(entry.getValue(), valueClass);
 		}
 		
 		return map;
 	}
 
-	public static Set safeCopy(Set set, Class c)
-		throws IllegalArgumentException {
+	public static Set safeCopy(Set set, Class c) {
 		if (set == null || c == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		set = Collections.unmodifiableSet(new HashSet(set));
 		Iterator iterator = set.iterator();
 	
 		while (iterator.hasNext())
-			if (!c.isInstance(iterator.next()))
-				throw new IllegalArgumentException();		
+			assertInstance(iterator.next(), c);
 
 		return set;
 	}
 
-	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass)
-		throws IllegalArgumentException {
+	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass) {
 		if (sortedMap == null || keyClass == null || valueClass == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		sortedMap = Collections.unmodifiableSortedMap(new TreeMap(sortedMap));
 		Iterator iterator = sortedMap.entrySet().iterator();
 	
 		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();			
-			
-			if (!keyClass.isInstance(entry.getKey()) || !valueClass.isInstance(entry.getValue()))
-				throw new IllegalArgumentException();
+			Map.Entry entry = (Map.Entry) iterator.next();
+			assertInstance(entry.getKey(), keyClass);
+			assertInstance(entry.getValue(), valueClass);
 		}
 		
 		return sortedMap;
 	}
 	
-	public static SortedSet safeCopy(SortedSet sortedSet, Class c)
-		throws IllegalArgumentException {
+	public static SortedSet safeCopy(SortedSet sortedSet, Class c) {
 		if (sortedSet == null || c == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		sortedSet = Collections.unmodifiableSortedSet(new TreeSet(sortedSet));
 		Iterator iterator = sortedSet.iterator();
 	
 		while (iterator.hasNext())
-			if (!c.isInstance(iterator.next()))
-				throw new IllegalArgumentException();		
+			assertInstance(iterator.next(), c);
 
 		return sortedSet;
 	}	
 	
-	protected Util() {
+	private Util() {
 		super();
 	}
 }

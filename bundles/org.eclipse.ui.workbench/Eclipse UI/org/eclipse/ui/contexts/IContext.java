@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.contexts;
 
-
 /**
  * <p>
  * JAVADOC

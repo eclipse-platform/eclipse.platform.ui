@@ -28,9 +28,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.ICommandHandlerService;
+import org.eclipse.ui.commands.ICommandDelegateService;
 import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.CommandHandlerService;
+import org.eclipse.ui.internal.commands.CommandDelegateService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 
 /**
@@ -67,7 +67,7 @@ public class PartSite implements IWorkbenchPartSite {
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
 	
-	private ICommandHandlerService handlerService;
+	private ICommandDelegateService handlerService;
 		
 	/**
 	 * EditorContainer constructor comment.
@@ -79,13 +79,13 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 	}
 
-	private ICommandHandlerService commandHandlerService;
+	private ICommandDelegateService commandDelegateService;
 
-	public ICommandHandlerService getCommandHandlerService() {
-		if (commandHandlerService == null) 
-			commandHandlerService = new CommandHandlerService();
+	public ICommandDelegateService getCommandDelegateService() {
+		if (commandDelegateService == null) 
+			commandDelegateService = new CommandDelegateService();
 		
-		return commandHandlerService;
+		return commandDelegateService;
 	}
 	
 	private IContextActivationService contextActivationService;	
@@ -265,7 +265,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getCommandHandlerService(), getContextActivationService());
+			keyBindingService = new KeyBindingService(getCommandDelegateService(), getContextActivationService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();

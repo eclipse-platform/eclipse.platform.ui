@@ -78,7 +78,8 @@ import org.eclipse.ui.internal.commands.registry.old.PreferenceRegistry;
 import org.eclipse.ui.internal.commands.registry.old.SequenceBinding;
 import org.eclipse.ui.internal.commands.util.old.GestureSupport;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.commands.util.old.SequenceUtil;
+import org.eclipse.ui.internal.util.Util;
 
 public class GesturePreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -1070,7 +1071,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 
 	private void selectedButtonChange() {
 		Sequence gestureSequence = getGestureSequence();
-		boolean validGestureSequence = gestureSequence != null && Util.validateSequence(gestureSequence);
+		boolean validGestureSequence = gestureSequence != null && SequenceUtil.validateSequence(gestureSequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String gestureConfigurationId = getGestureConfigurationId();
@@ -1130,7 +1131,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 		boolean commandSelected = command != null;
 
 		Sequence gestureSequence = getGestureSequence();
-		boolean validGestureSequence = gestureSequence != null && Util.validateSequence(gestureSequence);
+		boolean validGestureSequence = gestureSequence != null && SequenceUtil.validateSequence(gestureSequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String gestureConfigurationId = getGestureConfigurationId();

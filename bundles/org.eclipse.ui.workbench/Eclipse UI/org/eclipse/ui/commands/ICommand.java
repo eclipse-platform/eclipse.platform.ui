@@ -11,10 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.SortedSet;
-
-import org.eclipse.ui.handles.NotDefinedException;
-
 /**
  * <p>
  * JAVADOC
@@ -31,100 +27,37 @@ import org.eclipse.ui.handles.NotDefinedException;
 public interface ICommand {
 
 	/**
-	 * Registers an ICommandListener instance with this command.
-	 *
-	 * @param commandListener the ICommandListener instance to register.
-	 * @throws IllegalArgumentException
-	 */	
-	void addCommandListener(ICommandListener commandListener)
-		throws IllegalArgumentException;
-
-	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 * @throws NotDefinedException
 	 */	
-	String getDescription()
-		throws NotDefinedException;
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 * @throws NotHandledException
-	 */	
-	ICommandHandler getCommandHandler()
-		throws NotHandledException;
+	String getCategoryId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	SortedSet getContextBindings();
-	
+	String getDescription();
+		
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	SortedSet getImageBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 */	
-	String getName()
-		throws NotDefinedException;	
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 */	
-	String getParentId()
-		throws NotDefinedException;
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 * @throws NotDefinedException
 	 */	
-	String getPluginId()
-		throws NotDefinedException;
+	String getName();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean isDefined();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isHandled();
-	
-	/**
-	 * Unregisters an ICommandListener instance with this command.
-	 *
-	 * @param commandListener the ICommandListener instance to unregister.
-	 * @throws IllegalArgumentException
-	 */
-	void removeCommandListener(ICommandListener commandListener)
-		throws IllegalArgumentException;
+	String getPluginId();
 }

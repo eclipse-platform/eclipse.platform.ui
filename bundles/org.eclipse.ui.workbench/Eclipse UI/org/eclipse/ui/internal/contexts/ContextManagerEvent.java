@@ -19,12 +19,11 @@ final class ContextManagerEvent implements IContextManagerEvent {
 
 	private IContextManager contextManager;
 
-	ContextManagerEvent(IContextManager contextManager)
-		throws IllegalArgumentException {		
+	ContextManagerEvent(IContextManager contextManager) {
 		super();
 		
 		if (contextManager == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.contextManager = contextManager;
 	}

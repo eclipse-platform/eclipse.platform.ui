@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.util.Util;
 
 public final class Context implements Comparable {
 

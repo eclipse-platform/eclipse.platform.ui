@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.commands.util.old;
 
 import java.util.Arrays;
 
+import org.eclipse.ui.internal.util.Util;
+
 public final class CaptureEvent implements Comparable {
 
 	private final static int HASH_FACTOR = 89;

@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.internal.util.Util;
 
 public final class KeySupport {
 
@@ -167,10 +168,9 @@ public final class KeySupport {
 		return string.toUpperCase();
 	}
 
-	public static String formatSequence(Sequence sequence, boolean localized)
-		throws IllegalArgumentException {
+	public static String formatSequence(Sequence sequence, boolean localized) {
 		if (sequence == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		int i = 0;
 		Iterator iterator = sequence.getStrokes().iterator();
@@ -187,10 +187,9 @@ public final class KeySupport {
 		return stringBuffer.toString();
 	}
 
-	public static String formatStroke(Stroke stroke, boolean localized)
-		throws IllegalArgumentException {
+	public static String formatStroke(Stroke stroke, boolean localized) {
 		if (stroke == null)
-			throw new IllegalArgumentException();		
+			throw new NullPointerException();		
 			
 		StringBuffer stringBuffer = new StringBuffer();
 		int value = stroke.getValue();
@@ -234,10 +233,9 @@ public final class KeySupport {
 		return stringBuffer.toString();				
 	}
 	
-	public static Sequence parseSequence(String string, boolean localized)
-		throws IllegalArgumentException {
+	public static Sequence parseSequence(String string, boolean localized) {
 		if (string == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		List strokes = new ArrayList();
 		StringTokenizer stringTokenizer = new StringTokenizer(string);
@@ -248,10 +246,9 @@ public final class KeySupport {
 		return Sequence.create(strokes);
 	}	
 	
-	public static Stroke parseStroke(String string, boolean localized)
-		throws IllegalArgumentException {
+	public static Stroke parseStroke(String string, boolean localized) {
 		if (string == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		List list = new ArrayList();
 		StringTokenizer stringTokenizer = new StringTokenizer(string, MODIFIER_SEPARATOR, true);

@@ -32,28 +32,25 @@ public interface IContextActivationService {
 	 * JAVADOC
 	 *
 	 * @param contextId
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	void activateContext(String contextId)
-		throws IllegalArgumentException;
+	void activateContext(String contextId);
 
 	/**
 	 * Registers an IContextActivationServiceListener instance with this context activation service.
 	 *
 	 * @param contextActivationServiceListener the IContextActivationServiceListener instance to register.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener)
-		throws IllegalArgumentException;
+	void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener);
 
 	/**
 	 * JAVADOC
 	 *
 	 * @param contextId
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	void deactivateContext(String contextId)
-		throws IllegalArgumentException;
+	void deactivateContext(String contextId);
 		
 	/**
 	 * JAVADOC
@@ -66,8 +63,7 @@ public interface IContextActivationService {
 	 * Unregisters an IContextActivationServiceListener instance with this context activation services.
 	 *
 	 * @param contextActivationServiceListener the IContextActivationServiceListener instance to unregister.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */
-	void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener)
-		throws IllegalArgumentException;
+	void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener);
 }

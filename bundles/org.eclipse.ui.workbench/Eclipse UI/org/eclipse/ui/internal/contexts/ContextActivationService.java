@@ -33,10 +33,9 @@ public final class ContextActivationService implements IContextActivationService
 		super();
 	}
 
-	public void activateContext(String contextId)
-		throws IllegalArgumentException {
+	public void activateContext(String contextId) {
 		if (contextId == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		if (activeContextIds == null)
 			activeContextIds = new TreeSet();
@@ -45,10 +44,9 @@ public final class ContextActivationService implements IContextActivationService
 			fireContextActivationServiceChanged();
 	}
 
-	public void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener)
-		throws IllegalArgumentException {
+	public void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener) {
 		if (contextActivationServiceListener == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		if (contextActivationServiceListeners == null)
 			contextActivationServiceListeners = new ArrayList();
@@ -57,10 +55,9 @@ public final class ContextActivationService implements IContextActivationService
 			contextActivationServiceListeners.add(contextActivationServiceListener);
 	}
 
-	public void deactivateContext(String contextId)
-		throws IllegalArgumentException {
+	public void deactivateContext(String contextId) {
 		if (contextId == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		if (activeContextIds != null && activeContextIds.remove(contextId)) {			
 			if (activeContextIds.isEmpty())
@@ -74,10 +71,9 @@ public final class ContextActivationService implements IContextActivationService
 		return activeContextIds != null ? Collections.unmodifiableSortedSet(activeContextIds) : Util.EMPTY_SORTED_SET;
 	}
 	
-	public void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener)
-		throws IllegalArgumentException {
+	public void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener) {
 		if (contextActivationServiceListener == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		if (contextActivationServiceListeners != null) {
 			contextActivationServiceListeners.remove(contextActivationServiceListener);

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands.registry.old;
 
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.util.Util;
 
 public final class ActiveConfiguration implements Comparable {
 

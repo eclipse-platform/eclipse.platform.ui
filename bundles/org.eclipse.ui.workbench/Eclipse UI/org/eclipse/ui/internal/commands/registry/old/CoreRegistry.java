@@ -128,7 +128,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readActiveGestureConfiguration(IConfigurationElement element) {
-			ActiveConfiguration activeGestureConfiguration = Persistence.readActiveConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			ActiveConfiguration activeGestureConfiguration = Persistence.readActiveConfiguration(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (activeGestureConfiguration != null)
 				activeGestureConfigurations.add(activeGestureConfiguration);	
@@ -137,7 +137,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readActiveKeyConfiguration(IConfigurationElement element) {
-			ActiveConfiguration activeKeyConfiguration = Persistence.readActiveConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			ActiveConfiguration activeKeyConfiguration = Persistence.readActiveConfiguration(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (activeKeyConfiguration != null)
 				activeKeyConfigurations.add(activeKeyConfiguration);	
@@ -146,7 +146,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readCategory(IConfigurationElement element) {
-			Category category = Persistence.readCategory(ConfigurationElementMemento.create(element), getPlugin(element));
+			Category category = Persistence.readCategory(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (category != null)
 				categories.add(category);	
@@ -155,7 +155,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readCommand(IConfigurationElement element) {
-			Command command = Persistence.readCommand(ConfigurationElementMemento.create(element), getPlugin(element));
+			Command command = Persistence.readCommand(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (command != null)
 				commands.add(command);	
@@ -164,7 +164,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readContext(IConfigurationElement element) {
-			Context context = Persistence.readContext(ConfigurationElementMemento.create(element), getPlugin(element));
+			Context context = Persistence.readContext(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (context != null)
 				contexts.add(context);	
@@ -173,7 +173,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readContextBinding(IConfigurationElement element) {
-			ContextBinding contextBinding = Persistence.readContextBinding(ConfigurationElementMemento.create(element), getPlugin(element));
+			ContextBinding contextBinding = Persistence.readContextBinding(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (contextBinding != null)
 				contextBindings.add(contextBinding);	
@@ -182,7 +182,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readGestureBinding(IConfigurationElement element) {
-			SequenceBinding gestureBinding = Persistence.readSequenceBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			SequenceBinding gestureBinding = Persistence.readSequenceBinding(new ConfigurationElementMemento(element), getPlugin(element), RANK_CORE);
 
 			if (gestureBinding != null)
 				gestureBindings.add(gestureBinding);
@@ -191,7 +191,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readGestureConfiguration(IConfigurationElement element) {
-			Configuration gestureConfiguration = Persistence.readConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			Configuration gestureConfiguration = Persistence.readConfiguration(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (gestureConfiguration != null)
 				gestureConfigurations.add(gestureConfiguration);	
@@ -200,7 +200,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readKeyBinding(IConfigurationElement element) {
-			SequenceBinding keyBinding = Persistence.readSequenceBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			SequenceBinding keyBinding = Persistence.readSequenceBinding(new ConfigurationElementMemento(element), getPlugin(element), RANK_CORE);
 
 			if (keyBinding != null)
 				keyBindings.add(keyBinding);
@@ -209,7 +209,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 	
 		private boolean readKeyConfiguration(IConfigurationElement element) {
-			Configuration keyConfiguration = Persistence.readConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			Configuration keyConfiguration = Persistence.readConfiguration(new ConfigurationElementMemento(element), getPlugin(element));
 		
 			if (keyConfiguration != null)
 				keyConfigurations.add(keyConfiguration);	

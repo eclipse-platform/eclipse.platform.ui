@@ -19,7 +19,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.commands.util.old.KeySupport;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
 import org.eclipse.ui.internal.commands.util.old.Stroke;
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
 

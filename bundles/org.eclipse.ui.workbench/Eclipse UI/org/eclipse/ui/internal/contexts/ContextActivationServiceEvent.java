@@ -19,12 +19,11 @@ final class ContextActivationServiceEvent implements IContextActivationServiceEv
 
 	private IContextActivationService contextActivationService;
 
-	ContextActivationServiceEvent(IContextActivationService contextActivationService)
-		throws IllegalArgumentException {		
+	ContextActivationServiceEvent(IContextActivationService contextActivationService) {
 		super();
 		
 		if (contextActivationService == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.contextActivationService = contextActivationService;
 	}

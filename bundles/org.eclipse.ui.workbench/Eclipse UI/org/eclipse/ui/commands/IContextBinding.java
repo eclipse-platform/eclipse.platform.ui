@@ -45,5 +45,5 @@ public interface IContextBinding {
 	 * 
 	 * @return
 	 */	
-	String getPluginId();
+	String getPluginId();		
 }

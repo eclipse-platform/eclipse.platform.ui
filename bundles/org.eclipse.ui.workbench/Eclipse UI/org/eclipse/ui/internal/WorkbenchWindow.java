@@ -416,15 +416,15 @@ public class WorkbenchWindow
 		};
 	}
 
-	private SortedMap commandHandlersForActionSets = new TreeMap();
-	private SortedMap commandHandlersForGlobalActions = new TreeMap(); 
+	private SortedMap commandDelegatesForActionSets = new TreeMap();
+	private SortedMap commandDelegatesForGlobalActions = new TreeMap(); 
 
-	SortedMap getCommandHandlersForActionSets() {
-		return commandHandlersForActionSets;
+	SortedMap getCommandDelegatesForActionSets() {
+		return commandDelegatesForActionSets;
 	}
 	
-	SortedMap getCommandHandlersForGlobalActions() {
-		return commandHandlersForGlobalActions;
+	SortedMap getCommandDelegatesForGlobalActions() {
+		return commandDelegatesForGlobalActions;
 	}
 
 	void updateContextAndHandlerManager() {
@@ -433,7 +433,7 @@ public class WorkbenchWindow
 	}
 
 	void registerActionSets(IActionSet[] actionSets) {
-		commandHandlersForActionSets.clear();
+		commandDelegatesForActionSets.clear();
 		
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
@@ -446,7 +446,7 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						commandHandlersForActionSets.put(command, new ActionHandler(pluginAction));
+						commandDelegatesForActionSets.put(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
@@ -458,7 +458,7 @@ public class WorkbenchWindow
 		String command = globalAction.getActionDefinitionId();
 
 		if (command != null)
-			commandHandlersForGlobalActions.put(command, new ActionHandler(globalAction));
+			commandDelegatesForGlobalActions.put(command, new ActionHandler(globalAction));
 
 		workbench.updateCommandsAndContexts();
 	}
@@ -1179,7 +1179,7 @@ public class WorkbenchWindow
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(workbench.getCommandHandlerService(), workbench.getContextActivationService());
+			keyBindingService = new KeyBindingService(workbench.getCommandDelegateService(), workbench.getContextActivationService());
 			updateActiveActions();
 		}
 

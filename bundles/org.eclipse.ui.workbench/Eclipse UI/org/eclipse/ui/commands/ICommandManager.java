@@ -33,27 +33,41 @@ public interface ICommandManager {
 	 * Registers an ICommandManagerListener instance with this command manager.
 	 *
 	 * @param commandManagerListener the ICommandManagerListener instance to register.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	void addCommandManagerListener(ICommandManagerListener commandManagerListener)
-		throws IllegalArgumentException;
+	void addCommandManagerListener(ICommandManagerListener commandManagerListener);
 
 	/**
 	 * JAVADOC
 	 *
-	 * @param commandId
+	 * @param categoryId
 	 * @return
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	ICommand getCommand(String commandId)
-		throws IllegalArgumentException;
+	ICategoryHandle getCategoryHandle(String categoryId);
 
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedMap getCommandHandlersById();
+	SortedMap getCommandDelegatesById();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @param commandId
+	 * @return
+	 * @throws NullPointerException
+	 */	
+	ICommandHandle getCommandHandle(String commandId);
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	SortedSet getDefinedCategoryIds();
 
 	/**
 	 * JAVADOC
@@ -63,11 +77,42 @@ public interface ICommandManager {
 	SortedSet getDefinedCommandIds();
 	
 	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	SortedSet getDefinedGestureConfigurationIds();	
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	SortedSet getDefinedKeyConfigurationIds();	
+
+	/**
+	 * JAVADOC
+	 *
+	 * @param gestureConfigurationId
+	 * @return
+	 * @throws NullPointerException
+	 */	
+	IGestureConfigurationHandle getGestureConfigurationHandle(String gestureConfigurationId);
+
+	/**
+	 * JAVADOC
+	 *
+	 * @param keyConfigurationId
+	 * @return
+	 * @throws NullPointerException
+	 */	
+	IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId);
+	
+	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.
 	 *
 	 * @param commandManagerListener the ICommandManagerListener instance to unregister.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */
-	void removeCommandManagerListener(ICommandManagerListener commandManagerListener)
-		throws IllegalArgumentException;
+	void removeCommandManagerListener(ICommandManagerListener commandManagerListener);
 }

@@ -78,7 +78,8 @@ import org.eclipse.ui.internal.commands.registry.old.PreferenceRegistry;
 import org.eclipse.ui.internal.commands.registry.old.SequenceBinding;
 import org.eclipse.ui.internal.commands.util.old.KeySupport;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.Util;
+import org.eclipse.ui.internal.commands.util.old.SequenceUtil;
+import org.eclipse.ui.internal.util.Util;
 
 public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -1086,7 +1087,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	private void selectedButtonChange() {
 		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && Util.validateSequence(keySequence);
+		boolean validKeySequence = keySequence != null && SequenceUtil.validateSequence(keySequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();
@@ -1146,7 +1147,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		boolean commandSelected = command != null;
 
 		Sequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && Util.validateSequence(keySequence);
+		boolean validKeySequence = keySequence != null && SequenceUtil.validateSequence(keySequence);
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();

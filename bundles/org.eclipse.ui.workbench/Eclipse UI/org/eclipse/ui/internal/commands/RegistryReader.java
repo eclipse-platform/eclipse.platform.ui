@@ -20,77 +20,98 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICategory;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.IGestureConfiguration;
+import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
-	
-	private List commandElements;
-	private List contextBindingElements;
-	private List imageBindingElements;
+
+	private List categories;	
+	private List commands;
+	private List gestureConfigurations;
+	private List keyConfigurations;
 	private IPluginRegistry pluginRegistry;
-	private List unmodifiableCommandElements;
-	private List unmodifiableContextBindingElements;
-	private List unmodifiableImageBindingElements;
+	private List unmodifiableCategories;
+	private List unmodifiableCommands;
+	private List unmodifiableGestureConfigurations;
+	private List unmodifiableKeyConfigurations;
 	
 	RegistryReader(IPluginRegistry pluginRegistry) {
 		super();	
 		this.pluginRegistry = pluginRegistry;
-		unmodifiableCommandElements = Collections.EMPTY_LIST;
-		unmodifiableContextBindingElements = Collections.EMPTY_LIST;		
-		unmodifiableImageBindingElements = Collections.EMPTY_LIST;
+		unmodifiableCategories = Collections.EMPTY_LIST;
+		unmodifiableCommands = Collections.EMPTY_LIST;
+		unmodifiableGestureConfigurations = Collections.EMPTY_LIST;
+		unmodifiableKeyConfigurations = Collections.EMPTY_LIST;
 	}
 
-	List getCommandElements() {
-		return unmodifiableCommandElements;
-	}
-
-	List getContextBindingElements() {
-		return unmodifiableContextBindingElements;
+	List getCategories() {
+		return unmodifiableCategories;
 	}
 	
-	List getImageBindingElements() {
-		return unmodifiableImageBindingElements;
+	List getCommands() {
+		return unmodifiableCommands;
 	}
 
-	void load() {
-		if (commandElements == null)
-			commandElements = new ArrayList();
-		else 
-			commandElements.clear();
+	List getGestureConfigurations() {
+		return unmodifiableGestureConfigurations;
+	}
 
-		if (contextBindingElements == null)
-			contextBindingElements = new ArrayList();
+	List getKeyConfigurations() {
+		return unmodifiableKeyConfigurations;
+	}
+	
+	void load() {
+		if (categories == null)
+			categories = new ArrayList();
 		else 
-			contextBindingElements.clear();
+			categories.clear();
 			
-		if (imageBindingElements == null)
-			imageBindingElements = new ArrayList();
+		if (commands == null)
+			commands = new ArrayList();
 		else 
-			imageBindingElements.clear();		
+			commands.clear();
+
+		if (gestureConfigurations == null)
+			gestureConfigurations = new ArrayList();
+		else 
+			gestureConfigurations.clear();
+			
+		if (keyConfigurations == null)
+			keyConfigurations = new ArrayList();
+		else 
+			keyConfigurations.clear();
 
 		if (pluginRegistry != null)	
 			readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 			
-		unmodifiableCommandElements = Collections.unmodifiableList(new ArrayList(commandElements));		
-		unmodifiableContextBindingElements = Collections.unmodifiableList(new ArrayList(contextBindingElements));
-		unmodifiableImageBindingElements = Collections.unmodifiableList(new ArrayList(imageBindingElements));
+		unmodifiableCategories = Collections.unmodifiableList(new ArrayList(categories));
+		unmodifiableCommands = Collections.unmodifiableList(new ArrayList(commands));
+		unmodifiableGestureConfigurations = Collections.unmodifiableList(new ArrayList(gestureConfigurations));
+		unmodifiableKeyConfigurations = Collections.unmodifiableList(new ArrayList(keyConfigurations));
 	}
 
 	protected boolean readElement(IConfigurationElement element) {
 		String name = element.getName();
 
+		if (Persistence.TAG_CATEGORY.equals(name))
+			return readCategory(element);
+
 		if (Persistence.TAG_COMMAND.equals(name))
 			return readCommand(element);
 
-		if (Persistence.TAG_CONTEXT_BINDING.equals(name))
-			return readContextBinding(element);
-			
-		if (Persistence.TAG_IMAGE_BINDING.equals(name))
-			return readImageBinding(element);			
+		if (Persistence.TAG_GESTURE_CONFIGURATION.equals(name))
+			return readGestureConfiguration(element);
 
-		return true; // TODO return false once commands extension point is complete
+		if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
+			return readKeyConfiguration(element);
+
+		return true; // TODO
+		//return false;
 	}
 
 	private String getPluginId(IConfigurationElement element) {
@@ -110,29 +131,38 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		return pluginId;
 	}
 
+	private boolean readCategory(IConfigurationElement element) {
+		ICategory category = Persistence.readCategory(new ConfigurationElementMemento(element), getPluginId(element));
+	
+		if (category != null)
+			categories.add(category);	
+		
+		return true;
+	}
+	
 	private boolean readCommand(IConfigurationElement element) {
-		CommandElement commandElement = Persistence.readCommandElement(ConfigurationElementMemento.create(element), getPluginId(element));
+		ICommand command = Persistence.readCommand(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (commandElement != null)
-			commandElements.add(commandElement);	
+		if (command != null)
+			commands.add(command);	
+		
+		return true;
+	}
+
+	private boolean readGestureConfiguration(IConfigurationElement element) {
+		IGestureConfiguration gestureConfiguration = Persistence.readGestureConfiguration(new ConfigurationElementMemento(element), getPluginId(element));
+	
+		if (gestureConfiguration != null)
+			gestureConfigurations.add(gestureConfiguration);	
 		
 		return true;
 	}
 	
-	private boolean readContextBinding(IConfigurationElement element) {
-		ContextBindingElement contextBindingElement = Persistence.readContextBindingElement(ConfigurationElementMemento.create(element), getPluginId(element));
+	private boolean readKeyConfiguration(IConfigurationElement element) {
+		IKeyConfiguration keyConfiguration = Persistence.readKeyConfiguration(new ConfigurationElementMemento(element), getPluginId(element));
 	
-		if (contextBindingElement != null)
-			contextBindingElements.add(contextBindingElement);	
-		
-		return true;
-	}
-	
-	private boolean readImageBinding(IConfigurationElement element) {
-		ImageBindingElement imageBindingElement = Persistence.readImageBindingElement(ConfigurationElementMemento.create(element), getPluginId(element));
-	
-		if (imageBindingElement != null)
-			imageBindingElements.add(imageBindingElement);	
+		if (keyConfiguration != null)
+			keyConfigurations.add(keyConfiguration);	
 		
 		return true;
 	}

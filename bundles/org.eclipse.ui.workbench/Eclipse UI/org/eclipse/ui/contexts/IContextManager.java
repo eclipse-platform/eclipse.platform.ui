@@ -32,10 +32,9 @@ public interface IContextManager {
 	 * Registers an IContextManagerListener instance with this context manager.
 	 *
 	 * @param contextManagerListener the IContextManagerListener instance to register.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	void addContextManagerListener(IContextManagerListener contextManagerListener)
-		throws IllegalArgumentException;
+	void addContextManagerListener(IContextManagerListener contextManagerListener);
 
 	/**
 	 * JAVADOC
@@ -49,10 +48,9 @@ public interface IContextManager {
 	 *
 	 * @param contextId
 	 * @return
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */	
-	IContextHandle getContextHandle(String contextId)
-		throws IllegalArgumentException;
+	IContextHandle getContextHandle(String contextId);
 
 	/**
 	 * JAVADOC
@@ -65,8 +63,7 @@ public interface IContextManager {
 	 * Unregisters an IContextManagerListener instance with this context manager.
 	 *
 	 * @param contextManagerListener the IContextManagerListener instance to unregister.
-	 * @throws IllegalArgumentException
+	 * @throws NullPointerException
 	 */
-	void removeContextManagerListener(IContextManagerListener contextManagerListener)
-		throws IllegalArgumentException;
+	void removeContextManagerListener(IContextManagerListener contextManagerListener);
 }
