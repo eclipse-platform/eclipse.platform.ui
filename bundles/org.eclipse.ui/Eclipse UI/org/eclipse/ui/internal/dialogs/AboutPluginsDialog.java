@@ -378,8 +378,8 @@ public class AboutPluginsDialog extends Dialog {
 		else {
 			// Sort ascending
 			Arrays.sort(info, new Comparator() {
+				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
-					Collator coll = Collator.getInstance(Locale.getDefault());
 					IPluginDescriptor d1, d2;
 					String provider1, provider2, pluginId1, pluginId2;
 					d1 = (IPluginDescriptor) a;
@@ -413,8 +413,8 @@ public class AboutPluginsDialog extends Dialog {
 		else {
 			// Sort ascending
 			Arrays.sort(info, new Comparator() {
+				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
-					Collator coll = Collator.getInstance(Locale.getDefault());
 					IPluginDescriptor d1, d2;
 					String pluginId1, pluginId2;
 					d1 = (IPluginDescriptor) a;
@@ -445,8 +445,8 @@ public class AboutPluginsDialog extends Dialog {
 		else {
 			// Sort ascending
 			Arrays.sort(info, new Comparator() {
+				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
-					Collator coll = Collator.getInstance(Locale.getDefault());
 					IPluginDescriptor d1, d2;
 					String version1, version2, pluginId1, pluginId2;
 					d1 = (IPluginDescriptor) a;
