@@ -2,7 +2,7 @@
 
 <plugin
   name = "AntUI"
-  id="org.eclipse.ant.internal.ui"
+  id="org.eclipse.ant.ui"
   version = "0.0"
   vendor-name = "IBM"
   class="org.eclipse.ant.internal.ui.AntUIPlugin">
