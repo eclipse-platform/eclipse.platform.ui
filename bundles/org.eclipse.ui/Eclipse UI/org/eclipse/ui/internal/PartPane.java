@@ -358,20 +358,11 @@ protected abstract Sashes findSashes();
  * the keyboard to move the specified sash
  */
 protected void moveSash(final Sash sash) {
-	final Control focus = sash.getDisplay().getFocusControl();
 	final KeyListener listener = new KeyAdapter() {
 		public void keyPressed(KeyEvent e) {
-			if ((e.keyCode != SWT.ARROW_DOWN) && 
-	  			 (e.keyCode != SWT.ARROW_UP) && 
-				 (e.keyCode != SWT.ARROW_LEFT) && 
-				 (e.keyCode != SWT.ARROW_RIGHT) &&
-				 (e.keyCode != SWT.ALT) &&
-				 (e.keyCode != SWT.CTRL)) {
-			 		if(control == null || control.isDisposed())
-						getPart().setFocus();
-					else
-						control.setFocus();
-				 }
+			if (e.character == SWT.ESC || e.character == '\r') {
+				getPart().setFocus();
+			}
 		}
 	};
 	sash.addFocusListener(new FocusAdapter() {
