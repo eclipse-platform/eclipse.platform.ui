@@ -44,12 +44,12 @@ public class ConnectionThreadManager {
 	private Vector threads;
 
 	public static class StreamRunnable implements Runnable {
-		private HttpURLConnection urlConnection;
+		private URLConnection urlConnection;
 		private Exception exception;
 		private InputStream is;
 		private boolean disconnected;
 
-		public StreamRunnable(HttpURLConnection urlConnection) {
+		public StreamRunnable(URLConnection urlConnection) {
 			this.urlConnection = urlConnection;
 		}
 
@@ -66,7 +66,8 @@ public class ConnectionThreadManager {
 		}
 
 		public void disconnect() {
-			urlConnection.disconnect();
+			if (urlConnection instanceof HttpURLConnection)
+				((HttpURLConnection)urlConnection).disconnect();
 			disconnected = true;
 		}
 

@@ -16,6 +16,7 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 
 public class OtherResponse implements Response {
+	private static final long POLLING_INTERVAL = 200;
 	protected URL url;
 	protected InputStream in;
 	protected URLConnection connection;
@@ -23,11 +24,12 @@ public class OtherResponse implements Response {
 
 	public OtherResponse(URL url) throws IOException {
 		this.url = url;
-		connection = url.openConnection();
+//		connection = url.openConnection();
 	}
 
 	public InputStream getInputStream() throws IOException {
 		if (in == null && url != null) {
+			connection = url.openConnection();
 			in = connection.getInputStream();
 			this.lastModified = connection.getLastModified();
 		}
@@ -38,11 +40,26 @@ public class OtherResponse implements Response {
 	 */
 	public InputStream getInputStream(IProgressMonitor monitor)
 		throws IOException, CoreException {
-		return getInputStream();
+		if (in == null && url != null) {
+			connection = url.openConnection();
+
+			if (monitor != null) {
+				this.in =
+					openStreamWithCancel(connection, monitor);
+			} else {
+				this.in = connection.getInputStream();
+			}
+			if (in != null) {
+				this.lastModified = connection.getLastModified();
+			}
+		}
+		return in;
 	}
 
 	public long getContentLength() {
-		return connection.getContentLength();
+		if (connection != null)
+			return connection.getContentLength();
+		return 0;
 	}
 
 	public int getStatusCode() {
@@ -54,9 +71,47 @@ public class OtherResponse implements Response {
 	}
 
 	public long getLastModified() {
-		if (lastModified == 0) {
+		if (lastModified == 0 && connection != null) {
 			lastModified = connection.getLastModified();
 		}
 		return lastModified;
 	}
+	
+	private InputStream openStreamWithCancel(
+			URLConnection urlConnection,
+			IProgressMonitor monitor)
+			throws IOException, CoreException {
+			ConnectionThreadManager.StreamRunnable runnable =
+				new ConnectionThreadManager.StreamRunnable(urlConnection);
+			Thread t =
+				UpdateCore.getPlugin().getConnectionManager().createThread(
+					runnable);
+			t.start();
+			InputStream is = null;
+			try {
+				for (;;) {
+					if (monitor.isCanceled()) {
+						runnable.disconnect();
+						break;
+					}
+					if (runnable.getInputStream() != null) {
+						is = runnable.getInputStream();
+						break;
+					}
+					if (runnable.getException() != null) {
+						if (runnable.getException() instanceof IOException)
+							throw (IOException) runnable.getException();
+						else
+							throw new CoreException(new Status(IStatus.ERROR,
+									UpdateCore.getPlugin().getBundle()
+											.getSymbolicName(), IStatus.OK,
+									runnable.getException().getMessage(), runnable
+											.getException()));
+					}
+					t.join(POLLING_INTERVAL);
+				}
+			} catch (InterruptedException e) {
+			}
+			return is;
+		}
 }

@@ -49,9 +49,7 @@ public class HttpResponse implements Response {
 
 			if (monitor != null) {
 				this.in =
-					openStreamWithCancel(
-						(HttpURLConnection) connection,
-						monitor);
+					openStreamWithCancel(connection, monitor);
 			} else {
 				this.in = connection.getInputStream();
 			}
@@ -73,6 +71,11 @@ public class HttpResponse implements Response {
 	}
 
 	public int getStatusCode() {
+		if (connection == null)
+			try {
+				connection = url.openConnection();
+			} catch (IOException e) {
+			}
 		if (connection != null) {
 			try {
 				return ((HttpURLConnection) connection).getResponseCode();
@@ -108,7 +111,7 @@ public class HttpResponse implements Response {
 	}
 
 	private InputStream openStreamWithCancel(
-		HttpURLConnection urlConnection,
+		URLConnection urlConnection,
 		IProgressMonitor monitor)
 		throws IOException, CoreException {
 		ConnectionThreadManager.StreamRunnable runnable =
