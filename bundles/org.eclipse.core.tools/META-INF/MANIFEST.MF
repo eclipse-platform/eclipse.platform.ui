@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-Name: Core Tools
+Bundle-SymbolicName: org.eclipse.core.tools; singleton=true
+Bundle-Version: 1.1.0.qualifier
+Bundle-ClassPath: coretools.jar,
+ tools.jar
+Bundle-Activator: org.eclipse.core.tools.CoreToolsPlugin
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: plugin
+Provide-Package: org.eclipse.core.tools,
+ org.eclipse.core.tools.runtime
+Require-Bundle: org.eclipse.core.resources;optional=true,
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.ui,
+ org.eclipse.ui.workbench.texteditor
+Eclipse-AutoStart: true

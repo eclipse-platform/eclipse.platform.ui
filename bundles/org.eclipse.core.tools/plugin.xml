@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+<!--  Perspectives -->
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Plug-in Dependency Perspective"
+            icon="icons/req_plugins_obj.gif"
+            class="org.eclipse.core.tools.runtime.PluginDependencyPerspective"
+            id="org.eclipse.core.tools.runtime.PluginDependencyPerspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Runtime Spy"
+            icon="icons/zoom.gif"
+            class="org.eclipse.core.tools.runtime.RuntimeSpyPerspective"
+            id="org.eclipse.core.tools.runtime.RuntimeSpyPerspective">
+      </perspective>
+   </extension>
+<!-- Runtime Views -->
+   <extension point="org.eclipse.ui.views">
+      <category name="Runtime Tools" id="org.eclipse.core.tools.runtime"/>
+      <view
+            name="Activated Plugins"
+            icon="icons/plugin.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.ActivePluginsView"
+            id="org.eclipse.core.tools.runtime.ActivePluginsView"/>
+      <view
+            name="Loaded Classes"
+            icon="icons/classes.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.LoadedClassesView"
+            id="org.eclipse.core.tools.runtime.LoadedClassesView"/>
+      <view
+            name="Plugin Datasheet"
+            icon="icons/datasheet.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.PluginDataSheetView"
+            id="org.eclipse.core.tools.runtime.PluginDataSheetView"/>
+      <view
+            name="Stack Trace View"
+            icon="icons/trace.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.StackTraceView"
+            id="org.eclipse.core.tools.runtime.StackTraceView"/>
+      <view
+            name="Plug-in Dependency Spy"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.PluginDependencyView"
+            id="org.eclipse.core.tools.runtime.PluginDependencyView"/>
+      <view
+            name="Plug-in List Spy"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.PluginListView"
+            id="org.eclipse.core.tools.runtime.PluginListView"/>
+      <view
+            name="Eclipse Preferences"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.EclipsePreferencesView"
+            id="org.eclipse.core.tools.runtime.EclipsePreferencesView"/>
+      <view
+            name="Eclipse Preference Stats Spy"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.PreferenceStatsView"
+            id="org.eclipse.core.tools.runtime.PreferenceStatsView"/>
+   </extension>
+
+</plugin>
