@@ -50,7 +50,7 @@ public class IntroPartTest extends IWorkbenchPartTest {
      */
     protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
-		page.getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro((IIntroPart) part);            
+		assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro((IIntroPart) part));            
     }
     
 	public void testOpenAndClose() throws Throwable {
@@ -84,6 +84,7 @@ public class IntroPartTest extends IWorkbenchPartTest {
         assertTrue(Arrays.equals(descImage.getImageData().data, partImage.getImageData().data));
         if (descImage != null)
             descImage.dispose();
+        closePart(fPage, part);
 	}
     
     

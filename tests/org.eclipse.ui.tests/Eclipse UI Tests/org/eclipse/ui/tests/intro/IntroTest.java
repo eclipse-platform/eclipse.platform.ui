@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.intro;
 
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -46,7 +48,7 @@ public class IntroTest extends UITestCase {
         part = introManager.showIntro(window, true);
         assertNotNull(part);
         assertTrue(introManager.isIntroStandby(part));
-        introManager.closeIntro(part);
+        assertTrue(introManager.closeIntro(part));
         assertNull(introManager.getIntro());
 	}
     
@@ -56,7 +58,29 @@ public class IntroTest extends UITestCase {
         assertNotNull(part);
         assertFalse(workbench.getIntroManager().isIntroStandby(part));
         workbench.getIntroManager().setIntroStandby(part, true);
-        assertTrue(workbench.getIntroManager().isIntroStandby(part));        
+        assertTrue(workbench.getIntroManager().isIntroStandby(part)); 
+        assertTrue(workbench.getIntroManager().closeIntro(part));
+        assertNull(workbench.getIntroManager().getIntro());
+    }
+    
+    /**
+     * Open the intro, change perspective, close the intro (ensure it still 
+     * exists), change back to the first perspective, close the intro, ensure 
+     * that it no longer exists.
+     */
+    public void testPerspectiveChange() {
+        IWorkbench workbench = window.getWorkbench();          
+        IIntroPart part = workbench.getIntroManager().showIntro(window, false);
+        assertNotNull(part);        
+        IWorkbenchPage activePage = window.getActivePage();
+        IPerspectiveDescriptor oldDesc = activePage.getPerspective();
+		activePage.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.SessionPerspective"));
+        assertFalse(workbench.getIntroManager().closeIntro(part));
+        assertNotNull(workbench.getIntroManager().getIntro());
+        
+        activePage.setPerspective(oldDesc);
+        assertTrue(workbench.getIntroManager().closeIntro(part));
+        assertNull(workbench.getIntroManager().getIntro());
     }
     
     public void testPerspectiveReset() {
@@ -73,6 +97,8 @@ public class IntroTest extends UITestCase {
         part = workbench.getIntroManager().getIntro();
         assertNotNull(part);
         assertTrue(workbench.getIntroManager().isIntroStandby(part));
+        assertTrue(workbench.getIntroManager().closeIntro(part));
+        assertNull(workbench.getIntroManager().getIntro());
     }    
     
     /* (non-Javadoc)
@@ -80,10 +106,10 @@ public class IntroTest extends UITestCase {
      */
     protected void doSetUp() throws Exception {
         super.doSetUp();
-        window = openTestWindow();
         oldDesc = Workbench.getInstance().getIntroDescriptor();
         IntroDescriptor testDesc = (IntroDescriptor)WorkbenchPlugin.getDefault().getIntroRegistry().getIntro("org.eclipse.ui.testintro");
-        Workbench.getInstance().setIntroDescriptor(testDesc);        
+        Workbench.getInstance().setIntroDescriptor(testDesc);
+        window = openTestWindow();
     }
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()

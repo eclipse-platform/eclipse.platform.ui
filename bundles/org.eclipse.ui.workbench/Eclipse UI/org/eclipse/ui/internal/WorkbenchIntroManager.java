@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -53,11 +54,19 @@ public class WorkbenchIntroManager implements IIntroManager {
 	public boolean closeIntro(IIntroPart part) {
 		if (introPart == null || !introPart.equals(part))
 			return false;
-		introPart = null;
 
         IViewPart introView = getViewIntroAdapterPart();
 		if (introView != null) {
-			getViewIntroAdapterPart().getSite().getPage().hideView(introView);
+			//assumption is that there is only ever one intro per workbench
+			//if we ever support one per window then this will need revisiting
+			IWorkbenchPage page = introView.getSite().getPage();
+			IViewReference reference = page.findViewReference(IIntroConstants.INTRO_VIEW_ID);
+			page.hideView(introView);			
+			if (reference == null || reference.getPart(false) == null) {
+				introPart = null;
+				return true;
+			}
+			return false;
 		}
 		return true;
 	}

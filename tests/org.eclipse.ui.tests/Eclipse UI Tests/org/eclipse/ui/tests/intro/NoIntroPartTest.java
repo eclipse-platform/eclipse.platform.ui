@@ -16,7 +16,6 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
-import org.eclipse.ui.tests.api.MockWorkbenchPart;
 
 
 /**
@@ -38,7 +37,7 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
      * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#openPart(org.eclipse.ui.IWorkbenchPage)
      */
     protected MockPart openPart(IWorkbenchPage page) throws Throwable {
-        return (MockWorkbenchPart)page.getWorkbenchWindow().getWorkbench().getIntroManager().showIntro(page.getWorkbenchWindow(), false);
+        return (MockPart)page.getWorkbenchWindow().getWorkbench().getIntroManager().showIntro(page.getWorkbenchWindow(), false);
     }
 
     /* (non-Javadoc)
@@ -46,7 +45,7 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
      */
     protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
-		page.getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro((IIntroPart) part);            
+		assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro((IIntroPart) part));            
     }
     
     
