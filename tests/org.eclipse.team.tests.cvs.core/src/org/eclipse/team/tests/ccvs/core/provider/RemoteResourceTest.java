@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -48,7 +49,7 @@ public class RemoteResourceTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(RemoteResourceTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new RemoteResourceTest("testFileRevisions"));
+		//return new CVSTestSetup(new RemoteResourceTest("testExists"));
 	}
 	
 	protected void assertRemoteMatchesLocal(String message, RemoteFolder remote, IContainer container) throws CVSException, IOException, CoreException {
@@ -280,12 +281,20 @@ public class RemoteResourceTest extends EclipseTest {
 		assertEquals(Path.EMPTY, remote, v2, false);
 	 }
 	 
-	 public void testExists() throws TeamException, CoreException, IOException {
+	 public void testExists() throws TeamException, CoreException, IOException, InterruptedException {
 	 	IProject project = createProject("testExists", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
-	 	ICVSRemoteResource resource = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
-	 	assertTrue(resource.exists(DEFAULT_MONITOR));
-	 	resource = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder2/folder3/"));
-	 	assertTrue(resource.exists(DEFAULT_MONITOR));
+	 	ICVSRemoteResource resource1 = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
+	 	assertTrue(resource1.exists(DEFAULT_MONITOR));
+	 	ICVSRemoteResource resource2 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder2/folder3/"));
+	 	assertTrue(resource2.exists(DEFAULT_MONITOR));
+	 	deleteResources(project, new String[] {"file1.txt", "folder2/folder3/b.txt", "folder2/folder3/c.txt" }, true);
+	 	assertTrue( ! resource1.exists(DEFAULT_MONITOR));
+	 	assertTrue(resource2.exists(DEFAULT_MONITOR));
+	 	if (CVSTestSetup.INITIALIZE_REPO) {
+	 		CVSTestSetup.executeRemoteCommand(getRepository(), "rm -rf " + ((ICVSFolder)resource2).getFolderSyncInfo().getRemoteLocation());
+	 		assertTrue( ! resource2.exists(DEFAULT_MONITOR));
+	 	}
+	 	
 	 }
 }
 
