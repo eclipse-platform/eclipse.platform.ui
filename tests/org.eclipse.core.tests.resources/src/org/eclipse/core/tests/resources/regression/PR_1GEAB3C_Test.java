@@ -47,6 +47,9 @@ public class PR_1GEAB3C_Test extends ResourceTest {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		//ensure background work is done before adding verifier
+		waitForBuild();
+		waitForRefresh();
 		verifier = new ResourceDeltaVerifier();
 		getWorkspace().addResourceChangeListener(verifier);
 	}
