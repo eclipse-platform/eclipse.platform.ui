@@ -52,7 +52,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	}
 
 	protected RegistryCacheReader createRegistryReader(File cacheFile) {
-		return new RegistryCacheReader(cacheFile, new MultiStatus(Platform.PI_RUNTIME, 0, "", null), false);
+		return new RegistryCacheReader(cacheFile, new MultiStatus(Platform.PI_RUNTIME, 0, "", null), false, true);
 	}
 
 	/**

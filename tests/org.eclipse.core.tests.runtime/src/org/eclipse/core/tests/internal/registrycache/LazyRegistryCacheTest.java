@@ -23,7 +23,7 @@ public class LazyRegistryCacheTest extends RegistryCacheTest {
 	}
 
 	protected RegistryCacheReader createRegistryReader(File cacheFile) {
-		return new RegistryCacheReader(cacheFile, new MultiStatus(Platform.PI_RUNTIME, 0, "", null), true);
+		return new RegistryCacheReader(cacheFile, new MultiStatus(Platform.PI_RUNTIME, 0, "", null), true, true);
 	}
 
 	public static Test suite() {
