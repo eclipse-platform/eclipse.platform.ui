@@ -19,6 +19,7 @@ import org.eclipse.ui.tests.api.ApiTestSuite;
 import org.eclipse.ui.tests.commands.CommandsTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
+import org.eclipse.ui.tests.deadlock.NestedSyncExecDeadlockTest;
 import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.dnd.DragTestSuite;
@@ -53,6 +54,7 @@ public class UiTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UiTestSuite() {
+    	addTest(new TestSuite(NestedSyncExecDeadlockTest.class));
         addTest(new ApiTestSuite());
         addTest(new UIAutomatedSuite());
         addTest(new PropertySheetTestSuite());

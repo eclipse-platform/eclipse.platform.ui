@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Jeremiah Lott (jeremiah.lott@timesys.com) - fix for deadlock bug 76378
+ *     
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -138,6 +140,9 @@ public class UILockListener extends LockListener {
     void doPendingWork() {
         Semaphore work;
         while ((work = pendingWork.remove()) != null) {
+        	//remember the old current work before replacing, to handle
+        	//the nested waiting case (bug 76378)
+        	Semaphore oldWork = currentWork;
             try {
                 currentWork = work;
                 Runnable runnable = work.getRunnable();
@@ -145,7 +150,7 @@ public class UILockListener extends LockListener {
                     runnable.run();
 
             } finally {
-                currentWork = null;
+                currentWork = oldWork;
                 work.release();
             }
         }
