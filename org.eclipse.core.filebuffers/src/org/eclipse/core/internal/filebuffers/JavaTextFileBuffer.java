@@ -315,7 +315,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	}
 
 	protected void cacheEncodingState(IProgressMonitor monitor) {
-		fEncoding= null;
+		fEncoding= fExplicitEncoding;
 		fHasBOM= false;
 		
 		InputStream stream= getFileContents(monitor);
@@ -324,8 +324,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
 				if (description != null) {
-					fEncoding= description.getCharset();
 					fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
+					if (fEncoding == null)
+						fEncoding= description.getCharset();
 				}
 			} catch (IOException e) {
 				// do nothing
