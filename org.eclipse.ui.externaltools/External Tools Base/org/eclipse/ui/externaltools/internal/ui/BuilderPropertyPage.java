@@ -476,7 +476,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * if the user cancelled.
 	 */
 	private ILaunchConfigurationType promptForConfigurationType() {
-		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
 
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), debugModelPresentation);
 		dialog.setElements(externalToolTypes.toArray());

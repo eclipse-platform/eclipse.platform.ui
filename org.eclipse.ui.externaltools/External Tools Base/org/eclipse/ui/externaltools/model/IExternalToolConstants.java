@@ -252,9 +252,17 @@ public interface IExternalToolConstants {
 
 	// ------- Launch configuration category --------
 	/**
-	 * Identifier for external tools launch configuration category
+	 * Identifier for external tools launch configuration category. Launch
+	 * configuration types for external tools that appear in the external tools
+	 * launch configuration dialog should belong to this category.
 	 */
 	public static final String ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY = "org.eclipse.ui.externaltools"; //$NON-NLS-1$
+	/**
+	 * Identifier for external tools launch configuration builders category.
+	 * Launch configuration types that can be added as project builders should
+	 * belong to this category.
+	 */
+	public static final String ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY = "org.eclipse.ui.externaltools.builder"; //$NON-NLS-1$
 
 	// ------- Launch configuration groups --------
 	/**
