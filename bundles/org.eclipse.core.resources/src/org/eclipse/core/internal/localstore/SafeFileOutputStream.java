@@ -1,5 +1,5 @@
 package org.eclipse.core.internal.localstore;
-
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -76,9 +76,6 @@ protected void createTempFile(String tempPath) throws IOException {
 	if (tempPath == null)
 		tempPath = target.getAbsolutePath() + EXTENSION;
 	temp = new File(tempPath);
-}
-protected void finalize() throws Throwable {
-	close();
 }
 public void flush() throws IOException {
 	try {
