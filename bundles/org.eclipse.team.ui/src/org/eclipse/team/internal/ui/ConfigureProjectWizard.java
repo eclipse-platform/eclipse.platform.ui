@@ -70,6 +70,12 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		mainPage.setWorkbench(workbench);
 		addPage(mainPage);
 	}
+	public IWizardPage getNextPage(IWizardPage page) {
+		if (wizard != null) {
+			return wizard.getNextPage(page);
+		}
+		return super.getNextPage(page);
+	}
 	public boolean canFinish() {
 		// If we are on the first page, never allow finish unless the selected wizard has no pages.
 		if (getContainer().getCurrentPage() == mainPage) {
@@ -77,6 +83,9 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return true;
 			}
 			return false;
+		}
+		if (wizard != null) {
+			return wizard.canFinish();
 		}
 		return super.canFinish();
 	}
