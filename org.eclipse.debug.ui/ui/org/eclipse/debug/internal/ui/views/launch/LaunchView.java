@@ -224,7 +224,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 			}
 		});
-		lv.setContentProvider(new DeferredContentProvider(lv, getSite()));
+		lv.setContentProvider(new DebugViewContentProvider(lv, getSite()));
 		final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
 		DebugViewDecoratingLabelProvider labelProvider= new DebugViewDecoratingLabelProvider(lv, new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
 		lv.setLabelProvider(labelProvider);

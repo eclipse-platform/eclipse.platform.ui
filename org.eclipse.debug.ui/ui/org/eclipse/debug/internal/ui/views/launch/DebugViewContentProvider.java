@@ -12,19 +12,41 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 /**
- * DebugWorkbenchContentProvider
+ * Provides deferred content for the debug view.
+ * @since 3.1
  */
 public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
+    
+    private DeferredTreeContentManager fManager;
+    
+    public DebugViewContentProvider(AbstractTreeViewer tree, IWorkbenchPartSite site) {
+        fManager = new DeferredTreeContentManager(this, tree, site);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+     */
+    public Object[] getChildren(Object parentElement) {
+        Object[] children = fManager.getChildren(parentElement);
+        if (children == null) {
+            children = super.getChildren(parentElement);
+        }
+        return children;
+    }
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
@@ -65,4 +87,13 @@ public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
         }
 		return super.hasChildren(element);
 	}    
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+     */
+    public void dispose() {
+        fManager.cancel(DebugPlugin.getDefault().getLaunchManager());
+        super.dispose();
+    }
+
 }
