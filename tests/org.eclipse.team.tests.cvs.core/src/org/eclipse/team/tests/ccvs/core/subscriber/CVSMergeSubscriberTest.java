@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -24,7 +25,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
@@ -397,10 +400,10 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	}
 	
 	/*Bug 53129  
-	   Outgoing deletions in deleted folders are lost 
+	   Outgoing deletions in deleted folders are lost.
 	 */
-	public void testBug53129Outgoingdeletionsindeletedfoldersarelost() throws TeamException, CoreException, InvocationTargetException, InterruptedException {		
-		/*IProject project = createProject("testBug53129", new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+	public void testOutgoingDeletionAfterMergeBug53129() throws TeamException, CoreException, InvocationTargetException, InterruptedException {		
+		IProject project = createProject("testBug53129", new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
 		commitProject(project);
 		
@@ -435,12 +438,12 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		f.delete(true, null);
 		
 		assertSyncEquals("testBug53129 - 3", getWorkspaceSubscriber(), project, 
-				new String[]{"file1.txt", "folder1", "folder1/a.txt", "folder1/b.txt"}, true, 
+				new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"}, true, 
 				new int[]{
 						SyncInfo.IN_SYNC, 
+						SyncInfo.IN_SYNC,
 						SyncInfo.OUTGOING | SyncInfo.DELETION,
-						SyncInfo.OUTGOING | SyncInfo.DELETION,
-						SyncInfo.OUTGOING | SyncInfo.DELETION});*/
+						SyncInfo.OUTGOING | SyncInfo.DELETION});
 	}
 	
 	public void testDisconnectingProject() throws CoreException, IOException, TeamException, InterruptedException {
