@@ -94,7 +94,10 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	 * to search for duplicate source elements
 	 */
 	protected boolean isFindDuplicates() {
-		return getDirector().isFindDuplicates();
+		if (getDirector() != null) {
+			return getDirector().isFindDuplicates();
+		}
+		return false;
 	}
 	
 	/**
