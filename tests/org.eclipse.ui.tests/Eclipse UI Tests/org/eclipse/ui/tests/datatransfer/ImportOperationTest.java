@@ -147,7 +147,6 @@ public class ImportOperationTest
 	
 	public void testImportSource() throws Exception {
 		project = FileUtil.createProject("ImportSource");
-		File element = new File(localDirectory);
 		ImportOperation operation =
 			new ImportOperation(
 				project.getFullPath(),

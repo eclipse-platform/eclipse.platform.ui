@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A multi-page editor is an editor with multiple pages, each of which may
@@ -478,8 +479,30 @@ protected void setControl(int pageIndex, Control control) {
  */
 public void setFocus() {
 	int index = getActivePage();
-	if (index != -1)
+	IKeyBindingService service = getSite().getKeyBindingService();
+	if (index == -1) {
+		// There is no selected page, so deactivate the active service.
+		if (service instanceof INestableKeyBindingService) {
+			INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+			nestableService.activateKeyBindingService(null);
+		} else {
+			WorkbenchPlugin.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	} else {
+		// There is no selected page, so deactivate the active service.
+		if (service instanceof INestableKeyBindingService) {
+			INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+			IEditorPart editorPart = getEditor(index);
+			if (editorPart != null) {
+				nestableService.activateKeyBindingService(editorPart.getEditorSite());
+			} else {
+				nestableService.activateKeyBindingService(null);
+			}
+		} else {
+			WorkbenchPlugin.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		setFocus(index);
+	}
 }
 /**
  * Sets focus to the control for the given page.

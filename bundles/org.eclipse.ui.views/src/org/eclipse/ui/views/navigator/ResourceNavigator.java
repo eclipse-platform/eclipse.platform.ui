@@ -25,17 +25,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -58,7 +47,18 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -107,6 +107,8 @@ public class ResourceNavigator
 	private ResourceWorkingSetFilter workingSetFilter =
 		new ResourceWorkingSetFilter();
 	private boolean linkingEnabled;
+	private boolean dragDetected;
+	private Listener dragDetectListener;
 
 	/** 
 	 * Settings constant for section name (value <code>ResourceNavigator</code>).
@@ -407,6 +409,10 @@ public class ResourceNavigator
 		if (getActionGroup() != null) {
 			getActionGroup().dispose();
 		}
+		Control control = viewer.getControl();
+		if (dragDetectListener != null && control != null && control.isDisposed() == false) {
+			control.removeListener(SWT.DragDetect, dragDetectListener);
+		}
 		super.dispose();
 	}
 
@@ -427,8 +433,11 @@ public class ResourceNavigator
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			IFile file = fileInput.getFile();
 			ISelection newSelection = new StructuredSelection(file);
-			if (!getTreeViewer().getSelection().equals(newSelection)) {
-				getTreeViewer().setSelection(newSelection);
+			if (getTreeViewer().getSelection().equals(newSelection)) {
+				getTreeViewer().getTree().showSelection();
+			}
+			else {
+				getTreeViewer().setSelection(newSelection, true);
 			}
 		}
 	}
@@ -640,10 +649,21 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
-		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+		final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
 		updateActionBars(sel);
-		linkToEditor(sel);
+		dragDetected = false;
+		if (isLinkingEnabled()) {
+			getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (dragDetected == false) {
+						// only synchronize with editor when the selection is not the result 
+						// of a drag. Fixes bug 22274.
+						linkToEditor(sel);
+					}
+				}
+			});
+		}
 	}
 
 	/**
@@ -695,6 +715,12 @@ public class ResourceNavigator
 		NavigatorDropAdapter adapter = new NavigatorDropAdapter(viewer);
 		adapter.setFeedbackEnabled(false);
 		viewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, adapter);
+		dragDetectListener = new Listener() {
+			public void handleEvent(Event event) {
+				dragDetected = true;
+			}
+		};
+		viewer.getControl().addListener(SWT.DragDetect, dragDetectListener);
 	}
 
 	/**
@@ -820,7 +846,7 @@ public class ResourceNavigator
 			IMemento children[] = filtersMem.getChildren(TAG_FILTER);
 
 			// check if first element has new tag defined, indicates new version
-			if (children[0].getString(TAG_IS_ENABLED) != null) { 
+			if (children.length > 0 && children[0].getString(TAG_IS_ENABLED) != null) { 
 				ArrayList selectedFilters = new ArrayList();
 				ArrayList unSelectedFilters = new ArrayList();
 				for (int i = 0; i < children.length; i++) {
@@ -882,7 +908,9 @@ public class ResourceNavigator
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 				for (int i = 0; i < elementMem.length; i++) {
 					Object element = container.findMember(elementMem[i].getString(TAG_PATH));
-					elements.add(element);
+					if (element != null) {
+						elements.add(element);
+					}
 				}
 				viewer.setExpandedElements(elements.toArray());
 			}
@@ -892,7 +920,9 @@ public class ResourceNavigator
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 				for (int i = 0; i < elementMem.length; i++) {
 					Object element = container.findMember(elementMem[i].getString(TAG_PATH));
-					list.add(element);
+					if (element != null) {
+						list.add(element);
+					}
 				}
 				viewer.setSelection(new StructuredSelection(list));
 			}

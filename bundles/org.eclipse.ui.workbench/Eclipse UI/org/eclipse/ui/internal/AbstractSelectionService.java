@@ -293,8 +293,11 @@ public void partOpened(IWorkbenchPart part) {
  * Notifies the listener that a part has been opened.
  */
 public void partInputChanged(IWorkbenchPart part) {
-	reset();
-	partActivated(part);
+	// 36501 - only process if part is active
+	if (activePart == part) {
+		reset();
+		partActivated(part);
+	}
 }
 /**
  * Resets the service.  The active part and selection provider are

@@ -13,7 +13,6 @@ package org.eclipse.jface.viewers;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -23,11 +22,15 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * A cell editor that manages a text entry field.
@@ -132,10 +135,15 @@ private void checkSelection() {
  */
 protected Control createControl(Composite parent) {
 	text = new Text(parent, getStyle());
+    text.addSelectionListener(new SelectionAdapter() {
+            public void widgetDefaultSelected(SelectionEvent e) {
+                handleDefaultSelection(e);
+            }   
+        });    
 	text.addKeyListener(new KeyAdapter() {
 		// hook key pressed - see PR 14201  
 		public void keyPressed(KeyEvent e) {
-			keyReleaseOccured(e);
+            keyReleaseOccured(e);
 			// as a result of processing the above call, clients may have
 			// disposed this cell editor
 			if ((getControl() == null) || getControl().isDisposed())
@@ -252,6 +260,20 @@ private ModifyListener getModifyListener() {
 	}
 	return modifyListener;
 }
+
+/**
+ * Handles a default selection event from the text control by applying the editor
+ * value and deactivating this cell editor.
+ * 
+ * @param event the selection event
+ * 
+ * @since 3.0
+ */
+protected void handleDefaultSelection(SelectionEvent event) {
+    // same with enter-key handling code in keyReleaseOccured(e);
+    fireApplyEditorValue();
+    deactivate();
+}
 /**
  * The <code>TextCellEditor</code>  implementation of this 
  * <code>CellEditor</code> method returns <code>true</code> if 
@@ -319,6 +341,29 @@ public boolean isSelectAllEnabled() {
 		return false;
 	return text.getCharCount() > 0;
 }
+
+/**
+ * Processes a key release event that occurred in this cell editor.
+ * <p>
+ * The <code>TextCellEditor</code> implementation of this framework method 
+ * ignores when the RETURN key is pressed since this is handled in 
+ * <code>handleDefaultSelection</code>.
+ * </p>
+ *
+ * @param keyEvent the key event
+ */
+protected void keyReleaseOccured(KeyEvent keyEvent) {
+	if (keyEvent.character == '\r') { // Return key
+		// Enter is handled in handleDefaultSelection.
+		// Do not apply the editor value in response to an Enter key event
+		// since this can be received from the IME when the intent is -not-
+		// to apply the value.  
+		// See bug 39074 [CellEditors] [DBCS] canna input mode fires bogus event from Text Control  
+	    return;
+	}
+	super.keyReleaseOccured(keyEvent);
+}
+
 /**
  * The <code>TextCellEditor</code> implementation of this
  * <code>CellEditor</code> method copies the

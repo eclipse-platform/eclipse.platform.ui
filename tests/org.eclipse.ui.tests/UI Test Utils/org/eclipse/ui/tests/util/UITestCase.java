@@ -11,20 +11,13 @@
 package org.eclipse.ui.tests.util;
 
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.*;
 
 
 /**
@@ -41,6 +34,7 @@ public abstract class UITestCase extends TestCase
 
 	public UITestCase(String testName) {
 		super(testName);
+//		ErrorDialog.NO_UI = true;
 		fWorkbench = PlatformUI.getWorkbench();
 		testWindows = new ArrayList(3);
 	}

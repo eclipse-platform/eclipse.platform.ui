@@ -104,7 +104,6 @@ protected Control createContents(Composite parent) {
 	data.bottom = new FormAttachment(100,100);
 	parent.setLayoutData(data);
 	
-	Control top = createTitleArea(parent);
 	
 	//Now create a work area for the rest of the dialog
 	Composite composite = new Composite(parent, SWT.NULL);
@@ -113,6 +112,8 @@ protected Control createContents(Composite parent) {
 	childLayout.marginWidth = 0;
 	childLayout.verticalSpacing = 0;
 	composite.setLayout(childLayout);
+	
+	Control top = createTitleArea(parent);
 	
 	FormData childData = new FormData();
 	childData.top = new FormAttachment(top);
@@ -129,6 +130,7 @@ protected Control createContents(Composite parent) {
 	// create the dialog area and button bar
 	dialogArea = createDialogArea(composite);
 	buttonBar = createButtonBar(composite);
+	
 	
 	return parent;
 }
@@ -227,7 +229,7 @@ private Control createTitleArea(Composite parent) {
 	messageImageLabel.setBackground(background);
 
 	// Message label @ bottom, center
-	messageLabel = new Label(parent, SWT.WRAP);
+	messageLabel = new Label(parent, SWT.WRAP | SWT.READ_ONLY);
 	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 	messageLabel.setFont(JFaceResources.getDialogFont());

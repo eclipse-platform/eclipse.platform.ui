@@ -525,7 +525,7 @@ public class EditorManager {
 
 		// Test the result.
 		if (ex[0] != null) {
-			throw new PartInitException(ex[0].getMessage()); //$NON-NLS-1$
+			throw new PartInitException(ex[0].getMessage(), ex[0]); //$NON-NLS-1$
 		}
 	}
 	/*
@@ -972,6 +972,7 @@ public class EditorManager {
 			title + ':' + targetExc.getMessage());
 		} catch (InterruptedException e) {
 			// Ignore.  The user pressed cancel.
+			wasCanceled[0] = true;
 		}
 		return !wasCanceled[0];
 	}

@@ -26,6 +26,8 @@ import java.util.List;  // disambiguate from SWT List
  */
 public class MenuManager extends ContributionManager implements IMenuManager {
 
+	private final static String PERMANENT = "lkg84hsdf098a!243lkjha9SDFlkjhsdfXlkjhsfdkljhfds$#$%sdfa68fgh"; //$NON-NLS-1$
+
 	/**
 	 * The menu control; <code>null</code> before
 	 * creation and after disposal.
@@ -505,11 +507,16 @@ protected void update(boolean force, boolean recursive) {
 			
 			// remove obsolete (removed or non active)
 			MenuItem[] mi= menu.getItems();
+			
 			for (int i= 0; i < mi.length; i++) {
-				Object data= mi[i].getData();
+				if (PERMANENT.equals(mi[i].getData(PERMANENT)))
+					continue;
+								
+				Object data = mi[i].getData();					
+					
 				if (data == null || !clean.contains(data)) {
 					mi[i].dispose();
-				} else if(data instanceof IContributionItem && 
+				} else if (data instanceof IContributionItem && 
 					((IContributionItem)data).isDynamic() && 
 					((IContributionItem)data).isDirty()) {
 						mi[i].dispose();
@@ -520,9 +527,15 @@ protected void update(boolean force, boolean recursive) {
 			mi= menu.getItems();
 			int srcIx= 0;
 			int destIx= 0;
+			
 			for (Iterator e= clean.iterator(); e.hasNext();) { 
 				IContributionItem src= (IContributionItem) e.next();
 				IContributionItem dest;
+
+				while (srcIx < mi.length && PERMANENT.equals(mi[srcIx].getData(PERMANENT))) {
+					srcIx++;
+					destIx++;
+				}
 					
 				// get corresponding item in SWT widget
 				if (srcIx < mi.length)
@@ -565,7 +578,8 @@ protected void update(boolean force, boolean recursive) {
 
 			// remove any old menu items not accounted for
 			for (; srcIx < mi.length; srcIx++) {
-				mi[srcIx].dispose();
+				if (!PERMANENT.equals(mi[srcIx].getData(PERMANENT)))
+					mi[srcIx].dispose();
 			}
 			
 			setDirty(false);
@@ -599,23 +613,37 @@ public void updateAll(boolean force) {
  * Does nothing if this menu is not a submenu.
  */
 private void updateMenuItem() {
-/*
- * Commented out until proper solution to enablement of
- * menu item for a sub-menu is found. See bug 30833 for
- * more details.
- *  
-	if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
-		IContributionItem items[] = getItems();
-		boolean enabled = false;
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem item = items[i];
-			enabled = item.isEnabled();
-			if(enabled) break;
+	/*
+	 * Commented out until proper solution to enablement of
+	 * menu item for a sub-menu is found. See bug 30833 for
+	 * more details.
+	 *  
+		if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
+			IContributionItem items[] = getItems();
+			boolean enabled = false;
+			for (int i = 0; i < items.length; i++) {
+				IContributionItem item = items[i];
+				enabled = item.isEnabled();
+				if(enabled) break;
+			}
+			// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
+			if (menuItem.getEnabled() != enabled)
+				menuItem.setEnabled(enabled);
 		}
-		// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
-		if (menuItem.getEnabled() != enabled)
-			menuItem.setEnabled(enabled);
-	}
-*/
+	*/
+		// Partial fix for bug #34969 - diable the menu item if no
+		// items in sub-menu (for context menus).
+		if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
+			boolean enabled = menu.getItemCount() > 0;
+			// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
+			if (menuItem.getEnabled() != enabled) {
+				// We only do this for context menus (for bug #34969)
+				Menu topMenu = menu;
+				while (topMenu.getParentMenu() != null)
+					topMenu = topMenu.getParentMenu();
+				if ((topMenu.getStyle() & SWT.BAR) == 0)
+					menuItem.setEnabled(enabled);
+			}
+		}
 }
 }

@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.*;
  */
 public class CreateLinkedResourceGroup {	
 	private Listener listener;
-	private String initialLinkTarget;
+	private String linkTarget;
 	private int type;
 	private boolean createLink = false;
 
@@ -73,7 +73,7 @@ public Composite createContents(Composite parent) {
 	GridLayout layout = new GridLayout();
 	groupComposite.setLayout(layout);
 	groupComposite.setLayoutData(new GridData(
-		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		GridData.VERTICAL_ALIGN_FILL | GridData.FILL_HORIZONTAL));
 	groupComposite.setFont(font);
 
 	final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
@@ -133,14 +133,12 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	linkTargetField.setEnabled(enabled);
 	linkTargetField.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
+			linkTarget = linkTargetField.getText();
 			resolveVariable();
 			if (listener != null)
 				listener.handleEvent(new Event());
 		}
 	});
-	if (initialLinkTarget != null)
-		linkTargetField.setText(initialLinkTarget);
-
 	// browse button
 	browseButton = new Button(linkTargetGroup, SWT.PUSH);
 	setButtonLayoutData(browseButton);
@@ -184,6 +182,9 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	resolvedPathLabelData.setLayoutData(data);
 	resolvedPathLabelData.setVisible(false);
+
+	if (linkTarget != null)
+		linkTargetField.setText(linkTarget);
 }
 /**
  * Returns a new status object with the given severity and message.
@@ -332,7 +333,7 @@ private GridData setButtonLayoutData(Button button) {
  * @param target the value of the link target field
  */
 public void setLinkTarget(String target) {
-	initialLinkTarget = target;
+	linkTarget = target;
 	if (linkTargetField != null && linkTargetField.isDisposed() == false)
 		linkTargetField.setText(target);
 }

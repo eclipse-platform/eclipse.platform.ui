@@ -31,9 +31,15 @@ public class SubStatusLineManager extends SubContributionManager implements ISta
 	private String errorMessage;
 
 	/**
-	 * Current status line image.
+	 * Current status line message image.
 	 */
-	private Image image;
+	private Image messageImage;
+	
+	/**
+	 * Current status line error image
+	 */
+	private Image errorImage;
+	
 	/**
 	 * Constructs a new manager.
 	 *
@@ -75,7 +81,7 @@ public class SubStatusLineManager extends SubContributionManager implements ISta
 	 * Method declared on IStatusLineManager.
 	 */
 	public void setErrorMessage(String message) {
-		this.image = null;
+		this.errorImage = null;
 		this.errorMessage = message;
 		if (isVisible())
 			getParentStatusLineManager().setErrorMessage(errorMessage);
@@ -84,16 +90,16 @@ public class SubStatusLineManager extends SubContributionManager implements ISta
 	 * Method declared on IStatusLineManager.
 	 */
 	public void setErrorMessage(Image image, String message) {
-		this.image = image;
+		this.errorImage = image;
 		this.errorMessage = message;
 		if (isVisible())
-			getParentStatusLineManager().setErrorMessage(image, errorMessage);
+			getParentStatusLineManager().setErrorMessage(errorImage, errorMessage);
 	}
 	/* (non-Javadoc)
 	 * Method declared on IStatusLineManager.
 	 */
 	public void setMessage(String message) {
-		this.image = null;
+		this.messageImage = null;
 		this.message = message;
 		if (isVisible())
 			getParentStatusLineManager().setMessage(message);
@@ -102,10 +108,10 @@ public class SubStatusLineManager extends SubContributionManager implements ISta
 	 * Method declared on IStatusLineManager.
 	 */
 	public void setMessage(Image image, String message) {
-		this.image = image;
+		this.messageImage = image;
 		this.message = message;
 		if (isVisible())
-			getParentStatusLineManager().setMessage(image, message);
+			getParentStatusLineManager().setMessage(messageImage, message);
 	}
 	/* (non-Javadoc)
 	 * Method declared on SubContributionManager.
@@ -113,10 +119,10 @@ public class SubStatusLineManager extends SubContributionManager implements ISta
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			getParentStatusLineManager().setErrorMessage(image, errorMessage);
-			getParentStatusLineManager().setMessage(image, message);
+			getParentStatusLineManager().setErrorMessage(errorImage, errorMessage);
+			getParentStatusLineManager().setMessage(messageImage, message);
 		} else {
-			getParentStatusLineManager().setMessage(null, (String) null);
+			getParentStatusLineManager().setMessage(null, null);
 			getParentStatusLineManager().setErrorMessage(null, null);
 		}
 	}

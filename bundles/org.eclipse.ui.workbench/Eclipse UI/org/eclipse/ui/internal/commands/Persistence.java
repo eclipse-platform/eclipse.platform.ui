@@ -180,7 +180,7 @@ final class Persistence {
 			
 			if (string != null)			
 				try {			
-					sequence = KeySupport.parseSequence(string);
+					sequence = KeySupport.parseSequence(string, false);
 				} catch (IllegalArgumentException eIllegalArgument) {					
 				}
 		}
@@ -196,7 +196,7 @@ final class Persistence {
 			
 				if (string != null)			
 					try {			
-						sequence = KeySupport.parseSequence(string);
+						sequence = KeySupport.parseSequence(string, false);
 					} catch (IllegalArgumentException eIllegalArgument) {					
 					}
 			}
