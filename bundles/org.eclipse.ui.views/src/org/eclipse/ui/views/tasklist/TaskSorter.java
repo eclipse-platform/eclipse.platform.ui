@@ -95,23 +95,16 @@ private int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
 	}
 }
 /**
- * Method compareId.
- * @param m1
- * @param m2
- * @return int
+ * Compares the ids of two markers.
  */
 private int compareId(IMarker m1, IMarker m2) {
-	long result;
-	result = m1.getId() - m2.getId();
+	long result = m1.getId() - m2.getId();
 	if (result > 0) return 1;
 	else if (result < 0) return -1;
 	return 0;
 }
 /**
- * Method compareCreationTime.
- * @param m1
- * @param m2
- * @return int
+ * Compares the creation time of two markers.
  */
 private int compareCreationTime(IMarker m1, IMarker m2) {
 	long result;
