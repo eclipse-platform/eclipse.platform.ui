@@ -152,6 +152,25 @@
          </factoryclass>
       </browser>
       <browser
+            name="%mozilla_adapter"
+            id="org.eclipse.help.mozillaHPUX">
+         <factoryclass
+               class="org.eclipse.help.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="mozilla">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%mozilla">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="HP">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
             name="%netscape_adapter"
             id="org.eclipse.help.netscapeHPUX">
          <factoryclass
