@@ -372,6 +372,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		getCollector().setProgressGroup(group, 20);
 		setProperty(IProgressConstants.ICON_PROPERTY, participant.getImageDescriptor());
 		setProperty(IProgressConstants.ACTION_PROPERTY, actionWrapper);
+		setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 		// Listener delagate
 		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
 			public void refreshStarted(IRefreshEvent event) {
