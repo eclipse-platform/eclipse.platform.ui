@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.osgi.service.debug.*;
 import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
@@ -27,6 +28,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
 	public static final String INSTALL_LOCATION = "osgi.installLocation";
 	public static final String LAST_CONFIG_STAMP = "last.config.stamp";
+	public static final String NAME_SPACE = "org.eclipse.update";
 	
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
@@ -45,7 +47,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private static URL installURL;
 	
 	// Location of the configuration data
-	private String configArea;
+	private Location configLocation;
 	
 	//Need to store that because it is not provided by the platformConfiguration
 	private long lastTimeStamp;
@@ -91,15 +93,17 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		Utils.setLog(platform.getLog(context.getBundle()));
 		
 		installURL = platform.getInstallURL();
-		configArea = platform.getConfigurationMetadataLocation().toOSString();
+		configLocation = platform.getConfigurationLocation();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
-		configuration = getPlatformConfiguration(installURL, configArea);
+		configuration = getPlatformConfiguration(installURL, configLocation);
 		if (configuration == null)
-			throw Utils.newCoreException("Cannot create configuration in " + configArea, null);
+			throw Utils.newCoreException("Cannot create configuration in " + configLocation.getURL(), null);
 
 		try {
-			DataInputStream stream = new DataInputStream(new FileInputStream(configArea + File.separator + LAST_CONFIG_STAMP));
+//			TODO workaround bug for missing trailing slash
+			DataInputStream stream = new DataInputStream(new URL(configLocation.getURL().toExternalForm() + "/"+ LAST_CONFIG_STAMP).openStream());
 			lastTimeStamp = stream.readLong();
+			stream.close();
 		} catch (Exception e) {
 			lastTimeStamp = configuration.getChangeStamp() - 1;
 		} 
@@ -216,9 +220,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	 * @param metaPath
 	 * @return
 	 */
-	private PlatformConfiguration getPlatformConfiguration(URL installURL, String configPath) {
+	private PlatformConfiguration getPlatformConfiguration(URL installURL, Location configLocation) {
 		try {
-			PlatformConfiguration.startup(installURL, configPath);
+			PlatformConfiguration.startup(installURL, configLocation);
 		} catch (Exception e) {
 			if (platformTracker != null) {
 				String message = e.getMessage();
@@ -292,8 +296,12 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	
 	private void writePlatformConfigurationTimeStamp() {
 		try {
+			if (configLocation.isReadOnly())
+				return;
+			
+			String configArea = configLocation.getURL().getFile();
 			lastTimeStamp = configuration.getChangeStamp();
-			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + File.separator + LAST_CONFIG_STAMP));
+			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ LAST_CONFIG_STAMP));
 			stream.writeLong(lastTimeStamp);
 		} catch (Exception e) {
 			Utils.log(e.getLocalizedMessage());

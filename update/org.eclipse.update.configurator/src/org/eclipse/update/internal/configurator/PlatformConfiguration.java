@@ -22,12 +22,13 @@ import javax.xml.transform.stream.*;
 
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.update.configurator.*;
 import org.w3c.dom.*;
 
 /**
  * This class is responsible for providing the features and plugins (bundles) to 
- * the runtime. Configuration data is stored in the .config/platform.xml file.
+ * the runtime. Configuration data is stored in the configuration/org.eclipse.update/platform.xml file.
  * When eclipse starts, it tries to load the config info from platform.xml.
  * If the file does not exist, then it also tries to read it from a temp or backup file.
  * If this does not succeed, a platform.xml is created by inspecting the eclipse 
@@ -45,24 +46,17 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private Configuration config;
 	private URL configLocation;
-//	private HashMap sites;
 	private HashMap externalLinkSites; // used to restore prior link site state
-	private HashMap bootPlugins;
 	private long changeStamp;
-//	private boolean changeStampIsValid = false;
-//	private long lastFeaturesChangeStamp;
 	private long featuresChangeStamp;
 	private boolean featuresChangeStampIsValid;
-//	private long lastPluginsChangeStamp;
 	private long pluginsChangeStamp;
 	private boolean pluginsChangeStampIsValid;
 	private File cfgLockFile;
 	private RandomAccessFile cfgLockFileRAF;
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
-	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
 	private static final String CONFIG_NAME = "platform.xml"; //$NON-NLS-1$
-	private static final String CONFIG_FILE = CONFIG_DIR + "/" + CONFIG_NAME; //$NON-NLS-1$
 	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
@@ -70,9 +64,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
 	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
-//	private static final String[] BOOTSTRAP_PLUGINS = { "org.eclipse.core.boot" }; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
-	
 
 	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id"; //$NON-NLS-1$
 	private static final String INIT_DEFAULT_PLUGIN_ID = "feature.default.plugin.id"; //$NON-NLS-1$
@@ -80,23 +72,18 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
-
 	private static final String LINK_PATH = "path"; //$NON-NLS-1$
 	private static final String LINK_READ = "r"; //$NON-NLS-1$
 	private static final String LINK_READ_WRITE = "rw"; //$NON-NLS-1$
-
 	private static URL installURL;
 	
+	private PlatformConfiguration(Location platformConfigLocation) throws CoreException, IOException {
 
-	private PlatformConfiguration(String configPath) throws CoreException, IOException {
-//		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
-		this.bootPlugins = new HashMap();
-		
 		this.config = null;
 		
 		// initialize configuration
-		initializeCurrent(configPath);
+		initializeCurrent(platformConfigLocation);
 
 		// Detect external links. These are "soft link" to additional sites. The link
 		// files are usually provided by external installation programs. They are located
@@ -128,9 +115,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	PlatformConfiguration(URL url) throws Exception {
-//		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
-		this.bootPlugins = new HashMap();
 		initialize(url);
 	}
 
@@ -181,17 +166,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		URL url = entry.getURL();
 		if (url == null)
 			return;
-		String key = url.toExternalForm();
 
-//		if (sites.containsKey(key) && !replace)
-//			return;
-		
+		String key = url.toExternalForm();
 		if (config.getSiteEntry(key) != null && !replace)
 			return;
-		
-//
-//		sites.put(key, entry);
-		
+	
 		if (entry instanceof SiteEntry)
 			config.addSiteEntry(key, (SiteEntry)entry);
 	}
@@ -206,10 +185,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		URL url = entry.getURL();
 		if (url == null)
 			return;
-		String key = url.toExternalForm();
-
-//		sites.remove(key);
 		
+		String key = url.toExternalForm();	
 		if (entry instanceof SiteEntry)
 			config.removeSiteEntry(key);
 	}
@@ -218,10 +195,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#getConfiguredSites()
 	 */
 	public ISiteEntry[] getConfiguredSites() {
-//		if (sites.size() == 0)
-//			return new ISiteEntry[0];
-//
-//		return (ISiteEntry[]) sites.values().toArray(new ISiteEntry[0]);
 		if (config == null)
 			return new ISiteEntry[0];
 		
@@ -252,7 +225,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return null;
 		String key = url.toExternalForm();
 
-//		ISiteEntry result = (ISiteEntry) sites.get(key);
 		SiteEntry result = config.getSiteEntry(key);
 		try {
 			key = URLDecoder.decode(key, "UTF-8");
@@ -261,7 +233,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 		
 		if (result == null) // retry with decoded URL string
-//			result = (ISiteEntry) sites.get(key);
 			result = config.getSiteEntry(key);
 			
 		if (result == null && checkPlatformURL) {
@@ -352,9 +323,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#getChangeStamp()
 	 */
 	public long getChangeStamp() {
-//		if (!changeStampIsValid)
-//			computeChangeStamp();
-//		return changeStamp;
 		return config.getDate().getTime();
 	}
 
@@ -362,9 +330,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#getFeaturesChangeStamp()
 	 */
 	public long getFeaturesChangeStamp() {
-//		if (!featuresChangeStampIsValid)
-//			computeFeaturesChangeStamp();
-//		return featuresChangeStamp;
 		return 0;
 	}
 
@@ -372,9 +337,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#getPluginsChangeStamp()
 	 */
 	public long getPluginsChangeStamp() {
-//		if (!pluginsChangeStampIsValid)
-//			computePluginsChangeStamp();
-//		return pluginsChangeStamp;
 		return 0;
 	}
 
@@ -450,13 +412,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#setBootstrapPluginLocation(String, URL)
 	 */
 	public void setBootstrapPluginLocation(String id, URL location) {
-//		String[] ids = getBootstrapPluginIdentifiers();
-//		for (int i = 0; i < ids.length; i++) {
-//			if (ids[i].equals(id)) {
-//				bootPlugins.put(id, location.toExternalForm());
-//				break;
-//			}
-//		}
 	}
 
 	/*
@@ -495,12 +450,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// reset site entry
 			 ((SiteEntry) sites[i]).refresh();
 		}
-		// reset configuration entry.
-//		lastFeaturesChangeStamp = featuresChangeStamp;
-//		lastPluginsChangeStamp = pluginsChangeStamp;
-//		changeStampIsValid = false;
-//		featuresChangeStampIsValid = false;
-//		pluginsChangeStampIsValid = false;
 	}
 
 	/*
@@ -619,14 +568,14 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @param r10apps application identifies as passed on the BootLoader.run(...)
 	 * method. Supported for R1.0 compatibility.
 	 */
-	public static synchronized void startup(URL installURL, String configPath) throws Exception {
+	public static synchronized void startup(URL installURL, Location platformConfigLocation) throws Exception {
 		PlatformConfiguration.installURL = installURL;
 	
 		// create current configuration
 		if (currentPlatformConfiguration == null) {
-			currentPlatformConfiguration = new PlatformConfiguration(configPath);
+			currentPlatformConfiguration = new PlatformConfiguration(platformConfigLocation);
 			if (currentPlatformConfiguration.config == null)
-				throw new Exception("Cannot load configuration from " + configPath);
+				throw new Exception("Cannot load configuration from " + platformConfigLocation.getURL());
 			if (currentPlatformConfiguration.config.isDirty())
 				currentPlatformConfiguration.save();
 		}
@@ -653,7 +602,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-	private synchronized void initializeCurrent(String configPath) throws IOException {
+
+	private synchronized void initializeCurrent(Location platformConfigLocation) throws IOException {
 		// FIXME: commented out for now. Remove if not needed.
 		//boolean concurrentUse = false;
 
@@ -665,8 +615,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// a new configuration is created. In either case the resulting
 		// configuration is written into the specified configuration area.
 
-		URL configDirURL = new URL("file", "", configPath);
-		URL configFileURL = new URL("file", "", configPath + "/" + CONFIG_NAME);
+		//TODO workaround bug for missing trailing slash
+		URL configFileURL = new URL(platformConfigLocation.getURL().toExternalForm() + "/"+ CONFIG_NAME);
 		try {	
 			// check concurrent use lock
 			// FIXME: might not need this method call.
@@ -678,24 +628,27 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				Utils.debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
 			} catch (Exception e) {
 				// failed to load, see if we can find pre-initialized configuration.
-				// Don't attempt this initialization when self-hosting (is unpredictable)
 				try {
-					URL sharedConfigDirURL = new URL(getInstallURL(), CONFIG_DIR);
-					URL sharedConfigFileURL = new URL(getInstallURL(), CONFIG_FILE);
+					Location parentLocation = platformConfigLocation.getParentLocation();
+					if (parentLocation == null)
+						throw new IOException(); // no platform.xml found, need to create default site
+					
+					//TODO workaround bug for missing trailing slash
+					URL sharedConfigFileURL = new URL(parentLocation.getURL().toExternalForm() + "/"+ CONFIG_NAME);
 
 					config = loadConfig(sharedConfigFileURL);
 					
 					// pre-initialized config loaded OK ... copy any remaining update metadata
 					// Only copy if the default config location is not the install location
-					if (!sharedConfigDirURL.equals(configDirURL)) {
-						if (true)
+					if (!sharedConfigFileURL.equals(configFileURL)) {
+//						if (true)
 							// need to link config info instead of using a copy
-							linkInitializedState(config, sharedConfigDirURL, configFileURL);
-						else
-							// copy config info
-							copyInitializedState(sharedConfigDirURL, configPath);
+							linkInitializedState(config, parentLocation, platformConfigLocation);
+//						else
+//							// copy config info
+//							copyInitializedState(sharedConfigDirURL, configPath);
 						
-						Utils.debug("Configuration initialized from    " + sharedConfigDirURL.toString()); //$NON-NLS-1$
+						Utils.debug("Configuration initialized from    " + sharedConfigFileURL.toString()); //$NON-NLS-1$
 					}
 					return;
 				} catch (Exception ioe) {
@@ -712,6 +665,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
+	
 	private synchronized void initialize(URL url) throws Exception {
 		if (url != null) {
 			config = loadConfig(url);	
@@ -752,16 +706,16 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return defaultSite;
 	}
 
-	private void resetInitializationConfiguration(URL url) throws IOException {
-		// [20111]
-		if (!supportsDetection(url))
-			return; // can't do ...
-
-		URL resolved = resolvePlatformURL(url);
-		File initCfg = new File(resolved.getFile().replace('/', File.separatorChar));
-		File initDir = initCfg.getParentFile();
-		resetInitializationLocation(initDir);
-	}
+//	private void resetInitializationConfiguration(URL url) throws IOException {
+//		// [20111]
+//		if (!supportsDetection(url))
+//			return; // can't do ...
+//
+//		URL resolved = resolvePlatformURL(url);
+//		File initCfg = new File(resolved.getFile().replace('/', File.separatorChar));
+//		File initDir = initCfg.getParentFile();
+//		resetInitializationLocation(initDir);
+//	}
 
 	private void resetInitializationLocation(File dir) {
 		// [20111]
@@ -992,21 +946,23 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 	
-	private void linkInitializedState(Configuration sharedConfig, URL sharedConfigURL, URL newConfigURL) {
+	private void linkInitializedState(Configuration sharedConfig, Location sharedConfigLocation, Location newConfigLocation) {
 		try {
-			URL oldConfigIniURL = new URL(sharedConfigURL, CONFIG_INI);
-			URL newConfigIniURL = new URL(newConfigURL, CONFIG_INI);
+			//TODO workaround bug for missing trailing slash
+			URL oldConfigIniURL = new URL(sharedConfigLocation.getURL().toExternalForm() + "/"+ CONFIG_INI);
+			URL newConfigIniURL = new URL(newConfigLocation.getURL().toExternalForm() + "/"+ CONFIG_INI);
 			if (!newConfigIniURL.getProtocol().equals("file")) //$NON-NLS-1$
 				return; // need to be able to do write
 
 			// modify config.ini and platform.xml to only link original files
 			File configIni = new File(newConfigIniURL.getFile());
 			Properties props = new Properties();
-			props.put(CFG_SHARED_URL, oldConfigIniURL.toExternalForm());
+			props.put("osgi.sharedConfiguration.area", sharedConfigLocation.getURL().toExternalForm());
 			props.store(new FileOutputStream(configIni), "Linked configuration");
 			
 			config = new Configuration(new Date());
-			config.setURL(newConfigURL);
+//			TODO workaround bug for missing trailing slash
+			config.setURL(new URL(newConfigLocation.getURL().toExternalForm() +"/"+ CONFIG_NAME));
 			config.setLinkedConfig(sharedConfig);
 			config.setDirty(true);
 		} catch (IOException e) {
@@ -1016,18 +972,18 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-	private void copyInitializedState(URL source, String target) {
-		try {
-			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
-				return; // need to be able to do "dir"
-
-			copy(new File(source.getFile()), new File(target));
-
-		} catch (IOException e) {
-			// this is an optimistic copy. If we fail, the state will be reconciled
-			// when the update manager is triggered.
-		}
-	}
+//	private void copyInitializedState(URL source, String target) {
+//		try {
+//			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
+//				return; // need to be able to do "dir"
+//
+//			copy(new File(source.getFile()), new File(target));
+//
+//		} catch (IOException e) {
+//			// this is an optimistic copy. If we fail, the state will be reconciled
+//			// when the update manager is triggered.
+//		}
+//	}
 
 	private void copy(File src, File tgt) throws IOException {
 		if (src.isDirectory()) {
@@ -1273,31 +1229,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return url;
 	}
 
-//	private void resetUpdateManagerState(URL url) throws IOException {
-//		// [20111]
-//		if (!supportsDetection(url))
-//			return; // can't do ...
-//
-//		// find directory where the platform configuration file is	
-//		URL resolved = resolvePlatformURL(url);
-//		File initCfg = new File(resolved.getFile().replace('/', File.separatorChar));
-//		File initDir = initCfg.getParentFile();
-//
-//		// Find the Update Manager State directory
-//		if (initDir == null || !initDir.exists() || !initDir.isDirectory())
-//			return;
-//		String temp = initCfg.getName() + ".metadata"; //$NON-NLS-1$
-//		File UMDir = new File(initDir, temp + '/');
-//
-//		// Attempt to rename it
-//		if (UMDir == null || !UMDir.exists() || !UMDir.isDirectory())
-//			return;
-//		Date now = new Date();
-//		boolean renamed = UMDir.renameTo(new File(initDir, temp + now.getTime() + '/'));
-//
-//		if (!renamed)
-//			resetInitializationLocation(UMDir);
-//	}
 
 	public static URL getInstallURL() {
 		return installURL;
