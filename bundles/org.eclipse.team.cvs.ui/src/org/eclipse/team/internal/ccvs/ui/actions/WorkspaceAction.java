@@ -248,6 +248,9 @@ public abstract class WorkspaceAction extends CVSAction {
 			// only enable for accessible resources
 			if (! resource.isAccessible()) return false;
 			
+			// no CVS actions are enabled if the selection contains a linked resource
+			if (CVSWorkspaceRoot.isLinkedResource(resource)) return false;
+			
 			// only enable for resources in a project shared with CVS
 			if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
 				return false;

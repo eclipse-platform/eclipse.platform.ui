@@ -109,6 +109,8 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		try {
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 			if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getIResource().getParent().getType() != IResource.ROOT) {
+				// linked resources are not considered orphans even if they have CVS folders in them
+				if (isLinkedResource(mFolder)) return false;
 				mFolder.unmanage(null);
 				return true;
 			}
@@ -118,7 +120,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		return false;
 	}
 	
-	
+	private boolean isLinkedResource(ICVSResource cvsResource) throws CVSException {
+		IResource iResource = cvsResource.getIResource();
+		if (iResource != null)
+			return CVSWorkspaceRoot.isLinkedResource(iResource);
+		return false;
+	}
 	/*
 	 * Mark deleted managed files as outgoing deletions
 	 */

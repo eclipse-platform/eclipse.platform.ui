@@ -191,18 +191,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	}
 	
 	/**
-	 * If not already cached, loads and caches the folder sync for the container.
-	 * Folder must exist and must not be the workspace root.
-	 *
-	 * @param container the container
-	 * @return the folder sync info for the folder, or null if none.
-	 */
-	/*package*/ FolderSyncInfo cacheFolderSync(IContainer container) throws CVSException {
-		// nothing needs to be done since the synchronizer is persisted
-		return getCachedFolderSync(container);
-	}
-	
-	/**
 	 * Returns the folder sync info for the container; null if none.
 	 * Folder must exist and must not be the workspace root.
 	 * The folder sync info for the container MUST ALREADY BE CACHED.
@@ -467,5 +455,11 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 */
 	void setResourceSyncInfoCached(IContainer container) throws CVSException {
 		// do nothing
+	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#isFolderSyncInfoCached(org.eclipse.core.resources.IContainer)
+	 */
+	boolean isFolderSyncInfoCached(IContainer container) throws CVSException {
+		return true;
 	}
 }

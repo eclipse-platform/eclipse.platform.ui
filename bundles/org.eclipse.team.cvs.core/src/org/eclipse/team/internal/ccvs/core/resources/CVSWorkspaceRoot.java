@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -700,5 +701,26 @@ public class CVSWorkspaceRoot {
 
 	public ICVSFolder getLocalRoot() {
 		return localRoot;
+	}
+	
+	
+	/**
+	 * Return true if the resource is part of a link (i.e. a linked resource or
+	 * one of it's children.
+	 * 
+	 * @param container
+	 * @return boolean
+	 */
+	public static boolean isLinkedResource(IResource resource) {
+		// check the resource directly first
+		if (resource.isLinked()) return true;
+		// projects and root cannot be links
+		if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT) {
+			return false;
+		}
+		// look one level under the project to see if the resource is part of a link
+		String linkedParentName = resource.getProjectRelativePath().segment(0);
+		IFolder linkedParent = resource.getProject().getFolder(linkedParentName);
+		return linkedParent.isLinked();
 	}
 }

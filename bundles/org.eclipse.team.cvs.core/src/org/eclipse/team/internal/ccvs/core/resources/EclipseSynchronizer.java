@@ -46,6 +46,9 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
  * A synchronizer is responsible for managing synchronization information for local
  * CVS resources.
  * 
+ * Special processing has been added for linked folders and their childen so
+ * that their CVS meta files are never read or written.
+ * 
  * @see ResourceSyncInfo
  * @see FolderSyncInfo
  */
@@ -130,8 +133,8 @@ public class EclipseSynchronizer {
 		if (folder.getType() == IResource.ROOT || !isValid(folder)) return null;
 		try {
 			beginOperation(null);
-			// cache folder sync and return it
-			return getSyncInfoCacheFor(folder).cacheFolderSync(folder);
+			cacheFolderSync(folder);
+			return getSyncInfoCacheFor(folder).getCachedFolderSync(folder);
 		} finally {
 			endOperation(null);
 		}
@@ -652,7 +655,13 @@ public class EclipseSynchronizer {
 		// don't try to load if the information is already cached
 		if (! getSyncInfoCacheFor(container).isResourceSyncInfoCached(container)) {
 			// load the sync info from disk
-			byte[][] infos = SyncFileWriter.readAllResourceSync(container);
+			byte[][] infos;
+			// do not load the sync info for resources that are linked
+			if (isLinkedResource(container)) {
+				infos = null;
+			} else {
+				infos = SyncFileWriter.readAllResourceSync(container);
+			}
 			if (infos != null) {
 				for (int i = 0; i < infos.length; i++) {
 					byte[] syncBytes = infos[i];
@@ -670,6 +679,31 @@ public class EclipseSynchronizer {
 		}
 	}
 	
+	/**
+	 * If not already cached, loads and caches the folder sync for the
+	 * container. Folder must exist and must not be the workspace root.
+	 *
+	 * @param container the container
+	 */
+	private void cacheFolderSync(IContainer container) throws CVSException {
+		// don't try to load if the information is already cached
+		if (! getSyncInfoCacheFor(container).isFolderSyncInfoCached(container)) {
+			// load the sync info from disk
+			FolderSyncInfo info;
+			// do not load the sync info for resources that are linked
+			if (isLinkedResource(container)) {
+				info = null;
+			} else {
+				info = SyncFileWriter.readFolderSync(container);
+			}
+			getSyncInfoCacheFor(container).setCachedFolderSync(container, info);
+		}
+	}
+	
+	private boolean isLinkedResource(IResource resource) {
+		return CVSWorkspaceRoot.isLinkedResource(resource);
+	}
+
 	/**
 	 * Load the sync info for the given resource from disk
 	 * @param resource
@@ -737,9 +771,12 @@ public class EclipseSynchronizer {
 				if (folder.exists() && folder.getType() != IResource.ROOT) {
 					try {
 						FolderSyncInfo info = sessionPropertyCache.getCachedFolderSync(folder);
+						// Do not write the folder sync for linked resources
 						if (info == null) {
 							// deleted folder sync info since we loaded it
-							SyncFileWriter.deleteFolderSync(folder);
+							// (but don't overwrite the sync info for linked folders
+							if (!isLinkedResource(folder))
+								SyncFileWriter.deleteFolderSync(folder);
 							dirtyParents.remove(folder);
 						} else {
 							// modified or created new folder sync info since we loaded it
@@ -775,8 +812,10 @@ public class EclipseSynchronizer {
 								infos.add(syncBytes);
 							}
 						}
-						SyncFileWriter.writeAllResourceSync(folder,
-							(byte[][]) infos.toArray(new byte[infos.size()][]));
+						// do not overwrite the sync info for linked resources
+						if (infos.size() > 0 || !isLinkedResource(folder))
+							SyncFileWriter.writeAllResourceSync(folder,
+								(byte[][]) infos.toArray(new byte[infos.size()][]));
 					} catch(CVSException e) {
 						try {
 							sessionPropertyCache.purgeCache(folder, false /* depth 1 */);
@@ -1130,7 +1169,7 @@ public class EclipseSynchronizer {
 			try {
 				beginOperation(null);
 				cacheResourceSyncForChildren(parent);
-				getSyncInfoCacheFor(parent).cacheFolderSync(parent);
+				cacheFolderSync(parent);
 				cacheFolderIgnores(parent);
 			} finally {
 				endOperation(null);

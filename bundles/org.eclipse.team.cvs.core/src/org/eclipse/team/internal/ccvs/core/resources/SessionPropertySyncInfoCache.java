@@ -61,36 +61,13 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		}
 	}
 
-
-	/**
-	 * If not already cached, loads and caches the folder sync for the container.
-	 * Folder must exist and must not be the workspace root.
-	 *
-	 * @param container the container
-	 * @return the folder sync info for the folder, or null if none.
-	 */
-	/*package*/ FolderSyncInfo cacheFolderSync(IContainer container) throws CVSException {
-		if (!container.exists()) return null;
+	/*package*/ boolean isFolderSyncInfoCached(IContainer container) throws CVSException {
 		try {
-			// don't try to load if the information is already cached
-			FolderSyncInfo info = (FolderSyncInfo)container.getSessionProperty(FOLDER_SYNC_KEY);
-			if (info == null) {
-				// read folder sync info and remember it
-				info = SyncFileWriter.readFolderSync(container);
-				if (info == null) {
-					container.setSessionProperty(FOLDER_SYNC_KEY, NULL_FOLDER_SYNC_INFO);
-				} else {
-					container.setSessionProperty(FOLDER_SYNC_KEY, info);
-				}
-			} else if (info == NULL_FOLDER_SYNC_INFO) {
-				info = null;
-			}
-			return info;
+			return container.getSessionProperty(FOLDER_SYNC_KEY) != null;
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
 	}
-
 
 	/*package*/ boolean isResourceSyncInfoCached(IContainer container) throws CVSException {
 		try {
@@ -383,12 +360,12 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	/*package*/ boolean isSyncInfoLoaded(IContainer parent) throws CVSException {
 		try {
 			if (parent.getFolder(new Path(SyncFileWriter.CVS_DIRNAME)).exists()) {
-				if (parent.getSessionProperty(RESOURCE_SYNC_KEY) == null)
+				if (parent.getSessionProperty(RESOURCE_SYNC_CACHED_KEY) == null)
 					return false;
 				if (parent.getSessionProperty(FOLDER_SYNC_KEY) == null)
 					return false;
-				if (parent.getSessionProperty(IGNORE_SYNC_KEY) == null)
-					return false;
+//				if (parent.getSessionProperty(IGNORE_SYNC_KEY) == null)
+//					return false;
 			}
 		} catch (CoreException e) {
 			// let future operations surface the error

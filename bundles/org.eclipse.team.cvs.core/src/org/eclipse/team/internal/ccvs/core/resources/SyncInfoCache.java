@@ -45,15 +45,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	/*package*/ static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
 	
 	/**
-	 * If not already cached, loads and caches the folder sync for the container.
-	 * Folder must exist and must not be the workspace root.
-	 *
-	 * @param container the container
-	 * @return the folder sync info for the folder, or null if none.
-	 */
-	/*package*/ abstract FolderSyncInfo cacheFolderSync(IContainer container) throws CVSException;
-
-	/**
 	 * Returns the folder sync info for the container; null if none.
 	 * Folder must exist and must not be the workspace root.
 	 * The folder sync info for the container MUST ALREADY BE CACHED.
@@ -123,6 +114,16 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	/*package*/ abstract boolean removeDeletedChild(IContainer container, IFile file) throws CVSException;
 	
 	/*package*/ abstract boolean isSyncInfoLoaded(IContainer parent) throws CVSException;
+	
+	/**
+	 * Query the low level cache to see if the sync info for the provided
+	 * container is loaded.
+	 * 
+	 * @param container
+	 * @return boolean
+	 * @throws CVSException
+	 */
+	/*package*/ abstract boolean isFolderSyncInfoCached(IContainer container) throws CVSException;
 	
 	/**
 	 * Query the low level cache to see if the sync info for the direct children

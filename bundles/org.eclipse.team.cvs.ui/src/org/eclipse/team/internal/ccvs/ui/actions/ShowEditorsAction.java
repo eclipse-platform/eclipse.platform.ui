@@ -14,10 +14,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
 import org.eclipse.team.internal.ccvs.ui.EditorsView;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -50,16 +48,21 @@ public class ShowEditorsAction extends WorkspaceAction {
 
 	}
 
-	/*
-	 * @see TeamAction#isEnabled()
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
 	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
+	protected boolean isEnabledForAddedResources() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
+	 */
+	protected boolean isEnabledForMultipleResources() {
 		// We support one selected Resource,
 		// because the editors command will
 		// show the editors of all children too.
-		return (resources.length == 1);
-		
+		return false;
 	}
 
 }
