@@ -118,8 +118,8 @@ public IResource findMember(String name, boolean includePhantoms);
  * Finds and returns the member resource identified by the given path in
  * this container, or <code>null</code> if no such resource exists.
  * The supplied path may be absolute or relative; in either case, it is
- * interpreted as relative to this resource.   Trailing separators are ignored.
- * If the path is empty this container is returned.
+ * interpreted as relative to this resource.   Trailing separators and the path's
+ * device are ignored. If the path is empty this container is returned.
  * <p>
  * Note that no attempt is made to exclude team-private member resources
  * as with <code>members</code>.
@@ -138,7 +138,8 @@ public IResource findMember(IPath path);
  * Finds and returns the member resource identified by the given path in
  * this container, or <code>null</code> if there is no such resource.
  * The supplied path may be absolute or relative; in either case, it is
- * interpreted as relative to this resource.  Trailing separators are ignored.
+ * interpreted as relative to this resource.  Trailing separators and the path's
+ * device are ignored.
  * If the path is empty this container is returned.
  * <p>
  * If the <code>includePhantoms</code> argument is <code>false</code>, 
