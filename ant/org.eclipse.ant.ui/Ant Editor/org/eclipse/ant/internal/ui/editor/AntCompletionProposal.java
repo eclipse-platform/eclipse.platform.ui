@@ -161,4 +161,12 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 	public IContextInformation getContextInformation() {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getDisplayString();
+	}
+
 }
