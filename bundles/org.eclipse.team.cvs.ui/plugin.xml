@@ -585,6 +585,10 @@
                 visible="false"
                 relationship="stack"/>
       </perspectiveExtension>
+	<perspectiveExtension 
+		targetID="org.eclipse.team.cvs.ui.cvsPerspective">
+		<actionSet id="org.eclipse.team.cvs.ui.CVSActionSet"/>
+	</perspectiveExtension>
    </extension>
 
 	<!-- ************** Project Sets **************** -->
@@ -608,5 +612,23 @@
  				class="org.eclipse.team.internal.ccvs.ui.actions.ContentAction">
 			</action>
 		</editorContribution>
+	</extension>
+	
+	<!-- ********** Action Sets ************** -->
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet 
+			label="%CVS" 
+			visible="false" 
+			id="org.eclipse.team.cvs.ui.CVSActionSet"
+			description="%CVSActionSet.description">
+	  	  <action
+	  	  	toolbarPath="Normal/CVS"
+	  		 label="%CVSActionSet.newLabel"
+	  		 tooltip="%CVSActionSet.newTooltip"
+	  		 icon="icons/full/ctool16/checkout.gif"
+	  		 class="org.eclipse.team.internal.ccvs.ui.actions.NewRepositoryAction"
+	  		 id="org.eclipse.team.cvs.ui.actions.NewRepositoryAction"> 
+	  	    </action>
+	  </actionSet>
 	</extension>
 </plugin>
