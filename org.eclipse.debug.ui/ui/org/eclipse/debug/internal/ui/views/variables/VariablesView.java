@@ -547,7 +547,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		viewForm.setTopLeft(detailsLabel);
 								
 		ToolBar toolBar = new ToolBar(viewForm, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
-		ToolBarManager toolBarMgr= new ToolBarManager(toolBar);
+		new ToolBarManager(toolBar);
 		GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		toolBar.setLayoutData(gd);
