@@ -211,6 +211,8 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 		Iterator resourcesEnum = selectedResources.iterator();
 		while (resourcesEnum.hasNext()) {
 			IResource currentResource = (IResource) resourcesEnum.next();
+			if (!currentResource.exists())
+				return false;
 			if (currentResource.getType() == IResource.PROJECT) {
 				return false;
 			}
