@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -133,13 +134,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.part.EditorPart;
-
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -1509,20 +1509,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private List fLegalInsertModes= null;
 	/**
-	 * The caret used in overwrite mode.
+	 * The non-default caret.
 	 * @since 3.0
 	 */
-	private Caret fOverwriteModeCaret;
+	private Caret fNonDefaultCaret;
 	/**
-	 * The caret used in insert mode.
+	 * The image used in non-default caret.
 	 * @since 3.0
 	 */
-	private Caret fInsertModeCaret;
+	private Image fNonDefaultCaretImage;
 	/**
-	 * The caret used in smart insert mode.
+	 * The styled text's default caret.
 	 * @since 3.0
 	 */
-	private Caret fSmartInsertModeCaret;
+	private Caret fDefaultCaret;
 	
 	
 	/**
@@ -2396,7 +2396,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			extension.elementStateValidationChanged(input, false);
 		}
 		
-		createInsertModeCarets();
+		fDefaultCaret= getSourceViewer().getTextWidget().getCaret();
 		if (getInsertMode() == OVERWRITE)
 			fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
 		handleInsertModeChanged();
@@ -2573,32 +2573,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fFont= null;
 		}
 		
-		if (fInsertModeCaret != null) {
-			if (!fInsertModeCaret.isDisposed()) {
-				Image image= fInsertModeCaret.getImage();
-				if (image != null && !image.isDisposed())
-					image.dispose();				
+		disposeNonDefaultCaret();
+		if (fDefaultCaret != null && !fDefaultCaret.isDisposed()) {
+			try {
+				fDefaultCaret.dispose();
+			// XXX: see SWT bug ??? 
+			} catch (SWTException x) {
+				if (x.code != SWT.ERROR_WIDGET_DISPOSED)
+					throw x;
 			}
-			fInsertModeCaret= null;
 		}
-		
-		if (fOverwriteModeCaret != null) {
-			if (!fOverwriteModeCaret.isDisposed()) {
-				Image image= fOverwriteModeCaret.getImage();
-				if (image != null && !image.isDisposed())
-					image.dispose();
-			}
-			fOverwriteModeCaret= null;
-		}
-		
-		if (fSmartInsertModeCaret != null) {
-			if (!fSmartInsertModeCaret.isDisposed()) {
-				Image image= fSmartInsertModeCaret.getImage();
-				if (image != null && !image.isDisposed())
-					image.dispose();
-			}
-			fSmartInsertModeCaret= null;
-		}
+		fDefaultCaret= null;
 		
 		if (fForegroundColor != null) {
 			fForegroundColor.dispose();
@@ -4343,14 +4328,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return caret;
 	}
 
-	private void createInsertModeCarets() {
-		StyledText styledText= getSourceViewer().getTextWidget();
-		fInsertModeCaret= styledText.getCaret();
-		fOverwriteModeCaret= createOverwriteCaret(styledText);
-		fSmartInsertModeCaret= createSmartInsertModeCaret(styledText);
-		styledText.setCaret(fInsertModeCaret);
-	}
-	
 	private void updateCaret() {
 		
 		if (getSourceViewer() == null)
@@ -4358,29 +4335,39 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 		StyledText styledText= getSourceViewer().getTextWidget();
 		
-		Caret caret= null;
-		Image image= null;
-		
 		InsertMode mode= getInsertMode();
-		if (OVERWRITE == mode) {
-			caret= fOverwriteModeCaret;
-			image= createOverwriteModeCaretImage(styledText);
-		} else if (INSERT == mode) {
-			caret= fInsertModeCaret;
-		} else if (SMART_INSERT == mode) {
-			caret= fSmartInsertModeCaret;
-			image= createSmartInsertModeCaretImage(styledText);
+		
+		disposeNonDefaultCaret();
+		
+		if (INSERT == mode) {
+			styledText.setCaret(fDefaultCaret);
+			return;
 		}
 		
-		if (caret != null) {
-			if (image != null) {
-				Image oldImage= caret.getImage();
-				caret.setImage(image);
-				if (oldImage != null)
-					oldImage.dispose();
+		if (OVERWRITE == mode)
+			fNonDefaultCaret= createOverwriteCaret(styledText);
+		else if (SMART_INSERT == mode)
+			fNonDefaultCaret= createSmartInsertModeCaret(styledText);
+
+		styledText.setCaret(fNonDefaultCaret);
+		if (fNonDefaultCaret != null)
+			fNonDefaultCaretImage= fNonDefaultCaret.getImage();
+	}
+	
+	private void disposeNonDefaultCaret() {
+		if (fNonDefaultCaretImage != null && !fNonDefaultCaretImage.isDisposed())
+			fNonDefaultCaretImage.dispose();
+		fNonDefaultCaretImage= null;
+
+		if (fNonDefaultCaret != null && !fNonDefaultCaret.isDisposed())
+			try {
+				fNonDefaultCaret.dispose();
+			// XXX: see SWT bug ???
+			} catch (SWTException x) {
+				if (x.code != SWT.ERROR_WIDGET_DISPOSED)
+					throw x;
 			}
-			styledText.setCaret(caret);
-		}
+		fNonDefaultCaret= null;
 	}
 		
 	/**
