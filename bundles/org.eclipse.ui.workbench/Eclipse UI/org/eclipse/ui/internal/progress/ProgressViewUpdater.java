@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -68,7 +69,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
         /**
          * Add a remove update
          * 
-         * @param addition
+         * @param removal
          */
         void remove(JobTreeElement removal) {
             deletions.add(removal);
@@ -77,7 +78,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
         /**
          * Add a refresh update
          * 
-         * @param addition
+         * @param refresh
          */
         void refresh(JobTreeElement refresh) {
             refreshes.add(refresh);
@@ -131,7 +132,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
     /**
      * Return a new instance of the receiver.
      * 
-     * @return
+     * @return ProgressViewUpdater
      */
     static ProgressViewUpdater getSingleton() {
         if (singleton == null)
@@ -143,7 +144,8 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * Return whether or not there is a singleton for updates to avoid creating
      * extra listeners.
      * 
-     * @return
+     * @return boolean <code>true</code> if there is already
+     * a singleton
      */
     static boolean hasSingleton() {
         return singleton != null;
@@ -157,8 +159,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
     /**
      * Create a new instance of the receiver.
-     * 
-     * @return
      */
     private ProgressViewUpdater() {
         createUpdateJob();
@@ -182,7 +182,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
     /**
      * Remove the collector from the list of collectors.
      * 
-     * @param newCollector
+     * @param provider
      */
     void removeCollector(IProgressUpdateCollector provider) {
         HashSet newCollectors = new HashSet();
@@ -278,10 +278,9 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
         return currentInfo;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
+    /**
+     * Refresh the supplied JobInfo.
+     * @param info
      */
     public void refresh(JobInfo info) {
 
@@ -425,7 +424,8 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * if a final refresh is required.
      * 
      * @param job
-     * @return
+     * @return boolean <code>true</true> if this is the 
+     * update job
      */
     boolean isUpdateJob(Job job) {
         return job.equals(updateJob);

@@ -150,7 +150,7 @@ public class JobView extends ViewPart implements IViewPart {
      * Get the currently selected job info. Only return it if it is the only
      * item selected and it is a JobInfo.
      * 
-     * @return
+     * @return JobInfo
      */
     JobInfo getSelectedInfo() {
         IStructuredSelection selection = getSelection();
