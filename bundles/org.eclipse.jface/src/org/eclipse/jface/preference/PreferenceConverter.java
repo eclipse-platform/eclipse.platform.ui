@@ -51,7 +51,6 @@ public class PreferenceConverter {
 	public static final RGB COLOR_DEFAULT_DEFAULT = new RGB(0, 0, 0);
 	private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
 
-
 	/**
 	 * The default-default value for <code>FontData</code> preferences.
 	 */
@@ -66,7 +65,7 @@ public class PreferenceConverter {
 		 * This is left in for compatibility purposes. It is recommended that
 		 * FONTDATA_ARRAY_DEFAULT_DEFAULT is actually used.
 		 */
-		
+
 		FONTDATA_DEFAULT_DEFAULT = FONTDATA_ARRAY_DEFAULT_DEFAULT[0];
 	}
 
@@ -113,7 +112,7 @@ public class PreferenceConverter {
 		}
 		return fontData;
 	}
-	
+
 	/**
 	 * Reads the supplied string and returns its corresponding
 	 * FontData. If it cannot be read then the default FontData
@@ -122,7 +121,7 @@ public class PreferenceConverter {
 	 * @param fontDataValue the string value for the font data  
 	 * @return the font data
 	 */
-	public static FontData[] readFontData(String fontDataValue){
+	public static FontData[] readFontData(String fontDataValue) {
 		return basicGetFontData(fontDataValue);
 	}
 	/**
@@ -407,7 +406,10 @@ public class PreferenceConverter {
 
 	/**
 	 * Sets the current value of the preference with the given name
-	 * in the given preference store.
+	 * in the given preference store. This method also sets the corresponding
+	 * key in the JFace FontRegistry to the value and fires a 
+	 * propertyChangeEvent.
+	 * @see putValue(IPreferenceStore, String, FontData[])
 	 *
 	 * @param store the preference store
 	 * @param name the name of the preference
@@ -423,6 +425,27 @@ public class PreferenceConverter {
 			store.putValue(name, getStoredRepresentation(value));
 			JFaceResources.getFontRegistry().put(name, value);
 			store.firePropertyChangeEvent(name, oldValue, value);
+		}
+	}
+
+	/**
+	 * Sets the current value of the preference with the given name
+	 * in the given preference store. This method does not update
+	 * the font registry or inform of the change.
+	 * 
+	 * @param store the preference store
+	 * @param name the name of the preference
+	 * @param value the new current value of the preference
+	 * @see setValue(IPreferenceStore, String, FontData[])
+	 */
+	public static void putValue(
+		IPreferenceStore store,
+		String name,
+		FontData[] value) {
+		FontData[] oldValue = getFontDataArray(store, name);
+		// see if the font has changed
+		if (!Arrays.equals(oldValue, value)) {
+			store.putValue(name, getStoredRepresentation(value));
 		}
 	}
 
