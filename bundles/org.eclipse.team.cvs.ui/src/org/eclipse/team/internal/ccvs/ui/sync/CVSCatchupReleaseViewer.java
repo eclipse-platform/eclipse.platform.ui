@@ -8,20 +8,23 @@ package org.eclipse.team.internal.ccvs.ui.sync;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
@@ -30,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateMergeAction;
@@ -37,12 +41,15 @@ import org.eclipse.team.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.MergeResource;
 import org.eclipse.team.ui.sync.SyncView;
+import org.eclipse.team.ui.sync.TeamFile;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions
 	private UpdateSyncAction updateAction;
 	private CommitSyncAction commitAction;
 	private UpdateMergeAction updateMergeAction;
+	private IgnoreAction ignoreAction;
+	private HistoryAction showInHistory;
 	
 	class DiffImage extends CompositeImageDescriptor {
 		private static final int HEIGHT= 16;
@@ -70,6 +77,41 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		 */
 		protected Point getSize() {
 			return new Point(WIDTH, HEIGHT);
+		}
+	}
+	class HistoryAction extends Action implements ISelectionChangedListener {
+		IStructuredSelection selection;
+		public HistoryAction(String label) {
+			super(label);
+		}
+		public void run() {
+			if (selection.isEmpty()) return;
+			ITeamNode node = (ITeamNode)selection.getFirstElement();
+			ICVSRemoteFile remoteFile = (ICVSRemoteFile)((TeamFile)node).getMergeResource().getSyncElement().getRemote();
+			HistoryView view = HistoryView.openInActivePerspective();
+			if (view != null) {
+				view.showHistory(remoteFile);
+			}
+		}
+		public void selectionChanged(SelectionChangedEvent event) {
+			ISelection selection = event.getSelection();
+			if (!(selection instanceof IStructuredSelection)) {
+				setEnabled(false);
+				return;
+			}
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if (ss.size() != 1) {
+				setEnabled(false);
+				return;
+			}
+			ITeamNode first = (ITeamNode)ss.getFirstElement();
+			if (first instanceof TeamFile) {
+				this.selection = ss;
+				setEnabled(true);
+			} else {
+				this.selection = null;
+				setEnabled(false);
+			}
 		}
 	}
 	
@@ -136,6 +178,11 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	}
 	
 	protected void fillContextMenu(IMenuManager manager) {
+		super.fillContextMenu(manager);
+		if (showInHistory != null) {
+			manager.add(showInHistory);
+		}
+		manager.add(new Separator());
 		switch (getSyncMode()) {
 			case SyncView.SYNC_INCOMING:
 				updateAction.update(SyncView.SYNC_INCOMING);
@@ -144,12 +191,16 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			case SyncView.SYNC_OUTGOING:
 				commitAction.update(SyncView.SYNC_OUTGOING);
 				manager.add(commitAction);
+				ignoreAction.update();
+				manager.add(ignoreAction);
+				manager.add(new Separator());
 				updateAction.update(SyncView.SYNC_OUTGOING);
 				manager.add(updateAction);
 				break;
 			case SyncView.SYNC_BOTH:
 				commitAction.update(SyncView.SYNC_BOTH);
 				manager.add(commitAction);
+				manager.add(new Separator());
 				updateAction.update(SyncView.SYNC_BOTH);
 				manager.add(updateAction);
 				break;
@@ -158,8 +209,6 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(updateMergeAction);
 				break;
 		}
-		manager.add(new Separator());
-		super.fillContextMenu(manager);
 	}
 	
 	/**
@@ -170,6 +219,10 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		commitAction = new CommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.commit"), shell);
 		updateAction = new UpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
 		updateMergeAction = new UpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
+		ignoreAction = new IgnoreAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.ignore"), shell);
+		// Show in history view
+		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory"));
+		addSelectionChangedListener(showInHistory);	
 	}
 	
 	/**
