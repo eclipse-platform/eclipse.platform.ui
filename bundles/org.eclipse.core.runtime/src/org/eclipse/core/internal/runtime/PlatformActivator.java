@@ -31,7 +31,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
-	private ServiceRegistration converterRegistration;
 	private static File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile();
 
 	public static BundleContext getContext() {
@@ -198,14 +197,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		Runnable work = new Runnable() {
 			public void run() {
 				IPlatformRunnable application = null;
-				String[] appArgs;
 				String applicationId = null;
-				try {
-					EnvironmentInfo envInfo = (EnvironmentInfo) context.getService(environmentServiceReference);
-					if (envInfo == null)
-						throw new RuntimeException("Unable to locate EnvironmentInfo service"); 
-					appArgs = envInfo.getApplicationArgs();
-					
+				try {					
 					applicationId = System.getProperty("eclipse.application");
 					IExtension applicationExtension = registry.getExtension(IPlatform.PI_RUNTIME, IPlatform.PT_APPLICATIONS, applicationId);
 					if (applicationExtension == null)
@@ -230,7 +223,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 					return;
 				}
 				try {
-					Object result = application.run(appArgs);
+					Object result = application.run(InternalPlatform.getDefault().getAppArgs());
 					int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
 					System.setProperty("eclipse.exitcode", Integer.toString(exitCode)); //$NON-NLS-1$
 					if (InternalPlatform.DEBUG)
