@@ -1,5 +1,3 @@
-package org.eclipse.ui.dialogs;
-
 /******************************************************************************* 
  * Copyright (c) 2000, 2003 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials! 
@@ -11,7 +9,10 @@ package org.eclipse.ui.dialogs;
  *   IBM Corporation - initial API and implementation 
  *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *     font should be activated and used by other components.
-******************************************************************************/ 
+ *****************************************************************************/ 
+
+package org.eclipse.ui.dialogs;
+
 import java.util.ArrayList;
 import java.util.List;
 
