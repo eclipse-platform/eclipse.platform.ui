@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,7 +189,6 @@ public class ExternalToolsUtil {
 	 * Returns the collection of resources for the build scope as specified by the given launch configuration.
 	 * 
 	 * @param configuration launch configuration
-	 * @param context context used to expand variables
 	 * @throws CoreException if an exception occurs while retrieving the resources
 	 */
 	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration) throws CoreException {
@@ -207,8 +206,6 @@ public class ExternalToolsUtil {
 	 * copy will be created from the arguments and returned.
 	 * 
 	 * @param commandArgs the builder ICommand arguments
-	 * @param newName a new name for the config if the one in the command is
-	 * invalid
 	 * @return a launch configuration, a launch configuration working copy, or
 	 * <code>null</code> if not possible.
 	 */
