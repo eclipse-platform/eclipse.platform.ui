@@ -9,7 +9,7 @@
 <plugin
    name = "%help_plugin_name"
    id = "org.eclipse.help"
-   version = "1.0"
+   version = "2.0"
    provider-name = "International Business Machines Corp."
    class="org.eclipse.help.internal.HelpPlugin">
 
@@ -89,9 +89,9 @@
 	
 	<!-- For remote install, run this application -->
 	<!-- ======================================== -->
-	<extension id="servletFacade" point="org.eclipse.core.runtime.applications">
+	<extension id="helpApplication" point="org.eclipse.core.runtime.applications">
 		<application> 
-			<run class="org.eclipse.help.internal.ServletFacade">
+			<run class="org.eclipse.help.internal.HelpApplication">
 			</run>
 		</application>
 	</extension>

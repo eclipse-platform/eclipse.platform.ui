@@ -14,7 +14,7 @@ import javax.servlet.*;
  * Eclipse launcher
  */
 public class Eclipse {
-	private static final String SERVLET_FACADE = "org.eclipse.help.servletFacade";
+	private static final String HELP_APPLICATION = "org.eclipse.help.helpApplication";
 	private Class bootLoader;
 	private Object platformRunnable;
 	private Method runMethod;
@@ -87,7 +87,7 @@ public class Eclipse {
 	}
 
 	private synchronized void init() throws ServletException {
-		System.out.println("init eclipse");
+
 		try {
 			if (context.getAttribute("platformRunnable") == null) {
 				//System.out.println("getting boot loader");
@@ -112,7 +112,7 @@ public class Eclipse {
 
 				//System.out.println("get platform runnable");
 				platformRunnable =
-					mGetRunnable.invoke(bootLoader, new Object[] { SERVLET_FACADE });
+					mGetRunnable.invoke(bootLoader, new Object[] { HELP_APPLICATION });
 
 				runMethod =
 					platformRunnable.getClass().getMethod("run", new Class[] { Object.class });
