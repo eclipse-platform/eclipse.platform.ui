@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * The <code>TaskDescriptionProvider</code> provides the additional descriptions
@@ -139,6 +140,7 @@ public class TaskDescriptionProvider {
 
         try {
             DocumentBuilder tempDocBuilder = tempFactory.newDocumentBuilder();
+            tempDocBuilder.setErrorHandler(new DefaultHandler());
             URL tempURL = getClass().getResource(aFileName);
             InputSource tempInputSource = new InputSource(tempURL.toExternalForm());
             tempDocument = tempDocBuilder.parse(tempInputSource);
