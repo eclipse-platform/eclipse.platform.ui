@@ -208,7 +208,7 @@ public class AnimationManager {
 	 * behaviour.
 	 */
 	private void animationStarted() {
-		UIJob animationStartJob = new WorkbenchJob(ProgressMessages
+		WorkbenchJob animationStartJob = new WorkbenchJob(ProgressMessages
 				.getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
 			/*
 			 * (non-Javadoc)

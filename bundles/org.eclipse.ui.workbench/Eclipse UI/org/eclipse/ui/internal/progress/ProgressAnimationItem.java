@@ -64,6 +64,8 @@ public class ProgressAnimationItem extends AnimationItem {
 	 */
 	void animationDone() {
 		super.animationDone();
+		if(bar.isDisposed())
+			return;
 		bar.done();
 	}
 
@@ -74,6 +76,8 @@ public class ProgressAnimationItem extends AnimationItem {
 	 */
 	void animationStart() {
 		super.animationStart();
+		if(bar.isDisposed())
+			return;
 		bar.beginAnimatedTask();
 	}
 
