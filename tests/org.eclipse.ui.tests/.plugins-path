@@ -6,7 +6,6 @@ org.eclipse.core.runtime = file:/d:/eclipse/plugins/org.eclipse.core.runtime/plu
 org.eclipse.core.resources = file:/d:/eclipse/plugins/org.eclipse.core.resources/plugin.xml
 org.eclipse.swt = file:/d:/eclipse/plugins/org.eclipse.swt/plugin.xml
 org.eclipse.ui = file:/d:/eclipse/plugins/org.eclipse.ui/plugin.xml
-org.eclipse.ui.junit.util = file:/d:/eclipse/plugins/org.eclipse.ui.junit.util/plugin.xml
 org.junit = file:/d:/eclipse/plugins/org.junit/plugin.xml
 org.eclipse.help = file:/d:/eclipse/plugins/org.eclipse.help/plugin.xml
 org.eclipse.junit = file:/d:/eclipse/plugins/org.eclipse.junit/plugin.xml

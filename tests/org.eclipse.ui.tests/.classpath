@@ -4,6 +4,7 @@
     <classpathentry kind="lib" path="D:/eclipse/startup.jar"/>
     <classpathentry kind="src" path="Eclipse UI Tests"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
+    <classpathentry kind="src" path="/org.eclipse.ui.junit"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.boot/bootsrc.zip"/>
     <classpathentry kind="var"
@@ -14,6 +15,5 @@
         path="ECLIPSE_HOME/plugins/org.eclipse.swt/swt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.junit/junit.jar" sourcepath="ECLIPSE_PLUGINS/org.junit/src.jar"/>
-    <classpathentry kind="src" path="/org.eclipse.ui.junit.util"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
