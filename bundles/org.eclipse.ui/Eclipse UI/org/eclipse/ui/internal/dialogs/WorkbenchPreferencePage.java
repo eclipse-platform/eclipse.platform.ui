@@ -410,6 +410,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		recentFilesEditor.loadDefault();
 		
+		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
+		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
+		openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
+		singleClickButton.setSelection(openOnSingleClick);
+		doubleClickButton.setSelection(!openOnSingleClick);
+		selectOnHoverButton.setSelection(selectOnHover);
+		openAfterDelayButton.setSelection(openAfterDelay);
+		selectOnHoverButton.setEnabled(openOnSingleClick);
+		openAfterDelayButton.setEnabled(openOnSingleClick);		
+		
 //		acceleratorPerformDefaults(store);
 		super.performDefaults();
 	}
@@ -424,16 +434,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			name = config.getName();
 		if((name != null) && (accelConfigCombo != null))
 			accelConfigCombo.select(accelConfigCombo.indexOf(name));
-			
-		boolean openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
-		boolean selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
-		boolean openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
-		singleClickButton.setSelection(openOnSingleClick);
-		doubleClickButton.setSelection(!openOnSingleClick);
-		selectOnHoverButton.setSelection(selectOnHover);
-		openAfterDelayButton.setSelection(openAfterDelay);
-		selectOnHoverButton.setEnabled(openOnSingleClick);
-		openAfterDelayButton.setEnabled(openOnSingleClick);			
 	}
 	/**
 	 *	The user has pressed Ok.  Store/apply this page's values appropriately.
