@@ -245,6 +245,7 @@ public class SearchManager implements IResourceChangeListener {
 					public void run() {
 						if (previousSearch != null && viewer == visibleViewer)
 							previousSearch.setSelection(viewer.getSelection());
+						viewer.setInput(null);
 						viewer.setPageId(search.getPageId());
 						viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 						viewer.setContextMenuTarget(search.getContextMenuContributor());
