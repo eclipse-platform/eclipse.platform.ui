@@ -20,6 +20,7 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantAction;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceCommitOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
@@ -71,5 +72,11 @@ public class SharingWizardPageActionGroup extends SynchronizePageActionGroup {
 						return "SharingWizardIgnore."; //$NON-NLS-1$
 					}
 				});
+	}
+	/**
+	 * @return Returns the commitAction.
+	 */
+	public SynchronizeModelAction getCommitAction() {
+		return commitAction;
 	}
 }

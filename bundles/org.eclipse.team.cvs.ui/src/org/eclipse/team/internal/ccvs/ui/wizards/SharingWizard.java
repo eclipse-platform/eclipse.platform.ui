@@ -26,14 +26,21 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.operations.DisconnectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ReconcileProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
@@ -72,10 +79,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	private ICVSRemoteFolder existingRemote;
 	
 	public SharingWizard() {
-		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		IDialogSettings section = workbenchSettings.getSection("NewLocationWizard");//$NON-NLS-1$
+		IDialogSettings cvsSettings = CVSUIPlugin.getPlugin().getDialogSettings();
+		IDialogSettings section = cvsSettings.getSection("SharingWizard");//$NON-NLS-1$
 		if (section == null) {
-			section = workbenchSettings.addNewSection("NewLocationWizard");//$NON-NLS-1$
+			section = cvsSettings.addNewSection("SharingWizard");//$NON-NLS-1$
 		}
 		setDialogSettings(section);
 		setNeedsProgressMonitor(true);
@@ -237,9 +244,13 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		if (result[0] && isNewLocation) {
 			KnownRepositories.getInstance().addRepository(location, true /* broadcast */);
 		}
+		if (getContainer().getCurrentPage() == syncPage) {
+			syncPage.saveSettings();
+			syncPage.promptToCommit();
+		}
 		return result[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performCancel()
 	 */

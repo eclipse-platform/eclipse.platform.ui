@@ -19,11 +19,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -48,6 +51,10 @@ import org.eclipse.ui.part.PageBook;
  */
 public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSetChangeListener {
 	
+	// Constant keys used to store last size for this page
+	private static final String PAGE_HEIGHT = "SyncPageHeight"; //$NON-NLS-1$
+	private static final String PAGE_WIDTH = "SyncPageWidth"; //$NON-NLS-1$
+	
 	private ParticipantPageSaveablePart input;
 	private ISynchronizePageConfiguration configuration;
 	private SyncInfoSet infos;
@@ -57,6 +64,10 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	private Control syncPage;
 	private Control noChangesPage;
 	private Control errorPage;
+	
+	private int width;
+	private int height;
+	private SharingWizardPageActionGroup sharingWizardPageActionGroup;
 	
 	public SharingWizardSyncPage(String pageName, String title, ImageDescriptor titleImage, String description) {
 		super(pageName, title, titleImage, description);
@@ -127,7 +138,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 
 	/* private */ void showErrors() {
 		ITeamStatus[] status = infos.getErrors();
-		String title = Policy.bind("Errors Occurred"); //$NON-NLS-1$
+		String title = Policy.bind("SharingWizardSyncPage.8"); //$NON-NLS-1$
 		if (status.length == 1) {
 			IStatus s = status[0];
 			if (s.getException() instanceof CoreException) {
@@ -135,7 +146,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 			}
 			ErrorDialog.openError(getShell(), title, null, s);
 		} else {
-			MultiStatus multi = new MultiStatus(CVSUIPlugin.ID, 0, status, "The following errors occurred.", null); //$NON-NLS-1$
+			MultiStatus multi = new MultiStatus(CVSUIPlugin.ID, 0, status, Policy.bind("SharingWizardSyncPage.9"), null); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
 	}
@@ -143,8 +154,9 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	private ParticipantPageSaveablePart createCompareInput() {	
 		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(new ResourceScope(new IResource[] { project }));
 		configuration = participant.createPageConfiguration();
-		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {SharingWizardPageActionGroup.ACTION_GROUP});
-		configuration.addActionContribution(new SharingWizardPageActionGroup());
+		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.LAYOUT_GROUP, SharingWizardPageActionGroup.ACTION_GROUP});
+		sharingWizardPageActionGroup = new SharingWizardPageActionGroup();
+		configuration.addActionContribution(sharingWizardPageActionGroup);
 		configuration.setRunnableContext(getContainer());
 		
 		CompareConfiguration cc = new CompareConfiguration();
@@ -215,5 +227,57 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 
 	public WorkspaceSynchronizeParticipant getParticipant() {
 		return (WorkspaceSynchronizeParticipant)configuration.getParticipant();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (syncPage.isVisible()) {
+			initializeSize();
+			getShell().setSize(Math.max(width, 300), Math.max(height, 300));
+		}
+	}
+	
+	private void initializeSize() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			try {
+				width = settings.getInt(PAGE_WIDTH);
+				height = settings.getInt(PAGE_HEIGHT);
+			} catch (NumberFormatException e) {
+				// Ignore and go on;
+			}
+		}
+		if (width == 0) width = 640;
+		if (height == 0) height = 480;
+	}
+
+	/**
+	 * Save the size of the page so it can be opened with the same size next time
+	 */
+	public void saveSettings() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			Point size = getShell().getSize();
+			settings.put(PAGE_WIDTH, size.x);
+			settings.put(PAGE_HEIGHT, size.y);
+		}
+	}
+	
+	/**
+	 * Prompt to commit any leftovers
+	 */
+	public void promptToCommit() {
+		if (sharingWizardPageActionGroup != null) {
+			if (sharingWizardPageActionGroup.getCommitAction().isEnabled()) {
+				if (MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizardSyncPage.10"), Policy.bind("SharingWizardSyncPage.11"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					// Null the context so the commit will run in the background
+					configuration.setRunnableContext(null);
+					sharingWizardPageActionGroup.getCommitAction().run();
+				}
+			}
+		}
 	}
 }
