@@ -456,7 +456,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		
 		IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 		try {
-			antObject.setPluginLabel(descriptor.getLabel());
+			antObject.setPluginLabel(element.getNamespace());
 			URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 			if (new File(url.getPath()).exists()) {
 				addURLToExtraClasspathEntries(url, element);
@@ -553,13 +553,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			Property property;
 			if (value != null) {
 				property = new Property(name, value);
-				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
-				property.setPluginLabel(descriptor.getLabel());
+				property.setPluginLabel(element.getNamespace());
 			} else {
 				property = new Property();
 				property.setName(name);
 				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
-				property.setPluginLabel(descriptor.getLabel());
+				property.setPluginLabel(element.getNamespace());
 				String className = element.getAttribute(AntCorePlugin.CLASS);
 				property.setValueProvider(className, descriptor.getPluginClassLoader());
 			}
@@ -595,7 +594,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				return null;
 			}
 		}
-			return new AntClasspathEntry(tools.getAbsolutePath()); 
+			AntClasspathEntry toolsEntry= new AntClasspathEntry(tools.getAbsolutePath());
+            toolsEntry.setEclipseRuntimeRequired(false);
+            return toolsEntry;
 	}
 
 	/**
