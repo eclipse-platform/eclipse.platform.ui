@@ -71,7 +71,7 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 		Composite formParent = factory.createComposite(canvas);
 		createFormClient(formParent);
 		this.control = canvas;
-		canvas.setFocus();
+		//canvas.setFocus();
 		return canvas;
 	}
 
