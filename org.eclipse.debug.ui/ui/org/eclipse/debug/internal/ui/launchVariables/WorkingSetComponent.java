@@ -48,13 +48,6 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 	private IWorkingSet currentWorkingSet;
 
 	/**
-	 * @see IVariableComponent#getControl()
-	 */
-	public Control getControl() {
-		return mainGroup;
-	}
-
-	/**
 	 * @see IVariableComponent#createContents(Composite, String, IVariableComponentContainer)
 	 */
 	public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {

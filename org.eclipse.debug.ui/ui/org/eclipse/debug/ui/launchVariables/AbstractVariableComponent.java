@@ -34,7 +34,7 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	 * @see IVariableComponent#getControl()
 	 */
 	public Control getControl() {
-		return null;
+		return mainGroup;
 	}
 	
 	/* (non-Javadoc)

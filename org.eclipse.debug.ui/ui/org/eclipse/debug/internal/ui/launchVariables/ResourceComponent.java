@@ -129,13 +129,6 @@ public class ResourceComponent extends AbstractVariableComponent {
 	/* (non-Javadoc)
 	 * Method declared on IVariableComponent.
 	 */
-	public Control getControl() {
-		return mainGroup;
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IVariableComponent.
-	 */
 	public String getVariableValue() {
 		if (selectedResourceVariable) {
 			return null;
