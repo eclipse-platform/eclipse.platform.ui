@@ -11,120 +11,53 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IContextService;
 
 final class KeyBindingService implements IKeyBindingService {
 	
-	private SortedMap commandIdToActionMap = new TreeMap();
-	private String[] scopes = new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
+	private SortedMap actionMap = new TreeMap();
+	private IActionService actionService;
+	private IContextService contextService;
 	
-	KeyBindingService(PartSite partSite) {
-		if (partSite instanceof EditorSite) {
-			EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) partSite).getExtensionActionBarContributor();
-			
-			if (contributor != null)
-				registerExtendedActions(contributor.getExtendedActions());
-		}
+	KeyBindingService(IActionService actionService, IContextService contextService) {
+		super();
+		this.actionService = actionService;
+		this.contextService = contextService;
 	}
 
-	IAction getAction(String command) {
-		return (IAction) commandIdToActionMap.get(command);
-	}
-	
-	void registerExtendedActions(ActionDescriptor[] actionDescriptors) {
-		if (actionDescriptors != null) {
-			for (int i = 0; i < actionDescriptors.length; i++) {
-				ActionDescriptor actionDescriptor = actionDescriptors[i];
-				
-				if (actionDescriptor != null) {
-					IAction action = actionDescriptors[i].getAction();
-			
-					if (action != null && action.getActionDefinitionId() != null)
-						registerAction(action);
-				}
-			}
-		}		
-	}
-
-	/*
-	 * @see IKeyBindingService#getScopes()
-	 */
 	public String[] getScopes() {
-    	return (String[]) scopes.clone();
+    	List contexts = contextService.getContexts();
+    	return (String[]) contexts.toArray(new String[contexts.size()]);
     }
 
-	/*
-	 * @see IKeyBindingService#setScopes(String[] scopes)
-	 */
-	public void setScopes(String[] scopes)
-		throws IllegalArgumentException {
-		if (scopes == null || scopes.length < 1)
-			throw new IllegalArgumentException();
-			
-    	this.scopes = (String[]) scopes.clone();
-    	
-    	for (int i = 0; i < scopes.length; i++)
-			if (scopes[i] == null)
-				throw new IllegalArgumentException();    	
+	public void setScopes(String[] scopes) {
+		List contexts = Arrays.asList(scopes);
+		contextService.setContexts(contexts);		 	
     }
 
-	/*
-	 * @see IKeyBindingService#registerAction(IAction)
-	 */
 	public void registerAction(IAction action) {
     	String command = action.getActionDefinitionId();
 
-		if (command != null)
-			commandIdToActionMap.put(command, action);
+		if (command != null) {
+			actionMap.put(command, action);		
+			actionService.setActionMap(actionMap);
+		}
     }
     
-   	/*
-	 * @see IKeyBindingService#unregisterAction(IAction)
-	 */
 	public void unregisterAction(IAction action) {   		
     	String command = action.getActionDefinitionId();
 
-		if (command != null)
-			commandIdToActionMap.remove(command);
-    }
-
-	/*
-	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
-	 */
-    public String getActiveAcceleratorConfigurationId() {
-    	return org.eclipse.ui.internal.commands.Manager.getInstance().getKeyMachine().getConfiguration();
-    }
-
-	/*
-	 * @see IKeyBindingService#getActiveAcceleratorScopeId()
-	 */
-	public String getActiveAcceleratorScopeId() {
-   		return getScopes()[0];
-    }
-
-	/*
-	 * @see IKeyBindingService#setActiveAcceleratorScopeId(String)
-	 */ 
-    public void setActiveAcceleratorScopeId(String scopeId)
-    	throws IllegalArgumentException {
-   		setScopes(new String[] { scopeId });
-    }
-    
-   	/*
-	 * @see IKeyBindingService#processKey(Event)
-	 */
-	public boolean processKey(KeyEvent event) {
-		return false;
-    }
-
-    /*
-	 * @see IKeyBindingService#registerAction(IAction)
-	 */
-	public void enable(boolean enable) {
-	}
+		if (command != null) {
+			actionMap.remove(command);
+			actionService.setActionMap(actionMap);
+		}
+    }	
 }

@@ -456,7 +456,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		//Temporary option to turn off the dialog font
 		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 		//Temporary option to disable the progress indicator
-		store.setDefault(IWorkbenchConstants.SHOW_PROGRESS_INDICATOR, true); //$NON-NLS-1$	
+		store.setDefault(IWorkbenchConstants.SHOW_PROGRESS_INDICATOR, false); //$NON-NLS-1$	
 
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);

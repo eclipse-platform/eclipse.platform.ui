@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -210,7 +209,7 @@ public abstract class DecoratorDefinition {
 	protected void handleCoreException(CoreException exception) {
 
 		//If there is an error then reset the enabling to false
-		InternalPlatform.getRuntimePlugin().getLog().log(exception.getStatus());
+		WorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
 		this.enabled = false;
 	}
 

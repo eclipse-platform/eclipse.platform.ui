@@ -100,6 +100,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_Y = "y"; //$NON-NLS-1$
 	public static final String TAG_WIDTH = "width"; //$NON-NLS-1$
 	public static final String TAG_HEIGHT = "height"; //$NON-NLS-1$
+	public static final String TAG_MINIMIZED = "minimized"; //$NON-NLS-1$
+	public static final String TAG_MAXIMIZED = "maximized"; //$NON-NLS-1$
 	public static final String TAG_FOLDER = "folder"; //$NON-NLS-1$
 	public static final String TAG_INFO = "info"; //$NON-NLS-1$
 	public static final String TAG_PART = "part"; //$NON-NLS-1$
@@ -161,13 +163,13 @@ public interface IWorkbenchConstants {
 	public static final String TAG_PATH = "path";//$NON-NLS-1$
 	public static final String TAG_TOOLTIP = "tooltip";//$NON-NLS-1$
 	public static final String TAG_VIEWS = "views";//$NON-NLS-1$
-	public static final String TAG_ADDED = "added";//$NON-NLS-1$
 	public static final String TAG_POSITION = "position";//$NON-NLS-1$
 	public static final String TAG_NAVIGATION_HISTORY = "navigationHistory";//$NON-NLS-1$
 	public static final String TAG_ACTIVE = "active";//$NON-NLS-1$
 	public static final String TAG_REMOVED = "removed";//$NON-NLS-1$
 	public static final String TAG_HISTORY_LABEL = "historyLabel";//$NON-NLS-1$
+	public static final String TAG_LOCKED = "locked";//$NON-NLS-1$
 	
 	//Progress indicator
-	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";
+	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	
 }

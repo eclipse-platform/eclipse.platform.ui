@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Sebastian Davids <sdavids@gmx.de> - Fix for bug 38729 - [Preferences]
+ * 			 NPE PreferencePage isValid.
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -497,7 +499,8 @@ public abstract class PreferencePage
 		isValid = b;
 		if (oldValue != isValid) {
 			// update container state
-			getContainer().updateButtons();
+			if (getContainer() != null)
+				getContainer().updateButtons();
 			// update page state
 			updateApplyButton();
 		}

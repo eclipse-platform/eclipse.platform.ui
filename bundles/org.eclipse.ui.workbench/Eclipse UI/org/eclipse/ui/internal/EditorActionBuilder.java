@@ -93,7 +93,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
 	 * Helper class that will populate the menu and toobar with the external
 	 * editor contributions.
 	 */
-	protected static class ExternalContributor implements IEditorActionBarContributor {
+	public static class ExternalContributor implements IEditorActionBarContributor {
 		private ArrayList cache;
 		
 		public ExternalContributor(ArrayList cache) {

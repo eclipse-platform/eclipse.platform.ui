@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * The TypeSelectionDialog is a SelectionDialog that allows the user to select a file editor.
+ * The TypeFilteringDialog  is a SelectionDialog that allows the user to select a file editor.
  */
 public class TypeFilteringDialog extends SelectionDialog {
 	Button addTypesButton;
@@ -58,7 +58,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 
 	IFileEditorMapping[] currentInput;
 /**
- * Creates a type selection dialog using the supplied entries. Set the initial selections to those
+ * Creates a type filtering dialog using the supplied entries. Set the initial selections to those
  * whose extensions match the preselections.
  * @param Shell
  * @param Collection of String - a Collection of String to define the preselected types
@@ -71,7 +71,7 @@ public TypeFilteringDialog(Shell parentShell, Collection preselections) {
 }
 
 /**
- * Creates a type selection dialog using the supplied entries. Set the initial selections to those
+ * Creates a type filtering dialog using the supplied entries. Set the initial selections to those
  * whose extensions match the preselections.
  * @param Shell
  * @param Collection of String - a Collection of String to define the preselected types
@@ -272,7 +272,7 @@ private void initializeViewer() {
 	listViewer.setInput(getInput());
 }
 /**
- * The <code>ListSelectionDialog</code> implementation of this 
+ * The <code>TypeFilteringDialog</code> implementation of this 
  * <code>Dialog</code> method builds a list of the selected elements for later
  * retrieval by the client and closes this dialog.
  */

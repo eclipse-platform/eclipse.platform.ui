@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.*;
  */
 public class CreateLinkedResourceGroup {	
 	private Listener listener;
-	private String initialLinkTarget;
+	private String linkTarget = "";	//$NON-NLS-1$
 	private int type;
 	private boolean createLink = false;
 
@@ -73,7 +73,7 @@ public Composite createContents(Composite parent) {
 	GridLayout layout = new GridLayout();
 	groupComposite.setLayout(layout);
 	groupComposite.setLayoutData(new GridData(
-		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		GridData.VERTICAL_ALIGN_FILL | GridData.FILL_HORIZONTAL));
 	groupComposite.setFont(font);
 
 	final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
@@ -133,14 +133,12 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	linkTargetField.setEnabled(enabled);
 	linkTargetField.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
+			linkTarget = linkTargetField.getText();
 			resolveVariable();
 			if (listener != null)
 				listener.handleEvent(new Event());
 		}
 	});
-	if (initialLinkTarget != null)
-		linkTargetField.setText(initialLinkTarget);
-
 	// browse button
 	browseButton = new Button(linkTargetGroup, SWT.PUSH);
 	setButtonLayoutData(browseButton);
@@ -184,6 +182,9 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	resolvedPathLabelData.setLayoutData(data);
 	resolvedPathLabelData.setVisible(false);
+
+	if (linkTarget != null)
+		linkTargetField.setText(linkTarget);
 }
 /**
  * Returns a new status object with the given severity and message.
@@ -212,8 +213,8 @@ public void dispose() {
  * 	chose not to create a link.
  */
 public String getLinkTarget() {
-	if (createLink && linkTargetField != null && linkTargetField.isDisposed() == false)
-		return linkTargetField.getText();
+	if (createLink)
+		return linkTarget;
 
 	return null;
 }
@@ -221,12 +222,11 @@ public String getLinkTarget() {
  * Opens a file or directory browser depending on the link type.
  */
 private void handleLinkTargetBrowseButtonPressed() {
-	String linkTargetName = linkTargetField.getText();
 	File file = null;
 	String selection = null;
 	
-	if ("".equals(linkTargetName) == false) {	//$NON-NLS-1$
-		file = new File(linkTargetName);
+	if ("".equals(linkTarget) == false) {	//$NON-NLS-1$
+		file = new File(linkTarget);
 		if (file.exists() == false)
 			file = null;
 	}
@@ -234,19 +234,20 @@ private void handleLinkTargetBrowseButtonPressed() {
 		FileDialog dialog = new FileDialog(linkTargetField.getShell());
 		if (file != null) {
 			if (file.isFile())
-				dialog.setFileName(linkTargetName);
+				dialog.setFileName(linkTarget);
 			else
-				dialog.setFilterPath(linkTargetName);
+				dialog.setFilterPath(linkTarget);
 		}
 		selection = dialog.open();		
 	}
 	else {
 		DirectoryDialog dialog = new DirectoryDialog(linkTargetField.getShell());
 		if (file != null) {
+			String path = linkTarget;
 			if (file.isFile())
-				linkTargetName = file.getParent();
-			if (linkTargetName != null)
-				dialog.setFilterPath(linkTargetName);
+				path = file.getParent();
+			if (path != null)
+				dialog.setFilterPath(path);
 		}
 		dialog.setMessage(WorkbenchMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
 		selection = dialog.open();
@@ -297,7 +298,7 @@ protected void initializeDialogUnits(Control control) {
  */
 private void resolveVariable() {
 	IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-	IPath path = new Path(linkTargetField.getText());
+	IPath path = new Path(linkTarget);
 	IPath resolvedPath = pathVariableManager.resolvePath(path);
 	
 	if (path.equals(resolvedPath)) {
@@ -332,7 +333,7 @@ private GridData setButtonLayoutData(Button button) {
  * @param target the value of the link target field
  */
 public void setLinkTarget(String target) {
-	initialLinkTarget = target;
+	linkTarget = target;
 	if (linkTargetField != null && linkTargetField.isDisposed() == false)
 		linkTargetField.setText(target);
 }
@@ -367,8 +368,7 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		return createStatus(IStatus.OK, "");	//$NON-NLS-1$
 	
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-	String linkTargetName = linkTargetField.getText();
-	IPath path = new Path(linkTargetName);
+	IPath path = new Path(linkTarget);
 	
 	if (createLink == false)
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
@@ -378,9 +378,9 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		return locationStatus;
 
 	// use the resolved link target name
-	linkTargetName = resolvedPathLabelData.getText();
-	path = new Path(linkTargetName);
-	File linkTargetFile = new Path(linkTargetName).toFile();
+	String resolvedLinkTarget = resolvedPathLabelData.getText();
+	path = new Path(resolvedLinkTarget);
+	File linkTargetFile = new Path(resolvedLinkTarget).toFile();
 	if (linkTargetFile.exists()) {
 		IStatus fileTypeStatus = validateFileType(linkTargetFile);
 		if (fileTypeStatus.isOK() == false)

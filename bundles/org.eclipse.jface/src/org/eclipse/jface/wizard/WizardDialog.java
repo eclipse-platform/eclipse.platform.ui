@@ -13,11 +13,10 @@ package org.eclipse.jface.wizard;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.progress.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
@@ -47,9 +46,7 @@ import org.eclipse.swt.widgets.*;
  * is rarely required.
  * </p>
  */
-public class WizardDialog
-	extends TitleAreaDialog
-	implements IWizardContainer {
+public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 	/**
 	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
@@ -587,9 +584,15 @@ public class WizardDialog
 	 * Creates and return a new wizard closing dialog without openiong it.
 	 */
 	private MessageDialog createWizardClosingDialog() {
-			MessageDialog result = new MessageDialog(getShell(), JFaceResources.getString("WizardClosingDialog.title"), //$NON-NLS-1$
-		null, JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
-	MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL }, 0);
+		MessageDialog result =
+			new MessageDialog(
+				getShell(),
+				JFaceResources.getString("WizardClosingDialog.title"), //$NON-NLS-1$
+				null,
+				JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
+				MessageDialog.QUESTION,
+				new String[] { IDialogConstants.OK_LABEL },
+				0);
 		return result;
 	}
 	/**
@@ -742,7 +745,7 @@ public class WizardDialog
 	public void run(
 		boolean fork,
 		boolean cancelable,
-		final IRunnableWithProgress runnable)
+		IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException {
 		// The operation can only be canceled if it is executed in a separate thread.
 		// Otherwise the UI is blocked anyway.
@@ -765,36 +768,6 @@ public class WizardDialog
 		}
 	}
 	/**
-		 * A long running operation triggered through the wizard
-		 * was stopped either by user input or by normal end.
-		 * Hides the progress monitor and restores the enable state
-		 * wizard's buttons and controls.
-		 *
-		 * @param savedState the saved UI state as returned by <code>aboutToStart</code>
-		 * @see #aboutToStart
-		 */
-	private void stopped(Object savedState) {
-		if (getShell() != null) {
-			if (wizard.needsProgressMonitor()) {
-				progressMonitorPart.setVisible(false);
-				progressMonitorPart.removeFromCancelComponent(cancelButton);
-			}
-			Map state = (Map) savedState;
-			restoreUIState(state);
-			cancelButton.addSelectionListener(cancelListener);
-
-			setDisplayCursor(null);
-			cancelButton.setCursor(null);
-			waitCursor.dispose();
-			waitCursor = null;
-			arrowCursor.dispose();
-			arrowCursor = null;
-			Control focusControl = (Control) state.get(FOCUS_CONTROL);
-			if (focusControl != null)
-				focusControl.setFocus();
-		}
-	}
-	/**
 	 * Saves the enabled/disabled state of the given control in the
 	 * given map, which must be modifiable.
 	 *
@@ -812,7 +785,7 @@ public class WizardDialog
 		String key,
 		boolean enabled) {
 		if (w != null) {
-			h.put(key, new Boolean(w.isEnabled()));
+			h.put(key, new Boolean(w.getEnabled()));
 			w.setEnabled(enabled);
 		}
 	}
@@ -1016,6 +989,36 @@ public class WizardDialog
 		update();
 	}
 	/**
+	 * A long running operation triggered through the wizard
+	 * was stopped either by user input or by normal end.
+	 * Hides the progress monitor and restores the enable state
+	 * wizard's buttons and controls.
+	 *
+	 * @param savedState the saved UI state as returned by <code>aboutToStart</code>
+	 * @see #aboutToStart
+	 */
+	private void stopped(Object savedState) {
+		if (getShell() != null) {
+			if (wizard.needsProgressMonitor()) {
+				progressMonitorPart.setVisible(false);
+				progressMonitorPart.removeFromCancelComponent(cancelButton);
+			}
+			Map state = (Map) savedState;
+			restoreUIState(state);
+			cancelButton.addSelectionListener(cancelListener);
+
+			setDisplayCursor(null);
+			cancelButton.setCursor(null);
+			waitCursor.dispose();
+			waitCursor = null;
+			arrowCursor.dispose();
+			arrowCursor = null;
+			Control focusControl = (Control) state.get(FOCUS_CONTROL);
+			if (focusControl != null)
+				focusControl.setFocus();
+		}
+	}
+	/**
 	 * Updates this dialog's controls to reflect the current page.
 	 */
 	protected void update() {
@@ -1173,5 +1176,4 @@ public class WizardDialog
 
 		getShell().setText(title);
 	}
-
 }

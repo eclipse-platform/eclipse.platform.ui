@@ -157,7 +157,23 @@ public class ActionContributionItem extends ContributionItem {
 			entries.clear();
 		}
 	}
+
+public boolean isVisible() {
+	IAction action = getAction();
 	
+	if (action != null) {
+		String commandId = action.getActionDefinitionId();
+		IContextResolver contextResolver = ContextResolver.getInstance().getContextResolver();
+		
+		if (contextResolver != null) {
+			return contextResolver.inContext(commandId);
+		}
+	}
+	
+	return true;	
+	//return visible;
+}
+
 /**
  * Returns whether color icons should be used in toolbars.
  * 

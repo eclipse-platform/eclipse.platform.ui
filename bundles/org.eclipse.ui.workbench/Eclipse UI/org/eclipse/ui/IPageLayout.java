@@ -72,14 +72,19 @@ public interface IPageLayout {
 	public static String ID_OUTLINE = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
 
 	/**
+	 * The view id for the workbench's Bookmark Navigator standard component.
+	 */
+	public static String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkView"; //$NON-NLS-1$
+
+	/**
+	 * The view id for the workbench's Task List standard component.
+	 */
+	public static String ID_PROBLEM_VIEW = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
+
+	/**
 	 * The view id for the workbench's Task List standard component.
 	 */
 	public static String ID_TASK_LIST = "org.eclipse.ui.views.TaskList"; //$NON-NLS-1$
-
-	/**
-	 * The view id for the workbench's Bookmark Navigator standard component.
-	 */
-	public static String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkNavigator"; //$NON-NLS-1$
 
 	/**
 	 * Id of the navigate action set. 

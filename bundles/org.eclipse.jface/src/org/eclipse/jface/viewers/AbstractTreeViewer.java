@@ -11,24 +11,16 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.progress.IPendingPlaceholder;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TreeEvent;
-import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers
@@ -100,7 +92,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	protected AbstractTreeViewer() {
 	}
-
 	/**
 	 * Adds the given child elements to this viewer as children of the given parent element.
 	 * If this viewer does not have a sorter, the elements are added at the end of the 
@@ -136,9 +127,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			createTreeItem(widget, filtered[i], index);
 		}
 
-	} /*
-		* Returns the index where the item should be inserted.
-	   */
+	} 
+	
+	/**
+	 * Returns the index where the item should be inserted.
+	 * @param parent The parent widget the element will be inserted into.
+	 * @param element The element to insert.
+	 */
 	protected int indexForElement(Widget parent, Object element) {
 		ViewerSorter sorter = getSorter();
 		Item [] items = getChildren(parent);
@@ -146,9 +141,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		if (sorter == null)
 			return items.length;
 		int count = items.length;
-		int min = 0, max = count - 1;
-		
-		
+		int min = 0, max = count - 1;		
 		
 		while (min <= max) {
 			int mid = (min + max) / 2;
@@ -173,7 +166,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 		return min;
 	}
-
 	/**
 	 * Adds the given child element to this viewer as a child of the given parent element.
 	 * If this viewer does not have a sorter, the element is added at the end of the 

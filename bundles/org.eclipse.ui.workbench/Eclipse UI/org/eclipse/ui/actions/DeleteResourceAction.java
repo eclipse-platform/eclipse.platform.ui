@@ -27,7 +27,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard action for deleting the currently selected resources.
@@ -386,9 +385,7 @@ public void run() {
 				delete(resourcesToDelete, monitor);
 			}
 		};
-		AbstractUIPlugin plugin =
-					(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		plugin.getWorkbench().getActiveWorkbenchWindow().queueJob(op);
+		new ProgressMonitorDialog(shell).run(true, true, op);
 	} catch (InvocationTargetException e) {
 		Throwable t = e.getTargetException();
 		if (t instanceof CoreException) {

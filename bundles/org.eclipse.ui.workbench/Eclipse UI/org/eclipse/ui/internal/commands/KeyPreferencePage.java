@@ -11,7 +11,9 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -363,26 +365,26 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				treeViewerCommands.setInput(new Object());
 	
 			List scopes = new ArrayList();
-			scopes.addAll(coreRegistry.getScopes());
-			scopes.addAll(localRegistry.getScopes());
-			scopes.addAll(preferenceRegistry.getScopes());
+			scopes.addAll(coreRegistry.getContexts());
+			scopes.addAll(localRegistry.getContexts());
+			scopes.addAll(preferenceRegistry.getContexts());
 	
 			if (!Util.equals(scopes, this.scopes)) {
 				this.scopes = Collections.unmodifiableList(scopes);
-				scopesById = Collections.unmodifiableSortedMap(Scope.sortedMapById(this.scopes));
-				scopesByName = Collections.unmodifiableSortedMap(Scope.sortedMapByName(this.scopes));							
+				scopesById = Collections.unmodifiableSortedMap(Context.sortedMapById(this.scopes));
+				scopesByName = Collections.unmodifiableSortedMap(Context.sortedMapByName(this.scopes));							
 				List names = new ArrayList();
 				Iterator iterator = this.scopes.iterator();
 				
 				while (iterator.hasNext()) {
-					Scope scope = (Scope) iterator.next();
+					Context scope = (Context) iterator.next();
 					
 					if (scope != null) {
 						String name = scope.getName();
 						String parent = scope.getParent();
 					
 						if (parent != null) {
-							scope = (Scope) scopesById.get(parent);
+							scope = (Context) scopesById.get(parent);
 						
 							if (scope != null)
 								name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, scope.getName() }); //$NON-NLS-1$
@@ -457,7 +459,11 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		if (!Util.equals(activeKeyConfigurations, this.activeKeyConfigurations)) {
 			this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
-			activeKeyConfiguration = (ActiveConfiguration) this.activeKeyConfigurations.get(this.activeKeyConfigurations.size() - 1);				
+			
+			if (this.activeKeyConfigurations.size() >= 1)			
+				activeKeyConfiguration = (ActiveConfiguration) this.activeKeyConfigurations.get(this.activeKeyConfigurations.size() - 1);
+			else
+				activeKeyConfiguration = null;				
 		}
 		
 		List keyConfigurations = new ArrayList();
@@ -512,7 +518,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			
 			if (object instanceof Sequence) {
 				Sequence keySequence = (Sequence) object;
-				String name = KeySupport.formatSequence(keySequence, false);
+				String name = KeySupport.formatSequence(keySequence, true);
 				keySequencesByName.put(name, keySequence);
 			}
 		}		
@@ -578,6 +584,16 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//buttonDelete.setLayoutData(gridData);	
 		//buttonDelete.setVisible(false);	
 
+		Button buttonTest = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
+		buttonTest.setFont(compositeActiveKeyConfiguration.getFont());
+		gridData = new GridData();
+		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		buttonTest.setText("Test" /*Util.getString(resourceBundle, "buttonTest")*/); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonTest.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonTest.setLayoutData(gridData);
+		buttonTest.setVisible(false);
+
 		Label labelSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		labelSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -642,7 +658,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		labelName.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		labelName.setText(Util.getString(resourceBundle, "labelName")); //$NON-NLS-1$
 
-		textName = new Text(compositeAssignmentTitle, SWT.LEFT | SWT.READ_ONLY);
+		textName = new Text(compositeAssignmentTitle, SWT.BORDER | SWT.LEFT | SWT.READ_ONLY);
 		textName.setFont(compositeAssignmentTitle.getFont());
 		textName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -651,7 +667,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		labelDescription.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		labelDescription.setText(Util.getString(resourceBundle, "labelDescription")); //$NON-NLS-1$
 
-		textDescription = new Text(compositeAssignmentTitle, SWT.LEFT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		textDescription = new Text(compositeAssignmentTitle, SWT.BORDER | SWT.LEFT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 		textDescription.setFont(compositeAssignmentTitle.getFont());
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.heightHint = 30;
@@ -766,7 +782,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		buttonAdd.setFont(compositeButton.getFont());
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		buttonAdd.setText(Util.getString(resourceBundle, "buttonAdd")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonAdd.setLayoutData(gridData);		
@@ -864,6 +880,12 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//	public void widgetSelected(SelectionEvent selectionEvent) {
 		//	}	
 		//});
+
+		buttonTest.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				dumpCommandsByCategory();
+			}	
+		});
 
 		treeViewerCommands.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -1135,10 +1157,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		buttonRestore.setEnabled(false);
 		labelCommandsForSequence.setEnabled(validKeySequence);		
 		tableCommandsForSequence.setEnabled(validKeySequence);		
-
-		textName.setText(commandSelected ? command.getName() : Util.ZERO_LENGTH_STRING);
-		textDescription.setText(commandSelected ? command.getDescription() : Util.ZERO_LENGTH_STRING);
-		
+		textName.setText(commandSelected ? command.getName() : Util.ZERO_LENGTH_STRING);		
+		String description = commandSelected ? command.getDescription() : null;
+		textDescription.setText(description != null ? description : Util.ZERO_LENGTH_STRING);		
 		CommandRecord commandRecord = getSelectedCommandRecord();
 		
 		if (commandRecord == null)
@@ -1151,7 +1172,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		if (validKeySequence) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence, false) + '\''}); //$NON-NLS-1$
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence, true) + '\''}); //$NON-NLS-1$
 			labelCommandsForSequence.setText(text);
 		} else 
 			labelCommandsForSequence.setText(Util.getString(resourceBundle, "labelCommandsForSequence.noSelection")); //$NON-NLS-1$
@@ -1317,7 +1338,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(commandRecord.scope);
+			Context scope = (Context) scopesById.get(commandRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scope));
 			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.configuration);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.configuration));
@@ -1325,7 +1346,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			StringBuffer stringBuffer = new StringBuffer();
 
 			if (commandRecord.sequence != null)
-				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence, false));
+				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence, true));
 
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
@@ -1414,7 +1435,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(keySequenceRecord.scope);
+			Context scope = (Context) scopesById.get(keySequenceRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scope));
 			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.configuration);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.configuration));
@@ -1545,13 +1566,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		keySequence = (Sequence) keySequencesByName.get(name);
 			
 		if (keySequence == null)
-			keySequence = KeySupport.parseSequence(name);
+			keySequence = KeySupport.parseSequence(name, true);
 
 		return keySequence;
 	}
 
 	private void setKeySequence(Sequence keySequence) {
-		comboSequence.setText(keySequence != null ? KeySupport.formatSequence(keySequence, false) : Util.ZERO_LENGTH_STRING);
+		comboSequence.setText(keySequence != null ? KeySupport.formatSequence(keySequence, true) : Util.ZERO_LENGTH_STRING);
 	}
 
 	private String getScopeId() {
@@ -1559,7 +1580,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		List scopes = new ArrayList(scopesByName.values());			
 		
 		if (selection >= 0 && selection < scopes.size()) {
-			Scope scope = (Scope) scopes.get(selection);
+			Context scope = (Context) scopes.get(selection);
 			return scope.getId();				
 		}
 		
@@ -1574,7 +1595,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			List scopes = new ArrayList(scopesByName.values());			
 
 			for (int i = 0; i < scopes.size(); i++) {
-				Scope scope = (Scope) scopes.get(i);		
+				Context scope = (Context) scopes.get(i);		
 				
 				if (scope.getId().equals(scopeId)) {
 					comboScope.select(i);
@@ -1664,7 +1685,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			paths.add(locale);
 			State platformLocale = State.create(paths);
 			Integer rank = new Integer(sequenceBinding.getRank());
-			String scope = sequenceBinding.getScope();			
+			String scope = sequenceBinding.getContext();			
 			SortedMap scopeMap = (SortedMap) tree.get(sequence);
 			
 			if (scopeMap == null) {
@@ -1806,7 +1827,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 						
 						while (iterator4.hasNext()) {
 							String command = (String) iterator4.next();
-							sequenceBindingSet.add(SequenceBinding.create(configuration, command, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, scope, sequence));									
+							sequenceBindingSet.add(SequenceBinding.create(command, configuration, scope, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, sequence));									
 						}
 					}
 				}
@@ -1867,6 +1888,71 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					}
 				}
 			}
+		}
+	}
+
+	private void dumpCommandsByCategory() {
+		try {
+			Writer writer = new FileWriter("c:\\commands.html");		
+			writer.write(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
+				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n" +
+				"<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n" +
+				"<head>\r\n" +
+				"<style type=\"text/css\"><!-- .text { font-family: Arial, Helvetica; font-size: 9pt; line-height: 16pt; color: #666666; text-decoration: none; font-weight: normal}--></style>\r\n" +
+				"<title>Key Assignments</title>\r\n" +
+				"</head>\r\n" +
+				"<body bgcolor=\"#ffffff\" text=\"#333333\" link=\"#006699\" vlink=\"#006699\" alink=\"#ff9900\">\r\n" +
+				"<span class=\"text\">\r\n");
+
+			List categories = new ArrayList(this.categories);
+			Collections.sort(categories, Category.nameComparator());
+			
+			List commands = new ArrayList(KeyPreferencePage.this.commands);				
+			Collections.sort(commands, Command.nameComparator());
+
+			Iterator iterator = categories.iterator();
+			
+			while (iterator.hasNext()) {
+				Category category = (Category) iterator.next();								
+				writer.write("<b>" + category.getName() + "</b>");
+				Iterator iterator2 = commands.iterator();
+				writer.write("<p>");
+				
+				while (iterator2.hasNext()) {
+					Command command = (Command) iterator2.next();
+
+					if (category.getId().equals(command.getCategory())) {
+						SequenceMachine sequenceMachine = Manager.getInstance().getKeyMachine();
+						SortedSet sequenceSet = (SortedSet) sequenceMachine.getCommandMap().get(command.getId());
+						StringBuffer sb = new StringBuffer();
+
+						if (sequenceSet != null && !sequenceSet.isEmpty()) {
+							Iterator iterator3 = sequenceSet.iterator();
+							
+							while (iterator3.hasNext()) {
+								Sequence sequence = (Sequence) iterator3.next();
+								sb.append(KeySupport.formatSequence(sequence, true));
+								sb.append(",&nbsp");																	
+							}							
+						}													
+
+						writer.write(command.getName() + "&nbsp&nbsp" + sb.toString() + "<br />");
+					}																												
+				}
+				
+				writer.write("</p>");
+			}
+				
+			writer.write(				
+				"</span>\r\n" +				
+				"</body>\r\n" +				
+				"</html>\r\n");
+				
+			writer.flush();
+			writer.close();
+		} catch (IOException eIO) {
+			System.out.println(eIO);
 		}
 	}
 }

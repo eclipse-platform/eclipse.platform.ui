@@ -11,8 +11,10 @@
 package org.eclipse.ui.internal;
 
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.part.CoolItemGroupMarker;
 
 /**
  * A CoolBarContributionItem is an item which realizes itself and its items
@@ -30,15 +32,6 @@ public class CoolBarContributionItem extends ContributionItem {
 	 */
 	private CoolItemToolBarManager toolBarManager;
 
-	/**
-	 * Need to remember order information about the item since
-	 * item layout order is dynamic for coolbars.  We know the
-	 * order the of all of the CoolBarContribution items, but when 
-	 * an item is dynamically added and removed we need to remember 
-	 * its order relationship to the items around it.
-	 */
-	private boolean orderBefore = false;
-	private boolean orderAfter = false;
 	/**
 	 */
 	public CoolBarContributionItem() {
@@ -164,7 +157,11 @@ public class CoolBarContributionItem extends ContributionItem {
 		IContributionItem[] items = toolBarManager.getItems();
 		for (int i=0; i<items.length; i++) {
 			IContributionItem item = items[i];
-			if (item.isSeparator() || item.isGroupMarker()) continue;
+			if (item.isSeparator()) continue;
+			// see 37537 - do not get rid of empty coolbar contribution items
+			// for editor contributions that are split into multiple coolitems
+			if (item instanceof CoolItemGroupMarker) return false;
+			if (item.isGroupMarker()) continue;
 			return false;
 		}
 		return true;
@@ -198,20 +195,6 @@ public class CoolBarContributionItem extends ContributionItem {
 		return true;
 	}
 	/**
-	 * Returns whether this contribution item is ordered after the 
-	 * the item before it.
-	 */
-	protected boolean isOrderAfter() {
-		return orderAfter;
-	}
-	/**
-	 * Returns whether this contribution item is ordered before a the
-	 * item after it.
-	 */
-	protected boolean isOrderBefore() {
-		return orderBefore;
-	}
-	/**
 	 * Returns whether this contribution item is a separator.
 	 * This information is used to enable hiding of unnecessary separators.
 	 *
@@ -233,20 +216,6 @@ public class CoolBarContributionItem extends ContributionItem {
 		if (getParentManager() == null)
 			return true;
 		return visible;
-	}
-	/**
-	 * Sets whether this contribution item is ordered after the
-	 * item before it.
-	 */
-	protected void setOrderAfter(boolean orderAfter) {
-		this.orderAfter = orderAfter;
-	}
-	/**
-	 * Sets whether this contribution item is ordered before the
-	 * item after it.
-	 */
-	protected void setOrderBefore(boolean orderBefore) {
-		this.orderBefore = orderBefore;
 	}
 	/**
 	 * Sets the visibility of the manager.  If the visibility is <code>true</code>

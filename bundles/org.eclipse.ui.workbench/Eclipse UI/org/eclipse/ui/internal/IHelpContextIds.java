@@ -104,6 +104,7 @@ public interface IHelpContextIds {
 	public static final String CYCLE_PERSPECTIVE_FORWARD_ACTION = PREFIX + "cycle_perspective_forward_action_context"; //$NON-NLS-1$
 	public static final String CYCLE_PERSPECTIVE_BACKWARD_ACTION = PREFIX + "cycle_perspective_backward_action_context"; //$NON-NLS-1$
 	public static final String ACTIVATE_EDITOR_ACTION = PREFIX + "activate_editor_action_context"; //$NON-NLS-1$
+	public static final String MAXIMIZE_PART_ACTION = PREFIX + "maximize_part_action_context"; //$NON-NLS-1$
 	public static final String OPEN_WORKSPACE_FILE_ACTION = PREFIX + "open_workspace_file_action_context"; //$NON-NLS-1$
 	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_action_context"; //$NON-NLS-1$
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_action_context"; //$NON-NLS-1$

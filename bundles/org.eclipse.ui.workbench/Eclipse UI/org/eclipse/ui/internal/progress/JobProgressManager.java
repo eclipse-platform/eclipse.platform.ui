@@ -1,10 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IProgressProvider;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -17,15 +27,27 @@ public class JobProgressManager implements IProgressProvider {
 	private ArrayList providers = new ArrayList();
 	private static JobProgressManager singleton;
 
+	/**
+	 * Get the progress manager currently in use.
+	 * @return JobProgressManager
+	 */
 	public static JobProgressManager getInstance() {
 		if (singleton == null)
 			singleton = new JobProgressManager();
 		return singleton;
 	}
 
+	/**
+	 * The JobMonitor is the inner class that handles the IProgressMonitor 
+	 * integration with the ProgressMonitor.
+	 */
 	private class JobMonitor implements IProgressMonitor {
 		Job job;
 
+		/**
+		 * Create a monitor on the supplied job.
+		 * @param newJob
+		 */
 		JobMonitor(Job newJob) {
 			job = newJob;
 		}
@@ -44,9 +66,8 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 		 */
 		public void done() {
-			// XXX Auto-generated method stub
-
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
@@ -63,23 +84,21 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
-			// XXX Auto-generated method stub
 			return false;
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
-			// XXX Auto-generated method stub
-
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
 		public void setTaskName(String name) {
-			// XXX Auto-generated method stub
-
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
@@ -92,6 +111,7 @@ public class JobProgressManager implements IProgressProvider {
 			}
 
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
@@ -105,8 +125,11 @@ public class JobProgressManager implements IProgressProvider {
 		}
 	};
 
-	public JobProgressManager() {
-		JobManager.getInstance().setProgressProvider(this);
+	/**
+	 * Create a new instance of the receiver.	 *
+	 */
+	JobProgressManager() {
+		Platform.getJobManager().setProgressProvider(this);
 	}
 
 	/* (non-Javadoc)
@@ -116,10 +139,18 @@ public class JobProgressManager implements IProgressProvider {
 		return new JobMonitor(job);
 	}
 
+	/**
+	 * Add a progress content provider to listen to the changes.
+	 * @param provider
+	 */
 	void addProvider(ProgressContentProvider provider) {
 		providers.add(provider);
 	}
 
+	/**
+	 * Remove the supplied provider from the list of providers.
+	 * @param provider
+	 */
 	void removeProvider(ProgressContentProvider provider) {
 		providers.remove(provider);
 	}

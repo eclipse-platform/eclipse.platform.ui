@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.commands;
 
 public final class ActiveConfiguration implements Comparable {
 
-	private final static int HASH_FACTOR = 17;
-	private final static int HASH_INITIAL = 27;
+	private final static int HASH_FACTOR = 89;
+	private final static int HASH_INITIAL = ActiveConfiguration.class.getName().hashCode();
 
 	public static ActiveConfiguration create(String plugin, String value)
 		throws IllegalArgumentException {

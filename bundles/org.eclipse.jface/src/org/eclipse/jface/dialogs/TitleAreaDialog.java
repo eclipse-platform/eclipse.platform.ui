@@ -69,7 +69,8 @@ public class TitleAreaDialog extends Dialog {
 
 	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
-	private Label messageLabel;
+	private Text messageLabel;
+	private Composite workArea;
 
 	private Label messageImageLabel;
 	private Image messageImage;
@@ -104,31 +105,26 @@ protected Control createContents(Composite parent) {
 	data.bottom = new FormAttachment(100,100);
 	parent.setLayoutData(data);
 	
-	Control top = createTitleArea(parent);
-	
 	//Now create a work area for the rest of the dialog
-	Composite composite = new Composite(parent, SWT.NULL);
+	workArea = new Composite(parent, SWT.NULL);
 	GridLayout childLayout = new GridLayout();
 	childLayout.marginHeight = 0;
 	childLayout.marginWidth = 0;
 	childLayout.verticalSpacing = 0;
-	composite.setLayout(childLayout);
+	workArea.setLayout(childLayout);
 	
-	FormData childData = new FormData();
-	childData.top = new FormAttachment(top);
-	childData.right = new FormAttachment(100,0);
-	childData.left = new FormAttachment(0,0);
-	childData.bottom = new FormAttachment(100,0);
-	composite.setLayoutData(childData);
+	Control top = createTitleArea(parent);
 	
-	composite.setFont(JFaceResources.getDialogFont());
+	resetWorkAreaAttachments(top);
+	
+	workArea.setFont(JFaceResources.getDialogFont());
 
 	// initialize the dialog units
-	initializeDialogUnits(composite);
+	initializeDialogUnits(workArea);
 	
 	// create the dialog area and button bar
-	dialogArea = createDialogArea(composite);
-	buttonBar = createButtonBar(composite);
+	dialogArea = createDialogArea(workArea);
+	buttonBar = createButtonBar(workArea);
 	
 	return parent;
 }
@@ -227,7 +223,7 @@ private Control createTitleArea(Composite parent) {
 	messageImageLabel.setBackground(background);
 
 	// Message label @ bottom, center
-	messageLabel = new Label(parent, SWT.WRAP);
+	messageLabel = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
 	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 	messageLabel.setFont(JFaceResources.getDialogFont());
@@ -260,6 +256,8 @@ private void determineTitleImageLargest (){
 	
 	int labelY = titleLabel.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
 	labelY += messageLabel.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
+	FontData[] data = messageLabel.getFont().getFontData();
+	labelY += data[0].getHeight();
 	
 	titleImageLargest = titleY > labelY;
 }
@@ -582,6 +580,15 @@ public void setTitleAreaColor(RGB color) {
 public void setTitleImage(Image newTitleImage) {
 	titleImage.setImage(newTitleImage);
 	titleImage.setVisible(newTitleImage != null);
+	if(newTitleImage != null){
+		determineTitleImageLargest();
+		Control top;
+		if(titleImageLargest)
+			top = titleImage;
+		else
+			top = messageLabel;
+		resetWorkAreaAttachments(top);
+	}
 }
 
 /**
@@ -611,6 +618,20 @@ private void setMessageBackgrounds(boolean showingError){
 	messageImageLabel.setBackground(color);
 	bottomFillerLabel.setBackground(color);
 	leftFillerLabel.setBackground(color); 
+}
+
+/**
+ * Reset the attachment of the workArea to now attach
+ * to top as the top control.
+ * @param top
+ */
+private void resetWorkAreaAttachments(Control top) {
+	FormData childData = new FormData();
+	childData.top = new FormAttachment(top);
+	childData.right = new FormAttachment(100, 0);
+	childData.left = new FormAttachment(0, 0);
+	childData.bottom = new FormAttachment(100, 0);
+	workArea.setLayoutData(childData);
 }
 		
 }

@@ -217,9 +217,21 @@ protected void createChildControl() {
 			IViewPart part = (IViewPart)getViewReference().getPart(true);
 			if(part != null) {
 				builder.readActionExtensions(part);
-				ActionDescriptor[] extendedActions = builder.getExtendedActions();
+				ActionDescriptor[] actionDescriptors = builder.getExtendedActions();
 				KeyBindingService keyBindingService = (KeyBindingService)part.getSite().getKeyBindingService();
-				keyBindingService.registerExtendedActions(extendedActions);
+				
+				if (actionDescriptors != null) {
+					for (int i = 0; i < actionDescriptors.length; i++) {
+						ActionDescriptor actionDescriptor = actionDescriptors[i];
+				
+						if (actionDescriptor != null) {
+							IAction action = actionDescriptors[i].getAction();
+			
+							if (action != null && action.getActionDefinitionId() != null)
+							keyBindingService.registerAction(action);
+						}
+					}
+				}	
 			}
 			updateActionBars();
 		}
@@ -287,13 +299,19 @@ protected void createTitleBar() {
 	titleLabel.setBackground(null, null);
 	titleLabel.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
-			if (e.button == 3)
-				showPaneMenu(titleLabel,new Point(e.x, e.y));
-			else if ((e.button == 1) && overImage(e.x))
+			if ((e.button == 1) && overImage(e.x))
 				showPaneMenu();
 		}
 		public void mouseDoubleClick(MouseEvent event){
 			doZoom();
+		}
+	});
+	// Listen for popup menu mouse event
+	titleLabel.addListener(SWT.MenuDetect, new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MenuDetect) {
+				showPaneMenu(titleLabel, new Point(event.x, event.y));
+			}
 		}
 	});
 	updateTitles();
@@ -493,7 +511,7 @@ public void showPaneMenu() {
 	if(isFastView() && (page.getActiveFastView() != getViewReference()))
 		return;
 	Rectangle bounds = titleLabel.getBounds();
-	showPaneMenu(titleLabel,new Point(0,bounds.height));
+	showPaneMenu(titleLabel, titleLabel.toDisplay(new Point(0, bounds.height)));
 }
 /**
  * Return true if this view is a fast view.

@@ -143,10 +143,10 @@ public class Manager {
 		SortedMap keyConfigurationMap = SequenceMachine.buildPathMapForConfigurationMap(Configuration.sortedMapById(keyConfigurations));
 		
 		List scopes = new ArrayList();
-		scopes.addAll(coreRegistry.getScopes());
-		scopes.addAll(localRegistry.getScopes());
-		scopes.addAll(preferenceRegistry.getScopes());
-		SortedMap scopeMap = SequenceMachine.buildPathMapForScopeMap(Scope.sortedMapById(scopes));
+		scopes.addAll(coreRegistry.getContexts());
+		scopes.addAll(localRegistry.getContexts());
+		scopes.addAll(preferenceRegistry.getContexts());
+		SortedMap scopeMap = SequenceMachine.buildPathMapForScopeMap(Context.sortedMapById(scopes));
 
 		gestureMachine.setConfiguration(activeGestureConfigurationId);
 		gestureMachine.setConfigurationMap(Collections.unmodifiableSortedMap(gestureConfigurationMap));

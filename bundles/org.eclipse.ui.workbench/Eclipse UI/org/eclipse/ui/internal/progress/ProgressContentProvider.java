@@ -12,12 +12,15 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.*;
 
-import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.*;
 
+/**
+ * The ProgressContentProvider is the content provider used for
+ * classes that listen to the progress changes.
+ */
 public class ProgressContentProvider
 	implements ITreeContentProvider, IJobChangeListener {
 
@@ -26,7 +29,7 @@ public class ProgressContentProvider
 	private TreeViewer viewer;
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
-		JobManager.getInstance().addJobChangeListener(this);
+		Platform.getJobManager().addJobChangeListener(this);
 		viewer = mainViewer;
 		JobProgressManager.getInstance().addProvider(this);
 	}
@@ -62,7 +65,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		JobManager.getInstance().removeJobChangeListener(this);
+		Platform.getJobManager().removeJobChangeListener(this);
 		JobProgressManager.getInstance().removeProvider(this);
 
 	}
@@ -103,6 +106,12 @@ public class ProgressContentProvider
 		refreshViewer(info);
 
 	}
+
+	/**
+	 * Get the JobInfo currently being collected for job.
+	 * @param job
+	 * @return
+	 */
 	private JobInfo getInfo(Job job) {
 		return ((JobInfo) jobs.get(job));
 	}
@@ -121,6 +130,10 @@ public class ProgressContentProvider
 		refreshViewer(info);
 	}
 
+	/**
+	 * Refresh the viewer as a result of a change in info.
+	 * @param info
+	 */
 	private void refreshViewer(final JobInfo info) {
 		if (viewer.getControl().isDisposed())
 			return;
@@ -138,46 +151,45 @@ public class ProgressContentProvider
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void aboutToRun(Job job) {
-		// XXX Auto-generated method stub
-
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#awake(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void awake(Job job) {
-		// XXX Auto-generated method stub
-
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, org.eclipse.core.runtime.IStatus)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core.runtime.jobs.Job, org.eclipse.core.runtime.IStatus)
 	 */
 	public void done(Job job, IStatus result) {
 		jobs.remove(job);
 		refreshViewer(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void aboutToRun(Job job) {
 
 	}
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#running(org.eclipse.core.runtime.jobs.Job)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#awake(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void awake(Job job) {
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#running(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void running(Job job) {
-		// XXX Auto-generated method stub
 
 	}
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#scheduled(org.eclipse.core.runtime.jobs.Job)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#scheduled(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void scheduled(Job job) {
-		// XXX Auto-generated method stub
 
 	}
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#sleeping(org.eclipse.core.runtime.jobs.Job)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#sleeping(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void sleeping(Job job) {
-		// XXX Auto-generated method stub
 
 	}
 

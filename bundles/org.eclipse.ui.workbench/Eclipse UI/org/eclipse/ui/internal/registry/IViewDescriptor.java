@@ -47,6 +47,13 @@ public String[] getCategoryPath();
  */
 public IConfigurationElement getConfigurationElement();
 /**
+ * Returns the description of this view.
+ * This is the value of its <code>"description"</code> attribute.
+ *
+ * @return the description
+ */
+public String getDescription();
+/**
  * Returns the id of the view.
  */
 public String getID() ;

@@ -337,7 +337,7 @@ public void updateTabList() {
 					ResourceTransfer.getInstance(),
 					MarkerTransfer.getInstance() };
 		
-			dropTarget = new DropTarget(getControl(), DND.DROP_DEFAULT);
+			dropTarget = new DropTarget(getControl(), DND.DROP_DEFAULT | DND.DROP_COPY);
 			dropTarget.setTransfer(types);
 			dropTarget.addDropListener(dropTargetAdapter);
 		}

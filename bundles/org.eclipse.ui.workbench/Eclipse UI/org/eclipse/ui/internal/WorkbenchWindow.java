@@ -12,32 +12,94 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IContributionManagerOverrides;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.SubMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.*;
+import org.eclipse.ui.internal.commands.ActionAndContextManager;
+import org.eclipse.ui.internal.commands.Manager;
+import org.eclipse.ui.internal.commands.Sequence;
+import org.eclipse.ui.internal.commands.SequenceMachine;
+import org.eclipse.ui.internal.commands.SimpleActionService;
+import org.eclipse.ui.internal.commands.SimpleContextService;
+import org.eclipse.ui.internal.commands.Stroke;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressControl;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
 /**
  * A window within the workbench.
@@ -45,6 +107,10 @@ import org.eclipse.ui.internal.registry.IActionSet;
 public class WorkbenchWindow
 	extends ApplicationWindow
 	implements IWorkbenchWindow {
+
+	private ActionAndContextManager actionAndContextManager;
+	private IActionService actionService;
+	private IContextService contextService;
 	private int number;
 	private Workbench workbench;
 	private PageList pageList = new PageList();
@@ -54,13 +120,12 @@ public class WorkbenchWindow
 	private IPartDropListener partDropListener;
 	private WWinPerspectiveService perspectiveService =
 		new WWinPerspectiveService(this);
-	private WWinKeyBindingService keyBindingService;
+	private KeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
 	private Label separator2;
 	private Label separator3;
-	private ProgressControl progressControl;
 	private ToolBarManager shortcutBar;
 	private ShortcutBarPart shortcutBarPart;
 	private ShortcutBarPartDragDrop shortcutDND;
@@ -72,11 +137,15 @@ public class WorkbenchWindow
 	private Menu perspectiveBarMenu;
 	private Menu fastViewBarMenu;
 	private MenuItem restoreItem;
+	private ProgressControl progressControl;
+	
 	private CoolBarManager coolBarManager = new CoolBarManager();
 	private Label noOpenPerspective;
 	private boolean showShortcutBar = true;
 	private boolean showStatusLine = true;
 	private boolean showToolBar = true;
+	private Rectangle normalBounds;
+	private boolean asMaximizedState = false;
 
 	// constants for shortcut bar group ids 
 	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
@@ -87,6 +156,7 @@ public class WorkbenchWindow
 	static final int VGAP = 0;
 	static final int CLIENT_INSET = 3;
 	static final int BAR_SIZE = 23;
+
 
 	/**
 	 * Constructs a new workbench window.
@@ -104,7 +174,7 @@ public class WorkbenchWindow
 		addToolBar(SWT.FLAT);
 
 		addStatusLine();
-		addShortcutBar(SWT.FLAT | SWT.VERTICAL | SWT.WRAP);
+		addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 
 		updateBarVisibility();
 
@@ -138,6 +208,69 @@ public class WorkbenchWindow
 			};
 		};
 	}
+
+	void updateActionAndContextManager() {
+		if (actionAndContextManager != null)
+			actionAndContextManager.update();
+	}
+
+	public IActionService getActionService() {
+		if (actionService == null)
+			actionService = new SimpleActionService();
+
+		return actionService;
+	}
+
+	public IContextService getContextService() {
+		if (contextService == null)
+			contextService = new SimpleContextService();
+
+		return contextService;
+	}
+
+	private SortedMap actionSetsCommandIdToActionMap = new TreeMap();
+	private SortedMap globalActionsCommandIdToActionMap = new TreeMap();
+
+	void registerActionSets(IActionSet[] actionSets) {
+		actionSetsCommandIdToActionMap.clear();
+
+		for (int i = 0; i < actionSets.length; i++) {
+			if (actionSets[i] instanceof PluginActionSet) {
+				PluginActionSet pluginActionSet =
+					(PluginActionSet) actionSets[i];
+				IAction[] pluginActions = pluginActionSet.getPluginActions();
+
+				for (int j = 0; j < pluginActions.length; j++) {
+					IAction pluginAction = (IAction) pluginActions[j];
+					String command = pluginAction.getActionDefinitionId();
+
+					if (command != null)
+						actionSetsCommandIdToActionMap.put(
+							command,
+							pluginAction);
+				}
+			}
+		}
+
+		updateActionMap();
+	}
+
+	void registerGlobalAction(IAction globalAction) {
+		String command = globalAction.getActionDefinitionId();
+
+		if (command != null) {
+			globalActionsCommandIdToActionMap.put(command, globalAction);
+			updateActionMap();
+		}
+	}
+
+	private void updateActionMap() {
+		SortedMap actionMap = new TreeMap();
+		actionMap.putAll(globalActionsCommandIdToActionMap);
+		actionMap.putAll(actionSetsCommandIdToActionMap);
+		getActionService().setActionMap(actionMap);
+	}
+
 	/*
 	 * Adds an listener to the part service.
 	 */
@@ -248,9 +381,10 @@ public class WorkbenchWindow
 	 * @see Window
 	 */
 	public int open() {
-		int r = super.open();
+		int result = super.open();
+		actionAndContextManager = new ActionAndContextManager(this);
 		workbench.fireWindowOpened(this);
-		return r;
+		return result;
 	}
 	/* (non-Javadoc)
 	 * Method declared on Window.
@@ -415,6 +549,7 @@ public class WorkbenchWindow
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
 		trackShellActivation(shell);
+		trackShellResize(shell);
 
 		// If the user clicks on toolbar, status bar, or shortcut bar
 		// hide the fast view.
@@ -461,10 +596,11 @@ public class WorkbenchWindow
 
 		// Add right mouse button support.
 		ToolBar tb = shortcutBar.getControl();
-		tb.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				if (e.button == 3)
-					showShortcutBarPopup(e);
+		tb.addListener(SWT.MenuDetect, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.type == SWT.MenuDetect) {
+					showShortcutBarPopup(new Point(event.x, event.y));
+				}
 			}
 		});
 	}
@@ -484,18 +620,6 @@ public class WorkbenchWindow
 	 */
 	protected ToolBarManager createToolBarManager(int style) {
 		return null;
-	}
-
-	/**
-	 * Create the progress indicator for the receiver.
-	 * @param shell	the parent shell
-	 */
-	private void createProgressIndicator(Shell shell) {
-		if (showProgressIndicator()) {
-			progressControl = new ProgressControl();
-			progressControl.createCanvas(shell);
-		}
-
 	}
 
 	/* (non-Javadoc)
@@ -685,6 +809,9 @@ public class WorkbenchWindow
 			shortcutDND.addDropListener(partDropListener);
 		}
 	}
+	public void fillActionBars(WWinActionBars actionBars) {
+		getActionBuilder().fillActionBars(actionBars);
+	}
 	/**
 	 * Returns the shortcut for a page.
 	 */
@@ -858,11 +985,13 @@ public class WorkbenchWindow
 	 * @return the key binding service in use.
 	 * @since 2.0
 	 */
-	public WWinKeyBindingService getKeyBindingService() {
+	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new WWinKeyBindingService(this);
+			keyBindingService =
+				new KeyBindingService(getActionService(), getContextService());
 			updateActiveActions();
 		}
+
 		return keyBindingService;
 	}
 
@@ -870,11 +999,11 @@ public class WorkbenchWindow
 	 * Re-register the action sets actions in the keybinding service.
 	 */
 	private void updateActiveActions() {
-		if (keyBindingService == null) {
+		if (keyBindingService == null)
 			getKeyBindingService();
-		} else {
-			IActionSet sets[] = actionPresentation.getActionSets();
-			keyBindingService.registerActionSets(sets);
+		else {
+			IActionSet actionSets[] = actionPresentation.getActionSets();
+			registerActionSets(actionSets);
 		}
 	}
 
@@ -1001,6 +1130,24 @@ public class WorkbenchWindow
 	 */
 	public IWorkbench getWorkbench() {
 		return workbench;
+	}
+	public String getToolbarLabel(String actionSetId) {
+		ActionSetRegistry registry =
+			WorkbenchPlugin.getDefault().getActionSetRegistry();
+		IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
+		if (actionSet != null) {
+			return actionSet.getLabel();
+		} else {
+			if (IWorkbenchActionConstants
+				.TOOLBAR_FILE
+				.equalsIgnoreCase(actionSetId))
+				return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar"); //$NON-NLS-1$
+			if (IWorkbenchActionConstants
+				.TOOLBAR_NAVIGATE
+				.equalsIgnoreCase(actionSetId))
+				return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar"); //$NON-NLS-1$
+		}
+		return null;
 	}
 	/**
 	 * Unconditionally close this window. Assumes the proper
@@ -1150,30 +1297,32 @@ public class WorkbenchWindow
 
 		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("WorkbenchWindow.problemsRestoringWindow"), null); //$NON-NLS-1$
 
-		// Read the bounds.
-		if ("true".equals(memento.getString("maximized"))) { //$NON-NLS-2$//$NON-NLS-1$
-			getShell().setMaximized(true);
-		} else if ("true".equals(memento.getString("minimized"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			//Do not restore minimized state.
-		} else {
-			Integer bigInt;
-			bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
-			int x = bigInt.intValue();
-			bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
-			int y = bigInt.intValue();
-			bigInt = memento.getInteger(IWorkbenchConstants.TAG_WIDTH);
-			int width = bigInt.intValue();
-			bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
-			int height = bigInt.intValue();
-			// Set the bounds.
-			getShell().setBounds(x, y, width, height);
+		// Read window's bounds and state.
+		Rectangle displayBounds = getShell().getDisplay().getBounds();
+		Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
+		Integer bigInt;
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
+		shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
+		shellBounds.y = bigInt == null ? 0 : bigInt.intValue();
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_WIDTH);
+		shellBounds.width = bigInt == null ? 0 : bigInt.intValue();
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
+		shellBounds.height = bigInt == null ? 0 : bigInt.intValue();
+		if (!shellBounds.isEmpty()) {
+			if (!shellBounds.intersects(displayBounds)) {
+				Rectangle clientArea = getShell().getDisplay().getClientArea();
+				shellBounds.x = clientArea.x;
+				shellBounds.y = clientArea.y;
+			}
+			getShell().setBounds(shellBounds);
 		}
-
-		// Recreate toolbar layout locked state. 
-		Integer locked =
-			memento.getInteger(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		boolean state = (locked != null) && (locked.intValue() == 1);
-		lockToolBar(state);
+		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MAXIMIZED))) { //$NON-NLS-1$
+			getShell().setMaximized(true);
+		}
+		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MINIMIZED))) { //$NON-NLS-1$
+			//		getShell().setMinimized(true);
+		}
 
 		// Recreate each page in the window. 
 		IWorkbenchPage newActivePage = null;
@@ -1263,10 +1412,15 @@ public class WorkbenchWindow
 			newActivePage = (IWorkbenchPage) pageList.getNextActive();
 
 		setActivePage(newActivePage);
-		IWorkbenchPart part = newActivePage.getActivePart();
 
-		if (part != null)
-			getKeyBindingService().update(part);
+		// TODO: is this necessary?
+		updateActionAndContextManager();
+
+		// Restore the coolbar manager state. 
+		IMemento coolBarMem =
+			memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+		if (coolBarMem != null)
+			getCoolBarManager().restoreState(coolBarMem);
 
 		return result;
 	}
@@ -1284,7 +1438,7 @@ public class WorkbenchWindow
 			shortcutBarControl = shortcutBar.getControl();
 		boolean shortcutbarWasEnabled = false;
 		if (shortcutBarControl != null)
-			shortcutbarWasEnabled = shortcutBarControl.isEnabled();
+			shortcutbarWasEnabled = shortcutBarControl.getEnabled();
 		try {
 			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
 				shortcutBarControl.setEnabled(false);
@@ -1313,22 +1467,25 @@ public class WorkbenchWindow
 
 		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("WorkbenchWindow.problemsSavingWindow"), null); //$NON-NLS-1$
 
-		// Save the bounds.
-		if (getShell().getMaximized()) {
-			memento.putString("maximized", "true"); //$NON-NLS-2$//$NON-NLS-1$
-		} else if (getShell().getMinimized()) {
-			memento.putString("minimized", "true"); //$NON-NLS-2$//$NON-NLS-1$
-		} else {
-			Rectangle bounds = getShell().getBounds();
-			memento.putInteger(IWorkbenchConstants.TAG_X, bounds.x);
-			memento.putInteger(IWorkbenchConstants.TAG_Y, bounds.y);
-			memento.putInteger(IWorkbenchConstants.TAG_WIDTH, bounds.width);
-			memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, bounds.height);
+		// Save the window's state and bounds.
+		if (getShell().getMaximized() || asMaximizedState) {
+			memento.putString(IWorkbenchConstants.TAG_MAXIMIZED, "true"); //$NON-NLS-1$
 		}
+		if (getShell().getMinimized()) {
+			memento.putString(IWorkbenchConstants.TAG_MINIMIZED, "true"); //$NON-NLS-1$
+		}
+		if (normalBounds == null) {
+			normalBounds = getShell().getBounds();
+		}
+		memento.putInteger(IWorkbenchConstants.TAG_X, normalBounds.x);
+		memento.putInteger(IWorkbenchConstants.TAG_Y, normalBounds.y);
+		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
+		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
 
-		// Save toolbar lock state.
-		int state = isToolBarLocked() ? 1 : 0;
-		memento.putInteger(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT, state);
+		// Save the coolbar manager state. 
+		IMemento coolBarMem =
+			memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+		getCoolBarManager().saveState(coolBarMem);
 
 		// Save each page.
 		Iterator enum = pageList.iterator();
@@ -1423,8 +1580,6 @@ public class WorkbenchWindow
 				updateTitle();
 				updateActionSets();
 				shortcutBar.update(false);
-				if (newPage != null && newPage.getPerspective() != null)
-					newPage.setToolBarLayout();
 				getMenuManager().update(IAction.TEXT);
 
 				if (noOpenPerspective != null && in != null) {
@@ -1465,11 +1620,10 @@ public class WorkbenchWindow
 	/**
 	 * Shows the popup menu for a page item in the shortcut bar.
 	 */
-	private void showShortcutBarPopup(MouseEvent e) {
+	private void showShortcutBarPopup(Point pt) {
 		// Get the tool item under the mouse.
-		Point pt = new Point(e.x, e.y);
 		ToolBar toolBar = shortcutBar.getControl();
-		ToolItem toolItem = toolBar.getItem(pt);
+		ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
 		if (toolItem == null)
 			return;
 
@@ -1516,7 +1670,6 @@ public class WorkbenchWindow
 
 			// Show popup menu.
 			if (fastViewBarMenu != null) {
-				pt = toolBar.toDisplay(pt);
 				fastViewBarMenu.setLocation(pt.x, pt.y);
 				fastViewBarMenu.setVisible(true);
 			}
@@ -1576,7 +1729,6 @@ public class WorkbenchWindow
 
 			// Show popup menu.
 			if (perspectiveBarMenu != null) {
-				pt = toolBar.toDisplay(pt);
 				perspectiveBarMenu.setLocation(pt.x, pt.y);
 				perspectiveBarMenu.setVisible(true);
 			}
@@ -1636,6 +1788,39 @@ public class WorkbenchWindow
 			}
 		});
 	}
+	/**
+	 * Hooks a listener to track the resize of the window's
+	 * shell. Stores the new bounds if in normal state - that
+	 * is, not in minimized or maximized state)
+	 */
+	private void trackShellResize(Shell newShell) {
+		newShell.addControlListener(new ControlAdapter() {
+			public void controlMoved(ControlEvent e) {
+				saveBounds();
+			}
+
+			public void controlResized(ControlEvent e) {
+				saveBounds();
+			}
+
+			private void saveBounds() {
+				Shell shell = getShell();
+				if (shell == null)
+					return;
+				if (shell.isDisposed())
+					return;
+				if (shell.getMinimized())
+					return;
+				if (shell.getMaximized()) {
+					asMaximizedState = true;
+					return;
+				}
+				asMaximizedState = false;
+				normalBounds = shell.getBounds();
+			}
+		});
+	}
+
 	/**
 	 * update the action bars.
 	 */
@@ -1749,106 +1934,35 @@ public class WorkbenchWindow
 		}
 		getShell().setText(title);
 	}
-
-	class PageList {
-		//List of pages in the order they were created;
-		private List pageList;
-		//List of pages where the top is the last activated.
-		private List pageStack;
-		// The page explicitly activated
-		private Object active;
-
-		public PageList() {
-			pageList = new ArrayList(4);
-			pageStack = new ArrayList(4);
-		}
-		public boolean add(Object object) {
-			pageList.add(object);
-			pageStack.add(0, object);
-			//It will be moved to top only when activated.
-			return true;
-		}
-		public Iterator iterator() {
-			return pageList.iterator();
-		}
-		public boolean contains(Object object) {
-			return pageList.contains(object);
-		}
-		public boolean remove(Object object) {
-			if (active == object)
-				active = null;
-			pageStack.remove(object);
-			return pageList.remove(object);
-		}
-		public boolean isEmpty() {
-			return pageList.isEmpty();
-		}
-		public IWorkbenchPage[] getPages() {
-			int nSize = pageList.size();
-			IWorkbenchPage[] retArray = new IWorkbenchPage[nSize];
-			pageList.toArray(retArray);
-			return retArray;
-		}
-		public void setActive(Object page) {
-			if (active == page)
-				return;
-
-			active = page;
-
-			if (page != null) {
-				pageStack.remove(page);
-				pageStack.add(page);
-			}
-		}
-		public WorkbenchPage getActive() {
-			return (WorkbenchPage) active;
-		}
-		public WorkbenchPage getNextActive() {
-			if (active == null) {
-				if (pageStack.isEmpty())
-					return null;
-				else
-					return (WorkbenchPage) pageStack.get(pageStack.size() - 1);
-			} else {
-				if (pageStack.size() < 2)
-					return null;
-				else
-					return (WorkbenchPage) pageStack.get(pageStack.size() - 2);
-			}
-		}
+	
+	/**
+	 * Return whether or not to show the progress indicator.
+	 * @return boolan
+	 */
+	private boolean showProgressIndicator() {
+		return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
 	}
+	
 	/* (non-Javadoc)
-			 * @see org.eclipse.ui.IWorkbenchWindow#queueJob(java.lang.String, org.eclipse.jface.operation.IRunnableWithProgress)
-			 */
-	public void queueJob(final IRunnableWithProgress runnable)
-		throws InterruptedException, InvocationTargetException {
-		Job job = new Job() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					runnable.run(monitor);
-					return Status.OK_STATUS;
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				} catch (InvocationTargetException e) {
-					return new Status(
-						IStatus.ERROR,
-						WorkbenchPlugin
-							.getDefault()
-							.getDescriptor()
-							.getUniqueIdentifier(),
-						IStatus.ERROR,
-						"Error invoking job",
-						e);
-				}
-			}
-
-		};
-		job.schedule();
+	 * @see org.eclipse.jface.window.Window#initializeBounds()
+	 */
+	protected void initializeBounds() {
+		setAttachments();
+		super.initializeBounds();
 	}
+	
+	/**
+	 * Create the progress indicator for the receiver.
+	 * @param shell	the parent shell
+	 */
+	private void createProgressIndicator(Shell shell) {
+		if (showProgressIndicator()) {
+			progressControl = new ProgressControl();
+			progressControl.createCanvas(shell);
+		}
 
+	}
+	
 	/**
 	 * Set the attachments for the widgets in the recevier.
 	 *
@@ -1964,19 +2078,71 @@ public class WorkbenchWindow
 		getClientComposite().setLayoutData(mainAreaData);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#initializeBounds()
-	 */
-	protected void initializeBounds() {
-		setAttachments();
-		super.initializeBounds();
-	}
+	class PageList {
+		//List of pages in the order they were created;
+		private List pageList;
+		//List of pages where the top is the last activated.
+		private List pageStack;
+		// The page explicitly activated
+		private Object active;
 
-	/**
-	 * Return whether or not to show the progress indicator.
-	 * @return boolan
-	 */
-	private boolean showProgressIndicator() {
-		return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
+		public PageList() {
+			pageList = new ArrayList(4);
+			pageStack = new ArrayList(4);
+		}
+		public boolean add(Object object) {
+			pageList.add(object);
+			pageStack.add(0, object);
+			//It will be moved to top only when activated.
+			return true;
+		}
+		public Iterator iterator() {
+			return pageList.iterator();
+		}
+		public boolean contains(Object object) {
+			return pageList.contains(object);
+		}
+		public boolean remove(Object object) {
+			if (active == object)
+				active = null;
+			pageStack.remove(object);
+			return pageList.remove(object);
+		}
+		public boolean isEmpty() {
+			return pageList.isEmpty();
+		}
+		public IWorkbenchPage[] getPages() {
+			int nSize = pageList.size();
+			IWorkbenchPage[] retArray = new IWorkbenchPage[nSize];
+			pageList.toArray(retArray);
+			return retArray;
+		}
+		public void setActive(Object page) {
+			if (active == page)
+				return;
+
+			active = page;
+
+			if (page != null) {
+				pageStack.remove(page);
+				pageStack.add(page);
+			}
+		}
+		public WorkbenchPage getActive() {
+			return (WorkbenchPage) active;
+		}
+		public WorkbenchPage getNextActive() {
+			if (active == null) {
+				if (pageStack.isEmpty())
+					return null;
+				else
+					return (WorkbenchPage) pageStack.get(pageStack.size() - 1);
+			} else {
+				if (pageStack.size() < 2)
+					return null;
+				else
+					return (WorkbenchPage) pageStack.get(pageStack.size() - 2);
+			}
+		}
 	}
 }

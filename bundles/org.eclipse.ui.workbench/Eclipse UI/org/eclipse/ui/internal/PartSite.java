@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -25,6 +26,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IContextService;
+import org.eclipse.ui.internal.commands.SimpleActionService;
+import org.eclipse.ui.internal.commands.SimpleContextService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -58,6 +63,9 @@ public class PartSite implements IWorkbenchPartSite {
 	private SubActionBars actionBars;
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
+	
+	private IActionService actionService;
+	private IContextService contextService;
 	
 	/**
 	 * EditorContainer constructor comment.
@@ -223,7 +231,29 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(this);
+			keyBindingService = new KeyBindingService(getActionService(), getContextService());
+			
+			if (this instanceof EditorSite) {
+				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();
+			
+				if (contributor != null) {
+					ActionDescriptor[] actionDescriptors = contributor.getExtendedActions();
+			
+					if (actionDescriptors != null) {
+						for (int i = 0; i < actionDescriptors.length; i++) {
+							ActionDescriptor actionDescriptor = actionDescriptors[i];
+					
+							if (actionDescriptor != null) {
+								IAction action = actionDescriptors[i].getAction();
+				
+								if (action != null && action.getActionDefinitionId() != null)
+								keyBindingService.registerAction(action);
+							}
+						}
+					}
+				}				
+			}			
+			
 			keyBindingService.setScopes(new String[] { getInitialScopeId()}); //$NON-NLS-1$
 		}
 
@@ -234,4 +264,17 @@ public class PartSite implements IWorkbenchPartSite {
 		return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
 	}
 
+	public IActionService getActionService() {
+		if (actionService == null)
+			actionService = new SimpleActionService();
+
+		return actionService;		
+	}
+
+	public IContextService getContextService() {
+		if (contextService == null)
+			contextService = new SimpleContextService();
+
+		return contextService;		
+	}
 }

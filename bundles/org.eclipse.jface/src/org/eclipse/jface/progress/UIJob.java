@@ -9,17 +9,32 @@
  **********************************************************************/
 package org.eclipse.jface.progress;
 
+/**
+ * The UIJob is a Job that runs within the UI Thread via an
+ * asyncExec.
+ */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.resource.JFaceResources;
 
-public abstract class UIJob extends NotifyingJob {
+public abstract class UIJob extends Job {
 	private Display display;
+	
+	private static final String PLUGIN_NAME = "org.eclipse.jface"; //$NON-NLS-1$
 
+	/**
+	 * Create a new instance of the receiver.
+	 */
 	public UIJob() {
 		super();
 	}
 
+	/**
+	 * Create a new instance of the receiver with the supplied
+	 * Display.
+	 * @param jobDisplay
+	 */
 	public UIJob(Display jobDisplay) {
 		this();
 		display = jobDisplay;
@@ -33,7 +48,7 @@ public abstract class UIJob extends NotifyingJob {
 	public static IStatus errorStatus(Throwable exception) {
 		return new Status(
 			IStatus.ERROR,
-			"org.eclipse.jface",
+			PLUGIN_NAME,
 			IStatus.ERROR,
 			exception.getMessage(),
 			exception);
@@ -41,19 +56,19 @@ public abstract class UIJob extends NotifyingJob {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 * Note: this message is marked final. Implementors should use
+	 * runInUIThread() instead.
 	 */
 	public final IStatus run(final IProgressMonitor monitor) {
 
 		Display asyncDisplay = getDisplay();
 
 		if (asyncDisplay == null) {
-
-			System.out.println("No display");
 			return new Status(
 				IStatus.ERROR,
-				"org.eclipse.jface",
+				PLUGIN_NAME,
 				IStatus.ERROR,
-				"Display must be set",
+				JFaceResources.getString("UIJob.displayNotSet"), //$NON-NLS-1$
 				null);
 		}
 		asyncDisplay.asyncExec(new Runnable() {
@@ -66,9 +81,9 @@ public abstract class UIJob extends NotifyingJob {
 						result =
 							new Status(
 								IStatus.ERROR,
-								"org.eclipse.ui",
+								PLUGIN_NAME,
 								1,
-								"Error",
+								JFaceResources.getString("Error"), //$NON-NLS-1$
 								null);
 					done(result);
 				}
@@ -76,17 +91,24 @@ public abstract class UIJob extends NotifyingJob {
 		});
 		return Job.ASYNC_FINISH;
 	}
+	
 	/**
 	 * Run the job in the UI Thread.
+	 * @param monitor
+	 * @return IStatus
 	 */
 	public abstract IStatus runInUIThread(IProgressMonitor monitor);
 
+	/**
+	 * Set the display to execute the asyncExec in.
+	 * @param runDisplay
+	 */
 	public void setDisplay(Display runDisplay) {
 		display = runDisplay;
 	}
 	/**
 	 * Get the display for use by the receiver.
-	 * @return
+	 * @return Display
 	 */
 	public Display getDisplay() {
 		return display;

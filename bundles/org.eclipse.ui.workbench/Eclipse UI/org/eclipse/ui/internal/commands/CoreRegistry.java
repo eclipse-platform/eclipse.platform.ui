@@ -14,9 +14,7 @@ package org.eclipse.ui.internal.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -29,19 +27,7 @@ public final class CoreRegistry extends AbstractRegistry {
 
 	private final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
 
-		private final static String DEPRECATED_KEY_SEQUENCE_SEPARATOR = "||"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_ACCELERATOR = "accelerator"; //$NON-NLS-1$	
-		private final static String DEPRECATED_TAG_ACCELERATOR_CONFIGURATION = "acceleratorConfiguration"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_ACCELERATOR_CONFIGURATIONS = "acceleratorConfigurations"; //$NON-NLS-1$		
-		private final static String DEPRECATED_TAG_ACCELERATOR_SCOPE = "acceleratorScope"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_ACCELERATOR_SCOPES = "acceleratorScopes"; //$NON-NLS-1$		
-		private final static String DEPRECATED_TAG_ACCELERATOR_SET = "acceleratorSet"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_ACCELERATOR_SETS = "acceleratorSets"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_ACTION_DEFINITION = "actionDefinition"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_ACTION_DEFINITIONS = "actionDefinitions"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_CONFIGURATION_ID = "configurationId"; //$NON-NLS-1$		
-		private final static String DEPRECATED_TAG_KEY = "key"; //$NON-NLS-1$
-		private final static String DEPRECATED_TAG_SCOPE_ID = "scopeId"; //$NON-NLS-1$	
+		private final static String DEPRECATED_TAG_SCOPE = "scope"; //$NON-NLS-1$	
 		private final static int RANK_CORE = 2;
 		private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 		
@@ -49,13 +35,12 @@ public final class CoreRegistry extends AbstractRegistry {
 		private List activeKeyConfigurations;		
 		private List categories;
 		private List commands;
+		private List contextBindings;
+		private List contexts;
 		private List gestureBindings;
 		private List gestureConfigurations;
 		private List keyBindings;
-		private String keyConfiguration;
 		private List keyConfigurations;
-		private String scope;
-		private List scopes;
 	
 		private RegistryReader(IPluginRegistry pluginRegistry) {
 			super();
@@ -63,86 +48,33 @@ public final class CoreRegistry extends AbstractRegistry {
 			activeKeyConfigurations = new ArrayList();		
 			categories = new ArrayList();
 			commands = new ArrayList();
+			contextBindings = new ArrayList();
+			contexts = new ArrayList();
 			gestureBindings = new ArrayList();
 			gestureConfigurations = new ArrayList();
 			keyBindings = new ArrayList();
 			keyConfigurations = new ArrayList();
-			scopes = new ArrayList();
 
-			if (pluginRegistry != null) {
-				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACCELERATOR_CONFIGURATIONS);
-				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACCELERATOR_SCOPES);
-				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACCELERATOR_SETS);
-				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACTION_DEFINITIONS);				
+			if (pluginRegistry != null)	
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
-			}
 
 			CoreRegistry.this.activeGestureConfigurations = Collections.unmodifiableList(activeGestureConfigurations);
 			CoreRegistry.this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
 			CoreRegistry.this.categories = Collections.unmodifiableList(categories);
-			CoreRegistry.this.commands = Collections.unmodifiableList(commands);
+			CoreRegistry.this.commands = Collections.unmodifiableList(commands);			
+			CoreRegistry.this.contextBindings = Collections.unmodifiableList(contextBindings);			
+			CoreRegistry.this.contexts = Collections.unmodifiableList(contexts);
 			CoreRegistry.this.gestureBindings = Collections.unmodifiableList(gestureBindings);
 			CoreRegistry.this.gestureConfigurations = Collections.unmodifiableList(gestureConfigurations);
 			CoreRegistry.this.keyBindings = Collections.unmodifiableList(keyBindings);
 			CoreRegistry.this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
-			CoreRegistry.this.scopes = Collections.unmodifiableList(scopes);
 		}
 
 		protected boolean readElement(IConfigurationElement element) {
 			String name = element.getName();
 
-			if (DEPRECATED_TAG_ACCELERATOR.equals(name) || DEPRECATED_TAG_ACCELERATOR_SET.equals(name)) {
-				/*
-				logError(element, 
-					"'" + TAG_ACCELERATOR + //$NON-NLS-1$
-					"', '" + TAG_ACCELERATOR_SET + //$NON-NLS-1$
-					"' and '" + TAG_ACCELERATOR_SETS + //$NON-NLS-1$ 
-					"' have been deprecated. please replace them with '" + Persistence.TAG_REGIONAL_KEY_BINDING + //$NON-NLS-1$ 
-					"' and '" + Persistence.TAG_REGIONAL_KEY_BINDINGS + //$NON-NLS-1$
-					"' in all places."); //$NON-NLS-1$
-				*/
-				
-				if (DEPRECATED_TAG_ACCELERATOR.equals(name))
-					return readDeprecatedAccelerator(element);
-				else 
-					return readDeprecatedAcceleratorSet(element);
-			} 
-
-			if (DEPRECATED_TAG_ACCELERATOR_CONFIGURATION.equals(name)) {
-				/*
-				logError(element, 
-					"'" + TAG_ACCELERATOR_CONFIGURATION + //$NON-NLS-1$
-					"' and '" + TAG_ACCELERATOR_CONFIGURATIONS + //$NON-NLS-1$ 
-					"' have been deprecated. please replace them with '" + Persistence.TAG_KEY_CONFIGURATION + //$NON-NLS-1$ 
-					"' and '" + Persistence.TAG_KEY_CONFIGURATIONS + //$NON-NLS-1$
-					"' in all places."); //$NON-NLS-1$
-				*/
-				return readKeyConfiguration(element);
-			}
-
-			if (DEPRECATED_TAG_ACCELERATOR_SCOPE.equals(name)) {
-				/*
-				logError(element, 
-					"'" + TAG_ACCELERATOR_SCOPE + //$NON-NLS-1$
-					"' and '" + TAG_ACCELERATOR_SCOPES + //$NON-NLS-1$ 
-					"' have been deprecated. please replace them with '" + Persistence.TAG_SCOPE + //$NON-NLS-1$ 
-					"' and '" + Persistence.TAG_SCOPES + //$NON-NLS-1$
-					"' in all places."); //$NON-NLS-1$
-				*/
-				return readScope(element);
-			}
-
-			if (DEPRECATED_TAG_ACTION_DEFINITION.equals(name)) {
-				/*
-				logError(element, 
-					"'" + TAG_ACTION_DEFINITION + //$NON-NLS-1$
-					"' and '" + TAG_ACTION_DEFINITIONS + //$NON-NLS-1$ 
-					"' have been deprecated. please replace them with '" + Persistence.TAG_COMMAND + //$NON-NLS-1$ 
-					"' and '" + Persistence.TAG_COMMANDS + //$NON-NLS-1$
-					"' in all places."); //$NON-NLS-1$
-				*/
-				return readCommand(element);
-			}
+			if (DEPRECATED_TAG_SCOPE.equals(name))
+				return readContext(element);
 
 			if (Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION.equals(name))
 				return readActiveGestureConfiguration(element);
@@ -156,6 +88,12 @@ public final class CoreRegistry extends AbstractRegistry {
 			if (Persistence.TAG_COMMAND.equals(name))
 				return readCommand(element);
 
+			if (Persistence.TAG_CONTEXT.equals(name))
+				return readContext(element);
+
+			if (Persistence.TAG_CONTEXT_BINDING.equals(name))
+				return readContextBinding(element);
+
 			if (Persistence.TAG_GESTURE_BINDING.equals(name))
 				return readGestureBinding(element);
 
@@ -168,9 +106,6 @@ public final class CoreRegistry extends AbstractRegistry {
 			if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
 				return readKeyConfiguration(element);
 
-			if (Persistence.TAG_SCOPE.equals(name))
-				return readScope(element);
-	
 			return false;
 		}
 
@@ -227,65 +162,26 @@ public final class CoreRegistry extends AbstractRegistry {
 			return true;
 		}
 
-		private boolean readDeprecatedAccelerator(IConfigurationElement element) {
-			if (keyConfiguration == null || scope == null)
-				return false;
-
-			String id = element.getAttribute(Persistence.TAG_ID);
-			String key = element.getAttribute(DEPRECATED_TAG_KEY);
-
-			if (key != null) {
-				List sequences = new ArrayList();	
-				StringTokenizer orTokenizer = new StringTokenizer(key, DEPRECATED_KEY_SEQUENCE_SEPARATOR); 
+		private boolean readContext(IConfigurationElement element) {
+			Context context = Persistence.readContext(ConfigurationElementMemento.create(element), getPlugin(element));
+		
+			if (context != null)
+				contexts.add(context);	
 			
-				while (orTokenizer.hasMoreTokens()) {					
-					try {			
-						Sequence sequence = KeySupport.parseSequence(orTokenizer.nextToken());
-
-						if (sequence.getStrokes().size() >= 1)
-							sequences.add(sequence);		
-					} catch (IllegalArgumentException eIllegalArgument) {					
-					}
-				}		
-				
-				if (sequences.size() >= 1) {
-					String locale = element.getAttribute(Persistence.TAG_LOCALE);
-		
-					if (locale == null)
-						locale = Util.ZERO_LENGTH_STRING;
-		
-					String platform = element.getAttribute(Persistence.TAG_PLATFORM);
-		
-					if (platform == null)
-						platform = Util.ZERO_LENGTH_STRING;
-		
-					String plugin = getPlugin(element);				
-					Iterator iterator = sequences.iterator();
-				
-					while (iterator.hasNext()) {
-						Sequence sequence = (Sequence) iterator.next();			
-						keyBindings.add(SequenceBinding.create(keyConfiguration, id, locale, platform, plugin, RANK_CORE, scope, sequence));	
-					}
-				}
-			}
-
 			return true;
 		}
 
-		private boolean readDeprecatedAcceleratorSet(IConfigurationElement element) {
-			keyConfiguration = element.getAttribute(DEPRECATED_TAG_CONFIGURATION_ID);
-			scope = element.getAttribute(DEPRECATED_TAG_SCOPE_ID);
+		private boolean readContextBinding(IConfigurationElement element) {
+			ContextBinding contextBinding = Persistence.readContextBinding(ConfigurationElementMemento.create(element), getPlugin(element));
+		
+			if (contextBinding != null)
+				contextBindings.add(contextBinding);	
 			
-			if (keyConfiguration != null && scope != null)
-				readElementChildren(element);
-				
-			keyConfiguration = null;
-			scope = null;
 			return true;
-		}	
+		}
 
 		private boolean readGestureBinding(IConfigurationElement element) {
-			SequenceBinding gestureBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			SequenceBinding gestureBinding = Persistence.readSequenceBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (gestureBinding != null)
 				gestureBindings.add(gestureBinding);
@@ -303,7 +199,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readKeyBinding(IConfigurationElement element) {
-			SequenceBinding keyBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			SequenceBinding keyBinding = Persistence.readSequenceBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (keyBinding != null)
 				keyBindings.add(keyBinding);
@@ -316,15 +212,6 @@ public final class CoreRegistry extends AbstractRegistry {
 		
 			if (keyConfiguration != null)
 				keyConfigurations.add(keyConfiguration);	
-			
-			return true;
-		}
-
-		private boolean readScope(IConfigurationElement element) {
-			Scope scope = Persistence.readScope(ConfigurationElementMemento.create(element), getPlugin(element));
-		
-			if (scope != null)
-				scopes.add(scope);	
 			
 			return true;
 		}

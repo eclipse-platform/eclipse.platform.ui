@@ -87,11 +87,14 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	private StatusLineManager statusLineManager = null;
 	
 	/**
+	 * The seperator between the menu bar and the rest of the window.
+	 */
+	protected Label seperator1;
+	
+	/**
 	 * A flag indicating that an operation is running.
 	 */
 	private boolean operationInProgress = false;
-	
-	protected Label seperator1;
 	
 	/**
 	 * Internal application window layout class.
@@ -250,7 +253,7 @@ protected void configureShell(Shell shell) {
 	shell.setLayout(new ApplicationWindowLayout());
 
 	if (! "carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
-		seperator1 =  new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		 seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
 	createToolBarControl(shell);
 
@@ -392,7 +395,7 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 		final Control contents = getContents();
 		final Display display = contents.getDisplay();
 		Shell shell = getShell();
-		boolean contentsWasEnabled = contents.isEnabled();
+		boolean contentsWasEnabled = contents.getEnabled();
 		MenuManager manager = getMenuBarManager();
 		Menu menuBar = null;
 		if (manager != null) {
@@ -406,7 +409,7 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 		Control toolbarControl = getToolBarControl();
 		boolean toolbarWasEnabled = false;
 		if (toolbarControl != null) 
-			toolbarWasEnabled = toolbarControl.isEnabled();
+			toolbarWasEnabled = toolbarControl.getEnabled();
 	
 		// Disable the rest of the shells on the current display
 		Shell[] shells = display.getShells();
@@ -415,7 +418,7 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 			Shell current = shells[i];
 			if (current == shell) continue;
 			if (current != null && !current.isDisposed()) {
-				enabled[i] = current.isEnabled();
+				enabled[i] = current.getEnabled();
 				current.setEnabled(false);
 			}
 		}

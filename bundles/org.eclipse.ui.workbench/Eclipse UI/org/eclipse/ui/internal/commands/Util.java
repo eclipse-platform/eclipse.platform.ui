@@ -13,10 +13,14 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public final class Util {
 
@@ -161,6 +165,42 @@ public final class Util {
 		return list;
 	}
 
+	public static Map safeCopy(Map map, Class keyClass, Class valueClass)
+		throws IllegalArgumentException {
+		if (map == null || keyClass == null || valueClass == null)
+			throw new IllegalArgumentException();
+			
+		map = Collections.unmodifiableMap(new HashMap(map));
+		Iterator iterator = map.entrySet().iterator();
+	
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();			
+			
+			if (!keyClass.isInstance(entry.getKey()) || !valueClass.isInstance(entry.getValue()))
+				throw new IllegalArgumentException();
+		}
+		
+		return map;
+	}
+
+	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass)
+		throws IllegalArgumentException {
+		if (sortedMap == null || keyClass == null || valueClass == null)
+			throw new IllegalArgumentException();
+			
+		sortedMap = Collections.unmodifiableSortedMap(new TreeMap(sortedMap));
+		Iterator iterator = sortedMap.entrySet().iterator();
+	
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();			
+			
+			if (!keyClass.isInstance(entry.getKey()) || !valueClass.isInstance(entry.getValue()))
+				throw new IllegalArgumentException();
+		}
+		
+		return sortedMap;
+	}	
+	
 	private Util() {
 		super();
 	}

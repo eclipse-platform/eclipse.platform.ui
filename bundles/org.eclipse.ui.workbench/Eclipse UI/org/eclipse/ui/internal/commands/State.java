@@ -20,8 +20,8 @@ public final class State implements Comparable {
 
 	final static int MAXIMUM_PATHS = 8;
 
-	private final static int HASH_FACTOR = 117;
-	private final static int HASH_INITIAL = 127;
+	private final static int HASH_FACTOR = 89;
+	private final static int HASH_INITIAL = State.class.getName().hashCode();
 
 	static State create(List paths)
 		throws IllegalArgumentException {
