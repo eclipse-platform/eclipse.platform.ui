@@ -299,9 +299,9 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append("<a href=\""); //$NON-NLS-1$
 				buff.append(hit.getHref());
 				buff.append("\" alt=\""); //$NON-NLS-1$
-				buff.append(hit.getToc().getLabel());
+				buff.append(parent.escapeSpecialChars(hit.getToc().getLabel()));
 				buff.append("\">"); //$NON-NLS-1$
-				buff.append(hit.getLabel());
+				buff.append(parent.escapeSpecialChars(hit.getLabel()));
 				buff.append("</a>"); //$NON-NLS-1$
 				buff.append("</li>"); //$NON-NLS-1$
 			}

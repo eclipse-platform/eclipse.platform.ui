@@ -296,13 +296,13 @@ public class EngineResultSection {
 				buff.append("\""); //$NON-NLS-1$
 			}
 			buff.append(">"); //$NON-NLS-1$
-			buff.append(hit.getLabel());
+			String elabel = part.parent.escapeSpecialChars(hit.getLabel());
+			buff.append(elabel);
 			buff.append("</a>"); //$NON-NLS-1$
 			if (!hit.getForceExternalWindow()) {
 				buff.append(" <a href=\""); //$NON-NLS-1$ 
 				buff.append("nw:");//$NON-NLS-1$ 
 				String ahref = part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true));
-				//System.out.println(ahref);
 				buff.append(ahref);
 				buff.append("\"><img href=\""); //$NON-NLS-1$ 
 				buff.append(IHelpUIConstants.IMAGE_NW);
@@ -314,7 +314,10 @@ public class EngineResultSection {
 				buff.append("</a>"); //$NON-NLS-1$
 			}
 			if (part.getShowDescription()) {
-				String summary = getSummary(hit);
+				String edesc = hit.getDescription();
+				if (edesc!=null)
+					edesc = part.parent.escapeSpecialChars(edesc);
+				String summary = getSummary(elabel, edesc);
 				if (summary != null) {
 					buff.append("<br/>"); //$NON-NLS-1$
 					//buff.append("<span color=\"summary\">"); //$NON-NLS-1$
@@ -379,9 +382,7 @@ public class EngineResultSection {
 				});
 				nextLink = toolkit
 						.createImageHyperlink(navContainer, SWT.RIGHT);
-				int remainder = Math.min(hits.size() - resultOffset
-						- HITS_PER_PAGE - HITS_PER_PAGE, HITS_PER_PAGE);
-				nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$ //$NON-NLS-2$
+
 				nextLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_FORWARD));
 				gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -395,6 +396,12 @@ public class EngineResultSection {
 				});
 			}
 			prevLink.setVisible(resultOffset > 0);
+			
+			int nextOffset = resultOffset + HITS_PER_PAGE;
+			int remainder = hits.size() - nextOffset;
+			remainder = Math.min(remainder, HITS_PER_PAGE);
+				
+			nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$
 			nextLink.setVisible(hits.size() >= resultOffset + HITS_PER_PAGE);
 		} else {
 			if (prevLink != null) {
@@ -406,16 +413,13 @@ public class EngineResultSection {
 		}
 	}
 
-	private String getSummary(ISearchEngineResult hit) {
-		String desc = hit.getDescription();
-		if (desc != null) {
-			String edesc = part.parent.escapeSpecialChars(desc);
-			if (!edesc.equals(hit.getLabel())) {
-				String label = hit.getLabel();
-				if (edesc.length() > label.length()) {
-					String ldesc = edesc.substring(0, label.length());
-					if (ldesc.equalsIgnoreCase(label))
-						edesc = edesc.substring(label.length() + 1);
+	private String getSummary(String elabel, String edesc) {
+		if (edesc != null) {
+			if (!edesc.equals(elabel)) {
+				if (edesc.length() > elabel.length()) {
+					String ldesc = edesc.substring(0, elabel.length());
+					if (ldesc.equalsIgnoreCase(elabel))
+						edesc = edesc.substring(elabel.length() + 1);
 				}
 				return edesc;
 			}

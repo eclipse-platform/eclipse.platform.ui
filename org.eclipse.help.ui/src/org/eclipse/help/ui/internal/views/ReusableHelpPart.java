@@ -940,10 +940,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		if (mng!=null)
 			mng.setMessage(null);
 	}
+	
 	String escapeSpecialChars(String value) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
+
 			switch (c) {
 			case '&':
 				buf.append("&amp;"); //$NON-NLS-1$
@@ -960,7 +962,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			case '\"':
 				buf.append("&quot;"); //$NON-NLS-1$
 				break;
-			case 0x160:
+			case (int)160:
 				buf.append(" ");
 				break;
 			default:
