@@ -86,8 +86,9 @@ public interface IBreakpointManager {
 	public boolean isRegistered(IBreakpoint breakpoint);
 	
 	/**
-	 * Notifies all registered listeners that this breakpoint has changed.
-	 * Has no effect if the given breakpoint is not currently registered.
+	 * Notifies all registered listeners that the given
+	 * breakpoint has changed. Has no effect if the given
+	 * breakpoint is not currently registered.
 	 * 
 	 * This method is intended to be used when a breakpoint
 	 * attribute is changed that does not alter the breakpoint's

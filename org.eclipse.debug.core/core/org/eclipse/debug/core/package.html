@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>Eclipse Debug Tools</title>
+<title>Eclipse Debug Platform</title>
 </head>
 
 <body bgcolor="#FFFFFF">
@@ -23,11 +23,11 @@ The debug plug-in itself does not provide any implementations of a debug model. 
 intended that third parties providing an integrated set of development tools for a
 specific language will also implement a debug model for that language, using an underlying
 debug architecture of their choice. For example, Java Tooling provides an implementation
-of a debug model based on the standard Java Debug Interface (JDI).</p>
+of a debug model based on the standard Java Platform Debug Architecture (JPDA).</p>
 
 <h4>The Managers</h4>
 
-<p>Eclipse Debug Tools defines and provides an implementation of the following managers:
+<p>The debug platform defines and provides an implementation of the following managers:
 <ul>
  <li>Launch Manager - The launch manager maintains the set of registered launches - that is,
  	a collection of programs that have been launched in debuggable or non-debuggable (run) mode.
@@ -55,8 +55,9 @@ of a debug model based on the standard Java Debug Interface (JDI).</p>
  The actual launching of an application is performed
  by an associated implementation of a launch configuration delegate, which is specifed by each launch configuration
  type extension.</p>
-<p>A launch configuration may be shared in a repository via standard VCM mechanisms, or may
- be stored locally, essentially making the launch configuration private for a single user.</p>
+<p>A launch configuration may be stored as a file in the worksapce (and shared in a repository via
+ standard team mechanisms), or may be stored locally, essentially making the launch configuration
+ private for a single user.</p>
 
 
 </body>

@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>Eclipse Debug Tools [org.eclipse.debug.core.model]</title>
+<title>Eclipse Debug Platform [org.eclipse.debug.core.model]</title>
 </head>
 
 <body bgcolor="#FFFFFF">
@@ -18,7 +18,7 @@ representing common artifacts in debuggable programs. The debug plug-in itself d
 any implementations of a debug model. It is intended that third parties providing an integrated
 set of development tools for a specific language will also implement a debug model for that language,
 using an underlying debug architecture of their choice. For example, Java Tooling provides an
-implementation of a debug model based on the standard Java Debug Interface (JDI).</p>
+implementation of a debug model based on the standard Java Platform Debug Architecture (JPDA).</p>
 
 <h4>The Debug Model</h4>
 
@@ -56,14 +56,14 @@ termination of a thread.</p>
 <p>Breakpoints are used to suspend the execution of a program being debugged. There are
 many kinds of breakpoints - line breakpoints, conditional line breakpoints, hit count
 breakpoints, exception breakpoints, etc. The kinds of breakpoints supported by each debug
-architecture (for example, JDI), and the information required to create those breakpoints
-is dictated by each debug architecture. Eclipse Debug Tools supports an extensible
+architecture, and the information required to create those breakpoints
+is dictated by each debug architecture. The debug platform supports an extensible
 set of breakpoint via the breakpoints extension point.</p>
 
-<p>Eclipse Debug Tools provides a breakpoint manager that maintains the collection of all
+<p>The debug platform provides a breakpoint manager that maintains the collection of all
 registered breakpoints. Clients add and remove breakpoints via this manager. Breakpoints are
 implemented by instances of IBreakpoint. Each breakpoint object has an associated marker,
-which provides persistence and presentation in editors. Eclipse Debug Tools defines a generic
+which provides persistence and presentation in editors. The debug platform defines a generic
 breakpoint and line breakpoint, as well as their corresponding marker definitions. Breakpoint
 creation is a client responsibility - that is, defining the attributes of a breakpoint and
 the resource to associate a breakpoin marker with.</p>
