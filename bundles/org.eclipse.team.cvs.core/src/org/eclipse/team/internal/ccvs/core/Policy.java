@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.util.InfiniteSubProgressMonitor;
+import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 
 public class Policy {
 	protected static ResourceBundle bundle = null;

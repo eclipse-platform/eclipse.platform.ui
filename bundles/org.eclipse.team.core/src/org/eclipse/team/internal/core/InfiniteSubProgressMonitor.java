@@ -1,4 +1,4 @@
-package org.eclipse.team.internal.ccvs.core.util;
+package org.eclipse.team.internal.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
