@@ -43,7 +43,7 @@ protected Control createContents(Composite parent) {
 	noDefaultAndApplyButton();
 	
 	// define container & its gridding
-	Composite pageComponent = new Composite(parent, SWT.NULL);
+	Group pageComponent = new Group(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	pageComponent.setLayout(layout);
@@ -51,15 +51,8 @@ protected Control createContents(Composite parent) {
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
 	pageComponent.setLayoutData(data);
+	pageComponent.setText(WorkbenchMessages.getString("PerspectivesPreference.available"));
 
-	// Add the label
-	Label label = new Label(pageComponent, SWT.LEFT);
-	label.setText(WorkbenchMessages.getString("PerspectivesPreference.available")); //$NON-NLS-1$
-	data = new GridData();
-	data.horizontalAlignment = GridData.FILL;
-	data.horizontalSpan = 2;
-	label.setLayoutData(data);
-		
 	// Add perspective list.
 	list = new List(pageComponent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.addSelectionListener(new SelectionAdapter() {
