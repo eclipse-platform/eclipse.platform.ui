@@ -229,6 +229,8 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		Composite topComp = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginHeight=0;
+		layout.marginWidth=0;
 		topComp.setLayout(layout);
 		GridData gd;
 	

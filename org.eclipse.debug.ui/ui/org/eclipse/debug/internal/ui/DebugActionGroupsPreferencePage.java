@@ -66,6 +66,8 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
+		layout.marginHeight=0;
+		layout.marginWidth=0;
 		composite.setLayout(layout);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
