@@ -212,17 +212,14 @@ public class Utilities {
 		String relPath= getString(bundle, imageKey, null);
 		if (relPath != null && relPath.trim().length() > 0) {
 			
-			String cPath;
 			String dPath;
 			String ePath;
 			
 			if (relPath.indexOf("/") >= 0) { //$NON-NLS-1$
 				String path= relPath.substring(1);
-				cPath= 'c' + path;
 				dPath= 'd' + path;
 				ePath= 'e' + path;
 			} else {
-				cPath= "clcl16/" + relPath; //$NON-NLS-1$
 				dPath= "dlcl16/" + relPath; //$NON-NLS-1$
 				ePath= "elcl16/" + relPath; //$NON-NLS-1$
 			}
@@ -230,12 +227,11 @@ public class Utilities {
 			ImageDescriptor id= CompareUIPlugin.getImageDescriptor(dPath);	// we set the disabled image first (see PR 1GDDE87)
 			if (id != null)
 				a.setDisabledImageDescriptor(id);
-			id= CompareUIPlugin.getImageDescriptor(cPath);
-			if (id != null)
-				a.setHoverImageDescriptor(id);
 			id= CompareUIPlugin.getImageDescriptor(ePath);
-			if (id != null)
+			if (id != null) {
 				a.setImageDescriptor(id);
+				a.setHoverImageDescriptor(id);
+			}
 		}
 	}
 	

@@ -98,7 +98,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public static final String DIRTY_STATE= "DIRTY_STATE"; //$NON-NLS-1$
 		
-	private static final String COMPARE_EDITOR_IMAGE_NAME= "cview16/compare_view.gif"; //$NON-NLS-1$
+	private static final String COMPARE_EDITOR_IMAGE_NAME= "eview16/compare_view.gif"; //$NON-NLS-1$
 	private static Image fgTitleImage;
 	
 	private Splitter fComposite;
