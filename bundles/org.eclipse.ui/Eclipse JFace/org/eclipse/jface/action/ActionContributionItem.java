@@ -404,7 +404,7 @@ private void handleWidgetSelection(Event e) {
 		// Ensure action is enabled first.
 		// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be executed while disabled.
 		if (action.isEnabled()) {
-			action.run();
+			action.run(e);
 		}
 	}
 }

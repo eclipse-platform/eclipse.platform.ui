@@ -147,13 +147,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performCut();
 				return;
 			}
 			if (cutAction != null) {
-				cutAction.run();
+				cutAction.run(event);
 				return;
 			}
 		}
@@ -176,13 +176,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performCopy();
 				return;
 			}
 			if (copyAction != null) {
-				copyAction.run();
+				copyAction.run(event);
 				return;
 			}
 		}
@@ -205,13 +205,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performPaste();
 				return;
 			}
 			if (pasteAction != null) {
-				pasteAction.run();
+				pasteAction.run(event);
 				return;
 			}
 		}
@@ -234,13 +234,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorDeleteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performDelete();
 				return;
 			}
 			if (deleteAction != null) {
-				deleteAction.run();
+				deleteAction.run(event);
 				return;
 			}
 		}
@@ -263,13 +263,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performSelectAll();
 				return;
 			}
 			if (selectAllAction != null) {
-				selectAllAction.run();
+				selectAllAction.run(event);
 				return;
 			}
 		}
@@ -292,13 +292,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorFindActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performFind();
 				return;
 			}
 			if (findAction != null) {
-				findAction.run();
+				findAction.run(event);
 				return;
 			}
 		}
@@ -321,13 +321,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorUndoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performUndo();
 				return;
 			}
 			if (undoAction != null) {
-				undoAction.run();
+				undoAction.run(event);
 				return;
 			}
 		}
@@ -350,13 +350,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorRedoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void run() {
+		public void run(Event event) {
 			if (activeEditor != null) {
 				activeEditor.performRedo();
 				return;
 			}
 			if (redoAction != null) {
-				redoAction.run();
+				redoAction.run(event);
 				return;
 			}
 		}

@@ -9,6 +9,7 @@ import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * A <code>RetargetAction</code> tracks the active part in the workbench.  
@@ -122,9 +123,9 @@ protected void propogateChange(PropertyChangeEvent event) {
 /**
  * Invoked when an action occurs. 
  */
-public void run() {
+public void run(Event event) {
 	if (handler != null)
-		handler.run();
+		handler.run(event);
 }
 /**
  * Set the action handler.  Update self.

@@ -5,6 +5,7 @@ package org.eclipse.jface.action;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -426,10 +427,28 @@ public static String removeAcceleratorText(String text) {
 public void removePropertyChangeListener(IPropertyChangeListener listener) {
 	listeners.remove(listener);
 }
+
 /**
- * Implementation of method defined on <code>IAction</code>.
+ * The default implementation of this <code>IAction</code> method
+ * does nothing.  Subclasses should override this method
+ * if they do not need information from the triggering event,
+ * or override <code>run(Event)</code> if they do.
  */
-public abstract void run();
+public void run() {
+}
+
+/**
+ * The default implementation of this <code>IAction</code> method
+ * ignores the event argument, and simply calls <code>run()</code>.
+ * Subclasses should override this method if they need information 
+ * from the triggering event, or override <code>run()</code> if not.
+ * 
+ * @since 2.0
+ */
+public void run(Event event) {
+	run();
+}
+
 /* (non-Javadoc)
  * Method declared on IAction.
  */

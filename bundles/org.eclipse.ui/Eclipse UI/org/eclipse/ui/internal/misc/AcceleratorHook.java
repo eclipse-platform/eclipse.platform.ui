@@ -6,7 +6,6 @@ package org.eclipse.ui.internal.misc;
  */
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 
@@ -32,7 +31,7 @@ import java.util.*;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class AcceleratorHook extends KeyAdapter {
+public class AcceleratorHook implements Listener {
 	private ArrayList actionList;
 	
 	private class ActionItem {
@@ -56,7 +55,8 @@ public class AcceleratorHook extends KeyAdapter {
  */
 public AcceleratorHook(Control ctrl) {
 	actionList = new ArrayList(5);
-	ctrl.addKeyListener(this);
+	ctrl.addListener(SWT.KeyDown, this);
+	ctrl.addListener(SWT.KeyUp, this);
 }
 /**
  * Adds an action to the control.  If the action accelerator is pressed
@@ -112,7 +112,7 @@ private ActionItem findItem(IAction action) {
  *
  * @returns the first item to match, or <code>null</code>.
  */
-private ActionItem findItem(KeyEvent e) {
+private ActionItem findItem(Event e) {
 	// Map event to accel.
 	int accel = getAccel(e);
 	if (accel == 0)
@@ -134,7 +134,7 @@ private ActionItem findItem(KeyEvent e) {
  * @param e the key event
  * @return the int accelerator value
  */
-private int getAccel(KeyEvent e) {
+private int getAccel(Event e) {
 	// Debug.
 	/*
 	System.out.println("KeyEvent");
@@ -162,8 +162,9 @@ private int getAccel(KeyEvent e) {
 	*/
 	return accel;
 }
+
 /**
- * Notifies a key has been pressed on the system keyboard.
+ * Notifies that a key has been pressed on the system keyboard.
  * <p>
  * This method is a callback from the target control for this hook.
  * Other clients are not expected to call this method.
@@ -171,11 +172,12 @@ private int getAccel(KeyEvent e) {
  *
  * @param e an event containing information about the key press
  */
-public void keyPressed(KeyEvent e) {
-	ActionItem item = findItem(e);
+public void handleEvent(Event event) {
+	ActionItem item = findItem(event);
 	if (item != null)
-		item.action.run();
+		item.action.run(event);
 }
+
 /**
  * Removes an action from the hook.  Does nothing if the action is
  * not found.

@@ -7,6 +7,7 @@ package org.eclipse.jface.action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * An action represents the non-UI side of a command which can be triggered
@@ -221,11 +222,27 @@ public boolean isEnabled();
  * @param listener a property change listener
  */
 public void removePropertyChangeListener(IPropertyChangeListener listener);
+
 /**
- * Runs this action.  
+ * Runs this action.
  * Each action implementation must define the steps needed to carry out this action.
+ * The default implementation of this method in <code>Action</code>
+ * does nothing.
  */
 public void run();
+
+/**
+ * Runs this action, passing the triggering SWT event.
+ * As of 2.0, <code>ActionContributionItem</code> calls this method
+ * instead of <code>run()</code>.  
+ * The default implementation of this method in <code>Action</code>
+ * simply calls <code>run()</code> for backwards compatibility.
+ * 
+ * @param event the SWT event which triggered this action being run 
+ * @since 2.0
+ */
+public void run(Event event);
+
 /**
  * Sets the checked status of this action.
  * <p>
