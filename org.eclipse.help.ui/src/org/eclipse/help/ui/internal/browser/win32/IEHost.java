@@ -5,6 +5,7 @@
 package org.eclipse.help.ui.internal.browser.win32;
 import java.io.*;
 import java.util.StringTokenizer;
+import org.eclipse.help.internal.ui.ICommandStateChangedListener;
 import org.eclipse.help.internal.ui.util.HelpWorkbenchException;
 import org.eclipse.help.internal.ui.win32.WebBrowser;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -19,7 +20,7 @@ import org.eclipse.swt.widgets.*;
  * Commands and their parameters are separated using spaced
  * and should be provided one command per line.
  */
-public class IEHost implements Runnable {
+public class IEHost implements Runnable, ICommandStateChangedListener {
 	public static final String SYS_PROPERTY_INSTALLURL = "installURL";
 	public static final String SYS_PROPERTY_STATELOCATION = "stateLocation";
 	public static final String CMD_CLOSE = "close";
@@ -38,6 +39,7 @@ public class IEHost implements Runnable {
 	private IEResources ieResources;
 	private IEStore store;
 	boolean opened = false;
+	ToolItem backItem, forwardItem;
 	/**
 	 * Constructor
 	 */
@@ -145,7 +147,7 @@ public class IEHost implements Runnable {
 		//gridData.horizontalSpan = 3;
 		bar.setLayoutData(gridData);
 		// Add a button to navigate back
-		ToolItem backItem = new ToolItem(bar, SWT.HORIZONTAL, 0);
+		backItem = new ToolItem(bar, SWT.HORIZONTAL, 0);
 		backItem.setText(ieResources.getString("Previous_page"));
 		backItem.setToolTipText(ieResources.getString("Previous_page_tip"));
 		backItem.addSelectionListener(new SelectionListener() {
@@ -157,7 +159,7 @@ public class IEHost implements Runnable {
 			}
 		});
 		// Add a button to navigate forward
-		ToolItem forwardItem = new ToolItem(bar, SWT.NONE, 1	);
+		forwardItem = new ToolItem(bar, SWT.NONE, 1);
 		forwardItem.setText(ieResources.getString("Next_page"));
 		forwardItem.setToolTipText(ieResources.getString("Next_page_tip"));
 		forwardItem.addSelectionListener(new SelectionListener() {
@@ -170,9 +172,14 @@ public class IEHost implements Runnable {
 		});
 		try {
 			webBrowser = new WebBrowser(composite);
+			webBrowser.addCommandStateChangedListener(this);
 		} catch (HelpWorkbenchException hwe) {
 		}
 		return composite;
+	}
+	public void commandStateChanged(boolean back, boolean forward) {
+		backItem.setEnabled(back);
+		forwardItem.setEnabled(forward);
 	}
 	/**
 	 * Reads commands from standard input.
