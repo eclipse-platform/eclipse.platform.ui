@@ -26,6 +26,8 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.LineStyleEvent;
+import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
@@ -44,7 +46,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
+public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener, LineStyleListener {
 
 	/**
 	 * Font used in the underlying text widget
@@ -94,7 +96,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			}
 			getTextWidget().setEditable(!doc.isReadOnly());
 			if (isVisible()) {
-				paintDocument();
 				revealEndOfDocument();
 			}
 		}
@@ -119,6 +120,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		getTextWidget().setFont(fFont);
 		getTextWidget().addMouseTrackListener(this);
 		getTextWidget().addPaintListener(this);
+		getTextWidget().addLineStyleListener(this);
 	}
 	
 	/**
@@ -180,7 +182,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 
 		super.setDocument(document);
 		if (document != null) {
-			paintDocument();
 			revealEndOfDocument();
 			document.addDocumentListener(fInternalDocumentListener);
 		}
@@ -201,7 +202,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		if (propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB) ||
 			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB) ||
 			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB)) {
-				paintDocument();
+				getTextWidget().redraw();
 			}
 		if (!propertyName.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
 			return;
@@ -264,37 +265,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		}
 	}
 	
-	protected void paintDocument() {
-		IDocument document = getDocument();
-		if (document != null) {
-			final ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)document.getDocumentPartitioner();
-			if (partitioner != null) {
-				Runnable r = new Runnable() {
-					public void run() {
-						IConsoleColorProvider contentProvider = partitioner.getContentProvider();
-						// bug 28227
-						IDocument doc = getDocument();
-						if (doc != null) {
-							ITypedRegion[] regions = partitioner.computePartitioning(0, getDocument().getLength());
-							StyleRange[] styles = new StyleRange[regions.length];
-							for (int i = 0; i < regions.length; i++) {
-								StreamPartition partition = (StreamPartition)regions[i];
-								Color color = contentProvider.getColor(partition.getStreamIdentifier());
-								styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
-							}	
-							try {
-								getTextWidget().setStyleRanges(styles);
-							} catch (IllegalArgumentException e) {
-								// style ranges are out of bounds - likely an old/changed document.
-							}
-						}
-					}
-				};
-				getControl().getDisplay().asyncExec(r);
-			}
-		}
-	}
-
 	/**
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 	 */
@@ -469,13 +439,31 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 
 	protected void setVisible(boolean visible) {
 		fVisible = visible;
-		if (visible) {
-			paintDocument();
-		}
 	}
 	
 	protected boolean isVisible() {
 		return fVisible;
 	}
+	/**
+	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
+	 */
+	public void lineGetStyle(LineStyleEvent event) {
+		IDocument document = getDocument();
+		if (document != null) {
+			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)document.getDocumentPartitioner();
+			if (partitioner != null) {
+				IConsoleColorProvider contentProvider = partitioner.getContentProvider();
+				ITypedRegion[] regions = partitioner.computePartitioning(event.lineOffset, event.lineOffset + event.lineText.length());
+				StyleRange[] styles = new StyleRange[regions.length];
+				for (int i = 0; i < regions.length; i++) {
+					StreamPartition partition = (StreamPartition)regions[i];
+					Color color = contentProvider.getColor(partition.getStreamIdentifier());
+					styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
+				}	
+				event.styles = styles;
+			}
+		}
+	}
+
 }
 
