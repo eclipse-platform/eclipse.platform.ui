@@ -11,23 +11,18 @@ package org.eclipse.ui.externaltools.internal.ant.view.actions;
  * IBM - Initial API and implementation
  ******************************************************************************/
 
-import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -53,11 +48,6 @@ public class RunTargetAction extends Action implements IUpdate {
 		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();
 		shortcut.launch(file, ILaunchManager.RUN_MODE, target.getName());
-	}
-	
-	private void handleException(CoreException exception, TargetNode target) {
-		MessageDialog.openError(Display.getCurrent().getActiveShell(), "Error Running Target", MessageFormat.format("An exception occurred attempting to launch target {0}. See log for details.", new String[] {target.getName()}));
-		ExternalToolsPlugin.getDefault().log(MessageFormat.format("An exception occurred attempting to launch target {0}.", new String[] {target.getName()}), exception);
 	}
 	
 	/**
