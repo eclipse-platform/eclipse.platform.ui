@@ -66,7 +66,7 @@ public class EclipseController {
 	/**
 	 * @see org.eclipse.help.standalone.Help#start()
 	 */
-	public void start() {
+	public void start() throws Exception {
 		connection.reset();
 		startEclipse();
 	}
@@ -126,7 +126,7 @@ public class EclipseController {
 	/**
 	 * Starts Eclipse if not yet running.
 	 */
-	private void startEclipse() {
+	private void startEclipse() throws Exception {
 		if (Options.isDebug()) {
 			System.out.println(
 				"Using workspace " + Options.getWorkspace().getAbsolutePath());
@@ -140,7 +140,7 @@ public class EclipseController {
 					System.out.println(
 						"File "
 							+ Options.getLockFile()
-							+ " exists and is locked.");
+							+ " exists and is locked.  Eclipse is already running.");
 				}
 				return;
 			} else {
@@ -154,18 +154,28 @@ public class EclipseController {
 						"Deleted file " + Options.getConnectionFile());
 				}
 			}
+		} else {
+			if (Options.isDebug()) {
+				System.out.println(
+					"File "
+						+ Options.getLockFile()
+						+ " does not exist.  Eclipse needs to be started.");
+			}
 		}
 		if (Options.isDebug()) {
 			System.out.println("Launching Eclipse.");
-			for (Iterator it = Options.getEclipseArgs().iterator();
-				it.hasNext();
-				) {
-				System.out.println("  " + (String) it.next());
+		}
+		eclipse = new Eclipse();
+		eclipse.start();
+		while(eclipse.getStatus()==Eclipse.STATUS_INTIT){
+			try{
+				Thread.sleep(50);
+			}catch(InterruptedException ie){
 			}
 		}
-			eclipse =
-				new Eclipse();
-		eclipse.start();
+		if(eclipse.getStatus()==Eclipse.STATUS_ERROR){
+			throw eclipse.getException();
+		}
 		if (Options.isDebug()) {
 			System.out.println("Eclipse launched");
 		}

@@ -12,9 +12,17 @@ import java.util.List;
  * or org.eclipse.core.launcher.Main.
  */
 public class Eclipse extends Thread {
-	private static final int RESTART = 23;
+	// Eclipse exit codes
+	private static final int NEEDS_RESTART = 23;
+	// Launching status
+	public static final int STATUS_INTIT = 0;
+	public  static final int STATUS_STARTED = 1;
+	public static final int STATUS_ERROR = 2;
+
 	File dir;
 	String[] cmdarray;
+	private int status;
+	private Exception exception = new Exception("Unknown exception.");
 	/**
 	 * Constructor
 	 */
@@ -23,12 +31,15 @@ public class Eclipse extends Thread {
 		this.setName("Eclipse");
 		this.dir = Options.getEclipseHome();
 	}
-	private void prepareCommand() {
+	private void prepareCommand() throws Exception {
 		if (Options.useExe()) {
 			prepareEclipseCommand();
+			ensureEclipseExeExists();
 		} else {
 			prepareJavaCommand();
+			ensureStartupJarExists();
 		}
+		ensureVmExists();
 	}
 	private void prepareEclipseCommand() {
 		List vmArgs = Options.getVmArgs();
@@ -65,19 +76,40 @@ public class Eclipse extends Thread {
 	 * Launches Eclipse process and waits for it.
 	 */
 	public void run() {
-		prepareCommand();
+		try {
+			prepareCommand();
+			if(Options.isDebug()){
+				printCommand();
+			}
+			launchProcess();
+		} catch (Exception exc) {
+			exception = exc;
+			status = STATUS_ERROR;
+		} finally {
+			if (status == STATUS_INTIT) {
+				status = STATUS_ERROR;
+			}
+		}
+	}
+	private void launchProcess() throws IOException {
 		try {
 			Process pr;
 			do {
 				pr = Runtime.getRuntime().exec(cmdarray, (String[]) null, dir);
 				(new StreamConsumer(pr.getInputStream())).start();
 				(new StreamConsumer(pr.getErrorStream())).start();
+				status = STATUS_STARTED;
 				pr.waitFor();
-			} while (pr.exitValue() == RESTART);
+				if (Options.isDebug()) {
+					System.out.println(
+						"Eclipse exited with status code " + pr.exitValue());
+					if (pr.exitValue() == NEEDS_RESTART) {
+						System.out.println(
+							"Updates are installed,  Eclipse will be restarted.");
+					}
+				}
+			} while (pr.exitValue() == NEEDS_RESTART);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	/**
@@ -101,5 +133,65 @@ public class Eclipse extends Thread {
 				ioe.printStackTrace();
 			}
 		}
+	}
+	private void ensureVmExists() throws Exception {
+		File vmExe = new File(Options.getVm());
+		if (vmExe.exists() && !vmExe.isDirectory()) {
+			return;
+		}
+		vmExe = new File(Options.getVm()+".exe");
+		if (vmExe.exists() && !vmExe.isDirectory()) {
+			return;
+		}
+		throw new Exception(
+			"File "
+				+ vmExe.getAbsolutePath()
+				+ " does not exists.  Pass a correct -vm option");
+	}
+	private void ensureEclipseExeExists() throws Exception {
+		File eclipseExe =
+			new File(
+				Options.getEclipseHome(),
+				"eclipse"
+					+ (System.getProperty("os.name").startsWith("Win")
+						? ".exe"
+						: ""));
+		if (eclipseExe.exists() && !eclipseExe.isDirectory()) {
+			return;
+		}
+		throw new Exception(
+			"File "
+				+ eclipseExe.getAbsolutePath()
+				+ " does not exists.  Pass a correct -eclipsehome option");
+	}
+	private void ensureStartupJarExists() throws Exception {
+		File startupJar = new File(Options.getEclipseHome(), "startup.jar");
+		if (startupJar.exists() && !startupJar.isDirectory()) {
+			return;
+		}
+		throw new Exception(
+			"File "
+				+ startupJar.getAbsolutePath()
+				+ " does not exists.  Pass a correct -eclipsehome option");
+	}
+	/**
+	 * @return Exception
+	 */
+	public Exception getException() {
+		return exception;
+	}
+
+	/**
+	 * @return int
+	 */
+	public int getStatus() {
+		return status;
+	}
+	private void printCommand(){
+		System.out.println("Launch command is:");
+		for (int i=0; i<cmdarray.length; i++){
+			System.out.println("  " + (String) cmdarray[i]);
+		}
+
 	}
 }

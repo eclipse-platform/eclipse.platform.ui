@@ -108,10 +108,10 @@ public class EclipseConnection {
 				if (Options.isDebug()) {
 					System.out.println(
 						"Timeout waiting for file "
-							+ Options.getConnectionFile());
+							+ Options.getConnectionFile()+"\nEclipse is not running.");
 				}
 				throw new Exception(
-					"Timeout waiting for file " + Options.getConnectionFile());
+					"Timeout waiting for file " + Options.getConnectionFile()+"\nEclipse is not running.");
 			}
 			// wait more
 			Thread.sleep(2000);
