@@ -93,13 +93,8 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 				
 					IAction action= null;
 					Object property= job.getProperty(IProgressConstants.ACTION_PROPERTY);
-					if (property instanceof IAction) {
+					if (property instanceof IAction)
 						action= (IAction) property;
-					} else {	// backward compatibility
-						property= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
-						if (property instanceof IAction)
-							action= (IAction) property;
-					}
 					if (action != null && action.isEnabled()) {
 						action.run();
 						JobTreeElement topElement= (JobTreeElement) ji.getParent();
@@ -118,10 +113,6 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	
 	private IAction getAction(Job job) {
 		Object property= job.getProperty(IProgressConstants.ACTION_PROPERTY);
-		if (property instanceof IAction)
-			return (IAction) property;
-		// backward compatibility
-		property= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
 		if (property instanceof IAction)
 			return (IAction) property;
 		return null;
@@ -225,7 +216,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		if ("gtk".equals(SWT.getPlatform())) {	//$NON-NLS-1$
 			// workaround for an SWT problem; see #62883
 			gd= new GridData(GridData.FILL_VERTICAL);
-			gd.widthHint= 22;
+			gd.widthHint= 23;
 			toolbar.setLayoutData(gd);
 		}
 		

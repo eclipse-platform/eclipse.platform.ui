@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * progress service to allow locks to show the current jobs.
  */
 public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
-	private ProgressTreeViewer viewer;
+	private NewProgressViewer viewer;
 	/**
 	 * The height of the viewer. Set when the details button is selected.
 	 */

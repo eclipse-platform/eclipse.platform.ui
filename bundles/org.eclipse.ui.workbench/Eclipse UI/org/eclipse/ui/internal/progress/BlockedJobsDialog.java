@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -47,7 +46,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * 
 	 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer
 	 */
-	private ProgressTreeViewer viewer;
+	private NewProgressViewer viewer;
 	/**
 	 * The name of the task that is being blocked.
 	 */
@@ -267,23 +266,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	void showJobDetails(Composite parent) {
 		viewer = new NewProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.BORDER) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#updateColors(org.eclipse.swt.widgets.TreeItem,
-			 *      org.eclipse.ui.internal.progress.JobTreeElement)
-			 */
-			protected void updateColors(TreeItem treeItem,
-					JobTreeElement element) {
-				super.updateColors(treeItem, element);
-				//Color the blocked element the not running color.
-				if (element == blockedElement)
-					setNotRunningColor(treeItem);
-			}
-		};
-		if (viewer instanceof NewProgressViewer && blockingJob != null)
-			((NewProgressViewer) viewer).setHighlightJob(blockingJob);
+				| SWT.V_SCROLL | SWT.BORDER);
+		if (blockingJob != null)
+			viewer.setHighlightJob(blockingJob);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(new ViewerSorter() {
 			/*

@@ -20,9 +20,9 @@ public class ProgressTreeContentProvider
 	extends ProgressContentProvider
 	implements ITreeContentProvider {
 
-	ProgressTreeViewer viewer;
+	NewProgressViewer viewer;
 
-	public ProgressTreeContentProvider(ProgressTreeViewer mainViewer) {
+	public ProgressTreeContentProvider(NewProgressViewer mainViewer) {
 		super();
 		viewer = mainViewer;
 	}
@@ -33,7 +33,7 @@ public class ProgressTreeContentProvider
 	 * @param mainViewer
 	 * @param noDebug If true do not show debug information
 	 */
-	public ProgressTreeContentProvider(ProgressTreeViewer mainViewer,boolean noDebug) {
+	public ProgressTreeContentProvider(NewProgressViewer mainViewer,boolean noDebug) {
 		super(noDebug);
 		viewer = mainViewer;
 	}

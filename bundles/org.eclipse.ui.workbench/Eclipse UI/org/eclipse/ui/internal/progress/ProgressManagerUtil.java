@@ -63,14 +63,14 @@ public class ProgressManagerUtil {
 	static void logException(Throwable exception) {
 		BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
 	}
-	/**
-	 * Sets the label provider for the viewer.
-	 * 
-	 * @param viewer
-	 */
-	static void initLabelProvider(ProgressTreeViewer viewer) {
-		viewer.setLabelProvider(new ProgressLabelProvider());
-	}
+//	/**
+//	 * Sets the label provider for the viewer.
+//	 * 
+//	 * @param viewer
+//	 */
+//	static void initLabelProvider(ProgressTreeViewer viewer) {
+//		viewer.setLabelProvider(new ProgressLabelProvider());
+//	}
 	/**
 	 * Return a viewer sorter for looking at the jobs.
 	 * 

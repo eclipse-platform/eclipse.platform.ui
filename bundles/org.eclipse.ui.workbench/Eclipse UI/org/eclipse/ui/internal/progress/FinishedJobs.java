@@ -168,10 +168,6 @@ class FinishedJobs {
 				Object prop= job.getProperty(IProgressConstants.ACTION_PROPERTY);
 				if (prop instanceof ActionFactory.IWorkbenchAction)
 					((ActionFactory.IWorkbenchAction)prop).dispose();
-				// backward compatibility
-				prop= job.getProperty(NewProgressViewer.GOTO_PROPERTY);
-				if (prop instanceof ActionFactory.IWorkbenchAction)
-					((ActionFactory.IWorkbenchAction)prop).dispose();
 			}
 		}
 	}

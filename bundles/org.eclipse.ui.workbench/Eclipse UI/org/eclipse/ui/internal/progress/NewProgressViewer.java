@@ -54,7 +54,7 @@ import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
 
 
-public class NewProgressViewer extends ProgressTreeViewer implements FinishedJobs.KeptJobsListener {
+public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJobsListener {
 	
 	static final boolean DEBUG= false;
 	
@@ -65,8 +65,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	static final QualifiedName KEEP_PROPERTY= IProgressConstants.KEEP_PROPERTY;
 	static final QualifiedName KEEPONE_PROPERTY= IProgressConstants.KEEPONE_PROPERTY;
 	static final QualifiedName ICON_PROPERTY= IProgressConstants.ICON_PROPERTY;
-	/** @deprecated use IProgressConstants.ACTION_PROPERTY instead */
-	static final QualifiedName GOTO_PROPERTY= new QualifiedName(ICON_PROPERTY.getQualifier(), "goto"); //$NON-NLS-1$
 	
 	private FinishedJobs finishedJobs;
 	private boolean dialogContext;	// viewer runs in dialog: filter accordingly
@@ -463,13 +461,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 
 				// check for action property
 				Object property= job.getProperty(IProgressConstants.ACTION_PROPERTY);
-				if (property instanceof IAction) {
+				if (property instanceof IAction)
 					setAction((IAction) property);
-				} else {	// backward compatibility
-					property= job.getProperty(GOTO_PROPERTY);
-					if (property instanceof IAction)
-						setAction((IAction) property);
-				}
 		    	
 		    	// poll for result status
 		    	IStatus status= job.getResult();

@@ -48,7 +48,6 @@ public class JobView extends ViewPart implements IViewPart {
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 		initContentProvider();
-		ProgressManagerUtil.initLabelProvider(viewer);
 		createClearAllAction();
 		createCancelAction();
 		initContextMenu();
