@@ -1043,7 +1043,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 			return Boolean.valueOf(property).booleanValue();
 		} catch (CoreException e) {
-			if (project.exists()) {
+			if (project.isAccessible()) {
 				// We only care if the project still exists
 				throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorGettingWatchEdit", project.getName()), e)); //$NON-NLS-1$
 			}
