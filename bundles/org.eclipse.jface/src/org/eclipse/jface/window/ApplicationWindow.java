@@ -91,6 +91,8 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	 */
 	private boolean operationInProgress = false;
 	
+	protected Label seperator1;
+	
 	/**
 	 * Internal application window layout class.
 	 * This vertical layout supports a tool bar area (fixed size),
@@ -248,7 +250,7 @@ protected void configureShell(Shell shell) {
 	shell.setLayout(new ApplicationWindowLayout());
 
 	if (! "carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
-		 new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator1 =  new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
 	createToolBarControl(shell);
 

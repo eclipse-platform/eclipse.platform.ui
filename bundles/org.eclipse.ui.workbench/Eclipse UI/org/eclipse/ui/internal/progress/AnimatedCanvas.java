@@ -1,9 +1,6 @@
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -50,9 +47,9 @@ public class AnimatedCanvas {
 	public void createCanvas(Composite parent) {
 
 		// Canvas to show the image.
-		imageCanvas = new Canvas(parent, SWT.BORDER);
+		imageCanvas = new Canvas(parent, SWT.NONE);
 		imageCanvas.setBackground(
-			parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
@@ -313,5 +310,13 @@ public class AnimatedCanvas {
 		if (ms < 30)
 			return ms + 10;
 		return ms;
+	}
+	
+	/**
+	 * Get the bounds of the image being displayed here.
+	 * @return Rectangle
+	 */
+	public Rectangle getImageBounds(){
+		return disabledImage.getBounds();
 	}
 }

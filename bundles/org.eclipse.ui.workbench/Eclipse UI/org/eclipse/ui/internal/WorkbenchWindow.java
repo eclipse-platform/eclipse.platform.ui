@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -30,8 +29,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -39,7 +36,7 @@ import org.eclipse.ui.internal.commands.*;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.progress.*;
+import org.eclipse.ui.internal.progress.ProgressControl;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
@@ -63,6 +60,7 @@ public class WorkbenchWindow
 	private WWinActionBars actionBars;
 	private Label separator2;
 	private Label separator3;
+	private ProgressControl progressControl;
 	private ToolBarManager shortcutBar;
 	private ShortcutBarPart shortcutBarPart;
 	private ShortcutBarPartDragDrop shortcutDND;
@@ -79,6 +77,7 @@ public class WorkbenchWindow
 	private boolean showShortcutBar = true;
 	private boolean showStatusLine = true;
 	private boolean showToolBar = true;
+
 
 	// constants for shortcut bar group ids 
 	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
@@ -107,8 +106,6 @@ public class WorkbenchWindow
 
 		addStatusLine();
 		addShortcutBar(SWT.FLAT |  SWT.VERTICAL | SWT.WRAP);
-
-		addProgressItem();
 
 		updateBarVisibility();
 
@@ -412,6 +409,7 @@ public class WorkbenchWindow
 		shell.setLayout(getLayout());
 		shell.setSize(800, 600);
 		separator2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		createProgressIndicator(shell);
 		createShortcutBar(shell);
 		separator3 = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
 
@@ -487,6 +485,16 @@ public class WorkbenchWindow
 	 */
 	protected ToolBarManager createToolBarManager(int style) {
 		return null;
+	}
+	
+	/**
+	 * Create the progress indicator for the receiver.
+	 * @param shell	the parent shell
+	 */
+	private void createProgressIndicator(Shell shell){
+		progressControl = new ProgressControl();
+		progressControl.createCanvas(shell);
+		
 	}
 
 	/* (non-Javadoc)
@@ -1808,12 +1816,6 @@ public class WorkbenchWindow
 			}
 		}
 	}
-
-	public void addProgressItem() {
-		getStatusLineManager().add(
-			new ProgressContributionItem("org.eclipse.ui.progress"));
-	}
-
 	/* (non-Javadoc)
 			 * @see org.eclipse.ui.IWorkbenchWindow#queueJob(java.lang.String, org.eclipse.jface.operation.IRunnableWithProgress)
 			 */
@@ -1846,7 +1848,11 @@ public class WorkbenchWindow
 		job.schedule();
 	}
 
-	protected void initializeBounds() {
+	/**
+	 * Set the attachments for the widgets in the recevier.
+	 *
+	 */
+	protected void setAttachments() {
 
 		FormData sep1Data = new FormData();
 		sep1Data.top = new FormAttachment(0, 0);
@@ -1857,9 +1863,21 @@ public class WorkbenchWindow
 
 		if (getShowToolBar()) {
 
+			Control progressCanvas = progressControl.getCanvas().getControl();
+			Rectangle progressBounds = progressControl.getCanvas().getImageBounds();
+			FormData progressData = new FormData();
+			progressData.top = new FormAttachment(seperator1, 0);
+			progressData.right = new FormAttachment(100, 0);
+			progressData.left = new FormAttachment(100, progressBounds.width * -1);
+			
 			FormData toolData = new FormData();
 			toolData.top = new FormAttachment(seperator1, 0);
 			toolData.left = new FormAttachment(0, 0);
+			toolData.right = new FormAttachment(progressControl.getCanvas().getControl(), 0);
+			
+			progressData.bottom = new FormAttachment(getToolBarControl(), 0, SWT.BOTTOM);
+						
+			progressCanvas.setLayoutData(progressData);
 			getToolBarControl().setLayoutData(toolData);
 
 			FormData sep2Data = new FormData();
@@ -1894,6 +1912,10 @@ public class WorkbenchWindow
 			sep3.setLayoutData(sep3Data);
 			sideWidget = sep3;
 		}
+		else{
+			getShortcutBar().getControl().setBounds(0,0,0,0);
+			getSeparator3().setBounds(0,0,0,0);
+		}
 
 		Control bottomWidget = null;
 		if (getShowStatusLine() && getStatusLineManager() != null) {
@@ -1912,6 +1934,8 @@ public class WorkbenchWindow
 
 			bottomWidget = statusLine;
 		}
+		else
+			getStatusLineManager().getControl().setBounds(0,0,0,0);
 
 		FormData mainAreaData = new FormData();
 		mainAreaData.top = new FormAttachment(topWidget, VGAP);
@@ -1930,7 +1954,13 @@ public class WorkbenchWindow
 		getClientComposite().setLayoutData(mainAreaData);
 		Point bounds =
 			getClientComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		System.out.println(bounds);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#initializeBounds()
+	 */
+	protected void initializeBounds() {
+		setAttachments();
 		super.initializeBounds();
 	}
 
