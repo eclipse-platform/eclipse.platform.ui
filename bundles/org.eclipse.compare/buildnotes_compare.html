@@ -11,6 +11,19 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Compare</h1>
+Eclipse Build Input June 12th 2002
+
+<h2>
+What's new in this drop</h2>
+
+There were several complains that clicking on a zip file in the left pane (structure input pane) feeds all other
+compare panes (see bug 13730). There are cases where this is expensive (for example a large zip file that has 
+to be read from a repository). To avoid those situations the left pane now honors single or double click mode as 
+set in Preferences->Workbench. So if this preference is set to double click the user has to double click on a file
+in the left pane to actually feed all other compare panes.
+
+<h1>
+<hr WIDTH="100%"></h1>
 Eclipse Build Input June 8th 2002
 
 <h2>

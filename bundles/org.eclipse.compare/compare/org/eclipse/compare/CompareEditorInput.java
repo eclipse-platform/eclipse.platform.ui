@@ -430,7 +430,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 		
+		// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
 		// setup the wiring for second pane
+		/*
 		fStructurePane1.addOpenListener(
 			new IOpenListener() {
 				public void open(OpenEvent oe) {
@@ -438,17 +440,23 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				}
 			}
 		);
+		*/
+		// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972		
 		fStructurePane1.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent e) {
 					ISelection s= e.getSelection();
-					if (s == null || s.isEmpty())
-						feed2(s);
+					// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
+					// if (s == null || s.isEmpty())
+					// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
+					feed2(s);
 				}
 			}
 		);
 
+		// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
 		// setup the wiring for third pane
+		/*
 		fStructurePane2.addOpenListener(
 			new IOpenListener() {
 				public void open(OpenEvent oe) {
@@ -456,17 +464,24 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				}
 			}
 		);
+		*/
+		// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972		
 		fStructurePane2.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent e) {
 					ISelection s= e.getSelection();
-					if (s == null || s.isEmpty())
-						feed3(s);
+					// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
+					// if (s == null || s.isEmpty())
+					// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
+					feed3(s);
 				}
 			}
 		);
 		
+		
+		// Begin fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
 		// now deal with activation/deactivation
+		/*
 		Listener activationListener= new Listener() {
 			int fOldOpenStrategy;
 			
@@ -495,6 +510,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fStructurePane1.addListener(SWT.Deactivate, activationListener);
 		fStructurePane2.addListener(SWT.Deactivate, activationListener);
 		fContentInputPane.addListener(SWT.Deactivate, activationListener);
+		*/
+		// End fix for http://bugs.eclipse.org/bugs/show_bug.cgi?id=19972
 		
 
 		if (fInput instanceof ICompareInput) {
