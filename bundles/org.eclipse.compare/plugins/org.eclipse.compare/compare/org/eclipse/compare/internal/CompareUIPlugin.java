@@ -217,19 +217,21 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		Assert.isTrue(fgComparePlugin == null);
 		fgComparePlugin= this;
 		
+		ComparePreferencePage.initDefaults(getPreferenceStore());		
+		
 		fResourceBundle= descriptor.getResourceBundle();
 		registerExtensions();
 		initPreferenceStore();
 	}
 	
-	/**
-	 * @see AbstractUIPlugin#initializeDefaultPreferences
-	 */
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		super.initializeDefaultPreferences(store);
-		ComparePreferencePage.initDefaults(store);		
-	}
-	
+//	/**
+//	 * @see AbstractUIPlugin#initializeDefaultPreferences
+//	 */
+//	protected void initializeDefaultPreferences(IPreferenceStore store) {
+//		super.initializeDefaultPreferences(store);
+//		ComparePreferencePage.initDefaults(store);		
+//	}
+		
 	/**
 	 * Returns the singleton instance of this plug-in runtime class.
 	 *
