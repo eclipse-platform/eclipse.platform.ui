@@ -57,7 +57,7 @@ import org.eclipse.jface.text.TextUtilities;
  */
 class CompletionProposalPopup implements IContentAssistListener {
 	
-	private final class MyKeyListener implements KeyListener {
+	private final class ProposalSelectionListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {
 			if (!Helper.okToUse(fProposalShell))
 				return;
@@ -98,7 +98,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** Indicates whether a completion proposal is being inserted */
 	private boolean fInserting= false;
 	/** The key listener to control navigation */
-	private KeyListener fKeyListener;
+	private ProposalSelectionListener fKeyListener;
 	/** List of document events used for filtering proposals */
 	private List fDocumentEvents= new ArrayList();
 	/** Listener filling the document event queue */
@@ -181,7 +181,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	public String showProposals(final boolean autoActivated) {
 		
 		if (fKeyListener == null) {
-			fKeyListener= new MyKeyListener();
+			fKeyListener= new ProposalSelectionListener();
 		}
 
 		final Control control= fContentAssistSubjectAdapter.getControl();
@@ -884,7 +884,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			final Control control= fContentAssistSubjectAdapter.getControl();
 			
 			if (fKeyListener == null)
-				fKeyListener= new MyKeyListener();
+				fKeyListener= new ProposalSelectionListener();
 			
 			if (!Helper.okToUse(fProposalShell) && !control.isDisposed())
 				fContentAssistSubjectAdapter.addKeyListener(fKeyListener);
