@@ -45,5 +45,13 @@ abstract class JobTreeElement implements Comparable{
 	 * @return boolean
 	 */
 	abstract boolean isJobInfo();
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object arg0) {
+		return getDisplayString().compareTo(((JobTreeElement) arg0).getDisplayString());
+	}
+	
 
 }

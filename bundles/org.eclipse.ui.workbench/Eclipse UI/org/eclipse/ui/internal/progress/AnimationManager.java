@@ -366,9 +366,9 @@ class AnimationManager {
 			HashSet jobs = new HashSet();
 
 			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#addJob(org.eclipse.ui.internal.progress.JobInfo)
 			 */
-			public void add(JobInfo info) {
+			public void addJob(JobInfo info) {
 				incrementJobCount(info);
 
 			}
@@ -380,9 +380,9 @@ class AnimationManager {
 
 				int state = info.getJob().getState();
 				if (state == Job.RUNNING)
-					add(info);
+					addJob(info);
 				else
-					remove(info);
+					removeJob(info);
 			}
 
 			/* (non-Javadoc)
@@ -394,10 +394,7 @@ class AnimationManager {
 				setAnimated(false);
 				JobInfo[] currentInfos = manager.getJobInfos(showsDebug());
 				for (int i = 0; i < currentInfos.length; i++) {
-					JobInfo info = currentInfos[i];
-					if (manager.isNonDisplayableJob(info.getJob(), showsDebug()))
-						continue;
-					add(currentInfos[i]);
+					addJob(currentInfos[i]);
 				}
 
 			}
@@ -405,7 +402,7 @@ class AnimationManager {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 			 */
-			public void remove(JobInfo info) {
+			public void removeJob(JobInfo info) {
 				if (jobs.contains(info.getJob())) {
 					decrementJobCount(info.getJob());
 				}
@@ -444,6 +441,22 @@ class AnimationManager {
 				//We always track errors
 				Job job = info.getJob();
 				return job.getState() != Job.RUNNING || job == clearJob || job == animateJob;
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#addGroup(org.eclipse.ui.internal.progress.GroupInfo)
+			 */
+			public void addGroup(GroupInfo info) {
+				//Don't care about groups
+
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#removeGroup(org.eclipse.ui.internal.progress.GroupInfo)
+			 */
+			public void removeGroup(GroupInfo group) {
+				//Don't care about groups
+
 			}
 		};
 	}
@@ -529,12 +542,12 @@ class AnimationManager {
 	 */
 	private void animationDone() {
 
-		UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationCleanUp")) { //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+			UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationCleanUp")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				
+
 				AnimationItem[] animationItems = getAnimationItems();
 				for (int i = 0; i < animationItems.length; i++) {
 					AnimationItem item = animationItems[i];
@@ -545,7 +558,7 @@ class AnimationManager {
 		};
 		animationDoneJob.setSystem(true);
 		animationDoneJob.schedule();
-		
+
 	}
 
 	/**
@@ -553,13 +566,13 @@ class AnimationManager {
 	 * other start behaviour.
 	 */
 	private void animationStarted() {
-		
-		UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationStart")) { //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+
+			UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				
+
 				AnimationItem[] animationItems = getAnimationItems();
 				for (int i = 0; i < animationItems.length; i++) {
 					AnimationItem item = animationItems[i];
@@ -572,18 +585,18 @@ class AnimationManager {
 		animationDoneJob.schedule();
 
 	}
-	
+
 	/**
 	 * Get the preferred width for widgets displaying the 
 	 * animation.
 	 * @return int. Return 0 if there is no image data.
 	 */
-	int getPreferredWidth(){
-		if(animatedData == null)
+	int getPreferredWidth() {
+		if (animatedData == null)
 			return 0;
 		else
 			return animatedData[0].width;
-		
+
 	}
 
 }

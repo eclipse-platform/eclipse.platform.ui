@@ -74,12 +74,4 @@ class SubTaskInfo extends JobTreeElement {
 	boolean isJobInfo() {
 		return false;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object arg0) {
-		return getDisplayString().compareTo(
-			((SubTaskInfo) arg0).getDisplayString());
-	}
 }

@@ -19,7 +19,13 @@ interface IJobProgressManagerListener {
 	 * Refresh the viewer as a result of an addition of info.
 	 * @param info
 	 */
-	void add(final JobInfo info);
+	void addJob(final JobInfo info);
+	
+	/**
+	 * Refresh the viewer as a result of an addition of group.
+	 * @param info
+	 */
+	void addGroup(final GroupInfo info);
 
 	/**
 	 * Refresh the IJobProgressManagerListeners as a result of a change in info.
@@ -37,7 +43,13 @@ interface IJobProgressManagerListener {
 	 * Refresh the viewer as a result of a removal of info.
 	 * @param info
 	 */
-	void remove(final JobInfo info);
+	void removeJob(final JobInfo info);
+	
+	/**
+	 * Refresh the viewer as a result of a removal of group.
+	 * @param info
+	 */
+	void removeGroup(final GroupInfo group);
 	
 	/**
 	 * Return whether or not this listener shows debug information.

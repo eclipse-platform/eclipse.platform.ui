@@ -38,7 +38,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 	ProgressTreeViewer viewer;
 	Action cancelAction;
-	Action deleteAction;
 
 	/*
 	 * (non-Javadoc)
@@ -87,14 +86,11 @@ public class ProgressView extends ViewPart implements IViewPart {
 		Menu menu = menuMgr.createContextMenu(viewer.getTree());
 
 		createCancelAction();
-		createDeleteAction();
 		menuMgr.add(cancelAction);
-		menuMgr.add(deleteAction);
 
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
 
-				deleteAction.setEnabled(false);
 				JobInfo info = getSelectedInfo();
 				if (info == null)
 					return;
@@ -192,26 +188,5 @@ public class ProgressView extends ViewPart implements IViewPart {
 		};
 	}
 
-	/**
-	 * Create the delete action for the receiver.
-	 * 
-	 * @return Action
-	 */
-	private void createDeleteAction() {
-			deleteAction = new Action(ProgressMessages.getString("ProgressView.DeleteAction")) {//$NON-NLS-1$
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-			public void run() {
-				JobInfo element = getSelectedInfo();
-				//Check it case it got removed after enablement
-				if (element == null) {
-					return;
-				}
-				ProgressManager.getInstance().clearJob(element.getJob());
-			}
-		};
-	}
+	
 }
