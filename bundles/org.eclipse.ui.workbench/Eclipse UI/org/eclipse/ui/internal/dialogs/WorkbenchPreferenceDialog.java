@@ -12,23 +12,15 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -66,17 +58,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @since 3.1
 	 */
 	private static WorkbenchPreferenceDialog instance = null;
-
-
-	/**
-	 * The Load button id.
-	 */
-	private final static int LOAD_ID = IDialogConstants.CLIENT_ID + 1;
-
-	/**
-	 * The Save button id.
-	 */
-	private final static int SAVE_ID = IDialogConstants.CLIENT_ID + 2;
 
 	/**
 	 * Creates a workbench preference dialog to a particular preference page. It
@@ -226,23 +207,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		history = new PreferencePageHistory(this);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
-	protected void buttonPressed(int buttonId) {
-		switch (buttonId) {
-		case LOAD_ID: {
-			loadPressed();
-			return;
-		}
-		case SAVE_ID: {
-			savePressed();
-			return;
-		}
-		}
-		super.buttonPressed(buttonId);
-	}
-
 	/**
 	 * Closes the preference dialog. This clears out the singleton instance
 	 * before calling the super implementation.
@@ -255,30 +219,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		instance = null;
 		history.dispose();
 		return super.close();
-	}
-
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		createButton(parent, LOAD_ID,
-				WorkbenchMessages.WorkbenchPreferenceDialog_load, false);
-		createButton(parent, SAVE_ID,
-				WorkbenchMessages.WorkbenchPreferenceDialog_save, false);
-
-		Label l = new Label(parent, SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		l = new Label(parent, SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		GridLayout layout = (GridLayout) parent.getLayout();
-		layout.numColumns += 3;
-		layout.makeColumnsEqualWidth = false;
-
-		super.createButtonsForButtonBar(parent);
 	}
 
 	/*
@@ -564,69 +504,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return new Path(currentFileName);
 
 	}
-
-	/**
-	 * Import a preference file.
-	 * 
-	 * @param path
-	 *            The file path.
-	 * @return true if successful.
-	 */
-	private boolean importPreferences(IPath path) {
-		IStatus status = Preferences.validatePreferenceVersions(path);
-		if (status.getSeverity() == IStatus.ERROR) {
-			// Show the error and about
-			ErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle,
-					NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_verifyErrorMessage, path.toOSString() ), status);
-			return false;
-		} else if (status.getSeverity() == IStatus.WARNING) {
-			// Show the warning and give the option to continue
-			int result = PreferenceErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle,
-					NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_verifyWarningMessage, path.toOSString()), status);
-			if (result != Window.OK) {
-				return false;
-			}
-		}
-
-		try {
-			Preferences.importPreferences(path);
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle, 
-					NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorMessage, path.toOSString()), e.getStatus());
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Handle a request to load preferences
-	 */
-	protected void loadPressed() {
-		final IPath filePath = getFilePath(false);
-		if (filePath == null)
-			return;
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				importPreferences(filePath);
-			}
-		});
-
-		close();
-	}
-
-	/**
-	 * Handle a request to save preferences
-	 */
-	protected void savePressed() {
-		new PreferencesExportDialog(getShell()).open();
-		close();
-	}
-
 
 	/*
 	 * (non-Javadoc)
