@@ -75,7 +75,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			return;
 		}
 			
-		final ITextHover hover= fTextViewer.getTextHover(offset, getStateMask());
+		final ITextHover hover= fTextViewer.getTextHover(offset, getHoverEventStateMask());
 		if (hover == null) {
 			setInformation(null, null);
 			return;
