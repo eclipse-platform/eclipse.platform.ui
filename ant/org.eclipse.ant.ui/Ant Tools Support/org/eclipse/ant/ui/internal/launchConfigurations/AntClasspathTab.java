@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.ui.internal.model.AntUtil;
-import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.preferences.AntClasspathBlock;
 import org.eclipse.ant.ui.internal.preferences.IAntBlockContainer;
