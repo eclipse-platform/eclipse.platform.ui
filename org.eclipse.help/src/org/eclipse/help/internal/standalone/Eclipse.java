@@ -15,14 +15,15 @@ public class Eclipse extends Thread {
 	// Eclipse exit codes
 	private static final int NEEDS_RESTART = 23;
 	// Launching status
-	public static final int STATUS_INTIT = 0;
-	public  static final int STATUS_STARTED = 1;
+	public static final int STATUS_INIT = 0;
+	public static final int STATUS_STARTED = 1;
 	public static final int STATUS_ERROR = 2;
 
 	File dir;
 	String[] cmdarray;
 	private int status;
 	private Exception exception = new Exception("Unknown exception.");
+	Process pr;
 	/**
 	 * Constructor
 	 */
@@ -78,7 +79,7 @@ public class Eclipse extends Thread {
 	public void run() {
 		try {
 			prepareCommand();
-			if(Options.isDebug()){
+			if (Options.isDebug()) {
 				printCommand();
 			}
 			launchProcess();
@@ -86,14 +87,13 @@ public class Eclipse extends Thread {
 			exception = exc;
 			status = STATUS_ERROR;
 		} finally {
-			if (status == STATUS_INTIT) {
+			if (status == STATUS_INIT) {
 				status = STATUS_ERROR;
 			}
 		}
 	}
 	private void launchProcess() throws IOException {
 		try {
-			Process pr;
 			do {
 				pr = Runtime.getRuntime().exec(cmdarray, (String[]) null, dir);
 				(new StreamConsumer(pr.getInputStream())).start();
@@ -139,7 +139,7 @@ public class Eclipse extends Thread {
 		if (vmExe.exists() && !vmExe.isDirectory()) {
 			return;
 		}
-		vmExe = new File(Options.getVm()+".exe");
+		vmExe = new File(Options.getVm() + ".exe");
 		if (vmExe.exists() && !vmExe.isDirectory()) {
 			return;
 		}
@@ -187,11 +187,19 @@ public class Eclipse extends Thread {
 	public int getStatus() {
 		return status;
 	}
-	private void printCommand(){
+	private void printCommand() {
 		System.out.println("Launch command is:");
-		for (int i=0; i<cmdarray.length; i++){
+		for (int i = 0; i < cmdarray.length; i++) {
 			System.out.println("  " + (String) cmdarray[i]);
 		}
 
+	}
+	/**
+	 * Used in unit testing.
+	 */
+	public void killProcess() {
+		if (pr != null) {
+			pr.destroy();
+		}
 	}
 }
