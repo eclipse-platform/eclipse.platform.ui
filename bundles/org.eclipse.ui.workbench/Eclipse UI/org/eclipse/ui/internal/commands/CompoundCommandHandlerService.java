@@ -65,7 +65,12 @@ public final class CompoundCommandHandlerService
 
 	private void setHandlersByCommandId(Map handlersByCommandId) {
 		handlersByCommandId =
-			Util.safeCopy(handlersByCommandId, String.class, IHandler.class);
+			Util.safeCopy(
+				handlersByCommandId,
+				String.class,
+				IHandler.class,
+				false,
+				true);
 		boolean commandHandlerServiceChanged = false;
 		Map commandEventsByCommandId = null;
 
@@ -96,10 +101,10 @@ public final class CompoundCommandHandlerService
 				String commandId = (String) entry.getKey();
 				IHandler handler = (IHandler) entry.getValue();
 
-				if (handlersByCommandId.containsKey(commandId))
-					handlersByCommandId.put(commandId, null);
-				else
+				if (!handlersByCommandId.containsKey(commandId))
 					handlersByCommandId.put(commandId, handler);
+				else if (!handlersByCommandId.get(commandId).equals(handler))
+					handlersByCommandId.put(commandId, null);
 			}
 		}
 

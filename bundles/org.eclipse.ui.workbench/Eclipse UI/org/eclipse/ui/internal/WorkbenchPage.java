@@ -1765,8 +1765,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 		throws WorkbenchException {
-		workbenchPageContextSupport = new WorkbenchPageContextSupport(this);
-	
 		// Save args.
 		this.window = w;
 		this.input = input;
@@ -1792,8 +1790,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			window.firePerspectiveActivated(this, desc);
 		}
 
-	workbenchPageCommandSupport = new WorkbenchPageCommandSupport(this);
-	workbenchPageContextSupport = new WorkbenchPageContextSupport(this);
+		workbenchPageCommandSupport = new WorkbenchPageCommandSupport(this);
+		workbenchPageContextSupport = new WorkbenchPageContextSupport(this);
 	}
 	/**
 	 * See IWorkbenchPage.

@@ -740,7 +740,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	public void setActionsById(Map actionsById) {
-		actionsById = Util.safeCopy(actionsById, String.class, IHandler.class);
+		actionsById = Util.safeCopy(actionsById, String.class, IHandler.class, false, true);
 
 		if (!Util.equals(actionsById, this.actionsById)) {
 			this.actionsById = actionsById;

@@ -110,7 +110,12 @@ final class WorkbenchWindowCommandHandlerService
 
 	private void setHandlersByCommandId(Map handlersByCommandId) {
 		handlersByCommandId =
-			Util.safeCopy(handlersByCommandId, String.class, IHandler.class);
+			Util.safeCopy(
+				handlersByCommandId,
+				String.class,
+				IHandler.class,
+				false,
+				true);
 		boolean commandHandlerServiceChanged = false;
 		Map commandEventsByCommandId = null;
 

@@ -35,7 +35,7 @@ public final class MutableCommandHandlerService
 
 	public void setHandlersByCommandId(Map handlersByCommandId) {
 		handlersByCommandId =
-			Util.safeCopy(handlersByCommandId, String.class, IHandler.class);
+			Util.safeCopy(handlersByCommandId, String.class, IHandler.class, false, true);
 		boolean commandHandlerServiceChanged = false;
 		Map commandEventsByCommandId = null;
 
