@@ -13,8 +13,7 @@ package org.eclipse.team.internal.ui.jobs;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 
 /**
  * This class will show a busy cursor over a control when jobs of a particular type
@@ -22,15 +21,15 @@ import org.eclipse.swt.widgets.Display;
  */
 public class JobBusyCursor implements IJobListener {
 
-	private Control control;
+	private Composite composite;
 	private Cursor waitCursor;
 	private QualifiedName jobType;
 
-	public JobBusyCursor(Control control, QualifiedName jobType) {
+	public JobBusyCursor(Composite composite, QualifiedName jobType) {
+		this.composite = composite;
 		this.jobType = jobType;
 		synchronized (this) {
 			JobStatusHandler.addJobListener(this, jobType);
-			setControl(control);
 		}
 	}
 	
@@ -46,16 +45,27 @@ public class JobBusyCursor implements IJobListener {
 	}
 	
 	private void showCursor(final Cursor cursor) {
-		if (getControl() == null) return;
-		Display.getDefault().asyncExec(new Runnable() {
+		if (getComposite() == null) return;
+		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				synchronized (this) {
-					if (getControl() != null && !getControl().isDisposed()) {
-						getControl().setCursor(cursor);
-					}
+					setCursorDeep(cursor, getComposite());
 				}
 			}
 		});
+	}
+	
+	private void setCursorDeep(Cursor cursor, Control control) {
+		if (control != null && !control.isDisposed()) {
+			control.setCursor(cursor);
+			if(control instanceof Composite) {
+				Composite composite = (Composite)control;
+				Control[] children = composite.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					setCursorDeep(cursor, children[i]);
+				}
+			}
+		}
 	}
 	
 	public synchronized void dispose() {
@@ -86,27 +96,7 @@ public class JobBusyCursor implements IJobListener {
 	/**
 	 * @return Returns the control.
 	 */
-	public Control getControl() {
-		return control;
+	public Composite getComposite() {
+		return composite;
 	}
-
-	/**
-	 * Set the control in which the busy indicator should appear.
-	 * Setting the control to <code>null</code> will prevent the cursor
-	 * from appearing anywhere. When a control is provided, the busy
-	 * cursor will appear if there is currently a job of the requested
-	 * type running.
-	 * @param control The control to set.
-	 */
-	public synchronized void setControl(Control control) {
-		this.control = control;
-		if (control != null) {
-			if (JobStatusHandler.hasRunningJobs(jobType)) {
-				showBusyCursor();
-			}
-		}
-	}
-
-
-
 }

@@ -85,7 +85,8 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 	private Action toggleLayoutTable;
 	private RefactorActionGroup refactorActions;
 	private SyncViewerShowPreferencesAction showPreferences;
-	private RefreshAction refreshAction;
+	private RefreshAction refreshAllAction;
+	private RefreshAction refreshSelectionAction;
 	private ComparisonCriteriaActionGroup comparisonCriteriaGroup;
 	private Action collapseAll;
 	private Action expandAll;
@@ -118,7 +119,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		composite.setLayout(gridLayout);
 		
 		// Create the busy cursor with no control to start with (createViewer will set it)
-		busyCursor = new JobBusyCursor(null /* control */, SubscriberAction.SUBSCRIBER_JOB_TYPE);
+		busyCursor = new JobBusyCursor(parent.getParent().getParent(), SubscriberAction.SUBSCRIBER_JOB_TYPE);
 		createViewer(composite);
 				
 		// create actions
@@ -134,7 +135,8 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		
 		showPreferences = new SyncViewerShowPreferencesAction(view.getSite().getShell());
 		
-		refreshAction = new RefreshAction(getSite().getPage(), getParticipant(), false /* refresh all */);
+		refreshAllAction = new RefreshAction(getSite().getPage(), getParticipant(), true /* refresh all */);
+		refreshSelectionAction = new RefreshAction(getSite().getPage(), getParticipant(), false /* refresh all */);
 		statusLine = new StatusLineContributionGroup(getParticipant());
 		
 		collapseAll = new Action() {
@@ -189,7 +191,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 	private void setContextMenu(IMenuManager manager) {
 		openWithActions.fillContextMenu(manager);
 		refactorActions.fillContextMenu(manager);
-		manager.add(refreshAction);
+		manager.add(refreshSelectionAction);
 		manager.add(new Separator());
 		manager.add(expandAll);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -254,7 +256,6 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		initializeListeners();
 		hookContextMenu();
 		getSite().setSelectionProvider(getViewer());
-		busyCursor.setControl(viewer.getControl());
 	}
 	
 	protected ILabelProvider getLabelProvider() {
@@ -316,7 +317,6 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 	
 	private void disposeChildren(Composite parent) {
 		// Null out the control of the busy cursor while we are switching viewers
-		busyCursor.setControl(null);
 		Control[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control control = children[i];
@@ -463,7 +463,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 			IToolBarManager manager = actionBars.getToolBarManager();			
 			
 			// toolbar
-			manager.add(refreshAction);
+			manager.add(refreshAllAction);
 			manager.add(new Separator());		
 			manager.add(gotoNext);
 			manager.add(gotoPrevious);

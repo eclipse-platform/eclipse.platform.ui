@@ -10,30 +10,26 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.OverlayIcon;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
-import org.eclipse.team.internal.ui.synchronize.sets.SyncInfoStatistics;
-import org.eclipse.team.internal.ui.synchronize.sets.SyncSet;
-import org.eclipse.team.internal.ui.synchronize.views.CompressedFolder;
-import org.eclipse.team.internal.ui.synchronize.views.SyncSetContentProvider;
-import org.eclipse.team.internal.ui.synchronize.views.SynchronizeViewNode;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.jobs.IJobListener;
+import org.eclipse.team.internal.ui.jobs.JobStatusHandler;
+import org.eclipse.team.internal.ui.synchronize.sets.*;
+import org.eclipse.team.internal.ui.synchronize.views.*;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.synchronize.actions.SubscriberAction;
+import org.eclipse.ui.internal.WorkbenchColors;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -45,11 +41,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * @see TeamSubscriberParticipantPage#getLabelProvider()
  * @since 3.0
  */
-public class TeamSubscriberParticipantLabelProvider extends LabelProvider implements ITableLabelProvider {
+public class TeamSubscriberParticipantLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
 	
 	//column constants
 	private static final int COL_RESOURCE = 0;
 	private static final int COL_PARENT = 1;
+	private boolean working = false;
 	
 	private Image compressedFolderImage;
 	
@@ -69,6 +66,29 @@ public class TeamSubscriberParticipantLabelProvider extends LabelProvider implem
 	}
 
 	public TeamSubscriberParticipantLabelProvider() {
+		JobStatusHandler.addJobListener(new IJobListener() {
+			public void started(QualifiedName jobType) {
+				working = true;
+				Display.getDefault().syncExec(new Runnable() {
+							public void run() {
+								synchronized (this) {
+									fireLabelProviderChanged(new LabelProviderChangedEvent(TeamSubscriberParticipantLabelProvider.this));
+								}
+							}
+						});
+			}
+			public void finished(QualifiedName jobType) {
+				working = false;
+				Display.getDefault().syncExec(new Runnable() {
+							public void run() {
+								synchronized (this) {
+									fireLabelProviderChanged(new LabelProviderChangedEvent(TeamSubscriberParticipantLabelProvider.this));
+								}
+							}
+						});
+
+			}
+		}, SubscriberAction.SUBSCRIBER_JOB_TYPE);
 	}
 	
 	protected String decorateText(String input, Object resource) {
@@ -206,6 +226,24 @@ public class TeamSubscriberParticipantLabelProvider extends LabelProvider implem
 			IResource resource = SyncSetContentProvider.getResource(element);
 			return resource.getParent().getFullPath().toString();
 		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
+	public Color getForeground(Object element) {	
+		if (working)  {
+			return WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		} else  {
+			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+	 */
+	public Color getBackground(Object element) {
 		return null;
 	}
 }
