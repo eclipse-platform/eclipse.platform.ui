@@ -412,13 +412,41 @@ public class PreferencesTest extends RuntimeTest {
 		
 		class Tracer implements Preferences.IPropertyChangeListener {
 			public StringBuffer log = new StringBuffer();
+			
+			private String typeCode(Object value) {
+				if (value == null) {
+					return "";
+				}
+				if (value instanceof Boolean) {
+					return "B";
+				}
+				if (value instanceof Integer) {
+					return "I";
+				}
+				if (value instanceof Long) {
+					return "L";
+				}
+				if (value instanceof Float) {
+					return "F";
+				}
+				if (value instanceof Double) {
+					return "D";
+				}
+				if (value instanceof String) {
+					return "S";
+				}
+				assertTrue("0.0", false);
+				return null;
+			}
 
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
 				log.append("[");
 				log.append(event.getProperty());
 				log.append(":");
+				log.append(typeCode(event.getOldValue()));
 				log.append(event.getOldValue() == null ? "null" : event.getOldValue());
 				log.append("->");
+				log.append(typeCode(event.getNewValue()));
 				log.append(event.getNewValue() == null ? "null" : event.getNewValue());
 				log.append("]");
 			}
@@ -431,21 +459,52 @@ public class PreferencesTest extends RuntimeTest {
 		ps.addPropertyChangeListener(tracer1);
 		assertEquals("1.0", "", tracer1.log.toString());
 		
-		// make sure it is notified
+		// make sure it is notified in a type appropriate manner
 		ps.setValue("a", "1");
-		assertEquals("1.1", "[a:->1]", tracer1.log.toString());
-
-		ps.setValue("a", "2");
-		assertEquals("1.2", "[a:->1][a:1->2]", tracer1.log.toString());
-
-		ps.setValue("a", ps.getDefaultString("a"));
-		assertEquals("1.2.1", "[a:->1][a:1->2][a:2->]", tracer1.log.toString());
-
-		ps.setValue("a", "3");
-		assertEquals("1.2.2", "[a:->1][a:1->2][a:2->][a:->3]", tracer1.log.toString());
+		assertEquals("1.0.1", "[a:S->S1]", tracer1.log.toString());
 
 		ps.setToDefault("a");
-		assertEquals("1.2.3", "[a:->1][a:1->2][a:2->][a:->3][a:3->null]", tracer1.log.toString());
+		tracer1.log.setLength(0);
+		ps.setValue("a", true);
+		assertEquals("1.0.2", "[a:Bfalse->Btrue]", tracer1.log.toString());
+
+		ps.setToDefault("a");
+		tracer1.log.setLength(0);
+		ps.setValue("a", 100);
+		assertEquals("1.0.3", "[a:I0->I100]", tracer1.log.toString());
+
+		ps.setToDefault("a");
+		tracer1.log.setLength(0);
+		ps.setValue("a", 100L);
+		assertEquals("1.0.4", "[a:L0->L100]", tracer1.log.toString());
+
+		ps.setToDefault("a");
+		tracer1.log.setLength(0);
+		ps.setValue("a", 2.0f);
+		assertEquals("1.0.5", "[a:F0.0->F2.0]", tracer1.log.toString());
+
+		ps.setToDefault("a");
+		tracer1.log.setLength(0);
+		ps.setValue("a", 2.0);
+		assertEquals("1.0.6", "[a:D0.0->D2.0]", tracer1.log.toString());
+
+		// make sure it is notified of a series of events
+		ps.setToDefault("a");
+		tracer1.log.setLength(0);
+		ps.setValue("a", "1");
+		assertEquals("1.1", "[a:S->S1]", tracer1.log.toString());
+
+		ps.setValue("a", "2");
+		assertEquals("1.2", "[a:S->S1][a:S1->S2]", tracer1.log.toString());
+
+		ps.setValue("a", ps.getDefaultString("a"));
+		assertEquals("1.2.1", "[a:S->S1][a:S1->S2][a:S2->S]", tracer1.log.toString());
+
+		ps.setValue("a", "3");
+		assertEquals("1.2.2", "[a:S->S1][a:S1->S2][a:S2->S][a:S->S3]", tracer1.log.toString());
+
+		ps.setToDefault("a");
+		assertEquals("1.2.3", "[a:S->S1][a:S1->S2][a:S2->S][a:S->S3][a:S3->null]", tracer1.log.toString());
 
 		// change to same value - no one notified
 		ps.setValue("a", "2");
@@ -457,15 +516,15 @@ public class PreferencesTest extends RuntimeTest {
 
 		// make sure both are notified
 		ps.setValue("a", "3");
-		assertEquals("1.4", "[a:2->3]", tracer1.log.toString());
-		assertEquals("1.5", "[a:2->3]", tracer2.log.toString());
+		assertEquals("1.4", "[a:S2->S3]", tracer1.log.toString());
+		assertEquals("1.5", "[a:S2->S3]", tracer2.log.toString());
 		
 		// deregister is honored
 		ps.removePropertyChangeListener(tracer2);
 		tracer1.log.setLength(0);
 		tracer2.log.setLength(0);
 		ps.setValue("a", "1");
-		assertEquals("1.6", "[a:3->1]", tracer1.log.toString());
+		assertEquals("1.6", "[a:S3->S1]", tracer1.log.toString());
 		assertEquals("1.7", "", tracer2.log.toString());
 		
 		// duplicate deregister is ignored
@@ -473,14 +532,14 @@ public class PreferencesTest extends RuntimeTest {
 		tracer1.log.setLength(0);
 		tracer2.log.setLength(0);
 		ps.setValue("a", "2");
-		assertEquals("1.8", "[a:1->2]", tracer1.log.toString());
+		assertEquals("1.8", "[a:S1->S2]", tracer1.log.toString());
 		assertEquals("1.9", "", tracer2.log.toString());
 		
 		// duplicate register is ignored
 		ps.addPropertyChangeListener(tracer1);
 		tracer1.log.setLength(0);
 		ps.setValue("a", "1");
-		assertEquals("1.10", "[a:2->1]", tracer1.log.toString());
+		assertEquals("1.10", "[a:S2->S1]", tracer1.log.toString());
 		
 		// last deregister is honored
 		ps.removePropertyChangeListener(tracer1);
@@ -504,8 +563,8 @@ public class PreferencesTest extends RuntimeTest {
 		tracer2.log.setLength(0);
 		ps.setValue("a", "1");
 		ps.setValue("a", "2");
-		assertEquals("1.12", "[a:0->1]", tracer1.log.toString());
-		assertEquals("1.13", "[a:1->2]", tracer2.log.toString());
+		assertEquals("1.12", "[a:S0->S1]", tracer1.log.toString());
+		assertEquals("1.13", "[a:S1->S2]", tracer2.log.toString());
 		
 	}
 	
