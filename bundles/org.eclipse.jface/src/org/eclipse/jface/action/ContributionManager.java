@@ -370,7 +370,7 @@ public void prependToGroup(String groupName, IContributionItem item) {
 public IContributionItem remove(String ID) {
 	IContributionItem ci= find(ID);
 	if (ci == null)
-		throw new IllegalArgumentException("can't find ID");//$NON-NLS-1$
+		return null;
 	return remove(ci);
 }
 /* (non-Javadoc)
