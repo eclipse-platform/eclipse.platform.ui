@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.contexts;
 
-import org.eclipse.commands.contexts.ContextManager;
+import org.eclipse.core.commands.contexts.ContextManager;
 
 /**
  * This class allows clients to broker instances of <code>IContextManager</code>.

@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.commands.Command;
-import org.eclipse.commands.CommandManager;
-import org.eclipse.commands.contexts.ContextManager;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;

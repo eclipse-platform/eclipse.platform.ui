@@ -23,8 +23,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.commands.CommandManager;
-import org.eclipse.commands.contexts.ContextManager;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;

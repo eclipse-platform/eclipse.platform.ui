@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.Map;
 
-import org.eclipse.commands.CommandEvent;
-import org.eclipse.commands.ICommandListener;
+import org.eclipse.core.commands.CommandEvent;
+import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.ui.commands.ICommand;
 

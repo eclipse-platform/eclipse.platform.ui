@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import org.eclipse.commands.Command;
+import org.eclipse.core.commands.Command;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.events.HelpListener;

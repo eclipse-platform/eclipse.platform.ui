@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.commands.Command;
+import org.eclipse.core.commands.Command;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
@@ -87,9 +87,9 @@ final class CommandWrapper implements ICommand {
             throws ExecutionException, NotHandledException {
         try {
             return command.execute(parameterValuesByName);
-        } catch (final org.eclipse.commands.ExecutionException e) {
+        } catch (final org.eclipse.core.commands.ExecutionException e) {
             throw new ExecutionException(e);
-        } catch (final org.eclipse.commands.NotHandledException e) {
+        } catch (final org.eclipse.core.commands.NotHandledException e) {
             throw new NotHandledException(e);
         }
     }
@@ -102,7 +102,7 @@ final class CommandWrapper implements ICommand {
     public final Map getAttributeValuesByName() throws NotHandledException {
         try {
             return command.getAttributeValuesByName();
-        } catch (final org.eclipse.commands.NotHandledException e) {
+        } catch (final org.eclipse.core.commands.NotHandledException e) {
             throw new NotHandledException(e);
         }
     }
@@ -125,7 +125,7 @@ final class CommandWrapper implements ICommand {
     public final String getDescription() throws NotDefinedException {
         try {
             return command.getDescription();
-        } catch (final org.eclipse.commands.misc.NotDefinedException e) {
+        } catch (final org.eclipse.core.commands.misc.NotDefinedException e) {
             throw new NotDefinedException(e);
         }
     }
@@ -177,7 +177,7 @@ final class CommandWrapper implements ICommand {
     public final String getName() throws NotDefinedException {
         try {
             return command.getName();
-        } catch (final org.eclipse.commands.misc.NotDefinedException e) {
+        } catch (final org.eclipse.core.commands.misc.NotDefinedException e) {
             throw new NotDefinedException(e);
         }
     }

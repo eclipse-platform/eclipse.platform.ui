@@ -49,7 +49,7 @@ public final class ExecutionException extends CommandException {
      *            must not be <code>null</code>.
      * @since 3.1
      */
-    public ExecutionException(final org.eclipse.commands.ExecutionException e) {
+    public ExecutionException(final org.eclipse.core.commands.ExecutionException e) {
         super(e.getMessage(), e);
     }
 }

@@ -47,7 +47,7 @@ public final class NotHandledException extends CommandException {
      *            must not be <code>null</code>.
      * @since 3.1
      */
-    public NotHandledException(final org.eclipse.commands.NotHandledException e) {
+    public NotHandledException(final org.eclipse.core.commands.NotHandledException e) {
         super(e.getMessage(), e);
     }
 }

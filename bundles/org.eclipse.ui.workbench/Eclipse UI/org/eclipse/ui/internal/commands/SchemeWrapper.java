@@ -83,7 +83,7 @@ final class SchemeWrapper implements IKeyConfiguration {
     public String getDescription() throws NotDefinedException {
         try {
             return scheme.getDescription();
-        } catch (final org.eclipse.commands.misc.NotDefinedException e) {
+        } catch (final org.eclipse.core.commands.misc.NotDefinedException e) {
             throw new NotDefinedException(e);
         }
     }
@@ -105,7 +105,7 @@ final class SchemeWrapper implements IKeyConfiguration {
     public String getName() throws NotDefinedException {
         try {
             return scheme.getName();
-        } catch (final org.eclipse.commands.misc.NotDefinedException e) {
+        } catch (final org.eclipse.core.commands.misc.NotDefinedException e) {
             throw new NotDefinedException(e);
         }
     }
@@ -118,7 +118,7 @@ final class SchemeWrapper implements IKeyConfiguration {
     public String getParentId() throws NotDefinedException {
         try {
             return scheme.getParentId();
-        } catch (final org.eclipse.commands.misc.NotDefinedException e) {
+        } catch (final org.eclipse.core.commands.misc.NotDefinedException e) {
             throw new NotDefinedException(e);
         }
     }

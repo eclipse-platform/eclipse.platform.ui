@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.commands.Command;
-import org.eclipse.commands.CommandManager;
-import org.eclipse.commands.contexts.ContextManager;
-import org.eclipse.commands.misc.NotDefinedException;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.misc.NotDefinedException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
@@ -47,7 +47,7 @@ import org.eclipse.ui.keys.KeySequence;
  * @since 3.0
  */
 public final class MutableCommandManager implements
-        org.eclipse.commands.ICommandManagerListener, IBindingManagerListener,
+        org.eclipse.core.commands.ICommandManagerListener, IBindingManagerListener,
         IMutableCommandManager {
 
     /**
@@ -260,7 +260,7 @@ public final class MutableCommandManager implements
      * @see org.eclipse.commands.ICommandManagerListener#commandManagerChanged(org.eclipse.commands.CommandManagerEvent)
      */
     public void commandManagerChanged(
-            org.eclipse.commands.CommandManagerEvent commandManagerEvent) {
+            org.eclipse.core.commands.CommandManagerEvent commandManagerEvent) {
         // TODO Auto-generated method stub
 
     }

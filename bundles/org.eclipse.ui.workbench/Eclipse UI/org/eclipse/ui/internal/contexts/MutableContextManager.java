@@ -24,7 +24,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
-import org.eclipse.commands.contexts.ContextManager;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.ContextManagerEvent;

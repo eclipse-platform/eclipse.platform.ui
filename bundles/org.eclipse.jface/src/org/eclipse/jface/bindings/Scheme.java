@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.commands.misc.NamedHandleObject;
-import org.eclipse.commands.misc.NotDefinedException;
+import org.eclipse.core.commands.misc.NamedHandleObject;
+import org.eclipse.core.commands.misc.NotDefinedException;
 import org.eclipse.jface.util.Util;
 
 /**
@@ -44,7 +44,7 @@ import org.eclipse.jface.util.Util;
  * 
  * @since 3.1
  * @see ISchemeListener
- * @see org.eclipse.commands.CommandManager
+ * @see org.eclipse.core.commands.CommandManager
  */
 public final class Scheme extends NamedHandleObject implements Comparable {
 

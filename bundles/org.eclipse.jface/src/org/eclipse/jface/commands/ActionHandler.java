@@ -14,12 +14,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.commands.AbstractHandler;
-import org.eclipse.commands.Command;
-import org.eclipse.commands.ExecutionException;
-import org.eclipse.commands.HandlerEvent;
-import org.eclipse.commands.IHandler;
-import org.eclipse.commands.IHandlerListener;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.HandlerEvent;
+import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -104,7 +104,7 @@ public class ActionHandler extends AbstractHandler {
     }
 
     /**
-     * @see org.eclipse.commands.IHandler#addHandlerListener(IHandlerListener)
+     * @see org.eclipse.core.commands.IHandler#addHandlerListener(IHandlerListener)
      * @since 3.1
      */
     public final void addHandlerListener(final IHandlerListener handlerListener) {
@@ -164,7 +164,7 @@ public class ActionHandler extends AbstractHandler {
     /**
      * Removes the property change listener from the action.
      * 
-     * @see org.eclipse.commands.IHandler#dispose()
+     * @see org.eclipse.core.commands.IHandler#dispose()
      */
     public final void dispose() {
         if (hasListeners()) {
@@ -236,7 +236,7 @@ public class ActionHandler extends AbstractHandler {
     }
 
     /**
-     * @see org.eclipse.commands.IHandler#removeHandlerListener(IHandlerListener)
+     * @see org.eclipse.core.commands.IHandler#removeHandlerListener(IHandlerListener)
      * @since 3.1
      */
     public final void removeHandlerListener(

@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.commands.CommandManager;
-import org.eclipse.commands.contexts.ContextManager;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
 
 /**
