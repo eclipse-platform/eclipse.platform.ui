@@ -169,7 +169,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
 			if (process == null) {
 				p.destroy();
-				throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, "An IProcess could not be created for the launch", null));
+				throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.4"), null)); //$NON-NLS-1$
 			}
 			
 		}
