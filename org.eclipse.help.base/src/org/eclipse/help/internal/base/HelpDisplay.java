@@ -74,15 +74,20 @@ public class HelpDisplay {
 						|| href.startsWith(
 							"contextId="))) { // assume it is a query string
 			displayHelpURL(href);
-		} else // assume this is a topic
+		} else { // assume this is a topic
 			if (getNoframesURL(href) == null) {
 				try {
 					displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"));
 				} catch (UnsupportedEncodingException uee) {
 				}
+			} else if (href.startsWith("jar:file:")) {
+				// topic from a jar to display without frames
+				displayHelpURL(
+					getBaseURL() + "nftopic/" + getNoframesURL(href));
 			} else {
 				displayHelpURL(getNoframesURL(href));
 			}
+		}
 	}
 
 	/**
@@ -145,14 +150,14 @@ public class HelpDisplay {
 
 		try {
 			if (helpURL == null || helpURL.length() == 0) {
-				BaseHelpSystem.getHelpBrowser().displayURL(getBaseURL());
+				BaseHelpSystem.getHelpBrowser().displayURL(getFramesetURL());
 			} else if (
 				helpURL.startsWith("tab=")
 					|| helpURL.startsWith("toc=")
 					|| helpURL.startsWith("topic=")
 					|| helpURL.startsWith("contextId=")) {
 				BaseHelpSystem.getHelpBrowser().displayURL(
-					getBaseURL() + "?" + helpURL);
+					getFramesetURL() + "?" + helpURL);
 			} else {
 				BaseHelpSystem.getHelpBrowser().displayURL(helpURL);
 			}
@@ -171,7 +176,11 @@ public class HelpDisplay {
 			+ WebappManager.getHost()
 			+ ":"
 			+ WebappManager.getPort()
-			+ "/help/index.jsp";
+			+ "/help/";
+	}
+
+	private String getFramesetURL() {
+		return getBaseURL() + "index.jsp";
 	}
 
 	private String getTopicURL(String topic) {
