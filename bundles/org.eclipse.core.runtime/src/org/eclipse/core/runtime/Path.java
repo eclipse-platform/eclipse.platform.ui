@@ -637,11 +637,11 @@ public IPath makeUNC(boolean toUNC) {
  */
 public int matchingFirstSegments(IPath anotherPath) {
 	Assert.isNotNull(anotherPath);
-	String[] argument = anotherPath.segments();
-	int max = Math.min(segments.length, argument.length);
+	int anotherPathLen = anotherPath.segmentCount();
+	int max = Math.min(segments.length, anotherPathLen);
 	int count = 0;
 	for (int i = 0; i < max; i++) {
-		if (!segments[i].equals(argument[i])) {
+		if (!segments[i].equals(anotherPath.segment(i))) {
 			return count;
 		}
 		count++;
@@ -719,7 +719,9 @@ public int segmentCount() {
  * @see IPath#segments
  */
 public String[] segments() {
-	return (String[])segments.clone();
+	String[] segmentCopy = new String[segments.length];
+	System.arraycopy(segments, 0, segmentCopy, 0, segments.length);
+	return segmentCopy;
 }
 /* (Intentionally not included in javadoc)
  * @see IPath#setDevice
