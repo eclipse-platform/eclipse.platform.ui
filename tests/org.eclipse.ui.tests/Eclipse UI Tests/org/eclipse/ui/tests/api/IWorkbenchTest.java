@@ -1,11 +1,12 @@
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.ui.tests.util.*;
-import org.eclipse.jface.preference.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.tests.util.*;
 
 /**
  * Tests the IWorkbench interface.
@@ -70,6 +71,19 @@ public class IWorkbenchTest extends UITestCase {
 		assertNotNull(img);
 	}
 
+	public void testGetWorkingSetManager() throws Throwable {
+		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		
+		assertNotNull(workingSetManager);
+		
+		IWorkingSet workingSet = workingSetManager.createWorkingSet("ws1", new IAdaptable[] {workspace.getRoot()});
+		workingSetManager.addWorkingSet(workingSet);
+		workingSetManager = fWorkbench.getWorkingSetManager();
+		assertEquals(1, workingSetManager.getWorkingSets().length);
+		assertEquals(workingSet, workingSetManager.getWorkingSets()[0]);
+	}
+	
 	public void testGetWorkbenchWindows() throws Throwable {
 		IWorkbenchWindow[] wins = fWorkbench.getWorkbenchWindows();
 		assertEquals(ArrayUtil.checkNotNull(wins), true);

@@ -526,4 +526,15 @@
     </decorator> 
 </extension>
 
+<!-- Working set tests -->
+<extension
+   point="org.eclipse.ui.workingSets">
+   <workingSet
+        id="org.eclipse.ui.tests.api.MockWorkingSet"
+        name="Mock Working Set"            
+        icon="icons/anything.gif"
+        pageClass="org.eclipse.ui.tests.api.MockWorkingSetPage">
+   </workingSet>
+</extension>
+
 </plugin>

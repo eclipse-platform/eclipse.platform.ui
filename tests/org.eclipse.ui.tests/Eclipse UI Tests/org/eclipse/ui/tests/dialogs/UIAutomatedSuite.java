@@ -25,5 +25,7 @@ public class UIAutomatedSuite extends TestSuite {
 		addTest(new TestSuite(UIWizardsAuto.class));
 		addTest(new TestSuite(UIPreferencesAuto.class));
 		addTest(new TestSuite(UIMessageDialogsAuto.class));
+		addTest(new TestSuite(UINewWorkingSetWizardAuto.class));
+		addTest(new TestSuite(UIEditWorkingSetWizardAuto.class));		
 	}
 }
