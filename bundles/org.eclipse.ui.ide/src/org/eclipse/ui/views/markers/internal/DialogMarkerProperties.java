@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,9 +23,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,6 +39,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
 
 /**
  * Shows the properties of a new or existing marker
@@ -447,31 +453,68 @@ class DialogMarkerProperties extends Dialog {
 	 * Updates the existing marker only if there have been changes.
 	 */
 	private void saveChanges() {
-		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor)
-					throws CoreException {
-					if (marker == null)
-						createMarker();
-					if (isDirty())
-						updateMarker();
-				}
-			}, null);
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), Messages.getString("Error"), null, e.getStatus()); //$NON-NLS-1$
+		
+		final CoreException[] coreExceptions = new CoreException[1];
+		
+		try{
+			final Map attrs = getMarkerAttributes();
+			
+			PlatformUI.getWorkbench().getProgressService().
+				busyCursorWhile(
+					new IRunnableWithProgress(){
+						/* (non-Javadoc)
+						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+						 */
+						public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+							try{
+								
+								monitor.beginTask("",100);//$NON-NLS-1$
+								ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+									public void run(IProgressMonitor monitor)
+									throws CoreException {
+										if (marker == null)
+											createMarker(monitor);
+										if (isDirty())
+											updateMarker(monitor,attrs);
+									}
+								}, monitor);
+								monitor.done();
+							} catch (CoreException e) {
+								coreExceptions[0] = e;
+							}
+						}
+
+				});
+		}
+		catch (InvocationTargetException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(),StatusUtil.newStatus(IStatus.ERROR,e.getMessage(),e));
 			return;
 		}
+		
+		catch (InterruptedException e) {
+		}
+		
+		if(coreExceptions [0] != null)
+			ErrorDialog.openError(getShell(), Messages.getString("Error"), null, coreExceptions[0].getStatus()); //$NON-NLS-1$
+			
 	}
 
 	/**
 	 * Creates or updates the marker.  Must be called within a workspace runnable.
+	 * @param monitor the monitor we report to. 
+	 * @param attrs the attributes from the dialog
 	 */
-	private void updateMarker() throws CoreException {
+	private void updateMarker(IProgressMonitor monitor, Map attrs) throws CoreException {
 		// Set the marker attributes from the current dialog field values.
 		// Do not use setAttributes(Map) as that overwrites any attributes
 		// not covered by the dialog.
-		Map attrs = getMarkerAttributes();
+		
+		int increment = 50/attrs.size();
+		
 		for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
+			monitor.worked(increment);
 			String key = (String) i.next();
 			Object val = attrs.get(key);
 			marker.setAttribute(key, val);
@@ -494,16 +537,19 @@ class DialogMarkerProperties extends Dialog {
 		return attrs;
 	}
 	
-	private void createMarker() {
-		if (resource == null) {
+	/**
+	 * Create the marker and report progress
+	 * to the monitor.
+	 * @param monitor
+	 * @throws a CoreException
+	 */
+	private void createMarker(IProgressMonitor monitor) throws CoreException{
+		if (resource == null) 
 			return;
-		}
-			
-		try {
-			marker = resource.createMarker(type);
-		}
-		catch (CoreException e) {
-		}
+		
+		monitor.worked(10);
+		marker = resource.createMarker(type);
+		monitor.worked(40);
 	}
 	
 	/**
