@@ -115,7 +115,7 @@ protected DialogCellEditor(Composite parent) {
  */
 protected Button createButton(Composite parent) {
 	Button result = new Button(parent, SWT.DOWN);
-	result.setImage(JFaceResources.getImage(CELL_EDITOR_IMG_DOTS_BUTTON));
+	result.setText("..."); //$NON-NLS-1$
 	return result;
 }
 /**
