@@ -20,13 +20,12 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageCache;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -52,6 +51,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.internal.util.Descriptors;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 
@@ -94,8 +94,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 	private Button openFastButton;
     
-    private ImageCache imageCache;
-
 	// labels
 	private final String OVM_TITLE = WorkbenchMessages.OpenViewMode_title;
 
@@ -587,11 +585,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	protected TableItem newPerspectivesTableItem(IPerspectiveDescriptor persp,
             int index, boolean selected) {
         
-        Image image = getImageCache().getImage(persp.getImageDescriptor());
+        ImageDescriptor image = persp.getImageDescriptor();
         
         TableItem item = new TableItem(perspectivesTable, SWT.NULL, index);
         if (image != null) {
-            item.setImage(image);
+            Descriptors.setImage(item, image);
         }
         String label=persp.getLabel();
         if (persp.getId().equals(defaultPerspectiveId)){
@@ -605,13 +603,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
         }
 
         return item;
-    }
-
-	private ImageCache getImageCache() {
-        if (imageCache == null)
-            imageCache = new ImageCache();
-        
-        return imageCache;
     }
 
     /**
@@ -656,10 +647,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	}
     
     public void dispose() {
-         if (imageCache != null) {
-             imageCache.dispose();
-             imageCache = null;
-         }
          super.dispose();
     }
 }

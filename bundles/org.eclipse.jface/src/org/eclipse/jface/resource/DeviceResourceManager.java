@@ -14,15 +14,17 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Manages SWT resources for a particular device. This is called a "global" registry
- * because there is typically only one instance of GlobalSWTRegistry per device.
- * The application should allocate and deallocate resources using a shared registry.
- * This allows different parts of the app to share the same instance of a common resource.
+ * Manages SWT resources for a particular device. Clients normally don't need to construct
+ * this object themselves, since JFace provides global registries for each display. The
+ * global registries can be accessed via JFaceResources.getResources(Display). These global
+ * registries should be used wherever possible since creating multiple registries on the same
+ * device is wasteful.
+ * 
  * <p>
- * Note that it is possible to create multiple GlobalSWTRegistries on the same device,
- * but this would be wasteful since they wouldn't share the resources for identical descriptors.
- * If some object wants its own local registry in order to safeguard against leaks, it should
- * use NestedSWTRegistry instead.
+ * Clients would only need to construct a DeviceResourceManager if they are allocating resources
+ * on a non-display (such as a printer), or if they specifically want multiple copies of certain
+ * resources (which may be useful when debugging resource leaks). In any other circumstance, the
+ * class LocalResourceManager should be used for a localized registry.
  * </p>
  * 
  * @see LocalResourceManager
@@ -42,7 +44,7 @@ public final class DeviceResourceManager extends AbstractResourceManager {
     }
     
     /**
-     * Creates a new registry for the given device
+     * Creates a new registry for the given device.
      * 
      * @param device device to manage
      */

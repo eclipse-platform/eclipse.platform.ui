@@ -110,6 +110,29 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
     public static ImageDescriptor createFromImage(Image img) {
         return new ImageDataImageDescriptor(img);
     }
+    
+    /**
+     * Creates an ImageDescriptor based on the given original descriptor, but with additional
+     * SWT flags.
+     *  
+     * <p>
+     * Note that this sort of ImageDescriptor is slower and consumes more resources than
+     * a regular image descriptor. It will also never generate results that look as nice as
+     * a hand-drawn image. Clients are encouraged to supply their own disabled/grayed/etc. images
+     * rather than using a default image and transforming it.
+     * </p>
+     * 
+     * @param originalImage image to transform
+     * @param swtFlags any flag that can be passed to the flags argument of Image#Image(Device, Image, int)
+     * @return an ImageDescriptor that creates new images by transforming the given image descriptor
+     * 
+     * @see Image#Image(Device, Image, int) 
+     * @since 3.1 
+     *
+     */
+    public static ImageDescriptor createWithFlags(ImageDescriptor originalImage, int swtFlags) {
+        return new DerivedImageDescriptor(originalImage, swtFlags);
+    }
 
     /**
      * Creates and returns a new image descriptor for the given image. This
@@ -165,6 +188,17 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 * explicitly disposed using the image's dispose call. The image will not be
 	 * automatically garbage collected. A default image is returned in the event
 	 * of an error.
+     * 
+     * <p>
+     * Note: this method differs from createResource(Device) in that the returned image
+     * must be disposed directly, whereas an image obtained from createResource(...)
+     * must be disposed by calling destroyResource(...). It is not possible to 
+     * mix-and-match. If you obtained the Image from this method, you must not dispose
+     * it by calling destroyResource. Clients are encouraged to use 
+     * create/destroyResource and downcast the result to Image rather than using 
+     * createImage.
+     * </p>
+     * 
 	 * <p>
 	 * Note: it is still possible for this method to return <code>null</code>
 	 * in extreme cases, for example if SWT runs out of image handles.

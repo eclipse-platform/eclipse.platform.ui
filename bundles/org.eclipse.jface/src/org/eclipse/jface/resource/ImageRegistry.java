@@ -53,6 +53,12 @@ public class ImageRegistry {
 
     private Map table;
     
+    private Runnable disposeRunnable = new Runnable() {
+        public void run() {
+            dispose();
+        }
+    };
+    
     /**
      * Contains the data for an entry in the registry. 
      */
@@ -125,11 +131,7 @@ public class ImageRegistry {
             this.display = (Display)dev;
         }
         this.manager = manager;
-        manager.disposeExec(new Runnable() {
-            public void run() {
-                dispose();
-            }
-        });
+        manager.disposeExec(disposeRunnable);
     }
     
     /**
@@ -321,6 +323,8 @@ public class ImageRegistry {
      * @since 3.1
      */
     public void dispose() {
+        manager.cancelDisposeExec(disposeRunnable);
+        
         if (table != null) {
             for (Iterator i = table.values().iterator(); i.hasNext();) {
                 Entry entry = (Entry) i.next();

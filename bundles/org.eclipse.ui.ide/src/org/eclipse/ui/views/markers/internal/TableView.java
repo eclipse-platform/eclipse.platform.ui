@@ -195,13 +195,6 @@ public abstract class TableView extends ViewPart {
         sorterChanged();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#dispose()
-     */
-    public void dispose() {
-
-    }
-
     /**
      * Creates the table control.
      */

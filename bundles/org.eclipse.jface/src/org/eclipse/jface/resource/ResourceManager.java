@@ -11,7 +11,6 @@
 package org.eclipse.jface.resource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.util.Assert;
@@ -221,8 +220,9 @@ public abstract class ResourceManager {
         // here and throw it at the end of the method.
         RuntimeException foundException = null;
         
-        for (Iterator iter = disposeExecs.iterator(); iter.hasNext();) {
-            Runnable exec = (Runnable) iter.next();
+        Runnable[] execs = (Runnable[]) disposeExecs.toArray(new Runnable[disposeExecs.size()]);
+        for (int i = 0; i < execs.length; i++) {
+            Runnable exec = execs[i];            
             
             try {
                 exec.run();

@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import org.eclipse.jface.resource.ImageCache;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
@@ -65,8 +67,6 @@ public class ActionContributionItem extends ContributionItem {
     /** a string inserted in the middle of text that has been shortened */
     private static final String ellipsis = "..."; //$NON-NLS-1$
 
-    private static ImageCache globalImageCache;
-
     private static boolean USE_COLOR_ICONS = true;
 
     /**
@@ -113,6 +113,11 @@ public class ActionContributionItem extends ContributionItem {
         }
     };
 
+    /**
+     * Remembers all images in use by this contribution item
+     */
+    private LocalResourceManager imageManager;
+    
     /**
      * Listener for SWT button widget events.
      */
@@ -376,32 +381,6 @@ public class ActionContributionItem extends ContributionItem {
     }
 
     /**
-     * Returns the image cache.
-     * The cache is global, and is shared by all action contribution items.
-     * This has the disadvantage that once an image is allocated, it is never freed until the display
-     * is disposed.  However, it has the advantage that the same image in different contribution managers
-     * is only ever created once.
-     */
-    private static ImageCache getImageCache() {
-        ImageCache cache = globalImageCache;
-        if (cache == null) {
-            globalImageCache = cache = new ImageCache();
-            Display display = Display.getDefault();
-            if (display != null) {
-                display.disposeExec(new Runnable() {
-                    public void run() {
-                        if (globalImageCache != null) {
-                            globalImageCache.dispose();
-                            globalImageCache = null;
-                        }
-                    }
-                });
-            }
-        }
-        return cache;
-    }
-
-    /**
      * Returns the listener for SWT menu item widget events.
      * 
      * @return a listener for menu item events
@@ -498,6 +477,8 @@ public class ActionContributionItem extends ContributionItem {
 
             // Clear the widget field.
             widget = null;
+            
+            disposeOldImages();
         }
     }
 
@@ -891,90 +872,109 @@ public class ActionContributionItem extends ContributionItem {
      * @return <code>true</code> if there are images for this action, <code>false</code> if not
      */
     private boolean updateImages(boolean forceImage) {
-        ImageCache cache = getImageCache();
 
+        ResourceManager parentResourceManager = JFaceResources.getResources();
+        
         if (widget instanceof ToolItem) {
             if (USE_COLOR_ICONS) {
-                Image image = cache.getImage(action.getHoverImageDescriptor());
+                ImageDescriptor image = action.getHoverImageDescriptor();
                 if (image == null) {
-                    image = cache.getImage(action.getImageDescriptor());
+                    image = action.getImageDescriptor();
                 }
-                Image disabledImage = cache.getImage(action
-                        .getDisabledImageDescriptor());
+                ImageDescriptor disabledImage = action
+                        .getDisabledImageDescriptor();
 
                 // Make sure there is a valid image.
                 if (image == null && forceImage) {
-                    image = cache.getMissingImage();
+                    image = ImageDescriptor.getMissingImageDescriptor();
                 }
-
+        
+                LocalResourceManager localManager = new LocalResourceManager(parentResourceManager);
+                
                 // performance: more efficient in SWT to set disabled and hot image before regular image
-                if (disabledImage != null) {
-                    // Set the disabled image if we were able to create one.
-                    // Assumes that SWT.ToolItem will use platform's default
-                    // behavior to show item when it is disabled and a disabled
-                    // image has not been set. 
-                    ((ToolItem) widget).setDisabledImage(disabledImage);
-                }
-                ((ToolItem) widget).setImage(image);
+                ((ToolItem) widget).setDisabledImage(disabledImage == null ? null : localManager.createImageWithDefault(disabledImage));
+                ((ToolItem) widget).setImage(image == null ? null : localManager.createImageWithDefault(image));
 
-                return image != null;
-            } else {
-                Image image = cache.getImage(action.getImageDescriptor());
-                Image hoverImage = cache.getImage(action
-                        .getHoverImageDescriptor());
-                Image disabledImage = cache.getImage(action
-                        .getDisabledImageDescriptor());
-
-                // If there is no regular image, but there is a hover image,
-                // convert the hover image to gray and use it as the regular image.
-                if (image == null && hoverImage != null) {
-                    image = cache
-                            .getImage(action.getHoverImageDescriptor(), ImageCache.GRAY);
-                } else {
-                    // If there is no hover image, use the regular image as the hover image,
-                    // and convert the regular image to gray
-                    if (hoverImage == null && image != null) {
-                        hoverImage = image;
-                        image = cache.getImage(action.getImageDescriptor(), ImageCache.GRAY);
-                    }
-                }
-
-                // Make sure there is a valid image.
-                if (hoverImage == null && image == null && forceImage) {
-                    image = cache.getMissingImage();
-                }
-
-                // performance: more efficient in SWT to set disabled and hot image before regular image
-                if (disabledImage != null) {
-                    // Set the disabled image if we were able to create one.
-                    // Assumes that SWT.ToolItem will use platform's default
-                    // behavior to show item when it is disabled and a disabled
-                    // image has not been set. 
-                    ((ToolItem) widget).setDisabledImage(disabledImage);
-                }
-                ((ToolItem) widget).setHotImage(hoverImage);
-                ((ToolItem) widget).setImage(image);
-
+                disposeOldImages();
+                imageManager = localManager;
+                
                 return image != null;
             }
+            ImageDescriptor image = action.getImageDescriptor();
+            ImageDescriptor hoverImage = action
+                    .getHoverImageDescriptor();
+            ImageDescriptor disabledImage = action
+                    .getDisabledImageDescriptor();
+
+            // If there is no regular image, but there is a hover image,
+            // convert the hover image to gray and use it as the regular image.
+            if (image == null && hoverImage != null) {
+                image = ImageDescriptor.createWithFlags(action.getHoverImageDescriptor(), SWT.IMAGE_GRAY); 
+            } else {
+                // If there is no hover image, use the regular image as the hover image,
+                // and convert the regular image to gray
+                if (hoverImage == null && image != null) {
+                    hoverImage = image;
+                    image = ImageDescriptor.createWithFlags(action.getImageDescriptor(), SWT.IMAGE_GRAY);
+                }
+            }
+
+            // Make sure there is a valid image.
+            if (hoverImage == null && image == null && forceImage) {
+                image = ImageDescriptor.getMissingImageDescriptor();
+            }
+
+            // Create a local resource manager to remember the images we've allocated for this tool item
+            LocalResourceManager localManager = new LocalResourceManager(parentResourceManager);
+            
+            // performance: more efficient in SWT to set disabled and hot image before regular image
+            ((ToolItem) widget).setDisabledImage(disabledImage == null? null : localManager.createImageWithDefault(disabledImage));
+            ((ToolItem) widget).setHotImage(hoverImage == null? null : localManager.createImageWithDefault(hoverImage));
+            ((ToolItem) widget).setImage(image == null? null : localManager.createImageWithDefault(image));
+
+            // Now that we're no longer referencing the old images, clear them out.
+            disposeOldImages();
+            imageManager = localManager;
+            
+            return image != null;
         } else if (widget instanceof Item || widget instanceof Button) {
+            
             // Use hover image if there is one, otherwise use regular image.
-            Image image = cache.getImage(action.getHoverImageDescriptor());
+            ImageDescriptor image = action.getHoverImageDescriptor();
             if (image == null) {
-                image = cache.getImage(action.getImageDescriptor());
+                image = action.getImageDescriptor();
             }
             // Make sure there is a valid image.
             if (image == null && forceImage) {
-                image = cache.getMissingImage();
+                image = ImageDescriptor.getMissingImageDescriptor();
             }
+            
+            // Create a local resource manager to remember the images we've allocated for this widget
+            LocalResourceManager localManager = new LocalResourceManager(parentResourceManager);
+            
             if (widget instanceof Item) {
-                ((Item) widget).setImage(image);
+                ((Item) widget).setImage(image == null ? null : localManager.createImageWithDefault(image));
             } else if (widget instanceof Button) {
-                ((Button) widget).setImage(image);
+                ((Button) widget).setImage(image == null ? null : localManager.createImageWithDefault(image));
             }
+            
+            // Now that we're no longer referencing the old images, clear them out.
+            disposeOldImages();
+            imageManager = localManager;
+            
             return image != null;
         }
         return false;
+    }
+
+    /**
+     * Dispose any images allocated for this contribution item
+     */
+    private void disposeOldImages() {
+        if (imageManager != null) {
+            imageManager.dispose();
+            imageManager = null;
+        }
     }
 
     /**
