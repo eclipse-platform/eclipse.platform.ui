@@ -11,7 +11,7 @@ import java.util.*;
 import java.net.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.contributors.xml.*;
@@ -81,8 +81,9 @@ public class HelpNavigationManager {
 				navigationModels.put(infoset.getID(), m);
 
 				// generate navigation file for each infoset
-				File navOutDir = 					HelpSystem
-						.getPlugin()
+				File navOutDir = 					
+					HelpPlugin
+						.getDefault()
 						.getStateLocation()
 						.addTrailingSeparator()
 						.append(infoset.getID()).toFile();

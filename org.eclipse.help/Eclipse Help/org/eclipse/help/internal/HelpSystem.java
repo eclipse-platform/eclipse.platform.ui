@@ -23,7 +23,6 @@ public final class HelpSystem {
 	protected HelpNavigationManager navigationManager;
 	protected ContextManager contextManager;
 	protected ISearchEngine searchManager;
-	protected Plugin plugin;
 
 	int debug_level;
 	private String browserPath;
@@ -110,9 +109,7 @@ public final class HelpSystem {
 		}
 		return getInstance().navigationManager;
 	}
-	public static Plugin getPlugin() {
-		return getInstance().plugin;
-	}
+
 	/**
 	 * Returns the path to the help server.
 	 * This is usually empty, but for remote install it can be
@@ -210,9 +207,7 @@ public final class HelpSystem {
 		getInstance().localServerPort = port;
 		HelpServer.setAddress(addr, port);
 	}
-	public static void setPlugin(Plugin plugin) {
-		getInstance().plugin = plugin;
-	}
+
 	public static void setRemoteServerInfo(String url) {
 		URL oldURL=getInstance().remoteServerURL;
 		String oldPath=getInstance().remoteServerPath;
@@ -268,10 +263,10 @@ public final class HelpSystem {
 			}
 			Logger.logInfo(Resources.getString("I002"));
 		} catch (Exception e) {
-			getPlugin().getLog().log(
+			HelpPlugin.getDefault().getLog().log(
 				new Status(
 					Status.ERROR,
-					getPlugin().getDescriptor().getUniqueIdentifier(),
+					HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0,
 					Resources.getString("E005"),
 					e));

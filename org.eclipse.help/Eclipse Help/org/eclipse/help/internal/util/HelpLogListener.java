@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.Date;
 import java.text.DateFormat;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * Help Log Listener is a sink for text messages
@@ -21,8 +21,8 @@ class HelpLogListener implements ILogListener {
 		try {
 			// ** Initialize log file location here.
 			IPath path =
-				HelpSystem
-					.getPlugin()
+				HelpPlugin
+					.getDefault()
 					.getStateLocation()
 					.addTrailingSeparator()
 					.append(".log");

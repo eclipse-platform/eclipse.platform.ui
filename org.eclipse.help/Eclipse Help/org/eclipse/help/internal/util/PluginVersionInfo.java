@@ -8,11 +8,13 @@ package org.eclipse.help.internal.util;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * Table of plugins. Records all plugins and their version.
  */
 public class PluginVersionInfo extends HelpProperties {
+	Plugin basePlugin = HelpPlugin.getDefault();
 	boolean doComparison = true;
 	boolean hasChanged = false;
 
@@ -21,10 +23,40 @@ public class PluginVersionInfo extends HelpProperties {
 
 	/**
 	 * Creates table of current contributing plugins and their version.
-	 * @param list vector of current contributions (IConfigurationElement type)
+ 	 * @param name the name of the file to serialize the data to
+	 * @param list list of current contributions (IConfigurationElement type)
+	 */
+	public PluginVersionInfo(String name, List list) {
+		this(name, list.iterator());
+	}
+	
+	/**
+	 * Creates table of current contributing plugins and their version.
+	 * @param it iterator of current contributions (IConfigurationElement type)
 	 */
 	public PluginVersionInfo(String name, Iterator it) {
-		super(name);
+		this(name, it, HelpPlugin.getDefault());
+	}
+
+	/**
+	 * Creates table of current contributing plugins and their version.
+	 * @param name the name of the file to serialize the data to
+	 * @param list list of current contributions (IConfigurationElement type)
+ 	 * @param basePlugin use this plugin's state location to store the data
+	 */
+	public PluginVersionInfo(String name, List list, Plugin basePlugin) {
+		this(name, list.iterator(), basePlugin);
+	}
+	
+	/**
+	 * Creates table of current contributing plugins and their version.
+	 * @param name the name of the file to serialize the data to
+	 * @param it iterator of current contributions (IConfigurationElement type)
+	 * @param basePlugin use this plugin's state location to store the data
+	 */
+	public PluginVersionInfo(String name, Iterator it, Plugin basePlugin) {
+		super(name, basePlugin);
+		this.basePlugin = basePlugin;
 		if (it == null)
 			return;
 		// create table of current contributions
@@ -35,34 +67,7 @@ public class PluginVersionInfo extends HelpProperties {
 				plugin.getVersionIdentifier().toString());
 		}
 	}
-	/**
-	 * Creates table of current contributing plugins and their version.
-	 * @param list vector of current contributions (IConfigurationElement type)
-	 */
-	public PluginVersionInfo(String name, List list) {
-		super(name);
-		// create table of current contributions
-		for (Iterator it = list.iterator(); it.hasNext();) {
-			IPluginDescriptor plugin = (IPluginDescriptor) it.next();
-			this.put(
-				plugin.getUniqueIdentifier(),
-				plugin.getVersionIdentifier().toString());
-		}
-	}
-	/**
-	 * Creates table of current contributing plugins and their version.
-	 * @param list vector of current contributions (IConfigurationElement type)
-	 */
-	public PluginVersionInfo(String name, Vector list) {
-		super(name);
-		// create table of current contributions
-		for (int i = 0; i < list.size(); i++) {
-			IPluginDescriptor plugin = (IPluginDescriptor) list.elementAt(i);
-			this.put(
-				plugin.getUniqueIdentifier(),
-				plugin.getVersionIdentifier().toString());
-		}
-	}
+
 	/**
 	 * Detects changes in contributions or their version
 	 * since last time the contribution table was saved.
@@ -73,7 +78,7 @@ public class PluginVersionInfo extends HelpProperties {
 			return hasChanged;
 
 		// Create table of contributions present before last save()
-		HelpProperties oldContrs = new HelpProperties(this.name);
+		HelpProperties oldContrs = new HelpProperties(this.name, basePlugin);
 		oldContrs.restore();
 		// check if contributions changed
 		hasChanged = false;

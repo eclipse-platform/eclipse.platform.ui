@@ -7,7 +7,7 @@ package org.eclipse.help.internal.navigation;
 import org.xml.sax.*;
 import java.util.*;
 import java.io.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.contributions.*;
 import java.net.*;
@@ -82,8 +82,8 @@ public class NavigationModel {
 	 */
 	private void load() {
 		String xmlFile =
-			HelpSystem
-				.getPlugin()
+			HelpPlugin
+				.getDefault()
 				.getStateLocation()
 				.append(infosetID)
 				.append(HelpNavigationManager.NAV_XML_FILENAME)

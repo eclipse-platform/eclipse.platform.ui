@@ -6,7 +6,9 @@ package org.eclipse.help.internal.util;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.help.internal.HelpPlugin;
+
 
 /**
  * Properties stored in HelpPlugin work area.
@@ -19,13 +21,23 @@ public class HelpProperties extends Properties {
 	 * @param name name of the table;
 	 */
 	public HelpProperties(String name) {
+		this(name, HelpPlugin.getDefault());
+	}
+	
+	/**
+	 * Creates empty Properties for the specified plugin
+	 * @param name name of the table;
+	 * @param plugin the plugin
+	 */
+	public HelpProperties(String name, Plugin plugin) {
 		super();
 		this.name = name;
 		file =
 			new File(
-				HelpSystem.getPlugin().getStateLocation().toFile().getPath(),
+				plugin.getStateLocation().toFile().getPath(),
 				name + ".properties");
 	}
+	
 	/**
 	 * Restores contents of the Properties from a file.
 	 * @return true if persistant data was read in

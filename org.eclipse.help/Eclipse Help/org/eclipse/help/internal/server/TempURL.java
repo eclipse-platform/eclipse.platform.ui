@@ -6,7 +6,7 @@ package org.eclipse.help.internal.server;
 
 
 import java.io.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -73,7 +73,7 @@ public class TempURL extends HelpURL {
 			return generateTableOfContents();
 
 		String path =
-			HelpSystem.getPlugin().getStateLocation().toFile().getAbsolutePath().replace(
+			HelpPlugin.getDefault().getStateLocation().toFile().getAbsolutePath().replace(
 				File.separatorChar,
 				'/');
 		try {

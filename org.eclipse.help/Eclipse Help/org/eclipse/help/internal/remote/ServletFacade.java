@@ -27,8 +27,6 @@ public class ServletFacade implements IPlatformRunnable {
 	public ServletFacade() {
 		super();
 
-		HelpSystem.setPlugin(HelpPlugin.getDefault());
-
 		// Tell the help system this is a remote install
 		HelpSystem.setInstall(2);
 

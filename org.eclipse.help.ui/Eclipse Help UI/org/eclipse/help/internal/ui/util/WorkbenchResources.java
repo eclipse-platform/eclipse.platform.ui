@@ -9,7 +9,7 @@ import java.util.*;
 import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
 
 /**
  * Uses a resource bundle to load images and strings from
@@ -26,7 +26,7 @@ public class WorkbenchResources {
 		resBundle = ResourceBundle.getBundle("HelpWorkbench", Locale.getDefault());
 		try {
 			imageURL =
-				new URL(HelpSystem.getPlugin().getDescriptor().getInstallURL(), "icons/");
+				new URL(WorkbenchHelpPlugin.getDefault().getDescriptor().getInstallURL(), "icons/");
 		} catch (MalformedURLException e) {
 		}
 

@@ -25,7 +25,6 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	public WorkbenchHelpPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
-		HelpSystem.setPlugin(plugin);
 	}
 	/**
 	 * @return com.ibm.ua.HelpViewerPlugin

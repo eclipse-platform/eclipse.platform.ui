@@ -7,7 +7,7 @@ package org.eclipse.help.internal.navigation;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.server.TempURL;
 import org.eclipse.help.internal.contributions.*;
@@ -28,8 +28,8 @@ public class InfosetsMap extends Hashtable {
 	public InfosetsMap() {
 		super();
 		infosetsFile =
-			HelpSystem
-				.getPlugin()
+			HelpPlugin
+				.getDefault()
 				.getStateLocation()
 				.addTrailingSeparator()
 				.append(INFOSETS_FILENAME)
@@ -85,8 +85,8 @@ public class InfosetsMap extends Hashtable {
 				source.setSystemId(remoteInfosetFile.toExternalForm());
 			} else {
 				String xmlFile =
-					HelpSystem
-						.getPlugin()
+					HelpPlugin
+						.getDefault()
 						.getStateLocation()
 						.append(INFOSETS_FILENAME)
 						.toOSString();

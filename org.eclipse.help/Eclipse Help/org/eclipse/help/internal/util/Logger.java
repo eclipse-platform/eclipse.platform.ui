@@ -6,7 +6,7 @@ package org.eclipse.help.internal.util;
 
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 
 /**
  * Generic Help System Logger class for handling logging and tracing.
@@ -42,7 +42,7 @@ public class Logger {
 			debug_level = HelpSystem.getDebugLevel();
 
 			// get unique pluging ID and cash it for later use.
-			Plugin workbenchPlugin = HelpSystem.getPlugin();
+			Plugin workbenchPlugin = HelpPlugin.getDefault();//HelpSystem.getPlugin();
 			workbenchPluginID = workbenchPlugin.getDescriptor().getUniqueIdentifier();
 			helpSystemLog = workbenchPlugin.getLog();
 			if (helpLogListener == null)
