@@ -1253,7 +1253,7 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 	}
 	
 	// WORKAROUND
-	if (widget == tree && oldCnt == 0 && getItemCount(tree) == 1) {
+	if (widget == tree && oldCnt == 0 && getItemCount(tree) != 0) {
 		//System.out.println("WORKAROUND setRedraw");
 		tree.setRedraw(false);
 		tree.setRedraw(true);
