@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -33,7 +34,6 @@ public class UpdateWizard extends Wizard {
 
 	private IResource[] resources;
 	private final IWorkbenchPart part;
-	private UpdateWizardPage optionsPage;
 	private TagSelectionWizardPage tagSelectionPage;
 	
 	public UpdateWizard(IWorkbenchPart part, IResource[] resources) {
@@ -44,14 +44,10 @@ public class UpdateWizard extends Wizard {
 	
 	public void addPages() {
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
-
 		tagSelectionPage = new TagSelectionWizardPage("tagPage", "Select Tag", substImage, "Select the tag for the update", null /* no laqbel */, ProjectElement.INCLUDE_ALL_TAGS); //$NON-NLS-1$
 		tagSelectionPage.setAllowNoTag(true);
 		tagSelectionPage.setFolders(getCVSFolders());
 		addPage(tagSelectionPage);
-		
-		optionsPage = new UpdateWizardPage("updatePage", Policy.bind("UpdateWizard.updatePage"), substImage); //$NON-NLS-1$ //$NON-NLS-2$
-		addPage(optionsPage);
 	}
 	
 	private ICVSFolder[] getCVSFolders() {
@@ -74,7 +70,7 @@ public class UpdateWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		try {
-			new UpdateOperation(part, resources, optionsPage.getLocalOptions(), tagSelectionPage.getSelectedTag()).run();
+			new UpdateOperation(part, resources, Command.NO_LOCAL_OPTIONS, tagSelectionPage.getSelectedTag()).run();
 		} catch (InvocationTargetException e) {
 			CVSUIPlugin.openError(getShell(), null, null, e);
 			return false;
