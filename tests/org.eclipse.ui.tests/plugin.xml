@@ -284,8 +284,7 @@
         <action id="org.eclipse.ui.tests.internal.ac7" 
             label="pluginNotInstalledAction_v2" 
             menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
-            class="org.eclipse.ui.tests.api.MockActionDelegate" 
-            enablesFor="1"> 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
             <enablement>
             	<pluginState id="7777xxf" value="installed"/>
             </enablement>
@@ -293,8 +292,7 @@
         <action id="org.eclipse.ui.tests.internal.ac8" 
             label="pluginInstalledAction_v2" 
             menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
-            class="org.eclipse.ui.tests.api.MockActionDelegate"
-            enablesFor="1"> 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
             <enablement>
             	<pluginState id="org.eclipse.ui" value="installed"/>
             </enablement>
@@ -302,8 +300,7 @@
         <action id="org.eclipse.ui.tests.internal.ac9" 
             label="pluginNotActivatedAction_v2" 
             menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
-            class="org.eclipse.ui.tests.api.MockActionDelegate"
-            enablesFor="1"> 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
             <enablement>
             	<pluginState id="org.eclipse.update" value="activated"/>
             </enablement>
@@ -311,8 +308,7 @@
         <action id="org.eclipse.ui.tests.internal.ac10" 
             label="pluginActivatedAction_v2" 
             menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
-            class="org.eclipse.ui.tests.api.MockActionDelegate" 
-            enablesFor="1"> 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
             <enablement>
             	<pluginState id="org.eclipse.ui" value="activated"/>
             </enablement>
@@ -320,8 +316,7 @@
         <action id="org.eclipse.ui.tests.internal.ac11" 
             label="systemPropertyAction_v2" 
             menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
-            class="org.eclipse.ui.tests.api.MockActionDelegate" 
-            enablesFor="1"> 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
             <enablement>
             	<systemProperty name="ActionExpressionVar" value="bubba"/>
             </enablement>
