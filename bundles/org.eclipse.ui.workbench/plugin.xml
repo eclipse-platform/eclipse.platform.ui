@@ -16,7 +16,7 @@
    <requires>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.swt" export="true"/>
+      <import plugin="org.eclipse.swt"/>
    </requires>
 
 
