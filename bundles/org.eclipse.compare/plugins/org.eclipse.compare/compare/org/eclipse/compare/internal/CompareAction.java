@@ -27,9 +27,11 @@ public class CompareAction implements IObjectActionDelegate {
 
 	private ResourceCompareInput fInput;
 	private IWorkbenchPage fWorkbenchPage;
+	private ISelection fSelection;
 
 	public void run(IAction action) {
 		if (fInput != null) {
+			fInput.setSelection(fSelection);
 			fInput.initializeCompareConfiguration();
 			CompareUI.openCompareEditorOnPage(fInput, fWorkbenchPage);
 			fInput= null;	// don't reuse this input!
@@ -45,7 +47,8 @@ public class CompareAction implements IObjectActionDelegate {
 						
 			fInput= new ResourceCompareInput(cc);
 		}
-		action.setEnabled(fInput.setSelection(selection));
+		fSelection= selection;
+		action.setEnabled(fInput.isEnabled(selection));
 	}
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {

@@ -128,11 +128,35 @@ class ResourceCompareInput extends CompareEditorInput {
 		return fDiffViewer;
 	}
 
+	void setSelection(ISelection s) {
+		
+		IResource[] selection= Utilities.getResources(s);
+
+		fThreeWay= selection.length == 3;
+		
+		fAncestorResource= null;
+		fLeftResource= selection[0];
+		fRightResource= selection[1];
+		if (fThreeWay) {
+			fLeftResource= selection[1];		
+			fRightResource= selection[2];
+		}
+		
+		fAncestor= null;
+		fLeft= getStructure(fLeftResource);
+		fRight= getStructure(fRightResource);
+					
+		if (fThreeWay) {
+			fAncestorResource= selection[0];
+			fAncestor= getStructure(fAncestorResource);
+		}
+	}
+	
 	/**
 	 * Returns true if compare can be executed for the given selection.
 	 */
-	boolean setSelection(ISelection s) {
-
+	public boolean isEnabled(ISelection s) {
+		
 		IResource[] selection= Utilities.getResources(s);
 		if (selection.length < 2 || selection.length > 3)
 			return false;
@@ -145,19 +169,14 @@ class ResourceCompareInput extends CompareEditorInput {
 			fLeftResource= selection[1];		
 			fRightResource= selection[2];
 		}
-		
-		fAncestor= null;
-		fLeft= getStructure(fLeftResource);
-		fRight= getStructure(fRightResource);
-					
-		if (incomparable(fLeft, fRight))
+							
+		if (!comparable(fLeftResource, fRightResource))
 			return false;
 
 		if (fThreeWay) {
 			fAncestorResource= selection[0];
-			fAncestor= getStructure(fAncestorResource);
 			
-			if (incomparable(fAncestor, fRight))
+			if (!comparable(fLeftResource, fRightResource))
 				return false;
 		}
 
@@ -184,22 +203,29 @@ class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	/**
-	 * Returns true if the given arguments cannot be compared.
+	 * Returns true if both resources are either structured or unstructured.
 	 */
-	private boolean incomparable(IStructureComparator c1, IStructureComparator c2) {
-		if (c1 == null || c2 == null)
-			return true;
-		return isLeaf(c1) != isLeaf(c2);
+	private boolean comparable(IResource c1, IResource c2) {
+		return hasStructure(c1) && hasStructure(c2);
 	}
 	
 	/**
-	 * Returns true if the given arguments is a leaf.
+	 * Returns true if the given argument has a structure.
 	 */
-	private boolean isLeaf(IStructureComparator c) {
-		if (c instanceof ITypedElement) {
-			ITypedElement te= (ITypedElement) c;
-			return !ITypedElement.FOLDER_TYPE.equals(te.getType());
+	private boolean hasStructure(IResource input) {
+		
+		if (input instanceof IContainer)
+			return true;
+			
+		if (input instanceof IFile) {
+			IFile file= (IFile) input;
+			String type= file.getFileExtension();
+			if (type != null) {
+				type= normalizeCase(type);
+				return "JAR".equals(type) || "ZIP".equals(type);	//$NON-NLS-2$ //$NON-NLS-1$
+			}
 		}
+		
 		return false;
 	}
 	
