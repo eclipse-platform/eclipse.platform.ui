@@ -341,12 +341,12 @@ public class ContextHelpDialog {
 			imgRegistry = HelpUIPlugin.getDefault().getImageRegistry();
 			imgRegistry
 					.put(
-							IHelpUIConstants.IMAGE_KEY_F1TOPIC,
+							IHelpUIConstants.IMAGE_FILE_F1TOPIC,
 							ImageDescriptor
 									.createFromURL(HelpUIResources
 											.getImagePath(IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
 		}
-		return imgRegistry.get(IHelpUIConstants.IMAGE_KEY_F1TOPIC);
+		return imgRegistry.get(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
 	}
 
 	public boolean isShowing() {

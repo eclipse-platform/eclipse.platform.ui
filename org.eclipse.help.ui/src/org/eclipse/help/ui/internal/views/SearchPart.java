@@ -35,9 +35,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	protected static java.util.List previousSearchQueryData = new java.util.ArrayList(
 			20);
 
-	private static final String HREF_TOGGLE = "__toggle__";
+	private static final String HREF_TOGGLE = "__toggle__"; //$NON-NLS-1$
 
-	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/tsearch.htm";
+	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/tsearch.htm"; //$NON-NLS-1$
 
 	private String id;
 
@@ -125,8 +125,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 							true);
 			}
 		});
-		searchWordText.setImage(IHelpUIConstants.IMAGE_FILE_F1TOPIC,
-				HelpUIResources.getImage(IHelpUIConstants.IMAGE_FILE_F1TOPIC));
+		searchWordText.setImage(IHelpUIConstants.IMAGE_HELP,
+				HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP));
 		updateSearchWordText();
 		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
@@ -230,34 +230,34 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void updateSearchWordText() {
 		StringBuffer buff = new StringBuffer();
-		buff.append("<form>");
-		buff.append("<p>");
-		buff.append(HelpUIResources.getString("expression"));
+		buff.append("<form>"); //$NON-NLS-1$
+		buff.append("<p>"); //$NON-NLS-1$
+		buff.append(HelpUIResources.getString("expression")); //$NON-NLS-1$
 		if (searchWordTextExpanded) {
-			buff.append(" <a href=\"");
+			buff.append(" <a href=\""); //$NON-NLS-1$
 			buff.append(HREF_TOGGLE);
-			buff.append("\" alt=\"");
-			buff.append("Collapse");
-			buff.append("\">&lt;&lt;</a>");
-			buff.append("</p><p>");
-			buff.append(HelpUIResources.getString("expression_label"));
-			buff.append("</p><p>");
-			buff.append("<img href=\"");
-			buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
-			buff.append("\"/> ");
-			buff.append("<a href=\"");
+			buff.append("\" alt=\""); //$NON-NLS-1$
+			buff.append(HelpUIResources.getString("SearchPart.collapse")); //$NON-NLS-1$
+			buff.append("\">&lt;&lt;</a>"); //$NON-NLS-1$
+			buff.append("</p><p>"); //$NON-NLS-1$
+			buff.append(HelpUIResources.getString("expression_label")); //$NON-NLS-1$
+			buff.append("</p><p>"); //$NON-NLS-1$
+			buff.append("<img href=\""); //$NON-NLS-1$
+			buff.append(IHelpUIConstants.IMAGE_HELP);
+			buff.append("\"/> "); //$NON-NLS-1$
+			buff.append("<a href=\""); //$NON-NLS-1$
 			buff.append(HREF_SEARCH_HELP);
-			buff.append("\">Learn more");
-			buff.append("</a>");
+			buff.append(HelpUIResources.getString("SearchPart.learnMore")); //$NON-NLS-1$
+			buff.append("</a>"); //$NON-NLS-1$
 		} else {
-			buff.append(" <a href=\"");
+			buff.append(" <a href=\""); //$NON-NLS-1$
 			buff.append(HREF_TOGGLE);
-			buff.append("\" alt=\"");
-			buff.append("Expand");
-			buff.append("\">&gt;&gt;</a>");
+			buff.append("\" alt=\""); //$NON-NLS-1$
+			buff.append(HelpUIResources.getString("SearchPart.expand")); //$NON-NLS-1$
+			buff.append("\">&gt;&gt;</a>"); //$NON-NLS-1$
 		}
-		buff.append("</p>");
-		buff.append("</form>");
+		buff.append("</p>"); //$NON-NLS-1$
+		buff.append("</form>"); //$NON-NLS-1$
 		searchWordText.setText(buff.toString(), true, false);
 	}
 
@@ -316,10 +316,10 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		if (desc != null) {
 			toolkit.createLabel(container, null);
 			Label dlabel = toolkit.createLabel(container, desc, SWT.WRAP);
-			dlabel
-					.setForeground(toolkit.getColors().getColor(
+			dlabel.setForeground(toolkit.getColors().getColor(
 							FormColors.TITLE));
 			dlabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+			dlabel.setMenu(container.getMenu());
 		}
 		return edesc;
 	}
@@ -437,7 +437,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public boolean fillContextMenu(IMenuManager manager) {
-		return false;
+		return parent.fillFormContextMenu(searchWordText, manager);
 	}
 
 	/*
@@ -446,7 +446,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
 	 */
 	public boolean hasFocusControl(Control control) {
-		return false;
+		return control==searchWordText || control==searchWordCombo || scopeSection.getClient()==control;
 	}
 
 	public void setFocus() {

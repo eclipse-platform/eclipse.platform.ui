@@ -23,19 +23,19 @@ public interface IHelpUIConstants {
 			+ "prefPageAppServer"; //$NON-NLS-1$
 	public static final String PREF_PAGE_CUSTOM_BROWSER_PATH = HELP_UI_PLUGIN_ID
 			+ "prefPageCustomBrowserPath"; //$NON-NLS-1$
-	public static final String IMAGE_KEY_F1TOPIC = "f1_topic_icon"; //$NON-NLS-1$
-	public static final String IMAGE_FILE_F1TOPIC = "topic_small.gif"; //$NON-NLS-1$
+	public static final String IMAGE_FILE_F1TOPIC = "obj16/topic_small.gif"; //$NON-NLS-1$
 	
 	// Help view images
-	public static final String IMAGE_CONTAINER = "container_obj.gif"; //$NON-NLS-1$
-	public static final String IMAGE_TOC_CLOSED= "toc_closed.gif"; //$NON-NLS-1$
-	public static final String IMAGE_TOC_OPEN = "toc_open.gif"; //$NON-NLS-1$
-	public static final String IMAGE_HELP_SEARCH = "e_search_menu.gif"; //$NON-NLS-1$
-	public static final String IMAGE_CLEAR = "clear.gif"; //$NON-NLS-1$
-	public static final String IMAGE_NW = "browser.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SHOW_CATEGORIES = "show_categories.gif"; //$NON-NLS-1$
-	public static final String IMAGE_SHOW_DESC = "desc_obj.gif";
-	public static final String IMAGE_REMOVE_ALL = "search_remall.gif";
+	public static final String IMAGE_CONTAINER = "obj16/container_obj.gif"; //$NON-NLS-1$
+	public static final String IMAGE_TOC_CLOSED= "obj16/toc_closed.gif"; //$NON-NLS-1$
+	public static final String IMAGE_TOC_OPEN = "obj16/toc_open.gif"; //$NON-NLS-1$
+	public static final String IMAGE_HELP_SEARCH = "etool16/search_menu.gif"; //$NON-NLS-1$
+	public static final String IMAGE_HELP = "etool16/help.gif"; //$NON-NLS-1$
+	public static final String IMAGE_CLEAR = "elcl16/clear.gif"; //$NON-NLS-1$
+	public static final String IMAGE_NW = "elcl16/browser.gif"; //$NON-NLS-1$
+	public static final String IMAGE_SHOW_CATEGORIES = "elcl16/show_categories.gif"; //$NON-NLS-1$
+	public static final String IMAGE_SHOW_DESC = "elcl16/desc_obj.gif";
+	public static final String IMAGE_REMOVE_ALL = "elcl16/search_remall.gif";
 	// Help view constants
 	public static final String HV_SEARCH = "search";
 	public static final String HV_FSEARCH = "fsearch";

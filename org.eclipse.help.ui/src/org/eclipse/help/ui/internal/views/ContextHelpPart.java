@@ -178,7 +178,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	
 	private void updateTitle() {
 		if (lastPart!=null)
-			getSection().setText(HelpUIResources.getString("ContextHelpPart.aboutP", lastPart.getSite().getRegisteredName()));
+			getSection().setText(HelpUIResources.getString("ContextHelpPart.aboutP", lastPart.getSite().getRegisteredName())); //$NON-NLS-1$
 		else
 			getSection().setText(HelpUIResources.getString("ContextHelpPart.about")); //$NON-NLS-1$
 	}

@@ -67,9 +67,9 @@ public class EngineResultSection {
 
 	private int HITS_PER_PAGE = 10;
 
-	private static final String HREF_PROGRESS = "__progress__";
+	private static final String HREF_PROGRESS = "__progress__"; //$NON-NLS-1$
 
-	private static final String PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView";
+	private static final String PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
 	private int resultOffset = 0;
 
@@ -102,7 +102,7 @@ public class EngineResultSection {
 		container.setLayout(layout);
 		createFormText(container, toolkit);
 		searchResults.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		// searchResults.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		//searchResults.setColor("summary", toolkit.getColors().getColor(FormColors.TITLE));
 		section.setClient(container);
 		updateSectionTitle();
 		section.addExpansionListener(new IExpansionListener() {
@@ -128,7 +128,7 @@ public class EngineResultSection {
 		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
 		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
 		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
-		searchResults.setColor("summary", parent.getDisplay().getSystemColor(
+		searchResults.setColor("summary", parent.getDisplay().getSystemColor( //$NON-NLS-1$
 				SWT.COLOR_WIDGET_DARK_SHADOW));
 		searchResults.setImage(ISharedImages.IMG_TOOL_FORWARD, PlatformUI
 				.getWorkbench().getSharedImages().getImage(
@@ -140,7 +140,7 @@ public class EngineResultSection {
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if ("nw:".equals(href)) {
+				if ("nw:".equals(href)) { //$NON-NLS-1$
 					part.doOpenLink(e.getHref());
 				} else if (HREF_PROGRESS.equals(href)) {
 					showProgressView();
@@ -153,20 +153,20 @@ public class EngineResultSection {
 	}
 
 	private void initializeText() {
-		Bundle bundle = Platform.getBundle("org.eclipse.ui.views");
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.views"); //$NON-NLS-1$
 		if (bundle != null) {
 			StringBuffer buff = new StringBuffer();
-			buff.append("<form>");
-			buff.append("<p><a href=\"");
+			buff.append("<form>"); //$NON-NLS-1$
+			buff.append("<p><a href=\""); //$NON-NLS-1$
 			buff.append(HREF_PROGRESS);
-			buff.append("\" alt=\"");
-			buff.append("Show Progress View");
-			buff.append("\">");
-			buff.append("Search in progress...");
-			buff.append("</a></p></form>");
+			buff.append("\" alt=\""); //$NON-NLS-1$
+			buff.append(HelpUIResources.getString("EngineResultSection.progressTooltip")); //$NON-NLS-1$
+			buff.append("\">"); //$NON-NLS-1$
+			buff.append(HelpUIResources.getString("EngineResultSection.searchInProgress")); //$NON-NLS-1$
+			buff.append("</a></p></form>"); //$NON-NLS-1$
 			searchResults.setText(buff.toString(), true, false);
 		} else {
-			searchResults.setText("Search in progress...", false, false);
+			searchResults.setText(HelpUIResources.getString("EngineResultSection.progress2"), false, false); //$NON-NLS-1$
 		}
 	}
 
@@ -179,7 +179,7 @@ public class EngineResultSection {
 				try {
 					page.showView(PROGRESS_VIEW);
 				} catch (PartInitException e) {
-					HelpUIPlugin.logError("Error opening the progress view", e);
+					HelpUIPlugin.logError(HelpUIResources.getString("EngineResultSection.progressError"), e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -207,8 +207,10 @@ public class EngineResultSection {
 				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
 					public void run() {
 						updateResults(true);
-						if (scrollToBeginning)
+						if (scrollToBeginning) {
 							part.scrollToBeginning();
+							searchResults.setFocus();
+						}
 					}
 				});
 			}
@@ -243,30 +245,30 @@ public class EngineResultSection {
 					&& cat != null
 					&& (oldCat == null || !oldCat.getLabel().equals(
 							cat.getLabel()))) {
-				buff.append("<p>");
+				buff.append("<p>"); //$NON-NLS-1$
 				if (cat.getHref() != null) {
-					buff.append("<a bold=\"true\" href=\"");
+					buff.append("<a bold=\"true\" href=\""); //$NON-NLS-1$
 					buff.append(escapeSpecialChars(cat.getHref()));
-					buff.append("\">");
+					buff.append("\">"); //$NON-NLS-1$
 					buff.append(cat.getLabel());
-					buff.append("</a>");
+					buff.append("</a>"); //$NON-NLS-1$
 				} else {
-					buff.append("<b>");
+					buff.append("<b>"); //$NON-NLS-1$
 					buff.append(cat.getLabel());
-					buff.append("</b>");
+					buff.append("</b>"); //$NON-NLS-1$
 				}
-				buff.append("</p>");
+				buff.append("</p>"); //$NON-NLS-1$
 				oldCat = cat;
 			}
 			int indent = part.getShowCategories() && cat != null ? 26 : 21;
 			int bindent = part.getShowCategories() && cat != null ? 5 : 0;
 			buff
-					.append("<li indent=\"" + indent + "\" bindent=\"" + bindent + "\" style=\"image\" value=\""); //$NON-NLS-1$
+					.append("<li indent=\"" + indent + "\" bindent=\"" + bindent + "\" style=\"image\" value=\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			buff.append(desc.getId());
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
 			if (hit.getForceExternalWindow())
-				buff.append("nw:");
+				buff.append("nw:"); //$NON-NLS-1$
 			buff.append(escapeSpecialChars(hit.getHref()));
 			buff.append("\""); //$NON-NLS-1$
 			if (hit.getCategory() != null) {
@@ -293,11 +295,10 @@ public class EngineResultSection {
 			if (part.getShowDescription()) {
 				String summary = getSummary(hit);
 				if (summary != null) {
-					buff.append("<br/>");
-					// buff.append("<span color=\"summary\">");
+					buff.append("<br/>"); //$NON-NLS-1$
+					//buff.append("<span color=\"summary\">");
 					buff.append(summary);
-					// buff.append("</span>");
-					buff.append("...");
+					//buff.append("</span>");
 				}
 			}
 			buff.append("</li>"); //$NON-NLS-1$
@@ -317,11 +318,8 @@ public class EngineResultSection {
 				Composite navContainer = toolkit.createComposite(container);
 				TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
 				navContainer.setLayoutData(td);
-				// navContainer.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 				GridLayout glayout = new GridLayout();
 				glayout.numColumns = 2;
-				// glayout.horizontalSpacing = 0;
-				// glayout.makeColumnsEqualWidth=true;
 				navContainer.setLayout(glayout);
 				Label sep = toolkit.createLabel(navContainer, null,
 						SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -331,7 +329,7 @@ public class EngineResultSection {
 				sep.setLayoutData(gd);
 				prevLink = toolkit.createImageHyperlink(navContainer, SWT.NULL);
 
-				prevLink.setText("Previous " + HITS_PER_PAGE);
+				prevLink.setText(HelpUIResources.getString("EngineResultSection.previous", ""+HITS_PER_PAGE)); //$NON-NLS-1$
 				prevLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_BACK));
 				prevLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -340,15 +338,11 @@ public class EngineResultSection {
 						asyncUpdateResults(false, true);
 					}
 				});
-				// Label space = toolkit.createLabel(navContainer, null);
-				// gd = new GridData(GridData.FILL_HORIZONTAL);
-				// gd.widthHint = 5;
-				// space.setLayoutData(gd);
 				nextLink = toolkit
 						.createImageHyperlink(navContainer, SWT.RIGHT);
 				int remainder = Math.min(hits.size() - resultOffset
 						- HITS_PER_PAGE - HITS_PER_PAGE, HITS_PER_PAGE);
-				nextLink.setText("Next " + remainder);
+				nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$
 				nextLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_FORWARD));
 				gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -419,19 +413,19 @@ public class EngineResultSection {
 	private void updateSectionTitle() {
 		if (hits.size() == 1)
 			section.setText(HelpUIResources.getString(
-					"EngineResultSection.sectionTitle.hit", desc.getLabel(), ""
+					"EngineResultSection.sectionTitle.hit", desc.getLabel(), "" //$NON-NLS-1$ //$NON-NLS-2$
 							+ hits.size()));
 		else if (hits.size() <= HITS_PER_PAGE)
 			section.setText(HelpUIResources.getString(
-					"EngineResultSection.sectionTitle.hits", desc.getLabel(),
-					"" + hits.size()));
+					"EngineResultSection.sectionTitle.hits", desc.getLabel(), //$NON-NLS-1$
+					"" + hits.size())); //$NON-NLS-1$
 		else {
 			int from = (resultOffset + 1);
 			int to = (resultOffset + HITS_PER_PAGE);
 			to = Math.min(to, hits.size());
 			section.setText(HelpUIResources.getString(
-					"EngineResultSection.sectionTitle.hitsRange", desc
-							.getLabel(), "" + from, "" + to, "" + hits.size()));
+					"EngineResultSection.sectionTitle.hitsRange", desc //$NON-NLS-1$
+							.getLabel(), "" + from, "" + to, "" + hits.size())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 

@@ -244,7 +244,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		buff.append("\">"); //$NON-NLS-1$
 		buff.append(HelpUIResources.getString("SearchResultsPart.progress")); //$NON-NLS-1$
 		buff.append("</span>"); //$NON-NLS-1$
-		buff.append("<a href=\"");
+		buff.append("<a href=\""); //$NON-NLS-1$
 		buff.append(CANCEL_HREF);
 		buff.append("\">"); //$NON-NLS-1$
 		buff.append(HelpUIResources.getString("SearchResultsPart.cancel")); //$NON-NLS-1$

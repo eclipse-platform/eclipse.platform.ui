@@ -71,7 +71,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		buf.append("\">"); //$NON-NLS-1$
 		buf.append(HelpUIResources.getString("SeeAlsoPart.goto")); //$NON-NLS-1$
 		buf.append("</span></p>"); //$NON-NLS-1$
-		buf.append("<p>");
+		buf.append("<p>"); //$NON-NLS-1$
 		if ((parent.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
 			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.allTopics"), IHelpUIConstants.HV_ALL_TOPICS_PAGE, //$NON-NLS-1$
 				IHelpUIConstants.IMAGE_TOC_OPEN);
@@ -82,7 +82,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.contextHelp"), //$NON-NLS-1$
 				IHelpUIConstants.HV_CONTEXT_HELP_PAGE,
 				IHelpUIConstants.IMAGE_CONTAINER);
-		buf.append("</p>");
+		buf.append("</p>"); //$NON-NLS-1$
 		buf.append("</form>"); //$NON-NLS-1$
 		text.setText(buf.toString(), true, false);
 	}
@@ -100,14 +100,14 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		buf.append("</a>"); //$NON-NLS-1$
 		buf.append("</li>"); //$NON-NLS-1$
 		*/
-		buf.append("<img href=\"");
+		buf.append("<img href=\""); //$NON-NLS-1$
 		buf.append(imgRef);
-		buf.append("\"/> ");
-		buf.append("<a href=\"");
+		buf.append("\"/> "); //$NON-NLS-1$
+		buf.append("<a href=\""); //$NON-NLS-1$
 		buf.append(id);
-		buf.append("\">");
+		buf.append("\">"); //$NON-NLS-1$
 		buf.append(text);
-		buf.append("</a> ");
+		buf.append("</a> "); //$NON-NLS-1$
 	}
 
 	/*

@@ -389,7 +389,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		backAction.setEnabled(false);
 		backAction.setText(HelpUIResources.getString("ReusableHelpPart.back.label")); //$NON-NLS-1$
 		backAction.setToolTipText(HelpUIResources.getString("ReusableHelpPart.back.tooltip")); //$NON-NLS-1$
-		backAction.setId("back");
+		backAction.setId("back"); //$NON-NLS-1$
 		
 		nextAction = new Action("next") { //$NON-NLS-1$
 			public void run() {
@@ -401,7 +401,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		nextAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		nextAction.setEnabled(false);
 		nextAction.setToolTipText(HelpUIResources.getString("ReusableHelpPart.forward.tooltip")); //$NON-NLS-1$
-		nextAction.setId("next");
+		nextAction.setId("next"); //$NON-NLS-1$
 		toolBarManager.add(backAction);
 		toolBarManager.add(nextAction);
 		
@@ -452,6 +452,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		ScrolledForm form = toolkit.createScrolledForm(parent);
 		form.getBody().setLayout(new HelpPartLayout());
 		mform = new ManagedForm(toolkit, form);
+		mform.getForm().setDelayedReflow(false);
 		MenuManager manager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -601,7 +602,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			part = new ContextHelpPart(parent, mform.getToolkit());
 			((ContextHelpPart)part).setDefaultText(getDefaultContextHelpText());
 		} else if (id.equals(HV_BROWSER)) {
-			part = new BrowserPart(parent, mform.getToolkit());
+			part = new BrowserPart(parent, mform.getToolkit(), tbm);
 		} else if (id.equals(HV_SEARCH_RESULT)) {
 			part = new DynamicHelpPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH_RESULT)) {
@@ -652,7 +653,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 	public void showURL(String url, boolean replace) {
 		if (url==null) return;
-		if (url.startsWith("nw:")) {
+		if (url.startsWith("nw:")) { //$NON-NLS-1$
 			replace=false;
 			url = url.substring(3);
 		}
@@ -660,7 +661,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 			BrowserPart bpart = (BrowserPart)findPart(IHelpUIConstants.HV_BROWSER);
 			if (bpart!=null) {
-				bpart.showURL(toAbsoluteURL(url));
+				bpart.showURL(url, toAbsoluteURL(url));
 				return;
 			}
 		}
@@ -684,7 +685,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 				BaseHelpSystem.getHelpBrowser(true).displayURL(toAbsoluteURL(url));
 			}
 			catch (Exception e) {
-				HelpUIPlugin.logError("Error opening browser", e);
+				HelpUIPlugin.logError("Error opening browser", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -742,11 +743,11 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 	private boolean fillOpenActions(Object target, IMenuManager manager) {
 		String href = getHref(target);
-		if (href!=null && !href.startsWith("__")) {
+		if (href!=null && !href.startsWith("__")) { //$NON-NLS-1$
 			openAction.setTarget(target);
 			openInHelpAction.setTarget(target);
 			manager.add(openAction);
-			if (!href.startsWith("nw:"))
+			if (!href.startsWith("nw:")) //$NON-NLS-1$
 				manager.add(openInHelpAction);
 			return true;
 		}

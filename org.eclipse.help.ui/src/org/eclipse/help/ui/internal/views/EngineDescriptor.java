@@ -36,7 +36,7 @@ public class EngineDescriptor {
 		return config;
 	}
 	public IConfigurationElement [] getPages() {
-		return config.getChildren("subpage");
+		return config.getChildren("subpage"); //$NON-NLS-1$
 	}
 	
 	public String getLabel() {
@@ -48,7 +48,7 @@ public class EngineDescriptor {
 	public boolean isEnabled() {
 		String enabled = config.getAttribute(IHelpUIConstants.ATT_ENABLED);
 		if (enabled!=null)
-			return enabled.equals("true");
+			return enabled.equals("true"); //$NON-NLS-1$
 		return false;
 	}
 	public Image getIconImage() {
@@ -106,7 +106,7 @@ public class EngineDescriptor {
 					}
 				}
 				catch (CoreException e) {
-					HelpUIPlugin.logWarning("Engine " + eclass + " cannot be instantiated");
+					HelpUIPlugin.logWarning("Engine " + eclass + " cannot be instantiated"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -124,7 +124,7 @@ public class EngineDescriptor {
 					}
 				}
 				catch (CoreException e) {
-                    HelpUIPlugin.logWarning("Scope factory " + fclass + " cannot be instantiated");
+                    HelpUIPlugin.logWarning("Scope factory " + fclass + " cannot be instantiated"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
