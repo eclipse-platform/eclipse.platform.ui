@@ -106,9 +106,6 @@ class NewWizardNewPage implements ISelectionChangedListener,
     private final static String STORE_SELECTED_ID = DIALOG_SETTING_SECTION_NAME
             + "STORE_SELECTED_ID"; //$NON-NLS-1$
 
-    private static final String SHOW_ALL_ENABLED = DIALOG_SETTING_SECTION_NAME
-            + ".SHOW_ALL_SELECTED"; //$NON-NLS-1$
-
     private TreeViewer viewer;
 
     private NewWizardSelectionPage page;
@@ -394,6 +391,8 @@ class NewWizardNewPage implements ISelectionChangedListener,
                 }
             }
         });
+        
+        viewer.addFilter(filter);
 
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 2;
@@ -479,18 +478,6 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * expanded no longer exists then it is ignored.
      */
     protected void expandPreviouslyExpandedCategories() {
-        boolean showAll = settings.getBoolean(SHOW_ALL_ENABLED);
-
-        if (showAllCheck != null) {
-            showAllCheck.setSelection(showAll);
-            if (showAll) {
-                viewer.resetFilters();
-            } else {
-                viewer.addFilter(filter);
-            }
-            viewer.refresh(false);
-        }
-
         String[] expandedCategoryPaths = settings
                 .getArray(STORE_EXPANDED_CATEGORIES_ID);
         if (expandedCategoryPaths == null || expandedCategoryPaths.length == 0)
@@ -631,13 +618,6 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * order to recreate this page's state in the next instance of this page.
      */
     protected void storeSelectedCategoryAndWizard() {
-
-        if (showAllCheck != null && showAllCheck.getSelection()) {
-            settings.put(SHOW_ALL_ENABLED, true);
-        } else {
-            settings.put(SHOW_ALL_ENABLED, false);
-        }
-
         Object selected = getSingleSelection((IStructuredSelection) viewer
                 .getSelection());
 
