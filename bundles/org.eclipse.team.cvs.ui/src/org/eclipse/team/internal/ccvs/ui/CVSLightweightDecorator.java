@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
@@ -46,6 +47,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 
@@ -61,6 +63,8 @@ public class CVSLightweightDecorator
 	private static ImageDescriptor merged;
 	private static ImageDescriptor newResource;
 	private static ImageDescriptor edited;
+
+	private static ExceptionCollector exceptions;
 
 	/*
 	 * Define a cached image descriptor which only creates the image data once
@@ -92,6 +96,7 @@ public class CVSLightweightDecorator
 	public CVSLightweightDecorator() {
 		CVSProviderPlugin.addResourceStateChangeListener(this);
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
+		exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog());
 	}
 
 	public static boolean isDirty(final ICVSResource cvsResource) {
@@ -99,7 +104,7 @@ public class CVSLightweightDecorator
 			return !cvsResource.isIgnored() && cvsResource.isModified(null);
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty
-			CVSUIPlugin.log(e);
+			handleException(e);
 			return true;
 		}
 	}
@@ -176,6 +181,7 @@ public class CVSLightweightDecorator
 		} catch (CVSException e) {
 			// The was an exception in isIgnored. Don't decorate
 			//todo should log this error
+			handleException(e);
 			return;
 		}
 
@@ -265,7 +271,7 @@ public class CVSLightweightDecorator
 		CVSDecoratorConfiguration.decorate(decoration, format, bindings);
 			
 		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
+			handleException(e);
 			return;
 		}
 	}
@@ -343,7 +349,7 @@ public class CVSLightweightDecorator
 					}
 				}
 			} catch (CVSException e) {
-				CVSUIPlugin.log(e);
+				handleException(e);
 				return null;
 			}
 		}
@@ -372,7 +378,7 @@ public class CVSLightweightDecorator
 					}
 				}
 			} catch (CVSException e) {
-				CVSUIPlugin.log(e);
+				handleException(e);
 				return null;
 			}
 		}
@@ -382,7 +388,7 @@ public class CVSLightweightDecorator
 		try {
 			decorateEdited = provider.isWatchEditEnabled();
 		} catch (CVSException e1) {
-			CVSUIPlugin.log(e1);
+			handleException(e1);
 			decorateEdited = false;
 		}
 		
@@ -403,7 +409,7 @@ public class CVSLightweightDecorator
 					}
 				} catch (CVSException e) {
 					// log the exception and show the shared overlay
-					CVSUIPlugin.log(e);
+					handleException(e);
 				}
 			}
 			return checkedIn;
@@ -449,7 +455,7 @@ public class CVSLightweightDecorator
 			});
 			postLabelEvent(new LabelProviderChangedEvent(this, resources.toArray()));
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(e);
+			handleException(e);
 		}
 	}
 	
@@ -521,5 +527,12 @@ public class CVSLightweightDecorator
 	public void dispose() {
 		super.dispose();
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(false /* disabled */);
+	}
+	
+	/**
+	 * Handle exceptions that occur in the decorator. 
+	 */
+	private static void handleException(Exception e) {
+		exceptions.handleException(e);
 	}
 }
