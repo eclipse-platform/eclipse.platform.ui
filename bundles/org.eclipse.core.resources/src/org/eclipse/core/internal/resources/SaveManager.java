@@ -922,7 +922,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			if (hasTreeChanges) {
 				operationCount++;
 				if (snapshotJob.getState() == Job.NONE) {
-					if (ResourcesPlugin.getPlugin().isDebugging())
+					if (Policy.DEBUG_SAVE)
 						System.out.println("Scheduling workspace snapshot"); //$NON-NLS-1$
 					long interval = workspace.internalGetDescription().getSnapshotInterval();
 					snapshotJob.schedule(Math.max(interval, MIN_SNAPSHOT_DELAY));
@@ -1271,11 +1271,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 					broadcastLifecycle(SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 					switch (kind) {
 						case ISaveContext.FULL_SAVE :
-							//according to spec it is illegal to start a full save inside another operation
-							if (workspace.getWorkManager().getPreparedOperationDepth() > 1) {
-								message = Policy.bind("resources.saveOp"); //$NON-NLS-1$
-								throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
-							}
 							// save the complete tree and remember all of the required saved states
 							saveTree(contexts, Policy.subMonitorFor(monitor, 1));
 							// reset the snapshot state.
