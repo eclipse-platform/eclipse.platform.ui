@@ -666,6 +666,26 @@ public class ContentAssistant implements IContentAssistant {
 	 */
 	public void enableAutoActivation(boolean enabled) {
 		fIsAutoActivated= enabled;
+		manageAutoActivation(fIsAutoActivated);
+	}
+	
+	/**
+	 * Installs and uninstall the listeners needed for autoactivation.
+	 * @param start <code>true</code> if listeners must be installed,
+	 * 	<code>false</code> if they must be removed
+	 */
+	private void manageAutoActivation(boolean start) {			
+		if (start) {
+			if (fViewer != null && fAutoAssistListener == null) {
+				fAutoAssistListener= new AutoAssistListener();
+				addContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
+			}
+		} else {
+			if (fAutoAssistListener != null) {
+				removeContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
+				fAutoAssistListener= null;
+			}
+		}
 	}
 	
 	/**
@@ -836,7 +856,7 @@ public class ContentAssistant implements IContentAssistant {
 	public void setInformationControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
 	}
-	
+		
 	/*
 	 * @see IContentAssist#install
 	 */
@@ -855,20 +875,15 @@ public class ContentAssistant implements IContentAssistant {
 		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
 		fProposalPopup= new CompletionProposalPopup(this, fViewer, controller);
 		
-		if (fIsAutoActivated) {
-			fAutoAssistListener= new AutoAssistListener();
-			addContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
-		}
+		manageAutoActivation(fIsAutoActivated);
 	}
 	
 	/*
 	 * @see IContentAssist#uninstall
 	 */
 	public void uninstall() {
-		if (fAutoAssistListener != null) {
-			removeContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
-			fAutoAssistListener= null;
-		}
+		manageAutoActivation(false);
+		fViewer= null;
 	}
 
 	/**
