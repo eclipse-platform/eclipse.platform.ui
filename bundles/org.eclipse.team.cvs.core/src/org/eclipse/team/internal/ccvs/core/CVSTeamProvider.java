@@ -1381,6 +1381,38 @@ public class CVSTeamProvider extends RepositoryProvider {
 		return listener.getEditorsInfos();
 	}
 
-
+	/**
+	 * Return the commit comment template that was provided by the server.
+	 * 
+	 * @return String
+	 * @throws CVSException
+	 */
+	public String getCommitTemplate() throws CVSException {
+		ICVSFolder localFolder = getCVSWorkspaceRoot().getLocalRoot();
+		ICVSFolder cvsFolder = localFolder.getFolder("CVS");
+		ICVSFile templateFile = cvsFolder.getFile("Template");
+		if (!templateFile.exists()) return null;
+		InputStream in = new BufferedInputStream(templateFile.getContents());
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			int b;
+			do {
+				b = in.read();
+				if (b != -1)
+					out.write((byte)b);
+			} while (b != -1);
+			out.close();
+			return new String(out.toString());
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				// Since we already have the contents, just log this exception
+				CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+			}
+		}
+	}
 
 }

@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -26,6 +27,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -48,20 +53,21 @@ public class ReleaseCommentDialog extends Dialog {
 
 	private IResource[] resourcesToAdd;
 	
+	private IProject mainProject;
+	
 	/**
 	 * ReleaseCommentDialog constructor.
 	 * 
 	 * @param parentShell  the parent of this dialog
 	 */
-	public ReleaseCommentDialog(Shell parentShell) {
-		super(parentShell);
-	}
-	
-	public ReleaseCommentDialog(Shell parentShell, IResource[] unaddedResources) {
+	public ReleaseCommentDialog(Shell parentShell, IResource[] resourcesToCommit, IResource[] unaddedResources) {
 		super(parentShell);
 		this.unaddedResources = unaddedResources;
 		// this line is required for the CVS UI test framework
 		this.resourcesToAdd = unaddedResources;
+		// Get a project from which the commit template can be obtained
+		if (resourcesToCommit.length > 0) 
+			mainProject = resourcesToCommit[0].getProject();
 	}
 	
 	/*
@@ -91,6 +97,21 @@ public class ReleaseCommentDialog extends Dialog {
 					e.doit = false;
 					okPressed();
 				}
+			}
+		});
+		
+		
+		Button clear = new Button(composite, SWT.PUSH);
+		clear.setText(Policy.bind("ReleaseCommentDialog.clearTextArea")); //$NON-NLS-1$
+		data = new GridData();
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, clear.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		data.horizontalAlignment = GridData.BEGINNING;
+		clear.setLayoutData(data);
+		clear.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ReleaseCommentDialog.this.clearCommitText();
 			}
 		});
 		
@@ -187,7 +208,18 @@ public class ReleaseCommentDialog extends Dialog {
 	 * @param comment  the initial comment
 	 */
 	public void setComment(String comment) {
-		this.comment = comment;
+		if (comment == null || comment.length() == 0) {
+			try {
+				this.comment = getCommitTemplate();
+			} catch (CVSException e) {
+				// log the exception for now. 
+				// The user can surface the problem by trying to reset the comment
+				CVSUIPlugin.log(e);
+				this.comment = comment;
+			}
+		} else {
+			this.comment = comment;
+		}
 	}
 	/*
 	 * @see Dialog#okPressed
@@ -228,4 +260,30 @@ public class ReleaseCommentDialog extends Dialog {
 		return resourcesToAdd;
 	}
 
+	/**
+	 * Method clearCommitText.
+	 */
+	private void clearCommitText() {
+		try {
+			text.setText(getCommitTemplate());
+		} catch (CVSException e) {
+			CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC);
+		}
+	}
+	
+	private String getCommitTemplate() throws CVSException {
+		CVSTeamProvider provider = getProvider();
+		if (provider == null) return "";
+		String template = provider.getCommitTemplate();
+		if (template == null) template = "";
+		return template;
+	}
+
+	/**
+	 * Method getProvider.
+	 */
+	private CVSTeamProvider getProvider() throws CVSException {
+		if (mainProject == null) return null;
+		return (CVSTeamProvider) RepositoryProvider.getProvider(mainProject, CVSProviderPlugin.getTypeId());
+	}
 }

@@ -95,7 +95,7 @@ public class ForceCommitSyncAction extends MergeAction {
 		
 		// prompt to get comment and any resources to be added to version control
 		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-		ReleaseCommentDialog dialog = promptForComment(manager, unadded);
+		ReleaseCommentDialog dialog = promptForComment(manager, syncSet.getResources(), unadded);
 		if (dialog == null) {
 			// User cancelled.
 			return null;
@@ -294,8 +294,8 @@ public class ForceCommitSyncAction extends MergeAction {
 	 * Note: This method is designed to be overridden by test cases.
 	 * @return the comment, or null to cancel
 	 */
-	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] unadded) {
-		return manager.promptForComment(getShell(), unadded);
+	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
+		return manager.promptForComment(getShell(), resourcesToCommit, unadded);
 	}
 
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {

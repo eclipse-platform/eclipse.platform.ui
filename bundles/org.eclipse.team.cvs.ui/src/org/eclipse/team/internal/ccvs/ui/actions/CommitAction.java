@@ -52,7 +52,7 @@ public class CommitAction extends WorkspaceAction {
 				try {
 					// search for any non-added, non-ignored resources in the selection
 					IResource[] unadded = getUnaddedResources(resources, monitor);
-					ReleaseCommentDialog dialog = promptForComment(manager, unadded);
+					ReleaseCommentDialog dialog = promptForComment(manager, resources, unadded);
 					if (dialog == null) return;
 					comment[0] = dialog.getComment();
 					resourcesToBeAdded[0] = dialog.getResourcesToAdd();
@@ -164,8 +164,8 @@ public class CommitAction extends WorkspaceAction {
 	 * Prompts the user for a release comment.
 	 * @return the comment, or null to cancel
 	 */
-	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] unadded) {
-		return manager.promptForComment(getShell(), unadded);
+	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
+		return manager.promptForComment(getShell(), resourcesToCommit, unadded);
 	}
 	
 	/**

@@ -553,9 +553,9 @@ public class RepositoryManager {
 	 * The comment and unadded resources to add  can be retrieved from the dialog.
 	 * Persist the entered release comment for the next caller.
 	 */
-	public ReleaseCommentDialog promptForComment(final Shell shell, final IResource[] unadded) {
+	public ReleaseCommentDialog promptForComment(final Shell shell, IResource[] resourcesToCommit, final IResource[] unadded) {
 		final int[] result = new int[1];
-		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, unadded); 
+		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit, unadded); 
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				dialog.setComment(previousComment);

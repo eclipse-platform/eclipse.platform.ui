@@ -55,6 +55,7 @@ public abstract class Request {
 		registerResponseHandler(new ModuleExpansionHandler());
 		registerResponseHandler(new MTHandler());
 		registerResponseHandler(new NotifiedHandler());
+		registerResponseHandler(new TemplateHandler());
 	}
 	protected static void registerResponseHandler(ResponseHandler handler) {
 		responseHandlers.put(handler.getResponseID(), handler);
