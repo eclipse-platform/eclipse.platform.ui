@@ -22,6 +22,7 @@
 
  
 BODY {
+	font: 8pt Tahoma;
 	background:#D4D0C8;
 	border:1px black solid;
 	padding:0px;
@@ -29,6 +30,7 @@ BODY {
 }
 
 TABLE {
+	font: 8pt Tahoma;
 	background:#D4D0C8;
 }
 
@@ -39,6 +41,7 @@ TD, TR {
 }
 
 FORM {
+	font: 8pt Tahoma;
 	margin:0;
 	padding:0px;
 	border:0px;
@@ -52,6 +55,7 @@ FORM {
 }
 
 #searchWord {
+	font: 8pt Tahoma;
 	border:1px solid #000;
 	width:100%;
 	font:icon;
@@ -162,22 +166,22 @@ function onloadHandler()
 
 <body  onload="onloadHandler()">
 
-<form name="searchForm" onsubmit="doAdvancedSearch()">
+<form name="searchForm" onsubmit="doAdvancedSearch()" style="margin-top:0px;">
 
-	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
+	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center style="margin-top:0px;">
 		<tr><td style="padding:0px 10px;"><%=WebappResources.getString("SearchExpression", request)%>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value='' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+		<tr><td style="padding:0px 10px;"><input size=40 type="text" id="searchWord" name="searchWord" value='' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
         </td></tr>
         <tr><td style="padding:0px 10px;"><%=WebappResources.getString("expression_label", request)%>
         </td></tr>
     </table>
   
-  	<table id="filterTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center  style="background:transparent;">
-		<tr><td><div id="selectBook" style="margin-left:10px;"><%=WebappResources.getString("Select", request)%></div>
+  	<table id="filterTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
+		<tr><td><div id="selectBook" style="margin-left:10px; margin-top:5px"><%=WebappResources.getString("Select", request)%></div>
 		</td></tr>
-		<tr><td>
+		<tr><td bgcolor="#ffffff" >
 			<div id="booksContainer">
 <% 
 ContentUtil content = new ContentUtil(application, request);
