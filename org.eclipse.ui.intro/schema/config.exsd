@@ -12,9 +12,15 @@ The intros are organized into pages which usually reflect a particular category 
 &lt;p&gt;
       </documentation>
    </annotation>
-	<include schemaLocation="IntroContent.exsd"/>
+
+   <include schemaLocation="IntroContent.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="config" minOccurs="1" maxOccurs="unbounded"/>
