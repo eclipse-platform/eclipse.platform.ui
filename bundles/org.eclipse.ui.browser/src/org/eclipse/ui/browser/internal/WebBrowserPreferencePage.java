@@ -18,6 +18,28 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -25,7 +47,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -34,13 +57,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -228,7 +244,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection sel = ((StructuredSelection) tableViewer.getSelection());
 				if (sel.getFirstElement() != null) {
-					IBrowserDescriptor browser2 = (IBrowserDescriptor) sel.getFirstElement();
+					Object browser2 = sel.getFirstElement();
 					if (browser2 instanceof IBrowserDescriptor) {
 						IBrowserDescriptorWorkingCopy wc = ((IBrowserDescriptor) browser2).getWorkingCopy();
 						BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(getShell(), wc);
@@ -303,7 +319,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		edit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection sel = ((StructuredSelection) tableViewer.getSelection());
-				IBrowserDescriptor browser2 = (IBrowserDescriptor) sel.getFirstElement();
+				Object browser2 = sel.getFirstElement();
 				if (browser2 instanceof IBrowserDescriptor) {
 					IBrowserDescriptorWorkingCopy wc = ((IBrowserDescriptor) browser2).getWorkingCopy();
 					BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(getShell(), wc);
