@@ -46,6 +46,10 @@ public class SyncInfoSource {
 		return subscriber;
 	}
 	
+	public Subscriber createWorkspaceSubscriber() throws TeamException {
+		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+	}
+	
 	/**
 	 * Return the sync info for the given subscriber for the given resource.
 	 */

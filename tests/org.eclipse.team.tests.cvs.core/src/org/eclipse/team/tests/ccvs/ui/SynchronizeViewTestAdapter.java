@@ -11,6 +11,7 @@
 package org.eclipse.team.tests.ccvs.ui;
 
 import junit.framework.AssertionFailedError;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
@@ -18,17 +19,29 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.WorkspaceScope;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPage;
@@ -134,6 +147,25 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 			throw new AssertionFailedError("Cannot show sync view in active page");
 		}
 		return mergeSubscriber;
+	}
+	
+	public Subscriber createWorkspaceSubscriber() throws TeamException {
+		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
+		ISynchronizeParticipantReference[] participants = synchronizeManager.get(WorkspaceSynchronizeParticipant.ID);
+		if (participants.length > 0) {
+			return ((SubscriberParticipant)participants[0].getParticipant()).getSubscriber();
+		}
+		SubscriberParticipant participant = new WorkspaceSynchronizeParticipant(new WorkspaceScope());
+		synchronizeManager.addSynchronizeParticipants(
+				new ISynchronizeParticipant[] {participant});		
+		IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
+		try {
+			ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
+			view.display(participant);
+		} catch (PartInitException e) {
+			throw new AssertionFailedError("Cannot show sync view in active page");
+		}
+		return participant.getSubscriber();
 	}
 	
 	

@@ -11,17 +11,26 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
+import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
 import org.eclipse.team.internal.ccvs.ui.subscriber.ConfirmMergedOperation;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
@@ -50,9 +59,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	}
 	
 	protected Subscriber getWorkspaceSubscriber() throws TeamException {
-		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-		if (subscriber == null) fail("The CVS sync subsciber is not registered");
-		return subscriber;
+		return getSyncInfoSource().createWorkspaceSubscriber();
 	}
 	
 	public SyncInfoSource getSyncInfoSource() {
