@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
  * </p>
  * 
  * @since 2.0
+ * @deprecated use org.eclipse.ui.IWorkingSet - this class will be removed soon
  */
 public interface IWorkingSet {
 	
