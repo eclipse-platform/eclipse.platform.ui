@@ -169,9 +169,8 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 
 		// change settings in the file
 		String newKey = "newKey" + getUniqueString();
-		String fullPath = Path.ROOT.append(ProjectScope.SCOPE).append(project.getName()).append(qualifier).append(newKey).toString();
 		String newValue = "newValue" + getUniqueString();
-		props.put(fullPath, newValue);
+		props.put(newKey, newValue);
 
 		// save the file and ensure timestamp is different
 		OutputStream output = null;
