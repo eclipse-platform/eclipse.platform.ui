@@ -25,6 +25,14 @@ public class TypedResourceVisitor implements IResourceProxyVisitor {
 		return true;
 	}
 
+	protected boolean visitProject(IResourceProxy proxy) throws CoreException {
+		return true;
+	}
+	
+	protected boolean visitFolder(IResourceProxy proxy) throws CoreException {
+		return true;
+	}
+	
 	protected void addToStatus(CoreException ex) {
 		fStatus.add(ex.getStatus());
 	}
@@ -38,9 +46,9 @@ public class TypedResourceVisitor implements IResourceProxyVisitor {
 				case IResource.FILE:
 					return visitFile(proxy);
 				case IResource.FOLDER:
-					return true;
+					return visitFolder(proxy);
 				case IResource.PROJECT:
-					return true;
+					return visitProject(proxy);
 				default:
 					Assert.isTrue(false, "unknown resource type"); //$NON-NLS-1$
 			}
