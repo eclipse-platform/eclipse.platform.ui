@@ -21,19 +21,21 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
+import org.eclipse.team.internal.ccvs.ui.wizards.AddWizard;
 
 /**
  * AddAction performs a 'cvs add' command on the selected resources. If a
  * container is selected, its children are recursively added.
  */
 public class AddAction extends WorkspaceTraversalAction {
-	
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		if (!promptForAddOfIgnored()) return;
-		new AddOperation(getTargetPart(), getCVSResourceMappings()).run();
+        if (!promptForAddOfIgnored()) return;
+        AddOperation op = new AddOperation(getTargetPart(), getCVSResourceMappings());
+        AddWizard.run(getShell(), op);
 	}
 
     /*

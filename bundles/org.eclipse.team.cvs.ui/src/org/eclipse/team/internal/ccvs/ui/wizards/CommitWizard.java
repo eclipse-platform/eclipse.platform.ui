@@ -36,7 +36,6 @@ import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 
 /**
  * A wizard to commit the resources whose synchronization state is given in form
@@ -164,7 +163,7 @@ public class CommitWizard extends ResizableWizard {
 	private SyncInfoSet getAllOutOfSync() throws CVSException {
 		final SubscriberSyncInfoCollector syncInfoCollector = fParticipant.getSubscriberSyncInfoCollector();
             try {
-				Workbench.getInstance().getProgressService().run(true, true, new IRunnableWithProgress() {
+				PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 				    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				    	monitor.beginTask(Policy.bind("CommitWizard.4"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				    	syncInfoCollector.waitForCollector(monitor);
@@ -228,14 +227,14 @@ public class CommitWizard extends ResizableWizard {
             final Map extensionsNotToSave= new HashMap();
             
             fFileTypePage.getModesForExtensions(extensionsToSave, extensionsNotToSave);
-            saveExtensionMappings(extensionsToSave);
+            CommitWizardFileTypePage.saveExtensionMappings(extensionsToSave);
             operation.setModesForExtensionsForOneTime(extensionsNotToSave);
             
             final Map namesToSave= new HashMap();
             final Map namesNotToSave= new HashMap();
             
             fFileTypePage.getModesForNames(namesToSave, namesNotToSave);
-            saveNameMappings(namesToSave);
+            CommitWizardFileTypePage.saveNameMappings(namesToSave);
             operation.setModesForNamesForOneTime(namesNotToSave);
         }
         
@@ -332,34 +331,6 @@ public class CommitWizard extends ResizableWizard {
                 unadded.add(info);
         }
         return unadded;
-    }
-    
-    private static void saveExtensionMappings(Map modesToPersist) {
-        
-        final String [] extensions= new String [modesToPersist.size()];
-        final int [] modes= new int[modesToPersist.size()];
-        
-        int index= 0;
-        for (Iterator iter= modesToPersist.keySet().iterator(); iter.hasNext();) {
-            extensions[index]= (String) iter.next();
-            modes[index]= ((Integer)modesToPersist.get(extensions[index])).intValue();
-            ++index;
-        }
-        Team.getFileContentManager().addExtensionMappings(extensions, modes);
-    }
-    
-    private static void saveNameMappings(Map modesToPersist) {
-        
-        final String [] names= new String [modesToPersist.size()];
-        final int [] modes= new int[modesToPersist.size()];
-        
-        int index= 0;
-        for (Iterator iter= modesToPersist.keySet().iterator(); iter.hasNext();) {
-            names[index]= (String) iter.next();
-            modes[index]= ((Integer)modesToPersist.get(names[index])).intValue();
-            ++index;
-        }
-        Team.getFileContentManager().addNameMappings(names, modes);
     }
     
     private static boolean isAdded(IResource resource) throws CVSException {

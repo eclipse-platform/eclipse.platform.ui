@@ -120,4 +120,32 @@ public class CommitWizardFileTypePage extends WizardPage {
 		ResourceSyncInfo fileInfo = cvsFile.getSyncInfo();
 		return fileInfo != null ? fileInfo.getKeywordMode() : KSubstOption.fromFile(file);
     }
+    
+    public static void saveExtensionMappings(Map modesToPersist) {
+        
+        final String [] extensions= new String [modesToPersist.size()];
+        final int [] modes= new int[modesToPersist.size()];
+        
+        int index= 0;
+        for (Iterator iter= modesToPersist.keySet().iterator(); iter.hasNext();) {
+            extensions[index]= (String) iter.next();
+            modes[index]= ((Integer)modesToPersist.get(extensions[index])).intValue();
+            ++index;
+        }
+        Team.getFileContentManager().addExtensionMappings(extensions, modes);
+    }
+    
+    public static void saveNameMappings(Map modesToPersist) {
+        
+        final String [] names= new String [modesToPersist.size()];
+        final int [] modes= new int[modesToPersist.size()];
+        
+        int index= 0;
+        for (Iterator iter= modesToPersist.keySet().iterator(); iter.hasNext();) {
+            names[index]= (String) iter.next();
+            modes[index]= ((Integer)modesToPersist.get(names[index])).intValue();
+            ++index;
+        }
+        Team.getFileContentManager().addNameMappings(names, modes);
+    }
 }
