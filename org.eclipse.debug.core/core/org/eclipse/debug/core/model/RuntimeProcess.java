@@ -15,11 +15,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -66,7 +64,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * The monitor which listens for this runtime process' system process
 	 * to terminate.
 	 */
-	private ProcessMonitorJob fMonitor;
+	private ProcessMonitorThread fMonitor;
 	
 	/**
 	 * The streams proxy for this process
@@ -111,7 +109,8 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			fTerminated= false;
 		}
 		fStreamsProxy= createStreamsProxy();
-		fMonitor = new ProcessMonitorJob(this);
+		fMonitor = new ProcessMonitorThread(this);
+		fMonitor.start();
 		launch.addProcess(this);
 		fireCreationEvent();
 	}
@@ -203,7 +202,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			}
 			// clean-up
 			if (fMonitor != null) {
-				fMonitor.killJob();
+				fMonitor.killThread();
 				fMonitor = null;
 			}
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.terminate_failed"), null);		 //$NON-NLS-1$
@@ -336,7 +335,12 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Monitors a system process, waiting for it to terminate, and
 	 * then notifies the associated runtime process.
 	 */
-	class ProcessMonitorJob extends Job {
+	class ProcessMonitorThread extends Thread {
+		
+		/**
+		 * Whether the thread has been told to exit.
+		 */
+		protected boolean fExit;
 		/**
 		 * The underlying <code>java.lang.Process</code> being monitored.
 		 */
@@ -351,12 +355,22 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		 * The <code>Thread</code> which is monitoring the underlying process.
 		 */
 		protected Thread fThread;
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		
+		/**
+		 * A lock protecting access to <code>fThread</code>.
 		 */
-		public IStatus run(IProgressMonitor monitor) {
-			fThread = Thread.currentThread();
+		private final Object fThreadLock = new Object();
+
+		/**
+		 * @see Thread#run()
+		 */
+		public void run() {
+			synchronized (fThreadLock) {
+				if (fExit) {
+					return;
+				}
+				fThread = Thread.currentThread();
+			}
 			while (fOSProcess != null) {
 				try {
 					fOSProcess.waitFor();
@@ -369,20 +383,16 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				}
 			}
 			fThread = null;
-			return Status.OK_STATUS;
 		}
 
 		/**
-		 * Creates a new process monitor and starts monitoring the process
-		 * for termination.
+		 * Creates a new process monitor and starts monitoring the process for
+		 * termination.
 		 */
-		public ProcessMonitorJob(RuntimeProcess process) {
+		public ProcessMonitorThread(RuntimeProcess process) {
 			super(DebugCoreMessages.getString("ProcessMonitorJob.0")); //$NON-NLS-1$
-			setPriority(Job.INTERACTIVE);
-			setSystem(true);
 			fRuntimeProcess= process;
 			fOSProcess= process.getSystemProcess();
-			schedule();
 		}
 
 		/**
@@ -392,11 +402,13 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		 * case of an underlying process which has not informed this
 		 * monitor of its termination.
 		 */
-		protected void killJob() {
-			if (fThread == null) {
-				cancel();
-			} else {
-				fThread.interrupt();
+		protected void killThread() {
+			synchronized (fThreadLock) {
+				if (fThread == null) {
+					fExit = true;
+				} else {
+					fThread.interrupt();
+				}
 			}
 		}
 	}	
