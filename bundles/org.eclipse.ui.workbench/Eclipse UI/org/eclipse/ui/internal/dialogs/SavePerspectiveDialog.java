@@ -35,6 +35,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.activities.ws.ActivityViewerFilter;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
@@ -145,6 +146,7 @@ protected Control createDialogArea(Composite parent) {
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspectiveLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
+	list.addFilter(new ActivityViewerFilter());
 	list.setSorter(new ViewerSorter());
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
