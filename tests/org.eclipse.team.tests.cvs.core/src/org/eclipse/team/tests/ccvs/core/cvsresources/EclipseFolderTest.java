@@ -1,0 +1,95 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
+package org.eclipse.team.tests.ccvs.core.cvsresources;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.ccvs.core.ICVSRunnable;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
+import org.eclipse.team.tests.ccvs.core.EclipseTest;
+
+/**
+ * What does this class do?
+ */
+public class EclipseFolderTest extends EclipseTest {
+	public EclipseFolderTest() {
+		super();
+	}
+	
+	public EclipseFolderTest(String name) {
+		super(name);
+	}
+	
+	public static Test suite() {
+		TestSuite suite = new TestSuite();
+		suite.addTestSuite(EclipseFolderTest.class);
+		return new CVSTestSetup(suite);
+	}
+	
+	protected void assertChildrenHaveSync(IContainer root, final boolean hasSync) throws CoreException, CVSException {
+		root.accept(new IResourceVisitor() {
+			public boolean visit(IResource resource) throws CoreException {
+				try {
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					if(!cvsResource.isIgnored()) {
+						if(resource.getType()==IResource.FILE) {
+							assertTrue((cvsResource.getSyncInfo()!=null) == hasSync);
+						} else {
+							assertTrue((((ICVSFolder)cvsResource).getFolderSyncInfo()!=null) == hasSync);
+						}
+					}
+				} catch(CVSException e) {
+					throw new CoreException(e.getStatus());
+				}
+				return true;
+			}
+		});
+	}
+	
+	public void testUnmanageFolder() throws CoreException, TeamException {
+		IProject project = createProject("testUnmanageFolder_A", new String[] {"a.txt", "folder1/", "folder1/b.txt", "folder1/folder2/", "folder1/folder2/c.txt"});
+		ICVSFolder cvsProject = CVSWorkspaceRoot.getCVSFolderFor(project);
+		assertChildrenHaveSync(project, true);
+		
+		// test that unmanaging the project flushes sync info
+		cvsProject.unmanage(null);
+		assertChildrenHaveSync(project, false);
+		
+		final IProject projectB = createProject("testUnmanageFolder_B", new String[] {"a.txt", "folder1/", "folder1/b.txt", "folder1/folder2/", "folder1/folder2/c.txt"});
+		final ICVSFolder cvsProjectB = CVSWorkspaceRoot.getCVSFolderFor(projectB);
+		assertChildrenHaveSync(projectB, true);
+		
+		// test that unmanaging in a CVS runnable flushes too
+		cvsProjectB.run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+					try {
+						assertChildrenHaveSync(projectB, true);
+						cvsProjectB.unmanage(null);
+						assertChildrenHaveSync(projectB, false);
+					} catch(CoreException e) {
+						throw CVSException.wrapException(e);
+					}
+			}
+		}, null);		
+		assertChildrenHaveSync(projectB, false);
+	}
+}

@@ -37,6 +37,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.util.InfiniteSubProgressMonitor;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -149,7 +150,7 @@ public class UnmanageAction extends TeamAction {
 					monitor.setTaskName(Policy.bind("Unmanage.unmanaging"));
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+						IProgressMonitor subMonitor = new InfiniteSubProgressMonitor(monitor, 1000);
 						subMonitor.beginTask(null, 100);
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
@@ -158,7 +159,7 @@ public class UnmanageAction extends TeamAction {
 							IResource resource = providerResources[i];
 							ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
 							if(deleteContent) {
-								folder.unmanage();
+								folder.unmanage(Policy.subMonitorFor(subMonitor, 10));
 							}
 							RepositoryProvider.removeNatureFromProject((IProject)resource, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(subMonitor, 10));							
 							CVSDecorator.refresh(resource);

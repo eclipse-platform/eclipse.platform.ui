@@ -110,7 +110,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	/*
 	 * @see ICVSResource#unmanage()
 	 */
-	public void unmanage() throws CVSException {
+	public void unmanage(IProgressMonitor monitor) throws CVSException {
 		// do nothing
 	}
 

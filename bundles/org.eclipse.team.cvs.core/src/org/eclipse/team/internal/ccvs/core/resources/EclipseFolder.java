@@ -206,19 +206,29 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	/*
 	 * @see ICVSResource#unmanage()
 	 */
-	public void unmanage() throws CVSException {
-		recursiveUnmanage((IContainer) resource);
-		super.unmanage();
+	public void unmanage(IProgressMonitor monitor) throws CVSException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask("", 100);
+		run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				recursiveUnmanage((IContainer) resource, monitor);				
+			}
+		}, Policy.subMonitorFor(monitor, 99));
+		// unmanaged from parent
+		super.unmanage(Policy.subMonitorFor(monitor, 1));
 	}
 	
-	private static void recursiveUnmanage(IContainer container) throws CVSException {
+	private static void recursiveUnmanage(IContainer container, IProgressMonitor monitor) throws CVSException {
 		try {
-			EclipseSynchronizer.getInstance().deleteFolderSync(container);
+			monitor.beginTask("", 10);
+			monitor.subTask(container.getFullPath().toOSString());
+			EclipseSynchronizer.getInstance().deleteFolderSync(container);						
 			IResource[] members = container.members();
 			for (int i = 0; i < members.length; i++) {
+				monitor.worked(1);
 				IResource resource = members[i];
 				if (members[i].getType() != IResource.FILE) {
-					recursiveUnmanage((IContainer) resource);
+					recursiveUnmanage((IContainer) resource, monitor);
 				}
 			}
 		} catch (CoreException e) {

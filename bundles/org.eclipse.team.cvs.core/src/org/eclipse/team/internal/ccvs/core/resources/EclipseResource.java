@@ -8,7 +8,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.IIgnoreInfo;
@@ -235,7 +235,7 @@ abstract class EclipseResource implements ICVSResource {
 	/*
 	 * @see ICVSResource#unmanage()
 	 */
-	public void unmanage() throws CVSException {
+	public void unmanage(IProgressMonitor monitor) throws CVSException {
 		EclipseSynchronizer.getInstance().deleteResourceSync(resource);
 	}
 }

@@ -147,7 +147,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	public void unmanageResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
 		for (int i=0;i<resources.length;i++) {
-			CVSWorkspaceRoot.getCVSResourceFor(resources[i]).unmanage();
+			CVSWorkspaceRoot.getCVSResourceFor(resources[i]).unmanage(null);
 		}
 	}
 	

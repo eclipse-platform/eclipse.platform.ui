@@ -57,6 +57,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -113,6 +114,14 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @see IProjectNature#deconfigure()
 	 */
 	public void deconfigure() throws CoreException {
+		// when a nature is removed from the project, notify the synchronizer that
+		// we no longer need the sync info cached. This does not affect the actual CVS
+		// meta directories on disk, and will remain unless a client calls unmanage().
+		try {
+			EclipseSynchronizer.getInstance().flush(getProject(), true, null);
+		} catch(CVSException e) {
+			throw new CoreException(e.getStatus());
+		}
 	}
 	
 	/**
@@ -444,10 +453,10 @@ public class CVSTeamProvider extends RepositoryProvider {
 					if (info == null || info.isAdded()) {
 						// Delete the file if it's unmanaged or doesn't exist remotely
 						file.delete();
-						file.unmanage();
+						file.unmanage(null);
 					} else if (info.isDeleted()) {
 						// If deleted, null the sync info so the file will be refetched
-						file.unmanage();
+						file.unmanage(null);
 					}
 					subProgress.worked(1);
 				}

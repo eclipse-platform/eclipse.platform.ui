@@ -218,7 +218,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		// To make outgoing deletions incoming, the local will not exist but
 		// it is still important to unmanage (e.g. delete all meta info) for the
 		// deletion.
-		CVSWorkspaceRoot.getCVSResourceFor(getLocal()).unmanage();
+		CVSWorkspaceRoot.getCVSResourceFor(getLocal()).unmanage(null);
 	}
 	
 	/*
@@ -314,7 +314,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			try {
 				ICVSResource cvsResource = localSync.getCVSResource();
 				if(!isContainer() && cvsResource.isManaged()) {
-					cvsResource.unmanage();
+					cvsResource.unmanage(null);
 				}
 				return IRemoteSyncElement.IN_SYNC;
 			} catch(CVSException e) {

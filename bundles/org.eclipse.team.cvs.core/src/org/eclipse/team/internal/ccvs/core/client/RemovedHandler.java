@@ -51,7 +51,7 @@ class RemovedHandler extends ResponseHandler {
 		
 		// delete then unmanage the file
 		mFile.delete();
-		mFile.unmanage();
+		mFile.unmanage(null);
 	}
 }
 

@@ -100,7 +100,7 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 		try {
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 			if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getParent().isCVSFolder()) {
-				mFolder.unmanage();
+				mFolder.unmanage(null);
 				return true;
 			}
 		} catch (CVSException e) {
@@ -119,7 +119,7 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 			if (mFile.isManaged()) {
 				ResourceSyncInfo info = mFile.getSyncInfo();
 				if (info.isAdded()) {
-					mFile.unmanage();
+					mFile.unmanage(null);
 				} else {
 					mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.DELETED_PREFIX + info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
 				}
@@ -142,7 +142,7 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 					mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
 				} else if (info.isDirectory()) {
 					// XXX This is a gender change against the server! We should prevent this creation.
-					mFile.unmanage();
+					mFile.unmanage(null);
 				}
 			}
 		} catch (CVSException e) {
@@ -163,7 +163,7 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 			if (fromFile.isManaged()) {
 				fromInfo = fromFile.getSyncInfo();
 				if (fromInfo.isAdded()) {
-					fromFile.unmanage();
+					fromFile.unmanage(null);
 				} else {
 					fromFile.setSyncInfo(new ResourceSyncInfo(fromInfo.getName(), fromInfo.DELETED_PREFIX + fromInfo.getRevision(), fromInfo.getTimeStamp(), fromInfo.getKeywordMode(), fromInfo.getTag(), fromInfo.getPermissions()));
 				}

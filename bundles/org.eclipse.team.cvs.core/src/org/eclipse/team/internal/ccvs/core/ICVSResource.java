@@ -47,7 +47,7 @@ public interface ICVSResource {
 	 * resource. The only way a resource can become managed is by running the 
 	 * appropriate CVS commands (e.g. add/commit/update).
 	 */
-	public void unmanage() throws CVSException;
+	public void unmanage(IProgressMonitor monitor) throws CVSException;
 
 	/**
 	 * Answer whether the resource could be ignored because it is in the one of the 
