@@ -205,8 +205,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		super();
 	}
 	
-	/*
-	 * @see StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput)
+	/**
+	 * Overrides <code>StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput)</code>.
+	 * @deprecated use file encoding based version
 	 */
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
@@ -214,8 +215,19 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			setDocumentContent(document, file.getContents(false));
 			return true;
 		}
-		
 		return super.setDocumentContent(document, editorInput);
+	}
+	
+	/*
+	 * @see StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput, String)
+	 */
+	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
+		if (editorInput instanceof IFileEditorInput) {
+			IFile file= ((IFileEditorInput) editorInput).getFile();
+			setDocumentContent(document, file.getContents(false), encoding);
+			return true;
+		}
+		return super.setDocumentContent(document, editorInput, encoding);
 	}
 	
 	/*
@@ -316,10 +328,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			
 			IFileEditorInput input= (IFileEditorInput) element;
 			
-//			try {
+			try {
 			
-			InputStream stream= new ByteArrayInputStream(document.get().getBytes());
-//			InputStream stream= new ByteArrayInputStream(document.get().getBytes(ResourcesPlugin.getEncoding()));
+			InputStream stream= new ByteArrayInputStream(document.get().getBytes(ResourcesPlugin.getEncoding()));
 			IFile file= input.getFile();
 									
 				if (file.exists()) {
@@ -351,10 +362,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					}
 				}
 				
-//			} catch (IOException x) {
-//				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
-//				throw new CoreException(s);
-//			}
+			} catch (IOException x) {
+				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
+				throw new CoreException(s);
+			}
 			
 		} else {
 			super.doSaveDocument(monitor, element, document, overwrite);
@@ -375,13 +386,23 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
 			}
 			
-			IDocument d= createDocument(element);
+			IDocument d= null;
+			IStatus s= null;
+			
+			try {
+				d= createDocument(element);
+			} catch (CoreException x) {
+				s= x.getStatus();
+				d= new Document();
+			}
+			
 			IAnnotationModel m= createAnnotationModel(element);
 			FileSynchronizer f= new FileSynchronizer(input);
 			f.install();
 			
 			FileInfo info= new FileInfo(d, m, f);
 			info.fModificationStamp= computeModificationStamp(input.getFile());
+			info.fStatus= s;
 			
 			return info;
 		}
@@ -410,43 +431,47 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected void handleElementContentChanged(IFileEditorInput fileEditorInput) {
 		FileInfo info= (FileInfo) getElementInfo(fileEditorInput);
+		
+		IDocument document= new Document();
+		IStatus status= null;
+		
 		try {
-			
-			IDocument document= new Document();
-			setDocumentContent(document, fileEditorInput);
-			String newContent= document.get();
-			
-			if ( !newContent.equals(info.fDocument.get())) {
-				
-				// set the new content and fire content related events
-				fireElementContentAboutToBeReplaced(fileEditorInput);
-				
-				removeUnchangedElementListeners(fileEditorInput, info);
-				
-				info.fDocument.removeDocumentListener(info);
-				info.fDocument.set(newContent);
-				info.fCanBeSaved= false;
-				info.fModificationStamp= computeModificationStamp(fileEditorInput.getFile());
-				
-				addUnchangedElementListeners(fileEditorInput, info);
-				
-				fireElementContentReplaced(fileEditorInput);
-				
-			} else {
-				
-				removeUnchangedElementListeners(fileEditorInput, info);
-				
-				// fires only the dirty state related event
-				info.fCanBeSaved= false;
-				info.fModificationStamp= computeModificationStamp(fileEditorInput.getFile());
-				
-				addUnchangedElementListeners(fileEditorInput, info);
-				
-				fireElementDirtyStateChanged(fileEditorInput, false);
-			}
-			
+			setDocumentContent(document, fileEditorInput, info.fEncoding);
 		} catch (CoreException x) {
-			handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.updateContent")); //$NON-NLS-1$
+			status= x.getStatus();
+		}
+		
+		String newContent= document.get();
+		
+		if ( !newContent.equals(info.fDocument.get())) {
+			
+			// set the new content and fire content related events
+			fireElementContentAboutToBeReplaced(fileEditorInput);
+			
+			removeUnchangedElementListeners(fileEditorInput, info);
+			
+			info.fDocument.removeDocumentListener(info);
+			info.fDocument.set(newContent);
+			info.fCanBeSaved= false;
+			info.fModificationStamp= computeModificationStamp(fileEditorInput.getFile());
+			info.fStatus= status;
+			
+			addUnchangedElementListeners(fileEditorInput, info);
+			
+			fireElementContentReplaced(fileEditorInput);
+			
+		} else {
+			
+			removeUnchangedElementListeners(fileEditorInput, info);
+			
+			// fires only the dirty state related event
+			info.fCanBeSaved= false;
+			info.fModificationStamp= computeModificationStamp(fileEditorInput.getFile());
+			info.fStatus= status;
+			
+			addUnchangedElementListeners(fileEditorInput, info);
+			
+			fireElementDirtyStateChanged(fileEditorInput, false);
 		}
 	}
 	

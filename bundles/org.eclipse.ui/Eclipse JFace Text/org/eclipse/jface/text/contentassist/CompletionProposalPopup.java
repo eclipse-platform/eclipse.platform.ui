@@ -396,7 +396,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				if (fCounter != fInvocationCounter) return;
 				
 				int offset= fViewer.getSelectedRange().x;
-				ICompletionProposal[] proposals= computeFilteredProposals(offset);
+				ICompletionProposal[] proposals= (offset == -1 ? null : computeFilteredProposals(offset));
 				fFilterOffset= offset;
 				
 				if (proposals != null && proposals.length > 0)
@@ -421,6 +421,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		ICompletionProposal[] proposals= fComputedProposals;
 		if (offset > fFilterOffset)
 			proposals= fFilteredProposals;
+			
+		if (proposals == null)
+			return null;
 			
 		IDocument document= fViewer.getDocument();
 		int length= proposals.length;

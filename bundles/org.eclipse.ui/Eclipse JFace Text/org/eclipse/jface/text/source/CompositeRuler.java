@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -45,7 +46,7 @@ import org.eclipse.jface.text.Position;
  *
  * @see ITextViewer
  */
-public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, IVerticalRulerInfo {
+public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	
 	
 	/**
@@ -82,10 +83,97 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		}
 	};
 	
+	/**
+	 * A canvas that adds listeners to all its children.
+	 */
+	class CompositeRulerCanvas extends Canvas {
+		
+		private class ListenerInfo {
+			Listener listener;
+			int eventType;
+		};
+		
+		private List fCachedListeners= new ArrayList();
+		
+		/**
+		 * Creates a new composite ruler canvas.
+		 */
+		public CompositeRulerCanvas(Composite parent, int style) {
+			super(parent, style);
+		}
+		
+		/* 
+		 * @see Widget#addListener(int, Listener)
+		 */
+		public void addListener(int eventType, Listener listener) {
+			
+			super.addListener(eventType, listener);
+			
+			Control[] children= getChildren();
+			for (int i= 0; i < children.length; i++) {
+				if (children[i] != null && !children[i].isDisposed())
+					children[i].addListener(eventType, listener);
+			}
+			
+			ListenerInfo info= new ListenerInfo();
+			info.listener= listener;
+			info.eventType= eventType;
+			fCachedListeners.add(info);
+		}
+		
+		/*
+		 * @see Widget#removeListener(int, Listener)
+		 */
+		public void removeListener(int eventType, Listener listener) {
+			
+			int length= fCachedListeners.size();
+			for (int i= 0; i < length; i++) {
+				ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
+				if (listener == info.listener && eventType == info.eventType) {
+					fCachedListeners.remove(i);
+					break;
+				}
+			}
+			
+			Control[] children= getChildren();
+			for (int i= 0; i < children.length; i++) {
+				if (children[i] != null && !children[i].isDisposed())
+					children[i].removeListener(eventType, listener);
+			}
+			
+			super.removeListener(eventType, listener);
+		}
+		
+		/**
+		 * Tells this canvas that a child has been added.
+		 */
+		public void childAdded(Control child) {
+			if (child != null && !child.isDisposed()) {
+				int length= fCachedListeners.size();
+				for (int i= 0; i < length; i++) {
+					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
+					child.addListener(info.eventType, info.listener);
+				}
+			}
+		}
+		
+		/**
+		 * Tells this canvas that a child has been removed.
+		 */
+		public void childRemoved(Control child) {
+			if (child != null && !child.isDisposed()) {
+				int length= fCachedListeners.size();
+				for (int i= 0; i < length; i++) {
+					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
+					child.removeListener(info.eventType, info.listener);
+				}
+			}
+		}
+	};
+	
 	
 	private ITextViewer fTextViewer;
-	private Composite fComposite;
-	private List fMouseListeners= new ArrayList(2);
+	private CompositeRulerCanvas fComposite;
 	
 	private List fDecorators= new ArrayList(2);
 	private IAnnotationModel fModel;
@@ -103,16 +191,8 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	public void addDecorator(int index, IVerticalRulerColumn rulerColumn) {
 		fDecorators.add(index, rulerColumn);
 		if (fComposite != null && !fComposite.isDisposed()) {
-			
 			rulerColumn.createControl(this, fComposite);
-			
-			Control cc= rulerColumn.getControl();
-			Iterator e= fMouseListeners.iterator();
-			while (e.hasNext()) {
-				MouseListener listener= (MouseListener) e.next();
-				cc.addMouseListener(listener);
-			}
-			
+			fComposite.childAdded(rulerColumn.getControl());
 			layoutTextViewer();
 		}
 	}
@@ -121,8 +201,10 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		IVerticalRulerColumn column= (IVerticalRulerColumn) fDecorators.get(index);
 		fDecorators.remove(index);
 		Control cc= column.getControl();
-		if (cc != null && !cc.isDisposed())
+		if (cc != null && !cc.isDisposed()) {
+			fComposite.childRemoved(cc);
 			cc.dispose();
+		}
 		layoutTextViewer();
 	}
 	
@@ -153,7 +235,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		
 		fTextViewer= textViewer;
 		
-		fComposite= new Canvas(parent, SWT.NONE);
+		fComposite= new CompositeRulerCanvas(parent, SWT.NONE);
 		fComposite.setLayout(new RulerLayout());
 		
 		Iterator e= fDecorators.iterator();
@@ -162,7 +244,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			column.createControl(this, fComposite);
 		}
 		
-		fComposite.addDisposeListener(new DisposeListener() {
+		parent.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				fTextViewer= null;		
 			}
@@ -250,7 +332,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	 */
 	public int toDocumentLineNumber(int y_coordinate) {
 		
-		if (fTextViewer == null)
+		if (fTextViewer == null || y_coordinate == -1)
 			return -1;
 			
 		StyledText text= fTextViewer.getTextWidget();
@@ -263,44 +345,6 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		}
 		
 		return line;
-	}
-	
-	/*
-	 * @see IVerticalRulerInfo#addMouseListener
-	 */
-	public void addMouseListener(MouseListener listener) {
-		
-		fMouseListeners.add(listener);
-		
-		Iterator e= fDecorators.iterator();
-		while (e.hasNext()) {
-			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
-			Control control= column.getControl();
-			if (control != null && !control.isDisposed())
-				control.addMouseListener(listener);
-		}
-	}
-	
-	/*
-	 * @see IVerticalRulerInfo#addMouseListener
-	 */
-	public void removeMouseListener(MouseListener listener) {
-		
-		int size= fMouseListeners.size();
-		for (int i= 0; i < size; i++) {
-			if (listener == fMouseListeners.get(i)) {
-				fMouseListeners.remove(i);
-				break;
-			}
-		}
-		
-		Iterator e= fDecorators.iterator();
-		while (e.hasNext()) {
-			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
-			Control control= column.getControl();
-			if (control != null && !control.isDisposed())
-				control.removeMouseListener(listener);
-		}
 	}
 	
 	/**

@@ -30,8 +30,9 @@ import org.eclipse.jface.text.ITextViewer;
  * by <code>VerticalRuler</code>.
  *  
  * @see ITextViewer
+ * @see IVerticalRulerInfo
  */
-public interface IVerticalRuler  {
+public interface IVerticalRuler extends IVerticalRulerInfo {
 
 	/**
 	 * Associates an annotation model with this ruler.
@@ -66,35 +67,4 @@ public interface IVerticalRuler  {
 	 * @return the ruler's SWT control
 	 */
 	Control createControl(Composite parent, ITextViewer textViewer);
-	
-	/**
-	 * Returns the ruler's SWT control.
-	 *
-	 * @return the ruler's SWT control
-	 */
-	Control getControl();
-	
-	/**
-	 * Returns the line number of the last mouse button activity.
-	 * Based on the input document of the connected text viewer.
-	 *
-	 * @return the line number of the last mouse button activity
-	 */
-	int getLineOfLastMouseButtonActivity();
-	
-	/**
-	 * Translates a y-coordinate of the ruler's SWT control into
-	 * the according line number of the document of the connected text viewer.
-	 *
-	 * @param y_coordinate a y-coordinate of the ruler's SWT control
-	 * @return the line number of that coordinate 
-	 */
-	int toDocumentLineNumber(int y_coordinate);
-	
-	/**
-	 * Returns the width of this ruler's control.
-	 *
-	 * @return the width of this ruler's control
-	 */
-	int getWidth();
 }

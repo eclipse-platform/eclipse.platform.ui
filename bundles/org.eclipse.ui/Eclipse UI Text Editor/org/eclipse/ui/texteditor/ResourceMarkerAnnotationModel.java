@@ -152,4 +152,14 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	protected IMarker[] retrieveMarkers() throws CoreException {
 		return fResource.findMarkers(IMarker.MARKER, true, IResource.DEPTH_ZERO);
 	}
+
+	/**
+	 * Returns the resource serving as the source of markers for this annotation model.
+	 * 
+	 * @return the resource serving as the source of markers for this annotation model
+	 */
+	protected IResource getResource() {
+		return fResource;
+	}
+
 }

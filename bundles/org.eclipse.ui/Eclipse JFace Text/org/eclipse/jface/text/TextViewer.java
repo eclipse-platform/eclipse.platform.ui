@@ -246,93 +246,27 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	};
 	
 	/**
-	 * Internal document listener and hover reset timer.
+	 * Internal document listener.
 	 */
-	class DocumentListener implements IDocumentListener, Runnable {
-		
-		private Object fSyncPoint= new Object();
-		private Thread fThread;
-		private boolean fIsReset= false;
+	class DocumentListener implements IDocumentListener {
 		
 		/*
 		 * @see IDocumentListener#documentAboutToBeChanged
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
-			if (e.getDocument() == getVisibleDocument()) {
+			if (e.getDocument() == getVisibleDocument())
 				fWidgetCommand.setEvent(e);
-				if (fTextHoverManager != null && (fThread == null || !fThread.isAlive())) {
-					fThread= new Thread(this, JFaceTextMessages.getString("TextViewer.timer.name")); //$NON-NLS-1$
-					fThread.start();
-				}
-			}
 		}
 		
 		/*
 		 * @see IDocumentListener#documentChanged
 		 */
 		public void documentChanged(final DocumentEvent e) {
-			if (fWidgetCommand.event == e) {
-				
+			if (fWidgetCommand.event == e)
 				updateTextListeners(fWidgetCommand);
-				
-				if (fTextHoverManager != null) {
-					synchronized (fSyncPoint) {
-						fIsReset= true;
-					}
-					fTextHoverManager.setEnabled(false);
-				}
-			}
-		}
-		
-		/*
-		 * @see IRunnable#run
-		 */
-		public void run() {
-			try {
-				while (true) {
-					
-					synchronized (fSyncPoint) {
-						fSyncPoint.wait(1500);
-						if (fIsReset) {
-							fIsReset= false;
-							continue;
-						}
-					}
-					
-					break;
-				}
-			} catch (InterruptedException e) {
-			}
-			
-			fThread= null;
-			
-			if (fTextHoverManager != null) {
-				Control c= getControl();
-				if (c != null && !c.isDisposed()) {
-					Display d= c.getDisplay();
-					if (d != null) {
-						d.asyncExec(new Runnable() {
-							public void run() {
-								if (fTextHoverManager != null)
-									fTextHoverManager.setEnabled(true);
-							}
-						});
-					}
-				}
-			}
-		}
-		
-		/**
-		 * Stops the running hover timer thread.
-		 */
-		public void stop() {
-			if (fThread != null) {
-				if (fThread.isAlive())
-					fThread.interrupt();
-				fThread= null;
-			}
 		}
 	};
+	
 	
 	/**
 	 * Internal verify listener.
@@ -777,12 +711,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	
 		
 	/** ID for originators of view port changes */
-	protected static final int SCROLLER=	1;
-	protected static final int MOUSE=		2;
+	protected static final int SCROLLER=		1;
+	protected static final int MOUSE=			2;
 	protected static final int MOUSE_END=	3;
-	protected static final int KEY=		4;
-	protected static final int RESIZE=		5;
-	protected static final int INTERNAL=	6;
+	protected static final int KEY=				4;
+	protected static final int RESIZE=			5;
+	protected static final int INTERNAL=		6;
 		
 	/** Internal name of the position category used selection preservation during shift */
 	protected static final String SHIFTING= "__TextViewer_shifting"; //$NON-NLS-1$
@@ -1025,10 +959,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			fTextHoverManager= null;
 		}
 		
-		if (fDocumentListener != null) {
-			fDocumentListener.stop();
+		if (fDocumentListener != null)
 			fDocumentListener= null;
-		}
 		
 		if (fVisibleDocument instanceof ChildDocument) {
 			ChildDocument child = (ChildDocument) fVisibleDocument;
@@ -2068,7 +2000,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			return new Region(p.getOffset(), p.getLength());
 		}		
 		
-		return new Region(0, document.getLength());
+		return new Region(0, document == null ? 0 : document.getLength());
 	}
 		
 	/*

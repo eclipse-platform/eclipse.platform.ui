@@ -95,6 +95,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -684,13 +685,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	};
 	
-	private final String fPositionLabelError= EditorMessages.getString("Editor.statusline.position.error.label"); //$NON-NLS-1$
+	protected final String fErrorLabel= EditorMessages.getString("Editor.statusline.error.label"); //$NON-NLS-1$
 	private final String fPositionLabelPattern= EditorMessages.getString("Editor.statusline.position.pattern"); //$NON-NLS-1$
 	private final PositionLabelValue fLineLabel= new PositionLabelValue();
 	private final PositionLabelValue fColumnLabel= new PositionLabelValue();
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
 
-	
 	
 	
 	
@@ -1259,13 +1259,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Control rulerControl= fVerticalRuler.getControl();
 		fRulerContextMenu= manager.createContextMenu(rulerControl);
 		rulerControl.setMenu(fRulerContextMenu);
-		
-		if (fVerticalRuler instanceof IVerticalRulerInfo) {
-			IVerticalRulerInfo info= (IVerticalRulerInfo) fVerticalRuler;
-			info.addMouseListener(getRulerMouseListener());
-		} else {
-			rulerControl.addMouseListener(getRulerMouseListener());
-		}
+		rulerControl.addMouseListener(getRulerMouseListener());
 		
 		if (fRulerContextMenuId != null)
 			getSite().registerContextMenu(fRulerContextMenuId, manager, getSelectionProvider());
@@ -2591,46 +2585,26 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		
-		if (isEditable()) {
-			menu.add(new Separator(ITextEditorActionConstants.GROUP_UNDO));
-			addAction(menu, ITextEditorActionConstants.UNDO);
-			addAction(menu, ITextEditorActionConstants.REDO);
-			addAction(menu, ITextEditorActionConstants.REVERT_TO_SAVED);			
-		}
-		
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_COPY));
-		if (isEditable()) {
-			addAction(menu, ITextEditorActionConstants.CUT);
-			addAction(menu, ITextEditorActionConstants.COPY);
-			addAction(menu, ITextEditorActionConstants.PASTE);
-			addAction(menu, ITextEditorActionConstants.SELECT_ALL);
-		} else {
-			addAction(menu, ITextEditorActionConstants.COPY);
-			addAction(menu, ITextEditorActionConstants.SELECT_ALL);
-		}
-		
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_UNDO));
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_COPY));		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_PRINT));
-		
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
-		addAction(menu, ITextEditorActionConstants.SHIFT_RIGHT);
-		addAction(menu, ITextEditorActionConstants.SHIFT_LEFT);
-		
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_FIND));
-		addAction(menu, ITextEditorActionConstants.FIND);
-		addAction(menu, ITextEditorActionConstants.GOTO_LINE);
-		
-		String label= EditorMessages.getString("Editor.AddMenu.label"); //$NON-NLS-1$
-		MenuManager submenu= new MenuManager(label, ITextEditorActionConstants.GROUP_ADD);
-		addAction(submenu, ITextEditorActionConstants.BOOKMARK);
-		addAction(submenu, ITextEditorActionConstants.ADD_TASK);
-		menu.add(submenu);
-		
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));		
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_FIND));	
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_ADD));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_SAVE));
-		if (isEditable())
-			addAction(menu, ITextEditorActionConstants.SAVE);
-		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
+		
+		if (isEditable()) {
+			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.CUT);
+			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.COPY);
+			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.PASTE);
+			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.SELECT_ALL);
+		} else {
+			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.COPY);
+			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.SELECT_ALL);
+		}
+
 	}
 		
 	/*
@@ -2647,8 +2621,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fIncrementalFindTarget == null) {
 				IEditorActionBarContributor contributor= getEditorSite().getActionBarContributor();
 				if (contributor instanceof EditorActionBarContributor) {
-					IStatusLineManager manager= ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
-					fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
+					IActionBars actionBars= ((EditorActionBarContributor) contributor).getActionBars();
+					if (actionBars != null) {
+						IStatusLineManager manager= actionBars.getStatusLineManager();
+						fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
+					}
 				}
 			}
 			return fIncrementalFindTarget;
@@ -2895,24 +2872,35 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param category
 	 */
 	protected void updateStatusField(String category) {
-		if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION.equals(category)) {
-			
-			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
-			if (field != null)
-				field.setText(getCursorPosition());
 		
-		} else if (ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE.equals(category)) {
+		if (category == null)
+			return;
 			
-			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
-			if (field != null)
-				field.setText(isEditorInputReadOnly() ? fReadOnlyLabel : fWritableLabel);
-		
-		} else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category)) {
+		IStatusField field= getStatusField(category);
+		if (field != null) {
+	
+			String text= null;
 			
-			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE);
-			if (field != null)
-				field.setText(isInInsertMode() ? fInsertModeLabel : fOverwriteModeLabel);
-		}	
+			if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION.equals(category))
+				text= getCursorPosition();
+			else if (ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE.equals(category))
+				text= isEditorInputReadOnly() ? fReadOnlyLabel : fWritableLabel;
+			else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category))
+				text= isInInsertMode() ? fInsertModeLabel : fOverwriteModeLabel;
+			
+			field.setText(text == null ? fErrorLabel : text);
+		}
+	}
+	
+	/**
+	 * Updates all status fields.
+	 */
+	protected void updateStatusFields() {
+		if (fStatusFields != null) {
+			Iterator e= fStatusFields.keySet().iterator();
+			while (e.hasNext())
+				updateStatusField((String) e.next());
+		}
 	}
 	
 	/**
@@ -2921,6 +2909,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @return a description of the cursor position
 	 */
 	protected String getCursorPosition() {
+		
+		if (fSourceViewer == null)
+			return fErrorLabel;
+		
 		StyledText styledText= fSourceViewer.getTextWidget();
 		
 		int offset= fSourceViewer.getVisibleRegion().getOffset();
@@ -2945,7 +2937,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return MessageFormat.format(fPositionLabelPattern, fPositionLabelPatternArguments);
 			
 		} catch (BadLocationException x) {
-			return fPositionLabelError;
+			return fErrorLabel;
 		}
 	}
 	

@@ -50,6 +50,10 @@ public class GotoLineAction extends TextEditorAction {
 	class NumberValidator implements IInputValidator {
 		
 		public String isValid(String input) {
+			
+			if (input == null || input.length() == 0)
+				return " "; //$NON-NLS-1$
+						
 			try {
 				int i= Integer.parseInt(input);
 				if (i <= 0 || fLastLine < i)
@@ -59,7 +63,7 @@ public class GotoLineAction extends TextEditorAction {
 				return fBundle.getString(fPrefix + "dialog.invalid_input"); //$NON-NLS-1$
 			}
 			
-			return ""; //$NON-NLS-1$
+			return null;
 		}
 	};
 	
@@ -142,32 +146,33 @@ public class GotoLineAction extends TextEditorAction {
 		try {
 			
 			ITextEditor editor= getTextEditor();
-
+			
+			if (editor == null)
+				return;
 			
 			IDocumentProvider docProvider= editor.getDocumentProvider();
-			ISelectionProvider selProvider= editor.getSelectionProvider();
-			ITextSelection selection= (ITextSelection) selProvider.getSelection();		
+			if (docProvider == null)
+				return;
 			
 			IDocument document= docProvider.getDocument(editor.getEditorInput());
+			if (document == null)
+				return;
+			
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
-		
+			
 			String title= fBundle.getString(fPrefix + "dialog.title"); //$NON-NLS-1$
 			String message= MessageFormat.format(fBundle.getString(fPrefix + "dialog.message"), new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
-			String value= Integer.toString(selection.getStartLine() + 1);
 			
-			/*
-			 * 1GIJZOO: ITPSRCEDIT:ALL - Gotodialog's edit field has no initial focus
-			 */
-			GotoLineDialog d= new GotoLineDialog(editor.getSite().getShell(), title, message, value, new NumberValidator());
-			d.open();
-			
-			try {
-				int line= Integer.parseInt(d.getValue());
-				gotoLine(line - 1);
-			} catch (NumberFormatException x) {
+			GotoLineDialog d= new GotoLineDialog(editor.getSite().getShell(), title, message, "", new NumberValidator()); //$NON-NLS-1$
+			if (d.open() == d.OK) {
+				try {
+					int line= Integer.parseInt(d.getValue());
+					gotoLine(line - 1);
+				} catch (NumberFormatException x) {
+				}
 			}
+			
 		} catch (BadLocationException x) {
-			return;
 		}
 	}
 }

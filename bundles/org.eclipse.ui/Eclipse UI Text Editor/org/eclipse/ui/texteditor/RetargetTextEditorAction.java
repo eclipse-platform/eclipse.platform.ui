@@ -52,6 +52,26 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	}
 	
 	/**
+	 * Creates a new action. The action configures its initial visual 
+	 * representation from the given resource bundle. If this action's
+	 * wrapped action is set to <code>null</code> it also uses the 
+	 * information in the resource bundle. The action gets the given
+	 * action id.
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   <code>null</code> if none
+	 * @param actionId the action id
+	 * @see ResourceAction#ResourceAction
+	 */
+	public RetargetTextEditorAction(ResourceBundle bundle, String prefix, String actionId) {
+		super(bundle, prefix);
+		fDefaultText= getText();
+		setId(actionId);
+	}
+	
+	/**
 	 * Updates to the changes of the underlying action.
 	 *
 	 * @param event the change event describing the state change

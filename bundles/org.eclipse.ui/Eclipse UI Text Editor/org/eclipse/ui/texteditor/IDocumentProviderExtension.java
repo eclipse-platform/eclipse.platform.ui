@@ -6,6 +6,7 @@ package org.eclipse.ui.texteditor;
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 
 
 /**
@@ -78,5 +79,9 @@ public interface IDocumentProviderExtension {
 	 * @param element the element
 	 */
 	void setCanSaveDocument(Object element);
+	
+	/**
+	 * Returns the status of the given element.
+	 */
+	IStatus getStatus(Object element);
 }
-

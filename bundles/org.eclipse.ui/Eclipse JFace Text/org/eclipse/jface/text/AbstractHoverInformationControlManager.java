@@ -17,6 +17,7 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 
 /**
@@ -41,6 +42,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		private IInformationControl fInformationControl;
 		/** The subject area */
 		private Rectangle fSubjectArea;
+		/** The restarter */
+		private Restarter fRestarter= new Restarter();
 		
 		/**
 		 * Creates a new information control closer.
@@ -84,6 +87,14 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see IInformationControlCloser#stop()
 		 */
 		public void stop() {
+			stop(false);
+		}
+		
+		/**
+		 * Stops the information control and if <code>delayRestart</code> is set
+		 * allows restart only after a certain delay.
+		 */
+		protected void stop(boolean delayRestart) {
 			
 			if (fInformationControl != null)
 				fInformationControl.setVisible(false);
@@ -96,7 +107,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeKeyListener(this);
 			}
 			
-			setEnabled(true);
+			fRestarter.start(fSubjectControl, delayRestart);
 		}
 		
 		/*
@@ -158,9 +169,99 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see KeyListener#keyPressed(KeyEvent)
 		 */
 		public void keyPressed(KeyEvent event) {
-			stop();
+			stop(true);
 		}
 	};
+	
+	
+	/**
+	 * Hover restarter.
+	 */
+	class Restarter implements Runnable, KeyListener {
+		
+		private Object fSyncPoint= new Object();
+		private Thread fThread;
+		private boolean fIsReset= false;
+		private Control fControl;
+		
+		
+		public Restarter() {
+		}
+		
+		/**
+		 * Starts this restarted on the given control.
+		 * @param control the control to watch
+		 * @param delayRestart indicates whether the restart should be delayed
+		 */
+		public void start(Control control, boolean delayRestart) {
+			
+			if (!delayRestart) {
+				setEnabled(true);
+				return;
+			}
+			
+			fControl= control;
+			fControl.addKeyListener(this);
+			
+			fThread= new Thread(this, JFaceTextMessages.getString("AbstractHoverInformationControlManager.hover.restarter")); //$NON-NLS-1$
+			fThread.setDaemon(true);
+			fThread.start();
+		}
+		
+		/*
+		 * @see KeyListener#keyPressed(KeyEvent)
+		 */
+		public void keyPressed(KeyEvent e) {
+			synchronized (fSyncPoint) {
+				fIsReset= true;
+			}
+		}
+
+		/*
+		 * @see KeyListener#keyReleased(KeyEvent)
+		 */
+		public void keyReleased(KeyEvent e) {
+		}
+		
+		/*
+		 * @see IRunnable#run
+		 */
+		public void run() {
+			try {
+				while (true) {
+					
+					synchronized (fSyncPoint) {
+						fSyncPoint.wait(1500);
+						if (fIsReset) {
+							fIsReset= false;
+							continue;
+						}
+					}
+					
+					break;
+				}
+			} catch (InterruptedException e) {
+			}
+			
+			fThread= null;
+			
+			if (fControl != null && !fControl.isDisposed()) {
+				Display d= fControl.getDisplay();
+				if (d != null) {
+					d.asyncExec(new Runnable() {
+						public void run() {
+							if (fControl != null && !fControl.isDisposed()) {
+								fControl.removeKeyListener(Restarter.this);
+								fControl= null;
+								setEnabled(true);
+							}
+						}
+					});
+				}
+			}
+		}
+	};
+	
 	
 	/**
 	 * The mouse tracker to be installed on the manager's subject control.
@@ -171,10 +272,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		private final static int EPSILON= 3;
 		
 		/** Reset time of mouse hover location. */
-		private final static int RESET= 600;
+		private final static int RESET= 700;
 		
 		/**
-		 * Resets the hover event location of nothing happend
+		 * Resets the hover event location if nothing happend
 		 * since the timer has been started.
 		 */
 		private class Reset implements Runnable {
@@ -188,7 +289,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			public void run() {
 				if (fStartTicket == fTicket && fHoverEventLocation != null) {
 					fHoverEventLocation.x= -1;
-					fHoverEventLocation.y= -1;
+					fHoverEventLocation.y= -1;					
 				}
 			}
 		};

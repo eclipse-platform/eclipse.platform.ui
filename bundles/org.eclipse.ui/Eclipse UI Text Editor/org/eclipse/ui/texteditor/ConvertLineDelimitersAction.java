@@ -19,13 +19,11 @@ import org.eclipse.jface.text.IRegion;
 /**
  * An action to convert line delimiters of a text editor document to a particular line delimiter.
  */
-public class ConvertLineDelimitersAction extends TextEditorAction implements IDocumentListener {
+public class ConvertLineDelimitersAction extends TextEditorAction {
 
 	/** The target line delimiter. */
 	private final String fLineDelimiter;
 	
-	private boolean fInitialized;
-
 	/**
 	 * Creates a line delimiter conversion action.
 	 * 
@@ -158,10 +156,13 @@ public class ConvertLineDelimitersAction extends TextEditorAction implements IDo
 			return null;
 
 		IDocumentProvider documentProvider= editor.getDocumentProvider();
+		if (documentProvider == null)
+			return null;
+		
 		return documentProvider.getDocument(editor.getEditorInput());				
 	}
 
-	private static boolean usesLineDelimiterExclusively(IDocument document, String lineDelimiter) throws BadLocationException {
+	private static boolean usesLineDelimiterExclusively(IDocument document, String lineDelimiter) {
 
 		try {
 			final int lineCount= document.getNumberOfLines();
@@ -172,7 +173,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction implements IDo
 			}
 
 		} catch (BadLocationException e) {
-			throw e;
+			return false;
 		}
 		
 		return true;
@@ -204,56 +205,28 @@ public class ConvertLineDelimitersAction extends TextEditorAction implements IDo
 		
 		return null;
 	}
+
+	private boolean doEnable() {
+			ITextEditor editor= getTextEditor();
+			if (editor == null)
+				return false;
+
+			if (editor instanceof ITextEditorExtension && ((ITextEditorExtension) editor).isEditorInputReadOnly())
+				return false;
+
+			IDocument document= getDocument();
+			if (document == null || usesLineDelimiterExclusively(document, fLineDelimiter))
+				return false;
+				
+			return isEnabled();
+	}
 	
 	/*
 	 * @see IUpdate#update()
 	 */
 	public void update() {
 		super.update();
-
-		try {
-			IDocument document= getDocument();
-			setEnabled(isEnabled() && document != null && !usesLineDelimiterExclusively(document, fLineDelimiter));
-			
-		} catch (BadLocationException e) {
-		}
+//		setEnabled(doEnable());	
 	}	
-
-	/*
-	 * @see TextEditorAction#setEditor(ITextEditor)
-	 */
-	public void setEditor(ITextEditor editor) {
-		IDocument document= getDocument();
-		if (document != null)
-			document.removeDocumentListener(this);
-		
-		super.setEditor(editor);
-
-		document= getDocument();
-		if (document != null)
-			document.addDocumentListener(this);
-	}
-
-	/*
-	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-	 */
-	public void documentAboutToBeChanged(DocumentEvent event) {
-	}
-
-	/*
-	 * @see IDocumentListener#documentChanged(DocumentEvent)
-	 */
-	public void documentChanged(DocumentEvent event) {
-
-		IDocument document= getDocument();
-
-		// detach from document if no longer connected to editor
-		if (!event.getDocument().equals(document)) {
-			event.getDocument().removeDocumentListener(this);
-			return;
-		}
-
-		update();		
-	}
 
 }

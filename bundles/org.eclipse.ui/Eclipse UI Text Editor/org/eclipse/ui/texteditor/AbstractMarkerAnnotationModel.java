@@ -492,9 +492,6 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 
 		Assert.isTrue(fDocument == document);
 		
-		/*
-		 * 1GFBE1X: ITPSRCEDIT:ALL - Marker are not deleted on save
-		 */
 		if (fAnnotations.size() == 0 && fDeletedAnnotations.size() == 0)
 			return;
 			

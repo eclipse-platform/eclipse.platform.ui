@@ -135,12 +135,17 @@ public class Position {
 			return false;
 			
 		int end= offset + length;
-		int myEnd= this.offset + this.length;
+		int thisEnd= this.offset + this.length;
 		
-		if (length > 0)
-			return this.offset < end && offset < myEnd;
+		if (length > 0) {
+			if (this.length > 0)
+				return this.offset < end && offset < thisEnd;
+			return  offset <= this.offset && this.offset < end;
+		}
 		
-		return this.offset <= offset && offset < myEnd;
+		if (this.length > 0)
+			return this.offset <= offset && offset < thisEnd;
+		return this.offset == offset;
 	}
 	
 	/**

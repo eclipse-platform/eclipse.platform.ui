@@ -53,7 +53,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * 
 	 * @param id the item's id
 	 */
-	StatusLineContributionItem(String id) {
+	public StatusLineContributionItem(String id) {
 		super(id);
 	}
 	

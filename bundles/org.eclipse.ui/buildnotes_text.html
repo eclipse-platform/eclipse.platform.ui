@@ -14,7 +14,41 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020508
+<p><br>Eclipse SDK Build 20020514
+<h2>
+Breaking API changes</h2>
+IVerticalRulerInfo.addMouseListener/removeMouseListener have been removed
+again. The vertical ruler now provides a control that shares its listeners
+with its children.
+<p>IDocumentProviderExtension.getStatus(Object element) returns an IStatus
+connected with the given element. The status can be used to relate any
+relevant kind of status information with an element for which a provider
+manages a document.
+<h2>
+Other highlights</h2>
+Introduced a StatusTextEditor. The status text editor checks the status
+flag managed for its input element by the editor' document provider. If
+the status is not-OK, a different control is shown. By default an InfoForm
+is shown. Subclasses can change what is shown or subclass InfoForm.
+<p>StorageDocumentProvider and FileDocumentProvider honor the workbench's
+encoding settings. In addition, encoding support is provided by standard
+text editor. File can be viewed using different encodings. Save always
+uses the workbench's encoding setting. Custom editors can leverage the
+support by including the EncodingActionGroup into their menus. The encoding
+support uses the newly introduced status text editor.
+<p>Text hover timeout when typing has been imporved. It's now always 1500ms.
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+See bugzilla.
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<br>&nbsp;
+<br>&nbsp;
+<p>Eclipse SDK Build 20020508
 <h2>
 Breaking API changes</h2>
 
@@ -38,10 +72,6 @@ Performance changes to the reconciling mechanism in JFace Text.</li>
 <li>
 Changes in handling read only files: All modifying text actions are disabled
 by default.</li>
-
-<li>
-Changes in applying text styles and colors to the editor's text widget.
-Leverage SWT support provided with this build.</li>
 </ul>
 
 <h2>

@@ -309,6 +309,7 @@ abstract public class AbstractInformationControlManager {
 	 * Sets the enable state of this manager.
 	 * 
 	 * @param enabled the enable state
+	 * @deprecated visibility will be changed to protected
 	 */
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;

@@ -21,8 +21,12 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.util.Assert;
 
+import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 
 
@@ -53,6 +57,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			public IAnnotationModel fModel;
 			/** Has element state been validated */
 			public boolean fIsStateValidated;
+			/** The status of this element */
+			public IStatus fStatus;
 			
 			
 			/**
@@ -111,14 +117,24 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Indicates whether this provider should behave as described in
 	 * use case 5 of http://bugs.eclipse.org/bugs/show_bug.cgi?id=10806.
 	 */ 
-	static final boolean PR10806_UC5_ENABLED= false;
+	static final protected boolean PR10806_UC5_ENABLED= false;
 	
 	/**
 	 * Indicates whether this provider should behave as described in
 	 * http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469
 	 * Notes: This contradicts <code>PR10806_UC5_ENABLED</code>.
 	 */
-	static final boolean PR14469_ENABLED= true;
+	static final protected boolean PR14469_ENABLED= true;
+	
+	/**
+	 * Constant for representing an ok status.
+	 */
+	static final protected IStatus STATUS_OK= new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "OK", null);
+	
+	/**
+	 * Constant for representing an error status.
+	 */
+	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.INFO, "ERROR", null);
 	
 	
 	/** Information of all connected elements */
@@ -261,14 +277,24 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			info= createElementInfo(element);
 			if (info == null) 
 				info= new ElementInfo(null, null);
-			
+								
 			info.fElement= element;
 			
 			addUnchangedElementListeners(element, info);
 			
 			fElementInfoMap.put(element, info);
+			if (fElementInfoMap.size() == 1)
+				connected();
 		}	
 		++ info.fCount;		
+	}
+	
+	/**
+	 * This hook method is called when this provider starts managing documents for 
+	 * elements. I.e. it is called when the first element gets connected to this provider.
+	 * Subclasses may extend.
+	 */
+	protected void connected() {
 	}
 	
 	/*
@@ -286,10 +312,20 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			removeUnchangedElementListeners(element, info);
 			disposeElementInfo(element, info);
 			
+			if (fElementInfoMap.size() == 0)
+				disconnected();
+			
 		} else
 		 	-- info.fCount;
-	}		
+	}
 	
+	/**
+	 * This hook method is called when this provider stops managing documents for
+	 * element. I.e. it is called when the last element gets disconnected from this provider.
+	 * Subcalles may extend.
+	 */
+	protected void disconnected() {
+	}
 	
 	/*
 	 * @see IDocumentProvider#getDocument
@@ -347,13 +383,26 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			return;
 			
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
-		if (info != null && info.fCanBeSaved) {
-			IDocument original= createDocument(element);
+		if (info != null) {
+			
+			IDocument original= null;
+			IStatus status= null;
+			
+			try {
+				original= createDocument(element);
+			} catch (CoreException x) {
+				status= x.getStatus();
+			}
+			
+			info.fStatus= status;			
+			
 			if (original != null) {
 				fireElementContentAboutToBeReplaced(element);
 				info.fDocument.set(original.get());
-				info.fCanBeSaved= false;
-				addUnchangedElementListeners(element, info);
+				if (info.fCanBeSaved) {
+					info.fCanBeSaved= false;
+					addUnchangedElementListeners(element, info);
+				}
 				fireElementContentReplaced(element);
 			}
 		}
@@ -632,5 +681,19 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				l.elementStateValidationChanged(element, isStateValidated);
 			}
 		}
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#getStatus(Object)
+	 */
+	public IStatus getStatus(Object element) {
+		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		if (info != null) {
+			if (info.fStatus != null)
+				return info.fStatus;
+			return (info.fDocument == null ? STATUS_ERROR : STATUS_OK);
+		}
+		
+		return STATUS_ERROR;
 	}
 }

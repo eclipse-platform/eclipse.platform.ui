@@ -43,7 +43,7 @@ import org.eclipse.jface.text.TextEvent;
  *
  * @see ITextViewer
  */
-public final class VerticalRuler implements IVerticalRuler, IVerticalRulerInfo {
+public final class VerticalRuler implements IVerticalRuler {
 	
 	/**
 	 * Internal listener class.

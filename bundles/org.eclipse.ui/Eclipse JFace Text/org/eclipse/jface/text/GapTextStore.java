@@ -147,7 +147,7 @@ public class GapTextStore implements ITextStore {
 		if (fContent == null)
 			return ""; //$NON-NLS-1$
 		
-		if (end < fGapStart)
+		if (end <= fGapStart)
 			return new String(fContent, offset, length);
 
 		if (fGapStart < offset) {

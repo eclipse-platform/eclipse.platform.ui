@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 /**
  * Shareable document provider specialized for <code>IStorage</code>s.
  */
-public class StorageDocumentProvider extends AbstractDocumentProvider {
+public class StorageDocumentProvider extends AbstractDocumentProvider implements IStorageDocumentProvider {
 	
 	
 	/**
@@ -50,11 +50,21 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		public boolean fIsReadOnly= true;
 		/** The flag representing the need to update the cached flag */
 		public boolean fUpdateCache= true;
+		/** The encoding used to create the document from the storage or <code>null</code> for workbench encoding */
+		public String fEncoding;
 		
 		public StorageInfo(IDocument document, IAnnotationModel model) {
 			super(document, model);
+			fEncoding= null;
 		}
 	};
+	
+	/**
+	 * Creates a new document provider.
+	 */
+	public StorageDocumentProvider() {
+		super();
+	}
 	
 	/**
 	 * Intitializes the given document with the given stream.
@@ -62,15 +72,31 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
 	 * @exception CoreException if the given stream can not be read
+	 * 
+	 * @deprecated use encoding based version instead
 	 */
 	protected void setDocumentContent(IDocument document, InputStream contentStream) throws CoreException {
+		setDocumentContent(document, contentStream, null);
+	}
+	
+	/**
+	 * Intitializes the given document with the given stream using the given encoding.
+	 *
+	 * @param document the document to be initialized
+	 * @param contentStream the stream which delivers the document content
+	 * @param encoding the encoding for reading the given stream
+	 * @exception CoreException if the given stream can not be read
+	 */
+	protected void setDocumentContent(IDocument document, InputStream contentStream, String encoding) throws CoreException {
 		
 		Reader in= null;
 		
 		try {
 			
-			in= new InputStreamReader(new BufferedInputStream(contentStream));
-//			in= new InputStreamReader(new BufferedInputStream(contentStream), ResourcesPlugin.getEncoding());
+			if (encoding == null)
+				encoding= getDefaultEncoding();
+				
+			in= new InputStreamReader(new BufferedInputStream(contentStream), encoding);
 			StringBuffer buffer= new StringBuffer();
 			char[] readBuffer= new char[2048];
 			int n= in.read(readBuffer);
@@ -82,7 +108,8 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 			document.set(buffer.toString());
 		
 		} catch (IOException x) {
-			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
+			String msg= x.getMessage() == null ? "" : x.getMessage(); //$NON-NLS-1$
+			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, x);
 			throw new CoreException(s);
 		} finally {
 			if (in != null) {
@@ -95,17 +122,32 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 	}
 	
 	/**
-	 * Intitializes the given document from the given editor input.
+	 * Intitializes the given document from the given editor input using the default encoding.
 	 *
 	 * @param document the document to be initialized
 	 * @param editorInput the input from which to derive the content of the document
 	 * @return <code>true</code> if the document content could be set, <code>false</code> otherwise
 	 * @exception CoreException if the given editor input cannot be accessed
+	 * 
+	 * @deprecated use the encoding based version instead
 	 */
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
+		return setDocumentContent(document, editorInput, null);
+	}
+	
+	/**
+	 * Intitializes the given document from the given editor input using the given encoding.
+	 *
+	 * @param document the document to be initialized
+	 * @param editorInput the input from which to derive the content of the document
+	 * @param encoding the encoding used to read the editor input
+	 * @return <code>true</code> if the document content could be set, <code>false</code> otherwise
+	 * @exception CoreException if the given editor input cannot be accessed
+	 */
+	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput) editorInput).getStorage();
-			setDocumentContent(document, storage.getContents());
+			setDocumentContent(document, storage.getContents(), encoding);
 			return true;
 		}
 		return false;
@@ -125,7 +167,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		
 		if (element instanceof IEditorInput) {
 			Document document= new Document();
-			if (setDocumentContent(document, (IEditorInput) element))
+			if (setDocumentContent(document, (IEditorInput) element, getEncoding(element)))
 				return document;
 		}
 		
@@ -136,8 +178,24 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 	 * @see AbstractDocumentProvider#createElementInfo(Object)
 	 */
 	protected ElementInfo createElementInfo(Object element) throws CoreException {
-		if (element instanceof IStorageEditorInput)
-			return new StorageInfo(createDocument(element), createAnnotationModel(element));
+		if (element instanceof IStorageEditorInput) {
+			
+			IDocument document= null;
+			IStatus status= null;
+			
+			try {
+				document= createDocument(element);
+			} catch (CoreException x) {
+				status= x.getStatus();
+				document= new Document();
+			}
+			
+			ElementInfo info= new StorageInfo(document, createAnnotationModel(element));
+			info.fStatus= status;
+			
+			return info;
+		}
+		
 		return super.createElementInfo(element);
 	}
 	
@@ -162,6 +220,11 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		log.log(exception.getStatus());
 	}
 	
+	/**
+	 * Updates the internal cache for the given input.
+	 * 
+	 * @param input the input whose cache will be updated
+	 */
 	protected void updateCache(IStorageEditorInput input) throws CoreException {
 		StorageInfo info= (StorageInfo) getElementInfo(input);
 		if (info != null) {
@@ -229,5 +292,35 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 				info.fUpdateCache= true;
 		}
 		super.doUpdateStateCache(element);
+	}
+	
+	/*
+	 * @see IStorageDocumentProvider#getDefaultEncoding()
+	 */
+	public String getDefaultEncoding() {
+		return ResourcesPlugin.getEncoding();
+	}
+	
+	/* 
+	 * @see IStorageDocumentProvider#getEncoding(Object)
+	 */
+	public String getEncoding(Object element) {
+		if (element instanceof IStorageEditorInput) {
+			StorageInfo info= (StorageInfo) getElementInfo(element);
+			if (info != null)
+				return info.fEncoding;
+		}
+		return null;
+	}
+	
+	/*
+	 * @see IStorageDocumentProvider#setEncoding(Object, String)
+	 */
+	public void setEncoding(Object element, String encoding) {
+		if (element instanceof IStorageEditorInput) {
+			StorageInfo info= (StorageInfo) getElementInfo(element);
+			if (info != null)
+				info.fEncoding= encoding;
+		}
 	}
 }

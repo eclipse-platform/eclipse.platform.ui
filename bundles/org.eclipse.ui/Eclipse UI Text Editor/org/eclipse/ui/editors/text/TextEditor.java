@@ -17,9 +17,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
@@ -30,13 +33,14 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
+
 import org.eclipse.ui.texteditor.ConvertLineDelimitersAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
+import org.eclipse.ui.texteditor.StatusTextEditor;
 
 
 
@@ -53,20 +57,16 @@ import org.eclipse.ui.texteditor.ResourceAction;
  * instantiated or subclassed by clients.
  * </p>
  */
-public class TextEditor extends AbstractTextEditor {
+public class TextEditor extends StatusTextEditor {
+	
+	private DefaultEncodingSupport fEncodingSupport;
 		
 	/**
 	 * Creates a new text editor.
 	 */
 	public TextEditor() {
 		super();
-		initializeEditor();
-	}
-	
-	/**
-	 * Initializes this editor.
-	 */
-	protected void initializeEditor() {
+		
 		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
@@ -78,19 +78,25 @@ public class TextEditor extends AbstractTextEditor {
 			setPreferenceStore(uiPlugin.getPreferenceStore());
 		}
 	}
-		
+	
+	/*
+	 * @see IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		if (fEncodingSupport != null) {
+				fEncodingSupport.dispose();
+				fEncodingSupport= null;
+		}
+		super.dispose();
+	}
+	
 	/**
 	 * The <code>TextEditor</code> implementation of this 
 	 * <code>AbstractTextEditor</code> method asks the user for the workspace path
 	 * of a file resource and saves the document there.
 	 */
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
-		/*
-		 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
-		 * Changed Behavior to make sure that if called inside a regular save (because
-		 * of deletion of input element) there is a way to report back to the caller.
-		 */
-				 		
+		
 		Shell shell= getSite().getShell();
 		
 		SaveAsDialog dialog= new SaveAsDialog(shell);
@@ -112,10 +118,6 @@ public class TextEditor extends AbstractTextEditor {
 		
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
 			public void execute(final IProgressMonitor monitor) throws CoreException {
-				/* 
-				 * 1GF5YOX: ITPJUI:ALL - Save of delete file claims it's still there
-				 * Changed false to true.
-				 */
 				getDocumentProvider().saveDocument(monitor, newInput, getDocumentProvider().getDocument(getEditorInput()), true);
 			}
 		};
@@ -142,15 +144,14 @@ public class TextEditor extends AbstractTextEditor {
 			progressMonitor.setCanceled(!success);
 	}
 	
-	/**
-	 * The <code>TextEditor</code> implementation of this 
-	 * <code>IEditorPart</code> method returns <code>true</code>.
+	/*
+	 * @see IEditorPart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-
-	/**
+	
+	/*
 	 * @see AbstractTextEditor#createActions()
 	 */
 	protected void createActions() {
@@ -171,9 +172,82 @@ public class TextEditor extends AbstractTextEditor {
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONVERT_LINE_DELIMITERS_TO_MAC);
 		setAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, action);
 		
-		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS, true);
-		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX, true);
-		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, true);
+//		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS, true);
+//		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX, true);
+//		markAsContentDependentAction(ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC, true);
+		
+		fEncodingSupport= new DefaultEncodingSupport();
+		fEncodingSupport.initialize(this);
 	}
-
+	
+	/*
+	 * @see StatusTextEditor#getStatusHeader(IStatus)
+	 */
+	protected String getStatusHeader(IStatus status) {
+		if (fEncodingSupport != null) {
+			String message= fEncodingSupport.getStatusHeader(status);
+			if (message != null)
+				return message;
+		}
+		return super.getStatusHeader(status);
+	}
+	
+	/*
+	 * @see StatusTextEditor#getStatusBanner(IStatus)
+	 */
+	protected String getStatusBanner(IStatus status) {
+		if (fEncodingSupport != null) {
+			String message= fEncodingSupport.getStatusBanner(status);
+			if (message != null)
+				return message;
+		}
+		return super.getStatusBanner(status);
+	}
+	
+	/*
+	 * @see StatusTextEditor#getStatusMessage(IStatus)
+	 */
+	protected String getStatusMessage(IStatus status) {
+		if (fEncodingSupport != null) {
+			String message= fEncodingSupport.getStatusMessage(status);
+			if (message != null)
+				return message;
+		}
+		return super.getStatusMessage(status);
+	}
+	
+	/*
+	 * @see AbstractTextEditor#doSetInput(IEditorInput)
+	 */
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		super.doSetInput(input);
+		if (fEncodingSupport != null)
+			fEncodingSupport.reset();
+	}
+	
+	/*
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IEncodingSupport.class.equals(adapter))
+			return fEncodingSupport;
+		return super.getAdapter(adapter);
+	}
+	
+	/*
+	 * @see AbstractTextEditor#editorContextMenuAboutToShow(IMenuManager)
+	 */
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		
+		super.editorContextMenuAboutToShow(menu);
+		
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_RIGHT);
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_LEFT);
+		
+		String label= TextEditorMessages.getString("Editor.AddMenu.label"); //$NON-NLS-1$
+		MenuManager submenu= new MenuManager(label, ITextEditorActionConstants.GROUP_ADD);
+		addAction(submenu, ITextEditorActionConstants.BOOKMARK);
+		addAction(submenu, ITextEditorActionConstants.ADD_TASK);
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_ADD, submenu);
+	}
 }

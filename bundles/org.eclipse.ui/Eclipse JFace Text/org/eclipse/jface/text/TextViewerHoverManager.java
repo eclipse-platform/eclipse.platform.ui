@@ -68,9 +68,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 	 */
 	private int computeOffsetAtLocation(int x, int y) {
 		
-		IDocument document= fTextViewer.getVisibleDocument();
 		StyledText styledText= fTextViewer.getTextWidget();
+		IDocument document= fTextViewer.getVisibleDocument();
 		
+		if (document == null)
+			return -1;		
 		
 		int line= (y + styledText.getTopPixel()) / styledText.getLineHeight();
 		int lineCount= document.getNumberOfLines();

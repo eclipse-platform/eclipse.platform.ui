@@ -305,6 +305,30 @@
       <actionDefinition
             id="org.eclipse.ui.edit.text.showRulerContextMenu">
       </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.us-ascii">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.utf-8">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.utf-16be">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.utf-16le">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.utf-16">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.system">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.encoding.custom">
+      </actionDefinition>
    </extension>
 
 
@@ -644,6 +668,38 @@
                key=""
                id="org.eclipse.ui.edit.text.showRulerContextMenu">
          </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.us-ascii">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-8">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-16be">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-16le">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-16">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.system">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.custom">
+         </accelerator>
       </acceleratorSet>
       
       <acceleratorSet
@@ -948,6 +1004,38 @@
          <accelerator
                key="Ctrl+W"
                id="org.eclipse.ui.edit.text.showRulerContextMenu">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.us-ascii">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-8">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-16be">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-16le">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.utf-16">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.system">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.encoding.custom">
          </accelerator>
       </acceleratorSet>
    </extension>

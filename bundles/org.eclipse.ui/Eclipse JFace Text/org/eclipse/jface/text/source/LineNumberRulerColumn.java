@@ -75,7 +75,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 	};
 	
-	private final static int MAXDIGETS= 5;
+	private final static int MAXDIGITS= 5;
 	
 	/** This column's parent ruler */
 	private CompositeRuler fParentRuler;
@@ -101,12 +101,15 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private Color fForeground;
 	/** The background color */
 	private Color fBackground;
+	/** Digit place holder for line number exceeding the MAXDIGITS length */
+	private String fDigitPlaceHolder;
 	
 	
 	/**
 	 * Constructs the vertical ruler column.
 	 */
 	public LineNumberRulerColumn() {
+		fDigitPlaceHolder= JFaceTextMessages.getString("LineNumberRulerColumn.prefix_placeholder");  //$NON-NLS-1$
 	}
 	
 	public void setForeground(Color foreground) {
@@ -149,13 +152,13 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			gc.setFont(fCanvas.getFont());
 			NumberFormat nf= NumberFormat.getInstance();
 			
-			fIndentation= new int[MAXDIGETS + 1];
+			fIndentation= new int[MAXDIGITS + 1];
 			
-			double number= Math.pow(10, MAXDIGETS) - 1;
+			double number= Math.pow(10, MAXDIGITS) - 1;
 			Point p= gc.stringExtent(nf.format(number));
 			fIndentation[0]= p.x;
 			
-			for (int i= 1; i <= MAXDIGETS; i++) {
+			for (int i= 1; i <= MAXDIGITS; i++) {
 				number= Math.pow(10, i) - 1;
 				p= gc.stringExtent(nf.format(number));
 				fIndentation[i]= fIndentation[0] - p.x;
@@ -349,14 +352,14 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 				
 			String s= Integer.toString(line + 1);
 			int length= s.length();
-			if (length <= MAXDIGETS) {
+			if (length <= MAXDIGITS) {
 				int indentation= fIndentation[s.length()];
 				gc.drawString(nf.format(line + 1), indentation, y);
 			} else {
 				StringBuffer buffer= new StringBuffer();
-				buffer.append(s.substring(length - MAXDIGETS, length));
-				if (MAXDIGETS >= 2)
-					buffer.replace(0, 2, "..");
+				buffer.append(s.substring(length - MAXDIGITS, length));
+				if (MAXDIGITS >= 2)
+					buffer.replace(0, 2, fDigitPlaceHolder);
 				gc.drawString(buffer.toString(), 0, y);
 			}
 		}
