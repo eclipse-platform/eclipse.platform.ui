@@ -10,6 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.outline;
@@ -230,8 +231,20 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
                     }	
                     return super.getDisplayName();
                 }
-        	};
-        }	
+        	};        
+        } else if (tempElementName.equalsIgnoreCase("macrodef")) { //$NON-NLS-1$
+            elementType= IAntEditorConstants.TYPE_MACRODEF;
+            tempElement = new XmlElement(tempElementName) {
+                public String getDisplayName() {
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
+                    if(tempXmlAttr != null) {
+                        return tempXmlAttr.getValue();
+                    } else {                
+                        return super.getDisplayName();
+                    }
+                }
+            };
+        }
         else if(tempElementName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
 			elementType= IAntEditorConstants.TYPE_ANTCALL;
         	tempElement = new XmlElement(tempElementName) {
@@ -244,7 +257,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
                     return tempDisplayName;
                 }
         	};
-        }	
+        }      
         else if(tempElementName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$
 			elementType= IAntEditorConstants.TYPE_MKDIR;
         	tempElement = new XmlElement(tempElementName) {
@@ -352,7 +365,20 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
                     return tempDisplayName;
                 }
         	};
-        }	
+        }
+        else if(tempElementName.equalsIgnoreCase("import")) { //$NON-NLS-1$
+            elementType= IAntEditorConstants.TYPE_IMPORT;
+            tempElement = new XmlElement(tempElementName) {
+                public String getDisplayName() {
+                    String tempDisplayName = "import "; //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_FILE);
+                    if(tempXmlAttr != null) {
+                        return tempDisplayName + tempXmlAttr.getValue();
+                    }
+                    return tempDisplayName;
+                }
+            };
+        }
         else {
 			elementType= IAntEditorConstants.TYPE_UNKNOWN;
 	        tempElement = new XmlElement(tempElementName);

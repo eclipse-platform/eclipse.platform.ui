@@ -7,9 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.model;
-
 
 /**
  * Defines the constants available for client use.
@@ -60,7 +60,9 @@ public interface IAntUIConstants {
 	 public static final String IMG_ANT_TARGET_INTERNAL = PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
 	 public static final String IMG_ANT_DEFAULT_TARGET= PLUGIN_ID + ".antDefaultTarget"; //$NON-NLS-1$
 	 public static final String IMG_ANT_TARGET_ERROR = PLUGIN_ID + ".antTargetError"; //$NON-NLS-1$
-	 
+	 public static final String IMG_ANT_MACRODEF = PLUGIN_ID + ".antMacrodef"; //$NON-NLS-1$
+     public static final String IMG_ANT_IMPORT = PLUGIN_ID + ".antImport"; //$NON-NLS-1$
+     
 	/**
 	 * Icon for task proposal.
 	 */

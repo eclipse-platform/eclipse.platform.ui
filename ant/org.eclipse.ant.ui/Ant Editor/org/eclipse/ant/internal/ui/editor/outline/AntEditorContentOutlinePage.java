@@ -10,6 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.outline;
@@ -231,10 +232,17 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
 				return getProjectImage(tempElement);
 			}
+			if("macrodef".equals(tempElement.getName())) { //$NON-NLS-1$
+			    return AntUIImages.getImage(IAntUIConstants.IMG_ANT_MACRODEF);
+			}
 			
 			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
 				return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 			}
+            
+            if("import".equals(tempElement.getName())) { //$NON-NLS-1$
+                return AntUIImages.getImage(IAntUIConstants.IMG_ANT_IMPORT);
+            }
 			
 			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
 			if (attribute != null && IAntEditorConstants.TYPE_EXTERNAL.equals(attribute.getValue())) {

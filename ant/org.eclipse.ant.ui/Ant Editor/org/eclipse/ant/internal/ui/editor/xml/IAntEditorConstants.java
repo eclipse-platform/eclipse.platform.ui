@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.xml;
 
@@ -48,5 +49,7 @@ public interface IAntEditorConstants {
 	public static final String TYPE_EXEC = "exec"; //$NON-NLS-1$
 	public static final String TYPE_DELETE = "delete"; //$NON-NLS-1$
 	public static final String TYPE_UNKNOWN = "unknown"; //$NON-NLS-1$
+	public static final String TYPE_MACRODEF = "macrodef"; //$NON-NLS-1$
+	public static final String TYPE_IMPORT = "import"; //$NON-NLS-1$
 
 }
