@@ -58,6 +58,7 @@ public void testGetRelevantStrings() {
 		} catch (IOException ioe) {
 		}
 	}
+	pluginPathFile.delete();
 }
 }
 
