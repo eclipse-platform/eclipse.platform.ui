@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
@@ -38,8 +39,9 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
-	public synchronized void init(IConsole console) {
-		ConsoleLineTracker.console= console;
+	public synchronized void init(IConsole c) {
+		ConsoleLineTracker.console= c;
+		lines= new ArrayList();
 	}
 
 	/**
@@ -57,7 +59,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 		if (index < lines.size()){
 			IRegion lineRegion= (IRegion)lines.get(index);
 			try {
-				console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength());
+				return console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength());
 			} catch (BadLocationException e) {
 				return null;
 			}
@@ -65,4 +67,20 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 		return null;
 	}
 	
+	public static List getAllMessages() {
+		List all= new ArrayList(lines.size());
+		for (int i = 0; i < lines.size(); i++) {
+			IRegion lineRegion= (IRegion)lines.get(i);
+			try {
+				all.add(console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength()));
+			} catch (BadLocationException e) {
+				continue;
+			}
+		}
+		return all;
+	}
+	
+	public static IDocument getDocument() {
+		return console.getDocument();
+	}
 }
