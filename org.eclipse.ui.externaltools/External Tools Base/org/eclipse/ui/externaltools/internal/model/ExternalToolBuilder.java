@@ -12,6 +12,8 @@ package org.eclipse.ui.externaltools.internal.model;
 
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -45,7 +47,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
-	private IProject[] projectsWithinScope= null;
+	private List projectsWithinScope;
 	
 	private boolean buildKindCompatible(int kind, ILaunchConfiguration config) throws CoreException {
 		int[] buildKinds = buildTypesToArray(config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
@@ -66,9 +68,9 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			if (config != null && buildKindCompatible(kind, config)) {
 				launchBuild(kind, config, monitor);
 			}
-			return projectsWithinScope;
+			return getProjectsWithinScope();
 		}
-		
+	
 		//need to build all external tools from one builder (see bug 39713)
 		//if not a full build
 		ICommand[] commands = getProject().getDescription().getBuildSpec();
@@ -80,17 +82,25 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		return projectsWithinScope;
+		return getProjectsWithinScope();
+	}
+
+	private IProject[] getProjectsWithinScope() {
+		if (projectsWithinScope == null) {
+			return null;
+		} else {
+			return (IProject[])projectsWithinScope.toArray(new IProject[projectsWithinScope.size()]);
+		}
 	}
 
 	private void doBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
 		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
 		if (resources != null && resources.length > 0) {
-			projectsWithinScope= new IProject[resources.length];
+			projectsWithinScope= new ArrayList();
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				projectsWithinScope[i]= resource.getProject();
+				projectsWithinScope.add(resource.getProject());
 			}
 			buildForChange = buildScopeIndicatesBuild(resources);
 		}
@@ -147,7 +157,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {
 		for (int i = 0; i < resources.length; i++) {
-			IResourceDelta delta = getDelta(projectsWithinScope[i]);
+			IResourceDelta delta = getDelta(resources[i].getProject());
 			if (delta == null) {
 				//project just added to the workspace..no previous build tree
 				return true;
