@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     Initial implementation - Gunnar Ahlberg - www.gunnarahlberg.com
+ *     Initial implementation - Gunnar Ahlberg (IBS AB, www.ibs.net)
  *     IBM Corporation - further revisions
  *******************************************************************************/
 
