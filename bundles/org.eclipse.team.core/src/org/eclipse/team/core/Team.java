@@ -118,9 +118,15 @@ public final class Team {
 	}
 
 	/**
-	 * Returns whether the given file is ignored by any of the global ignore patterns.
+	 * Returns whether the given file should be ignored.
+	 * 
+	 * This method answers true if the file matches one of the global ignore
+	 * patterns, or if the file is marked as derived.
+	 * 
+	 * @param file  the file
+	 * @return whether the file should be ignored
 	 */
-	public static boolean isIgnored(IFile file) {
+	public static boolean isIgnoredHint(IFile file) {
 		IIgnoreInfo[] ignorePatterns = getAllIgnores();
 		StringMatcher matcher;
 		for (int i = 0; i < ignorePatterns.length; i++) {
@@ -130,6 +136,7 @@ public final class Team {
 				if (matcher.match(file.getName())) return true;
 			}
 		}
+		if (file.isDerived()) return true;
 		return false;
 	}
 
