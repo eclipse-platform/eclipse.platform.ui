@@ -5215,3 +5215,23 @@
           type (plain | xml | brief) #IMPLIED
           classname CDATA #IMPLIED
           extension CDATA #IMPLIED>
+          
+<!ELEMENT scp (fileset)*>
+<!ATTLIST scp
+          id ID #IMPLIED
+          file CDATA #REQUIRED
+          localFile CDATA #IMPLIED
+          remoteFile CDATA #IMPLIED
+          todir CDATA #REQUIRED
+          localTodir CDATA #IMPLIED
+          localTofile CDATA #IMPLIED
+		  remoteTodir CDATA #IMPLIED
+          remoteTofile CDATA #IMPLIED                    
+          port CDATA #IMPLIED
+          trust %boolean; #IMPLIED
+          knownhosts CDATA #IMPLIED
+          failonerror %boolean; #IMPLIED
+          password CDATA #IMPLIED
+          keyfile CDATA #IMPLIED
+          passphrase CDATA #IMPLIED
+          verbose %boolean; #IMPLIED>

@@ -21951,5 +21951,66 @@ This attribute is placed in the body of the templated task using a notation simi
 		</attributes>
 	</structure>
   </task>
+
+<task name="scp">  
+    <description>
+	Copies a file or FileSet to or from a remote machine running SSH daemon. FileSet only works for copying files from the local machine to a remote machine.
+	Note: This task depends on external libraries not included in the Ant distribution
+		Since Ant 1.6.
+	</description>
+	<structure>
+		<attributes>
+			<attribute name="file" required="yes">
+				<description>The file to copy. This can be a local path or a remote path of the form user[:password]@host:/directory/path. :password can be ommitted if you use key based authentication or specify the password attribute. The way remote path is recognized is whether it contains @ character or not. This will not work if your localPath contains @ character.</description>
+			</attribute>
+			<attribute name="localFile" required="no">
+				<description>This is an alternative to the file attribute. But this must always point to a local file. The reason this was added was that when you give file attribute it is treated as remote if it contains @ character. This character can exist also in local paths. since Ant 1.6.2</description>
+			</attribute>
+		    <attribute name="remoteFile" required="no">
+				<description>This is an alternative to the file attribute. But this must always point to a remote file. since Ant 1.6.2</description>
+			</attribute>
+			<attribute name="todir" required="yes">
+				<description>The directory to copy to. This can be a local path or a remote path of the form user[:password]@host:/directory/path. :password can be ommitted if you use key based authentication or specify the password attribute. The way remote path is recognized is whether it contains @ character or not. This will not work if your localPath contains @ character.</description>
+			</attribute>
+			<attribute name="localTodir" required="no">
+				<description>This is an alternative to the todir attribute. But this must always point to a local directory. The reason this was added was that when you give todir attribute it is treated as remote if it contains @ character. This character can exist also in local paths. since Ant 1.6.2</description>
+			</attribute>
+			<attribute name="localTofile" required="no">
+				<description>Changes the file name to the given name while receiving it, only useful if receiving a single file. since Ant 1.6.2</description>
+			</attribute>
+			<attribute name="remoteTodir" required="no">
+				<description>This is an alternative to the todir attribute. But this must always point to a remote directory. since Ant 1.6.2</description>
+			</attribute>
+			<attribute name="remoteTofile" required="no">
+				<description>Changes the file name to the given name while sending it, only useful if sending a single file. since Ant 1.6.2</description>
+			</attribute>
+			<attribute name="port" required="no">
+				<description>The port to connect to on the remote host..</description>
+			</attribute>
+			<attribute name="trust" required="no">
+				<description>This trusts all unknown hosts if set to yes/true.
+Note If you set this to false (the default), the host you connect to must be listed in your knownhosts file, this also implies that the file exists.</description>
+			</attribute>
+			<attribute name="knownhosts" required="no">
+				<description>This sets the known hosts file to use to validate the identity of the remote host. This must be a SSH2 format file. SSH1 format is not supported.</description>
+			</attribute>
+			<attribute name="failonerror" required="no">
+				<description>Whether to halt the build if the transfer fails. </description>
+			</attribute>
+			<attribute name="password" required="no">
+				<description>The password.</description>
+			</attribute>
+			<attribute name="keyfile" required="no">
+				<description>Location of the file holding the private key.</description>
+			</attribute>
+			<attribute name="passphrase" required="no">
+				<description>Passphrase for your private key.</description>
+			</attribute>
+			<attribute name="verbose" required="no">
+				<description>Determines whether SCP outputs verbosely to the user. Currently this means outputting dots/stars showing the progress of a file transfer. Since Ant 1.6.2.</description>
+			</attribute>
+		</attributes>
+	</structure>
+  </task>
  
 </tasks>
