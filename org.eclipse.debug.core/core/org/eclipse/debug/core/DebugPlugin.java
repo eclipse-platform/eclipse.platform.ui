@@ -473,9 +473,6 @@ public class DebugPlugin extends Plugin {
 		if (fEventListeners != null) {
 			fEventListeners.removeAll();
 		}
-		if (fSimpleVariableRegistry != null) {
-			fSimpleVariableRegistry.storeVariables();
-		}
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 	}

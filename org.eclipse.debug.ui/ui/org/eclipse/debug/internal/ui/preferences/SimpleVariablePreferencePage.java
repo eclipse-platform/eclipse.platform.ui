@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 import java.text.MessageFormat;
-import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
@@ -48,6 +47,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+/**
+ * Preference page for creating and configuring simple
+ * launch variables.
+ * 
+ * @see org.eclipse.debug.core.variables.ISimpleLaunchVariable
+ * @see org.eclipse.debug.core.variables.ISimpleVariableRegistry
+ */
 public class SimpleVariablePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private TableViewer variableTable;
@@ -196,6 +202,12 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		editVariable(variable);
 	}
 	
+	/**
+	 * Prompt the user to edit the selection variable.
+	 * @param variable the variable to edit
+	 * @return <code>true</code> if the user confirmed the edit,
+	 * 	<code>false</code> if the user cancelled.
+	 */
 	private boolean editVariable(ISimpleLaunchVariable variable) {
 		InputDialog dialog= new InputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.12"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {variable.getName()}), variable.getText(), null); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() != Dialog.OK) {
@@ -206,13 +218,13 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		return true;
 	}
 	
+	/**
+	 * Remove the selection variables.
+	 */
 	private void handleRemoveButtonPressed() {
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
-		Iterator iter= selection.iterator();
-		ISimpleVariableRegistry registry= getVariableRegistry(); 
-		while (iter.hasNext()) {
-			registry.removeVariable((ISimpleLaunchVariable) iter.next());
-		}
+		ISimpleLaunchVariable[] variables= (ISimpleLaunchVariable[]) selection.toList().toArray(new ISimpleLaunchVariable[0]);
+		getVariableRegistry().removeVariables(variables); 
 	}
 	
 	/**
@@ -228,23 +240,31 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	public void init(IWorkbench workbench) {
 	}
 
+	/**
+	 * Revert to the previously saved state.
+	 */
 	public boolean performCancel() {
 		ISimpleVariableRegistry registry= getVariableRegistry();
-		registry.clear();
+		registry.removeVariables(registry.getVariables());
 		registry.addVariables(originalVariableState);
 		return super.performCancel();
 	}
 
+	/**
+	 * Clear the variables.
+	 */
 	protected void performDefaults() {
-		getVariableRegistry().clear();
+		ISimpleVariableRegistry registry= getVariableRegistry();
+		registry.removeVariables(registry.getVariables());
 		variableTable.refresh();
 		super.performDefaults();
 	}
-
+	
+	/**
+	 * Sets the saved state for reversion.
+	 */
 	public boolean performOk() {
-		ISimpleVariableRegistry registry= getVariableRegistry();
-		originalVariableState= registry.getVariables();
-		registry.storeVariables(); // Write the file immediately. Don't wait for shutdown.
+		originalVariableState= getVariableRegistry().getVariables();
 		return super.performOk();
 	}
 

@@ -71,26 +71,23 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#addVariable(ISimpleLaunchVariable)
-	 */
-	public void addVariable(ISimpleLaunchVariable variable) {
-		fVariables.put(variable.getName(), variable);
-	}
-	
-	/**
 	 * @see ISimpleVariableRegistry#addVariables(ISimpleLaunchVariable[])
 	 */
 	public void addVariables(ISimpleLaunchVariable[] variables) {
 		for (int i = 0; i < variables.length; i++) {
-			addVariable(variables[i]);
+			fVariables.put(variables[i].getName(), variables[i]);
 		}
+		storeVariables();
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#removeVariable(ISimpleLaunchVariable)
+	 * @see ISimpleVariableRegistry#removeVariable(ISimpleLaunchVariable[])
 	 */
-	public void removeVariable(ISimpleLaunchVariable variable) {
-		fVariables.remove(variable.getName());
+	public void removeVariables(ISimpleLaunchVariable[] variables) {
+		for (int i = 0; i < variables.length; i++) {
+			fVariables.remove(variables[i].getName());
+		}
+		storeVariables();
 	}
 	
 	/**
@@ -195,9 +192,10 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 	}
 	
 	/**
-	 * @see ISimpleVariableRegistry#storeVariables()
+	 * Saves the variables in this registry in the
+	 * preference store. 
 	 */
-	public void storeVariables() {
+	private void storeVariables() {
 		Preferences prefs= DebugPlugin.getDefault().getPluginPreferences();
 		String variableString= ""; //$NON-NLS-1$
 		if (!fVariables.isEmpty()) {

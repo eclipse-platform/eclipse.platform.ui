@@ -29,19 +29,11 @@ public interface ISimpleVariableRegistry {
 	 */
 	public void addVariables(ISimpleLaunchVariable[] variables);
 	/**
-	 * Removes the given variable from this registry. Has no effect
-	 * if the given variable is not in this registry.
-	 * @param variable the variable to remove
+	 * Removes the given variables from this registry. Has no effect
+	 * if any of the given variables are not in this registry.
+	 * @param variables the variables to remove
 	 */
-	public void removeVariable(ISimpleLaunchVariable variable);
-	/**
-	 * Clears this registry, removing all variables.
-	 */
-	public void clear();
-	/**
-	 * Stores the variables in this registry in a file in the metadata.
-	 */
-	public void storeVariables();
+	public void removeVariables(ISimpleLaunchVariable[] variables);
 	/**
 	 * Returns the variable with the given name or <code>null</code>
 	 * if no such variable exists. If multiple variables with the given name have
