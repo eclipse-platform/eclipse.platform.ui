@@ -41,9 +41,11 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
@@ -926,13 +928,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		Job job = new Job(DebugUIMessages.getString("DebugUITools.3")) { //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				try {
-					if(waitInJob) {
+					if(waitInJob) {						
+						StringBuffer buffer= new StringBuffer(configuration.getName());
+						buffer.append(DebugUIMessages.getString("DebugUIPlugin.0")); //$NON-NLS-1$
+						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
+						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
+						ILaunch pendingLaunch= new Launch(workingCopy, mode, null);
+						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
+
 						try {
 							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
 							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
 						} catch (InterruptedException e) {
 							// just continue.
 						}
+						
+						DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
 					}
 					
 					if (!monitor.isCanceled()) {
