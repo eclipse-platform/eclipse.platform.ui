@@ -50,10 +50,10 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	
 	private class RestoreItemData {
 		CoolItemPosition savedPosition;
-		String beforeItemId;
-		String afterItemId;
-		int beforeIndex = -1;
-		int afterIndex = -1;
+		String beforeItemId; // found afterItemId, restore item after this item
+		String afterItemId; // found beforeItemId, restore item before this item
+		int beforeIndex = -1; // index in current layout of beforeItemId
+		int afterIndex = -1; // index in current layout of afterItemId
 		
 		RestoreItemData() {
 		}
@@ -182,61 +182,122 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	private CoolItem createRememberedCoolItem(CoolBarContributionItem cbItem, ToolBar toolBar, CoolItemPosition position) {		
 		RestoreItemData data = getRestoreData(cbItem, position);		
 		int savedAfterRow = -1;
+		int currentAfterRow = -1;
 		int savedBeforeRow = -1;
-		int savedItemRow = data.savedPosition.getRowOf(cbItem.getId());
-		if (data.afterItemId != null) savedAfterRow = data.savedPosition.getRowOf(data.afterItemId);
-		if (data.beforeItemId != null) savedBeforeRow = data.savedPosition.getRowOf(data.beforeItemId);
-
-		int createIndex = -1;
-		int[] newWraps = null;
+		int currentBeforeRow = -1;
+		int savedItemRow = -1;
 		CoolBarLayout currentLayout = getLayout();
+		if (data.savedPosition != null) {
+			savedItemRow = data.savedPosition.getRowOf(cbItem.getId());
+			if (data.afterItemId != null) {
+				savedAfterRow = data.savedPosition.getRowOf(data.afterItemId);
+				currentAfterRow = currentLayout.getRowOfIndex(data.afterIndex);
+			}
+			if (data.beforeItemId != null) {
+				savedBeforeRow = data.savedPosition.getRowOf(data.beforeItemId);
+				currentBeforeRow = currentLayout.getRowOfIndex(data.beforeIndex);
+			}
+		}
 		
-		// figure out where to place the item and how to adjust the wrap indices.
+		int createIndex = -1;
+		int row;
+		int[] newWraps = null;
+		
+		// Figure out where to place the item and how to adjust the wrap indices.
+		// When adding the item at the afterIndex, wrap indices may need to be 
+		// adjusted if the index represents the beginning of a row in the current
+		// coolbar layout.
 		if (data.afterIndex != -1 && data.beforeIndex != -1) {
-			// the exact position to place the item was found
-			if ((savedItemRow == savedAfterRow) || (savedItemRow == savedBeforeRow)) {
-				int row;
-				if (savedItemRow == savedAfterRow) {
-					createIndex = data.afterIndex;
-					row = currentLayout.getRowOfIndex(createIndex);
-				} else {
+			// both a beforeItem and afterItem were found in the current coolbar layout
+			// for the item to be added
+			if ((savedItemRow == savedAfterRow) && (savedItemRow == savedBeforeRow)) {
+				// in the saved layout the item was on the same row as both the beforeItem
+				// and the afterItem, compare this to the current coolbar layout
+				if (currentAfterRow == currentBeforeRow) {
+					// in the current layout, both the before and after item are on the
+					// same row, so add the item to this row
 					createIndex = data.beforeIndex + 1;
-					row = currentLayout.getRowOfIndex(data.beforeIndex);
+					row = currentBeforeRow;
+				} else {
+					// in the current layout, both the before and after item are not on
+					// the same row
+					if (currentBeforeRow == savedBeforeRow) {
+						// the beforeItem is on the same row as in the saved layout
+						createIndex = data.beforeIndex + 1;
+						row = currentBeforeRow;
+					} else if (currentAfterRow == savedAfterRow) {
+						// the afterItem is on the same row as in the saved layout
+						createIndex = data.afterIndex;
+						row = currentAfterRow;
+						newWraps = currentLayout.wrapsForNewItem(row, createIndex);
+					} else {
+						// current layout is different than when the item was deleted,
+						// just add the item to the beforeRow
+						createIndex = data.beforeIndex + 1;
+						row = currentBeforeRow;
+					}
+					
 				}
+			} else if (savedItemRow == savedBeforeRow) {
+				// in the saved layout, the item was on the same row as the beforeItem,
+				// add the item to the before row
+				createIndex = data.beforeIndex + 1;
+				row = currentBeforeRow;
+			} else if (savedItemRow == savedAfterRow) {
+				// in the saved layout, the item was on the same row as the afterItem
+				// add the item to the currentAfterRow
+				createIndex = data.afterIndex;
+				row = currentAfterRow;
 				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
 			} else {
-				// add the item on a row by itself
-				createIndex = data.afterIndex;
-				int row = currentLayout.getRowOfIndex(createIndex);
- 				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
+				// in the saved layout, the item was on a row by itself
+				// put the item on a row by itself after currentBeforeRow
+				row = currentBeforeRow + 1;
+				createIndex = currentLayout.getStartIndexOfRow(row);
+ 				if (createIndex == -1) {
+					// row does not exist
+					createIndex = coolBar.getItemCount();
+				}
+				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
 			}
 		} else if (data.afterIndex != -1) {
+			// only an afterItem was found in the current coolbar layout
+			// for the item to be added
 			createIndex = data.afterIndex;
 			if (savedItemRow == savedAfterRow) {
-				int row = currentLayout.getRowOfIndex(createIndex);
+				// in the saved layout, the item was on the same row as the afterItem, 
+				// put the item on the afterRow in the current layout
+				row = currentAfterRow;
 				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
 			} else {
-				// create new row before the row that afterIndex is on [if the item
-				// being restored has items before it in its saved layout????]
-				createIndex = data.afterIndex;
-				int row = currentLayout.getRowOfIndex(createIndex);
-				if (row != 0) row--;
+				// in the saved layout, the item was not on the same row as the afterItem, 
+				// create a new row before currentAfterRow
+				row = currentAfterRow;
+				createIndex = currentLayout.getStartIndexOfRow(row);
  				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
 			}
 		} else if (data.beforeIndex != -1) {
+			// only a beforeItem was found in the current coolbar layout
+			// for the item to be added
 			createIndex = data.beforeIndex + 1;
 			if (savedItemRow == savedBeforeRow) {
-				int row = currentLayout.getRowOfIndex(data.beforeIndex);
+				// in the saved layout, the item was on the same row as the beforeItem, 
+				// put the item on the beforeRow in the current layout
+				row = currentBeforeRow;
 				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
 			} else {
-				// create a new row after the row on which beforeIndex is [if the item
-				// being restored has items after it in its saved layout????]
-				int row = currentLayout.getRowOfIndex(data.beforeIndex);
-				row++;
- 				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
+				// create a new row with the item after beforeRow
+				row = currentBeforeRow + 1;
+ 				createIndex = currentLayout.getStartIndexOfRow(row);
+ 				if (createIndex == -1) {
+ 					// row does not exist
+ 					createIndex = coolBar.getItemCount();
+ 				}
+				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
 			}
 		} else {
-			// add the item to the end of the coolbar
+			// neither a before or after item was found in the current coolbar
+			// layout, just add the item to the end of the coolbar
 			createIndex = coolBar.getItemCount();
 		}
 
@@ -447,19 +508,17 @@ coolBar.setRedraw(true);
 			int savedItemIndex = savedItems.indexOf(cbItem.getId());
 			if (savedItemIndex == -1) break;
 				
-			// if the previousLayout is not similar to the next layout,
-			// stop processing
+			// if the previousLayout is not similar to the next layout, stop
 			if (previousLayout != null) {
 				if (!previousLayout.isDerivativeOf(savedPosition.layout)) break;
 			}
 			
 			boolean afterBeforeItemFound = bestMatch.afterIndex != -1 && bestMatch.beforeIndex != -1;
-			
 			String afterId = null;
 			String beforeId = null;	
 			int beforeIndex = -1;
 			int afterIndex = -1;	
-					
+			
 			// look at the saved items after savedItemIndex, see if any of these items
 			// is in the current coolbar layout
 			for (int j = savedItemIndex + 1; j < savedItems.size(); j++) {
@@ -480,23 +539,24 @@ coolBar.setRedraw(true);
 					break;
 				}
 			}
+			// NOT HANDLING THE FOLLOWING CORRECTLY
+			// 		ABC
+			//		DEF
+			// 	delete D, switch C & E
+			//  	ABE
+			//		CF
+			//	when add D back, beforeIndex will be > afterIndex
 			if (beforeIndex != -1 && afterIndex != -1) {
 				// test whether or not we've found an exact position, 
 				// if we have use this savedPosition
+				bestMatch.savedPosition = savedPosition;
+				bestMatch.afterItemId = afterId;
+				bestMatch.afterIndex = afterIndex;
+				bestMatch.beforeItemId = beforeId;
+				bestMatch.beforeIndex = beforeIndex;
 				if (beforeIndex + 1 == afterIndex) {
-					bestMatch.savedPosition = savedPosition;
-					bestMatch.afterItemId = afterId;
-					bestMatch.afterIndex = afterIndex;
-					bestMatch.beforeItemId = beforeId;
-					bestMatch.beforeIndex = beforeIndex;
 					break;
-				} else {
-					bestMatch.savedPosition = savedPosition;
-					bestMatch.afterItemId = afterId;
-					bestMatch.afterIndex = afterIndex;
-					bestMatch.beforeItemId = beforeId;
-					bestMatch.beforeIndex = beforeIndex;
-				}
+				} 
 			} else if (beforeIndex != -1) {
 				// If we found both items previously, that is the best match.
 				// This condition can happen if items were added between this 
@@ -507,6 +567,8 @@ coolBar.setRedraw(true);
 				bestMatch.beforeIndex = beforeIndex;
 				bestMatch.afterItemId = null;
 				bestMatch.afterIndex = -1;
+				// there are no after before index on the coolbar
+				if (beforeIndex == coolBarItems.size() - 1) break;
 			} else if (afterIndex != -1) {
 				// If we found both items previously, that is the best match. 
 				// This condition can happen if items were added between this 
@@ -517,6 +579,8 @@ coolBar.setRedraw(true);
 				bestMatch.afterIndex = afterIndex;
 				bestMatch.beforeItemId = null;
 				bestMatch.beforeIndex = -1;
+				// there are no items before afterIndex on the coolbar
+				if (afterIndex == 0) break;
 			} else {
 				// nothing found
 				break;
@@ -982,6 +1046,7 @@ coolBar.setRedraw(true);
 		if (isDirty() || force) {
 			if (coolBarExist()) {
 				boolean useRedraw = false;
+				CoolBarLayout layout = getLayout();
 				
 				// remove CoolBarItemContributions that are empty
 				IContributionItem[] items = getItems();
@@ -989,6 +1054,13 @@ coolBar.setRedraw(true);
 				for (int i = 0; i < items.length; i++) {
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
 					if (cbItem.getItems().length == 0) {
+						CoolItem coolItem = findCoolItem(cbItem);
+						if (!useRedraw && coolItem != null) {
+							int visualIndex = coolBar.indexOf(coolItem);
+							if (layout.isOnRowAlone(visualIndex)) {
+								useRedraw = true;
+							}
+						}						
 						cbItemsToRemove.add(cbItem);
 					}
 				}
@@ -1000,39 +1072,22 @@ coolBar.setRedraw(true);
 					CoolItem coolItem = coolItems[i];
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) coolItem.getData();
 					if ((cbItem != null) && !cbItem.isVisible() && (!cbItemsToRemove.contains(cbItem))) {
+						if (!useRedraw) {
+							int visualIndex = coolBar.indexOf(coolItem);
+							if (layout.isOnRowAlone(visualIndex)) {
+								useRedraw = true;
+							}
+						}
 						coolItemsToRemove.add(coolItem);
 					}
 				}
-				if ((cbItemsToRemove.size() + coolItemsToRemove.size()) > 2) {
+				// set redraw off if deleting a sole item from a row to reduce jumpiness in the
+				// case that an item gets added back on that row as part of the update
+				if (!useRedraw && (cbItemsToRemove.size() + coolItemsToRemove.size() > 2)) {
 					useRedraw = true;
-					coolBar.setRedraw(false);
 				}
-				// set redraw off if we are deleting an item from a row where it is the only item,
-				// doing so will handle jumpy coolbar behavior when the item is deleted but another
-				// item is put back in its place
-				if (!useRedraw) {
-					CoolBarLayout layout = getLayout();
-					ArrayList allCoolItemsToRemove = new ArrayList();
-					allCoolItemsToRemove.addAll(coolItemsToRemove);
-					for (int i=0; i<cbItemsToRemove.size(); i++) {
-						CoolBarContributionItem item = (CoolBarContributionItem)cbItemsToRemove.get(i);
-						CoolItem coolItem = findCoolItem(item);
-						if (item != null) allCoolItemsToRemove.add(coolItem);
-					}
-					for (int i=0; i<allCoolItemsToRemove.size(); i++) {
-						CoolItem coolItem = (CoolItem)allCoolItemsToRemove.get(i);
-						int itemIndex = coolBar.indexOf(coolItem);
-						int row = layout.getRowOfIndex(itemIndex);
-						int rowStart = layout.getStartIndexOfRow(row);
-						int nextRowStart = layout.getStartIndexOfRow(row + 1);
-						if (nextRowStart == -1) nextRowStart = rowStart;
-						if ((rowStart == itemIndex) && (nextRowStart - rowStart <= 1)) {
-							useRedraw = true;
-							coolBar.setRedraw(false);
-							break;
-						}
-					}
-				}
+				if (useRedraw) coolBar.setRedraw(false);
+
 				for (Iterator e = cbItemsToRemove.iterator(); e.hasNext();) {
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) e.next();
 					dispose(cbItem);

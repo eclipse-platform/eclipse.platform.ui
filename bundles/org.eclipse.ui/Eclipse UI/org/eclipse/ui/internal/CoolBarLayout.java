@@ -155,6 +155,13 @@ public class CoolBarLayout {
 		if (rowIndex > itemWrapIndices.length - 1) return -1;  // row doesn't exist
 		return itemWrapIndices[rowIndex];
 	}
+	boolean isOnRowAlone(int itemIndex) {
+		int row = getRowOfIndex(itemIndex);
+		int rowStart = getStartIndexOfRow(row);
+		int nextRowStart = getStartIndexOfRow(row + 1);
+		if (nextRowStart == -1) nextRowStart = rowStart;
+		return (rowStart == itemIndex) && (nextRowStart - rowStart <= 1);
+	}
 	/**
 	 * Return whether or not the items from this layout that are in
 	 * otherLayout are in the same order within the layouts.
