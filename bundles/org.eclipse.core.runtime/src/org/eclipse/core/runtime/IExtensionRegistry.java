@@ -30,12 +30,13 @@ package org.eclipse.core.runtime;
  */
 public interface IExtensionRegistry {
 	/**
-	* Adds the given listener for registry change events related to the given 
-	* namespace.
+	* Adds the given listener for registry change events related to extension points 
+	* in the given namespace.
 	* Has no effect if an identical listener is already registered. After 
 	* completion of this method, the given listener will be registered for events 
-	* related to the specified namespace. If no namespace is specified,
-	* the listener will receive notifications for changes in any namespace.  
+	* related to extension points in the specified namespace. If no namespace 
+	* is specified, the listener will receive notifications for changes to 
+	* extension points in any namespace.  
 	* <p>
 	* Once registered, a listener starts receiving notification of changes to
 	*  the registry. Registry change notifications are sent asynchronously.
