@@ -12,12 +12,21 @@ package org.eclipse.ui.internal.dialogs;
  *    Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
  *       activated and used by other components.
 *********************************************************************/
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
@@ -29,7 +38,9 @@ import org.eclipse.ui.ICapabilityInstallWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.Capability;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -115,18 +126,16 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 						cats.add(reg.getMiscCategory());
 					return cats.toArray();
 				}
-				// @issue need own ICategory
-				if (parentElement instanceof ICategory)
-					return ((ICategory)parentElement).getChildren(parentElement);
+				if (parentElement instanceof Category)
+					return ((Category)parentElement).getChildren(parentElement);
 				return null;
 			}
 			
 			public boolean hasChildren(Object element) {
 				if (element instanceof CapabilityRegistry)
 					return true;
-				// @issue need own ICategory
-				if (element instanceof ICategory)
-					return ((ICategory)element).hasElements();
+				if (element instanceof Category)
+					return ((Category)element).hasElements();
 				return false;
 			}
 		};

@@ -18,7 +18,9 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -27,7 +29,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.Capability;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.ide.Category;
 
 /**
  * Standard workbench wizard that guides the user to supply
@@ -36,7 +40,6 @@ import org.eclipse.ui.internal.registry.*;
 public class NewProjectWizard extends MultiStepCapabilityWizard implements INewWizard {
 	// init method parameters supplied
 	private IWorkbench workbench;
-	private IStructuredSelection selection;
 	
 	// Reference to the pages provided by this wizard
 	private WizardNewProjectNameAndLocationPage creationPage;
@@ -48,8 +51,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	// initial values for the pages provided by this wizard
 	private String initialProjectName;
 	private Capability[] initialProjectCapabilities;
-	// @issue need own definition of ICategory
-	private ICategory[] initialSelectedCategories;
+	private Category[] initialSelectedCategories;
 	
 	/**
 	 * Creates an empty wizard for creating a new project
@@ -255,7 +257,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	 * 
 	 * @param categories initial categories to select
 	 */
-	public void setInitialSelectedCategories(ICategory[] categories) {
+	public void setInitialSelectedCategories(Category[] categories) {
 		initialSelectedCategories = categories;
 	}
 	

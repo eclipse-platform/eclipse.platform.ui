@@ -13,19 +13,43 @@ package org.eclipse.ui.internal.misc;
  *        activated and used by other components.
 *********************************************************************/
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.Capability;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -37,8 +61,7 @@ public class ProjectCapabilitySelectionGroup {
 	private static final String EMPTY_DESCRIPTION = "\n\n\n"; //$NON-NLS-1$
 	
 	private CapabilityRegistry registry;
-	// @issue need own ICategory
-	private ICategory[] initialCategories;
+	private Category[] initialCategories;
 	private Capability[] initialCapabilities;
 	private Capability[] disabledCapabilities;
 	private boolean modified = false;
@@ -64,8 +87,8 @@ public class ProjectCapabilitySelectionGroup {
 		private Collator collator = Collator.getInstance();
 
 		public int compare(Object ob1, Object ob2) {
-			ICategory c1 = (ICategory) ob1;
-			ICategory c2 = (ICategory) ob2;
+			Category c1 = (Category) ob1;
+			Category c2 = (Category) ob2;
 			return collator.compare(c1.getLabel(), c2.getLabel());
 		}
 	};
@@ -88,7 +111,7 @@ public class ProjectCapabilitySelectionGroup {
 	 * @param capabilities the intial collection of valid capabilities to select
 	 * @param registry all available capabilities registered by plug-ins
 	 */
-	public ProjectCapabilitySelectionGroup(ICategory[] categories, Capability[] capabilities, CapabilityRegistry registry) {
+	public ProjectCapabilitySelectionGroup(Category[] categories, Capability[] capabilities, CapabilityRegistry registry) {
 		this(categories, capabilities, null, registry);
 	}
 
@@ -100,7 +123,7 @@ public class ProjectCapabilitySelectionGroup {
 	 * @param disabledCapabilities the collection of capabilities to show as disabled
 	 * @param registry all available capabilities registered by plug-ins
 	 */
-	public ProjectCapabilitySelectionGroup(ICategory[] categories, Capability[] capabilities, Capability[] disabledCapabilities, CapabilityRegistry registry) {
+	public ProjectCapabilitySelectionGroup(Category[] categories, Capability[] capabilities, Capability[] disabledCapabilities, CapabilityRegistry registry) {
 		super();
 		this.initialCategories = categories;
 		this.initialCapabilities = capabilities;
@@ -225,7 +248,7 @@ public class ProjectCapabilitySelectionGroup {
 					visibleCapabilities.clear();
 					Iterator enum = sel.iterator();
 					while (enum.hasNext()) {
-						ICategory cat = (ICategory)enum.next();
+						Category cat = (Category)enum.next();
 						visibleCapabilities.addAll(cat.getElements());
 					}
 					Collections.sort(visibleCapabilities, capabilityComparator);
@@ -304,7 +327,6 @@ public class ProjectCapabilitySelectionGroup {
 	private ArrayList getAvailableCategories() {
 		ArrayList results = registry.getUsedCategories();
 		Collections.sort(results, categoryComparator);
-		// @issue new own default misc category
 		if (registry.getMiscCategory() != null)
 			results.add(registry.getMiscCategory());
 		return results;

@@ -20,12 +20,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProjectCapabilitySelectionGroup;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.Capability;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.ide.Category;
 
 /**
  * A property page for IProject resources to view and edit the
@@ -71,8 +77,7 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		
 		Capability[] caps = reg.getProjectCapabilities(getProject());
 		Capability[] disabledCaps = reg.getProjectDisabledCapabilities(getProject());
-		// @issue need own ICategory
-		ICategory[] cats = new ICategory[0];
+		Category[] cats = new Category[0];
 		capabilityGroup = new ProjectCapabilitySelectionGroup(cats, caps, disabledCaps, reg);
 		return capabilityGroup.createContents(parent);
 	}

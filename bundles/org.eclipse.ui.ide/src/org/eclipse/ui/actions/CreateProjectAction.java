@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.dialogs.NewProjectWizard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.ICategory;
+import org.eclipse.ui.internal.ide.Category;
 
 /**
  * Standard action for launching the new project creation
@@ -70,7 +70,7 @@ public class CreateProjectAction extends Action {
 	/**
 	 * The suggested categories to be selected
 	 */
-	private ICategory[] initialSelectedCategories;
+	private Category[] initialSelectedCategories;
 
 	/**
 	 * Creates a new action for launching the new project
@@ -115,14 +115,14 @@ public class CreateProjectAction extends Action {
 			CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
 			ArrayList results = new ArrayList(ids.length);
 			for (int i = 0; i < ids.length; i++) {
-				ICategory cat = reg.findCategory(ids[i]);
+				Category cat = reg.findCategory(ids[i]);
 				if (cat != null)
 					results.add(cat);
 			}
 			if (results.isEmpty())
 				initialSelectedCategories = null;
 			else {
-				initialSelectedCategories = new ICategory[results.size()];
+				initialSelectedCategories = new Category[results.size()];
 				results.toArray(initialSelectedCategories);
 			}
 		}

@@ -15,9 +15,13 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProjectCapabilitySelectionGroup;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.Capability;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.ide.Category;
 
 /**
  * Second page for the new project creation wizard. This page
@@ -34,8 +38,7 @@ import org.eclipse.ui.internal.registry.*;
 public class WizardNewProjectCapabilityPage extends WizardPage {
 	// initial value stores
 	private Capability[] initialProjectCapabilities;
-	// @issue ICategory
-	private ICategory[] initialSelectedCategories;
+	private Category[] initialSelectedCategories;
 
 	// widgets
 	private ProjectCapabilitySelectionGroup capabilityGroup;
@@ -92,7 +95,7 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 	 * 
 	 * @param categories initial categories to select
 	 */
-	/* package */ void setInitialSelectedCategories(ICategory[] categories) {
+	/* package */ void setInitialSelectedCategories(Category[] categories) {
 		initialSelectedCategories = categories;
 	}
 	

@@ -10,10 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
  
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNatureDescriptor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -28,7 +37,6 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	private HashMap natureToCapability;
 	private ArrayList capabilities;
 	private ArrayList categories;
-	// @issue need own copy of Category
 	private Category miscCategory;
 	
 	/**
@@ -51,7 +59,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * Adds the given capability category to the registry. Called
 	 * by the CapabilityRegistryReader.
 	 */
-	/* package */ boolean addCategory(ICategory category) {
+	/* package */ boolean addCategory(Category category) {
 		return categories.add(category);
 	}
 	
@@ -74,7 +82,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * Finds the category for the given identifier, or
 	 * <code>null</code> if none.
 	 */
-	public ICategory findCategory(String id) {
+	public Category findCategory(String id) {
 		Iterator enum = categories.iterator();
 		while (enum.hasNext()) {
 			Category cat = (Category) enum.next();
@@ -115,9 +123,9 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * 
 	 * @return an array of <code>ICategory</code>
 	 */
-	public ICategory[] findCategories(String[] ids) {
+	public Category[] findCategories(String[] ids) {
 		int count = categories.size();
-		ICategory[] results = new Category[ids.length];
+		Category[] results = new Category[ids.length];
 		
 		for (int i = 0; i < ids.length; i++) {
 			String id = ids[i];
@@ -152,7 +160,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 		ArrayList results = new ArrayList(categories.size());
 		Iterator enum = categories.iterator();
 		while (enum.hasNext()) {
-			ICategory cat = (ICategory) enum.next();
+			Category cat = (Category) enum.next();
 			if (cat.hasElements())
 				results.add(cat);
 		}
@@ -196,7 +204,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * Returns the miscellaneous category, or <code>null</code>
 	 * if none.
 	 */
-	public ICategory getMiscCategory() {
+	public Category getMiscCategory() {
 		return miscCategory;
 	}
 	
