@@ -1045,7 +1045,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return success;
 	}
 	
-	private VersionedIdentifier[] collectFeatures() {	
+
+	/**
+	 * Reads the about info for all the configured features.
+	 */
+	private void readFeaturesInfo() {
+		
+		// get the previous features
+		VersionedIdentifier featureEntries[];
 		try {
 		   ArrayList result = new ArrayList();
 		   ILocalSite localSite = SiteManager.getLocalSite();
@@ -1064,18 +1071,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		         }
 		      }
 		   }
-		   return (VersionedIdentifier[])result.toArray(new VersionedIdentifier[result.size()]);
+		   featureEntries =  (VersionedIdentifier[])result.toArray(new VersionedIdentifier[result.size()]);
 		} catch (CoreException e) {
-			return new VersionedIdentifier[0];
-		}
-	}
-
-	/**
-	 * Reads the about info for all the configured features.
-	 */
-	private void readFeaturesInfo() {
-		// get the previous features
-		VersionedIdentifier featureEntries[] = collectFeatures();
+			featureEntries =  new VersionedIdentifier[0];
+		}		
+		
 		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
 		String[] oldFeaturesArray = settings.getArray(INSTALLED_FEATURES);
 		List oldFeatures = null;
