@@ -210,7 +210,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Version 1 (current version)
 	 * path/key=value
 	 */
-	protected void convertFromProperties(Properties table) {
+	protected void convertFromProperties(Properties table, boolean notify) {
 		String version = table.getProperty(VERSION_KEY);
 		if (version == null || !VERSION_VALUE.equals(version)) {
 			// ignore for now
@@ -224,11 +224,16 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				String path = splitPath[0];
 				path = makeRelative(path);
 				String key = splitPath[1];
-				//use internal methods to avoid notifying listeners
-				EclipsePreferences childNode = (EclipsePreferences) internalNode(path, false, null);
 				if (InternalPlatform.DEBUG_PREFERENCES)
-					Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
-				childNode.internalPut(key, value);
+					Policy.debug("Setting preference: " + path + '/' + key + '=' + value); //$NON-NLS-1$
+				//use internal methods to avoid notifying listeners if applicable
+				if (notify) {
+					Preferences childNode = node(path);
+					childNode.put(key, value);
+				} else {
+					EclipsePreferences childNode = (EclipsePreferences) internalNode(path, false, null);
+					childNode.internalPut(key, value);
+				}
 			}
 		}
 	}
@@ -613,7 +618,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					// ignore
 				}
 		}
-		convertFromProperties(fromDisk);
+		convertFromProperties(fromDisk, false);
 	}
 
 	protected void loaded() {
