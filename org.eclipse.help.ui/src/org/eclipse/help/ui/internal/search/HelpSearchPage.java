@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -155,7 +156,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			}
 		});
 		setControl(control);
-		WorkbenchHelp.setHelp(control, new String[] { SearchUIConstants.SEARCH_PAGE });
+		WorkbenchHelp.setHelp(control, new String[] { IHelpUIConstants.SEARCH_PAGE });
 	}
 	/**
 	 * @see ISearchPage#performAction()

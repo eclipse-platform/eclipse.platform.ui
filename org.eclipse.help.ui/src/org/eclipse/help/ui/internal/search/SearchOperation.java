@@ -29,10 +29,10 @@ public class SearchOperation extends WorkspaceModifyOperation {
 	// Images
 	private static final ImageDescriptor IMAGE_DSCR_SEARCH =
 		ImageDescriptor.createFromURL(
-			WorkbenchResources.getImagePath(SearchUIConstants.IMAGE_KEY_SEARCH));
+			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_KEY_SEARCH));
 	private static final ImageDescriptor IMAGE_DSCR_TOPIC =
 		ImageDescriptor.createFromURL(
-			WorkbenchResources.getImagePath(SearchUIConstants.IMAGE_KEY_TOPIC));
+			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_KEY_TOPIC));
 	// Resource we will be using
 	private static final IResource resource =
 		ResourcesPlugin.getWorkspace().getRoot();
@@ -45,8 +45,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 	public SearchOperation(SearchQueryData data) {
 		if (imgRegistry == null) {
 			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
-			imgRegistry.put(SearchUIConstants.IMAGE_KEY_SEARCH, IMAGE_DSCR_SEARCH);
-			imgRegistry.put(SearchUIConstants.IMAGE_KEY_TOPIC, IMAGE_DSCR_TOPIC);
+			imgRegistry.put(IHelpUIConstants.IMAGE_KEY_SEARCH, IMAGE_DSCR_SEARCH);
+			imgRegistry.put(IHelpUIConstants.IMAGE_KEY_TOPIC, IMAGE_DSCR_TOPIC);
 		}
 		queryData = data;
 	}
@@ -72,7 +72,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 		if (sView != null)
 			sView
 				.searchStarted(
-					SearchUIConstants.RESULTS_PAGE_ID,
+					IHelpUIConstants.RESULTS_PAGE_ID,
 					WorkbenchResources.getString("singleSearchResult", queryData.getExpression()),
 					WorkbenchResources.getString(
 						"multipleSearchResult",
@@ -86,14 +86,14 @@ public class SearchOperation extends WorkspaceModifyOperation {
 					try {
 						ISearchResultViewEntry entry = (ISearchResultViewEntry) element;
 						return (String) entry.getSelectedMarker().getAttribute(
-							SearchUIConstants.HIT_MARKER_ATTR_LABEL);
+							IHelpUIConstants.HIT_MARKER_ATTR_LABEL);
 					} catch (CoreException ce) {
 					}
 				return "";
 			}
 			public Image getImage(Object element) {
 				if (element instanceof ISearchResultViewEntry)
-					return imgRegistry.get(SearchUIConstants.IMAGE_KEY_TOPIC);
+					return imgRegistry.get(IHelpUIConstants.IMAGE_KEY_TOPIC);
 				return null;
 			}
 		}, new org.eclipse.jface.action.Action() {
@@ -112,7 +112,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 							((DefaultHelp) ihelp).displaySearch(
 								queryData.getExpression(),
 								(String) entry.getSelectedMarker().getAttribute(
-									SearchUIConstants.HIT_MARKER_ATTR_HREF));
+									IHelpUIConstants.HIT_MARKER_ATTR_HREF));
 					} catch (Exception e) {
 						System.out.println(e);
 					}
@@ -120,8 +120,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			}		}, new IGroupByKeyComputer() {
 			public Object computeGroupByKey(IMarker marker) {
 				try {
-					if (marker.getAttribute(SearchUIConstants.HIT_MARKER_ATTR_HREF) != null)
-						return marker.getAttribute(SearchUIConstants.HIT_MARKER_ATTR_HREF);
+					if (marker.getAttribute(IHelpUIConstants.HIT_MARKER_ATTR_HREF) != null)
+						return marker.getAttribute(IHelpUIConstants.HIT_MARKER_ATTR_HREF);
 				} catch (CoreException ce) {
 				}
 				return "UNKNOWN";
@@ -130,7 +130,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 		// Delete all previous results
 		try {
 			resource.deleteMarkers(
-				SearchUIConstants.HIT_MARKER_ID,
+				IHelpUIConstants.HIT_MARKER_ID,
 				true,
 				IResource.DEPTH_INFINITE);
 		} catch (CoreException ex) {
@@ -160,22 +160,22 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			Element topic = (Element) topics.item(i);
 			try {
 				IMarker marker = null;
-				marker = resource.createMarker(SearchUIConstants.HIT_MARKER_ID);
+				marker = resource.createMarker(IHelpUIConstants.HIT_MARKER_ID);
 				marker.setAttribute(
-					SearchUIConstants.HIT_MARKER_ATTR_HREF,
+					IHelpUIConstants.HIT_MARKER_ATTR_HREF,
 					topic.getAttribute(ITopic.HREF));
 				marker.setAttribute(
-					SearchUIConstants.HIT_MARKER_ATTR_RESULTOF,
+					IHelpUIConstants.HIT_MARKER_ATTR_RESULTOF,
 					queryData.toURLQuery());
 				marker.setAttribute(
-					SearchUIConstants.HIT_MARKER_ATTR_LABEL,
+					IHelpUIConstants.HIT_MARKER_ATTR_LABEL,
 					topic.getAttribute(ITopic.LABEL));
 				marker.setAttribute(
-					SearchUIConstants.HIT_MARKER_ATTR_ORDER,
+					IHelpUIConstants.HIT_MARKER_ATTR_ORDER,
 					new Integer(i).toString());
 				sView.addMatch(
 					topic.getAttribute(ITopic.LABEL),
-					marker.getAttribute(SearchUIConstants.HIT_MARKER_ATTR_HREF),
+					marker.getAttribute(IHelpUIConstants.HIT_MARKER_ATTR_HREF),
 					resource,
 					marker);
 			} catch (CoreException ce) {

@@ -3,6 +3,7 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.search;
+import org.eclipse.help.internal.ui.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
@@ -18,13 +19,13 @@ public class HelpSearchSorter extends ViewerSorter {
 			int order1 =
 				Integer.parseInt(
 					entry1.getSelectedMarker().getAttribute(
-						SearchUIConstants.HIT_MARKER_ATTR_ORDER,
+						IHelpUIConstants.HIT_MARKER_ATTR_ORDER,
 						"0"));
 			ISearchResultViewEntry entry2 = (ISearchResultViewEntry) e2;
 			int order2 =
 				Integer.parseInt(
 					entry2.getSelectedMarker().getAttribute(
-						SearchUIConstants.HIT_MARKER_ATTR_ORDER,
+						IHelpUIConstants.HIT_MARKER_ATTR_ORDER,
 						"0"));
 			return order1 - order2;
 		} catch (Exception e) {
