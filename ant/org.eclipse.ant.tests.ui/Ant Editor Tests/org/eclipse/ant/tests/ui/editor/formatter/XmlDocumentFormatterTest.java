@@ -14,14 +14,8 @@ import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 
-/**
- *  
- */
 public class XmlDocumentFormatterTest extends AbstractAntUITest {
 
-    /**
-     * @param name
-     */
     public XmlDocumentFormatterTest(String name) {
         super(name);
     }
@@ -80,7 +74,6 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
         };
         simpleTest("formatTest_source01.xml","formatTest_target03.xml",prefs);        
     }
-    
     
     /**
      * @param sourceFileName - file to format
