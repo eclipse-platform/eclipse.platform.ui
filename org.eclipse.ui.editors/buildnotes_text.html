@@ -495,31 +495,31 @@ flag to indicate whether the annotation is persistent or temporary.
 
 The following annotation types are declared by the org.eclipse.ui.editors plug-in:
 
-   &ltextension point="org.eclipse.ui.editors.annotationTypes"&gt
-      &lttype
+   &lt;extension point="org.eclipse.ui.editors.annotationTypes"&gt;
+      &lt;type
          name="org.eclipse.ui.workbench.texteditor.error"
          markerType="org.eclipse.core.resources.problemmarker"
-         markerSeverity="2"&gt
-      &lt/type&gt
-      &lttype
+         markerSeverity="2"&gt;
+      &lt;/type&gt;
+      &lt;type
          name="org.eclipse.ui.workbench.texteditor.warning"
          markerType="org.eclipse.core.resources.problemmarker"
-         markerSeverity="1"&gt
-      &lt/type&gt
-      &lttype
+         markerSeverity="1"&gt;
+      &lt;/type&gt;
+      &lt;type
          name="org.eclipse.ui.workbench.texteditor.info"
          markerType="org.eclipse.core.resources.problemmarker"
-         markerSeverity="0"&gt
-      &lt/type&gt
-      &lttype
+         markerSeverity="0"&gt;
+      &lt;/type&gt;
+      &lt;type
          name="org.eclipse.ui.workbench.texteditor.task"
-         markerType="org.eclipse.core.resources.taskmarker"&gt
-      &lt/type&gt
-      &lttype
+         markerType="org.eclipse.core.resources.taskmarker"&gt;
+      &lt;/type&gt;
+      &lt;type
          name="org.eclipse.ui.workbench.texteditor.bookmark"
-         markerType="org.eclipse.core.resources.bookmark"&gt
-      &lt/type&gt
-   &lt/extension&gt
+         markerType="org.eclipse.core.resources.bookmark"&gt;
+      &lt;/type&gt;
+   &lt;/extension&gt;
 
 The defined markerAnnotationSpecification extension no longer provide "markerType" and "markerSeverity" 
 attributes. They define the "symbolicIcon" attribute with the according value. Thus, MarkerAnnotation.paint 
