@@ -422,7 +422,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	}
 	
 	/**
-	 * Returns all elements that are connected with the given file buffer.
+	 * Returns a list of all elements that are connected with the given file buffer at
+	 * this moment in time.
 	 * 
 	 * @param file the file buffer
 	 * @return the list of all elements connected with the given file buffer
@@ -430,8 +431,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	protected List getElements(IFileBuffer file) {
 		List elements= (List) fFileBufferMap.get(file);
 		if (elements == null)
-			elements= EMPTY_LIST;
-		return elements;
+			return EMPTY_LIST;
+		return new ArrayList(elements);
 	}
 
 	/*
