@@ -4,7 +4,6 @@
  */
 package org.eclipse.search.internal.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -17,10 +16,12 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -30,21 +31,27 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
-import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
+import org.eclipse.search.internal.ui.util.ListContentProvider;
+import org.eclipse.search.internal.ui.util.SWTUtil;
 
 class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
+
 	
 	private class TabFolderLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
@@ -78,7 +85,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 				children[i].setBounds(rect);
 			}
 		}
-	}	
+	}
+	
 	
 	private IWorkspace fWorkspace;
 	private ISearchPage fCurrentPage;
@@ -96,7 +104,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		setPerformActionLabel(SearchMessages.getString("SearchDialog.performAction")); //$NON-NLS-1$
 		fSelection= selection;
 		fEditorPart= editor;
-		fDescriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
+		fDescriptors= SearchPlugin.getDefault().getEnabledSearchPageDescriptors();
 	}
 
 	/* (non-Javadoc)
@@ -132,6 +140,36 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			fCurrentPage.setVisible(true);
 	}
 
+	private void handleCustomizePressed() {
+
+		ILabelProvider labelProvider= new LabelProvider() {
+			public Image getImage(Object element) {
+				return null;
+			}
+			public String getText(Object element) {
+				if (element instanceof SearchPageDescriptor)
+					return ((SearchPageDescriptor)element).getLabel();
+				else
+					return null;
+			}
+		};
+		Object input= SearchPlugin.getDefault().getSearchPageDescriptors();
+		String message= SearchMessages.getString("SearchPageSelectionDialog.message"); //$NON-NLS-1$
+		
+		/*
+		 * XXX:	Empty selection should be forbidden but it can't:
+		 *      see bug 15077: Can't validate ListSelectionDialog
+		 */
+		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ListContentProvider(), labelProvider, message);
+		dialog.setTitle(SearchMessages.getString("SearchPageSelectionDialog.title")); //$NON-NLS-1$
+		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors().toArray());
+		if (dialog.open() == dialog.OK) {
+			SearchPageDescriptor.setEnabled(dialog.getResult());
+			close();
+			new OpenSearchDialogAction().run();
+		}
+	}
+	
 	protected Control createPageArea(Composite parent) {
 		int numPages= fDescriptors.size();
 		fScopeParts= new ScopePart[numPages];
@@ -152,17 +190,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		
 		fCurrentPage.setContainer(this);
 
-		if (numPages == 1) {
-			Control control= getControl(fCurrentPage, parent, 0);
-			if (control instanceof Composite) {
-				boolean showScope= getDescriptorAt(0).showScopeSection();
-				if (showScope) {
-					fScopeParts[0].createPart((Composite)control);
-					fScopeParts[0].setVisible(showScope);
-				}
-			}
-			return control;
-		}
+		if (numPages == 1)
+			return getControl(fCurrentPage, parent, 0);
 		else {
 			Composite border= new Composite(parent, SWT.NONE);
 			GridLayout layout= new GridLayout();
@@ -206,6 +235,34 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			
 			return border;
 		}	
+	}
+
+	protected Control createButtonBar(Composite parent) {
+		Composite composite= new Composite(parent, SWT.NULL);
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 3;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Button button= new Button(composite, SWT.NONE);
+		button.setText(SearchMessages.getString("SearchDialog.customize")); //$NON-NLS-1$
+		GridData gd= new GridData();
+		gd.horizontalIndent= 2 * new GridLayout().marginWidth;
+		button.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(button);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleCustomizePressed();
+			}
+		});
+		
+		Label filler= new Label(composite, SWT.NONE);
+		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+		
+		return super.createButtonBar(composite);
 	}
 
 	protected boolean performAction() {
