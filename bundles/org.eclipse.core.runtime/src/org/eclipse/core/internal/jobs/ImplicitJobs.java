@@ -12,7 +12,6 @@ package org.eclipse.core.internal.jobs;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -130,6 +129,9 @@ class ImplicitJobs {
 			Thread currentThread = Thread.currentThread();
 			threadJob = (ThreadJob) threadJobs.get(currentThread);
 			if (threadJob == null) {
+				//no need to schedule a thread job for a null rule
+				if (rule == null)
+					return;
 				//create a thread job for this thread
 				//use the rule from the real job if it has one
 				Job realJob = Platform.getJobManager().currentJob();
@@ -159,8 +161,7 @@ class ImplicitJobs {
 	synchronized void end() {
 		Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
-		Assert.isNotNull(threadJob, "IJobManager.endRule without matching IJobManager.beginRule"); //$NON-NLS-1$
-		if (threadJob.pop()) {
+		if (threadJob != null && threadJob.pop()) {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);
 			if (threadJob.running) {
