@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -27,6 +28,7 @@ class ImplicitJobs {
 	 * Captures the implicit job state for a given thread.
 	 */
 	class ThreadJob extends Job {
+		private RuntimeException lastPush = null;
 		private ISchedulingRule[] ruleStack;
 		protected boolean running = false;
 		protected boolean queued = false;
@@ -71,9 +73,27 @@ class ImplicitJobs {
 		 */
 		boolean pop(ISchedulingRule rule) {
 			if (top < 0 || ruleStack[top] != rule)
-				Assert.isLegal(false, "IJobManager.endRule without matching IJobManager.beginRule: " + rule); //$NON-NLS-1$
+				illegalPop(rule);
 			ruleStack[top--] = null;
 			return top < 0;
+		}
+		private void illegalPop(ISchedulingRule rule) {
+			StringBuffer buf = new StringBuffer("Attempted to endRule: "); //$NON-NLS-1$
+			buf.append(rule);
+			if (top >= 0 && top < ruleStack.length) {
+				buf.append(", does not match most recent begin: "); //$NON-NLS-1$
+				buf.append(ruleStack[top]);
+			} else {
+				if (top < 0)
+					buf.append(", but there was no matching beginRule"); //$NON-NLS-1$
+				else
+					buf.append(", but the rule stack was out of bounds: " + top); //$NON-NLS-1$
+			}
+			buf.append(".  See log for trace information if rule tracing is enabled."); //$NON-NLS-1$
+			String msg = buf.toString();
+			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, lastPush);
+			InternalPlatform.log(error);
+			Assert.isLegal(false, msg);
 		}
 		void push(ISchedulingRule rule) {
 			if (++top >= ruleStack.length) {
@@ -82,6 +102,8 @@ class ImplicitJobs {
 				ruleStack = newStack;
 			}
 			ruleStack[top] = rule;
+			if (JobManager.DEBUG_BEGIN_END)
+				lastPush = (RuntimeException) new RuntimeException().fillInStackTrace();
 		}
 		public void recycle() {
 			//clear and reset all fields
@@ -135,7 +157,7 @@ class ImplicitJobs {
 					return;
 				//create a thread job for this thread
 				//use the rule from the real job if it has one
-				Job realJob = Platform.getJobManager().currentJob();
+				Job realJob = manager.currentJob();
 				if (realJob != null && realJob.getRule() != null)
 					threadJob = newThreadJob(realJob.getRule());
 				else {
@@ -163,7 +185,7 @@ class ImplicitJobs {
 		Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
 		if (threadJob == null)
-			Assert.isLegal(rule == null, "endRule without matching beginRule"); //$NON-NLS-1$
+			Assert.isLegal(rule == null, "endRule without matching beginRule: " + rule); //$NON-NLS-1$
 		else if (threadJob.pop(rule)) {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);

@@ -33,8 +33,10 @@ import org.eclipse.core.runtime.jobs.*;
 public class JobManager implements IJobManager {
 	private static final String OPTION_DEBUG_JOBS = Platform.PI_RUNTIME + "/jobs"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_JOBS_TIMING = Platform.PI_RUNTIME + "/jobs/timing"; //$NON-NLS-1$
-	public static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS));
-	public static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS_TIMING));
+	private static final String OPTION_DEBUG_BEGIN_END = Platform.PI_RUNTIME + "/jobs/beginend"; //$NON-NLS-1$
+	static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS));
+	static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS_TIMING));
+	static final boolean DEBUG_BEGIN_END= Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_BEGIN_END));
 	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	private static JobManager instance;
 	protected static final long NEVER = Long.MAX_VALUE;

@@ -11,6 +11,8 @@ org.eclipse.core.runtime/debug/context=false
 org.eclipse.core.runtime/jobs=false
 # Includes current date and time in job debug information
 org.eclipse.core.runtime/jobs/timing=false
+# Computes location of error on mismatched IJobManager.beginRule/endRule
+org.eclipse.core.runtime/jobs/beginend=false
 
 # Prints time taken by Plugin constructors and startup() methods.
 org.eclipse.core.runtime/timing/startup=false
