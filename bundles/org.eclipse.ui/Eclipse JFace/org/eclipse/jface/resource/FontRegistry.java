@@ -349,7 +349,7 @@ public void put(String symbolicName, FontData[] fontData) {
 	Assert.isNotNull(fontData);
 		
 	FontData[] existing = (FontData []) stringToFontData.get(symbolicName);
-	if(fontData.equals(existing))
+	if(Arrays.equals(existing,fontData))
 		return;
 		
 	Font oldFont = (Font)stringToFont.remove(symbolicName);
