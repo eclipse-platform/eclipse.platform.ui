@@ -2,8 +2,6 @@ package org.eclipse.update.internal.ui.properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
@@ -60,13 +58,9 @@ public class FeatureGeneralPropertyPage
 	private void addField(Composite parent, String property, String value) {
 
 		if (value != null && value.length() > 0) {
-			FontData data = new FontData();
-			data.setStyle(SWT.BOLD);
-			data.setHeight(8);
 
 			Label label = new Label(parent, SWT.NONE);
 			label.setText(property);
-			label.setFont(new Font(null, data));
 
 			label = new Label(parent, SWT.NONE);
 			label.setText(value);
@@ -79,29 +73,28 @@ public class FeatureGeneralPropertyPage
 		if (description != null) {
 			String annotation = description.getAnnotation();
 			if (annotation != null && annotation.length() > 0) {
+				Composite composite = new Composite(parent, SWT.NULL);
+				GridLayout layout = new GridLayout();
+				layout.marginWidth  = 0;
+				layout.marginHeight = 20;
+				composite.setLayout(layout);
 				GridData gd = new GridData();
 				gd.horizontalSpan = 2;
+				composite.setLayoutData(gd);
 
-				FontData data = new FontData();
-				data.setStyle(SWT.BOLD);
-				data.setHeight(8);
-
-				Label label = new Label(parent, SWT.NONE);
+				Label label = new Label(composite, SWT.NONE);
 				label.setText("Description:");
-				label.setFont(new Font(null, data));
-				label.setLayoutData(gd);
 
 				gd = new GridData(GridData.FILL_BOTH);
-				gd.horizontalSpan = 2;
 
 				if (annotation.length() < 80) {
-					label = new Label(parent, SWT.NONE);
+					label = new Label(composite, SWT.NONE);
 					label.setText(annotation);
 					label.setLayoutData(gd);
 				} else {
 					Text text =
 						new Text(
-							parent,
+							composite,
 							SWT.MULTI
 								| SWT.V_SCROLL
 								| SWT.H_SCROLL

@@ -2,8 +2,6 @@ package org.eclipse.update.internal.ui.properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Composite;
@@ -28,34 +26,26 @@ public class FeatureEnvironmentPropertyPage extends PropertyPage implements IWor
 			layout.numColumns = 2;
 			composite.setLayout(layout);
 			
-			FontData data = new FontData();
-			data.setStyle(SWT.BOLD);
-			data.setHeight(8);
-			
 			Label label = new Label(composite, SWT.NONE);
 			label.setText("Operating System:");
-			label.setFont(new Font(null,data));
 			
 			label = new Label(composite, SWT.NONE);
 			label.setText(extractValue(feature.getOS()));
 			
 			label = new Label(composite, SWT.NONE);
 			label.setText("Windowing System:");
-			label.setFont(new Font(null,data));
 			
 			label = new Label(composite, SWT.NONE);
 			label.setText(extractValue(feature.getWS()));
 			
 			label = new Label(composite, SWT.NONE);
-			label.setText("Operating System Architecture:");
-			label.setFont(new Font(null,data));
+			label.setText("CPU Architecture:");
 			
 			label = new Label(composite, SWT.NONE);
 			label.setText(extractValue(feature.getOSArch()));
 
 			label = new Label(composite, SWT.NONE);
 			label.setText("Languages:");
-			label.setFont(new Font(null,data));
 			
 			label = new Label(composite, SWT.NONE);
 			label.setText(extractValue(feature.getNL()));
