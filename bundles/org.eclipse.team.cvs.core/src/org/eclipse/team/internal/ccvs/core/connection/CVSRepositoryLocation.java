@@ -117,7 +117,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 	 * This method shold only be invoked when the corresponding adapter is shut
 	 * down or a connection is being validated.
 	 */
-	protected void dispose() throws CVSException {
+	public void dispose() throws CVSException {
 		IUserAuthenticator authenticator = getAuthenticator();
 		if (authenticator != null) {
 			authenticator.dispose(this);

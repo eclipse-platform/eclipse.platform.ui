@@ -46,7 +46,7 @@ public class RemoteFile extends RemoteResource implements IRemoteFile, IManagedF
 	/**
 	 * Constructor for RemoteFile.
 	 */
-	protected RemoteFile(RemoteFolder parent, String name, String tag) {
+	public RemoteFile(RemoteFolder parent, String name, String tag) {
 		super(name, tag);
 		this.parent = parent;
 	}

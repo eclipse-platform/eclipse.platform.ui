@@ -19,6 +19,7 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
@@ -69,6 +70,13 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	/**
+	 * Get the ICVSProvider
+	 */
+	public static ICVSProvider getProvider() {
+		return CVSProvider.getInstance();
+	}
+	
+	/**
 	 * Get the communications timeout value in seconds
 	 */
 	public int getTimeout() {
@@ -88,6 +96,7 @@ public class CVSProviderPlugin extends Plugin {
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages");
 		ResourceDeltaVisitor.register();
+		CVSProvider.initialize();
 	}
 	
 	/*

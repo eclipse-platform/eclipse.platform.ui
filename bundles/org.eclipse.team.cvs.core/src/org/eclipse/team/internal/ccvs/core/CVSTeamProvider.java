@@ -36,6 +36,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
@@ -838,7 +839,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		checkIsChild(resource);
 		IManagedResource managed = getChild(resource);
 		if (managed.isFolder()) {
+			IManagedFolder folder = (IManagedFolder)managed;
+			new RemoteFolder(CVSRepositoryLocation.fromString(folder.getFolderInfo().getRoot()), new Path(folder.getFolderInfo().getRepository()), folder.getFolderInfo().getTag());
 		} else {
+			// NOTE: This may not provide a proper parent!
+			new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), ((IManagedFile)managed).getFileInfo().getVersion());
 		}
 		return null;
 	}
