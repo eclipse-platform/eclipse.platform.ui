@@ -323,8 +323,7 @@ public class UpdateManagerUtils {
 	 * 
 	 */
 	public static URL asDirectoryURL(URL url) throws MalformedURLException {
-		
-		url = URLEncoder.encode(url);
+		//url = URLEncoder.encode(url);
 		String path = url.getFile();
 		if (!path.endsWith("/")) {		
 			int index = path.lastIndexOf('/');
