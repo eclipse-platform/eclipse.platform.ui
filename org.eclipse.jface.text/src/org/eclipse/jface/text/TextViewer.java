@@ -2018,6 +2018,11 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget == null || !redraws())
 			return;
+			
+		if (length < 0) {
+			start += length;
+			length= -length;
+		}
 		
 		int end= start + length;
 
