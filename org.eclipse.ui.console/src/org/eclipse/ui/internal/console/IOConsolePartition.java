@@ -56,11 +56,12 @@ public class IOConsolePartition implements IConsolePartition {
     }
     
     /**
-     * appends a string to this partition
-     * @param s
+     * Inserts a string into this partition
+     * @param s The string to insert
+     * @param offset the offset in the partition
      */
-    public void append(String s, int location) {
-        buffer.replace(location, location, s);
+    public void insert(String s, int insertOffset) {
+        buffer.insert(insertOffset, s);
         length += s.length();
     }
       

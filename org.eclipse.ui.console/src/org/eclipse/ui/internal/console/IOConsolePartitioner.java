@@ -352,7 +352,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 					partitions.add(lastPartition);
 					inputPartitions.add(lastPartition);
 				} else {
-					lastPartition.append(event.fText, (event.fOffset-lastPartition.getOffset()));
+					lastPartition.insert(event.fText, (event.fOffset-lastPartition.getOffset()));
 				}
 				
 				int lastLineDelimiter = -1;
