@@ -98,6 +98,9 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void cancel() {
 			fCanceled= true;
+			IProgressMonitor pm= fProgressMonitor;
+			if (pm != null)
+				pm.setCanceled(true);
 			synchronized (fDirtyRegionQueue) {
 				fDirtyRegionQueue.notifyAll();
 			}
