@@ -110,6 +110,7 @@ public class Main {
 	// splash handling
 	private String showSplash = null; 
 	private String endSplash = null; 
+	private boolean cmdInitialize = false;
 	private Process showProcess = null;
 	private boolean splashDown = false; 
 	private final Runnable endSplashHandler = new Runnable() {
@@ -127,6 +128,7 @@ public class Main {
 	private static final String APPLICATION = "-application";
 	private static final String BOOT = "-boot";
 	private static final String INSTALL = "-install";
+	private static final String INITIALIZE = "-initialize";
 	private static final String DEBUG = "-debug";
 	private static final String DEV = "-dev";
 	private static final String DATA = "-data";
@@ -490,6 +492,13 @@ protected String[] processCommandLine(String[] args) throws Exception {
 			continue;
 		}
 		
+		// check if this is initialization pass
+		if (args[i].equalsIgnoreCase(INITIALIZE)) {
+			cmdInitialize = true;
+			// passed thru this arg (i.e., do not set found = true
+			continue;
+		}
+		
 		// check if development mode should be enabled for the entire platform
 		// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 		// simply enable development mode.  Otherwise, assume that that the following arg is
@@ -658,8 +667,15 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 		if (urlString != null) {
 			try {
 				urlString = resolve(urlString);
-				URL bootURL = new URL(new URL(urlString), BOOTJAR);
-				bootLocation = bootURL.toExternalForm();
+				URL bootDir = new URL(urlString);
+				URL bootURL = new URL(bootDir, BOOTJAR);
+				if (bootDir.getProtocol().equals("file")) {
+					File dir = new File(bootDir.getFile());
+					if (dir.exists())
+						// verify boot dir ... otherwise will do default search for boot
+						bootLocation = bootURL.toExternalForm();
+				} else
+					bootLocation = bootURL.toExternalForm();
 			} catch(MalformedURLException e) {
 				// continue ... will do default search for boot
 			}
@@ -756,6 +772,7 @@ private void loadConfiguration(URL url) {
 			if (debug)
 				System.out.println("Startup: using configuration " + url.toString());
 		} catch(IOException e) {
+			// continue ...
 			if (debug)
 				System.out.println("Startup: unable to load configuration\n" + e);
 		}
@@ -835,6 +852,13 @@ private String loadAttribute(Properties props, String name, String dflt) {
  */
 private void handleSplash(URL[] bootPath) {
 	
+	// run without splash if we are initializing
+	if (cmdInitialize) {
+		showSplash = null;
+		endSplash = null;
+		return;
+	}
+	
 	// if -endsplash is specified, use it and ignore any -showsplash command
 	if (endSplash != null) {
 		showSplash = null;
@@ -875,6 +899,7 @@ private void handleSplash(URL[] bootPath) {
 	try {
 		showProcess = Runtime.getRuntime().exec(cmd);
 	} catch (Exception e) {
+		// continue without splash ...
 		e.printStackTrace();
 	}
 	return;
