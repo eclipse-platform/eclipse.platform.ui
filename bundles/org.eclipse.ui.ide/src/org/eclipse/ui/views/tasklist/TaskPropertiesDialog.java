@@ -253,6 +253,12 @@ public class TaskPropertiesDialog extends Dialog {
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         composite.setLayout(layout);
+        
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        composite.setLayoutData(gridData);
+        
+        composite.setLayoutData(gridData);
+        
         Label label = new Label(composite, SWT.NONE);
         label.setText(TaskListMessages.getString("TaskProp.description")); //$NON-NLS-1$
         label.setFont(font);
@@ -261,7 +267,7 @@ public class TaskPropertiesDialog extends Dialog {
             style |= SWT.READ_ONLY;
         }
         descriptionText = new Text(composite, style);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.widthHint = convertHorizontalDLUsToPixels(400);
         descriptionText.setLayoutData(gridData);
         descriptionText.setFont(font);

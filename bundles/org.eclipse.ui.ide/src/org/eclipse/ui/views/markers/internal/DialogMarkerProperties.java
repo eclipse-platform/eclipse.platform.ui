@@ -271,17 +271,22 @@ class DialogMarkerProperties extends Dialog {
      */
     private void createDescriptionArea(Composite parent) {
         Font font = parent.getFont();
+        
         Composite composite = new Composite(parent, SWT.NONE);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        composite.setLayoutData(gridData);
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         composite.setLayout(layout);
+
+        
         Label label = new Label(composite, SWT.NONE);
         label.setText(Messages.getString("propertiesDialog.description.text")); //$NON-NLS-1$
         label.setFont(font);
         int style = SWT.SINGLE | SWT.BORDER;
         descriptionText = new Text(composite, style);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.widthHint = convertHorizontalDLUsToPixels(400);
+        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData.widthHint =  convertHorizontalDLUsToPixels(400);
         descriptionText.setLayoutData(gridData);
         descriptionText.setFont(font);
 
