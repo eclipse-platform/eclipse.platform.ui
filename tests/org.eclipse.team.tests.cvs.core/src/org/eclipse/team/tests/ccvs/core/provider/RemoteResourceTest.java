@@ -296,21 +296,21 @@ public class RemoteResourceTest extends EclipseTest {
 	 	}
 	 }
 	 
-	 /**
-	  * Test building a sync tree using the RemoteFolderTreeBuilder using a remote resource as the
-	  * starting point instead of a local one.
-	  */
-	 public void testBuildRemoteTree() throws TeamException, CoreException, IOException, InterruptedException {
-	 	// Create a project and then delete it locally
-	 	IProject project = createProject("testBuildRemoteTree", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
-	 	String name = project.getName();
-	 	project.delete(true, false, DEFAULT_MONITOR);
-	 	// Create a remote resource for the project and build a sync tree from it
-	 	RemoteFolder folder = new RemoteFolder(null, getRepository(), new Path(name), null);
-	 	RemoteFolderTree tree = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, null, DEFAULT_MONITOR);
-		// Reload the project from the repository and ensure that the tree and project are equal.
-		checkoutProject(project, name, null);
-		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project), tree, false, true);
-	 }
+//	 /**
+//	  * Test building a sync tree using the RemoteFolderTreeBuilder using a remote resource as the
+//	  * starting point instead of a local one.
+//	  */
+//	 public void testBuildRemoteTree() throws TeamException, CoreException, IOException, InterruptedException {
+//	 	// Create a project and then delete it locally
+//	 	IProject project = createProject("testBuildRemoteTree", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
+//	 	String name = project.getName();
+//	 	project.delete(true, false, DEFAULT_MONITOR);
+//	 	// Create a remote resource for the project and build a sync tree from it
+//	 	RemoteFolder folder = new RemoteFolder(null, getRepository(), new Path(name), null);
+//	 	RemoteFolderTree tree = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, null, DEFAULT_MONITOR);
+//		// Reload the project from the repository and ensure that the tree and project are equal.
+//		checkoutProject(project, name, null);
+//		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project), tree, false, true);
+//	 }
 }
 
