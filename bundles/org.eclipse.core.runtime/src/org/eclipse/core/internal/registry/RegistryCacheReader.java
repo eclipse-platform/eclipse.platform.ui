@@ -420,6 +420,11 @@ public class RegistryCacheReader {
 	}
 
 	public class InvalidRegistryCacheException extends Exception {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
+
 		Throwable cause = null;
 
 		public InvalidRegistryCacheException(String msg, Throwable cause) {

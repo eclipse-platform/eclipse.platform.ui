@@ -21,6 +21,11 @@ package org.eclipse.core.internal.runtime;
  */
 /* package */
 class AssertionFailedException extends RuntimeException {
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/** 
 	 * Constructs a new exception.
 	 */

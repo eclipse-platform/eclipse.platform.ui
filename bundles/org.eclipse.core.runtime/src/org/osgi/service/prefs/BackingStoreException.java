@@ -1,6 +1,6 @@
 /*
  * @(#)BackingStoreException.java   1.3 01/07/18
- * $Header: /cvshome/repository/org/osgi/service/prefs/BackingStoreException.java,v 1.6 2002/09/20 11:55:57 pkriens Exp $
+ * $Header: /home/eclipse/org.eclipse.core.runtime/src/org/osgi/service/prefs/BackingStoreException.java,v 1.1 2004/05/05 15:14:34 jeff Exp $
  *
  * Open Services Gateway Initiative (OSGi) Confidential. 
  * 
@@ -18,12 +18,17 @@ package org.osgi.service.prefs;
  * of a failure in the backing store, or a failure to contact the backing
  * store.
  *
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.1 $
  * @author Open Services Gateway Initiative
  */
 
 public class BackingStoreException extends Exception {
-    /**
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Constructs a <tt>BackingStoreException</tt> with the specified detail message.
      *
      * @param s the detail message.

@@ -24,6 +24,11 @@ import java.io.PrintWriter;
  */
 public class CoreException extends Exception {
 
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/** Status object. */
 	private IStatus status;
 

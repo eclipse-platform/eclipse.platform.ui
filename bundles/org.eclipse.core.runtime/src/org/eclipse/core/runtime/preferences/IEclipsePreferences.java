@@ -36,6 +36,10 @@ public interface IEclipsePreferences extends Preferences {
 	 * @since 3.0
 	 */
 	public final class NodeChangeEvent extends EventObject {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 
 		private Preferences child;
 
@@ -116,6 +120,10 @@ public interface IEclipsePreferences extends Preferences {
 	 * @since 3.0
 	 */
 	public final class PreferenceChangeEvent extends EventObject {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 
 		private String key;
 		private Object newValue;

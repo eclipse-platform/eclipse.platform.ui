@@ -152,6 +152,10 @@ public class Preferences {
 	 * @see Preferences.IPropertyChangeListener
 	 */
 	public static class PropertyChangeEvent extends EventObject {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * The name of the changed property.

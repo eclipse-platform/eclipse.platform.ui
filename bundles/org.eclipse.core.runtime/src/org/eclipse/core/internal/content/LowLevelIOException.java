@@ -24,6 +24,11 @@ import org.eclipse.core.internal.runtime.Assert;
  */
 /* package */class LowLevelIOException extends IOException {
 
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private IOException actual;
 
 	public LowLevelIOException(IOException actual) {

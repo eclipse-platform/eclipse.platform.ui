@@ -38,6 +38,10 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 */
 	private class StopParsingException extends SAXException {
 		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
+		/**
 		 * Constructs an instance of <code>StopParsingException</code> with a
 		 * <code>null</code> detail message.
 		 */

@@ -60,6 +60,10 @@ public interface IContentTypeManager {
 	 * </p>
 	 */
 	public final class ContentTypeChangeEvent extends EventObject {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * Constructor for a new content type change event.
