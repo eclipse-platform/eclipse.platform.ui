@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui;
+package org.eclipse.debug.internal.ui.views;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -12,12 +12,33 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.AbstractDebugView;
+import org.eclipse.debug.internal.ui.ControlAction;
+import org.eclipse.debug.internal.ui.CopyToClipboardActionDelegate;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.DisconnectActionDelegate;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.RelaunchActionDelegate;
+import org.eclipse.debug.internal.ui.RemoveTerminatedAction;
+import org.eclipse.debug.internal.ui.ResumeActionDelegate;
+import org.eclipse.debug.internal.ui.ShowQualifiedAction;
+import org.eclipse.debug.internal.ui.StepIntoActionDelegate;
+import org.eclipse.debug.internal.ui.StepOverActionDelegate;
+import org.eclipse.debug.internal.ui.StepReturnActionDelegate;
+import org.eclipse.debug.internal.ui.SuspendActionDelegate;
+import org.eclipse.debug.internal.ui.TerminateActionDelegate;
+import org.eclipse.debug.internal.ui.TerminateAllAction;
+import org.eclipse.debug.internal.ui.TerminateAndRemoveActionDelegate;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -25,10 +46,17 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -40,8 +68,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class DebugView extends LaunchesView implements IPartListener {
+public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener, IPartListener {
 
+	/**
+	 * Event handler for this view
+	 */
+	private LaunchViewEventHandler fEventHandler;
+	
 	/**
 	 * A marker for the source selection and icon for an
 	 * instruction pointer.  This marker is transient.
@@ -57,9 +90,9 @@ public class DebugView extends LaunchesView implements IPartListener {
 		new String[] {IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};	
 	
 	/**
-	 * Creates a debug view and an instruction pointer marker for the view
+	 * Creates a lanuch view and an instruction pointer marker for the view
 	 */
-	public DebugView() {
+	public LaunchView() {
 		try {
 			fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
 		} catch (CoreException e) {
@@ -75,13 +108,201 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 	
 	/**
-	 * @see IWorkbenchPart#dispose()
+	 * Updates the state of the buttons in the view
 	 */
-	public void dispose() {
-		super.dispose();
-		getSite().getPage().removePartListener(this);
+	protected void updateButtons() {
+		updateSelectionActions();
+		updateActions();
 	}
 
+	/**
+	 * @see AbstractDebugView#createActions()
+	 */
+	protected void createActions() {
+		StructuredViewer viewer = getViewer();
+		
+		IAction action;
+		
+		action = new ControlAction(viewer, new TerminateActionDelegate());
+		action.setEnabled(false);
+		setAction("Terminate", action);
+
+		action = new ControlAction(viewer, new DisconnectActionDelegate());
+		action.setEnabled(false);
+		setAction("Disconnect", action);
+
+		action = new RemoveTerminatedAction();
+		action.setEnabled(false);
+		setAction("RemoveAll", action);
+
+		action = new ControlAction(viewer, new RelaunchActionDelegate());
+		action.setEnabled(false);
+		setAction("Relaunch",action);
+
+		setAction(REMOVE_ACTION, new ControlAction(viewer, new TerminateAndRemoveActionDelegate()));
+		setAction("TerminateAll", new TerminateAllAction());
+		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider()));
+		
+		ControlAction cAction = new ControlAction(viewer, new ResumeActionDelegate());
+		viewer.addSelectionChangedListener(cAction);
+		cAction.setEnabled(false);
+		setAction("Resume", cAction);
+
+		cAction = new ControlAction(viewer, new SuspendActionDelegate());
+		viewer.addSelectionChangedListener(cAction);
+		cAction.setEnabled(false);
+		setAction("Suspend", cAction);
+
+		cAction = new ControlAction(viewer, new StepIntoActionDelegate());
+		viewer.addSelectionChangedListener(cAction);
+		cAction.setEnabled(false);
+		setAction("StepInto", cAction);
+
+		cAction = new ControlAction(viewer, new StepOverActionDelegate());
+		viewer.addSelectionChangedListener(cAction);
+		cAction.setEnabled(false);
+		setAction("StepOver", cAction);
+
+		cAction = new ControlAction(viewer, new StepReturnActionDelegate());
+		viewer.addSelectionChangedListener(cAction);
+		cAction.setEnabled(false);
+		setAction("StepReturn", cAction);
+
+		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));
+
+		IAction qAction = new ShowQualifiedAction(viewer);
+		qAction.setChecked(false);
+		setAction("ShowQualifiedNames", qAction);		
+	}
+
+	/**
+	 * @see AbstractDebugView#createViewer(Composite)
+	 */
+	protected StructuredViewer createViewer(Composite parent) {
+		LaunchViewer lv = new LaunchViewer(parent);
+		lv.addSelectionChangedListener(this);
+		lv.addDoubleClickListener(this);
+		lv.setContentProvider(createContentProvider());
+		lv.setLabelProvider(new DelegatingModelPresentation());
+		lv.setUseHashlookup(true);
+		// add my viewer as a selection provider, so selective re-launch works
+		getSite().setSelectionProvider(lv);
+		lv.expandToLevel(2);
+		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
+		setEventHandler(new LaunchViewEventHandler(this, lv));
+		return lv;
+	}
+	
+	/**
+	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
+	 */
+	protected void configureToolBar(IToolBarManager tbm) {
+		tbm.add(getAction("Resume"));
+		tbm.add(getAction("Suspend"));
+		tbm.add(getAction("Terminate"));
+		tbm.add(getAction("Disconnect"));
+		tbm.add(getAction("RemoveAll"));
+		tbm.add(new Separator("#StepGroup")); //$NON-NLS-1$
+		tbm.add(getAction("StepInto"));
+		tbm.add(getAction("StepOver"));
+		tbm.add(getAction("StepReturn"));
+		tbm.add(new Separator("#RenderGroup")); //$NON-NLS-1$
+		tbm.add(getAction("ShowQualifiedNames"));
+	}	
+
+	/**
+	 * @see IWorkbenchPart
+	 */
+	public void dispose() {
+		if (getViewer() != null) {
+			getViewer().removeDoubleClickListener(this);
+			getViewer().removeSelectionChangedListener(this);
+		}
+		getSite().getPage().removePartListener(this);
+		getEventHandler().dispose();
+		super.dispose();
+	}
+	
+	public void autoExpand(Object element) {
+		Object selectee = element;
+		if (element instanceof ILaunch) {
+			IProcess[] ps= ((ILaunch)element).getProcesses();
+				if (ps != null && ps.length > 0) {
+					selectee= ps[0];
+				}
+		}
+		getViewer().setSelection(new StructuredSelection(selectee), true);
+	}
+	
+	/**
+	 * Creates and returns the content provider to use for
+	 * the viewer of this view.
+	 */
+	protected IStructuredContentProvider createContentProvider() {
+		return new LaunchViewContentProvider();
+	}
+	
+	/**
+	 * The selection has changed in the viewer. Show the
+	 * associated source code if it is a stack frame.
+	 * 
+	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		updateButtons();
+		showMarkerForCurrentSelection();
+	}		
+	/**
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		ISelection selection= event.getSelection();
+		if (!(selection instanceof IStructuredSelection)) {
+			return;
+		}
+		IStructuredSelection ss= (IStructuredSelection)selection;
+		Object o= ss.getFirstElement();
+		if (o instanceof IStackFrame) {
+			return;
+		} 
+		TreeViewer tViewer= (TreeViewer)getViewer();
+		boolean expanded= tViewer.getExpandedState(o);
+		tViewer.setExpandedState(o, !expanded);
+	}
+
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+	}
+	
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		if (part == this) {
+			showMarkerForCurrentSelection();
+		}		
+	}	
+	
 	/**
 	 * Returns the configured instruction pointer.
 	 * Selection is based on the line number OR char start and char end.
@@ -108,75 +329,8 @@ public class DebugView extends LaunchesView implements IPartListener {
 		}
 		
 		return fInstructionPointer;
-	}	
+	}		
 	
-	/**
-	 * @see AbstractDebugView#createActions()
-	 */
-	protected void createActions() {
-		super.createActions();
-
-		LaunchesViewer viewer = (LaunchesViewer)getViewer();
-		ControlAction action = new ControlAction(viewer, new ResumeActionDelegate());
-		viewer.addSelectionChangedListener(action);
-		action.setEnabled(false);
-		setAction("Resume", action);
-
-		action = new ControlAction(viewer, new SuspendActionDelegate());
-		viewer.addSelectionChangedListener(action);
-		action.setEnabled(false);
-		setAction("Suspend", action);
-
-		action = new ControlAction(viewer, new StepIntoActionDelegate());
-		viewer.addSelectionChangedListener(action);
-		action.setEnabled(false);
-		setAction("StepInto", action);
-
-		action = new ControlAction(viewer, new StepOverActionDelegate());
-		viewer.addSelectionChangedListener(action);
-		action.setEnabled(false);
-		setAction("StepOver", action);
-
-		action = new ControlAction(viewer, new StepReturnActionDelegate());
-		viewer.addSelectionChangedListener(action);
-		action.setEnabled(false);
-		setAction("StepReturn", action);
-
-		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));
-
-		IAction qAction = new ShowQualifiedAction(viewer);
-		qAction.setChecked(false);
-		setAction("ShowQualifiedNames", qAction);
-	}
-
-	/**
-	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
-	 */
-	protected void configureToolBar(IToolBarManager tbm) {
-		tbm.add(getAction("Resume"));
-		tbm.add(getAction("Suspend"));
-		tbm.add(getAction("Terminate"));
-		tbm.add(getAction("Disconnect"));
-		tbm.add(getAction("RemoveAll"));
-		tbm.add(new Separator("#StepGroup")); //$NON-NLS-1$
-		tbm.add(getAction("StepInto"));
-		tbm.add(getAction("StepOver"));
-		tbm.add(getAction("StepReturn"));
-		tbm.add(new Separator("#RenderGroup")); //$NON-NLS-1$
-		tbm.add(getAction("ShowQualifiedNames"));
-	}
-
-	/**
-	 * The selection has changed in the viewer. Show the
-	 * associated source code if it is a stack frame.
-	 * 
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		super.selectionChanged(event);
-		showMarkerForCurrentSelection();
-	}
-
 	/**
 	 * Opens a marker for the current selection if it is a stack frame.
 	 * If the current selection is a thread, deselection occurs.
@@ -340,7 +494,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 			}
 		};
 	}
-
+	
 	/**
 	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
@@ -375,15 +529,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 		action.setEnabled(action.isApplicableForSelection());
 		menu.add(action);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-
-	/**
-	 * Returns the content provider to use for this viewer 
-	 * of this view.
-	 */
-	protected DebugContentProvider getContentProvider() {
-		return new DebugContentProvider();
-	}
+	}	
 	
 	/**
 	 * Auto-expand and select the given element - must be called in UI thread.
@@ -425,39 +571,23 @@ public class DebugView extends LaunchesView implements IPartListener {
 			//reveal the thread children of a debug target
 			getViewer().reveal(children[0]);
 		}
-	}
-	
-	/**
-	 * @see IPartListener#partClosed(IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-	}
-	
-	/**
-	 * @see IPartListener#partOpened(IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		if (part == this) {
-			showMarkerForCurrentSelection();
-		}		
 	}	
-
+	
+	/**
+	 * Sets the event handler for this view
+	 * 
+	 * @param eventHandler event handler
+	 */
+	private void setEventHandler(LaunchViewEventHandler eventHandler) {
+		fEventHandler = eventHandler;
+	}
+	
+	/**
+	 * Sets the event handler for this view
+	 * 
+	 * @param eventHandler event handler
+	 */
+	protected LaunchViewEventHandler getEventHandler() {
+		return fEventHandler;
+	}	
 }

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
@@ -41,21 +42,20 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.ViewContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -138,7 +138,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-		if (part instanceof LaunchesView) {
+		if (part.getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW)) {
 			if (sel instanceof IStructuredSelection) {
 				setViewerInput((IStructuredSelection)sel);
 			}
@@ -179,9 +179,9 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	}
 	
 	/**
-	 * @see IWorkbenchPart#createPartControl(Composite)
+	 * @see AbstractDebugView#createViewer(Composite)
 	 */
-	public void createPartControl(Composite parent) {
+	public StructuredViewer createViewer(Composite parent) {
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		
 		fModelPresentation = new DelegatingModelPresentation();
@@ -194,33 +194,33 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		
 		// add tree viewer
 		TreeViewer vv = new TreeViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		setViewer(vv);
-		getViewer().setContentProvider(new VariablesContentProvider(this));
-		getViewer().setLabelProvider(getModelPresentation());
-		getViewer().setUseHashlookup(true);
-		getViewer().addDoubleClickListener(this);
+		vv.setContentProvider(new VariablesContentProvider(this));
+		vv.setLabelProvider(getModelPresentation());
+		vv.setUseHashlookup(true);
+		vv.addDoubleClickListener(this);
 		
 		// add text viewer
 		fDetailTextViewer = new TextViewer(getSashForm(), SWT.V_SCROLL | SWT.H_SCROLL);
 		getDetailTextViewer().setDocument(getDetailDocument());
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
 		getDetailTextViewer().setEditable(false);
-		getSashForm().setMaximizedControl(getViewer().getControl());
-		getViewer().addSelectionChangedListener(getTreeSelectionChangedListener());
+		getSashForm().setMaximizedControl(vv.getControl());
+		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
 		getDetailTextViewer().getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
-		
-		// add a context menu to the tree
-		createTreeContextMenu(vv.getTree());
-		
+				
 		// add a context menu to the detail area
 		createDetailContextMenu(getDetailTextViewer().getTextWidget());
-
-		initializeActions();
-		initializeToolBar();
 	
 		setInitialContent();
-		WorkbenchHelp.setHelp(parent,
-			new ViewContextComputer(this, IDebugHelpContextIds.VARIABLE_VIEW ));
+		return vv;
+	}
+	
+	
+	/**
+	 * @see AbstractDebugView#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.VARIABLE_VIEW;		
 	}
 	
 	/**
@@ -293,7 +293,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		if (p == null) {
 			return;
 		}
-		DebugView view= (DebugView) p.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+		IViewPart view= p.findView(IDebugUIConstants.ID_DEBUG_VIEW);
 		if (view != null) {
 			ISelectionProvider provider= view.getSite().getSelectionProvider();
 			if (provider != null) {
@@ -349,9 +349,9 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	}
 	
 	/**
-	 * Initializes ALL actions for the toolbar and both context menus.
+	 * @see AbstractDebugView#createActions()
 	 */
-	protected void initializeActions() {
+	protected void createActions() {
 		setShowTypesAction(new ShowTypesAction(getViewer()));
 		getShowTypesAction().setChecked(false);
 		

@@ -162,6 +162,8 @@ public interface IDebugUIConstants {
 
 	/**
 	 * Process view identifier (value <code>"org.eclipse.debug.ui.ProcessView"</code>).
+	 * 
+	 * @deprecated this view no longer exists
 	 */
 	public static final String ID_PROCESS_VIEW= "org.eclipse.debug.ui.ProcessView"; //$NON-NLS-1$
 	

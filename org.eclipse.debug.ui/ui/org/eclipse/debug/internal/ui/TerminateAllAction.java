@@ -13,11 +13,12 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Terminates all launches.
  */
-public class TerminateAllAction extends Action {
+public class TerminateAllAction extends Action implements IUpdate {
 	
 	public TerminateAllAction() {
 		super(DebugUIMessages.getString("TerminateAllAction.Termi&nate_All_1")); //$NON-NLS-1$

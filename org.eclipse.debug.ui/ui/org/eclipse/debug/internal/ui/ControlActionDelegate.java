@@ -9,19 +9,18 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate {
-	
-	private String fMode= ILaunchManager.DEBUG_MODE;
 
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
@@ -39,19 +38,13 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void initializeForOwner(ControlAction controlAction) {
 		setActionImages(controlAction);
-		LaunchesViewer provider= (LaunchesViewer)controlAction.getSelectionProvider();
-		IContentProvider contentProvider= provider.getContentProvider();
-		setMode(ILaunchManager.DEBUG_MODE);
-		if (contentProvider instanceof ProcessesContentProvider) {
-			setMode(ILaunchManager.RUN_MODE);
-		}	
 	}
 	
 	/**
 	 * Do the specific action using the current selection.
 	 */
 	public void run() {
-		LaunchesView view= getLaunchesView(getMode());
+		IViewPart view= getDebugView();
 		if (view == null) {
 			return;
 		}
@@ -111,7 +104,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		if (action == null) {
 			return;
 		}
-		LaunchesView view= getLaunchesView(getMode());
+		IViewPart view= getDebugView();
 		if (view == null) {
 			action.setEnabled(false);
 			return;
@@ -150,20 +143,20 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		return true;
 	}
 	
-	protected LaunchesView getLaunchesView(String mode) {
+	/**
+	 * Returns the debug view, or <code>null</code> if none.
+	 */
+	protected IViewPart getDebugView() {		
 		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-		return
-			DebugUIPlugin.getDefault().findDebugPart(window, mode, false);
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				return page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+			}
+		}
+		return null;
 	}
-	
-	protected String getMode() {
-		return fMode;
-	}
-
-	protected void setMode(String mode) {
-		fMode = mode;
-	}
-	
+		
 	/**
 	 * Does the specific action of this action to the process.
 	 */

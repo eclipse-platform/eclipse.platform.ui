@@ -10,24 +10,32 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.IUpdate;
  
 /**
- * Removes all terminated/detached launches from the UI. 
- * Clears the launches output as well.
+ * Removes all terminated/detached launches from the
+ * active debug view.
  */
-public class RemoveTerminatedAction extends Action {
+public class RemoveTerminatedAction extends Action implements IUpdate {
 
-	boolean fRemoveDebug;
-
-	public RemoveTerminatedAction(boolean removeDebug) {
+	
+	public RemoveTerminatedAction() {
 		super(DebugUIMessages.getString("RemoveTerminatedAction.Remove_&All_Terminated_1")); //$NON-NLS-1$
 		setToolTipText(DebugUIMessages.getString("RemoveTerminatedAction.Remove_All_Terminated_Launches_2")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED));
-		fRemoveDebug= removeDebug;
 		setEnabled(false);
 		WorkbenchHelp.setHelp(
 			this,
@@ -36,17 +44,19 @@ public class RemoveTerminatedAction extends Action {
 
 	/**
 	 * Removes all of the terminated launches relevant to the
-	 * current perspective. Has the 
-	 * side effect of clearing the console output.
+	 * active debug view.
+	 * 
 	 * @see IAction
 	 */
 	public void run() {
-		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		Object[] launches= lManager.getLaunches();
-		for (int i= 0; i < launches.length; i++) {
-			ILaunch launch= (ILaunch)launches[i];
-			if (launch.isTerminated() && isLaunchRelevantToCurrentPerpective(launch)) {
-				lManager.deregisterLaunch(launch);
+		Object[] elements = getElements();
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof ILaunch) {
+				ILaunch launch = (ILaunch)elements[i];
+				if (launch.isTerminated()) {
+					manager.deregisterLaunch(launch);
+				}
 			}
 		}
 	}
@@ -56,31 +66,47 @@ public class RemoveTerminatedAction extends Action {
 	 * least one launch is terminated and relative to the current perspective.
 	 */
 	public void update() {
-		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches= lManager.getLaunches();
-		for (int i= 0; i < launches.length; i++) {
-			ILaunch launch= launches[i];
-			if (launch.isTerminated() && isLaunchRelevantToCurrentPerpective(launch)) {
-				setEnabled(true);
-				return;
+		Object[] elements = getElements();
+		if (elements != null) {
+			for (int i= 0; i < elements.length; i++) {
+				if (elements[i] instanceof ILaunch) {
+					ILaunch launch= (ILaunch)elements[i];
+					if (launch.isTerminated()) {
+						setEnabled(true);
+						return;
+					}
+				}
 			}
 		}
 		setEnabled(false);
 	}
 
 	/**
-	 * Returns whether this launch is relevant to the 
-	 * current perspective...ie Run or Debug.
-	 * For example, if in the debug perspective (fRemoveDebug= true)
-	 * and the launch does not have a debug target, <code>false</code>
-	 * will be returned.
+	 * Returns the top level elements in the active debug
+	 * view, or <code>null</code> if none.
+	 * 
+	 * @return array of object
 	 */
-	protected boolean isLaunchRelevantToCurrentPerpective(ILaunch launch) {
-		if (fRemoveDebug) {
-			return launch.getDebugTarget() != null;
+	protected Object[] getElements() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IWorkbenchPart part = page.getActivePart();
+				if (part != null) {
+					IDebugViewAdapter view = (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+					if (view != null) {
+						StructuredViewer viewer = view.getViewer();
+						if (viewer != null) {
+							IStructuredContentProvider cp = (IStructuredContentProvider)viewer.getContentProvider();
+							Object input = viewer.getInput();
+							return cp.getElements(input);
+						}
+					}
+				}
+			}
 		}
-		IProcess[] processes= launch.getProcesses();
-		return (processes != null && processes.length > 0);
+		return null;
 	}
 }
 

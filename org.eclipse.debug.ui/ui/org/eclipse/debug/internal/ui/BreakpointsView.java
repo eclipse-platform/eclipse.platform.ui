@@ -14,22 +14,20 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.help.ViewContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -37,43 +35,29 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  */
 public class BreakpointsView extends AbstractDebugView implements IDoubleClickListener {
 	
-	/**
-	 * The various actions of the context menu of this view
-	 */
-	private OpenMarkerAction fOpenMarkerAction;
-	private RemoveBreakpointAction fRemoveBreakpointAction;
-	private RemoveAllBreakpointsAction fRemoveAllBreakpointsAction;
-	private EnableDisableBreakpointAction fEnableDisableBreakpointAction;
-	private ShowQualifiedAction fShowQualifiedNamesAction;
 	private Vector fBreakpointListenerActions;
 	
 	/**
-	 * @see IWorkbenchPart#createPartControl(Composite)
+	 * @see AbstractDebugView#createViewer(Composite)
 	 */
-	public void createPartControl(Composite parent) {
-		setViewer(new TableViewer(parent, SWT.MULTI| SWT.H_SCROLL | SWT.V_SCROLL));
-		getViewer().setContentProvider(new BreakpointsContentProvider());
-		getViewer().setLabelProvider(new DelegatingModelPresentation());
-		getViewer().setSorter(new WorkbenchViewerSorter());
-		initializeActions();
-		initializeToolBar();
-
-		createContextMenu(((TableViewer)getViewer()).getTable());
+	protected StructuredViewer createViewer(Composite parent) {
+		StructuredViewer viewer = new TableViewer(parent, SWT.MULTI| SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setContentProvider(new BreakpointsContentProvider());
+		viewer.setLabelProvider(new DelegatingModelPresentation());
+		viewer.setSorter(new WorkbenchViewerSorter());
 				
-		getViewer().setInput(DebugPlugin.getDefault().getBreakpointManager());
-		getViewer().addDoubleClickListener(this);
-		getViewer().getControl().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				handleKeyPressed(e);
-			}
-		});
-		
-		WorkbenchHelp.setHelp(
-			parent,
-			new ViewContextComputer(this, IDebugHelpContextIds.BREAKPOINT_VIEW));
-			
+		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());
+		viewer.addDoubleClickListener(this);			
 		// Necessary so that the PropertySheetView hears about selections in this view
-		getSite().setSelectionProvider(getViewer());
+		getSite().setSelectionProvider(viewer);
+		return viewer;
+	}	
+	
+	/**
+	 * @see AbstractDebugView#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.BREAKPOINT_VIEW;
 	}
 
 	/**
@@ -90,22 +74,24 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	/**
 	 * Initializes the actions of this view
 	 */
-	protected void initializeActions() {
-		setBreakpointListenerActions(new Vector(2));		
-		setRemoveBreakpointAction(new RemoveBreakpointAction(getViewer()));
+	protected void createActions() {
+		IAction action; 
 		
-		setRemoveAllBreakpointsAction(new RemoveAllBreakpointsAction());
-		boolean enable= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true;
-		getRemoveAllBreakpointsAction().setEnabled(enable);
+		setAction(REMOVE_ACTION, new RemoveBreakpointAction(getViewer()));
 		
-		setShowQualifiedNamesAction(new ShowQualifiedAction(getViewer()));
-		getShowQualifiedNamesAction().setChecked(true);
+		action = new RemoveAllBreakpointsAction();
+		action.setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
+		setAction("RemoveAll", action);
 		
-		setOpenMarkerAction(new OpenBreakpointMarkerAction(getViewer()));
-
-		setEnableDisableBreakpointAction(new EnableDisableBreakpointAction(getViewer()));
-		addBreakpointListenerAction(getEnableDisableBreakpointAction());
-		addBreakpointListenerAction(getRemoveAllBreakpointsAction());
+		action = new ShowQualifiedAction(getViewer());
+		action.setChecked(true);
+		setAction("ShowQualifiedNames", action);
+		
+		setAction("GotoMarker", new OpenBreakpointMarkerAction(getViewer()));
+		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer()));
+		
+		addBreakpointListenerAction(getAction("EnableDisableBreakpoint"));
+		addBreakpointListenerAction(getAction("RemoveAll"));
 	}
 
 	/**
@@ -118,7 +104,7 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 		DebugPlugin dp= DebugPlugin.getDefault();
 		IBreakpointManager bm= dp.getBreakpointManager();
 		
-		for (int i=0; i < fBreakpointListenerActions.size(); i++) {
+		for (int i=0; i < getBreakpointListenerActions().size(); i++) {
 			bm.removeBreakpointListener((IBreakpointListener)getBreakpointListenerActions().get(i));
 		} 
 	}	
@@ -131,15 +117,15 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.NAVIGATION_GROUP));
-		menu.add(getOpenMarkerAction());
+		menu.add(getAction("GotoMarker"));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		menu.add(getEnableDisableBreakpointAction());
-		menu.add(getRemoveBreakpointAction());
-		menu.add(getRemoveAllBreakpointsAction());
+		menu.add(getAction("EnableDisableBreakpoint"));
+		menu.add(getAction(REMOVE_ACTION));
+		menu.add(getAction("RemoveAll"));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getShowQualifiedNamesAction());
+		menu.add(getAction("ShowQualifiedNames"));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -148,16 +134,19 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	 * 
 	 * @param action The action to add to the collection.
 	 */
-	public void addBreakpointListenerAction(IBreakpointListener action) {
+	public void addBreakpointListenerAction(IAction action) {
 		getBreakpointListenerActions().add(action);
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(action);		
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener((IBreakpointListener)action);		
 	}	
 	
 	/**
 	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
 	 */
 	public void doubleClick(DoubleClickEvent event) {
-		getOpenMarkerAction().run();
+		IAction action = getAction("GotoMarker");
+		if (action != null) {
+			action.run();
+		}
 	}
 
 	/**
@@ -190,70 +179,17 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	}
 	
 	protected void configureToolBar(IToolBarManager tbm) {
-		tbm.add(getRemoveBreakpointAction());
-		tbm.add(getRemoveAllBreakpointsAction());
-		tbm.add(getOpenMarkerAction());
-		tbm.add(getShowQualifiedNamesAction());
+		tbm.add(getAction(REMOVE_ACTION));
+		tbm.add(getAction("RemoveAll"));
+		tbm.add(getAction("GotoMarker"));
+		tbm.add(getAction("ShowQualifiedNames"));
 	}
-	
-	/**
-	 * Handles key events in viewer.  Specifically interested in
-	 * the Delete key.
-	 * 
-	 * @param event The key event that has occurred.
-	 */
-	protected void handleKeyPressed(KeyEvent event) {
-		if (event.character == SWT.DEL && event.stateMask == 0 
-			&& getRemoveBreakpointAction().isEnabled()) {
-				getRemoveBreakpointAction().run();
-		}
-	}
-	
+		
 	protected Vector getBreakpointListenerActions() {
+		if(fBreakpointListenerActions == null) {
+			fBreakpointListenerActions= new Vector(2);
+		}
 		return fBreakpointListenerActions;
 	}
 
-	protected void setBreakpointListenerActions(Vector breakpointListenerActions) {
-		fBreakpointListenerActions = breakpointListenerActions;
-	}
-
-	protected EnableDisableBreakpointAction getEnableDisableBreakpointAction() {
-		return fEnableDisableBreakpointAction;
-	}
-
-	protected void setEnableDisableBreakpointAction(EnableDisableBreakpointAction enableDisableBreakpointAction) {
-		fEnableDisableBreakpointAction = enableDisableBreakpointAction;
-	}
-
-	protected OpenMarkerAction getOpenMarkerAction() {
-		return fOpenMarkerAction;
-	}
-
-	protected void setOpenMarkerAction(OpenMarkerAction openMarkerAction) {
-		fOpenMarkerAction = openMarkerAction;
-	}
-
-	protected RemoveAllBreakpointsAction getRemoveAllBreakpointsAction() {
-		return fRemoveAllBreakpointsAction;
-	}
-
-	protected void setRemoveAllBreakpointsAction(RemoveAllBreakpointsAction removeAllBreakpointsAction) {
-		fRemoveAllBreakpointsAction = removeAllBreakpointsAction;
-	}
-
-	protected RemoveBreakpointAction getRemoveBreakpointAction() {
-		return fRemoveBreakpointAction;
-	}
-
-	protected void setRemoveBreakpointAction(RemoveBreakpointAction removeBreakpointAction) {
-		fRemoveBreakpointAction = removeBreakpointAction;
-	}
-
-	protected ShowQualifiedAction getShowQualifiedNamesAction() {
-		return fShowQualifiedNamesAction;
-	}
-
-	protected void setShowQualifiedNamesAction(ShowQualifiedAction showQualifiedNamesAction) {
-		fShowQualifiedNamesAction = showQualifiedNamesAction;
-	}
 }

@@ -35,14 +35,16 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	/**
 	 * Constructs a new inspector content provider
 	 */
-	public InspectorContentProvider(RemoveAllFromInspectorAction action) {
-		fRemoveAllFromInspectorAction= action;
+	public InspectorContentProvider() {
 		fInspectorList = new InspectorList(3);
 		fParentCache = new HashMap(10);
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		enableRemoveAllFromInspectorAction();
 	}
-		
+	
+	protected void setRemoveAllAction(RemoveAllFromInspectorAction action) {
+		fRemoveAllFromInspectorAction = action;
+		enableRemoveAllFromInspectorAction();
+	}	
 	/**
 	 * @see ITreeContentProvider
 	 */
