@@ -25,7 +25,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
+import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -97,8 +98,8 @@ public class Bug40023Test extends UITestCase {
         List keyStrokes = new ArrayList();
         keyStrokes.add(KeyStroke.getInstance(keySequenceText));
         Event event = new Event();
-        WorkbenchContextSupport support = (WorkbenchContextSupport) workbench
-                .getContextSupport();
+		BindingService support = (BindingService) workbench
+				.getAdapter(IBindingService.class);
         support.getKeyboard().press(keyStrokes, event);
 
         // Check that the "Lock Toolbars" menu item is now checked.

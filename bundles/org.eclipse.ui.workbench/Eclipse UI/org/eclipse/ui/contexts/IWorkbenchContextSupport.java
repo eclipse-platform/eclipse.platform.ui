@@ -25,6 +25,10 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * 
  * @since 3.0
+ * @deprecated Please use <code>IBindingService</code> and
+ *             <code>IContextService</code> instead.
+ * @see org.eclipse.ui.contexts.IContextService
+ * @see org.eclipse.ui.keys.IBindingService
  */
 public interface IWorkbenchContextSupport {
 

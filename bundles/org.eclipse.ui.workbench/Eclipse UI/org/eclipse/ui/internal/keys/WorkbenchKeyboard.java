@@ -253,9 +253,9 @@ public final class WorkbenchKeyboard {
 
 	/**
 	 * The binding manager to be used to resolve key bindings. This member
-	 * variable should never be <code>null</code>.
+	 * variable will be <code>null</code> if it has not yet been initialized.
 	 */
-	private final IBindingService bindingService;
+	private IBindingService bindingService = null;
 
 	/**
 	 * The <code>KeyAssistDialog</code> displayed to the user to assist them
@@ -366,8 +366,6 @@ public final class WorkbenchKeyboard {
 	public WorkbenchKeyboard(Workbench associatedWorkbench) {
 		workbench = associatedWorkbench;
 		state = new KeyBindingState(associatedWorkbench);
-		bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
 		workbench.addWindowListener(windowListener);
 	}
 
@@ -569,6 +567,10 @@ public final class WorkbenchKeyboard {
 	 *         if no command matches.
 	 */
 	private Binding getPerfectMatch(KeySequence keySequence) {
+		if (bindingService == null) {
+			bindingService = (IBindingService) workbench
+					.getAdapter(IBindingService.class);
+		}
 		return bindingService.getPerfectMatch(keySequence);
 	}
 
@@ -615,6 +617,10 @@ public final class WorkbenchKeyboard {
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean isPartialMatch(KeySequence keySequence) {
+		if (bindingService == null) {
+			bindingService = (IBindingService) workbench
+					.getAdapter(IBindingService.class);
+		}
 		return bindingService.isPartialMatch(keySequence);
 	}
 
@@ -629,6 +635,10 @@ public final class WorkbenchKeyboard {
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean isPerfectMatch(KeySequence keySequence) {
+		if (bindingService == null) {
+			bindingService = (IBindingService) workbench
+					.getAdapter(IBindingService.class);
+		}
 		return bindingService.isPerfectMatch(keySequence);
 	}
 

@@ -147,6 +147,14 @@ public interface IBindingService {
 	public Scheme getScheme(String schemeId);
 
 	/**
+	 * Tests whether the global key binding architecture is currently active.
+	 * 
+	 * @return <code>true</code> if the key bindings are active;
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean isKeyFilterEnabled();
+
+	/**
 	 * Returns whether the given trigger sequence is a partial match for the
 	 * given sequence.
 	 * 
@@ -169,6 +177,12 @@ public interface IBindingService {
 	 *         bindings; <code>false</code> otherwise.
 	 */
 	public boolean isPerfectMatch(TriggerSequence trigger);
+
+	/**
+	 * Opens the key assistant dialog positioned near the key binding entry in
+	 * the status bar.
+	 */
+	public void openKeyAssistDialog();
 
 	/**
 	 * <p>
@@ -215,4 +229,26 @@ public interface IBindingService {
 	 */
 	public void savePreferences(Scheme activeScheme, Binding[] bindings)
 			throws IOException;
+
+	/**
+	 * <p>
+	 * Enables or disables the global key binding architecture. The architecture
+	 * should be enabled by default.
+	 * </p>
+	 * <p>
+	 * When enabled, keyboard shortcuts are active, and that key events can
+	 * trigger commands. This also means that widgets may not see all key events
+	 * (as they might be trapped as a keyboard shortcut).
+	 * </p>
+	 * <p>
+	 * When disabled, no key events will trapped as keyboard shortcuts, and that
+	 * no commands can be triggered by keyboard events. (Exception: it is
+	 * possible that someone listening for key events on a widget could trigger
+	 * a command.)
+	 * </p>
+	 * 
+	 * @param enabled
+	 *            Whether the key filter should be enabled.
+	 */
+	public void setKeyFilterEnabled(boolean enabled);
 }

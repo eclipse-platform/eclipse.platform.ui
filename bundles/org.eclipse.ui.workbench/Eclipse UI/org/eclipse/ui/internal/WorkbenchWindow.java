@@ -84,6 +84,7 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -738,10 +739,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
             shell.setText(title);
         }
 
-        getWorkbench().getHelpSystem().setHelp(shell,
+		final IWorkbench workbench = getWorkbench();
+		workbench.getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
-        getWorkbench().getContextSupport().registerShell(shell,
-                IWorkbenchContextSupport.TYPE_WINDOW);
+		final IContextService contextService = (IContextService) workbench
+				.getAdapter(IContextService.class);
+		contextService.registerShell(shell, IContextService.TYPE_WINDOW);
 
         trackShellActivation(shell);
         trackShellResize(shell);
@@ -1233,9 +1236,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
             globalActionHandlersByCommandId.clear();
 
             // Remove the enabled submissions. Bug 64024.
-            final IWorkbenchContextSupport contextSupport = workbench
-                    .getContextSupport();
-            contextSupport.unregisterShell(getShell());
+			final IContextService contextService = (IContextService) workbench
+					.getAdapter(IContextService.class);
+            contextService.unregisterShell(getShell());
 
             closeAllPages();
             

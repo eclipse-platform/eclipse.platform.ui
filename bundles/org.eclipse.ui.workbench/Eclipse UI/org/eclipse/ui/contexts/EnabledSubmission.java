@@ -36,6 +36,9 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  * @see IWorkbenchContextSupport
+ * @deprecated Please use <code>IContextService.activateContext</code>
+ *             instead.
+ * @see org.eclipse.ui.contexts.IContextService
  */
 public final class EnabledSubmission implements Comparable {
 

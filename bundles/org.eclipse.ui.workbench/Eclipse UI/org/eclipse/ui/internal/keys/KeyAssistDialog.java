@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -754,9 +754,10 @@ final class KeyAssistDialog extends Dialog {
 	 */
 	private final void registerShellType() {
 		final Shell shell = getShell();
-		final IWorkbenchContextSupport contextSupport = keyBindingState
-				.getAssociatedWindow().getWorkbench().getContextSupport();
-		contextSupport.registerShell(shell, contextSupport
+		final IContextService contextService = (IContextService) keyBindingState
+				.getAssociatedWindow().getWorkbench().getAdapter(
+						IContextService.class);
+		contextService.registerShell(shell, contextService
 				.getShellType((Shell) shell.getParent()));
 	}
 

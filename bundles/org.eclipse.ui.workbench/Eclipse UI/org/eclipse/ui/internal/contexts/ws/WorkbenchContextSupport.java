@@ -16,9 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.LegacyHandlerSubmissionExpression;
@@ -30,7 +27,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.contexts.ContextManagerFactory;
 import org.eclipse.ui.internal.contexts.ContextManagerWrapper;
-import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * Provides support for contexts within the workbench -- including key bindings,
@@ -48,16 +45,16 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	private Map activationsBySubmission = null;
 
 	/**
+	 * The binding service for the workbench. This value is never
+	 * <code>null</code>.
+	 */
+	private IBindingService bindingService;
+
+	/**
 	 * The context service for the workbench. This value is never
 	 * <code>null</code>.
 	 */
 	private IContextService contextService;
-
-	/**
-	 * The key binding support for the contexts. In the workbench, key bindings
-	 * are intimately tied to the context mechanism.
-	 */
-	private WorkbenchKeyboard keyboard;
 
 	/**
 	 * The legacy context manager supported by this application.
@@ -87,6 +84,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 		workbench = workbenchToSupport;
 		contextService = (IContextService) workbench
 				.getAdapter(IContextService.class);
+		bindingService = (IBindingService) workbench
+				.getAdapter(IBindingService.class);
 		contextManagerWrapper = ContextManagerFactory
 				.getContextManagerWrapper(contextManager);
 	}
@@ -131,49 +130,16 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 		return contextManagerWrapper;
 	}
 
-	/**
-	 * An accessor for the underlying key binding support. This method is
-	 * internal, and is not intended to be used by clients. It is currently only
-	 * used for testing purposes.
-	 * 
-	 * @return A reference to the key binding support; never <code>null</code>.
-	 */
-	public final WorkbenchKeyboard getKeyboard() {
-		return keyboard;
-	}
-
 	public final int getShellType(Shell shell) {
 		return contextService.getShellType(shell);
 	}
 
-	/**
-	 * Initializes the key binding support.
-	 */
-	public final void initialize() {
-		// Hook up the key binding support.
-		keyboard = new WorkbenchKeyboard(workbench);
-		final Display display = workbench.getDisplay();
-		final Listener listener = keyboard.getKeyDownFilter();
-		display.addFilter(SWT.KeyDown, listener);
-		display.addFilter(SWT.Traverse, listener);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#isKeyFilterEnabled()
-	 */
 	public final boolean isKeyFilterEnabled() {
-		return keyboard.getKeyDownFilter().isEnabled();
+		return bindingService.isKeyFilterEnabled();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#openKeyAssistDialog()
-	 */
 	public final void openKeyAssistDialog() {
-		keyboard.openMultiKeyAssistShell();
+		bindingService.openKeyAssistDialog();
 	}
 
 	public final boolean registerShell(final Shell shell, final int type) {
@@ -202,7 +168,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	}
 
 	public final void setKeyFilterEnabled(final boolean enabled) {
-		keyboard.getKeyDownFilter().setEnabled(enabled);
+		bindingService.setKeyFilterEnabled(enabled);
 	}
 
 	public final boolean unregisterShell(final Shell shell) {

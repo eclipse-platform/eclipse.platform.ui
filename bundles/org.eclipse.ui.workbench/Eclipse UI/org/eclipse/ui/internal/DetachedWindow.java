@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 
 public class DetachedWindow {
@@ -147,9 +147,10 @@ public class DetachedWindow {
             bounds = s.getBounds();
 
             // Unregister this detached view as a window (for key bindings).
-            final IWorkbenchContextSupport contextSupport = getWorkbenchPage()
-                    .getWorkbenchWindow().getWorkbench().getContextSupport();
-            contextSupport.unregisterShell(s);
+			final IContextService contextService = (IContextService) getWorkbenchPage()
+					.getWorkbenchWindow().getWorkbench().getAdapter(
+							IContextService.class);
+			contextService.unregisterShell(s);
 
             s.setData(null);
             s = null;
@@ -179,10 +180,11 @@ public class DetachedWindow {
         shell.addListener(SWT.Resize, resizeListener);
 
         // Register this detached view as a window (for key bindings).
-        final IWorkbenchContextSupport contextSupport = getWorkbenchPage()
-                .getWorkbenchWindow().getWorkbench().getContextSupport();
-        contextSupport.registerShell(shell,
-                IWorkbenchContextSupport.TYPE_WINDOW);
+		final IContextService contextService = (IContextService) getWorkbenchPage()
+				.getWorkbenchWindow().getWorkbench().getAdapter(
+						IContextService.class);
+        contextService.registerShell(shell,
+                IContextService.TYPE_WINDOW);
 
         page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.DETACHED_WINDOW);

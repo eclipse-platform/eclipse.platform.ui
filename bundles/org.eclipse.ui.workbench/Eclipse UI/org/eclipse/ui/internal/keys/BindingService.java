@@ -21,7 +21,11 @@ import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -48,19 +52,36 @@ public final class BindingService implements IBindingService {
 	private final BindingManager bindingManager;
 
 	/**
+	 * The key binding support for the contexts. In the workbench, key bindings
+	 * are intimately tied to the context mechanism.
+	 */
+	private WorkbenchKeyboard keyboard;
+
+	/**
 	 * Constructs a new instance of <code>BindingService</code> using a JFace
 	 * binding manager.
 	 * 
 	 * @param bindingManager
 	 *            The binding manager to use; must not be <code>null</code>.
+	 * @param workbench
+	 *            The workbench on which this context service will act; must not
+	 *            be <code>null</code>.
 	 */
-	public BindingService(final BindingManager bindingManager) {
+	public BindingService(final BindingManager bindingManager,
+			final Workbench workbench) {
 		if (bindingManager == null) {
 			throw new NullPointerException(
 					"Cannot create a binding service with a null manager"); //$NON-NLS-1$
 		}
 		this.bindingManager = bindingManager;
-		
+
+		// Hook up the key binding support.
+		keyboard = new WorkbenchKeyboard(workbench);
+		final Display display = workbench.getDisplay();
+		final Listener listener = keyboard.getKeyDownFilter();
+		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, listener);
+
 		// Initialize the key formatter.
 		KeyFormatterFactory.setDefault(SWTKeySupport
 				.getKeyFormatterForPlatform());
@@ -91,6 +112,17 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getDefinedSchemes();
 	}
 
+	/**
+	 * Returns the key binding architecture for the workbench. This method is
+	 * internal, and is only intended for testing. This must not be used by
+	 * clients.
+	 * 
+	 * @return The key binding support; never <code>null</code>.
+	 */
+	public final WorkbenchKeyboard getKeyboard() {
+		return keyboard;
+	}
+
 	public final String getLocale() {
 		return bindingManager.getLocale();
 	}
@@ -115,12 +147,20 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getScheme(schemeId);
 	}
 
+	public final boolean isKeyFilterEnabled() {
+		return keyboard.getKeyDownFilter().isEnabled();
+	}
+
 	public final boolean isPartialMatch(final TriggerSequence sequence) {
 		return bindingManager.isPartialMatch(sequence);
 	}
 
 	public final boolean isPerfectMatch(final TriggerSequence sequence) {
 		return bindingManager.isPerfectMatch(sequence);
+	}
+
+	public final void openKeyAssistDialog() {
+		keyboard.openMultiKeyAssistShell();
 	}
 
 	public final void readRegistryAndPreferences(
@@ -137,5 +177,9 @@ public final class BindingService implements IBindingService {
 			// The active scheme is not currently defined.
 		}
 		bindingManager.setBindings(bindings);
+	}
+
+	public final void setKeyFilterEnabled(final boolean enabled) {
+		keyboard.getKeyDownFilter().setEnabled(enabled);
 	}
 }

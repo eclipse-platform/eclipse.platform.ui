@@ -44,7 +44,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -436,13 +436,14 @@ public class CyclePartAction extends PageEventAction {
 		backwardTriggerSequences = bindingService
 				.getActiveBindingsFor(commandBackward);
 
-		final IWorkbenchContextSupport contextSupport = page
-				.getWorkbenchWindow().getWorkbench().getContextSupport();
+		final IContextService contextService = (IContextService) page
+				.getWorkbenchWindow().getWorkbench().getAdapter(
+						IContextService.class);
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
-			contextSupport.registerShell(dialog,
-					IWorkbenchContextSupport.TYPE_NONE);
+			contextService.registerShell(dialog,
+					IContextService.TYPE_NONE);
 			addKeyListener(table, dialog);
 			addTraverseListener(table);
 
@@ -452,7 +453,7 @@ public class CyclePartAction extends PageEventAction {
 		} finally {
 			if (!dialog.isDisposed())
 				cancel(dialog);
-			contextSupport.unregisterShell(dialog);
+			contextService.unregisterShell(dialog);
 			forwardTriggerSequences = null;
 			backwardTriggerSequences = null;
 		}

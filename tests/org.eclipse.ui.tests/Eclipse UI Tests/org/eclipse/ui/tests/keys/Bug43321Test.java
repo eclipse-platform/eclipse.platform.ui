@@ -29,7 +29,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
+import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -40,55 +41,55 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  */
 public class Bug43321Test extends UITestCase {
 
-    /**
-     * Constructor for Bug43321Test.
-     * 
-     * @param name
-     *            The name of the test
-     */
-    public Bug43321Test(String name) {
-        super(name);
-    }
+	/**
+	 * Constructor for Bug43321Test.
+	 * 
+	 * @param name
+	 *            The name of the test
+	 */
+	public Bug43321Test(String name) {
+		super(name);
+	}
 
-    /**
-     * Tests that non-check box items on the menu are not checked when
-     * activated from the keyboard.
-     * 
-     * @throws CommandException
-     *             If execution of the handler fails.
-     * @throws CoreException
-     *             If the test project cannot be created and opened.
-     * @throws ParseException
-     *             If "CTRL+C" isn't a valid key stroke.
-     */
-    public void testNoCheckOnNonCheckbox() throws CommandException,
-            CoreException, ParseException {
-        IWorkbenchWindow window = openTestWindow();
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IProject testProject = workspace.getRoot().getProject("TestProject"); //$NON-NLS-1$
-        testProject.create(null);
-        testProject.open(null);
-        IFile textFile = testProject.getFile("A.txt"); //$NON-NLS-1$
-        String contents = "A blurb"; //$NON-NLS-1$
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(contents
-                .getBytes());
-        textFile.create(inputStream, true, null);
-        AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(window
-                .getActivePage(), textFile, true);
-        editor.selectAndReveal(0, 1);
+	/**
+	 * Tests that non-check box items on the menu are not checked when activated
+	 * from the keyboard.
+	 * 
+	 * @throws CommandException
+	 *             If execution of the handler fails.
+	 * @throws CoreException
+	 *             If the test project cannot be created and opened.
+	 * @throws ParseException
+	 *             If "CTRL+C" isn't a valid key stroke.
+	 */
+	public void testNoCheckOnNonCheckbox() throws CommandException,
+			CoreException, ParseException {
+		IWorkbenchWindow window = openTestWindow();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject testProject = workspace.getRoot().getProject("TestProject"); //$NON-NLS-1$
+		testProject.create(null);
+		testProject.open(null);
+		IFile textFile = testProject.getFile("A.txt"); //$NON-NLS-1$
+		String contents = "A blurb"; //$NON-NLS-1$
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(contents
+				.getBytes());
+		textFile.create(inputStream, true, null);
+		AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(window
+				.getActivePage(), textFile, true);
+		editor.selectAndReveal(0, 1);
 
-        // Press "Ctrl+C" to perform a copy.
-        List keyStrokes = new ArrayList();
-        keyStrokes.add(KeyStroke.getInstance("CTRL+C")); //$NON-NLS-1$
-        Event event = new Event();
-        Workbench workbench = ((Workbench) window.getWorkbench());
-        WorkbenchContextSupport support = (WorkbenchContextSupport) workbench
-                .getContextSupport();
-        support.getKeyboard().press(keyStrokes, event);
+		// Press "Ctrl+C" to perform a copy.
+		List keyStrokes = new ArrayList();
+		keyStrokes.add(KeyStroke.getInstance("CTRL+C")); //$NON-NLS-1$
+		Event event = new Event();
+		Workbench workbench = ((Workbench) window.getWorkbench());
+		BindingService support = (BindingService) workbench
+				.getAdapter(IBindingService.class);
+		support.getKeyboard().press(keyStrokes, event);
 
-        // Get the menu item we've just selected.
-        IAction action = editor.getEditorSite().getActionBars()
-                .getGlobalActionHandler(ActionFactory.COPY.getId());
-        assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
-    }
+		// Get the menu item we've just selected.
+		IAction action = editor.getEditorSite().getActionBars()
+				.getGlobalActionHandler(ActionFactory.COPY.getId());
+		assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
+	}
 }

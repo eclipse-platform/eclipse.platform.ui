@@ -859,7 +859,7 @@ public final class Workbench implements IWorkbench {
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager, commandManager);
 		final IBindingService bindingService = new BindingService(
-				bindingManager);
+				bindingManager, this);
 		services.put(IBindingService.class, bindingService);
 
 		/*
@@ -910,7 +910,6 @@ public final class Workbench implements IWorkbench {
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,
 				commandManager, contextManager, handlerService);
-		workbenchContextSupport.initialize(); // deferred key binding support
 		initializeCommandResolver();
 
 		addWindowListener(windowListener);
