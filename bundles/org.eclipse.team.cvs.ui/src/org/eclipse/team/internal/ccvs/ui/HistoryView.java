@@ -106,6 +106,7 @@ public class HistoryView extends ViewPart {
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
 	private Action getRevisionAction;
+	private Action refreshAction;
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -176,7 +177,7 @@ public class HistoryView extends ViewPart {
 	 */
 	protected void contributeActions() {
 		// Refresh (toolbar)
-		final Action refreshAction = new Action(Policy.bind("HistoryView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
+		refreshAction = new Action(Policy.bind("HistoryView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
 			public void run() {
 				BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 					public void run() {
@@ -576,7 +577,6 @@ public class HistoryView extends ViewPart {
 		tableViewer.addDropSupport(ops, transfers, new HistoryDropAdapter(tableViewer, this));
 	}
 	private void fillTableMenu(IMenuManager manager) {
-		if (tableViewer.getInput() == null) return;
 		// file actions go first (view file)
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 		if (file != null) {
@@ -592,6 +592,7 @@ public class HistoryView extends ViewPart {
 			}
 		}
 		manager.add(new Separator("additions")); //$NON-NLS-1$
+		manager.add(refreshAction);
 		manager.add(new Separator("additions-end")); //$NON-NLS-1$
 	}
 	private void fillTextMenu(IMenuManager manager) {
