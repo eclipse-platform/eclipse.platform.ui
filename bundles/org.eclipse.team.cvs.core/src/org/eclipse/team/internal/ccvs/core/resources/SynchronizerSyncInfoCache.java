@@ -10,13 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -24,13 +17,15 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This cache uses session properties to hold the bytes representing the sync
@@ -47,55 +42,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 */
 	private ISynchronizer getWorkspaceSynchronizer() {
 		return ResourcesPlugin.getWorkspace().getSynchronizer();
-	}
-	
-	/**
-	 * Convert a byte array that was created using getBytes(Map)
-	 * into a Map of ResourceSyncInfo
-	 */
-	private byte[][] getResourceSyncInfo(byte[] bytes) throws CVSException {
-		byte[][] infos = SyncFileWriter.readLines(new ByteArrayInputStream(bytes));
-		// check to make sure the info is not stored in the old format 
-		if (infos.length != 0) {
-			byte[] firstLine = infos[0];
-			if (firstLine.length != 0 && (firstLine[0] != (byte)'/' && firstLine[0] != (byte)'D')) {
-				Map oldInfos = getResourceSyncInfoMap(bytes);
-				infos = new byte[oldInfos.size()][];
-				int i = 0;
-				for (Iterator iter = oldInfos.values().iterator(); iter.hasNext();) {
-					ResourceSyncInfo element = (ResourceSyncInfo) iter.next();
-					infos[i++] = element.getBytes();
-				}
-				// We can't convert the info to the new format because the caller
-				// may either not be in a workspace runnable or the resource tree
-				// may be closed for modification
-			}
-		}
-		return infos;
-	}
-
-	/**
-	 * ResourceSyncInfo used to be stored as a Map of ResourceSyncInfo.
-	 * We need to be able to retrieve that info the way it was and
-	 * convert it to the new way. 
-	 * 
-	 * Convert a byte array that was created using
-	 * getBytes(Map) into a Map of ResourceSyncInfo
-	 */
-	private Map getResourceSyncInfoMap(byte[] bytes) throws CVSException {
-		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-		DataInputStream dis = new DataInputStream(in);
-		Map result = new HashMap();
-		try {
-			int size = dis.readInt();
-			for (int i = 0; i < size; i++) {
-				ResourceSyncInfo info = new ResourceSyncInfo(dis.readUTF(), null, null);
-				result.put(info.getName(), info);
-			}
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}
-		return result;
 	}
 	
 	/*package*/ void flush(IProject project) throws CVSException {
@@ -182,6 +128,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		try {
 			if (syncBytes == null) {
 				if (oldBytes != null && (resource.exists() || resource.isPhantom())) {
+					checkCanModifyWorkspace(resource, canModifyWorkspace);
 					getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
 				}
 			} else {
@@ -189,6 +136,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				// We do this to avoid causing a resource delta when the sync info is 
 				// initially loaded (i.e. the synchronizer has it and so does the Entries file
 				if (oldBytes == null || !Util.equals(syncBytes, oldBytes)) {
+					checkCanModifyWorkspace(resource, canModifyWorkspace);
 					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 				}
 			}
@@ -197,6 +145,17 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		}
 	}
 
+	/*
+	 * If we are not able to modify the workspace, throw an exception indicating this
+	 * condition. The client requesting the cache should read the individual sync info
+	 * directly.
+	 */
+	private void checkCanModifyWorkspace(IResource resource, boolean canModifyWorkspace) throws CVSException {
+		if (!canModifyWorkspace) {
+			throw new CVSException(IStatus.WARNING, CVSStatus.FAILED_TO_CACHE_SYNC_INFO, Policy.bind("SynchronizerSyncInfoCache.0", resource.getFullPath().toString())); //$NON-NLS-1$
+		}
+		
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getDirtyIndicator(org.eclipse.core.resources.IResource)
 	 */

@@ -190,7 +190,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				beginOperation();
 				// iterate over all children with sync info and prepare notifications
 				// this is done first since deleting the folder sync may remove a phantom
-				cacheResourceSyncForChildren(folder);
+				cacheResourceSyncForChildren(folder, true /* can modify workspace */);
 				IResource[] children = folder.members(true);
 				for (int i = 0; i < children.length; i++) {
 					IResource resource = children[i];
@@ -239,7 +239,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			try {
 				beginOperation();
 				// cache resource sync for siblings, set for self, then notify
-				cacheResourceSyncForChildren(parent);
+				cacheResourceSyncForChildren(parent, true /* can modify workspace */);
 				setCachedResourceSync(resource, info);
 				resourceChanged(resource);		
 			} finally {
@@ -277,12 +277,15 @@ public class EclipseSynchronizer implements IFlushOperation {
 			beginOperation();
 			// cache resource sync for siblings, then return for self
 			try {
-				cacheResourceSyncForChildren(parent);
+				cacheResourceSyncForChildren(parent, false /* cannot modify workspace */);
 			} catch (CVSException e) {
-				if (e.getStatus().getCode() == IResourceStatus.WORKSPACE_LOCKED) {
-					// This can occur if the resource sync is loaded during the POST_CHANGE delta phase.
+				if (isCannotModifySynchronizer(e)) {
 					// We will resort to loading the sync info for the requested resource from disk
-					return getSyncBytesFromDisk(resource);
+					byte[] bytes =  getSyncBytesFromDisk(resource);
+					if (!resource.exists() && !ResourceSyncInfo.isDeletion(bytes)) {
+						bytes = ResourceSyncInfo.convertToDeletion(bytes);
+					}
+					return bytes;
 				} else {
 					throw e;
 				}
@@ -313,7 +316,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			try {
 				beginOperation();
 				// cache resource sync for siblings, set for self, then notify
-				cacheResourceSyncForChildren(parent);
+				cacheResourceSyncForChildren(parent, true /* can modify workspace */);
 				setCachedSyncBytes(resource, syncBytes);
 				resourceChanged(resource);		
 			} finally {
@@ -338,7 +341,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			try {
 				beginOperation();
 				// cache resource sync for siblings, delete for self, then notify
-				cacheResourceSyncForChildren(parent);
+				cacheResourceSyncForChildren(parent, true /* can modify workspace */);
 				if (getCachedSyncBytes(resource) != null) { // avoid redundant notifications
 					setCachedSyncBytes(resource, null);
 					clearDirtyIndicator(resource);
@@ -438,16 +441,33 @@ public class EclipseSynchronizer implements IFlushOperation {
 			beginOperation();
 			if (folder.getType() != IResource.ROOT) {
 				// ensure that the sync info is cached so any required phantoms are created
-				cacheResourceSyncForChildren(folder);
+				cacheResourceSyncForChildren(folder, false);
 			}
-			return folder.members(true);
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
+		} catch (CVSException e) {
+			if (isCannotModifySynchronizer(e)) {
+				// Log the problem and continue
+				CVSProviderPlugin.log(e);
+			} else {
+				throw e;
+			}
 		} finally {
 			endOperation();
 		}
+		try {
+			return folder.members(true);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 	
+	private boolean isCannotModifySynchronizer(CVSException e) {
+		// IResourceStatus.WORKSPACE_LOCKED can occur if the resource sync is loaded 
+		// during the POST_CHANGE delta phase.
+		// CVSStatus.FAILED_TO_CACHE_SYNC_INFO can occur if the resource sync is loaded
+		// when no scheduling rule is held.
+		return (e.getStatus().getCode() == IResourceStatus.WORKSPACE_LOCKED 
+				|| e.getStatus().getCode() == CVSStatus.FAILED_TO_CACHE_SYNC_INFO);
+	}
 	
 	/**
 	 * Begins a batch of operations.
@@ -655,15 +675,10 @@ public class EclipseSynchronizer implements IFlushOperation {
 	protected void handleDeleted(IResource resource) throws CVSException {
 		if (resource.exists()) return;
 		try {
-			beginBatching(resource);
-			try {
-				beginOperation();
-				adjustDirtyStateRecursively(resource, RECOMPUTE_INDICATOR);
-			} finally {
-				endOperation();
-			}
+			beginOperation();
+			adjustDirtyStateRecursively(resource, RECOMPUTE_INDICATOR);
 		} finally {
-			endBatching(null);
+			endOperation();
 		}
 	}
 	
@@ -707,7 +722,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 *
 	 * @param container the container
 	 */
-	private void cacheResourceSyncForChildren(IContainer container) throws CVSException {
+	private void cacheResourceSyncForChildren(IContainer container, boolean canModifyWorkspace) throws CVSException {
 		// don't try to load if the information is already cached
 		if (! getSyncInfoCacheFor(container).isResourceSyncInfoCached(container)) {
 			// load the sync info from disk
@@ -989,16 +1004,18 @@ public class EclipseSynchronizer implements IFlushOperation {
 		sessionPropertyCache.setCachedFolderIgnores(container, ignores);
 	}
 	
-	/**
+	/*
 	 * Recursively adds to the possibleIgnores list all children of the given 
-	 * folder that can be ignored.
+	 * folder that can be ignored. This method may only be invoked when a 
+	 * schedling rule for the given foldr is held and when the CVs sync lock is
+	 * held.
 	 * 
 	 * @param folder the folder to be searched
 	 * @param possibleIgnores the list of IResources that can be ignored
 	 */
 	private void accumulateNonManagedChildren(IContainer folder, List possibleIgnores) throws CVSException {
 		try {
-			cacheResourceSyncForChildren(folder);
+			cacheResourceSyncForChildren(folder, true /* can modify workspace */);
 			IResource[] children = folder.members();
 			List folders = new ArrayList();
 			// deal with all files first and then folders to be otimized for caching scheme
@@ -1245,12 +1262,17 @@ public class EclipseSynchronizer implements IFlushOperation {
 		for (int i = 0; i < folders.length; i++) {
 			IContainer parent = folders[i];
 			try {
-				beginOperation();
-				cacheResourceSyncForChildren(parent);
-				cacheFolderSync(parent);
-				cacheFolderIgnores(parent);
+				beginBatching(parent);
+				try {
+					beginOperation();
+					cacheResourceSyncForChildren(parent, false);
+					cacheFolderSync(parent);
+					cacheFolderIgnores(parent);
+				} finally {
+					endOperation();
+				}
 			} finally {
-				endOperation();
+				endBatching(null);
 			}
 		}
 	}

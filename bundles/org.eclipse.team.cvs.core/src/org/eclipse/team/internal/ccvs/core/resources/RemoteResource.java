@@ -163,13 +163,6 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		RemoteResource remote = (RemoteResource) target;
 		return remote.isContainer() == isContainer() && remote.getRepositoryRelativePath().equals(getRepositoryRelativePath());
 	}
-	/*
-	 * @see ICVSResource#setIgnored()
-	 */
-	public void setIgnored() throws CVSException {
-		// ensure that clients are not trying to set sync info on remote handles.
-		Assert.isTrue(false);
-	}
 
 	/*
 	 * @see ICVSResource#setIgnoredAs(String)

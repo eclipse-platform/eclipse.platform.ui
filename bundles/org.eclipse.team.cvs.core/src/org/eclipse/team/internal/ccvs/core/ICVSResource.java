@@ -66,11 +66,6 @@ public interface ICVSResource {
 	public boolean isIgnored() throws CVSException;
 	
 	/**
-	 * Add the following file to the parent's ignore list
-	 */
-	public void setIgnored() throws CVSException;
-	
-	/**
 	 * Add the following pattern to the file's parent ignore list
 	 * 
 	 * XXX This should really be a method of ICVSFolder

@@ -146,13 +146,6 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		if (info == null) return false;
 		return info.getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY);
 	}
-
-	/*
-	 * @see ICVSResource#setIgnored()
-	 */
-	public void setIgnored() throws CVSException {
-		EclipseSynchronizer.getInstance().addIgnored(resource.getParent(), resource.getName());
-	}
 	
 	/*
 	 * @see ICVSResource#setIgnoredAs(String)
