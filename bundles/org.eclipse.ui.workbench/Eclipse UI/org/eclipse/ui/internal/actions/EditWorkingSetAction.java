@@ -52,8 +52,6 @@ public class EditWorkingSetAction extends Action {
 	 * @see org.eclipse.jface.Action#run
 	 */
 	public void run() {
-		if (shell == null)
-			shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSet workingSet = actionGroup.getWorkingSet();
 		
