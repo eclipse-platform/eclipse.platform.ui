@@ -709,7 +709,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		try {
 			if (coreItem != null) {
-				if ((coreItem.runAction(getManager()) == ViewItem.VIEWITEM_ADVANCE)){//TODO? && !(coreItem.isCompleted())) {
+				if (coreItem.runAction(getManager()) == ViewItem.VIEWITEM_ADVANCE && !coreItem.hasConfirm()) {
 					/* LP-item event */
 					// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_PERFORMED, currentItem);
 					coreItem.setRestartImage();
@@ -735,7 +735,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		try {
 			if (coreItem != null) {
-				if (coreItem.runSubItemAction(getManager(), subItemIndex) == ViewItem.VIEWITEM_ADVANCE) {
+				if (coreItem.runSubItemAction(getManager(), subItemIndex) == ViewItem.VIEWITEM_ADVANCE && !coreItem.hasConfirm(subItemIndex)) {
 					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));

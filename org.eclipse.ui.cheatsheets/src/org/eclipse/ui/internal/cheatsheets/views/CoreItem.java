@@ -178,6 +178,33 @@ public class CoreItem extends ViewItem {
 		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub));
 	}
 
+	private Action getAction() {
+		Action action = item.getAction();
+		if(action == null) {
+			if(item.getPerformWhen() != null){
+				action = item.getPerformWhen().getSelectedAction();
+			}
+		}
+		return action;
+	}
+
+	private Action getAction(int index) {
+		if (item.getSubItems() != null && item.getSubItems().size()>0 && listOfSubItemCompositeHolders != null) {
+			SubItemCompositeHolder s = (SubItemCompositeHolder) listOfSubItemCompositeHolders.get(index);
+			if(s != null) {
+				SubItem subItem = s.getSubItem();
+				Action action = subItem.getAction();
+				if(action == null) {
+					if(subItem.getPerformWhen() != null){
+						action = subItem.getPerformWhen().getSelectedAction();
+					}
+				}
+				return action;
+			}
+		}
+		return null;
+	}
+
 	public ArrayList getListOfSubItemCompositeHolders() {
 		return listOfSubItemCompositeHolders;
 	}
@@ -363,6 +390,26 @@ public class CoreItem extends ViewItem {
 		}
 		buttonsHandled = true;
 	}
+	
+	/*package*/
+	boolean hasConfirm() {
+		Action action = getAction();
+
+		if (action == null || action.isConfirm()) {
+			return true;
+		}
+		return false;
+	}
+
+	/*package*/
+	boolean hasConfirm(int index) {
+		Action action = getAction(index);
+
+		if (action == null || action.isConfirm()) {
+			return true;
+		}
+		return false;
+	}
 
 	public String performLineSubstitution(String line, String variable, String value) {
 		StringBuffer buffer = new StringBuffer(line.length());
@@ -385,12 +432,7 @@ public class CoreItem extends ViewItem {
 	}
 	/*package*/
 	byte runAction(CheatSheetManager csm) {
-		Action action = item.getAction();
-		if(action == null) {
-			if(item.getPerformWhen() != null){
-				action = item.getPerformWhen().getSelectedAction();
-			}
-		}
+		Action action = getAction();
 
 		if(action != null) {
 			return runAction(action.getPluginID(), action.getActionClass(), action.getParams(), csm);
@@ -486,13 +528,7 @@ public class CoreItem extends ViewItem {
 		if (item.getSubItems() != null && item.getSubItems().size()>0 && listOfSubItemCompositeHolders != null) {
 			SubItemCompositeHolder s = (SubItemCompositeHolder) listOfSubItemCompositeHolders.get(index);
 			if(s != null) {
-				SubItem subItem = s.getSubItem();
-				Action action = subItem.getAction();
-				if(action == null) {
-					if(subItem.getPerformWhen() != null){
-						action = subItem.getPerformWhen().getSelectedAction();
-					}
-				}
+				Action action = getAction(index);
 
 				if(action != null) {
 					try {
