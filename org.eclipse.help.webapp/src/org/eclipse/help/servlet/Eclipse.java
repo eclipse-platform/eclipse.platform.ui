@@ -53,7 +53,7 @@ public class Eclipse {
 	 */
 	public URLConnection openConnection(String url) throws Exception {
 
-		System.out.println("opening connection");
+		//System.out.println("opening connection");
 		Object[] params = new Object[1];
 		params[0] = new Object[] { "openConnection", url };
 		Object retObj = runMethod.invoke(platformRunnable, params);
@@ -81,25 +81,17 @@ public class Eclipse {
 			//String path = baseURL.getFile() + "/plugins/org.eclipse.core.boot/boot.jar";
 			File f = new File(baseURL.getFile());
 			String path = searchForBoot(f.getParentFile());
-				/*
-			String path =
-				(f.toString() + "/"+PI_BOOT+"/boot.jar").replace(
-					'\\',
-					'/');
-					*/
-
+		
 			URL bootUrl =
 				new URL(
 					baseURL.getProtocol(),
 					baseURL.getHost(),
 					baseURL.getPort(),
 					path);
-			System.out.println("URL for bootloader:" + bootUrl);
-			try
-			{
+			//System.out.println("URL for bootloader:" + bootUrl);
+
 			bootLoader =
 				new URLClassLoader(new URL[] { bootUrl }, null).loadClass(BOOTLOADER);
-			}catch(Exception ex) { ex.printStackTrace(); }
 		}
 		return bootLoader;
 	}
@@ -111,9 +103,9 @@ public class Eclipse {
 			initializeHandlers();
 
 			if (context.getAttribute("platformRunnable") == null) {
-				System.out.println("getting boot loader");
+				//System.out.println("getting boot loader");
 				bootLoader = getBootLoader();
-				System.out.println("got bootloader: " + bootLoader);
+				//System.out.println("got bootloader: " + bootLoader);
 				Method mStartup =
 					bootLoader.getMethod(
 						"startup",
@@ -127,7 +119,7 @@ public class Eclipse {
 						.getAttribute("javax.servlet.context.tempdir"))
 						.getAbsolutePath();
 
-				System.out.println("starting eclipse");
+				//System.out.println("starting eclipse");
 				mStartup
 					.invoke(
 						bootLoader,
@@ -139,7 +131,7 @@ public class Eclipse {
 						"getRunnable",
 						new Class[] { String.class });
 
-				System.out.println("get platform runnable");
+				//System.out.println("get platform runnable");
 				platformRunnable =
 					mGetRunnable.invoke(
 						bootLoader,
@@ -153,8 +145,7 @@ public class Eclipse {
 
 		} catch (Throwable e) {
 			context.log("Problem occured initializing Eclipse", e);
-			e.printStackTrace();
-			System.out.println(((InvocationTargetException)e).getCause());
+			//System.out.println(((InvocationTargetException)e).getCause());
 			throw new ServletException(e);
 		}
 	}
@@ -182,10 +173,10 @@ public class Eclipse {
 	* @param start the location to begin searching at
 	*/
 	protected String searchForBoot(File start) {
-		System.out.println("search boot in " + start);
+		//System.out.println("search boot in " + start);
 		FileFilter filter = new FileFilter() {
 			public boolean accept(File candidate) {
-				System.out.println("candidate: " + candidate);
+				//System.out.println("candidate: " + candidate);
 				return candidate.isDirectory() && (candidate.getName().equals(PI_BOOT) || candidate.getName().startsWith(PI_BOOT + "_")); //$NON-NLS-1$
 			}
 		};
@@ -196,7 +187,7 @@ public class Eclipse {
 		Object maxVersion = null;
 		for (int i = 0; i < boots.length; i++) {
 			String name = boots[i].getName();
-			System.out.println("try " + name);
+			//System.out.println("try " + name);
 			int index = name.indexOf('_');
 			String version;
 			Object currentVersion;
@@ -216,7 +207,6 @@ public class Eclipse {
 					maxVersion = currentVersion;
 				}
 			}
-			System.out.println("maxVersion=  " + maxVersion);
 		}
 		if (result == null)
 			throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot."); //$NON-NLS-1$
