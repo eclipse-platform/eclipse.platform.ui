@@ -40,7 +40,10 @@ public interface IInformationControl {
 	 * Sets the information control's size constraints. A constraint value of
 	 * <code>-1</code> indicates no constraint. This method must be called before 
 	 * <code>computeSizeHint</code> is called.
-	 * 
+	 * <p>
+	 * Note: An information control which implements {@link IInformationControlExtension3}
+	 * can ignore this method or use it as hint for its very first appearance.
+	 * </p>
 	 * @param maxWidth the maximal width of the control  to present the information, or <code>-1</code> for not constraint
 	 * @param maxHeight the maximal height of the control to present the information, or <code>-1</code> for not constraint
 	 */
