@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -39,111 +38,154 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public interface IEditorRegistry {
 
 	/**
-	 * The property id for the contents of this registry.
+	 * The property identifier for the contents of this registry.
 	 */
 	public static final int PROP_CONTENTS = 0x01;
-/**
- * Adds a listener for changes to properties of this registry.
- * Has no effect if an identical listener is already registered.
- * <p>
- * The properties ids are as follows:
- * <ul>
- *   <li><code>PROP_CONTENTS</code>: Triggered when the file editor mappings in
- *       the editor registry change.</li>
- * </ul>
- * </p>
- * <p>
- * [Issue: Check handling of identical listeners.]
- * </p>
- *
- * @param listener a property listener
- */
-public void addPropertyListener(IPropertyListener listener);
-/**
- * Finds and returns the descriptor of the editor with the given editor id.
- *
- * @param editorId the editor id
- * @return the editor descriptor with the given id, or <code>null</code> if not
- *   found
- */
-public IEditorDescriptor findEditor(String editorId);
-/**
- * Returns the default editor used for all unmapped resource types.
- *
- * @return the descriptor of the default editor, or <code>null</code> if not
- *   found
- * @issue contract was changed for 3.0 to allow the possibility of no editors
- * @issue how does application control which editor is the default editor?
- * @issue the other option is to delete this method
- */
-public IEditorDescriptor getDefaultEditor();
-/**
- * Returns the default editor for a given file name.  
- * <p>
- * The default editor is determined by taking the file extension for the
- * file and obtaining the default editor for that extension.
- * </p>
- *
- * @param filename the file name
- * @return the descriptor of the default editor, or <code>null</code> if not
- *   found
- */
-public IEditorDescriptor getDefaultEditor(String fileName) ;
-/**
- * Returns the list of file editors registered to work against the file
- * with the given file name. 
- * <p>
- * Note: Use <code>getDefaultEditor</code> if you only the need the default
- * editor rather than all candidate editors.
- * </p>
- *
- * @param filename the file name
- * @return a list of editor descriptors
- */
-public IEditorDescriptor[] getEditors(String filename) ;
-/**
- * Returns a list of mappings from file type to editor.  The resulting list
- * is sorted in ascending order by file extension.
- * <p>
- * Each mapping defines an extension and the set of editors that are 
- * available for that type. The set of editors includes those registered 
- * via plug-ins and those explicitly associated with a type by the user 
- * in the workbench preference pages.
- * </p>
- *
- * @return a list of mappings sorted alphabetically by extension
- */
-public IFileEditorMapping[] getFileEditorMappings();
-/**
- * Returns the image descriptor associated with a given file.  This image
- * is usually displayed next to the given file.
- * <p>
- * The image is determined by taking the file extension of the file and 
- * obtaining the image for the default editor associated with that extension.
- * A default image is returned if no default editor is available.
- * </p>
- *
- * @param filename the file name
- * @return the descriptor of the image to display next to the file
- */
-public ImageDescriptor getImageDescriptor(String filename) ;
-/**
- * Removes the given property listener from this registry.
- * Has no affect if an identical listener is not registered.
- * <p>
- * [Issue: Check handling of identical listeners.]
- * </p>
- *
- * @param listener a property listener
- */
-public void removePropertyListener(IPropertyListener listener);
-/**
- * Sets the default editor id for a the files that match that
- * specified file name or extension. The specified editor must be
- * defined as an editor for that file name or extension.
- *
- * @param fileNamePattern the file name or pattern (e.g. "*.xml");
- * @param editorId the editor id
- */
-public void setDefaultEditor(String fileNameOrExtension, String editorId);
+
+	/**
+	 * The identifier for the system external editor descriptor. This descriptor 
+	 * is always present in the registry on all platforms. This editor requires 
+	 * an input which implements <code>IPathEditorInput</code>. To access the
+	 * editor descriptor for this identifier, use <code>findEditor(String)</code>.
+	 */
+	public static final String SYSTEM_EXTERNAL_EDITOR_ID = "org.eclipse.ui.systemExternalEditor"; //$NON-NLS-1$
+	
+	/**
+	 * The identifier for the system in-place editor descriptor. This descriptor 
+	 * is only present in the registry on platforms that support in-place editing
+	 * (for example Win32). This editor requires an input which implements 
+	 * <code>IPathEditorInput</code>. To access the editor descriptor for this 
+	 * identifier, use <code>findEditor(String)</code>.
+	 */
+	public static final String SYSTEM_INPLACE_EDITOR_ID = "org.eclipse.ui.systemInPlaceEditor"; //$NON-NLS-1$
+	
+	/**
+	 * Adds a listener for changes to properties of this registry.
+	 * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * The properties ids are as follows:
+	 * <ul>
+	 *   <li><code>PROP_CONTENTS</code>: Triggered when the file editor mappings in
+	 *       the editor registry change.</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param listener a property listener
+	 */
+	public void addPropertyListener(IPropertyListener listener);
+	
+	/**
+	 * Finds and returns the descriptor of the editor with the given editor id.
+	 *
+	 * @param editorId the editor id
+	 * @return the editor descriptor with the given id, or <code>null</code> if not
+	 *   found
+	 */
+	public IEditorDescriptor findEditor(String editorId);
+	
+	/**
+	 * Returns the default editor. The default editor always exist.
+	 *
+	 * @return the descriptor of the default editor
+	 * @deprecated 
+	 */
+	public IEditorDescriptor getDefaultEditor();
+	
+	/**
+	 * Returns the default editor for a given file name.  
+	 * <p>
+	 * The default editor is determined by taking the file extension for the
+	 * file and obtaining the default editor for that extension.
+	 * </p>
+	 *
+	 * @param filename the file name in the system
+	 * @return the descriptor of the default editor, or <code>null</code> if not
+	 *   found
+	 */
+	public IEditorDescriptor getDefaultEditor(String fileName);
+	
+	/**
+	 * Returns the list of file editors registered to work against the file
+	 * with the given file name. 
+	 * <p>
+	 * Note: Use <code>getDefaultEditor(String)</code> if you only the need the default
+	 * editor rather than all candidate editors.
+	 * </p>
+	 *
+	 * @param filename the file name in the system
+	 * @return a list of editor descriptors
+	 */
+	public IEditorDescriptor[] getEditors(String filename);
+	
+	/**
+	 * Returns a list of mappings from file type to editor.  The resulting list
+	 * is sorted in ascending order by file extension.
+	 * <p>
+	 * Each mapping defines an extension and the set of editors that are 
+	 * available for that type. The set of editors includes those registered 
+	 * via plug-ins and those explicitly associated with a type by the user 
+	 * in the workbench preference pages.
+	 * </p>
+	 *
+	 * @return a list of mappings sorted alphabetically by extension
+	 */
+	public IFileEditorMapping[] getFileEditorMappings();
+	
+	/**
+	 * Returns the image descriptor associated with a given file.  This image
+	 * is usually displayed next to the given file.
+	 * <p>
+	 * The image is determined by taking the file extension of the file and 
+	 * obtaining the image for the default editor associated with that extension.
+	 * A default image is returned if no default editor is available.
+	 * </p>
+	 *
+	 * @param filename the file name in the system
+	 * @return the descriptor of the image to display next to the file
+	 */
+	public ImageDescriptor getImageDescriptor(String filename);
+	
+	/**
+	 * Removes the given property listener from this registry.
+	 * Has no affect if an identical listener is not registered.
+	 *
+	 * @param listener a property listener
+	 */
+	public void removePropertyListener(IPropertyListener listener);
+	
+	/**
+	 * Sets the default editor id for a the files that match that
+	 * specified file name or extension. The specified editor must be
+	 * defined as an editor for that file name or extension.
+	 *
+	 * @param fileNamePattern the file name or pattern (e.g. "*.xml");
+	 * @param editorId the editor id or <code>null</code> for no default
+	 */
+	public void setDefaultEditor(String fileNameOrExtension, String editorId);
+	
+	/**
+	 * Returns whether the system has an in-place editor that could handle
+	 * the file.
+	 * 
+	 * @param filename the file name in the system
+	 * @return <code>true</code> if an in-place editor available, <code>false</code> otherwise
+	 */
+	public boolean systemInPlaceEditorAvailable(String filename);
+	
+	/**
+	 * Returns whether the system has an editor that could handle the file.
+	 * 
+	 * @param filename the file name in the system
+	 * @return <code>true</code> if an external editor available, <code>false</code> otherwise
+	 */
+	public boolean systemExternalEditorAvailable(String filename);
+	
+	/**
+	 * Returns the image descriptor associated with the system editor that
+	 * would be used to edit this file externally.
+	 *
+	 * @param filename the file name in the system
+	 * @return the descriptor of the external editor image or <code>null</code>
+	 */
+	public ImageDescriptor getSystemExternalEditorImageDescriptor(String filename);
 }
