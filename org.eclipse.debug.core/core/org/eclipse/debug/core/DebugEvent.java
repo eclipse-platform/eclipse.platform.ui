@@ -36,7 +36,15 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * state between a suspend and resume operation, is if the thread or owning debug
  * target is termianted. However, if a debug model supports some other operation
  * that would allow a debug element to change state while suspended, the debug model
- * would fire a change event for that element. 
+ * would fire a change event for that element. The valid detail codes for a
+ * change event are:<ul>
+ * <li><code>STATE</code> - indicates the state of an element has changed, but its
+ *  children are not effected. A client would use a state change event to update
+ *  a label of the effected element, but would not update any children.</li>
+ * <li><code>CONTENT</code> - indicates that a debug element's value or contents have
+ *  changed in some way. For example, when the value of a variable is changed
+ *  explicitly, the variable should fire a content change event.</li>
+ * </ul>
  * </p>
  * <ul>
  * <li><code>IDebugTarget</code>
@@ -210,7 +218,25 @@ public final class DebugEvent extends EventObject {
 	 * @since 2.0
 	 */
 	public static final int EVALUATION_READ_ONLY = 0x0080;
-		
+
+	/**
+	 * State change detail. Indicates the state of a single 
+	 * debug element has changed. Only valid for <code>CHANGE</code>
+	 * events.
+	 * 
+	 * @since 2.0
+	 */
+	public static final int STATE = 0x0100;
+	
+	/**
+	 * Content change detail. Indicates the content of a debug element
+	 * (and potentially its children) has changed. Only valid for
+	 * <code>CHANGE</code> events.
+	 * 
+	 * @since 2.0
+	 */
+	public static final int CONTENT = 0x0200;	
+			
 	/**
 	 * Constant indicating that the kind or detail of a debug
 	 * event is unspecified.
@@ -253,7 +279,7 @@ public final class DebugEvent extends EventObject {
 		super(eventSource);
 		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_kind")); //$NON-NLS-1$
-		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_READ_ONLY)) == 0)
+		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_READ_ONLY | STATE | CONTENT)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_detail")); //$NON-NLS-1$
 		fKind= kind;
 		fDetail= detail;
@@ -362,6 +388,12 @@ public final class DebugEvent extends EventObject {
 			case EVALUATION_READ_ONLY:
 				buf.append("EVALUATION_READ_ONLY"); //$NON-NLS-1$
 				break;								
+			case STATE:
+				buf.append("STATE"); //$NON-NLS-1$
+				break;			
+			case CONTENT:
+				buf.append("CONTENT"); //$NON-NLS-1$
+				break;					
 			case UNSPECIFIED:
 				buf.append("UNSPECIFIED"); //$NON-NLS-1$
 				break;

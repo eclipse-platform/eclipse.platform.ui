@@ -7,6 +7,7 @@ package org.eclipse.debug.internal.ui.views;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -40,7 +41,14 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 				}
 				break;
 			case DebugEvent.CHANGE:
-				refresh();
+				if (event.getDetail() == DebugEvent.STATE) {
+					// only process variable state changes
+					if (event.getSource() instanceof IVariable) {
+						refresh(event.getSource());
+					}
+				} else {
+					refresh();
+				}
 				break;
 		}
 	}
