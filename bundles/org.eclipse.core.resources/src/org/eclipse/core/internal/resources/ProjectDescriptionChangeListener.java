@@ -31,17 +31,16 @@ public void resourceChanged(IResourceChangeEvent event) {
 		//if the project description has changed, then copy in memory always wins
 		if ((projectDeltas[i].getFlags() & IResourceDelta.DESCRIPTION) != 0)
 			continue;
-		//if the project is being closed, opened, or deleted, we don't need to update description
-		if (projectDeltas[i].getKind() == IResourceDelta.REMOVED || ((projectDeltas[i].getFlags() & IResourceDelta.OPEN) != 0))
+		IProject project = (IProject)projectDeltas[i].getResource();
+		//if the project is being closed or deleted, we don't need to update description
+		if (projectDeltas[i].getKind() == IResourceDelta.REMOVED || !project.isAccessible())
 			continue;
 		IResourceDelta childDelta = projectDeltas[i].findMember(filePath);
 		if (childDelta == null)
 			continue;
-		IResource childResource = childDelta.getResource();
 		//update the project description
 		try {
-			Project project = (Project)childResource.getProject();
-			project.updateDescription();
+			((Project)project).updateDescription();
 		} catch (CoreException e) {
 			//This error should be propagated to the user
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
