@@ -1,25 +1,41 @@
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
-public abstract class MockWorkbenchPart implements IWorkbenchPart {	
+public abstract class MockWorkbenchPart implements IWorkbenchPart,
+	IExecutableExtension
+{	
 	public boolean 
 		createPartControlCalled = false,
 		disposeCalled = false,
 		setFocusCalled = false,
 		initCalled = false;
 		
-	private IPropertyListener myListener;
 	private Composite myParent;
+	private IPropertyListener myListener;
+	private String title;
+	private IWorkbenchPartSite site;
 	
 	public MockWorkbenchPart()
 	{
 	}
 
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+		title = (String)config.getAttribute("name");
+	}
+	
+	public void setSite(IWorkbenchPartSite site) {
+		this.site = site;
+	}
+	
+	public IWorkbenchPartSite getSite() {
+		return site;
+	}
+	
 	/**
 	 * @see IWorkbenchPart#addPropertyListener(IPropertyListener)
 	 */
@@ -33,6 +49,8 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart {
 	public void createPartControl(Composite parent) {
 		myParent = parent;
 		createPartControlCalled = true;
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(title);
 	}
 
 	/**
@@ -43,24 +61,25 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart {
 	}
 
 	/**
-	 * @see IWorkbenchPart#getSite()
-	 */
-	public abstract IWorkbenchPartSite getSite();
-
-	/**
 	 * @see IWorkbenchPart#getTitle()
 	 */
-	public abstract String getTitle();
+	public String getTitle() {
+		return title;
+	}
 
 	/**
 	 * @see IWorkbenchPart#getTitleImage()
 	 */
-	public abstract Image getTitleImage();
+	public Image getTitleImage() {
+		return null;
+	}
 
 	/**
 	 * @see IWorkbenchPart#getTitleToolTip()
 	 */
-	public abstract String getTitleToolTip();
+	public String getTitleToolTip() {
+		return title;
+	}
 
 	/**
 	 * @see IWorkbenchPart#removePropertyListener(IPropertyListener)

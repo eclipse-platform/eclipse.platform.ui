@@ -25,12 +25,6 @@
 	<uiTest 
 		id="ui.api.TestSuite"
 		class="org.eclipse.ui.tests.api.ApiTestSuite"/>
-	<uiTest 
-		id="ui.api.PlatformUITest"
-		class="org.eclipse.ui.tests.api.PlatformUITest"/>
-	<uiTest 
-		id="ui.api.IWorkbenchTest"
-		class="org.eclipse.ui.tests.api.IWorkbenchTest"/>
 </extension>
 
 <extension 
@@ -40,6 +34,56 @@
 		name="Empty Perspective"
 		class="org.eclipse.ui.tests.api.EmptyPerspective">
 	</perspective>
+</extension>
+
+<extension 
+	point="org.eclipse.ui.views">
+	<view
+       id="org.eclipse.ui.tests.api.MockView1"
+	   name="Mock View 1"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.MockViewPart">
+	</view>
+	<view
+       id="org.eclipse.ui.tests.api.MockView2"
+	   name="Mock View 2"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.MockViewPart">
+	</view>
+	<view
+       id="org.eclipse.ui.tests.api.MockView3"
+	   name="Mock View 3"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.MockViewPart">
+	</view>
+	<view
+       id="org.eclipse.ui.tests.api.MockView4"
+	   name="Mock View 4"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.MockViewPart">
+	</view>
+	<view
+       id="org.eclipse.ui.tests.api.MockView5"
+	   name="Mock View 5"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.MockViewPart">
+	</view>
+</extension>
+
+<extension
+    point = "org.eclipse.ui.editors">
+    <editor id ="org.eclipse.ui.tests.api.MockEditor1"
+      name="Mock Editor 1"
+      extensions="mock1"
+      icon="icons\view.gif"
+      class="org.eclipse.ui.tests.api.MockEditorPart">
+    </editor>
+    <editor id ="org.eclipse.ui.tests.api.MockEditor2"
+      name="Mock Editor 2"
+      extensions="mock2"
+      icon="icons\view.gif"
+      class="org.eclipse.ui.tests.api.MockEditorPart">
+    </editor>
 </extension>
 
 </plugin>
