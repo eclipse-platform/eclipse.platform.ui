@@ -890,6 +890,9 @@ public class InternalAntRunner {
 
 		if (commands.remove("-emacs")) { //$NON-NLS-1$
 			emacsMode = true;
+			if (buildLogger != null) {
+				buildLogger.setEmacsMode(true);
+			}
 		}
 		if (commands.remove("-projecthelp")) { //$NON-NLS-1$
 			projectHelp = true;
