@@ -23,7 +23,11 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RestoreDefaultEntriesAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathModel;
+import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -91,5 +95,38 @@ public class AntClasspathTab extends JavaClasspathTab {
 				((AntTargetsTab)tab).setDirty(true);
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		
+		boolean valid= super.isValid(launchConfig);
+		if (!valid) {
+			return false;
+		}
+		
+		return validateAntHome();
+	}
+	
+	private boolean validateAntHome() {
+		ClasspathModel model= getModel();
+		IClasspathEntry userEntry= model.getUserEntry();
+		IClasspathEntry[] entries= userEntry.getEntries();
+		for (int i = 0; i < entries.length; i++) {
+			ClasspathEntry entry = (ClasspathEntry) entries[i];
+			IRuntimeClasspathEntry runtimeEntry= entry.getDelegate();
+			if (runtimeEntry instanceof AntHomeClasspathEntry) {
+				try {
+					((AntHomeClasspathEntry)runtimeEntry).resolveAntHome();
+				} catch (CoreException ce) {
+					setErrorMessage(ce.getStatus().getMessage());
+					return false;
+				}
+				break;
+			}
+		}
+		return true;
 	}
 }

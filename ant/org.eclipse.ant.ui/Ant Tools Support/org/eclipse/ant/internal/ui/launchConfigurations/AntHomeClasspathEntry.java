@@ -102,24 +102,34 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 				libs.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
 			}
 		} else {
+			File lib= resolveAntHome();
 			IPath libDir = new Path(antHomeLocation).append("lib"); //$NON-NLS-1$
-			File lib = libDir.toFile();
-			if (lib.exists() && lib.isDirectory()) {
-				String[] fileNames = lib.list();
-				for (int i = 0; i < fileNames.length; i++) {
-					String name = fileNames[i];
-					IPath path = new Path(name);
-					String fileExtension = path.getFileExtension();
-					if ("jar".equalsIgnoreCase(fileExtension)) { //$NON-NLS-1$
-						libs.add(JavaRuntime.newArchiveRuntimeClasspathEntry(libDir.append(path)));
-					}
+			String[] fileNames = lib.list();
+			for (int i = 0; i < fileNames.length; i++) {
+				String name = fileNames[i];
+				IPath path = new Path(name);
+				String fileExtension = path.getFileExtension();
+				if ("jar".equalsIgnoreCase(fileExtension)) { //$NON-NLS-1$
+					libs.add(JavaRuntime.newArchiveRuntimeClasspathEntry(libDir.append(path)));
 				}
-			} else {
-				abort(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.7"), new String[]{antHomeLocation}), null); //$NON-NLS-1$
 			}
 		}
 		return (IRuntimeClasspathEntry[]) libs.toArray(new IRuntimeClasspathEntry[libs.size()]);
 	}
+	
+	public File resolveAntHome() throws CoreException {
+		IPath libDir= new Path(antHomeLocation).append("lib"); //$NON-NLS-1$
+		File lib= libDir.toFile();
+		File parentDir= lib.getParentFile();
+		if (parentDir == null || !parentDir.exists()) {
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.10"), new String[] {antHomeLocation}), null); //$NON-NLS-1$
+		}
+		if (!lib.exists() || !lib.isDirectory()) {
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.11"), new String[] {antHomeLocation}), null); //$NON-NLS-1$
+		}
+		return lib;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getName()
 	 */
