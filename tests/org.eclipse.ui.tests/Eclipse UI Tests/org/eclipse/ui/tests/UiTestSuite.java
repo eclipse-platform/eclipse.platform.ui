@@ -49,28 +49,28 @@ public class UiTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UiTestSuite() {
-//        addTest(new ApiTestSuite());
-//
-//        if (!PlatformUtil.onLinux()) {
-//            addTest(new UIAutomatedSuite());
-//        }
-//
-//        addTest(new PropertySheetTestSuite());
-//        addTest(new InternalTestSuite());
-//        addTest(new NavigatorTestSuite());
-//        addTest(new AdaptableTestSuite());
-//        addTest(new ZoomTestSuite());
-//        addTest(new DataTransferTestSuite());
-//        addTest(new PreferencesTestSuite());
-//        addTest(new KeysTestSuite());
-//        addTest(new MultiPageEditorTestSuite());
+        addTest(new ApiTestSuite());
+
+        if (!PlatformUtil.onLinux()) {
+            addTest(new UIAutomatedSuite());
+        }
+
+        addTest(new PropertySheetTestSuite());
+        addTest(new InternalTestSuite());
+        addTest(new NavigatorTestSuite());
+        addTest(new AdaptableTestSuite());
+        addTest(new ZoomTestSuite());
+        addTest(new DataTransferTestSuite());
+        addTest(new PreferencesTestSuite());
+        addTest(new KeysTestSuite());
+        addTest(new MultiPageEditorTestSuite());
         addTest(new DynamicPluginsTestSuite());
-//        addTest(new ActivitiesTestSuite());
-//        addTest(new CommandsTestSuite());
-//        addTest(new ContextsTestSuite());
-//        addTest(new DragTestSuite());
-//        addTest(new ThemesTestSuite());
-//        addTest(new IntroTestSuite());
-//        addTest(new MenusTestSuite());
+        addTest(new ActivitiesTestSuite());
+        addTest(new CommandsTestSuite());
+        addTest(new ContextsTestSuite());
+        addTest(new DragTestSuite());
+        addTest(new ThemesTestSuite());
+        addTest(new IntroTestSuite());
+        addTest(new MenusTestSuite());
     }
 }
