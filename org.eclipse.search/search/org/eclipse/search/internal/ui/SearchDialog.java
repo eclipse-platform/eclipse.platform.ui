@@ -67,12 +67,10 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		}
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle rect= composite.getClientArea();
-			int width= rect.width;
-			int height= rect.height;
 			
 			Control[] children= composite.getChildren();
 			for (int i= 0; i < children.length; i++) {
-				children[i].setBounds(0, 0, width, height);
+				children[i].setBounds(rect);
 			}
 		}
 	}	
@@ -235,7 +233,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			ISearchPage page= descriptor.createObject();
 			page.setContainer(this);
 			item.setData(page);
-			item.setControl(getControl(page, (Composite)event.widget));
+			Control newControl= getControl(page, (Composite)event.widget);
+			item.setControl(newControl);
+			resizeDialogIfNeeded(newControl);
 		}
 		if (item.getData() instanceof ISearchPage) {
 			fCurrentPage= (ISearchPage)item.getData();
@@ -278,5 +278,18 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			page.createControl(parent);
 		}
 		return page.getControl();
+	}
+	
+	private void resizeDialogIfNeeded(Control newControl) {
+		Point currentSize= fCurrentPage.getControl().getSize();
+		Point newSize= newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		if (mustResize(currentSize, newSize)) {
+			Shell shell= getShell();
+			shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+		}
+	}
+	
+	private boolean mustResize(Point currentSize, Point newSize) {
+		return currentSize.x < newSize.x || currentSize.y < newSize.y;
 	}
 }
