@@ -226,6 +226,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 				result.add(s);
 			}
 		}
+		throw new CVSException(result);
 	}
 
 	/**
