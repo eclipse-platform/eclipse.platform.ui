@@ -631,7 +631,7 @@ public Object run(Object arg) {
 /**
  * run an event loop for the workbench.
  */
-private void runEventLoop() {
+protected void runEventLoop() {
 	Display display = Display.getCurrent();
 	runEventLoop = true;
 	while (runEventLoop) {
