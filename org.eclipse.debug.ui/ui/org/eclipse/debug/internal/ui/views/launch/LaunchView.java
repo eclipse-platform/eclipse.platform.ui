@@ -414,22 +414,24 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		site.getPage().addPartListener(this);
 		site.getWorkbenchWindow().addPageListener(this);
 		site.getWorkbenchWindow().addPerspectiveListener(this);
-		if (memento != null) {
-			if (fReuseEditor) {
-				String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
-				if (index != null) {
-					try {
-						fEditorIndex = Integer.parseInt(index);
-					} catch (NumberFormatException e) {
-						DebugUIPlugin.log(e);
-					}
+		if (memento == null) {
+			return;
+		}
+		if (fReuseEditor) {
+			String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
+			if (index != null) {
+				try {
+					fEditorIndex = Integer.parseInt(index);
+				} catch (NumberFormatException e) {
+					DebugUIPlugin.log(e);
 				}
 			}
-			String autoManage = memento.getString(ATTR_AUTO_MANAGE_VIEWS);
-			if (autoManage != null) {
-				fAutoManage= Boolean.valueOf(autoManage).booleanValue();
-			}
 		}
+		String autoManage = memento.getString(ATTR_AUTO_MANAGE_VIEWS);
+		if (autoManage != null) {
+			fAutoManage= Boolean.valueOf(autoManage).booleanValue();
+		}
+		contextListener.init(memento);
 	}
 		
 	/**
@@ -1271,6 +1273,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		}
 		memento.putString(ATTR_AUTO_MANAGE_VIEWS, Boolean.toString(fAutoManage));
+		contextListener.saveState(memento);
 	}
 
 	/**
