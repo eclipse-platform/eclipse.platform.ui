@@ -106,8 +106,6 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	private Map contextViews= new HashMap();
 	/**
 	 * Collection of all views that might be opened or closed automatically.
-	 * This collection starts out containing all views associated with a context.
-	 * As views are manually opened and closed by the user, they're removed.
 	 */
 	private Set managedViewIds= new HashSet();
 	private Set viewIdsToNotOpen= new HashSet();
@@ -854,7 +852,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	public void partOpened(IWorkbenchPartReference ref) {
 		if (ref instanceof IViewReference) {
 			String id = ((IViewReference) ref).getId();
-			managedViewIds.remove(id);
+			openedViewIds.remove(id);
 		}
 	}
 	
@@ -869,7 +867,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 			// visible. To tell that the view has been "closed",
 			// try to find it.
 			if (getActiveWorkbenchPage().findView(id) == null) {
-				if (managedViewIds.remove(id)) {
+				if (managedViewIds.contains(id)) {
 					viewIdsToNotOpen.add(id);
 				}
 				openedViewIds.remove(id);
