@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.*;
 
 /**
  * Preferences for availiable to webapp
@@ -92,6 +91,10 @@ public class WebappPreferences {
 			return 1;
 		}
 		return value;
+	}
+	public boolean isWindowTitlePrefix() {
+		return "true".equalsIgnoreCase(prefs.getString("windowTitlePrefix"));
+
 	}
 
 }

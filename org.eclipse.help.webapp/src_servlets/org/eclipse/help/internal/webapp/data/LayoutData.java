@@ -14,7 +14,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.webapp.*;
 
 public class LayoutData extends RequestData {
 
@@ -132,7 +131,14 @@ public class LayoutData extends RequestData {
 				return views[i];
 		return null;
 	}
-	public String getWindowTitle(){
-		return ServletResources.getString("browserTitle", HelpSystem.getProductName(), request);
+	public String getWindowTitle() {
+		if (preferences.isWindowTitlePrefix()) {
+			return ServletResources.getString(
+				"browserTitle",
+				HelpSystem.getProductName(),
+				request);
+		} else {
+			return HelpSystem.getProductName();
+		}
 	}
 }
