@@ -66,8 +66,6 @@ public interface IHelpContextIds {
 	public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX + "target_editors_visibility_action_context"; //$NON-NLS-1$
 	public static final String SWITCH_TO_PERSPECTIVE_ACTION = PREFIX + "switch_to_perspective_action_context"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_ACTION = PREFIX + "show_view_action_context"; //$NON-NLS-1$
-	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_action" ; //$NON-NLS-1$
-	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_action" ; //$NON-NLS-1$
 	
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$
@@ -91,6 +89,7 @@ public interface IHelpContextIds {
 	public static final String YES_NO_CANCEL_LIST_SELECTION_DIALOG = PREFIX + "yes_no_cancel_list_selection_dialog_context"; //$NON-NLS-1$
 	public static final String RESOURCE_SELECTION_DIALOG = PREFIX + "resource_selection_dialog_context"; //$NON-NLS-1$
 	public static final String GOTO_LINE_DIALOG = PREFIX + "goto_line_dialog_context"; //$NON-NLS-1$	
+	public static final String WORKING_SET_SELECTION_DIALOG = PREFIX + "working_set_selection_dialog" ; //$NON-NLS-1$
 
 	// Editors
 	public static final String WELCOME_EDITOR = PREFIX + "welcome_editor_context"; //$NON-NLS-1$
