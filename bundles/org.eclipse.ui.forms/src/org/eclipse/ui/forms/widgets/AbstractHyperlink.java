@@ -230,6 +230,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	protected void paint(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle clientArea = getClientArea();
+		if (clientArea.width==0 || clientArea.height==0) return;
 		Image buffer = new Image(getDisplay(), clientArea.width, clientArea.height);
 		buffer.setBackground(getBackground());
 		GC bufferGC = new GC(buffer, gc.getStyle());
