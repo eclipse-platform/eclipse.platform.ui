@@ -193,7 +193,7 @@ class JobInfo extends JobTreeElement {
 		
 			
 		if (element.getJob().getState() == getJob().getState()){
-			return compareJobs(getJob(),element.getJob());
+			return compareJobs(element);
 		}
 		else { //If the receiver is running and the other isn't show it higer
 			if (getJob().getState() == Job.RUNNING)
@@ -314,12 +314,14 @@ class JobInfo extends JobTreeElement {
 	}
 	
 	/**
-	 * Compare the two jobs to see which should be higher.
-	 * @param job1
-	 * @param job2
+	 * Compare the the job of the receiver to job2.
+	 * @param jobInfo The info we are comparing to
 	 * @return
+	 * @see Comparable#compareTo(java.lang.Object)
 	 */
-	private int compareJobs(Job job1, Job job2){
+	private int compareJobs(JobInfo jobInfo){
+		
+		Job job2 = jobInfo.getJob();
 		
 		//User jobs have top priority
 		if(job.isUser()){
@@ -331,11 +333,22 @@ class JobInfo extends JobTreeElement {
 				return 1;		
 		}
 		
-		if (job1.getPriority() == job2.getPriority()){
-			return job1.getName().compareTo(job2.getName());
+		//Show the blocked ones last
+		if(isBlocked()){
+			if(!jobInfo.isBlocked())
+				return 1;
+		}
+		else{
+			if(jobInfo.isBlocked())
+				return -1;
+		}
+				
+		
+		if (job.getPriority() == job2.getPriority()){
+			return job.getName().compareTo(job2.getName());
 		}
 		
-		if (job1.getPriority() > job2.getPriority())
+		if (job.getPriority() > job2.getPriority())
 			return -1;
 		else
 			return 1;
