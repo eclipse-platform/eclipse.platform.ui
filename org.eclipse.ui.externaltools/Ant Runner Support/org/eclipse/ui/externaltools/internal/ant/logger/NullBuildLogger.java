@@ -13,6 +13,7 @@ import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 
@@ -145,6 +146,7 @@ public class NullBuildLogger implements BuildLogger {
 	protected void handleException(BuildEvent event) {
 		Throwable exception = event.getException();
 		if (exception == null || exception == fHandledException
+		|| exception instanceof OperationCanceledException
 		|| exception instanceof AntSecurityException) {
 			return;
 		}
