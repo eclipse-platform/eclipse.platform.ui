@@ -39,9 +39,6 @@ public class UnifiedTree {
 	/** Spare node objects available for reuse */
 	protected ArrayList freeNodes = new ArrayList();
 
-	/** sorter */
-	protected Sorter sorter;
-
 	/** special node to mark the beginning of a level in the tree */
 	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, 0, null, null, false);
 
