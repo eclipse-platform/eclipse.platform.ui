@@ -22,10 +22,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.externaltools.internal.core.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.externaltools.internal.core.*;
+import org.eclipse.ui.externaltools.internal.core.ToolUtil.VariableDefinition;
 
 /**
  * Dialog box to enter the required information for running
@@ -608,6 +609,7 @@ public class EditDialog extends TitleAreaDialog {
 	 * the user can select one.
 	 */
 	private class VariableSelectionDialog extends SelectionDialog {
+		String location;
 		List list;
 		
 		public VariableSelectionDialog(Shell parent) {
@@ -635,7 +637,12 @@ public class EditDialog extends TitleAreaDialog {
 			list.add(ToolMessages.getString("EditDialog.varProjectDirLabel")); //$NON-NLS-1$
 			list.add(ToolMessages.getString("EditDialog.varProjectXDirLabel")); //$NON-NLS-1$
 			
-			Path path = new Path(locationField.getText().trim());
+			location = locationField.getText().trim();
+			Path path = null;
+			VariableDefinition varDef = ToolUtil.extractVariableTag(location, 0);
+			if (varDef.start >= 0 && ExternalTool.VAR_DIR_WORKSPACE.equals(varDef.name))
+				location = Platform.getLocation().toString() + location.substring(varDef.end);
+			path = new Path(location);
 			AntTargetList targetList = AntUtil.getTargetList(path);
 			if (targetList != null)
 				list.add(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
@@ -670,7 +677,7 @@ public class EditDialog extends TitleAreaDialog {
 
 				case 3 :
 					TargetSelectionDialog targetDialog;
-					targetDialog = new TargetSelectionDialog(getShell(), locationField.getText().trim());
+					targetDialog = new TargetSelectionDialog(getShell(), location);
 					targetDialog.open();
 					Object[] targets = targetDialog.getResult();
 					if (targets != null && targets.length > 0) {
