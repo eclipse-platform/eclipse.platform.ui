@@ -137,6 +137,14 @@ public class TargetPage extends BannerPage {
 				return null;
 			}
 		}
+
+		// This is a new install. Check if there is 
+		// a disabled feature with the same ID
+		String newFeatureID = newFeature.getVersionedIdentifier().getIdentifier();
+		IConfiguredSite sameSite = findSameIdFeatureSite(config, newFeatureID);
+		if (sameSite!=null){
+			return sameSite;
+		}
 		
 		// check if the affinity feature is installed
 		String affinityID = newFeature.getAffinityFeature();
@@ -146,10 +154,7 @@ public class TargetPage extends BannerPage {
 				return affinitySite;
 		}
 		
-		// This is a new install. Check if there is 
-		// a disabled feature with the same ID
-		String newFeatureID = newFeature.getVersionedIdentifier().getIdentifier();
-		return findSameIdFeatureSite(config, newFeatureID);
+		return null;
 	}
 
 	private static IConfiguredSite findSameIdFeatureSite(
