@@ -29,11 +29,12 @@ import org.eclipse.ui.PartInitException;
  * workbench window at a time.
  * </p>
  * <p>
- * This interface may be implemented directly.  For convenience, a base
- * implementation is defined in {@link org.eclipse.ui.part.IntroPart}.
+ * This interface in not intended to be directly implemented. Rather, clients
+ * providing a intro part implementation should subclass 
+ * {@link org.eclipse.ui.part.IntroPart}. 
  * </p>
  * 
- * @see org.eclipse.ui.intro.IIntroManager#showIntro(IWorkbenchWindow, boolean)
+ * @see org.eclipse.ui.intro.IIntroManager#showIntro(org.eclipse.ui.IWorkbenchWindow, boolean)
  * @since 3.0
  */
 public interface IIntroPart extends IWorkbenchPart {

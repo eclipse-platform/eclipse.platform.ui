@@ -159,9 +159,7 @@ in order to inherit the default functionality.  This class implements the introd
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;code&gt;class&lt;/code&gt; attribute must be the fully qualified name of a class that implements the &lt;code&gt;org.eclipse.ui.intro.IIntroPart&lt;/code&gt; interface.  A common practice 
-is to subclass &lt;code&gt;org.eclipse.ui.part.intro.IntroPart&lt;/code&gt; 
-in order to inherit the default functionality.
+         The value of the &lt;code&gt;class&lt;/code&gt; attribute must be the fully qualified name of a class that implements the&lt;code&gt;org.eclipse.ui.intro.IIntroPart&lt;/code&gt; interface by subclassing &lt;code&gt;org.eclipse.ui.part.intro.IntroPart&lt;/code&gt;.
       </documentation>
    </annotation>
 

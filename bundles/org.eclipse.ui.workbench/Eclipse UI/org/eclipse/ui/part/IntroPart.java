@@ -60,6 +60,12 @@ public abstract class IntroPart extends WorkbenchPart implements IIntroPart {
 	 * ignores the memento and initializes the part in a fresh state. 
 	 * Subclasses may extend to perform any state restoration, but must call
 	 * the super method.
+	 *
+	 * @param site the intro site
+     * @param memento the intro part state or <code>null</code> if there is no previous
+     * saved state
+	 * @exception PartInitException if this part was not initialized
+	 * successfully
 	 */
 	public void init(IIntroSite site, IMemento memento) throws PartInitException {
 		setSite(site);
@@ -68,6 +74,8 @@ public abstract class IntroPart extends WorkbenchPart implements IIntroPart {
 	/** 
 	 * The base implementation of this {@link IIntroPart} method does nothing.
 	 * Subclasses may override.
+	 * 
+	 * @param memento a memento to receive the object state
 	 */
 	public void saveState(IMemento memento){
 	    //no-op
