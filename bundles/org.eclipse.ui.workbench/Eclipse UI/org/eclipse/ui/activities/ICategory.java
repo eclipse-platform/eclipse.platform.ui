@@ -66,7 +66,7 @@ public interface ICategory extends Comparable {
 	 * defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -82,7 +82,7 @@ public interface ICategory extends Comparable {
 	 * suitable for display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -106,7 +106,7 @@ public interface ICategory extends Comparable {
 	 * for display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -123,7 +123,7 @@ public interface ICategory extends Comparable {
 	 * defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 

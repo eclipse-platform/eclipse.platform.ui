@@ -47,7 +47,7 @@ public interface ICommandService {
 	 * Returns the set of identifiers to active commands.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 

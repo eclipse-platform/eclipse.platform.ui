@@ -64,7 +64,7 @@ public interface ICommand extends Comparable {
 	 * not the command represented by this handle is defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -80,7 +80,7 @@ public interface ICommand extends Comparable {
 	 * this handle.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -97,7 +97,7 @@ public interface ICommand extends Comparable {
 	 * suitable for display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -122,7 +122,7 @@ public interface ICommand extends Comparable {
 	 * the command represented by this handle is defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -139,7 +139,7 @@ public interface ICommand extends Comparable {
 	 * whether or not the command represented by this handle is defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -155,7 +155,7 @@ public interface ICommand extends Comparable {
 	 * display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -173,7 +173,7 @@ public interface ICommand extends Comparable {
 	 * from whence they were brokered.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -187,7 +187,7 @@ public interface ICommand extends Comparable {
 	 * defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -203,7 +203,7 @@ public interface ICommand extends Comparable {
 	 * from whence they were brokered.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
