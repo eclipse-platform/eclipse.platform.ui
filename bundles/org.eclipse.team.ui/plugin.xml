@@ -69,6 +69,7 @@
 			<separator name="group8"/>
 			<separator name="group9"/>
 			<separator name="group10"/>
+			<separator name="targetGroup"/>
 			<separator name="projectGroup"/>
 		</menu>
 	</objectContribution>	
@@ -86,31 +87,28 @@
 	</objectContribution>	
 
 	<!-- ****************** Target Management Popup Actions *************** -->
-
+	
    	<objectContribution
-         id="org.eclipse.team.ui.targetResourceContributions"
+         id="org.eclipse.team.ui.targetResourceContributionsActions"
          objectClass="org.eclipse.core.resources.IResource" adaptable="true">
-		<menu
-			id="team.target"
-			path="additions"
-			label="%Deployment.group">
-			<separator name="group1"/>
-			<separator name="projectGroup"/>
-		</menu>
-      <action      
-            menubarPath="team.target/group1"
+		<filter
+               name="persistentProperty"
+               value="org.eclipse.team.target=basic">
+         </filter>      
+         <action      
+            menubarPath="team.main/targetGroup"
             class="org.eclipse.team.internal.ui.target.GetAction"
             id="org.eclipse.team.target.getAction"
             label="%Deployment.getAction">
       </action>
       <action      
-            menubarPath="team.target/group1"
+            menubarPath="team.main/targetGroup"
             class="org.eclipse.team.internal.ui.target.UploadAction"
             id="org.eclipse.team.target.uploadAction"
             label="%Deployment.uploadAction">
       </action>
       <action      
-            menubarPath="team.target/group1"
+            menubarPath="team.main/targetGroup"
             class="org.eclipse.team.internal.ui.target.SyncAction"
             id="org.eclipse.team.target.SyncAction"
             label="%Deployment.synchronize">
@@ -124,7 +122,7 @@
 			id="org.eclipse.team.ui.TargetProject"
 			label="%Deployment.configSite"
 			tooltip="%ConfigureTargetProject.tooltip"
-			menubarPath="team.target/projectGroup"
+			menubarPath="team.main/projectGroup"
 			enablesFor="1"
 			class="org.eclipse.team.internal.ui.target.TargetProjectAction">
 		</action>
@@ -134,14 +132,14 @@
             objectClass="org.eclipse.team.internal.ui.target.RemoteResourceElement"
             id="org.eclipse.team.internal.ui.target.RemoteResourceElement">
          <action
-               label="%SiteExplorerGetAs.label"
-               tooltip="%SiteExplorerGetAs.tooltip"
+               label="Get As..."
+               tooltip="Get As..."
                class="org.eclipse.team.internal.ui.target.GetAsAction"
                id="org.eclipse.team.internal.ui.target.GetAsAction">
          </action>
          <action
-               label="%SiteExplorerGetAsProject.label"
-               tooltip="%SiteExplorerGetAsProject.tooltip"
+               label="Get As Project"
+               tooltip="Get As Project"
                class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
                id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
          </action>
@@ -151,10 +149,22 @@
             objectClass="org.eclipse.team.internal.ui.target.SiteElement"
             id="org.eclipse.team.internal.ui.target.SiteElement">
          <action
-               label="%SiteExplorerDiscardSite.label"
-               tooltip="%SiteExplorerDiscardSite.tooltip"
+               label="Discard Site"
+               tooltip="Discard this Site"
                class="org.eclipse.team.internal.ui.target.DiscardSiteAction"
                id="org.eclipse.team.internal.ui.target.DiscardSiteAction">
+         </action>        
+         <action
+               label="Get As..."
+               tooltip="Get As..."
+               class="org.eclipse.team.internal.ui.target.GetAsAction"
+               id="org.eclipse.team.internal.ui.target.GetAsAction">
+         </action>
+         <action
+               label="Get As Project"
+               tooltip="Get As Project"
+               class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
+               id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
          </action>
    </objectContribution>
 </extension>
