@@ -2230,6 +2230,10 @@ M4 = Platform-specific fourth key
            viewId="org.eclipse.debug.ui.BreakpointView"
            contextId="org.eclipse.debug.ui.debugging">
      </contextViewBinding>
+     <contextViewBinding
+           autoOpen="false"
+           contextId="org.eclipse.debug.ui.debugging"
+           viewId="org.eclipse.ui.console.ConsoleView"/>
   </extension>
   
    <extension
