@@ -26,6 +26,7 @@
 		</copy>
 		<zip zipfile="${dest}/searchsrc.zip">
 		    <fileset dir="search" />
-  		</zip>				
+		    <fileset dir="new search" />
+  		</zip>
 	</target>
 </project>
