@@ -42,6 +42,8 @@ public abstract class ProductInfoDialog extends Dialog{
 	private 	boolean webBrowserOpened;
 	private 	Cursor handCursor;
 	private 	Cursor busyCursor;
+	private boolean mouseDown = false;
+	private boolean dragEvent = false;
 	
 /**
  * Create an instance of this Dialog
@@ -55,10 +57,23 @@ public ProductInfoDialog(Shell parentShell) {
  */
 protected void addListeners(StyledText styledText) {
 	styledText.addMouseListener(new MouseAdapter() {
+		public void mouseDown(MouseEvent e) {
+			if (e.button != 1) {
+				return;
+			}
+			mouseDown = true;
+		}
 		public void mouseUp(MouseEvent e) {
+			mouseDown = false;
 			StyledText text = (StyledText)e.widget;
 			int offset = text.getCaretOffset();
-			if (item != null && item.isLinkAt(offset)) {	
+			if (dragEvent) {
+				// don't activate a link during a drag/mouse up operation
+				dragEvent = false;
+				if (item != null && item.isLinkAt(offset)) {
+					text.setCursor(handCursor);
+				}
+			} else if (item != null && item.isLinkAt(offset)) {	
 				text.setCursor(busyCursor);
 				openLink(item.getLinkAt(offset));
 				text.setCursor(null);
@@ -67,6 +82,15 @@ protected void addListeners(StyledText styledText) {
 	});
 	styledText.addMouseMoveListener(new MouseMoveListener() {
 		public void mouseMove(MouseEvent e) {
+			// Do not change cursor on drag events
+			if (mouseDown) {
+				if (!dragEvent) {
+					StyledText text = (StyledText)e.widget;
+					text.setCursor(null);
+				}
+				dragEvent = true;
+				return;
+			}
 			StyledText text = (StyledText)e.widget;
 			int offset = -1;
 			try {
