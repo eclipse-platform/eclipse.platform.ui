@@ -427,7 +427,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				message= null;
 			}
 		} else {
-			status= new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$	
+			status= new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$
+			log(status);	
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
