@@ -30,7 +30,6 @@ public class Actions {
 
 	static ImageDescriptor actionsImage;
 	static ImageDescriptor hidenav;
-	static ImageDescriptor shownav;
 	static {
 		synchronize =
 			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("resynch_icon"));
@@ -44,8 +43,6 @@ public class Actions {
 			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("printer_icon"));
 		copy =
 			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("copy_icon"));
-		shownav =
-			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("shownav_icon"));
 		hidenav =
 			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("hidenav_icon"));
 		actionsImage =
@@ -225,11 +222,9 @@ public class Actions {
 			boolean hidden = view.toggleNavigation();
 			if (hidden) {
 				setText("&Show navigation@Ctrl+H");
-				//setImageDescriptor(shownav);
 				setToolTipText(WorkbenchResources.getString("Show_TOC"));
 			} else {
 				setText("&Hide navigation@Ctrl+H");
-				//setImageDescriptor(hidenav);
 				setToolTipText(WorkbenchResources.getString("Hide_TOC"));
 			}
 		}
@@ -239,7 +234,6 @@ public class Actions {
 			{
 				view.toggleNavigation();
 				setText("&Hide navigation@Ctrl+H");
-				//setImageDescriptor(hidenav);
 				setToolTipText(WorkbenchResources.getString("Hide_TOC"));
 				setChecked(false);
 			}
