@@ -210,6 +210,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		refreshAction.setToolTipText(Policy.bind("RepositoriesView.refreshTooltip")); //$NON-NLS-1$
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
+		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.REFRESH, refreshAction);
 
 		collapseAllAction = new Action(Policy.bind("RepositoriesView.collapseAll"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { //$NON-NLS-1$
 			public void run() {
