@@ -161,4 +161,24 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (fParent != null && !fParent.isDisposed())
 			updatePartControl(getEditorInput());			
 	}
+	
+	/*
+	 * @see ITextEditor#doRevertToSaved()
+	 */
+	public void doRevertToSaved() {
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
+		super.doRevertToSaved();
+		if (fParent != null && !fParent.isDisposed())
+			updatePartControl(getEditorInput());
+	}
+	
+	/*
+	 * @see AbstractTextEditor#sanityCheckState(IEditorInput)
+	 */
+	protected void sanityCheckState(IEditorInput input) {
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
+		super.sanityCheckState(input);
+		if (fParent != null && !fParent.isDisposed())
+			updatePartControl(getEditorInput());
+	}
 }

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -440,7 +441,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFileEditorInput input= (IFileEditorInput) element;
 			
 			try {
-				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, null);
+				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 			} catch (CoreException x) {
 				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
 			}
@@ -592,5 +593,21 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				return true;
 		}
 		return super.isModifiable(element);
+	}
+	
+	/*
+	 * @see IDocumentProvider#resetDocument(Object)
+	 */
+	public void resetDocument(Object element) throws CoreException {
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			try {
+				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			} catch (CoreException x) {
+				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.resetDocument")); //$NON-NLS-1$
+			}
+		}
+		super.resetDocument(element);	
 	}
 }
