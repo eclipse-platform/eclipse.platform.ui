@@ -23,6 +23,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentInformationMapping;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ISlaveDocumentManager;
+import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
 
 
 
@@ -42,7 +43,7 @@ import org.eclipse.jface.text.ISlaveDocumentManager;
  * 
  * @since 3.0
  */
-public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager {
+public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager, ISlaveDocumentManagerExtension {
 	
 	
 	/**
@@ -237,5 +238,18 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 	public void setAutoExpandMode(IDocument slave, boolean autoExpanding) {
 		if (slave instanceof ProjectionDocument)
 			((ProjectionDocument) slave).setAutoExpandMode(autoExpanding);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ISlaveDocumentManagerExtension#getSlaveDocuments(org.eclipse.jface.text.IDocument)
+	 */
+	public IDocument[] getSlaveDocuments(IDocument master) {
+		List list= (List) fProjectionRegistry.get(master);
+		if (list != null) {
+			IDocument[] result= new IDocument[list.size()];
+			list.toArray(result);
+			return result;
+		}
+		return null;
 	}
 }
