@@ -1,5 +1,4 @@
 package org.eclipse.update.core;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -13,52 +12,70 @@ import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.URLEncoder;
 
 /**
- * Default content reference. 
- * Implements a simple URL or local File wrapper.
- * </p>
+ * Content reference implements a general access wrapper 
+ * to feature and site content. The reference specifies
+ * a "symbolic" path identifier for the content, and the actual
+ * reference as a file, or a URL.
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p> 
+ * @see org.eclipse.update.core.JarContentReference
+ * @see org.eclipse.update.core.JarEntryContentReference
  * @since 2.0
  */
 public class ContentReference {
-
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	/**
+	 * Unknown size indication
+	 * @since 2.0
+	 */
+	public static final long UNKNOWN_SIZE = -1;
+	
 	private static final String FILE_URL_PROTOCOL = "file";	 //$NON-NLS-1$
 	
 	private String id;
 	private URL url;	// reference is either URL reference *OR*
 	private File file;	//    local file reference
 	private URLConnection connection;
-	
-	/**
-	 * 
-	 */
-	public static final long UNKNOWN_SIZE = -1;
 
-	/**
-	 * Constructor for ContentRef.
+	/*
+	 * do not allow default contruction
 	 */
 	private ContentReference() {}
 
 	/**
-	 * Constructor for ContentRef.
+	 * Create content reference from URL.
+	 * 
+	 * @param id "symbolic" path identifier
+	 * @param url actual referenced URL
+	 * @since 2.0
 	 */
 	public ContentReference(String id, URL url) {
-		this.id = (id==null ? EMPTY_STRING : id); //$NON-NLS-1$
+		this.id = (id==null ? "" : id); //$NON-NLS-1$
 		this.url = url; // can be null
 		this.file = null;
 	}
-	
+
 	/**
-	 * Constructor for ContentRef.
+	 * Create content reference from file.
+	 * 
+	 * @param id "symbolic" path identifier
+	 * @param file actual referenced file
+	 * @since 2.0
 	 */
 	public ContentReference(String id, File file) {
-		this.id = (id==null ? EMPTY_STRING : id); //$NON-NLS-1$
+		this.id = (id==null ? "" : id); //$NON-NLS-1$
 		this.file = file; // can be null
 		this.url = null;
 	}
 	
 	/**
-	 * Clone a new content reference of the same type
+	 * A factory method to create a content reference of
+	 * the same type.
 	 * 
+	 * @param id "symbolic" path identifier
+	 * @param file actual referenced file
+	 * @return content reference of the same type
 	 * @since 2.0
 	 */
 	public ContentReference createContentReference(String id, File file) {
@@ -66,6 +83,9 @@ public class ContentReference {
 	}
 	
 	/**
+	 * Retrieves the "symbolic" path identifier for the reference.
+	 * 
+	 * @return "symbolic" path identifier
 	 * @since 2.0
 	 */
 	public String getIdentifier() {
@@ -73,6 +93,10 @@ public class ContentReference {
 	}
 	
 	/**
+	 * Creates an input stream for the reference.
+	 * 
+	 * @return input stream
+	 * @exception IOException unable to create stream
 	 * @since 2.0
 	 */
 	public InputStream getInputStream() throws IOException {
@@ -89,6 +113,9 @@ public class ContentReference {
 	}	
 	
 	/**
+	 * Returns the size of the referenced input, if it can be determined.
+	 * 
+	 * @return input size, or @see #UNKNOWN_SIZE if size cannot be determined.
 	 * @since 2.0
 	 */
 	public long getInputSize() {
@@ -110,6 +137,10 @@ public class ContentReference {
 	}
 	
 	/**
+	 * Indicates whether the reference is a local file reference.
+	 * 
+	 * @return <code>true</code> if the reference is local, 
+	 * otherwise <code>false</code>
 	 * @since 2.0
 	 */
 	public boolean isLocalReference() {
@@ -122,12 +153,12 @@ public class ContentReference {
 	}	
 		
 	/**
-	 * Returns a local file for the content reference.
-	 * Throws an exception if content reference cannot
-	 * be returned as a local file. Note, that this method
+	 * Returns the content reference as a file. Note, that this method
 	 * <b>does not</b> cause the file to be downloaded if it
 	 * is not already local.
 	 * 
+	 * @return reference as file
+	 * @exception IOException reference cannot be returned as file
 	 * @since 2.0
 	 */
 	public File asFile() throws IOException {
@@ -138,13 +169,13 @@ public class ContentReference {
 			return new File(url.getFile());
 			
 		throw new IOException(Policy.bind("ContentReference.UnableToReturnReferenceAsFile",this.toString())); //$NON-NLS-1$ 
-	}
+	}	
 		
 	/**
-	 * Returns a URL for the content reference.
-	 * Throws an exception if content reference cannot
-	 * be returned as a URL.
+	 * Returns the content reference as a URL.
 	 * 
+	 * @return reference as URL
+	 * @exception IOException reference cannot be returned as URL
 	 * @since 2.0
 	 */
 	public URL asURL() throws IOException {
@@ -158,6 +189,9 @@ public class ContentReference {
 	}
 			
 	/**
+	 * Return string representation of this reference.
+	 * 
+	 * @return string representation
 	 * @since 2.0
 	 */
 	public String toString() {
@@ -165,12 +199,5 @@ public class ContentReference {
 			return file.getAbsolutePath();
 		else
 			return url.toExternalForm();
-	}
-	
-	/**
-	 * @since 2.0
-	 */
-	public void setIdentifier(String id) {
-		this.id = id;
-	}
+	}	
 }
