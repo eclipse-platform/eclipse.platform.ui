@@ -667,11 +667,11 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			return;
 		if (one == two)
 			return;
-		if (one == null || two == null)
-			assertTrue(message + ".1", false);
-		assertEquals(message + ".2", one.length, two.length);
+		assertNotNull(message + ".1", one);
+		assertNotNull(message + ".2", two);
+		assertEquals(message + ".3", one.length, two.length);
 		for (int i = 0; i < one.length; i++)
-			assertEquals(message + ".3." + i, one[i], two[i]);
+			assertEquals(message + ".4." + i, one[i], two[i]);
 	}
 
 	private void assertEquals(String message, Object[] one, Object[] two) {
