@@ -312,6 +312,18 @@ public class OptionTests extends AbstractAntTest {
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
 	}
 	
+	/**
+	 * Tests specifying a target at the command line and quiet reporting
+	 * Bug 37094
+	 */
+	public void testMinusDWithSpaces() throws CoreException {
+		run("echoing.xml", new String[]{"-DAntTests= testing", "-Declipse.is.cool=    true"}, false);
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+	}
+	
 	public void testPropertyFileWithNoArg() throws CoreException {
 		try {
 			run("TestForEcho.xml", new String[]{"-propertyfile"});

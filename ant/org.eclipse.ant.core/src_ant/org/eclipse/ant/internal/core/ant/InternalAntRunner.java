@@ -1127,10 +1127,12 @@ public class InternalAntRunner {
 				String name = arg.substring(2, arg.length());
 				String value = null;
 				int posEq = name.indexOf("="); //$NON-NLS-1$
-				if (posEq > 0) {
-					value = name.substring(posEq + 1);
+				if (posEq > 0 && posEq != name.length() - 1) {
+					value = name.substring(posEq + 1).trim();
 					name = name.substring(0, posEq);
 				} else if (i < args.length - 1) {
+					commands.remove(i);
+					name= name.substring(0, posEq);
 					value = args[++i];
 				}
 				if (userProperties == null) {
