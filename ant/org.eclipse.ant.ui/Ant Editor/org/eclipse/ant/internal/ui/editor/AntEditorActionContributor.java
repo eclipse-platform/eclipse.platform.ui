@@ -33,12 +33,15 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 public class AntEditorActionContributor extends TextEditorActionContributor {
 
 	protected RetargetTextEditorAction fContentAssistProposal;
+	protected RetargetTextEditorAction fContentFormatProposal;
 	private OpenDeclarationAction fOpenDeclarationAction;
 	private ValidateBuildfileAction fValidateAction;
 
 	public AntEditorActionContributor() {
 		super();
-		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
+		fContentAssistProposal = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
+		fContentFormatProposal = new RetargetTextEditorAction(bundle, "ContentFormatProposal."); //$NON-NLS-1$
 		fValidateAction= new ValidateBuildfileAction();
 	}
 	
@@ -55,6 +58,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		}
 
 		fContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
+		fContentFormatProposal.setAction(getAction(editor,"ContentFormatProposal")); //$NON-NLS-1$
 		
 		if (part instanceof AntEditor) {
 			if (fOpenDeclarationAction == null) {
@@ -95,6 +99,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
         if (editMenu != null) {
             editMenu.add(new Separator());
             editMenu.add(fContentAssistProposal);
+            editMenu.add(fContentFormatProposal);
         }
     }
     

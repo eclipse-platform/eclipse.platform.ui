@@ -15,6 +15,9 @@
 package org.eclipse.ant.internal.ui.editor;
 
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
+import org.eclipse.ant.internal.ui.editor.formatter.ContentFormatter3;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorProcInstrScanner;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorTagScanner;
@@ -37,6 +40,8 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.formatter.IContentFormatter;
+import org.eclipse.jface.text.formatter.IFormattingStrategy;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -257,4 +262,21 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 			}
 		}		
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentFormatter(org.eclipse.jface.text.source.ISourceViewer)
+     */
+    public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
+        
+        ContentFormatter3 formatter = new ContentFormatter3();
+        formatter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+        
+        IFormattingStrategy indentationStrategy = new XmlDocumentFormattingStrategy(sourceViewer);
+        IFormattingStrategy elementFormattingStrategy = new XmlElementFormattingStrategy(sourceViewer);        
+        
+        formatter.setFormattingStrategy(indentationStrategy);
+        formatter.setFormattingStrategy(indentationStrategy,IDocument.DEFAULT_CONTENT_TYPE);
+        formatter.setFormattingStrategy(elementFormattingStrategy,AntEditorPartitionScanner.XML_TAG);
+        
+        return formatter;
+    }
 }

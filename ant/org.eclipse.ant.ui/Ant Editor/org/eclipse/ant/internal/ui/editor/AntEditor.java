@@ -27,6 +27,7 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -49,6 +50,7 @@ import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -117,11 +119,15 @@ public class AntEditor extends TextEditor {
     protected void createActions() {
         super.createActions();
 
-        ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"), "ContentAssistProposal.", this); //$NON-NLS-1$ //$NON-NLS-2$
-
+        ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
+        IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
+        
         // This action definition is associated with the accelerator Ctrl+Space
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
         setAction("ContentAssistProposal", action); //$NON-NLS-1$
+        
+		action = new TextOperationAction(bundle,"ContentFormatProposal.",this,ISourceViewer.FORMAT); //$NON-NLS-1$        
+        setAction("ContentFormatProposal", action); //$NON-NLS-1$
     }
 
 	/*
