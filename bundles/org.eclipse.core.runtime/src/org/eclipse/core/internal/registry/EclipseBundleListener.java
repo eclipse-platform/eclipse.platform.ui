@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.IPlatform;
-import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -110,8 +110,9 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		InputStream is = null;
 		String manifestType = null;
 		boolean isFragment = InternalPlatform.getDefault().isFragment(bundle);
+		String manifestName = isFragment ? FRAGMENT_MANIFEST : PLUGIN_MANIFEST;
 		try {
-			URL url = bundle.getEntry(isFragment ? FRAGMENT_MANIFEST : PLUGIN_MANIFEST);
+			URL url = bundle.getEntry(manifestName);
 			if (url != null) {
 				is = url.openStream();
 				manifestType = isFragment ? ExtensionsParser.FRAGMENT : ExtensionsParser.PLUGIN;
@@ -122,9 +123,10 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		if (is == null)
 			return null;
 		try {
-			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry problems", null); //$NON-NLS-1$
+			String message = Policy.bind("parse.problems", bundle.getLocation()); //$NON-NLS-1$
+			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
-			BundleModel bundleModel = new ExtensionsParser(factory).parseManifest(new InputSource(is), manifestType);
+			BundleModel bundleModel = new ExtensionsParser(factory).parseManifest(new InputSource(is), manifestType, manifestName);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setBundle(bundle);
 			if (isFragment) {
@@ -132,6 +134,8 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 				if (hosts != null && hosts.length > 0)
 					bundleModel.setHostIdentifier(hosts[0].getSymbolicName());
 			}
+			if (problems.getSeverity() != IStatus.OK)
+				InternalPlatform.getDefault().log(problems);
 			return bundleModel;
 		} catch (SAXException e) {
 			// TODO: need to log this

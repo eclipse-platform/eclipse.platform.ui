@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,23 +93,18 @@ public class ExtensionsParser extends DefaultHandler {
 
 	private String manifestType;
 
+	private Locator locator = null;
+
 	public ExtensionsParser(Factory factory) {
 		super();
 		this.factory = factory;
 	}
 
 	/**
-	 * Receive a Locator object for document events.
-	 *
-	 * <p>By default, do nothing.  Application writers may override this
-	 * method in a subclass if they wish to store the locator for use
-	 * with other document events.</p>
-	 *
-	 * @param locator A locator for all SAX document events.
-	 * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
-	 * @see org.xml.sax.Locator
+	 * @see ContentHandler#setDocumentLocator
 	 */
 	public void setDocumentLocator(Locator locator) {
+		this.locator = locator;
 	}
 
 	public void characters(char[] ch, int start, int length) {
@@ -228,7 +223,7 @@ public class ExtensionsParser extends DefaultHandler {
 	private void handleExtensionPointState(String elementName, Attributes attributes) {
 		// We ignore all elements under extension points (if there are any)
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName)); //$NON-NLS-1$
+		unknownElement(EXTENSION_POINT, elementName);
 	}
 
 	private void handleExtensionState(String elementName, Attributes attributes) {
@@ -300,7 +295,8 @@ public class ExtensionsParser extends DefaultHandler {
 		// If we get to this point, the element name is one we don't currently accept.
 		// Set the state to indicate that this element will be ignored
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", manifestType, elementName)); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!compatibilityMode)
+			unknownElement(manifestType, elementName);
 	}
 
 	public void ignoreableWhitespace(char[] ch, int start, int length) {
@@ -339,7 +335,7 @@ public class ExtensionsParser extends DefaultHandler {
 
 	// TODO why is this synchronized; does not appear to be called by multiple threads.
 	// a new ExtensionParser is created for each parsing action.
-	synchronized public BundleModel parseManifest(InputSource in, String manifestType) throws SAXException, IOException {
+	synchronized public BundleModel parseManifest(InputSource in, String manifestType, String manifestName) throws SAXException, IOException {
 		long start = 0;
 		if (InternalPlatform.DEBUG)
 			start = System.currentTimeMillis();
@@ -355,6 +351,8 @@ public class ExtensionsParser extends DefaultHandler {
 				throw new IllegalArgumentException("Invalid manifest type: " + manifestType); //$NON-NLS-1$
 			this.manifestType = manifestType;
 			locationName = in.getSystemId();
+			if (locationName == null)
+				locationName = manifestName;
 			try {
 				factory.setNamespaceAware(true);
 				factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
@@ -423,8 +421,37 @@ public class ExtensionsParser extends DefaultHandler {
 					targetName = attrValue;
 				currentExtension.setExtensionPointIdentifier(targetName);
 			} else
-				internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName)); //$NON-NLS-1$
+				unknownAttribute(EXTENSION, attrName); //$NON-NLS-1$
 		}
+		if (currentExtension.getExtensionPointUniqueIdentifier() == null) {
+			missingAttribute(EXTENSION_TARGET, EXTENSION);
+			stateStack.pop();
+			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+			objectStack.pop();
+			return;
+		}
+
+	}
+
+	private void missingAttribute(String attribute, String element) {
+		if (locator == null)
+			internalError(Policy.bind("parse.missingAttribute", new String[] {attribute, element})); //$NON-NLS-1$
+		else
+			internalError(Policy.bind("parse.missingAttributeLine", new String[] {attribute, element, Integer.toString(locator.getLineNumber())})); //$NON-NLS-1$
+	}
+
+	private void unknownAttribute(String attribute, String element) {
+		if (locator == null)
+			internalError(Policy.bind("parse.unknownAttribute", new String[] {attribute, element})); //$NON-NLS-1$
+		else
+			internalError(Policy.bind("parse.unknownAttributeLine", new String[] {attribute, element, Integer.toString(locator.getLineNumber())})); //$NON-NLS-1$
+	}
+
+	private void unknownElement(String element, String parent) {
+		if (locator == null)
+			internalError(Policy.bind("parse.unknownAttribute", new String[] {parent, element})); //$NON-NLS-1$
+		else
+			internalError(Policy.bind("parse.unknownAttributeLine", new String[] {parent, element, Integer.toString(locator.getLineNumber())})); //$NON-NLS-1$
 	}
 
 	private void parseExtensionPointAttributes(Attributes attributes) {
@@ -443,8 +470,16 @@ public class ExtensionsParser extends DefaultHandler {
 			else if (attrName.equals(EXTENSION_POINT_SCHEMA))
 				currentExtPoint.setSchema(attrValue);
 			else
-				internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName)); //$NON-NLS-1$
+				unknownAttribute(EXTENSION_POINT, attrName); //$NON-NLS-1$
 		}
+		if (currentExtPoint.getSimpleIdentifier() == null || currentExtPoint.getName() == null) {
+			String attribute = currentExtPoint.getSimpleIdentifier() == null ? EXTENSION_POINT_ID : EXTENSION_POINT_NAME;
+			missingAttribute(attribute, EXTENSION_POINT);
+			stateStack.pop();
+			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+			return;
+		}
+
 		// currentExtPoint contains a pointer to the parent bundle model.
 		BundleModel root = (BundleModel) objectStack.peek();
 		currentExtPoint.setParent(root);
@@ -477,24 +512,17 @@ public class ExtensionsParser extends DefaultHandler {
 				break;
 			default :
 				stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-				internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
+				if (!compatibilityMode)
+					internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
 		}
 	}
 
 	public void warning(SAXParseException ex) {
-		// no warnings if in compatibility mode
-		if (!compatibilityMode)
-			logStatus(ex);
+		logStatus(ex);
 	}
 
 	private void internalError(String message) {
-		// no warnings if in compatibility mode
-		if (compatibilityMode)
-			return;
-		if (locationName != null)
-			factory.error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, locationName + ": " + message, null)); //$NON-NLS-1$
-		else
-			factory.error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, message, null));
+		factory.error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, message, null));
 	}
 
 	/* (non-Javadoc)
