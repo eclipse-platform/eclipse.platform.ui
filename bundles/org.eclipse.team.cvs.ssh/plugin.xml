@@ -21,7 +21,7 @@
       <import plugin="org.eclipse.team.core"/>
    </requires>
 
-
+<!--
    <extension
          id="ssh"
          point="org.eclipse.team.cvs.core.connectionmethods">
@@ -35,5 +35,6 @@
          </run>
       </adapter>
    </extension>
+-->
 
 </plugin>

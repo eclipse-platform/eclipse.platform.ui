@@ -180,12 +180,12 @@ public class CVSTestSetup extends TestSetup {
 		// Validate that we can connect, also creates and caches the repository location. This
 		// is important for the UI tests.
 		CVSRepositoryLocation repository = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(location);
-
+		repository.setUserAuthenticator(new TestsUserAuthenticator());
 		repository.setReadLocation(READ_REPOSITORY_LOCATION);
 		repository.setWriteLocation(WRITE_REPOSITORY_LOCATION);
 		
 		// Give some info about which repository the tests are running with
-		System.out.println("Connecting to: " + repository.getHost());
+		System.out.println("Connecting to: " + repository.getHost() + ":" + repository.getMethod().getName());
 		
 		try {
 			try {

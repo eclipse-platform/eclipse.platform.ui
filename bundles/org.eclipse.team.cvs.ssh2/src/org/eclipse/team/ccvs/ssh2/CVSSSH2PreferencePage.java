@@ -11,22 +11,12 @@ Contributors:
 **********************************************************************/
 package org.eclipse.team.ccvs.ssh2;
 
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
-import org.eclipse.jface.preference.ColorFieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -41,6 +31,9 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   public static String KEY_PROXY_USER="CVSSSH2PreferencePage.PROXY_USER";
   public static String KEY_PROXY_PASS="CVSSSH2PreferencePage.PROXY_PASS";
   public static String KEY_SSH2HOME="CVSSSH2PreferencePage.SSH2HOME";
+  
+  // Temporary preference for using ssh2 instead of ssh1
+  public static String KEY_USE_SSH2="CVSSSH2PreferencePage.SSH2_USE_SSH2";
 
   static String SOCKS5="SOCKS5";
   static String HTTP="HTTP";
@@ -61,6 +54,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   private Text proxyPassText;
   private Button enableProxy;
   private Button enableAuth;
+  private Button enableSSH2;
   private boolean useProxy;
   private boolean useAuth;
 
@@ -72,7 +66,15 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   }
 
   protected void createFieldEditors() {
-    ssh2homeEditor=
+  	enableSSH2=new Button(getFieldEditorParent(), SWT.CHECK);
+  	enableSSH2.setText("Enable SSH2 instead of SSH1 (temporary until SSH2 is fully tested)");
+  	GridData gd=new GridData();
+  	gd.horizontalSpan=2;
+  	enableSSH2.setLayoutData(gd);
+  	
+  	createSpacer(getFieldEditorParent(), 3);
+  	
+  	ssh2homeEditor=
       new DirectoryFieldEditor(KEY_SSH2HOME, 
 			       "SSH2 Home", 
 			       getFieldEditorParent());
@@ -84,7 +86,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   }
 
   private void updateControls() {
-    boolean enable=enableProxy.getSelection();
+  	boolean enable=enableProxy.getSelection();
     proxyTypeLabel.setEnabled(enable);
     proxyTypeCombo.setEnabled(enable);
     proxyPortLabel.setEnabled(enable);
@@ -115,6 +117,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     setDefault(store, KEY_PROXY_AUTH, "false");
     setDefault(store, KEY_PROXY_USER, "");
     setDefault(store, KEY_PROXY_PASS, "");
+    store.setDefault(KEY_USE_SSH2, false);
   }
 
   private static void setDefault(IPreferenceStore store, String key, String value){
@@ -125,6 +128,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
 
   private void initControls(){
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
+    enableSSH2.setSelection(store.getBoolean(KEY_USE_SSH2));
     useProxy=store.getString(KEY_PROXY).equals("true");
     enableProxy.setSelection(useProxy);
     proxyHostText.setText(store.getString(KEY_PROXY_HOST));
@@ -148,7 +152,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     gd.horizontalAlignment=GridData.FILL;
     group.setLayoutData(gd);
     group.setFont(composite.getFont());
-
+    
     enableProxy=new Button(group, SWT.CHECK);
     enableProxy.setText("Enable proxy connection");
     gd=new GridData();
@@ -248,6 +252,8 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
       store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
       store.setValue(KEY_PROXY_USER, proxyUserText.getText());
       store.setValue(KEY_PROXY_PASS, proxyPassText.getText());
+      
+      store.setValue(KEY_USE_SSH2, enableSSH2.getSelection());
     }
     CVSSSH2Plugin.getDefault().savePluginPreferences();
     return result;

@@ -109,5 +109,17 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * @param monitor the progress monitor used while validating
 	 */
 	public void validateConnection(IProgressMonitor monitor) throws CVSException;
+	
+	/**
+	 * Returns the plugged-in authenticator for this location.
+	 * @since 3.0
+	 */
+	public IUserAuthenticator getUserAuthenticator();
+	
+	/**
+	 * Sets the plugged-in authenticator for this location. This is a hook
+	 * for testing.
+	 * @since 3.0
+	 */
+	public void setUserAuthenticator(IUserAuthenticator authenticator);	
 }
-

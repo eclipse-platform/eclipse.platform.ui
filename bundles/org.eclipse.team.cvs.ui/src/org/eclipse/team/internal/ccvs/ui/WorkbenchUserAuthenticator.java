@@ -11,7 +11,9 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileTypeInfo;
@@ -143,5 +145,39 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		}
 		
 		userinfo.setPassword(result[0]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.IUserAuthenticator#prompt(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, int, java.lang.String, java.lang.String, int[], int)
+	 */
+	public int prompt(ICVSRepositoryLocation location, final int promptType, final String title, final String message, final int[] promptResponses, final int defaultResponse) {
+		final Display display = CVSUIPlugin.getStandardDisplay();
+		final int[] retval = new int[1];
+		final String[] buttons = new String[promptResponses.length];
+		for (int i = 0; i < promptResponses.length; i++) {
+			int prompt = promptResponses[i];
+			switch(prompt) { 
+				case IUserAuthenticator.OK_ID: buttons[i] = IDialogConstants.OK_LABEL; break;
+				case IUserAuthenticator.CANCEL_ID: buttons[i] = IDialogConstants.CANCEL_LABEL; break;
+				case IUserAuthenticator.NO_ID: buttons[i] = IDialogConstants.NO_LABEL; break;
+				case IUserAuthenticator.YES_ID: buttons[i] = IDialogConstants.YES_LABEL; break;
+			}
+		}
+		
+		display.syncExec(new Runnable() {
+			public void run() {
+				final MessageDialog dialog = new MessageDialog(
+						new Shell(display),
+						title,
+						null /* title image */,
+						message,
+						promptType,
+						buttons,
+						1
+				);				
+				retval[0] = dialog.open();
+			}
+		});
+		return retval[0];
 	}
 }
