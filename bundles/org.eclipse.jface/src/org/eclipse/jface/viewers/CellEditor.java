@@ -1,9 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -64,9 +70,14 @@ public abstract class CellEditor {
 	private Control control = null;
 
 	/**
+	 * Default cell editor style
+	 */
+	private static final int defaultStyle = SWT.NONE;
+
+	/**
 	 * This cell editor's style
 	 */
-	private int style = SWT.NONE;
+	private int style = defaultStyle;
 
 	/** 
 	 * Struct-like layout data for cell editors, with reasonable defaults
@@ -128,6 +139,14 @@ public abstract class CellEditor {
 	 * Property name for the undo action
 	 */
 	public static final String UNDO = "undo"; //$NON-NLS-1$
+
+/**
+ * Creates a new cell editor with no control 
+ * The cell editor has no cell validator.
+ * @since 2.1
+ */
+protected CellEditor() {
+}
 /**
  * Creates a new cell editor under the given parent control.
  * The cell editor has no cell validator.
@@ -135,7 +154,7 @@ public abstract class CellEditor {
  * @param parent the parent control
  */
 protected CellEditor(Composite parent) {
-	this(parent, SWT.NONE);
+	this(parent, defaultStyle);
 }
 /**
  * Creates a new cell editor under the given parent control.
@@ -147,14 +166,7 @@ protected CellEditor(Composite parent) {
  */
 protected CellEditor(Composite parent, int style) {
 	this.style = style;
-	control = createControl(parent);
-
-	// See 1GD5CA6: ITPUI:ALL - TaskView.setSelection does not work
-	// Control is created with isVisible()==true by default.
-	// This causes composite.setFocus() to work incorrectly.
-	// The cell editor's control grabs focus instead, even if it is not active.
-	// Make the control invisible here by default.
-	deactivate();
+	create(parent);
 }
 /**
  * Activates this cell editor.
@@ -196,6 +208,22 @@ public void addPropertyChangeListener(IPropertyChangeListener listener) {
  */
 protected abstract Control createControl(Composite parent);
 /**
+ * Creates the control for this cell editor under the given parent control.
+ * 
+ * @param parent the parent control
+ * @since 2.1
+ */
+public void create(Composite parent) {
+	Assert.isTrue(control==null);
+	control = createControl(parent);
+	// See 1GD5CA6: ITPUI:ALL - TaskView.setSelection does not work
+	// Control is created with isVisible()==true by default.
+	// This causes composite.setFocus() to work incorrectly.
+	// The cell editor's control grabs focus instead, even if it is not active.
+	// Make the control invisible here by default.
+	deactivate();
+}
+/**
  * Hides this cell editor's control. Does nothing if this 
  * cell editor is not visible.
  */
@@ -207,11 +235,10 @@ public void deactivate() {
  * Disposes of this cell editor and frees any associated SWT resources.
  */
 public void dispose() {
-	// XXX: Should not need to check if we are already disposed but this
-	// was occuring in the property sheet.
 	if (control != null && !control.isDisposed()) {
 		control.dispose();
 	}
+	control = null;
 }
 /**
  * Returns this cell editor's value.
@@ -292,7 +319,17 @@ protected void fireEnablementChanged(String actionId) {
 	}
 }
 /**
- * Returns the style bits for this this cell editor.
+ * Sets the style bits for this cell editor.
+ * 
+ * @param style the SWT style bits for this cell editor
+ * @since 2.1
+ */
+public void setStyle(int style) {
+	this.style = style;
+}
+
+/**
+ * Returns the style bits for this cell editor.
  *
  * @return the style for this cell editor
  * @since 2.1

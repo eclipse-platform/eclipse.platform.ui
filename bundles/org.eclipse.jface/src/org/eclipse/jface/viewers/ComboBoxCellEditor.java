@@ -1,9 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.text.MessageFormat;
 
 import org.eclipse.jface.util.Assert;
@@ -38,6 +44,25 @@ public class ComboBoxCellEditor extends CellEditor {
 	 */
 	private CCombo comboBox;
 
+	/**
+	 * Default ComboBoxCellEditor style
+	 */
+	private static final int defaultStyle = SWT.NONE;
+
+/**
+ * Creates a new cell editor with no control and no  st of choices. Initially,
+ * the cell editor has no cell validator.
+ * 
+ * @since 2.1
+ * @see #setStyle
+ * @see #create
+ * @see #setItems
+ * @see #dispose
+ */
+public ComboBoxCellEditor() {
+	setStyle(defaultStyle);
+}
+
 /**
  * Creates a new cell editor with a combo containing the given 
  * list of choices and parented under the given control. The cell
@@ -49,8 +74,9 @@ public class ComboBoxCellEditor extends CellEditor {
  * @param items the list of strings for the combo box
  */
 public ComboBoxCellEditor(Composite parent, String[] items) {
-	this(parent, items, SWT.NONE);
+	this(parent, items, defaultStyle);
 }
+
 /**
  * Creates a new cell editor with a combo containing the given 
  * list of choices and parented under the given control. The cell
@@ -65,11 +91,29 @@ public ComboBoxCellEditor(Composite parent, String[] items) {
  */
 public ComboBoxCellEditor(Composite parent, String[] items, int style) {
 	super(parent, style);
+	setItems(items);
+}
+
+/**
+ * Returns the list of choices for the combo box
+ *
+ * @return the list of choices for the combo box
+ */
+public String[] getItems() {
+	return this.items;
+}
+
+/**
+ * Sets the list of choices for the combo box
+ *
+ * @param items the list of choices for the combo box
+ */
+public void setItems(String[] items) {
 	Assert.isNotNull(items);
 	this.items = items;
-	selection = 0;
 	populateComboBoxItems();
 }
+
 /* (non-Javadoc)
  * Method declared on CellEditor.
  */
@@ -112,6 +156,7 @@ protected Control createControl(Composite parent) {
 
 	return comboBox;
 }
+
 /**
  * The <code>ComboBoxCellEditor</code> implementation of
  * this <code>CellEditor</code> framework method returns
@@ -123,12 +168,14 @@ protected Control createControl(Composite parent) {
 protected Object doGetValue() {
 	return new Integer(selection);
 }
+
 /* (non-Javadoc)
  * Method declared on CellEditor.
  */
 protected void doSetFocus() {
 	comboBox.setFocus();
 }
+
 /**
  * The <code>ComboBoxCellEditor</code> implementation of
  * this <code>CellEditor</code> framework method sets the 
@@ -141,6 +188,7 @@ public LayoutData getLayoutData() {
 	layoutData.minimumWidth = 50;
 	return layoutData;
 }
+
 /**
  * The <code>ComboBoxCellEditor</code> implementation of
  * this <code>CellEditor</code> framework method
@@ -154,15 +202,18 @@ protected void doSetValue(Object value) {
 	selection = ((Integer) value).intValue();
 	comboBox.select(selection);
 }
+
 /**
- * Add the items to the combo box.
+ * Updates the list of choices for the combo box for the current control.
  */
 private void populateComboBoxItems() {
 	if (comboBox != null && items != null) {
+		comboBox.removeAll();
 		for (int i = 0; i < items.length; i++)
 			comboBox.add(items[i], i);
 
 		setValueValid(true);
+		selection = 0;
 	}
 }
 }

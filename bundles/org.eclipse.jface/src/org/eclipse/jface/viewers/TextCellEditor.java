@@ -1,9 +1,14 @@
-package org.eclipse.jface.viewers;
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+package org.eclipse.jface.viewers;
 
 import java.text.MessageFormat;
 
@@ -34,6 +39,24 @@ public class TextCellEditor extends CellEditor {
 	private boolean isSelection = false;
 	private boolean isDeleteable = false;
 	private boolean isSelectable = false;
+	
+	/**
+	 * Default TextCellEditor style
+	 * specify no borders on text widget as cell outline in table already
+	 * provides the look of a border.
+	 */
+	private static final int defaultStyle = SWT.SINGLE;
+
+/**
+ * Creates a new text string cell editor with no control
+ * The cell editor value is the string itself, which is initially the empty
+ * string. Initially, the cell editor has no cell validator.
+ * 
+ * @since 2.1
+ */
+public TextCellEditor() {
+	setStyle(defaultStyle);
+}
 /**
  * Creates a new text string cell editor parented under the given control.
  * The cell editor value is the string itself, which is initially the empty string. 
@@ -42,9 +65,7 @@ public class TextCellEditor extends CellEditor {
  * @param parent the parent control
  */
 public TextCellEditor(Composite parent) {
-	// specify no borders on text widget as cell outline in
-	// table already provides the look of a border.
-	this(parent, SWT.SINGLE);
+	this(parent, defaultStyle);
 }
 /**
  * Creates a new text string cell editor parented under the given control.

@@ -1,9 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.text.MessageFormat;
 
 import org.eclipse.jface.resource.*;
@@ -90,6 +96,19 @@ public abstract class DialogCellEditor extends CellEditor {
 			return result;			
 		}
 	}
+	
+	/**
+	 * Default DialogCellEditor style
+	 */
+	private static final int defaultStyle = SWT.NONE;
+	
+/**
+ * Creates a new dialog cell editor with no control
+ * @since 2.1
+ */
+public DialogCellEditor() {
+	setStyle(defaultStyle);
+}	
 /**
  * Creates a new dialog cell editor parented under the given control.
  * The cell editor value is <code>null</code> initially, and has no 
@@ -98,7 +117,7 @@ public abstract class DialogCellEditor extends CellEditor {
  * @param parent the parent control
  */
 protected DialogCellEditor(Composite parent) {
-	this(parent, SWT.NONE);
+	this(parent, defaultStyle);
 }
 /**
  * Creates a new dialog cell editor parented under the given control.
