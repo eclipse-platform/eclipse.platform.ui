@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.themes;
 
 /**
- * A basic element (color, font, gradient) of a theme must implement this 
+ * A basic element (color, font) of a theme must implement this 
  * interface.
  * 
  * @since 3.0
@@ -19,16 +19,16 @@ package org.eclipse.ui.internal.themes;
 public interface IThemeElementDefinition {
 
     /**
-     * Returns the label for this element.
+     * Returns the name for this element.
      * 
-     * @return the label for this element
+     * @return the name for this element
      */
-    public String getLabel();
+    public String getName();
 
     /**
      * Returns the id for this element.
      * 
-     * @return the id for this element.  This should never be <code>null</code>.
+     * @return the id for this element.  This will never be <code>null</code>.
      */
     public String getId();
 

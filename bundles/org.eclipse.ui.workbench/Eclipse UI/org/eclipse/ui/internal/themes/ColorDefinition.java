@@ -77,7 +77,7 @@ public class ColorDefinition implements IPluginContribution,
      */
     public ColorDefinition(ColorDefinition original, RGB value) {
 
-        this.label = original.getLabel();
+        this.label = original.getName();
         this.id = original.getId();
         this.categoryId = original.getCategoryId();
         this.description = original.getDescription();
@@ -118,7 +118,7 @@ public class ColorDefinition implements IPluginContribution,
     /**
      * @return the label text.  Should not be <code>null</code>.
      */
-    public String getLabel() {
+    public String getName() {
         return label;
     }
 

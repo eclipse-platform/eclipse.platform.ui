@@ -602,7 +602,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         themeCombo.add(themeString);
 
         for (int i = 0; i < descs.length; i++) {
-            themeString = descs[i].getLabel();
+            themeString = descs[i].getName();
             if (descs[i].getId().equals(currentTheme.getId())) {
                 themeString = MessageFormat
                         .format(

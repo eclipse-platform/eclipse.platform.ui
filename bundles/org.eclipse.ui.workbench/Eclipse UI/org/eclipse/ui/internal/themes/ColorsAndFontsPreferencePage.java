@@ -492,11 +492,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                         return MessageFormat
                                 .format(
                                         RESOURCE_BUNDLE
-                                                .getString("defaultFormat"), new Object[] { ((IThemeElementDefinition) element).getLabel(), def.getLabel() }); //$NON-NLS-1$ 	                
+                                                .getString("defaultFormat"), new Object[] { ((IThemeElementDefinition) element).getName(), def.getName() }); //$NON-NLS-1$ 	                
                     }
                 }
             }
-            return ((IThemeElementDefinition) element).getLabel();
+            return ((IThemeElementDefinition) element).getName();
         }
     }
 

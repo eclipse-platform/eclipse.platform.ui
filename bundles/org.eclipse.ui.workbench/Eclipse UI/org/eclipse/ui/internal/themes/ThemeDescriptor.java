@@ -123,7 +123,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getName()
      */
-    public String getLabel() {
+    public String getName() {
         return name;
     }
 

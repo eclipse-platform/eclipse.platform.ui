@@ -92,7 +92,7 @@ public class ThemeElementCategory implements IPluginContribution,
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeElementDefinition#getLabel()
      */
-    public String getLabel() {
+    public String getName() {
         return label;
     }
 

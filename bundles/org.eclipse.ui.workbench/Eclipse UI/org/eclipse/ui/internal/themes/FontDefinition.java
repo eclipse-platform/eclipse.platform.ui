@@ -68,7 +68,7 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
      * @param datas the FontData[] value
      */
     public FontDefinition(FontDefinition originalFont, FontData[] datas) {
-        this.label = originalFont.getLabel();
+        this.label = originalFont.getName();
         this.id = originalFont.getId();
         this.categoryId = originalFont.getCategoryId();
         this.description = originalFont.getDescription();
@@ -97,7 +97,7 @@ public class FontDefinition implements IHierarchalThemeElementDefinition,
      * Returns the label.
      * @return String
      */
-    public String getLabel() {
+    public String getName() {
         return label;
     }
 

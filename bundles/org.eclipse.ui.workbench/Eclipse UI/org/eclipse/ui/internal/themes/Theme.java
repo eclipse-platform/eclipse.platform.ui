@@ -297,7 +297,7 @@ public class Theme implements ITheme {
      */
     public String getLabel() {
         return descriptor == null ? RESOURCE_BUNDLE
-                .getString("DefaultTheme.label") : descriptor.getLabel(); //$NON-NLS-1$ 
+                .getString("DefaultTheme.label") : descriptor.getName(); //$NON-NLS-1$ 
     }
 
     /* (non-Javadoc)
