@@ -45,8 +45,9 @@ public class ControlEnableState {
 			this.state = state;
 		}
 		public void restore() {
-			if (item != null)
-				item.setEnabled(state);
+			if (item == null || item.isDisposed())
+				return;
+			item.setEnabled(state);
 		}
 	}
 /**
