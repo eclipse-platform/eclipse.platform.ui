@@ -1672,6 +1672,7 @@ private void trackShellActivation(Shell shell) {
 	shell.addShellListener(new ShellAdapter() {
 		public void shellActivated(ShellEvent event) {
 			shellActivated = true;
+			workbench.setActivatedWindow(WorkbenchWindow.this);
 			WorkbenchPage currentPage = getActiveWorkbenchPage();
 			if (currentPage != null) {
 				IWorkbenchPart part = currentPage.getActivePart();

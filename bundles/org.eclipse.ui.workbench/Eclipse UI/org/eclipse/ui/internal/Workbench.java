@@ -116,6 +116,7 @@ import org.eclipse.update.core.SiteManager;
 public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExtension {
 
 	private WindowManager windowManager;
+	private WorkbenchWindow activatedWindow;
 	private EditorHistory editorHistory;
 	private PerspectiveHistory perspHistory;
 	private boolean runEventLoop;
@@ -498,12 +499,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @see IWorkbench
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
-
-		Display display = Display.getCurrent();
 		// Display will be null if SWT has not been initialized or
 		// this method was called from wrong thread.
+		Display display = Display.getCurrent();
 		if (display == null)
 			return null;
+
+		// Look at the current shell and up its parent
+		// hierarchy for a workbench window.
 		Control shell = display.getActiveShell();
 		while (shell != null) {
 			Object data = shell.getData();
@@ -511,12 +514,24 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				return (IWorkbenchWindow) data;
 			shell = shell.getParent();
 		}
+		
+		// Look for the window that was last known being
+		// the active one
+		WorkbenchWindow win = getActivatedWindow();
+		if (win != null) {
+			return win;
+		}
+		
+		// Look at all the shells and pick the first one
+		// that is a workbench window.
 		Shell shells[] = display.getShells();
 		for (int i = 0; i < shells.length; i++) {
 			Object data = shells[i].getData();
 			if (data instanceof IWorkbenchWindow)
 				return (IWorkbenchWindow) data;
 		}
+		
+		// Can't find anything!
 		return null;
 	}
 	/**
@@ -1596,4 +1611,26 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
+	/**
+	 * Returns the workbench window which was last known being
+	 * the active one, or <code>null</code>.
+	 */
+	protected final WorkbenchWindow getActivatedWindow() {
+		if (activatedWindow != null) {
+			Shell shell = activatedWindow.getShell();
+			if (shell != null && !shell.isDisposed()) {
+				return activatedWindow;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Sets the workbench window which was last known being the
+	 * active one, or <code>null</code>.
+	 */
+	protected final void setActivatedWindow(WorkbenchWindow window) {
+		activatedWindow = window;
+	}
 }
