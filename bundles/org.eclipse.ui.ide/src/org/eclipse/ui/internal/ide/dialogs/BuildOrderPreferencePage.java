@@ -404,7 +404,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
             }
         };
         maxItersField.setValidRange(1, Integer.MAX_VALUE);
-        maxItersField.setPreferencePage(this);
+        maxItersField.setPage(this);
         maxItersField.setPreferenceStore(getPreferenceStore());
         maxItersField.setPropertyChangeListener(validityChangeListener);
         maxItersField.load();

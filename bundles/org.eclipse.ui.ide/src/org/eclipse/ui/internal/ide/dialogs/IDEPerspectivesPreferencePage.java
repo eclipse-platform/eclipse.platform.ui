@@ -82,7 +82,7 @@ public class IDEPerspectivesPreferencePage extends PerspectivesPreferencePage {
                 PROJECT_SWITCH_PERSP_MODE_TITLE, namesAndValues.length,
                 namesAndValues, projectComposite, true);
         projectSwitchField.setPreferenceStore(getIDEPreferenceStore());
-        projectSwitchField.setPreferencePage(this);
+        projectSwitchField.setPage(this);
         projectSwitchField.load();
     }
 

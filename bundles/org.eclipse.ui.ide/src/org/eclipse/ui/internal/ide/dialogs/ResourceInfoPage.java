@@ -294,7 +294,7 @@ public class ResourceInfoPage extends PropertyPage {
 		new Label(composite, SWT.NONE); // a vertical spacer
 		encodingEditor = new ResourceEncodingFieldEditor(
 				getFieldEditorLabel(resource), composite, resource);
-		encodingEditor.setPreferencePage(this);
+		encodingEditor.setPage(this);
 		encodingEditor.load();
 
 		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {

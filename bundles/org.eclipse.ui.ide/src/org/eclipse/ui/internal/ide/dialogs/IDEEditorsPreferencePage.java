@@ -67,7 +67,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 				.getString("WorkbenchPreference.encoding"), composite, ResourcesPlugin //$NON-NLS-1$
 				.getWorkspace().getRoot());
 
-		encodingEditor.setPreferencePage(this);
+		encodingEditor.setPage(this);
 		encodingEditor.load();
 		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
 			/* (non-Javadoc)

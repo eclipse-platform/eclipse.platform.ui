@@ -97,7 +97,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		if (descriptionCharset != null && !(descriptionCharset.equals(encoding))) {
 
 			MessageDialog dialog = new MessageDialog(
-					getPreferencePage().getShell(),
+					getPage().getShell(),
 					IDEWorkbenchMessages
 							.getString("ResourceEncodingFieldEditor.EncodingConflictTitle"), //$NON-NLS-1$
 					null,

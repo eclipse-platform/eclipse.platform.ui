@@ -258,7 +258,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault()
                 .getPreferenceStore());
-        reuseEditorsThreshold.setPreferencePage(this);
+        reuseEditorsThreshold.setPage(this);
         reuseEditorsThreshold.setTextLimit(2);
         reuseEditorsThreshold.setErrorMessage(WorkbenchMessages
                 .getString("WorkbenchPreference.reuseEditorsThresholdError")); //$NON-NLS-1$
@@ -319,7 +319,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         recentFilesEditor.setPreferenceStore(WorkbenchPlugin.getDefault()
                 .getPreferenceStore());
-        recentFilesEditor.setPreferencePage(this);
+        recentFilesEditor.setPage(this);
         recentFilesEditor.setTextLimit(Integer.toString(EditorHistory.MAX_SIZE)
                 .length());
         recentFilesEditor

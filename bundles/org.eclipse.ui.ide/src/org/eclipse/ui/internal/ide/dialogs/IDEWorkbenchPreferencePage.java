@@ -126,7 +126,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         // core's pref. ours is not up-to-date anyway if someone changes this
         // interval directly thru core api.
         saveInterval.setPreferenceStore(getIDEPreferenceStore());
-        saveInterval.setPreferencePage(this);
+        saveInterval.setPage(this);
         saveInterval.setTextLimit(Integer.toString(
                 IDEInternalPreferences.MAX_SAVE_INTERVAL).length());
         saveInterval.setErrorMessage(IDEWorkbenchMessages.format(

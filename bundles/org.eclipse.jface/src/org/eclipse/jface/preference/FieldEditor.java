@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
@@ -111,7 +112,7 @@ public abstract class FieldEditor {
     /** 
      * The page containing this field editor
      */
-    private PreferencePage page;
+    private DialogPage page;
 
     /**
      * Creates a new field editor.
@@ -418,9 +419,22 @@ public abstract class FieldEditor {
      * appears.
      *
      * @return the preference page, or <code>null</code> if none
+     * @deprecated use #getPage()
      */
     protected PreferencePage getPreferencePage() {
-        return page;
+    	if(page != null && page instanceof PreferencePage)
+        	return (PreferencePage) page;
+    	return null;
+    }
+    
+    /**
+     * Return the DialogPage that the receiver is sending
+     * updates to.
+     * @return DialogPage or <code>null</code> if it 
+     * has not been set.
+     */
+    protected DialogPage getPage(){
+    	return page;
     }
 
     /**
@@ -563,12 +577,23 @@ public abstract class FieldEditor {
      * appears.
      *
      * @param preferencePage the preference page, or <code>null</code> if none
+     * @deprecated use #setPage(DialogPage)
      */
     public void setPreferencePage(PreferencePage preferencePage) {
-        page = preferencePage;
+        setPage(preferencePage);
     }
+    
 
     /**
+     * Set the page to be the receiver.
+	 * @param dialogPage
+	 */
+	public void setPage(DialogPage dialogPage) {
+		page = dialogPage;
+		
+	}
+
+	/**
      * Sets the preference store used by this field editor.
      *
      * @param store the preference store, or <code>null</code> if none

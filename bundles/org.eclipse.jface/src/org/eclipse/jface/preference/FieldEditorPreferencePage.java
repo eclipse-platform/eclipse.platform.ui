@@ -255,7 +255,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
             Iterator e = fields.iterator();
             while (e.hasNext()) {
                 FieldEditor pe = (FieldEditor) e.next();
-                pe.setPreferencePage(null);
+                pe.setPage(null);
                 pe.setPropertyChangeListener(null);
                 pe.setPreferenceStore(null);
             }
@@ -292,7 +292,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
             Iterator e = fields.iterator();
             while (e.hasNext()) {
                 FieldEditor pe = (FieldEditor) e.next();
-                pe.setPreferencePage(this);
+                pe.setPage(this);
                 pe.setPropertyChangeListener(this);
                 pe.setPreferenceStore(getPreferenceStore());
                 pe.load();
