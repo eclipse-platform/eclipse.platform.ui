@@ -31,7 +31,7 @@ public abstract class ResizableDialog extends Dialog {
 
 	public ResizableDialog(Shell parent, ResourceBundle bundle) {
 		super(parent);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		
 		fBundle= bundle;
 		

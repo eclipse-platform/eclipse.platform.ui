@@ -64,8 +64,10 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent2) {
 						
+		Composite parent= (Composite) super.createDialogArea(parent2);
+
 		Control c= fCompareEditorInput.createContents(parent);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
@@ -73,7 +75,7 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 		shell.setText(fCompareEditorInput.getTitle());
 		shell.setImage(fCompareEditorInput.getTitleImage());
 
-		return c;
+		return parent;
 	}
 		
 	/* (non-Javadoc)

@@ -674,8 +674,10 @@ public class EditionSelectionDialog extends ResizableDialog {
  	/* (non Javadoc)
  	 * Creates SWT control tree.
  	 */
-	protected synchronized Control createDialogArea(Composite parent) {
+	protected synchronized Control createDialogArea(Composite parent2) {
 		
+		Composite parent= (Composite) super.createDialogArea(parent2);
+
 		getShell().setText(Utilities.getString(fBundle, "title")); //$NON-NLS-1$
 		
 		Splitter vsplitter= new Splitter(parent,  SWT.VERTICAL);
@@ -789,7 +791,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });
 				
-		return vsplitter;
+		return parent;
 	}	
 	
 	/* (non-Javadoc)
