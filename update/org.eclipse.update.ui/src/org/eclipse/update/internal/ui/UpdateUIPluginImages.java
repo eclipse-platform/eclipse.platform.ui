@@ -53,18 +53,30 @@ public class UpdateUIPluginImages {
 	 */
 	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
 	public static final String IMG_FORM_UNDERLINE = NAME_PREFIX + "FORM_UNDERLINE";
-	public static final String IMG_UPDATES_OBJ = NAME_PREFIX + "UDATES_OBJ";
-
 
 	/**
 	 * OBJ16
 	 */
 	public static final ImageDescriptor DESC_APP_OBJ = create(PATH_OBJ, "app_obj.gif");
+	public static final ImageDescriptor DESC_BFOLDER_OBJ = create(PATH_OBJ, "bfolder_obj.gif");
+	public static final ImageDescriptor DESC_CATEGORY_OBJ = create(PATH_OBJ, "category_obj.gif");
+	public static final ImageDescriptor DESC_CD_OBJ = create(PATH_OBJ, "cd_obj.gif");
 	public static final ImageDescriptor DESC_COMPUTER_OBJ = create(PATH_OBJ, "computer_obj.gif");
-	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif");
-	public static final ImageDescriptor DESC_UNCONF_FEATURE_OBJ = create(PATH_OBJ, "unconf_feature_obj.gif");
-	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif");
 	public static final ImageDescriptor DESC_CONFIG_OBJ = create(PATH_OBJ, "config_obj.gif");
+	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif");
+	public static final ImageDescriptor DESC_FLOPPY_OBJ = create(PATH_OBJ, "floppy_obj.gif");
+	public static final ImageDescriptor DESC_HISTORY_OBJ = create(PATH_OBJ, "history_obj.gif");
+	public static final ImageDescriptor DESC_LSITE_OBJ = create(PATH_OBJ, "lsite_obj.gif");
+	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif");
+	public static final ImageDescriptor DESC_PLACES_OBJ = create(PATH_OBJ, "places_obj.gif");
+	public static final ImageDescriptor DESC_SAVED_OBJ = create(PATH_OBJ, "saved_obj.gif");
+	public static final ImageDescriptor DESC_UNCONF_FEATURE_OBJ = create(PATH_OBJ, "unconf_feature_obj.gif");
+	public static final ImageDescriptor DESC_UPDATES_OBJ = create(PATH_OBJ, "updates_obj.gif");
+	public static final ImageDescriptor DESC_VFIXED_OBJ = create(PATH_OBJ, "vfixed_obj.gif");
+	public static final ImageDescriptor DESC_VREMOTE_OBJ = create(PATH_OBJ, "vremote_obj.gif");
+	public static final ImageDescriptor DESC_VREMOVABLE_OBJ = create(PATH_OBJ, "vremovable_obj.gif");
+
+
 	
 	/**
 	 * OVR16
@@ -102,6 +114,9 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_GO_NAV = create(PATH_LCL, "go_nav.gif");
 	public static final ImageDescriptor DESC_GO_NAV_H = create(PATH_LCL_HOVER, "go_nav.gif");
 	public static final ImageDescriptor DESC_GO_NAV_D = create(PATH_LCL_DISABLED, "go_nav.gif");
+	public static final ImageDescriptor DESC_SHOW_UNCONF = create(PATH_LCL, "show_unconf.gif");
+	public static final ImageDescriptor DESC_SHOW_UNCONF_H = create(PATH_LCL_HOVER, "show_unconf.gif");
+	public static final ImageDescriptor DESC_SHOW_UNCONF_D = create(PATH_LCL_DISABLED, "show_unconf.gif");
 
 	/**
 	 * WIZ
