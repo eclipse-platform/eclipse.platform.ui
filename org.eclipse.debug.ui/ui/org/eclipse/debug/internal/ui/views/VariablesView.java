@@ -443,7 +443,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void setInitialContent() {
 		ISelection selection= getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			setViewerInput((IStructuredSelection) selection);
 		}
 	}
