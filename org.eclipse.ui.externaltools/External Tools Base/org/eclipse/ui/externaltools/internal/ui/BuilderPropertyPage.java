@@ -429,8 +429,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 		copyButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.&Copy..._3")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
-		enableButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.41")); //$NON-NLS-1$
-		disableButton= createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.42")); //$NON-NLS-1$
+		enableButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.36")); //$NON-NLS-1$
+		disableButton= createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.37")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
 		upButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
 		downButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
