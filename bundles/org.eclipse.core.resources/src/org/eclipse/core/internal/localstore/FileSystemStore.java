@@ -69,31 +69,36 @@ public void delete(File target) throws CoreException {
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(target.getAbsolutePath()), Policy.bind("couldnotDelete", new String[] {target.getAbsolutePath()}), null);
 }
 public boolean delete(java.io.File root, MultiStatus status) {
-	boolean result = true;
+	boolean failedRecursive = false;
 	if (root.isDirectory()) {
 		String[] list = root.list();
 		// for some unknown reason, list() can return null.  
 		// Just skip the children If it does.
 		if (list != null)
 			for (int i = 0; i < list.length; i++)
-				delete(new java.io.File(root, list[i]), status);
+				// try best effort on all children so put logical OR at end
+				failedRecursive = !delete(new java.io.File(root, list[i]), status) || failedRecursive;
 	}
-	boolean failed = false;
+	boolean failedThis = false;
 	try {
-		if (root.exists())
-			failed = !root.delete();
+		// don't try to delete the root if one of the children failed
+		if (!failedRecursive && root.exists())
+			failedThis = !root.delete();
 	} catch (Exception e) {
-		failed = true;
+		// we caught a runtime exception so log it
+		String message = "Exception trying to delete file: " + root.getAbsolutePath();
+		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, message));
+		return false;
 	}
-	if (failed) {
+	if (failedThis) {
 		String message = null;
 		if (CoreFileSystemLibrary.isReadOnly(root.getAbsolutePath()))
 			message = "Could not delete read-only resource: " + root.getAbsolutePath();
 		else
 			message = Policy.bind("couldnotDelete", new String[] { root.getAbsolutePath()});
-		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message));
+		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, message));
 	}
-	return result;
+	return !(failedRecursive || failedThis);
 }
 public void move(File source, File destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);

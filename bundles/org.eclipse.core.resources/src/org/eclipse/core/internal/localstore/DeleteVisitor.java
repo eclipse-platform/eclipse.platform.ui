@@ -33,13 +33,17 @@ public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boo
 	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("deleteProblem", null), null);
 }
 protected void delete(UnifiedTreeNode node) {
+	IPath location = node.getLocalLocation();
+	Resource target = (Resource) node.getResource();
+	boolean success = true;
+	if (keepHistory)
+		target.getLocalManager().getHistoryStore().addState(target.getFullPath(), location, node.getLastModified(), true);
+	else
+		success = getStore().delete(location.toFile(), status);
+	// if there was a problem don't try and delete the resource from the tree
+	if (!success)
+		return;
 	try {
-		IPath location = node.getLocalLocation();
-		Resource target = (Resource) node.getResource();
-		if (keepHistory)
-			target.getLocalManager().getHistoryStore().addState(target.getFullPath(), location, node.getLastModified(), true);
-		else
-			getStore().delete(location.toFile(), status);
 		target.deleteResource(convertToPhantom, status);
 	} catch (CoreException e) {
 		status.add(e.getStatus());
