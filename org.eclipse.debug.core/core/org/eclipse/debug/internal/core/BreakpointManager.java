@@ -129,8 +129,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	
 	/**
 	 * Delete any non-persisted/invalid breakpoint markers. This is done
-	 * at startup rather than shutdown, since we are unable
-	 * to modify the resource tree at shutdown time
+	 * at startup rather than shutdown, since the changes made at
+	 * shutdown are not persisted as the workspace state has already
+	 * been saved. See bug 7683.
 	 */
 	protected void deleteNonPersistedBreakpoints(IResource resource) throws CoreException {
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
