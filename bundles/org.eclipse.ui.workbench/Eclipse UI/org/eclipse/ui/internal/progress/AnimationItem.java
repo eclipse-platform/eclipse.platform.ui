@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class AnimationItem {
 
@@ -46,7 +45,7 @@ public class AnimationItem {
 	private ImageLoader loader = new ImageLoader();
 	boolean animated = false;
 	private Job animateJob;
-	private IJobChangeListener listener;
+	private IJobProgressManagerListener listener;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -74,8 +73,8 @@ public class AnimationItem {
 			if (disabledData != null)
 				disabledImage = getImage(disabledData[0]);
 
-			listener = getJobListener();
-			Platform.getJobManager().addJobChangeListener(listener);
+			listener = getProgressListener();
+			JobProgressManager.getInstance().addListener(listener);
 		} catch (MalformedURLException exception) {
 			ProgressUtil.logException(exception);
 		}
@@ -268,7 +267,7 @@ public class AnimationItem {
 	void dispose() {
 		animatedImage.dispose();
 		disabledImage.dispose();
-		Platform.getJobManager().removeJobChangeListener(listener);
+		JobProgressManager.getInstance().removeListener(listener);
 	}
 
 	/**
@@ -435,52 +434,66 @@ public class AnimationItem {
 		return disabledImage.getBounds();
 	}
 
-	/**
-	 * Add a listener to the job manager for the receiver.
-	 *
-	 */
-	private IJobChangeListener getJobListener() {
-		return new JobChangeAdapter() {
 
+
+	private IJobProgressManagerListener getProgressListener(){
+		return new IJobProgressManagerListener(){
+			
 			HashSet jobs = new HashSet();
-
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 			 */
-			public void aboutToRun(IJobChangeEvent event) {
-				incrementJobCount(event.getJob());
+			public void add(JobInfo info) {
+				incrementJobCount(info.getJob());
+
 			}
-
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 			 */
-			public void done(IJobChangeEvent event) {
-				if (jobs.contains(event.getJob())) {
-					decrementJobCount(event.getJob());
+			public void refresh(JobInfo info) {
+				// XXX Auto-generated method stub
+
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
+			 */
+			public void refreshAll() {
+				// XXX Auto-generated method stub
+
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
+			 */
+			public void remove(JobInfo info) {
+				if (jobs.contains(info.getJob())) {
+					decrementJobCount(info.getJob());
 				}
-			}
 
+			}
+			
 			private void incrementJobCount(Job job) {
-				//Don't count the animate job itself
-				if (job.isSystem())
-					return;
-				if (jobs.size() == 0)
-					setAnimated(true);
-				jobs.add(job);
-			}
+							//Don't count the animate job itself
+							if (job.isSystem())
+								return;
+							if (jobs.size() == 0)
+								setAnimated(true);
+							jobs.add(job);
+						}
 
-			private void decrementJobCount(Job job) {
-				//Don't count the animate job itself
-				if (job.isSystem())
-					return;
-				jobs.remove(job);
-				if(jobs.isEmpty())
-					setAnimated(false);
-			}
-
+						private void decrementJobCount(Job job) {
+							//Don't count the animate job itself
+							if (job.isSystem())
+								return;
+							jobs.remove(job);
+							if(jobs.isEmpty())
+								setAnimated(false);
+						}
 		};
 	}
-
 
 	private Job getAnimateJob() {
 		if (animateJob == null) {
