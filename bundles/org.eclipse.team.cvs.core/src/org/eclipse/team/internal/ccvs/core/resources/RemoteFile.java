@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -59,10 +60,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
  * use by the repository and sync view.
  */
-public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
-
-	// Contents will be cached to disk when this thrshold is exceeded
-	private static final int CACHING_THRESHOLD = -1; // don't create a byte array even for files size 0
+public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStorage  {
 	
 	// sync info in byte form
 	private byte[] syncBytes;
@@ -437,7 +435,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/*
 	 * @see ICVSFile#isReadOnly()
 	 */
-	public boolean isReadOnly() throws CVSException {
+	public boolean isReadOnly() {
 		return true;
 	}
 	
@@ -611,5 +609,21 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public String getCreatorDisplayName() throws CVSException {
 		ILogEntry entry = getLogEntry(new NullProgressMonitor());
 		return entry.getAuthor();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.IRemoteResource#getBufferedStorage(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException {
+		// Invoke getContents which ensures that contents are cached
+		getContents(monitor);
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getFullPath()
+	 */
+	public IPath getFullPath() {
+		return new Path(getRepositoryRelativePath());
 	}
 }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -605,6 +606,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getCreatorDisplayName()
 	 */
 	public String getCreatorDisplayName() throws TeamException {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.IRemoteResource#getBufferedStorage(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException {
 		return null;
 	}
 }

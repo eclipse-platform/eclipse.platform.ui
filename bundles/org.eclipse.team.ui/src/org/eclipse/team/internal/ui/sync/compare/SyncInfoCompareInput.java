@@ -37,19 +37,35 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	private SyncInfoDiffNode node;
 	private static Image titleImage;
 	
-	/* protected */ SyncInfoCompareInput() {
-		super(new CompareConfiguration());		
-	}
-	
-	public SyncInfoCompareInput(SyncInfo sync) {
-		super(new CompareConfiguration());
-		this.sync = sync;
+	public static SyncInfoCompareInput createInput(SyncInfo sync) {
 				
-		ITypedElement elements[] = SyncInfoDiffNode.getTypedElements(sync);
-		this.node = new SyncInfoDiffNode(elements[0] /* base */, elements[1] /* local */, elements[2] /* remote */, sync.getKind());
-		initializeContentChangeListeners();
+		// Create the local ITypedElement
+		ITypedElement localTypedElement = SyncInfoDiffNode.createTypeElement(sync.getLocal(), sync.getKind());
+		
+		// Create the remote ITypedElement
+		ITypedElement remoteTypedElement = null;
+		IRemoteResource remoteResource = sync.getRemote();
+		if (remoteResource != null) {
+			remoteTypedElement = SyncInfoDiffNode.createTypeElement(remoteResource);
+		}
+		
+		// Create the base ITypedElement
+		ITypedElement baseTypedElement = null;
+		IRemoteResource baseResource = sync.getRemote();
+		if (baseResource != null) {
+			baseTypedElement = SyncInfoDiffNode.createTypeElement(baseResource);
+		}
+		
+		return new SyncInfoCompareInput(sync, new SyncInfoDiffNode(baseTypedElement, localTypedElement, remoteTypedElement, sync.getKind()));
 	}
 
+	private SyncInfoCompareInput(SyncInfo sync, SyncInfoDiffNode diffNode) {
+		super(new CompareConfiguration());
+		this.sync = sync;
+		this.node = diffNode;
+		initializeContentChangeListeners();
+	}
+	
 	private void initializeContentChangeListeners() {
 			ITypedElement te = node.getLeft();
 			if(te instanceof IContentChangeNotifier) {
@@ -82,7 +98,12 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		// update the title now that the remote revision number as been fetched from the server
 		setTitle(getTitle());
 		updateLabels();
-		return node;		
+		try {
+			node.cacheContents(monitor);
+		} catch (TeamException e) {
+			throw new InvocationTargetException(e);
+		}
+		return node;
 	}
 	
 	/* (non-Javadoc)
@@ -219,9 +240,9 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		super.saveChanges(pm);
-		if (node instanceof DiffNode) {
+		if (node != null) {
 			try {
-				commit(pm, (DiffNode) node);
+				commit(pm, node);
 			} finally {
 				setDirty(false);	
 			}

@@ -124,7 +124,7 @@ public class OpenInCompareAction extends Action {
 	 */
 	private static SyncInfoCompareInput getCompareInput(SyncInfo info) {
 		if (info != null && info.getLocal() instanceof IFile) {
-			return new SyncInfoCompareInput(info);								
+			return SyncInfoCompareInput.createInput(info);								
 		}
 		return null;
 	}				

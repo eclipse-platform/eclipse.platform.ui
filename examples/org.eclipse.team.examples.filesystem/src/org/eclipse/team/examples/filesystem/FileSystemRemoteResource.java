@@ -17,19 +17,21 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.examples.filesystem.Policy;
 
 /**
  * Class represents a handle to a <code>java.io.File</code> that conforms to
  * the <code>org.eclipse.team.core.IRemoteResource</code> interface.
  */
-public class FileSystemRemoteResource implements IRemoteResource {
+public class FileSystemRemoteResource implements IRemoteResource, IStorage {
 
 	// the file object in which the data is stored on the disk
 	private File ioFile;
@@ -176,5 +178,34 @@ public class FileSystemRemoteResource implements IRemoteResource {
 	 */
 	public String getCreatorDisplayName() throws TeamException {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.IRemoteResource#getBufferedStorage(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException {
+		// The contents are local so no caching is required
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getContents()
+	 */
+	public InputStream getContents() throws CoreException {
+		return getContents(new NullProgressMonitor());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getFullPath()
+	 */
+	public IPath getFullPath() {
+		return new Path(ioFile.getAbsolutePath());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		return true;
 	}
 }

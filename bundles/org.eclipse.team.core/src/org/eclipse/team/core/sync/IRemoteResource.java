@@ -12,6 +12,7 @@ package org.eclipse.team.core.sync;
 
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -69,5 +70,16 @@ public interface IRemoteResource extends IAdaptable {
 	public String getContentIdentifier() throws TeamException;
 	
 	public String getCreatorDisplayName() throws TeamException;
+	
+	/**
+	 * Returns an IStorage that contains (or provides access to) the buffered 
+	 * contents of the remote resource. Returns <code>null</code> if the remote
+	 * resource does not have contents (i.e. is not a file).
+	 * 
+	 * @param monitor
+	 * @return
+	 * @throws TeamException
+	 */
+	public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException;
 }
 
