@@ -1,10 +1,9 @@
 package org.eclipse.help.internal.ui.util;
-
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 
 // possibly use platform CoreException later. For now, this is
 // handled by the Logger class in base.
