@@ -20,11 +20,6 @@
 
 var args = parent.parseQueryString();
 
-// listen for clicks
-var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
-var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
-
-
 function displayTocFor(topic)
 {
 	parent.TabsFrame.showNavFrame("toc");
