@@ -288,7 +288,20 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		this.fSecondaryId = secondaryId; 
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * Classes that are persisted must override this method and perform
+	 * the following initialization.
+	 * <pre>
+	 * 		super.init(secondaryId, memento);
+	 * 		try {
+	 *			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(PARTICIPANT_ID);
+	 *			setInitializationData(descriptor);
+	 *		} catch (CoreException e) {
+	 *			TeamUIPlugin.log(e);
+	 *		}
+	 * </pre>
+	 * where <code>PARTICIPANT_ID</code> is the id of the particant as defined in the plugin manifest.
+	 * </p>
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
 	public void init(String secondaryId, IMemento memento) throws PartInitException {
