@@ -199,8 +199,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public IFeatureReference install(IFeature targetFeature, IVerificationListener verificationListener, IProgressMonitor progress) throws InstallAbortedException, CoreException {
-		//TODO
-		// call other API with all optional features, or setup variabel meaning install all
+		// call other API with all optional features, or setup variable meaning install all
 		return install(targetFeature, null, verificationListener, progress);
 	}
 

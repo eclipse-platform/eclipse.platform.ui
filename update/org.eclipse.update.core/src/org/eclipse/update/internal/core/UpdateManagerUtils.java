@@ -192,7 +192,7 @@ public class UpdateManagerUtils {
 
 		if (ref.getPermission() != 0) {
 			UpdateManagerPlugin.warn("Change permission for " + filePath + " to " + ref.getPermission());
-			// FIXME
+			// FIXME: change the code to use JNI
 		}
 
 		if (filePath != null && OS_UNIX && ref.getPermission() != 0) {

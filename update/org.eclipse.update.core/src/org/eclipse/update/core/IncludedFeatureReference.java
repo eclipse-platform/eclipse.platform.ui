@@ -106,7 +106,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 			if (this.equals(configured[i])) return false;
 		}
 		return true;*/
-		// FIXME
+		// FIXME: this code was never executed, should we remove it ?
 		return false;
 	}
 	
