@@ -440,7 +440,8 @@ public class OptionTests extends AbstractAntTest {
 		}
 		
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(12);
-		assertTrue("Message incorrect: " + msg, msg.endsWith("org.apache.ant"));
+		//msg depends on whether self hosting testing or build testing
+		assertTrue("Message incorrect: " + msg, msg.endsWith("org.apache.ant") || msg.endsWith("org.apache.ant_1.5.3"));
 	}
 	
 	/**
