@@ -931,4 +931,33 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("main", proposals);
     	assertContains("testUnless", proposals);
     }
+    
+    /**
+     * Tests the code completion for project attributes (bug 82031)
+     */
+    public void testProjectAttributeProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
+
+		int lineNumber= 1;
+    	int columnNumber= 9;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	//includes all the project attributes
+    	assertTrue(proposals.length == 3);
+    	assertContains("name", proposals);
+    	assertContains("default", proposals);
+    	assertContains("basedir", proposals);
+    	
+    	columnNumber= 10;
+    	lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "n");
+    	assertTrue(proposals.length == 1);
+    	assertContains("name", proposals);
+    }
 }

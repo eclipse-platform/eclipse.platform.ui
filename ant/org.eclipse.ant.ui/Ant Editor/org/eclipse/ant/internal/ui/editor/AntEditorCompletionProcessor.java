@@ -1204,22 +1204,26 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     	if (currentProposalMode != -1) {
     		return currentProposalMode;
     	}
-    	if (antModel != null && antModel.getProjectNode() == null) {
-    		return PROPOSAL_MODE_BUILDFILE;
-    	}
     	if (document.getLength() == 0 || (document.getLength() == 1 && document.get().equals("<"))) { //$NON-NLS-1$
     		return PROPOSAL_MODE_BUILDFILE;
     	}
     	
-        // String from beginning of document to the beginning of the prefix
+    	//String from beginning of document to the beginning of the prefix
     	String text= document.get();
         String stringToPrefix = text.substring(0, aCursorPosition - aPrefix.length());
         if (stringToPrefix.length() == 0) {
         	return PROPOSAL_MODE_BUILDFILE;
         }
-        
-        // Is trimmable from behind
+        //Is trimmable from behind
         String trimmedString = stringToPrefix.trim();
+    	if (antModel != null && antModel.getProjectNode() == null) {
+    		currentTaskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
+    		if ("project".equals(currentTaskString)) { //$NON-NLS-1$
+    			return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
+    		}
+    		return PROPOSAL_MODE_BUILDFILE;
+    	}
+    	
         char lastChar = 0;
         if(trimmedString.length() > 0) {
 	        lastChar = trimmedString.charAt(trimmedString.length()-1);
