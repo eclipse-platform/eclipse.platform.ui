@@ -1357,7 +1357,7 @@ public void testMarkerSave() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
 				try {
-					reader.read(input, false);
+					reader.read(input, true);
 				} catch (IOException e) {
 					fail("4.0", e);
 				}
@@ -1471,7 +1471,7 @@ public void testMarkerSaveTransient() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				MarkerReader reader = new MarkerReader((Workspace) getWorkspace());
 				try {
-					reader.read(input, false);
+					reader.read(input, true);
 				} catch (IOException e) {
 					fail("4.0", e);
 				}
