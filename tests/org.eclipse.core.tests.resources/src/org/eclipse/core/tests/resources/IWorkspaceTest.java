@@ -39,11 +39,9 @@ public String[] defineHierarchy() {
  * Returns the nature descriptor with the given Id, or null if not found
  */
 protected IProjectNatureDescriptor findNature(IProjectNatureDescriptor[] descriptors, String id) {
-	for (int i = 0; i < descriptors.length; i++) {
-		if (descriptors[i].getNatureId().equals(id)) {
+	for (int i = 0; i < descriptors.length; i++)
+		if (descriptors[i].getNatureId().equals(id))
 			return descriptors[i];
-		}
-	}
 	return null;
 }
 
@@ -101,6 +99,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file}, folder.getFullPath(), false, getMonitor());
 		fail("0.0");
 	} catch (CoreException e) {
+		// should fail
 	}
 	createHierarchy();
 
@@ -109,6 +108,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file}, folder2.getFullPath().append("figment"), false, getMonitor());
 		fail("1.0");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	//copy to non-existent destination
@@ -116,6 +116,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file}, folder2.getFullPath(), false, getMonitor());
 		fail("1.1");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	//create the destination
@@ -130,6 +131,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file2}, folder2.getFullPath(), false, getMonitor());
 		fail("1.3");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	//some source files don't exist
@@ -137,6 +139,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file, file2}, folder2.getFullPath(), false, getMonitor());
 		fail("1.4");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	//make sure the first copy worked
@@ -162,6 +165,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file, projectFile}, folder2.getFullPath(), false, getMonitor());
 		fail("1.8");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	//source files contains duplicates	
@@ -169,6 +173,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file, file2, file}, folder2.getFullPath(), false, getMonitor());
 		fail("1.9");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	//source can't be prefix of destination
@@ -178,6 +183,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {folder2}, folder3.getFullPath(), false, getMonitor());
 		fail("2.0");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	//target exists
@@ -186,6 +192,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file, file2}, folder2.getFullPath(), false, getMonitor());
 		fail("2.1");
 	} catch (CoreException e) {
+		// should fail
 	}
 	ensureDoesNotExistInWorkspace(file2Copy);
 	ensureDoesNotExistInFileSystem(file2Copy);
@@ -205,6 +212,7 @@ public void testCopy() throws CoreException {
 		getWorkspace().copy(new IResource[] {file}, folder2.getFullPath(), false, getMonitor());
 		fail("2.5");
 	} catch (CoreException e) {
+		// should fail
 	}
 
 	// make sure "file" is in sync.

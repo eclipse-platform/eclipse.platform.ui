@@ -140,7 +140,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteOpenProjectLinux() {
-		if (!(BootLoader.getOS().equals(BootLoader.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
@@ -205,7 +205,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteClosedProjectWindows() {
-		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
 			return;
 
 		IProject project = null;
@@ -282,7 +282,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteClosedProjectLinux() {
-		if (!(BootLoader.getOS().equals(BootLoader.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
@@ -343,7 +343,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteFolderWindows() {
-		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
 			return;
 
 		IProject project = null;
@@ -413,7 +413,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteFolderLinux() {
-		if (!(BootLoader.getOS().equals(BootLoader.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
