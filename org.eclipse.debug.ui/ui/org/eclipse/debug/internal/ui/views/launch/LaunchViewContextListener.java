@@ -880,7 +880,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * views based on contexts
 	 */
 	private boolean isAutoManageViews() {
-		IWorkbenchPage page = launchView.getViewSite().getWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = launchView.getViewSite().getPage();
 		if (page != null) {
 			IPerspectiveDescriptor descriptor = page.getPerspective();
 			if (descriptor != null) {
