@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Abstract base implementation of all workbench views.
@@ -56,7 +58,8 @@ import org.eclipse.ui.PartInitException;
  */
 public abstract class ViewPart extends WorkbenchPart implements IViewPart {
 
-    
+private boolean automaticContentDescription = true;
+	
 /**
  * Creates a new view.
  */
@@ -95,6 +98,49 @@ public void saveState(IMemento memento){
     // do nothing
 }
 
+/**
+ * Sets the content description for this part. The content description is typically
+ * a short string describing the current contents of the part. This will be included
+ * in the part's title unless the part explicitly calls setTitle to override this
+ * behavior.
+ * <p>
+ * For compatibility with old views, if the view uses setTitle to change the view title
+ * and the view never calls setContentDescription then the view title will be used as
+ * the content description. 
+ * </p>
+ * 
+ * @param description the content description. New views should not use setTitle, in which
+ * case calling this with the empty string indicates that no content description should be
+ * used. For old views (that use setTitle), the empty string indicates that the content
+ * description should match the view title.
+ * 
+ * @since 3.0
+ */
+protected void setContentDescription(String description) {
+	Assert.isNotNull(description);
+	
+	automaticContentDescription = Util.equals(description, "");  //$NON-NLS-1$
+	
+	if (automaticContentDescription) {
+		String title = getTitle();
+		
+		if (!automaticTitle) { 
+			description = title;
+		}
+	}
+	
+	super.setContentDescription(description);
+}
 
-
+/* (non-Javadoc)
+ * @see org.eclipse.ui.part.WorkbenchPart#setTitle(java.lang.String)
+ */
+protected void setTitle(String title) {
+	title = Util.safeString(title);
+	super.setTitle(title);
+	
+	if (automaticContentDescription) {
+		setContentDescription(""); //$NON-NLS-1$
+	}
+}
 }

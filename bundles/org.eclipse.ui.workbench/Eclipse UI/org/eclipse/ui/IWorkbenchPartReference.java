@@ -58,8 +58,23 @@ public interface IWorkbenchPartReference {
 	 * @see IWorkbenchPart#removePropertyListener
 	 */
 	public void removePropertyListener(IPropertyListener listener);
+	
 	/**
 	 * Returns the workbench page that contains this part
 	 */
 	public IWorkbenchPage getPage();
+	
+	/**
+	 * Returns the name of the part, as it should be shown in tabs
+	 * 
+	 * @return the part name
+	 */
+	public String getPartName();
+	
+	/**
+	 * Returns the content description for the part (or the empty string if none)
+	 * 
+	 * @return the content description for the part  
+	 */
+	public String getContentDescription();
 }

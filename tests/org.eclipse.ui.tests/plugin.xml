@@ -75,6 +75,12 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+       		name="Title Test View"
+       		icon="icons\view.gif"
+       		class="org.eclipse.ui.tests.api.TitleTestView"
+       		id="org.eclipse.ui.tests.api.TitleTestView">
+      </view>
+      <view
             name="Mock View 1"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"

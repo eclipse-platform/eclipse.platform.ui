@@ -106,6 +106,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_FOLDER = "folder"; //$NON-NLS-1$
 	public static final String TAG_INFO = "info"; //$NON-NLS-1$
 	public static final String TAG_PART = "part"; //$NON-NLS-1$
+	public static final String TAG_PART_NAME = "partName"; //$NON-NLS-1$
 	public static final String TAG_RELATIVE = "relative"; //$NON-NLS-1$
 	public static final String TAG_RELATIONSHIP = "relationship"; //$NON-NLS-1$
 	public static final String TAG_RATIO = "ratio"; //$NON-NLS-1$

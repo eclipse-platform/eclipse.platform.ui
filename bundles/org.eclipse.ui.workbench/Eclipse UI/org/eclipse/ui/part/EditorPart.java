@@ -62,6 +62,8 @@ import org.eclipse.ui.*;
  */
 public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 
+	private boolean automaticPartName = true;
+	
 	/**
 	 * Editor input, or <code>null</code> if none.
 	 */
@@ -170,4 +172,47 @@ public boolean isSaveOnCloseNeeded() {
 protected void setInput(IEditorInput input) {
 	editorInput = input;
 }
+
+/**
+ * Sets the part name, as it should be displayed in tabs. The name will also be included 
+ * in the part's title unless it explicitly calls setTitle to override this behavior.
+ * Setting the part name to the empty string (default) will cause the part title to be
+ * used as the part name. New editors should use setPartName instead of setTitle.
+ *
+ * @param partName the part name, as it should be displayed in tabs.
+ * 
+ * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
+ */
+protected void setPartName(String partName) {
+	automaticPartName = partName.equals(""); //$NON-NLS-1$
+	
+	if (automaticPartName) {
+		partName = getTitle();
+	}
+	
+	super.setPartName(partName);
+}
+
+/**
+ * Sets or clears the title of this editor. Setting this to null or the empty string (default)
+ * will cause the title to be automatically generated based on the part name and
+ * content description. Setting this to a non-empty string will override this
+ * behavior.
+ * <p>
+ * For compatibility with old editors, setting the setTitle will also set the part name unless
+ * the editor calls setPartName with a non-empty string to override this behavior.
+ * </p> 
+ *
+ * @deprecated new code should use setPartName and setContentDescription
+ *
+ * @param title the title, or <code>null</code> to clear
+ */
+protected void setTitle(String title) {
+	super.setTitle(title);
+	
+	if (automaticPartName) {
+		setPartName(""); //$NON-NLS-1$
+	}
+}
+
 }

@@ -36,7 +36,6 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.presentations.PresentableViewPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
@@ -53,8 +52,6 @@ import org.eclipse.ui.presentations.StackPresentation;
  * part.
  */
 public class ViewPane extends PartPane implements IPropertyListener {
-	private PresentableViewPart presentableAdapter = new PresentableViewPart(this);
-
 	private boolean busy = false;
 
 	private boolean fast = false;
@@ -534,13 +531,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
-	 */
-	public IPresentablePart getPresentablePart() {
-		return presentableAdapter;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.LayoutPart#reparent(org.eclipse.swt.widgets.Composite)
 	 */
 	public void reparent(Composite newParent) {
@@ -621,4 +611,28 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public String getPlaceHolderId() {
         return ViewFactory.getKey(getViewReference());
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#getToolBar()
+	 */
+	public Control getToolBar() {
+
+		if (!toolbarIsVisible()) {
+			return null;
+		}
+		
+		ToolBarManager toolbarManager = getToolBarManager();
+		
+		if (toolbarManager == null) {
+			return null;
+		}
+		
+		ToolBar control = toolbarManager.getControl();
+		
+		if (control == null || control.isDisposed() ) {
+			return null;
+		}		
+		
+		return control;
+	}
 }

@@ -471,7 +471,7 @@ public class DefaultPartPresentation extends StackPresentation {
     }
 	
 	protected String getPaneName() {
-		return "&Pane";
+		return WorkbenchMessages.getString("DefaultPartPresentation.PaneName"); //$NON-NLS-1$
 	}
 
 	/**
@@ -567,6 +567,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	       	if(!getCurrent().equals(part))//Set bold if it does currently have focus
 				tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 	        break;
+	     case IPresentablePart.PROP_CONTENT_DESCRIPTION:
 		 case IPresentablePart.PROP_TOOLBAR:
 		 case IPresentablePart.PROP_PANE_MENU:
 		 case IPresentablePart.PROP_TITLE:
@@ -1111,7 +1112,7 @@ public class DefaultPartPresentation extends StackPresentation {
     
     String getLabelText(IPresentablePart presentablePart,
             boolean includePath) {
-        String title = presentablePart.getTitle().trim();
+        String title = presentablePart.getTitle();
         return title;
     }
     

@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -24,7 +25,7 @@ public class SystemMenuMovePane extends Action implements ISelfUpdatingAction {
 	
 	public SystemMenuMovePane(IStackPresentationSite site) {
 		this.site = site;
-		setText("&Pane");
+		setText(WorkbenchMessages.getString("SystemMenuMovePane.PaneName")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

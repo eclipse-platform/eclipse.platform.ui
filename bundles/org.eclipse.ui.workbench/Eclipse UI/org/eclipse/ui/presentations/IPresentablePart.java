@@ -13,9 +13,8 @@ package org.eclipse.ui.presentations;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartConstants;
 
 /**
  * This is a skin's interface to the contents of a view or editor. Note that this
@@ -31,18 +30,29 @@ public interface IPresentablePart {
 	/**
 	 * The property id for <code>isDirty</code>.
 	 */
-	public static final int PROP_DIRTY = IEditorPart.PROP_DIRTY;
+	public static final int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
 
 	/**
 	 * The property id for <code>getEditorInput</code>.
 	 */
-	public static final int PROP_INPUT = IEditorPart.PROP_INPUT;
+	public static final int PROP_INPUT = IWorkbenchPartConstants.PROP_INPUT;
 
 	/**
 	 * The property id for <code>getTitle</code>, <code>getTitleImage</code>
 	 * and <code>getTitleToolTip</code>.
 	 */
-	public static final int PROP_TITLE = IWorkbenchPart.PROP_TITLE;
+	public static final int PROP_TITLE = IWorkbenchPartConstants.PROP_TITLE;
+	
+	/**
+	 * The property id for <code>IWorkbenchPart2.getContentDescription()</code>
+	 */
+	public static final int PROP_CONTENT_DESCRIPTION = IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION;
+
+	/**
+	 * The property id for <code>IWorkbenchPart2.getContentDescription()</code>
+	 */
+	public static final int PROP_PART_NAME = IWorkbenchPartConstants.PROP_PART_NAME;
+	
 	
 	/**
 	 * The property id for <code>isBusy</code>.

@@ -51,11 +51,11 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 		private String secondaryId;
 		private boolean create = true;
 
-		public ViewReference(String id) {
-			this(id, null);
+		public ViewReference(String id, IMemento memento) {
+			this(id, null, memento);
 		}
 		
-		public ViewReference(String id, String secondaryId) {
+		public ViewReference(String id, String secondaryId, IMemento memento) {
 			ViewDescriptor desc = (ViewDescriptor) viewReg.find(id);
 			ImageDescriptor iDesc = null;
 			String title = null;
@@ -63,7 +63,14 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 				iDesc = desc.getImageDescriptor();
 				title = desc.getLabel();
 			}
-			init(id, title, null, iDesc);
+			
+			String name = null;
+			
+			if (memento != null) {
+				name = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
+			}
+			
+			init(id, title, null, iDesc, name, null);
 			this.secondaryId = secondaryId;
 		}
 		
@@ -141,6 +148,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 		public boolean isFastView() {
 			return page.isFastView(this);
 		}
+		
 	}
 	
 	private ReferenceCounter counter;
@@ -195,7 +203,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 
 		final String viewID = ref.getId();
-		final IMemento stateMem = (IMemento) mementoTable.get(viewID);
+		final IMemento stateMem = getViewState(viewID);
 		mementoTable.remove(viewID);
 
 		final boolean resetPart[] = { true };
@@ -321,7 +329,8 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 		String key = getKey(id, secondaryId);
 		IViewReference ref = (IViewReference) counter.get(key);
 		if (ref == null) {
-			ref = new ViewReference(id, secondaryId);
+			IMemento memento = (IMemento)mementoTable.get(id); 
+			ref = new ViewReference(id, secondaryId, memento);
 			counter.put(key, ref);
 		} else {
 			counter.addRef(key);
@@ -484,6 +493,9 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 		final MultiStatus result = res;
 		final IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
 		viewMemento.putString(IWorkbenchConstants.TAG_ID, ref.getId());
+		if (ref instanceof ViewReference) {
+			viewMemento.putString(IWorkbenchConstants.TAG_PART_NAME, ((ViewReference)ref).getPartName());
+		}
 		final IViewReference viewRef = ref;
 		final IViewPart view = (IViewPart)ref.getPart(false);
 		if(view != null) {
@@ -499,7 +511,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 				}
 			});
 		} else {
-			IMemento mem = (IMemento)mementoTable.get(ref.getId());
+			IMemento mem = getViewState(ref.getId());
 			if(mem != null) {
 				IMemento child = viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE);
 				child.putMemento(mem);
@@ -511,7 +523,17 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 //	for dynamic UI
 	public void restoreViewState(IMemento memento){
 		String id = memento.getString(IWorkbenchConstants.TAG_ID);
-		mementoTable.put(id, memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE));
+		mementoTable.put(id, memento);
+	}
+	
+	private IMemento getViewState(String viewId) {
+		IMemento memento = (IMemento) mementoTable.get(viewId);
+		
+		if (memento == null) {
+			return null;
+		}
+		
+		return memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
 	}
 }
 	

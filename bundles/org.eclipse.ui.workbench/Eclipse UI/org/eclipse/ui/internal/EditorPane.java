@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
@@ -25,9 +26,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.internal.presentations.PresentableEditorPart;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -35,8 +34,6 @@ import org.eclipse.ui.presentations.StackPresentation;
  * behavior for workbench editors.
  */
 public class EditorPane extends PartPane {
-	private PresentableEditorPart presentableAdapter = new PresentableEditorPart(this);	
-	
 	private EditorStack workbook;
 
 /**
@@ -218,10 +215,19 @@ public void testInvariants() {
 		Assert.isTrue(getContainer() == workbook);
 	}
 }
+
 /* (non-Javadoc)
- * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
+ * @see org.eclipse.ui.internal.PartPane#getName()
  */
-public IPresentablePart getPresentablePart() {
-	return presentableAdapter;
+public String getName() {
+	return null;
 }
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartPane#getToolBar()
+ */
+public Control getToolBar() {
+	return null;
+}
+
 }

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -54,6 +55,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -1080,6 +1082,7 @@ public class EditorManager {
 			String id = memento.getString(IWorkbenchConstants.TAG_ID);
 			String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
 			String tooltip = memento.getString(IWorkbenchConstants.TAG_TOOLTIP);
+			String partName = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
 			if (tooltip == null) {
 				tooltip = ""; //$NON-NLS-1$
 			}
@@ -1093,7 +1096,7 @@ public class EditorManager {
 			String location = memento.getString(IWorkbenchConstants.TAG_PATH);	
 			IPath path = location == null ? null : new Path(location);
 			ImageDescriptor iDesc = findImage(desc, path);
-			init(id, title, tooltip, iDesc);
+			init(id, title, tooltip, iDesc, partName, null);
 			
 			this.name = memento.getString(IWorkbenchConstants.TAG_NAME);
 			this.pinned = "true".equals(memento.getString(IWorkbenchConstants.TAG_PINNED));  //$NON-NLS-1$
@@ -1240,6 +1243,7 @@ public class EditorManager {
 			restoredInput = (IEditorInput) input;
 			return restoredInput;
 		}
+
 	}
 	protected void restoreEditorState(IMemento editorMem, ArrayList visibleEditors,
 			IEditorPart[] activeEditor, ArrayList errorWorkbooks, MultiStatus result) {
@@ -1315,6 +1319,11 @@ public class EditorManager {
 				editorMem.putString(IWorkbenchConstants.TAG_NAME,input.getName());
 				editorMem.putString(IWorkbenchConstants.TAG_ID, editor.getSite().getId());
 				editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editor.getTitleToolTip()); //$NON-NLS-1$
+				
+				if (editor instanceof IWorkbenchPart2) {
+					IWorkbenchPart2 part2 = (IWorkbenchPart2)editor;
+					editorMem.putString(IWorkbenchConstants.TAG_PART_NAME, part2.getPartName());
+				}
 				
 				if(!site.getReuseEditor())
 					editorMem.putString(IWorkbenchConstants.TAG_PINNED,"true"); //$NON-NLS-1$

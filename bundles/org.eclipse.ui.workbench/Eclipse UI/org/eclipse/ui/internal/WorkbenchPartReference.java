@@ -9,15 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal;
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
-
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * 
@@ -33,16 +33,20 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	private Image image;
 	private ImageDescriptor imageDescriptor;
 	private ListenerList propChangeListeners = new ListenerList(2);		
+	private String partName;
+	private String contentDescription;
 	
 	public WorkbenchPartReference() {
 	    //no-op
 	}
 	
-	public void init(String id,String title,String tooltip,ImageDescriptor desc) {
+	public void init(String id,String title,String tooltip,ImageDescriptor desc, String paneName, String contentDescription) {
 		this.id = id;
 		this.title = title;
 		this.tooltip = tooltip;
 		this.imageDescriptor = desc;
+		this.partName = paneName;
+		this.contentDescription = contentDescription;
 	}
 	
 	/**
@@ -66,6 +70,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			imageDescriptor = null;
 		}
 		propChangeListeners.clear();
+		partName = null;
+		contentDescription = null;
 	}
 	/**
 	 * @see IWorkbenchPart
@@ -93,23 +99,73 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		    if (site != null)
 		        return site.getId();
 		}
-		return id;
+		return Util.safeString(id);
 	}
 
 	public String getTitleToolTip() {
-		if(part != null)
-			return part.getTitleToolTip();
-		else
-			return tooltip;
+		String result = tooltip; 
+		if(part != null) {
+			result = part.getTitleToolTip();
+		}
+		return Util.safeString(result);
 	}	
+	
+	/**
+	 * Returns the pane name for the part
+	 * 
+	 * @return the pane name for the part
+	 */
+	public String getPartName() {
+		String result = null;
+		
+		if (part != null && part instanceof IWorkbenchPart2) {
+			IWorkbenchPart2 part2 = (IWorkbenchPart2)part;
+			
+			result = part2.getPartName();
+		} else if (partName != null) {
+			result = partName;
+		} else {
+			result = getRegisteredName(); 
+		}
+		
+		return Util.safeString(result);
+	}
+		
+	/**
+	 * Returns the content description for this part.
+	 * 
+	 * @return the pane name for the part
+	 */
+	public String getContentDescription() {
+		String result = null;
+		
+		if (part != null && part instanceof IWorkbenchPart2) {
+			IWorkbenchPart2 part2 = (IWorkbenchPart2)part;
+			
+			result = part2.getContentDescription();
+		} if (contentDescription != null) {
+			result = contentDescription;
+		}
+		
+		return Util.safeString(result);		 //$NON-NLS-1$
+	}
+	
+	public boolean isDirty() {
+		return false;
+	}
+		
+	/**
+	 * Returns the title for the part.
+	 * 
+	 * @return
+	 */
 	public String getTitle() {
 		String result = title;
 		if(part != null)
 			result = part.getTitle();
-		if(result == null)
-			result = new String();
-		return result;
+		return Util.safeString(result);		
 	}
+	
 	public Image getTitleImage() {
 		if(part != null)
 			return part.getTitleImage();
@@ -179,5 +235,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			part.dispose();
 		part = null;
 	}	
+	
 	public abstract String getRegisteredName();
 }

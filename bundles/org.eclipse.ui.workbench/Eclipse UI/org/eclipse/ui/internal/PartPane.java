@@ -26,6 +26,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -40,6 +41,8 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.presentations.PresentablePart;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * Provides the common behavior for both views
@@ -48,6 +51,8 @@ import org.eclipse.ui.internal.misc.UIStats;
 public abstract class PartPane extends LayoutPart
 	implements Listener
 {
+
+	protected PresentablePart presentableAdapter = new PresentablePart(this);
 	public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
 	private boolean isZoomed = false;
 	private MenuManager paneMenuManager;
@@ -497,4 +502,35 @@ public void reparent(Composite newParent) {
         setZoomed(false);
     super.reparent(newParent);
 }
+
+/**
+ * @return
+ */
+public abstract Control getToolBar();
+
+/**
+ * @return
+ */
+public boolean hasViewMenu() {
+	return false;
+}
+
+/**
+ * @param location
+ */
+public void showViewMenu(Point location) {
+	
+}
+
+public boolean isBusy() {
+	return false;
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
+ */
+public IPresentablePart getPresentablePart() {
+	return presentableAdapter;
+}
+
 }

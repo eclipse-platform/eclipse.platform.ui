@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
@@ -22,11 +24,12 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -52,8 +55,10 @@ public abstract class WorkbenchPart implements IWorkbenchPart2, IExecutableExten
 	private ListenerList propChangeListeners = new ListenerList(2);
     
     private String partName = ""; //$NON-NLS-1$
-    private String statusText = ""; //$NON-NLS-1$
-	
+    private String contentDescription = ""; //$NON-NLS-1$
+    
+    /* package */ boolean automaticTitle = true;
+    
 /**
  * Creates a new workbench part.
  */
@@ -202,9 +207,9 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	// Save config element.
 	configElement = cfig;
 
-	// Part name and title.
-	partName = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$; 
-	title = partName;
+	// Part name and title.  
+	title = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$;
+	setPartName(title);
 
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
@@ -243,20 +248,42 @@ protected void setSite(IWorkbenchPartSite site) {
 	this.partSite = site;
 }
 /**
- * Sets or clears the title of this part.
+ * Sets or clears the title of this part. Setting this to null or the empty string (default)
+ * will cause the title to be automatically generated based on the part name and
+ * content description. Setting this to a non-empty string will override this
+ * behavior.
  *
- * @deprecated new code should use setPartName and setContentDescription instead
+ * @deprecated new code should use setPartName and setContentDescription
  *
  * @param title the title, or <code>null</code> to clear
  */
 protected void setTitle(String title) {
-    title = Util.safeString(title); 
+	title = Util.safeString(title);
+	
+	automaticTitle = (title.equals("") || title.equals(getPartName())); //$NON-NLS-1$
+	if (automaticTitle) {
+		String description = getContentDescription();
+		String name = getPartName();
+		
+		if (Util.equals(description, "")) { //$NON-NLS-1$
+			title = name;
+		} else {
+			title = MessageFormat.format(WorkbenchMessages.getString("WorkbenchPart.AutoTitleFormat"), new String[] {name, description}); //$NON-NLS-1$
+		}
+	}
+	
+	internalSetTitle(title);
+}
+
+private void internalSetTitle(String title) {
+     
 	//Do not send changes if they are the same
 	if(Util.equals(this.title, title))
 		return;
 	this.title = title;
-	firePropertyChange(IWorkbenchPart.PROP_TITLE);
+	firePropertyChange(IWorkbenchPart.PROP_TITLE);	
 }
+
 /**
  * Sets or clears the title image of this part.
  *
@@ -296,7 +323,7 @@ public void showBusy(boolean busy){
 }
 
 /* (non-Javadoc)
- * Method declared on IViewPart2.
+ * Method declared on IWorkbenchPart2.
  * 
  * @since 3.0
  */
@@ -305,12 +332,11 @@ public String getPartName() {
 }
 
 /**
- * Sets the name of this part. The name will be shown when the view is
- * selected in tabs. If the part name is set to the empty string, the
- * workbench will generate a name for the part. 
+ * Sets the name of this part. The name will be shown when the tab area for 
+ * selecting the part. The name will also be included in the part's title unless
+ * it explicitly calls setTitle to override this behavior.
  *
- * @param partName the part name, or the empty string indicating that the
- * workbench should use the default name for the part.
+ * @param partName the part name, as it should be displayed in tabs.
  * 
  * @since 3.0
  */
@@ -322,35 +348,45 @@ protected void setPartName(String partName) {
 		return;
 	this.partName = partName;
 	firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
+	
+	if (automaticTitle) {
+		setTitle(""); //$NON-NLS-1$
+	}
 }
 
 /* (non-Javadoc)
- * Method declared on IViewPart2.
+ * Method declared on IWorkbenchPart2.
  * 
  * @since 3.0
  */
 public String getContentDescription() {
-    return statusText;
+    return contentDescription;
 }
 
 /**
- * Sets the status text for this part. The status text is typically
- * a short string describing the current contents of the part. If parts
- * use the setTitle method, their content description may be set automatically.
- *
- * @param statusText the status text, or the empty string indicating
- * that the workbench should manage the status message for this part
+ * Sets the content description for this part. The content description is typically
+ * a short string describing the current contents of the part. This will be included
+ * in the part's title unless the part explicitly calls setTitle to override this
+ * behavior.
+ * 
+ * @param description the content description
  * 
  * @since 3.0
  */
-protected void setContentDescription(String statusText) {
-	Assert.isNotNull(statusText);
-     
+protected void setContentDescription(String description) {
+	Assert.isNotNull(description);
+	
 	//Do not send changes if they are the same
-	if(Util.equals(this.statusText, statusText))
+	if(Util.equals(contentDescription, description))
 		return;
-	this.statusText = statusText;
+	this.contentDescription = description;
+	
 	firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
+	
+	if (automaticTitle) {
+		setTitle(""); //$NON-NLS-1$
+	}
 }
+
 
 }
