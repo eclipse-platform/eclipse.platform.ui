@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<project name="Build Team and CVS plugins" basedir="." default="init">
+
+  <property name="root" value="${basedir}/.."/>
+  <property name="temp" value="${root}/__temp"/>
+  <property name="plugins" value="${temp}/eclipse/plugins"/>
+
+  <target name="init">
+    <tstamp/>
+
+    <delete dir="${temp}"/>
+    <mkdir dir="${plugins}"/>
+
+    <antcall target="org.eclipse.team.core"/>
+    <antcall target="org.eclipse.team.ui"/>
+    <antcall target="org.eclipse.team.cvs.core"/>
+    <antcall target="org.eclipse.team.cvs.ui"/>
+    <antcall target="org.eclipse.team.cvs.ssh"/>
+
+    <zip zipfile="${basedir}/selfhost${DSTAMP}.zip"
+       basedir="${temp}"
+    />
+
+    <delete dir="${temp}"/>
+    <eclipse.refreshLocal resource="org.eclipse.team.tests.cvs.core"/>
+  </target>
+
+  <target name="org.eclipse.team.core">
+    <antcall target="buildPlugin">
+      <param name="pluginName" value="org.eclipse.team.core" />
+      <param name="jarName" value="team.jar" />
+    </antcall>
+  </target>
+
+  <target name="org.eclipse.team.ui">
+    <antcall target="buildPlugin">
+      <param name="pluginName" value="org.eclipse.team.ui" />
+      <param name="jarName" value="teamui.jar" />
+    </antcall>
+  </target>
+
+  <target name="org.eclipse.team.cvs.core">
+    <antcall target="buildPlugin">
+      <param name="pluginName" value="org.eclipse.team.cvs.core" />
+      <param name="jarName" value="cvs.jar" />
+    </antcall>
+  </target>
+
+  <target name="org.eclipse.team.cvs.ui">
+    <antcall target="buildPlugin">
+      <param name="pluginName" value="org.eclipse.team.cvs.ui" />
+      <param name="jarName" value="teamcvsui.jar" />
+    </antcall>
+  </target>
+
+  <target name="org.eclipse.team.cvs.ssh">
+    <antcall target="buildPlugin">
+      <param name="pluginName" value="org.eclipse.team.cvs.ssh" />
+      <param name="jarName" value="teamcvsssh.jar" />
+    </antcall>
+  </target>
+          
+  <target name="buildPlugin">
+    <copy todir="${plugins}/${pluginName}">
+      <fileset dir="${root}/${pluginName}"/>
+    </copy>
+    <jar jarfile="${plugins}/${pluginName}/${jarName}"
+         basedir="${plugins}/${pluginName}/bin"
+    />
+    <delete dir="${plugins}/${pluginName}/bin"/>
+  </target>
+
+</project>
