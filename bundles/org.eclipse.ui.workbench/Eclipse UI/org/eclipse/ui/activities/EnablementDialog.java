@@ -69,6 +69,7 @@ class EnablementDialog extends Dialog {
 		Composite composite = (Composite)super.createDialogArea(parent);
 		Text text = new Text(composite, SWT.READ_ONLY | SWT.WRAP);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		text.setFont(parent.getFont());
 		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 		
 //		if (activityIds.size() == 1) {
@@ -113,15 +114,18 @@ class EnablementDialog extends Dialog {
 		    activitiesToEnable.addAll(activityIdsCopy);
 		    
 		    viewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		    viewer.getControl().setFont(parent.getFont());
 		    
 			text = new Text(composite, SWT.READ_ONLY);
 			text.setText(RESOURCE_BUNDLE.getString("proceedMulti")); //$NON-NLS-1$
 			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			text.setFont(parent.getFont());
 			
 			dontAskButton = new Button(composite, SWT.CHECK);
 	        dontAskButton.setSelection(false);
 	        dontAskButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			dontAskButton.setText(RESOURCE_BUNDLE.getString("dontAsk")); //$NON-NLS-1$		    
+			dontAskButton.setText(RESOURCE_BUNDLE.getString("dontAsk")); //$NON-NLS-1$
+			dontAskButton.setFont(parent.getFont());
 //		}		
 				
 		return composite;
