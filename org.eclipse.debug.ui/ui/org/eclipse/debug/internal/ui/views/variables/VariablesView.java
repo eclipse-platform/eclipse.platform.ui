@@ -23,6 +23,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
@@ -73,6 +74,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -114,6 +116,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		public VariablesViewLabelProvider(IDebugModelPresentation presentation) {
 			this.presentation= presentation;
 		}
+		
+		public IDebugModelPresentation getPresentation() {
+			return presentation;
+		}
+		
 		public Image getImage(Object element) {
 			return presentation.getImage(element);
 		}
@@ -1127,4 +1134,22 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return fFocusViewer;
 	}
 
+	/**
+	 * @see IDebugView#getPresentation(String)
+	 */
+	public IDebugModelPresentation getPresentation(String id) {
+		if (getViewer() instanceof StructuredViewer) {
+			VariablesViewLabelProvider vvlp = (VariablesViewLabelProvider)((StructuredViewer)getViewer()).getLabelProvider();
+			IDebugModelPresentation lp = vvlp.getPresentation();
+			if (lp instanceof DelegatingModelPresentation) {
+				return ((DelegatingModelPresentation)lp).getPresentation(id);
+			}
+			if (lp instanceof LazyModelPresentation) {
+				if (((LazyModelPresentation)lp).getDebugModelIdentifier().equals(id)) {
+					return (IDebugModelPresentation)lp;
+				}
+			}
+		}
+		return null;
+	}
 }
