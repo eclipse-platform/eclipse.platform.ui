@@ -31,8 +31,6 @@ public class TocData extends RequestData {
 
 	// images directory
 	private String imagesDirectory;
-	
-	private int level = 0;
 
 	/**
 	 * Constructs the xml data for the contents page.
@@ -170,16 +168,13 @@ public class TocData extends RequestData {
 
 	private void generateTopic(ITopic topic, Writer out) throws IOException {
 
-		level++;
 		out.write("<li>");
 
 		boolean hasNodes = topic.getSubtopics().length > 0;
 		if (hasNodes) {
-			if (level == 1){
-				out.write("<img src='");
-				out.write(imagesDirectory);
-				out.write("/plus.gif' class='collapsed' >");
-			}
+			out.write("<img src='");
+			out.write(imagesDirectory);
+			out.write("/plus.gif' class='collapsed' >");
 			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
@@ -196,11 +191,9 @@ public class TocData extends RequestData {
 
 			out.write("</ul>");
 		} else {
-			if (level == 1) {
-				out.write("<img src='");
-				out.write(imagesDirectory);
-				out.write("/plus.gif' class='h'>");
-			}
+			out.write("<img src='");
+			out.write(imagesDirectory);
+			out.write("/plus.gif' class='h'>");
 			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
@@ -210,7 +203,6 @@ public class TocData extends RequestData {
 		}
 
 		out.write("</li>");
-		level--;
 	}
 
 	/**
