@@ -1,3 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+    font should be activated and used by other components.
+************************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
 /*
@@ -7,27 +20,59 @@ package org.eclipse.ui.internal.dialogs;
  */
 
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
+import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.VersionedIdentifier;
 
 /**
  * Displays information about the product plugins.
@@ -219,7 +264,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		layout.numColumns = 2; 
 		infoArea.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = convertVerticalDLUsToPixels(INFO_HEIGHT);
+		int infoAreaHeight = convertVerticalDLUsToPixels(INFO_HEIGHT);
+		data.heightHint = infoAreaHeight;
 		infoArea.setLayoutData(data);
 		
 		imageLabel = new Label(infoArea, SWT.NONE);
@@ -239,6 +285,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		data.grabExcessHorizontalSpace = true;
+		data.heightHint = infoAreaHeight;	
 		text.setLayoutData(data);
 		text.setFont(font);
 		text.setCursor(null);
