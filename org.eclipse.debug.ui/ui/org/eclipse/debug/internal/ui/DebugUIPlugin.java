@@ -856,8 +856,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
 						jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
+						jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
 					} catch (InterruptedException e) {
 						// continue
 					}
