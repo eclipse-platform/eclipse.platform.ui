@@ -201,13 +201,13 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 		
 		try {
 			
-			Position[] category= event.getDocument().getPositions(fCategory);
 			
 			fOffset= event.getOffset();
 			fLength= event.getLength();
 			fReplaceLength= (event.getText() == null ? 0 : event.getText().length());
 			fDocument= event.getDocument();
 			
+			Position[] category= fDocument.getPositions(fCategory);
 			for (int i= 0; i < category.length; i++) {
 				
 				fPosition= category[i];
