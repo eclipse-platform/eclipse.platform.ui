@@ -712,7 +712,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				for (Iterator iter = efixesToEnable.iterator(); iter.hasNext();) {
 					IFeature element = (IFeature) iter.next();
 					ArrayList expandedEfix = new ArrayList();
-					expandFeature(element, expandedEfix, configuredSite);
+					expandEfixFeature(element, expandedEfix, configuredSite);
 					configuredFeatures.addAll(expandedEfix);
 				}
 			}
@@ -1148,6 +1148,54 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		return result;
 	}
 
-	
+	/*
+	 * only enable non-efix children recursively
+	 */
+	private static void expandEfixFeature(IFeature feature, ArrayList features, IConfiguredSite configuredSite) {
+
+		// add feature
+		if (!features.contains(feature)) {
+			features.add(feature);
+			// debug
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug("Retaining configured feature " + feature.getVersionedIdentifier().toString());
+			}
+		}
+
+		// add nested children to the list
+		IIncludedFeatureReference[] children = null;
+		try {
+			children = feature.getIncludedFeatureReferences();
+		} catch (CoreException e) {
+			UpdateCore.warn("", e);
+			return;
+		}
+
+		for (int j = 0; j < children.length; j++) {
+			IFeature child = null;
+			try { // fix 71730, expand with the best match in the configured site
+				child = children[j].getFeature(false, configuredSite,null);
+			} catch (CoreException e) {
+				if (!children[j].isOptional())
+				UpdateCore.warn("", e);
+				// 25202 do not return right now, the peer children may be ok
+			}
+			if (child != null){
+				// regression bug
+				// only expand if this feature is not a patch
+				boolean isPatch = false;
+				IImport[] imports = child.getImports();
+				for (int i = 0; i < imports.length; i++) {
+					if (imports[i].isPatch()){
+						 isPatch=true;
+						 break;
+					}
+				}
+				
+				if (!isPatch)
+					expandEfixFeature(child, features, configuredSite);
+			}
+		}
+	}	
 	
 }
