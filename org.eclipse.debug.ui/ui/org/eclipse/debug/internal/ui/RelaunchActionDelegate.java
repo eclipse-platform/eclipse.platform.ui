@@ -70,7 +70,17 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate
 	 */
 	public boolean isEnabledFor(Object element) {
-		return element instanceof ILaunch || element instanceof IDebugElement || element instanceof IProcess;
+		ILaunch launch= null;
+		
+		if (element instanceof ILaunch) {
+			launch= (ILaunch)element;
+		} else if (element instanceof IDebugElement) {
+			launch= ((IDebugElement)element).getLaunch();
+		} else if (element instanceof IProcess) {
+			launch= ((IProcess)element).getLaunch();
+		}
+
+		return launch != null && DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
 	}
 	
 	/**
