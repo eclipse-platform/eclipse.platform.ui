@@ -54,6 +54,11 @@ public class FramesetFilter implements IFilter {
 		script.append("?topic="); //$NON-NLS-1$
 		script.append(req.getPathInfo());
 		script.append(scriptPart3);
-		return new FilterHTMLHeadOutputStream(out, script.toString().getBytes());
+		try {
+			return new FilterHTMLHeadOutputStream(out, script.toString()
+					.getBytes("ASCII"));
+		} catch (UnsupportedEncodingException uee) {
+			return out;
+		}
 	}
 }

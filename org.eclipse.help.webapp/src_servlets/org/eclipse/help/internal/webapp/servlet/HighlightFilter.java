@@ -79,7 +79,11 @@ public class HighlightFilter implements IFilter {
 		}
 		//
 		buf.append(scriptPart5);
-		return buf.toString().getBytes();
+		try {
+			return buf.toString().getBytes("ASCII");
+		} catch (UnsupportedEncodingException uee) {
+			return new byte[0];
+		}
 	}
 	/**
 	 * Extracts keywords from query that contains keywords dobule quoted and
