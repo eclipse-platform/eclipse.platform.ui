@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -27,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.PlatformUI;
 
@@ -73,17 +76,37 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @throws InterruptedException
 	 * @throws CVSException
 	 */
-	public void execute(IRunnableContext aRunnableContext) throws InterruptedException, CVSException {
-		if (aRunnableContext == null) {
-			aRunnableContext = getRunnableContext();
+	synchronized public void execute(IRunnableContext aRunnableContext) throws InterruptedException, CVSException {
+		if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_OPERATIONS)) {
+			runAsJob();
+		} else {
+			if (aRunnableContext == null) {
+				aRunnableContext = getRunnableContext();
+			}
+			try {
+				aRunnableContext.run(isInterruptable(), isInterruptable(), this);
+			} catch (InvocationTargetException e) {
+				throw CVSException.wrapException(e);
+			} catch (OperationCanceledException e) {
+				throw new InterruptedException();
+			}
 		}
-		try {
-			aRunnableContext.run(isInterruptable(), isInterruptable(), this);
-		} catch (InvocationTargetException e) {
-			throw CVSException.wrapException(e);
-		} catch (OperationCanceledException e) {
-			throw new InterruptedException();
-		}
+	}
+	
+	protected void runAsJob() {
+		Job job = new Job() {
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					CVSOperation.this.execute(monitor);
+					return Status.OK_STATUS;
+				} catch (CVSException e) {
+					return e.getStatus();
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+			}
+		};
+		job.schedule();
 	}
 	
 	public void executeWithProgress() throws CVSException, InterruptedException {

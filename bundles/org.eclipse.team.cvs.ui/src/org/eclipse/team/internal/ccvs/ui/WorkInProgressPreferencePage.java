@@ -19,8 +19,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class WorkInProgressPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-	private BooleanFieldEditor bkgFetch = null;
-	
 	public WorkInProgressPreferencePage() {
 		super(GRID);
 		setTitle("CVS Work In Progress");
@@ -40,8 +38,8 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {		
-		bkgFetch = new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_REPOVIEW, "Enable background fetching of resources in the CVS Repositories view", SWT.NONE, getFieldEditorParent());
-		addField(bkgFetch);		
+		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_REPOVIEW, "Enable background fetching of resources in the CVS Repositories view", SWT.NONE, getFieldEditorParent()));	
+		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_OPERATIONS, "Enable operations to be run in the background (e.g. checkout, update, commit)", SWT.NONE, getFieldEditorParent()));
 	}
 	
 	/* (non-Javadoc)

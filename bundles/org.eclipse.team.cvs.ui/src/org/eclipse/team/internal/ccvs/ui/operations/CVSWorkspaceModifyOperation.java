@@ -14,7 +14,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -33,12 +38,34 @@ public class CVSWorkspaceModifyOperation extends WorkspaceModifyOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-		try {
-			operation.execute(monitor);
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
+	synchronized protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+		if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_OPERATIONS)) {
+			runAsJob();
+		} else {
+			try {
+				operation.execute(monitor);
+			} catch (CVSException e) {
+				throw new InvocationTargetException(e);
+			}
 		}
 	}
-
+	
+	protected void runAsJob() {
+		Job job = new Job() {
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					operation.run(monitor);
+					return Status.OK_STATUS;
+				} catch (InvocationTargetException e) {
+					if(e.getTargetException() instanceof CVSException) {
+						return ((CVSException)e.getTargetException()).getStatus();
+					}
+					return Status.CANCEL_STATUS;
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+			}
+		};
+		job.schedule();
+	}
 }
