@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <fragment
    id="org.eclipse.ui.workbench.compatibility"
-   name="org.eclipse.ui.workbench.compatibility"
+   name="%CompatibilityFragment.fragmentName"
    version="3.0.0"
    plugin-id="org.eclipse.ui.workbench"
    plugin-version="3.0.0">
