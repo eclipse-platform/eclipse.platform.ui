@@ -29,7 +29,7 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
      * @param testName
      */
     public OpenMultipleEditorTest(String extension, boolean closeAll) {
-        super ("testOpeMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"));
+        super ("testOpenMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"));
         this.extension = extension;        
         this.closeAll = closeAll;
     }
