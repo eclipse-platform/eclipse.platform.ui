@@ -64,7 +64,6 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 		progressMonitor.beginTask("generating changes", lineCount);
 		try {
 			
-			boolean isEmpty= true;
 			MultiTextEdit multiEdit= new MultiTextEdit();
 			
 			for (int i= 0; i < lineCount; i++) {
@@ -75,12 +74,11 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 				if (delimiter != null && delimiter.length() > 0 && !delimiter.equals(fLineDelimiter)) {
 					IRegion region= document.getLineInformation(i);
 					multiEdit.addChild(new ReplaceEdit(region.getOffset() + region.getLength(), delimiter.length(), fLineDelimiter));
-					isEmpty= false;
 				}
 				progressMonitor.worked(1);
 			}
 			
-			return isEmpty ? null : multiEdit;
+			return multiEdit.getChildrenSize() <= 0 ? null : multiEdit;
 			
 		} catch (BadLocationException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, "", x)); //$NON-NLS-1$

@@ -57,7 +57,6 @@ public class RemoveTrailingWhitespaceOperation extends TextFileBufferOperation {
 		progressMonitor.beginTask("generating changes", lineCount);
 		try {
 			
-			boolean isEmpty= true;
 			MultiTextEdit multiEdit= new MultiTextEdit();
 			
 			for (int i= 0; i < lineCount; i++) {
@@ -73,14 +72,12 @@ public class RemoveTrailingWhitespaceOperation extends TextFileBufferOperation {
 				int j= lineExclusiveEnd -1;
 				while (j >= lineStart && Character.isWhitespace(document.getChar(j))) --j;
 				++j;
-				if (j < lineExclusiveEnd) {
+				if (j < lineExclusiveEnd)
 					multiEdit.addChild(new DeleteEdit(j, lineExclusiveEnd - j));
-					isEmpty= false;
-				}
 				progressMonitor.worked(1);
 			}
 			
-			return isEmpty ? null : multiEdit;
+			return multiEdit.getChildrenSize() <= 0 ? null : multiEdit;
 			
 		} catch (BadLocationException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, "", x)); //$NON-NLS-1$
