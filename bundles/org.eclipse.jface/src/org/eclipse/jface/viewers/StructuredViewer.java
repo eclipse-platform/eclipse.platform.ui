@@ -526,7 +526,7 @@ protected Object getRoot() {
 }
 /**
  * The <code>StructuredViewer</code> implementation of this method
- * returns the result as a <code>StructuredSelection</code>.
+ * returns the result as an <code>IStructuredSelection</code>.
  * <p>
  * Subclasses do not typically override this method, but implement
  * <code>getSelectionFromWidget(List)</code> instead.
