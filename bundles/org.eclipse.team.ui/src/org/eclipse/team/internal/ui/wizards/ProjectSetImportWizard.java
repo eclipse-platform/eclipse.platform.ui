@@ -17,12 +17,13 @@ import java.util.*;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.*;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -82,17 +83,41 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 						} else {
 							UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(getShell(), filename);
 							Iterator it = map.keySet().iterator();
+							List errors = new ArrayList();
 							while (it.hasNext()) {
-								String id = (String)it.next();
-								List references = (List)map.get(id);
-								RepositoryProviderType providerType = RepositoryProviderType.getProviderType(id);
-								ProjectSetCapability serializer = providerType.getProjectSetCapability();
-								ProjectSetCapability.ensureBackwardsCompatible(providerType, serializer);
-								if (serializer != null) {
-									IProject[] projects = serializer.addToWorkspace((String[])references.toArray(new String[references.size()]), context, monitor);
-									if (projects != null)
-										newProjects.addAll(Arrays.asList(projects));
-								}
+								try {
+                                    String id = (String)it.next();
+                                    List references = (List)map.get(id);
+                                    RepositoryProviderType providerType = RepositoryProviderType.getProviderType(id);
+                                    if (providerType == null) {
+                                        // The provider type is absent. Perhaps there is another provider that can import this type
+                                        providerType = TeamPlugin.getAliasType(id);
+                                    }
+                                    if (providerType == null) {
+                                        throw new TeamException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, "Projects for repository type {0} could not be loaded as the type could not be found." + id, null));
+                                    }
+                                	ProjectSetCapability serializer = providerType.getProjectSetCapability();
+                                	ProjectSetCapability.ensureBackwardsCompatible(providerType, serializer);
+                                	if (serializer != null) {
+                                		IProject[] projects = serializer.addToWorkspace((String[])references.toArray(new String[references.size()]), context, monitor);
+                                		if (projects != null)
+                                			newProjects.addAll(Arrays.asList(projects));
+                                	}
+                                } catch (TeamException e) {
+                                    errors.add(e);
+                                }
+							}
+							if (!errors.isEmpty()) {
+							    if (errors.size() == 1) {
+							        throw (TeamException)errors.get(0);
+							    } else {
+							        TeamException[] exceptions = (TeamException[]) errors.toArray(new TeamException[errors.size()]);
+							        IStatus[] status = new IStatus[exceptions.length];
+							        for (int i = 0; i < exceptions.length; i++) {
+                                        status[i] = exceptions[i].getStatus();
+                                    }
+							        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, "The following errors occurred while importing projects. Some projects may not be loaded.", null));
+							    }
 							}
 						}
 						if (workingSetName != null)

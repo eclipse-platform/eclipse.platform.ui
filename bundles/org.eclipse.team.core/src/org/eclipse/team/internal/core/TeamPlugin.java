@@ -13,6 +13,7 @@ package org.eclipse.team.internal.core;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.team.core.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
@@ -135,6 +137,29 @@ final public class TeamPlugin extends Plugin {
 					// Ignore exceptions on close
 				}
 		}
+	}
+	
+	public static RepositoryProviderType getAliasType(String id) {
+		TeamPlugin plugin = TeamPlugin.getPlugin();
+		if (plugin != null) {
+			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.REPOSITORY_EXTENSION);
+			if (extension != null) {
+				IExtension[] extensions =  extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+					    String aliasId = configElements[j].getAttribute("canImportId"); //$NON-NLS-1$
+					    if (aliasId != null && aliasId.equals(id)) {
+							String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
+							if (extensionId != null) {
+								return RepositoryProviderType.getProviderType(extensionId);
+							}
+					    }
+					}
+				}
+			}		
+		}
+		return null;
 	}
 
 }
