@@ -120,7 +120,7 @@ public class CoolItemToolBarManager extends ToolBarManager {
 		else return items[insertIndex];	
 	}
 	/* package */ String getSubGroupId(String groupId, String toolBarId) {
-		return groupId + "-" + toolBarId;
+		return groupId + "-" + toolBarId; //$NON-NLS-1$
 	}
 	protected CoolBarManager getParentManager() {
 		return parentManager;

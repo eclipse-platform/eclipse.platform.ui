@@ -281,7 +281,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			String contributingId = bars.getActionSetId();
 			CoolBarManager coolBarMgr = ((CoolItemToolBarManager)bars.getToolBarManager()).getParentManager();
 			
-			if (toolBarId == null || toolBarId.equals("Normal") || toolBarId.equals("")) {
+			if (toolBarId == null || toolBarId.equals("Normal") || toolBarId.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 				// the item is being added to the coolitem for its action set
 				toolBarId = contributingId;
 			} 
@@ -395,7 +395,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			if (refItem != null) {
 				mgr.insertAfter(refItem.getId(), item);
 			} else {
-				WorkbenchPlugin.log("Reference item " + refId + " not found for action " + item.getId()); //$NON-NLS-1$
+				WorkbenchPlugin.log("Reference item " + refId + " not found for action " + item.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
