@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.StatusLineLayoutData;
@@ -24,7 +28,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	public final static int DEFAULT_CHAR_WIDTH = 40; 
 	
 	private int charWidth;
-	private CLabel label;
+	private Collection labels = new ArrayList();
 	private String text = Util.ZERO_LENGTH_STRING;
 	private int widthHint = -1;
 
@@ -38,7 +42,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	}
 
 	public void fill(Composite parent) {	
-		label = new CLabel(parent, SWT.SHADOW_IN);
+		final CLabel label = new CLabel(parent, SWT.SHADOW_IN);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
 		
 		if (widthHint < 0) {
@@ -51,6 +55,9 @@ public class StatusLineContributionItem extends ContributionItem {
 		statusLineLayoutData.widthHint = widthHint;
 		label.setLayoutData(statusLineLayoutData);
 		label.setText(text);
+		synchronized (labels) {
+			labels.add(label);
+		}
 	}
 
 	public String getText() {
@@ -63,8 +70,17 @@ public class StatusLineContributionItem extends ContributionItem {
 
 		this.text = text;
 		
-		if (label != null && !label.isDisposed())
-			label.setText(this.text);
+		synchronized (labels) {
+			final Iterator labelItr = labels.iterator();
+			while (labelItr.hasNext()) {
+				final CLabel label = (CLabel) labelItr.next();
+				if ((label == null) || (label.isDisposed())) {
+					labelItr.remove();
+				} else {
+					label.setText(this.text);
+				}
+			}
+		}
 		
 		if (this.text.length() == 0) {
 			if (isVisible()) {
