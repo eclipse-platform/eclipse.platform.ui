@@ -3859,8 +3859,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (actionSize > 1) {
 				IConfigurationElement[] actionArray= (IConfigurationElement[])actions.toArray(new IConfigurationElement[actionSize]);
 				ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
-					/**
-					 * {@inheritDoc}
+					/*
+					 * @see org.eclipse.ui.texteditor.ConfigurationElementSorter#getConfigurationElement(java.lang.Object)
 					 */
 					public IConfigurationElement getConfigurationElement(Object object) {
 						return (IConfigurationElement)object;

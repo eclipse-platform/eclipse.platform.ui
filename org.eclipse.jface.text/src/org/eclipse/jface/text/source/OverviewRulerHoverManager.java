@@ -53,7 +53,7 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 	/**
 	 * Determines graphical area covered for which the hover is valid.
 	 *
-	 * @param y-coordinate in the vertical ruler
+	 * @param y y-coordinate in the vertical ruler
 	 * @return the graphical extend where the hover is valid
 	 */
 	private Rectangle computeArea(int y) {
