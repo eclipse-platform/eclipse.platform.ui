@@ -408,7 +408,7 @@
 	        category="org.eclipse.ui.category.window"
 	        id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly">
 	  </command>
-	        <command
+      <command
             name="%command.contentAssistProposals.name"
             description="%command.contentAssistProposals.description"
             categoryId="org.eclipse.ui.category.edit"
