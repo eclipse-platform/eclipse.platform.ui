@@ -144,6 +144,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 	
 	public DirtyBufferValidationState(IFile file) {
 		super(file);
+		fContentStamp= ContentStamps.get(file);
 		fFileBufferListener= new FileBufferListener();
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(fFileBufferListener);
 		fDocumentListener= new DocumentChangedListener();
