@@ -35,8 +35,10 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private String currentID;
 	private int currentItemNum;
 	private boolean hascontent = false;
-	// Use tp indicate if an invalid cheat sheet id was specified via setInput.
+	// Used to indicate if an invalid cheat sheet id was specified via setInput.
 	private boolean invalidCheatSheetId = false;
+	// Used to indicate if a null cheat sheet id was specified via setInput.
+	private boolean nullCheatSheetId = false;
 
 	private CheatSheetParser parser;
 	private CheatSheet cheatSheet;
@@ -623,6 +625,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		boolean parsedOK = readFile();
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after readFile() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 		if(!parsedOK){
+			// If a null cheat sheet id was specified, return leaving the cheat sheet empty.
+			if(nullCheatSheetId) {
+				return;
+			}
+
 			// Exception thrown during parsing.
 			// Something is wrong with the Cheat sheet content file at the xml level.
 			if(invalidCheatSheetId) {
@@ -836,14 +843,22 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	public void setInput(String id) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.setInput(String id)"); //$NON-NLS-1$
 
-		CheatSheetElement element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
-		if(element == null) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_INVALID_CHEATSHEET_ID, new Object[] {id});
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			invalidCheatSheetId = true;
+		CheatSheetElement element = null;
+
+		if(id == null) {
+			nullCheatSheetId = true;
 		} else {
-			invalidCheatSheetId = false;
+			nullCheatSheetId = false;
+
+			element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
+			if(element == null) {
+				String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_INVALID_CHEATSHEET_ID, new Object[] {id});
+				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
+				CheatSheetPlugin.getPlugin().getLog().log(status);
+				invalidCheatSheetId = true;
+			} else {
+				invalidCheatSheetId = false;
+			}
 		}
 
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setInput(String id)", "Time in CheatSheetViewer.setInput(String id) before setContent() call: "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -866,6 +881,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		element.setID(id);
 		element.setContentFile(url.toString());
 
+		nullCheatSheetId = false;
 		invalidCheatSheetId = false;
 		setContent(element);
 	}
