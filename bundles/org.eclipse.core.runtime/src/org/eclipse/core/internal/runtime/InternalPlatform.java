@@ -13,7 +13,6 @@ package org.eclipse.core.internal.runtime;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
