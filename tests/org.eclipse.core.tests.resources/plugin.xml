@@ -125,6 +125,12 @@
 	<test id = "org.eclipse.core.tests.resources.session.SampleSessionTest">
 		<run class="org.eclipse.core.tests.resources.session.SampleSessionTest"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestSave">
+		<run class="org.eclipse.core.tests.resources.session.TestSave"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.Test1G1N9GZ">
+		<run class="org.eclipse.core.tests.resources.session.Test1G1N9GZ"/>
+	</test>
   
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>

@@ -10,10 +10,11 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
+import org.eclipse.core.tests.harness.*;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
 import org.eclipse.core.tests.internal.resources.*;
 
-public class WorkspaceSerializationTest extends EclipseWorkspaceTest {
+public class WorkspaceSerializationTest extends WorkspaceSessionTest {
 	protected IWorkspace workspace;
 	protected IPath location;
 	protected IProgressMonitor monitor = new FussyProgressMonitor();
@@ -86,15 +87,6 @@ public static Test suite() {
 //	suite.addTest(new WorkspaceSerializationTest("testSaveCreateProjectCloseOpen"));
 	
 	return suite;
-	
-}
-/**
- * Tears down the fixture, for example, close a network connection.
- * This method is called after a test is executed.
- */
-protected void tearDown() throws Exception {
-	workspace.getRoot().delete(true, true, monitor);
-	gc();
 }
 /**
  * 1G1N9GZ: ITPCORE:WIN2000 - ElementTree corruption when linking trees
