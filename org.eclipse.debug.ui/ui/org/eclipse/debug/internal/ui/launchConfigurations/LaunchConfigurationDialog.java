@@ -1063,8 +1063,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		} else if (singleSelection && firstSelectedElement instanceof ILaunchConfigurationType) {
 			if (canReplaceConfig) {
 				clearLaunchConfiguration();
-				setTabsForConfigType((ILaunchConfigurationType)firstSelectedElement);
 				getEditArea().setVisible(false);
+				disposeExistingTabs();
 			}
  		} else {
  			// multi-selection
