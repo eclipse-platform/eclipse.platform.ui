@@ -89,7 +89,7 @@
             icon="icons/template.gif"
             description="%ant.tasks.copy.description"
             contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
-            id="org.eclipse.ui.examples.templateeditor.ant.javac">
+            id="org.eclipse.ui.examples.templateeditor.ant.copy">
          <pattern>&lt;copy todir=&quot;${dst}&quot;&gt;
 	&lt;fileset dir=&quot;${src}&quot;/&gt;
 &lt;/copy&gt;</pattern>
@@ -110,6 +110,10 @@
             contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
             class="org.eclipse.ui.examples.templateeditor.template.AntVariableResolver">
       </resolver>
+      <include
+      		file="templates/ant.xml"
+      		translations="templates/ant.properties">
+      </include>
    </extension>
 
 </plugin>
