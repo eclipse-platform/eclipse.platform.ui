@@ -1116,7 +1116,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		
 		int shift= isCarbon ? -25 : -10; // Mac has different Gamma value
 		lightColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		darkColor= new Color(display, lightColor.getRed()+shift, lightColor.getGreen()+shift, lightColor.getBlue()+shift);
+		darkColor= new Color(display, 	Math.max(0, lightColor.getRed()+shift),
+										Math.max(0, lightColor.getGreen()+shift),
+										Math.max(0, lightColor.getBlue()+shift));
 		textColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		selectedTextColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		selectedColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
