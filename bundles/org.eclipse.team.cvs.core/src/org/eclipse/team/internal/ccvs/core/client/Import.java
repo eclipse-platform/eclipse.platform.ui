@@ -22,7 +22,7 @@ public class Import extends Command {
 	}
 
 	protected Import() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "import"; //$NON-NLS-1$
 	}
 

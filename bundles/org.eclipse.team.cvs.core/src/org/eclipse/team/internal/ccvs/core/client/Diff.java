@@ -25,7 +25,7 @@ public class Diff extends Command {
 	public static final LocalOption INCLUDE_NEWFILES = new LocalOption("-N"); //$NON-NLS-1$
 
 	protected Diff() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "diff"; //$NON-NLS-1$
 	}
 	

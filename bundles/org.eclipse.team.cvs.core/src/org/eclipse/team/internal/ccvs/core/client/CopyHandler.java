@@ -38,7 +38,7 @@ class CopyHandler extends ResponseHandler {
 		// read additional data for the response
 		String repositoryFile = session.readLine();
 		String newFile = session.readLine();
-		if (session.isNoLocalChanges()) return;
+		if (session.isNoLocalChanges() || ! session.isCreateBackups()) return;
 
 		// Get the local file		
 		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$

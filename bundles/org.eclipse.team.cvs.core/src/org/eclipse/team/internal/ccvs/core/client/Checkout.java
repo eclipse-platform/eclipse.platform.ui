@@ -7,7 +7,6 @@ package org.eclipse.team.internal.ccvs.core.client;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSResource;
@@ -38,7 +37,7 @@ public class Checkout extends Command {
 	}
 	
 	protected Checkout() { }	
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "co"; //$NON-NLS-1$
 	}
 	
@@ -87,8 +86,8 @@ public class Checkout extends Command {
 	 * On sucessful finish, prune empty directories if 
 	 * the -P option was specified (or is implied by -D or -r)
 	 */
-	protected void commandFinished(Session session, Option[] globalOptions,
-		Option[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
 		boolean succeeded) throws CVSException {
 		// If we didn't succeed, don't do any post processing
 		if (! succeeded) return;
@@ -118,7 +117,7 @@ public class Checkout extends Command {
 		monitor.beginTask(null, 100);
 		// Execute the expand-modules command. 
 		// This will put the expansions in the session for later retrieval
-		IStatus status = EXPAND_MODULES.execute(session, arguments, Policy.subMonitorFor(monitor, 10));
+		IStatus status = Request.EXPAND_MODULES.execute(session, arguments, Policy.subMonitorFor(monitor, 10));
 		if (status.getCode() == CVSStatus.SERVER_ERROR)
 			return status;
 		

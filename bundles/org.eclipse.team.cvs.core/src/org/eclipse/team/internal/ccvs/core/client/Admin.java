@@ -9,7 +9,7 @@ public class Admin extends AbstractMessageCommand {
 	/*** Local options: specific to admin ***/
 
 	protected Admin() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "admin";  //$NON-NLS-1$
 	}
 }

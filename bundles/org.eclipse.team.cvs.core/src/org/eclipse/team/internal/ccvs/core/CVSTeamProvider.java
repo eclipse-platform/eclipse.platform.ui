@@ -50,7 +50,6 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
-import org.eclipse.team.internal.ccvs.core.client.ResponseHandler;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Tag;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -507,7 +506,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			 options.add(Command.DO_NOT_RECURSE);
 			}
 			LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
-			update(resources, commandOptions, tag, null, Policy.subMonitorFor(progress, 70));
+			update(resources, commandOptions, tag, true /*createBackups*/, Policy.subMonitorFor(progress, 70));
 		} finally {
 			progress.done();
 		}
@@ -619,7 +618,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				if (eclipseWay) {
 					setTag(resources, branchTag, Policy.subMonitorFor(monitor, 20));
 				} else {
-					update(resources, Command.NO_LOCAL_OPTIONS, branchTag, null, Policy.subMonitorFor(monitor, 20));
+					update(resources, Command.NO_LOCAL_OPTIONS, branchTag, true /*createBackups*/, Policy.subMonitorFor(monitor, 20));
 				}
 			}
 		} finally {
@@ -800,21 +799,15 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * will be appropriatly tagged. If the tag is HEAD, then there will be no tag on the resources (same as -A
 	 * clear sticky option).
 	 * 
+	 * @param createBackups if true, creates .# files for updated files
 	 */
-	public void update(IResource[] resources, LocalOption[] options, CVSTag tag, ResponseHandler handler, IProgressMonitor progress) throws TeamException {
+	public void update(IResource[] resources, LocalOption[] options, CVSTag tag, boolean createBackups, IProgressMonitor progress) throws TeamException {
 		// Build the local options
 		List localOptions = new ArrayList();
 		
 		// Use the appropriate tag options
 		if (tag != null) {
 			localOptions.add(Update.makeTagOption(tag));
-		}
-		
-		// save old handler, to be reset after command is run
-		ResponseHandler oldHandler = null;
-		if(handler!=null) {
-			oldHandler = Command.getResponseHandler(handler.getResponseID());
-			Command.registerResponseHandler(handler);
 		}
 		
 		// Build the arguments list
@@ -828,18 +821,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 		try {
 			// Opening the session takes 20% of the time
 			s.open(Policy.subMonitorFor(progress, 20));
-			status = Command.UPDATE.execute(s,
-			Command.NO_GLOBAL_OPTIONS,
-			commandOptions,
-			arguments,
-			null,
-			Policy.subMonitorFor(progress, 80));
+			status = Command.UPDATE.execute(s, Command.NO_GLOBAL_OPTIONS, commandOptions, arguments,
+				null, Policy.subMonitorFor(progress, 80), createBackups);
 		} finally {
 			progress.done();
 			s.close();
-			if(oldHandler!=null) {
-				Command.registerResponseHandler(oldHandler);
-			}
 		}
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// XXX diff errors??
@@ -1080,8 +1066,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 					totalWork += list.size();
 				}
 				if (totalWork != 0) {
-					Session s = new Session(workspaceRoot.getRemoteLocation(),
-						workspaceRoot.getLocalRoot(), false);
+					Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 					monitor.beginTask(Policy.bind("CVSTeamProvider.settingKSubst"), 5 + totalWork);
 					try {
 						s.open(Policy.subMonitorFor(monitor, 5));

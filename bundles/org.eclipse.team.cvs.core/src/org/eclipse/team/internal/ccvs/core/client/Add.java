@@ -22,7 +22,7 @@ public class Add extends Command {
 	/*** Local options: specific to add ***/
 
 	protected Add() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "add";  //$NON-NLS-1$
 	}
 	
@@ -47,8 +47,8 @@ public class Add extends Command {
 	 * If the add succeeded then folders have to be initialized with the 
 	 * sync info
 	 */
-	protected void commandFinished(Session session, Option[] globalOptions,
-		Option[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
 		boolean succeeded) throws CVSException {
 				
 		ICVSFolder mFolder;

@@ -6,13 +6,11 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,16 +25,13 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 
 /**
- * Abstract base class for the commands which implements the ICommand 
- * interface so subclasses can be added to the CommandDispatcher.
- * 
- * Also you do not need to use this class to implement commands
- * because the dispatcher makes use of ICommand only. However, all
- * the current command are derived from this class.
+ * Abstract base class for command requests.
+ * Provides a framework for implementing command execution.
  */
-public abstract class Command {
+public abstract class Command extends Request {
 	/*** Command singleton instances ***/
 	public final static Add ADD = new Add();
 	public final static Admin ADMIN = new Admin();
@@ -53,8 +48,6 @@ public abstract class Command {
 	public final static Tag CUSTOM_TAG = new Tag(true);
 	public final static RTag RTAG = new RTag();
 	public final static Update UPDATE = new Update();
-	public final static ExpandModules EXPAND_MODULES = new ExpandModules();
-	final static ValidRequests VALID_REQUESTS = new ValidRequests();
 	
 	// Empty argument array
 	public final static String[] NO_ARGUMENTS = new String[0];
@@ -99,33 +92,6 @@ public abstract class Command {
 	public static final KSubstOption KSUBST_TEXT_VALUES_ONLY = new KSubstOption("-kv"); //$NON-NLS-1$
 	public static final KSubstOption KSUBST_TEXT_KEYWORDS_ONLY = new KSubstOption("-kk"); //$NON-NLS-1$
 
-	/*** Response handler map ***/
-	private static final Hashtable responseHandlers = new Hashtable();
-	static {
-		registerResponseHandler(new CheckedInHandler());
-		registerResponseHandler(new CopyHandler());
-		registerResponseHandler(new ModTimeHandler());
-		registerResponseHandler(new NewEntryHandler());
-		registerResponseHandler(new RemovedHandler());
-		registerResponseHandler(new RemoveEntryHandler());
-		registerResponseHandler(new StaticHandler(true));
-		registerResponseHandler(new StaticHandler(false));
-		registerResponseHandler(new StickyHandler(true));
-		registerResponseHandler(new StickyHandler(false));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATED));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATE_EXISTING));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_CREATED));
-		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_MERGED));
-		registerResponseHandler(new ValidRequestsHandler());
-		registerResponseHandler(new ModuleExpansionHandler());		
-	}
-	public static void registerResponseHandler(ResponseHandler handler) {
-		responseHandlers.put(handler.getResponseID(), handler);
-	}
-	public static ResponseHandler getResponseHandler(String responseID) {
-		return (ResponseHandler)responseHandlers.get(responseID);
-	}
-	
 	/*** Default command output listener ***/
 	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER =
 		new ICommandOutputListener() {
@@ -138,27 +104,10 @@ public abstract class Command {
 
 		};
 	
-	/*
-	 * XXX For the time being, the console listener is registered with Command
-	 */
-	private static ICommandOutputListener consoleListener;
-	
-	public static void setConsoleListener(ICommandOutputListener listener) {
-		consoleListener = listener;
-	}
-	
 	/**
 	 * Prevents client code from instantiating us.
 	 */
 	protected Command() { }
-	
-	/**
-	 * Returns the request string used to invoke this command on the server.
-	 * [template method]
-	 * 
-	 * @return the command's request identifier string
-	 */
-	protected abstract String getCommandId();
 
 	/**
 	 * Provides the default command output listener which is used to accumulate errors.
@@ -222,8 +171,8 @@ public abstract class Command {
 	 * @param monitor the progress monitor
 	 * @param serverError true iff the server returned the "ok" response
 	 */
-	protected void commandFinished(Session session, Option[] globalOptions,
-		Option[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
 		boolean serverError) throws CVSException {
 	}
 
@@ -348,17 +297,51 @@ public abstract class Command {
 		final IStatus[] status = new IStatus[1];
 		ICVSRunnable job = new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
-				status[0] = doExecute(session, globalOptions, localOptions, arguments, listener, monitor);
+				// update the global and local options
+				GlobalOption[] gOptions = filterGlobalOptions(session, globalOptions);
+				LocalOption[] lOptions = filterLocalOptions(session, gOptions, localOptions);
+				
+				// print the invocation string to the console
+				if (session.isOutputToConsole() || Policy.DEBUG_CVS_PROTOCOL) {
+					String line = constructCommandInvocationString(gOptions, lOptions, arguments);
+					if (session.isOutputToConsole()) {
+						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
+						if (consoleListener != null) consoleListener.commandInvoked(line);
+					}
+					if (Policy.DEBUG_CVS_PROTOCOL) System.out.println("CMD> " + line);
+				}
+				
+				// run the command
+				try {
+					status[0] = doExecute(session, gOptions, lOptions, arguments, listener, monitor);
+					notifyConsoleOnCompletion(session, status[0], null);
+				} catch (CVSException e) {
+					notifyConsoleOnCompletion(session, null, e);
+					throw e;
+				} catch (RuntimeException e) {
+					notifyConsoleOnCompletion(session, null, e);
+					throw e;
+				}
 			}
 		};
 		session.getLocalRoot().run(job, pm);
 		return status[0];
 	}
 	
+	private void notifyConsoleOnCompletion(Session session, IStatus status, Exception exception) {
+		if (session.isOutputToConsole()) {
+			IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
+			if (consoleListener != null) consoleListener.commandCompleted(status, exception);
+		}
+		if (Policy.DEBUG_CVS_PROTOCOL) {
+			if (status != null) System.out.println("RESULT> " + status.toString());
+			else System.out.println("RESULT> " + exception.toString());
+		}
+	}
+
 	protected IStatus doExecute(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
 		IProgressMonitor monitor) throws CVSException {
-			
 		ICVSResource[] resources = null;
 		/*** setup progress monitor ***/
 		monitor = Policy.monitorFor(monitor);
@@ -366,37 +349,42 @@ public abstract class Command {
 		Policy.checkCanceled(monitor);
 		try {
 			/*** prepare for command ***/
-			// Ensure that the commands run with the latest contents of the CVS subdirectory sync files 
-			// and not the cached values. Allow 10% of work.
-			resources = computeWorkResources(session, localOptions, arguments);			
-			Policy.checkCanceled(monitor);
-
 			// clear stale command state from previous runs
 			session.setNoLocalChanges(DO_NOT_CHANGE.isElementOf(globalOptions));
 			session.setModTime(null);
-	
-			/*** initiate command ***/
-			// send global and local options by first merging any command specific defaults
-			Option[] gOptions = makeAndSendOptions(session, globalOptions, getDefaultGlobalOptions(session, globalOptions, localOptions));
-			Option[] lOptions = makeAndSendOptions(session, localOptions, getDefaultLocalOptions(globalOptions, localOptions));
 
+			/*** initiate command ***/
+			// send global options
+			for (int i = 0; i < globalOptions.length; i++) {
+				globalOptions[i].send(session);
+			}
+			Policy.checkCanceled(monitor);
+			// send local options
+			for (int i = 0; i < localOptions.length; i++) {
+				localOptions[i].send(session);
+			}
+			Policy.checkCanceled(monitor);
+			// compute the work resources
+			resources = computeWorkResources(session, localOptions, arguments);			
+			Policy.checkCanceled(monitor);
+			// send local working directory state contributes 25% of work
+			sendLocalResourceState(session, globalOptions, localOptions,
+				resources, Policy.subMonitorFor(monitor, 25));
+			Policy.checkCanceled(monitor);
 			// send arguments
 			sendArguments(session, arguments);
-			// send local working directory state
-			sendLocalResourceState(session, globalOptions, localOptions,
-				resources, Policy.subMonitorFor(monitor, 10));
-			Policy.checkCanceled(monitor);
 			// send local working directory path
 			sendLocalWorkingDirectory(session);
-			// send command
-			session.sendCommand(getCommandId());
 
-			/*** process responses ***/
+			// if no listener was provided, use the command's default in order to get error reporting
+			if (listener == null) listener = getDefaultCommandOutputListener();
+
+			/*** execute command and process responses ***/
 			// Processing responses contributes 70% of work.
-			IStatus status = processResponses(session, listener, Policy.subMonitorFor(monitor, 70));
+			IStatus status = executeRequest(session, listener, Policy.subMonitorFor(monitor, 70));
 
 			// Finished adds last 5% of work.
-			commandFinished(session, gOptions, lOptions, resources, Policy.subMonitorFor(monitor, 5),
+			commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 5),
 				status.getCode() != CVSStatus.SERVER_ERROR);
 			return status;
 		} finally {			
@@ -405,136 +393,38 @@ public abstract class Command {
 	}
 	
 	/**
-	 * Processes the responses arising from command execution.
+	 * Constucts the CVS command invocation string corresponding to the arguments.
 	 * 
-	 * @param session the open CVS session
-	 * @param listener the command output listener, or null to discard all messages
-	 * @param consoleListener the console listener, or null to discard all messages
-	 * @param monitor the progress monitor
-	 * @return a status code indicating success or failure of the operation
+	 * @param globalOptions the global options
+	 * @param localOption the local options
+	 * @param arguments the arguments
+	 * @return the command invocation string
 	 */
-	private IStatus processResponses(Session session, ICommandOutputListener listener,
-		IProgressMonitor monitor) throws CVSException {
-		// This number can be tweaked if the monitor is judged to move too
-		// quickly or too slowly. After some experimentation this is a good
-		// number for both large projects (it doesn't move so quickly as to
-		// give a false sense of speed) and smaller projects (it actually does
-		// move some rather than remaining still and then jumping to 100).
-		final int TOTAL_WORK = 300;
-		monitor.beginTask(Policy.bind("Command.receivingResponses"), TOTAL_WORK); //$NON-NLS-1$
-		int halfWay = TOTAL_WORK / 2;
-		int currentIncrement = 4;
-		int nextProgress = currentIncrement;
-		int worked = 0;
-
-		// If no listener was provided, use the command's default in order to get error reporting
-		if (listener == null)
-			listener = getDefaultCommandOutputListener();
-				
-		List accumulatedStatus = new ArrayList();
-		for (;;) {
-			// update monitor work amount
-			if (--nextProgress <= 0) {
-				monitor.worked(1);
-				worked++;
-				if (worked >= halfWay) {
-					// we have passed the current halfway point, so double the
-					// increment and reset the halfway point.
-					currentIncrement *= 2;
-					halfWay += (TOTAL_WORK - halfWay) / 2;				
-				}
-				// reset the progress counter to another full increment
-				nextProgress = currentIncrement;
-			}			
-			Policy.checkCanceled(monitor);
-
-			// retrieve a response line
-			String response = session.readLine();
-			int spacePos = response.indexOf(' ');
-			String argument;
-			if (spacePos != -1) {
-				argument = response.substring(spacePos + 1);
-				response = response.substring(0, spacePos);
-			} else argument = "";  //$NON-NLS-1$
-
-			// handle completion responses
-			if (response.equals("ok")) {  //$NON-NLS-1$
-				break;
-			} else if (response.equals("error")) {  //$NON-NLS-1$
-				if (argument.trim().length() == 0) {
-					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getCommandId()));  //$NON-NLS-1$  //$NON-NLS-2$
-				}
-				if (accumulatedStatus.isEmpty()) {
-					accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, Policy.bind("Command.noMoreInfoAvailable")));
-				}
-				return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
-					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
-					argument, null);
-			// handle message responses
-			} else if (response.equals("M")) {  //$NON-NLS-1$
-				IStatus status = listener.messageLine(argument, session.getLocalRoot(), monitor);
-				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
-				if (consoleListener != null && session.isOutputToConsole()) consoleListener.messageLine(argument, null, null);
-			} else if (response.equals("E")) { //$NON-NLS-1$
-				IStatus status = listener.errorLine(argument, session.getLocalRoot(), monitor);
-				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
-				if (consoleListener != null && session.isOutputToConsole()) consoleListener.errorLine(argument, null, null);
-			// handle other responses
-			} else {
-				ResponseHandler handler = (ResponseHandler) responseHandlers.get(response);
-				if (handler != null) {
-					handler.handle(session, argument, monitor);
-				} else {
-					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
-						CVSProviderPlugin.ID, CVSException.IO_FAILED,
-						Policy.bind("Command.unsupportedResponse", response, argument), null)); //$NON-NLS-1$
-				}
-			}
+	private String constructCommandInvocationString(GlobalOption[] globalOptions,
+		LocalOption[] localOptions, String[] arguments) {
+		StringBuffer commandLine = new StringBuffer("cvs"); //$NON-NLS-1$
+		for (int i = 0; i < globalOptions.length; ++i) {
+			String option = globalOptions[i].toString();
+			if (option.length() == 0) continue;
+			commandLine.append(' ');
+			commandLine.append(option);
 		}
-		if (accumulatedStatus.isEmpty()) {
-			return ICommandOutputListener.OK;
-		} else {
-			return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
-				(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
-				Policy.bind("Command.warnings", Policy.bind("Command." + getCommandId())), null);  //$NON-NLS-1$  //$NON-NLS-2$
+		commandLine.append(' ');
+		commandLine.append(getRequestId());
+		for (int i = 0; i < localOptions.length; ++i) {
+			String option = localOptions[i].toString();
+			if (option.length() == 0) continue;
+			commandLine.append(' ');
+			commandLine.append(option);
 		}
-	}
-	
-	/**
-	 * Calculate and sends the list of global and local options to send to the server.
-	 */
-	private Option[] makeAndSendOptions(Session session, Option[] userOptions, Option[] defaultCommandOptions) throws CVSException {
-		List options = new ArrayList(5);
-
-		// add default options first
-		options.addAll(Arrays.asList(defaultCommandOptions));
-		options.addAll(Arrays.asList(userOptions));
-			
-		Option[] commandOptions = (Option[]) options.toArray(new Option[options.size()]);
-
-		// send global options
-		for (int i = 0; i < commandOptions.length; i++) {
-			commandOptions[i].send(session);
+		for (int i = 0; i < arguments.length; ++i) {
+			if (arguments[i].length() == 0) continue;
+			commandLine.append(" \"");
+			commandLine.append(arguments[i]);
+			commandLine.append('"');
 		}
-		
-		// returned merged options that were sent to server
-		return commandOptions;
-	}
-		
-	/**
-	 * Makes a list of all valid responses; for initializing a session.
-	 * @return a space-delimited list of all valid response strings
-	 */
-	static String makeResponseList() {
-		StringBuffer result = new StringBuffer("ok error M E");  //$NON-NLS-1$
-		Iterator elements = responseHandlers.keySet().iterator();
-		while (elements.hasNext()) {
-			result.append(' ');
-			result.append((String) elements.next());
-		}
-		
-		return result.toString();
-	}
+		return commandLine.toString();
+	}	
 
 	/**
 	 * Superclass for all CVS command options
@@ -581,7 +471,7 @@ public abstract class Command {
 		 */
 		public String toString() {
 			if (argument != null && argument.length() != 0) {
-				return option + " " + argument; //$NON-NLS-1$
+				return option + " \"" + argument + '"'; //$NON-NLS-1$
 			} else {
 				return option;
 			}
@@ -736,8 +626,7 @@ public abstract class Command {
 	 */
 	public static Option findOption(Option[] array, String option) {
 		for (int i = 0; i < array.length; ++i) {
-			// FIXME: can be optimized using identity
-			if (array[i].option.equals(option)) return array[i];
+			if (array[i].getOption().equals(option)) return array[i];
 		}
 		return null;
 	}
@@ -749,9 +638,9 @@ public abstract class Command {
 	 * @return an array of all arguments of belonging to matching options
 	 */
 	protected static String[] collectOptionArguments(Option[] array, String option) {
-		Vector /* of String */ list = new Vector();
+		List /* of String */ list = new ArrayList();
 		for (int i = 0; i < array.length; ++i) {
-			if (array[i].option.equals(option)) {
+			if (array[i].getOption().equals(option)) {
 				list.add(array[i].argument);
 			}
 		}
@@ -759,33 +648,36 @@ public abstract class Command {
 	}
 	
 	/**
-	 * Returns the default global options for all commands. Subclasses can override but
-	 * must call this method and return superclasses global options.
+	 * Allows commands to filter the set of global options to be sent.
+	 * Subclasses that override this method should call the superclass.
 	 * 
-	 * @param globalOptions are the options already specified by the user.
-	 * @return the default global options that will be sent with every command.
+	 * @param session the session
+	 * @param globalOptions the global options, read-only
+	 * @return the filtered global options
 	 */
-	protected GlobalOption[] getDefaultGlobalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {
-		if (session.isNoLocalChanges()) {
-			return Command.NO_GLOBAL_OPTIONS;
+	protected GlobalOption[] filterGlobalOptions(Session session, GlobalOption[] globalOptions) {
+		if (! DO_NOT_CHANGE.isElementOf(globalOptions)) {
+			QuietOption quietOption = CVSProviderPlugin.getPlugin().getQuietness();
+			if (quietOption != null) {
+				GlobalOption[] oldOptions = globalOptions;
+				globalOptions = new GlobalOption[oldOptions.length + 1];
+				System.arraycopy(oldOptions, 0, globalOptions, 1, oldOptions.length);
+				globalOptions[0] = quietOption;
+			}
 		}
-		QuietOption option = CVSProviderPlugin.getPlugin().getQuietness();
-		if (option == null)
-			return Command.NO_GLOBAL_OPTIONS;
-		else
-			return new GlobalOption[] {option};		
+		return globalOptions;
 	}
 	
 	/**
-	 * Returns the default local options for a command. Subclasses can override but
-	 * must return superclasses default local options.
+	 * Allows commands to filter the set of local options to be sent.
+	 * Subclasses that override this method should call the superclass.
 	 * 
-	 * @param globalOptions are the options specified by the user
-	 * @param localOptions are the options already specified by the user.
-	 * @return the default local options that will be sent with every command of this
-	 * type.
+	 * @param session the session
+	 * @param globalOptions the global options, read-only
+	 * @param localOptions the local options, read-only
+	 * @return the filtered local options
 	 */
-	protected LocalOption[] getDefaultLocalOptions(GlobalOption[] globalOptions, LocalOption[] localOptions) {
-		return Command.NO_LOCAL_OPTIONS;
+	protected LocalOption[] filterLocalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {
+		return localOptions;
 	}
 }

@@ -33,9 +33,10 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
+import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -66,6 +67,7 @@ public class CVSProviderPlugin extends Plugin {
 	private boolean showTasksOnAddAndDelete = false;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsServer = DEFAULT_CVS_SERVER;
+	private IConsoleListener consoleListener;
 	
 	private static CVSProviderPlugin instance;
 	
@@ -170,6 +172,22 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public QuietOption getQuietness() {
 		return quietness;
+	}
+	
+	/**
+	 * Set the console listener for commands.
+	 * @param consoleListener the listener
+	 */
+	public void setConsoleListener(IConsoleListener consoleListener) {
+		this.consoleListener = consoleListener;
+	}
+
+	/**
+	 * Get the console listener for commands.
+	 * @return the consoleListener, or null
+	 */
+	public IConsoleListener getConsoleListener() {
+		return consoleListener;
 	}
 	
 	/**

@@ -78,6 +78,7 @@ public class Session {
 	private String validRequests = null;
 	private Date modTime = null;
 	private boolean noLocalChanges = false;
+	private boolean createBackups = true;
 	private List expansions;
 	private Collection /* of ICVSFile */ textTransferOverrideSet = null;
 
@@ -144,14 +145,10 @@ public class Session {
 			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
 			
 			// tell the server the names of the responses we can handle
-			connection.writeLine("Valid-responses " + Command.makeResponseList()); //$NON-NLS-1$
+			connection.writeLine("Valid-responses " + Request.makeResponseList()); //$NON-NLS-1$
 	
 			// ask for the set of valid requests
-			boolean saveOutputToConsole = outputToConsole;
-			outputToConsole = false;
-			Command.VALID_REQUESTS.execute(this, Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS,
-				Command.NO_ARGUMENTS, null, Policy.subMonitorFor(monitor, 50));
-			outputToConsole = saveOutputToConsole;
+			Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 50));
 	
 			// set the root directory on the server for this connection
 			connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
@@ -272,12 +269,12 @@ public class Session {
 	}
 
 	/**
-	 * Sends a command to the server and flushes any output buffers.
+	 * Sends a request to the server and flushes any output buffers.
 	 * 
-	 * @param commandId the string associated with the command to be executed
+	 * @param requestId the string associated with the request to be executed
 	 */
-	public void sendCommand(String commandId) throws CVSException {
-		connection.writeLine(commandId);
+	public void sendRequest(String requestId) throws CVSException {
+		connection.writeLine(requestId);
 		connection.flush();
 	}
 
@@ -763,7 +760,21 @@ public class Session {
 		return outputToConsole;
 	}
 
-		
+	/**
+	 * Stores a flag as to whether .# files will be created. (Default is true)
+	 * @param createBackups if true, creates .# files at the server's request
+	 */
+	void setCreateBackups(boolean createBackups) {
+		this.createBackups = createBackups;
+	}
+
+	/**
+	 * Returns a flag as to whether .# files will be created.
+	 */
+	boolean isCreateBackups() {
+		return createBackups;
+	}
+
 	/**
 	 * Gets the sendFileTitleKey.
 	 * @return Returns a String

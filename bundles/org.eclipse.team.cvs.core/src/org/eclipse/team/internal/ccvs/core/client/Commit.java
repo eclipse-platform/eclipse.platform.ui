@@ -22,7 +22,7 @@ public class Commit extends Command {
 	public static final LocalOption FORCE = new LocalOption("-f"); //$NON-NLS-1$
 
 	protected Commit() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "ci"; //$NON-NLS-1$
 	}
 

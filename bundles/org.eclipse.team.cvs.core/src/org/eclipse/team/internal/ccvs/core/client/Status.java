@@ -9,7 +9,7 @@ public class Status extends AbstractMessageCommand {
 	/*** Local options: specific to status ***/
 
 	protected Status() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "status"; //$NON-NLS-1$
 	}
 }

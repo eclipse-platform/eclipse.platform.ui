@@ -6,10 +6,11 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSResource;
@@ -55,7 +56,7 @@ public class Update extends Command {
 	}
 	
 	protected Update() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "update"; //$NON-NLS-1$
 	}
 	
@@ -73,10 +74,26 @@ public class Update extends Command {
 	}
 	
 	/**
+	 * Convenience method that allows the creation of .# files to be disabled.
+	 * @param createBackups if true, creates .# files
+	 * @see Command.execute
+	 */
+	public final IStatus execute(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
+		IProgressMonitor pm, boolean createBackups) throws CVSException {
+		session.setCreateBackups(createBackups);
+		try {
+			return super.execute(session, globalOptions, localOptions, arguments, listener, pm);
+		} finally {
+			session.setCreateBackups(true);
+		}
+	}
+	
+	/**
 	 * On successful finish, prune empty directories if the -P or -D option was specified.
 	 */
-	protected void commandFinished(Session session, Option[] globalOptions,
-		Option[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
 		boolean succeeded) throws CVSException {
 		// If we didn't succeed, don't do any post processing
 		if (! succeeded) return;
@@ -93,11 +110,8 @@ public class Update extends Command {
 		}	
 	}
 	
-	/*
-	 * @see Command#getDefaultLocalOptions()
-	 */
-	protected LocalOption[] getDefaultLocalOptions(GlobalOption[] globalOptions, LocalOption[] localOptions) {
-		List newOptions = new ArrayList(5);
+	protected LocalOption[] filterLocalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {
+		List newOptions = new ArrayList(Arrays.asList(localOptions));
 		
 		// Look for absent directories if enabled and the option is not already included
 		if (CVSProviderPlugin.getPlugin().getFetchAbsentDirectories() && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
@@ -106,11 +120,11 @@ public class Update extends Command {
 		
 		// Prune empty directories if pruning is enabled and the command in not being run in non-update mode
 		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && ! PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) {
-			if(!Command.DO_NOT_CHANGE.isElementOf(globalOptions)) {
+			if (! DO_NOT_CHANGE.isElementOf(globalOptions)) {
 				newOptions.add(Update.PRUNE_EMPTY_DIRECTORIES);
 			}
 		}
-		
-		return (LocalOption[]) newOptions.toArray(new LocalOption[newOptions.size()]);
+		localOptions = (LocalOption[]) newOptions.toArray(new LocalOption[newOptions.size()]);
+		return super.filterLocalOptions(session, globalOptions, localOptions);
 	}
 }

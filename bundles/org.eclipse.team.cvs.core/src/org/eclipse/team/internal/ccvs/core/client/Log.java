@@ -9,7 +9,7 @@ public class Log extends AbstractMessageCommand {
 	/*** Local options: specific to log ***/
 
 	protected Log() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "log"; //$NON-NLS-1$
 	}
 }

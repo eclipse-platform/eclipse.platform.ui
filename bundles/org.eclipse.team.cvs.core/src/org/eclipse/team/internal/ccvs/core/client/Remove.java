@@ -16,7 +16,7 @@ public class Remove extends Command {
 	/*** Local options: specific to remove ***/
 
 	protected Remove() { }	
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "remove"; //$NON-NLS-1$
 	}
 

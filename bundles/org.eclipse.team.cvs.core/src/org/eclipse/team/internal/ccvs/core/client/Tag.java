@@ -35,7 +35,7 @@ public class Tag extends Command {
 		this(false);
 	}
 	
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "tag"; //$NON-NLS-1$
 	}
 

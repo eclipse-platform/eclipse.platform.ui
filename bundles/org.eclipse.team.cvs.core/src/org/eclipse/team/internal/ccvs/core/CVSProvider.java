@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,6 +49,7 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Import;
+import org.eclipse.team.internal.ccvs.core.client.Request;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -68,7 +68,6 @@ public class CVSProvider implements ICVSProvider {
 	private static final String STATE_FILE = ".cvsProviderState"; //$NON-NLS-1$
 	
 	private static CVSProvider instance;
-	private PrintStream printStream;
 	private Map repositories;
 	
 	private List listeners = new ArrayList();
@@ -230,7 +229,7 @@ public class CVSProvider implements ICVSProvider {
 								if (project == null) {
 									
 									// Fetch the module expansions
-									IStatus status = Command.EXPAND_MODULES.execute(session, new String[] {moduleName}, Policy.subMonitorFor(pm, 50));
+									IStatus status = Request.EXPAND_MODULES.execute(session, new String[] {moduleName}, Policy.subMonitorFor(pm, 50));
 									if (status.getCode() == CVSStatus.SERVER_ERROR) {
 										// XXX Should we cleanup any partially checked out projects?
 										throw new CVSServerException(status);
@@ -386,7 +385,7 @@ public class CVSProvider implements ICVSProvider {
 		Session s = new Session(resources[0].getRepository(), root);
 		s.open(monitor);
 		try {
-			status = Command.EXPAND_MODULES.execute(s, arguments, monitor);
+			status = Request.EXPAND_MODULES.execute(s, arguments, monitor);
 		} finally {
 			s.close();
 		}
@@ -521,13 +520,6 @@ public class CVSProvider implements ICVSProvider {
 				listener.repositoryRemoved(repository);
 			}
 		}
-	}
-	
-	/**
-	 * Set the stream to which CVS command output is sent
-	 */
-	public void setPrintStream(PrintStream out) {
-		printStream = out;
 	}
 	
 	public void setSharing(IProject project, FolderSyncInfo info, IProgressMonitor monitor) throws TeamException {

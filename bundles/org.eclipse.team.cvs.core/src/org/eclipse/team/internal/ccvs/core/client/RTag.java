@@ -43,7 +43,7 @@ public class RTag extends Command {
 	}
 	
 	protected RTag() { }
-	protected String getCommandId() {
+	protected String getRequestId() {
 		return "rtag"; //$NON-NLS-1$
 	}
 
