@@ -258,7 +258,7 @@ public class AboutFeaturesDialog extends Dialog {
 			text.setText(""); //$NON-NLS-1$
 			return;
 		}
-		ImageDescriptor desc = info.getFeatureIcon();
+		ImageDescriptor desc = info.getFeatureImage();
 		Image image =  (Image)cachedImages.get(desc);
 		if (image == null && desc != null) {
 			image = desc.createImage();

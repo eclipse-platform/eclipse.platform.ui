@@ -26,9 +26,9 @@ public class AboutInfo extends NewConfigurationInfo {
 
 	private String appName;
 	private String productName;
-	private ImageDescriptor windowIcon;
+	private ImageDescriptor windowImage;
 	private ImageDescriptor aboutImage;
-	private ImageDescriptor featureIcon;
+	private ImageDescriptor featureImage;
 	private String aboutText;
 	private URL welcomePageURL;
 
@@ -55,10 +55,10 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * dialog.
 	 * Products designed to run "headless" typically would not have such an image.
 	 * 
-	 * @return the descriptor for a feature icon, or <code>null</code> if none
+	 * @return the descriptor for a feature image, or <code>null</code> if none
 	 */
-	public ImageDescriptor getFeatureIcon() {
-		return featureIcon;
+	public ImageDescriptor getFeatureImage() {
+		return featureImage;
 	}
 	
 	/**
@@ -142,13 +142,13 @@ public class AboutInfo extends NewConfigurationInfo {
 	}
 
 	/**
-	 * Returns the image descriptor for the window icon to use for this product.
+	 * Returns the image descriptor for the window image to use for this product.
 	 * Products designed to run "headless" typically would not have such an image.
 	 * 
-	 * @return the image descriptor for the window icon, or <code>null</code> if none
+	 * @return the image descriptor for the window image, or <code>null</code> if none
 	 */
-	public ImageDescriptor getWindowIcon() {
-		return windowIcon;
+	public ImageDescriptor getWindowImage() {
+		return windowImage;
 	}
 	
 	/**
@@ -230,20 +230,14 @@ public class AboutInfo extends NewConfigurationInfo {
 		productName = (String) ini.get("productName"); //$NON-NLS-1$
 		productName = getResourceString(productName, bundle, mappingsArray);
 
-		windowIcon = getImage(ini, "windowIcon"); //$NON-NLS-1$
-		if (windowIcon == null)
-			// backward compatibility
-			windowIcon = getImage(ini, "windowImage"); //$NON-NLS-1$
+		windowImage = getImage(ini, "windowImage"); //$NON-NLS-1$
 
 		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
 		aboutText = getResourceString(aboutText, bundle, mappingsArray);
 
 		aboutImage = getImage(ini, "largeImage"); //$NON-NLS-1$
 
-		featureIcon = getImage(ini, "featureIcon"); //$NON-NLS-1$
-		if (featureIcon == null)
-			// backward compatibility
-			featureIcon = getImage(ini, "featureImage"); //$NON-NLS-1$
+		featureImage = getImage(ini, "featureImage"); //$NON-NLS-1$
 
 		welcomePageURL = getURL(ini, "welcomePage");
 

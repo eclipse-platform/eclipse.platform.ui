@@ -643,7 +643,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Initialize the product image obtained from the product info file
 	 */
 	private void initializeProductImage() {
-		ImageDescriptor descriptor = getAboutInfo().getWindowIcon();
+		ImageDescriptor descriptor = getAboutInfo().getWindowImage();
 		if (descriptor == null) {
 			// backward compatibility
 			getProductInfo().getProductImageDescriptor();

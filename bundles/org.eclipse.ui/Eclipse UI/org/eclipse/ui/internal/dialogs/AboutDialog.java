@@ -251,7 +251,7 @@ protected Control createDialogArea(Composite parent) {
 	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 	final AboutInfo[] infoArray = workbench.getFeaturesInfo();
 	for (int i = 0; i < infoArray.length; i++) {
-		ImageDescriptor desc = infoArray[i].getFeatureIcon();
+		ImageDescriptor desc = infoArray[i].getFeatureImage();
 		Image image = null;
 		if (desc != null) {
 			Button button = new Button(featureContainer, SWT.FLAT | SWT.PUSH);
