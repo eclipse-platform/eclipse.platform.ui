@@ -33,19 +33,6 @@ import org.eclipse.team.internal.core.Policy;
  * a difference, the remote resource is considered the
  * <b>incoming resource</b>.
  * </p>
- * <p>
- * Differences between the local and remote resources
- * determine the <b>sync status</b>. The sync status does
- * not take into account the common resource.
- * </p>
- * <p>
- * Note that under this parse of the world, a resource
- * can have both incoming and outgoing changes at the
- * same time, but may nevertheless be in sync!
- * <p>
- * [Issue: "Gender changes" are also an interesting aspect...
- * ]
- * </p>
  * 
  * @since 3.0
  */
@@ -171,7 +158,7 @@ public class SyncInfo implements IAdaptable {
 	}
 		
 	/**
-	 * Returns the remote resource handle  for the base resource,
+	 * Returns the remote resource handle for the base resource,
 	 * or <code>null</code> if the base resource does not exist.
 	 * <p>
 	 * [Note: The type of the common resource may be different from the types
@@ -201,8 +188,8 @@ public class SyncInfo implements IAdaptable {
 	}
 	
 	/**
-	 * Returns the subscriber that created and maintains this sync info
-	 * object. 
+	 * Returns the comparator that is used to determine the
+	 * kin of this sync node.
 	 */
 	public IResourceVariantComparator getComparator() {
 		return comparator;
@@ -210,24 +197,48 @@ public class SyncInfo implements IAdaptable {
 	
 	/**
 	 * Returns the kind of synchronization for this node. 
-	 * @return
+	 * @return the kind of synchronization for this nod
 	 */
 	public int getKind() {
 		return syncKind;
 	}
 	
+	/**
+	 * Helper method that returns whether the given kind represents
+	 * an in-sync resource.
+	 * @param kind the kind of a <code>SyncInfo</code>
+	 * @return whether the kind is <code>IN_SYNC</code>.
+	 */
 	static public boolean isInSync(int kind) {
 		return kind == IN_SYNC;
 	}
 	
+	/**
+	 * Helper method to return the direction portion 
+	 * of the given kind. The resulting value
+	 * can be compared directly with the direction constants.
+	 * @param kind the kind of a <code>SyncInfo</code>
+	 * @return the direction portion of the kind
+	 */
 	static public int getDirection(int kind) {
 		return kind & DIRECTION_MASK;
 	}
-		
+	
+	/**
+	 * Helper method to return the change portion 
+	 * of the given kind. The resulting value
+	 * can be compared directly with the change
+	 * type constants.
+	 * @param kind the kind of a <code>SyncInfo</code>
+	 * @return the change portion of the kind
+	 */
 	static public int getChange(int kind) {
 		return kind & CHANGE_MASK;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if(other instanceof SyncInfo) {
@@ -287,10 +298,19 @@ public class SyncInfo implements IAdaptable {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		return getLocal().getName() + " " + kindToString(getKind()); //$NON-NLS-1$
 	}
 	
+	/**
+	 * A helper method that returns a displayable (i.e. externalized)
+	 * string describing the provided sync kind.
+	 * @param kind the sync kind obtained from a <code>SyncInfo</code>
+	 * @return a displayable string that descibes the kind
+	 */
 	public static String kindToString(int kind) {
 		String label = ""; //$NON-NLS-1$
 		if(kind==IN_SYNC) {
