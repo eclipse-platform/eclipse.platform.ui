@@ -31,7 +31,7 @@ public class SampleEditorFormWizard extends Wizard {
 				monitor.beginTask("Processing...", 20);
 				try {
 					for (int i = 0; i < 20; i++) {
-						Thread.currentThread().sleep(200);
+						Thread.sleep(200);
 						monitor.worked(1);
 					}
 					monitor.done();
