@@ -510,6 +510,19 @@
          </action>      
       </objectContribution>
       <objectContribution
+            objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchCategory"
+            id="org.eclipse.team.ccvs.ui.model.BranchCategoryContributions">
+         <action
+               label="%RefreshTagsAction.label"
+               icon="icons/full/clcl16/newstream_wiz.gif"
+               tooltip="%RefreshTagsAction.tooltip"
+               menubarPath="tagGroup"
+               class="org.eclipse.team.internal.ccvs.ui.repo.RefreshTagsAction"
+               helpContextId="org.eclipse.team.cvs.ui.refresh_tags_action_context"
+               id="org.eclipse.team.ccvs.ui.refreshTags">
+         </action>      
+      </objectContribution>
+      <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteResource"
             id="org.eclipse.team.ccvs.ui.RemoteResourceContributions">
          <action

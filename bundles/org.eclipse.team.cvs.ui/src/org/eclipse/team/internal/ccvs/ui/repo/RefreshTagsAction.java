@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
 
 /**
  * @author Administrator
@@ -45,13 +46,18 @@ public class RefreshTagsAction extends CVSAction {
 		if (!selection.isEmpty()) {
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
-				Object adapter = getAdapter(elements.next(), ICVSRepositoryLocation.class);
-				if (adapter instanceof ICVSRepositoryLocation) {
+				Object element = elements.next();
+				Object adapter = getAdapter(element, ICVSRepositoryLocation.class);
+				if (adapter != null) {
 					tags.add(adapter);
+				} else {
+					adapter = getAdapter(element, BranchCategory.class);
+					if(adapter != null) {
+						tags.add(((BranchCategory)adapter).getRepository(adapter));
+					}
 				}
 			}
 		}
 		return (ICVSRepositoryLocation[])tags.toArray(new ICVSRepositoryLocation[tags.size()]);
 	}
-
 }
