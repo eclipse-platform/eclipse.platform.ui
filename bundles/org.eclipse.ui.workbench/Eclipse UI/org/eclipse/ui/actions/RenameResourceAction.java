@@ -280,7 +280,7 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
 	    IProject project = (IProject) resource;
 		IProjectDescription description = project.getDescription();
 		description.setName(newPath.segment(0));
-		project.move(description, true, monitor);
+		project.move(description, IResource.FORCE | IResource.SHALLOW, monitor);
 	} else
 		resource.move(newPath, IResource.KEEP_HISTORY | IResource.SHALLOW, new SubProgressMonitor(monitor, 50));
 }

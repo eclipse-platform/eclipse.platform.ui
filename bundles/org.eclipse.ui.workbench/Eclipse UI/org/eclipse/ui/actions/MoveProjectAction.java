@@ -78,7 +78,7 @@ boolean performMove(
 
 				monitor.worked(50);
 
-				project.move(newDescription, true, monitor);
+				project.move(newDescription, IResource.FORCE | IResource.SHALLOW, monitor);
 
 				monitor.worked(50);
 
