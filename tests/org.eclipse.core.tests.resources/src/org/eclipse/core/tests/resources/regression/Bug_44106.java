@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
+import java.io.File;
 import java.io.IOException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -97,4 +98,118 @@ public class Bug_44106 extends EclipseWorkspaceTest {
 		linkDestFile.toFile().delete();
 		linkDestFolder.toFile().delete();
 	}
+
+	public void testDeleteLinkedFile() {
+		if (!Platform.getOS().equals(Constants.OS_LINUX))
+			return;
+		// create the file/folder that we are going to link to
+		IPath linkDestFile = getTempDir().append(getUniqueString());
+		try {
+			createFileInFileSystem(linkDestFile);
+		} catch (CoreException e) {
+			fail("0.0", e);
+		}
+		assertTrue("0.1", linkDestFile.toFile().exists());
+
+		// create some resources in the workspace
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+
+		// link in the folder
+		String target = linkDestFile.toOSString();
+		IFile linkedFile = project.getFile("linkedFile");
+		String local = linkedFile.getLocation().toOSString();
+		try {
+			Process p = Runtime.getRuntime().exec("/bin/ln -s " + target + " " + local);
+			p.waitFor();
+		} catch (IOException e) {
+			fail("1.0", e);
+		} catch (InterruptedException e) {
+			fail("1.1", e);
+		}
+		assertExistsInFileSystem("1.2", linkedFile);
+
+		// do a refresh and ensure that the resources are in the workspace
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		assertExistsInWorkspace("2.1", linkedFile);
+
+		// delete the file
+		try {
+			linkedFile.delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		// ensure that the folder and file weren't deleted in the filesystem
+		assertDoesNotExistInWorkspace("4.0", linkedFile);
+		assertTrue("4.1", linkDestFile.toFile().exists());
+
+		// cleanup
+		linkDestFile.toFile().delete();
+		File parent = linkDestFile.toFile().getParentFile();
+		if (parent != null)
+			parent.delete();
+	}
+
+	public void testDeleteLinkedResourceInProject() {
+		if (!Platform.getOS().equals(Constants.OS_LINUX))
+			return;
+		// create the file/folder that we are going to link to
+		IPath linkDestFile = getTempDir().append(getUniqueString());
+		try {
+			createFileInFileSystem(linkDestFile);
+		} catch (CoreException e) {
+			fail("0.0", e);
+		}
+		assertTrue("0.1", linkDestFile.toFile().exists());
+
+		// create some resources in the workspace
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+
+		// link in the folder
+		String target = linkDestFile.toOSString();
+		IFile linkedFile = project.getFile("linkedFile");
+		String local = linkedFile.getLocation().toOSString();
+		try {
+			Process p = Runtime.getRuntime().exec("/bin/ln -s " + target + " " + local);
+			p.waitFor();
+		} catch (IOException e) {
+			fail("1.0", e);
+		} catch (InterruptedException e) {
+			fail("1.1", e);
+		}
+		assertExistsInFileSystem("1.2", linkedFile);
+
+		// do a refresh and ensure that the resources are in the workspace
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		assertExistsInWorkspace("2.1", linkedFile);
+
+		// delete the project
+		try {
+			project.delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		// ensure that the folder and file weren't deleted in the filesystem
+		assertDoesNotExistInWorkspace("4.0", project);
+		assertDoesNotExistInWorkspace("4.1", linkedFile);
+		assertTrue("4.2", linkDestFile.toFile().exists());
+
+		// cleanup
+		linkDestFile.toFile().delete();
+		File parent = linkDestFile.toFile().getParentFile();
+		if (parent != null)
+			parent.delete();
+	}
+
 }
