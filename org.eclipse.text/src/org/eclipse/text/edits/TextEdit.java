@@ -662,7 +662,7 @@ public abstract class TextEdit {
 			TextEditProcessor processor= new TextEditProcessor(document, this, style);
 			return processor.performEdits();
 		} finally {
-			// unconnect from text edit processor
+			// disconnect from text edit processor
 			fParent= null;
 		}
 	}
@@ -828,6 +828,7 @@ public abstract class TextEdit {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
 				TextEdit child= (TextEdit)fChildren.get(i);
 				delta+= child.traverseDocumentUpdating(processor, document);
+				childDocumentUpdated();
 			}
 		}
 		if (processor.considerEdit(this)) {
@@ -841,6 +842,19 @@ public abstract class TextEdit {
 		return delta;
 	}
 	
+	/**
+	 * Hook method called when the document updating of a child edit has been
+	 * completed. When a client calls {@link #apply(IDocument)} or
+	 * {@link #apply(IDocument, int)} this method is called
+	 * {@link #getChildrenSize()} times.
+	 * <p>
+	 * May be overridden by subclasses of {@link MultiTextEdit}.
+	 * 
+	 * @since 3.1
+	 */
+	protected void childDocumentUpdated() {
+	}
+
 	/* package */ abstract int performDocumentUpdating(IDocument document) throws BadLocationException;
 	
 	/* package */ int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
@@ -850,9 +864,25 @@ public abstract class TextEdit {
 			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
 				TextEdit child= (TextEdit)iter.next();
 				accumulatedDelta= child.traverseRegionUpdating(processor, document, accumulatedDelta, childDelete);
+				childRegionUpdated();
 			}
 		}
 		return accumulatedDelta + fDelta;
+	}
+	
+	/**
+	 * Hook method called when the region updating of a child edit has been
+	 * completed. When a client calls {@link #apply(IDocument)} this method is
+	 * called {@link #getChildrenSize()} times. When calling
+	 * {@link #apply(IDocument, int)} this method is called
+	 * {@link #getChildrenSize()} times, when the style parameter contains the
+	 * {@link #UPDATE_REGIONS} flag.
+	 * <p>
+	 * May be overridden by subclasses of {@link MultiTextEdit}.
+	 * 
+	 * @since 3.1
+	 */
+	protected void childRegionUpdated() {
 	}
 	
 	/* package */ void performRegionUpdating(int accumulatedDelta, boolean delete) {
