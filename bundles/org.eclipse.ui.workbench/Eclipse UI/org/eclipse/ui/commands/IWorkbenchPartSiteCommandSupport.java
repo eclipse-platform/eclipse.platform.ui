@@ -21,5 +21,5 @@ public interface IWorkbenchPartSiteCommandSupport {
 	 * @return the mutable command handler service for the workbench part site.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	//IMutableCommandHandlerService getMutableCommandHandlerService();
+	IMutableCommandHandlerService getMutableCommandHandlerService();
 }

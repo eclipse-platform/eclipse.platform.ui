@@ -21,5 +21,5 @@ public interface IWorkbenchWindowCommandSupport {
 	 * @return the command handler for the workbench window. Guaranteed not
 	 *         to be <code>null</code>.
 	 */
-	//ICommandHandlerService getCommandHandlerService();
+	ICommandHandlerService getCommandHandlerService();
 }

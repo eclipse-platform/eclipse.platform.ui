@@ -29,7 +29,7 @@ public interface IWorkbenchCommandSupport {
 	 * @return the command handler for the workbench. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
-	//ICommandHandlerService getCommandHandlerService();
+	ICommandHandlerService getCommandHandlerService();
 
 	/**
 	 * Returns the compound command handler service for the workbench.
@@ -37,5 +37,5 @@ public interface IWorkbenchCommandSupport {
 	 * @return the compound command handler service for the workbench.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	//ICompoundCommandHandlerService getCompoundCommandHandlerService();
+	ICompoundCommandHandlerService getCompoundCommandHandlerService();
 }

@@ -21,5 +21,5 @@ public interface IWorkbenchPageCommandSupport {
 	 * @return the compound command handler service for the workbench page.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	//ICompoundCommandHandlerService getCompoundCommandHandlerService();
+	ICompoundCommandHandlerService getCompoundCommandHandlerService();
 }
