@@ -10,45 +10,54 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard;
 import org.eclipse.ui.*;
 
 /**
  * Action that launches the checkout wizard
  */
-public class CheckoutWizardAction implements IWorkbenchWindowActionDelegate {
+public class CheckoutWizardAction extends CVSAction implements IWorkbenchWindowActionDelegate {
 	
 	Shell shell;
 	
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
 	}
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
 		this.shell = window.getShell();
 	}
-
-	/**
-	 * @see IActionDelegate#run(IAction)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		CheckoutWizard wizard = new CheckoutWizard();
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.open();
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
+	 */
+	protected boolean isEnabled() throws TeamException {
+		return true;
 	}
 }
