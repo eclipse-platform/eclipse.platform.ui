@@ -24,7 +24,7 @@ public class CompatibilityActivator implements BundleActivator {
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		//TODO Is there really nothing to do
+		//Nothing to do
 	}
 
 }
