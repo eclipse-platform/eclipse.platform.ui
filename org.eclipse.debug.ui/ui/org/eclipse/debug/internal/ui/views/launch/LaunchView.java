@@ -48,6 +48,7 @@ import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.GroupMarker;
@@ -61,10 +62,12 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -73,6 +76,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
@@ -217,8 +221,21 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		});
 		lv.setContentProvider(createContentProvider());
-		DelegatingModelPresentation presentation = new DelegatingModelPresentation();
-		lv.setLabelProvider(presentation);
+		final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
+		ILabelProvider provider= new LabelProvider() {
+			public Image getImage(Object element) {
+				return presentation.getImage(element);
+			}
+	
+			public String getText(Object element) {
+				if (!(element instanceof IDebugElement)) {
+					return presentation.getText(element);
+				}
+				return DebugUIViewsMessages.getString("LaunchView.9"); //$NON-NLS-1$
+			}
+		};
+		LaunchViewDecoratingLabelProvider labelProvider= new LaunchViewDecoratingLabelProvider(provider, new LaunchViewLabelDecorator(presentation));
+		lv.setLabelProvider(labelProvider);
 		fEditorPresentation = presentation;
 		// add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(lv);
@@ -616,6 +633,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setEditorInput(editorInput);
 		setEditorId(editorId);
 		setSourceElement(sourceElement);
+	}
+	
+	/**
+	 * @see IDebugView#getPresentation(String)
+	 */
+	public IDebugModelPresentation getPresentation(String id) {
+		return ((DelegatingModelPresentation)fEditorPresentation).getPresentation(id);
 	}
 	
 	/**
