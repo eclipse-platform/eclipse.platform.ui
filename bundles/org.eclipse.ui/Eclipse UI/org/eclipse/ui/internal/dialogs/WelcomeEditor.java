@@ -7,6 +7,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
@@ -34,6 +35,7 @@ import org.eclipse.ui.part.EditorPart;
  *		This class is internal to the workbench and must not be called outside the workbench
  */
 public class WelcomeEditor extends EditorPart {
+	
 	private final String TAG_TITLE = "title";//$NON-NLS-1$
 	private final String TAG_INTRO = "intro";//$NON-NLS-1$
 	private final String TAG_ITEM = "item";//$NON-NLS-1$
@@ -50,6 +52,132 @@ public class WelcomeEditor extends EditorPart {
 	private IWorkbench workbench;
 	private WelcomeParser parser;
 	private Image image;
+	
+	private ArrayList texts = new ArrayList();
+	private StyledText lastNavigatedText = null;
+	private ScrolledComposite scrolledComposite;
+	
+	/**
+	 * The keyListener innerClass for the welcome editor
+	 * navigation
+	 */
+	
+	private KeyListener welcomeListener = new KeyListener(){
+		
+		public void keyPressed(KeyEvent e){
+			//Ignore a key press
+		}
+		public void keyReleased(KeyEvent event){
+			
+			StyledText text = lastNavigatedText;
+			if(event.character == '\t' && event.keyCode == SWT.NULL){
+				StyleRange nextRange = findStartRange(text,false);
+				if(nextRange == null){
+					if(text != null)
+						text.setSelection(0,0);
+					StyledText newText = nextText(text);
+					if(newText == null)
+						return;
+					newText.setFocus();
+					newText.setCaretOffset(0);
+					scrolledComposite.setOrigin(0,newText.getLocation().y);
+					lastNavigatedText = newText;
+				}
+				else{
+					text.setSelection(nextRange.start,nextRange.start + nextRange.length);
+					text.setFocus();					
+				}
+				return;
+			}
+			if(event.character == ' '){
+				WelcomeItem item = (WelcomeItem)text.getData();
+	
+				//Be sure we are in the selection
+				int offset = text.getSelection().x + 1;
+				
+				if (item.isLinkAt(offset)) {	
+					text.setCursor(busyCursor);
+					item.triggerLinkAt(offset);
+					text.setCursor(null);
+				}
+				return;
+			}
+			
+			//Any other character clears
+			lastNavigatedText = null;			
+			
+		}
+		
+		/**
+		 * Find the next text 
+		 */
+		
+		private StyledText nextText(StyledText text){
+			int index = 0;
+			if(text == null)
+				return (StyledText) texts.get(0);
+			else
+				index = texts.indexOf(text);
+				
+			//If we are not at the end....
+			if(index < texts.size() - 1)
+				return (StyledText) texts.get(index + 1);
+			else
+				return (StyledText)  texts.get(0);						
+		}
+		
+		
+		/**
+		 * Find the next text that has a style range
+		 */
+		
+		private StyledText nextTextWithRange(StyledText text){
+			int index = 0;
+			if(text != null)
+				index = texts.indexOf(text);
+			//Find the next field then
+			for(int i = index + 1; i < texts.size(); i ++){
+				StyledText nextText = (StyledText) texts.get(i);
+				if(nextText.getStyleRanges().length > 0)
+					return nextText;
+			}	
+			
+			//Try to loop back
+			for(int i = 0; i <= index; i ++){
+				StyledText nextText = (StyledText) texts.get(i);
+				if(nextText.getStyleRanges().length > 0)
+					return nextText;
+			}	
+			return null;
+						
+		}
+	
+		/**
+		 * Find the next range after the current 
+		 * selection.
+		 */
+		private StyleRange findStartRange(StyledText text, boolean returnDefault){
+	
+			if(text == null)
+				return null;
+				
+			StyleRange[] ranges = text.getStyleRanges();
+			int currentSelectionStart = text.getSelection().x;
+	
+			for (int i = 0; i < ranges.length; i++) {
+				if(ranges[i].start > currentSelectionStart)
+					return ranges[i];
+			}
+	
+			//If the default one is good then return it
+			if(ranges.length > 0 && returnDefault)
+				return ranges[0];
+			else
+				return null;
+		}
+	};
+
+	
 	
 /**
  * Create a new instance of the welcome editor
@@ -87,7 +215,11 @@ private void addListeners(StyledText styledText) {
 				text.setCursor(null);
 		}
 	});
+	
+	//Listen for Tab and Space to allow keyboard navigation
+	styledText.addKeyListener(welcomeListener);
 }
+
 /**
  * Creates the wizard's title area.
  *
@@ -97,9 +229,9 @@ private void addListeners(StyledText styledText) {
 private Composite createInfoArea(Composite parent) {
 	// Create the title area which will contain
 	// a title, message, and image.
-	ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-	sc.setLayoutData(new GridData(GridData.FILL_BOTH));
-	Composite infoArea = new Composite(sc, SWT.NONE);
+	this.scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+	this.scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+	Composite infoArea = new Composite(this.scrolledComposite, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 10;
 	layout.verticalSpacing = 5;
@@ -118,9 +250,9 @@ private Composite createInfoArea(Composite parent) {
 	WelcomeItem item = getIntroItem();
 	if (item != null) {
 		StyledText styledText = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		this.texts.add(styledText);
 		sampleStyledText = styledText;
 		styledText.setCursor(null);
-		styledText.getCaret().setVisible(false);
 		styledText.setBackground(bg);
 		styledText.setText(getIntroItem().getText());
 		setBoldRanges(styledText, item.getBoldRanges());
@@ -152,9 +284,9 @@ private Composite createInfoArea(Composite parent) {
 		image.setLayoutData(gd);
 
 		StyledText styledText = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		this.texts.add(styledText);
 		sampleStyledText = styledText;
 		styledText.setCursor(null);
-		styledText.getCaret().setVisible(false);
 		styledText.setBackground(bg);
 		styledText.setText(items[i].getText());
 		setBoldRanges(styledText, items[i].getBoldRanges());
@@ -173,25 +305,25 @@ private Composite createInfoArea(Composite parent) {
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 	}
-	sc.setContent(infoArea);
+	this.scrolledComposite.setContent(infoArea);
 	Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-	sc.setMinHeight(p.y);
-	sc.setMinWidth(p.x);
-	sc.setExpandHorizontal(true);
-	sc.setExpandVertical(true);
+	this.scrolledComposite.setMinHeight(p.y);
+	this.scrolledComposite.setMinWidth(p.x);
+	this.scrolledComposite.setExpandHorizontal(true);
+	this.scrolledComposite.setExpandVertical(true);
 
 	// Adjust the scrollbar increments
 	if (sampleStyledText == null) {
-		sc.getHorizontalBar().setIncrement(HORZ_SCROLL_INCREMENT);
-		sc.getVerticalBar().setIncrement(VERT_SCROLL_INCREMENT);
+		this.scrolledComposite.getHorizontalBar().setIncrement(HORZ_SCROLL_INCREMENT);
+		this.scrolledComposite.getVerticalBar().setIncrement(VERT_SCROLL_INCREMENT);
 	} else {
 		GC gc = new GC(sampleStyledText);
 		int width = gc.getFontMetrics().getAverageCharWidth();
 		gc.dispose();
-		sc.getHorizontalBar().setIncrement(width);
-		sc.getVerticalBar().setIncrement(sampleStyledText.getLineHeight());
+		this.scrolledComposite.getHorizontalBar().setIncrement(width);
+		this.scrolledComposite.getVerticalBar().setIncrement(sampleStyledText.getLineHeight());
 	}
-	sc.addControlListener(new ControlAdapter() {
+	this.scrolledComposite.addControlListener(new ControlAdapter() {
 		public void controlResized(ControlEvent e) {
 			ScrolledComposite localSC = (ScrolledComposite)e.widget;
 			ScrollBar horizontal = localSC.getHorizontalBar();
