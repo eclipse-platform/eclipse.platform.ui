@@ -76,6 +76,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		
 		createSaveBeforeLaunchEditors();
 		
+		createRelaunchInDebugMode();
+		
 		createSpacer(getFieldEditorParent(), 2);
 		
 		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.getString("DebugPreferencePage.10"), getFieldEditorParent()); //$NON-NLS-1$
@@ -92,7 +94,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		});
 		addField(editor);
 	}
-	
+
 	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
@@ -137,6 +139,12 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 				getFieldEditorParent(),
 				true));
 	}
+	
+	private void createRelaunchInDebugMode() {
+		String[][] labelAndValues = new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.27"), AlwaysNeverDialog.ALWAYS}, {DebugPreferencesMessages.getString("DebugPreferencePage.28"), AlwaysNeverDialog.NEVER}, {DebugPreferencesMessages.getString("DebugPreferencePage.29"), AlwaysNeverDialog.PROMPT}}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		RadioGroupFieldEditor radioGroupFieldEditor = new RadioGroupFieldEditor(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, DebugPreferencesMessages.getString("DebugPreferencePage.30"), 3, labelAndValues, getFieldEditorParent(), true); //$NON-NLS-1$
+		addField(radioGroupFieldEditor);
+	}	
 		
 	protected void createSpacer(Composite composite, int columnSpan) {
 		Label label = new Label(composite, SWT.NONE);
