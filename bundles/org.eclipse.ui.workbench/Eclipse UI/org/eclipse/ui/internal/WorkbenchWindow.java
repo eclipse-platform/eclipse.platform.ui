@@ -626,9 +626,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    
 	    // Create a parent of the Toolbar, CBanner and perspective switcher bar
 	    topBarParent = new Composite(shell, SWT.NONE);
-	    GridLayout gd = new GridLayout();
-	    gd.marginHeight = 0;
-	    gd.marginWidth = 0;
+	    CellLayout gd = new CellLayout(1)
+			.setMargins(0,0)
+			.setDefaultColumn(Row.growing())
+			.setDefaultRow(Row.fixed());
 	    topBarParent.setLayout(gd);
 	    
 		topBar = new CBanner(topBarParent, SWT.NONE);
@@ -637,30 +638,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// need to resize the shell, not just the coolbar's immediate
 		// parent, if the coolbar wants to grow or shrink
 		
-		// TODO the code below is a workaround to keep both the coolbar and perspective switcher
-		// visible... it should however be changed such that the perspective bar can have a 
-		// chevron and does not need to grow the height
         coolBar.addListener(SWT.Resize, new Listener() {
             public void handleEvent(Event event) {
-            	Point cbSize = coolBar.getSize();
-            	Point temp = coolBar.computeSize (100, SWT.DEFAULT);
-            	int trimX = temp.x - 100;
-            	
-            	Point desiredSize = coolBar.computeSize(cbSize.x - trimX, SWT.DEFAULT);
-            	
-            	if (topBar.getRight() != null) {
-            		Control right = topBar.getRight();
-            		Point rightSize = right.computeSize (topBar.getRightWidth(), SWT.DEFAULT);
-	            	desiredSize.y = Math.max(rightSize.y, desiredSize.y);
-            	}          	
-            	GridData data = (GridData)topBar.getLayoutData();
-            	data.heightHint = desiredSize.y;
-
                 shell.layout();
             }
         });
-		GridData topBarData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
-		topBar.setLayoutData(topBarData);
 
 		if (getWindowConfigurer().getShowCoolBar()) {
 			topBar.setLeft(getCoolBarControl());
