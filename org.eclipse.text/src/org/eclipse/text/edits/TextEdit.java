@@ -141,6 +141,9 @@ public abstract class TextEdit {
 	/**
 	 * Create a new text edit. Parent is initialized to <code>
 	 * null<code> and the edit doesn't have any children.
+	 * 
+	 * @param offset the edit's offset
+	 * @param length the edit's length
 	 */
 	protected TextEdit(int offset, int length) {
 		Assert.isTrue(offset >= 0 && length >= 0);
@@ -241,22 +244,30 @@ public abstract class TextEdit {
 	
 	/**
 	 * Returns <code>true</code> if the edit covers the given edit
-	 * <code>other</code>. If the length of the edit is zero <code>
-	 * false</code> is returned. An insert edit can't cover any other
-	 * edit, even if the other edit has the same offset and length.
+	 * <code>other</code>. It is up to the concrete text edit to 
+	 * decide if a edit of length zero can cover another edit.
 	 * 
 	 * @param other the other edit
 	 * @return <code>true<code> if the edit covers the other edit;
 	 *  otherwise <code>false</code> is returned.
-	 * @see Regions#covers(IRegion, IRegion)  
 	 */
 	public final boolean covers(TextEdit other) {
-		if (fLength == 0) {	// an insert edit can't cover anything
+		if (fLength == 0 && !canZeroLengthCover()) {	
 			return false;
 		} else {
 			int otherOffset= other.fOffset;
 			return fOffset <= otherOffset && otherOffset + other.fLength <= fOffset + fLength;
 		}		
+	}
+	
+	/**
+	 * Returns <code>true</code> if an edit with length zero can cover
+	 * another edit. Returns <code>false</code> otherwise.
+	 * 
+	 * @return whether an edit of length zero can cover another edit
+	 */
+	protected boolean canZeroLengthCover() {
+		return false;
 	}
 
 	//---- parent and children management -----------------------------
@@ -525,7 +536,7 @@ public abstract class TextEdit {
 	
 	/**
 	 * This method is called on every edit of the copied tree to do some
-	 * postprocessing like connected an edit to a different edit in the tree.
+	 * post-processing like connected an edit to a different edit in the tree.
 	 * <p>
 	 * This default implementation does nothing
 	 * 
@@ -617,8 +628,6 @@ public abstract class TextEdit {
 	 *  in the tree can't be executed. The state of the document is
 	 *  undefined if this exception is thrown.
 	 * 
-	 * @see #checkIntegrity()
-	 * @see #perform(IDocument)
 	 * @see TextEditProcessor#performEdits()
 	 */
 	public final UndoEdit apply(IDocument document, int style) throws MalformedTreeException, BadLocationException {
@@ -636,6 +645,15 @@ public abstract class TextEdit {
 	 * method is a convenience method for <code>apply(document, CREATE_UNDO | UPDATE_REGIONS)
 	 * </code>
 	 * 
+	 * @param document the document to which to apply this edit
+	 * @return a undo edit, if <code>CREATE_UNDO</code> is specified. Otherwise
+	 *  <code>null</code> is returned.
+	 * @exception MalformedTreeException is thrown if the tree isn't
+	 *  in a valid state. This exception is thrown before any edit
+	 *  is executed. So the document is still in its original state.
+	 * @exception BadLocationException is thrown if one of the edits
+	 *  in the tree can't be executed. The state of the document is
+	 *  undefined if this exception is thrown.
 	 * @see #apply(IDocument, int)
 	 */
 	public final UndoEdit apply(IDocument document) throws MalformedTreeException, BadLocationException {

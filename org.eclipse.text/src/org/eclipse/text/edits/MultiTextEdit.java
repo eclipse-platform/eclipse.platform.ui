@@ -16,10 +16,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * A multi text edit can be used to aggregate several edits into
+ * A multi-text edit can be used to aggregate several edits into
  * one edit. The edit itself doesn't modify a document.
  * <p>
- * Clients are allowed to implement subclasses of a multi text 
+ * Clients are allowed to implement subclasses of a multi-text 
  * edit.Subclasses must implement <code>doCopy()</code> to ensure
  * the a copy of the right type is created. Not implementing 
  * <code>doCopy()</code> in subclasses will result in an assertion
@@ -82,8 +82,15 @@ public class MultiTextEdit extends TextEdit {
 	protected void checkIntegrity() throws MalformedTreeException {
 		// does nothing
 	}
+
+	/*
+	 * @see org.eclipse.text.edits.TextEdit#canZeroLengthCover()
+	 */
+	protected boolean canZeroLengthCover() {
+		return true;
+	}
 	
-	/* non Java-doc
+	/*
 	 * @see TextEdit#copy
 	 */	
 	protected TextEdit doCopy() {
@@ -91,7 +98,7 @@ public class MultiTextEdit extends TextEdit {
 		return new MultiTextEdit(this);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see TextEdit#accept0
 	 */
 	protected void accept0(TextEditVisitor visitor) {
@@ -101,14 +108,14 @@ public class MultiTextEdit extends TextEdit {
 		}
 	}
 
-	/* non Java-doc
+	/*
 	 * @see TextEdit#performConsistencyCheck
 	 */	
 	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		checkIntegrity();
 	}
 	
-	/* non Java-doc
+	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */	
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
@@ -116,7 +123,7 @@ public class MultiTextEdit extends TextEdit {
 		return fDelta;
 	}
 	
-	/* non Java-doc
+	/*
 	 * @see TextEdit#deleteChildren
 	 */	
 	/* package */ boolean deleteChildren() {

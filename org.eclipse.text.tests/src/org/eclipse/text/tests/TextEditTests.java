@@ -73,6 +73,18 @@ public class TextEditTests extends TestCase {
 		fRoot= null;
 	}
 	
+	public void testCovers1() throws Exception {
+		InsertEdit insert= new InsertEdit(1, "");
+		DeleteEdit delete= new DeleteEdit(2, 2);
+		assertEquals(false, insert.covers(delete));
+	}
+	
+	public void testCovers2() throws Exception {
+		MultiTextEdit multi= new MultiTextEdit(0,0);
+		MultiTextEdit child= new MultiTextEdit(0,0);
+		assertEquals(true, multi.covers(child));
+	}
+	
 	public void testOverlap1() throws Exception {
 		// [ [ ] ]
 		fRoot.addChild(new ReplaceEdit(0, 2, "01"));
