@@ -41,7 +41,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Example useage:
  * <pre>
- * mainPage = new WizardNewProjectNameAndLocationPage("basicNewProjectPage");
+ * mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");
  * mainPage.setTitle("Project");
  * mainPage.setDescription("Create a new project resource.");
  * </pre>
