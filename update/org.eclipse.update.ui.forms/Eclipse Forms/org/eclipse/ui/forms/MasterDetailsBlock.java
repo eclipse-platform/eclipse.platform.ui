@@ -5,13 +5,10 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.ui.forms;
-import java.util.Hashtable;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
@@ -19,16 +16,11 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public abstract class MasterDetailsPage extends FormPage {
+public abstract class MasterDetailsBlock {
 	protected DetailsPart detailsPart;
 	protected SashForm sashForm;
-	private Hashtable actions;
-	
-	public MasterDetailsPage(FormEditor editor, String id, String title) {
-		super(editor, id, title);
-	}
 
-	protected void createFormContent(ManagedForm managedForm) {
+	public void createContent(ManagedForm managedForm) {
 		final Form form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		GridLayout layout = new GridLayout();
