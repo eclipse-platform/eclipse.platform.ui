@@ -320,22 +320,57 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 * @throws CVSException, PartInitException
 	 */
 	private IEditorPart openEditor() throws CVSException, PartInitException {
-		// Open the editor
-		IEditorPart part;
-		ICVSRemoteFile file;		
-		IEditorRegistry registry;
-
-		file = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource);
-		
-		registry = CVSUIPlugin.getPlugin().getWorkbench().getEditorRegistry();
-		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName());
+		 ICVSRemoteFile file = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource);
 
 		// Determine if the registered editor is an ITextEditor.	
 		// There is currently no support from UI to determine this information. This
 		// problem has been logged in: https://bugs.eclipse.org/bugs/show_bug.cgi?id=47362
 		// For now, use internal classes.
-		String id;
+		String id = getEditorId(file);
+		ITextEditor editor = getEditor(id, file);
 		
+		// Hook Editor post selection listener.
+		if (editor.getSelectionProvider() instanceof IPostSelectionProvider) {
+			((IPostSelectionProvider) editor.getSelectionProvider()).addPostSelectionChangedListener(this);
+		}
+		editor.getSite().getPage().addPartListener(partListener);
+		return editor;
+	}
+
+    private ITextEditor getEditor(String id, ICVSRemoteFile file) throws PartInitException {
+        // Either reuse an existing editor or open a new editor of the correct type.
+		if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
+		    // We can reuse the editor
+		    ((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(file, contents));
+		    return editor;
+		} else {
+		    // We can not reuse the editor so close the existing one and open a new one.
+		    if (editor != null) {
+		        page.closeEditor(editor, false);
+		        editor = null;
+		    }
+		    IEditorPart part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), id);
+		    if (part instanceof ITextEditor) {
+	        	return (ITextEditor)part;
+		    } else {
+		        // We asked for a text editor but didn't get one
+		        // so open a vanilla text editor
+		        page.closeEditor(part, false);
+		        part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+		        if (part instanceof ITextEditor) {
+		            return (ITextEditor)part;
+		        } else {
+		            // There is something really wrong so just bail
+		            throw new PartInitException(Policy.bind("AnnotateView.0")); //$NON-NLS-1$
+		        }
+		    }
+		}
+    }
+
+    private String getEditorId(ICVSRemoteFile file) {
+        String id;
+		IEditorRegistry registry = CVSUIPlugin.getPlugin().getWorkbench().getEditorRegistry();
+		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName());
 		if (descriptor == null || !(descriptor instanceof EditorDescriptor) || !(((EditorDescriptor)descriptor).isInternal())) {
 			id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID; //$NON-NLS-1$
 		} else {
@@ -350,33 +385,10 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 				id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID;
 			}
 		}
-		
-		// Either reuse an existing editor or open a new editor of the correct type.
+        return id;
+    }
 
-		if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
-		    // We can reuse the editor
-		    ((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(file, contents));
-		    part = editor;
-		} else {
-		    // We can not reuse the editor so close the existing one and open a new one.
-		    if (editor != null) {
-		        page.closeEditor(editor, false);
-		        editor = null;
-		    }
-		    part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), id);
-		}
-
-		
-		// Hook Editor post selection listener.
-		ITextEditor editor = (ITextEditor) part;
-		if (editor.getSelectionProvider() instanceof IPostSelectionProvider) {
-			((IPostSelectionProvider) editor.getSelectionProvider()).addPostSelectionChangedListener(this);
-		}
-		part.getSite().getPage().addPartListener(partListener);
-		return part;
-	}
-
-	// This method implemented to be an ISelectionChangeListener but we
+    // This method implemented to be an ISelectionChangeListener but we
 	// don't really care when the List or Editor get focus.
 	public void setFocus() {
 		return;
