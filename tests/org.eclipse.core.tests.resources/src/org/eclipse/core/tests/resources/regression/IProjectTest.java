@@ -13,6 +13,7 @@ package org.eclipse.core.tests.resources.regression;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -100,18 +101,21 @@ public void testAutoBuild_1GC2FKV() {
 	}
 
 	// create project with a builder
-	IProject projectTWO = getWorkspace().getRoot().getProject("Project_TWO");
+	final IProject projectTWO = getWorkspace().getRoot().getProject("Project_TWO");
+	final IProjectDescription prjDescription = getWorkspace().newProjectDescription("Project_TWO");
+	ICommand command = prjDescription.newCommand();
+	command.setBuilderName(SignaledBuilder.BUILDER_ID);
+	prjDescription.setBuildSpec(new ICommand[] { command });
 	try {
-		IProjectDescription prjDescription = getWorkspace().newProjectDescription("Project_TWO");
-		ICommand command = prjDescription.newCommand();
-		command.setBuilderName(SignaledBuilder.BUILDER_ID);
-		prjDescription.setBuildSpec(new ICommand[] { command });
-		projectTWO.create(prjDescription, getMonitor());
-		projectTWO.open(getMonitor());
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				projectTWO.create(prjDescription, getMonitor());
+				projectTWO.open(getMonitor());
+			}
+		}, getMonitor());
 	} catch (CoreException e) {
 		fail("0.2", e);
 	}
-
 	SignaledBuilder projectONEbuilder = SignaledBuilder.getInstance(projectONE);
 	SignaledBuilder projectTWObuilder = SignaledBuilder.getInstance(projectTWO);
 	projectONEbuilder.reset();
