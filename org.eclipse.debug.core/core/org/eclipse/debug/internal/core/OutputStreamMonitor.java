@@ -16,9 +16,6 @@ import java.util.Vector;
 
 public class OutputStreamMonitor {
 	
-	private final static String PREFIX= "output_stream_monitor.";
-	private final static String LABEL= PREFIX + "label";
-	
 	protected OutputStream fStream;
 	protected Vector fQueue;
 	protected Thread fThread; 
@@ -55,7 +52,7 @@ public class OutputStreamMonitor {
 				public void run() {
 					write();
 				}
-			}, DebugCoreUtils.getResourceString(LABEL));
+			}, DebugCoreMessages.getString("OutputStreamMonitor.label")); //$NON-NLS-1$
 			fThread.start();
 		}
 	}

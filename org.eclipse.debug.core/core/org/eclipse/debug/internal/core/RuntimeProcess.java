@@ -16,11 +16,6 @@ import java.io.InputStream;import java.io.OutputStream;import java.util.HashMa
  * underlying system process for terminataion.
  */
 public class RuntimeProcess extends PlatformObject implements IProcess {
-	
-	private final static String PREFIX= "runtime_process.";
-	
-	private final static String ERROR = PREFIX + "error.";
-	private final static String TERMINATE_FAILED = ERROR + "terminate_failed";
 
 	private static final int MAX_WAIT_FOR_DEATH_ATTEMPTS = 10;
 	
@@ -151,7 +146,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			}
 			// clean-up
 			fMonitor.stopMonitoring();
-			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, IDebugStatusConstants.TARGET_REQUEST_FAILED, DebugCoreUtils.getResourceString(TERMINATE_FAILED), null);		
+			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, IDebugStatusConstants.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.terminate_failed"), null);		 //$NON-NLS-1$
 			throw new DebugException(status);
 		}
 	}

@@ -18,10 +18,6 @@ import java.io.InputStream;
  * @see IStreamMonitor
  */
 public class InputStreamMonitor implements IStreamMonitor {
-	
-	private final static String PREFIX= "input_stream_monitor.";
-	private final static String LABEL= PREFIX + "label";
-
 	/**
 	 * The input stream being monitored.
 	 */
@@ -152,7 +148,7 @@ public class InputStreamMonitor implements IStreamMonitor {
 				public void run() {
 					read();
 				}
-			}, DebugCoreUtils.getResourceString(LABEL));
+			}, DebugCoreMessages.getString("InputStreamMonitor.label")); //$NON-NLS-1$
 			fThread.start();
 		}
 	}

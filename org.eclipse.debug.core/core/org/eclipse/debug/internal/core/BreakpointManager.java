@@ -5,12 +5,14 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.model.Breakpoint;
+import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * The breakpoint manager manages all registered breakpoints
@@ -19,24 +21,6 @@ import org.eclipse.debug.core.model.*;
  * @see IBreakpointManager
  */
 public class BreakpointManager implements IBreakpointManager, IResourceChangeListener {
-
-	private final static String PREFIX= "breakpoint_manager.";
-	private final static String ERROR= PREFIX + "error.";
-	private final static String OLD_MARKER= ERROR + "old_marker";
-	private final static String ADAPTER= ERROR + "adapter";
-	private final static String LABEL_PROPERTY= ERROR + "label_property";
-	private final static String EXTENSION= ERROR + "extension";
-	private final static String ASSOCIATED_RESOURCE= ERROR + "associated_resource";
-	private final static String REQUIRED_ATTRIBUTES= ERROR + "required_attributes";
-	private final static String MISSING_BREAKPOINT_DEFINITION= ERROR + "missing_breakpoint_definition";
-	private final static String LINE_NUMBER= ERROR + "line_number";
-	private final static String CREATION_FAILED= ERROR + "creation_failed";
-	private final static String UNSUPPORTED_EXTENSION= ERROR + "unsupported_extension";
-	private final static String INSTALLATION_FAILED= ERROR + "installation_failed";
-	private final static String REMOVE_FAILED= ERROR + "remove_failed";
-	private final static String ENABLE= ERROR + "enable";
-	private final static String HIT_COUNT= ERROR + "hit_count";
-	private final static String TARGET= ERROR + "target";
 	
 	/**
 	 * Constants for breakpoint add/remove/change updates
@@ -206,9 +190,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			IConfigurationElement config = (IConfigurationElement)fBreakpointExtensions.get(marker.getType());
 			if (config == null) {
 				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-					IDebugStatusConstants.CONFIGURATION_INVALID, DebugCoreUtils.getFormattedString(MISSING_BREAKPOINT_DEFINITION, marker.getType()), null));
+					IDebugStatusConstants.CONFIGURATION_INVALID, MessageFormat.format(DebugCoreMessages.getString("BreakpointManager.Missing_breakpoint_definition"), new String[] {marker.getType()}), null)); //$NON-NLS-1$
 			}
-			IBreakpoint bp = (IBreakpoint)config.createExecutableExtension("class");
+			IBreakpoint bp = (IBreakpoint)config.createExecutableExtension("class"); //$NON-NLS-1$
 			bp.setMarker(marker);
 			addBreakpoint(bp);
 			return bp;		
@@ -238,7 +222,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			String id= breakpoint.getModelIdentifier();
 			if (id == null) {
 				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-					IDebugStatusConstants.CONFIGURATION_INVALID, DebugCoreUtils.getResourceString(REQUIRED_ATTRIBUTES), null));
+					IDebugStatusConstants.CONFIGURATION_INVALID, DebugCoreMessages.getString("BreakpointManager.Missing_model_identifier"), null)); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
 			throw new DebugException(e.getStatus());

@@ -13,9 +13,6 @@ import org.eclipse.debug.core.*;
  */
 
 public class ProcessMonitor {
-	
-	private final static String PREFIX= "process_monitor.";
-	private final static String LABEL= PREFIX + "label";
 	/**
 	 * The <code>IProcess</code> being monitored.
 	 */
@@ -62,7 +59,7 @@ public class ProcessMonitor {
 				public void run() {
 					monitorProcess();
 				}
-			}, DebugCoreUtils.getResourceString(LABEL));
+			}, DebugCoreMessages.getString("ProcessMonitor.label")); //$NON-NLS-1$
 			fThread.start();
 		}
 	}

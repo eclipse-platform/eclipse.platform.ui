@@ -18,16 +18,12 @@ import java.util.*;
  * @see ILaunchManager
  */
 public class LaunchManager extends PlatformObject implements ILaunchManager  {
-
-	private final static String PREFIX= "launch_manager.";
-	private final static String ERROR= PREFIX + "error.";
-	private final static String TERMINATION= ERROR + "termination";
 	
 	/**
 	 * Constant for use as local name part of <code>QualifiedName</code>
 	 * for persisting the default launcher.
 	 */
-	 private static final String DEFAULT_LAUNCHER= "launcher";
+	 private static final String DEFAULT_LAUNCHER= "launcher"; //$NON-NLS-1$
 	 
 	 /**
 	  * Types of notifications

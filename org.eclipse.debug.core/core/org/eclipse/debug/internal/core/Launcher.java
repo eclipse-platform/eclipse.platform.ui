@@ -47,7 +47,7 @@ public class Launcher implements ILauncher {
 	 * @see ILauncher
 	 */
 	public String getIdentifier() {
-		return fConfigElement.getAttribute("id");
+		return fConfigElement.getAttribute("id"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -56,11 +56,11 @@ public class Launcher implements ILauncher {
 	 */
 	public Set getModes() {
 		if (fModes == null) {
-			String modes= fConfigElement.getAttribute("modes");
+			String modes= fConfigElement.getAttribute("modes"); //$NON-NLS-1$
 			if (modes == null) {
 				return null;
 			}
-			StringTokenizer tokenizer= new StringTokenizer(modes, ",");
+			StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
 			fModes = new HashSet(tokenizer.countTokens());
 			while (tokenizer.hasMoreTokens()) {
 				fModes.add(tokenizer.nextToken().trim());
@@ -73,14 +73,14 @@ public class Launcher implements ILauncher {
 	 * @see ILauncher.
 	 */
 	public String getLabel() {
-		return fConfigElement.getAttribute("label");
+		return fConfigElement.getAttribute("label"); //$NON-NLS-1$
 	}
 	
 	/**
 	 * @see ILauncher
 	 */
 	public String getPerspectiveIdentifier() {
-		return fConfigElement.getAttribute("perspective");
+		return fConfigElement.getAttribute("perspective"); //$NON-NLS-1$
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class Launcher implements ILauncher {
 	public ILauncherDelegate getDelegate() {
 		if (fDelegate == null) {
 			try {
-				fDelegate = (ILauncherDelegate)fConfigElement.createExecutableExtension("class");
+				fDelegate = (ILauncherDelegate)fConfigElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				//status logged in the #createExecutableExtension code
 			}
@@ -115,6 +115,6 @@ public class Launcher implements ILauncher {
 	 * @see ILanucher.
 	 */
 	public String getIconPath() {
-		return fConfigElement.getAttribute("icon");
+		return fConfigElement.getAttribute("icon"); //$NON-NLS-1$
 	}
 }
