@@ -223,7 +223,7 @@ public class SyncFileWriter {
 	 * Returns the CVS subdirectory for this folder.
 	 */
 	public static ICVSFolder getCVSSubdirectory(ICVSFolder folder) throws CVSException {
-		return folder.getFolder("CVS");
+		return folder.getFolder("CVS"); //$NON-NLS-1$
 	}
 	
 	/**

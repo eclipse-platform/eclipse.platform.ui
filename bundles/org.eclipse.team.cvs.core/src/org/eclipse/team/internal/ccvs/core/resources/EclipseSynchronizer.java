@@ -47,24 +47,17 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
  * A synchronizer is responsible for managing synchronization information for local
  * CVS resources.
  * 
- * [Notes:
- *  1. how can we expire cache elements and purge to safe memory?
- *  2. how can we safeguard against overwritting meta files changes made outside of Eclipse? I'm
- *     not sure we should force setting file contents in EclipseFile handles?
- *  4. how do we reload
- * ]
- * 
  * @see ResourceSyncInfo
  * @see FolderSyncInfo
  */
 public class EclipseSynchronizer {
 	// the resources plugin synchronizer is used to cache and possibly persist. These 
 	// are keys for storing the sync info.
-	private static final QualifiedName FOLDER_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-sync");
-	private static final QualifiedName RESOURCE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "resource-sync");
-	private static final QualifiedName IGNORE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-ignore");
+	private static final QualifiedName FOLDER_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-sync"); //$NON-NLS-1$
+	private static final QualifiedName RESOURCE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "resource-sync"); //$NON-NLS-1$
+	private static final QualifiedName IGNORE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-ignore"); //$NON-NLS-1$
 	
-	private static final FolderSyncInfo EMPTY_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false);
+	private static final FolderSyncInfo EMPTY_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	// the cvs eclipse synchronizer is a singleton
 	private static EclipseSynchronizer instance;
@@ -168,7 +161,12 @@ public class EclipseSynchronizer {
 	public void setIgnored(IContainer resource, String pattern) throws CVSException {
 		try {
 			SyncFileWriter.addCVSIgnoreEntry(CVSWorkspaceRoot.getCVSFolderFor(resource), pattern);
-			// broadcast 
+			String[] ignores = getIgnored(resource);
+			String[] newIgnores = new String[ignores.length+1];
+			System.arraycopy(ignores, 0, newIgnores, 0, ignores.length);
+			newIgnores[ignores.length] = pattern;
+			setCachedFolderIgnores(resource, newIgnores);
+			// broadcast changes to unmanaged children - they are the only candidates for being ignored
 			IResource[] children = resource.members();
 			List possibleIgnores = new ArrayList();
 			for (int i = 0; i < children.length; i++) {
@@ -178,7 +176,7 @@ public class EclipseSynchronizer {
 			}
 			TeamPlugin.getManager().broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
 		} catch(CoreException e) {
-			throw CVSException.wrapException(resource, "Error setting an ignore pattern", e);
+			throw CVSException.wrapException(e);
 		}
 	}
 		
@@ -226,7 +224,7 @@ public class EclipseSynchronizer {
 					int numDirty = dirtyParents.size();
 					int numResources = changedFolders.size() + numDirty;
 					monitor.beginTask(null, numResources);
-					monitor.subTask("Updating CVS synchronization information...");
+					monitor.subTask(Policy.bind("EclipseSynchronizer_updatingSyncEndOperation")); //$NON-NLS-1$
 					
 					/*** write sync info to disk ***/
 					// folder sync info changes
@@ -281,9 +279,6 @@ public class EclipseSynchronizer {
 		Assert.isTrue(nestingCount>= 0);
 	}
 	
-	private static ISynchronizer getSynchronizer() {
-		return ResourcesPlugin.getWorkspace().getSynchronizer();
-	}
 	
 	/*
 	 * Returns the cached resource sync info, or null if none found.
@@ -423,7 +418,7 @@ public class EclipseSynchronizer {
 			return children!=null;
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
-		}		
+		}
 	}
 	
 	/**
@@ -452,7 +447,7 @@ public class EclipseSynchronizer {
 				}
 			}
 		} catch(CoreException e) {
-			throw CVSException.wrapException(root, "Problems occured deleting sync info", e);
+			throw CVSException.wrapException(e);
 		}
 	}
 	
@@ -476,7 +471,7 @@ public class EclipseSynchronizer {
 				}
 			}
 		} catch(CoreException e) {
-			throw CVSException.wrapException(root, "Problems occured flushing sync info", e);
+			throw CVSException.wrapException(e);
 		}
 	}
 	
@@ -491,7 +486,7 @@ public class EclipseSynchronizer {
 				container.setSessionProperty(FOLDER_SYNC_KEY, null);
 			}
 		} catch(CoreException e) {
-			throw CVSException.wrapException(container, "Problems occured flushing sync info for container", e);
+			throw CVSException.wrapException(e);
 		}
 	}	
 }

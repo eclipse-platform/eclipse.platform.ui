@@ -86,7 +86,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		final int[] count = new int[] {0};
 		
 		// Create a listener for receiving the revision info
-		final Map revisions = new HashMap();
 		IStatusListener listener = new IStatusListener() {
 			public void fileStatus(IPath path, String remoteRevision) {
 				if (remoteRevision == IStatusListener.FOLDER_REVISION)

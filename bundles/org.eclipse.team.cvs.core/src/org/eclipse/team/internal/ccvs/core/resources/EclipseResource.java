@@ -132,7 +132,7 @@ abstract class EclipseResource implements ICVSResource {
 		}
 		if(cvsIgnorePatterns!=null) {
 			for (int i = 0; i < cvsIgnorePatterns.length; i++) {
-				matcher.register(cvsIgnorePatterns[i], "true");
+				matcher.register(cvsIgnorePatterns[i], "true"); //$NON-NLS-1$
 			}
 		}
 		

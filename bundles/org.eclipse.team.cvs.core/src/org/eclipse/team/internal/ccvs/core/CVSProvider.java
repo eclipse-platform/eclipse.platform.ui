@@ -195,7 +195,6 @@ public class CVSProvider implements ICVSProvider {
 			IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor pm) throws CoreException {
 					try {
-						pm.setTaskName(Policy.bind("Checking_out_from_CVS..._5")); //$NON-NLS-1$
 						pm.beginTask(null, 1000 * resources.length);
 						
 						// Get the location of the workspace root
@@ -221,14 +220,14 @@ public class CVSProvider implements ICVSProvider {
 							ICVSRepositoryLocation repository = resource.getRepository();
 							Session session = new Session(repository, root);
 							try {
-								session.open(monitor);
+								session.open(Policy.subMonitorFor(pm, 50));
 								
 								// Determine the local target projects (either the project provider or the module expansions) 
 								Set targetProjects = new HashSet();
 								if (project == null) {
 									
 									// Fetch the module expansions
-									IStatus status = Command.EXPAND_MODULES.execute(session, new String[] {moduleName}, monitor);
+									IStatus status = Command.EXPAND_MODULES.execute(session, new String[] {moduleName}, Policy.subMonitorFor(pm, 50));
 									if (status.getCode() == CVSStatus.SERVER_ERROR) {
 										// XXX Should we cleanup any partially checked out projects?
 										throw new CVSServerException(status);
@@ -275,7 +274,7 @@ public class CVSProvider implements ICVSProvider {
 								}
 								
 								// Bring the project into the workspace
-								refreshProjects((IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), Policy.subMonitorFor(pm, 100));
+								//refreshProjects((IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), Policy.subMonitorFor(pm, 100));
 
 							} finally {
 								session.close();

@@ -143,7 +143,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	public void makeOutgoing(IProgressMonitor monitor) throws TeamException {
 		
 		int syncKind = getSyncKind(GRANULARITY_TIMESTAMP, monitor);
-		boolean conflict = (syncKind & DIRECTION_MASK) == CONFLICTING;
 		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;
 		boolean outgoing = (syncKind & DIRECTION_MASK) == OUTGOING;
 

@@ -50,7 +50,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 		try {
 			((IFile)resource).delete(false /*force*/, true /*keepHistory*/, null);
 		} catch(CoreException e) {
-			throw new CVSException(e.getStatus());
+			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_deleting_resource", resource.getFullPath().toString()), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -62,7 +62,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
  		try {
 			return getIFile().getContents();
 		} catch (CoreException e) {
- 			throw CVSException.wrapException(e);
+ 			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_accessing_resource", resource.getFullPath().toString()), e); //$NON-NLS-1$ //$NON-NLS-2$
  		}
  	}
 	
@@ -77,7 +77,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
 					}
 				} catch(CoreException e) {
-					throw new IOException("Error setting file contents: " + e.getMessage());
+					throw new IOException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
 				} finally {
 					super.close();
 				}
@@ -99,7 +99,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
 					}
 				} catch(CoreException e) {
-					throw new IOException("Error setting file contents: " + e.getMessage());
+					throw new IOException(Policy.bind("EclipseFile_Problem_appending_to_resource", e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
 				} finally {
 					super.close();
 				}

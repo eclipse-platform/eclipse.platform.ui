@@ -54,8 +54,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		IResource[] resources = EclipseSynchronizer.getInstance().members(folder);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			if(resources[i].getType()!=IResource.FILE) {
-				ICVSResource cvsResource = new EclipseFolder((IContainer)resources[i]);
+			if(resource.getType()!=IResource.FILE) {
+				ICVSResource cvsResource = new EclipseFolder((IContainer)resource);
 				if(!cvsResource.isIgnored()) {
 					folders.add(cvsResource);
 				}
@@ -74,8 +74,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		IResource[] resources = EclipseSynchronizer.getInstance().members(folder);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			if(resources[i].getType()==IResource.FILE) {
-				ICVSResource cvsResource = new EclipseFile((IFile)resources[i]);
+			if(resource.getType()==IResource.FILE) {
+				ICVSResource cvsResource = new EclipseFile((IFile)resource);
 				if(!cvsResource.isIgnored()) {
 					files.add(cvsResource);
 				}
@@ -118,7 +118,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				((IFolder)resource).create(false /*don't force*/, true /*make local*/, null);
 			}				
 		} catch (CoreException e) {
-			throw new CVSException(e.getStatus());
+			throw CVSException.wrapException(resource, Policy.bind("EclipseFolder_problem_creating", resource.getFullPath().toString()), e); //$NON-NLS-1$
 		} 
 	}
 		
