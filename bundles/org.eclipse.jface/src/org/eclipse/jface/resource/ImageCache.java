@@ -368,30 +368,6 @@ public final class ImageCache {
 		}
 
 		/**
-		 * Dispose the images if they have not been disposed.
-		 * 
-		 * @param images
-		 *            The array of images.
-		 */
-		private void disposeImages(final Image[] images) {
-			Display display = Display.getCurrent();
-			if (display == null) {
-				display = Display.getDefault();
-			}
-			display.syncExec(new Runnable() {
-				public void run() {
-					// Dispose the images
-					for (int i = 0; i < images.length; i++) {
-						final Image image = images[i];
-						if ((image != null) && (!image.isDisposed())) {
-							image.dispose();
-						}
-					}
-				}
-			});
-		}
-
-		/**
 		 * Remove the reference enqueued by iterating through the set of keys in
 		 * the map.
 		 * 
@@ -402,7 +378,6 @@ public final class ImageCache {
 				final ImageCacheWeakReference currentReference) {
 			EquivalenceSet currentSet = null;
 			Set keySet = imageMap.keySet();
-			Image[] images = null;
 
 			// Ensure that the image map is locked until the removal of the
 			// reference has finished
@@ -416,23 +391,35 @@ public final class ImageCache {
 					if (removed) {
 						// Clean up needed since the set is now empty
 						if (currentSet.getSize() == 0) {
-							images = ((ImageMapEntry) imageMap
+							final Image[] images = ((ImageMapEntry) imageMap
 									.remove(currentSet)).getImages();
 							if (images == null) {
 								throw new NullPointerException(
 										"The array of images removed from the map on clean up should not be null."); //$NON-NLS-1$
 							}
+							Display display = Display.getCurrent();
+							if (display == null) {
+								display = Display.getDefault();
+							}
+							display.syncExec(new Runnable() {
+								public void run() {
+									// Dispose the images
+									for (int j = 0; j < images.length; j++) {
+										final Image image = images[j];
+										if ((image != null)
+												&& (!image.isDisposed())) {
+											image.dispose();
+										}
+									}
+								}
+							});
 						}
+
 						// break out of for loop since the reference has
 						// been removed
 						break;
 					}
 				}
-			}
-			// Didpose the images if needed
-			if (images != null) {
-				// dispose the images outside of the synchronized block
-				disposeImages(images);
 			}
 		}
 
@@ -453,6 +440,8 @@ public final class ImageCache {
 
 				// Check to see if we've been told to stop.
 				if (reference == endMarker) {
+					// Clean up the image map
+					shutDownCleaning();
 					break;
 				}
 
@@ -470,6 +459,35 @@ public final class ImageCache {
 				}
 
 			}
+		}
+
+		/**
+		 * Clean everything in the map.
+		 *  
+		 */
+		private final void shutDownCleaning() {
+			// Clear all the references in the equivalence sets and
+			// dispose the corresponding images
+			for (Iterator imageItr = imageMap.entrySet().iterator(); imageItr
+					.hasNext();) {
+				final Map.Entry entry = (Map.Entry) imageItr.next();
+				final EquivalenceSet key = (EquivalenceSet) entry.getKey();
+				// Dispose the images if they have been created and have
+				// not been disposed yet
+				final Image[] images = ((ImageMapEntry) entry.getValue())
+						.getImages();
+				for (int i = 0; i < images.length; i++) {
+					final Image image = images[i];
+					if ((image != null) && (!image.isDisposed())) {
+						image.dispose();
+					}
+				}
+
+				// Clear all the references in the equivalence set
+				key.clear();
+			}
+			// Clear map
+			imageMap.clear();
 		}
 
 		/**
@@ -624,8 +642,8 @@ public final class ImageCache {
 	/**
 	 * Cleans up all images in the cache. This disposes of all of the images,
 	 * and drops references to them. This should only be called when the images
-	 * and the image cache are no longer needed. This should be called on
-	 * shutdown.
+	 * and the image cache are no longer needed (i.e.: shutdown). Note that the
+	 * image disposal is handled by the cleaner thread.
 	 */
 	public final void dispose() {
 		// Clean up the missing image.
@@ -634,40 +652,8 @@ public final class ImageCache {
 			missingImage = null;
 		}
 
-		// Stop the image cleaner thread and wait for it to finish
+		// Stop the image cleaner thread
 		imageCleaner.stopCleaning();
-		try {
-			imageCleaner.join();
-		} catch (InterruptedException e) {
-			// Interrupted
-		}
-
-		// Ensure that the image map is locked until the process of
-		// clearing the images is finished
-		synchronized (imageMap) {
-			// Clear all the references in the equivalence sets and dispose
-			// the corresponding images
-			for (Iterator imageItr = imageMap.entrySet().iterator(); imageItr
-					.hasNext();) {
-				final Map.Entry entry = (Map.Entry) imageItr.next();
-				final EquivalenceSet key = (EquivalenceSet) entry.getKey();
-				// Dispose the images if they have been created and have not
-				// been disposed yet
-				final Image[] images = ((ImageMapEntry) entry.getValue())
-						.getImages();
-				for (int i = 0; i < images.length; i++) {
-					final Image image = images[i];
-					if ((image != null) && (!image.isDisposed())) {
-						image.dispose();
-					}
-				}
-
-				// Clear all the references in the equivalence set
-				key.clear();
-			}
-			// Clear map
-			imageMap.clear();
-		}
 	}
 
 	/**
