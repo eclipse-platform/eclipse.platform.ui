@@ -30,11 +30,8 @@ public class WorkingSetManagerData extends RequestData {
 
 	public WorkingSetManagerData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
-		
-		if (getMode() != MODE_WORKBENCH)
-			return;
-			
-		if (!workingSetsSynchronized) {
+	
+		if (!workingSetsSynchronized && getMode() == MODE_WORKBENCH) {
 			// upon startup in workbench mode, make sure working sets are in synch with those from UI
 			workingSetsSynchronized = true;
 			wsmgr.synchronizeWorkingSets();
