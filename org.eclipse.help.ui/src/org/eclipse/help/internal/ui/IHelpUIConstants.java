@@ -28,4 +28,5 @@ public interface IHelpUIConstants {
 	public static final String NAVIGATION_VIEWER = HELP_UI_ID + "navigationViewer";
 	public static final String TOPICS_VIEWER = HELP_UI_ID + "topicsViewer";
 	public static final String PREF_PAGE_BROWSERS = HELP_UI_ID + "prefPageBrowsers";
+	public static final String SEARCH_FILTERING_OPTIONS = HELP_UI_ID + "searchFilteringOpts";
 }

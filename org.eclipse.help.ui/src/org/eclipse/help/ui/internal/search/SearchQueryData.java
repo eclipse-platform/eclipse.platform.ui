@@ -1,10 +1,11 @@
 package org.eclipse.help.ui.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.net.URLEncoder;
 import java.util.*;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.util.URLCoder;
 /**
  * Help Search Query.
@@ -19,15 +20,15 @@ public class SearchQueryData {
 	 * will search stop
 	 */
 	private int maxHits;
-	private boolean fieldSearch = false;
-	private boolean categoryFiltering = false;
-	private List excludedCategories;
+	private boolean fieldSearch;
+	private boolean bookFiltering;
+	private List selectedBooks;
 	/** search keyword(s) */
 	private String expression;
 	/** locale to be used for search */
 	private String locale;
 	/** fields that will be searched */
-	private Collection fieldNames = new ArrayList();
+	private Collection fieldNames;
 	/**
 	 * HelpSearchQuery constructor.
 	 * @param key java.lang.String
@@ -35,8 +36,11 @@ public class SearchQueryData {
 	 */
 	public SearchQueryData() {
 		expression = "";
+		bookFiltering = false;
 		locale = Locale.getDefault().toString();
 		maxHits = MAX_HITS;
+		fieldSearch = false;
+		fieldNames = new ArrayList();
 		fieldNames.add("h1");
 		fieldNames.add("h2");
 		fieldNames.add("h3");
@@ -44,15 +48,16 @@ public class SearchQueryData {
 		fieldNames.add("role");
 		fieldNames.add("solution");
 		fieldNames.add("technology");
+		selectedBooks = new ArrayList(0);
 	}
 	/**
-	 * Returns the list of category id's to be excluded from search.
+	 * Returns the list of books to be excluded from search.
 	 * (A category is a top level topic in an info view)
 	 * When the list is null (note, empty list is not the same as null)
 	 * no filtering is performed.
 	 */
-	public List getExcludedCategories() {
-		return excludedCategories;
+	public List getSelectedBooks() {
+		return selectedBooks;
 	}
 	/**
 	 * Returns the locale in which the search will be performed.
@@ -61,10 +66,10 @@ public class SearchQueryData {
 		return locale;
 	}
 	/**
-	 * Returns true if  category filtering is enabled.
+	 * Returns true if books filtering is enabled.
 	 */
-	public boolean isCategoryFiltering() {
-		return categoryFiltering;
+	public boolean isBookFiltering() {
+		return bookFiltering;
 	}
 	/**
 	 * Returns true if search is to be performed on the fields only.
@@ -73,20 +78,17 @@ public class SearchQueryData {
 		return fieldSearch;
 	}
 	/**
-	 * Sets category filtering.
-	 * @param enable true if category filtering is turned on
+	 * Enables book filtering.
+	 * @param enable true if book filtering is turned on
 	 */
-	public void setCategoryFiltering(boolean enable) {
-		this.categoryFiltering = enable;
+	public void setBookFiltering(boolean enable) {
+		this.bookFiltering = enable;
 	}
 	/**
-	 * Sets the list of category id's to be excluded from search.
-	 * (A category is a top level topic in an info view)
-	 * When the list is null (note, empty list is not the same as null)
-	 * no filtering is performed.
+	 * Sets the list of books to be included in search.
 	 */
-	public void setExcludedCategories(List excluded) {
-		excludedCategories = excluded;
+	public void setSelecteBooks(List selected) {
+		this.selectedBooks = selected;
 	}
 	/**
 	 * Sets search to be performed on the fields only.
@@ -126,17 +128,13 @@ public class SearchQueryData {
 			q += "&fieldSearch=true";
 		else
 			q += "&fieldSearch=false";
-		/** TO DO: define filtering 
-		 
-		if (categoryFiltering && excludedCategories != null)
-			for (Iterator iterator = excludedCategories.iterator(); iterator.hasNext();) {
-				Contribution category = (Contribution) iterator.next();
-				q += "&exclude=" + URLEncoder.encode(category.getID());
+		if (bookFiltering && selectedBooks != null)
+			for (Iterator iterator = selectedBooks.iterator(); iterator.hasNext();) {
+				Toc toc = (Toc) iterator.next();
+				q += "&scope=" + URLEncoder.encode(toc.getHref());
 			}
-		*/
 		return q;
-	}
-	/**
+	} /**
 	 * Gets the expression
 	 * @return Returns a String
 	 */

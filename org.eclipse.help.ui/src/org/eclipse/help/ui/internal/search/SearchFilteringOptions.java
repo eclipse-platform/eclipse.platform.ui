@@ -1,119 +1,95 @@
 package org.eclipse.help.ui.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.util.*;
+import java.util.List;
+
 import org.eclipse.help.IToc;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.ui.IHelpUIConstants;
+import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 /**
- * Displays Search Filtering Options dialog.
+ * Displays Search Filtering Options Dialog.
  */
-public class SearchFilteringOptions {
-	private CheckboxTreeViewer checkboxTreeViewer;
+public class SearchFilteringOptions extends Dialog {
+	private Table booksTable;
 	private SearchQueryData queryData;
-	private Collection excludedCategories; // = query.getExcludedCategories()
-	public SearchFilteringOptions(Composite parent, SearchQueryData queryData) {
+	private List allBooks;
+	private List selectedBooks;
+	/**
+	 * Constructor
+	 */
+	public SearchFilteringOptions(Shell parentShell, SearchQueryData queryData) {
+		super(parentShell);
 		this.queryData = queryData;
-		excludedCategories = queryData.getExcludedCategories();
-		if (excludedCategories == null)
-			excludedCategories = new ArrayList();
-		createControl(parent);
+		IToc tocs[] = HelpSystem.getTocManager().getTocs();
+		allBooks = new ArrayList(tocs.length);
+		for (int i = 0; i < tocs.length; i++)
+			allBooks.add(tocs[i]);
+		queryData.getSelectedBooks();
+		selectedBooks = new ArrayList(queryData.getSelectedBooks().size());
+		selectedBooks.addAll(queryData.getSelectedBooks());
 	}
 	/**
 	 * Fills in the dialog area with text and checkboxes
 	 * @param the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
-	protected void createControl(Composite parent) {
-		checkboxTreeViewer =
-			new CheckboxTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.END;
-		gd.verticalAlignment = gd.VERTICAL_ALIGN_BEGINNING;
-		checkboxTreeViewer.getControl().setLayoutData(gd);
-		/** TO DO ..
-		// Listen to check state changes
-		checkboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getElement() instanceof IToc)
-					checkboxTreeViewer.setSubtreeChecked(event.getElement(), event.getChecked());
-				else if (event.getElement() instanceof ITopic) {
-					if (((ITopic) event.getElement()).getParent() instanceof InfoView)
-						updateTocSelection((IToc) ((ITopic) event.getElement()).getParent());
-				}
-			}
-		});
-		
-		checkboxTreeViewer.setContentProvider(CheckboxTreeContentProvider.getDefault());
-		checkboxTreeViewer.setLabelProvider(CheckboxLabelProvider.getDefault());
-		checkboxTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		IToc toc =
-			HelpSystem.getTocManager().getToc(queryData.getInfoset());
-		checkboxTreeViewer.setInput(infoset);
-		checkboxTreeViewer.setExpandedElements(infoset.getChildrenList().toArray());
-		setExcludedCategories(queryData.getExcludedCategories());
-		//checkboxTreeViewer.refresh();
-		 */
+	protected Control createDialogArea(Composite parent) {
+		WorkbenchHelp.setHelp(
+			parent,
+			new String[] { IHelpUIConstants.SEARCH_FILTERING_OPTIONS });
+		Composite mainComposite = new Composite(parent, SWT.NULL);
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		//data.grabExcessHorizontalSpace = true;
+		mainComposite.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		mainComposite.setLayout(layout);
+		Label description = new Label(mainComposite, SWT.NULL);
+		description.setText(
+			WorkbenchResources.getString("SearchFilteringOptions.description"));
+		booksTable = new Table(mainComposite, SWT.CHECK | SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = convertHeightInCharsToPixels(19);
+		gd.widthHint = convertWidthInCharsToPixels(48);
+		booksTable.setLayoutData(gd);
+		// populate table with books
+		for (Iterator it = allBooks.iterator(); it.hasNext();) {
+			TableItem item = new TableItem(booksTable, SWT.NONE);
+			IToc toc = (IToc) it.next();
+			item.setText(toc.getLabel());
+			if (selectedBooks.contains(toc))
+				item.setChecked(true);
+			else
+				item.setChecked(false);
+		}
+		return mainComposite;
 	}
 	/**
-	 * Returns a list of Topics (categories) that are to be excluded from search
+	 * Returns a list of books that are to be included in search
 	 */
-	public List getExcludedCategories() {
-		ArrayList categories = new ArrayList();
-		/* TO DO
-		for (Iterator viewIterator = infoset.getChildren(); viewIterator.hasNext();) {
-			InfoView view = (InfoView) viewIterator.next();
-			for (Iterator topicIterator = view.getChildren(); topicIterator.hasNext();) {
-				categories.add(topicIterator.next());
-			}
-		}
-		Object[] checkedElements = checkboxTreeViewer.getCheckedElements();
-		for (int i = 0; i < checkedElements.length; i++) {
-			Contribution c = (Contribution) checkedElements[i];
-			categories.remove(c);
-		}
-		*/
-		return categories;
+	public List getSelectedBooks() {
+		return selectedBooks;
 	}
-	/**
-	 * Selects checkboxes based on (categories) that are to be excluded from search
-	 */
-	public void setExcludedCategories(List categories) {
-		/* TO DO
-		InfoSet infoset = HelpSystem.getNavigationManager().getCurrentInfoSet();
-		for (Iterator viewIterator = infoset.getChildren(); viewIterator.hasNext();) {
-			InfoView view = (InfoView) viewIterator.next();
-			// First set all, then un-check
-			checkboxTreeViewer.setSubtreeChecked(view, true);
-			for (Iterator topicIterator = view.getChildren(); topicIterator.hasNext();) {
-				Contribution topic = (Contribution) topicIterator.next();
-				if (categories != null && categories.contains(topic))
-					checkboxTreeViewer.setChecked(topic, false);
-			}
-			updateInfoViewSelection(view);
+	protected void okPressed() {
+		selectedBooks = new ArrayList();
+		for (int i = 0; i < allBooks.size(); i++) {
+			if (booksTable.getItem(i).getChecked())
+				selectedBooks.add(allBooks.get(i));
 		}
-		*/
+		super.okPressed();
 	}
-	/**
-	 * Selects InfoView if at least one of children topics is selected
-	 * Deselects InfoView if none of children topics is selected
-	 */
-	private void updateTocSelection(IToc toc) {
-		/*
-		boolean viewSelected = false;
-		for (Iterator topicIterator = view.getChildren(); topicIterator.hasNext();) {
-			Contribution topic = (Contribution) topicIterator.next();
-			if (checkboxTreeViewer.getChecked(topic)) {
-				viewSelected = true;
-				break;
-			}
-		}
-		if (checkboxTreeViewer.getChecked(view) != viewSelected)
-			checkboxTreeViewer.setChecked(view, viewSelected);
-		*/
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(WorkbenchResources.getString("SearchFilteringOptions.title"));
 	}
 }

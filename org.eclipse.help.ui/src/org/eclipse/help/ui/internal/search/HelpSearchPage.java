@@ -4,10 +4,11 @@ package org.eclipse.help.ui.internal.search;
  * All Rights Reserved.
  */
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.Iterator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.search.ui.*;
@@ -25,9 +26,10 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	private Combo patternCombo = null;
 	private static java.util.List previousSearchQueryData =
 		new java.util.ArrayList(20);
-	private Button advancedButton = null;
+	private Button all;
+	private Button selected;
+	private Text selectedBooksText;
 	//private Button headingsButton = null;
-	//private SearchFilteringOptions filteringOptions = null;
 	private ISearchPageContainer scontainer = null;
 	private boolean firstTime = true;
 	// Search query based on the data entered in the UI
@@ -69,9 +71,10 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 					previousSearchQueryData.size() - 1 - patternCombo.getSelectionIndex();
 				searchQueryData = (SearchQueryData) previousSearchQueryData.get(index);
 				patternCombo.setText(searchQueryData.getExpression());
+				all.setSelection(!searchQueryData.isBookFiltering());
+				selected.setSelection(searchQueryData.isBookFiltering());
+				displaySelectedBooks();
 				//headingsButton.setSelection(searchOperation.getQueryData().isFieldsSearch());
-				//filteringOptions.setExcludedCategories(
-				//searchOperation.getQueryData().getExcludedCategories());
 			}
 		});
 		patternCombo.addModifyListener(new ModifyListener() {
@@ -93,15 +96,64 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		//		headingsButton.setLayoutData(gd);
 		//		headingsButton.setText(WorkbenchResources.getString("Search_headers_only"));
 		// Filtering group
-		//		Group filteringGroup = new Group(control, SWT.NONE);
-		//		layout = new GridLayout();
-		//		filteringGroup.setLayout(layout);
-		//		gd = new GridData(GridData.FILL_BOTH);
-		//		gd.heightHint = 100;
-		//		filteringGroup.setLayoutData(gd);
-		//		filteringOptions =
-		//			new SearchFilteringOptions(filteringGroup, searchOperation.getQueryData());
-		//		filteringGroup.setText(WorkbenchResources.getString("limit_to"));
+		Group filteringGroup = new Group(control, SWT.NONE);
+		filteringGroup.setLayout(layout);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		gd.grabExcessHorizontalSpace = true;
+		gd.grabExcessVerticalSpace = true;
+		filteringGroup.setLayoutData(gd);
+		filteringGroup.setText(WorkbenchResources.getString("limit_to"));
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		filteringGroup.setLayout(layout);
+		//
+		all = new Button(filteringGroup, SWT.RADIO);
+		all.setSelection(!searchQueryData.isBookFiltering());
+		all.setText(WorkbenchResources.getString("HelpSearchPage.allBooks"));
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		all.setLayoutData(gd);
+		all.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				searchQueryData.setBookFiltering(false);
+			}
+		});
+		//
+		selected = new Button(filteringGroup, SWT.RADIO);
+		selected.setSelection(searchQueryData.isBookFiltering());
+		selected.setText(WorkbenchResources.getString("HelpSearchPage.selectedBooks"));
+		selected.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				searchQueryData.setBookFiltering(true);
+			}
+		});
+		//
+		selectedBooksText =
+			new Text(filteringGroup, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		displaySelectedBooks();
+		//
+		Button chooseWorkingSet = new Button(filteringGroup, SWT.PUSH);
+		chooseWorkingSet.setLayoutData(new GridData());
+		chooseWorkingSet.setText(WorkbenchResources.getString("HelpSearchPage.choose"));
+		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent = 8;
+		gd.widthHint = SWTUtil.convertWidthInCharsToPixels(30, selectedBooksText);
+		selectedBooksText.setLayoutData(gd);
+		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SearchFilteringOptions dialog =
+					new SearchFilteringOptions(selected.getShell(), searchQueryData);
+				if (dialog.open() == dialog.OK) {
+					all.setSelection(false);
+					selected.setSelection(true);
+					searchQueryData.setBookFiltering(true);
+					searchQueryData.setSelecteBooks(dialog.getSelectedBooks());
+					displaySelectedBooks();
+				}
+			}
+		});
 		setControl(control);
 		WorkbenchHelp.setHelp(control, new String[] { SearchUIConstants.SEARCH_PAGE });
 	}
@@ -110,12 +162,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	 */
 	public boolean performAction() {
 		searchQueryData.setExpression(patternCombo.getText());
-		searchQueryData.setFieldsSearch(false		/*headingsButton.getSelection()*/
-		);
-		//java.util.List excluded = filteringOptions.getExcludedCategories();
-		searchQueryData.setCategoryFiltering(false		/*excluded.size() > 0*/
-		);
-		searchQueryData.setExcludedCategories(new ArrayList(0)		/*excluded*/
+		searchQueryData.setFieldsSearch(false /*headingsButton.getSelection()*/
 		);
 		if (!previousSearchQueryData.contains(searchQueryData))
 			previousSearchQueryData.add(searchQueryData);
@@ -170,5 +217,19 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			scontainer.setPerformActionEnabled(patternCombo.getText().length() > 0);
 		}
 		super.setVisible(visible);
+	}
+	private void displaySelectedBooks() {
+		String tocLabels = "";
+		for (Iterator booksIt = searchQueryData.getSelectedBooks().iterator();
+			booksIt.hasNext();
+			) {
+			String bookLabel = ((IToc) booksIt.next()).getLabel();
+			if (tocLabels.length() <= 0)
+				tocLabels = bookLabel;
+			else
+				tocLabels += WorkbenchResources.getString("HelpSearchPage.bookLabelSeparator")
+					+ bookLabel;
+		}
+		selectedBooksText.setText(tocLabels);
 	}
 }

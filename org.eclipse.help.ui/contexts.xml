@@ -124,5 +124,9 @@ Under normal circumstances, use the &lt;b&gt;Automatic&lt;/b&gt; setting.</descr
    <context  id="showHideAction" >
       <description>Hides or shows navigation frame on the left-hand side of the help view.</description>
    </context>
+   
+   <context  id="searchFilteringOpts" >
+      <description>Choose a set of books to search.  Only results that are contained within those books will be displayed.</description>
+   </context>
 
 </contexts>
