@@ -12,6 +12,68 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Core</h1>
+Eclipse SDK Build 20020318
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<ul>
+<li>
+Added the IMoveDeleteHook interface for the Team plugin to hook. See the
+interfaces IMoveDeleteHook and IResourceTree for more information. Current
+limitations:</li>
+
+<ul>
+<li>
+Signalling a project move by #beginMoveProject/#endMoveProject does not
+work. (clients must call #movedProjectSubTree)</li>
+
+<li>
+A project move fail if the resources are out of sync with the local file
+system and the force flag is false. (Note that it does NOT try to move
+all in-sync resources)</li>
+</ul>
+
+<li>
+The project description file has been moved from the project metadata area
+to the project content area into a file called ".project". Current limitations:</li>
+
+<ul>
+<li>
+If #setContents is called on the .project file the changes are reflected
+in the project description in memory during the next resource change notification.</li>
+
+<li>
+If new content is discovered for the .project file from a #refreshLocal
+the changes are reflected in the project description in memory during the
+next resource change notification.</li>
+</ul>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+Resolved Bugs</h3>
+
+<ul>
+<li>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&email1=&emailtype1=substring&emailassigned_to1=1&email2=&emailtype2=substring&emailreporter2=1&bugidtype=include&bug_id=&changedin=&votes=&chfield=bug_status&chfieldfrom=2002%2F03%2F12&chfieldto=2002%2F03%2F18&chfieldvalue=&product=Platform&version=2.0&component=Core&short_desc=&short_desc_type=allwordssubstr&long_desc=&long_desc_type=allwordssubstr&keywords=&keywords_type=anywords&field0-0-0=noop&type0-0-0=noop&value0-0-0=&cmdtype=doit&namedcmd=ant&newqueryname=&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+since the last integration build.</li>
+</ul>
+
+<h1>
+
+<hr WIDTH="100%">Eclipse Platform Build Notes<br>
+Core</h1>
 Eclipse SDK Build 20020312
 <h2>
 What's new in this drop</h2>
