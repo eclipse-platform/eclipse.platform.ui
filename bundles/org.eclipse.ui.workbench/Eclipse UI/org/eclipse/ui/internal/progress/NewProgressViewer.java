@@ -1113,8 +1113,6 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
 		if (fds.length > 0) {
 			FontData fd= fds[0];
 			int h= fd.getHeight();
-			if (isCarbon)
-				h-=2;
 			boldFont= new Font(display, fd.getName(), h, fd.getStyle() | SWT.BOLD);
 			smallerFont= new Font(display, fd.getName(), h, fd.getStyle());
 		}
