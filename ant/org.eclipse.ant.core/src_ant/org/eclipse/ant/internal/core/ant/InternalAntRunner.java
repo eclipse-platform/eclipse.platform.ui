@@ -263,7 +263,7 @@ public void run() {
 		}
 		createMonitorBuildListener(project);
         fireBuildStarted(project);
-		if (extraArguments != null && !extraArguments.trim().equals(""))
+		if (extraArguments != null && !extraArguments.trim().equals("")) //$NON-NLS-1$
 			project.log(Policy.bind("label.arguments", extraArguments)); //$NON-NLS-1$
 		if (targets != null && !targets.isEmpty())
 			project.executeTargets(targets);
@@ -747,13 +747,13 @@ private ArrayList getArrayList(String args) {
 		String token = tokens.nextToken();
 		if (waitingForQuote) {
 			sb.append(token);
-			if (token.equals("\"")) {
+			if (token.equals("\"")) { //$NON-NLS-1$
 				result.add(sb.toString());
 				sb.setLength(0);
 				waitingForQuote = false;
 			}
 		} else {
-			if (token.equals("\"")) {
+			if (token.equals("\"")) { //$NON-NLS-1$
 				// test if we have something like -Dproperty="value"
 				if (result.size() > 0) {
 					int index = result.size() - 1;
@@ -766,7 +766,7 @@ private ArrayList getArrayList(String args) {
 				sb.append(token);
 				waitingForQuote = true;
 			} else {
-				if (!(token.equals(",") || token.equals(" ")))
+				if (!(token.equals(",") || token.equals(" "))) //$NON-NLS-1$ //$NON-NLS-2$
 					result.add(token);
 			}
 		}
