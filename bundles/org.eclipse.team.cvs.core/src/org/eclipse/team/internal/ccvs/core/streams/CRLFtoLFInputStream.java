@@ -95,8 +95,8 @@ public class CRLFtoLFInputStream extends FilterInputStream {
 		count += len;
 		// strip out CR's in CR/LF pairs
 		// pendingByte will be true iff previous byte was a CR
-		int j = 0;
-		for (int i = 0; i < count; ++i) { // invariant: j <= i
+		int j = off;
+		for (int i = off; i < off + count; ++i) { // invariant: j <= i
 			lastByte = buffer[i];
 			if (lastByte == '\r') {
 				if (pendingByte) {
@@ -113,10 +113,10 @@ public class CRLFtoLFInputStream extends FilterInputStream {
 			}
 		}
 		if (iioe != null) {
-			iioe.bytesTransferred = j;
+			iioe.bytesTransferred = j - off;
 			throw iioe;
 		}
-		return j;
+		return j - off;
 	}
 
 	/**
