@@ -10,12 +10,16 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import org.eclipse.core.resources.IFile;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Action delegate to launch Ant on a build file.
@@ -29,7 +33,12 @@ public class AntRunActionDelegate extends ActionDelegate implements IObjectActio
 	 */
 	public void run(IAction action) {
 		if (part != null && selectedFile != null) {
-			new AntAction(selectedFile, part.getSite().getWorkbenchWindow()).run();
+			if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
+				AntLaunchShortcut shortcut = new AntLaunchShortcut();
+				shortcut.launch(new StructuredSelection(selectedFile), ILaunchManager.RUN_MODE);
+			} else {
+				new AntAction(selectedFile, part.getSite().getWorkbenchWindow()).run();
+			}
 		}
 	}
 	

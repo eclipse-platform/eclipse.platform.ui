@@ -108,8 +108,6 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
-		configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, true);
 	}
 
 	/**
@@ -147,7 +145,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	private void updateRecursive(ILaunchConfiguration configuration) {
 		boolean recursive= true;
 		try {
-			recursive= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, true);
+			recursive= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, false);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
 		}
@@ -172,14 +170,14 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		
+
 		if (refreshField.getSelection()) {
 			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, variableForm.getSelectedVariable());
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
 		}
 		
-		configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, recursiveField.getSelection());
+		setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), false);
 	}
 
 	/**

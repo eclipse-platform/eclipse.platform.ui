@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,8 +49,15 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
+		if (ExternalToolsUtil.isBackground(configuration)) {
+			monitor.beginTask(MessageFormat.format("Launching {0}", new String[] {configuration.getName()}), 10);
+		} else {
+			monitor.beginTask(MessageFormat.format("Running {0}", new String[] {configuration.getName()}), 100);
+		}
+		
 		// save dirty editors
 		ExternalToolsUtil.saveDirtyEditors(configuration);
+		monitor.worked(1);
 		
 		if (monitor.isCanceled()) {
 			return;
@@ -57,6 +65,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		// get variable context
 		ExpandVariableContext resourceContext = ExternalToolsUtil.getVariableContext();
+		monitor.worked(1);
 
 		if (monitor.isCanceled()) {
 			return;
@@ -66,6 +75,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		// resolve location
 		IPath location = ExternalToolsUtil.getLocation(configuration, resourceContext);
+		monitor.worked(1);
 		
 		if (monitor.isCanceled()) {
 			return;
@@ -77,6 +87,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (workingDirectory != null) {
 			baseDir = workingDirectory.toOSString();
 		}
+		monitor.worked(1);
 		
 		if (monitor.isCanceled()) {
 			return;
@@ -115,6 +126,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (targets != null) {
 			runner.setExecutionTargets(targets);
 		}
+		monitor.worked(1);
 								
 		if (monitor.isCanceled()) {
 			return;
@@ -138,6 +150,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			};
 			Thread background = new Thread(r);
 			background.start();
+			monitor.worked(1);
 			// refresh resources after process finishes
 			if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process, resourceContext);
@@ -155,6 +168,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			
 			// refresh resources
 			ExternalToolsUtil.refreshResources(configuration, resourceContext, monitor);
-		}		
+		}	
+		
+		monitor.done();	
 	}
 }

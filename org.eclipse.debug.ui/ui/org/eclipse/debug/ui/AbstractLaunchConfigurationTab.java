@@ -1,13 +1,19 @@
 package org.eclipse.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
  
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -221,5 +227,23 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		return null;
 	}
 
+	/**
+	 * Convenience method to set a boolean attribute of on a launch
+	 * configuration. If the value being set is the default, the attribute's
+	 * value is set to <code>null</code>.
+	 * 
+	 * @param attribute
+	 * @param configuration
+	 * @param value
+	 * @param defaultValue
+	 * @since 2.1
+	 */
+	protected void setAttribute(String attribute, ILaunchConfigurationWorkingCopy configuration, boolean value, boolean defaultValue) {
+		if (value == defaultValue) {
+			configuration.setAttribute(attribute, (String)null);
+		} else {
+			configuration.setAttribute(attribute, value);
+		}
+	}
 }
 

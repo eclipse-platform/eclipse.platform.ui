@@ -1,17 +1,27 @@
 package org.eclipse.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -21,6 +31,8 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -337,6 +349,38 @@ public class DebugUITools {
 	 */
 	public static boolean saveAndBuildBeforeLaunch() {
 		return DebugUIPlugin.saveAndBuild();
+	}
+	
+	/**
+	 * Launches the given launch configuration in the specified mode with a
+	 * progress dialog. Reports any exceptions that occurr in an error dilaog.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode - run or debug
+	 */
+	public static void launch(final ILaunchConfiguration configuration, final String mode) {
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					configuration.launch(mode, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+			}		
+		};
+		try {
+			dialog.run(true, true, runnable);
+		} catch (InvocationTargetException e) {
+			Throwable targetException = e.getTargetException();
+			Throwable t = e;
+			if (targetException instanceof CoreException) {
+				t = targetException;
+			}
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", "Exception occurred during launch", t);
+		} catch (InterruptedException e) {
+			// cancelled
+		}
 	}
 	
 }
