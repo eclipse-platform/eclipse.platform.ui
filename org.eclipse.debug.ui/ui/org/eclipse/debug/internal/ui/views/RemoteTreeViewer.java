@@ -397,7 +397,6 @@ public class RemoteTreeViewer extends TreeViewer {
                             Object data = item.getData();
                             if (!child.equals(data)) {
                                 validateDeferredUpdates(data);
-                                associate(child, item);
                                 internalRefresh(item, child, true, true);
                             }   
                         } else {
