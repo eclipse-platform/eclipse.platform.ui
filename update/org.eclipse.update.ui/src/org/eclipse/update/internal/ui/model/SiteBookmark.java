@@ -33,6 +33,7 @@ public class SiteBookmark extends NamedModelObject
 	private boolean webBookmark;
 	private boolean selected;
 	private String [] ignoredCategories;
+	private boolean readOnly = false;
 
 	public SiteBookmark() {
 	}
@@ -226,6 +227,13 @@ public class SiteBookmark extends NamedModelObject
 	public String getLabel() {
 		return getName();
 	}
-
+	
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+	
+	public boolean isReadOnly() {
+		return readOnly;
+	}
 
 }

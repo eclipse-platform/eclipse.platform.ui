@@ -79,6 +79,7 @@ public class DiscoveryFolder extends BookmarkFolder {
 					entry.getAnnotation(),
 					entry.getURL(),
 					entry.getType() == IURLEntry.WEB_SITE);
+			bookmark.setReadOnly(true);
 			if (!contains(bookmark))
 				internalAdd(bookmark);
 		}

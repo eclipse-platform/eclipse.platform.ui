@@ -100,11 +100,6 @@ public class SearchRunner2 {
 			SimpleFeatureAdapter adapter = (SimpleFeatureAdapter) candidates[i];
 			try {
 				IFeature feature = adapter.getFeature(null);
-				IFeature[] installed =
-					UpdateManager.getInstalledFeatures(feature);
-				IFeature oldFeature = null;
-				if (installed.length>0)
-					oldFeature = installed[0];
 				PendingOperation change = new InstallOperation(feature);
 				result.add(change);
 			} catch (CoreException e) {

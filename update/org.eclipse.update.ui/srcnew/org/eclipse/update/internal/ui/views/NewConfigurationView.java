@@ -62,6 +62,7 @@ public class NewConfigurationView
 	private SwapVersionAction swapVersionAction;
 	private FeatureStateAction featureStateAction;
 	private UninstallFeatureAction uninstallFeatureAction;
+	private InstallOptionalFeatureAction installOptFeatureAction;
 	private Action showUnconfFeaturesAction;
 	private RevertConfigurationAction revertAction;
 	private SaveConfigurationAction preserveAction;
@@ -423,6 +424,8 @@ public class NewConfigurationView
 			"org.eclipse.update.ui.CofigurationView_propertiesAction");
 
 		uninstallFeatureAction = new UninstallFeatureAction("Uninstall");
+		
+		installOptFeatureAction = new InstallOptionalFeatureAction("Install");
 
 		swapVersionAction = new SwapVersionAction("another version...");
 
@@ -518,29 +521,41 @@ public class NewConfigurationView
 
 		if (obj instanceof ILocalSite) {
 			manager.add(revertAction);
-			preserveAction.setConfiguration(
-				((ILocalSite) obj).getCurrentConfiguration());
+			preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
 			manager.add(preserveAction);
 			manager.add(new Separator());
 		} else if (obj instanceof IConfiguredSiteAdapter) {
-			siteStateAction.setSite(
-				((IConfiguredSiteAdapter) obj).getConfiguredSite());
+			siteStateAction.setSite(((IConfiguredSiteAdapter) obj).getConfiguredSite());
 			manager.add(siteStateAction);
 			manager.add(new Separator());
 		} else if (obj instanceof ConfiguredFeatureAdapter) {
-			ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) obj;
-			MenuManager mgr = new MenuManager("Replace with");
-			mgr.add(swapVersionAction);
-			manager.add(mgr);
-			featureStateAction.setFeature(adapter);
-			manager.add(featureStateAction);
-			manager.add(uninstallFeatureAction);
-			manager.add(new Separator());
+			try {
+				ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) obj;
+				IFeature feature = adapter.getFeature(null);
+				boolean enable = (adapter.isOptional() || !adapter.isIncluded());
 
-			boolean enable = (adapter.isOptional() || !adapter.isIncluded());
-			swapVersionAction.setEnabled(enable);
-			featureStateAction.setEnabled(enable);
-			uninstallFeatureAction.setEnabled(enable);
+				MenuManager mgr = new MenuManager("Replace with");
+				mgr.add(swapVersionAction);
+				swapVersionAction.setEnabled(enable);
+				manager.add(mgr);
+
+				featureStateAction.setFeature(adapter);
+				featureStateAction.setEnabled(enable);
+				manager.add(featureStateAction);
+
+				if (feature instanceof MissingFeature) {
+					MissingFeature mf = (MissingFeature) feature;
+					installOptFeatureAction.setEnabled(
+						mf.isOptional() && mf.getOriginatingSiteURL() != null);
+					manager.add(installOptFeatureAction);
+				} else {
+					uninstallFeatureAction.setEnabled(enable);
+					manager.add(uninstallFeatureAction);
+				}
+				manager.add(new Separator());
+
+			} catch (CoreException e) {
+			}
 		}
 
 		addDrillDownAdapter(manager);

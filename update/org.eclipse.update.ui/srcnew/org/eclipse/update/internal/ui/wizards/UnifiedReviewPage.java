@@ -19,15 +19,15 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
+//import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.views.*;
 
 public class UnifiedReviewPage extends BannerPage2 {
 	// NL keys
@@ -35,8 +35,6 @@ public class UnifiedReviewPage extends BannerPage2 {
 		"MultiInstallWizard.MultiReviewPage.title";
 	private static final String KEY_DESC =
 		"MultiInstallWizard.MultiReviewPage.desc";
-	private static final String KEY_C_TASK =
-		"MultiInstallWizard.MultiReviewPage.c.task";
 	private static final String KEY_C_FEATURE =
 		"MultiInstallWizard.MultiReviewPage.c.feature";
 	private static final String KEY_C_VERSION =
@@ -48,7 +46,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 	private static final String KEY_FILTER_CHECK =
 		"MultiInstallWizard.MultiReviewPage.filterCheck";
 
-	private PendingOperationAdapter[] jobs;
+	private PendingOperation[] jobs;
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
@@ -73,7 +71,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int column) {
-			PendingOperationAdapter job = (PendingOperationAdapter) obj;
+			PendingOperation job = (PendingOperation) obj;
 			IFeature feature = job.getFeature();
 
 			switch (column) {
@@ -91,8 +89,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 		}
 		public Image getColumnImage(Object obj, int column) {
 			if (column == 0) {
-				PendingOperationAdapter job = (PendingOperationAdapter) obj;
-				IFeature feature = job.getFeature();
+				IFeature feature = ((PendingOperation) obj).getFeature();
 				boolean patch = feature.isPatch();
 				UpdateLabelProvider provider =
 					UpdateUI.getDefault().getLabelProvider();
@@ -107,15 +104,15 @@ public class UnifiedReviewPage extends BannerPage2 {
 
 	class ContainmentFilter extends ViewerFilter {
 		public boolean select(Viewer v, Object parent, Object child) {
-			return !isContained((PendingOperationAdapter) child);
+			return !isContained((PendingOperation) child);
 		}
-		private boolean isContained(PendingOperationAdapter job) {
-			if (job.getJob().getJobType() != PendingOperation.INSTALL)
+		private boolean isContained(PendingOperation job) {
+			if (job.getJobType() != PendingOperation.INSTALL)
 				return false;
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
 			Object[] selected = tableViewer.getCheckedElements();
 			for (int i = 0; i < selected.length; i++) {
-				PendingOperationAdapter candidate = (PendingOperationAdapter) selected[i];
+				PendingOperation candidate = (PendingOperation) selected[i];
 				if (candidate.equals(job))
 					continue;
 				IFeature feature = candidate.getFeature();
@@ -169,9 +166,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 	}
 
 	private void setJobs(PendingOperation[] jobs) {
-		this.jobs = new PendingOperationAdapter[jobs.length];
-		for (int i=0; i<jobs.length; i++)
-			this.jobs[i] = new PendingOperationAdapter(jobs[i]);
+		this.jobs = jobs;
 		if (tableViewer != null) {
 			tableViewer.refresh();
 			tableViewer.getTable().layout(true);
@@ -189,14 +184,12 @@ public class UnifiedReviewPage extends BannerPage2 {
 		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
 		Label label = new Label(client, SWT.NULL);
-		label.setText("&You are about to execute the following tasks:");
+		label.setText("Select the &features to install:");
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		Control table = createTable(client);
-		gd = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(gd);
+		createTable(client);
 
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		gd = new GridData(GridData.FILL_VERTICAL);
@@ -282,7 +275,6 @@ public class UnifiedReviewPage extends BannerPage2 {
 		descLabel.setEditable(false);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
-		gd.heightHint = 48;
 		descLabel.setLayoutData(gd);
 
 		counterLabel = new Label(client, SWT.NULL);
@@ -318,29 +310,37 @@ public class UnifiedReviewPage extends BannerPage2 {
 				parent,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		Table table = tableViewer.getTable();
-		table.setHeaderVisible(true);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 250;
+		table.setLayoutData(gd);
 
+		table.setHeaderVisible(true);
+	
 		TableColumn column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString(KEY_C_FEATURE));
-
+	
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString(KEY_C_VERSION));
-
+	
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString(KEY_C_PROVIDER));
-
+	
 		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(80, true));
-		layout.addColumnData(new ColumnWeightData(30));
-		layout.addColumnData(new ColumnWeightData(100, true));
-
+		layout.addColumnData(new ColumnWeightData(80, 225, true));
+		layout.addColumnData(new ColumnWeightData(30, 80));
+		layout.addColumnData(new ColumnWeightData(100, 140, true));
+	
 		table.setLayout(layout);
-
+	
 		tableViewer.setContentProvider(new JobsContentProvider());
 		tableViewer.setLabelProvider(new JobsLabelProvider());
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				pageChanged();
+				tableViewer.getControl().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						pageChanged();
+					}
+				});
 			}
 		});
 		tableViewer
@@ -361,7 +361,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 
 
 	private void jobSelected(IStructuredSelection selection) {
-		PendingOperationAdapter job = (PendingOperationAdapter) selection.getFirstElement();
+		PendingOperation job = (PendingOperation) selection.getFirstElement();
 		IFeature feature = job != null ? job.getFeature() : null;
 		IURLEntry descEntry = feature != null ? feature.getDescription() : null;
 		String desc = null;
@@ -396,70 +396,55 @@ public class UnifiedReviewPage extends BannerPage2 {
 
 	private void handleSelectAll(boolean select) {
 		tableViewer.setAllChecked(select);
-		pageChanged();
+		tableViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				pageChanged();
+			}
+		});
 	}
 
 	private void handleProperties() {
-		IStructuredSelection selection =
+		final IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-		final PendingOperationAdapter selectedJob =
-			(PendingOperationAdapter) selection.getFirstElement();
-		if (selectedJob == null)
-			return;
 
-		if (propertiesAction==null) {
-			propertiesAction =
-				new PropertyDialogAction(
-					getShell(),
-					tableViewer);
+		if (propertiesAction == null) {
+			propertiesAction = new PropertyDialogAction(getShell(), tableViewer);
 		}
-		
-		BusyIndicator
-			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+
+		BusyIndicator.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				propertiesAction.selectionChanged(new StructuredSelection(selectedJob));
+				propertiesAction.selectionChanged(selection);
 				propertiesAction.run();
 			}
 		});
 	}
 
-	private String getMoreInfoURL(PendingOperationAdapter job) { 
-		IFeature feature = job.getFeature();
-		IURLEntry desc = feature.getDescription();
-		if (desc==null) return null;
-		URL url = desc.getURL();
-		if (url==null) return null;
-		return url.toString();
+	private String getMoreInfoURL(PendingOperation job) {
+		IURLEntry desc = job.getFeature().getDescription();
+		if (desc != null) {
+			URL url = desc.getURL();
+			return (url == null) ? null : url.toString();
+		}
+		return null;
 	}
 	
 	private void handleMoreInfo() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-		final PendingOperationAdapter selectedJob =
-			(PendingOperationAdapter) selection.getFirstElement();
-		if (selectedJob == null)
-			return;
-			
-		final String moreInfoURL = getMoreInfoURL(selectedJob);
-		if (moreInfoURL==null) return;
-
-		BusyIndicator
-			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+		final PendingOperation selectedJob =
+			(PendingOperation) selection.getFirstElement();
+		BusyIndicator.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				DetailsView.showURL(moreInfoURL, false);
+				Program.launch(getMoreInfoURL(selectedJob));
 			}
 		});
 	}
 
 	public PendingOperation[] getSelectedJobs() {
 		Object[] selected = tableViewer.getCheckedElements();
-		PendingOperation[] jobs = new PendingOperation[selected.length];
-		for (int i=0; i<jobs.length; i++)
-			jobs[i] = ((PendingOperationAdapter)selected[i]).getJob();
-		// TODO we should in the future have the pending operation adapter implement some pending operation interface and
-		// use the arraycopy for better performance
-		//System.arraycopy(selected, 0, jobs, 0, selected.length);
-		return jobs;
+		PendingOperation[] result = new PendingOperation[selected.length];
+		System.arraycopy(selected,0,result,0,selected.length);
+		return result;
 	}
 
 	public void validateSelection() {
@@ -469,8 +454,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 		String errorMessage = null;
 
 		if (validationStatus != null) {
-			errorMessage =
-				"Invalid combination - select \"Show Status...\" for details.";
+			errorMessage = "Invalid combination - select \"Show Status...\" for details.";
 		}
 		setErrorMessage(errorMessage);
 	}
@@ -479,7 +463,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 		if (validationStatus != null) {
 			ErrorDialog.openError(
 				UpdateUI.getActiveWorkbenchShell(),
-				null,
+				"Invalid combination",
 				null,
 				validationStatus);
 		}

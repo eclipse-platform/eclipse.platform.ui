@@ -24,18 +24,14 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.security.*;
 
 public class UnifiedInstallWizard extends Wizard {
-	private static final String KEY_UNABLE = "MultiInstallWizard.error.unable";
-	private static final String KEY_OLD = "MultiInstallWizard.error.old";
-	private static final String KEY_SAVED_CONFIG =
-		"MultiInstallWizard.savedConfig";
 	private static final String KEY_INSTALLING =
 		"MultiInstallWizard.installing";
-	private ModeSelectionPage2 modePage;
+	private UnifiedModeSelectionPage modePage;
 	private UnifiedSitePage sitePage;
 	private UnifiedReviewPage reviewPage;
 	private LicensePage2 licensePage;
-	private MultiOptionalFeaturesPage2 optionalFeaturesPage;
-	private MultiTargetPage2 targetPage;
+	private UnifiedOptionalFeaturesPage optionalFeaturesPage;
+	private UnifiedTargetPage targetPage;
 	private IInstallConfiguration config;
 	private int installCount = 0;
 	private SearchRunner2 searchRunner;
@@ -133,7 +129,7 @@ public class UnifiedInstallWizard extends Wizard {
 
 	public void addPages() {
 		searchRunner = new SearchRunner2(getShell(), getContainer());
-		modePage = new ModeSelectionPage2(searchRunner);
+		modePage = new UnifiedModeSelectionPage(searchRunner);
 		addPage(modePage);
 		sitePage = new UnifiedSitePage(searchRunner);
 		addPage(sitePage);
@@ -148,9 +144,9 @@ public class UnifiedInstallWizard extends Wizard {
 
 		licensePage = new LicensePage2(true);
 		addPage(licensePage);
-		optionalFeaturesPage = new MultiOptionalFeaturesPage2(config);
+		optionalFeaturesPage = new UnifiedOptionalFeaturesPage(config);
 		addPage(optionalFeaturesPage);
-		targetPage = new MultiTargetPage2(config);
+		targetPage = new UnifiedTargetPage(config);
 		addPage(targetPage);
 	}
 

@@ -31,7 +31,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 
-public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
+public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	// NL keys
 	private static final String KEY_TITLE =
 		"MultiInstallWizard.TargetPage.title";
@@ -170,7 +170,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	/**
 	 * Constructor for ReviewPage2
 	 */
-	public MultiTargetPage2(IInstallConfiguration config) {
+	public UnifiedTargetPage(IInstallConfiguration config) {
 		super("MultiTarget");
 		setTitle(UpdateUI.getString(KEY_TITLE));
 		setDescription(UpdateUI.getString(KEY_DESC));
