@@ -22,9 +22,11 @@ import org.eclipse.update.core.ISite;
 
 public class FeatureReferenceModel extends ModelObject {
 	
+	private boolean broken= false;
 	private String type;
 	private String urlString;
 	private URL url;
+	private URLEntryModel updateURL;
 	private SiteMapModel site;
 	private List /* of String*/ categoryNames;
 	
@@ -157,4 +159,38 @@ public boolean equals(Object object) {
 		// resolve local elements
 		url = resolveURL(base, bundle,urlString);
 	}
+	
+	/**
+	 * returns true if the Feature is not accessible at this time.
+	 * @return Returns a boolean
+	 */
+	public boolean isBroken() {
+		return broken;
+	}
+
+	/**
+	 * Sets the broken.
+	 * @param broken The broken to set
+	 */
+	public void setBroken(boolean broken) {
+		this.broken = broken;
+	}
+
+	/**
+	 * Gets the updateURL. This is the update URL for the Feature.
+	 * This is used when the feature cannot be accessed.
+	 * @return Returns a URLEntryModel
+	 */
+	public URLEntryModel getUpdateURL() {
+		return updateURL;
+	}
+
+	/**
+	 * Sets the updateURL.
+	 * @param updateURL The updateURL to set
+	 */
+	public void setUpdateURL(URLEntryModel updateURL) {
+		this.updateURL = updateURL;
+	}
+
 }

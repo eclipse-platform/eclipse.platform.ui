@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.PluginEntry;
 import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.core.PluginEntryContentConsumer;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -22,8 +25,9 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DefaultPluginParser extends DefaultHandler {
 
 	private SAXParser parser;
-	private String version;
-	private String id;
+	private String id = null;
+	private String version = null;
+	private PluginEntry pluginEntry;
 	
 	private static final String PLUGIN = "plugin";
 	private static final String FRAGMENT = "fragment";
@@ -48,14 +52,14 @@ public class DefaultPluginParser extends DefaultHandler {
 	/**
 	 * @since 2.0
 	 */
-	public synchronized VersionedIdentifier parse(InputStream in) throws SAXException, IOException {
+	public synchronized PluginEntry parse(InputStream in) throws SAXException, IOException {
 		try {
-			version = null;
-			id=null;
+			pluginEntry = new PluginEntry();			
 			parser.parse(new InputSource(in));
+			pluginEntry.setIdentifier(new VersionedIdentifier(id,version));			
 		} catch(ParseCompleteException e) {
 		}
-		return new VersionedIdentifier(id,version);
+		return pluginEntry;
 	}
 	
 	/**
@@ -67,11 +71,13 @@ public class DefaultPluginParser extends DefaultHandler {
 	
 		if (tag.equalsIgnoreCase(PLUGIN)) {
 			processPlugin(attributes);
+			pluginEntry.isFragment(false);
 			return;
 		}
 	
 		if (tag.equalsIgnoreCase(FRAGMENT)) {
 			processPlugin(attributes);
+			pluginEntry.isFragment(true);
 			return;
 		}
 	}

@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.core.model.URLEntryModel;
  
  /**
   *
@@ -84,6 +85,20 @@ public interface IFeatureReference {
 
 	void addCategory(ICategory category);
 	
+	/**
+	 * returns true if the Feature is not accessible at this time.
+	 * @return Returns a boolean
+	 * @since 2.0
+	 */
+	boolean isBroken();
+
+	/**
+	 * Gets the updateURL. This is the update URL for the Feature.
+	 * This is used when the feature cannot be accessed.
+	 * @return Returns a URLEntryModel
+	 * @since 2.0
+	 */
+	 URLEntryModel getUpdateURL();
 	
 }
 

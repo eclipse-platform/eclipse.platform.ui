@@ -95,4 +95,16 @@ public class PluginEntryModel extends ContentEntryModel {
 		assertIsWriteable();
 		this.isFragment = isFragment;
 	}
+	/*
+	 * @see Object#equals(Object)
+	 */
+	public boolean equals(Object obj) {
+		if (!(obj instanceof PluginEntryModel))
+			return false;
+		PluginEntryModel model = (PluginEntryModel)obj;
+		return ( (getPluginIdentifier().equals(model.getPluginIdentifier())) &&
+					(getPluginVersion().equals(model.getPluginVersion())) &&
+					(isFragment()==model.isFragment()));
+	}
+
 }

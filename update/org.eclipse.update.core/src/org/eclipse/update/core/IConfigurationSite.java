@@ -33,6 +33,13 @@ public interface IConfigurationSite {
 	boolean isInstallSite();
 
 	/**
+	 * returns true if the Site is not accessible at this time.
+	 * @return Returns a boolean
+	 * @since 2.0
+	 */
+	boolean isBroken();
+
+	/**
 	 * sets if the site is an installable site
 	 * @since 2.0 
 	 */

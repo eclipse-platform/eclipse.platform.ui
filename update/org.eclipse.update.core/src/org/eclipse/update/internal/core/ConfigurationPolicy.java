@@ -88,7 +88,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 			}
 		}
 
-		if (multiStatus.getChildren().length > 0) {
+		if (multiStatus.getChildren().length > 0 && handler!=null) {
 			unconfigure = handler.reportProblem("Are you certain to want to unconfigure this feature ?", multiStatus);
 		}
 

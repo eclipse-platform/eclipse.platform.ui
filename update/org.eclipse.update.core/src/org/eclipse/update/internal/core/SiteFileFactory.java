@@ -258,7 +258,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 						}
 
 						if (pluginFile != null && pluginFile.exists()) {
-							VersionedIdentifier identifier = new DefaultPluginParser().parse(new FileInputStream(pluginFile));
+							IPluginEntry entry = new DefaultPluginParser().parse(new FileInputStream(pluginFile));
+							VersionedIdentifier identifier = entry.getVersionIdentifier();
 							plugin = new PluginIdentifier(identifier, pluginFile);
 
 							addParsedPlugin(plugin);
@@ -335,7 +336,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 						jarReference.peek("fragment.xml", null, null);
 
 					if (ref != null) {
-						VersionedIdentifier identifier = new DefaultPluginParser().parse(ref.getInputStream());
+						IPluginEntry entry = new DefaultPluginParser().parse(ref.getInputStream());
+						VersionedIdentifier identifier = entry.getVersionIdentifier();
 						plugin = new PluginIdentifier(identifier, file);
 						addParsedPlugin(plugin);
 					} //ref!=null

@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.IActivity;
 import org.eclipse.update.core.IConfigurationSite;
 import org.eclipse.update.core.IFeature;
@@ -50,6 +51,7 @@ import org.xml.sax.SAXException;
 
 public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
+	private IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
 
 	/**
@@ -114,7 +116,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		return site;
 	}
-
 
 	private SiteLocal() {
 	}
@@ -526,7 +527,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// new site only exist in platformConfig
 			List modified = new ArrayList();
 			List toInstall = new ArrayList();
-			List toRemove = new ArrayList();
+			List brokenLink = new ArrayList();
 			IConfigurationSite[] configured = new IConfigurationSite[0];
 			if (getCurrentConfiguration() != null)
 				configured = getCurrentConfiguration().getConfigurationSites();
@@ -539,6 +540,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					if (configured[index].getSite().getURL().equals(resolvedURL)) {
 						found = true;
 						modified.add(configured[index]);
+						configured[index] = null;
 					}
 				}
 				// new site not found, create it
@@ -546,13 +548,19 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					ISite site = SiteManager.getSite(resolvedURL);
 					//site policy
 					IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
-					ConfigurationSite configSite = (ConfigurationSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteMapModel)site, sitePolicy.getType());
+					ConfigurationSite configSite = (ConfigurationSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteMapModel) site, sitePolicy.getType());
 					configSite.setPlatformURLString(siteEntries[siteIndex].getURL().toExternalForm());
 
 					//the site may not be read-write
 					configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
 					toInstall.add(configSite);
 				}
+			}
+
+			// get the broken sites.... teh one that are not setup and not modified
+			for (int g = 0; g < configured.length; g++) {
+				if (configured[g] != null)
+					brokenLink.add(configured[g]);
 			}
 
 			// we now have three lists
@@ -575,7 +583,16 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				newDefaultConfiguration.addConfigurationSite(element);
 			}
 
+			// add the broken one as is
+			Iterator brokenIter = brokenLink.iterator();
+			while (brokenIter.hasNext()) {
+				IConfigurationSite element = (IConfigurationSite) addIter.next();
+				((ConfigurationSiteModel) element).setBroken(true);
+				newDefaultConfiguration.addConfigurationSite(element);
+			}
+
 			this.addConfiguration(newDefaultConfiguration);
+
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create the Local Site: " + e.getMessage(), e);
@@ -585,23 +602,31 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private IConfigurationSite reconcile(IConfigurationSite toReconcile) throws CoreException {
 
-	int policy = toReconcile.getConfigurationPolicy().getPolicy();
-	SiteMapModel siteModel = (SiteMapModel)toReconcile.getSite();
-	ConfigurationSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel,policy );
-	newSiteModel.setInstallSite(toReconcile.isInstallSite());
-	IConfigurationSite newSite = (IConfigurationSite)newSiteModel;
+		int policy = toReconcile.getConfigurationPolicy().getPolicy();
+		SiteMapModel siteModel = (SiteMapModel) toReconcile.getSite();
+		ConfigurationSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
+		newSiteModel.setInstallSite(toReconcile.isInstallSite());
+		IConfigurationSite newSite = (IConfigurationSite) newSiteModel;
 
 		// check the Features that are still here
 		List toCheck = new ArrayList();
-		IFeatureReference[ ] configured = toReconcile.getSite().getFeatureReferences();
+		List brokenfeature = new ArrayList();
+		IFeatureReference[] configured = toReconcile.getSite().getFeatureReferences();
 		IFeatureReference[] found = newSite.getSite().getFeatureReferences();
 
 		for (int i = 0; i < found.length; i++) {
 			for (int j = 0; j < configured.length; j++) {
 				if (configured[j].equals(found[i])) {
 					toCheck.add(configured[j]);
+					configured[j] = null;
 				}
 			}
+		}
+
+		// teh features that are still in the array are broken
+		for (int k = 0; k < configured.length; k++) {
+			if (configured[k] != null)
+				brokenfeature.add(configured[k]);
 		}
 
 		// check the Plugins of all the features
@@ -611,6 +636,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		Iterator featureIter = toCheck.iterator();
 		while (featureIter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) featureIter.next();
+
 			if (currentSite.equals(element.getSite())) {
 				currentSite = element.getSite();
 				siteEntries = currentSite.getPluginEntries();
@@ -618,8 +644,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			IPluginEntry[] featuresEntries = element.getFeature().getPluginEntries();
 			IPluginEntry[] result = intersection(featuresEntries, siteEntries);
 			if (result == null || (result.length != featuresEntries.length)) {
-				//FIXME set feature as broken
-				//element.setValid(false);
+				((FeatureReferenceModel) element).setBroken(true);
 				IPluginEntry[] missing = intersection(featuresEntries, result);
 				String listOfMissingPlugins = "";
 				for (int k = 0; k < missing.length; k++) {
@@ -629,9 +654,20 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature " + element.getURL().toExternalForm() + " requires some missing plugins from the site:" + currentSite.getURL().toExternalForm() + listOfMissingPlugins, null);
 				UpdateManagerPlugin.getPlugin().getLog().log(status);
 			}
+			checkConfigure(element, newSite);
 		}
 
-		return toReconcile;
+		//add broken features
+		Iterator brokenIter = brokenfeature.iterator();
+		while (brokenIter.hasNext()) {
+			IFeatureReference element = (IFeatureReference) featureIter.next();
+			((FeatureReferenceModel) element).setBroken(true);
+			// if it is broken (ie the feature does not exist, we 
+			//cannot check the plugins... consider as unconfigured)
+			newSite.unconfigure(element,null);
+		}
+
+		return newSite;
 	}
 
 	/**
@@ -666,4 +702,55 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		return resultEntry;
 	}
 
+	/**
+	 * Check if all the plugins of the feature are configured in the runtime
+	 * depending on teh answer add it to the newSite as either configured or unconfigured
+	 * We have to check all the running plugin, even if they come from different site
+	 * A feature may be broken because all the plugins are not in the Site, but may be configured
+	 * because soem of the needed plugins come from other site
+	 */
+	private void checkConfigure(IFeatureReference ref, IConfigurationSite newSite) throws CoreException {
+		// check if all the needed plugins are part of all plugin
+		
+		IPluginEntry[] allPlugins = getAllRunningPlugin();
+		IPluginEntry[] featurePlugins = ref.getFeature().getPluginEntries();
+		IPluginEntry[] result = intersection(featurePlugins,allPlugins);
+		
+		// there are soem plugins the feature need that are not present
+		if (result.length!=0){
+			newSite.unconfigure(ref,null);
+		} else {
+			newSite.configure(ref);
+		}
+		
+	}
+
+	private IPluginEntry[] getAllRunningPlugin() throws CoreException {
+		if (allRunningPluginEntry == null) {
+			// get all the running plugins
+			URL[] pluginPathURL = BootLoader.getCurrentPlatformConfiguration().getPluginPath();
+
+			// we explicitly create instances of PlugiNEntry as we will just compare them
+			allRunningPluginEntry = new PluginEntry[pluginPathURL.length];
+			if (pluginPathURL.length > 0) {
+				DefaultPluginParser parser = new DefaultPluginParser();
+				for (int i = 0; i < pluginPathURL.length; i++) {
+					try {
+						IPluginEntry entry = parser.parse(pluginPathURL[i].openStream());
+						allRunningPluginEntry[i] = entry;						
+					} catch (Exception e){
+						throw newCoreException("Unable to parse file"+pluginPathURL[i]+".\r\n"+e.toString(),e);
+					}
+				}
+			}
+		}
+		return allRunningPluginEntry;
+	}
+	
+	/**
+	 * returns a Core Exception
+	 */
+	private static CoreException newCoreException(String s, Throwable e) throws CoreException {
+		return new CoreException(new Status(IStatus.ERROR, "org.eclipse.update.core", 0, s, e));
+	}	
 }

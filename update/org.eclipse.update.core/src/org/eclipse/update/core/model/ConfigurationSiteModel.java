@@ -19,6 +19,7 @@ import org.eclipse.update.core.IFeatureReference;
  */
 public class ConfigurationSiteModel extends ModelObject {
 
+	private boolean broken=false;
 	private SiteMapModel site;
 	private String platformURLString;
 	private ConfigurationPolicyModel policy;
@@ -114,6 +115,22 @@ public class ConfigurationSiteModel extends ModelObject {
 	 */
 	public void setPlatformURLString(String platformURLString) {
 		this.platformURLString = platformURLString;
+	}
+
+	/**
+	 * returns true if the Site is not accessible at this time.
+	 * @return Returns a boolean
+	 */
+	public boolean isBroken() {
+		return broken;
+	}
+
+	/**
+	 * Sets the broken.
+	 * @param broken The broken to set
+	 */
+	public void setBroken(boolean broken) {
+		this.broken = broken;
 	}
 
 }

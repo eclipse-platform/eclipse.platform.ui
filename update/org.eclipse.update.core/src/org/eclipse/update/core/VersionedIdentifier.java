@@ -36,7 +36,7 @@ public class VersionedIdentifier {
 	 */
 	public VersionedIdentifier(String id, String versionName) {
 		if (id==null || (id=id.trim()).equals("") || versionName==null)
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("The id or the version of an identifier is null or empty");
 		this.id = id;
 		this.version = new Version(versionName);
 	}
