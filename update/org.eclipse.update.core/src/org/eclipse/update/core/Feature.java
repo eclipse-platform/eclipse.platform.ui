@@ -3,6 +3,7 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+ 
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,36 +20,30 @@ import org.eclipse.update.internal.core.InstallHandlerProxy;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
+
 /**
- * Abstract Class that implements most of the behavior of a feature
- * A feature ALWAYS belongs to an ISite
+ * Convenience implementation of a packaged feature.
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p> 
+ * @see org.eclipse.update.core.IFeature
+ * @see org.eclipse.update.core.model.FeatureModel
+ * @since 2.0
  */
 public class Feature extends FeatureModel implements IFeature {
 
 	/**
-	 * 
+	 * Simple file name of the default feature manifest file
 	 */
 	public static final String FEATURE_FILE = "feature"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 * File extension of the default feature manifest file
 	 */
 	public static final String FEATURE_XML = FEATURE_FILE + ".xml"; //$NON-NLS-1$
 
-	/**
-	 * 
-	 */
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
-	/**
-	 * Site in which teh feature resides
-	 */
-	private ISite site;
-
-	/**
-	 * The content provider of the DefaultFeature
-	 */
-	private IFeatureContentProvider featureContentProvider;
+	private ISite site; // feature site
+	private IFeatureContentProvider featureContentProvider; // content provider
 
 	/**
 	 * Constructor
@@ -157,7 +152,7 @@ public class Feature extends FeatureModel implements IFeature {
 			String id =
 				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			String featureURLString =
-				(getURL() != null) ? getURL().toExternalForm() : EMPTY_STRING;
+				(getURL() != null) ? getURL().toExternalForm() : "";
 			IStatus status =
 				new Status(
 					IStatus.ERROR,
@@ -269,7 +264,7 @@ public class Feature extends FeatureModel implements IFeature {
 			int taskCount =
 				2 + 2 * pluginsToInstall.length + nonPluginsToInstall.length + 1;
 			if (monitor != null)
-				monitor.beginTask(EMPTY_STRING, taskCount);
+				monitor.beginTask("", taskCount);
 
 			// Start the installation tasks			
 			handler.installInitiated();
