@@ -127,7 +127,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (altStyleValues != null) {
             altStyle = altStyleValues[0];
             altStyle = BundleUtil.getResolvedResourceLocation(altStyle, bundle);
-            for (int i = 1; i < styleValues.length; i++) {
+            for (int i = 1; i < altStyleValues.length; i++) {
                 String style = altStyleValues[i];
                 style = BundleUtil.getResolvedResourceLocation(style, bundle);
                 addAltStyle(style, bundle);
