@@ -300,7 +300,10 @@ void importFile(Object fileObject, int policy) {
 	try {
 		containerResource = getDestinationContainerFor(fileObject);
 	} catch (CoreException e) {
-		errorTable.add(e.getStatus());
+		IStatus coreStatus = e.getStatus();		
+		String newMessage = DataTransferMessages.format("ImportOperation.coreImportError", new Object [] {fileObject, coreStatus.getMessage()}); //$NON-NLS-1$
+		IStatus status = new Status(coreStatus.getSeverity(), coreStatus.getPlugin(), coreStatus.getCode(), newMessage, null);
+		errorTable.add(status);
 		return;
 	}
 		
