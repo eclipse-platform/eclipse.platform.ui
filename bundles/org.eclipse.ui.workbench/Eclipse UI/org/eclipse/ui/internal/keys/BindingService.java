@@ -110,9 +110,13 @@ public final class BindingService implements IBindingService {
 		return bindingManager.isPerfectMatch(sequence);
 	}
 
+	public final void readRegistryAndPreferences() {
+		BindingPersistence.read(bindingManager);
+	}
+
 	public final void savePreferences(final Scheme activeScheme,
 			final Binding[] bindings) throws IOException {
-		BindingPersistence.persist(activeScheme, bindings);
+		BindingPersistence.write(activeScheme, bindings);
 		try {
 			bindingManager.setActiveScheme(activeScheme);
 		} catch (final NotDefinedException e) {

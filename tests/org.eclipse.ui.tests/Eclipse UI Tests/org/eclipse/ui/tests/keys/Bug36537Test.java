@@ -17,11 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.commands.KeySequenceBindingDefinition;
-import org.eclipse.ui.internal.commands.CommandManagerWrapper;
-import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -46,45 +47,40 @@ public class Bug36537Test extends UITestCase {
      * application.
      */
     public void testForRedundantKeySequenceBindings() {
-        IWorkbenchWindow window = openTestWindow();
-        Workbench workbench = (Workbench) window.getWorkbench();
-        // TODO this is a bad downcast and will fail in the future.
-        CommandManagerWrapper mutableCommandManager = (CommandManagerWrapper) workbench
-                .getCommandSupport().getCommandManager();
-        List keySequenceBindings = mutableCommandManager.getCommandRegistry()
-                .getKeySequenceBindingDefinitions();
-        Iterator keySequenceBindingItr = keySequenceBindings.iterator();
+        final IWorkbenchWindow window = openTestWindow();
+        final IWorkbench workbench = window.getWorkbench();
+		final IBindingService bindingService = (IBindingService) workbench.getService(IWorkbenchServices.BINDING);
+        final Binding[] bindings = bindingService.getBindings();
+		final int bindingCount = bindings.length;
         Map keySequenceBindingsByKeySequence = new HashMap();
 
-        while (keySequenceBindingItr.hasNext()) {
+        for (int i = 0; i < bindingCount; i++) {
             // Retrieve the key binding.
-            KeySequenceBindingDefinition keySequenceBinding = (KeySequenceBindingDefinition) keySequenceBindingItr
-                    .next();
+            final Binding binding = bindings[i];
 
             // Find the point the bindings with matching key sequences.
-            KeySequence keySequence = keySequenceBinding.getKeySequence();
+            TriggerSequence triggerSequence = binding.getTriggerSequence();
             List matches = (List) keySequenceBindingsByKeySequence
-                    .get(keySequence);
+                    .get(triggerSequence);
             if (matches == null) {
                 matches = new ArrayList();
-                keySequenceBindingsByKeySequence.put(keySequence, matches);
+                keySequenceBindingsByKeySequence.put(triggerSequence, matches);
             }
 
             // Check that we don't have any redundancy or other wackiness.
             Iterator matchItr = matches.iterator();
             while (matchItr.hasNext()) {
-                KeySequenceBindingDefinition definition = (KeySequenceBindingDefinition) matchItr
-                        .next();
-                String commandA = keySequenceBinding.getCommandId();
-                String commandB = definition.getCommandId();
-                String contextA = keySequenceBinding.getContextId();
-                String contextB = definition.getContextId();
-                String keyConfA = keySequenceBinding.getKeyConfigurationId();
-                String keyConfB = definition.getKeyConfigurationId();
-                String localeA = keySequenceBinding.getLocale();
-                String localeB = definition.getLocale();
-                String platformA = keySequenceBinding.getPlatform();
-                String platformB = definition.getPlatform();
+                final Binding matchedBinding = (Binding) matchItr.next();
+                String commandA = binding.getCommandId();
+                String commandB = matchedBinding.getCommandId();
+                String contextA = binding.getContextId();
+                String contextB = matchedBinding.getContextId();
+                String keyConfA = binding.getSchemeId();
+                String keyConfB = matchedBinding.getSchemeId();
+                String localeA = binding.getLocale();
+                String localeB = matchedBinding.getLocale();
+                String platformA = binding.getPlatform();
+                String platformB = matchedBinding.getPlatform();
 
                 boolean same = true;
                 int nullMatches = 0;
@@ -116,11 +112,11 @@ public class Bug36537Test extends UITestCase {
                 }
 
                 assertFalse(
-                        "Redundant key bindings: " + keySequenceBinding + ", " + definition, same && (nullMatches < 1)); //$NON-NLS-1$ //$NON-NLS-2$
+                        "Redundant key bindings: " + binding + ", " + matchedBinding, same && (nullMatches < 1)); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             // Add the key binding.
-            matches.add(keySequenceBinding);
+            matches.add(binding);
         }
     }
 }

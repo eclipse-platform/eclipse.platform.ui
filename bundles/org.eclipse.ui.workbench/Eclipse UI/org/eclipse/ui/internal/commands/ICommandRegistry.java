@@ -18,8 +18,6 @@ public interface ICommandRegistry {
     void addCommandRegistryListener(
             ICommandRegistryListener commandRegistryListener);
 
-    List getActiveKeyConfigurationDefinitions();
-
     List getCategoryDefinitions();
 
     List getCommandDefinitions();
@@ -27,10 +25,6 @@ public interface ICommandRegistry {
     List getHandlers();
 
     List getImageBindingDefinitions();
-
-    List getKeyConfigurationDefinitions();
-
-    List getKeySequenceBindingDefinitions();
 
     void removeCommandRegistryListener(
             ICommandRegistryListener commandRegistryListener);

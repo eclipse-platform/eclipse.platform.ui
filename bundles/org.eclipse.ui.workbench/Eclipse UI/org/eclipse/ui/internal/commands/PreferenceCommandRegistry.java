@@ -95,34 +95,13 @@ public final class PreferenceCommandRegistry extends
 
             try {
                 IMemento memento = XMLMemento.createReadRoot(reader);
-                List activeKeyConfigurationDefinitions = Collections
-                        .unmodifiableList(Persistence
-                                .readActiveKeyConfigurationDefinitions(
-                                        memento,
-                                        Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
-                                        null));
                 List categoryDefinitions = Collections
                         .unmodifiableList(Persistence.readCategoryDefinitions(
                                 memento, Persistence.TAG_CATEGORY, null));
                 List commandDefinitions = Collections
                         .unmodifiableList(Persistence.readCommandDefinitions(
                                 memento, Persistence.TAG_COMMAND, null));
-                List keyConfigurationDefinitions = Collections
-                        .unmodifiableList(Persistence
-                                .readKeyConfigurationDefinitions(memento,
-                                        Persistence.TAG_KEY_CONFIGURATION, null));
-                List keySequenceBindingDefinitions = Collections
-                        .unmodifiableList(Persistence
-                                .readKeySequenceBindingDefinitions(memento,
-                                        Persistence.TAG_KEY_SEQUENCE_BINDING,
-                                        null));
                 boolean commandRegistryChanged = false;
-
-                if (!activeKeyConfigurationDefinitions
-                        .equals(this.activeKeyConfigurationDefinitions)) {
-                    this.activeKeyConfigurationDefinitions = activeKeyConfigurationDefinitions;
-                    commandRegistryChanged = true;
-                }
 
                 if (!categoryDefinitions.equals(this.categoryDefinitions)) {
                     this.categoryDefinitions = categoryDefinitions;
@@ -131,18 +110,6 @@ public final class PreferenceCommandRegistry extends
 
                 if (!commandDefinitions.equals(this.commandDefinitions)) {
                     this.commandDefinitions = commandDefinitions;
-                    commandRegistryChanged = true;
-                }
-
-                if (!keyConfigurationDefinitions
-                        .equals(this.keyConfigurationDefinitions)) {
-                    this.keyConfigurationDefinitions = keyConfigurationDefinitions;
-                    commandRegistryChanged = true;
-                }
-
-                if (!keySequenceBindingDefinitions
-                        .equals(this.keySequenceBindingDefinitions)) {
-                    this.keySequenceBindingDefinitions = keySequenceBindingDefinitions;
                     commandRegistryChanged = true;
                 }
 
@@ -165,18 +132,10 @@ public final class PreferenceCommandRegistry extends
      */
     public void save() throws IOException {
         XMLMemento xmlMemento = XMLMemento.createWriteRoot(KEY);
-        Persistence.writeActiveKeyConfigurationDefinitions(xmlMemento,
-                Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
-                activeKeyConfigurationDefinitions);
         Persistence.writeCategoryDefinitions(xmlMemento,
                 Persistence.TAG_CATEGORY, categoryDefinitions);
         Persistence.writeCommandDefinitions(xmlMemento,
                 Persistence.TAG_COMMAND, commandDefinitions);
-        Persistence.writeKeyConfigurationDefinitions(xmlMemento,
-                Persistence.TAG_KEY_CONFIGURATION, keyConfigurationDefinitions);
-        Persistence.writeKeySequenceBindingDefinitions(xmlMemento,
-                Persistence.TAG_KEY_SEQUENCE_BINDING,
-                keySequenceBindingDefinitions);
         Writer writer = new StringWriter();
 
         try {

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -32,7 +33,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * @since 3.0
  */
 public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
-
+	
 	public void initializeDefaultPreferences() {
 
 		IEclipsePreferences node = new DefaultScope().getNode(UIPlugin
@@ -79,7 +80,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		//Default to the standard key configuration.
 		node.put(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
-				"org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
+				IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID);
 
 		//Preference for showing system jobs in the jobs view
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS,false);
