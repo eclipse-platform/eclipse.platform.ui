@@ -65,6 +65,7 @@ class SearchResultViewer extends TableViewer {
 	private CopyToClipboardAction fCopyToClipboardAction;
 	private int fMarkerToShow;
 	private boolean fHandleNextSelectionChangedEvent= true;
+	private boolean fCurrentMatchRemoved= false;
 	
 	/*
 	 * These static fields will go away when support for 
@@ -145,6 +146,7 @@ class SearchResultViewer extends TableViewer {
 		fRemoveMatchAction.setEnabled(hasSingleSelection);
 		if (updateMarkerToShow && fHandleNextSelectionChangedEvent) {
 			fMarkerToShow= -1;
+			fCurrentMatchRemoved= false;
 		} else
 			fHandleNextSelectionChangedEvent= true;
 
@@ -197,6 +199,7 @@ class SearchResultViewer extends TableViewer {
 		getTable().removeAll();
 		super.inputChanged(input, oldInput);
 		fMarkerToShow= -1;
+		fCurrentMatchRemoved= false;
 		updateTitle();
 		enableActions();
 		if (getItemCount() > 0)
@@ -331,6 +334,7 @@ class SearchResultViewer extends TableViewer {
 
 
 		fMarkerToShow= 0;
+		fCurrentMatchRemoved= false;
 		entry.setSelectedMarkerIndex(0);
 		openCurrentSelection();
 	}
@@ -350,8 +354,10 @@ class SearchResultViewer extends TableViewer {
 		if (index > -1)
 			entry= (SearchResultViewEntry)table.getItem(index).getData();
 
-
-		fMarkerToShow++;
+		if (fCurrentMatchRemoved)
+			fCurrentMatchRemoved= false;
+		else
+			fMarkerToShow++;
 		if (entry == null || fMarkerToShow >= entry.getMatchCount()) {
 			// move selection
 			if (index == -1) {
@@ -376,6 +382,7 @@ class SearchResultViewer extends TableViewer {
 	 * visible result, this method makes the last result visible.
 	 */
 	public void showPreviousResult() {
+		fCurrentMatchRemoved= false;
 		Table table= getTable();
 		if (!canDoShowResult(table))
 			return;
@@ -500,9 +507,11 @@ class SearchResultViewer extends TableViewer {
 	/**
 	 * Handle an update of an entry.
 	 */
-	protected void handleUpdateMatch(ISearchResultViewEntry entry) {
+	protected void handleUpdateMatch(ISearchResultViewEntry entry, boolean matchRemoved) {
 		Widget item= findItem(entry);
 		updateItem(item, entry);
+		if (matchRemoved && getSelectionFromWidget().contains(entry))
+			fCurrentMatchRemoved= true;
 	}
 
 	//--- Persistency -------------------------------------------------

@@ -386,7 +386,7 @@ public class SearchManager implements IResourceChangeListener {
 			entry.add(marker);
 			Iterator iter= fListeners.iterator();
 			while (iter.hasNext())
-				((SearchResultViewer)iter.next()).handleUpdateMatch(entry);
+				((SearchResultViewer)iter.next()).handleUpdateMatch(entry, false);
 		}
 	}
 	
@@ -415,7 +415,7 @@ public class SearchManager implements IResourceChangeListener {
 			else {
 				Iterator iter= fListeners.iterator();
 				while (iter.hasNext())
-					((SearchResultViewer)iter.next()).handleUpdateMatch(entry);
+					((SearchResultViewer)iter.next()).handleUpdateMatch(entry, true);
 			}
 		}
 	}
@@ -425,7 +425,7 @@ public class SearchManager implements IResourceChangeListener {
 		if (entry != null) {
 			Iterator iter= fListeners.iterator();
 			while (iter.hasNext())
-				((SearchResultViewer)iter.next()).handleUpdateMatch(entry);
+				((SearchResultViewer)iter.next()).handleUpdateMatch(entry, false);
 		}
 	}
 
