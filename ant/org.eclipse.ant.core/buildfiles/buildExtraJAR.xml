@@ -32,6 +32,7 @@
 					${basedir}/../org.eclipse.osgi/bin;
 					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/osgi.jar;
 					${basedir}/../org.apache.ant/lib/ant.jar;
+					${basedir}/../org.apache.ant/lib/ant-launcher.jar;
 					${eclipse.home}/plugins/org.apache.ant${ant_version.suffix}/lib/ant.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
