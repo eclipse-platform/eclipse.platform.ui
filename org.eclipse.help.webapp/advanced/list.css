@@ -75,14 +75,4 @@ TABLE {
 	padding-right:5px;
 }
 
-<% 
-if (data.isMozilla()) {
-%>
-.active, A.active:hover {
-	background:WindowText;
-	color:Window;
-}
-<%
-}
-%>
  
