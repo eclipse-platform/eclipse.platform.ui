@@ -20,5 +20,5 @@ Export-Package:
 Provide-Package: 
  org.eclipse.update.configurator
 Require-Bundle: 
- org.eclipse.core.runtime.osgi,
+ org.eclipse.core.runtime,
  org.apache.xerces;optional=true
