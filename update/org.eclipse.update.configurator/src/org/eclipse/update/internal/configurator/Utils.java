@@ -153,6 +153,8 @@ public class Utils {
 //		if (log != null)
 //			log.log(status);
 		System.out.println(status.getMessage());
+		if (status.getException() != null)
+			status.getException().printStackTrace();
 	}
 	
 	/**
