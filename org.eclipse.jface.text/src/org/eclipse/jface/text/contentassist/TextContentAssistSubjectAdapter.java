@@ -39,8 +39,14 @@ import org.eclipse.jface.text.IDocument;
  */
 public class TextContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
 
+	/**
+	 * The <code>Document</code> of <code>fCombo</code>'s contents.
+	 */
 	private class InternalDocument extends Document {
-		
+	
+		/**
+		 * Updates this <code>Document</code> with changes in <code>fText</code>.
+		 */
 		private ModifyListener fModifyListener;
 		
 		private InternalDocument() {
@@ -67,6 +73,11 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		}
 	}
 
+	/** The text. */
+	private Text fText;
+	/** The modify listeners. */
+	private HashMap fModifyListeners;
+	
 	/**
 	 * Creates a content assist subject adapter for the given text.
 	 * 
@@ -89,39 +100,33 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	}
 
 	/**
-	 * The text.
-	 */
-	private Text fText;
-	private HashMap fModifyListeners;
-	
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getControl()
+	 * {@inheritDoc}
 	 */
 	public Control getControl() {
 		return fText;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLineHeight()
+	/**
+	 * {@inheritDoc}
 	 */
 	public int getLineHeight() {
 		return fText.getLineHeight();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getCaretOffset()
+	/**
+	 * {@inheritDoc}
 	 */
 	public int getCaretOffset() {
 		return fText.getCaretPosition();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLocationAtOffset(int)
+	/**
+	 * {@inheritDoc}
 	 */
 	public Point getLocationAtOffset(int offset) {
 //		return fText.getCaretLocation();
 
-		//XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50256
+		// FIXME: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50256
 		String comboString= fText.getText();
 		GC gc = new GC(fText);
 		gc.setFont(fText.getFont());
@@ -129,28 +134,28 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		int spaceWidth= gc.textExtent(" ").x; //$NON-NLS-1$
 		gc.dispose();
 		/*
-		 * FIXME: the two space widths below is a workaround for bug 44072
+		 * FIXME: the two space widths below is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=44072
 		 */
 		int x= 2 * spaceWidth + fText.getClientArea().x + fText.getBorderWidth() + extent.x;
 		return new Point(x, 0);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getSelectionRange()
+	/**
+	 * {@inheritDoc}
 	 */
 	public Point getWidgetSelectionRange() {
 		return new Point(fText.getSelection().x, Math.abs(fText.getSelection().y - fText.getSelection().x));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getSelectedRange()
+	/**
+	 * {@inheritDoc}
 	 */
 	public Point getSelectedRange() {
 		return new Point(fText.getSelection().x, Math.abs(fText.getSelection().y - fText.getSelection().x));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getDocument()
+	/**
+	 * {@inheritDoc}
 	 */
 	public IDocument getDocument() {
 		IDocument document= (IDocument)fText.getData("document"); //$NON-NLS-1$
@@ -161,26 +166,29 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		return document;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setSelectedRange(int, int)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setSelectedRange(int i, int j) {
 		fText.setSelection(new Point(i, i+j));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#revealRange(int, int)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void revealRange(int i, int j) {
 		// XXX: this should be improved
 		fText.setSelection(new Point(i, i+j));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fText.addSelectionListener(selectionListener);
 		Listener listener= new Listener() {
-			/*
-			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+			/**
+			 * {@inheritDoc}
 			 */
 			public void handleEvent(Event e) {
 				selectionListener.widgetSelected(new SelectionEvent(e));
@@ -189,9 +197,12 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		};
 		fText.addListener(SWT.Modify, listener); 
 		fModifyListeners.put(selectionListener, listener);
-		return true; //TODO: why return true?
+		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fText.removeSelectionListener(selectionListener);
 		Object listener= fModifyListeners.get(selectionListener);

@@ -40,8 +40,13 @@ import org.eclipse.jface.util.Assert;
  */
 public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
 
+	/**
+	 * The <code>Document</code> of <code>fCombo</code>'s contents.
+	 */
 	private class InternalDocument extends Document {
-		
+		/**
+		 * Updates this <code>Document</code> with changes in <code>fCombo</code>.
+		 */
 		private ModifyListener fModifyListener;
 		
 		private InternalDocument() {
@@ -181,7 +186,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		};
 		fCombo.addListener(SWT.Modify, listener); 
 		fModifyListeners.put(selectionListener, listener);
-		return true; //TODO: why return true?
+		return true;
 	}
 
 	/*

@@ -43,7 +43,7 @@ import org.eclipse.jface.text.IEventConsumer;
 
 
 /**
- * A <code>ControlContentAssistSubjectAdapter</code> delegates assistance requests from a 
+ * An <code>AbstractControlContentAssistSubjectAdapter</code> delegates assistance requests from a 
  * {@link org.eclipse.jface.text.contentassist.IContentAssistantExtension content assistant}
  * to a <code>Control</code>.
  * <p>
@@ -56,14 +56,26 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 
 	protected static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/ContentAssistSubjectAdapters"));  //$NON-NLS-1$//$NON-NLS-2$
 	
+	/**
+	 * ImageDescriptor of the visual cue for content assist in dialog fields.
+	 */
 	private static final ImageDescriptor CONTENT_ASSIST_CUE_IMAGE= ImageDescriptor.createFromFile(AbstractControlContentAssistSubjectAdapter.class, "images/content_assist_cue.gif"); //$NON-NLS-1$
-
+	/**
+	 * VerifyKeyListeners for the control.
+	 */
 	private List fVerifyKeyListeners;
+	/**
+	 * KeyListeners for the control.
+	 */
 	private Set fKeyListeners;
+	/**
+	 * The Listener installed on the control which passes events to
+	 * {@link #fVerifyKeyListeners fVerifyKeyListeners} and {@link #fKeyListeners fKeyListeners}.
+	 */
 	private Listener fControlListener;
 
 	/**
-	 * Creates a new {@link ControlContentAssistSubjectAdapter}.
+	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
 	 * 
 	 * @param control the control
 	 **/
@@ -72,7 +84,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	}
 
 	/**
-	 * Creates a new {@link ControlContentAssistSubjectAdapter}.
+	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
 	 * 
 	 * @param control the control
 	 * @param showCue show cue on the left side of control
@@ -94,79 +106,85 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void addKeyListener(KeyListener keyListener) {
 		fKeyListeners.add(keyListener);
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#addKeyListener()"); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#addKeyListener()"); //$NON-NLS-1$
 		installControlListener();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void removeKeyListener(KeyListener keyListener) {
 		boolean deleted= fKeyListeners.remove(keyListener);
 		if (DEBUG && !deleted)
 			System.err.println("removeKeyListener -> wasn't here"); //$NON-NLS-1$
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#removeKeyListener() -> " + fKeyListeners.size()); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#removeKeyListener() -> " + fKeyListeners.size()); //$NON-NLS-1$
 		uninstallControlListener();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#supportsVerifyKeyListener()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean supportsVerifyKeyListener() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(verifyKeyListener);
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#appendVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#appendVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
 		installControlListener();
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#prependVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(0, verifyKeyListener);
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#prependVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#prependVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
 		installControlListener();
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.remove(verifyKeyListener);
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#removeVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#removeVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
 		uninstallControlListener();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setEventConsumer(org.eclipse.jface.text.IEventConsumer)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setEventConsumer(IEventConsumer eventConsumer) {
 		// this is not supported
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#setEventConsumer()"); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#setEventConsumer()"); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLineDelimiter()
+	/**
+	 * {@inheritDoc}
 	 */
 	public String getLineDelimiter() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
-
+	
+	/**
+	 * Installs <code>fControlListener</code>, which handles VerifyEvents and KeyEvents by
+	 * passing them to <code>fVerifyKeyListeners</code> and <code>fKeyListeners</code>.
+	 */
 	private void installControlListener() {
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#installControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#installControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fControlListener != null)
 			return;
 	
 		fControlListener= new Listener() {
 			public void handleEvent(Event e) {
+				if (e.widget != getControl())
+					return; //SWT.TRAVERSE_MNEMONIC events can also come from other widgets
 				VerifyEvent verifyEvent= new VerifyEvent(e);
 				KeyEvent keyEvent= new KeyEvent(e);
 				switch (e.type) {
@@ -204,43 +222,62 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						Assert.isTrue(false);
 				}
 			}
+			
+			/**
+			 * Dump the given events to "standard" output.
+			 * 
+			 * @param who who dump's
+			 * @param e  the event
+			 * @param ve the verify event
+			 */
 			private void dump(String who, Event e, VerifyEvent ve) {
-				StringBuffer sb= new StringBuffer("---\n"); //$NON-NLS-1$
+				StringBuffer sb= new StringBuffer("--- [AbstractControlContentAssistSubjectAdapter]\n"); //$NON-NLS-1$
 				sb.append(who);
 				sb.append(" - e: keyCode="+e.keyCode+hex(e.keyCode)); //$NON-NLS-1$
 				sb.append("; character="+e.character+hex(e.character)); //$NON-NLS-1$
 				sb.append("; stateMask="+e.stateMask+hex(e.stateMask)); //$NON-NLS-1$
 				sb.append("; doit="+e.doit); //$NON-NLS-1$
 				sb.append("; detail="+e.detail+hex(e.detail)); //$NON-NLS-1$
+				sb.append("; widget="+e.widget); //$NON-NLS-1$
 				sb.append("\n"); //$NON-NLS-1$
 				sb.append("  verifyEvent keyCode="+e.keyCode+hex(e.keyCode)); //$NON-NLS-1$
 				sb.append("; character="+e.character+hex(e.character)); //$NON-NLS-1$
 				sb.append("; stateMask="+e.stateMask+hex(e.stateMask)); //$NON-NLS-1$
 				sb.append("; doit="+ve.doit); //$NON-NLS-1$
+				sb.append("; widget="+e.widget); //$NON-NLS-1$
 				System.out.println(sb);
 			}
+			
 			private String hex(int i) {
 				return "[0x" + Integer.toHexString(i) + ']'; //$NON-NLS-1$
 			}
 		};
 		getControl().addListener(SWT.Traverse, fControlListener);
 		getControl().addListener(SWT.KeyDown, fControlListener);
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#installControlListener() - installed"); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#installControlListener() - installed"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Uninstalls <code>fControlListener</code> iff there are no <code>KeyListener</code>s and no
+	 * <code>VerifyKeyListener</code>s registered.
+	 * Otherwise does nothing.
+	 */
 	private void uninstallControlListener() {
 		if (fControlListener == null || fKeyListeners.size() + fVerifyKeyListeners.size() != 0) {
-			if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#uninstallControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
+			if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		getControl().removeListener(SWT.Traverse, fControlListener);
 		getControl().removeListener(SWT.KeyDown, fControlListener);
 		fControlListener= null;
-		if (DEBUG) System.err.println("ControlContentAssistSubjectAdapter#uninstallControlListener() - done"); //$NON-NLS-1$
+		if (DEBUG) System.err.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() - done"); //$NON-NLS-1$
 	}
 
 	/**
-	 * Installs a visual cue indicating availability of content assist on the given control.
+	 * Installs the handler which shows a visual cue besides
+	 * the <code>Text</code> or <code>Combo</code> control.
+	 * Does nothing if already installed or the control is
+	 * of an unsupported type.
 	 */
 	private  static void installContentAssistCue(final Control control) {
 		
@@ -266,6 +303,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		class CueHandler implements FocusListener, PaintListener {
 			private Image fBulb;
 			
+			/**
+			 * {@inheritDoc}
+			 */
 			public void paintControl(PaintEvent e) {
 				if (control.isDisposed())
 					return;
@@ -276,6 +316,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				e.gc.drawImage(fBulb, p.x, p.y);
 			}
 			
+			/**
+			 * {@inheritDoc}
+			 */
 			public void focusGained(FocusEvent e) {
 				for (Control c= ((Control)e.widget).getParent(); c != null; c= c.getParent()) {
 					c.addPaintListener(this);
@@ -283,6 +326,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				}
 			}
 			
+			/**
+			 * {@inheritDoc}
+			 */
 			public void focusLost(FocusEvent e) {
 				for (Control c= ((Control)e.widget).getParent(); c != null; c= c.getParent()) {
 					c.removePaintListener(this);
