@@ -102,25 +102,29 @@ public final class TextOperationAction extends TextEditorAction {
 	 * operation code.
 	 */
 	public void run() {
-		if (fOperationCode != -1 && fOperationTarget != null) {
+		if (fOperationCode == -1 || fOperationTarget == null)
+			return;
 			
-			ITextEditor editor= getTextEditor();
-			if (editor != null) {
-				
-				Display display= null;
-				
-				IWorkbenchPartSite site= editor.getSite();
-				Shell shell= site.getShell();
-				if (shell != null && !shell.isDisposed()) 
-					display= shell.getDisplay();
+		ITextEditor editor= getTextEditor();
+		if (editor == null)
+			return;
+
+		if (editor instanceof ITextEditorExtension2)
+			if (! ((ITextEditorExtension2) editor).validateEditorInputState())
+				return;
 			
-				BusyIndicator.showWhile(display, new Runnable() {
-					public void run() {
-						fOperationTarget.doOperation(fOperationCode);
-					}
-				});
+		Display display= null;
+		
+		IWorkbenchPartSite site= editor.getSite();
+		Shell shell= site.getShell();
+		if (shell != null && !shell.isDisposed()) 
+			display= shell.getDisplay();
+	
+		BusyIndicator.showWhile(display, new Runnable() {
+			public void run() {
+				fOperationTarget.doOperation(fOperationCode);
 			}
-		}
+		});
 	}
 	
 	/**
@@ -132,9 +136,9 @@ public final class TextOperationAction extends TextEditorAction {
 	public void update() {
 		
 		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension) {
-			ITextEditorExtension extension= (ITextEditorExtension) editor;
-			if (extension.isEditorInputReadOnly() && !fRunsOnReadOnly) {
+		if (editor instanceof ITextEditorExtension2) {
+			ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
+			if (!extension.isEditorInputModifiable() && !fRunsOnReadOnly) {
 				setEnabled(false);
 				return;
 			}

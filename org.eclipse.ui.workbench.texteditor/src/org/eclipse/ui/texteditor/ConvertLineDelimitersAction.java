@@ -78,6 +78,10 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			ITextEditor editor= getTextEditor();
 			if (editor == null)
 				return;
+
+			if (editor instanceof ITextEditorExtension2)
+				if (! ((ITextEditorExtension2) editor).validateEditorInputState())
+					return;
 				
 			Object adapter= editor.getAdapter(IRewriteTarget.class);
 			if (adapter instanceof IRewriteTarget) {
@@ -265,8 +269,11 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			if (editor == null)
 				return false;
 
-			if (editor instanceof ITextEditorExtension && ((ITextEditorExtension) editor).isEditorInputReadOnly())
-				return false;
+			if (editor instanceof ITextEditorExtension2) {
+				ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
+				if (! extension.isEditorInputModifiable())
+					return false;
+			}
 
 //			IDocument document= getDocument();
 //			if (document == null || usesLineDelimiterExclusively(document, fLineDelimiter))

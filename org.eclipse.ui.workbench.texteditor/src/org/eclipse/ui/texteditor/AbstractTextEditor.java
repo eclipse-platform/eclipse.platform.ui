@@ -132,6 +132,9 @@ import org.eclipse.ui.internal.actions.gestures.Util;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
+
+
+
 /**
  * Abstract base implementation of a text editor.
  * <p>
@@ -161,7 +164,7 @@ import org.eclipse.ui.part.EditorPart;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, INavigationLocationProvider {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, INavigationLocationProvider {
 
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
@@ -169,6 +172,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private static final String TAG_CONTRIBUTION_TYPE= "editorContribution"; //$NON-NLS-1$
+
+	/**
+	 * The text input listener.
+	 */
+	private static class TextInputListener implements ITextInputListener {
+		/** Indicates whether the editor input changed during the process of state validation. */
+		public boolean inputChanged;
+		/** Detector for editor input changes during the process of state validation. */
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {}
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) { inputChanged= true; }
+	}
 
 	/**
 	 * Internal element state listener.
@@ -181,31 +195,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			 * @since 2.0
 			 */
 			class Validator implements VerifyListener {
-				
-				/** Indicates whether the editor input changed during the process of state validation. */
-				private boolean fInputChanged;
-				/** Detector for editor input changes during the process of state validation. */
-				private ITextInputListener fInputListener= new ITextInputListener() {
-					public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {}
-					public void inputDocumentChanged(IDocument oldInput, IDocument newInput) { fInputChanged= true; }
-				};
-				
 				/*
 				 * @see VerifyListener#verifyText(VerifyEvent)
 				 */
 				public void verifyText(VerifyEvent e) {
-					
-					ISourceViewer viewer= getSourceViewer();
-					fInputChanged= false;
-					viewer.addTextInputListener(fInputListener);
-					try {
-						validateState(getEditorInput());
-						sanityCheckState(getEditorInput());
-						if (isEditorInputReadOnly() || fInputChanged)
-							e.doit= false;
-					} finally {
-						viewer.removeTextInputListener(fInputListener);
-					}
+					if (! validateEditorInputState())
+						e.doit= false;
 				}
 			};
 		
@@ -1208,6 +1203,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private Menu fRulerContextMenu;
 	/** The editor's element state listener */
 	private IElementStateListener fElementStateListener= new ElementStateListener();
+	/** The editor's text input listener. */
+	private TextInputListener fTextInputListener= new TextInputListener();
 	/** The editor's text listener */
 	private ITextListener fTextListener= new TextListener();
 	/** The editor's property change listener */
@@ -1582,7 +1579,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						if (action.isEnabled())
 							action.run();
 					}
-				}				
+				}
 				
 				public void mouseUp(MouseEvent e) {
 					setFocus();
@@ -1724,7 +1721,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
 	 * source viewer. Subclasses may extend.
 	 */
-	public void createPartControl(Composite parent) {	
+	public void createPartControl(Composite parent) {
+		
 		fVerticalRuler= createVerticalRuler();
 		
 		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
@@ -2234,7 +2232,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fSourceViewer.removeTextListener(fTextListener);
 				fTextListener= null;
 			}
-			
+
+			fTextInputListener= null;			
 			fSelectionProvider= null;
 			fSourceViewer= null;
 		}
@@ -2555,24 +2554,60 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void validateState(IEditorInput input) {
 		IDocumentProvider provider= getDocumentProvider();
-		if (provider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-			try {
-				
-				boolean wasReadOnly= isEditorInputReadOnly();
-				
-				extension.validateState(input, getSite().getShell());
-				
+		if (! (provider instanceof IDocumentProviderExtension))
+			return;
+			
+		IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+
+		boolean wasReadOnly= isEditorInputReadOnly();
+
+		try {
+			extension.validateState(input, getSite().getShell());
+			
+		} catch (CoreException exception) {
+
+			// for backward compatibility only
+			if (exception instanceof ValidateStateException) {
 				if (fSourceViewer != null)
 					fSourceViewer.setEditable(isEditable());
-					
+
 				if (wasReadOnly != isEditorInputReadOnly())
-					updateStateDependentActions();
-									
-			} catch (CoreException x) {
-				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
-				log.log(x.getStatus());
+					updateStateDependentActions();				
 			}
+			
+			ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+			log.log(exception.getStatus());
+
+			Shell shell= getSite().getShell();
+			String title= EditorMessages.getString("Editor.error.validateEdit.title"); //$NON-NLS-1$
+			String msg= EditorMessages.getString("Editor.error.validateEdit.message"); //$NON-NLS-1$			
+			ErrorDialog.openError(shell, title, msg, exception.getStatus());
+
+			return;
+		}
+
+		if (fSourceViewer != null)
+			fSourceViewer.setEditable(isEditable());
+
+		if (wasReadOnly != isEditorInputReadOnly())
+			updateStateDependentActions();
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension2.validateEditorInputState()
+	 */
+	public boolean validateEditorInputState() {
+		ISourceViewer viewer= getSourceViewer();
+		fTextInputListener.inputChanged= false;
+		viewer.addTextInputListener(fTextInputListener);
+		try {			
+			IEditorInput input= getEditorInput();
+			validateState(input);
+			sanityCheckState(input);
+			return !isEditorInputReadOnly() && !fTextInputListener.inputChanged;
+
+		} finally {
+			viewer.removeTextInputListener(fTextInputListener);
 		}
 	}
 	
@@ -3797,6 +3832,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		return true;
 	}
+
+	/*
+	 * @see ITextEditorExtension2#isEditorInputModifiable()
+	 * @since 2.1
+	 */
+	public boolean isEditorInputModifiable() {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IDocumentProviderExtension) {
+			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+			return extension.isModifiable(getEditorInput());
+		}
+		return true;
+	}
 	
 	/*
 	 * @see ITextEditorExtension#addRulerContextMenuListener(IMenuListener)
@@ -3825,4 +3873,5 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
 		return true;
 	}
+
 }

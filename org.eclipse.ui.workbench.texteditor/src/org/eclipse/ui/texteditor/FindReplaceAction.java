@@ -196,24 +196,27 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 *	@see IAction#run
 	 */
 	public void run() {
-		if (fTarget != null) {
+		if (fTarget == null)
+			return;
+
+		if (fWorkbenchPart instanceof ITextEditorExtension2)
+			fIsTargetEditable= ((ITextEditorExtension2) fWorkbenchPart).validateEditorInputState();
 			
-			if (fgFindReplaceDialogStub != null) {
-				Shell shell= fWorkbenchPart.getSite().getShell();
-				FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
-				if (dialog != null && shell != dialog.getParentShell()) {
-					fgFindReplaceDialogStub= null; // here to avoid timing issues
-					dialog.close();
-				}
-			}
-			
-			if (fgFindReplaceDialogStub == null)
-				fgFindReplaceDialogStub= new FindReplaceDialogStub(fWorkbenchPart.getSite());
-				
+		if (fgFindReplaceDialogStub != null) {
+			Shell shell= fWorkbenchPart.getSite().getShell();
 			FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
-			dialog.updateTarget(fTarget, fIsTargetEditable);
-			dialog.open();
+			if (dialog != null && shell != dialog.getParentShell()) {
+				fgFindReplaceDialogStub= null; // here to avoid timing issues
+				dialog.close();
+			}
 		}
+		
+		if (fgFindReplaceDialogStub == null)
+			fgFindReplaceDialogStub= new FindReplaceDialogStub(fWorkbenchPart.getSite());
+			
+		FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
+		dialog.updateTarget(fTarget, fIsTargetEditable);
+		dialog.open();
 	}
 	
 	/*
@@ -223,12 +226,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		
 		if (fWorkbenchPart == null && fWorkbenchWindow != null)
 			fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
-			
-		if (fWorkbenchPart instanceof ITextEditorExtension) {
-			ITextEditorExtension extension= (ITextEditorExtension) fWorkbenchPart;
-			fIsTargetEditable= !extension.isEditorInputReadOnly();
-		}
-		
+				
 		if (fWorkbenchPart != null)
 			fTarget= (IFindReplaceTarget) fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
 		else

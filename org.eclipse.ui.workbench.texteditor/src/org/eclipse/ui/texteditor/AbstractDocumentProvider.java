@@ -630,6 +630,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * 
 	 * @param element the element
 	 * @param computationContext the context in which validation happens
+	 * @exception ValidateStateException in case validation succeeds, but the state cannot be changed
 	 * @exception CoreException in case validation fails
 	 * @since 2.0
 	 */
@@ -642,12 +643,22 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	final public void validateState(Object element, Object computationContext) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
-		if (info != null) {
+		if (info == null)
+			return;
+
+		try {
 			doValidateState(element, computationContext);
+
+		} catch (ValidateStateException e) {
 			doUpdateStateCache(element);
 			info.fIsStateValidated= true;
 			fireElementStateValidationChanged(element, true);
+			throw e;
 		}
+
+		doUpdateStateCache(element);
+		info.fIsStateValidated= true;
+		fireElementStateValidationChanged(element, true);
 	}
 	
 	/**
