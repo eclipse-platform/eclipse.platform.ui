@@ -29,34 +29,14 @@
         <url-pattern>/control.html</url-pattern>
     </servlet-mapping>
     
-	<servlet-mapping>
-		<servlet-name>content</servlet-name>
-		<url-pattern>/servlet/org.eclipse.help.servlet.ContentServlet</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>livehelp</servlet-name>
-		<url-pattern>/servlet/org.eclipse.help.servlet.LiveHelpServlet</url-pattern>
-	</servlet-mapping>
-	
     <servlet-mapping>
         <servlet-name>content</servlet-name>
         <url-pattern>/content/*</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>content</servlet-name>
-        <url-pattern>/ns4/content/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>livehelp</servlet-name>
         <url-pattern>/livehelp/*</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>livehelp</servlet-name>
-        <url-pattern>/ns4/livehelp/*</url-pattern>
     </servlet-mapping>
     
 	<welcome-file-list>
