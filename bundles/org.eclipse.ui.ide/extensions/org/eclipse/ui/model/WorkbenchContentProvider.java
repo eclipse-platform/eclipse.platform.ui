@@ -170,12 +170,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 		// Get the affected resource
 		final IResource resource = delta.getResource();
-		final boolean[] refreshResource = { false };//flag to determine if
-		// refresh required
-		final boolean[] updateResource = { false };//flag to determine if just
-		// an
-		// update is required
-
+	
 		// If any children have changed type, just do a full refresh of this
 		// parent,
 		// since a simple update on such children won't work,
@@ -186,7 +181,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 				.getAffectedChildren(IResourceDelta.CHANGED);
 		for (int i = 0; i < affectedChildren.length; i++) {
 			if ((affectedChildren[i].getFlags() & IResourceDelta.TYPE) != 0) {
-				refreshResource[0] = true;
+				runnables.add(getRefreshRunnable(resource));
 				return;
 			}
 		}
@@ -197,31 +192,23 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		int changeFlags = delta.getFlags();
 		if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC
 				| IResourceDelta.TYPE | IResourceDelta.DESCRIPTION)) != 0) {
-			updateResource[0] = true;
-		}
-		// Replacing a resource may affect its label and its children
-		if ((changeFlags & IResourceDelta.REPLACED) != 0) {
-			refreshResource[0] = true;
-			return;
-		}
-
-		if (refreshResource[0] || updateResource[0]) {
-			Runnable refreshRunnable = new Runnable(){
+			Runnable updateRunnable =  new Runnable(){
 				/* (non-Javadoc)
 				 * @see java.lang.Runnable#run()
 				 */
 				public void run() {
-					if (refreshResource[0])
-						((StructuredViewer) viewer).refresh(resource, true);
-					if (updateResource[0])//We shouldn't do this if refreshing
-						// but we need to keep existing (3.0) behavior
-						((StructuredViewer) viewer).update(resource, null);
+					((StructuredViewer) viewer).update(resource, null);
 			
 				}
 			};
-			
-			runnables.add(refreshRunnable);
+			runnables.add(updateRunnable);
 		}
+		// Replacing a resource may affect its label and its children
+		if ((changeFlags & IResourceDelta.REPLACED) != 0) {
+			runnables.add(getRefreshRunnable(resource));
+			return;
+		}
+
 
 		// Handle changed children .
 		for (int i = 0; i < affectedChildren.length; i++) {
@@ -305,5 +292,22 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 		
 		runnables.add(addAndRemove);
+	}
+
+	/**
+	 * Return a runnable for refreshing a resource.
+	 * @param resource
+	 * @return Runnable
+	 */
+	private Runnable getRefreshRunnable(final IResource resource) {
+		return new Runnable(){
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				((StructuredViewer) viewer).refresh(resource);
+
+			}
+		};
 	}
 }
