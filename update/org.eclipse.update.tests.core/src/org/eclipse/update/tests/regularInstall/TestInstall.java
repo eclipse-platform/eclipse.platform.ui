@@ -35,9 +35,9 @@ public class TestInstall extends UpdateManagerTestCase {
 		}
 
 		/*
-		 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
+		 * @see IConfiguredSiteChangedListener#featureRemoved(IFeature)
 		 */
-		public void featureUninstalled(IFeature feature) {}
+		public void featureRemoved(IFeature feature) {}
 
 		public boolean isNotified() {
 			return notified;

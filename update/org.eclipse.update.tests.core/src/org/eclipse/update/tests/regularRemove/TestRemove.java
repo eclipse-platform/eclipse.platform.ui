@@ -22,7 +22,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		public boolean notified = false;
 
 			/*
-		 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
+		 * @see IConfiguredSiteChangedListener#featureRemoved(IFeature)
 		 */
 		public void featureInstalled(IFeature feature) {
 			notified = true;
@@ -32,7 +32,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		/*
 		 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
 		 */
-		public void featureUninstalled(IFeature feature) {}
+		public void featureRemoved(IFeature feature) {}
 
 		public boolean isNotified() {
 			return notified;
