@@ -40,49 +40,53 @@ import org.eclipse.ui.internal.util.Util;
 
 public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
-    private IWorkbenchWindow activeWorkbenchWindow;
-
     private String activePartId;
 
     private String activePerspectiveId;
 
+    private IWorkbenchWindow activeWorkbenchWindow;
+
+    private ICompoundContextActivationService compoundContextActivationService;
+
     private Map enabledSubmissionsByContextId = new HashMap();
+
+    private IMutableContextManager mutableContextManager;
 
     private IPageListener pageListener = new IPageListener() {
 
         public void pageActivated(IWorkbenchPage workbenchPage) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void pageClosed(IWorkbenchPage workbenchPage) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void pageOpened(IWorkbenchPage workbenchPage) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
     };
 
     private IPartListener partListener = new IPartListener() {
 
         public void partActivated(IWorkbenchPart workbenchPart) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void partBroughtToTop(IWorkbenchPart workbenchPart) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void partClosed(IWorkbenchPart workbenchPart) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void partDeactivated(IWorkbenchPart workbenchPart) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void partOpened(IWorkbenchPart workbenchPart) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
     };
 
@@ -90,41 +94,39 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
         public void perspectiveActivated(IWorkbenchPage workbenchPage,
                 IPerspectiveDescriptor perspectiveDescriptor) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void perspectiveChanged(IWorkbenchPage workbenchPage,
                 IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
     };
+
+    private boolean processingEnabledSubmissions;
+
+    private ProxyContextManager proxyContextManager;
 
     private IWindowListener windowListener = new IWindowListener() {
 
         public void windowActivated(IWorkbenchWindow window) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void windowClosed(IWorkbenchWindow window) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void windowDeactivated(IWorkbenchWindow window) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
 
         public void windowOpened(IWorkbenchWindow window) {
-            processEnabledSubmissionsByContextId(false);
+            processEnabledSubmissions(false);
         }
     };
 
     private Workbench workbench;
-
-    private ICompoundContextActivationService compoundContextActivationService;
-
-    private IMutableContextManager mutableContextManager;
-
-    private ProxyContextManager proxyContextManager;
 
     public WorkbenchContextSupport(Workbench workbench) {
         this.workbench = workbench;
@@ -157,7 +159,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             enabledSubmissions2.add(enabledSubmission);
         }
 
-        processEnabledSubmissionsByContextId(true);
+        processEnabledSubmissions(true);
     }
 
     public ICompoundContextActivationService getCompoundContextActivationService() {
@@ -168,7 +170,13 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         return proxyContextManager;
     }
 
-    private void processEnabledSubmissionsByContextId(boolean force) {
+    public final boolean isProcessingEnabledSubmissions() {
+        return processingEnabledSubmissions;
+    }
+
+    private void processEnabledSubmissions(boolean force) {
+        if (!processingEnabledSubmissions) return;
+
         Set enabledContextIds = new HashSet();
         String activePartId = null;
         String activePerspectiveId = null;
@@ -292,6 +300,14 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             }
         }
 
-        processEnabledSubmissionsByContextId(true);
+        processEnabledSubmissions(true);
+    }
+
+    public final void setProcessingEnabledSubmissions(
+            boolean processingEnabledSubmissions) {
+        if (this.processingEnabledSubmissions != processingEnabledSubmissions) {
+            this.processingEnabledSubmissions = processingEnabledSubmissions;
+            processEnabledSubmissions(true);
+        }
     }
 }

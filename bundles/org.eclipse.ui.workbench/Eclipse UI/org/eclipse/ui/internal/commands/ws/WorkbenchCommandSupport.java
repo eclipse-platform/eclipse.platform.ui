@@ -38,11 +38,11 @@ import org.eclipse.ui.keys.SWTKeySupport;
 
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
-    private IWorkbenchWindow activeWorkbenchWindow;
-
     private String activePartId;
 
     private String activePerspectiveId;
+
+    private IWorkbenchWindow activeWorkbenchWindow;
 
     private ICompoundCommandHandlerService compoundCommandHandlerService;
 
@@ -128,15 +128,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
     private Workbench workbench;
 
-    /**
-     * Constructs a new instance of <code>WorkbenchCommandSupport</code> with
-     * the workbench it should support. The workbench must already have a
-     * command manager defined, and must have a display. This initializes the
-     * key binding support.
-     * 
-     * @param workbench
-     *            The workbench which needs command support; must not be <code>null</code>.
-     */
     public WorkbenchCommandSupport(Workbench workbench) {
         this.workbench = workbench;
         mutableCommandManager = CommandManagerFactory.getCommandManager();
@@ -218,8 +209,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     private void processHandlerSubmissions(boolean force) {
-        if (!processingHandlerSubmissions)
-            return;
+        if (!processingHandlerSubmissions) return;
 
         Map handlersByCommandId = new HashMap();
         String activePartId = null;
