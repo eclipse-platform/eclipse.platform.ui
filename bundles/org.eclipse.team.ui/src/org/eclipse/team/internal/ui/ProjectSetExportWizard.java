@@ -61,32 +61,34 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					
+					String filename = mainPage.getFileName();
+					ProjectSetImportWizard.lastFile = filename;
+					File file = new File(filename);
+					File parentFile = file.getParentFile();
+					if (!parentFile.exists()) {
+						boolean r = MessageDialog.openQuestion(getShell(), Policy.bind("ProjectSetExportWizard.Question_4"), Policy.bind("ProjectSetExportWizard.Target_directory_does_not_exist._Would_you_like_to_create_it__5")); //$NON-NLS-1$ //$NON-NLS-2$
+						if (!r) {
+							result[0] = false;
+							return;
+						}
+						r = parentFile.mkdirs();
+						if (!r) {
+							MessageDialog.openError(getShell(), Policy.bind("ProjectSetExportWizard.Export_Problems_6"), Policy.bind("ProjectSetExportWizard.An_error_occurred_creating_the_target_directory_7")); //$NON-NLS-1$ //$NON-NLS-2$
+							result[0] = false;
+							return;
+						}
+					}
+					if (file.exists() && file.isFile()) {
+						boolean r = MessageDialog.openQuestion(getShell(), Policy.bind("ProjectSetExportWizard.Question_8"), Policy.bind("ProjectSetExportWizard.Target_already_exists._Would_you_like_to_overwrite_it__9")); //$NON-NLS-1$ //$NON-NLS-2$
+						if (!r) {
+							result[0] = false;
+							return;
+						}
+					}
+					OutputStreamWriter writer = null;
 					try {
-						String filename = mainPage.getFileName();
-						ProjectSetImportWizard.lastFile = filename;
-						File file = new File(filename);
-						File parentFile = file.getParentFile();
-						if (!parentFile.exists()) {
-							boolean r = MessageDialog.openQuestion(getShell(), Policy.bind("ProjectSetExportWizard.Question_4"), Policy.bind("ProjectSetExportWizard.Target_directory_does_not_exist._Would_you_like_to_create_it__5")); //$NON-NLS-1$ //$NON-NLS-2$
-							if (!r) {
-								result[0] = false;
-								return;
-							}
-							r = parentFile.mkdirs();
-							if (!r) {
-								MessageDialog.openError(getShell(), Policy.bind("ProjectSetExportWizard.Export_Problems_6"), Policy.bind("ProjectSetExportWizard.An_error_occurred_creating_the_target_directory_7")); //$NON-NLS-1$ //$NON-NLS-2$
-								result[0] = false;
-								return;
-							}
-						}
-						if (file.exists() && file.isFile()) {
-							boolean r = MessageDialog.openQuestion(getShell(), Policy.bind("ProjectSetExportWizard.Question_8"), Policy.bind("ProjectSetExportWizard.Target_already_exists._Would_you_like_to_overwrite_it__9")); //$NON-NLS-1$ //$NON-NLS-2$
-							if (!r) {
-								result[0] = false;
-								return;
-							}
-						}
-						OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8"); //$NON-NLS-1$
+						writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8"); //$NON-NLS-1$
 						
 						writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 						writer.write("<psf version=\"2.0\">\n"); //$NON-NLS-1$
@@ -129,16 +131,20 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							writer.write("\t</provider>\n"); //$NON-NLS-1$
 						}
 						writer.write("</psf>\n"); //$NON-NLS-1$
-						writer.close();
 						result[0] = true;
-					} catch (FileNotFoundException e) {
-						throw new InvocationTargetException(e);
 					} catch (IOException e) {
 						throw new InvocationTargetException(e);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					} finally {
 						monitor.done();
+						if (writer != null) {
+							try {
+								writer.close();
+							} catch (IOException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
 					}
 				}
 			});

@@ -51,10 +51,11 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					InputStreamReader reader = null;
 					try {
 						String filename = mainPage.getFileName();
 						lastFile = filename;
-						InputStreamReader reader = new InputStreamReader(new FileInputStream(filename), "UTF-8"); //$NON-NLS-1$
+						reader = new InputStreamReader(new FileInputStream(filename), "UTF-8"); //$NON-NLS-1$
 						
 						SAXParser parser = new SAXParser();
 						ProjectSetContentHandler handler = new ProjectSetContentHandler();
@@ -79,7 +80,6 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 								}
 							}
 						}
-						reader.close();
 						result[0] = true;
 					} catch (IOException e) {
 						throw new InvocationTargetException(e);
@@ -87,6 +87,14 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 						throw new InvocationTargetException(e);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
+					} finally {
+						if (reader != null) {
+							try {
+								reader.close();
+							} catch (IOException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
 					}
 				}
 			});
