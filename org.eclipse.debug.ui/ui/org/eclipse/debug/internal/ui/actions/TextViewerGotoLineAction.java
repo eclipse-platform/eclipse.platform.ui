@@ -72,7 +72,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			fTextViewer.getTextWidget().setSelection(start, start + length);
 			fTextViewer.revealRange(start, length);
 		} catch (BadLocationException x) {
-			DebugUIPlugin.logError(x);
+			DebugUIPlugin.errorDialog(fTextViewer.getTextWidget().getShell(), "Go To Line", "Exceptions occurred attempt to go to line", x);
 		}
 	}
 
@@ -88,7 +88,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			String title= ActionMessages.getString("TextViewerGotoLineAction.Go_to_Line_5"); //$NON-NLS-1$
 			String message= MessageFormat.format(ActionMessages.getString("TextViewerGotoLineAction.Enter_line_number__8"), new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
 			String value= Integer.toString(startLine);
-			Shell activeShell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
+			Shell activeShell= fTextViewer.getTextWidget().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());
 			d.open();
 
@@ -96,10 +96,10 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 				int line= Integer.parseInt(d.getValue());
 				gotoLine(line - 1);
 			} catch (NumberFormatException x) {
-				DebugUIPlugin.logError(x);
+				DebugUIPlugin.errorDialog(activeShell, "Go To Line", "Exceptions occurred attempt to go to line", x);
 			}
 		} catch (BadLocationException x) {
-			DebugUIPlugin.logError(x);
+			DebugUIPlugin.errorDialog(fTextViewer.getTextWidget().getShell(), "Go To Line", "Exceptions occurred attempt to go to line", x);
 			return;
 		}
 	}

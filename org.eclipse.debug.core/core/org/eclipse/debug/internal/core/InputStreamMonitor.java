@@ -107,7 +107,7 @@ public class InputStreamMonitor {
 					fStream.flush();
 				}
 			} catch (IOException e) {
-				DebugPlugin.logError(e);
+				DebugPlugin.log(e);
 			}
 		}
 		try {

@@ -121,7 +121,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			try {
 				createBreakpoint(marker);
 			} catch (DebugException e) {
-				logError(e);
+				DebugPlugin.log(e.getStatus());
 			}
 		}
 	}
@@ -249,7 +249,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		try {
 			loadBreakpoints(root);	
 		} catch (CoreException ce) {
-			logError(ce);
+			DebugPlugin.log(ce.getStatus());
 			setBreakpoints(new Vector(0));
 		} 
 	}
@@ -384,7 +384,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				}
 				delta.accept(fgVisitor);
 			} catch (CoreException ce) {
-				logError(ce);
+				DebugPlugin.log(ce.getStatus());
 			}
 		}
 	}
@@ -415,7 +415,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					try {
 						removeBreakpoint(breakpoint, false);
 					} catch (CoreException e) {
-						logError(e);
+						DebugPlugin.log(e.getStatus());
 					}
 				}
 			}
@@ -424,16 +424,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			try {
 				loadBreakpoints(project);
 			} catch (CoreException e) {
-				logError(e);
+				DebugPlugin.log(e.getStatus());
 			}
 		}
-	}
-
-	/**
-	 * An exception has occurred. Make a note of it in the log file.
-	 */
-	private void logError(Exception e) {
-		DebugPlugin.logError(e);
 	}
 
 	/**
@@ -485,7 +478,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 						try {
 							marker.delete();
 						} catch (CoreException ce) {
-							logError(ce);
+							DebugPlugin.log(ce.getStatus());
 						}
 					}
 				};
@@ -504,7 +497,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				try {
 					removeBreakpoint(breakpoint, false);
 				} catch (CoreException e) {
-					logError(e);
+					DebugPlugin.log(e.getStatus());
 				}
 			}
 		}
@@ -565,7 +558,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				try {
 					getWorkspace().run(wRunnable, null);
 				} catch (CoreException ce) {
-					logError(ce);
+					DebugPlugin.log(ce.getStatus());
 				}
 			}
 		};
@@ -578,6 +571,5 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public boolean hasBreakpoints() {
 		return !getBreakpoints0().isEmpty();
 	}
-
 }
 

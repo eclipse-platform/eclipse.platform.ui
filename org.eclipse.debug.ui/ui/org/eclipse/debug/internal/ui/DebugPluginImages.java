@@ -160,7 +160,7 @@ public class DebugPluginImages {
 					iconURL = new URL(iconURL, iconPath);			
 					desc= ImageDescriptor.createFromURL(iconURL);
 				} catch (MalformedURLException e) {
-					DebugUIPlugin.logError(e);
+					DebugUIPlugin.log(e);
 				} 
 				imageRegistry.put(launcher.getIdentifier(), desc);				
 				imageDescriptors.put(launcher.getIdentifier(), desc);
@@ -180,7 +180,7 @@ public class DebugPluginImages {
 				iconURL = new URL(iconURL, iconPath);
 				imageDescriptor = ImageDescriptor.createFromURL(iconURL);
 			} catch (MalformedURLException mue) {
-				DebugUIPlugin.logError(mue);
+				DebugUIPlugin.log(mue);
 			}
 			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);			
 			imageRegistry.put(configTypeID, imageDescriptor);				
@@ -199,7 +199,7 @@ public class DebugPluginImages {
 		try {
 			desc= ImageDescriptor.createFromURL(makeIconFileURL(path));
 		} catch (MalformedURLException me) {
-			DebugUIPlugin.logError(me);
+			DebugUIPlugin.log(me);
 		}
 		imageRegistry.put(key, desc);
 		imageDescriptors.put(key, desc);

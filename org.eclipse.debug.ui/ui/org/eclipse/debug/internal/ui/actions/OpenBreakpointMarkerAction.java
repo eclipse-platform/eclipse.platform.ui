@@ -19,9 +19,10 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class OpenBreakpointMarkerAction extends OpenMarkerAction {
+public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 
 	protected static DelegatingModelPresentation fgPresentation = new DelegatingModelPresentation();
 	
@@ -36,7 +37,7 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 	}
 
 	/**
-	 * @see IAction
+	 * @see IAction#run()
 	 */
 	public void run() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -45,9 +46,7 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 			return;
 		}
 		IEditorPart part= null;
-		// Get the resource.
 		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();
-		//Get the selected marker
 		Iterator enum= selection.iterator();
 		IBreakpoint breakpoint= (IBreakpoint)enum.next();
 		IEditorInput input= fgPresentation.getEditorInput(breakpoint);
@@ -56,15 +55,23 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 			try {
 				part= page.openEditor(input, editorId);
 			} catch (PartInitException e) {
-				DebugUIPlugin.logError(e);
+				DebugUIPlugin.errorDialog(dwindow.getShell(), "Go to Breakpoint", "Exceptions occurred attempting to open the editor for the breakpoint resource", e);
 			}
 		}
 		if (part != null) {
-			// Bring editor to front.
 			part.setFocus();
-
-			// Goto the bookmark.
 			part.gotoMarker(breakpoint.getMarker());
+		}
+	}
+	
+	/**
+	 * @see SelectionProviderAction
+	 */
+	public void selectionChanged(IStructuredSelection sel) {
+		if (sel.size() == 1) {
+			setEnabled(true);
+		} else {
+			setEnabled(false);
 		}
 	}
 }

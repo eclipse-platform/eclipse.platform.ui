@@ -97,7 +97,6 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			valueString= fVariable.getValue().getValueString();
 		} catch (DebugException de) {
 			DebugUIPlugin.errorDialog(activeShell,ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de.getStatus());	 //$NON-NLS-1$ //$NON-NLS-2$
-			DebugUIPlugin.logError(de);
 		}
 		TreeItem[] selectedItems = fTree.getSelection();
 		fTreeEditor.horizontalAlignment = SWT.LEFT;
@@ -110,7 +109,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		try {
 			varName = fVariable.getName();
 		} catch (DebugException de) {
-			DebugUIPlugin.logError(de);
+			DebugUIPlugin.errorDialog(activeShell,ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de.getStatus());	 //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		fEditorLabel.setText(varName + "="); //$NON-NLS-1$
 
@@ -166,7 +165,6 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			variable.setValue(newValue);
 		} catch (DebugException de) {
 			DebugUIPlugin.errorDialog(shell, ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de.getStatus());	//$NON-NLS-2$ //$NON-NLS-1$
-			DebugUIPlugin.logError(de);
 		}
 		cleanup();		
 	}

@@ -110,7 +110,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 					return;
 				} catch (IOException ioe) {
 					if (!isClosed()) {
-						DebugUIPlugin.logError(ioe);
+						DebugUIPlugin.log(ioe);
 					}
 				}
 			}
@@ -149,7 +149,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		try {		
 			super.replace(pos, replaceLength, text);
 		} catch (BadLocationException ble) {
-			DebugUIPlugin.logError(ble);
+			DebugUIPlugin.log(ble);
 		}
 	}
 

@@ -329,7 +329,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				candidateResource = candidateResource.getParent();
 			}
 		} catch (CoreException ce) {
-			DebugPlugin.logError(ce);
+			DebugPlugin.log(ce.getStatus());
 		}
 			
 		// Otherwise, return the default associated with the resource's file extension
@@ -467,7 +467,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		try {
 			resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
 		} catch (CoreException ce) {
-			DebugPlugin.logError(ce);
+			DebugPlugin.log(ce.getStatus());
 		}
 	}
 	
@@ -531,7 +531,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			try {
 				launch.terminate();
 			} catch (DebugException e) {
-				DebugPlugin.logError(e);
+				DebugPlugin.log(e.getStatus());
 			}
 		}
 		
@@ -1142,7 +1142,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				}
 				delta.accept(fgVisitor);
 			} catch (CoreException e) {
-				DebugPlugin.logError(e);
+				DebugPlugin.log(e.getStatus());
 			}
 		}		
 	}
@@ -1259,7 +1259,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	class LaunchManagerVisitor implements IResourceDeltaVisitor {
 		/**
-		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null) {
@@ -1275,7 +1275,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						    LaunchManager.this.projectClosed(project);
 						}
 					} catch (CoreException e) {
-						DebugPlugin.logError(e);
+						DebugPlugin.log(e.getStatus());
 					}
 				}
 				return false;

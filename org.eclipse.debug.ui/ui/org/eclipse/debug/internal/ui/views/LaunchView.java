@@ -100,7 +100,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		try {
 			fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
 		} catch (CoreException e) {
-			DebugUIPlugin.logError(e);
+			DebugUIPlugin.log(e.getStatus());
 		}
 	}
 	
@@ -190,7 +190,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					}
 				}
 			} catch (DebugException e) {
-				DebugUIPlugin.logError(e);
+				DebugUIPlugin.log(e.getStatus());
 			}
 		}
 		return null;
@@ -364,21 +364,21 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					if (lineNumber == -1) {
-						fInstructionPointer.setAttributes(fgStartEnd, 
-							new Object[] {new Integer(charStart), new Integer(charEnd)});
-					} else {
-						fInstructionPointer.setAttributes(fgLineStartEnd, 
-							new Object[] {new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)});
-					}
+			public void run(IProgressMonitor monitor) throws CoreException {
+				if (lineNumber == -1) {
+					fInstructionPointer.setAttributes(fgStartEnd, 
+						new Object[] {new Integer(charStart), new Integer(charEnd)});
+				} else {
+					fInstructionPointer.setAttributes(fgLineStartEnd, 
+						new Object[] {new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)});
 				}
-			};
+			}
+		};
 		
 		try {
 			workspace.run(runnable, null);
 		} catch (CoreException ce) {
-			DebugUIPlugin.logError(ce);
+			DebugUIPlugin.log(ce.getStatus());
 		}
 		
 		return fInstructionPointer;
@@ -421,7 +421,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 						start= stackFrame.getCharStart();
 						end= stackFrame.getCharEnd();
 					} catch (DebugException de) {
-						DebugUIPlugin.logError(de);
+						DebugUIPlugin.log(de.getStatus());
 					}
 					openEditorAndSetMarker(getEditorInput(), getEditorId(), lineNumber, start, end);
 				}
@@ -497,7 +497,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
 				DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
 				e.getStatus());
-			DebugUIPlugin.logError(e);
 		}		
 		
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
@@ -626,7 +625,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					try {
 						children= dt.getThreads();
 					} catch (DebugException de) {
-						DebugUIPlugin.logError(de);
+						DebugUIPlugin.log(de.getStatus());
 					}
 				}
 		}

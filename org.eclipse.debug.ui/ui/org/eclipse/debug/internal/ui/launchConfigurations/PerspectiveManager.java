@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugEvent;
@@ -115,7 +114,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			try {
 				perspectiveId = getPerspectiveId(launch);
 			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
 				String name = DebugUIPlugin.getDefault().getModelPresentation().getText(launch);
 				switchFailed(e.getStatus(), name);
 			}
@@ -139,7 +137,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 					try {
 						window.getWorkbench().showPerspective(id, window);
 					} catch (WorkbenchException e) {
-						DebugUIPlugin.logError(e);
 						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
 						"Error", 
 						MessageFormat.format("Unable to switch to perspective: {0}", new String[]{id}),
@@ -211,12 +208,11 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			try {
 				perspectiveId = getPerspectiveId(launch);
 			} catch (CoreException e) {
-				DebugUIPlugin.logError(e);
+				DebugUIPlugin.log(e.getStatus());
 			}
 			// if no perspective specified, always switch to debug
-			// perspective (unless the current perspective has a 
-			// debug view open)
-			
+			// perspective 
+
 			// this has to be done in an asynch, such that the workbench
 			// window can be accessed
 			final String id = perspectiveId;

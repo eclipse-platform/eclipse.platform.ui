@@ -35,7 +35,7 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 				return ((IThread)parent).getStackFrames();
 			}			
 		} catch (DebugException e) {
-			DebugUIPlugin.logError(e);
+			DebugUIPlugin.log(e.getStatus());
 		}
 		if (parent instanceof ILaunch) {
 			return ((ILaunch)parent).getChildren();

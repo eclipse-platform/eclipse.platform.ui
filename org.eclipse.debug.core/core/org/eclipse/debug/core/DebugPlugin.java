@@ -429,13 +429,15 @@ public class DebugPlugin extends Plugin {
 	}	
 	
 	/**
-	 * Convenience method to log internal errors
+	 * Logs the given message if in debug mode.
+	 * 
+	 * @param String message to log
 	 */
-	public static void logError(Exception e) {
+	public static void logDebugMessage(String message) {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from Debug Core: ", e));  //$NON-NLS-1$		
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null));
 		}
 	}
 	
@@ -446,6 +448,21 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+	
+	/**
+	 * Logs the specified throwable with this plug-in's log.
+	 * 
+	 * @param t throwable to log 
+	 */
+	public static void log(Throwable t) {
+		IStatus status= null;
+		if (t instanceof CoreException) {
+			status= ((CoreException)t).getStatus();
+		} else {
+			status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Error logged from Debug Core: ", t); //$NON-NLS-1$
+		}
+		log(status);
 	}
 	
 	/**

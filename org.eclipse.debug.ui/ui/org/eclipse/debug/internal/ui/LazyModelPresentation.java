@@ -164,7 +164,7 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 					fPresentation.setAttribute(key, fAttributes.get(key));
 				}
 			} catch (CoreException e) {
-				DebugUIPlugin.logError(e);
+				DebugUIPlugin.log(e.getStatus());
 			}
 		}
 		return fPresentation;

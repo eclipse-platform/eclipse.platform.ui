@@ -6,11 +6,11 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
  
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /********************************************************************************
@@ -158,7 +158,7 @@ public class LaunchConfigurationHistoryElement {
 					return getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
 				}
 			} catch (CoreException e) {
-				DebugUIPlugin.logError(e);
+				DebugUIPlugin.log(e.getStatus());
 			}
 		}
 		return false;

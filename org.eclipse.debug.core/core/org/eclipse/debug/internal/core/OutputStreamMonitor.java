@@ -136,7 +136,7 @@ public class OutputStreamMonitor implements IStreamMonitor {
 					}
 				}
 			} catch (IOException ioe) {
-				DebugPlugin.logError(ioe);
+				DebugPlugin.log(ioe);
 				return;
 			}
 			try {
@@ -152,7 +152,7 @@ public class OutputStreamMonitor implements IStreamMonitor {
 			try {
 				fStream.close();
 			} catch(IOException e) {
-				DebugPlugin.logError(e);
+				DebugPlugin.log(e);
 			}
 		}
 	}

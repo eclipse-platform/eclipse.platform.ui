@@ -393,7 +393,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		try {
 			persistLaunchHistory();
 		} catch (IOException e) {
-			logError(e);
+			log(e);
 		}
 		if (fgPresentation != null) {
 			fgPresentation.dispose();
@@ -415,7 +415,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		try {
 			restoreLaunchHistory();
 		} catch (IOException e) {
-			logError(e);
+			log(e);
 		}
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
@@ -542,7 +542,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 								page.bringToTop(consoleView);
 							}
 						} catch (PartInitException pie) {
-							logError(pie);
+							log(pie);
 						}
 					}
 				}
@@ -580,7 +580,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 				}
 				delta.accept(fgDeletedVisitor, false);
 			} catch (CoreException ce) {
-				logError(ce);
+				log(ce.getStatus());
 			}
 		}		
 	}
@@ -662,7 +662,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 				removeRunFavorite(config);
 			}
 		} catch (CoreException e) {
-			logError(e);
+			log(e.getStatus());
 		}	
 	}
 	
@@ -1204,10 +1204,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			rootHistoryElement = parser.parse(new InputSource(stream)).getDocumentElement();
 		} catch (SAXException e) {
-			logError(e);
+			log(e);
 			return;
 		} catch (ParserConfigurationException e) {
-			logError(e);
+			log(e);
 			return;
 		} finally {
 			stream.close();
@@ -1382,6 +1382,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 			message= null;
 		}
 		ErrorDialog.openError(shell, title, message, s);
+		log(s);
+	}
+	
+	/**
+	 * Utility method with conventions
+	 */
+	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
+		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$	
+		errorDialog(shell, title, message, status);
 	}
 
 	/**
@@ -1394,13 +1403,30 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	}
 	
 	/**
-	 * Convenience method to log internal UI errors
+	 * Logs the specified throwable with this plug-in's log.
+	 * 
+	 * @param t throwable to log 
 	 */
-	public static void logError(Exception e) {
+	public static void log(Throwable t) {
+		IStatus status= null;
+		if (t instanceof CoreException) {
+			status= ((CoreException)t).getStatus();
+		} else {
+			status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$
+		}
+		log(status);
+	}
+	
+	/**
+	 * Logs the given message if in debug mode.
+	 * 
+	 * @param String message to log
+	 */
+	public static void logDebugMessage(String message) {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal error logged from Debug UI: ", e));  //$NON-NLS-1$		
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null));  //$NON-NLS-1$		
 		}
 	}
 	

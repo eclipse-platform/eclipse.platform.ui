@@ -217,7 +217,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 				}
 			} catch (CoreException ce) {
 				fCombo.select(0);
-				DebugUIPlugin.logError(ce);
+				DebugUIPlugin.log(ce.getStatus());
 			}
 		}
 	}
@@ -237,7 +237,6 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 			}
 			getLaunchManager().setDefaultLauncher(project, null);
 		} catch (CoreException e) {
-			DebugUIPlugin.logError(e);
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("LauncherPropertyPage.Launcher_property_page_5"), DebugUIMessages.getString("LauncherPropertyPage.Exceptions_occurred_saving_the_launcher_preferences_6"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}

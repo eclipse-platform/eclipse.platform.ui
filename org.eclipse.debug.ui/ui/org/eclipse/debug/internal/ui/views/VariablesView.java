@@ -246,7 +246,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			try {
 				svc = mp.newDetailsViewerConfiguration();
 			} catch (CoreException e) {
-				DebugUIPlugin.logError(e);
 				DebugUIPlugin.errorDialog(getSite().getShell(), DebugUIViewsMessages.getString("VariablesView.Error_1"), DebugUIViewsMessages.getString("VariablesView.Unable_to_configure_variable_details_area._2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
@@ -604,7 +603,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				getDetailDocument().set(""); //$NON-NLS-1$
 			}
 		} catch (DebugException de) {
-			DebugUIPlugin.logError(de);
+			DebugUIPlugin.log(de.getStatus());
+			getDetailDocument().set("<error occurred retrieving value>");
 		}				
 	}
 	

@@ -9,37 +9,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A model presentation that delegates to the appropriate extension. This
@@ -145,7 +133,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					return new StringBuffer(((IVariable)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString(); //$NON-NLS-1$
 				}
 			} catch (DebugException de) {
-				DebugUIPlugin.logError(de);
+				DebugUIPlugin.log(de.getStatus());
 			}
 		}
 		return getDefaultText(item);

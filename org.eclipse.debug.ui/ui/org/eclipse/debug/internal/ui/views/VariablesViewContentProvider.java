@@ -64,7 +64,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 			if (getExceptionHandler() != null) {
 				getExceptionHandler().handleException(e);
 			} else {
-				DebugUIPlugin.logError(e);
+				DebugUIPlugin.log(e);
 			}
 		}
 		return new Object[0];

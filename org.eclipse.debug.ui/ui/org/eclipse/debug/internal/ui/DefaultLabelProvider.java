@@ -166,7 +166,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 		} catch (DebugException e) {
-			DebugUIPlugin.logError(e);
+			DebugUIPlugin.log(e.getStatus());
 			label.append(DebugUIMessages.getString("DefaultLabelProvider.<unknown>_1")); //$NON-NLS-1$
 		}
 		return label.toString();
@@ -201,8 +201,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			try {
 				buff.append(config.getType().getName());
 			} catch (CoreException e) {
-				//XXX: unknown configuration type
-				DebugUIPlugin.logError(e);
+				DebugUIPlugin.log(e.getStatus());
 			}
 			buff.append("]"); //$NON-NLS-1$
 			return buff.toString();			
@@ -217,7 +216,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			try {
 				valueString= value.getValueString();
 			} catch (DebugException de) {
-				DebugUIPlugin.logError(de);
+				DebugUIPlugin.log(de.getStatus());
 			}
 		}
 		if (valueString != null && valueString.length() > 0) {
@@ -231,12 +230,11 @@ public class DefaultLabelProvider implements ILabelProvider {
 		StringBuffer buffer= new StringBuffer();
 		try {
 			IValue value = variable.getValue();
-			
 			buffer.append(variable.getName());
 			buffer.append(" = "); //$NON-NLS-1$
 			buffer.append(value.getValueString());
 		} catch (DebugException de) {
-			DebugUIPlugin.logError(de);
+			DebugUIPlugin.log(de.getStatus());
 		}
 		return buffer.toString();
 	}
@@ -247,7 +245,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				return DebugUIMessages.getString("DefaultLabelProvider.Breakpoint_1"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.logError(e);
+			DebugUIPlugin.log(e.getStatus());
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -263,7 +261,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.logError(e);
+			DebugUIPlugin.log(e.getStatus());
 		}
 		return null;
 	}
