@@ -32,13 +32,13 @@ import org.eclipse.swt.widgets.DirectoryDialog;
  */
 public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 	
-	private AntClasspathTab2 fTab;
+	private AntClasspathTab fTab;
 	/**
 	 * Constructs an action to edit the Ant Home setting for a launch config.
 	 * 
 	 * @param viewer classpath viewer
 	 */
-	public EditAntHomeEntryAction(IClasspathViewer viewer, AntClasspathTab2 tab) {
+	public EditAntHomeEntryAction(IClasspathViewer viewer, AntClasspathTab tab) {
 		super(AntLaunchConfigurationMessages.getString("EditAntHomeEntryAction.1"), viewer); //$NON-NLS-1$
 		fTab = tab;
 	}

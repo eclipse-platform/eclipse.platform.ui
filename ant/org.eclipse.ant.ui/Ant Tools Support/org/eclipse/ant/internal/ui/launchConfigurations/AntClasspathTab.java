@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * The Ant classpath tab
  */
-public class AntClasspathTab2 extends JavaClasspathTab {
+public class AntClasspathTab extends JavaClasspathTab {
 	
 	
 	/* (non-Javadoc)
