@@ -191,7 +191,7 @@ public class EditorList extends AbstractTableInformationControl {
 
     protected TableViewer createTableViewer(Composite parent, int style) {
         Table table = new Table(parent, SWT.SINGLE | (style & ~SWT.MULTI));
-        table.setLayoutData(new GridData(GridData.FILL_BOTH));
+        table.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         TableViewer tableViewer = new TableViewer(table);
         tableViewer.addFilter(new NamePatternFilter());
         tableViewer.setContentProvider(new EditorListContentProvider());

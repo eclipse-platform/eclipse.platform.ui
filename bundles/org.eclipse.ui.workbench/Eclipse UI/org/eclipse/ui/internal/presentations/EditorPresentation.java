@@ -59,11 +59,8 @@ public class EditorPresentation extends BasicStackPresentation {
     private PaneFolderButtonListener showListListener = new PaneFolderButtonListener () {
 
         public void showList(CTabFolderEvent event) {
-            PaneFolder tabFolder = getTabFolder();
             event.doit = false;
-            Point p = tabFolder.getControl().toDisplay(event.x, event.y);
-            p.y += +event.height;
-            EditorPresentation.this.showList(tabFolder.getControl().getShell(), p.x, p.y);
+            showListDefaultLocation();
         }
     };
 
@@ -135,10 +132,7 @@ public class EditorPresentation extends BasicStackPresentation {
         IHandler openEditorDropDownHandler = new AbstractHandler() {
 
             public Object execute(Map parameterValuesByName) throws ExecutionException {
-                Rectangle clientArea = tabFolder.getClientArea();
-                Point location = tabFolder.getControl().getDisplay().map(tabFolder.getControl(), null,
-                        clientArea.x, clientArea.y);
-                showList(shell, location.x, location.y);
+            	showListDefaultLocation();
                 return null;
             }
         };
@@ -244,11 +238,7 @@ public class EditorPresentation extends BasicStackPresentation {
                 shellStyle, tableStyle);
         editorList.setInput(this);
         Point size = editorList.computeSizeHint();
-        int minX = 50; //labelComposite.getSize().x;
-        int minY = 300;
-        if (size.x < minX) size.x = minX;
-        if (size.y < minY) size.y = minY;
-        editorList.setSize(size.x, size.y);
+        
         Rectangle bounds = Display.getCurrent().getBounds();
         if (x + size.x > bounds.width) x = bounds.width - size.x;
         if (y + size.y > bounds.height) y = bounds.height - size.y;
@@ -262,6 +252,18 @@ public class EditorPresentation extends BasicStackPresentation {
                         editorList.setVisible(false);
                     }
                 });
+    }
+    
+    /*
+     * Shows the list of tabs at the top left corner of the editor
+     */
+    private void showListDefaultLocation() {
+    	PaneFolder tabFolder = getTabFolder();
+    	Shell shell = tabFolder.getControl().getShell();
+        Rectangle clientArea = tabFolder.getClientArea();
+        Point location = tabFolder.getControl().getDisplay().map(tabFolder.getControl(), null,
+                clientArea.x, clientArea.y);
+        showList(shell, location.x, location.y);
     }
 
     /**
