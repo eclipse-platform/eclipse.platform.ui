@@ -350,11 +350,9 @@ public final class Platform {
 			IPluginDescriptor pd = getPluginRegistry().getPluginDescriptor(id);
 			if (pd == null)
 				return null;
-
 			return pd.getPlugin();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO log the exception
 		}
 		return null;
 	}
