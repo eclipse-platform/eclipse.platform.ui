@@ -125,7 +125,7 @@ public class SearchQueryData {
 			q += "&fieldSearch=false";
 		if (bookFiltering) {
 			for (int i=0; i<workingSets.length; i++ ) {
-				q += "&scope=" + URLEncoder.encode(workingSets[i].getName());
+				q += "&scope=" + URLCoder.encode(workingSets[i].getName());
 			}
 		}
 		return q;
