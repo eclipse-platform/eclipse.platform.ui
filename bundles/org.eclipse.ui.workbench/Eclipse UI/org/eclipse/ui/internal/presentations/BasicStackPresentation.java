@@ -92,8 +92,6 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 		
 		public void mouseDoubleClick(MouseEvent e) {
-			CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
-			
 			if (site.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
 				site.setState(IStackPresentationSite.STATE_RESTORED);
 			} else {
@@ -197,7 +195,7 @@ public class BasicStackPresentation extends StackPresentation {
 
 				IPresentablePart part = getPartForTab(tabUnderPointer); 
 				
-				if (site.isMovable(part)) {
+				if (site.isMoveable(part)) {
 					site.dragStart(part, 
 						tabFolder.toDisplay(localPos), false);
 				}
@@ -297,7 +295,7 @@ public class BasicStackPresentation extends StackPresentation {
 	private void setControlSize() {
 		if (current == null || tabFolder == null)
 			return;
-		Rectangle bounds;
+//		Rectangle bounds;
 		// @issue as above, the mere presence of a theme should not change the behaviour
 //		if ((mapTabToPart.size() > 1)
 //			|| ((tabThemeDescriptor != null) && (mapTabToPart.size() >= 1)))
@@ -346,7 +344,7 @@ public class BasicStackPresentation extends StackPresentation {
 
 		int style = SWT.NONE;
 		
-		if (site.isClosable(part)) {
+		if (site.isCloseable(part)) {
 			style |= SWT.CLOSE;
 		}
 		
@@ -355,7 +353,7 @@ public class BasicStackPresentation extends StackPresentation {
 		tabItem.setData(TAB_DATA, part);
 		
 		part.addPropertyListener(childPropertyChangeListener);
-		tabItem.addDisposeListener(tabDisposeListener );
+		tabItem.addDisposeListener(tabDisposeListener);
 
 		initTab(tabItem, part);
 		

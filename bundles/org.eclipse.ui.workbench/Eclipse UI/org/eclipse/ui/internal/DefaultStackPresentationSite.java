@@ -76,14 +76,14 @@ public class DefaultStackPresentationSite implements IStackPresentationSite {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentablePart#isClosable()
 	 */
-	public boolean isClosable(IPresentablePart part) {
+	public boolean isCloseable(IPresentablePart part) {
 		return true;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentablePart#isMovable()
 	 */
-	public boolean isMovable(IPresentablePart part) {
+	public boolean isMoveable(IPresentablePart part) {
 		return true;
 	}
 	

@@ -96,7 +96,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
             EditorWorkbook.this.close(part);
         }
 
-        public boolean isClosable(IPresentablePart part) {
+        public boolean isCloseable(IPresentablePart part) {
             return true;
 
             //			Perspective perspective = page.getActivePerspective();
@@ -118,8 +118,8 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
             //			return !perspective.isFixedView(pane.getEditorReference());
         }
 
-        public boolean isMovable(IPresentablePart part) {
-            return isClosable(part);
+        public boolean isMoveable(IPresentablePart part) {
+            return isCloseable(part);
         }
     };
 
@@ -196,7 +196,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
      * @param part
      */
     protected void close(IPresentablePart part) {
-        if (!presentationSite.isClosable(part)) { return; }
+        if (!presentationSite.isCloseable(part)) { return; }
 
         LayoutPart layoutPart = getPaneFor(part);
 

@@ -15,6 +15,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -31,7 +33,11 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.presentations.*;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.PresentationUtil;
+import org.eclipse.ui.presentations.StackDropResult;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Base class for StackPresentations that display IPresentableParts in a CTabFolder. 
@@ -40,7 +46,6 @@ import org.eclipse.ui.presentations.*;
  */
 public class NativeStackPresentation extends StackPresentation {
 	
-    private Composite composite;
 	private TabFolder tabFolder;
 	private IStackPresentationSite site;
 	private IPresentablePart current;
@@ -105,7 +110,18 @@ public class NativeStackPresentation extends StackPresentation {
 			}
 		}	
 	};
-	
+
+	private DisposeListener tabDisposeListener = new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			if (e.widget instanceof TabItem) {
+				TabItem item = (TabItem)e.widget;
+				IPresentablePart part = getPartForTab(item);
+				part.removePropertyListener(childPropertyChangeListener);
+			}
+		}
+	};
+
+
 	public NativeStackPresentation(Composite parent, IStackPresentationSite stackSite, int flags) {
 	    // TODO: flags are currently ignored
 		int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
@@ -135,7 +151,7 @@ public class NativeStackPresentation extends StackPresentation {
 
 				IPresentablePart part = getPartForTab(tabUnderPointer); 
 				
-				if (site.isMovable(part)) {
+				if (site.isMoveable(part)) {
 					site.dragStart(part, 
 						tabFolder.toDisplay(localPos), false);
 				}
@@ -264,6 +280,7 @@ public class NativeStackPresentation extends StackPresentation {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE, tabIndex);
 		tabItem.setData(TAB_DATA, part);
 		part.addPropertyListener(childPropertyChangeListener);
+		tabItem.addDisposeListener(tabDisposeListener);
 		initTab(tabItem, part);
 		return tabItem;
 	}

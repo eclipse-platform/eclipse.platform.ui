@@ -37,6 +37,24 @@ public class StandardSystemContribution extends ContributionItem {
 		this.site = site;
 	}
 
+	/**
+	 * Returns the site.
+	 */
+	protected IStackPresentationSite getSite() {
+	    return site;
+	}
+	
+	/**
+	 * Returns the current part, or <code>null</code> if not set.
+	 */
+	protected IPresentablePart getPart() {
+	    return currentPart;
+	}
+
+	/**
+	 * @issue Why is this not set in the constructor?  
+	 *   Is the receiver somehow shared across parts? 
+	 */ 
 	public void setPart(IPresentablePart part) {
 		currentPart = part;
 		IContributionManager parent = getParent();
@@ -101,7 +119,7 @@ public class StandardSystemContribution extends ContributionItem {
 				site.dragStart(currentPart, display.getCursorLocation(), true);
 			}
 		});
-		item.setEnabled(currentPart != null && site.isMovable(currentPart));
+		item.setEnabled(currentPart != null && site.isMoveable(currentPart));
 
 		// Add move view's tab folder menu item
 		item = new MenuItem(moveMenu, SWT.NONE);
@@ -115,6 +133,7 @@ public class StandardSystemContribution extends ContributionItem {
 	}
 	
 	protected void addSizeMenuItem(Menu menu) {
+	    // do nothing
 	}
 	
 	protected void addCloseMenuItem (Menu menu) {
@@ -128,6 +147,6 @@ public class StandardSystemContribution extends ContributionItem {
 			}
 		});
 		
-		item.setEnabled(currentPart != null && site.isClosable(currentPart));
+		item.setEnabled(currentPart != null && site.isCloseable(currentPart));
 	}
 }

@@ -36,7 +36,14 @@ public class PartTabFolderSystemContribution extends PartPaneSystemContribution 
 	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
 	 */
 	public void fill(Menu menu, int index) {
-		MenuItem item = new MenuItem(menu, SWT.NONE);
+        if (getSite().isMoveable(getPart())) {
+            addFastViewMenuItem(menu);
+        }
+		super.fill(menu, index);
+	}
+
+    protected void addFastViewMenuItem(Menu menu) {
+        MenuItem item = new MenuItem(menu, SWT.NONE);
 		item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
 		item.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -47,7 +54,5 @@ public class PartTabFolderSystemContribution extends PartPaneSystemContribution 
 				}
 			}
 		});
-
-		super.fill(menu, index);
-	}
+    }
 }

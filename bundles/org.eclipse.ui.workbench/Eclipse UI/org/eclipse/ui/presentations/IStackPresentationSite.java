@@ -26,10 +26,10 @@ public interface IStackPresentationSite {
 	public static int STATE_RESTORED = 2;
 
 	/**
-	 * Sets the state of the container. Called by the skin when the
+	 * Sets the state of the container. Called by the presentation when the
 	 * user causes the the container to be minimized, maximized, etc.
 	 * 
-	 * @param newState
+	 * @param newState one of the STATE_* constants
 	 */
 	public void setState(int newState);
 	
@@ -50,9 +50,9 @@ public interface IStackPresentationSite {
 	public void dragStart(IPresentablePart beingDragged, Point initialPosition, boolean keyboard);
 	
 	/**
-	 * Closes the given part
+	 * Closes the given part.
 	 * 
-	 * @param toClose
+	 * @param toClose the part to close
 	 */
 	public void close(IPresentablePart toClose);
 	
@@ -70,7 +70,7 @@ public interface IStackPresentationSite {
 	 * @param toClose part to test
 	 * @return true iff the part may be closed
 	 */
-	public boolean isClosable(IPresentablePart toClose);
+	public boolean isCloseable(IPresentablePart toClose);
 	
 	/**
 	 * Returns true iff this site will allow the given part to be moved
@@ -78,7 +78,7 @@ public interface IStackPresentationSite {
 	 * @param toMove part to test
 	 * @return true iff the part may be moved
 	 */
-	public boolean isMovable(IPresentablePart toMove);
+	public boolean isMoveable(IPresentablePart toMove);
 	
 	/**
 	 * Makes the given part active

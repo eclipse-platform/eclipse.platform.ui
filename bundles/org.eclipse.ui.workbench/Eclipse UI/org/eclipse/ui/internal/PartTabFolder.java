@@ -86,7 +86,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
                     initialPosition, !keyboard);
         }
 
-        public boolean isClosable(IPresentablePart part) {
+        public boolean isCloseable(IPresentablePart part) {
             Perspective perspective = page.getActivePerspective();
 
             if (perspective == null) {
@@ -104,8 +104,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
             return !perspective.isFixedView(pane.getViewReference());
         }
 
-        public boolean isMovable(IPresentablePart part) {
-            return isClosable(part);
+        public boolean isMoveable(IPresentablePart part) {
+            return isCloseable(part);
         }
 
         public void selectPart(IPresentablePart toSelect) {
@@ -224,7 +224,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
      * @param part
      */
     protected void close(IPresentablePart part) {
-        if (!presentationSite.isClosable(part)) { return; }
+        if (!presentationSite.isCloseable(part)) { return; }
 
         LayoutPart layoutPart = getPaneFor(part);
 

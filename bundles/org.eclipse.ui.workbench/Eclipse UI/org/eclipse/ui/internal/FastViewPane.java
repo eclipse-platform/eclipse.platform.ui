@@ -87,7 +87,7 @@ class FastViewPane {
 		}
 		
 		public void close(IPresentablePart part) {
-			if (!isClosable(part)) {
+			if (!isCloseable(part)) {
 				return;
 			}
 			currentPane.getPage().hideView(currentPane.getViewReference());
