@@ -1609,12 +1609,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
  	protected void disposeExistingTabs() {
 		TabItem[] oldTabs = getTabFolder().getItems();
-		if (getTabGroup() != null) {
-			getTabGroup().dispose();
-		}
 		for (int i = 0; i < oldTabs.length; i++) {
 			oldTabs[i].dispose();
 		} 		
+		if (getTabGroup() != null) {
+			getTabGroup().dispose();
+		}
 		setTabGroup(null);
 		setTabType(null);
  	}
