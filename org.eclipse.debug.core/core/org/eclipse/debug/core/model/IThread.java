@@ -41,8 +41,10 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * are returned in top down order.
 	 * 
 	 * @return a collection of stack frames
-	 * @exception DebugException if unable to retrieve stack frames
-	 *   from the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException;
 	/**
@@ -50,8 +52,10 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * number is operating-system dependent.
 	 *
 	 * @return thread priority
-	 * @exception DebugException if unable to retrieve this thread's priority from
-	 *   the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
 	public int getPriority() throws DebugException;
 	/** 
@@ -59,8 +63,10 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * currently no top stack frame.
 	 *
 	 * @return the top stack frame, or <code>null</code> if none
-	 * @exception DebugException if unable to retrieve this thread's top stack frame
-	 *   from the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
 	public IStackFrame getTopStackFrame() throws DebugException;
 	/**
@@ -68,8 +74,10 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * specific, and should be specified by a debug model.
 	 *
 	 * @return this thread's name
-	 * @exception DebugException if unable to retrieve this element's name from
-	 *    the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
 	public String getName() throws DebugException;
 
