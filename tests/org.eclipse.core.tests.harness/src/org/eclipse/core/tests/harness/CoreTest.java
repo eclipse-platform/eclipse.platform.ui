@@ -61,8 +61,7 @@ public class CoreTest extends TestCase {
 		// then print out the multistatus so we can see all the info.
 		if (e instanceof CoreException) {
 			IStatus status = ((CoreException) e).getStatus();
-			if (status.getChildren().length > 0)
-				write(status, 0);
+			write(status, 0);
 		} else
 			e.printStackTrace();
 		fail(message + ": " + e);
@@ -81,6 +80,12 @@ public class CoreTest extends TestCase {
 
 		indent(output, indent);
 		output.println("Message: " + status.getMessage());
+		
+		if (status.getException() != null) {
+			indent(output, indent);
+			output.print("Exception: ");
+			status.getException().printStackTrace(output);
+		}
 
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
