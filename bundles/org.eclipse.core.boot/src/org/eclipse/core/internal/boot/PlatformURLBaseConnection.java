@@ -7,22 +7,22 @@ package org.eclipse.core.internal.boot;
  */
 
 /**
- * Eclipse URL support
- * eclipse:/platform/	maps to platform installation location
+ * Platform URL support
+ * platform:/base/	maps to platform installation location
  */
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
  
-public class EclipseURLPlatformConnection extends EclipseURLConnection {
+public class PlatformURLBaseConnection extends PlatformURLConnection {
 
 	// platform/ protocol
-	public static final String PLATFORM = "platform";
-	public static final String PLATFORM_URL_STRING = EclipseURLHandler.ECLIPSE+EclipseURLHandler.PROTOCOL_SEPARATOR+"/"+PLATFORM+"/";
+	public static final String PLATFORM = "base";
+	public static final String PLATFORM_URL_STRING = PlatformURLHandler.PROTOCOL+PlatformURLHandler.PROTOCOL_SEPARATOR+"/"+PLATFORM+"/";
 	
 	private static URL installURL;
-public EclipseURLPlatformConnection(URL url) {
+public PlatformURLBaseConnection(URL url) {
 	super(url);
 }
 protected boolean allowCaching() {
@@ -39,9 +39,9 @@ protected URL resolve() throws IOException {
 }
 public static void startup(URL url) {
 	
-	// register connection type for eclipse:/platform/ handling
+	// register connection type for platform:/base/ handling
 	if (installURL!=null) return;
 	installURL = url;
-	EclipseURLHandler.register(PLATFORM, EclipseURLPlatformConnection.class);
+	PlatformURLHandler.register(PLATFORM, PlatformURLBaseConnection.class);
 }
 }

@@ -22,6 +22,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	private boolean match = false;
 	private boolean export = false;
 	private String resolvedVersion = null;
+	private boolean optional = false;
 /**
  * Creates a new plug-in prerequisite model in which all fields
  * are <code>null</code>.
@@ -44,6 +45,14 @@ public boolean getExport() {
  */
 public boolean getMatch() {
 	return match;
+}
+/**
+ * Returns whether this pre-requisite is optional.
+ *
+ * @return whether this pre-requisite is optional
+ */
+public boolean getOptional() {
+	return optional;
 }
 /**
  * Returns the plug-in identifier of the prerequisite plug-in.
@@ -90,6 +99,16 @@ public void setExport(boolean value) {
 public void setMatch(boolean value) {
 	assertIsWriteable();
 	match = value;
+}
+/**
+ * Sets whether this pre-requisite is optional.
+ * This object must not be read-only.
+ *
+ * @param value whether this pre-requisite is optional
+ */
+public void setOptional(boolean value) {
+	assertIsWriteable();
+	optional = value;
 }
 /**
  * Sets the plug-in identifier of this prerequisite plug-in.

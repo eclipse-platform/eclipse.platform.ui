@@ -10,7 +10,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.boot.EclipseURLHandlerFactory;
+import org.eclipse.core.internal.boot.PlatformURLHandlerFactory;
 import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.runtime.*;
@@ -131,12 +131,12 @@ public static void addProtectionSpace(URL resourceUrl, String realm) throws Core
  */
 public static URL asLocalURL(URL url) throws IOException {
 	URLConnection connection = url.openConnection();
-	if (!(connection instanceof EclipseURLConnection))
+	if (!(connection instanceof PlatformURLConnection))
 		return url;
 	String file = connection.getURL().getFile();
-	if (file.endsWith("/") && !file.endsWith(EclipseURLHandler.JAR_SEPARATOR))
+	if (file.endsWith("/") && !file.endsWith(PlatformURLHandler.JAR_SEPARATOR))
 		throw new IOException();
-	return ((EclipseURLConnection) connection).getURLAsLocal();
+	return ((PlatformURLConnection) connection).getURLAsLocal();
 }
 private static void assertInitialized() {
 	Assert.isTrue(initialized, Policy.bind("appNotInit", new String[] {}));
@@ -406,7 +406,7 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 	MultiStatus problems = loadRegistry(pluginPath);
 	initialized = true;
 	// can't register url handlers until after the plugin registry is loaded
-	EclipseURLPluginHandlerFactory.startup();
+	PlatformURLPluginHandlerFactory.startup();
 	activateDefaultPlugins();
 	// can't install the log or log problems until after the platform has been initialized.
 	platformLog = new PlatformLogListener();
@@ -568,8 +568,8 @@ public static void removeLogListener(ILogListener listener) {
  */
 public static URL resolve(URL url) throws IOException {
 	URLConnection connection = url.openConnection();
-	if (connection instanceof EclipseURLConnection)
-		return ((EclipseURLConnection) connection).getResolvedURL();
+	if (connection instanceof PlatformURLConnection)
+		return ((PlatformURLConnection) connection).getResolvedURL();
 	else
 		return url;
 }

@@ -7,20 +7,20 @@ package org.eclipse.core.internal.boot;
  */
 
 /**
- * Eclipse URL support
+ * Platform URL support
  */
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
  
-public abstract class EclipseURLConnection extends URLConnection {
+public abstract class PlatformURLConnection extends URLConnection {
 
 	// URL access
 	private boolean isInCache = false;
 	private boolean isJar = false;
 	
-//	protected URL url;				// declared in super (eclipse: URL)
+//	protected URL url;				// declared in super (platform: URL)
 	private URL resolvedURL = null;	// resolved file URL (eg. http: URL)
 	private URL cachedURL = null;	// file URL in cache (file: URL)
 
@@ -40,14 +40,14 @@ public abstract class EclipseURLConnection extends URLConnection {
 	private static final String CACHE_INDEX_PROP = "index";
 	private static final String CACHE_PREFIX_PROP = "prefix";
 	private static final String CACHE_INDEX = ".index.properties";
-	private static final String CACHE_DIR = EclipseURLHandler.ECLIPSE + File.separator;
+	private static final String CACHE_DIR = PlatformURLHandler.PROTOCOL + File.separator;
 
 	// debug tracing
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONNECT = true;
 	public static boolean DEBUG_CACHE_LOOKUP = true;
 	public static boolean DEBUG_CACHE_COPY = true;
-protected EclipseURLConnection(URL url) {
+protected PlatformURLConnection(URL url) {
 	super(url);
 }
 protected boolean allowCaching() {
@@ -84,7 +84,7 @@ private void copyToCache() throws IOException {
 	String key;
 	if (isJar) {
 		tmp = url.getFile();
-		ix = tmp.lastIndexOf(EclipseURLHandler.JAR_SEPARATOR);
+		ix = tmp.lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		if (ix!=-1) tmp = tmp.substring(0,ix);
 		key = tmp;
 	}
@@ -94,7 +94,7 @@ private void copyToCache() throws IOException {
 	URL src;
 	if (isJar) {
 		tmp = resolvedURL.getFile();
-		ix = tmp.lastIndexOf(EclipseURLHandler.JAR_SEPARATOR);
+		ix = tmp.lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		if (ix!=-1) tmp = tmp.substring(0,ix);
 		src = new URL(tmp);
 	}
@@ -105,9 +105,9 @@ private void copyToCache() throws IOException {
 	String tgt;
 	if (isJar) {
 		tmp = cachedURL.getFile();
-		ix = tmp.indexOf(EclipseURLHandler.PROTOCOL_SEPARATOR);
+		ix = tmp.indexOf(PlatformURLHandler.PROTOCOL_SEPARATOR);
 		if (ix!=-1) tmp = tmp.substring(ix+1);
-		ix = tmp.lastIndexOf(EclipseURLHandler.JAR_SEPARATOR);
+		ix = tmp.lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		if (ix!=-1) tmp = tmp.substring(0,ix);
 		tgt = tmp;
 	}
@@ -179,7 +179,7 @@ public URL getURLAsLocal() throws IOException {
 	connect(true);	// connect and force caching if necessary
 	URL u = connection.getURL();
 	String up = u.getProtocol();
-	if (!up.equals(EclipseURLHandler.FILE) && !up.equals(EclipseURLHandler.JAR) && !up.equals(EclipseURLHandler.VA)) throw new IOException("Unable to access URL as local "+url.toString());
+	if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR) && !up.equals(PlatformURLHandler.VA)) throw new IOException("Unable to access URL as local "+url.toString());
 	return u;
 }
 private URL getURLInCache() throws IOException {
@@ -195,9 +195,9 @@ private URL getURLInCache() throws IOException {
 	String jarEntry = null;
 	if (isJar) {
 		file = url.getFile();
-		int ix = file.lastIndexOf(EclipseURLHandler.JAR_SEPARATOR);
+		int ix = file.lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		if (ix!=-1) {
-			jarEntry = file.substring(ix+EclipseURLHandler.JAR_SEPARATOR.length());
+			jarEntry = file.substring(ix+PlatformURLHandler.JAR_SEPARATOR.length());
 			file = file.substring(0,ix);
 		}
 	}
@@ -223,13 +223,13 @@ private URL getURLInCache() throws IOException {
 		if (isJar) {
 			if (DEBUG && DEBUG_CACHE_LOOKUP)
 				debug("Jar located in cache as "+tmp);
-			tmp = EclipseURLHandler.FILE + EclipseURLHandler.PROTOCOL_SEPARATOR + tmp + EclipseURLHandler.JAR_SEPARATOR + jarEntry;
-			cachedURL = new URL(EclipseURLHandler.JAR,null,-1,tmp);
+			tmp = PlatformURLHandler.FILE + PlatformURLHandler.PROTOCOL_SEPARATOR + tmp + PlatformURLHandler.JAR_SEPARATOR + jarEntry;
+			cachedURL = new URL(PlatformURLHandler.JAR,null,-1,tmp);
 		}
 		else {
 			if (DEBUG && DEBUG_CACHE_LOOKUP)
 				debug("Located in cache as "+tmp);
-			cachedURL = new URL(EclipseURLHandler.FILE,null,-1,tmp);
+			cachedURL = new URL(PlatformURLHandler.FILE,null,-1,tmp);
 		}
 		isInCache = true;
 	}
@@ -240,10 +240,10 @@ private URL getURLInCache() throws IOException {
 		tmp = cacheLocation + filePrefix + Long.toString((new java.util.Date()).getTime(),36) + "_" + tmp;
 		tmp = tmp.replace(File.separatorChar,'/');
 		if (isJar) {
-			tmp = EclipseURLHandler.FILE + EclipseURLHandler.PROTOCOL_SEPARATOR + tmp + EclipseURLHandler.JAR_SEPARATOR + jarEntry;
-			cachedURL = new URL(EclipseURLHandler.JAR,null,-1,tmp);
+			tmp = PlatformURLHandler.FILE + PlatformURLHandler.PROTOCOL_SEPARATOR + tmp + PlatformURLHandler.JAR_SEPARATOR + jarEntry;
+			cachedURL = new URL(PlatformURLHandler.JAR,null,-1,tmp);
 		}
-		else cachedURL = new URL(EclipseURLHandler.FILE,null,-1,tmp);
+		else cachedURL = new URL(PlatformURLHandler.FILE,null,-1,tmp);
 		copyToCache();
 	}
 	
@@ -259,11 +259,11 @@ protected URL resolve() throws IOException {
 }
 void setResolvedURL(URL url) throws IOException {
 	if (resolvedURL==null) {
-		int ix = url.getFile().lastIndexOf(EclipseURLHandler.JAR_SEPARATOR);
+		int ix = url.getFile().lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		isJar = -1 != ix;
 		// Resolved URLs containing !/ separator are assumed to be jar URLs.
 		// If the resolved protocol is not jar, new jar URL is created.
-		if (isJar && !url.getProtocol().equals(EclipseURLHandler.JAR)) url = new URL(EclipseURLHandler.JAR,null,-1,url.toExternalForm());
+		if (isJar && !url.getProtocol().equals(PlatformURLHandler.JAR)) url = new URL(PlatformURLHandler.JAR,null,-1,url.toExternalForm());
 		resolvedURL=url;
 	}
 }
@@ -272,8 +272,8 @@ private boolean shouldCache(boolean asLocal) {
 	// don't cache files that are known to be local
 	String rp = resolvedURL.getProtocol();
 	String rf = resolvedURL.getFile();
-	if (rp.equals(EclipseURLHandler.FILE) || rp.equals(EclipseURLHandler.VA)) return false;
-	if (rp.equals(EclipseURLHandler.JAR) && (rf.startsWith(EclipseURLHandler.FILE) || rf.startsWith(EclipseURLHandler.VA) )) return false;
+	if (rp.equals(PlatformURLHandler.FILE) || rp.equals(PlatformURLHandler.VA)) return false;
+	if (rp.equals(PlatformURLHandler.JAR) && (rf.startsWith(PlatformURLHandler.FILE) || rf.startsWith(PlatformURLHandler.VA) )) return false;
 
 	// for other files force caching if local connection was requested
 	if (asLocal) return true;

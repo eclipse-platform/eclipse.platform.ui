@@ -121,7 +121,8 @@ public String getProviderName();
 public IUMRegistry getUMRegistry() ;
 /**
  * Returns whether the component described by this descriptor
- * belongs to a product or not.
+ * belongs to a product or not.   Used only by local or current
+ * registries.
  *
  * @return <code>true</code> if this component does not belong to any 
  * product configuration, and
@@ -141,6 +142,16 @@ public boolean isDanglingComponent();
  * @return whether this remote component can be downloaded and installed.
  */
 public int isInstallable(IComponentDescriptor comp);
+/**
+ * Returns whether the component described by this descriptor
+ * belongs to a product or not.   Used only by remote
+ * registries.
+ *
+ * @return <code>true</code> if this component does not belong to any 
+ * product configuration, and
+ *   <code>false</code> otherwise
+ */
+public boolean isLoose();
 /**
  * Returns whether the component or configuration described by this descriptor
  * can be removed or not.  The following condition is checked:

@@ -29,7 +29,7 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 	private boolean bundleNotFound = false; // marker to prevent unnecessary lookups
 
 	// constants
-	private static final String ECLIPSE_URL = EclipseURLHandler.ECLIPSE + EclipseURLHandler.PROTOCOL_SEPARATOR + "/" + EclipseURLPluginConnection.PLUGIN + "/";
+	private static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/";
 
 	private static final String DEFAULT_BUNDLE_NAME = "plugin";
 	private static final String KEY_PREFIX = "%";
@@ -37,8 +37,7 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 
 	private static final String URL_PROTOCOL_FILE = "file";
 
-	private static final String VERSION_SEPARATOR_OPEN = "(";
-	private static final String VERSION_SEPARATOR_CLOSE = ")";
+	private static final String VERSION_SEPARATOR = "_";
 
 	// Development mode constants
 	private static final String PLUGIN_JARS = "plugin.jars";
@@ -216,7 +215,7 @@ public IExtension[] getExtensions() {
  */
 public URL getInstallURL() {
 	try {
-		return new URL(ECLIPSE_URL + getUniqueIdentifier() + "/");
+		return new URL(PLUGIN_URL + toString() + "/");
 	} catch (MalformedURLException e) {
 		throw new IllegalStateException(); // unchecked
 	}
@@ -255,7 +254,11 @@ public ClassLoader getPluginClassLoader(boolean eclipseURLs) {
 		return loader;
 
 	Object[] path = getPluginClassLoaderPath(eclipseURLs);
-	loader = new PluginClassLoader((URL[]) path[0], (URLContentFilter[]) path[1], PlatformClassLoader.getDefault(), this);
+	URL[] codePath = (URL[]) path[0];
+	URLContentFilter[] codeFilters = (URLContentFilter[]) path[1];
+	URL[] resourcePath = (URL[]) path[2];
+	URLContentFilter[] resourceFilters = (URLContentFilter[]) path[3];
+	loader = new PluginClassLoader(codePath, codeFilters, resourcePath, resourceFilters, PlatformClassLoader.getDefault(), this);
 	loader.initializeImportedLoaders();
 	// Note: need to be able to give out a loader reference before
 	// its prereqs are initialized. Otherwise loops in prereq
@@ -291,15 +294,17 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 	// applied to the corresponding loader search path entries
 
 	Properties jarDefinitions = loadJarDefinitions();
-	ArrayList urls = new ArrayList(5);
-	ArrayList cfs = new ArrayList(5);
+	ArrayList resourcePath = new ArrayList(5);
+	ArrayList resourceFilters = new ArrayList(5);
+	ArrayList codePath = new ArrayList(5);
+	ArrayList codeFilters = new ArrayList(5);
 	// compute the base of the classpath urls.  If <code>eclipseURLs</code> is
 	// true, we should use eclipse: URLs.  Otherwise the native URLs are used.
 	URL install = eclipseURLs ? getInstallURL() : getInstallURLInternal();
 	String execBase = install.toExternalForm();
 	String devBase = null;
 	if (InternalPlatform.inVAJ() || InternalPlatform.inVAME())
-		devBase = EclipseURLPlatformConnection.PLATFORM_URL_STRING;
+		devBase = PlatformURLBaseConnection.PLATFORM_URL_STRING;
 	else
 		devBase = execBase;
 
@@ -323,19 +328,21 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 	}
 
 	// add in the class path entries spec'd in the plugin.xml.  If in development mode, 
-	// add the entries from the plugin.jars first.
+	// add the entries from the plugin.jars first.  
 	ILibrary[] list = getRuntimeLibraries();
 	for (int i = 0; i < list.length; i++) {
 		ILibrary library = list[i];
-		if (library.getPath().isEmpty())
+		// if the library path is empty or the library is source lib, skip it.
+		if (library.getPath().isEmpty() || library.getType().equals(ILibrary.SOURCE))
 			continue;
 		String[] filters = library.isFullyExported() ? exportAll : library.getContentFilters();
 		// add in the plugin.jars entries
 		String libSpec = library.getPath().toString();
+		libSpec = resolveLibraryPath(libSpec);
 		String jarDefinition = null;
 		if (jarDefinitions != null && libSpec != null) {
 			jarDefinition = jarDefinitions.getProperty(libSpec);
-			String[] specs = getArrayFromList(jarDefinition );
+			String[] specs = getArrayFromList(jarDefinition);
 			// convert jar spec into url strings
 			for (int j = 0; j < specs.length; j++) {
 				libSpecs.add(devBase + specs[j] + "/");
@@ -353,16 +360,22 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 				if ((InternalPlatform.inVAJ() || InternalPlatform.inVAME()) && jarDefinition != null) {
 					libSpec = null;
 				} else {
-					if (libSpec.startsWith(EclipseURLHandler.ECLIPSE + EclipseURLHandler.PROTOCOL_SEPARATOR))
-						libSpec += EclipseURLHandler.JAR_SEPARATOR;
+					if (libSpec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
+						libSpec += PlatformURLHandler.JAR_SEPARATOR;
 					else
-						libSpec = EclipseURLHandler.JAR + EclipseURLHandler.PROTOCOL_SEPARATOR + libSpec + EclipseURLHandler.JAR_SEPARATOR;
+						libSpec = PlatformURLHandler.JAR + PlatformURLHandler.PROTOCOL_SEPARATOR + libSpec + PlatformURLHandler.JAR_SEPARATOR;
 				}
 			}
 			// if we still have a libspec, add it to the list of classpath entries
 			if (libSpec != null) {
-				libSpecs.add(libSpec);
-				libSpecs.add(filters);
+				if (library.getType().equals(ILibrary.CODE)) {
+					libSpecs.add(libSpec);
+					libSpecs.add(filters);
+				} else
+					if (library.getType().equals(ILibrary.RESOURCE)) {
+						resourcePath.add(libSpec);
+						resourceFilters.add(filters);
+					}
 			}
 		}
 	}
@@ -376,20 +389,22 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 			URL entry = new URL(spec);
 			URL resolved = Platform.resolve(entry);
 			boolean add = true;
-			if (resolved.getProtocol().equals(EclipseURLHandler.FILE))
+			if (resolved.getProtocol().equals(PlatformURLHandler.FILE))
 				add = new File(resolved.getFile()).exists();
 			if (add) {
-				urls.add(entry);
-				cfs.add(new URLContentFilter(filter));
+				codePath.add(resolved);
+				codeFilters.add(new URLContentFilter(filter));
 			}
 		} catch (IOException e) {
 			// skip bad URLs
 		}
 	}
 
-	Object[] result = new Object[2];
-	result[0] = urls.toArray(new URL[urls.size()]);
-	result[1] = cfs.toArray(new URLContentFilter[cfs.size()]);
+	Object[] result = new Object[4];
+	result[0] = codePath.toArray(new URL[codePath.size()]);
+	result[1] = codeFilters.toArray(new URLContentFilter[codeFilters.size()]);
+	result[2] = resourcePath.toArray(new URL[resourcePath.size()]);
+	result[3] = resourceFilters.toArray(new URLContentFilter[resourceFilters.size()]);
 	return result;
 }
 /**
@@ -489,6 +504,13 @@ public String getUniqueIdentifier() {
 	return getId();
 }
 /**
+ * @see #toString
+ */
+public static String getUniqueIdentifierFromString(String pluginString) {	
+	int ix = pluginString.indexOf(VERSION_SEPARATOR);
+	return ix==-1 ? pluginString : pluginString.substring(0,ix);
+}
+/**
  * @see IPluginDescriptor
  */
 public PluginVersionIdentifier getVersionIdentifier() {
@@ -497,8 +519,21 @@ public PluginVersionIdentifier getVersionIdentifier() {
 		return new PluginVersionIdentifier("1.0.0");
 	try {
 		return new PluginVersionIdentifier(version);
-	} catch (Throwable e) {
+	} catch (Exception e) {
 		return new PluginVersionIdentifier("1.0.0");
+	}
+}
+/**
+ * @see #toString
+ */
+public static PluginVersionIdentifier getVersionIdentifierFromString(String pluginString) {
+	int ix = pluginString.indexOf("_");
+	if (ix==-1) return null;
+	String vid = pluginString.substring(ix+1);	
+	try {
+		return new PluginVersionIdentifier(vid);
+	} catch (Exception e) {
+		return null;
 	}
 }
 private void internalDoPluginActivation() throws CoreException {
@@ -580,6 +615,9 @@ public synchronized boolean isPluginDeactivated() {
 	return deactivated;
 }
 private Properties loadJarDefinitions() {
+	// XXX this should be changed to just be !(inVAJ || inVAME).  Eclipse
+	// can now copy the resources etc into the right spot so we don't have to
+	// add the source folders any more.
 	if (!InternalPlatform.inDevelopmentMode())
 		return null;
 	Properties result = null;
@@ -630,6 +668,19 @@ private void pluginActivationExit(boolean errorExit) {
 	} else
 		active = true;
 }
+private String resolveLibraryPath(String spec) {
+	if (spec.charAt(0) != '$')
+		return spec;
+	IPath path = new Path(spec);
+	String first = path.segment(0);
+	if (first.equalsIgnoreCase("$ws$"))
+		return new Path("ws/" + BootLoader.getWS()).append(path.removeFirstSegments(1)).toString();
+	if (first.equalsIgnoreCase("$os$"))
+		return new Path("os/" + BootLoader.getOS()).append(path.removeFirstSegments(1)).toString();
+	if (first.equalsIgnoreCase("$nl$"))
+		return new Path("nl/" + BootLoader.getNL()).append(path.removeFirstSegments(1)).toString();
+	return spec;
+}
 public void setPluginClassLoader(DelegatingURLClassLoader value) {
 	loader = value;
 }
@@ -641,7 +692,11 @@ private void throwException(String message, Throwable exception) throws CoreExce
 	logError(status);
 	throw new CoreException(status);
 }
+/**
+ * @see #getUniqueIdentifierFromString
+ * @see #getVersionIdentifierFromString
+ */
 public String toString() {
-	return getUniqueIdentifier()+VERSION_SEPARATOR_OPEN+getVersionIdentifier().toString()+VERSION_SEPARATOR_CLOSE;
+	return getUniqueIdentifier()+VERSION_SEPARATOR+getVersionIdentifier().toString();
 }
 }

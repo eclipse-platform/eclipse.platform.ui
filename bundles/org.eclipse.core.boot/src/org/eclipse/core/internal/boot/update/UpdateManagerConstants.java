@@ -69,4 +69,8 @@ public interface UpdateManagerConstants {
 	public static final int URL_INVALID     =  9;
 	public static final int URL_MISSING     = 10;
 	public static final int URL_NOT_FOUND   = 11;
+
+	public static final int CURRENT_REGISTRY = 0;
+	public static final int LOCAL_REGISTRY = 1;
+	public static final int REMOTE_REGISTRY = 2;
 }

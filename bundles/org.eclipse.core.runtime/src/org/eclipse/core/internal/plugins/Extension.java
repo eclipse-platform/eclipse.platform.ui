@@ -45,6 +45,6 @@ public String getUniqueIdentifier() {
 	return getParentPluginDescriptor().getId() + "." + simple;
 }
 public String toString() {
-	return getDeclaringPluginDescriptor().toString()+"."+getSimpleIdentifier();
+	return getParent().getPluginId() + "." + getSimpleIdentifier();
 }
 }

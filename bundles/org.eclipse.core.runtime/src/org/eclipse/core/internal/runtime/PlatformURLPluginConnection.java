@@ -7,8 +7,8 @@ package org.eclipse.core.internal.runtime;
  */
 
 /**
- * Eclipse URL support
- * eclipse:plugin/<pluginId>/		maps to pluginDescriptor.getInstallURLInternal()
+ * Platform URL support
+ * platform:/plugin/<pluginId>/		maps to pluginDescriptor.getInstallURLInternal()
  */
 
 import java.net.*;
@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
  
-public class EclipseURLPluginConnection extends EclipseURLConnection {
+public class PlatformURLPluginConnection extends PlatformURLConnection {
 
 	// plugin/ protocol
 	private PluginDescriptor pd = null;
 	private static boolean isRegistered = false;
 	public static final String PLUGIN = "plugin";
-public EclipseURLPluginConnection(URL url) {
+public PlatformURLPluginConnection(URL url) {
 	super(url);
 }
 protected boolean allowCaching() {
@@ -35,25 +35,29 @@ protected URL resolve() throws IOException {
 	String spec = url.getFile().trim();
 	if (spec.startsWith("/")) spec = spec.substring(1);
 	int ix;
-	String name;
+	String ref;
+	String id;
+	PluginVersionIdentifier vid;
 	String rest;
 	URL result;
 
 	if (!spec.startsWith(PLUGIN)) throw new IOException("Unsupported protocol variation "+url.toString());
 
 	ix = spec.indexOf("/",PLUGIN.length()+1);
-	name = ix==-1 ? spec.substring(PLUGIN.length()+1) : spec.substring(PLUGIN.length()+1,ix);
+	ref = ix==-1 ? spec.substring(PLUGIN.length()+1) : spec.substring(PLUGIN.length()+1,ix);
+	id = PluginDescriptor.getUniqueIdentifierFromString(ref);
+	vid = PluginDescriptor.getVersionIdentifierFromString(ref);
 	IPluginRegistry r = Platform.getPluginRegistry();
-	pd = (PluginDescriptor)r.getPluginDescriptor(name);
+	pd = (PluginDescriptor)(vid==null ? r.getPluginDescriptor(id) : r.getPluginDescriptor(id,vid));
 	if (pd == null) throw new IOException("Unable to resolve plug-in "+url.toString());
 	result = (ix==-1 || (ix+1)>=spec.length()) ? pd.getInstallURLInternal() : new URL(pd.getInstallURLInternal(),spec.substring(ix+1));
 	return result;
 }
 public static void startup() {
 	
-	// register connection type for eclipse:/plugin handling
+	// register connection type for platform:/plugin handling
 	if (isRegistered) return;
-	EclipseURLHandler.register(PLUGIN, EclipseURLPluginConnection.class);
+	PlatformURLHandler.register(PLUGIN, PlatformURLPluginConnection.class);
 	isRegistered = true;
 }
 }

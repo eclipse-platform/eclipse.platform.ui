@@ -51,8 +51,8 @@ public void addComponentDescriptorToLocal(IComponentDescriptor comp, boolean dan
 	// need to reload the manifest so it'll reflect the state of things as the component
 	// exists relative to the current registry.  Cannot just add the component descriptor
 	// to the current registry
-	fCurrentRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
-	fLocalRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
+	ComponentDescriptorModel newComp1 =	fCurrentRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
+	ComponentDescriptorModel newComp2 = fLocalRegistry._loadComponentManifest(UMEclipseTree.getComponentURL().toString(),comp.getDirName(),fFactory);
 
 	LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(comp.getUniqueIdentifier(), comp.getVersionStr());
 	if (dangling) {
@@ -60,36 +60,34 @@ public void addComponentDescriptorToLocal(IComponentDescriptor comp, boolean dan
 		fLocalRegistry._addToDanglingComponentIVPsRel(vid);
 	} 	
 	
-	// look for freshly added comp descriptor and sync up the product
+	// for freshly added comp descriptor, sync up the product
 	// and compEntry sides
 	//---------------------------------------------------------------
 
-	// Current Registry 
-	ComponentDescriptorModel newComp = fCurrentRegistry._lookupComponentDescriptor(vid.getIdentifier(), vid.getVersion());
-	if (newComp != null) {
+	if (newComp1 != null) {
 		Vector prod_list = fCurrentRegistry._getAllProducts();
 		Enumeration list = prod_list.elements();
 		while ( list.hasMoreElements()) {
 			ProductDescriptorModel prod = (ProductDescriptorModel) list.nextElement();
-			ComponentEntryDescriptorModel compEntry = prod._lookupComponentEntry(vid.getIdentifier());
+			ComponentEntryDescriptorModel compEntry = prod._lookupComponentEntry(vid.getIdentifier(), vid.getVersion());
 			if (compEntry != null) {
 				compEntry._isInstalled(true);
-				newComp._addToContainingProductsRel(prod);
+				newComp1._addToContainingProductsRel(prod);
 			}
 		}
 	}
 
 	// Repeat for local registry
-	newComp = fLocalRegistry._lookupComponentDescriptor(vid.getIdentifier(), vid.getVersion());
-	if (newComp != null) {
+
+	if (newComp2 != null) {
 		Vector prod_list = fLocalRegistry._getAllProducts();
 		Enumeration list = prod_list.elements();
 		while ( list.hasMoreElements()) {
 			ProductDescriptorModel prod = (ProductDescriptorModel) list.nextElement();
-			ComponentEntryDescriptorModel compEntry = prod._lookupComponentEntry(vid.getIdentifier());
+			ComponentEntryDescriptorModel compEntry = prod._lookupComponentEntry(vid.getIdentifier(), vid.getVersion());
 			if (compEntry != null) {
 				compEntry._isInstalled(true);
-				newComp._addToContainingProductsRel(prod);
+				newComp2._addToContainingProductsRel(prod);
 			}
 		}
 	}	
@@ -221,6 +219,7 @@ public IProductDescriptor[] getProductDownloadList() {
 public IUMRegistry getRegistryAt(URL url) {
 	UMRegistry reg = createNewRegistry();
 	reg._loadManifests(url, fFactory);
+	reg._setType(UpdateManagerConstants.REMOTE_REGISTRY);
 	fDiscoveryRegistry = reg;
 	return (IUMRegistry) fDiscoveryRegistry;
 	
@@ -232,12 +231,74 @@ private void rehydrateRegistries() {
 	if (fLocalRegistry == null) {
 		fLocalRegistry = createNewRegistry();
 //		fLocalRegistry._loadSettings(fFactory);
-		fLocalRegistry._loadManifests(fEclipseBaseURL, fFactory); 
+		fLocalRegistry._loadManifests(fEclipseBaseURL, fFactory);
+		fLocalRegistry._setType(UpdateManagerConstants.LOCAL_REGISTRY);
 	}
 	if (fCurrentRegistry == null) {
 		fCurrentRegistry = createNewRegistry();
 //		fCurrentRegistry._loadSettings(fFactory);
 		fCurrentRegistry._loadManifests(fEclipseBaseURL, fFactory, true); // filtered for LaunchInfo
+		fCurrentRegistry._setType(UpdateManagerConstants.CURRENT_REGISTRY);
 	}
+}
+/**
+ * Removes the component descriptor with the given identifier
+ * and version number from this registry.  If a version number is not specified (null), the latest
+ * version of such component will be removed.
+ * This will also remove the pluginEntry and FragmentEntry descriptors belonging to
+ * this component.
+ * Important assumption here is that comp.isRemovable() is called before this is called
+ *
+ * @param prodId the unique identifier of the component .
+ * @param version the version number
+ * 
+ */
+public void removeComponentDescriptorFromLocal(IComponentDescriptor comp) {
+	removeComponentDescriptorFromLocal(comp, null);
+}
+/**
+ * Removes the component descriptor with the given identifier
+ * and version number from this registry.  If a version number is not specified (null), the latest
+ * version of such component will be removed.
+ * This will also remove the pluginEntry and FragmentEntry descriptors belonging to
+ * this component.
+ * Important assumption here is that comp.isRemovable() is called before this is called
+ *
+ * @param prodId the unique identifier of the component .
+ * @param version the version number
+ * 
+ */
+public void removeComponentDescriptorFromLocal(IComponentDescriptor comp, IProductDescriptor prod) {
+
+	// Important: comp.isRemovable() == true   called already
+	fCurrentRegistry._removeFromComponentProxysRel(comp);
+	if (comp.isDanglingComponent())
+		fCurrentRegistry._removeFromDanglingComponentIVPsRel(comp);
+
+	// repeat for local registry
+	fLocalRegistry._removeFromComponentProxysRel(comp);
+	if (comp.isDanglingComponent())
+		fLocalRegistry._removeFromDanglingComponentIVPsRel(comp);
+}
+/**
+ * Removes the product descriptor with the given product identifier
+ * and version number from this registry.  If a version number is not specified (null), the latest
+ * version of such product will be removed.
+ * This will also remove the componentEntry descriptors that belong to this
+ * product.
+ * Important assumption here is that prod.isRemovable() is called before this is called
+ *
+ * @param prodId the unique identifier of the product .
+ * @param version the version number
+ * 
+ */
+public void removeProductDescriptorFromLocal(IProductDescriptor prod) {
+
+	// Important: prod.isRemovable() == true   called already
+	//fCurrentRegistry._removeFromProductProxysRel(prod);
+	// for each compEntry, getComponentDescriptor(), remove prod from containing prod
+	// if comp is danglingComp, continue;
+	// else if comp still has containingprod, continue;
+	// else removeComponentDescriptor() from registry
 }
 }

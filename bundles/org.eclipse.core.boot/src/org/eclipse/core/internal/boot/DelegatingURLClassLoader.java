@@ -10,9 +10,8 @@ import java.util.*;
 import java.io.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import org.eclipse.core.boot.BootLoader;
 
-/**
- */
 public abstract class DelegatingURLClassLoader extends URLClassLoader {
 
 	// loader base
@@ -21,14 +20,17 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	// delegation chain
 	protected DelegateLoader[] imports = null;
 
+	// extra resource class loader
+	protected URLClassLoader resourceLoader = null;
+
 	// filter table
-	private Hashtable libTable = new Hashtable();
+	private Hashtable filterTable = new Hashtable();
 
 	// development mode class path additions
 	public static String devClassPath = null;
 	// native library loading
-	private String prefix;
-	private String suffix;
+	private static String libPrefix;
+	private static String libSuffix;
 	private static final String WIN_LIBRARY_PREFIX = "";
 	private static final String WIN_LIBRARY_SUFFIX = ".dll";
 	private static final String UNIX_LIBRARY_PREFIX = "lib";
@@ -102,19 +104,26 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 		}
 	}
 
-/**
- * DelegatingURLClassLoader constructor comment.
- * @param urls java.net.URL[] search path
- * @param URLContentFilter[] content filters
- * @param parent java.lang.ClassLoader parent loader
- */
-public DelegatingURLClassLoader(URL[] urls, URLContentFilter[] filters, ClassLoader parent) {
-	super(urls, parent);
+public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent) {
+	super(codePath, parent);
+	initialize();
+	if (resourcePath != null)
+		resourceLoader = new ResourceLoader(resourcePath);
 
-	if (urls!=null) {
-		if (filters==null || filters.length!=urls.length) throw new DelegatingLoaderException();
-		for (int i=0; i<urls.length; i++) {
-			if (filters[i]!=null) libTable.put(urls[i],filters[i]);
+	if (codePath != null) {
+		if (codeFilters == null || codeFilters.length != codePath.length)
+			throw new DelegatingLoaderException();
+		for (int i = 0; i < codePath.length; i++) {
+			if (codeFilters[i] != null)
+				filterTable.put(codePath[i], codeFilters[i]);
+		}
+	}
+	if (resourcePath != null) {
+		if (resourceFilters == null || resourceFilters.length != resourcePath.length)
+			throw new DelegatingLoaderException();
+		for (int i = 0; i < resourcePath.length; i++) {
+			if (resourceFilters[i] != null)
+				filterTable.put(resourcePath[i], resourceFilters[i]);
 		}
 	}
 }
@@ -123,7 +132,7 @@ public DelegatingURLClassLoader(URL[] urls, URLContentFilter[] filters, ClassLoa
  * given requestor.  The <code>inCache</code> flag controls how this action is
  * reported if in debug mode.
  */
-protected Class checkVisibility(Class result, DelegatingURLClassLoader requestor, boolean inCache) {
+protected Class checkClassVisibility(Class result, DelegatingURLClassLoader requestor, boolean inCache) {
 	if (result == null)
 		return null;
 	if (isClassVisible(result, requestor)) {
@@ -133,6 +142,23 @@ protected Class checkVisibility(Class result, DelegatingURLClassLoader requestor
 		if (DEBUG && DEBUG_SHOW_ACTIONS && debugClass(result.getName()))
 			debug("skip " + result.getName() + " in " + (inCache ? "cache" : getURLforClass(result).toExternalForm()));
 		return null;
+	}
+	return result;
+}
+/**
+ * Returns the given resource URL or <code>null</code> if the resource is not visible to the
+ * given requestor.  
+ */
+protected URL checkResourceVisibility(String name, URL result, DelegatingURLClassLoader requestor) {
+	if (result == null)
+		return null;
+	if (isResourceVisible(name, result, requestor)) {
+		if (DEBUG && DEBUG_SHOW_SUCCESS && debugResource(name))
+			debug("found " + result);
+	} else {
+		if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
+			debug("skip " + result);
+		result = null;
 	}
 	return result;
 }
@@ -148,18 +174,19 @@ protected boolean debugClass(String name) {
 	return false;
 }
 protected void debugConstruction() {
-	
-	if(DEBUG && DEBUG_SHOW_CREATE && debugLoader()) {
+	if (DEBUG && DEBUG_SHOW_CREATE && debugLoader()) {
 		URL[] urls = getURLs();
 		debug("Class Loader Created");
-		debug("> baseURL="+base);
-		if (urls==null || urls.length==0) debug("> empty search path");
+		debug("> baseURL=" + base);
+		if (urls == null || urls.length == 0)
+			debug("> empty search path");
 		else {
 			URLContentFilter filter;
-			for (int i=0; i<urls.length; i++) {
+			for (int i = 0; i < urls.length; i++) {
 				debug("> searchURL=" + urls[i].toString());
-				filter = (URLContentFilter)libTable.get(urls[i]);
-				if (filter!=null) debug(">    export=" + filter.toString());
+				filter = (URLContentFilter) filterTable.get(urls[i]);
+				if (filter != null)
+					debug(">    export=" + filter.toString());
 			}
 		}
 	}
@@ -269,6 +296,18 @@ protected Class findClassPrerequisites(final String name, DelegatingURLClassLoad
 	return null;
 }
 /**
+ * Finds the resource with the specified name on the URL search path.
+ * This method is used specifically to find the file containing a class to verify
+ * that the class exists without having to load it.
+ * Returns a URL for the resource.  Searches only this loader's classpath.
+ * <code>null</code> is returned if the resource cannot be found.
+ *
+ * @param name the name of the resource
+ */
+protected URL findClassResource(String name) {
+	return super.findResource(name);
+}
+/**
  * Returns the absolute path name of a native library. The VM
  * invokes this method to locate the native libraries that belong
  * to classes loaded with this class loader. If this method returns
@@ -279,36 +318,33 @@ protected Class findClassPrerequisites(final String name, DelegatingURLClassLoad
  * @return     the absolute path of the native library
  */
 protected String findLibrary(String libname) {
-	
-	if(DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libname)) 
-		debug("findLibrary("+libname+")");
+	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libname))
+		debug("findLibrary(" + libname + ")");
 
-	if (base==null) return null;
-
+	if (base == null)
+		return null;
 	File libFile = null;
-	String osLibFileName = getLibraryName(libname);
-	
-	if (base.getProtocol().equals(EclipseURLHandler.FILE) || base.getProtocol().equals(EclipseURLHandler.VA)) {
+	String osLibFileName = libPrefix + libname + libSuffix;
+	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
 		// directly access library	
-		String libFileName = (base.getFile()+osLibFileName).replace('/',File.separatorChar);
+		String libFileName = (base.getFile() + osLibFileName).replace('/', File.separatorChar);
 		libFile = new File(libFileName);
-	}
-	else if (base.getProtocol().equals(EclipseURLHandler.ECLIPSE)) {
-		// access library through eclipse URL
-		libFile = getNativeLibraryAsLocal(osLibFileName);	
-	}
+	} else
+		if (base.getProtocol().equals(PlatformURLHandler.PROTOCOL))
+			// access library through eclipse URL
+			libFile = getNativeLibraryAsLocal(osLibFileName);
 
-	if (libFile==null) return null;
-	
+	if (libFile == null)
+		return null;
 	if (!libFile.exists()) {
-		if(DEBUG && DEBUG_SHOW_FAILURE && debugNative(libname)) 
-			debug("not found "+libname);
+		if (DEBUG && DEBUG_SHOW_FAILURE && debugNative(libname))
+			debug("not found " + libname);
 		return null; // can't find the file
 	}
 
-	if(DEBUG && DEBUG_SHOW_SUCCESS && debugNative(libname)) 
-		debug("found "+libname+" as "+libFile.getAbsolutePath());
-		
+	if (DEBUG && DEBUG_SHOW_SUCCESS && debugNative(libname))
+		debug("found " + libname + " as " + libFile.getAbsolutePath());
+
 	return libFile.getAbsolutePath();
 }
 /**
@@ -320,60 +356,43 @@ protected String findLibrary(String libname) {
  * @param name the name of the resource
  */
 public URL findResource(String name) {
-
 	return findResource(name, this, null);
 }
 /**
  * Delegated resource access call. 
  * Does not check prerequisite loader parent chain.
  */
-private URL findResource(String name, DelegatingURLClassLoader requestor, Vector seen) {
-				
+protected URL findResource(String name, DelegatingURLClassLoader requestor, Vector seen) {
 	// guard against delegation loops
-	if (seen!=null && seen.contains(this)) return null;
+	if (seen != null && seen.contains(this))
+		return null;
 
-	if(DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name)) 
-		debug("findResource("+name+")");
-			
-	// check own URL search path
-	URL url = super.findResource(name);
+	if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
+		debug("findResource(" + name + ")");
 
-	if (url!=null) {
-		if (isResourceVisible(name,url,requestor)) {		
-			if(DEBUG && DEBUG_SHOW_SUCCESS && debugResource(name)) {
-				debug("found "+url);
-			}
-		}
-		else {	
-			if(DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name)) 
-				debug("skip "+url);
-			url = null;
-		}
+	// check the normal class path for self
+	URL result = super.findResource(name);
+	result = checkResourceVisibility(name, result, requestor);
+	if (result != null)
+		return result;
+
+	// check our extra resource path if any
+	if (resourceLoader != null) {
+		result = resourceLoader.findResource(name);
+		result = checkResourceVisibility(name, result, requestor);
+		if (result != null)
+			return result;
 	}
 
-	// delegate down the prerequisite chain
-	if (url==null) {
-		if (imports != null) {
-			if (seen==null) seen = new Vector(); // guard against delegation loops
-			seen.addElement(this);
-			
-			for (int i=0; i<imports.length && url==null; i++) {
-				url = imports[i].findResource(name, this, requestor, seen);
-			}
-		}
+	// delegate down the prerequisite chain if we haven't found anything yet.
+	if (imports != null) {
+		if (seen == null)
+			seen = new Vector(); // guard against delegation loops
+		seen.addElement(this);
+		for (int i = 0; i < imports.length && result == null; i++)
+			result = imports[i].findResource(name, this, requestor, seen);
 	}
-	
-	return url;
-}
-/**
- * Finds the resource with the specified name on the URL search path.
- * Returns a URL for the resource.  Searches only this loader's classpath.
- * <code>null</code> is returned if the resource cannot be found.
- *
- * @param name the name of the resource
- */
-protected URL findResourceLocal(String name) {
-	return super.findResource(name);
+	return result;
 }
 /**
  * Returns an Enumeration of URLs representing all of the resources
@@ -382,7 +401,6 @@ protected URL findResourceLocal(String name) {
  * @param name the resource name
  */
 public Enumeration findResources(String name) throws IOException {
-
 	return findResources(name, this, null);
 }
 /**
@@ -390,75 +408,53 @@ public Enumeration findResources(String name) throws IOException {
  * Does not check prerequisite loader parent chain.
  */
 private Enumeration findResources(String name, DelegatingURLClassLoader requestor, Vector seen) {
-				
 	// guard against delegation loops
-	if (seen!=null && seen.contains(this)) return null;
+	if (seen != null && seen.contains(this))
+		return null;
 
-	if(DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name)) 
-		debug("findResources("+name+")");
-			
+	if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
+		debug("findResources(" + name + ")");
+
 	// check own URL search path
 	Enumeration e = null;
-	try { e = super.findResources(name); }
-	catch(IOException ioe) {}
-	ResourceEnumeration re = new ResourceEnumeration(name, e, this, requestor);
+	try {
+		e = super.findResources(name);
+	} catch (IOException ioe) {
+	}
+	ResourceEnumeration result = new ResourceEnumeration(name, e, this, requestor);
 
 	// delegate down the prerequisite chain
 	if (imports != null) {
-		if (seen==null) seen = new Vector(); // guard against delegation loops
+		if (seen == null)
+			seen = new Vector(); // guard against delegation loops
 		seen.addElement(this);
+		for (int i = 0; i < imports.length; i++)
+			result.add(imports[i].findResources(name, this, requestor, seen));
+	}
 
-		for (int i=0; i<imports.length; i++) {
-			re.add(imports[i].findResources(name, this, requestor, seen));
-		}
-	}
-	
-	return re;
-}
-private String getLibraryName(String name) {
-	
-	if (prefix == null || suffix == null) {		
-		if (System.getProperty("os.name").indexOf("Windows")!=-1) {
-			prefix = WIN_LIBRARY_PREFIX;
-			suffix = WIN_LIBRARY_SUFFIX;
-		}
-		else {
-			prefix = UNIX_LIBRARY_PREFIX;
-			suffix = UNIX_LIBRARY_SUFFIX;
-		}
-	}
-	
-	return prefix + name + suffix;
+	return result;
 }
 private File getNativeLibraryAsLocal(String osname) {
-
-	File lib = null;
-	
+	File result = null;
 	try {
 		URL liburl = new URL(base, osname);
-		EclipseURLConnection c = (EclipseURLConnection) liburl.openConnection();
+		PlatformURLConnection c = (PlatformURLConnection) liburl.openConnection();
 		URL localName = c.getURLAsLocal();
-		lib = new File(localName.getFile());
+		result = new File(localName.getFile());
+	} catch (IOException e) {
 	}
-	catch(IOException e) {}
-
-	return lib;
+	return result;
 }
-/**
- */
 public URL getResource(String name) {
-	
-	if(DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name)) 
-		debug("getResource("+name+")");
-	
-	URL r = super.getResource(name);
-	
-	if (r==null) {	
-		if(DEBUG && DEBUG_SHOW_FAILURE && debugResource(name)) 
-			debug("not found "+name);
-		}
-	
-	return r;
+	if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
+		debug("getResource(" + name + ")");
+
+	URL result = super.getResource(name);
+	if (result == null) {
+		if (DEBUG && DEBUG_SHOW_FAILURE && debugResource(name))
+			debug("not found " + name);
+	}
+	return result;
 }
 private URL getURLforClass(Class clazz) {
 	ProtectionDomain pd = clazz.getProtectionDomain();
@@ -471,6 +467,15 @@ private URL getURLforClass(Class clazz) {
 		debug("*** " + clazz.getName());
 	return null;
 }
+private void initialize() {
+	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+		libPrefix = WIN_LIBRARY_PREFIX;
+		libSuffix = WIN_LIBRARY_SUFFIX;
+	} else {
+		libPrefix = UNIX_LIBRARY_PREFIX;
+		libSuffix = UNIX_LIBRARY_SUFFIX;
+	}
+}
 public void initializeImportedLoaders() {
 }
 /**
@@ -481,7 +486,7 @@ boolean isClassVisible(Class clazz, DelegatingURLClassLoader requestor) {
 	if (lib == null)
 		return true; // have a system class (see comment below)
 
-	URLContentFilter filter = (URLContentFilter) libTable.get(lib);
+	URLContentFilter filter = (URLContentFilter) filterTable.get(lib);
 	if (filter == null) {
 		// This code path is being executed because some VMs (eg. Sun JVM)
 		// return from the class cache classes that were not loaded
@@ -501,23 +506,24 @@ boolean isClassVisible(Class clazz, DelegatingURLClassLoader requestor) {
 /**
  * check to see if resource is visible (exported)
  */
-boolean isResourceVisible(String name, URL r, DelegatingURLClassLoader requestor) {
+boolean isResourceVisible(String name, URL resource, DelegatingURLClassLoader requestor) {
 	URL lib = null;
-	String file = r.getFile();
+	String file = resource.getFile();
 	try {
-		lib = new URL(r.getProtocol(),r.getHost(),file.substring(0,file.length()-name.length()));
-	}
-	catch(MalformedURLException e) {
-		if (DEBUG) debug("Unable to determine resource lib for "+name+" from "+r);
+		lib = new URL(resource.getProtocol(), resource.getHost(), file.substring(0, file.length() - name.length()));
+	} catch (MalformedURLException e) {
+		if (DEBUG)
+			debug("Unable to determine resource lib for " + name + " from " + resource);
 		return false;
 	}
-	
-	URLContentFilter filter = (URLContentFilter)this.libTable.get(lib);
-	if (filter==null) {
-		if (DEBUG) debug("Unable to find library filter for "+name+" from "+lib);
+
+	URLContentFilter filter = (URLContentFilter) filterTable.get(lib);
+	if (filter == null) {
+		if (DEBUG)
+			debug("Unable to find library filter for " + name + " from " + lib);
 		return false;
-	}
-	else return filter.isResourceVisible(name, this, requestor);
+	} else
+		return filter.isResourceVisible(name, this, requestor);
 }
 /**
  * Non-delegated load call.  This method is not synchronized.  Implementations of

@@ -18,7 +18,7 @@ public final class PlatformClassLoader extends DelegatingURLClassLoader {
  * given classpath, filters and parent.
  */
 public PlatformClassLoader(URL[] searchPath, URLContentFilter[] filters, ClassLoader parent, URL base) {
-	super(searchPath, filters, parent);
+	super(searchPath, filters, null, null, parent);
 	this.base = base;
 	if (singleton == null)
 		singleton = this;
@@ -30,10 +30,15 @@ protected String debugId() {
 /**
  * Finds and loads the class with the specified name from the URL search
  * path. Any URLs referring to JAR files are loaded and opened as needed
- * until the class is found. Only our own URL search path is used.
- *
+ * until the class is found. Only our own URL search path and that of our parent
+ * is used.  This method consults this loader's parent first but only if <code>checkParents</code>
+ * is <code>true</code>.  Following that, this loader's own search path is checked. 
+ * <code>null</code> is returned if the class cannot be found.
+ 
  * @param name the name of the class
+ * @param resolve whether to resolve any loaded class
  * @param requestor class loader originating the request
+ * @param checkParents whether to check the parent loader
  * @return the resulting class
  */
 protected Class findClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents) {
@@ -44,7 +49,7 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 		// no point in looking in self as the class was already in the cache.
 		result = findLoadedClass(name);
 		if (result != null) {
-			result = checkVisibility(result, requestor, true);
+			result = checkClassVisibility(result, requestor, true);
 			if (result != null || !checkParents)
 				return result;
 		}
@@ -57,7 +62,7 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 		}
 		try {
 			result = super.findClass(name);
-			return checkVisibility(result, requestor, false);
+			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;
 		}

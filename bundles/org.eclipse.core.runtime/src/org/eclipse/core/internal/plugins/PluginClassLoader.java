@@ -26,11 +26,11 @@ public final class PluginClassLoader extends DelegatingURLClassLoader {
 	private PluginDescriptor descriptor;
 	private boolean pluginActivationInProgress = false;
 	private boolean loadInProgress = false;
-public PluginClassLoader(URL[] searchPath, URLContentFilter[] filters, PlatformClassLoader parent, PluginDescriptor descriptor) {
+public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, PlatformClassLoader parent, PluginDescriptor descriptor) {
 	// create a class loader with the given classpath and filters.  Also, set the parent
 	// to be the parent of the platform class loader.  This allows us to decouple standard
 	// parent loading from platform loading.
-	super(searchPath, filters, parent.getParent());
+	super(codePath, codeFilters, resourcePath, resourceFilters, parent.getParent());
 	this.descriptor = descriptor;
 	base = descriptor.getInstallURL();
 	debugConstruction(); // must have initialized loader
@@ -82,7 +82,7 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 		// no point in looking in self as the class was already in the cache.
 		result = findLoadedClass(name);
 		if (result != null) {
-			result = checkVisibility(result, requestor, true);
+			result = checkClassVisibility(result, requestor, true);
 			if (result != null || !checkParents)
 				return result;
 		}
@@ -103,7 +103,7 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 			} catch (ClassNotFoundException e) {
 				return null;
 			}
-			return checkVisibility(result, requestor, false);
+			return checkClassVisibility(result, requestor, false);
 		}
 		// Check to see if we would find the class if we looked.  If so,
 		// activation is required.  If not, don't bother, just return null
@@ -125,12 +125,12 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 	synchronized (this) {
 		result = findLoadedClass(name);
 		if (result != null)
-			return checkVisibility(result, requestor, true);
+			return checkClassVisibility(result, requestor, true);
 
 		// do search/load in this class loader
 		try {
 			result = super.findClass(name);
-			return checkVisibility(result, requestor, false);
+			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
@@ -149,6 +149,7 @@ public void initializeImportedLoaders() {
 	ArrayList require = new ArrayList();
 	for (int i = 0; i < prereqs.length; i++) {
 		desc = (PluginDescriptor) registry.getPluginDescriptor(prereqs[i].getUniqueIdentifier(), prereqs[i].getResolvedVersionIdentifier());
+		// can be null if the prereq was optional and did not exst.
 		if (desc != null)
 			require.add(new DelegateLoader((DelegatingURLClassLoader) desc.getPluginClassLoader(true), prereqs[i].isExported()));
 	}
@@ -170,7 +171,7 @@ protected boolean shouldLookForClass(String name) {
 	// (2) the check cannot be added to the "right" spot inside private
 	//     implementation of URLClassLoader
 	String resource = name.replace('.', '/');
-	if (findResourceLocal(resource + ".class") == null)
+	if (findClassResource(resource + ".class") == null)
 		return false;
 
 	// check if plugin is permanently deactivated

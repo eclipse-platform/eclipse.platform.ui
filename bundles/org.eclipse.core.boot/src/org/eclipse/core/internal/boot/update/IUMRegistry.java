@@ -28,14 +28,6 @@ public interface IUMRegistry {
  */
 public IComponentDescriptor[] getAllComponentDescriptors();
 /**
- * Returns all plugin entry descriptors known to this registry, entries can
- * have duplicate plugin IDs but at different versions.
- * Returns an empty array if there are no installed plugins.
- *
- * @return all plugin descriptors, including all versions, known to this registry
- */
-public IPluginEntryDescriptor[] getAllPluginEntryDescriptors();
-/**
  * Returns all product descriptors known to this registry, entries can
  * have duplicate product IDs but at different versions.
  * Returns an empty array if there are no installed products.
@@ -82,35 +74,6 @@ IManifestDescriptor[] getConflictingManifests(IManifestDescriptor manifestDescri
 // return a list of components that don't belong to any products
 
 public IComponentDescriptor[] getDanglingComponents() ;
-/**
- * Returns the plug-in entry descriptor with the given plug-in identifier
- * at the latest version number in this registry, or <code>null</code> if there is no such
- * plug-in.
- *
- * @param pluginId the unique identifier of the plug-in (e.g. <code>"com.example.myplugin"</code>).
- * @return the plug-in entry descriptor, or <code>null</code>
- */
-public IPluginEntryDescriptor getPluginEntryDescriptor(String pluginId);
-/**
- * Returns the plug-in entry descriptor with the given plug-in identifier
- * and version number in this registry, or <code>null</code> if there is no such
- * plug-in.   If a version number is not specified (null), the latest
- * version of such plug-in will be returned
- *
- * @param pluginId the unique identifier of the plug-in (e.g. <code>"com.example.myplugin"</code>).
- * @param version the version number
- * @return the plug-in entry descriptor at the specified version number, or <code>null</code>
- */
-public IPluginEntryDescriptor getPluginEntryDescriptor(String pluginId, String version);
-/**
- * Returns all plug-in entry descriptors known to this registry.
- * Due to duplicate plugin IDs, the latest version of each descriptor
- * is returned.
- * Returns an empty array if there are no installed plug-ins.
- *
- * @return the plug-in entry descriptors at their latest version known to this registry
- */
-public IPluginEntryDescriptor[] getPluginEntryDescriptors();
 /**
  * Returns the Product descriptor with the given Product identifier
  * at the latest version number in this registry, or <code>null</code> if there is no such

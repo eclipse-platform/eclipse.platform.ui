@@ -5,7 +5,7 @@ package org.eclipse.core.internal.plugins;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 2000
  */
-import org.eclipse.core.internal.plugins.IModel;
+
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.runtime.Policy;
@@ -32,6 +32,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private final int LIBRARY_EXPORT_STATE = 8;
 	private final int PLUGIN_REQUIRES_IMPORT_STATE = 9;
 	private final int CONFIGURATION_ELEMENT_STATE = 10;
+	private final int FRAGMENT_STATE = 11;
 
 	// Current State Information
 	Stack stateStack = new Stack();
@@ -51,8 +52,6 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private final int CONFIGURATION_ELEMENT_INDEX = 5;
 	private final int LAST_INDEX = 5;
 	Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
-
-	PluginDescriptorModel pluginDescriptorTreeRoot;
 
 	// model parser
 	private SAXParser parser;
@@ -90,21 +89,22 @@ public void endElement(String uri, String elementName, String qName) {
 			// shouldn't get here - do some error handling
 			break;
 		case PLUGIN_STATE :
-			if (elementName.equals(PLUGIN)) {
+		case FRAGMENT_STATE :
+			if (elementName.equals(PLUGIN) || elementName.equals(FRAGMENT)) {
 				stateStack.pop();
-				pluginDescriptorTreeRoot = (PluginDescriptorModel) objectStack.pop();
+				PluginModel root = (PluginModel) objectStack.peek();
 
 				// Put the extension points into this plugin
 				Vector extPointVector = scratchVectors[EXTENSION_POINT_INDEX];
 				if (extPointVector.size() > 0) {
-					pluginDescriptorTreeRoot.setDeclaredExtensionPoints((ExtensionPointModel[]) extPointVector.toArray(new ExtensionPointModel[extPointVector.size()]));
+					root.setDeclaredExtensionPoints((ExtensionPointModel[]) extPointVector.toArray(new ExtensionPointModel[extPointVector.size()]));
 					scratchVectors[EXTENSION_POINT_INDEX].removeAllElements();
 				}
 
 				// Put the extensions into this plugin too
 				Vector extVector = scratchVectors[EXTENSION_INDEX];
 				if (extVector.size() > 0) {
-					pluginDescriptorTreeRoot.setDeclaredExtensions((ExtensionModel[]) extVector.toArray(new ExtensionModel[extVector.size()]));
+					root.setDeclaredExtensions((ExtensionModel[]) extVector.toArray(new ExtensionModel[extVector.size()]));
 					scratchVectors[EXTENSION_INDEX].removeAllElements();
 				}
 			}
@@ -116,8 +116,8 @@ public void endElement(String uri, String elementName, String qName) {
 				// descriptor
 				Vector libVector = scratchVectors[RUNTIME_INDEX];
 				if (libVector.size() > 0) {
-					PluginDescriptorModel pluginDescriptor = (PluginDescriptorModel) objectStack.peek();
-					pluginDescriptor.setRuntime((LibraryModel[]) libVector.toArray(new LibraryModel[libVector.size()]));
+					PluginModel model = (PluginModel) objectStack.peek();
+					model.setRuntime((LibraryModel[]) libVector.toArray(new LibraryModel[libVector.size()]));
 					scratchVectors[RUNTIME_INDEX].removeAllElements();
 				}
 			}
@@ -145,8 +145,8 @@ public void endElement(String uri, String elementName, String qName) {
 				stateStack.pop();
 				// Finish up extension object
 				ExtensionModel currentExtension = (ExtensionModel) objectStack.pop();
-				PluginDescriptorModel parent = (PluginDescriptorModel) objectStack.peek();
-				currentExtension.setParentPluginDescriptor(parent);
+				PluginModel parent = (PluginModel) objectStack.peek();
+				currentExtension.setParent(parent);
 				scratchVectors[EXTENSION_INDEX].addElement(currentExtension);
 			}
 			break;
@@ -241,40 +241,41 @@ public void handleExtensionState(String elementName, Attributes attributes) {
 	// configuration property for each attribute
 	parseConfigurationElementAttributes(attributes);
 }
-public void handleInitialState(String elementName, Attributes attributes) {
-	// The only valid element is a plugin
-	if (!elementName.equals(PLUGIN)) {
-		// We don't have a plugin, so ignore it.
-		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+public void handleFragmentState(String elementName, Attributes attributes) {
+
+	if (elementName.equals(RUNTIME)) {
+		// Change State
+		stateStack.push(new Integer(PLUGIN_RUNTIME_STATE));
+		// All runtime attributes are ignored so no further parsing required.
+		return;
+	}
+	if (elementName.equals(EXTENSION_POINT)) {
+		// Change State
+		stateStack.push(new Integer(PLUGIN_EXTENSION_POINT_STATE));
+		// Pick up Extension Point Attributes
+		parseExtensionPointAttributes(attributes);
+		return;
+	}
+	if (elementName.equals(EXTENSION)) {
+		// Change State
+		stateStack.push(new Integer(PLUGIN_EXTENSION_STATE));
+		// Pick up Extension Attributes
+		parseExtensionAttributes(attributes);
 		return;
 	}
 
-	// Change State
-	stateStack.push(new Integer(PLUGIN_STATE));
-
-	// process attributes
-	int len = attributes.getLength();
-	PluginDescriptorModel currentPluginDescriptor = (PluginDescriptorModel) objectStack.peek();
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		// common (manifest and cached registry)
-		if (attrName.equals(PLUGIN_ID))
-			currentPluginDescriptor.setId(attrValue);
+	// If we get to this point, the element name is one we don't currently accept.
+	// Set the state to indicate that this element will be ignored
+	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+}
+public void handleInitialState(String elementName, Attributes attributes) {
+	if (elementName.equals(PLUGIN))
+		processPlugin(elementName, attributes);
+	else
+		if (elementName.equals(FRAGMENT))
+			processFragment(elementName, attributes);
 		else
-			if (attrName.equals(PLUGIN_NAME))
-				currentPluginDescriptor.setName(attrValue);
-			else
-				if (attrName.equals(PLUGIN_VERSION))
-					currentPluginDescriptor.setVersion(attrValue);
-				else
-					if (attrName.equals(PLUGIN_VENDOR) || (attrName.equals(PLUGIN_PROVIDER)))
-						currentPluginDescriptor.setProviderName(attrValue);
-					else
-						if (attrName.equals(PLUGIN_CLASS))
-							currentPluginDescriptor.setPluginClass(attrValue);
-	}
+			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 }
 public void handleLibraryExportState(String elementName, Attributes attributes) {
 
@@ -391,11 +392,9 @@ private void logStatus(SAXParseException ex) {
 		msg = Policy.bind("parseErrorNameLineColumn", new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
-public PluginDescriptorModel parse(InputSource in) throws Exception {
-
+public PluginModel parse(InputSource in) throws Exception {
 	parser.parse(in);
-	return pluginDescriptorTreeRoot;
-
+	return (PluginModel) objectStack.pop();
 }
 public void parseConfigurationElementAttributes(Attributes attributes) {
 
@@ -422,7 +421,7 @@ public void parseConfigurationElementAttributes(Attributes attributes) {
 }
 public void parseExtensionAttributes(Attributes attributes) {
 
-	PluginDescriptorModel parentPluginDescriptor = (PluginDescriptorModel) objectStack.peek();
+	PluginModel parent = (PluginModel) objectStack.peek();
 
 	ExtensionModel currentExtension = factory.createExtension();
 	objectStack.push(currentExtension);
@@ -443,9 +442,10 @@ public void parseExtensionAttributes(Attributes attributes) {
 				if (attrName.equals(EXTENSION_TARGET)) {
 					// check if point is specified as a simple or qualified name
 					String targetName;
-					if (attrValue.lastIndexOf('.') == -1)
-						targetName = parentPluginDescriptor.getId() + "." + attrValue;
-					else
+					if (attrValue.lastIndexOf('.') == -1) {
+						String baseId = parent instanceof PluginDescriptorModel ? parent.getId() : ((PluginFragmentModel) parent).getPlugin();
+						targetName = baseId + "." + attrValue;
+					} else
 						targetName = attrValue;
 					currentExtension.setExtensionPoint(targetName);
 				}
@@ -472,16 +472,15 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 					currentExtPoint.setSchema(attrValue);
 	}
 	// currentExtPoint contains a pointer to the parent plugin descriptor.
-	PluginDescriptorModel currentPluginDescriptor = (PluginDescriptorModel) objectStack.peek();
-	currentExtPoint.setParentPluginDescriptor(currentPluginDescriptor);
+	PluginModel root = (PluginModel) objectStack.peek();
+	currentExtPoint.setParent(root);
 
 	// Now populate the the vector just below us on the objectStack with this extension point
 	scratchVectors[EXTENSION_POINT_INDEX].addElement(currentExtPoint);
 }
 public void parseLibraryAttributes(Attributes attributes) {
-
-	LibraryModel currentLib = factory.createLibrary();
-	objectStack.push(currentLib);
+	LibraryModel current = factory.createLibrary();
+	objectStack.push(current);
 
 	// process attributes
 	int len = (attributes != null) ? attributes.getLength() : 0;
@@ -491,16 +490,17 @@ public void parseLibraryAttributes(Attributes attributes) {
 
 		// common (manifest and cached registry)
 		if (attrName.equals(LIBRARY_NAME))
-			currentLib.setName(attrValue);
-		// library type attribute no longer supported
-		//		else
-		//			if (attrName.equals(LIBRARY_TYPE))
-		//				currentLib._setType(attrValue);
+			current.setName(attrValue);
+		else
+			if (attrName.equals(LIBRARY_TYPE))
+				current.setType(attrValue.toLowerCase());
+			else
+				if (attrName.equals(LIBRARY_SOURCE))
+					current.setSource(attrValue);
 	}
 }
 public void parsePluginRequiresImport(Attributes attributes) {
-
-	PluginPrerequisiteModel currentReq = factory.createPluginPrerequisite();
+	PluginPrerequisiteModel current = factory.createPluginPrerequisite();
 
 	// process attributes
 	int len = (attributes != null) ? attributes.getLength() : 0;
@@ -509,30 +509,33 @@ public void parsePluginRequiresImport(Attributes attributes) {
 		String attrValue = attributes.getValue(i).trim();
 
 		if (attrName.equals(PLUGIN_REQUIRES_PLUGIN))
-			currentReq.setPlugin(attrValue);
+			current.setPlugin(attrValue);
 		else
 			if (attrName.equals(PLUGIN_REQUIRES_PLUGIN_VERSION))
-				currentReq.setVersion(attrValue);
+				current.setVersion(attrValue);
 			else
-				if (attrName.equals(PLUGIN_REQUIRES_MATCH)) {
-					if (PLUGIN_REQUIRES_MATCH_EXACT.equals(attrValue))
-						currentReq.setMatch(true);
-					else
-						if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
-							currentReq.setMatch(false);
-					// XXX: else error handling
-				} else
-					if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
-						if (TRUE.equals(attrValue))
-							currentReq.setExport(true);
+				if (attrName.equals(PLUGIN_REQUIRES_OPTIONAL))
+					current.setOptional("true".equalsIgnoreCase(attrValue));
+				else
+					if (attrName.equals(PLUGIN_REQUIRES_MATCH)) {
+						if (PLUGIN_REQUIRES_MATCH_EXACT.equals(attrValue))
+							current.setMatch(true);
 						else
-							if (FALSE.equals(attrValue))
-								currentReq.setExport(false);
+							if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
+								current.setMatch(false);
 						// XXX: else error handling
-					}
+					} else
+						if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
+							if (TRUE.equals(attrValue))
+								current.setExport(true);
+							else
+								if (FALSE.equals(attrValue))
+									current.setExport(false);
+							// XXX: else error handling
+						}
 	}
 	// Populate the scratch vector of imports with this new element
-	scratchVectors[REQUIRES_INDEX].addElement(currentReq);
+	scratchVectors[REQUIRES_INDEX].addElement(current);
 }
 public void parseRequiresAttributes(Attributes attributes) {
 	// This attribute no longer supported
@@ -552,6 +555,68 @@ public void parseRequiresAttributes(Attributes attributes) {
 	}
 	*/
 }
+public void processFragment(String elementName, Attributes attributes) {
+	// Change State
+	stateStack.push(new Integer(FRAGMENT_STATE));
+	PluginFragmentModel current = factory.createPluginFragment();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(FRAGMENT_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(FRAGMENT_NAME))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(FRAGMENT_VERSION))
+					current.setVersion(attrValue);
+				else
+					if (attrName.equals(FRAGMENT_PROVIDER))
+						current.setProviderName(attrValue);
+					else
+						if (attrName.equals(FRAGMENT_PLUGIN_ID))
+							current.setPlugin(attrValue);
+						else
+							if (attrName.equals(FRAGMENT_PLUGIN_VERSION))
+								current.setPluginVersion(attrValue);
+	}
+}
+public void processPlugin(String elementName, Attributes attributes) {
+
+	// Change State
+	stateStack.push(new Integer(PLUGIN_STATE));
+	PluginDescriptorModel current = factory.createPluginDescriptor();
+	objectStack.push(current);
+
+	// process attributes
+	int len = attributes.getLength();
+	for (int i = 0; i < len; i++) {
+		String attrName = attributes.getLocalName(i);
+		String attrValue = attributes.getValue(i).trim();
+
+		// common (manifest and cached registry)
+		if (attrName.equals(PLUGIN_ID))
+			current.setId(attrValue);
+		else
+			if (attrName.equals(PLUGIN_NAME))
+				current.setName(attrValue);
+			else
+				if (attrName.equals(PLUGIN_VERSION))
+					current.setVersion(attrValue);
+				else
+					if (attrName.equals(PLUGIN_VENDOR) || (attrName.equals(PLUGIN_PROVIDER)))
+						current.setProviderName(attrValue);
+					else
+						if (attrName.equals(PLUGIN_CLASS))
+							current.setPluginClass(attrValue);
+	}
+}
 static String replace(String s, String from, String to) {
 	String str = s;
 	int fromLen = from.length();
@@ -565,7 +630,6 @@ static String replace(String s, String from, String to) {
 }
 public void startDocument() {
 	stateStack.push(new Integer(INITIAL_STATE));
-	objectStack.push(factory.createPluginDescriptor());
 	for (int i = 0; i <= LAST_INDEX; i++) {
 		scratchVectors[i] = new Vector();
 	}
@@ -574,6 +638,9 @@ public void startElement(String uri, String elementName, String qName, Attribute
 	switch (((Integer) stateStack.peek()).intValue()) {
 		case INITIAL_STATE :
 			handleInitialState(elementName, attributes);
+			break;
+		case FRAGMENT_STATE :
+			handlePluginState(elementName, attributes);
 			break;
 		case PLUGIN_STATE :
 			handlePluginState(elementName, attributes);

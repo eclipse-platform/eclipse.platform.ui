@@ -46,6 +46,12 @@ public final class InternalBootLoader {
 	private static Properties options = null;
 	private static boolean inDevelopmentMode = false;
 
+	// state for tracking the Platform context (e.g., the OS, Window system, locale, ...)
+	private static String NL = null;
+	private static String WS = null;
+	private static String OS = null;
+	private static final String[] OS_LIST = { BootLoader.OS_WIN32, BootLoader.OS_LINUX, BootLoader.OS_AIX, BootLoader.OS_SOLARIS, BootLoader.OS_HPUX };
+	
 	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform";
 	private static final String BOOTNAME = "org.eclipse.core.boot";
 	private static final String RUNTIMENAME = "org.eclipse.core.runtime";
@@ -79,10 +85,10 @@ public final class InternalBootLoader {
 	private static final String OPTION_LOADER_FILTER_LOADER = PI_RUNTIME + "/loader/debug/filter/loader";
 	private static final String OPTION_LOADER_FILTER_RESOURCE = PI_RUNTIME + "/loader/debug/filter/resource";
 	private static final String OPTION_LOADER_FILTER_NATIVE = PI_RUNTIME + "/loader/debug/filter/native";
-	private static final String OPTION_ECLIPSEURL_DEBUG = PI_RUNTIME+ "/eclipseurl/debug";
-	private static final String OPTION_ECLIPSEURL_DEBUG_CONNECT = PI_RUNTIME+ "/eclipseurl/debug/connect";
-	private static final String OPTION_ECLIPSEURL_DEBUG_CACHE_LOOKUP = PI_RUNTIME+ "/eclipseurl/debug/cachelookup";
-	private static final String OPTION_ECLIPSEURL_DEBUG_CACHE_COPY = PI_RUNTIME+ "/eclipseurl/debug/cachecopy";
+	private static final String OPTION_URL_DEBUG = PI_RUNTIME+ "/url/debug";
+	private static final String OPTION_URL_DEBUG_CONNECT = PI_RUNTIME+ "/url/debug/connect";
+	private static final String OPTION_URL_DEBUG_CACHE_LOOKUP = PI_RUNTIME+ "/url/debug/cachelookup";
+	private static final String OPTION_URL_DEBUG_CACHE_COPY = PI_RUNTIME+ "/url/debug/cachecopy";
 	private static final String OPTION_UPDATE_DEBUG = PI_RUNTIME+ "/update/debug";
 
 	// command line arguments
@@ -161,7 +167,7 @@ private static PlatformClassLoader configurePlatformLoader(Properties config) {
 	Object[] loadPath = getPlatformClassLoaderPath(config);
 	URL base = null;
 	try {
-		base = new URL(EclipseURLPlatformConnection.PLATFORM_URL_STRING+RUNTIMEDIR);
+		base = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING+RUNTIMEDIR);
 	} catch (MalformedURLException e) {
 	}
 	return new PlatformClassLoader((URL[]) loadPath[0], (URLContentFilter[]) loadPath[1], InternalBootLoader.class.getClassLoader(), base);
@@ -251,6 +257,18 @@ private static String[] getListOption(String option) {
 	while (tokenizer.hasMoreTokens())
 		result.add(tokenizer.nextToken());
 	return (String[]) result.toArray(new String[result.size()]);
+}
+/**
+ * @see BootLoader
+ */
+public static String getNL() {
+	return NL;
+}
+/**
+ * @see BootLoader
+ */
+public static String getOS() {
+	return OS;
 }
 private static Object[] getPlatformClassLoaderPath(Properties config) {
 	// If running in va, check for va properties file. 
@@ -348,10 +366,10 @@ private static Object[] getPlatformClassLoaderPath(Properties config) {
 		if (!(InternalBootLoader.inVAJ || InternalBootLoader.inVAME)) {
 			String libSpec = execBase + library.replace(File.separatorChar, '/');
 			if (!libSpec.endsWith("/")) {
-				if (libSpec.startsWith(EclipseURLHandler.ECLIPSE + EclipseURLHandler.PROTOCOL_SEPARATOR))
-					libSpec += EclipseURLHandler.JAR_SEPARATOR;
+				if (libSpec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
+					libSpec += PlatformURLHandler.JAR_SEPARATOR;
 				else
-					libSpec = EclipseURLHandler.JAR + EclipseURLHandler.PROTOCOL_SEPARATOR + libSpec + EclipseURLHandler.JAR_SEPARATOR;
+					libSpec = PlatformURLHandler.JAR + PlatformURLHandler.PROTOCOL_SEPARATOR + libSpec + PlatformURLHandler.JAR_SEPARATOR;
 			}
 			libSpecs.add(libSpec);
 			libSpecs.add(filters);
@@ -390,7 +408,7 @@ public static URL[] getPluginPath(URL pluginPathLocation) {
 	// definition in the install location.
 	if (input == null)
 		try {
-			URL url = new URL(EclipseURLPlatformConnection.PLATFORM_URL_STRING + PLUGIN_PATH);
+			URL url = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING + PLUGIN_PATH);
 			input = url.openStream();
 		} catch (MalformedURLException e) {
 		} catch (IOException e) {
@@ -489,6 +507,12 @@ public static IPlatformRunnable getRunnable(String pluginId, String className, O
 /**
  * @see BootLoader
  */
+public static String getWS() {
+	return WS;
+}
+/**
+ * @see BootLoader
+ */
 public static boolean inDebugMode() {
 	return debugRequested;
 }
@@ -507,7 +531,8 @@ private static String[] initialize(URL pluginPathLocation, String location, Stri
 	String[] appArgs = processCommandLine(args);
 	// setup the devClassPath if any
 	DelegatingURLClassLoader.devClassPath = devClassPath;
-	
+	setupSystemContext();
+
 	// if a platform location was not found in the arguments, set it to user.dir.		
 	// In VAJ, set user.dir to be <code>eclipse</code> in the parent of the install 
 	// directory.  This typically makes the platform working directory:
@@ -525,12 +550,12 @@ private static String[] initialize(URL pluginPathLocation, String location, Stri
 
 	// load update profile
 	LaunchInfo.startup(getInstallURL());
-	
+
 	// initialize eclipse URL handling
-	EclipseURLHandlerFactory.startup(baseLocation+File.separator+META_AREA);
-	EclipseURLPlatformConnection.startup(getInstallURL()); // past this point we can use eclipse:/platform/ URLs
-	EclipseURLConfigurationConnection.startup(getInstallURL()); // past this point we can use eclipse:/configuration/ URLs
-	EclipseURLComponentConnection.startup(getInstallURL()); // past this point we can use eclipse:/component/ URLs
+	PlatformURLHandlerFactory.startup(baseLocation + File.separator + META_AREA);
+	PlatformURLBaseConnection.startup(getInstallURL()); // past this point we can use eclipse:/platform/ URLs
+	PlatformURLConfigurationConnection.startup(getInstallURL()); // past this point we can use eclipse:/configuration/ URLs
+	PlatformURLComponentConnection.startup(getInstallURL()); // past this point we can use eclipse:/component/ URLs
 
 	// create and configure platform class loader
 	Properties config = loadConfiguration();
@@ -829,11 +854,29 @@ public static void setupOptions() {
 	DelegatingURLClassLoader.DEBUG_FILTER_LOADER = getListOption(OPTION_LOADER_FILTER_LOADER);
 	DelegatingURLClassLoader.DEBUG_FILTER_RESOURCE = getListOption(OPTION_LOADER_FILTER_RESOURCE);
 	DelegatingURLClassLoader.DEBUG_FILTER_NATIVE = getListOption(OPTION_LOADER_FILTER_NATIVE);
-	EclipseURLConnection.DEBUG = getBooleanOption(OPTION_ECLIPSEURL_DEBUG, false);
-	EclipseURLConnection.DEBUG_CONNECT = getBooleanOption(OPTION_ECLIPSEURL_DEBUG_CONNECT, true);
-	EclipseURLConnection.DEBUG_CACHE_LOOKUP = getBooleanOption(OPTION_ECLIPSEURL_DEBUG_CACHE_LOOKUP, true);
-	EclipseURLConnection.DEBUG_CACHE_COPY = getBooleanOption(OPTION_ECLIPSEURL_DEBUG_CACHE_COPY, true);
+	PlatformURLConnection.DEBUG = getBooleanOption(OPTION_URL_DEBUG, false);
+	PlatformURLConnection.DEBUG_CONNECT = getBooleanOption(OPTION_URL_DEBUG_CONNECT, true);
+	PlatformURLConnection.DEBUG_CACHE_LOOKUP = getBooleanOption(OPTION_URL_DEBUG_CACHE_LOOKUP, true);
+	PlatformURLConnection.DEBUG_CACHE_COPY = getBooleanOption(OPTION_URL_DEBUG_CACHE_COPY, true);
 	LaunchInfo.DEBUG = getBooleanOption(OPTION_UPDATE_DEBUG, false);
+}
+/**
+ * Initializes the execution context for this run of the platform.  The context
+ * includes information about the locale, operating system and window system.
+ */
+private static void setupSystemContext() {
+	if (NL == null)
+		NL = Locale.getDefault().toString();
+	if (OS == null) {
+		String name = System.getProperty("os.name");
+		for (int i = 0; i < OS_LIST.length; i++)
+			if (name.regionMatches(true, 0, OS_LIST[i], 0, 3))
+				OS = OS_LIST[i];
+		if (OS == null)
+			OS = BootLoader.OS_UNKNOWN;
+	}
+	if (WS == null)
+		WS = BootLoader.WS_UNKNOWN;
 }
 /**
  * @see BootLoader
@@ -852,7 +895,7 @@ public static void shutdown() throws Exception {
 		else
 			throw e;
 	} finally {
-		EclipseURLHandlerFactory.shutdown();
+		PlatformURLHandlerFactory.shutdown();
 		LaunchInfo.shutdown();
 		loader = null;
 	}

@@ -26,7 +26,7 @@ public class ComponentDescriptorModel extends ManifestDescriptorModel {
 
 	// properties determined at UM run time
 	private String _dirName = null;			// dir name in .install/.components/
-	private boolean _isDangling = false;	// not part of a product when downloaded
+	private boolean _isLoose = true;	
 	private Vector _containingProducts = null;
 	private Vector _pluginEntries = null;
 	private Vector _fragmentEntries = null;
@@ -136,13 +136,19 @@ public String _getVersion() {
 	
 	return _version;
 }
-public boolean _isDangling() {
+/*
+ * Loose and Dangling are the same idea - a component that can and has been
+ * decided to, exist on its own.  However, the term loose is used on the
+ * server side (managed by install.index), and dangling is used on the 
+ * local side (managed by LaunchInfo).  The two must not mix, and thus are named differently.
+ */
+public boolean _isLoose() {
 	
-	return _isDangling;
+	return _isLoose;
 }
-public void _isDangling(boolean dangling) {
+public void _isLoose(boolean loose) {
 	
-	_isDangling = dangling;
+	_isLoose = loose;
 }
 public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 
@@ -341,7 +347,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 	// Register
 	//---------
 	_setUMRegistry(parent);
-	parent._addToComponentsRel(this);
+	parent._addToComponentProxysRel(this);
 
 }
 public ProductDescriptorModel _lookupContainingProducts(String key) {

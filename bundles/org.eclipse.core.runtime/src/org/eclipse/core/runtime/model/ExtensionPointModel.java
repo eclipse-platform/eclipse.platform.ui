@@ -20,7 +20,7 @@ public class ExtensionPointModel extends PluginModelObject {
 	private String schema = null;
 
 	// transient properties (not included in plug-in manifest)
-	private PluginDescriptorModel plugin = null; // declaring plugin
+	private PluginModel plugin = null; // declaring plugin
 	private ExtensionModel[] extensions = null; // configured extensions
 /**
  * Creates a new extension point model in which all fields
@@ -49,13 +49,22 @@ public String getId() {
 	return id;
 }
 /**
+ * Returns the plug-in model (descriptor or fragment) in which this extension is declared.
+ *
+ * @return the plug-in model in which this extension is declared
+ *  or <code>null</code>
+ */
+public PluginModel getParent() {
+	return plugin;
+}
+/**
  * Returns the plug-in descriptor in which this extension point is declared.
  *
  * @return the plug-in descriptor in which this extension point is declared
  *  or <code>null</code>
  */
 public PluginDescriptorModel getParentPluginDescriptor() {
-	return plugin;
+	return (PluginDescriptorModel) plugin;
 }
 /**
  * Returns the schema specification for this extension point.
@@ -90,6 +99,17 @@ public void setDeclaredExtensions(ExtensionModel[] value) {
 public void setId(String value) {
 	assertIsWriteable();
 	id = value;
+}
+/**
+ * Sets the plug-in model in which this extension is declared.
+ * This object must not be read-only.
+ *
+ * @param value the plug-in model in which this extension is declared.  
+ *		May be <code>null</code>.
+ */
+public void setParent(PluginModel value) {
+	assertIsWriteable();
+	plugin = value;
 }
 /**
  * Sets the plug-in descriptor in which this extension point is declared.

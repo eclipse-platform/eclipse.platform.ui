@@ -12,20 +12,20 @@ import java.util.Hashtable;
 import java.lang.reflect.Constructor;
 
  /**
- * URL handler for the "eclipse:" protocol
+ * URL handler for the "platform" protocol
  */
-public class EclipseURLHandler extends URLStreamHandler {
+public class PlatformURLHandler extends URLStreamHandler {
 
 	private static Hashtable connectionType = new Hashtable();
 
 	// URL protocol designations
-	public static final String ECLIPSE = "eclipse";
+	public static final String PROTOCOL = "platform";
 	public static final String FILE = "file";
 	public static final String JAR = "jar";
 	public static final String VA = "valoader";
 	public static final String JAR_SEPARATOR = "!/";
 	public static final String PROTOCOL_SEPARATOR = ":";
-protected EclipseURLHandler() {
+protected PlatformURLHandler() {
 	super();
 }
 protected URLConnection openConnection(URL url) throws IOException {
@@ -33,15 +33,15 @@ protected URLConnection openConnection(URL url) throws IOException {
 	String spec = url.getFile().trim();
 	if (spec.startsWith("/")) spec = spec.substring(1);
 	int ix = spec.indexOf("/");
-	if (ix==-1) throw new MalformedURLException("Invalid \""+ECLIPSE+":\" URL "+url.toString());
+	if (ix==-1) throw new MalformedURLException("Invalid \""+PROTOCOL+":\" URL "+url.toString());
 
 	String type = spec.substring(0,ix);
 	Constructor construct = (Constructor) connectionType.get(type);
-	if (construct==null) throw new MalformedURLException("Unsupported \""+ECLIPSE+":\" protocol variation "+url.toString());
+	if (construct==null) throw new MalformedURLException("Unsupported \""+PROTOCOL+":\" protocol variation "+url.toString());
 
-	EclipseURLConnection c = null;
+	PlatformURLConnection c = null;
 	try {
-		c = (EclipseURLConnection) construct.newInstance(new Object[] { url });
+		c = (PlatformURLConnection) construct.newInstance(new Object[] { url });
 	}
 	catch(Exception e) { throw new IOException("Unable to create connection "+url.toString()+"\n"+e); }
 	

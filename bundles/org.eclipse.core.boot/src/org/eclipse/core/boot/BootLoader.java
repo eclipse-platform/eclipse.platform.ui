@@ -26,6 +26,78 @@ import java.net.URL;
  * @see org.eclipse.core.runtime.Platform
  */
 public final class BootLoader {
+
+	/**
+	 * Constant string (value "win32") indicating the platform is running on a
+	 * Window 32-bit operating system (e.g., Windows 98, NT, 2000).
+	 */
+	public static final String OS_WIN32 = "win32";
+
+	/**
+	 * Constant string (value "linux") indicating the platform is running on a
+	 * Linux-based operating system.
+	 */
+	public static final String OS_LINUX = "linux";
+
+	/**
+	 * Constant string (value "aix") indicating the platform is running on an
+	 * AIX-based machine.
+	 */
+	public static final String OS_AIX = "aix";
+
+	/**
+	 * Constant string (value "solaris") indicating the platform is running on a
+	 * Solaris-based machine.
+	 */
+	public static final String OS_SOLARIS = "solaris";
+
+	/**
+	 * Constant string (value "hpux") indicating the platform is running on an
+	 * HP/UX-based machine.
+	 */
+	public static final String OS_HPUX = "hpux";
+
+	/**
+	 * Constant string (value "neutrino") indicating the platform is running on a
+	 * Neutrino-based machine.
+	 */
+	public static final String OS_NEUTRINO = "neutrino";
+
+	/**
+	 * Constant string (value "unknown") indicating the platform is running on a
+	 * machine running an unknown operating system.
+	 */
+	public static final String OS_UNKNOWN = "unknown";
+
+	/**
+	 * Constant string (value "win32") indicating the platform is running on a
+	 * machine using the Windows windowing system.
+	 */
+	public static final String WS_WIN32 = "win32";
+
+	/**
+	 * Constant string (value "motif") indicating the platform is running on a
+	 * machine using the Motif windowing system.
+	 */
+	public static final String WS_MOTIF = "motif";
+
+	/**
+	 * Constant string (value "gtk") indicating the platform is running on a
+	 * machine using the GTK windowing system.
+	 */
+	public static final String WS_GTK = "gtk";
+
+	/**
+	 * Constant string (value "photon") indicating the platform is running on a
+	 * machine using the Photon windowing system.
+	 */
+	public static final String WS_PHOTON = "photon";
+
+	/**
+	 * Constant string (value "unknown") indicating the platform is running on a
+	 * machine running an unknown windowing system.
+	 */
+	public static final String WS_UNKNOWN = "unknown";
 /**
  * Private constructor to block instance creation.
  */
@@ -73,6 +145,30 @@ public static URL getInstallURL() {
 	return InternalBootLoader.getInstallURL();
 }
 /**
+ * Returns the string name of the current locale for use in finding files
+ * whose path starts with <code>$nl$</code>.  <code>null</code> is returned
+ * if the locale cannot be determined.
+ *
+ * @return the string name of the current locale or <code>null</code>
+ */
+public static String getNL() {
+	return InternalBootLoader.getNL();
+}
+/**
+ * Returns the string name of the current operating system for use in finding files
+ * whose path starts with <code>$os$</code>.  <code>OS_UNKNOWN</code> is returned
+ * if the operating system cannot be determined.  The value may indicate one of the following
+ * operating systems known to the platform (<code>OS_WIN32</code>, <code>OS_LINUX</code>,
+ * <code>OS_AIX</code>, <code>OS_SOLARIS</code>, <code>OS_HPUX</code> or
+ * a user-defined string if the operating system name is specified on the command line.
+ *
+ * @return the string name of the current operating system
+ * 
+ */
+public static String getOS() {
+	return InternalBootLoader.getOS();
+}
+/**
  * Returns the complete plugin path defined by the file at the given location.
  * If the given location is <code>null</code> or does not indicate a valid 
  * plug-in path definition file, <code>null</code> is returned.
@@ -112,6 +208,16 @@ public static IPlatformRunnable getRunnable(String applicationName) throws Excep
  */
 public static IPlatformRunnable getRunnable(String pluginId, String className, Object args) throws Exception {
 	return InternalBootLoader.getRunnable(pluginId, className, args);
+}
+/**
+ * Returns the string name of the current window system for use in finding files
+ * whose path starts with <code>$ws$</code>.  <code>null</code> is returned
+ * if the window system cannot be determined.
+ *
+ * @return the string name of the current window system or <code>null</code>
+ */
+public static String getWS() {
+	return InternalBootLoader.getWS();
 }
 /**
  * Returns <code>true</code> if the platform is currently running in 

@@ -28,7 +28,7 @@ public class ProductDescriptorModel extends ManifestDescriptorModel  {
 	private long   _stamp = 0;
 	private String _dirName = null;			// dir name in .install/.products/
 
-	private Vector _componentEntries = null;
+	private Hashtable compEntry_proxys_list = null; // component Entries
 
 /**
  * ComponentDescriptorModel constructor comment.
@@ -36,28 +36,79 @@ public class ProductDescriptorModel extends ManifestDescriptorModel  {
 public ProductDescriptorModel() {
 	super();
 }
-public void _addToComponentEntriesRel(Object o) {
-	
-	if (_componentEntries == null) _componentEntries = new Vector();
-	_componentEntries.addElement(o);
-	
-}
-public void _copyComponentEntriesRelInto(Object[] array) {
+// add a new component entry
+public void _addToComponentEntryProxysRel(Object o) {
 
-	if (_componentEntries != null) _componentEntries.copyInto(array);
+	if (compEntry_proxys_list == null) compEntry_proxys_list = new Hashtable();
+	String key = ((ComponentEntryDescriptorModel)o)._getId();
+	String version = ((ComponentEntryDescriptorModel)o)._getVersion();
+	
+	if (compEntry_proxys_list.containsKey(key)) { // a different version?  
+		UMProxy proxy = (UMProxy) compEntry_proxys_list.get(key);
+		Map versions = proxy._getVersionsRel();
+		if (versions.containsKey(version))	
+			; // LINDA - error condition - version collision
+		else {
+			proxy._addToVersionsRel(o, version);
+		}
+	} else {
+		UMProxy proxy = new UMProxy(key);
+		proxy._addToVersionsRel(o, version);
+		compEntry_proxys_list.put(key, proxy);
+	}
 }
-public Enumeration _enumerateComponentEntriesRel() {
+public void _copyComponentEntryProxysRelInto(Object[] array) {
 
-	if (_componentEntries == null) return (new Vector()).elements();
-	return _componentEntries.elements();
+	if (compEntry_proxys_list != null) {
+		Enumeration list = compEntry_proxys_list.elements();
+		for(int i=0; list.hasMoreElements(); i++) {
+			array[i] = list.nextElement();
+		}
+	}
+}
+public Enumeration _enumerateComponentProxysRel() {
+
+	if (compEntry_proxys_list == null) return (new Vector()).elements();
+	else return compEntry_proxys_list.elements();
+}
+public Vector _getAllComponentEntries() {
+
+	Vector all_comp_entries = new Vector();
+	if (compEntry_proxys_list == null) return all_comp_entries;
+	ComponentEntryDescriptorModel ced;
+	Enumeration list = compEntry_proxys_list.elements();
+	
+	while(list.hasMoreElements()) {
+		Map m = ((UMProxy)list.nextElement())._getVersionsRel();
+		for (Iterator i=m.entrySet().iterator(); i.hasNext(); ) {
+			  Map.Entry me = (Map.Entry) i.next();
+			  ced = (ComponentEntryDescriptorModel) me.getValue();
+			  all_comp_entries.addElement(ced);
+			  
+	    }
+	}
+	return all_comp_entries;
 }
 public String _getApplication() {
 	
 	return _application;
 }
-public Vector _getComponentEntriesRel() {
+public Hashtable _getComponentEntriesAtLatestVersion() {
+	
+	Hashtable _compEntry_list = new Hashtable();
+	if (compEntry_proxys_list == null) return _compEntry_list;
 
-	return _componentEntries;
+	ComponentEntryDescriptorModel ced;
+	Enumeration list = compEntry_proxys_list.elements();
+	while(list.hasMoreElements()) {
+		ced = (ComponentEntryDescriptorModel) ((UMProxy)list.nextElement())._getLatestVersion();
+		_compEntry_list.put(ced._getId(), ced);
+	}
+	return _compEntry_list;
+}
+public Hashtable _getComponentEntryProxysRel() {
+	
+	return compEntry_proxys_list;
 }
 public String _getDescription() {
 	
@@ -82,10 +133,10 @@ public String _getProviderName() {
 	
 	return _vendorName;
 }
-public int _getSizeOfComponentEntriesRel() {
+public int _getSizeOfComponentProxysRel() {
 
-	if (_componentEntries == null) return 0;
-	else return _componentEntries.size();
+	if (compEntry_proxys_list == null) return 0;
+	else return compEntry_proxys_list.size();
 }
 public long _getStamp() {
 	return _stamp;
@@ -233,7 +284,7 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 		componentEntryDescriptor._setProdInstallURL(_getInstallURL());
 		componentEntryDescriptor._setContainingProduct(this);
 		componentEntryDescriptor._setUMRegistry(parent);
-		_addToComponentEntriesRel(componentEntryDescriptor);
+		_addToComponentEntryProxysRel(componentEntryDescriptor);
 
 		// see if it is installed physically 
 		try {
@@ -242,13 +293,14 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 			path = new URL(path, comp_dir);
 			File check = new File( path.getFile());
 			if (check.exists()) {
-				componentEntryDescriptor._isInstalled(true);
-				componentEntryDescriptor._setCompInstallURL(path.toString());	
-				// find the corresponding component descriptor and add this 
+				// load the corresponding component descriptor and add this 
 				// product to the list of containing products
-				ComponentDescriptorModel comp = parent._lookupComponentDescriptor(componentEntryDescriptor._getId(), componentEntryDescriptor._getVersion());
-				if (comp != null)
+				ComponentDescriptorModel comp = parent._loadComponentManifest(UMEclipseTree.getComponentURL().toString(), comp_dir, factory);
+				if (comp != null) {
 					comp._addToContainingProductsRel(this);
+					componentEntryDescriptor._isInstalled(true);
+					componentEntryDescriptor._setCompInstallURL(path.toString());
+				}
 			}
 			componentEntryDescriptor._setDirName(comp_dir);	
 		} catch (java.net.MalformedURLException ex) {
@@ -260,25 +312,41 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 	// Register
 	//---------
 	_setUMRegistry(parent);
-	parent._addToProductsRel(this);
+	parent._addToProductProxysRel(this);
 }
-public ComponentEntryDescriptorModel _lookupComponentEntry(String key) {
+public ComponentEntryDescriptorModel _lookupComponentEntry(String compId, String version) {
+
+
+	if(compId == null) return null;
+	if (compEntry_proxys_list == null) return null;
+	UMProxy proxy = (UMProxy) _lookupComponentEntryProxy(compId);
+	if (proxy == null) return null;
+	if (version == null)
+		return (ComponentEntryDescriptorModel)proxy._getLatestVersion();
+	return (ComponentEntryDescriptorModel)proxy._lookupVersion(version);
+	
+}
+public UMProxy _lookupComponentEntryProxy(String key) {
 
 	if(key == null) return null;
-	
-	Enumeration list = _enumerateComponentEntriesRel();
-	ComponentEntryDescriptorModel comp;
-	while(list.hasMoreElements()) {
-		comp = (ComponentEntryDescriptorModel) list.nextElement();
-		if(key.equals(comp._getId())) return comp;
-	}
-	
-	return null;
+	if (compEntry_proxys_list == null) return null;
+	return (UMProxy) compEntry_proxys_list.get(key);
 }
-public void _removeFromComponentEntriesRel(Object o) {
+public void _removeFromComponentEntryProxysRel(Object o) {
 
-	if (o==null || _componentEntries == null) return;
-	_componentEntries.removeElement(o);		
+	if (o==null || compEntry_proxys_list == null) return;
+	String key = ((ComponentEntryDescriptorModel)o)._getId();
+	String version = ((ComponentEntryDescriptorModel)o)._getVersion();
+	
+	if (compEntry_proxys_list.containsKey(key)) {  
+		UMProxy proxy = (UMProxy) compEntry_proxys_list.get(key);
+		Map versions = proxy._getVersionsRel();
+		versions.remove(version);
+		if (versions.size() ==0)	// no other versions of this id left
+			compEntry_proxys_list.remove(key);
+	} else {
+		// error condition - component id doesn't exist
+	}
 }
 public void _setApplication(String app) {
 	 _application = app;
@@ -307,7 +375,7 @@ public void _setVersion(String version) {
  public Object clone() throws CloneNotSupportedException{
 	try {
 		ProductDescriptorModel clone = (ProductDescriptorModel)super.clone();
-		clone._componentEntries = (Vector) _componentEntries.clone();
+		clone.compEntry_proxys_list = (Hashtable) compEntry_proxys_list.clone();
 
 		return clone;
 	} catch (CloneNotSupportedException e) {

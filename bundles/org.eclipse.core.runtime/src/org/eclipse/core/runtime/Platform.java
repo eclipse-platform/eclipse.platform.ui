@@ -9,8 +9,6 @@ package org.eclipse.core.runtime;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.model.Factory;
 import org.eclipse.core.runtime.model.PluginRegistryModel;
-import org.eclipse.core.internal.boot.EclipseURLHandler;
-import org.eclipse.core.internal.boot.EclipseURLConnection;
 import org.eclipse.core.internal.plugins.PluginClassLoader;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.*;

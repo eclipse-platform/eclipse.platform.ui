@@ -6,7 +6,7 @@ package org.eclipse.core.internal.boot.update;
  * (c) Copyright IBM Corp 2001
  *
  */
-
+import org.eclipse.core.internal.boot.LaunchInfo;
 import java.net.*;
 import java.util.*;
 
@@ -310,7 +310,8 @@ public java.lang.String getVersionStr() {
  *   <code>false</code> otherwise
  */
 public boolean isDanglingComponent() {	
-	return _isDangling();
+	LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(getUniqueIdentifier(), getVersionStr());
+	return LaunchInfo.getCurrent().isDanglingComponent(vid);
 }
 /**
  * Checks all the upgrade rules to determine if this remote component can be
@@ -355,6 +356,18 @@ public int isInstallable(IComponentDescriptor compInstalled) {
 		
 	}
 	return UpdateManagerConstants.OK_TO_INSTALL;
+}
+/**
+ * Returns whether the component described by this descriptor
+ * belongs to a product or not.   Used only by remote
+ * registries.
+ *
+ * @return <code>true</code> if this component does not belong to any 
+ * product configuration, and
+ *   <code>false</code> otherwise
+ */
+public boolean isLoose() {
+	return false;
 }
 /**
  * Returns whether the component or configuration described by this descriptor

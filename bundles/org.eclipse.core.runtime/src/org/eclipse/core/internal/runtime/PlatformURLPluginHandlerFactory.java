@@ -9,17 +9,17 @@ package org.eclipse.core.internal.runtime;
 import java.net.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.boot.EclipseURLHandler;
-import org.eclipse.core.internal.boot.EclipseURLHandlerFactory;
+import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.internal.boot.PlatformURLHandlerFactory;
  
-public class EclipseURLPluginHandlerFactory implements URLStreamHandlerFactory {
+public class PlatformURLPluginHandlerFactory implements URLStreamHandlerFactory {
 
 	IConfigurationElement ce = null;
 	
 	private static final String URL_HANDLERS_POINT = "org.eclipse.core.runtime.urlHandlers";
 	private static final String PROTOCOL = "protocol";
 	private static final String HANDLER = "class";
-public EclipseURLPluginHandlerFactory(IConfigurationElement ce) {
+public PlatformURLPluginHandlerFactory(IConfigurationElement ce) {
 	super();
 	this.ce = ce;	
 }
@@ -40,10 +40,12 @@ public static void startup() {
 	for (int i=0; i<ce.length; i++) {
 		// register factory elements (actual handlers lazily created on request)
 		protocol = ce[i].getAttribute(PROTOCOL);
-		if (protocol!=null) EclipseURLHandlerFactory.register(protocol,new EclipseURLPluginHandlerFactory(ce[i]));
+		if (protocol!=null) PlatformURLHandlerFactory.register(protocol,new PlatformURLPluginHandlerFactory(ce[i]));
 	}
 
-	// initialize plugin connection support
-	EclipseURLPluginConnection.startup();
+	// initialize plugin and fragment connection support
+	PlatformURLPluginConnection.startup();
+	// FIXME: uncomment once we get the fragment code merged
+//	PlatformURLFragmentConnection.startup();
 }
 }

@@ -10,7 +10,7 @@ import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.net.URL;
+import java.net.*;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -184,6 +184,32 @@ public Plugin(IPluginDescriptor descriptor) {
 	String key = descriptor.getUniqueIdentifier() + "/debug";
 	String value = Platform.getDebugOption(key);
 	this.debug = value == null ? false : value.equalsIgnoreCase("true");
+}
+/**
+ * Returns a URL for the given path.  Returns <code>null</code> if the URL
+ * could not be computed or created.
+ * 
+ * @param file path relative to plug-in installation location 
+ * @return a URL for the given path or <code>null</code>
+ */
+public final URL find(IPath path) {
+	String first = path.segment(0);
+	if (first.charAt(0) != '$') {
+		try {
+			return new URL(getDescriptor().getInstallURL(), path.toString());
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
+	if (first.equalsIgnoreCase("$nl$"))
+		return null;
+	if (first.equalsIgnoreCase("$os$"))
+		return null;
+	if (first.equalsIgnoreCase("$ws$"))
+		return null;
+	if (first.equalsIgnoreCase("$files$"))
+		return null;
+	return null;
 }
 /**
  * Returns the plug-in descriptor for this plug-in runtime object.

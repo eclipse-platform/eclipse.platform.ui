@@ -80,6 +80,14 @@ public PluginDescriptorModel createPluginDescriptor() {
 	return new PluginDescriptorModel();
 }
 /**
+ * Returns a new plug-in fragment model which is not initialized.
+ *
+ * @return a new plug-in fragment model
+ */
+public PluginFragmentModel createPluginFragment() {
+	return new PluginFragmentModel();
+}
+/**
  * Returns a new plug-in prerequisite model which is initialized to
  * not export its code and to not require an exact match.
  *

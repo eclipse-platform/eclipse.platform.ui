@@ -20,6 +20,7 @@ public class PluginRegistryModel {
 
 	// transient properties (not included in plug-in manifest)
 	private Map plugins = new HashMap(30);
+	private Map fragments = new HashMap(30);
 	private boolean readOnly = false;
 	private boolean resolved = false;
 /**
@@ -27,6 +28,28 @@ public class PluginRegistryModel {
  */
 public PluginRegistryModel() {
 	super();
+}
+/**
+ * Adds the specified plug-in fragment to this registry.  An existing fragment
+ * with the same unique id and version is replaced by the new
+ * value.  
+ *
+ * @param fragment the plug-in fragment to add
+ */
+public void addFragment(PluginFragmentModel fragment) {
+	assertIsWriteable();
+	String key = fragment.getId();
+	PluginFragmentModel[] list = getFragments(key);
+	if (list == null) {
+		list = new PluginFragmentModel[1];
+		list[0] = fragment;
+		fragments.put(key, list);
+	} else {
+		PluginFragmentModel[] newList = new PluginFragmentModel[list.length + 1];
+		System.arraycopy(list, 0, newList, 0, list.length);
+		newList[list.length] = fragment;
+		fragments.put(key, newList);
+	}
 }
 /**
  * Adds the specified plug-in to this registry.  An existing plug-in
@@ -58,6 +81,68 @@ protected void assertIsWriteable() {
 	Assert.isTrue(!isReadOnly(), "Model is read-only");
 }
 /**
+ * Returns the plug-in fragment with the given identifier
+ * in this plug-in registry, or <code>null</code> if there is no such
+ * fragment.  If there are multiple versions of the identified fragment,
+ * one will be non-deterministically choosen and returned.  
+ *
+ * @param id the unique identifier of the plug-in fragment
+ *		(e.g. <code>"com.example.acme"</code>).
+ * @return the plug-in fragment, or <code>null</code>
+ */
+public PluginFragmentModel getFragment(String id) {
+	PluginFragmentModel[] result = (PluginFragmentModel[]) fragments.get(id);
+	return result == null ? null : result[0];
+}
+/**
+ * Returns the identified plug-in fragment or <code>null</code> if
+ * the fragment does not exist.
+ *
+ * @return the matching fragment in this registry
+ */
+public PluginFragmentModel getFragment(String id, String version) {
+	PluginFragmentModel[] list = getFragments(id);
+	if (list == null || list.length == 0)
+		return null;
+	if (version == null)
+		// Just return the first one in the list (random)
+		return list[0];
+
+	for (int i = 0; i < list.length; i++) {
+		PluginFragmentModel element = list[i];
+		if (element.getVersion().equals(version))
+			return element;
+	}
+	return null;
+}
+/**
+ * Returns the list of plug-in fragments managed by this registry.
+ *
+ * @return the fragments in this registry
+ */
+public PluginFragmentModel[] getFragments() {
+	List result = new ArrayList(fragments.size());
+	for (Iterator i = fragments.values().iterator(); i.hasNext();) {
+		PluginFragmentModel[] entries = (PluginFragmentModel[]) i.next();
+		for (int j = 0; j < entries.length; j++)
+			result.add(entries[j]);
+	}
+	return (PluginFragmentModel[]) result.toArray(new PluginFragmentModel[result.size()]);
+}
+/**
+ * Returns all versions of the identified plug-in fragment
+ * known to this plug-in registry.
+ * Returns an empty array if there are no fragments
+ * with the specified identifier.
+ *
+ * @param id the unique identifier of the plug-in fragment
+ *		(e.g. <code>"org.eclipse.core.resources"</code>).
+ * @return the fragments known to this plug-in registry with the given id
+ */
+public PluginFragmentModel[] getFragments(String id) {
+	return (PluginFragmentModel[]) fragments.get(id);
+}
+/**
  * Returns the plug-in descriptor with the given plug-in identifier
  * in this plug-in registry, or <code>null</code> if there is no such
  * plug-in.  If there are multiple versions of the identified plug-in,
@@ -78,23 +163,22 @@ public PluginDescriptorModel getPlugin(String pluginId) {
  * @return the matching plug-in in this registry
  */
 public PluginDescriptorModel getPlugin(String pluginId, String version) {
-
-	PluginDescriptorModel[] plugins = getPlugins(pluginId);
-	if (plugins == null || plugins.length == 0)
+	PluginDescriptorModel[] list = getPlugins(pluginId);
+	if (list == null || list.length == 0)
 		return null;
 	if (version == null)
 		// Just return the first one in the list (random)
-		return plugins[0];
+		return list[0];
 
-	for (int i = 0; i < plugins.length; i++) {
-		PluginDescriptorModel element = plugins[i];
+	for (int i = 0; i < list.length; i++) {
+		PluginDescriptorModel element = list[i];
 		if (element.getVersion().equals(version))
 			return element;
 	}
 	return null;
 }
 /**
- * Returns the of plug-ins managed by this registry.
+ * Returns the list of plug-ins managed by this registry.
  *
  * @return the plug-ins in this registry
  */
@@ -159,6 +243,49 @@ public void markReadOnly() {
  */
 public void markResolved() {
 	resolved = true;
+}
+/**
+ * Removes the fragment with id and version if it exists in this registry.
+ * This method has no effect if a fragment with the given id and version 
+ * cannot be found.
+ *
+ * @param id the unique identifier of the fragment to remove
+ * @param version the version of the fragment to remove
+ */
+public void removeFragment(String id, String version) {
+	assertIsWriteable();
+	PluginFragmentModel[] list = getFragments(id);
+	if (list == null || list.length == 0)
+		return;
+	int removedCount = 0;
+	for (int i = 0; i < list.length; i++) {
+		if (version.equals(list[i].getVersion())) {
+			list[i] = null;
+			removedCount++;
+		}
+	}
+	// If all were removed, toss the whole entry.  Otherwise, compact the array
+	if (removedCount == list.length)
+		removeFragments(id);
+	else {
+		PluginFragmentModel[] newList = new PluginFragmentModel[list.length - removedCount];
+		int index = 0;
+		for (int i = 0; i < list.length; i++) {
+			if (list[i] != null)
+				newList[index++] = list[i];
+		}
+		fragments.put(id, newList);
+	}
+}
+/**
+ * Removes all versions of the identified plug-in fragment from this registry.
+ * This method has no effect if such a fragment cannot be found.
+ *
+ * @param id the unique identifier of the fragments to remove
+ */
+public void removeFragments(String id) {
+	assertIsWriteable();
+	fragments.remove(id);
 }
 /**
  * Removes the plug-in with id and version if it exists in this registry.
@@ -226,7 +353,7 @@ public void removePlugins(String pluginId) {
 public IStatus resolve(boolean trimDisabledPlugins, boolean doCrossLinking) {
 	RegistryResolver resolver = new RegistryResolver();
 	resolver.setTrimPlugins(trimDisabledPlugins);
-	resolver.setCrossLinking(doCrossLinking);
+	resolver.setCrossLink(doCrossLinking);
 	return resolver.resolve(this);
 }
 }

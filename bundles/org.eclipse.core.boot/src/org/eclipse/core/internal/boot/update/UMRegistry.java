@@ -46,29 +46,6 @@ public IComponentDescriptor[] getAllComponentDescriptors() {
 	
 }
 /**
- * Returns all plugin entry descriptors known to this registry, entries can
- * have duplicate plugin IDs but at different versions.
- * Returns an empty array if there are no installed plugins.
- *
- * @return all plugin descriptors, including all versions, known to this registry
- */
-public IPluginEntryDescriptor[] getAllPluginEntryDescriptors() {
-	Vector plugins_list = _getAllPluginEntries();
-
-	int size;
-	if (plugins_list == null) size = 0;
-	else size = plugins_list.size();
-	if(size == 0) return new IPluginEntryDescriptor[0];
-	
-	IPluginEntryDescriptor[] array = new IPluginEntryDescriptor[size];
-	Enumeration list = plugins_list.elements();
-		for(int i=0; list.hasMoreElements(); i++) {
-			array[i] = (IPluginEntryDescriptor) list.nextElement();
-		}
-	
-	return array;
-}
-/**
  * Returns all product descriptors known to this registry, entries can
  * have duplicate product IDs but at different versions.
  * Returns an empty array if there are no installed products.
@@ -174,22 +151,33 @@ public IManifestDescriptor[] getConflictingManifests(IManifestDescriptor manifes
 
 }
 // return a list of components that don't belong to any products
+// if registry = current or local, return danglingComponents
+// else if registry is remote, return looseComponents
 
 public IComponentDescriptor[] getDanglingComponents() {
 
 	Vector comp_list = new Vector();
 
-	Enumeration list = _getAllComponents().elements();
-	for(int i=0; list.hasMoreElements(); i++) {
-		IComponentDescriptor comp = (IComponentDescriptor) list.nextElement();
-		LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(comp.getUniqueIdentifier(), comp.getVersionStr());
-		if (LaunchInfo.getCurrent().isDanglingComponent(vid)) {
-			comp_list.add(comp);
-		} else {	// sometimes the LaunchInfo list might be out-of-sync
-			IProductDescriptor[] prod = comp.getContainingProducts();
-			if (prod.length == 0) {
+	if (_getType() == UpdateManagerConstants.REMOTE_REGISTRY) {
+		Enumeration list = _getAllComponents().elements();
+		for(int i=0; list.hasMoreElements(); i++) {
+			IComponentDescriptor comp = (IComponentDescriptor) list.nextElement();
+			if (comp.isLoose())
 				comp_list.add(comp);
-				LaunchInfo.getCurrent().isDanglingComponent(vid, true); //add
+		}
+	} else {
+		Enumeration list = _getAllComponents().elements();
+		for(int i=0; list.hasMoreElements(); i++) {
+			IComponentDescriptor comp = (IComponentDescriptor) list.nextElement();
+			LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(comp.getUniqueIdentifier(), comp.getVersionStr());
+			if (LaunchInfo.getCurrent().isDanglingComponent(vid)) {
+				comp_list.add(comp);
+			} else {	// sometimes the LaunchInfo list might be out-of-sync
+				IProductDescriptor[] prod = comp.getContainingProducts();
+				if (prod.length == 0) {
+					comp_list.add(comp);
+					_addToDanglingComponentIVPsRel(vid);
+				}
 			}
 		}
 	}
@@ -198,55 +186,6 @@ public IComponentDescriptor[] getDanglingComponents() {
 			
 	IComponentDescriptor[] array = new IComponentDescriptor[comp_list.size()];
 	comp_list.copyInto(array);
-	return array;
-	
-}
-/**
- * Returns the plug-in entry descriptor with the given plug-in identifier
- * at the latest version number in this  registry, or <code>null</code> if there is no such
- * plug-in.
- *
- * @param pluginId the unique identifier of the plug-in (e.g. <code>"com.example.myplugin"</code>).
- * @return the plug-in entry descriptor, or <code>null</code>
- */
-public IPluginEntryDescriptor getPluginEntryDescriptor(String pluginId) {
-	return getPluginEntryDescriptor(pluginId, null);
-}
-/**
- * Returns the plug-in entry descriptor with the given plug-in identifier
- * and version number in this registry, or <code>null</code> if there is no such
- * plug-in.   If a version number is not specified (null), the latest
- * version of such plug-in will be returned
- *
- * @param pluginId the unique identifier of the plug-in (e.g. <code>"com.example.myplugin"</code>).
- * @param version the version number
- * @return the plug-in entry descriptor at the specified version number, or <code>null</code>
- */
-public IPluginEntryDescriptor getPluginEntryDescriptor(java.lang.String pluginId, java.lang.String version) {
-	return (IPluginEntryDescriptor)_lookupPluginEntryDescriptor(pluginId,version);
-}
-/**
- * Returns all plug-in entry descriptors known to this registry.
- * Due to duplicate plugin IDs, the latest version of each descriptor
- * is returned.
- * Returns an empty array if there are no installed plug-ins.
- *
- * @return the plug-in entry descriptors at their latest versions known to this registry
- */
-public IPluginEntryDescriptor[] getPluginEntryDescriptors() {
-	Hashtable plugins_list = _getPluginEntriesAtLatestVersion();
-
-	int size;
-	if (plugins_list == null) size = 0;
-	else size = plugins_list.size();
-	if(size == 0) return new IPluginEntryDescriptor[0];
-	
-	IPluginEntryDescriptor[] array = new IPluginEntryDescriptor[size];
-	Enumeration list = plugins_list.elements();
-		for(int i=0; list.hasMoreElements(); i++) {
-			array[i] = (IPluginEntryDescriptor) list.nextElement();
-		}
-	
 	return array;
 	
 }

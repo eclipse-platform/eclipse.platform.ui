@@ -9,14 +9,14 @@ package org.eclipse.core.internal.boot;
 import java.net.*;
 import java.util.*;
  
-public class EclipseURLHandlerFactory implements URLStreamHandlerFactory {
+public class PlatformURLHandlerFactory implements URLStreamHandlerFactory {
 
 	private static Hashtable handlers = new Hashtable();
-public EclipseURLHandlerFactory() {
+public PlatformURLHandlerFactory() {
 	super();
 
 	// register eclipse handler
-	handlers.put(EclipseURLHandler.ECLIPSE, new EclipseURLHandler());
+	handlers.put(PlatformURLHandler.PROTOCOL, new PlatformURLHandler());
 }
 public URLStreamHandler createURLStreamHandler(String protocol) {
 
@@ -36,23 +36,23 @@ public URLStreamHandler createURLStreamHandler(String protocol) {
 	return handler;
 }
 public static void register(String protocol, URLStreamHandlerFactory factory) {
-	if (protocol.equals(EclipseURLHandler.ECLIPSE)) return;	// just in case ...
+	if (protocol.equals(PlatformURLHandler.PROTOCOL)) return;	// just in case ...
 	handlers.put(protocol,factory);
 }
 public static void shutdown() {	
 	
-	EclipseURLHandlerFactoryProxy p = EclipseURLHandlerFactoryProxy.getFactoryProxy();
+	PlatformURLHandlerFactoryProxy p = PlatformURLHandlerFactoryProxy.getFactoryProxy();
 	if (p!=null) p.setFactory(null);
-	EclipseURLConnection.shutdown();
+	PlatformURLConnection.shutdown();
 }
 public static void startup(String location) {
 
-	EclipseURLHandlerFactoryProxy p = EclipseURLHandlerFactoryProxy.getFactoryProxy();
+	PlatformURLHandlerFactoryProxy p = PlatformURLHandlerFactoryProxy.getFactoryProxy();
 	if (p==null) {
-		p = new EclipseURLHandlerFactoryProxy();	
+		p = new PlatformURLHandlerFactoryProxy();	
 		URL.setURLStreamHandlerFactory(p);
 	}
-	p.setFactory(new EclipseURLHandlerFactory());
-	EclipseURLConnection.startup(location);
+	p.setFactory(new PlatformURLHandlerFactory());
+	PlatformURLConnection.startup(location);
 }
 }

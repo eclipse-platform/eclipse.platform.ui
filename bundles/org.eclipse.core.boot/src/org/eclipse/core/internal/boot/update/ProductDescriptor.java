@@ -68,29 +68,53 @@ public java.lang.String getApplication() {
 	return s==null ? "" : s;
 }
 /**
- * Returns a list of components shipped in this product.
- * These are the entries specified in the product jar manifest file
+ * Returns a list of component entries shipped in this product.  Entries can
+ * have duplicate component IDs but at different versions.
+ * These are the entries specified in the product install manifest file
+ * Note that this does the same as getAllComponentEntries()
  *
- * @return an array of component shipped in this product
+ * @return an array of all components shipped in this product
+ * 
  */
 public IComponentEntryDescriptor[] getComponentEntries() {
-	int size = _getSizeOfComponentEntriesRel();	
+	Vector compEntry_list = _getAllComponentEntries();
+
+	int size;
+	if (compEntry_list == null) size = 0;
+	else size = compEntry_list.size();
 	if(size == 0) return new IComponentEntryDescriptor[0];
 	
-	IComponentEntryDescriptor[] list = new IComponentEntryDescriptor[size];
-	_copyComponentEntriesRelInto(list);
-	return list;
+	IComponentEntryDescriptor[] array = new IComponentEntryDescriptor[size];
+	Enumeration list = compEntry_list.elements();
+		for(int i=0; list.hasMoreElements(); i++) {
+			array[i] = (IComponentEntryDescriptor) list.nextElement();
+		}
+	
+	return array;
 	
 }
 /**
- * Returns the component entry with the given identifier shipped in
- * this product, or <code>null</code> if there is no component entry.
+ * Returns the component entry with the given identifier at the latest
+ * version number shipped in  * this product, or <code>null</code> if 
+ * there is no such component entry.
  *
- * @param id the identifier of the component (e.g. <code>""</code>).
+ * @param id the identifier of the component entry (e.g. <code>""</code>).
  * @return the component entry, or <code>null</code>
  */
 public IComponentEntryDescriptor getComponentEntry(java.lang.String id) {
-	return (IComponentEntryDescriptor)_lookupComponentEntry(id);
+	return getComponentEntry(id, null);
+}
+/**
+ * Returns the component entry with the given identifier and
+ * version number shipped in this product, or <code>null</code> if 
+ * there is no such component entry.  If a version number is not 
+ * specified (null), the latest version of such component entry will be returned
+ *
+ * @param compId the identifier of the component entry (e.g. <code>""</code>).
+ * @return the component entry at the specified version number, or <code>null</code>
+ */
+public IComponentEntryDescriptor getComponentEntry(java.lang.String compId, String version) {
+	return (IComponentEntryDescriptor)_lookupComponentEntry(compId,version);
 }
 /**
  * Returns a description of this Product
@@ -317,7 +341,7 @@ public java.lang.String getVersionStr() {
  * all nested children of this configuration is installed 
  */
 public boolean isAllInstalled() {
-	Enumeration list = _enumerateComponentEntriesRel();
+	Enumeration list = _getAllComponentEntries().elements();
 	while(list.hasMoreElements()) {
 		IComponentEntryDescriptor comp =  (IComponentEntryDescriptor)list.nextElement();
 		if (!comp.isInstalled())
@@ -374,9 +398,7 @@ public int isInstallable(IProductDescriptor prodInstalled) {
  *   <code>false</code> otherwise
  */
 public boolean isRemovable() {
-	
-	
-	Enumeration list = _enumerateComponentEntriesRel();
+	Enumeration list = _getAllComponentEntries().elements();
 	IComponentDescriptor comp;
 	while(list.hasMoreElements()) {
 		comp = ((IComponentEntryDescriptor) list.nextElement()).getComponentDescriptor();

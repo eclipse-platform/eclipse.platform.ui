@@ -90,7 +90,7 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 
 		for (int i = 0; i < vidComponents.length; i++) {
 
-			IComponentDescriptor componentDescriptor = registryInstalled.getComponentDescriptor(vidComponents[i].getIdentifier(), vidConfigurations[i].getVersion());
+			IComponentDescriptor componentDescriptor = registryInstalled.getComponentDescriptor(vidComponents[i].getIdentifier(), vidComponents[i].getVersion());
 
 			// Validate existence
 			//-------------------
@@ -224,9 +224,9 @@ public static void uninstall(URL url) {
  */
 private static void uninstallComponents(Vector vectorComponents, IUMRegistry registry, LaunchInfo launchInfo) {
 
-	if( vectorComponents == null || vectorComponents.size() == 0 )
+	if (vectorComponents == null || vectorComponents.size() == 0)
 		return;
-		
+
 	Vector vectorComponentsRemoving = new Vector();
 	Vector vectorPluginsRemoving = new Vector();
 	Vector vectorFragmentsRemoving = new Vector();
@@ -269,36 +269,36 @@ private static void uninstallComponents(Vector vectorComponents, IUMRegistry reg
 
 		// Create a string array of component identifiers
 		//-----------------------------------------------
-		String[] straComponents = new String[vectorComponentsRemoving.size()];
+		LaunchInfo.VersionedIdentifier[] vidaComponents = new LaunchInfo.VersionedIdentifier[vectorComponentsRemoving.size()];
 
 		for (int i = 0; i < vectorComponentsRemoving.size(); ++i) {
 			componentInstalled = (IComponentDescriptor) vectorComponentsRemoving.elementAt(i);
-			straComponents[i] = componentInstalled.getUniqueIdentifier() + "_" + componentInstalled.getVersionStr();
+			vidaComponents[i] = new LaunchInfo.VersionedIdentifier(componentInstalled.getUniqueIdentifier(), componentInstalled.getVersionStr());
 		}
 
 		// Create a string array of plugin identifiers
 		//--------------------------------------------
-		String[] straPlugins = new String[vectorPluginsRemoving.size()];
+		LaunchInfo.VersionedIdentifier[] vidaPlugins = new LaunchInfo.VersionedIdentifier[vectorPluginsRemoving.size()];
 		IPluginEntryDescriptor pluginInstalled = null;
-		
+
 		for (int i = 0; i < vectorPluginsRemoving.size(); ++i) {
 			pluginInstalled = (IPluginEntryDescriptor) vectorPluginsRemoving.elementAt(i);
-			straPlugins[i] = pluginInstalled.getUniqueIdentifier() + "_" + pluginInstalled.getVersionStr();
+			vidaPlugins[i] = new LaunchInfo.VersionedIdentifier(pluginInstalled.getUniqueIdentifier(), pluginInstalled.getVersionStr());
 		}
 
 		// Create a string array of fragment identifiers
 		//----------------------------------------------
-		String[] straFragments = new String[vectorFragmentsRemoving.size()];
+		LaunchInfo.VersionedIdentifier[] vidaFragments = new LaunchInfo.VersionedIdentifier[vectorFragmentsRemoving.size()];
 		IFragmentEntryDescriptor fragmentInstalled = null;
-		
+
 		for (int i = 0; i < vectorFragmentsRemoving.size(); ++i) {
 			fragmentInstalled = (IFragmentEntryDescriptor) vectorFragmentsRemoving.elementAt(i);
-			straFragments[i] = fragmentInstalled.getUniqueIdentifier() + "_" + fragmentInstalled.getVersionStr();
+			vidaFragments[i] = new LaunchInfo.VersionedIdentifier(fragmentInstalled.getUniqueIdentifier(), fragmentInstalled.getVersionStr());
 		}
 
 		// Remove the components, plugins, and fragments
 		//----------------------------------------------
-		launchInfo.uninstall(null, straComponents, straPlugins, straFragments);
+		launchInfo.setInactive(null, vidaComponents, vidaPlugins, vidaFragments);
 	}
 
 	return;
@@ -306,10 +306,10 @@ private static void uninstallComponents(Vector vectorComponents, IUMRegistry reg
 /**
  */
 private static void uninstallProducts(Vector vectorProducts, IUMRegistry registry, LaunchInfo launchInfo) {
-	
-	if( vectorProducts == null || vectorProducts.size() == 0 )
+
+	if (vectorProducts == null || vectorProducts.size() == 0)
 		return;
-		
+
 	// Determine which products may be removed
 	//----------------------------------------
 	Vector vectorProductsRemoving = new Vector();
@@ -334,19 +334,19 @@ private static void uninstallProducts(Vector vectorProducts, IUMRegistry registr
 	// Remove the products
 	//--------------------
 	if (vectorProductsRemoving.size() > 0) {
-	    
+
 		// Create a string array of product identifiers
 		//---------------------------------------------	    
-		String[] straProducts = new String[vectorProductsRemoving.size()];
-		
+		LaunchInfo.VersionedIdentifier[] vidaProducts = new LaunchInfo.VersionedIdentifier[vectorProductsRemoving.size()];
+
 		for (int i = 0; i < vectorProductsRemoving.size(); ++i) {
 			productInstalled = (IProductDescriptor) vectorProductsRemoving.elementAt(i);
-			straProducts[i] = productInstalled.getUniqueIdentifier() + "_" + productInstalled.getVersionStr();
+			vidaProducts[i] = new LaunchInfo.VersionedIdentifier(productInstalled.getUniqueIdentifier(), productInstalled.getVersionStr());
 		}
 
 		// Remove the products
 		//--------------------
-		launchInfo.uninstall(straProducts, null, null, null);
+		launchInfo.setInactive(vidaProducts, null, null, null);
 	}
 
 	return;

@@ -8,31 +8,35 @@ package org.eclipse.core.internal.runtime;
 
 import org.eclipse.core.runtime.*;
 import java.io.*;
+import java.util.Date;
 
 class PlatformLogListener implements ILogListener {
-	PrintWriter log = null;
+	private PrintWriter log = null;
+	private boolean usingLogFile = false;
 PlatformLogListener() {
-	try {
-		log = new PrintWriter(new FileOutputStream(InternalPlatform.getMetaArea().getLogLocation().toFile()));
-	} catch (IOException e) {
-		log = null;
-	}
+	usingLogFile = true;
+	// remove old log file
+	InternalPlatform.getMetaArea().getLogLocation().toFile().delete();
 }
+/**
+ * It should only be used to pass System.out .
+ */
 PlatformLogListener(OutputStream out) {
 	log = new PrintWriter(out);
+}
+private void closeLogFile() {
+	try {
+		log.flush();
+		log.close();
+	} finally {
+		log = null;
+	}
 }
 private void indent(int count) {
 	for (int i = 0; i < count; i++)
 		log.print("\t");
 }
-public synchronized void logging(IStatus status) {
-	// thread safety: (Concurrency003)
-	if (log == null)
-		return;
-	log.println("Log: " + new java.util.Date());
-	logging(status, 0);
-}
-protected void logging(IStatus status, int nesting) {
+private void logging(IStatus status, int nesting) {
 	indent(nesting);
 	log.print(status.getSeverity());
 	log.print(" ");
@@ -58,15 +62,29 @@ protected void logging(IStatus status, int nesting) {
 }
 public synchronized void logging(IStatus status, String plugin) {
 	// thread safety: (Concurrency003)
+	if (usingLogFile)
+		openLogFile();
 	if (log == null)
 		return;
-	log.println("Log: " + new java.util.Date());
-	logging(status, 0);
+	try {
+		log.println("Log: " + new Date());
+		logging(status, 0);
+	} finally {
+		if (usingLogFile)
+			closeLogFile();
+	}
+}
+private void openLogFile() {
+	try {
+		log = new PrintWriter(new FileOutputStream(InternalPlatform.getMetaArea().getLogLocation().toOSString(), true));
+	} catch (IOException e) {
+		log = null;
+	}
 }
 /**
  * @see ILogListener
  */
-public void shutdown() {
+public synchronized void shutdown() {
 	if (log == null)
 		return;
 	PrintWriter old = log;

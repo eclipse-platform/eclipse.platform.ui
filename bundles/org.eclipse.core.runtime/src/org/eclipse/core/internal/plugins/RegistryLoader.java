@@ -58,7 +58,7 @@ private PluginRegistryModel parseRegistry(URL[] pluginPath) {
 public static PluginRegistryModel parseRegistry(URL[] pluginPath, Factory factory, boolean debug) {
 	return new RegistryLoader(factory, debug).parseRegistry(pluginPath);
 }
-private PluginDescriptorModel processManifestFile(URL manifest) {
+private PluginModel processManifestFile(URL manifest) {
 	InputStream is = null;
 	try {
 		is = manifest.openStream();
@@ -68,12 +68,10 @@ private PluginDescriptorModel processManifestFile(URL manifest) {
 			debug("No plugin found for: " + manifest);
 		return null;
 	}
-	PluginDescriptorModel result = null;
+	PluginModel result = null;
 	try {
 		try {
 			result = new PluginParser((Factory) factory).parse(new InputSource(is));
-			String url = manifest.toString();
-			result.setLocation(url.substring(0, 1 + url.lastIndexOf('/')));
 		} finally {
 			is.close();
 		}
@@ -87,35 +85,50 @@ private PluginDescriptorModel processManifestFile(URL manifest) {
 }
 private PluginRegistryModel processManifestFiles(URL[] pluginPath) {
 	PluginRegistryModel result = factory.createPluginRegistry();
-	for (int i = 0; i < pluginPath.length; i++) {
-		if (debug)
-			debug("Path - " + pluginPath[i]);
-		if (pluginPath[i].getFile().endsWith("/")) {
-			// directory entry - search for plugins
-			String[] members = getPathMembers(pluginPath[i]);
-			for (int j = 0; j < members.length; j++) {
-				try {
-					PluginDescriptorModel entry = processManifestFile(new URL(pluginPath[i], members[j] + "/plugin.xml"));
-					if (entry != null) {
-						result.addPlugin(entry);
-						entry.setRegistry(result);
-					}
-				} catch (java.net.MalformedURLException e) {
-				}
-				if (debug)
-					debug("Processed - " + members[j]);
-			}
-		} else {
-			// specific file entry - load the given file
-			PluginDescriptorModel entry = processManifestFile(pluginPath[i]);
-			if (entry != null) {
-				result.addPlugin(entry);
-				entry.setRegistry(result);
+	for (int i = 0; i < pluginPath.length; i++)
+		processPluginPathEntry(result, pluginPath[i]);
+	return result;
+}
+private void processPluginPathEntry(PluginRegistryModel registry, URL location) {
+	if (debug)
+		debug("Path - " + location);
+	if (location.getFile().endsWith("/")) {
+		// directory entry - search for plugins
+		String[] members = getPathMembers(location);
+		for (int j = 0; j < members.length; j++) {
+			try {
+				boolean found = processPluginPathFile(registry, new URL(location, members[j] + "/plugin.xml"));
+				if (!found)
+					found = processPluginPathFile(registry, new URL(location, members[j] + "/fragment.xml"));
+			} catch (MalformedURLException e) {
 			}
 			if (debug)
-				debug("Processed - " + pluginPath[i]);
+				debug("Processed - " + members[j]);
 		}
+	} else {
+		// specific file entry - load the given file
+		boolean found = processPluginPathFile(registry, location);
+		if (debug)
+			debug("Processed - " + location);
 	}
-	return result;
+}
+private boolean processPluginPathFile(PluginRegistryModel registry, URL location) {
+	PluginModel entry = processManifestFile(location);
+	if (entry == null)
+		return false;
+
+	String url = location.toString();
+	url = url.substring(0, 1 + url.lastIndexOf('/'));
+	if (entry instanceof PluginDescriptorModel)
+		registry.addPlugin((PluginDescriptorModel) entry);
+	else
+		if (entry instanceof PluginFragmentModel)
+			registry.addFragment((PluginFragmentModel) entry);
+		else
+			// XXX log some kind of error or throw an exception here
+			return false;
+	entry.setRegistry(registry);
+	entry.setLocation(url);
+	return true;
 }
 }

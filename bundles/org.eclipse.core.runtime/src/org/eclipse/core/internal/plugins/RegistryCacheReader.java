@@ -11,59 +11,99 @@ import org.eclipse.core.internal.plugins.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.EOFException;
+import java.util.ArrayList;
 
 public class RegistryCacheReader {
 
 	Factory cacheFactory;
+	// objectTable will be an array list of objects.  The objects will be things 
+	// like a plugin descriptor, extension, extension point, etc.  The integer 
+	// index value will be used in the cache to allow cross-references in the 
+	// cached registry.
+	ArrayList objectTable = null;
 
-	public static final int REGISTRY_CACHE_VERSION = 1;
+	public static final byte REGISTRY_CACHE_VERSION = 1;
 
-	public static final int NONLABEL = 0;
-	public static final int READONLY_LABEL = 1;
-	public static final int NAME_LABEL = 2;
+	public static final byte NONLABEL = 0;
 
-	public static final int ID_LABEL = 10;
-	public static final int PLUGIN_PROVIDER_NAME_LABEL = 11;
-	public static final int VERSION_LABEL = 12;
-	public static final int PLUGIN_CLASS_LABEL = 13;
-	public static final int PLUGIN_LOCATION_LABEL = 14;
-	public static final int PLUGIN_ENABLED_LABEL = 15;
-	public static final int PLUGIN_REQUIRES_LABEL = 20;
-	public static final int PLUGIN_LIBRARY_LABEL = 30;
-	public static final int PLUGIN_EXTENSION_LABEL = 40;
-	public static final int PLUGIN_EXTENSION_POINT_LABEL = 50;
-	public static final int PLUGIN_END_LABEL = 19;
+	public static final byte CONFIGURATION_ELEMENT_END_LABEL = 1;
+	public static final byte CONFIGURATION_ELEMENT_INDEX_LABEL = 45;
+	public static final byte CONFIGURATION_ELEMENT_LABEL = 2;
+	public static final byte CONFIGURATION_ELEMENT_PARENT_LABEL = 3;
+	public static final byte CONFIGURATION_PROPERTY_END_LABEL = 4;
+	public static final byte CONFIGURATION_PROPERTY_LABEL = 5;
 
-	public static final int REQUIRES_MATCH_LABEL = 23;
-	public static final int REQUIRES_EXPORT_LABEL = 24;
-	public static final int REQUIRES_RESOLVED_VERSION_LABEL = 25;
-	public static final int REQUIRES_PLUGIN_NAME_LABEL = 26;
-	public static final int REQUIRES_END_LABEL = 29;
+	public static final byte EXTENSION_END_LABEL = 6;
+	public static final byte EXTENSION_EXT_POINT_NAME_LABEL = 7;
+	public static final byte EXTENSION_INDEX_LABEL = 8;
+	public static final byte EXTENSION_PARENT_LABEL = 9;
 
-	public static final int LIBRARY_EXPORTS_LENGTH_LABEL = 31;
-	public static final int LIBRARY_EXPORTS_LABEL = 32;
-	public static final int LIBRARY_END_LABEL = 39;
+	public static final byte EXTENSION_POINT_END_LABEL = 10;
+	public static final byte EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL = 11;
+	public static final byte EXTENSION_POINT_EXTENSIONS_LABEL = 12;
+	public static final byte EXTENSION_POINT_PARENT_LABEL = 13;
+	public static final byte EXTENSION_POINT_SCHEMA_LABEL = 14;
 
-	public static final int EXTENSION_EXT_POINT_NAME_LABEL = 41;
-	public static final int SUBELEMENTS_LENGTH_LABEL = 42;
-	public static final int EXTENSION_END_LABEL = 49;
+	public static final byte ID_LABEL = 15;
+	public static final byte LIBRARY_END_LABEL = 16;
+	public static final byte LIBRARY_EXPORTS_LABEL = 17;
+	public static final byte LIBRARY_EXPORTS_LENGTH_LABEL = 18;
+	public static final byte NAME_LABEL = 19;
 
-	public static final int EXTENSION_POINT_SCHEMA_LABEL = 51;
-	public static final int EXTENSION_POINT_EXTENSIONS_LABEL = 52;
-	public static final int EXTENSION_POINT_END_LABEL = 59;
+	public static final byte PLUGIN_CLASS_LABEL = 20;
+	public static final byte PLUGIN_ENABLED_LABEL = 21;
+	public static final byte PLUGIN_END_LABEL = 22;
+	public static final byte PLUGIN_EXTENSION_LABEL = 23;
+	public static final byte PLUGIN_EXTENSION_POINT_LABEL = 24;
+	public static final byte PLUGIN_INDEX_LABEL = 25;
+	public static final byte PLUGIN_LABEL = 26;
+	public static final byte PLUGIN_LOCATION_LABEL = 27;
+	public static final byte PLUGIN_LIBRARY_LABEL = 28;
+	public static final byte PLUGIN_PARENT_LABEL = 29;
+	public static final byte PLUGIN_PROVIDER_NAME_LABEL = 30;
+	public static final byte PLUGIN_REQUIRES_LABEL = 31;
 
-	public static final int CONFIGURATION_ELEMENT_LABEL = 60;
-	public static final int VALUE_LABEL = 61;
-	public static final int PROPERTIES_LENGTH_LABEL = 62;
-	public static final int CONFIGURATION_ELEMENT_END_LABEL = 69;
-
-	public static final int CONFIGURATION_PROPERTY_LABEL = 70;
-	public static final int CONFIGURATION_PROPERTY_END_LABEL = 79;
+	public static final byte PROPERTIES_LENGTH_LABEL = 32;
+	public static final byte READONLY_LABEL = 33;
+	public static final byte REGISTRY_END_LABEL = 34;
+	public static final byte REGISTRY_INDEX_LABEL = 46;
+	public static final byte REGISTRY_LABEL = 35;
+	public static final byte REGISTRY_RESOLVED_LABEL = 36;
+	public static final byte REQUIRES_END_LABEL = 37;
+	public static final byte REQUIRES_EXPORT_LABEL = 38;
+	public static final byte REQUIRES_MATCH_LABEL = 39;
+	public static final byte REQUIRES_PLUGIN_NAME_LABEL = 40;
+	public static final byte REQUIRES_RESOLVED_VERSION_LABEL = 41;
+	public static final byte SUBELEMENTS_LENGTH_LABEL = 42;
+	public static final byte VALUE_LABEL = 43;
+	public static final byte VERSION_LABEL = 44;
 public RegistryCacheReader(Factory factory) {
 	super();
 	cacheFactory = factory;
+	objectTable = null;
+}
+public int addToObjectTable(Object object) {
+	if (objectTable == null) {
+		objectTable = new ArrayList();
+	}
+	objectTable.add(object);
+	// return the index of the object just added (i.e. size - 1)
+	return (objectTable.size() - 1);
+
 }
 public int decipherLabel(String labelString) {
+	if (labelString.equals("<registry>")) {
+		return REGISTRY_LABEL;
+	}
+	if (labelString.equals("<resolved>")) {
+		return REGISTRY_RESOLVED_LABEL;
+	}
+	if (labelString.equals("<plugin>")) {
+		return PLUGIN_LABEL;
+	}
+	if (labelString.equals("<endregistry>")) {
+		return REGISTRY_END_LABEL;
+	}
 	if (labelString.equals("<readonly>")) {
 		return READONLY_LABEL;
 	}
@@ -97,7 +137,7 @@ public int decipherLabel(String labelString) {
 	if (labelString.equals("<extension>")) {
 		return PLUGIN_EXTENSION_LABEL;
 	}
-	if (labelString.equals("<extension_point>")) {
+	if (labelString.equals("<extensionPoint>")) {
 		return PLUGIN_EXTENSION_POINT_LABEL;
 	}
 	if (labelString.equals("<endplugin>")) {
@@ -133,6 +173,64 @@ public int decipherLabel(String labelString) {
 	if (labelString.equals("<endextensionPoint>")) {
 		return EXTENSION_POINT_END_LABEL;
 	}
+	if (labelString.equals("<extension-extPt-name>")) {
+		return EXTENSION_EXT_POINT_NAME_LABEL;
+	}
+	if (labelString.equals("<subElements-length>")) {
+		return SUBELEMENTS_LENGTH_LABEL;
+	}
+	if (labelString.equals("<endextension>")) {
+		return EXTENSION_END_LABEL;
+	}
+	if (labelString.equals("<configuration-element>")) {
+		return CONFIGURATION_ELEMENT_LABEL;
+	}
+	if (labelString.equals("<value>")) {
+		return VALUE_LABEL;
+	}
+	if (labelString.equals("<properties-length>")) {
+		return PROPERTIES_LENGTH_LABEL;
+	}
+	if (labelString.equals("<endconfiguration-element>")) {
+		return CONFIGURATION_ELEMENT_END_LABEL;
+	}
+	if (labelString.equals("<configuration-property>")) {
+		return CONFIGURATION_PROPERTY_LABEL;
+	}
+	if (labelString.equals("<endconfiguration-property>")) {
+		return CONFIGURATION_PROPERTY_END_LABEL;
+	}
+	if (labelString.equals("<parentRegistry>")) {
+		return PLUGIN_PARENT_LABEL;
+	}
+	if (labelString.equals("<ConfigurationElementParent>")) {
+		return CONFIGURATION_ELEMENT_PARENT_LABEL;
+	}
+	if (labelString.equals("<pluginIndex>")) {
+		return PLUGIN_INDEX_LABEL;
+	}
+	if (labelString.equals("<extensionIndex>")) {
+		return EXTENSION_INDEX_LABEL;
+	}
+	if (labelString.equals("<ExtensionPointParent>")) {
+		return EXTENSION_POINT_PARENT_LABEL;
+	}
+	if (labelString.equals("<extensionPointExtensionsLength>")) {
+		return EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL;
+	}
+	if (labelString.equals("<extensionPointExtensions>")) {
+		return EXTENSION_POINT_EXTENSIONS_LABEL;
+	}
+	if (labelString.equals("<extensionParent>")) {
+		return EXTENSION_PARENT_LABEL;
+	}
+	if (labelString.equals("<configElementIndex>")) {
+		return CONFIGURATION_ELEMENT_INDEX_LABEL;
+	}
+	if (labelString.equals("<registryIndex>")) {
+		return REGISTRY_INDEX_LABEL;
+	}
+
 	return NONLABEL;
 }
 public boolean interpretHeaderInformation(DataInputStream in) {
@@ -157,18 +255,19 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// configuration element.
+	addToObjectTable(configurationElement);
 	boolean setReadOnlyFlag = false;
 	try {
-		String inString = null;
+		byte inByte = 0;
 		boolean done = false;
 		while (!done) {
 			try {
-				inString = in.readUTF();
+				inByte = in.readByte();
 			} catch (EOFException eofe) {
 				done = true;
 				break;
 			}
-			switch (decipherLabel(inString)) {
+			switch (inByte) {
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -193,10 +292,22 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 					int subElementsLength = in.readInt();
 					ConfigurationElementModel[] subElements = new ConfigurationElementModel[subElementsLength];
 					for (int i = 0; i < subElementsLength; i++) {
-						subElements[i] = readConfigurationElement(in);
+						// Do we have an index or a real configuration element?
+						switch (in.readByte()) {
+							case CONFIGURATION_ELEMENT_LABEL :
+								subElements[i] = readConfigurationElement(in);
+								break;
+							case CONFIGURATION_ELEMENT_INDEX_LABEL :
+								subElements[i] = (ConfigurationElementModel) objectTable.get(in.readInt());
+								break;
+						}
 					}
 					configurationElement.setSubElements(subElements);
 					subElements = null;
+					break;
+				case CONFIGURATION_ELEMENT_PARENT_LABEL :
+					// We know the parent already exists, just grab it.
+					configurationElement.setParent(objectTable.get(in.readInt()));
 					break;
 				case CONFIGURATION_ELEMENT_END_LABEL :
 					done = true;
@@ -204,9 +315,6 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 		}
 	} catch (IOException ioe) {
 		return null;
-	}
-	if (setReadOnlyFlag) {
-		configurationElement.markReadOnly();
 	}
 	return configurationElement;
 }
@@ -217,16 +325,16 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in) 
 	// configuration property.
 	boolean setReadOnlyFlag = false;
 	try {
-		String inString = null;
+		byte inByte = 0;
 		boolean done = false;
 		while (!done) {
 			try {
-				inString = in.readUTF();
+				inByte = in.readByte();
 			} catch (EOFException eofe) {
 				done = true;
 				break;
 			}
-			switch (decipherLabel(inString)) {
+			switch (inByte) {
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -245,28 +353,26 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in) 
 	} catch (IOException ioe) {
 		return null;
 	}
-	if (setReadOnlyFlag) {
-		configurationProperty.markReadOnly();
-	}
 	return configurationProperty;
 }
 public ExtensionModel readExtension(DataInputStream in) {
 	ExtensionModel extension = cacheFactory.createExtension();
+	addToObjectTable(extension);
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// extension.
 	boolean setReadOnlyFlag = false;
 	try {
-		String inString = null;
+		byte inByte = 0;
 		boolean done = false;
 		while (!done) {
 			try {
-				inString = in.readUTF();
+				inByte = in.readByte();
 			} catch (EOFException eofe) {
 				done = true;
 				break;
 			}
-			switch (decipherLabel(inString)) {
+			switch (inByte) {
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -285,40 +391,61 @@ public ExtensionModel readExtension(DataInputStream in) {
 					int subElementsLength = in.readInt();
 					ConfigurationElementModel[] subElements = new ConfigurationElementModel[subElementsLength];
 					for (int i = 0; i < subElementsLength; i++) {
-						subElements[i] = readConfigurationElement(in);
+						// Do we have a configuration element or an index into
+						// objectTable?
+						switch (in.readByte()) {
+							case CONFIGURATION_ELEMENT_LABEL :
+								subElements[i] = readConfigurationElement(in);
+								break;
+							case CONFIGURATION_ELEMENT_INDEX_LABEL :
+								subElements[i] = (ConfigurationElementModel) objectTable.get(in.readInt());
+								break;
+						}
 					}
 					extension.setSubElements(subElements);
 					subElements = null;
 					break;
-				case EXTENSION_POINT_END_LABEL :
+				case EXTENSION_PARENT_LABEL :
+					// Either there is a plugin or there is an index into the
+					// objectTable
+					switch (in.readByte()) {
+						case PLUGIN_LABEL :
+							extension.setParentPluginDescriptor(readPluginDescriptor(in));
+							break;
+						case PLUGIN_INDEX_LABEL :
+							extension.setParentPluginDescriptor((PluginDescriptorModel) objectTable.get(in.readInt()));
+							break;
+					}
+					break;
+				case EXTENSION_END_LABEL :
 					done = true;
 			}
 		}
 	} catch (IOException ioe) {
 		return null;
 	}
-	if (setReadOnlyFlag) {
-		extension.markReadOnly();
-	}
 	return extension;
 }
 public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 	ExtensionPointModel extPoint = cacheFactory.createExtensionPoint();
+	addToObjectTable(extPoint);
+
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// extension point.
 	boolean setReadOnlyFlag = false;
+	int extensionLength = 0;
 	try {
-		String inString = null;
+		byte inByte = 0;
 		boolean done = false;
 		while (!done) {
 			try {
-				inString = in.readUTF();
+				inByte = in.readByte();
 			} catch (EOFException eofe) {
 				done = true;
 				break;
 			}
-			switch (decipherLabel(inString)) {
+			switch (inByte) {
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -333,8 +460,28 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 				case EXTENSION_POINT_SCHEMA_LABEL :
 					extPoint.setSchema(in.readUTF());
 					break;
+				case EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL :
+					extensionLength = in.readInt();
+					break;
 				case EXTENSION_POINT_EXTENSIONS_LABEL :
-					// Add stuff here
+					ExtensionModel[] extensions = new ExtensionModel[extensionLength];
+					for (int i = 0; i < extensionLength; i++) {
+						switch (in.readByte()) {
+							// Either this is an extension or an index into
+							// the objectTable
+							case PLUGIN_EXTENSION_LABEL :
+								extensions[i] = readExtension(in);
+								break;
+							case EXTENSION_INDEX_LABEL :
+								extensions[i] = (ExtensionModel) objectTable.get(in.readInt());
+								break;
+						}
+					}
+					extPoint.setDeclaredExtensions(extensions);
+					break;
+				case EXTENSION_POINT_PARENT_LABEL :
+					// We know this plugin is already in the objectTable
+					extPoint.setParentPluginDescriptor((PluginDescriptorModel) objectTable.get(in.readInt()));
 					break;
 				case EXTENSION_POINT_END_LABEL :
 					done = true;
@@ -342,9 +489,6 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 		}
 	} catch (IOException ioe) {
 		return null;
-	}
-	if (setReadOnlyFlag) {
-		extPoint.markReadOnly();
 	}
 	return extPoint;
 }
@@ -356,16 +500,16 @@ public LibraryModel readLibrary(DataInputStream in) {
 	boolean setReadOnlyFlag = false;
 	int exportsLength = 0;
 	try {
-		String inString = null;
+		byte inByte = 0;
 		boolean done = false;
 		while (!done) {
 			try {
-				inString = in.readUTF();
+				inByte = in.readByte();
 			} catch (EOFException eofe) {
 				done = true;
 				break;
 			}
-			switch (decipherLabel(inString)) {
+			switch (inByte) {
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -392,36 +536,26 @@ public LibraryModel readLibrary(DataInputStream in) {
 	} catch (IOException ioe) {
 		return null;
 	}
-	if (setReadOnlyFlag) {
-		library.markReadOnly();
-	}
 	return library;
 }
 public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
-	try {
-		String inString = in.readUTF();
-		if (!inString.equals("<plugin>")) {
-			return null;
-		}
-	} catch (IOException ioe) {
-		return null;
-	}
 	PluginDescriptorModel plugin = cacheFactory.createPluginDescriptor();
+	addToObjectTable(plugin);
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// plugin.
 	boolean setReadOnlyFlag = false;
 	try {
-		String inString = null;
+		byte inByte = 0;
 		boolean done = false;
 		while (!done) {
 			try {
-				inString = in.readUTF();
+				inByte = in.readByte();
 			} catch (EOFException eofe) {
 				done = true;
 				break;
 			}
-			switch (decipherLabel(inString)) {
+			switch (inByte) {
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -498,6 +632,22 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 					extension = null;
 					extList = newExtValues = null;
 					break;
+				case EXTENSION_INDEX_LABEL :
+					extension = (ExtensionModel) objectTable.get(in.readInt());
+					extList = plugin.getDeclaredExtensions();
+					newExtValues = null;
+					if (extList == null) {
+						newExtValues = new ExtensionModel[1];
+						newExtValues[0] = extension;
+					} else {
+						newExtValues = new ExtensionModel[extList.length + 1];
+						System.arraycopy(extList, 0, newExtValues, 0, extList.length);
+						newExtValues[extList.length] = extension;
+					}
+					plugin.setDeclaredExtensions(newExtValues);
+					extension = null;
+					extList = newExtValues = null;
+					break;
 				case PLUGIN_EXTENSION_POINT_LABEL :
 					ExtensionPointModel extensionPoint = readExtensionPoint(in);
 					// Add this extension point to the end of the extension point list
@@ -515,15 +665,15 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 					extensionPoint = null;
 					extPointList = newExtPointValues = null;
 					break;
+				case PLUGIN_PARENT_LABEL :
+					plugin.setRegistry((PluginRegistryModel) objectTable.get(in.readInt()));
+					break;
 				case PLUGIN_END_LABEL :
 					done = true;
 			}
 		}
 	} catch (IOException ioe) {
 		return null;
-	}
-	if (setReadOnlyFlag) {
-		plugin.markReadOnly();
 	}
 	return plugin;
 }
@@ -534,16 +684,16 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 	// prerequisite.
 	boolean setReadOnlyFlag = false;
 	try {
-		String inString = null;
+		byte inByte = 0;
 		boolean done = false;
 		while (!done) {
 			try {
-				inString = in.readUTF();
+				inByte = in.readByte();
 			} catch (EOFException eofe) {
 				done = true;
 				break;
 			}
-			switch (decipherLabel(inString)) {
+			switch (inByte) {
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -574,9 +724,6 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 	} catch (IOException ioe) {
 		return null;
 	}
-	if (setReadOnlyFlag) {
-		requires.markReadOnly();
-	}
 	return requires;
 }
 public PluginRegistryModel readPluginRegistry(DataInputStream in) {
@@ -584,12 +731,60 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in) {
 		return null;
 	}
 	PluginRegistryModel cachedRegistry = cacheFactory.createPluginRegistry();
-	PluginDescriptorModel plugin = null;
-	while ((plugin = readPluginDescriptor(in)) != null) {
-		cachedRegistry.addPlugin(plugin);
+	addToObjectTable(cachedRegistry);
+
+	boolean setReadOnlyFlag = false;
+	try {
+		byte inByte = 0;
+		boolean done = false;
+		while (!done) {
+			try {
+				inByte = in.readByte();
+			} catch (EOFException eofe) {
+				done = true;
+				break;
+			}
+			switch (inByte) {
+				case READONLY_LABEL :
+					if (in.readBoolean()) {
+						setReadOnlyFlag = true;
+					}
+					break;
+				case REGISTRY_RESOLVED_LABEL :
+					if (in.readBoolean()) {
+						cachedRegistry.markResolved();
+					}
+					break;
+				case PLUGIN_LABEL :
+					PluginDescriptorModel plugin = null;
+					if ((plugin = readPluginDescriptor(in)) != null) {
+						cachedRegistry.addPlugin(plugin);
+					}
+					break;
+				case PLUGIN_INDEX_LABEL :
+					plugin = (PluginDescriptorModel) objectTable.get(in.readInt());
+					cachedRegistry.addPlugin(plugin);
+					break;
+				case REGISTRY_END_LABEL :
+					done = true;
+			}
+		}
+	} catch (IOException ioe) {
+		return null;
+	}
+	if (setReadOnlyFlag) {
+		// If we are finished reading this registry, we don't need to worry
+		// about setting the read-only flag on other objects we might wish
+		// to write to.  So, just to be safe, mark the whole thing.
+		cachedRegistry.markReadOnly();
 	}
 	// if there are no plugins in the registry, return null instead of
 	// an empty registry?
-	return cachedRegistry;
+	PluginDescriptorModel[] pluginList = cachedRegistry.getPlugins();
+	if ((pluginList == null) || (pluginList.length == 0)) {
+		return null;
+	} else {
+		return cachedRegistry;
+	}
 }
 }

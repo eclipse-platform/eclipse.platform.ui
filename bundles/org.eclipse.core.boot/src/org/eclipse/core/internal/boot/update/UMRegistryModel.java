@@ -15,50 +15,17 @@ public class UMRegistryModel   {
 		// persistent properties (marshaled)
 		private Hashtable comp_proxys_list = null; // components
 		private Hashtable product_proxys_list = null;
-		private Hashtable plugin_proxys_list = null;
+//		private Hashtable plugin_proxys_list = null;
 
 //		private Set extra_updateURLs = null;	// specified by users in UI
 //		private Vector _programPaths = null;
+		private int _type;				// current, local, or remote(discovery)
 		private URL _registryBase;		// Base of the Eclipse tree of this registry
 		private boolean _initialStartup = true;
 		private boolean _filtered = false; // whether this registry reflects LaunchInfo
 		
 		private long _lastRefreshed = 0;
 
-		// holds different versions of an entity (prod, comp or plug-in) that have the same id
-		class Proxy {
-			private String _id;
-			private Map _versions ;
-			Proxy(String id)      { 
-				_id = id;
-				_versions = null;
-			}
-			public void _addToVersionsRel(Object o, String key) {
-				if (_versions == null)  _versions = Collections.synchronizedMap(new TreeMap(new VersionComparator()));	
-				_versions.put(key,o);
-			}
-			public Object _lookupVersion(String key) {
-	
-				if(key == null) return null;
-				if (_versions == null) return null;
-				return _versions.get(key);
-			}
-			public Object _getEarliestVersion() {
-				TreeMap tm = new TreeMap(_versions);
-				String key = tm.firstKey().toString();
-				return _versions.get(key);
-			}
-			public Object _getLatestVersion() {
-				TreeMap tm = new TreeMap(_versions);
-				String key = tm.lastKey().toString();
-				return _versions.get(key);
-			}
-			public Map _getVersionsRel() {
-		
-				return _versions;
-	
-			}
-		}
 
 /**
  * UMRegistryModel constructor comment.
@@ -68,14 +35,14 @@ public UMRegistryModel() {
 
 }
 // add a new component
-public void _addToComponentsRel(Object o) {
+public void _addToComponentProxysRel(Object o) {
 
 	if (comp_proxys_list == null) comp_proxys_list = new Hashtable();
 	String key = ((ComponentDescriptorModel)o)._getId();
 	String version = ((ComponentDescriptorModel)o)._getVersion();
 	
 	if (comp_proxys_list.containsKey(key)) { // a different version?  
-		Proxy proxy = (Proxy) comp_proxys_list.get(key);
+		UMProxy proxy = (UMProxy) comp_proxys_list.get(key);
 		Map versions = proxy._getVersionsRel();
 		if (versions.containsKey(version))	
 			; // LINDA - error condition - version collision
@@ -83,7 +50,7 @@ public void _addToComponentsRel(Object o) {
 			proxy._addToVersionsRel(o, version);
 		}
 	} else {
-		Proxy proxy = new Proxy(key);
+		UMProxy proxy = new UMProxy(key);
 		proxy._addToVersionsRel(o, version);
 		comp_proxys_list.put(key, proxy);
 	}
@@ -93,35 +60,14 @@ public void _addToDanglingComponentIVPsRel(Object o) {
 	LaunchInfo.VersionedIdentifier vid = (LaunchInfo.VersionedIdentifier) o;
 	LaunchInfo.getCurrent().isDanglingComponent(vid, true); // add
 }
-// add a new component
-public void _addToPluginsRel(Object o) {
-
-	if (plugin_proxys_list == null) plugin_proxys_list = new Hashtable();
-	String key = ((PluginEntryDescriptorModel)o)._getId();
-	String version = ((PluginEntryDescriptorModel)o)._getVersion();
-	
-	if (plugin_proxys_list.containsKey(key)) { // a different version?  
-		Proxy proxy = (Proxy) plugin_proxys_list.get(key);
-		Map versions = proxy._getVersionsRel();
-		if (versions.containsKey(version))	
-			; // LINDA - error condition - version collision
-		else {
-			proxy._addToVersionsRel(o, version);
-		}
-	} else {
-		Proxy proxy = new Proxy(key);
-		proxy._addToVersionsRel(o, version);
-		plugin_proxys_list.put(key, proxy);
-	}
-}
-public void _addToProductsRel(Object o) {
+public void _addToProductProxysRel(Object o) {
 
 	if (product_proxys_list == null) product_proxys_list = new Hashtable();
 	String key = ((ProductDescriptorModel)o)._getId();
 	String version = ((ProductDescriptorModel)o)._getVersion();
 	
 	if (product_proxys_list.containsKey(key)) { // a different version?  
-		Proxy proxy = (Proxy) product_proxys_list.get(key);
+		UMProxy proxy = (UMProxy) product_proxys_list.get(key);
 		Map versions = proxy._getVersionsRel();
 		if (versions.containsKey(version))	
 			; // error condition - version collision
@@ -129,7 +75,7 @@ public void _addToProductsRel(Object o) {
 			proxy._addToVersionsRel(o, version);
 		}
 	} else {
-		Proxy proxy = new Proxy(key);
+		UMProxy proxy = new UMProxy(key);
 		proxy._addToVersionsRel(o, version);
 		product_proxys_list.put(key, proxy);
 	}
@@ -138,15 +84,6 @@ public void _copyComponentProxysRelInto(Object[] array) {
 
 	if (comp_proxys_list != null) {
 		Enumeration list = comp_proxys_list.elements();
-		for(int i=0; list.hasMoreElements(); i++) {
-			array[i] = list.nextElement();
-		}
-	}
-}
-public void _copyPluginProxysRelInto(Object[] array) {
-
-	if (plugin_proxys_list != null) {
-		Enumeration list = plugin_proxys_list.elements();
 		for(int i=0; list.hasMoreElements(); i++) {
 			array[i] = list.nextElement();
 		}
@@ -166,11 +103,6 @@ public Enumeration _enumerateComponentProxysRel() {
 	if (comp_proxys_list == null) return (new Vector()).elements();
 	else return comp_proxys_list.elements();
 }
-public Enumeration _enumeratePluginProxysRel() {
-
-	if (plugin_proxys_list == null) return (new Vector()).elements();
-	else return plugin_proxys_list.elements();
-}
 public Enumeration _enumerateProductProxysRel() {
 
 	if (product_proxys_list == null) return (new Vector()).elements();
@@ -184,7 +116,7 @@ public Vector _getAllComponents() {
 	Enumeration list = comp_proxys_list.elements();
 	
 	while(list.hasMoreElements()) {
-		Map m = ((Proxy)list.nextElement())._getVersionsRel();
+		Map m = ((UMProxy)list.nextElement())._getVersionsRel();
 		for (Iterator i=m.entrySet().iterator(); i.hasNext(); ) {
 			  Map.Entry me = (Map.Entry) i.next();
 			  cd = (ComponentDescriptorModel) me.getValue();
@@ -193,24 +125,6 @@ public Vector _getAllComponents() {
 	    }
 	}
 	return all_comp;
-}
-public Vector _getAllPluginEntries() {
-
-	Vector all_plugins = new Vector();
-	if (plugin_proxys_list == null) return all_plugins;
-	
-	PluginEntryDescriptorModel ped;
-	Enumeration list = plugin_proxys_list.elements();
-	
-	while(list.hasMoreElements()) {
-		Map m = ((Proxy)list.nextElement())._getVersionsRel();
-		for (Iterator i=m.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry me = (Map.Entry) i.next();
-			ped = (PluginEntryDescriptorModel) me.getValue();
-			all_plugins.addElement(ped);
-	    }
-	}
-	return all_plugins;
 }
 public Vector _getAllProducts() {
 
@@ -221,7 +135,7 @@ public Vector _getAllProducts() {
 	Enumeration list = product_proxys_list.elements();
 	
 	while(list.hasMoreElements()) {
-		Map m = ((Proxy)list.nextElement())._getVersionsRel();
+		Map m = ((UMProxy)list.nextElement())._getVersionsRel();
 		for (Iterator i=m.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry me = (Map.Entry) i.next();
 			pd = (ProductDescriptorModel) me.getValue();
@@ -242,30 +156,13 @@ public Hashtable _getComponentsAtLatestVersion() {
 	ComponentDescriptorModel cd;
 	Enumeration list = comp_proxys_list.elements();
 	while(list.hasMoreElements()) {
-		cd = (ComponentDescriptorModel) ((Proxy)list.nextElement())._getLatestVersion();
+		cd = (ComponentDescriptorModel) ((UMProxy)list.nextElement())._getLatestVersion();
 		_comp_list.put(cd._getId(), cd);
 	}
 	return _comp_list;
 }
 public long _getLastRefreshed() {
 	return _lastRefreshed;
-}
-public Hashtable _getPluginEntriesAtLatestVersion() {
-	
-	Hashtable _plugins_list = new Hashtable();
-	if (plugin_proxys_list == null) return _plugins_list;
-
-	PluginEntryDescriptorModel ped;
-	Enumeration list = plugin_proxys_list.elements();
-	while(list.hasMoreElements()) {
-		ped = (PluginEntryDescriptorModel) ((Proxy)list.nextElement())._getLatestVersion();
-		_plugins_list.put(ped._getId(), ped);
-	}
-	return _plugins_list;
-}
-public Hashtable _getPluginProxysRel() {
-	
-	return plugin_proxys_list;
 }
 public Hashtable _getProductProxysRel() {
 	
@@ -279,7 +176,7 @@ public Hashtable _getProductsAtLatestVersion() {
 	ProductDescriptorModel pd;
 	Enumeration list = product_proxys_list.elements();
 	while(list.hasMoreElements()) {
-		pd = (ProductDescriptorModel) ((Proxy)list.nextElement())._getLatestVersion();
+		pd = (ProductDescriptorModel) ((UMProxy)list.nextElement())._getLatestVersion();
 		_prod_list.put(pd._getId(), pd);
 	}
 	return _prod_list;
@@ -292,15 +189,13 @@ public int _getSizeOfComponentProxysRel() {
 	if (comp_proxys_list == null) return 0;
 	else return comp_proxys_list.size();
 }
-public int _getSizeOfPluginProxysRel() {
-
-	if (plugin_proxys_list == null) return 0;
-	else return plugin_proxys_list.size();
-}
 public int _getSizeOfProductProxysRel() {
 
 	if (product_proxys_list == null) return 0;
 	else return product_proxys_list.size();
+}
+public int _getType() {
+	return _type;
 }
 public boolean _isFiltered() {
 	
@@ -317,22 +212,35 @@ public void _isInitialStartup(boolean initialStartup) {
 /* load component manifest in the directory compDir/dirName
  * which is of the form ...../install/components/comp_dirname
  */
-public void _loadComponentManifest(String compDir, String dirName, IUMFactory factory) {
+public ComponentDescriptorModel _loadComponentManifest(String compDir, String dirName, IUMFactory factory) {
 
+	ComponentDescriptorModel cd = null;
 	try {	
-		ComponentDescriptorModel cd = (ComponentDescriptorModel) factory.createComponentDescriptor();
+		cd = (ComponentDescriptorModel) factory.createComponentDescriptor();
 		cd._setDirName(dirName);
 		cd._setInstallURL(compDir + dirName);
 		cd._loadManifest(new URL(cd._getInstallManifestURL()), this, factory);
 	} catch (java.net.MalformedURLException e) {
 	}
-
+	return cd;
 }
 public void _loadManifests(URL url, IUMFactory factory) {
 	
 	_loadManifests(url, factory, false);
 
 }
+/* The whole picture:
+ * Products load first, which in turn load their componentEntries
+ * for each componentEntry, look for actual component -
+ *     if exists on filesys, then compEntries.installed=true, load component
+ *     else compEntries.instaled = false
+ *
+ * Next we go to the components directory
+ * Look for install.index, if it exists on filesys, load all the components listed
+ * if component not already loaded (must be loose), load component 
+ * if this is a remote reg, comp._isLoose(true);
+ * for a local/current reg, see getDanglingComponents() to see how these are found
+ */
 public void _loadManifests(URL url, IUMFactory factory, boolean filtered) {
 
 	_filtered = filtered;
@@ -341,39 +249,54 @@ public void _loadManifests(URL url, IUMFactory factory, boolean filtered) {
 		
 	URL installURLs[] = UMEclipseTree.getDirectoriesInChain(url);
 	
-	// Components load first, so the componentEntries in products can be resolved later
 	for (int i = 0; i < installURLs.length; i++) {
-		URL componentPath = UMEclipseTree.getComponentURL(installURLs[i]);
-		if (filtered) {
-			LaunchInfo.VersionedIdentifier[] ivps = LaunchInfo.getCurrent().getComponents();
-			for (int j = 0; j < ivps.length; j++) {
-				_loadComponentManifest(componentPath.toString(), ivps[j].toString(), factory);
-			}
-		} else {
-			// get all components
-			String[] members = UMEclipseTree.getPathMembers(componentPath);
-			for (int j = 0; j < members.length; j++) {
-				if (members[j].equals(IManifestAttributes.INSTALL_INDEX)) continue;
-				_loadComponentManifest(componentPath.toString(), members[j] , factory);
-			}
-		}
-
 		// Products
 		//---------
 		URL productPath = UMEclipseTree.getProductURL(installURLs[i]);
-		if (filtered) {
+		if (filtered) {		// load specific products according to LaunchInfo
 			LaunchInfo.VersionedIdentifier[] ivps = LaunchInfo.getCurrent().getConfigurations();
 			for (int j = 0; j < ivps.length; j++) {
 				_loadProductManifest(productPath.toString(), ivps[j].toString(), factory);
 			}
-		} else {
-			// get all products
+		} else {			// get all products
 			String[] members = UMEclipseTree.getPathMembers(productPath);
 			for (int j = 0; j < members.length; j++) {
 				if (members[j].equals(IManifestAttributes.INSTALL_INDEX)) continue;
 				_loadProductManifest(productPath.toString(), members[j] , factory);		
 			}
 		}
+		
+		// Loose Components  
+		//-----------------
+		URL componentPath = UMEclipseTree.getComponentURL(installURLs[i]);
+		if (filtered) {		// load specific components according to LaunchInfo
+			LaunchInfo.VersionedIdentifier[] ivps = LaunchInfo.getCurrent().getComponents();
+			for (int j = 0; j < ivps.length; j++) {
+				ComponentDescriptorModel cd = _lookupComponentDescriptor(ivps[j].getIdentifier(), ivps[j].getVersion());
+				if (cd == null) { // these are the dangling ones
+					_loadComponentManifest(componentPath.toString(), ivps[j].toString(), factory);
+				}
+			}
+		} else {			// get all components in install.index or dir
+			String[] members = UMEclipseTree.getPathMembers(componentPath);
+			for (int j = 0; j < members.length; j++) {
+				if (members[j].equals(IManifestAttributes.INSTALL_INDEX)) continue;
+				LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(members[j]);
+				ComponentDescriptorModel cd = _lookupComponentDescriptor(vid.getIdentifier(), vid.getVersion());
+				if (cd == null) {
+					cd = _loadComponentManifest(componentPath.toString(), members[j] , factory);
+				}
+				if (cd !=null) {
+					if (_getType() == UpdateManagerConstants.REMOTE_REGISTRY)
+						cd._isLoose(true);
+				}
+			}
+		}
+		
+
+
+
+
 	}
 	_lastRefreshed = startTime; 
 
@@ -396,50 +319,74 @@ public ComponentDescriptorModel _lookupComponentDescriptor(String compId, String
 
 	if(compId == null) return null;
 	if (comp_proxys_list == null) return null;
-	Proxy proxy = (Proxy) _lookupComponentProxy(compId);
+	UMProxy proxy = (UMProxy) _lookupComponentProxy(compId);
 	if (proxy == null) return null;
 	if (version == null)
 		return (ComponentDescriptorModel)proxy._getLatestVersion();
 	return (ComponentDescriptorModel)proxy._lookupVersion(version);
 	
 }
-public Proxy _lookupComponentProxy(String key) {
+public UMProxy _lookupComponentProxy(String key) {
 
 	if(key == null) return null;
 	if (comp_proxys_list == null) return null;
-	return (Proxy) comp_proxys_list.get(key);
-}
-public PluginEntryDescriptorModel _lookupPluginEntryDescriptor(String plugId, String version) {
-
-	if(plugId == null) return null;
-	if (plugin_proxys_list == null) return null;
-	Proxy proxy = (Proxy) _lookupPluginProxy(plugId);
-	if (proxy == null) return null;
-	if (version == null)
-		return (PluginEntryDescriptorModel)proxy._getLatestVersion();
-	return (PluginEntryDescriptorModel)proxy._lookupVersion(version);
-}
-public Proxy _lookupPluginProxy(String key) {
-
-	if(key == null) return null;
-	if (plugin_proxys_list == null) return null;
-	return (Proxy)plugin_proxys_list.get(key);
+	return (UMProxy) comp_proxys_list.get(key);
 }
 public ProductDescriptorModel _lookupProductDescriptor(String prodId, String version) {
 
 	if(prodId == null) return null;
 	if (product_proxys_list == null) return null;
-	Proxy proxy = (Proxy) _lookupProductProxy(prodId);
+	UMProxy proxy = (UMProxy) _lookupProductProxy(prodId);
 	if (proxy == null) return null;
 	if (version == null)
 		return (ProductDescriptorModel)proxy._getLatestVersion();
 	return (ProductDescriptorModel)proxy._lookupVersion(version);
 	
 }
-public Proxy _lookupProductProxy(String key) {
+public UMProxy _lookupProductProxy(String key) {
 
 	if(key == null) return null;
 	if (product_proxys_list == null) return null;
-	return (Proxy)product_proxys_list.get(key);
+	return (UMProxy)product_proxys_list.get(key);
+}
+public void _removeFromComponentProxysRel(Object o) {
+
+	if (o==null || comp_proxys_list == null) return;
+	String key = ((ComponentDescriptorModel)o)._getId();
+	String version = ((ComponentDescriptorModel)o)._getVersion();
+	
+	if (comp_proxys_list.containsKey(key)) {  
+		UMProxy proxy = (UMProxy) comp_proxys_list.get(key);
+		Map versions = proxy._getVersionsRel();
+		versions.remove(version);
+		if (versions.size() ==0)	// no other versions of this id left
+			comp_proxys_list.remove(key);
+	} else {
+		// error condition - component id doesn't exist
+	}
+}
+public void _removeFromDanglingComponentIVPsRel(Object o) {
+
+	LaunchInfo.VersionedIdentifier vid = (LaunchInfo.VersionedIdentifier) o;
+	LaunchInfo.getCurrent().isDanglingComponent(vid, false); // remove
+}
+public void _removeFromProductProxysRel(Object o) {
+
+	if (o==null || product_proxys_list == null) return;
+	String key = ((ProductDescriptorModel)o)._getId();
+	String version = ((ProductDescriptorModel)o)._getVersion();
+	
+	if (product_proxys_list.containsKey(key)) {  
+		UMProxy proxy = (UMProxy) product_proxys_list.get(key);
+		Map versions = proxy._getVersionsRel();
+		versions.remove(version);
+		if (versions.size() ==0)	// no other versions of this id left
+			product_proxys_list.remove(key);
+	} else {
+		// error condition - product id doesn't exist
+	}
+}
+public void _setType(int type) {
+	_type = type;
 }
 }

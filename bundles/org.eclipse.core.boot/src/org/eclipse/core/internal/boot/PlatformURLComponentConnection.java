@@ -7,23 +7,23 @@ package org.eclipse.core.internal.boot;
  */
 
 /**
- * Eclipse URL support
- * eclipse:/component/<identifeir>/	maps to component installation location
+ * Platform URL support
+ * platform:/component/<identifeir>/	maps to component installation location
  */
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
  
-public class EclipseURLComponentConnection extends EclipseURLConnection {
+public class PlatformURLComponentConnection extends PlatformURLConnection {
 
 	// component/ protocol
 	public static final String COMP = "component";
-	public static final String COMP_URL_STRING = EclipseURLHandler.ECLIPSE+EclipseURLHandler.PROTOCOL_SEPARATOR+"/"+COMP+"/";
+	public static final String COMP_URL_STRING = PlatformURLHandler.PROTOCOL+PlatformURLHandler.PROTOCOL_SEPARATOR+"/"+COMP+"/";
 	
 	private static final String COMP_INSTALL = "install/components/";
 	private static URL installURL;
-public EclipseURLComponentConnection(URL url) {
+public PlatformURLComponentConnection(URL url) {
 	super(url);
 }
 protected boolean allowCaching() {
@@ -43,9 +43,9 @@ protected URL resolve() throws IOException {
 }
 public static void startup(URL url) {
 	
-	// register connection type for eclipse:/configuration/ handling
+	// register connection type for platform:/configuration/ handling
 	if (installURL!=null) return;
 	installURL = url;
-	EclipseURLHandler.register(COMP, EclipseURLComponentConnection.class);
+	PlatformURLHandler.register(COMP, PlatformURLComponentConnection.class);
 }
 }

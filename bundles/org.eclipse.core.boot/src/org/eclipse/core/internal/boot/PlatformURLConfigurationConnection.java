@@ -7,24 +7,24 @@ package org.eclipse.core.internal.boot;
  */
 
 /**
- * Eclipse URL support
- * eclipse:/configuration/<identifeir>/	maps to configuration installation location
+ * Platform URL support
+ * platform:/configuration/<identifeir>/	maps to configuration installation location
  */
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
  
-public class EclipseURLConfigurationConnection extends EclipseURLConnection {
+public class PlatformURLConfigurationConnection extends PlatformURLConnection {
 
 	// configuration/ protocol
 	public static final String CONFIG = "configuration";
-	public static final String CONFIG_URL_STRING = EclipseURLHandler.ECLIPSE+EclipseURLHandler.PROTOCOL_SEPARATOR+"/"+CONFIG+"/";
+	public static final String CONFIG_URL_STRING = PlatformURLHandler.PROTOCOL+PlatformURLHandler.PROTOCOL_SEPARATOR+"/"+CONFIG+"/";
 
 		
 	private static final String CONFIG_INSTALL = "install/configurations/";
 	private static URL installURL;
-public EclipseURLConfigurationConnection(URL url) {
+public PlatformURLConfigurationConnection(URL url) {
 	super(url);
 }
 protected boolean allowCaching() {
@@ -44,9 +44,9 @@ protected URL resolve() throws IOException {
 }
 public static void startup(URL url) {
 	
-	// register connection type for eclipse:/configuration/ handling
+	// register connection type for platform:/configuration/ handling
 	if (installURL!=null) return;
 	installURL = url;
-	EclipseURLHandler.register(CONFIG, EclipseURLConfigurationConnection.class);
+	PlatformURLHandler.register(CONFIG, PlatformURLConfigurationConnection.class);
 }
 }

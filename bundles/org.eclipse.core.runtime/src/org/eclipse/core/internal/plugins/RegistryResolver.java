@@ -10,11 +10,10 @@ import org.eclipse.core.internal.runtime.Policy;
 public class RegistryResolver {
 
 	private Map idmap;
-	private int size;
 	private PluginRegistryModel reg;
 	private MultiStatus status;
 	private boolean trimPlugins = true;
-	private boolean crossLinking = true;
+	private boolean crossLink = true;
 
 	public static final int MATCH_EXACT = 0;
 	public static final int MATCH_COMPATIBLE = 1;
@@ -413,13 +412,48 @@ private void add(PluginDescriptorModel pd) {
 			break;
 	}
 	verList.add(i, pd);
-
-	// keep track of number of entries
-	size++;
 }
 private void addAll(Collection c) {
 	for (Iterator list = c.iterator(); list.hasNext();)
 		add((PluginDescriptorModel) list.next());
+}
+private void addExtension(ExtensionModel extension, PluginDescriptorModel plugin) {
+	ExtensionModel[] list = plugin.getDeclaredExtensions();
+	ExtensionModel[] result = null;
+	if (list == null)
+		result = new ExtensionModel[1];
+	else {
+		result = new ExtensionModel[list.length + 1];
+		System.arraycopy(list, 0, result, 0, list.length);
+	}
+	result[result.length - 1] = extension;
+	plugin.setDeclaredExtensions(result);
+	extension.setParent(plugin);
+}
+private void addExtensionPoint(ExtensionPointModel extensionPoint, PluginDescriptorModel plugin) {
+	ExtensionPointModel[] list = plugin.getDeclaredExtensionPoints();
+	ExtensionPointModel[] result = null;
+	if (list == null)
+		result = new ExtensionPointModel[1];
+	else {
+		result = new ExtensionPointModel[list.length + 1];
+		System.arraycopy(list, 0, result, 0, list.length);
+	}
+	result[result.length - 1] = extensionPoint;
+	plugin.setDeclaredExtensionPoints(result);
+	extensionPoint.setParent(plugin);
+}
+private void addLibrary(LibraryModel library, PluginDescriptorModel plugin) {
+	LibraryModel[] list = plugin.getRuntime();
+	LibraryModel[] result = null;
+	if (list == null)
+		result = new LibraryModel[1];
+	else {
+		result = new LibraryModel[list.length + 1];
+		System.arraycopy(list, 0, result, 0, list.length);
+	}
+	result[result.length - 1] = library;
+	plugin.setRuntime(result);
 }
 private void debug(String s) {
 	System.out.println("Registry Resolve: "+s);
@@ -429,14 +463,6 @@ private void error(String message) {
 	status.add(error);
 	if (InternalPlatform.DEBUG && DEBUG_RESOLVE)
 		System.out.println(error.toString());
-}
-/**
- * Returns a value indicating if extensions are to be linked 
- * with their associated extension point during the resolve process.
- *
- */
-public boolean getCrossLinking() {
-	return crossLinking;
 }
 public IExtensionPoint getExtensionPoint(PluginDescriptorModel plugin, String extensionPointId) {
 	if (extensionPointId == null)
@@ -449,14 +475,6 @@ public IExtensionPoint getExtensionPoint(PluginDescriptorModel plugin, String ex
 			return (IExtensionPoint) list[i];
 	}
 	return null;
-}
-/**
- * Gets the boolean value which determines if disabled plugins
- * will be removed when this resolve is done.
- *
- */
-public boolean getTrimPlugins() {
-	return trimPlugins;
 }
 private PluginVersionIdentifier getVersionIdentifier(PluginDescriptorModel descriptor) {
 	String version = descriptor.getVersion();
@@ -532,7 +550,6 @@ public IStatus resolve(PluginRegistryModel registry) {
 		return status;
 	reg = registry;
 	idmap = new HashMap();
-	size = 0;
 	addAll(Arrays.asList(reg.getPlugins()));
 	resolve();
 	registry.markResolved();
@@ -575,6 +592,23 @@ private void resolveExtension(ExtensionModel ext) {
 	}
 	newValues[newValues.length - 1] = ext;
 	extPt.setDeclaredExtensions(newValues);
+}
+private void resolveFragments() {
+	ArrayList retained = new ArrayList(5);
+	PluginFragmentModel[] fragments = reg.getFragments();
+	HashSet seen = new HashSet(5);
+	for (int i = 0; i < fragments.length; i++) {
+		PluginFragmentModel fragment = fragments[i];
+		if (seen.contains(fragment.getId()))
+			continue;
+		seen.add(fragment.getId());
+		PluginDescriptorModel plugin = reg.getPlugin(fragment.getPluginId(), fragment.getPluginVersion());
+		if (plugin == null)
+			// XXX log something here?
+			continue;
+		PluginFragmentModel[] list = reg.getFragments(fragment.getId());
+		resolvePluginFragments(list, plugin);
+	}
 }
 private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPrerequisiteModel prq, Cookie cookie, List orphans) {
 	// This method is called recursively to setup dependency constraints.
@@ -669,23 +703,61 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	}
 }
 private void resolvePluginDescriptor(PluginDescriptorModel pd) {
-	if (getCrossLinking()) {
-		ExtensionModel[] list = pd.getDeclaredExtensions();
-		if (list == null || list.length == 0)
-			return;
-		for (int i = 0; i < list.length; i++) {
-			resolveExtension((ExtensionModel) list[i]);
-		}
+	ExtensionModel[] list = pd.getDeclaredExtensions();
+	if (list == null || list.length == 0)
+		return;
+	for (int i = 0; i < list.length; i++)
+		resolveExtension((ExtensionModel) list[i]);
+}
+private void resolvePluginFragment(PluginFragmentModel fragment, PluginDescriptorModel plugin) {
+	ExtensionModel[] extensions = fragment.getDeclaredExtensions();
+	if (extensions != null)
+		for (int i = 0; i < extensions.length; i++)
+			addExtension(extensions[i], plugin);
+
+	ExtensionPointModel[] points = fragment.getDeclaredExtensionPoints();
+	if (points != null)
+		for (int i = 0; i < points.length; i++)
+			addExtensionPoint(points[i], plugin);
+
+	LibraryModel[] libraries= fragment.getRuntime();
+	if (libraries!= null)
+		for (int i = 0; i < libraries.length; i++)
+			addLibrary(libraries[i], plugin);
+}
+private void resolvePluginFragments(PluginFragmentModel[] fragments, PluginDescriptorModel plugin) {
+	PluginFragmentModel latestFragment = null;
+	PluginVersionIdentifier latestVersion = null;
+	PluginVersionIdentifier targetVersion = new PluginVersionIdentifier(plugin.getVersion());
+	for (int i = 0; i < fragments.length; i++) {
+		PluginFragmentModel fragment = fragments[i];
+		PluginVersionIdentifier fragmentVersion = new PluginVersionIdentifier(fragment.getVersion());
+		PluginVersionIdentifier pluginVersion = new PluginVersionIdentifier(fragment.getPluginVersion());
+		if (pluginVersion.getMajorComponent() == targetVersion.getMajorComponent() && pluginVersion.getMinorComponent() == targetVersion.getMinorComponent())
+			if (latestFragment == null || fragmentVersion.isGreaterThan(latestVersion)) {
+				latestFragment = fragment;
+				latestVersion = fragmentVersion;
+			}
 	}
+	if (latestFragment != null)
+		resolvePluginFragment(latestFragment, plugin);
 }
 private void resolvePluginRegistry() {
 	// filter out disabled plugins from "live" registry
-	trimRegistry();
+	if (trimPlugins)
+		trimRegistry();
 
 	// resolve relationships
-	PluginDescriptorModel[] list = reg.getPlugins();
-	for (int i = 0; i < list.length; i++)
-		resolvePluginDescriptor((PluginDescriptorModel) list[i]);
+	if (crossLink) {
+		// knit the fragments into the plugins.  This must be done after any trimming
+		// so that fragments for disabled plugins are not added.
+		resolveFragments();
+		
+		// cross link all of the extensions and extension points.
+		PluginDescriptorModel[] plugins = reg.getPlugins();
+		for (int i = 0; i < plugins.length; i++)
+			resolvePluginDescriptor(plugins[i]);
+	}
 }
 private List resolveRootDescriptors() {
 
@@ -742,32 +814,27 @@ private List resolveRootDescriptors() {
 	return ids;
 }
 /**
- * Allows all extensions to be linked with their associated
- * extension point during the resolve process.
- *
+ * Specifies whether extensions and extension points should be cross 
+ * linked during the resolve process.
  */
-public void setCrossLinking(boolean doCrossLinking) {
-	crossLinking = doCrossLinking;
+public void setCrossLink(boolean value) {
+	crossLink = value;
 }
 /**
- * Allows all disabled plugins to be removed when the resolve
+ * Specified whether disabled plugins should to be removed when the resolve
  * is completed.
- *
  */
-public void setTrimPlugins(boolean trimDisabledPlugins) {
-	trimPlugins = trimDisabledPlugins;
+public void setTrimPlugins(boolean value) {
+	trimPlugins = value;
 }
 private void trimRegistry() {
-
-	if (getTrimPlugins()) {
-		PluginDescriptorModel[] list = reg.getPlugins();
-		for (int i = 0; i < list.length; i++) {
-			PluginDescriptorModel pd = (PluginDescriptorModel) list[i];
-			if (!pd.getEnabled()) {
-				if (DEBUG_RESOLVE)
-					debug("removing " + pd.toString());
-				reg.removePlugin(pd.getId(), pd.getVersion());
-			}
+	PluginDescriptorModel[] list = reg.getPlugins();
+	for (int i = 0; i < list.length; i++) {
+		PluginDescriptorModel pd = (PluginDescriptorModel) list[i];
+		if (!pd.getEnabled()) {
+			if (DEBUG_RESOLVE)
+				debug("removing " + pd.toString());
+			reg.removePlugin(pd.getId(), pd.getVersion());
 		}
 	}
 }

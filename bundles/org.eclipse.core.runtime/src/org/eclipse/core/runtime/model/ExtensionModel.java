@@ -21,7 +21,7 @@ public class ExtensionModel extends PluginModelObject {
 	private ConfigurationElementModel[] elements = null;
 
 	// transient properties (not included in plug-in manifest)
-	private PluginDescriptorModel plugin = null; // declaring plugin
+	private PluginModel plugin = null; // declaring plugin
 /**
  * Creates a new extension model in which all fields
  * are <code>null</code>.
@@ -50,13 +50,22 @@ public String getId() {
 	return id;
 }
 /**
+ * Returns the plug-in model (descriptor or fragment) in which this extension is declared.
+ *
+ * @return the plug-in model in which this extension is declared
+ *  or <code>null</code>
+ */
+public PluginModel getParent() {
+	return plugin;
+}
+/**
  * Returns the plug-in descriptor in which this extension is declared.
  *
  * @return the plug-in descriptor in which this extension is declared
  *  or <code>null</code>
  */
 public PluginDescriptorModel getParentPluginDescriptor() {
-	return plugin;
+	return (PluginDescriptorModel) plugin;
 }
 /**
  * Returns the configuration element children of this extension.
@@ -106,10 +115,21 @@ public void setId(String value) {
 	id = value;
 }
 /**
+ * Sets the plug-in model in which this extension is declared.
+ * This object must not be read-only.
+ *
+ * @param value the plug-in model in which this extension is declared.  
+ *		May be <code>null</code>.
+ */
+public void setParent(PluginModel value) {
+	assertIsWriteable();
+	plugin = value;
+}
+/**
  * Sets the plug-in descriptor in which this extension is declared.
  * This object must not be read-only.
  *
- * @param descriptor the plug-in descriptor in which this extension is declared.  
+ * @param value the plug-in descriptor in which this extension is declared.  
  *		May be <code>null</code>.
  */
 public void setParentPluginDescriptor(PluginDescriptorModel value) {

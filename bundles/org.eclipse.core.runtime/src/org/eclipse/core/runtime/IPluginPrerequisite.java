@@ -69,4 +69,11 @@ public boolean isMatchedAsCompatible();
  * plug-in will satisfy this dependency.
  */
 public boolean isMatchedAsExact();
+/**
+ * Indicates whether this plug-in prerequisite is optional.  If a required (i.e., non-optional)
+ * prerequisite is missing, this plugin is disabled.  
+ *
+ * @return <code>true</code> if this prerequisite is optional, <code>false</code> otherwise
+ */
+public boolean isOptional();
 }

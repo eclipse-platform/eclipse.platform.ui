@@ -68,6 +68,6 @@ public String getUniqueIdentifier() {
 	return getParentPluginDescriptor().getId() + "." + getSimpleIdentifier();
 }
 public String toString() {
-	return getDeclaringPluginDescriptor().toString()+"."+getSimpleIdentifier();
+	return getParent().getPluginId() + "." + getSimpleIdentifier();
 }
 }

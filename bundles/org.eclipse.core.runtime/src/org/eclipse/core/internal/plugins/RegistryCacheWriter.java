@@ -9,37 +9,63 @@ package org.eclipse.core.internal.plugins;
 import org.eclipse.core.runtime.model.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class RegistryCacheWriter {
-	// Want this for the writer and the reader.  Where is a good place to
-	// hold this?  On the PluginRegistryModel?  But it isn't the registry
-	// version.
-	public static final int REGISTRY_CACHE_VERSION = 1;
+	// See RegistryCacheReader for constants commonly used here too.
+
+	// objectTable will be an array list of objects.  The objects will be things 
+	// like a plugin descriptor, extension, extension point, etc.  The integer 
+	// index value will be used in the cache to allow cross-references in the 
+	// cached registry.
+	ArrayList objectTable = null;
 public RegistryCacheWriter() {
 	super();
 }
+public int addToObjectTable(Object object) {
+	if (objectTable == null) {
+		objectTable = new ArrayList();
+	}
+	objectTable.add(object);
+	// return the index of the object just added (i.e. size - 1)
+	return (objectTable.size() - 1);
+
+}
 public void writeConfigurationElement(ConfigurationElementModel configElement, DataOutputStream out) {
 	try {
+		// Check to see if this configuration element already exists in the
+		// objectTable.  If it is there, it has already been written to the 
+		// cache so just write out the index.
+		int configElementIndex = objectTable.indexOf(configElement);
+		if (configElementIndex != -1) {
+			// this extension is already there
+			out.writeByte(RegistryCacheReader.CONFIGURATION_ELEMENT_INDEX_LABEL);
+			out.writeInt(configElementIndex);
+			return;
+		}
+
 		String outString;
+		// add this object to the object table first
+		addToObjectTable(configElement);
 
-		out.writeUTF("<configuration-element>");
+		out.writeByte(RegistryCacheReader.CONFIGURATION_ELEMENT_LABEL);
 
-		out.writeUTF("<readonly>");
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
 		out.writeBoolean(configElement.isReadOnly());
 
 		if ((outString = configElement.getName()) != null) {
-			out.writeUTF("<name>");
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = configElement.getValue()) != null) {
-			out.writeUTF("<value>");
+			out.writeByte(RegistryCacheReader.VALUE_LABEL);
 			out.writeUTF(outString);
 		}
 
 		ConfigurationPropertyModel[] properties = configElement.getProperties();
 		if (properties != null) {
-			out.writeUTF("<properties-length>");
+			out.writeByte(RegistryCacheReader.PROPERTIES_LENGTH_LABEL);
 			out.writeInt(properties.length);
 			for (int i = 0; i < properties.length; i++) {
 				writeConfigurationProperty(properties[i], out);
@@ -48,14 +74,21 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, D
 
 		ConfigurationElementModel[] subElements = configElement.getSubElements();
 		if (subElements != null) {
-			out.writeUTF("<subElements-length>");
+			out.writeByte(RegistryCacheReader.SUBELEMENTS_LENGTH_LABEL);
 			out.writeInt(subElements.length);
 			for (int i = 0; i < subElements.length; i++) {
 				writeConfigurationElement(subElements[i], out);
 			}
 		}
 
-		out.writeUTF("<endconfiguration-element>");
+		// Write out the parent information.  We can assume that the parent has
+		// already been written out.
+		// Add the index to the registry object for this plugin
+		Object parent = configElement.getParent();
+		out.writeByte(RegistryCacheReader.CONFIGURATION_ELEMENT_PARENT_LABEL);
+		out.writeInt(objectTable.indexOf(parent));
+
+		out.writeByte(RegistryCacheReader.CONFIGURATION_ELEMENT_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
@@ -63,98 +96,152 @@ public void writeConfigurationProperty(ConfigurationPropertyModel configProperty
 	try {
 		String outString;
 
-		out.writeUTF("<configuration-element>");
+		out.writeByte(RegistryCacheReader.CONFIGURATION_PROPERTY_LABEL);
 
-		out.writeUTF("<readonly>");
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
 		out.writeBoolean(configProperty.isReadOnly());
 
 		if ((outString = configProperty.getName()) != null) {
-			out.writeUTF("<name>");
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = configProperty.getValue()) != null) {
-			out.writeUTF("<value>");
+			out.writeByte(RegistryCacheReader.VALUE_LABEL);
 			out.writeUTF(outString);
 		}
 
-		out.writeUTF("<endconfiguration-property>");
+		out.writeByte(RegistryCacheReader.CONFIGURATION_PROPERTY_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
 public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 	try {
+		// Check to see if this extension already exists in the objectTable.  If it
+		// is there, it has already been written to the cache so just write out
+		// the index.
+		int extensionIndex = objectTable.indexOf(extension);
+		if (extensionIndex != -1) {
+			// this extension is already there
+			out.writeByte(RegistryCacheReader.EXTENSION_INDEX_LABEL);
+			out.writeInt(extensionIndex);
+			return;
+		}
+		// add this object to the object table first
+		addToObjectTable(extension);
+
 		String outString;
 
-		out.writeUTF("<extension>");
+		out.writeByte(RegistryCacheReader.PLUGIN_EXTENSION_LABEL);
 
-		out.writeUTF("<readonly>");
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
 		out.writeBoolean(extension.isReadOnly());
 
 		if ((outString = extension.getName()) != null) {
-			out.writeUTF("<name>");
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = extension.getExtensionPoint()) != null) {
-			out.writeUTF("<extension-extPt-name>");
+			out.writeByte(RegistryCacheReader.EXTENSION_EXT_POINT_NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = extension.getId()) != null) {
-			out.writeUTF("<id>");
+			out.writeByte(RegistryCacheReader.ID_LABEL);
 			out.writeUTF(outString);
 		}
 
 		ConfigurationElementModel[] subElements = extension.getSubElements();
 		if (subElements != null) {
-			out.writeUTF("<subElements-length>");
+			out.writeByte(RegistryCacheReader.SUBELEMENTS_LENGTH_LABEL);
 			out.writeInt(subElements.length);
 			for (int i = 0; i < subElements.length; i++) {
 				writeConfigurationElement(subElements[i], out);
 			}
 		}
 
-		out.writeUTF("<endextension>");
+		// Now worry about the parent plugin descriptor
+		PluginDescriptorModel parentPlugin = extension.getParentPluginDescriptor();
+		int pluginIndex = objectTable.indexOf(parentPlugin);
+		out.writeByte(RegistryCacheReader.EXTENSION_PARENT_LABEL);
+		if (pluginIndex != -1) {
+			// We have already written this plugin.  Just use the index.
+			out.writeByte(RegistryCacheReader.PLUGIN_INDEX_LABEL);
+			out.writeInt(pluginIndex);
+		} else {
+			// We haven't visited this plugin yet, so write it explicitly
+			writePluginDescriptor(parentPlugin, out);
+		}
+
+		out.writeByte(RegistryCacheReader.EXTENSION_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
 public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream out) {
+	// add this object to the object table first
+	addToObjectTable(extPoint);
 	try {
 		String outString;
 
-		out.writeUTF("<extensionPoint>");
+		out.writeByte(RegistryCacheReader.PLUGIN_EXTENSION_POINT_LABEL);
 
-		out.writeUTF("<readonly>");
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
 		out.writeBoolean(extPoint.isReadOnly());
 
 		if ((outString = extPoint.getName()) != null) {
-			out.writeUTF("<name>");
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = extPoint.getId()) != null) {
-			out.writeUTF("<id>");
+			out.writeByte(RegistryCacheReader.ID_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = extPoint.getSchema()) != null) {
-			out.writeUTF("<schema>");
+			out.writeByte(RegistryCacheReader.EXTENSION_POINT_SCHEMA_LABEL);
 			out.writeUTF(outString);
+		}
+
+		// Write out the parent plugin descriptor's index.  We know we have
+		// already written this plugin to the cache
+		PluginDescriptorModel plugin = extPoint.getParentPluginDescriptor();
+		if (plugin != null) {
+			int pluginIndex = objectTable.indexOf(plugin);
+			if (pluginIndex != -1) {
+				out.writeByte(RegistryCacheReader.EXTENSION_POINT_PARENT_LABEL);
+				out.writeInt(pluginIndex);
+			}
 		}
 
 		// Now do the extensions.
 		ExtensionModel[] extensions = extPoint.getDeclaredExtensions();
-		if (extensions != null) {
+		int extLength = extensions == null ? 0 : extensions.length;
+		if (extLength != 0) {
+			out.writeByte(RegistryCacheReader.EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL);
+			out.writeInt(extLength);
+			out.writeByte(RegistryCacheReader.EXTENSION_POINT_EXTENSIONS_LABEL);
+			for (int i = 0; i < extLength; i++) {
+				// Check to see if the extension exists in the objectTable first
+				int extensionIndex = objectTable.indexOf(extensions[i]);
+				if (extensionIndex != -1) {
+					// Already in the objectTable and written to the cache
+					out.writeByte(RegistryCacheReader.EXTENSION_INDEX_LABEL);
+					out.writeInt(extensionIndex);
+				} else {
+					writeExtension(extensions[i], out);
+				}
+			}
 		}
 
-		out.writeUTF("<endextensionPoint>");
+		out.writeByte(RegistryCacheReader.EXTENSION_POINT_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
 public void writeHeaderInformation(DataOutputStream out) {
 	try {
-		out.writeInt(REGISTRY_CACHE_VERSION);
+		out.writeInt(RegistryCacheReader.REGISTRY_CACHE_VERSION);
 		// output some stamps too
 		// windows system stamp
 		// OS stamp
@@ -167,21 +254,21 @@ public void writeLibrary(LibraryModel library, DataOutputStream out) {
 	try {
 		String outString;
 
-		out.writeUTF("<library>");
+		out.writeByte(RegistryCacheReader.PLUGIN_LIBRARY_LABEL);
 
-		out.writeUTF("<readonly>");
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
 		out.writeBoolean(library.isReadOnly());
 
 		if ((outString = library.getName()) != null) {
-			out.writeUTF("<name>");
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
 		String[] exports = null;
 		if ((exports = library.getExports()) != null) {
-			out.writeUTF("<exports-length>");
+			out.writeByte(RegistryCacheReader.LIBRARY_EXPORTS_LENGTH_LABEL);
 			out.writeInt(exports.length);
-			out.writeUTF("<exports>");
+			out.writeByte(RegistryCacheReader.LIBRARY_EXPORTS_LABEL);
 			for (int i = 0; i < exports.length; i++) {
 				out.writeUTF(exports[i]);
 			}
@@ -190,42 +277,55 @@ public void writeLibrary(LibraryModel library, DataOutputStream out) {
 		// Don't bother caching 'isExported' and 'isFullyExported'.  There
 		// is no way of explicitly setting these fields.  They are computed
 		// from the values in the 'exports' list.
-		out.writeUTF("<endlibrary>");
+		out.writeByte(RegistryCacheReader.LIBRARY_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
 public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream out) {
+
 	try {
+		// Check to see if this plugin already exists in the objectTable.  If it is there,
+		// it has already been written to the cache so just write out the index.
+		int pluginIndex = objectTable.indexOf(plugin);
+		if (pluginIndex != -1) {
+			// this plugin is already there
+			out.writeByte(RegistryCacheReader.PLUGIN_INDEX_LABEL);
+			out.writeInt(pluginIndex);
+			return;
+		}
+
+		// add this object to the object table first
+		addToObjectTable(plugin);
 		String outString;
 
-		out.writeUTF("<plugin>");
-		out.writeUTF("<readonly>");
+		out.writeByte(RegistryCacheReader.PLUGIN_LABEL);
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
 		out.writeBoolean(plugin.isReadOnly());
 		if ((outString = plugin.getName()) != null) {
-			out.writeUTF("<name>");
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
 			out.writeUTF(outString);
 		}
 		if ((outString = plugin.getId()) != null) {
-			out.writeUTF("<id>");
+			out.writeByte(RegistryCacheReader.ID_LABEL);
 			out.writeUTF(outString);
 		}
 		if ((outString = plugin.getProviderName()) != null) {
-			out.writeUTF("<provider>");
+			out.writeByte(RegistryCacheReader.PLUGIN_PROVIDER_NAME_LABEL);
 			out.writeUTF(outString);
 		}
 		if ((outString = plugin.getVersion()) != null) {
-			out.writeUTF("<version>");
+			out.writeByte(RegistryCacheReader.VERSION_LABEL);
 			out.writeUTF(outString);
 		}
 		if ((outString = plugin.getPluginClass()) != null) {
-			out.writeUTF("<class>");
+			out.writeByte(RegistryCacheReader.PLUGIN_CLASS_LABEL);
 			out.writeUTF(outString);
 		}
 		if ((outString = plugin.getLocation()) != null) {
-			out.writeUTF("<location>");
+			out.writeByte(RegistryCacheReader.PLUGIN_LOCATION_LABEL);
 			out.writeUTF(outString);
 		}
-		out.writeUTF("<enabled>");
+		out.writeByte(RegistryCacheReader.PLUGIN_ENABLED_LABEL);
 		out.writeBoolean(plugin.getEnabled());
 
 		// write out prerequisites
@@ -263,7 +363,13 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 			}
 		}
 
-		out.writeUTF("<endplugin>");
+		// Add the index to the registry object for this plugin
+		PluginRegistryModel parentRegistry = plugin.getRegistry();
+		out.writeByte(RegistryCacheReader.PLUGIN_PARENT_LABEL);
+		// We can assume that the parent registry is already written out.
+		out.writeInt(objectTable.indexOf(parentRegistry));
+
+		out.writeByte(RegistryCacheReader.PLUGIN_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
@@ -271,45 +377,72 @@ public void writePluginPrerequisite(PluginPrerequisiteModel requires, DataOutput
 	try {
 		String outString = null;
 
-		out.writeUTF("<requires>");
+		out.writeByte(RegistryCacheReader.PLUGIN_REQUIRES_LABEL);
 
-		out.writeUTF("<readonly>");
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
 		out.writeBoolean(requires.isReadOnly());
 
 		if ((outString = requires.getName()) != null) {
-			out.writeUTF("<name>");
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = requires.getVersion()) != null) {
-			out.writeUTF("<version>");
+			out.writeByte(RegistryCacheReader.VERSION_LABEL);
 			out.writeUTF(outString);
 		}
 
-		out.writeUTF("<match>");
+		out.writeByte(RegistryCacheReader.REQUIRES_MATCH_LABEL);
 		out.writeBoolean(requires.getMatch());
 
-		out.writeUTF("<export>");
+		out.writeByte(RegistryCacheReader.REQUIRES_EXPORT_LABEL);
 		out.writeBoolean(requires.getExport());
 
 		if ((outString = requires.getResolvedVersion()) != null) {
-			out.writeUTF("<resolved_version>");
+			out.writeByte(RegistryCacheReader.REQUIRES_RESOLVED_VERSION_LABEL);
 			out.writeUTF(outString);
 		}
 
 		if ((outString = requires.getPlugin()) != null) {
-			out.writeUTF("<requires_plugin_name>");
+			out.writeByte(RegistryCacheReader.REQUIRES_PLUGIN_NAME_LABEL);
 			out.writeUTF(outString);
 		}
 
-		out.writeUTF("<endrequires>");
+		out.writeByte(RegistryCacheReader.REQUIRES_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
 public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream out) {
-	writeHeaderInformation(out);
-	PluginDescriptorModel[] pluginList = registry.getPlugins();
-	for (int i = 0; i < pluginList.length; i++)
-		writePluginDescriptor(pluginList[i], out);
+	try {
+		// Check to see if this registry already exists in the objectTable.  If it is there,
+		// it has already been written to the cache so just write out the index.
+		if (objectTable != null) {
+			int registryIndex = objectTable.indexOf(registry);
+			if (registryIndex != -1) {
+				// this plugin is already there
+				out.writeByte(RegistryCacheReader.REGISTRY_INDEX_LABEL);
+				out.writeInt(registryIndex);
+				return;
+			}
+		}
+
+		// add this object to the object table first
+		addToObjectTable(registry);
+		writeHeaderInformation(out);
+		String outString = null;
+
+		out.writeByte(RegistryCacheReader.REGISTRY_LABEL);
+
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
+		out.writeBoolean(registry.isReadOnly());
+
+		out.writeByte(RegistryCacheReader.REGISTRY_RESOLVED_LABEL);
+		out.writeBoolean(registry.isResolved());
+		PluginDescriptorModel[] pluginList = registry.getPlugins();
+		for (int i = 0; i < pluginList.length; i++)
+			writePluginDescriptor(pluginList[i], out);
+		out.writeByte(RegistryCacheReader.REGISTRY_END_LABEL);
+	} catch (IOException ioe) {
+	}
 }
 }
