@@ -47,5 +47,9 @@ public WorkspaceSessionTest() {
 public WorkspaceSessionTest(String name) {
 	super(name);
 }
-}
 
+protected void tearDown() throws Exception {
+	// We should not run super.tearDown() on session tests.
+	// If needed, we should to call it explicitly.
+}
+}

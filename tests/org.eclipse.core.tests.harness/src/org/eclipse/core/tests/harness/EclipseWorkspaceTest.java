@@ -801,4 +801,11 @@ public static void log(String message) {
 	if (plugin.isDebugging())
 		System.out.println(message);
 }
+protected void tearDown() throws Exception {
+	super.tearDown();
+	// Ensure everything is in a clean state for next one.
+	// Session tests should overwrite it.
+	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+	getWorkspace().save(true, null);
+}
 }
