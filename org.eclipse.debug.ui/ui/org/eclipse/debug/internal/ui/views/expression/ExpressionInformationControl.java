@@ -94,9 +94,11 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		viewer.getContentProvider();
 		if (view != null) {
 			StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
-			ViewerFilter[] filters = structuredViewer.getFilters();
-			for (int i = 0; i < filters.length; i++) {
-				viewer.addFilter(filters[i]);
+			if (structuredViewer != null) {
+				ViewerFilter[] filters = structuredViewer.getFilters();
+				for (int i = 0; i < filters.length; i++) {
+					viewer.addFilter(filters[i]);
+				}
 			}
 			((VariablesViewContentProvider)viewer.getContentProvider()).setShowLogicalStructure(view.isShowLogicalStructure());
 			Map map = view.getPresentationAttributes(exp.getModelIdentifier());
