@@ -57,6 +57,7 @@ public class DetailsView extends MultiPageView {
 	public static final String SEARCH_PAGE = "Search";
 	public static final String DISCOVERY_PAGE = "Discovery";
 	public static final String UNKNOWN_PAGE = "Unknown";
+	public static final String MULTIPLE_SELECTION_PAGE = "MultipleSelection";
 
 	private Action homeAction;
 	private UpdateAction backAction;
@@ -101,6 +102,7 @@ public class DetailsView extends MultiPageView {
 		addPage(
 			DISCOVERY_PAGE,
 			new DiscoveryFolderPage(this, "Discovery Sites"));
+		addPage(MULTIPLE_SELECTION_PAGE, new MultipleSelectionPage(this, "Multiple Selection"));
 		addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
 	}
 
@@ -179,7 +181,8 @@ public class DetailsView extends MultiPageView {
 	public void showPageWithInput(IWorkbenchPart part, String pageId, Object input) {
 		if (pageId.equals(HOME_PAGE) == false) {
 			if (!(input instanceof UIModelObject
-				|| input instanceof ModelObject))
+				|| input instanceof ModelObject 
+				|| input instanceof IStructuredSelection))
 				return;
 		}
 		showPage(pageId, input);
@@ -281,6 +284,8 @@ public class DetailsView extends MultiPageView {
 				}
 				//fallback - show empty page
 				showPageWithInput(part, UNKNOWN_PAGE, el);
+			} else if (ssel.size()>1) {
+				showPageWithInput(part, MULTIPLE_SELECTION_PAGE, ssel);
 			} else
 				// defect 14692
 				showPageWithInput(part, 

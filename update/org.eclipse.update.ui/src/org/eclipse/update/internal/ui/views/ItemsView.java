@@ -144,6 +144,7 @@ public class ItemsView extends BaseTableView {
 		TableViewer viewer = getTableViewer();
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
+		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
