@@ -1,9 +1,8 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2002, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  *
  * Contributors:
  * IBM - Initial API and implementation
@@ -43,6 +42,8 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			super.setAutoBuilding(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
 		if (preferences.contains(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL))
 			super.setSnapshotInterval(preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
+		if (preferences.contains(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS))
+			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
 		// This property listener ensures we are being updated properly when changes
 		// are done directly to the preference store.
 		preferences.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
@@ -108,6 +109,12 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		preferences.setValue(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, time);
 	}
 	/**
+	 * @see IWorkspaceDescription#setMaxBuildIterations(int)
+	 */
+	public void setMaxBuildIterations(int number) {
+		preferences.setValue(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, number);
+	}
+	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setMaxFileStates(int)
 	 */
 	public void setMaxFileStates(int number) {
@@ -159,6 +166,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		target.setAutoBuilding(source.isAutoBuilding());
 		target.setBuildOrder(source.getBuildOrder());
 		target.setFileStateLongevity(source.getFileStateLongevity());
+		target.setMaxBuildIterations(source.getMaxBuildIterations());
 		target.setMaxFileStates(source.getMaxFileStates());
 		target.setMaxFileStateSize(source.getMaxFileStateSize());
 		target.setSnapshotInterval(source.getSnapshotInterval());
@@ -194,6 +202,12 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			// snapshot interval - if set to anything else than a number, goes to default
 			long value = (newValue instanceof Number) ? ((Number) newValue).longValue() : defaults.getSnapshotInterval();
 			super.setSnapshotInterval(value);
+		} else if (property.equals(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS)) {
+			// max build iterations - if set to anything else than a number, goes to default
+			int value = (newValue instanceof Number) ? ((Number) newValue).intValue() : defaults.getMaxBuildIterations();
+			super.setMaxBuildIterations(value);
 		}
 	}
+
+
 }

@@ -1,9 +1,8 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -115,6 +114,14 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	public static final String PREF_DEFAULT_BUILD_ORDER = PREF_DESCRIPTION_PREFIX + "defaultbuildorder"; //$NON-NLS-1$
 	
+	/**
+	 * Name of a preference for configuring the maximum number of times that the
+	 * workspace should rebuild when builders affect projects that have already
+	 * been built.
+	 * @since 2.1
+	 */
+	public static final String PREF_MAX_BUILD_ITERATIONS = PREF_DESCRIPTION_PREFIX + "maxbuilditerations"; //$NON-NLS-1$
+
 	/**
 	 * Name of a preference for configuring the maximum number of milliseconds a
 	 * file state should be kept in the local history

@@ -1,9 +1,8 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -38,6 +37,8 @@ public class Policy {
 	public static final long defaultFileStateLongevity = 7 * 24 * 3600 * 1000l; // 7 days
 	public static final long defaultMaxFileStateSize = 1024 * 1024l; // 1 Mb
 	public static final int defaultMaxFileStates = 50;
+	public static final int defaultMaxBuildIterations = 10;
+	
 
 	//debug constants
 	public static boolean DEBUG_BUILD_FAILURE = false;

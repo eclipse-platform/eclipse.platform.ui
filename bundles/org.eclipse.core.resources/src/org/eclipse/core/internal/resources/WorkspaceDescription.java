@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -23,6 +23,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	protected volatile long fileStateLongevity = Policy.defaultFileStateLongevity;
 	// thread safety: (Concurrency004)
 	protected volatile long maxFileStateSize = Policy.defaultMaxFileStateSize;
+	protected int maxBuildIterations = Policy.defaultMaxBuildIterations;
 	protected int maxFileStates = Policy.defaultMaxFileStates;
 	protected String[] buildOrder = null;
 	// thread safety: (Concurrency004)
@@ -50,6 +51,12 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	 */
 	public long getFileStateLongevity() {
 		return fileStateLongevity;
+	}
+	/**
+	 * @see IWorkspaceDescription
+	 */
+	public int getMaxBuildIterations() {
+		return maxBuildIterations;
 	}
 	/**
 	 * @see IWorkspaceDescription
@@ -101,6 +108,12 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	 */
 	public void setFileStateLongevity(long time) {
 		fileStateLongevity = time;
+	}
+	/**
+	 * @see IWorkspaceDescription
+	 */
+	public void setMaxBuildIterations(int number) {
+		maxBuildIterations = number;
 	}
 	/**
 	 * @see IWorkspaceDescription

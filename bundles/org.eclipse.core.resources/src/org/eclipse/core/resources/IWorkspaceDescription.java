@@ -1,9 +1,8 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -40,6 +39,16 @@ public String[] getBuildOrder();
  * @see #setFileStateLongevity
  */
 public long getFileStateLongevity();
+/**
+ * Returns the maximum number of times that the workspace should rebuild when
+ * builders affect projects that have already been built.
+ * 
+ * @return the maximum number of times that the workspace should rebuild when
+ * builders affect projects that have already been built.
+ * @see #setMaxBuildIterations
+ * @since 2.1
+ */
+public int getMaxBuildIterations();
 /**
  * Returns the maximum number of states per file that can be stored in the local history.
  *
@@ -122,6 +131,21 @@ public void setBuildOrder(String[] value);
  * @see #getFileStateLongevity
  */
 public void setFileStateLongevity(long time);
+/**
+ * Sets the maximum number of times that the workspace should rebuild when
+ * builders affect projects that have already been built.
+ * <p>
+ * Users must call <code>IWorkspace.setDescription</code> before changes 
+ * made to this description take effect.
+ * </p>
+ *
+ * @param number the maximum number of times that the workspace should rebuild
+ * when builders affect projects that have already been built.
+ * @see IWorkspace#setDescription
+ * @see #getMaxBuildIterations
+ * @since 2.1
+ */
+public void setMaxBuildIterations(int number);
 /**
  * Sets the maximum number of states per file that can be stored in the local history.
  * If the maximum number is reached, older states are removed in favor of
