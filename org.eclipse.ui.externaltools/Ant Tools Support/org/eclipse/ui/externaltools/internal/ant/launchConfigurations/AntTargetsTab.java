@@ -388,7 +388,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntTargetsTab.Error_reading_configuration_12"), ce); //$NON-NLS-1$
 		}
 		
-		runDefaultTargetButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_13")); //$NON-NLS-1$
+		runDefaultTargetButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_11")); //$NON-NLS-1$
 		
 		if (newLocation == null) {
 			allTargets= null;

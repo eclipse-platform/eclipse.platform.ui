@@ -81,7 +81,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 */
 	protected void createRefreshComponent(Composite parent) {
 		refreshField = new Button(parent, SWT.CHECK);
-		refreshField.setText("R&efresh resources after running tool"); //$NON-NLS-1$
+		refreshField.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.&Refresh_resources_after_running_tool_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		refreshField.setLayoutData(data);
 		refreshField.setFont(parent.getFont());

@@ -220,7 +220,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void addProperty() {
 		String title = AntPreferencesMessages.getString("AntPropertiesPage.Add_Property_2");  //$NON-NLS-1$
-		AddPropertyDialog dialog = new AddPropertyDialog(getShell(), title, new String[]{"", ""});
+		AddPropertyDialog dialog = new AddPropertyDialog(getShell(), title, new String[]{"", ""}); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
