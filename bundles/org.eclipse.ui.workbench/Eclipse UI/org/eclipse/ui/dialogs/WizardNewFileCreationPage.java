@@ -109,7 +109,7 @@ protected void createAdvancedControls(Composite parent) {
 	if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false) {
 		advancedButton = new Button(parent, SWT.PUSH);
 		advancedButton.setFont(parent.getFont());
-		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed")); //$NON-NLS-1$
+		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 		GridData data = setButtonLayoutData(advancedButton);
 		data.horizontalAlignment = GridData.BEGINNING;
 		advancedButton.setLayoutData(data);
@@ -346,12 +346,12 @@ protected void handleAdvancedButtonSelect() {
 	if (linkedResourceGroupVisible) {
 		linkedResourceGroupVisible = false;
 		shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
-		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed")); //$NON-NLS-1$
+		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 	} else {
 		linkedResourceGroupVisible = true;
 		shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 		composite.layout();
-		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonExpanded")); //$NON-NLS-1$
+		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
 	}
 }
 /**

@@ -118,7 +118,7 @@ protected void createAdvancedControls(Composite parent) {
 		isValidContainer()) {
 		advancedButton = new Button(parent, SWT.PUSH);
 		advancedButton.setFont(parent.getFont());
-		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed")); //$NON-NLS-1$
+		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 		setButtonLayoutData(advancedButton);
 		GridData data = (GridData) advancedButton.getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
@@ -266,16 +266,16 @@ protected void handleAdvancedButtonSelect() {
 		linkedResourceComposite = linkedResourceGroup.createContents(composite);
 		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		shell.setSize(shellSize);
-		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded")); //$NON-NLS-1$
+		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
 	} else if (linkedResourceComposite.getVisible()) {
 		linkedResourceComposite.setVisible(false);
 		shell.setSize(shellSize.x, basicShellHeight);
-		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed")); //$NON-NLS-1$
+		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 	} else {
 		linkedResourceComposite.setVisible(true);
 		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		shell.setSize(shellSize);
-		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded")); //$NON-NLS-1$
+		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
 	}
 }
 /**
