@@ -215,6 +215,14 @@ public class DefaultTabFolder extends AbstractTabFolder {
     }
 
     /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getItemCount()
+     */
+    public int getItemCount() {
+        // Override retrieving all the items when we just want the count.
+        return paneFolder.getItemCount();
+    }
+    
+    /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#setSelection(org.eclipse.ui.internal.presentations.newapi.AbstractTabItem)
      */
     public void setSelection(AbstractTabItem toSelect) {

@@ -241,8 +241,11 @@ public final class TabbedStackPresentation extends StackPresentation {
      */
     public void showPartList() {
         if (partList != null) {
-            partList.show(getControl(), folder.getTabFolder().getPartListLocation(), 
-                    getSite().getSelectedPart());
+            final int numberOfParts = folder.getTabFolder().getItemCount();
+            if (numberOfParts > 0) {
+                partList.show(getControl(), folder.getTabFolder()
+                        .getPartListLocation(), getSite().getSelectedPart());
+            }
         }
     }
     
