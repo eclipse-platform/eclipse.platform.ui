@@ -61,6 +61,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.ANT_RUNTIME_PREFERENCE_PAGE);
 		initializeDialogUnits(parent);
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
@@ -159,13 +160,5 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		urls.addAll(classpathPage.getAntURLs());
 		urls.addAll(classpathPage.getUserURLs());
 		return urls;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.ANT_RUNTIME_PREFERENCE_PAGE);
 	}
 }

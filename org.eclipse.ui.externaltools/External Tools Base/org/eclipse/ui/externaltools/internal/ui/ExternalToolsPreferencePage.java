@@ -43,7 +43,8 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 */
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
-		
+
+		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_PREFERENCE_PAGE);
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -81,13 +82,5 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	protected void performDefaults() {
 		promptForMigrationButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
 		super.performDefaults();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_PREFERENCE_PAGE);
 	}
 }

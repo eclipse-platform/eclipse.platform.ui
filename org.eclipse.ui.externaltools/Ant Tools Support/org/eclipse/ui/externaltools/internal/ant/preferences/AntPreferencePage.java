@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
@@ -185,11 +186,11 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	}
 	
 	/**
-	 * @see PreferencePage#createControl(Composite)
+	 * @see FieldEditorPreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
+	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.ANT_PREFERENCE_PAGE);
+		return super.createContents(parent);
 	}
 
 	/**

@@ -173,14 +173,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
-	}
-
 	private void handleAppearanceColorListSelection() {	
 		int i= fAppearanceColorList.getSelectionIndex();
 		String key= fAppearanceColorListModel[i][1];
@@ -420,7 +412,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		
+
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
