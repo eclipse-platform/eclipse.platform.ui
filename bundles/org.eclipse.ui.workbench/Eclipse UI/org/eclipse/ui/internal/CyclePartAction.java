@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.commands.KeySupport;
 import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.Sequence;
 import org.eclipse.ui.internal.commands.Stroke;
@@ -234,11 +235,10 @@ public class CyclePartAction extends PageEventAction {
 			}
 		});
 		
-		addMouseListener(table,dialog);
-		addKeyListener(table,dialog);
-
 		try {
 			dialog.open();
+			addMouseListener(table, dialog);
+			addKeyListener(table, dialog);
 			
 			while (!dialog.isDisposed())
 				if (!display.readAndDispatch())
@@ -282,19 +282,21 @@ public class CyclePartAction extends PageEventAction {
 		}
 	}
 	
-	/*
-	 * Add a key listener to the table shifting the selection when
-	 * the acelarator key is pressed and closing the dialog when
-	 * Control or Alt is released.
-	 */
-	private void addKeyListener(final Table table,final Shell dialog) {
+	private void addKeyListener(final Table table, final Shell dialog) {
 		table.addKeyListener(new KeyListener() {
 			private boolean firstKey = true;
 			private boolean quickReleaseMode = false;
 			
 			public void keyPressed(KeyEvent e) {
-				char character = e.character;
 				int keyCode = e.keyCode;
+				int stateMask = e.stateMask;
+				char character = e.character;
+				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
+
+				//System.out.println("\nPRESSED");
+				//printKeyEvent(e);
+				//System.out.println("accelerat:\t" + accelerator + "\t (" + KeySupport.formatStroke(Stroke.create(accelerator), true) + ")");				
+				
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
 
@@ -310,7 +312,7 @@ public class CyclePartAction extends PageEventAction {
 							List strokes = sequence.getStrokes();
 							int size = strokes.size();
 
-							if (size > 0 && (keyCode | e.stateMask) == ((Stroke) strokes.get(size - 1)).getValue()) {
+							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
 								acceleratorForward = true;
 								break;
 							}
@@ -330,7 +332,7 @@ public class CyclePartAction extends PageEventAction {
 							List strokes = sequence.getStrokes();
 							int size = strokes.size();
 
-							if (size > 0 && (keyCode | e.stateMask) == ((Stroke) strokes.get(size - 1)).getValue()) {
+							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
 								acceleratorBackward = true;
 								break;
 							}
@@ -359,13 +361,32 @@ public class CyclePartAction extends PageEventAction {
 				firstKey = false;
 			}
 			
-			public void keyReleased(KeyEvent e) {
-				if ((firstKey || quickReleaseMode) && e.keyCode == e.stateMask)
+			public void keyReleased(KeyEvent e) {		
+				int keyCode = e.keyCode;
+				int stateMask = e.stateMask;
+				char character = e.character;
+				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
+
+				//System.out.println("\nRELEASED");
+				//printKeyEvent(e);
+				//System.out.println("accelerat:\t" + accelerator + "\t (" + KeySupport.formatStroke(Stroke.create(accelerator), true) + ")");
+				
+				if ((firstKey || quickReleaseMode) && keyCode == stateMask)
 					ok(dialog, table);
 			}
 		});
 	}
-	
+
+	private static char convertCharacter(char c) {
+		return c >= 0 && c <= 31 ? (char) (c + '@') : Character.toUpperCase(c);
+	}
+
+	//private static void printKeyEvent(KeyEvent keyEvent) {
+	//	System.out.println("keyCode:\t" + keyEvent.keyCode + "\t (" + KeySupport.formatStroke(Stroke.create(keyEvent.keyCode), true) + ")");
+	//	System.out.println("stateMask:\t" + keyEvent.stateMask + "\t (" + KeySupport.formatStroke(Stroke.create(keyEvent.stateMask), true) + ")");
+	//	System.out.println("character:\t" + (int) keyEvent.character + "\t (" + keyEvent.character + ")");
+	//}
+
 	/*
 	 * Close the dialog saving the selection
 	 */
