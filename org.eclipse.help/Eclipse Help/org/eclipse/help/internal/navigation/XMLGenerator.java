@@ -39,13 +39,6 @@ public abstract class XMLGenerator extends HelpVisitor {
 		infoSet.accept(this);
 	}
 	/**
-	 * @return java.lang.String
-	 * @param viewNode com.ibm.itp.contribution.View
-	 */
-	protected String generateID(InfoView view) {
-		return view.getID().replace('.', '_');
-	}
-	/**
 	 * Simplifies url path by removing "/.." with the parent directory from the path
 	 * @return java.lang.String
 	 * @param url java.lang.String
