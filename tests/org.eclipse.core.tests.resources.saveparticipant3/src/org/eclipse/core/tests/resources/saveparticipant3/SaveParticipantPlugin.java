@@ -1,20 +1,20 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
+ * Contributors: 
  * IBM - Initial API and implementation
- ******************************************************************************/
+ **********************************************************************/
 package org.eclipse.core.tests.resources.saveparticipant3;
+
+import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.ResourceDelta;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
-import java.io.*;
 /**
  * This plugin was designed to test the save facility provided by the ResourcesPlugin.
  * So, it does not act by itself. Another plugin (like a test) needs to call its methods in order
