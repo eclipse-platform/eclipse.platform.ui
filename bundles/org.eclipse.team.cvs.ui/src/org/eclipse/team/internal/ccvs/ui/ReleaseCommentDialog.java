@@ -32,6 +32,9 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	CommitCommentArea commitCommentArea;
 	//	dialogs settings that are persistent between workbench sessions
 	private IDialogSettings settings;
+	
+    private static final int DEFAULT_WIDTH_IN_CHARS= 80;
+
 	private static final String HEIGHT_KEY = "width-key"; //$NON-NLS-1$
 	private static final String WIDTH_KEY = "height-key"; //$NON-NLS-1$
 	
@@ -98,19 +101,18 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
-		int width, height;
 		try {
-			height = settings.getInt(HEIGHT_KEY);
-			width = settings.getInt(WIDTH_KEY);
+		    return new Point(settings.getInt(WIDTH_KEY), settings.getInt(HEIGHT_KEY));
 		} catch(NumberFormatException e) {
-			return super.getInitialSize();
+		    final Point size= super.getInitialSize();
+		    size.x= convertWidthInCharsToPixels(DEFAULT_WIDTH_IN_CHARS);
+		    size.y += convertHeightInCharsToPixels(8);
+		    return size;
 		}
-		Point p = super.getInitialSize();
-		return new Point(width, p.y);
 	}
 	
 	public String getComment() {
-		return commitCommentArea.getComment();
+		return commitCommentArea.getComment(true);
 	}
 	
 	public IResource[] getResourcesToCommit() {
@@ -127,7 +129,7 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#updateEnablements()
 	 */
-	protected void updateEnablements() {	
+	protected void updateEnablements() {
 	}
 	
 	/* (non-Javadoc)

@@ -135,6 +135,8 @@ public interface ICVSUIConstants {
 	public final String PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS= "pref_change_perspective_on_show_annotations"; //$NON-NLS-1$
 	public final String PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS= "pref_default_perspective_for_show_annotations"; //$NON-NLS-1$
 	
+	public final String PREF_ALLOW_EMPTY_COMMIT_COMMENTS= "pref_allow_empty_commit_comment"; //$NON-NLS-1$
+	
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
 	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.gif";	 //$NON-NLS-1$

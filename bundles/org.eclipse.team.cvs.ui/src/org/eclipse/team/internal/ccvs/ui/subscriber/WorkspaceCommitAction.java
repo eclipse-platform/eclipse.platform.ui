@@ -12,11 +12,16 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
+import org.eclipse.ui.PlatformUI;
 
 public class WorkspaceCommitAction extends CVSParticipantAction {
 
@@ -32,7 +37,7 @@ public class WorkspaceCommitAction extends CVSParticipantAction {
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING});
+		return new SyncInfoDirectionFilter(new int[] { SyncInfo.OUTGOING });
 	}
 
 	/* (non-Javadoc)
@@ -41,4 +46,31 @@ public class WorkspaceCommitAction extends CVSParticipantAction {
 	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		return new WorkspaceCommitOperation(configuration, elements, false /* override */);
 	}
+    
+    public void runOperation() {
+        final SyncInfoSet set = getSyncInfoSet();
+        final Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        try {
+            CommitWizard.run(shell, set);
+        } catch (CVSException e) {
+            CVSUIPlugin.log(e);
+        }
+    }
+
+    /*
+     * Return the selected SyncInfo for which this action is enabled.
+     * 
+     * @return the selected SyncInfo for which this action is enabled.
+     */
+    private SyncInfoSet getSyncInfoSet() {
+        IDiffElement [] elements= getFilteredDiffElements();
+        SyncInfoSet filtered = new SyncInfoSet();
+        for (int i = 0; i < elements.length; i++) {
+            IDiffElement e = elements[i];
+            if (e instanceof SyncInfoModelElement) {
+                filtered.add(((SyncInfoModelElement)e).getSyncInfo());
+            }
+        }
+        return filtered;
+    }
 }

@@ -15,6 +15,7 @@ package org.eclipse.team.core;
  * corresponding file type.
  * 
  * @since 2.0
+ * @deprecated Use the <code>IFileContentManager</code> API instead.
  */
 public interface IFileTypeInfo {
 	/**

@@ -59,7 +59,7 @@ public class KSubstWizardCommitCommentPage extends CVSWizardPage {
 	 * @return String
 	 */
 	public String getComment() {
-		return commitCommentArea.getComment();
+		return commitCommentArea.getComment(true);
 	}
 	
 	/* (non-Javadoc)

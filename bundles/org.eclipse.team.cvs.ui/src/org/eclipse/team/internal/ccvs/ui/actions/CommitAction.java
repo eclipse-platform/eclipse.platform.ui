@@ -2,7 +2,7 @@
  * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
+ * which accocmpanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
@@ -12,12 +12,11 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
+import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
 
 /**
  * Action for checking in files to a CVS provider.
@@ -29,19 +28,14 @@ public class CommitAction extends WorkspaceAction {
 	 * @see CVSAction#execute(IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		final CommitOperation operation = new CommitOperation(getTargetPart(), getSelectedResources(), null);
-		final boolean[] retVal = {true};
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					retVal[0] = operation.performPrompting(monitor);
-				} catch (CVSException e) {
-					new InvocationTargetException(e);
-				} 
-			}
-		}, false, PROGRESS_BUSYCURSOR);
-		if(retVal[0])
-			operation.run();
+
+	    try {
+	        final IResource [] resources= getSelectedResources();
+	        CommitWizard.run(shell, resources);
+
+		} catch (CVSException e) {
+			throw new InvocationTargetException(e);
+		}
 	}
 
 	/**

@@ -17,6 +17,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -30,6 +31,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class CommitSetDialog extends Dialog {
 
+    private static final int DEFAULT_WIDTH_IN_CHARS= 80;
+    
     private final ActiveChangeSet set;
     private CommitCommentArea commitCommentArea;
     private Text nameText;
@@ -102,6 +105,17 @@ public class CommitSetDialog extends Dialog {
         Dialog.applyDialogFont(parent);
         return composite;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+	    final Point size= super.getInitialSize();
+	    size.x= convertWidthInCharsToPixels(DEFAULT_WIDTH_IN_CHARS);
+	    size.y += convertHeightInCharsToPixels(8);
+	    return size;
+	}
+
 
     private void createNameArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -193,7 +207,7 @@ public class CommitSetDialog extends Dialog {
         set.setTitle(nameText.getText());
         if (isUseCustomComment()) {
             // Call getComment so the comment gets saved
-            set.setComment(commitCommentArea.getComment());
+            set.setComment(commitCommentArea.getComment(true));
         } else {
             set.setComment(null);
         }

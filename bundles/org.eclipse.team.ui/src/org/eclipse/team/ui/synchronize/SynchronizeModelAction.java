@@ -93,13 +93,26 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 			}
 		}
 		try {
-			getSubscriberOperation(configuration, getFilteredDiffElements()).run();
+			runOperation();
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
 			handle(e);
 		}
 	}
+
+    /**
+     * Create aand run the operation for this action. By default, the operation is created
+     * by calling <code>getSubscriberOperation</code> and then run. Subclasses may
+     * override.
+     * 
+     * @throws InvocationTargetException
+     * @throws InterruptedException
+     * @since 3.1
+     */
+    protected void runOperation() throws InvocationTargetException, InterruptedException {
+        getSubscriberOperation(configuration, getFilteredDiffElements()).run();
+    }
 
 	/**
 	 * Return whether dirty editor should be saved before this action is run.

@@ -634,6 +634,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		store.setDefault(ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS, CVSPerspective.ID);
 		store.setDefault(ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, MessageDialogWithToggle.PROMPT);
+		store.setDefault(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS, MessageDialogWithToggle.PROMPT);
 		
 		// Set the watch/edit preferences defaults and values
 		store.setDefault(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getDefaultBoolean(CVSProviderPlugin.READ_ONLY));

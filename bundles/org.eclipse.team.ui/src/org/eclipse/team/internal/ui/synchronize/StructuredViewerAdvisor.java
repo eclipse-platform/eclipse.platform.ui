@@ -14,7 +14,6 @@ import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -490,12 +489,8 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 			IWorkbenchPartSite ws = null;
 			if (workbenchSite instanceof IWorkbenchPartSite)
 				ws = (IWorkbenchPartSite)workbenchSite;
-//			if (ws == null) 
-//				ws = Utils.findSite();
 			if (ws != null) {
 				ws.registerContextMenu(targetID, menuMgr, viewer);
-			} else {
-				TeamUIPlugin.log(IStatus.ERROR, "Cannot add menu contributions because the site cannot be found: " + targetID, null); //$NON-NLS-1$
 			}
 		}
 	}

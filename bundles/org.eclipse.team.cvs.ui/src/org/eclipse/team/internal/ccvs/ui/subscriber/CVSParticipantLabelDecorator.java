@@ -13,28 +13,20 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
-import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 
-class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyChangeListener, ILabelDecorator {
+public class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyChangeListener, ILabelDecorator {
 	private ISynchronizePageConfiguration configuration;
 	
 	public CVSParticipantLabelDecorator(ISynchronizePageConfiguration configuration) {
@@ -51,7 +43,7 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 				IResource resource = ((ISynchronizeModelElement) element).getResource();
 				if (resource != null && resource.getType() != IResource.ROOT) {
 					// Prepare the decoration but substitute revision and hide dirty indicator
-					CVSDecoration decoration = CVSLightweightDecorator.decorate(resource);
+					CVSDecoration decoration = getDecoration(resource);
 					decoration.setRevision(getRevisionNumber((ISynchronizeModelElement) element));
 					decoration.setDirty(false);
 					decoration.compute();
@@ -72,17 +64,28 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 			return input;
 		}
 	}
-	public Image decorateImage(Image base, Object element) {
+	/**
+     * @return
+     */
+    protected CVSDecoration getDecoration(IResource resource) throws CVSException {
+        return CVSLightweightDecorator.decorate(resource);
+    }
+
+    public Image decorateImage(Image base, Object element) {
 		return base;
 	}
 	public void propertyChange(PropertyChangeEvent event) {
-		String property = event.getProperty();
-		if(property.equals(CVSUIPlugin.P_DECORATORS_CHANGED) || property.equals(TeamUI.GLOBAL_FILE_TYPES_CHANGED)) {
+		if (needsRefresh(event)) {
 			Viewer viewer = configuration.getPage().getViewer();
 			if(viewer instanceof StructuredViewer && !viewer.getControl().isDisposed()) {
 				((StructuredViewer)viewer).refresh(true);
 			}
 		}
+	}
+	
+	protected boolean needsRefresh(PropertyChangeEvent event) {
+	    final String property= event.getProperty();
+	    return property.equals(CVSUIPlugin.P_DECORATORS_CHANGED) || property.equals(TeamUI.GLOBAL_FILE_TYPES_CHANGED);
 	}
 	public void dispose() {
 		CVSUIPlugin.removePropertyChangeListener(this);

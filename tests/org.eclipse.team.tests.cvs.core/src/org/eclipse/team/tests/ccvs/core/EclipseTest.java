@@ -266,8 +266,8 @@ public class EclipseTest extends ResourceTest {
 	 * Commit the provided resources which must all be in the same project
 	 */
 	protected void commitResources(IResource[] resources, int depth, String message) throws TeamException, CoreException {
-		if (resources.length == 0) return;
-		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[] { Commit.makeArgumentOption(Command.MESSAGE_OPTION, message) }));
+		if (resources.length == 0) return; 
+		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[] { Commit.makeArgumentOption(Command.MESSAGE_OPTION, message) }, ""));
 	}
 	
 	/**
@@ -281,8 +281,8 @@ public class EclipseTest extends ResourceTest {
 	public void tagRemoteResource(ICVSRemoteResource resource, CVSTag tag, boolean force) throws TeamException  {
 		ITagOperation op = new TagInRepositoryOperation(null, new ICVSRemoteResource[] {resource});
 		runTag(op, tag, force);
-	
 	}
+    
 	private void runTag(ITagOperation op, CVSTag tag, boolean force) throws TeamException {
 		if (force) op.moveTag();
 		op.setTag(tag);

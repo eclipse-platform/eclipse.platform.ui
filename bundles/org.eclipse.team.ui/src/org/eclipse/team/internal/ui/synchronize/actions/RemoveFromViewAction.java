@@ -36,7 +36,7 @@ import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
  */
 public class RemoveFromViewAction extends SynchronizeModelAction {
 
-	protected RemoveFromViewAction(ISynchronizePageConfiguration configuration) {
+	public RemoveFromViewAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
 		Utils.initAction(this, "action.removeFromView.", Policy.getBundle()); //$NON-NLS-1$
 	}

@@ -25,9 +25,26 @@ import org.eclipse.team.internal.core.*;
  * @since 2.0
  */
 public final class Team {
+    
+    private static class StringMappingWrapper implements IFileTypeInfo {
+        
+        private final IStringMapping fMapping;
+
+        public StringMappingWrapper(IStringMapping mapping) {
+            fMapping= mapping;
+        }
+
+        public String getExtension() {
+            return fMapping.getString();
+        }
+
+        public int getType() {
+            return fMapping.getType();
+        }
+        
+    }
 	
 	private static final String PREF_TEAM_IGNORES = "ignore_files"; //$NON-NLS-1$
-	private static final String PREF_TEAM_TYPES = "file_types"; //$NON-NLS-1$
 	private static final String PREF_TEAM_SEPARATOR = "\n"; //$NON-NLS-1$
 	public static final Status OK_STATUS = new Status(Status.OK, TeamPlugin.ID, Status.OK, Policy.bind("ok"), null); //$NON-NLS-1$
 	
@@ -36,31 +53,22 @@ public final class Team {
 	public static final int TEXT = 1;
 	public static final int BINARY = 2;
 	
-	// Keys: file extensions. Values: Integers
-	private static SortedMap globalTypes, pluginTypes;
 
 	// The ignore list that is read at startup from the persisted file
-	private static SortedMap globalIgnore, pluginIgnore;
+	protected static SortedMap globalIgnore, pluginIgnore;
 	private static StringMatcher[] ignoreMatchers;
+    
+    private final static FileContentManager fFileContentManager;
+    
+    static {
+        fFileContentManager= new FileContentManager();
+    }
 	
-	private static class FileTypeInfo implements IFileTypeInfo {
-		private String extension;
-		private int type;
-		
-		public FileTypeInfo(String extension, int type) {
-			this.extension = extension;
-			this.type = type;
-		}
-		public String getExtension() {
-			return extension;
-		}
-		public int getType() {
-			return type;
-		}
-	}
 	
 	/**
-	 * Return the type of the given IStorage.
+     * Return the type of the given IStorage. First, we check whether a mapping has
+     * been defined for the name of the IStorage. If this is not the case, we check for
+     * a mapping with the extension. If no mapping is defined, UNKNOWN is returned.
 	 * 
 	 * Valid return values are:
 	 * Team.TEXT
@@ -69,14 +77,11 @@ public final class Team {
 	 * 
 	 * @param storage  the IStorage
 	 * @return whether the given IStorage is TEXT, BINARY, or UNKNOWN
+     * 
+     * @deprecated Use <code>getFileContentManager().getType(IStorage storage)</code> instead.
 	 */
 	public static int getType(IStorage storage) {
-		String extension = getFileExtension(storage.getName());
-		if (extension == null) return UNKNOWN;
-		SortedMap table = getFileTypeTable();
-		Integer integer = (Integer)table.get(extension);
-		if (integer == null) return UNKNOWN;
-		return integer.intValue();
+        return fFileContentManager.getType(storage);
 	}
 
 	/**
@@ -118,26 +123,22 @@ public final class Team {
 		return matchesEnabledIgnore(file);
 	}
 
-	private static IFileTypeInfo[] getFileTypeInfo(SortedMap map)  {
-		List result = new ArrayList();
-		Iterator e = map.keySet().iterator();
-		while (e.hasNext()) {
-			String string = (String)e.next();
-			int type = ((Integer)map.get(string)).intValue();
-			result.add(new FileTypeInfo(string, type));
-		}
-		return (IFileTypeInfo[])result.toArray(new IFileTypeInfo[result.size()]);
-	}
 	
 	/**
-	 * Return all known file types.
+     * Return all known file types.
 	 * 
 	 * @return all known file types
+     * @deprecated Use <code>getFileContentManager().getExtensionMappings()</code> instead.
 	 */
 	public static IFileTypeInfo[] getAllTypes() {
-		return getFileTypeInfo(getFileTypeTable());
+        final IStringMapping [] mappings= fFileContentManager.getExtensionMappings();
+        final IFileTypeInfo [] infos= new IFileTypeInfo[mappings.length];
+        for (int i = 0; i < infos.length; i++) {
+            infos[i]= new StringMappingWrapper(mappings[i]);
+        }
+        return infos;
 	}
-	
+    
 	/**
 	 * Returns the list of global ignores.
 	 */
@@ -169,12 +170,12 @@ public final class Team {
 			final boolean enabled = ((Boolean)gIgnore.get(pattern)).booleanValue();
 			result[i++] = new IIgnoreInfo() {
 				private String p = pattern;
-				private boolean e = enabled;
+				private boolean e1 = enabled;
 				public String getPattern() {
 					return p;
 				}
 				public boolean getEnabled() {
-					return e;
+					return e1;
 				}
 			};
 		}
@@ -196,52 +197,27 @@ public final class Team {
 		return ignoreMatchers;
 	}
 	
-	private synchronized static SortedMap getFileTypeTable() {
-		// The types are cached and when the preferences change the
-		// cache is cleared. This makes it faster to lookup without having
-		// to re-parse the preferences.
-		if (globalTypes == null) loadTextState();
-		return globalTypes;
-	}
 	
 	/**
-	 * Set the file type for the give extension to the given type.
+     * Set the file type for the give extensions. This
+     * will replace the existing file types with this new list.
 	 *
 	 * Valid types are:
 	 * Team.TEXT
 	 * Team.BINARY
 	 * Team.UNKNOWN
 	 * 
-	 * @param extension  the file extension
-	 * @param type  the file type
+	 * @param extensions  the file extensions
+	 * @param types  the file types
+     * 
+     * @deprecated Use <code>getFileContentManager().setExtensionMappings()</code> instead.
 	 */
 	public static void setAllTypes(String[] extensions, int[] types) {
-		if (pluginTypes == null) {
-			loadTextState();
-		}
-		globalTypes = new TreeMap();
-		for (int i = 0; i < extensions.length; i++) {
-			globalTypes.put(extensions[i], new Integer(types[i]));
-		}
-		// Now set into preferences
-		StringBuffer buf = new StringBuffer();
-		Iterator e = globalTypes.keySet().iterator();
-		while (e.hasNext()) {
-			String extension = (String)e.next();
-			boolean isCustom = (!pluginTypes.containsKey(extension)) ||
-				!((Integer)pluginTypes.get(extension)).equals(globalTypes.get(extension));
-			if (isCustom) {
-				buf.append(extension);
-				buf.append(PREF_TEAM_SEPARATOR);
-				Integer type = (Integer)globalTypes.get(extension);
-				buf.append(type);
-				buf.append(PREF_TEAM_SEPARATOR);
-			}
-			
-		}
-		TeamPlugin.getPlugin().getPluginPreferences().setValue(PREF_TEAM_TYPES, buf.toString());
+        fFileContentManager.addExtensionMappings(extensions, types);
 	}
-	
+    
+
+
 	/**
 	 * Add patterns to the list of global ignores.
 	 */
@@ -270,129 +246,9 @@ public final class Team {
 		TeamPlugin.getPlugin().getPluginPreferences().setValue(PREF_TEAM_IGNORES, buf.toString());
 	}
 	
-	/*
-	 * TEXT
-	 * 
-	 * Reads the text patterns currently defined by extensions.
-	 */
-	private static void initializePluginPatterns(Map pTypes, Map fTypes) {
-		TeamPlugin plugin = TeamPlugin.getPlugin();
-		if (plugin != null) {
-			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.FILE_TYPES_EXTENSION);
-			if (extension != null) {
-				IExtension[] extensions =  extension.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
-						String ext = configElements[j].getAttribute("extension"); //$NON-NLS-1$
-						if (ext != null) {
-							String type = configElements[j].getAttribute("type"); //$NON-NLS-1$
-							// If the extension doesn't already exist, add it.
-							if (!fTypes.containsKey(ext)) {
-								if (type.equals("text")) { //$NON-NLS-1$
-									pTypes.put(ext, new Integer(TEXT));
-									fTypes.put(ext, new Integer(TEXT));
-								} else if (type.equals("binary")) { //$NON-NLS-1$
-									fTypes.put(ext, new Integer(BINARY));
-									pTypes.put(ext, new Integer(BINARY));
-								}
-							}
-						}
-					}
-				}
-			}		
-		}
-	}
 	
-	/*
-	 * TEXT
-	 * 
-	 * Read the saved file type state from the given input stream.
-	 * 
-	 * @param dis  the input stream to read the saved state from
-	 * @throws IOException if an I/O problem occurs
-	 */
-	private static void readTextState(DataInputStream dis) throws IOException {
-		int extensionCount = 0;
-		try {
-			extensionCount = dis.readInt();
-		} catch (EOFException e) {
-			// Ignore the exception, it will occur if there are no
-			// patterns stored in the state file.
-			return;
-		}
-		for (int i = 0; i < extensionCount; i++) {
-			String extension = dis.readUTF();
-			int type = dis.readInt();
-			globalTypes.put(extension, new Integer(type));
-		}
-	}
-	
-	/*
-	 * TEXT
-	 * 
-	 * Load the file type registry saved state. This loads the previously saved
-	 * contents, as well as discovering any values contributed by plug-ins.
-	 */
-	private static void loadTextState() {
-		globalTypes = new TreeMap();
-		boolean old = loadBackwardCompatibleTextState();
-		if (!old) loadTextPreferences();
-		pluginTypes = new TreeMap();
-		initializePluginPatterns(pluginTypes, globalTypes);
-		if (old) TeamPlugin.getPlugin().savePluginPreferences();
-	}
 
-	private static void loadTextPreferences() {
-		Preferences pref = TeamPlugin.getPlugin().getPluginPreferences();
-		if (!pref.contains(PREF_TEAM_TYPES)) return;
-		pref.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				// when a property is changed, invalidate our cache so that
-				// properties will be recalculated.
-				if(event.getProperty().equals(PREF_TEAM_TYPES))
-					globalTypes = null;
-			}
-		});
-		String prefTypes = pref.getString(PREF_TEAM_TYPES);
-		StringTokenizer tok = new StringTokenizer(prefTypes, PREF_TEAM_SEPARATOR);
-		String extension, integer;
-		try {
-			while (true) {
-				extension = tok.nextToken();
-				if (extension.length()==0) return;
-				integer = tok.nextToken();
-				globalTypes.put(extension, Integer.valueOf(integer));
-			} 
-		} catch (NoSuchElementException e) {
-			return;
-		}
-			
-	}
-	/*
-	 * If the workspace is an old 2.0 one, read the old file and delete it
-	 */
-	private static boolean loadBackwardCompatibleTextState() {
-		// File name of the persisted file type information
-		String STATE_FILE = ".fileTypes"; //$NON-NLS-1$
-		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation().append(STATE_FILE);
-		File f = pluginStateLocation.toFile();
-		if (!f.exists()) return false;
-		try {
-			DataInputStream dis = new DataInputStream(new FileInputStream(f));
-			try {
-				readTextState(dis);
-			} finally {
-				dis.close();
-			}
-		} catch (IOException ex) {
-			TeamPlugin.log(Status.ERROR, ex.getMessage(), ex);
-			return false;
-		}
-		f.delete();
-		return true;
-	}
-	
+
 	/*
 	 * IGNORE
 	 * 
@@ -561,15 +417,6 @@ public final class Team {
 		return null;
 	}
 	
-	private static String getFileExtension(String name) {
-		if (name == null) return null;
-		int index = name.lastIndexOf('.');
-		if (index == -1)
-			return null;
-		if (index == (name.length() - 1))
-			return ""; //$NON-NLS-1$
-		return name.substring(index + 1);
-	}
 
 	/**
 	 * Return the default ignore infos
@@ -586,16 +433,39 @@ public final class Team {
 	}
 
 	/**
+     * TODO: change to file content manager
 	 * Return the default file type bindings
 	 * (i.e. those that are specified in
 	 * plugin manifests).
 	 * @return the default file type bindings
 	 * @since 3.0
+     * @deprecated Use Team.getFileContentManager().getDefaultExtensionMappings() instead.
 	 */
 	public static IFileTypeInfo[] getDefaultTypes() {
-		SortedMap gTypes = new TreeMap();
-		SortedMap pTypes = new TreeMap();
-		initializePluginPatterns(pTypes, gTypes);
-		return getFileTypeInfo(gTypes);
+        return asFileTypeInfo(getFileContentManager().getDefaultExtensionMappings());
 	}
+
+    private static IFileTypeInfo [] asFileTypeInfo(IStringMapping [] mappings) {
+        final IFileTypeInfo [] infos= new IFileTypeInfo[mappings.length];
+        for (int i = 0; i < infos.length; i++) {
+            infos[i]= new StringMappingWrapper(mappings[i]);
+        }
+        return infos;
+    }
+
+    /**
+     * Get the file content manager which implements the API for manipulating the mappings between
+     * file names, file extensions and content types.
+     *  
+     * @return an instance of IFileContentManager
+     * 
+     * @see IFileContentManager
+     * 
+     * @since 3.1
+     */
+    public static IFileContentManager getFileContentManager() {
+        return fFileContentManager;
+    }
+    
+
 }

@@ -190,7 +190,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
-		ILabelDecorator labelDecorator = new CVSParticipantLabelDecorator(configuration);
+		ILabelDecorator labelDecorator = getLabelDecorator(configuration);
 		configuration.addLabelDecorator(labelDecorator);
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, TOOLBAR_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new WorkspaceActionContribution());
@@ -211,6 +211,10 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				CONTEXT_MENU_CONTRIBUTION_GROUP_4);
+	}
+	
+	protected  ILabelDecorator getLabelDecorator(ISynchronizePageConfiguration configuration) {
+	    return new CVSParticipantLabelDecorator(configuration);
 	}
 	
 	protected ISynchronizeParticipantDescriptor getDescriptor() {

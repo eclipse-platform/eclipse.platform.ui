@@ -16,20 +16,14 @@ import java.util.Comparator;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.team.internal.ui.preferences.ComboFieldEditor;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 public class WorkInProgressPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
     
@@ -47,8 +41,6 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 		}
 	}
     
-	private RadioGroupFieldEditor synchronizePerspectiveSwitch;
-	
 	public WorkInProgressPreferencePage() {
 		super(GRID);
 		setTitle(Policy.bind("WorkInProgressPreferencePage.0")); //$NON-NLS-1$
@@ -61,7 +53,7 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 	 */
 	public void createFieldEditors() {	
 	    
-		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(
+	    addField(new RadioGroupFieldEditor(
 		        ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, 
 		        Policy.bind("WorkInProgressPreferencePage.7"), //$NON-NLS-1$
 		        3,
@@ -70,8 +62,10 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 		            {Policy.bind("WorkInProgressPreferencePage.2"), MessageDialogWithToggle.NEVER},  //$NON-NLS-1$
 		            {Policy.bind("WorkInProgressPreferencePage.3"), MessageDialogWithToggle.PROMPT} //$NON-NLS-1$
 		        },
-		        getFieldEditorParent(), true);
-		addField(synchronizePerspectiveSwitch);
+		        getFieldEditorParent(), true));
+		
+		
+
 		
 		final Group perspectiveGroup = createGroup(
 		        getFieldEditorParent(), 
@@ -87,9 +81,21 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 			perspectiveGroup);
 		addField(comboEditor);
 
-		Dialog.applyDialogFont(getFieldEditorParent());
+		addField(new RadioGroupFieldEditor(
+		        ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS,
+		        "&Allow empty commit comments:", //$NON-NLS-1$
+		        3,
+				new String[][] {
+		            { "Yes", MessageDialogWithToggle.ALWAYS},  //$NON-NLS-1$
+		            { "No", MessageDialogWithToggle.NEVER},  //$NON-NLS-1$
+		            { "Prompt", MessageDialogWithToggle.PROMPT} //$NON-NLS-1$
+		        },
+		        getFieldEditorParent(), true));
+
 		updateLayout(perspectiveGroup);
 		getFieldEditorParent().layout(true);	
+		
+		Dialog.applyDialogFont(getFieldEditorParent());
 	    
 	}
 	

@@ -243,12 +243,11 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	private static void extractFileProperties(IFile resource, CVSDecoration cvsDecoration) throws CVSException {
 		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(resource);
 		ResourceSyncInfo fileInfo = file.getSyncInfo();
-		KSubstOption option = KSubstOption.fromFile((IFile) resource);
+		KSubstOption option = KSubstOption.fromFile(resource);
 		if (fileInfo != null) {
 			cvsDecoration.setAdded(fileInfo.isAdded());
 			cvsDecoration.setRevision(fileInfo.getRevision());
 			cvsDecoration.setReadOnly(file.isReadOnly());
-			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 			cvsDecoration.setNeedsMerge(fileInfo.isNeedsMerge(file.getTimeStamp()));
 			option = fileInfo.getKeywordMode();
 		}

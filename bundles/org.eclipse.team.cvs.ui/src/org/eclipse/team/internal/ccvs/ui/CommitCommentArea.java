@@ -11,225 +11,289 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 
 /**
  * This area provides the widgets for providing the CVS commit comment
  */
 public class CommitCommentArea extends DialogArea {
+    
+    private class TextBox implements ModifyListener, TraverseListener, FocusListener, Observer {
+        
+        private final Text fTextField; // updated only by modify events
+        private final String fMessage;
+        
+        private String fText;
+        
+        public TextBox(Composite composite, String message, String initialText) {
+            
+            fMessage= message;
+            fText= initialText;
+            
+            fTextField = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+            fTextField.setLayoutData(SWTUtils.createHVFillGridData());
+            
+            setText(initialText);
+            
+            fTextField.addTraverseListener(this);
+            fTextField.addModifyListener(this);
+            fTextField.addFocusListener(this);
+        }
+        
+        public void modifyText(ModifyEvent e) {
+            final String old = fText;
+            fText = fTextField.getText();
+            firePropertyChangeChange(COMMENT_MODIFIED, old, fText);
+        }
+        
+        public void keyTraversed(TraverseEvent e) {
+            if (e.detail == SWT.TRAVERSE_RETURN && (e.stateMask & SWT.CTRL) != 0) {
+                e.doit = false;
+                firePropertyChangeChange(OK_REQUESTED, null, null);
+            }
+        }
+        
+        public void focusGained(FocusEvent e) {
 
-	private static final int WIDTH_HINT = 350;
-	private static final int HEIGHT_HINT = 50;
-	
-	private Text text;
-	private Combo previousCommentsCombo;
-	private IProject mainProject;
-	private String[] comments = new String[0];
-	private String comment = ""; //$NON-NLS-1$
-	
-	public static final String OK_REQUESTED = "OkRequested";//$NON-NLS-1$
-	public static final String COMMENT_MODIFIED = "CommentModified";//$NON-NLS-1$
-    private String proposedComment;
-	
-	/**
-	 * Constructor for CommitCommentArea.
-	 * @param parentDialog
-	 * @param settings
-	 */
-	public CommitCommentArea() {
-		comments = CVSUIPlugin.getPlugin().getRepositoryManager().getPreviousComments();
-	}
+            if (fText.length() > 0) 
+                return;
+            
+            fTextField.removeModifyListener(this);
+            try {
+                fTextField.setText(fText);
+            } finally {
+                fTextField.addModifyListener(this);
+            }
+        }
+        
+        public void focusLost(FocusEvent e) {
+            
+            if (fText.length() > 0) 
+                return;
+            
+            fTextField.removeModifyListener(this);
+            try {
+                fTextField.setText(fMessage);
+                fTextField.selectAll();
+            } finally {
+                fTextField.addModifyListener(this);
+            }
+        }
+        
+        public void setEnabled(boolean enabled) {
+            fTextField.setEnabled(enabled);
+        }
+        
+        public void update(Observable o, Object arg) {
+            if (arg instanceof String) {
+                setText((String)arg); // triggers a modify event
+            }
+        }
+        
+        public String getText() {
+            return fText;
+        }
+        
+        private void setText(String text) {
+            if (text.length() == 0) {
+                fTextField.setText(fMessage);
+                fTextField.selectAll();
+            } else
+                fTextField.setText(text);
+        }
 
-	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createArea(Composite parent) {
-        Dialog.applyDialogFont(parent);
-		Composite composite = createGrabbingComposite(parent, 1);
-		initializeDialogUnits(composite);
-						
-		Label label = new Label(composite, SWT.NULL);
-		label.setLayoutData(new GridData());
-		label.setText(Policy.bind("ReleaseCommentDialog.enterComment")); //$NON-NLS-1$
-				
-		text = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = WIDTH_HINT;
-		data.heightHint = HEIGHT_HINT;
-		
-		text.setLayoutData(data);
-		text.selectAll();
-		text.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_RETURN && (e.stateMask & SWT.CTRL) != 0) {
-					e.doit = false;
-					CommitCommentArea.this.signalCtrlEnter();
-				}
-			}
-		});
-		text.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-			    String oldComment = comment;
-				comment = text.getText();
-				CommitCommentArea.this.signalCommentModified(oldComment, comment);
-			}
-		});
-		
-		
-		label = new Label(composite, SWT.NULL);
-		label.setLayoutData(new GridData());
-		label.setText(Policy.bind("ReleaseCommentDialog.choosePrevious")); //$NON-NLS-1$
-		
-		previousCommentsCombo = new Combo(composite, SWT.READ_ONLY);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		previousCommentsCombo.setLayoutData(data);
-		
-		// Initialize the values before we register any listeners so
-		// we don't get any platform specific selection behavior
-		// (see bug 32078: http://bugs.eclipse.org/bugs/show_bug.cgi?id=32078)
-		initializeValues();
-		
-		previousCommentsCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int index = previousCommentsCombo.getSelectionIndex();
-				if (index != -1)
-					text.setText(comments[index]);
-			}
-		});
-	}
-
+        public void setFocus() {
+            fTextField.setFocus();
+        }
+    }
+    
+    private static class ComboBox extends Observable implements SelectionListener, FocusListener {
+        
+        private final String fMessage;
+        private final String [] fComments;
+        private final Combo fCombo;
+        
+        
+        public ComboBox(Composite composite, String message, String [] options) {
+            
+            fMessage= message;
+            fComments= options;
+            
+            fCombo = new Combo(composite, SWT.READ_ONLY);
+            fCombo.setLayoutData(SWTUtils.createHFillGridData());
+            
+            // populate the previous comment list
+            fCombo.add(fMessage);
+            for (int i = 0; i < fComments.length; i++) {
+                fCombo.add(HistoryView.flattenText(fComments[i]));
+            }
+            fCombo.setText(fMessage);
+            
+            // We don't want to have an initial selection
+            // (see bug 32078: http://bugs.eclipse.org/bugs/show_bug.cgi?id=32078)
+            fCombo.addFocusListener(this);
+            fCombo.addSelectionListener(this);
+        }
+        
+        public void widgetSelected(SelectionEvent e) {
+            final int index = fCombo.getSelectionIndex();
+            if (index > 0) {
+                setChanged();
+                notifyObservers(fComments[index - 1]);
+            }
+        }
+        
+        public void widgetDefaultSelected(SelectionEvent e) {
+        }
+        
+        public void focusGained(FocusEvent e) {
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+         */
+        public void focusLost(FocusEvent e) {
+            fCombo.removeSelectionListener(this);
+            try {
+                fCombo.setText(fMessage);
+            } finally {
+                fCombo.addSelectionListener(this);
+            }
+        }
+        
+        public void setEnabled(boolean enabled) {
+            fCombo.setEnabled(enabled);
+        }
+    }
+    
+    private static final String EMPTY_MESSAGE= Policy.bind("CommitCommentArea.0"); //$NON-NLS-1$
+    private static final String COMBO_MESSAGE= Policy.bind("CommitCommentArea.1"); //$NON-NLS-1$
+    
+    public static final String OK_REQUESTED = "OkRequested";//$NON-NLS-1$
+    public static final String COMMENT_MODIFIED = "CommentModified";//$NON-NLS-1$
+    
+    private TextBox fTextBox;
+    private ComboBox fComboBox;
+    
+    private IProject fMainProject;
+    private String fProposedComment;
+    private Composite fComposite;
+    
     /**
-	 * Method initializeValues.
-	 */
-	private void initializeValues() {
-		
-		// populate the previous comment list
-		for (int i = 0; i < comments.length; i++) {
-			previousCommentsCombo.add(HistoryView.flattenText(comments[i]));
-		}
-		
-		// We don't want to have an initial selection
-		// (see bug 32078: http://bugs.eclipse.org/bugs/show_bug.cgi?id=32078)
-		previousCommentsCombo.setText(""); //$NON-NLS-1$
-		
-		// determine the initial comment text
-		String initialComment = proposedComment;
-		if (initialComment == null) {
-			try {
-				initialComment = getCommitTemplate();
-			} catch (CVSException e) {
-				CVSUIPlugin.log(e);
-			}
-		}
-		if (initialComment != null && initialComment.length() != 0) {
-			text.setText(initialComment);
-		}
-	}
-
-	/**
-	 * Method signalCtrlEnter.
-	 */
-	private void signalCtrlEnter() {
-		firePropertyChangeChange(OK_REQUESTED, null, null);
-	}
-	
-    protected void signalCommentModified(String oldValue, String comment) {
-        firePropertyChangeChange(COMMENT_MODIFIED, oldValue, comment);
+     * @see org.eclipse.team.internal.ccvs.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
+     */
+    public void createArea(Composite parent) {
+        Dialog.applyDialogFont(parent);
+        initializeDialogUnits(parent);
+        
+        fComposite = createGrabbingComposite(parent, 1);
+        initializeDialogUnits(fComposite);
+        
+        fTextBox= new TextBox(fComposite, EMPTY_MESSAGE, getInitialComment());
+        
+        final String [] comments = CVSUIPlugin.getPlugin().getRepositoryManager().getPreviousComments();
+        fComboBox= new ComboBox(fComposite, COMBO_MESSAGE, comments);
+        
+        fComboBox.addObserver(fTextBox);
     }
+    
+    public String getComment(boolean save) {
+        final String comment= fTextBox.getText();
+        if (comment == null)
+            return ""; //$NON-NLS-1$
+        
+        final String stripped= strip(comment);
+        if (save && comment.length() > 0)
+            CVSUIPlugin.getPlugin().getRepositoryManager().addComment(comment);
 
-	private String getCommitTemplate() throws CVSException {
-		CVSTeamProvider provider = getProvider();
-		if (provider == null) return ""; //$NON-NLS-1$
-		String template = provider.getCommitTemplate();
-		if (template == null) template = ""; //$NON-NLS-1$
-		return template;
-	}
-	
-	/**
-	 * Method getProvider.
-	 */
-	private CVSTeamProvider getProvider() {
-		if (mainProject == null) return null;
-		return (CVSTeamProvider) RepositoryProvider.getProvider(mainProject, CVSProviderPlugin.getTypeId());
-	}
-	
-	/**
-	 * Return the entered comment
-	 * 
-	 * @return the comment
-	 */
-	public String[] getComments() {
-		return comments;
-	}
-	
-	/**
-	 * Returns the comment.
-	 * @return String
-	 */
-	public String getComment() {
-		if (comment != null && comment.length() > 0) finished();
-		return comment;
-	}
-
-	/**
-	 * Method setProject.
-	 * @param iProject
-	 */
-	public void setProject(IProject iProject) {
-		this.mainProject = iProject;
-	}
-	
-	private void finished() {
-		// strip template from the comment entered
-		try {
-			String commitTemplate = getCommitTemplate();
-			if (comment.startsWith(commitTemplate)) {
-				comment = comment.substring(commitTemplate.length());
-			} else if (comment.endsWith(commitTemplate)) {
-				comment = comment.substring(0, comment.length() - commitTemplate.length());
-			}
-		} catch (CVSException e) {
-			// we couldn't get the commit template. Log the error and continue
-			CVSUIPlugin.log(e);
-		}
-		// if there is still a comment, remember it
-		if (comment.length() > 0) {
-			CVSUIPlugin.getPlugin().getRepositoryManager().addComment(comment);
-		}
-	}
-	
-	public void setFocus() {
-		if (text != null) {
-			text.setFocus();
-		}
-	}
-
+        return stripped;
+    }
+    
+    public void setProject(IProject iProject) {
+        this.fMainProject = iProject;
+    }
+    
+    public void setFocus() {
+        if (fTextBox != null) {
+            fTextBox.setFocus();
+        }
+    }
+    
     public void setProposedComment(String proposedComment) {
-        this.proposedComment = proposedComment;
+        this.fProposedComment = proposedComment;
     }
-
+    
     public boolean hasCommitTemplate() {
         try {
-             String commitTemplate = getCommitTemplate();
+            String commitTemplate = getCommitTemplate();
             return commitTemplate != null && commitTemplate.length() > 0;
         } catch (CVSException e) {
             CVSUIPlugin.log(e);
             return false;
         }
     }
+    
+    public void setEnabled(boolean enabled) {
+        fTextBox.setEnabled(enabled);
+        fComboBox.setEnabled(enabled);
+    }
+    
+    public Composite getComposite() {
+        return fComposite;
+    }
+    
+    protected void firePropertyChangeChange(String property, Object oldValue, Object newValue) {
+        super.firePropertyChangeChange(property, oldValue, newValue);
+    }
+    
+    private String getInitialComment() {
+        if (fProposedComment != null)
+            return fProposedComment;
+        try {
+            return getCommitTemplate();
+        } catch (CVSException e) {
+            CVSUIPlugin.log(e);
+            return ""; //$NON-NLS-1$
+        }
+    }
 
-    public void setEnabled(boolean b) {
-        text.setEnabled(b);
-        previousCommentsCombo.setEnabled(b);
+    private String strip(String comment) {
+        // strip template from the comment entered
+        try {
+            final String commitTemplate = getCommitTemplate();
+            if (comment.startsWith(commitTemplate)) {
+                return comment.substring(commitTemplate.length());
+            } else if (comment.endsWith(commitTemplate)) {
+                return comment.substring(0, comment.length() - commitTemplate.length());
+            }
+        } catch (CVSException e) {
+            // we couldn't get the commit template. Log the error and continue
+            CVSUIPlugin.log(e);
+        }
+        return comment;
+    }
+
+    private CVSTeamProvider getProvider() {
+        if (fMainProject == null) return null;
+        return (CVSTeamProvider) RepositoryProvider.getProvider(fMainProject, CVSProviderPlugin.getTypeId());
+    }
+
+    private String getCommitTemplate() throws CVSException {
+        CVSTeamProvider provider = getProvider();
+        if (provider == null) 
+            return ""; //$NON-NLS-1$
+        final String template = provider.getCommitTemplate();
+        return template != null ? template : ""; //$NON-NLS-1$
     }
 }
