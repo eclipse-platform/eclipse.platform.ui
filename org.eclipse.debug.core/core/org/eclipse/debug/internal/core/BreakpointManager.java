@@ -78,11 +78,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * breakpoint extension.
 	 */
 	private static final String TYPE_NAME= "name"; //$NON-NLS-1$
-	
-	/**
-	 * Preference constant used to persist the auto group
-	 */
-    private static final String PREF_AUTO_GROUP = "AUTO_GROUP"; //$NON-NLS-1$
 
 	/**
 	 * A collection of breakpoints registered with this manager.
@@ -167,7 +162,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				DebugPlugin.log(e);
 			}
 		}
-		addBreakpoints((IBreakpoint[])added.toArray(new IBreakpoint[added.size()]), notify, true);
+		addBreakpoints((IBreakpoint[])added.toArray(new IBreakpoint[added.size()]), notify);
 	}
 	
 	/**
@@ -433,7 +428,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @see IBreakpointManager#addBreakpoints(IBreakpoint[])
 	 */
 	public void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException {
-	    addBreakpoints(breakpoints, true, false);
+	    addBreakpoints(breakpoints, true);
 	}	
 	
 	/**
@@ -444,15 +439,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @param loading whether the given breakpoints are being automatically loaded
 	 *  from previously persisted markers
 	 */
-	private void addBreakpoints(IBreakpoint[] breakpoints, boolean notify, final boolean loading) throws CoreException {
+	private void addBreakpoints(IBreakpoint[] breakpoints, boolean notify) throws CoreException {
 		List added = new ArrayList(breakpoints.length);
 		final List update = new ArrayList();
-		final String autoGroup = getAutoGroup();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
 			if (!getBreakpoints0().contains(breakpoint)) {
 				verifyBreakpoint(breakpoint);
-				if (autoGroup == null && breakpoint.isRegistered()) {
+				if (breakpoint.isRegistered()) {
 				    // If notify == false, the breakpoints are just being added at startup
 					added.add(breakpoint);
 					getBreakpoints0().add(breakpoint);
@@ -474,9 +468,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 						IBreakpoint breakpoint = (IBreakpoint)iter.next();
 						getBreakpoints0().add(breakpoint);
 						breakpoint.setRegistered(true);
-						if (!loading && autoGroup != null && autoGroup.length() > 0 && breakpoint.getGroup() == null) {
-						    breakpoint.setGroup(autoGroup);
-						}
 						fMarkersToBreakpoints.put(breakpoint.getMarker(), breakpoint);						
 					}
 				}
@@ -1020,23 +1011,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
             }
         }
         return typeName;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointManager#setAutoGroup(java.lang.String)
-     */
-    public void setAutoGroup(String group) {
-        if (group == null) {
-            group= ""; //$NON-NLS-1$
-        }
-        DebugPlugin.getDefault().getPluginPreferences().setValue(PREF_AUTO_GROUP, group);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointManager#getAutoGroup()
-     */
-    public String getAutoGroup() {
-        return DebugPlugin.getDefault().getPluginPreferences().getString(PREF_AUTO_GROUP);
     }
 }
 
