@@ -72,23 +72,25 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		}	
 	}	
 
-	//private static String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
-
-	private Text projectNameField;
-	private Text locationPathField;
-	private Button browseButton;
+	private Text fProjectNameField;
+	private Text fLocationPathField;
+	private Button fBrowseButton;
 	
 	private AntModel fAntModel;
 
-	private Listener locationModifyListener = new Listener() {
+	private Listener fLocationModifyListener = new Listener() {
 		public void handleEvent(Event e) {
-			fAntModel= getAntModel(getBuildFile(getProjectLocationFieldValue()));
-			setProjectName();
+			fAntModel= null;
+			File buildfile= getBuildFile(getProjectLocationFieldValue());
+			if (buildfile != null) {
+				fAntModel= getAntModel(buildfile);
+				setProjectName();
+			}
 			setPageComplete(validatePage());
 		}
 	};
 	
-	private Listener nameModifyListener = new Listener() {
+	private Listener fNameModifyListener = new Listener() {
 		public void handleEvent(Event e) {
 			setPageComplete(validatePage());
 		}
@@ -173,13 +175,13 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		projectLabel.setFont(dialogFont);
 
 		// new project name entry field
-		projectNameField = new Text(projectGroup, SWT.BORDER);
+		fProjectNameField = new Text(projectGroup, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-		projectNameField.setLayoutData(data);
-		projectNameField.setFont(dialogFont);
+		fProjectNameField.setLayoutData(data);
+		fProjectNameField.setFont(dialogFont);
 		
-		projectNameField.addListener(SWT.Modify, nameModifyListener);
+		fProjectNameField.addListener(SWT.Modify, fNameModifyListener);
 	}
 	/**
 	 * Creates the project location specification controls.
@@ -192,25 +194,25 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		Font dialogFont = projectGroup.getFont();
 
 		// project location entry field
-		this.locationPathField = new Text(projectGroup, SWT.BORDER);
+		fLocationPathField = new Text(projectGroup, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-		this.locationPathField.setLayoutData(data);
-		this.locationPathField.setFont(dialogFont);
+		fLocationPathField.setLayoutData(data);
+		fLocationPathField.setFont(dialogFont);
 
 		// browse button
-		this.browseButton = new Button(projectGroup, SWT.PUSH);
-		this.browseButton.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.13")); //$NON-NLS-1$
-		this.browseButton.setFont(dialogFont);
-		setButtonLayoutData(this.browseButton);
+		fBrowseButton = new Button(projectGroup, SWT.PUSH);
+		fBrowseButton.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.13")); //$NON-NLS-1$
+		fBrowseButton.setFont(dialogFont);
+		setButtonLayoutData(fBrowseButton);
 		
-		this.browseButton.addSelectionListener(new SelectionAdapter() {
+		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleBrowseButtonPressed();
 			}
 		});
 
-		locationPathField.addListener(SWT.Modify, locationModifyListener);
+		fLocationPathField.addListener(SWT.Modify, fLocationModifyListener);
 	}
 
 	/**
@@ -238,10 +240,10 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 * @return the project name in the field
 	 */
 	private String getProjectNameFieldValue() {
-		if (projectNameField == null) {
+		if (fProjectNameField == null) {
 			return ""; //$NON-NLS-1$
 		} 
-		return projectNameField.getText().trim();
+		return fProjectNameField.getText().trim();
 	}
 	/**
 	 * Returns the value of the project location field
@@ -250,7 +252,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 * @return the project location directory in the field
 	 */
 	private String getProjectLocationFieldValue() {
-		return locationPathField.getText().trim();
+		return fLocationPathField.getText().trim();
 	}
 	
 	/**
@@ -275,8 +277,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			String buildFileName= dialog.getFileName();
 			IPath path= filterPath.append(buildFileName).makeAbsolute();	
 			
-//			previouslyBrowsedDirectory = selectedDirectory;
-			locationPathField.setText(path.toOSString());
+			fLocationPathField.setText(path.toOSString());
 	}
 
 	/**
@@ -303,6 +304,10 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		}
 
 		if (fAntModel == null) {
+			if (getBuildFile(locationFieldContents) == null) {
+				setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.0")); //$NON-NLS-1$
+				return false;
+			} 
 			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.17")); //$NON-NLS-1$
 			return false;
 		}
@@ -336,7 +341,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		AntProjectNode node= fAntModel.getProjectNode();
 		String projectName= getProjectName(node);
 		
-		projectNameField.setText(projectName);
+		fProjectNameField.setText(projectName);
 	}
 
 	/**
@@ -345,7 +350,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 */
 	private File getBuildFile(String locationFieldContents) {
 		File buildFile = new File(locationFieldContents);
-		if (!buildFile.isFile() && buildFile.exists()) { 
+		if (!buildFile.isFile() || !buildFile.exists()) { 
 			return null;
 		}
 
@@ -365,18 +370,22 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		
 		final List javacNodes= new ArrayList();
 		getJavacNodes(javacNodes, projectNode);
+		if (javacNodes.size() > 1) {
+			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.20")); //$NON-NLS-1$
+			setPageComplete(false);
+			return null;
+		} else if (javacNodes.size() == 0) {
+			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.1")); //$NON-NLS-1$
+			setPageComplete(false);
+			return null;
+		}
 		final IJavaProject[] result= new IJavaProject[1];
 		final String projectName= getProjectNameFieldValue();
 		final File buildFile= getBuildFile(getProjectLocationFieldValue());
-		if (javacNodes.size() > 1) {
-			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.20")); //$NON-NLS-1$
-			return null;
-		}
 		
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				List javacTasks= resolveJavacTasks(javacNodes);
-				//TODO no javactasks...throw CoreException
 				ProjectCreator creator= new ProjectCreator();
 				Iterator iter= javacTasks.iterator();
 				while (iter.hasNext()) {
@@ -440,8 +449,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 				resolvedJavacTasks.add(((UnknownElement)javacTask).getRealThing());
 			} else {
 				resolvedJavacTasks.add(javacTask);
-			}
-			
+			}	
 		}
 		return resolvedJavacTasks;
 	}
@@ -529,7 +537,8 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if(visible)
-			this.locationPathField.setFocus();
+		if(visible) {
+			fLocationPathField.setFocus();
+		}
 	}
 }
