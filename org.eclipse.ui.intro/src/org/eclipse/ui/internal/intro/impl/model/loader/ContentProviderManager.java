@@ -22,7 +22,6 @@ import org.eclipse.ui.intro.config.*;
  * loaded models. <br>
  * For now, content provider model classes are used as keys in the hashtable,
  * and their corresponding classes as values.
- *  
  */
 
 public class ContentProviderManager {
@@ -87,7 +86,7 @@ public class ContentProviderManager {
             providerClass.init(site);
             contentProviders.put(provider, providerClass);
         } else
-            Log.info("Failed to create Intro model content provider: " //$NON-NLS-1$
+            Log.warning("Failed to create Intro model content provider: " //$NON-NLS-1$
                     + provider.getClassName());
         return providerClass;
     }

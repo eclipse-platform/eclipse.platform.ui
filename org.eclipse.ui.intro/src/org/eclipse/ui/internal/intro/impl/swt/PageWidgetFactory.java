@@ -323,7 +323,7 @@ public class PageWidgetFactory {
             IntroContentProvider provider) {
         // If we've already loaded the content provider for this element,
         // retrieve it, otherwise load the class.
-        // Create parent composite to hold daynamic content, and set layout
+        // Create parent composite to hold dynamic content, and set layout
         // accordingly.
         Composite container = toolkit.createComposite(parent);
         TableWrapLayout layout = new TableWrapLayout();
@@ -332,6 +332,7 @@ public class PageWidgetFactory {
         layout.leftMargin = 0;
         layout.rightMargin = 0;
         container.setLayout(layout);
+        
 
         IIntroContentProvider providerClass = ContentProviderManager.getInst()
                 .getContentProvider(provider);
@@ -341,7 +342,23 @@ public class PageWidgetFactory {
                     .createContentProvider(provider, site);
 
         if (providerClass != null) {
-            providerClass.createContent(provider.getId(), container, toolkit);
+            try {
+                providerClass.createContent(provider.getId(), container,
+                        toolkit);
+            } catch (Exception e) {
+                Log
+                        .warning("Failed to create the content of Intro model content provider: "
+                                + provider.getClassName());
+                // null provider.
+                providerClass = null;
+            }
+        }
+
+        if (providerClass == null) {
+            // we failed to create a provider class, create the embedded text.
+            IntroText text = provider.getIntroText();
+            if (text != null)
+                createText(container, text);
         }
         return container;
     }

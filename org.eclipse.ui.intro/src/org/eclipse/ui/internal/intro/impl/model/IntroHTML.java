@@ -31,6 +31,7 @@ public class IntroHTML extends AbstractTextElement {
      * type must be "inline" or "embed".
      */
     private static final String ATT_TYPE = "type"; //$NON-NLS-1$
+    // Default is UTF-8.
     private static final String ATT_ENCODING = "encoding"; //$NON-NLS-1$
 
     private String src;
@@ -43,6 +44,8 @@ public class IntroHTML extends AbstractTextElement {
         src = getAttribute(element, ATT_SRC);
         html_type = getAttribute(element, ATT_TYPE);
         encoding = getAttribute(element, ATT_ENCODING);
+        if (encoding == null)
+            encoding = "UTF-8";
         if (html_type != null && !html_type.equalsIgnoreCase("inline") //$NON-NLS-1$
                 && !html_type.equalsIgnoreCase("embed")) //$NON-NLS-1$
             // if type is not correct, null it.
@@ -97,7 +100,7 @@ public class IntroHTML extends AbstractTextElement {
 
     /**
      * @return Returns the encoding of the inlined file. This is not needed for
-     *         embedded files.
+     *         embedded files. Default is UTF-8.
      */
     public String getInlineEncoding() {
         return encoding;

@@ -913,6 +913,8 @@ public class IntroHTMLGenerator {
      *            the file that contains the target conent
      * @param charsetName -
      *            the encoding of the file to be read. If null, local encoding is used.
+     * 			  But the default of the model is UTF-8, so we should
+     *            not get a null encoding.
      * @return a StringBuffer containing the content in the file, or null
      */
     private StringBuffer readFromFile(String src, String charsetName) {

@@ -29,17 +29,11 @@
       <annotation>
          <documentation>
             This element is used to describe a page to be displayed. The intro can display both dynamic and static pages.&lt;br&gt;
-&lt;br&gt;
 Content for dynamic pages is generated from the subelements of the page, described below. The style or alt-style will be applied depending on the presentation. The styles can be further enhanced by referencing the id or class-id.&lt;br&gt;
-&lt;br/&gt;
 Static pages allow for the reuse of existing HTML documents within one&apos;s introduction, and can be linked to from any static or dynamic page.  Static pages are not defined in a page element, they are simply html files that can be linked to by other pages.&lt;br&gt;
-&lt;br/&gt;
-The home page, whose id is specified in the presentation element of the intro config extension point, can have a url indicating that it is a static page.  If no url is specified then the home page is assumed to be dynamic.  All other pages described using the page element are dynamic.  
-&lt;br/&gt;
- Also note that when the SWT presentation is used and a static page is to be displayed, an external brower is launched and the current page remains visible.&lt;br/&gt;
-&lt;br/&gt;
-
-The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt; subelement is used to group related content and apply style across the grouped content. A &lt;b&gt;link&lt;/b&gt; subelement defines a link which can be used to link to a static or dynamic page and run an intro action/command.  A link is normally defined at the page level to navigate between main pages versus links within a page. A &lt;b&gt;text&lt;/b&gt; subelement defines textual content at the page level. A &lt;b&gt;head&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for additional html to be added to the HTML &lt;b&gt;head&lt;/b&gt; section. This is useful for adding java scripts or extra style sheets. An &lt;b&gt;img&lt;/b&gt; subelement defines image content for the page level. An &lt;b&gt;include&lt;/b&gt; subelement allows for reuse of any element other than a page. An &lt;b&gt;html&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for the embedding or inclusion of html into the page&apos;s content. Embedding allows for a fully defined html file to be embeded within an HTML &lt;b&gt;object&lt;/b&gt; by referencing the html file. Inclusion allows for including an html snippet directly from an html file. A &lt;b&gt;title&lt;/b&gt; subelement defines the title of the page.  An &lt;b&gt;anchor&lt;/b&gt; subelement defines a point where external contributions can be made by an &lt;extensionContent&gt; element.
+The home page, whose id is specified in the presentation element of the intro config extension point, can have a url indicating that it is a static page.  If no url is specified then the home page is assumed to be dynamic.  All other pages described using the page element are dynamic.&lt;br&gt;
+ Also note that when the SWT presentation is used and a static page is to be displayed, an external brower is launched and the current page remains visible.&lt;br&gt;
+The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt; subelement is used to group related content and apply style across the grouped content. A &lt;b&gt;link&lt;/b&gt; subelement defines a link which can be used to link to a static or dynamic page and run an intro action/command.  A link is normally defined at the page level to navigate between main pages versus links within a page. A &lt;b&gt;text&lt;/b&gt; subelement defines textual content at the page level. A &lt;b&gt;head&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for additional html to be added to the HTML &lt;b&gt;head&lt;/b&gt; section. This is useful for adding java scripts or extra style sheets. An &lt;b&gt;img&lt;/b&gt; subelement defines image content for the page level. An &lt;b&gt;include&lt;/b&gt; subelement allows for reuse of any element other than a page. An &lt;b&gt;html&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for the embedding or inclusion of html into the page&apos;s content. Embedding allows for a fully defined html file to be embeded within an HTML &lt;b&gt;object&lt;/b&gt; by referencing the html file. Inclusion allows for including an html snippet directly from an html file. A &lt;b&gt;title&lt;/b&gt; subelement defines the title of the page.  An &lt;b&gt;anchor&lt;/b&gt; subelement defines a point where external contributions can be made by an &amp;lt;extensionContent&amp;gt; element.
          </documentation>
       </annotation>
       <complexType>
@@ -190,7 +184,7 @@ This markup is only to be used with an HTML based intro part implementation. It 
          <attribute name="encoding" type="string">
             <annotation>
                <documentation>
-                  an optional attribute to specify the encoding of the inlined file containing the head snippet.
+                  an optional attribute to specify the encoding of the inlined file containing the head snippet. Default is UTF-8. Since 3.0.1
                </documentation>
             </annotation>
          </attribute>
@@ -264,11 +258,8 @@ This markup is only to be used with an HTML based intro part implementation. It 
          <attribute name="url" type="string" use="required">
             <annotation>
                <documentation>
-                  A valid URL to an external web site, a static html file, or an Intro URL that represents an Intro action. All intro URLs have the following form:  http://org.eclipse.ui.intro/&lt;action name&gt;?param1=value1&amp;param2=value2 and will be processed by the intro framework.
-
-&lt;br&gt;&lt;br&gt;
-The predefined actions will be described using this format:
-&lt;br&gt;
+                  A valid URL to an external web site, a static html file, or an Intro URL that represents an Intro action. All intro URLs have the following form:  http://org.eclipse.ui.intro/&amp;lt;action name&amp;gt;?param1=value1&amp;amp;param2=value2 and will be processed by the intro framework.&lt;br&gt;
+The predefined actions will be described using this format:&lt;br&gt;
 &lt;p style=&quot;margin-left:15px;&quot;&gt;
 &lt;b&gt;action name&lt;/b&gt; - descripton of action&lt;br&gt;
 &lt;i&gt;action parameter1&lt;/i&gt; - description of parameter&lt;br&gt;
@@ -516,7 +507,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
          <attribute name="encoding" type="string">
             <annotation>
                <documentation>
-                  an optional attribute to specify the encoding of the inlined file (in the case where type=inline is specified). If not specified, the local file encoding is used.
+                  an optional attribute to specify the encoding of the inlined file (in the case where type=inline is specified). If not specified, the default is UTF-8. Since 3.0.1
                </documentation>
             </annotation>
          </attribute>
@@ -614,7 +605,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
          <documentation>
             A proxy for an intro content provider, which allows an intro page to dynamically pull data from various sources (e.g., the web, eclipse, etc) and provide content at runtime based on this dynamic data.  If the IIntroContentProvider class that is specified in the class attribute can not be loaded, then the contents of the text element will be rendered instead. 
 This is a dynamic version of the html intro tag. While the html tag allows for embedding or inlining a static html content into the generated html intro page, the contentProvider tag allows for dynamic creation of that content at runtime. 
-Another difference between the tags is that the html tag is only supported for the HTML presentation, while this contentProvider tag is supported for both the HTML and SWT presentations.
+Another difference between the tags is that the html tag is only supported for the HTML presentation, while this contentProvider tag is supported for both the HTML and SWT presentations. Since 3.0.1
          </documentation>
       </annotation>
       <complexType>

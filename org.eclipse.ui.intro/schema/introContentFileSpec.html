@@ -11,14 +11,14 @@
 <style>@import url("book.css");</style>
 <!-- default schema documentation stylesheets -->
 <style>@import url("schema.css");</style>
-
+<style>@import url("../../schema.css");</style>
 <title>Intro Content File XML Format</title>
 </head>
 
 <body>
 
 <h1>Intro Content File XML Format</h1>
-<p>Version 3.0</p>
+<p>Version 3.0.1</p>
 <p>This document describes the intro content file structure as a series of
 DTD fragments (machine readable <a href="IntroContent.exsd">XML schema</a>).</p>
 <h2><code>introContent</code></h2>
@@ -168,7 +168,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
 <li><b>type</b> - if 'embed', a valid (full) HTML document will be embedded using HTML 'OBJECT' tag. If 'inline', value of 'src' will be treated as a snippet of HTML to emit 'in-place'. (if type is not specified, this html object is ignored by the intro configuration).</li>
 <li><b>style-id</b> - A means to classify this HTML element into a given category so that a common style may be applied.</li>
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
-<li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file (in the case where type=inline is specified). If not specified, the local file encoding is used.</li>
+<li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file (in the case where type=inline is specified). If not specified, the default is UTF-8. Since 3.0.1</li>
 </ul>
 <h2><code>title</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.title">title</a> EMPTY&gt;</p>
@@ -223,7 +223,7 @@ This markup is only to be used with an HTML based intro part implementation. It 
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>src</b> - relative or absolute URL to a file containing HTML to include directly into the HTML head section.</li>
-<li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file containing the head snippet.</li>
+<li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file containing the head snippet. Default is UTF-8. Since 3.0.1</li>
 </ul>
 <h2><code>img</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.img">img</a> EMPTY&gt;</p>
@@ -285,7 +285,7 @@ html tag allows for embedding or inlining a static html content into the
 generated html intro page, the contentProvider tag allows for dynamic creation 
 of that content at runtime. Another difference between the tags is that the html 
 tag is only supported for the HTML presentation, while this contentProvider tag 
-is supported for both the HTML and SWT presentations.</p>
+is supported for both the HTML and SWT presentations. Since 3.0.1</p>
 <p><br>
 &nbsp;</p>
 <ul class="ConfigMarkup" id="attlistDesc">

@@ -24,6 +24,7 @@ public class IntroHead extends AbstractIntroElement {
     protected static final String TAG_HEAD = "head"; //$NON-NLS-1$
 
     private static final String ATT_SRC = "src"; //$NON-NLS-1$
+    // default encoding is UTF-8
     private static final String ATT_ENCODING = "encoding"; //$NON-NLS-1$
 
     private String src;
@@ -33,6 +34,8 @@ public class IntroHead extends AbstractIntroElement {
         super(element);
         src = element.getAttribute(ATT_SRC);
         encoding = element.getAttribute(ATT_ENCODING);
+        if (encoding == null)
+            encoding = "UTF-8";
 
         // Resolve.
         src = IntroModelRoot.getPluginLocation(src, element);
@@ -42,6 +45,8 @@ public class IntroHead extends AbstractIntroElement {
         super(element, bundle);
         src = getAttribute(element, ATT_SRC);
         encoding = getAttribute(element, ATT_ENCODING);
+        if (encoding == null)
+            encoding = "UTF-8";
 
         // Resolve.
         src = IntroModelRoot.getPluginLocation(src, bundle);
@@ -55,8 +60,7 @@ public class IntroHead extends AbstractIntroElement {
     }
 
     /**
-     * @return Returns the encoding of the inlined file. This is not needed for
-     *         embedded files.
+     * @return Returns the encoding of the inlined file. Default is UTF-8.
      */
     public String getInlineEncoding() {
         return encoding;
