@@ -28,6 +28,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 
 public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
@@ -68,8 +69,8 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	private ConfigListener configListener;
 	private Label requiredSpaceLabel;
 	private Label availableSpaceLabel;
-	private PendingOperation[] jobs;
-	private Hashtable targetSites;
+	private PendingOperationAdapter[] jobs;
+	private Hashtable targetSites;  // keys are PendingOperationAdapter
 	private Button addButton;
 	private Button deleteButton;
 	private HashSet added;
@@ -105,8 +106,8 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 				UpdateUI.getDefault().getLabelProvider();
 			if (obj instanceof IConfiguredSite)
 				return provider.getLocalSiteImage((IConfiguredSite) obj);
-			if (obj instanceof PendingOperation) {
-				PendingOperation job = (PendingOperation) obj;
+			if (obj instanceof PendingOperationAdapter) {
+				PendingOperationAdapter job = (PendingOperationAdapter) obj;
 				boolean patch = job.getFeature().isPatch();
 				ImageDescriptor base =
 					patch
@@ -125,8 +126,8 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
 		public String getColumnText(Object obj, int col) {
-			if (obj instanceof PendingOperation && col == 0) {
-				PendingOperation job = (PendingOperation) obj;
+			if (obj instanceof PendingOperationAdapter && col == 0) {
+				PendingOperationAdapter job = (PendingOperationAdapter) obj;
 				IFeature feature = job.getFeature();
 				return feature.getLabel()
 					+ " "
@@ -155,7 +156,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 		public void installSiteRemoved(IConfiguredSite csite) {
 			siteViewer.remove(csite);
 			if (added!=null) added.remove(csite);
-			PendingOperation job = (PendingOperation)siteViewer.getInput();
+			PendingOperationAdapter job = (PendingOperationAdapter)siteViewer.getInput();
 			if (job!=null) {
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 				IConfiguredSite defaultSite = computeTargetSite(jobSite);
@@ -180,88 +181,9 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	}
 
 	public void setJobs(PendingOperation[] jobs) {
-		this.jobs = jobs;
-	}
-
-	public static IConfiguredSite getDefaultTargetSite(
-		IInstallConfiguration config,
-		PendingOperation pendingChange) {
-		return getDefaultTargetSite(config, pendingChange, true);
-	}
-
-	private static IConfiguredSite getDefaultTargetSite(
-		IInstallConfiguration config,
-		PendingOperation pendingChange,
-		boolean checkAffinityFeature) {
-		IFeature oldFeature = pendingChange.getOldFeature();
-		IFeature newFeature = pendingChange.getFeature();
-		if (oldFeature != null) {
-			// We should install into the same site as
-			// the old feature
-			try {
-				return UpdateManager.getConfigSite(oldFeature, config);
-			} catch (CoreException e) {
-				UpdateUI.logException(e, false);
-				return null;
-			}
-		}
-
-		// This is a new install. Check if there is 
-		// a disabled feature with the same ID
-		String newFeatureID =
-			newFeature.getVersionedIdentifier().getIdentifier();
-		IConfiguredSite sameSite = findSameIdFeatureSite(config, newFeatureID);
-		if (sameSite != null) {
-			return sameSite;
-		}
-
-		if (checkAffinityFeature) {
-			return getAffinitySite(config, newFeature);
-		}
-		return null;
-	}
-
-	private static IConfiguredSite getAffinitySite(
-		IInstallConfiguration config,
-		IFeature newFeature) {
-		// check if the affinity feature is installed
-		String affinityID = newFeature.getAffinityFeature();
-		if (affinityID != null) {
-			IConfiguredSite affinitySite =
-				findSameIdFeatureSite(config, affinityID);
-			if (affinitySite != null)
-				return affinitySite;
-		}
-		return null;
-	}
-
-	private static IConfiguredSite findSameIdFeatureSite(
-		IInstallConfiguration config,
-		String featureID) {
-		if (featureID == null)
-			return null;
-		IConfiguredSite[] sites = config.getConfiguredSites();
-		for (int i = 0; i < sites.length; i++) {
-			IConfiguredSite site = sites[i];
-			IFeatureReference[] refs = site.getFeatureReferences();
-			for (int j = 0; j < refs.length; j++) {
-				IFeatureReference ref = refs[j];
-				try {
-					IFeature feature = ref.getFeature(null);
-					if (featureID
-						.equals(
-							feature
-								.getVersionedIdentifier()
-								.getIdentifier())) {
-						// found it
-						return site;
-					}
-				} catch (CoreException e) {
-					UpdateUI.logException(e, false);
-				}
-			}
-		}
-		return null;
+		this.jobs = new PendingOperationAdapter[jobs.length];
+		for (int i=0; i<jobs.length; i++)
+			this.jobs[i] = new PendingOperationAdapter(jobs[i]);
 	}
 
 	public void dispose() {
@@ -374,7 +296,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	}
 
 	private void handleJobsSelected(IStructuredSelection selection) {
-		PendingOperation job = (PendingOperation) selection.getFirstElement();
+		PendingOperationAdapter job = (PendingOperationAdapter) selection.getFirstElement();
 		siteViewer.setInput(job);
 		JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 		addButton.setEnabled(jobSite.affinitySite == null);
@@ -387,15 +309,15 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	private void computeDefaultTargetSites() {
 		targetSites.clear();
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = jobs[i];
+			PendingOperation job = jobs[i].getJob();
 			JobTargetSite jobSite = new JobTargetSite();
 			jobSite.job = job;
-			jobSite.defaultSite = getDefaultTargetSite(config, job, false);
-			jobSite.affinitySite = getAffinitySite(config, job.getFeature());
+			jobSite.defaultSite = UpdateManager.getDefaultTargetSite(config, job, false);
+			jobSite.affinitySite = UpdateManager.getAffinitySite(config, job.getFeature());
 			if (jobSite.affinitySite == null)
 				jobSite.affinitySite = job.getDefaultTargetSite();
 			jobSite.targetSite = computeTargetSite(jobSite);
-			targetSites.put(job, jobSite);
+			targetSites.put(jobs[i], jobSite);
 		}
 	}
 	
@@ -419,7 +341,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 		siteViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
 				IConfiguredSite site = (IConfiguredSite) obj;
-				PendingOperation job = (PendingOperation) siteViewer.getInput();
+				PendingOperationAdapter job = (PendingOperationAdapter) siteViewer.getInput();
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 				return getSiteVisibility(site, jobSite);
 			}
@@ -514,7 +436,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 
 	private void selectTargetSite(IStructuredSelection selection) {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
-		PendingOperation job = (PendingOperation) siteViewer.getInput();
+		PendingOperationAdapter job = (PendingOperationAdapter) siteViewer.getInput();
 		if (job != null) {
 			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 			jobSite.targetSite = site;
@@ -619,7 +541,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	private long computeRequiredSizeFor(IConfiguredSite site) {
 		long totalSize = 0;
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = jobs[i];
+			PendingOperationAdapter job = jobs[i];
 			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 			if (site.equals(jobSite.targetSite)) {
 				long jobSize =
@@ -661,7 +583,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 					setPageComplete(false);
 					return;
 				}
-			}
+			} 
 		}
 		verifyNotEmpty(empty);
 	}
@@ -685,7 +607,7 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	public JobTargetSite[] getTargetSites() {
 		JobTargetSite[] sites = new JobTargetSite[jobs.length];
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = jobs[i];
+			PendingOperationAdapter job = jobs[i];
 			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 			sites[i] = jobSite;
 		}
@@ -693,7 +615,16 @@ public class MultiTargetPage2 extends BannerPage2 implements IDynamicPage2 {
 	}
 
 	public IConfiguredSite getTargetSite(PendingOperation job) {
-		JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
+		// Find the adapter for this job
+		PendingOperationAdapter jobAdapter = null;
+		for (int i=0; jobs != null && i<jobs.length; i++)
+			if (job == jobs[i].getJob()) {
+				jobAdapter = jobs[i];
+				break;
+			}
+		if (jobAdapter == null) 
+			return null;	
+		JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobAdapter);
 		if (jobSite != null)
 			return jobSite.targetSite;
 		return null;
