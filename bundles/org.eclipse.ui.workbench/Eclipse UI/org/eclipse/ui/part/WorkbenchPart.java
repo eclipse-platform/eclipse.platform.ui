@@ -214,6 +214,9 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
 				configElement.getDeclaringExtension().getNamespace(),
 				strIcon);
+	
+	if (imageDescriptor == null)
+		return; 
 
 	/* remember the image in a separatly from titleImage,
 	 * since it must be disposed even if the titleImage is changed
