@@ -96,6 +96,8 @@ public class OrderedLock implements ILock {
 				if (acquire(Long.MAX_VALUE))
 					return;
 			} catch (InterruptedException e) {
+				//clear the interrupted state
+				Thread.interrupted();
 			}
 		}
 	}
@@ -178,7 +180,6 @@ public class OrderedLock implements ILock {
 	public synchronized int getDepth()  {
 		return depth;
 	}
-
 	/* (non-Javadoc)
 	 * @see ILock#release
 	 */
