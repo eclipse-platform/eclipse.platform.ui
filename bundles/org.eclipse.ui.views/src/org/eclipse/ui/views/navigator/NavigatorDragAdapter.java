@@ -29,6 +29,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 
 	private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages.getString("DragAdapter.title"); //$NON-NLS-1$
 	private static final String CHECK_MOVE_MESSAGE = ResourceNavigatorMessages.getString("DragAdapter.checkMoveMessage"); //$NON-NLS-1$
+	private static final String CHECK_DELETE_MESSAGE = ResourceNavigatorMessages.getString("DragAdapter.checkDeleteMessage"); //$NON-NLS-1$	
 
 	/**
 	 * Constructs a new drag adapter.
@@ -44,16 +45,19 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 			return;
 		}
 		final int typeMask = IResource.FOLDER | IResource.FILE;
-		DragSource dragSource = (DragSource) event.widget;
-		Control control = dragSource.getControl();
-		Shell shell = control.getShell();
-		
 		if (event.detail == DND.DROP_MOVE) {
-			IResource[] resources = getSelectedResources(typeMask, shell);
+			IResource[] resources = getSelectedResources(typeMask);	
+			DragSource dragSource = (DragSource) event.widget;
+			Control control = dragSource.getControl();
+			Shell shell = control.getShell();
+			ReadOnlyStateChecker checker;
 			
-			//delete the old elements
-			if (resources == null)
+			if (resources == null || resources.length == 0)
 				return;
+			
+			checker = new ReadOnlyStateChecker(shell, CHECK_MOVE_TITLE, CHECK_DELETE_MESSAGE);
+			resources = checker.checkReadOnlyResources(resources);		
+			//delete the old elements
 			for (int i = 0; i < resources.length; i++) {
 				try {
 					resources[i].delete(IResource.KEEP_HISTORY | IResource.FORCE, null);
@@ -62,7 +66,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 				}
 			}
 		} else if (event.detail == DND.DROP_TARGET_MOVE) {
-			IResource[] resources = getSelectedResources(typeMask, shell);
+			IResource[] resources = getSelectedResources(typeMask);
 
 			// file moved for us by OS, no need to delete the resources, just
 			// update the view
@@ -82,12 +86,8 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	 */
 	public void dragSetData(DragSourceEvent event) {
 		final int typeMask = IResource.FILE | IResource.FOLDER;
-
-		DragSource dragSource = (DragSource) event.widget;
-		Control control = dragSource.getControl();
-		Shell shell = control.getShell();
-
-		IResource[] resources = getSelectedResources(typeMask, shell);
+		IResource[] resources = getSelectedResources(typeMask);
+		
 		if (resources == null || resources.length == 0)
 			return;
 
@@ -114,7 +114,6 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	 * @see DragSourceListener#dragStart
 	 */
 	public void dragStart(DragSourceEvent event) {
-
 		// Workaround for 1GEUS9V
 		DragSource dragSource = (DragSource) event.widget;
 		Control control = dragSource.getControl();
@@ -135,7 +134,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		event.doit = true;
 	}
 	
-	private IResource[] getSelectedResources(int resourceTypes, Shell shell) {
+	private IResource[] getSelectedResources(int resourceTypes) {
 		List resources = new ArrayList();
 		IResource[] result = new IResource[0];
 
@@ -160,9 +159,6 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		}
 		result = new IResource[resources.size()];
 		resources.toArray(result);
-		ReadOnlyStateChecker checker =
-			new ReadOnlyStateChecker(shell, CHECK_MOVE_TITLE, CHECK_MOVE_MESSAGE);
-
-		return checker.checkReadOnlyResources(result);
+		return result;
 	}
 }
