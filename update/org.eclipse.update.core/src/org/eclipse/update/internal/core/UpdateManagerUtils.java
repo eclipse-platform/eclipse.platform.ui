@@ -28,6 +28,8 @@ public class UpdateManagerUtils {
 		table.put("greaterOrEqual", new Integer(IImport.RULE_GREATER_OR_EQUAL)); //$NON-NLS-1$
 	}
 
+	private static Writer writer;
+
 	/**
 	 * return the urlString if it is a absolute URL
 	 * otherwise, return the default URL if the urlString is null
@@ -580,9 +582,9 @@ public class UpdateManagerUtils {
 		String os = candidate.getOS();
 		String ws = candidate.getWS();
 		String arch = candidate.getOSArch();
-		if (os!=null && isMatching(os, BootLoader.getOS())==false) return false;
-		if (ws!=null && isMatching(ws, BootLoader.getWS())==false) return false;
-		if (arch!=null && isMatching(arch, BootLoader.getOSArch())==false) return false;
+		if (os!=null && isMatching(os, SiteManager.getOS())==false) return false;
+		if (ws!=null && isMatching(ws, SiteManager.getWS())==false) return false;
+		if (arch!=null && isMatching(arch, SiteManager.getOSArch())==false) return false;
 		return true;
 	}
 
@@ -597,5 +599,108 @@ public class UpdateManagerUtils {
 		}
 		return false;
 	}
+	
+/**
+ * write XML file
+ */
+public static class Writer {
 
+	private PrintWriter w;
+	private OutputStream out;
+	private OutputStreamWriter outWriter;
+	private BufferedWriter buffWriter;
+	private String encoding;
+
+	/*
+	 * 
+	 */
+	private Writer() {
+		super();
+	}
+	
+	public void init(File file, String encoding) throws FileNotFoundException, UnsupportedEncodingException{
+		this.encoding = encoding;
+		out = new FileOutputStream(file);
+		outWriter = new OutputStreamWriter(out, encoding); //$NON-NLS-1$
+		buffWriter = new BufferedWriter(outWriter);
+		w = new PrintWriter(buffWriter);
+	}
+
+	
+	/*
+	 * 
+	 */
+	public void write(IWritable element) {
+		w.println("<?xml version=\"1.0\" encoding=\""+encoding+"\"?>"); //$NON-NLS-1$
+		w.println(""); //$NON-NLS-1$
+		w.println("<!-- File written by Update manager 2.0 -->"); //$NON-NLS-1$
+		w.println("<!-- comments in this file are not preserved -->"); //$NON-NLS-1$
+		w.println(""); //$NON-NLS-1$
+		 ((IWritable) element).write(0, w);
+		close();
+	}
+	
+	/*
+	 * 
+	 */
+	 public void close(){
+	 		w.close();
+	 }
+
+	/*
+	 * 
+	 */
+	private static void appendEscapedChar(StringBuffer buffer, char c) {
+		String replacement = getReplacement(c);
+		if (replacement != null) {
+			buffer.append('&');
+			buffer.append(replacement);
+			buffer.append(';');
+		} else {
+			if ((c >= ' ' && c <= 0x7E) || c == '\n' || c == '\r' || c == '\t') {
+				buffer.append(c);
+			} else {
+				buffer.append("&#"); //$NON-NLS-1$
+				buffer.append(Integer.toString(c));
+				buffer.append(';');
+			}
+		}
+	}
+
+	/*
+	 * 
+	 */
+	public static String xmlSafe(String s) {
+		StringBuffer result = new StringBuffer(s.length() + 10);
+		for (int i = 0; i < s.length(); ++i)
+			appendEscapedChar(result, s.charAt(i));
+		return result.toString();
+	}
+	
+	/*
+	 * 
+	 */
+	private static String getReplacement(char c) {
+		// Encode special XML characters into the equivalent character references.
+		// These five are defined by default for all XML documents.
+		switch (c) {
+			case '<' :
+				return "lt"; //$NON-NLS-1$
+			case '>' :
+				return "gt"; //$NON-NLS-1$
+			case '"' :
+				return "quot"; //$NON-NLS-1$
+			case '\'' :
+				return "apos"; //$NON-NLS-1$
+			case '&' :
+				return "amp"; //$NON-NLS-1$
+		}
+		return null;
+	}
+}
+	public static Writer getWriter(File file,String encoding) throws FileNotFoundException, UnsupportedEncodingException {
+		if (writer==null) writer = new Writer();
+		writer.init(file,encoding);
+		return writer;
+	}
 }
