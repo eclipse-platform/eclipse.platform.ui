@@ -1,0 +1,118 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Build">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>The Workbench Test Framework</title>
+</head>
+<body>
+
+<h3>
+Plugin Test Practices</h3>
+In our own testing we have discovered a number of common test patterns.&nbsp;
+In order to encourage a consistent approach for testing they are published
+below.
+<p><b>Setters, Getters and Commands</b>
+<p>Scenario: You want to test setters, getters, and commands in an interface.
+<p>Method: Call the setter or command which affects the object state.&nbsp;
+Call the getter to verify that state.&nbsp; If you can't see this state
+see to "Piercing an Interface".
+<p><b>Subclass Superclass</b>
+<p>Scenario: You want to test D, which is a subclass of B.
+<p>Method: Implement a test case for B called BTest.&nbsp; Then create
+a subclass of BTest called DTest which tests D the additional methods on
+D.&nbsp; Add a factory method to BTest to create any required test objects
+which may be specific to the test case and override it in DTest.&nbsp;
+When this approach is taken you inherit all of the BTest methods within
+the subclass DTest.
+<p><b>Event Notification</b>
+<p>Scenario: You want to test Source, a class which fires events when a
+particular situation occurs.
+<p>Method: Implement a listener for Source which can record the reception
+of events. Then write a test class for Source called SourceTest which does
+something which should cause those events to fire.&nbsp; Verify the reception
+of events afterwards.
+<p>Additional Tips: The CallHistory class in org.eclipse.ui.tests.util can
+be used to record the methods invoked in a target object.&nbsp; If the
+listener can be added then test the removal of the listener also.&nbsp;
+Make sure that events are not received after the listener has been removed.
+<p><b>Avoiding Global State</b>
+<p>Scenario: In Eclipse the workbench is a global object.&nbsp; Unfortunately,
+this means that one test case may modify that state of the workbench and
+affect the outcome of other unrelated test cases.&nbsp; How can you avoid
+this problem?
+<p>Method: If the test case modifies the state of a window or something
+in the window you should create a new window as part of the setUp for the
+test case.&nbsp; Run the test code within that window and then close the
+test window in the tearDown method.&nbsp; The modified state will be discarded
+when the window is closed.
+<p>Additional Tips: The UITestCase class in org.eclipse.ui.tests.util can
+be used as a superclass for your test case.&nbsp; It provides useful methods
+for the creation of new windows, pages, etc, and their disposal.
+<p><b>Piercing the Encapsulation</b>
+<p>Scenario: To test the behavior of commands which modify the state of
+the object when there are no public interfaces to query that state.
+<p>Method: If possible, cast the interface to a concrete class with additional
+public methods.&nbsp; For instance, in the workbench the underlying structure
+for IWorkbench is exposed in Workbench.&nbsp; Given a Workbench object,
+you can get the menu, toolbar, etc, and interact directly with those objects
+to verify their state or invoke them directly.
+<p>Additional Tips: The ActionUtil class in org.eclipse.ui.tests.util can
+be used to invoke actions within a window or menu manager.
+<p><b>Extension Creation</b>
+<p>Scenario: You want to test the creation of an extension.&nbsp; For instance,
+the IWorkbenchPage has a method called openEditor which creates an editor
+extension, and another called showView which creates a view extension.&nbsp;
+How do you test these?
+<p>Method: Obviously we can test these methods by invoking them.&nbsp;
+However, each of them take an editor or view id.&nbsp; Which id's do we
+use?&nbsp; If we reference views and editors which exist within the Workbench
+UI Standard Components project the test case is vulnerable to change in
+those components.&nbsp; But we're not testing those standard components,
+we're actually testing IWorkbenchPage, so it is better to implement some
+light weight mock views and editors which do nothing more than record their
+own creation and lifecycle.
+<p><b>Extension Lifecycle</b>
+<p>Scenario: Within the workbench there are various interfaces, such as
+IViewPart, which are defined as API and implemented by plugin code.&nbsp;
+There is no need to test the implementation of an interface like this if
+you define it and expect others to implement it.&nbsp; However, it is important
+to test the lifecycle of the object as implemented by those objects which
+create and call the interface implementation.
+<p>Method: Define a class X which implements the interface and records
+the invocation of various methods.&nbsp; Create a scenario where this class
+is instantiated and should receive events.&nbsp; Afterwards, test that
+those methods were called.
+<p>Additional Tips: The CallHistory class in org.eclipse.ui.tests.util can
+be used to record the methods invoked in a target object.
+<p><b>Session Persistence</b>
+<p>Scenario: You want to test the persistence of state from one session
+to the next.
+<p>Method: You need to create two test cases.&nbsp; One test case will
+set up the state.&nbsp; The other will verify the state.&nbsp; Run them
+sequentially in two separate processes.
+<p><b>Testing Mixins</b>
+<p>Scenario: Within the workbench there are many classes which implement
+a particular interface.&nbsp; Given the responsability defined by the class
+and the interfaces separately, how do you organize the test cases?
+<p>Method: You may choose to use a one to one rule of thumb.&nbsp; Create
+one test case class for each class or interface in the mixin.&nbsp; This
+hierarchical separation makes it easier to reuse each test case when an
+interface is implemented by more than one class.&nbsp; It also simplifies
+the accounting required to track which test cases have been written.
+<p><b>Where Do I Stop?</b>
+<p>Scenario: The workbench has many layers.&nbsp; If you are a plugin developer
+what are the bounds of the area you should test?
+<p>Method: In general, you should assume that everything you rely upon
+works.&nbsp; If you don't take this approach you will spend endless hours
+testing code written by other people. For instance, in the workbench UI
+we don't test JFace, SWT, or core.&nbsp; They have their own test suites
+and are assumed to work.&nbsp; On the other hand, you should at least write
+tests for every API which you provide to others.&nbsp; In Eclipse we have
+very strong rules for API compatability, and your own test cases allow
+you to change the implementation of API with some confidence.
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>
