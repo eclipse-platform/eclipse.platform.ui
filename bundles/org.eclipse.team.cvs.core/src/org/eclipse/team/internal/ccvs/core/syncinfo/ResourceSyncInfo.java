@@ -427,4 +427,11 @@ public class ResourceSyncInfo {
 			isDeleted = false;
 		}
 	}
+	
+	/*
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		return getEntryLine(true);
+	}
 }
