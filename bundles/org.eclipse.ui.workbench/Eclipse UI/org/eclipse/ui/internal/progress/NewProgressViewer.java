@@ -265,7 +265,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
  			refresh();
 		}
 		boolean isLinkEnabled() {
-			return !dialogContext && linkEnabled;
+			return !dialogContext && linkEnabled && gotoAction != null;
 		}
 		public void handleEvent(Event e) {
 			super.handleEvent(e);
@@ -325,9 +325,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			if (t == null)
 				t= "";	//$NON-NLS-1$
 			if (!t.equals(text)) {
-				if (gotoAction == null || gotoAction.getToolTipText() == null)
-					setToolTipText(t);
 				text= t;
+				updateToolTip();
 				redraw();
 			}
 		}
@@ -346,12 +345,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				// end of temporary workaround
 
 				gotoAction.addPropertyChangeListener(this);
-				String tooltip= gotoAction.getToolTipText();
-				if (tooltip != null)
-					setToolTipText(tooltip);
-			} else {
-				setToolTipText(text);
 			}
+			updateToolTip();
 			setLinkEnable(action != null && action.isEnabled());
 		}
 		private void setLinkEnable(boolean enable) {
@@ -359,7 +354,17 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				linkEnabled= enable;
 				if (isLinkEnabled())
 					setCursor(handCursor);
+				updateToolTip();
 				redraw();
+			}
+		}
+		private void updateToolTip() {
+			if (isLinkEnabled()) {
+				String tooltip= gotoAction.getToolTipText();
+				if (tooltip != null)
+					setToolTipText(tooltip);
+			} else {
+				setToolTipText(text);
 			}
 		}
 		public void propertyChange(PropertyChangeEvent event) {
@@ -368,7 +373,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		    		public void run() {
 		    			if (!isDisposed()) {
 		    				checkKeep();
-		    				setLinkEnable(gotoAction.isEnabled());
+		    				setLinkEnable(gotoAction != null && gotoAction.isEnabled());
 		    			}
 		    		}
 		    	});
