@@ -82,21 +82,12 @@ public interface IHelp {
 	 * the documentation identified by the <code>href</code> parameter.
 	 * </p> 
 	 * <p>
-	 * Valid hrefs for TOC's or topics must have the following format
-	 * <em>/pluginID/path/to/document</em>
-	 * <br>where
-	 * <dl>
-	 * <dt> <em>pluginID</em> is the unique identifier of the plugin containing the help topic, 
-	 * </dt>
-	 * <dt> <em>path/to/document</em> is the help topic path, relative to the plugin directory
-	 * </dt>
-	 * </dl>
-	 * </p> 
-	 * <p>
 	 * The help system makes no guarantee that all the help resources can be displayed or how they are displayed.
 	 * </p>
-	 *
 	 * @param href the URL of the help resource.
+	 * <p>Valid href are as described in 
+	 * 	{@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
+	 * </p>
 	 * @since 2.0
 	 */
 	public void displayHelpResource(String href);

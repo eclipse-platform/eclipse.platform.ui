@@ -95,7 +95,15 @@ public class DefaultHelp implements IHelp {
 	}
 
 	/**
-	 * Displays a help resource specified as a url
+	 * Displays a help resource specified as a url. 
+	 * <ul>
+	 *  <li>a URL in a format that can be returned by
+	 * 	{@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
+	 * 	<li>a URL query in the format format <em>key=value&amp;key=value ...</em>
+	 *  The valid keys are: "tab", "toc", "topic", "contextId".
+	 *  For example, <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em>
+	 *  is valid.
+	 * </ul>
 	 */
 	public void displayHelpResource(String href) {
 		// check if this is a toc
