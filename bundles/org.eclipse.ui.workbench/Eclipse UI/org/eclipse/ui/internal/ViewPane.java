@@ -275,12 +275,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		super.createControl(parent);
 
-		// add the support for hiding the top row of widgets in the view
-		Control viewForm = getControl();
-		if (viewForm instanceof ViewForm) {
-			((ViewForm)viewForm).setMaximizeVisible(true);
-		}
-
 		setTabList();
 		
 		DragUtil.addDragSource(control, new AbstractDragSource() {
