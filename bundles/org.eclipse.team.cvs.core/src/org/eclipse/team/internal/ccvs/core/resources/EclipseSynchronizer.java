@@ -451,10 +451,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				cacheResourceSyncForChildren(folder, false);
 			}
 		} catch (CVSException e) {
-			if (isCannotModifySynchronizer(e)) {
-				// Log the problem and continue
-				CVSProviderPlugin.log(e);
-			} else {
+			if (!isCannotModifySynchronizer(e)) {
 				throw e;
 			}
 		} finally {
@@ -1289,7 +1286,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 
 	/**
-	 * Method ensureSyncInfoLoaded loads all the relevent sync info into the cache
+	 * Method ensureSyncInfoLoaded loads all the relevent sync info into the cache.
+	 * This method can only be invoked when the workspace is open for modification.
+	 * in other words it cannot be invoked from inside a POST_CHANGE delta listener.
 	 * @param resources
 	 * @param i
 	 * @return Object
@@ -1305,7 +1304,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				rule = beginBatching(parent, null);
 				try {
 					beginOperation();
-					cacheResourceSyncForChildren(parent, false);
+					cacheResourceSyncForChildren(parent, true /* can modify workspace */);
 					cacheFolderSync(parent);
 					cacheFolderIgnores(parent);
 				} finally {

@@ -379,7 +379,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			// Ensure the synchronizer is clear for exiting resources
 			if (canModifyWorkspace) {
 				byte[] oldBytes = synchronizerCache.getCachedSyncBytes(resource);
-				if (oldBytes != null) {
+				if (oldBytes != null && canModifyWorkspace) {
 					synchronizerCache.setCachedSyncBytes(resource, null, canModifyWorkspace);
 					if (ResourceSyncInfo.isFolder(syncBytes)) {
 						// Handle gender changes
