@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.expression;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.ColorManager;
@@ -48,20 +49,20 @@ public class ExpressionView extends VariablesView {
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
 		public Color getForeground(Object element) {
-			boolean watchExpressionWithError= false;
-			IWatchExpression watch= null;
-			if (element instanceof IWatchExpression) {
-				watch= (IWatchExpression) element;
+			boolean expressionWithError= false;
+			IErrorReportingExpression expression= null;
+			if (element instanceof IErrorReportingExpression) {
+				expression= (IErrorReportingExpression) element;
 			} else if (element instanceof String) {
 				Object parent= ((VariablesViewContentProvider) getVariablesViewer().getContentProvider()).getParent(element);
-				if (parent instanceof IWatchExpression) {
-					watch= (IWatchExpression) parent;
+				if (parent instanceof IErrorReportingExpression) {
+					expression= (IErrorReportingExpression) parent;
 				}
 			}
-			if (watch != null && watch.hasErrors()) {
-				watchExpressionWithError= true;
+			if (expression != null && expression.hasErrors()) {
+				expressionWithError= true;
 			}
-			if (watchExpressionWithError) {
+			if (expressionWithError) {
 				return ColorManager.getDefault().getColor(new RGB(255, 0, 0));
 			}
 			return super.getForeground(element);

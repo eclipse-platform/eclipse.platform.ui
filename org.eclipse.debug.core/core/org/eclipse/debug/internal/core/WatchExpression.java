@@ -84,6 +84,7 @@ public class WatchExpression implements IWatchExpression {
 			public void watchEvaluationFinished(IWatchExpressionResult result) {
 				fResult= result;
 				setPending(false);
+				fireChanged();
 			}
 		};
 		setPending(true);
@@ -97,6 +98,14 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void fireChanged() {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.CHANGE)});
+	}
+	
+	/**
+	 * Notifies the expression manager that this watch expression's
+	 * values have changed so the manager can update the
+	 * persisted expression.
+	 */
+	private void watchExpressionChanged() {
 		((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).watchExpressionChanged(this);
 	}
 
@@ -156,7 +165,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
-		fireChanged();
+		watchExpressionChanged();
 	}
 
 	/**
@@ -164,7 +173,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setExpressionText(String expression) {
 		fExpressionText= expression;
-		fireChanged();
+		watchExpressionChanged();
 	}
 
 	/**
@@ -191,7 +200,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	protected void setPending(boolean pending) {
 		fPending= pending;
-		fireChanged();
+		watchExpressionChanged();
 	}
 
 	/**
@@ -223,7 +232,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	protected void setObsolete(boolean obsolete) {
 		fObsolete= obsolete;
-		fireChanged();
+		watchExpressionChanged();
 	}
 
 }

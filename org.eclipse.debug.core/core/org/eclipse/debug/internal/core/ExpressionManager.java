@@ -151,6 +151,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 			return;
 		}
 		NodeList list= root.getChildNodes();
+		boolean expressionsAdded= false;
 		for (int i= 0, numItems= list.getLength(); i < numItems; i++) {
 			Node node= list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -167,10 +168,14 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 						fExpressions= new Vector(list.getLength());
 					}
 					fExpressions.add(expression);
+					expressionsAdded= true;
 				} else {
 					DebugPlugin.logMessage("Invalid expression entry encountered while loading watch expressions. Expression text is empty.", null); //$NON-NLS-1$
 				}
 			}
+		}
+		if (expressionsAdded) {
+			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
 	}
 	
@@ -378,6 +383,12 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 	}
 	
+	/**
+	 * The given watch expression has changed. Update the persisted
+	 * expressions to store this change.
+	 * 
+	 * @param expression the changed expression
+	 */
 	protected void watchExpressionChanged(IWatchExpression expression) {
 		if (fExpressions != null && fExpressions.contains(expression)) {
 			storeWatchExpressions();

@@ -21,7 +21,7 @@ package org.eclipse.debug.core.model;
  * 
  * @since 3.0
  */
-public interface IWatchExpression extends IExpression {
+public interface IWatchExpression extends IErrorReportingExpression {
 	
 	/**
 	 * Sets the context for this watch expression, or <code>null</code> if none.
@@ -57,22 +57,6 @@ public interface IWatchExpression extends IExpression {
 	 * @return whether this expression's result is pending
 	 */
 	public boolean isPending();
-	/**
-	 * Returns whether this expression has errors to report. An expression
-	 * can have errors if errors were generated the last time its value was
-	 * computed
-	 * 
-	 * @return whether this expression's result has errors
-	 */
-	public boolean hasErrors();
-	/**
-	 * Returns this expression's error messages, if any. An expression can
-	 * have errors if errors were generated the last time its value was
-	 * computed.
-	 *  
-	 * @return this expression's error messages
-	 */
-	public String[] getErrorMessages();
 	/**
 	 * Returns whether this expression is enabled. An enabled expression will
 	 * update its value. A disabled expression will not.

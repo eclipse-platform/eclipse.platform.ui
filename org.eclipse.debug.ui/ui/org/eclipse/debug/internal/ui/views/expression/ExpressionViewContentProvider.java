@@ -14,10 +14,10 @@ package org.eclipse.debug.internal.ui.views.expression;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
+import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.ui.IDebugView;
@@ -42,10 +42,10 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 				// do not cache parents
 				return ((IExpressionManager)parent).getExpressions();
 			} else if (parent instanceof IExpression) {
-				if (parent instanceof IWatchExpression) {
-					IWatchExpression watch= (IWatchExpression) parent;
-					if (watch.hasErrors()) {
-						children= watch.getErrorMessages();
+				if (parent instanceof IErrorReportingExpression) {
+					IErrorReportingExpression expression= (IErrorReportingExpression) parent;
+					if (expression.hasErrors()) {
+						children= expression.getErrorMessages();
 					}
 				}
 				if (children == null) {
@@ -90,7 +90,7 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 		if (element instanceof IExpressionManager) {
 			return ((IExpressionManager)element).hasExpressions();
 		} else if (element instanceof IExpression) {
-			if (element instanceof IWatchExpression && ((IWatchExpression) element).hasErrors()) {
+			if (element instanceof IErrorReportingExpression && ((IErrorReportingExpression) element).hasErrors()) {
 				return true;
 			}
 			IValue v = ((IExpression)element).getValue();
