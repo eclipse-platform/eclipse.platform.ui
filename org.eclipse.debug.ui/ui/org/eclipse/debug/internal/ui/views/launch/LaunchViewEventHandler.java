@@ -195,13 +195,18 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			return;
 		}
 
+		// do not update source selection for evaluation events
+		boolean evaluationEvent = event.isEvaluation();
+		
 		// if the top frame is the same, only update labels, and re-select
 		// the frame to display source
 		try {
 			IStackFrame frame = thread.getTopStackFrame();
 			if (frame != null && frame.equals(fLastStackFrame)) {
 				getLaunchViewer().update(new Object[]{thread, frame}, new String[] {IBasicPropertyConstants.P_IMAGE, IBasicPropertyConstants.P_TEXT});
-				getLaunchViewer().setSelection(new StructuredSelection(frame));
+				if (!evaluationEvent) {
+					getLaunchViewer().setSelection(new StructuredSelection(frame));
+				}
 				return;
 			}
 		} catch (DebugException e) {
@@ -209,7 +214,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		
 		// Auto-expand the thread. Only select the thread if this wasn't the end
 		// of an evaluation		
-		boolean evaluationEvent = event.isEvaluation();
+		
 		getLaunchView().autoExpand(thread, true, !evaluationEvent);
 		
 		try {
@@ -241,16 +246,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	private void updateForSuspendEvent(DebugEvent event) {
 		Object element= event.getSource();
-		if (event.isEvaluation() || (event.getDetail() & DebugEvent.STEP_END) != 0) {
-			IThread thread= getThread(element);
-			if (thread != null) {
-				fThreadTimer.stopTimer((IThread)element);
-			}
+		IThread thread= getThread(element);
+		if (thread != null) {
+			fThreadTimer.stopTimer((IThread)element);
+		}
 
-			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
-				// Don't update for evaluation completion.
-				return;
-			}
+		if (event.isEvaluation() || ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
+			// Don't update for evaluation completion.
+			return;
 		}
 		if (element instanceof IThread) {
 			try {
