@@ -28,7 +28,7 @@ import org.osgi.framework.BundleContext;
  * The main plugin class for cheat sheets.
  */
 
-public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, ICheatSheetResource {
+public class CheatSheetPlugin extends AbstractUIPlugin implements ICheatSheetResource {
 
 	//The shared instance of this plugin.
 	private static CheatSheetPlugin plugin;
@@ -91,30 +91,6 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 			CheatSheetMenu cheatsheetMenuMenuItem = new CheatSheetMenu();
 			cheatmanager.add(cheatsheetMenuMenuItem);
 		}
-	}
-
-	/**
-	 * @see org.eclipse.ui.IStartup#earlyStartup()
-	 */
-	public void earlyStartup() {
-		//get a handle to the help menu in the workbench.  It is a MenuManager type.
-		final IWorkbench mybench = getPlugin().getWorkbench();
-
-		IWorkbenchWindow[] windows = mybench.getWorkbenchWindows();
-		addCheatSheetMenu(windows);
-
-		mybench.addWindowListener(new IWindowListener() {
-			public void windowActivated(IWorkbenchWindow window) {
-			}
-			public void windowDeactivated(IWorkbenchWindow window) {
-			}
-			public void windowClosed(IWorkbenchWindow window) {
-			}
-			public void windowOpened(IWorkbenchWindow window) {
-				IWorkbenchWindow[] openedWindow = { mybench.getActiveWorkbenchWindow()};
-				addCheatSheetMenu(openedWindow);
-			}
-		});
 	}
 
 	/**
