@@ -21,6 +21,7 @@ import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -49,6 +50,9 @@ public class RefreshFromLocalAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+						for (int i = 0; i < providerResources.length; i++) {
+							CVSDecorator.refresh(providerResources[i]);							
+						}
 						provider.refreshFromLocal(providerResources, subMonitor);
 					}
 				} catch (TeamException e) {

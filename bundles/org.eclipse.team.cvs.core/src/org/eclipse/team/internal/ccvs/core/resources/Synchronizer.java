@@ -169,7 +169,7 @@ public class Synchronizer {
  	 * @throws CVSException if there was a problem adding sync info or broadcasting
 	 * the changes. If the parent folder does not have a CVS subdirectory.
 	 */
-	public void setResourceSync(File file, ResourceSyncInfo info) throws CVSException {
+	public synchronized void setResourceSync(File file, ResourceSyncInfo info) throws CVSException {
 		
 		Assert.isNotNull(file);
 		Assert.isNotNull(info);
@@ -189,7 +189,6 @@ public class Synchronizer {
 		}			
 		entriesSync.config.put(info.getName(), info);						
 		invalidatedEntryFiles.add(entriesFile);
-		broadcastSyncChange(file);
 	}
 	
 	/**
@@ -201,7 +200,7 @@ public class Synchronizer {
  	 * @throws CVSException if there was a problem adding sync info or broadcasting
 	 * the changes.
 	 */
-	public ResourceSyncInfo getResourceSync(File file) throws CVSException {
+	public synchronized ResourceSyncInfo getResourceSync(File file) throws CVSException {
 		return getResourceSync(file, false);		
 	}
 	
@@ -216,13 +215,13 @@ public class Synchronizer {
 	 * @throws CVSException if there was a problem removing sync info or broadcasting
 	 * the changes.
 	 */
-	public void deleteResourceSync(File file) throws CVSException {
+	public synchronized void deleteResourceSync(File file) throws CVSException {
 		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
 		SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);
 		if(entriesSync!=null) {
 			entriesSync.config.remove(file.getName());
 			invalidatedEntryFiles.add(entriesFile);
-			broadcastSyncChange(file);
+			broadcastSyncChange(new File[] {file}, true);
 		}			
 	}
 	
@@ -234,7 +233,7 @@ public class Synchronizer {
  	 * @throws CVSException if there was a problem adding folder sync info or broadcasting
 	 * the changes. If the folder does not exist on the file system.
 	 */
-	public FolderSyncInfo getFolderSync(File folder) throws CVSException {
+	public synchronized FolderSyncInfo getFolderSync(File folder) throws CVSException {
 		return getFolderSync(folder, false);
 	}
 	
@@ -251,7 +250,7 @@ public class Synchronizer {
  	 * @throws CVSException if there was a problem adding sync info or broadcasting
 	 * the changes. If the folder does not exist on the file system.
 	 */
-	public void setFolderSync(File folder, FolderSyncInfo info) throws CVSException {
+	public synchronized void setFolderSync(File folder, FolderSyncInfo info) throws CVSException {
 		
 		Assert.isNotNull(info);
 		
@@ -293,7 +292,7 @@ public class Synchronizer {
 	 * @throws CVSException if there was a problem removing sync info or broadcasting
 	 * the changes.
 	 */	
-	public void deleteFolderSync(File folder, IProgressMonitor monitor) throws CVSException {
+	public synchronized void deleteFolderSync(File folder, IProgressMonitor monitor) throws CVSException {
 		ResourceSyncInfo[] children = members(folder);
 		
 		for (int i = 0; i < children.length; i++) {
@@ -314,7 +313,8 @@ public class Synchronizer {
 	 * 
 	 * @throws CVSException if there was a problem persisting the changes to disk.
 	 */
-	public void save(IProgressMonitor monitor) throws CVSException {
+	public synchronized void save(IProgressMonitor monitor) throws CVSException {
+		List filesToUpdate = new ArrayList();
 		for (Iterator it = invalidatedEntryFiles.iterator(); it.hasNext();) {
 			File entryFile = (File) it.next();
 			SyncFile info = (SyncFile)entriesCache.get(entryFile);
@@ -327,7 +327,8 @@ public class Synchronizer {
 				List syncInfos = new ArrayList();
 				for (Iterator it2 = info.config.values().iterator(); it2.hasNext();) {										
 					ResourceSyncInfo element = (ResourceSyncInfo) it2.next();
-					syncInfos.add(element);					
+					syncInfos.add(element);
+					filesToUpdate.add(new File(entryFile.getParentFile().getParentFile(), element.getName()));
 				}
 				
 				if(!entryFile.exists()) {
@@ -343,9 +344,7 @@ public class Synchronizer {
 				
 				// ensure that the external sync files are kept in sync with the workbench
 				File[] entrySyncFiles = SyncFileUtil.getEntrySyncFiles(entryFile.getParentFile().getParentFile());
-				for (int i = 0; i < entrySyncFiles.length; i++) {
-					broadcastSyncChange(entrySyncFiles[i]);					
-				}
+				broadcastSyncChange(entrySyncFiles, false);			
 			}
 		}
 		
@@ -362,10 +361,13 @@ public class Synchronizer {
 				
 				// ensure that the external sync files are kept in sync with the workbench.
 				File[] folderSyncFiles = SyncFileUtil.getFolderSyncFiles(folder);
-				for (int i = 0; i < folderSyncFiles.length; i++) {
-					broadcastSyncChange(folderSyncFiles[i]);					
-				}				
+				broadcastSyncChange(folderSyncFiles, false);			
 			}
+		}
+		
+		// broadcast state changes for non-metadata files that have changed
+		if(!filesToUpdate.isEmpty()) {
+			broadcastSyncChange((File[]) filesToUpdate.toArray(new File[filesToUpdate.size()]), true);
 		}
 		
 		// clear invalidated lists
@@ -474,12 +476,10 @@ public class Synchronizer {
 				entriesCache.remove(entriesFile);
 				return null;
 			}
-			for (int i = 0; i < infos.length; i++) {
+			for (int i = 0; i < infos.length; i++) {				
 				entriesSync.config.put(infos[i].getName(), infos[i]);
 			}
 			entriesCache.put(entriesFile, entriesSync);
-			// notify of sync changes
-			broadcastSyncChange(file);
 		}
 		return (ResourceSyncInfo)entriesSync.config.get(file.getName());
 	}
@@ -493,32 +493,39 @@ public class Synchronizer {
 	 * @param file a file that has its CVS state changed. If the file does not exist
 	 * then the parent if notified instead.
 	 */
-	protected void broadcastSyncChange(File file) throws CVSException {	
-		IResource resource;
+	protected void broadcastSyncChange(File[] files, boolean notifyOfStateChange) throws CVSException {	
+		List resourcesToUpdate = new ArrayList();
 		int depth = IResource.DEPTH_ZERO;
 		
-		if(!file.exists()) {
-			file = file.getParentFile();
-			depth = IResource.DEPTH_ONE;
-		}
-		
-		if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile()) || !file.exists()) {
-			return;
-		}
-		
-		if(file.isDirectory()) {
-			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getAbsolutePath()));
-		} else {
-			resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(file.getAbsolutePath()));
-		}
-			
-		if(resource!=null) {			
-			try {
-				resource.refreshLocal(depth, null);
-			} catch(CoreException e) {
-				// throw new CVSException("Error refreshing file from local contents " + file.getAbsolutePath(), e);
+		for(int i=0; i < files.length; i++) {
+			File file = files[i];
+			if(!file.exists()) {
+				file = file.getParentFile();
+				depth = IResource.DEPTH_ONE;
 			}
-			TeamPlugin.getManager().broadcastResourceStateChanges(new IResource[] {resource});
+			
+			if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile()) || !file.exists()) {
+				return;
+			}
+			
+			IResource resource;
+			if(file.isDirectory()) {
+				resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getAbsolutePath()));
+			} else {
+				resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(file.getAbsolutePath()));
+			}
+				
+			if(resource!=null) {			
+				try {
+					resourcesToUpdate.add(resource);
+					resource.refreshLocal(depth, null);
+				} catch(CoreException e) {
+					// throw new CVSException("Error refreshing file from local contents " + file.getAbsolutePath(), e);
+				}
+			}
+		}
+		if(!resourcesToUpdate.isEmpty() && notifyOfStateChange) {
+			TeamPlugin.getManager().broadcastResourceStateChanges((IResource[]) resourcesToUpdate.toArray(new IResource[resourcesToUpdate.size()]));
 		}
 	}
 	
@@ -545,7 +552,7 @@ public class Synchronizer {
 		folderConfigCache.remove(folder);
 		
 		// notify of state change to this folder
-		broadcastSyncChange(folder);
+		broadcastSyncChange(new File[] {folder}, true);
 	}
 	
 	/**

@@ -6,184 +6,262 @@ package org.eclipse.team.internal.ccvs.ui;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
-import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.ITeamDecorator;
 import org.eclipse.team.ui.TeamUIPlugin;
 
-public class CVSDecorator implements ITeamDecorator {
+/**
+ * Classes registered with the workbench decoration extension point. The <code>CVSDecorationRunnable</code> class
+ * actually calculates the decoration, while this class is responsible for listening to the following sources
+ * for indications that the decorators need updating:
+ * <ul>
+ * 	<li>workbench label requests (decorateText/decorateImage)
+ * 	<li>workspace resource change events (resourceChanged)
+ * 	<li>cvs state changes (resourceStateChanged)
+ * </ul>
+ * <p>
+ * [Note: There are several optimization that can be implemented in this class: (1) cache something
+ * so that computing the dirty state of containers does not imply traversal of all children, (2) improve
+ * the queue used between the decorator and the decorator runnable such that priority can be
+ * given to visible elements when decoration requests are made.]
+ */
+public class CVSDecorator extends TeamResourceDecorator implements IDecorationNotifier {
 
-	ImageDescriptor dirty;
-	ImageDescriptor checkedIn;
-	ImageDescriptor checkedOut;
+	// Resources that need an icon and text computed for display to the user, no order
+	private Set decoratorNeedsUpdating = Collections.synchronizedSet(new HashSet());
 
-	//a dummy core exception used to short-circuit a resource visit
-	private static final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, CVSProviderPlugin.ID, 1, "", null));
+	// When decorations are computed they are added to this cache via decorated() method
+	private Map cache = Collections.synchronizedMap(new HashMap());
 
-
-	/**
-	 * Define a cached image descriptor which only creates the image data once
-	 */
-	class CachedImageDescriptor extends ImageDescriptor {
-		ImageDescriptor descriptor;
-		ImageData data;
-		
-		public CachedImageDescriptor(ImageDescriptor descriptor) {
-			this.descriptor = descriptor;
-		}
-		public ImageData getImageData() {
-			if (data == null) {
-				data = descriptor.getImageData();
-			}
-			return data;
-		}
-	};
-		
-	List listeners = new ArrayList(3);
-	private static final CoreException CORE_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null));
+	// Updater thread, computes decoration labels and images
+	private Thread decoratorUpdateThread;
 
 	public CVSDecorator() {
-		dirty = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
-		checkedIn = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
-		checkedOut = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
+		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS");
+		decoratorUpdateThread.start();
+	}
+
+	public String decorateText(String text, Object o) {
+		IResource resource = getResource(o);
+		if (resource == null || resource.getType() == IResource.ROOT)
+			return text;
+		if (getCVSProviderFor(resource) == null)
+			return text;
+
+		CVSDecoration decoration = (CVSDecoration) cache.get(resource);
+
+		if (decoration != null) {
+			String format = decoration.getFormat();
+			if (format == null) {
+				return text;
+			} else {
+				Map bindings = decoration.getBindins();
+				if (bindings.isEmpty())
+					return text;
+				bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, text);
+				return CVSDecoratorConfiguration.bind(format, bindings);
+			}
+		} else {
+			addResourcesToBeDecorated(new IResource[] { resource });
+			return text;
+		}
+	}
+
+	public Image decorateImage(Image image, Object o) {
+		IResource resource = getResource(o);
+		if (resource == null || resource.getType() == IResource.ROOT)
+			return image;
+		if (getCVSProviderFor(resource) == null)
+			return image;
+
+		CVSDecoration decoration = (CVSDecoration) cache.get(resource);
+
+		if (decoration != null) {
+			List overlays = decoration.getOverlays();
+			return overlays == null ? image : new OverlayIcon(image.getImageData(), new ImageDescriptor[][] {(ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()])}, new Point(16, 16)).createImage();
+		} else {
+			addResourcesToBeDecorated(new IResource[] { resource });
+			return image;
+		}
 	}
 
 	/*
-	 * @see ITeamDecorator#getText(String, IResource)
+	 * @see IDecorationNotifier#next()
 	 */
-	public String getText(String text, IResource resource) {
-		ITeamProvider p = TeamPlugin.getManager().getProvider(resource);
-		if (p == null) {
-			return text;
+	public synchronized IResource next() {
+		try {
+			if (decoratorNeedsUpdating.isEmpty()) {
+				wait();
+			}
+			Iterator iterator = decoratorNeedsUpdating.iterator();
+			IResource resource = (IResource) iterator.next();
+			iterator.remove();
+
+			//System.out.println("++ Next: " + resource.getFullPath() + " remaining in cache: " + cache.size());
+
+			return resource;
+		} catch (InterruptedException e) {
 		}
-		
-		try {	
-			switch (resource.getType()) {
-				case IResource.FOLDER: // fall through
-				case IResource.PROJECT:
-					ICVSFolder folder = new LocalFolder(resource.getLocation().toFile());
-					FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
-					if(folderInfo!=null) {
-						CVSTag tag = folderInfo.getTag();
-						if(tag!=null) {
-							if(resource.getType()==IResource.PROJECT) {
-								return Policy.bind("CVSDecorator.projectDecorationWithTag", new Object[] {text, tag.getName(), folderInfo.getRoot()});
-							} else {
-								return Policy.bind("CVSDecorator.folderDecoration", text, tag.getName());
-							}
-						} else {
-							if(resource.getType()==IResource.PROJECT) {
-								return Policy.bind("CVSDecorator.projectDecoration", text, folderInfo.getRoot());
-							} else {
-								return text;
-							}
-						}
-					}
-					break;
-				case IResource.FILE:
-					ICVSFile file = new LocalFile(resource.getLocation().toFile());
-					ResourceSyncInfo fileInfo = file.getSyncInfo();
-					if(fileInfo!=null) {
-						CVSTag tag = fileInfo.getTag();
-						if (tag == null || (tag!=null && tag.getType() == CVSTag.HEAD)) {
-							return Policy.bind("CVSDecorator.fileDecorationNoTag", text, fileInfo.getRevision());
-						} else {
-							return Policy.bind("CVSDecorator.fileDecorationWithTag", new Object[] {text, tag.getName(), fileInfo.getRevision()});
-						}
-					}
-					break;
-			}	
-		} catch (CVSException e) {
-			return text;
-		}
-		return text;
+		return null;
 	}
 
 	/*
-	 * @see ITeamDecorator#getImage(IResource)
+	 * @see IDecorationNotifier#notify(IResource, CVSDecoration)
 	 */
-	public ImageDescriptor[][] getImage(IResource resource) {
-		List overlays = new ArrayList(5);
-		CVSTeamProvider p = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
-		if(p!=null) {
-			if(isChildDirty(resource)) {
-				overlays.add(dirty);
-			}
-			if(p.hasRemote(resource)) {
-				overlays.add(checkedIn);
-			} 
-			if(p.isCheckedOut(resource)) {
-				overlays.add(checkedOut);
-			}
-		}
-		return new ImageDescriptor[][] {(ImageDescriptor[])overlays.toArray(new ImageDescriptor[overlays.size()])};
+	public synchronized void decorated(IResource resource, CVSDecoration decoration) {
+		cache.put(resource, decoration);
+		postLabelEvents(new LabelProviderChangedEvent[] { new LabelProviderChangedEvent(this, resource)});
 	}
-	
-	private boolean isChildDirty(IResource resource) {
+
+	/*
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		//System.out.println(">> Resource Change Event");
+		processDelta(event.getDelta());
+	}
+
+	/*
+	 * @see IResourceStateChangeListener#resourceStateChanged(IResource[])
+	 */
+	public void resourceStateChanged(IResource[] changedResources) {
+		// add depth first so that update thread processes parents first.
+		//System.out.println(">> State Change Event");
+		List resources = new ArrayList();
+		for (int i = 0; i < changedResources.length; i++) {
+			// ignore subtrees that aren't associated with a provider, this can happen on import
+			// of a new project to CVS.
+			if (getCVSProviderFor(changedResources[i]) == null) {
+				continue;
+			}
+			resources.addAll(computeParents(changedResources[i]));
+		}
+		addResourcesToBeDecorated((IResource[]) resources.toArray(new IResource[resources.size()]));
+	}
+
+	public static void refresh() {
+		try {
+			IResource[] resources = ResourcesPlugin.getWorkspace().getRoot().members();
+			for (int i = 0; i < resources.length; i++) {
+				if (getCVSProviderFor(resources[i]) != null) {
+					refresh(resources[i]);
+				}
+			}
+		} catch (CoreException e) {
+		}
+	}
+
+	public static void refresh(IResource resource) {
+		final List resources = new ArrayList();
 		try {
 			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {
-					
-					// a project can't be dirty, continue with its children
-					if(resource.getType() == IResource.PROJECT) {
-						return true;
-					}
-										
-					ICVSResource cvsResource;
-					if(resource.getType() == IResource.FILE) {
-						cvsResource = new LocalFile(resource.getLocation().toFile());
-					} else {
-						cvsResource = new LocalFolder(resource.getLocation().toFile());
-					}
-					
-					try {
-						if (!cvsResource.isManaged()) {
-							if (cvsResource.isIgnored()) {
-								return false;
-							} else {
-								// new resource, show as dirty
-								throw DECORATOR_EXCEPTION;
-							}
-						}
-						if (!cvsResource.isFolder()) {
-							if(((ICVSFile)cvsResource).isModified()) {
-								// file has changed, show as dirty
-								throw DECORATOR_EXCEPTION;
-							}
-						}
-					} catch(CVSException e) {
-						return true;
-					}
-					// no change -- keep looking in children
+				public boolean visit(IResource resource) {
+					resources.add(resource);
 					return true;
 				}
-			}, IResource.DEPTH_INFINITE, true);
+			});
+			TeamPlugin.getManager().broadcastResourceStateChanges((IResource[]) resources.toArray(new IResource[resources.size()]));
 		} catch (CoreException e) {
-			//if our exception was caught, we know there's a dirty child
-			return e == DECORATOR_EXCEPTION;
 		}
-		return false;
+	}
+
+	private List computeParents(IResource resource) {
+		IResource current = resource;
+		List resources = new ArrayList();
+		while (current.getType() != IResource.ROOT) {
+			resources.add(current);
+			current = current.getParent();
+		}
+		return resources;
+	}
+
+	private void processDelta(IResourceDelta delta) {
+		final LinkedList events = new LinkedList();
+		try {
+			delta.accept(new IResourceDeltaVisitor() {
+				public boolean visit(IResourceDelta delta) throws CoreException {
+					IResource resource = delta.getResource();
+					int type = resource.getType();
+
+					// skip workspace root
+					if (type == IResource.ROOT) {
+						return true;
+					}
+
+					// ignore subtrees that aren't associated with a provider
+					CVSTeamProvider p = getCVSProviderFor(resource);
+					if (p == null) {
+						return false;
+					}
+
+					// don't care about deletions
+					if (delta.getKind() == IResourceDelta.REMOVED) {
+						return false;
+					}
+
+					// handle .cvsignore changes that affect the state of peer files
+					if (resource.getName().equals(".cvsignore") && type == IResource.FILE) {
+						addResourcesToBeDecorated(resource.getParent().members());
+					}
+
+					// ignore subtrees that are ignored by team
+					if (!p.hasRemote(resource)) {
+						return false;
+					}
+					// chances are the team outgoing bit needs to be updated
+					// if any child has changed.
+					events.addFirst(resource);
+					return true;
+				}
+			});
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e.getStatus());
+		}
+		addResourcesToBeDecorated((IResource[]) events.toArray(new IResource[events.size()]));
+	}
+
+	private synchronized void addResourcesToBeDecorated(IResource[] resources) {
+		if (resources.length > 0) {
+			for (int i = 0; i < resources.length; i++) {
+				//System.out.println("\t to update: " + resources[i].getFullPath());
+				decoratorNeedsUpdating.add(resources[i]);
+			}
+			notify();
+		}
+	}
+
+	/** 
+	 * Answers null if a provider does not exist or the provider is not a CVS provider. These resources
+	 * will be ignored by the decorator.
+	 */
+	private static CVSTeamProvider getCVSProviderFor(IResource resource) {
+		ITeamProvider p = TeamPlugin.getManager().getProvider(resource);
+		if (p == null || !(p instanceof CVSTeamProvider)) {
+			return null;
+		}
+		return (CVSTeamProvider) p;
 	}
 }

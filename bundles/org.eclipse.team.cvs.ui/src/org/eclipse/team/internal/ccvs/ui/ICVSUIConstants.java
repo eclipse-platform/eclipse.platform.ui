@@ -32,5 +32,18 @@ public interface ICVSUIConstants {
 	public final String PREF_TIMEOUT = "pref_timeout";	
 	public final String PREF_QUIETNESS = "pref_quietness";
 	
+	// decorator preferences
+	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration";
+	public final String PREF_FOLDERTEXT_DECORATION = "pref_foldertext_decoration";
+	public final String PREF_PROJECTTEXT_DECORATION = "pref_projecttext_decoration";
+	
+	public final String PREF_SHOW_DIRTY_DECORATION = "pref_show_overlaydirty";
+	public final String PREF_SHOW_ADDED_DECORATION = "pref_show_added";
+	public final String PREF_SHOW_HASREMOTE_DECORATION = "pref_show_hasremote";
+	
+	public final String PREF_DIRTY_FLAG = "pref_dirty_flag";
+	public final String PREF_ADDED_FLAG = "pref_added_flag";
+	
+	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";
 }
 

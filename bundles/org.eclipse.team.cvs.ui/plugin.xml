@@ -27,14 +27,6 @@
 		</authenticator>
 	</extension>
 	
-	<!-- *************** Decorator **************** -->
-	<extension point="org.eclipse.team.ui.decorators">
-		<decorator 
-			class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
-			natureId="org.eclipse.team.cvs.core.cvsnature"/>
-	</extension>
-
-	
 	<!-- ******************* Wizards ****************** -->
 	<extension point="org.eclipse.team.ui.configurationWizards">
 		<wizard
@@ -325,5 +317,24 @@
 				name="%PreferencePage.name">
 			</page>
 	</extension>
-   
+
+	<extension
+      point = "org.eclipse.ui.preferencePages">
+       <page id="org.eclipse.team.cvs.ui.CVSDecoratorPreferences"
+       	  class="org.eclipse.team.internal.ccvs.ui.CVSDecoratorPreferencesPage"
+       	    name="%DecoratorPreferencePage.name"
+       	    category="org.eclipse.team.cvs.ui.CVSPreferences">
+       </page>
+   </extension>
+	
+	<!-- **************** DECORATOR ******************* -->
+	<extension point="org.eclipse.ui.decorators"> 
+        <decorator 
+             id="org.eclipse.team.cvs.ui.decorator" 
+             label="%DecoratorStandard.name" 
+             state="false" 
+	         class="org.eclipse.team.internal.ccvs.ui.CVSDecorator" 
+             objectClass="org.eclipse.core.resources.IResource"> 
+         </decorator> 
+	</extension>    
 </plugin>
