@@ -6,8 +6,8 @@
 <plugin
 	name= "Search"
 	id= "org.eclipse.search"
-	version= "0.0 001"
-	vendor-name= "OTI"
+	version= "1.0"
+	vendor-name= "IBM"
 	class= "org.eclipse.search.internal.ui.SearchPlugin">
 
 <requires>
