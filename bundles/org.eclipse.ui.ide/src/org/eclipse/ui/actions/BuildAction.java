@@ -13,7 +13,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -166,7 +166,7 @@ void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreEx
  */
 public static boolean isSaveAllSet() {
 	IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-	return store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD);
+	return store.getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD);
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
