@@ -177,8 +177,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private static final String TAG_CONTRIBUTION_TYPE= "editorContribution"; //$NON-NLS-1$
-
-	/**
+	
+	/** 
 	 * The caret width for the wide (double) caret.
 	 * Value: {@value}
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=21715
@@ -208,7 +208,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {}
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) { inputChanged= true; }
 	}
-
+	
 	/**
 	 * Internal element state listener.
 	 */
@@ -505,8 +505,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (getFontPropertyPreferenceKey().equals(property)) {
 				initializeViewerFont(fSourceViewer);
 				updateCaret();
+			}
 		}
-	}
 	}
 
 	/**
@@ -817,14 +817,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Action to toggle the insert mode. The action is checked if smart mode is
 	 * turned on.
 	 * 
-	 *  @since 2.1
+	 * @since 2.1
 	 */
 	class ToggleInsertModeAction extends ResourceAction {
 	
 		public ToggleInsertModeAction(ResourceBundle bundle, String prefix) {
 			super(bundle, prefix, IAction.AS_CHECK_BOX);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
@@ -837,9 +837,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public boolean isChecked() {
 			return fInsertMode == SMART_INSERT;
+		}
 	}
-	}
-
+	
 	/**
 	 * Action to toggle the overwrite mode.
 	 *  @since 3.0
@@ -1175,9 +1175,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public boolean isValid(ISelection postSelection) {
 			return fSelectionListener != null && fSelectionListener.isValid(postSelection);
-		}
 	}
-	
+	}
 	
 	/**
 	 * Internal implementation class for a change listener.
@@ -1625,7 +1624,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	private String[] fKeyBindingScopes;
-	/** 
+	/**
 	 * Whether the overwrite mode can be turned on.
 	 * @since 3.0
 	 */
@@ -1660,7 +1659,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	private Caret fDefaultCaret;
-	
 	
 	/**
 	 * Creates a new text editor. If not explicitly set, this editor uses
@@ -2841,7 +2839,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodeTrigger.uninstall();
 			fActivationCodeTrigger= null;
 		}
-
+		
 		if (fSelectionListener != null)  {
 			fSelectionListener.uninstall(getSelectionProvider());
 			fSelectionListener= null;
@@ -2906,7 +2904,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (fConfiguration != null)
 			fConfiguration= null;
-
+		
 		super.setInput(null);		
 		
 		super.dispose();
@@ -4517,7 +4515,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		InsertMode newMode= (InsertMode) legalModes.get(i);				
 		setInsertMode(newMode);
 	}
-
+	
 	private void toggleOverwriteMode() {
 		if (fIsOverwriteModeEnabled) {
 			fIsOverwriting= !fIsOverwriting;
@@ -4544,13 +4542,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			legalModes.remove(mode);
 		}
 	}
-
+	
 	protected void enableOverwriteMode(boolean enable) {
 		if (fIsOverwriting && !enable)
 			toggleOverwriteMode();
 		fIsOverwriteModeEnabled= enable;
 	}
-	
+
 	private Caret createOverwriteCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
 		GC gc= new GC(styledText);
@@ -4568,7 +4566,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		caret.setSize(width, caret.getSize().y);
 		return caret;
 	}
-		
+	
 	private Image createRawInsertModeCaretImage(StyledText styledText) {
 		
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
@@ -4582,7 +4580,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		gc.setLineWidth(width);
 		gc.drawLine(0, widthOffset, imageData.width, widthOffset);
 		gc.drawLine(widthOffset, 0, widthOffset, imageData.height - 1);
-		gc.drawLine(0, imageData.height -1, imageData.width -1, imageData.height -1);
+		gc.drawLine(0, imageData.height - 1, imageData.width - 1, imageData.height - 1);
 		gc.dispose();
 			
 		return bracketImage;
@@ -4599,7 +4597,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 		return caret;
 	}
-
+	
 	private void updateCaret() {
 		
 		if (getSourceViewer() == null)
@@ -4655,6 +4653,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	private void updateInsertModeAction() {
+		
+		// this may be called before the part is fully initialized (see configureInsertMode)
+		// drop out in thise case.
+		if (getSite() == null)
+			return;
+		
 		IAction action= getAction(ITextEditorActionConstants.TOGGLE_INSERT_MODE);
 		if (action != null) {
 			action.setEnabled(!fIsOverwriting);
