@@ -37,6 +37,9 @@ public class OpenMarkerAction extends SelectionProviderAction {
 		Object object= selection.getFirstElement();
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		IWorkbenchPage page= dwindow.getActivePage();
+		if (page == null) {
+			return;
+		}
 		try {
 			page.openEditor((IMarker)object);
 		} catch (PartInitException e) {

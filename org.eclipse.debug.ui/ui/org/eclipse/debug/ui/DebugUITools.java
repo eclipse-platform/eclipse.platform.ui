@@ -36,6 +36,9 @@ public class DebugUITools {
 	 */
 	public static void inspect(String label, IValue value) {
 		IWorkbenchPage p= DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+		if (p == null) {
+			return;
+		}
 		InspectorView view= (InspectorView) p.findView(IDebugUIConstants.ID_INSPECTOR_VIEW);
 		if (view == null) {
 			// open a new view

@@ -340,7 +340,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * specified debug mode.
 	 */
 	protected LaunchesView findDebugPart(IWorkbenchWindow window, String mode) {
+		if (window == null) {
+			return null;
+		}
 		IWorkbenchPage activePage= window.getActivePage();
+		if (activePage == null) {
+			return null;
+		}
 		IViewPart debugPart= null;
 		if (mode == ILaunchManager.DEBUG_MODE) {
 			debugPart= activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW);							

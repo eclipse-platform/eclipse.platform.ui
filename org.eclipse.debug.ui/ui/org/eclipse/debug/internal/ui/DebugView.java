@@ -242,6 +242,9 @@ public class DebugView extends LaunchesView {
 		
 		
 		IWorkbenchPage page= dwindow.getActivePage();
+		if (page == null) {
+			return;
+		}
 		IEditorPart editor= null;
 		IEditorPart[] editorParts= page.getEditors();
 		

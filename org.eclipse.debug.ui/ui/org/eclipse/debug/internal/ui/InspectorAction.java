@@ -26,6 +26,9 @@ public abstract class InspectorAction extends SelectionProviderAction {
 	public void run() {
 		// get the Inspector
 		IWorkbenchPage p= DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+		if (p == null) {
+			return;
+		}
 		InspectorView view= (InspectorView) p.findView(IDebugUIConstants.ID_INSPECTOR_VIEW);
 		if (view == null) {
 			// open a new view

@@ -136,6 +136,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionChan
 		}
 		IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
 		IWorkbenchPage page= dwindow.getActivePage();
+		if (page == null) {
+			return;
+		}
 		IEditorPart editor= getOpenEditor(breakpoint, page);
 		if (editor != null) {
 			editor.gotoMarker(breakpoint);

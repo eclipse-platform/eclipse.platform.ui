@@ -28,6 +28,9 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 	public void run() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		IWorkbenchPage page= dwindow.getActivePage();
+		if (page == null) {
+			return;
+		}
 		IEditorPart part= null;
 		// Get the resource.
 		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();
