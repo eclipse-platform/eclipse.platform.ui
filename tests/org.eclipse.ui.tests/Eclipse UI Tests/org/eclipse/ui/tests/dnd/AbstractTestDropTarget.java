@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -20,22 +21,28 @@ import org.eclipse.ui.internal.dnd.TestDropLocation;
  * @since 3.0
  */
 public abstract class AbstractTestDropTarget implements TestDropLocation {
-    //TestDragSource source;
+
+    private WorkbenchPage page;
 
     public abstract String toString();
 
     public abstract Point getLocation();
 
-    //	public void setSource(TestDragSource source) {
-    //		this.source = source;
-    //	}
-
+    public void setPage(WorkbenchPage page) {
+        this.page = page;
+    }
+    
     public WorkbenchPage getPage() {
-        return (WorkbenchPage) ((WorkbenchWindow) PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow()).getActivePage();
+        if (page == null) {
+            page = (WorkbenchPage) ((WorkbenchWindow) PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow()).getActivePage();
+        }
+        
+        return page;
+    }
+    
+    public Shell[] getShells() {
+        return new Shell[] {getPage().getWorkbenchWindow().getShell()};
     }
 
-    //	public TestDragSource getSource() {
-    //		return source;
-    //	}
 }

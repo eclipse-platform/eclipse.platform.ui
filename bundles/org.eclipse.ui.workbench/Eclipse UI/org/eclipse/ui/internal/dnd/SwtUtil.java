@@ -80,7 +80,7 @@ public class SwtUtil {
      * 
      * @param toSearch an array of composites 
      * @param locationToFind a point (in display coordinates)
-     * @return
+     * @return the most specific Control that overlaps the given point, or null if none
      */
     public static Control findControl(Control[] toSearch, Point locationToFind) {
         for (int idx = toSearch.length - 1; idx >= 0; idx--) {

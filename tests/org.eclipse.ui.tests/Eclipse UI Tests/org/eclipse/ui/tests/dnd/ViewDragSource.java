@@ -18,7 +18,6 @@ import org.eclipse.ui.internal.ViewStack;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -71,18 +70,19 @@ public class ViewDragSource extends TestDragSource {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.dnd.TestDragSource#drag(org.eclipse.swt.graphics.Point)
      */
-    public void drag(TestDropLocation target) {
+    public void drag(AbstractTestDropTarget target) {
         IViewPart part = getPart();
 
         WorkbenchPage page = getPage();
+        target.setPage(page);
         PartPane pane = ((ViewSite) part.getSite()).getPane();
         if (maximized) {
             page.toggleZoom(pane.getPartReference());
         }
-
+        
         DragUtil.forceDropLocation(target);
         ViewStack parent = ((ViewStack) (pane.getContainer()));
-
+        
         IPresentablePart presentablePart = wholeFolder ? null : pane
                 .getPresentablePart();
         parent.dragStart(presentablePart, Display.getDefault()

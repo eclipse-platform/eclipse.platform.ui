@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.dnd;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 
 /**
  * @since 3.0
@@ -23,7 +22,7 @@ public abstract class TestDragSource {
 
     public abstract String toString();
 
-    public abstract void drag(TestDropLocation target);
+    public abstract void drag(AbstractTestDropTarget target);
 
     public void setPage(WorkbenchPage page) {
         this.page = page;

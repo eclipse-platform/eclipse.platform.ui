@@ -188,13 +188,13 @@ public class DragUtil {
     static IDropTarget dragToTarget(final Object draggedItem,
             final Rectangle sourceBounds, final Point initialLocation,
             final boolean allowSnapping) {
-        final Display display = Display.getDefault();
+        final Display display = Display.getCurrent();
 
         if (forcedDropTarget != null) {
 
             Point location = forcedDropTarget.getLocation();
-            Control currentControl = SwtUtil.findControl(display, location);
 
+            Control currentControl = SwtUtil.findControl(forcedDropTarget.getShells(), location);
             return getDropTarget(currentControl, draggedItem, location,
                     sourceBounds);
         }

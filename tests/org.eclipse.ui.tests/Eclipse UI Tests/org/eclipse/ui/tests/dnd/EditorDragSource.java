@@ -11,7 +11,6 @@
 package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 
 /**
  * @since 3.0
@@ -51,7 +50,7 @@ public class EditorDragSource extends TestDragSource {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.dnd.TestDragSource#drag(org.eclipse.swt.graphics.Point)
      */
-    public void drag(TestDropLocation target) {
+    public void drag(AbstractTestDropTarget target) {
         DragOperations.drag(getPart(), target, wholeFolder);
     }
 

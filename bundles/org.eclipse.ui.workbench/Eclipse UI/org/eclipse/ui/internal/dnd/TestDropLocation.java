@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.dnd;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * This is an interface intended for use in test suites. Objects can implement
@@ -27,4 +28,12 @@ public interface TestDropLocation {
      * @return a location in display coordinates
      */
     public Point getLocation();
+    
+    /**
+     * The drop code will pretend that only the given shells are open,
+     * and that they have the specified Z-order.
+     *
+     * @return the shells to check for drop targets, from bottom to top.
+     */
+    public Shell[] getShells();
 }

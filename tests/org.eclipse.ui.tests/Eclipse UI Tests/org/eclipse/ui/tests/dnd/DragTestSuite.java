@@ -52,8 +52,8 @@ public class DragTestSuite extends TestSuite {
         String probView = IPageLayout.ID_PROBLEM_VIEW;
         
         // Commented out for now, see bug 76082.
-        if(SWT.getPlatform().equals("gtk"))
-        	return;
+//        if(SWT.getPlatform().equals("gtk"))
+//        	return;
 
         // Drag sources for views
         TestDragSource[] viewDragSources = new TestDragSource[] {
