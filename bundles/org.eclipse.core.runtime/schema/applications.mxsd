@@ -67,7 +67,7 @@ run multiple applications.
             <annotation>
                <documentation>
                   the fully-qualified name of a class which implements 
-&lt;samp&gt;org.eclipse.core.runtime.IPlatformRunnable&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.core.boot.IPlatformRunnable&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.boot.IPlatformRunnable"/>
@@ -128,7 +128,7 @@ run multiple applications.
       <documentation>
          The value of the class attribute must represent an 
 implementor of 
-&lt;samp&gt;org.eclipse.core.runtime.IPlatformRunnable&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.core.boot.IPlatformRunnable&lt;/samp&gt;.
       </documentation>
    </annotation>
 
