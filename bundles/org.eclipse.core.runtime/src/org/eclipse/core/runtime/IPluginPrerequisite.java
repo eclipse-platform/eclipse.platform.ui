@@ -84,10 +84,13 @@ public interface IPluginPrerequisite {
 	 * 
 	 * @return the plug-in version identifier, or <code>null</code> if 
 	 *    none was specified
-	 * @deprecated Given a manifest element equivalent of a plug-in 
-	 * prerequisite (see the class comment), this method is replaced by:
+	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * of the platform.  For example, 
 	 * <pre>
-	 *     element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+	 *     State state = Platform.getPlatformAdmin().getState();
+	 *     BundleDescription bundle = state.getBundle("my plug-in id", my plug-in version);
+	 *     BundleSpecification spec = bundle.getRequiredBundle("required plug-in id");
+	 *     Version reqMinVersion = spec.getVersionRange().getMinimum();
 	 * </pre>
 	 */
 	public PluginVersionIdentifier getVersionIdentifier();
@@ -119,11 +122,20 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if greater or equal match is allowed,
 	 *   <code>false</code> otherwise.
 	 * @since 2.0
-	 * @deprecated Given a manifest element equivalent of a plug-in 
-	 * prerequisite (see the class comment), this method is replaced by:
+	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * of the platform.  For example, 
 	 * <pre>
-	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
-	 *     Constants.VERSION_MATCH_GREATERTHANOREQUAL.equals(match);
+	 *     State state = Platform.getPlatformAdmin().getState();
+	 *     BundleDescription bundle = state.getBundle("my plug-in id", my plug-in version);
+	 *     BundleSpecification spec = bundle.getRequiredBundle("required plug-in id");
+	 *     VersionRange versionRange = spec.getVersionRange();
+	 *     if (versionRange == null || versionRange.getMinimum() == null)
+	 *         return false;
+	 *     Version minimum = versionRange.getMinimum();
+	 *     Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
+	 *     if (maximum.equals(Version.maxVersion))
+	 *         return true;
+	 *     return false;
 	 * </pre>
 	 */
 	public boolean isMatchedAsGreaterOrEqual();
@@ -134,11 +146,22 @@ public interface IPluginPrerequisite {
 	 *
 	 * @return <code>true</code> if compatible match is allowed,
 	 *   <code>false</code> if exact match is required.
-	 * @deprecated Given a manifest element equivalent of a plug-in 
-	 * prerequisite (see the class comment), this method is replaced by:
+	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * of the platform.  For example, 
 	 * <pre>
-	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
-	 *     Constants.VERSION_MATCH_MAJOR.equals(match);
+	 *     State state = Platform.getPlatformAdmin().getState();
+	 *     BundleDescription bundle = state.getBundle("my plug-in id", my plug-in version);
+	 *     BundleSpecification spec = bundle.getRequiredBundle("required plug-in id");
+	 *     VersionRange versionRange = spec.getVersionRange();
+	 *     if (versionRange == null || versionRange.getMinimum() == null)
+	 *         return false;
+	 *     Version minimum = versionRange.getMinimum();
+	 *     Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
+	 *     if (!minimum.isInclusive() || maximum.isInclusive())
+	 *         return false;
+	 *     else if (minimum.getMajorComponent() == maximum.getMajorComponent() - 1)
+	 *         return true;
+	 *     return false;	
 	 * </pre>
 	 */
 	public boolean isMatchedAsCompatible();
@@ -151,11 +174,26 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only equivalent identifier match
 	 * satisfies this dependency, <code>false</code> otherwise.
 	 * @since 2.0
-	 * @deprecated Given a manifest element equivalent of a plug-in 
-	 * prerequisite (see the class comment), this method is replaced by:
+	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * of the platform.  For example, 
 	 * <pre>
-	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
-	 *     Constants.VERSION_MATCH_MINOR.equals(match);
+	 *     State state = Platform.getPlatformAdmin().getState();
+	 *     BundleDescription bundle = state.getBundle("my plug-in id", my plug-in version);
+	 *     BundleSpecification spec = bundle.getRequiredBundle("required plug-in id");
+	 *     VersionRange versionRange = spec.getVersionRange();
+	 *     if (versionRange == null || versionRange.getMinimum() == null)
+	 *         return false;
+	 *     Version minimum = versionRange.getMinimum();
+	 *     Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
+	 *     if (!minimum.isInclusive() || maximum.isInclusive())
+	 *         return false;
+	 *     else if (minimum.getMajorComponent() == maximum.getMajorComponent() - 1)
+	 *         return false;
+	 *     else if (minimum.getMajorComponent() != maximum.getMajorComponent())
+	 *         return false;
+	 *     else if (minimum.getMinorComponent() == maximum.getMinorComponent() - 1)
+	 *         return true;
+	 *     return false;
 	 * </pre>
 	 */
 	public boolean isMatchedAsEquivalent();
@@ -169,11 +207,20 @@ public interface IPluginPrerequisite {
 	 * identifier match satisfies this dependency,
 	 * <code>false</code> otherwise.
 	 * @since 2.0
-	 * @deprecated Given a manifest element equivalent of a plug-in 
-	 * prerequisite (see the class comment), this method is replaced by:
+	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * of the platform.  For example, 
 	 * <pre>
-	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
-	 *     Constants.VERSION_MATCH_QUALIFIER.equals(match);
+	 *     State state = Platform.getPlatformAdmin().getState();
+	 *     BundleDescription bundle = state.getBundle("my plug-in id", my plug-in version);
+	 *     BundleSpecification spec = bundle.getRequiredBundle("required plug-in id");
+	 *     VersionRange versionRange = spec.getVersionRange();
+	 *     if (versionRange == null || versionRange.getMinimum() == null)
+	 *         return false;
+	 *     Version minimum = versionRange.getMinimum();
+	 *     Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
+	 *     if (minimum.equals(maximum))
+	 *         return true;
+	 *     return false;
 	 * </pre>
 	 */
 	public boolean isMatchedAsPerfect();
@@ -186,7 +233,28 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only exact identifier match
 	 * satisfies this dependency, <code>false</code> if compatible
 	 * plug-in will satisfy this dependency.
-	 * @deprecated ??? what the heck?
+	 * @deprecated Callers of this method should interrogate the current {@link State)
+	 * of the platform.  For example, 
+	 * <pre>
+	 *     State state = Platform.getPlatformAdmin().getState();
+	 *     BundleDescription bundle = state.getBundle("my plug-in id", my plug-in version);
+	 *     BundleSpecification spec = bundle.getRequiredBundle("required plug-in id");
+	 *     VersionRange versionRange = spec.getVersionRange();
+	 *     if (versionRange == null || versionRange.getMinimum() == null)
+	 *         return false;
+	 *     Version minimum = versionRange.getMinimum();
+	 *     Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
+	 *     if (!minimum.isInclusive() || maximum.isInclusive())
+	 *         return false;
+	 *     else if (minimum.getMajorComponent() == maximum.getMajorComponent() - 1)
+	 *         return false;
+	 *     else if (minimum.getMajorComponent() != maximum.getMajorComponent())
+	 *         return false;
+	 *     else if (minimum.getMinorComponent() == maximum.getMinorComponent() - 1)
+	 *         return true;
+	 *     return false;
+	 * </pre>
+	 * TODO verify that this method is the same as isMatchedAsEquivalent()
 	 */
 	public boolean isMatchedAsExact();
 
