@@ -44,6 +44,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	private ThreadTimer fThreadTimer= new ThreadTimer();
 	
 	/**
+	 * During a suspend event callback, some views may resume
+	 * the thread to perform an evaluation. This flag is set
+	 * when that state is detected so that the view can be
+	 * properly refreshed when the evaluation completes.
+	 */
+	private boolean fEvaluatingForSuspend= false;
+	
+	/**
 	 * Constructs an event handler for the given launch view.
 	 * 
 	 * @param view launch view
@@ -163,7 +171,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 			
 			boolean wasTimedOut= fThreadTimer.getTimedOutThreads().remove(thread);
-			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
+			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0) && !fEvaluatingForSuspend) {
 				if (thread != null && wasTimedOut) {
 					// Refresh the thread label when a timed out evaluation finishes.
 					// This is necessary because the timeout updates
@@ -173,6 +181,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				// Don't refresh fully for evaluation completion.
 				return;
 			}
+			fEvaluatingForSuspend= false;
 		}
 		if (element instanceof IThread) {
 			doHandleSuspendThreadEvent((IThread)element);
@@ -191,6 +200,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void doHandleSuspendThreadEvent(IThread thread) {
 		// if the thread has already resumed, do nothing
 		if (!thread.isSuspended()) {
+			fEvaluatingForSuspend= true;
 			return;
 		}
 		
@@ -505,4 +515,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 		}
 	}
+	
 }
+
