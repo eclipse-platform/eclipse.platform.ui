@@ -247,11 +247,10 @@ public class EmbeddedHelpView extends ViewPart {
 		tbm.removeAll();
 
 		tbm.add(showHideAction);
+		tbm.add(synchronizeAction);
 		tbm.add(new Separator());
 		tbm.add(backAction);
 		tbm.add(forwardAction);
-		tbm.add(new Separator());
-		tbm.add(synchronizeAction);
 		tbm.add(new Separator());
 		// NOTE: when print support is added in the platform
 		// move this to File -> Print
