@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -105,8 +106,11 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	public Menu getMenu(Menu parent) {
 		
 		// Retrieve the current perspective and the registered shortcuts
+		List shortcuts = null;
 		String activePerspID = getActivePerspectiveID();
-		List shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID);
+		if (activePerspID != null) {
+			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID);
+		}
 		
 		// If NO shortcuts are listed in the current perspective, add ALL shortcuts
 		// to avoid an empty cascading menu
@@ -138,10 +142,21 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	}
 	
 	/**
-	 * Return the ID of the currently active perspective.
+	 * Return the ID of the currently active perspective, or <code>null</code>
+	 * if there is none.
 	 */
 	protected String getActivePerspectiveID() {
-		return DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().getPerspective().getId();
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IPerspectiveDescriptor persp = page.getPerspective();
+				if (persp != null) {
+					return persp.getId();
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
