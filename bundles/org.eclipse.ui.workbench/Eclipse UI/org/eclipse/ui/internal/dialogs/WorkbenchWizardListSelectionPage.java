@@ -67,7 +67,7 @@ public void createControl(Composite parent) {
 	Table table = new Table(outerContainer, SWT.BORDER);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	
-	int availableRows = Dialog.availableRows(parent);
+	int availableRows = DialogUtil.availableRows(parent);
 	
 	//Only give a height hint if the dialog is going to be too small
 	if(availableRows > 50){

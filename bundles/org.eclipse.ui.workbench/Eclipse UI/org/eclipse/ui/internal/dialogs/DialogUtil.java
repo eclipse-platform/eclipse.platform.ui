@@ -1,13 +1,23 @@
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.ui.PartInitException;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PartInitException;
 
 /**
  * Utility class to help with dialogs.
@@ -76,4 +86,17 @@ public class DialogUtil {
 		return label;
 	}
 
+	/**
+	 * Return the number of rows available in the current display using the
+	 * current font.
+	 * @param parent The Composite whose Font will be queried.
+	 * @return int The result of the display size divided by the font size.
+	 */
+	public static int availableRows(Composite parent) {
+
+		int fontHeight = (parent.getFont().getFontData())[0].getHeight();
+		int displayHeight = parent.getDisplay().getClientArea().height;
+
+		return displayHeight / fontHeight;
+	}
 }

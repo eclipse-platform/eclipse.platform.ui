@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -270,7 +271,7 @@ public abstract class WizardExportResourcesPage
 				input.add(projects[i]);
 		}
 
-		int availableRows = Dialog.availableRows(parent);
+		int availableRows = DialogUtil.availableRows(parent);
 		
 		this.resourceGroup =
 			new ResourceTreeAndListGroup(

@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.dialogs.IElementFilter;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -173,7 +174,7 @@ protected final void createDestinationGroup(Composite parent) {
  */
 protected void createFileSelectionGroup(Composite parent) {
 	
-	int availableRows = Dialog.availableRows(parent);
+	int availableRows = DialogUtil.availableRows(parent);
 
 	//Just create with a dummy root.
 	this.selectionGroup =
