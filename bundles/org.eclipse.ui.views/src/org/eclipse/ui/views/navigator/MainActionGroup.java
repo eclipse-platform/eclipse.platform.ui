@@ -13,10 +13,6 @@ Contributors:
 package org.eclipse.ui.views.navigator;
 
 import org.eclipse.core.resources.IResource;
-
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -25,9 +21,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionContext;
