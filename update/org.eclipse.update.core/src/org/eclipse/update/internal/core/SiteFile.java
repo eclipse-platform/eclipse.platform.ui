@@ -419,6 +419,9 @@ public class SiteFile extends Site {
 	private void aboutToRemove(IFeature feature) throws CoreException {
 		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 
+		// if teh recovery is not turned on
+		if (!ErrorRecoveryLog.RECOVERY_ON) return;
+
 		//logFeature
 		if (feature != null) {
 			// log feature URL

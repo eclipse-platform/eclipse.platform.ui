@@ -24,7 +24,7 @@ import org.eclipse.update.core.Utilities;
  */
 public class ErrorRecoveryLog {
 
-	private static final boolean RECOVERY_ON = false;
+	public static final boolean RECOVERY_ON = false;
 
 	private static final String ERROR_RECOVERY_LOG = "platform.cfg.log";
 	private static final String LOG_ENTRY_KEY = "LogEntry.";
