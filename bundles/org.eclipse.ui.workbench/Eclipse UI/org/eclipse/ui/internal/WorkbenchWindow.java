@@ -2223,7 +2223,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		fastViewData.top = new FormAttachment(topBar, 0);
 
 		fastViewData.left = new FormAttachment(0);
-		fastViewData.bottom = new FormAttachment(100);
+		fastViewData.bottom = new FormAttachment(animationItem.getControl(),0);
 
 		fastViewBar.getControl().setLayoutData(fastViewData);
 
