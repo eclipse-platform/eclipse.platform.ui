@@ -139,23 +139,18 @@ public class SearchData extends RequestData {
 	}
 
 	/**
-	 * Returns the list of selected TOC's as a comma-separated list
+	 * Returns the list of selected TOC's 
 	 */
-	public String getSelectedTocsList() {
+	public String[] getSelectedTocs() {
 		String[] books = request.getParameterValues("scope");
-		StringBuffer booksList = new StringBuffer();
-		if (books != null && books.length > 0) {
-			booksList.append('"');
-			booksList.append(UrlUtil.JavaScriptEncode(books[0]));
-			booksList.append('"');
-			for (int i = 1; i < books.length; i++) {
-				booksList.append(',');
-				booksList.append('"');
-				booksList.append(UrlUtil.JavaScriptEncode(books[i]));
-				booksList.append('"');
-			}
+		if (books == null) {
+			// select all books
+			TocData tocData = new TocData(context, request);
+			books = new String[tocData.getTocCount()];
+			for (int i=0; i<books.length; i++)
+				books[i] = tocData.getTocHref(i);
 		}
-		return booksList.toString();
+		return books;
 	}
 
 	/**

@@ -105,21 +105,20 @@ body {
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 
-
+<%
+	String[] selectedBooks = data.getSelectedTocs();
+%>
 // create list of books initilize selectedBooks variable used by advances search
-// when no filtering, selectedBooks needs to be null
+var selectedBooks = new Array(<%=selectedBooks.length%>);
 <%
-	String selectedTocsList = data.getSelectedTocsList();
-	if (selectedTocsList.equals("")) {
+for (int i=0; i<selectedBooks.length; i++) 
+{
 %>
-var selectedBooks = null;
+	selectedBooks[<%=i%>] = "<%=UrlUtil.JavaScriptEncode(selectedBooks[i])%>";
 <%
-	} else {
+}
 %>
-var selectedBooks=new Array(<%=selectedTocsList%>);
-<%
-	}
-%>
+
 var advancedDialog;
 var w = 400;
 var h = 300;
