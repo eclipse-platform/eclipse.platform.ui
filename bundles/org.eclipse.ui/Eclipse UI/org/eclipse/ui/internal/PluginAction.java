@@ -197,8 +197,8 @@ public abstract class PluginAction extends Action
 				return;
 			}
 		}
-		if (event != null && delegate instanceof IActionDelegate2) {
-			((IActionDelegate2) delegate).run(this, event);
+		if (event != null && delegate instanceof IActionDelegateWithEvent) {
+			((IActionDelegateWithEvent) delegate).runWithEvent(this, event);
 		}
 		else {
 			delegate.run(this);

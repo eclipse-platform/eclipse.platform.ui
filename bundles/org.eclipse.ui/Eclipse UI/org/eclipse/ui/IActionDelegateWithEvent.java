@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Event;
 /**
  * This interface is a mixin interface for action delegates, adding the ability to
  * examine the triggering SWT event when it is run.
- * If an action delegate implements this interface, then <code>run(IAction, Event)</code>
+ * If an action delegate implements this interface, then <code>runWithEvent(IAction, Event)</code>
  * is called instead of <code>run(IAction)</code>.
  * <p>
  * Clients should implement this interface, in addition to <code>IActionDelegate</code> 
@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Event;
  *
  * @since 2.0
  */
-public interface IActionDelegate2 {
+public interface IActionDelegateWithEvent {
 
 /**
  * Performs this action, passing the SWT event which triggered it.
  * <p>
  * This method is called when the delegating action has been triggered.
  * Implement this method to do the actual work.
- * If an action delegate implements this interface, this run method
+ * If an action delegate implements this interface, this method
  * is called instead of <code>run(IAction)</code>.
  * <p>
  * NOTE: This is experimental API, which may change in the future.
@@ -33,6 +33,6 @@ public interface IActionDelegate2 {
  * @param event the SWT event which triggered this action being run 
  * @since 2.0
  */
-public void run(IAction action, Event event);
+public void runWithEvent(IAction action, Event event);
 
 }
