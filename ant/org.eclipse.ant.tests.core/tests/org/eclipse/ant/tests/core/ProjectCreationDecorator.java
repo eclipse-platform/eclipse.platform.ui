@@ -34,7 +34,7 @@ public class ProjectCreationDecorator extends AbstractAntTest {
 			pro.delete(true, true, null);
 		}
 		// create project and import buildfiles and support files
-		project = ProjectHelper.createProject("AntTests", "bin");
+		project = ProjectHelper.createProject("AntTests");
 		IFolder folder = ProjectHelper.addFolder(project, "buildfiles");
 		File root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_BUILDFILES_DIR);
 		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);

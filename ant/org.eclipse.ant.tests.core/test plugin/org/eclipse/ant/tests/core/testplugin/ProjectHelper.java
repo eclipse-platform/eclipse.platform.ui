@@ -33,7 +33,7 @@ public class ProjectHelper {
 	/**
 	 * Creates a IProject.
 	 */	
-	public static IProject createProject(String projectName, String binFolderName) throws CoreException {
+	public static IProject createProject(String projectName) throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
 		if (!project.exists()) {
