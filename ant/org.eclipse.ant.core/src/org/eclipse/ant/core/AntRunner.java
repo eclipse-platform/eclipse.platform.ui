@@ -214,7 +214,7 @@ private File findBuildFile(String start, String suffix) throws BuildException {
  */
 private int findTargetPosition(Vector names, String name) {
 	int result = names.size();
-	for (int i = 0; i < names.size() && res == names.size(); i++) {
+	for (int i = 0; i < names.size() && result == names.size(); i++) {
 		if (name.compareTo((String) names.elementAt(i)) < 0)
 			result = i;
 	}
