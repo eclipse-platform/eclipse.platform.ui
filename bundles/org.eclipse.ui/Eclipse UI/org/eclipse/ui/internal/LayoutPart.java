@@ -43,6 +43,14 @@ public Rectangle getBounds() {
 	return new Rectangle(0, 0, 0, 0);
 }
 /**
+ * Gets root container for this part.
+ */
+public RootLayoutContainer getRootContainer() {
+	if(container != null)
+		return container.getRootContainer();
+	return null;
+}
+/**
  * Gets the parent for this part.
  */
 public ILayoutContainer getContainer() {

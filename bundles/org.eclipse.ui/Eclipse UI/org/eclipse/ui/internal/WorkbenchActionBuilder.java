@@ -52,7 +52,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
 	private PinEditorAction pinEditorAction;
-	private ShowMenuAction showMenuAction;
+	private ShowViewMenuAction showViewMenuAction;
+	private ShowPartPaneMenuAction showPartPaneMenuAction;
 	private CyclePartAction nextPartAction;
 	private CyclePartAction prevPartAction;
 	private CycleEditorAction nextEditorAction;
@@ -262,12 +263,19 @@ private void createMenuBar() {
 		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
-	popup.add(activateEditorAction);
-	popup.add(showMenuAction);
-	popup.add(nextEditorAction);
-	popup.add(prevEditorAction);
-	popup.add(nextPartAction);
-	popup.add(prevPartAction);
+	
+	{
+		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
+		popup.add(subMenu);
+		subMenu.add(activateEditorAction);
+		subMenu.add(showViewMenuAction);
+		subMenu.add(showPartPaneMenuAction);
+		subMenu.add(nextEditorAction);
+		subMenu.add(prevEditorAction);
+		subMenu.add(nextPartAction);
+		subMenu.add(prevPartAction);
+	}
+	
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
 	popup.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -490,7 +498,8 @@ private void makeActions() {
 		quickStartAction = new QuickStartAction(workbench);
 	
 	// Actions for invisible accelerators
-	showMenuAction = new ShowMenuAction(window);
+	showViewMenuAction = new ShowViewMenuAction(window);
+	showPartPaneMenuAction = new ShowPartPaneMenuAction(window);
 	nextEditorAction = new CycleEditorAction(window, true);
 	prevEditorAction = new CycleEditorAction(window, false);
 	nextPartAction = new CyclePartAction(window, true);

@@ -152,7 +152,14 @@ protected void addMoveItems(Menu moveMenu) {
 	item.setEnabled(!isZoomed() && (getContainer() instanceof EditorWorkbook));
 }
 
-
+/**
+ * Return the sashes around this part.
+ */
+protected Sashes findSashes() {
+	Sashes result = new Sashes();
+	workbook.getEditorArea().findSashes(workbook,result);
+	return result;
+}
 /**
  * Update the title attributes for the pane.
  */
@@ -164,5 +171,11 @@ public void updateTitles() {
  */
 public void showPaneMenu() {
 	workbook.showPaneMenu();
+}
+/**
+ * Show the context menu for this part.
+ */
+public void showViewMenu(){
+	//Do nothing. Editors do not have menus
 }
 }

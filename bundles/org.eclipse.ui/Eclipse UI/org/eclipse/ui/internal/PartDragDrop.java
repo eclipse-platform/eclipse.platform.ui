@@ -315,7 +315,7 @@ public void openTracker() {
 				}
 			}
 			Cursor cursor = getCursor(display, dropEvent.relativePosition);
-			dragControl.setCursor(cursor);
+			tracker.setCursor(cursor);
 		}
 	});
 
@@ -326,10 +326,16 @@ public void openTracker() {
 	if (!(sourceControl instanceof Shell)) {
 		sourcePos = sourceControl.getParent().toDisplay(sourcePos);
 	}	
-	Point anchorPos = dragControl.toDisplay(new Point(xAnchor, yAnchor));
-	Point cursorPos = display.getCursorLocation();
-	sourceBounds.x = sourcePos.x - (anchorPos.x - cursorPos.x);
-	sourceBounds.y = sourcePos.y - (anchorPos.y - cursorPos.y);
+	if(mouseDown) {
+		Point anchorPos = dragControl.toDisplay(new Point(xAnchor, yAnchor));
+		Point cursorPos = display.getCursorLocation();
+		sourceBounds.x = sourcePos.x - (anchorPos.x - cursorPos.x);
+		sourceBounds.y = sourcePos.y - (anchorPos.y - cursorPos.y);
+	} else {
+		sourceBounds.x = sourcePos.x + HYSTERESIS;
+		sourceBounds.y = sourcePos.y + HYSTERESIS;
+	}
+	
 	tracker.setRectangles(new Rectangle[] {sourceBounds});
 		
 	// Run tracker until mouse up occurs or escape key pressed.

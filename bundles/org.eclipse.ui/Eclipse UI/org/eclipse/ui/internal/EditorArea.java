@@ -141,6 +141,15 @@ protected boolean isActiveWorkbook(EditorWorkbook workbook) {
 	return activeEditorWorkbook == workbook;
 }
 /**
+ * Find the sashs around the specified part.
+ */
+public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
+	//Find the sashes around the current editor and
+	//then the sashes around the editor area.
+	super.findSashes(pane,sashes);
+	getRootContainer().findSashes(this,sashes);
+}
+/**
  * Remove all the editors
  */
 public void removeAllEditors() {

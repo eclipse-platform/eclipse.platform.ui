@@ -12,16 +12,35 @@ import org.eclipse.ui.actions.*;
  * Show the menu on top of the icon in the
  * view or editor label.
  */
-public class ShowMenuAction extends PartEventAction {
+public class ShowPartPaneMenuAction extends PartEventAction {
 
 /**
- * Constructor for ShowMenuAction.
+ * Constructor for ShowPartPaneMenuAction.
  * @param text
  */
-public ShowMenuAction(WorkbenchWindow window) {
-	super(WorkbenchMessages.getString("ShowMenuAction.text"));
-	setToolTipText(WorkbenchMessages.getString("ShowMenuAction.toolTip"));
+public ShowPartPaneMenuAction(WorkbenchWindow window) {
+	super("");
+	initText();
 	window.getPartService().addPartListener(this);
+}
+/**
+ * Initialize the menu text and tooltip.
+ */
+protected void initText() {
+	setText(WorkbenchMessages.getString("ShowPartPaneMenuAction.text"));
+	setToolTipText(WorkbenchMessages.getString("ShowPartPaneMenuAction.toolTip"));
+}
+/**
+ * Show the pane title menu.
+ */
+protected void showMenu(PartPane pane) {
+	pane.showPaneMenu();
+}
+/**
+ * Updates the enabled state.
+ */
+protected void updateState() {
+	setEnabled(getActivePart() != null);
 }
 /**
  * See Action
@@ -29,7 +48,7 @@ public ShowMenuAction(WorkbenchWindow window) {
 public void run() {
 	IWorkbenchPart part = getActivePart();
 	if(part != null)
-		((PartSite)part.getSite()).getPane().showPaneMenu();
+		showMenu(((PartSite)part.getSite()).getPane());
 }
 /**
  * See IPartListener
@@ -58,12 +77,6 @@ public void partActivated(IWorkbenchPart part) {
 public void partDeactivated(IWorkbenchPart part) {
 	super.partDeactivated(part);
 	updateState();
-}
-/**
- * Updates the enabled state.
- */
-private void updateState() {
-	setEnabled(getActivePart() != null);
 }
 }
 

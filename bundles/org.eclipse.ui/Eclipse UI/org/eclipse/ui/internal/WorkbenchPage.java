@@ -141,8 +141,7 @@ public void addFastView(IViewPart view) {
 	// The view is now invisible.
 	// If it is active then deactivate it.
 	if (view == activePart) {
-		activationList.remove(view);
-		setActivePart(activationList.getActive());
+		setActivePart(activationList.getPreviouslyActive());
 	}
 		
 	// Notify listeners.
@@ -981,6 +980,13 @@ public boolean isEditorAreaVisible() {
  */
 public boolean isFastView(IViewPart part) {
 	return getPersp().isFastView(part);
+}
+/**
+ * Return the active fast view or null if there are no
+ * fast views or if there are all minimized.
+ */
+public IViewPart getActiveFastView() {
+	return getPersp().getActiveFastView();
 }
 /**
  * Return true if the perspective has a dirty editor.

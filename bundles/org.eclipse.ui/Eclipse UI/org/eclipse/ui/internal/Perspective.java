@@ -36,6 +36,17 @@ public class Perspective
 	private IViewPart activeFastView;
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
+	
+	// fields used by fast view resizing via a sash
+	private static final int SASH_SIZE = 3;
+	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
+	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
+	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
+	private Color borderColor1;
+	private Color borderColor2;
+	private Color borderColor3;
+	private Map mapFastViewToWidth = new HashMap();
+	private Sash fastViewSash;
 
 	// resize listener to update fast view height when
 	// window resized.
@@ -49,17 +60,7 @@ public class Perspective
 			}
 		}
 	};
-	
-	// fields used by fast view resizing via a sash
-	private static final int SASH_SIZE = 3;
-	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
-	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
-	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
-	private Color borderColor1;
-	private Color borderColor2;
-	private Color borderColor3;
-	private Map mapFastViewToWidth = new HashMap();
-	private Sash fastViewSash;
+
 	private PaintListener paintListener = new PaintListener() {
 		public void paintControl(PaintEvent event) {
 			if (borderColor1 == null) borderColor1 = WorkbenchColors.getColor(RGB_COLOR1);
@@ -378,6 +379,7 @@ private void hideFastView(IViewPart part) {
 
 	// Hide it completely.
 	pane.setBounds(0, 0, 0, 0);
+	pane.setFastViewSash(null);
 	ctrl.setEnabled(false); // Remove focus support.
 }
 /**
@@ -856,9 +858,16 @@ public void setActionSets(IActionSetDescriptor[] newArray) {
 	}
 }
 /**
+ * Return the active fast view or null if there are no
+ * fast views or if there are all minimized.
+ */
+public IViewPart getActiveFastView() {
+	return activeFastView;
+}
+/**
  * Sets the active fast view.
  */
-public void setActiveFastView(IViewPart view) {
+private void setActiveFastView(IViewPart view) {
 	if (activeFastView == view)
 		return;
 	if (activeFastView != null) {
@@ -958,8 +967,17 @@ private void showFastView(IViewPart part) {
 	if (fastViewSash == null) {
 		fastViewSash = new Sash(parent, SWT.VERTICAL);
 		fastViewSash.addPaintListener(paintListener);
+		fastViewSash.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				fastViewSash.removePaintListener(paintListener);
+			}
+			public void focusLost(FocusEvent e) {
+				fastViewSash.addPaintListener(paintListener);
+			}
+		});
 		fastViewSash.addSelectionListener(selectionListener);
 	}
+	pane.setFastViewSash(fastViewSash);
 	fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
 	fastViewSash.moveAbove(null);
 }

@@ -45,6 +45,15 @@ public PartSashContainer(String id) {
 	};
 }
 /**
+ * Find the sashs around the specified part.
+ */
+public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
+	LayoutTree part = root.find(pane);
+	if(part == null)
+		return;
+	part.findSashes(sashes);
+}
+/**
  * Add a part.
  */
 public void add(LayoutPart child) {

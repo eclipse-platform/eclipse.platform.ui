@@ -37,11 +37,15 @@ public class ViewPane extends PartPane
 	private ToolBar isvToolBar;
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
-	
+	private ToolItem pullDownButton;
 	/**
 	 * Indicates whether a toolbar button is shown for the view local menu.
 	 */
 	private boolean showMenuButton = false;
+	
+	//Created in o.e.ui.Perspective, disposed there.
+	private Sash fastViewSash;
+	
 
 	/**
 	 * Toolbar manager for the ISV toolbar.
@@ -97,14 +101,14 @@ public class ViewPane extends PartPane
 		public void fill(ToolBar toolbar, int index) {
 			showMenuButton = (isvMenuMgr != null && !isvMenuMgr.isEmpty());
 			if (showMenuButton) {
-				ToolItem pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
+				pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
 				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 				pullDownButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
 				pullDownButton.setImage(img);
 				pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
 				pullDownButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						showViewMenu((ToolItem) e.widget);
+						showViewMenu();
 					}
 				});
 			}
@@ -364,6 +368,10 @@ public void setFast(boolean b) {
 		isvToolBarMgr.update(true);
 	}
 }
+public void setFastViewSash(Sash s) {
+	fastViewSash = s;
+}
+
 /**
  * Indicate focus in part.
  */
@@ -389,6 +397,8 @@ public void showFocus(boolean inFocus) {
  * Show a title label menu for this pane.
  */
 public void showPaneMenu() {
+	if(isFastView() && (page.getActiveFastView() != this.getPart()))
+		return;
 	Rectangle bounds = titleLabel.getBounds();
 	showPaneMenu(titleLabel,new Point(0,bounds.height),isFastView());
 }
@@ -397,6 +407,21 @@ public void showPaneMenu() {
  */
 private boolean isFastView() {
 	return ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
+}
+/**
+ * Finds and return the sashes around this part.
+ */
+protected Sashes findSashes() {
+	Sashes result = new Sashes();
+	if(isFastView()) {
+		result.right = fastViewSash;		
+		return result;
+	}
+	if (this.getContainer() instanceof PartTabFolder)
+		getRootContainer().findSashes((PartTabFolder)this.getContainer(),result);
+	else
+		getRootContainer().findSashes(this,result);
+	return result;
 }
 /**
  * Add the Fast View menu item to the view title menu.
@@ -411,6 +436,17 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
 		}
 	});
 	item.setEnabled(!isFastView);
+
+	if(isFastView) {
+		item = new MenuItem(parent, SWT.NONE);
+		item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
+		item.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doMinimize();
+			}
+		});
+		item.setEnabled(true);
+	}
 }
 /**
  * Add the View and Tab Group items to the Move menu.
@@ -439,12 +475,13 @@ protected void addMoveItems(Menu moveMenu) {
 /**
  * Show the context menu for this window.
  */
-private void showViewMenu(ToolItem item) {
-	if (isvMenuMgr == null) {
+public void showViewMenu() {
+	if (isvMenuMgr == null)
 		return;
-	}
+	if(isFastView() && (page.getActiveFastView() != this))
+		return;
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
-	Rectangle bounds = item.getBounds();
+	Rectangle bounds = pullDownButton.getBounds();
 	Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
 	topLeft = isvToolBar.toDisplay(topLeft);
 	aMenu.setLocation(topLeft.x, topLeft.y);

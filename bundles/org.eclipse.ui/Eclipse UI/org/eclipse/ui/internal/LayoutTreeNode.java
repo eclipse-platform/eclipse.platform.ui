@@ -100,6 +100,41 @@ public LayoutTreeNode findSash(LayoutPartSash sash) {
 	return null;
 }
 /**
+ * Sets the elements in the array of sashes with the
+ * Left,Rigth,Top and Botton sashes. The elements
+ * may be null depending whether there is a shash
+ * beside the <code>part</code>
+ */
+void findSashes(LayoutTree child,PartPane.Sashes sashes) {
+	Sash sash = (Sash)getSash().getControl();
+	boolean leftOrTop = children[0] == child;
+	if(sash != null) {
+		int index;
+		LayoutPartSash partSash = getSash();
+		//If the child is in the left, the sash 
+		//is in the rigth and so on.
+		if(leftOrTop) {
+			if(partSash.isVertical()) {
+				if(sashes.right == null)
+					sashes.right = sash;
+			} else {
+				if(sashes.bottom == null)
+					sashes.bottom = sash;
+			}
+		} else {
+			if(partSash.isVertical()) {
+				if(sashes.left == null)
+					sashes.left = sash;
+			} else {
+				if(sashes.top == null)
+					sashes.top = sash;
+			}
+		}
+	}
+	if(getParent() != null)
+		getParent().findSashes(this,sashes);
+}
+/**
  * Return the bounds of this tree which is the rectangle that
  * contains all Controls in this tree.
  */
