@@ -459,8 +459,6 @@ public class InternalAntRunner {
 	 * Note that the list passed to this method must support
 	 * List#remove(Object)	 */
 	protected void run(List argList) {
-		long startTime = System.currentTimeMillis();
-
 		setCurrentProject(new Project());
 		Throwable error = null;
 		PrintStream originalErr = System.err;
@@ -470,6 +468,9 @@ public class InternalAntRunner {
 		scriptExecuted= true;
 		processAntHome(false);
 		try {
+			if (argList.remove("-projecthelp")) { //$NON-NLS-1$
+				projectHelp = true;
+			}
 			getCurrentProject().init();
 			if (argList != null) {
 				scriptExecuted= preprocessCommandLine(argList);
@@ -489,7 +490,9 @@ public class InternalAntRunner {
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 
-			fireBuildStarted(getCurrentProject());
+			if (!projectHelp) {
+				fireBuildStarted(getCurrentProject());
+			}
 			
 			if (argList != null && !argList.isEmpty()) {
 				try {
@@ -544,6 +547,11 @@ public class InternalAntRunner {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
 			System.setSecurityManager(originalSM);
+			
+			if (!projectHelp) {				
+				fireBuildFinished(getCurrentProject(), error);
+			}
+						
 			//close any user specified build log
 			if (err != originalErr) {
 				err.close();
@@ -552,10 +560,6 @@ public class InternalAntRunner {
 				out.close();
 			}
 			
-			fireBuildFinished(getCurrentProject(), error);
-			if (error == null && scriptExecuted) {
-				logMessage(getCurrentProject(), getTimeString(System.currentTimeMillis() - startTime), Project.MSG_INFO);
-			}
 			processAntHome(true);
 		}
 	}
@@ -915,9 +919,6 @@ public class InternalAntRunner {
 			if (buildLogger != null) {
 				buildLogger.setEmacsMode(true);
 			}
-		}
-		if (commands.remove("-projecthelp")) { //$NON-NLS-1$
-			projectHelp = true;
 		}
 		
 		if (commands.remove("-diagnostics")) { //$NON-NLS-1$
