@@ -242,6 +242,16 @@
 		<run class="org.eclipse.core.tests.resources.usecase.SnapshotTest"/>
 	</test>
 
+    <test id="alias.AllTests">
+      <run class="org.eclipse.core.tests.internal.alias.AllTests"/>
+    </test>
+    <test id="alias.BasicAliasTest">
+      <run class="org.eclipse.core.tests.internal.alias.BasicAliasTest"/>
+    </test>
+    <test id="alias.SyncAliasTest">
+      <run class="org.eclipse.core.tests.internal.alias.SyncAliasTest"/>
+    </test>
+
     <test id="builders.AllTests">
       <run class="org.eclipse.core.tests.internal.builders.AllTests"/>
     </test>
