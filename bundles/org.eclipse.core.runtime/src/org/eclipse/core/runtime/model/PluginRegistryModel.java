@@ -45,6 +45,14 @@ public void addFragment(PluginFragmentModel fragment) {
 		list[0] = fragment;
 		fragments.put(key, list);
 	} else {
+		//XXX should we check for duplicates?  See javadoc comment.
+//		for (int i = 0; i < list.length; i++) {
+//			if (list[i].getVersion().equals(fragment.getVersion())) {
+//				//replace with new plugin
+//				list[i] = fragment;
+//				return;
+//			}
+//		}
 		PluginFragmentModel[] newList = new PluginFragmentModel[list.length + 1];
 		System.arraycopy(list, 0, newList, 0, list.length);
 		newList[list.length] = fragment;
@@ -67,6 +75,14 @@ public void addPlugin(PluginDescriptorModel plugin) {
 		pluginList[0] = plugin;
 		plugins.put(key, pluginList);
 	} else {
+		//check for duplicates
+		for (int i = 0; i < pluginList.length; i++) {
+			if (pluginList[i].getVersion().equals(plugin.getVersion())) {
+				//replace with new plugin
+				pluginList[i] = plugin;
+				return;
+			}
+		}
 		PluginDescriptorModel[] newPluginList = new PluginDescriptorModel[pluginList.length + 1];
 		System.arraycopy(pluginList, 0, newPluginList, 0, pluginList.length);
 		newPluginList[pluginList.length] = plugin;
