@@ -40,7 +40,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -70,6 +69,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
  
 
@@ -1101,8 +1101,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				stopped(state);
 			}
 		} else {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
-			dialog.run(fork, cancelable, runnable);
+			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 		}
 	}
 	

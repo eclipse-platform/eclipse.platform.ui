@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,7 +24,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -63,7 +61,6 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -554,9 +551,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	private static boolean doBuild() {
-		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
 		try {
-			dialog.run(true, true, new IRunnableWithProgress() {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
@@ -848,7 +844,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				handleInvocationTargetException(e2, configuration, mode);
 			}
 		} else {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());	
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
@@ -859,7 +854,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				}		
 			};
 			try {
-				dialog.run(true, true, runnable);
+				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
 			} catch (InvocationTargetException e) {
 				handleInvocationTargetException(e, configuration, mode);
 			} catch (InterruptedException e) {
