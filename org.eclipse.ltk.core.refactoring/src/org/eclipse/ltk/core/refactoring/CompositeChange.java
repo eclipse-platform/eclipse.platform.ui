@@ -185,10 +185,12 @@ public class CompositeChange extends Change {
 	 * </p> 
 	 */
 	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
 		for (Iterator iter= fChanges.iterator(); iter.hasNext(); ) {
 			((Change)iter.next()).setEnabled(enabled);
 		}
-	}	
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * <p>

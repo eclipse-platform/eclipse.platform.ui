@@ -60,8 +60,12 @@ class DefaultChangeElement extends ChangeElement {
 	/* non Java-doc
 	 * @see ChangeElement#setActive
 	 */
-	public void setActive(boolean active) {
-		fChange.setEnabled(active);
+	public void setEnabled(boolean enabled) {
+		fChange.setEnabled(enabled);
+	}
+	
+	public void setEnabledShallow(boolean enabled) {
+		fChange.setEnabledShallow(enabled);
 	}
 	
 	/* non Java-doc

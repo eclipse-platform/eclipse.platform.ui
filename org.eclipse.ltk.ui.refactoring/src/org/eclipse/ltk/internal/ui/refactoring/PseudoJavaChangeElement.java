@@ -79,10 +79,17 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		}
 	}
 	
-	public void setActive(boolean active) {
+	public void setEnabled(boolean enabled) {
 		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
 			ChangeElement element= (ChangeElement)iter.next();
-			element.setActive(active);
+			element.setEnabled(enabled);
+		}
+	}
+	
+	public void setEnabledShallow(boolean enabled) {
+		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
+			ChangeElement element= (ChangeElement)iter.next();
+			element.setEnabledShallow(enabled);
 		}
 	}
 	

@@ -31,12 +31,13 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 				ChangeElement element= (ChangeElement)event.getElement();
 				boolean checked= event.getChecked();
 				
-				element.setActive(checked);
+				element.setEnabled(checked);
 				setSubtreeChecked(element, checked);
 				setSubtreeGrayed(element, false);
 				ChangeElement parent= element.getParent();
 				while(parent != null) {
 					int active= parent.getActive();
+					parent.setEnabledShallow(active == ChangeElement.PARTLY_ACTIVE || active == ChangeElement.ACTIVE);
 					boolean grayed= (active == ChangeElement.PARTLY_ACTIVE);
 					setChecked(parent, checked ? true : grayed);
 					setGrayed(parent, grayed);

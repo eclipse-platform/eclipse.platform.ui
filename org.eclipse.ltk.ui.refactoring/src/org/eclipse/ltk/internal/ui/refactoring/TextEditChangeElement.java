@@ -75,8 +75,12 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	/* non Java-doc
 	 * @see ChangeElement#setActive
 	 */
-	public void setActive(boolean active) {
-		fChangeGroup.setEnabled(active);
+	public void setEnabled(boolean enabled) {
+		fChangeGroup.setEnabled(enabled);
+	}
+	
+	public void setEnabledShallow(boolean enabled) {
+		fChangeGroup.setEnabled(enabled);
 	}
 	
 	/* non Java-doc

@@ -126,6 +126,20 @@ public abstract class Change implements IAdaptable {
 	}
 	
 	/**
+	 * Sets the enablement state of this change in a shallow way.
+	 * For changes having children this means that only this change's
+	 * enablement state changes. The children are left untouched.
+	 * 
+	 * @param enabled <code>true</code> to enable this change; <code>
+	 *  false</code> otherwise
+	 * 
+	 * @since 3.1
+	 */
+	public final void setEnabledShallow(boolean enabled) {
+		fIsEnabled= enabled;
+	}
+	
+	/**
 	 * Returns the parent change. Returns <code>null</code> if no
 	 * parent exists.
 	 * 

@@ -83,9 +83,17 @@ abstract class ChangeElement {
 	 * Sets the activation status for this <code>ChangeElement</code>. When a 
 	 * change element is not active,  then executing it is expected to do nothing.
 	 *
-	 * @param active the activation status for this change element
+	 * @param enabled the activation status for this change element
 	 */
-	public abstract void setActive(boolean active);
+	public abstract void setEnabled(boolean enabled);
+	
+	/**
+	 * Sets the activation status for this <code>ChangeElement</code>. When a 
+	 * change element is not active,  then executing it is expected to do nothing.
+	 *
+	 * @param enabled the activation status for this change element
+	 */
+	public abstract void setEnabledShallow(boolean enabled);
 	
 	/**
 	 * Returns the activation status of this <code>ChangeElement</code>.
