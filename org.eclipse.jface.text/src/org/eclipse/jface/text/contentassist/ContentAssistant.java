@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -45,7 +44,6 @@ import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IEventConsumer;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
@@ -73,45 +71,46 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * Installs this closer on it's viewer's text widget.
 		 */
 		protected void install() {
-			Control w= fViewer.getTextWidget();
-			if (Helper.okToUse(w)) {
+			Control control= fContentAssistRequestorAdapter.getControl();
+			if (Helper.okToUse(control)) {
 				
-				Control shell= w.getShell();
+				Control shell= control.getShell();
 				shell.addControlListener(this);
 					
-				w.addMouseListener(this);
-				w.addFocusListener(this);
+				control.addMouseListener(this);
+				control.addFocusListener(this);
 				
 				/*
 				 * 1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots of Internal Errors
 				 */
-				w.addDisposeListener(this);
+				control.addDisposeListener(this);
 			}
-			
-			fViewer.addViewportListener(this);
+			if (fViewer != null)
+				fViewer.addViewportListener(this);
 		}
 		
 		/**
 		 * Uninstalls this closer from the viewer's text widget.
 		 */
 		protected void uninstall() {
-			Control w= fViewer.getTextWidget();
-			if (Helper.okToUse(w)) {
+			Control control= fContentAssistRequestorAdapter.getControl();
+			if (Helper.okToUse(control)) {
 				
-				Control shell= w.getShell();
+				Control shell= control.getShell();
 				if (Helper.okToUse(shell))
 					shell.removeControlListener(this);
 				
-				w.removeMouseListener(this);
-				w.removeFocusListener(this);
+				control.removeMouseListener(this);
+				control.removeFocusListener(this);
 				
 				/*
 				 * 1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots of Internal Errors
 				 */
-				w.removeDisposeListener(this);
+				control.removeDisposeListener(this);
 			}
 			
-			fViewer.removeViewportListener(this);
+			if (fViewer != null)
+				fViewer.removeViewportListener(this);
 		}
 
 		/*
@@ -158,18 +157,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @see FocusListener#focusLost(FocusEvent)
 		 */
 		public void focusLost(FocusEvent e) {
-			if (fViewer != null) {
-				Control control= fViewer.getTextWidget();
-				if (control != null) {
-					Display d= control.getDisplay();
-					if (d != null) {
-						d.asyncExec(new Runnable() {
-							public void run() {
-								if (!fProposalPopup.hasFocus() && !fContextInfoPopup.hasFocus())
-									hide();
-							}
-						});
-					}
+			Control control= fContentAssistRequestorAdapter.getControl();
+			if (control != null) {
+				Display d= control.getDisplay();
+				if (d != null) {
+					d.asyncExec(new Runnable() {
+						public void run() {
+							if (!fProposalPopup.hasFocus() && (fContextInfoPopup == null || !fContextInfoPopup.hasFocus()))
+								hide();
+						}
+					});
 				}
 			}
 		}
@@ -264,16 +261,27 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 		
 		public void verifyKey(VerifyEvent e) {
-			
+			// Only act on typed characters and ignore modifier-only events
+			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
+				return;
+
 			int showStyle;
-			int pos= fViewer.getSelectedRange().x;
-			char[] activation= getCompletionProposalAutoActivationCharacters(fViewer, pos);
+			int pos= fContentAssistRequestorAdapter.getSelectedRange().x;
+			char[] activation;
+			
+			if (fContentAssistRequestor != null)
+				activation= getCompletionProposalAutoActivationCharacters(fContentAssistRequestor, pos);
+			else
+				activation= getCompletionProposalAutoActivationCharacters(fViewer, pos);
 			
 			if (contains(activation, e.character) && !fProposalPopup.isActive())
 				showStyle= SHOW_PROPOSALS;
 			else {
-				activation= getContextInformationAutoActivationCharacters(fViewer, pos);
-				if (contains(activation, e.character) && !fContextInfoPopup.isActive())
+				if (fContentAssistRequestor != null)
+					activation= getContextInformationAutoActivationCharacters(fContentAssistRequestor, pos);
+				else
+					activation= getContextInformationAutoActivationCharacters(fViewer, pos);
+				if (contains(activation, e.character) && fContextInfoPopup != null && !fContextInfoPopup.isActive())
 					showStyle= SHOW_CONTEXT_INFO;
 				else {
 					if (fThread != null && fThread.isAlive())
@@ -289,15 +297,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 				
 		protected void showAssist(final int showStyle) {
-			Control control= fViewer.getTextWidget();
-			Display d= control.getDisplay();
+			Display d= fContentAssistRequestorAdapter.getControl().getDisplay();
 			if (d != null) {
 				try {
 					d.syncExec(new Runnable() {
 						public void run() {
 							if (showStyle == SHOW_PROPOSALS)
 								fProposalPopup.showProposals(true);
-							else if (showStyle == SHOW_CONTEXT_INFO)
+							else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null)
 								fContextInfoPopup.showContextProposals(true);
 						}
 					});
@@ -514,9 +521,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 				
 		protected Point getAboveLocation(Shell shell, int offset) {
-			StyledText text= fViewer.getTextWidget();
-			Point location= text.getLocationAtOffset(offset);
-			location= text.toDisplay(location);
+			Point location= fContentAssistRequestorAdapter.getLocationAtOffset(offset);
+			location= fContentAssistRequestorAdapter.getControl().toDisplay(location);
 			
 			Rectangle shellBounds= shell.getBounds();
 			Rectangle displayBounds= shell.getDisplay().getClientArea();
@@ -530,16 +536,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 		
 		protected Point getBelowLocation(Shell shell, int offset) {
-			StyledText text= fViewer.getTextWidget();
-			Point location= text.getLocationAtOffset(offset);
+			Point location= fContentAssistRequestorAdapter.getLocationAtOffset(offset);
 			if (location.x < 0) location.x= 0;
 			if (location.y < 0) location.y= 0;
-			location= text.toDisplay(location);
+			location= fContentAssistRequestorAdapter.getControl().toDisplay(location);
 			
 			Rectangle shellBounds= shell.getBounds();
 			Rectangle displayBounds= shell.getDisplay().getClientArea();
 			
-			location.y= location.y + text.getLineHeight();
+			location.y= location.y + fContentAssistRequestorAdapter.getLineHeight();
 			shiftHorizontalLocation(location, shellBounds, displayBounds);
 			shiftVerticalLocation(location, shellBounds, displayBounds);
 			
@@ -666,8 +671,21 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private CompletionProposalPopup fProposalPopup;
 	private ContextInformationPopup fContextInfoPopup;
 	
-	private boolean fKeyListenerHooked= false;
+	private boolean fVerifyKeyListenerHooked= false;
 	private IContentAssistListener[] fListeners= new IContentAssistListener[4];
+	/**
+	 * The content assist requestor.
+	 * 
+	 * @since 3.0
+	 */
+	private IContentAssistRequestor fContentAssistRequestor;
+	/**
+	 * The content assist requestor adapter.
+	 * 
+	 * @since 3.0
+	 */
+	private ContentAssistRequestorAdapter fContentAssistRequestorAdapter;
+
 	
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -772,29 +790,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private void manageAutoActivation(boolean start) {			
 		if (start) {
 			
-			if (fViewer != null && fAutoAssistListener == null) {
+			if ((fViewer != null || fContentAssistRequestor != null) && fAutoAssistListener == null) {
 				fAutoAssistListener= new AutoAssistListener();
-				if (fViewer instanceof ITextViewerExtension) {
-					ITextViewerExtension extension= (ITextViewerExtension) fViewer;
-					extension.appendVerifyKeyListener(fAutoAssistListener);
-				} else {
-					StyledText textWidget= fViewer.getTextWidget();
-					if (Helper.okToUse(textWidget))
-						textWidget.addVerifyKeyListener(fAutoAssistListener);
+				if (!fContentAssistRequestorAdapter.appendVerifyKeyListener(fAutoAssistListener)) {
+					fAutoAssistListener= null;
 				}
 			}
 			
 		} else if (fAutoAssistListener != null) {
-				
-			if (fViewer instanceof ITextViewerExtension) {
-				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
-				extension.removeVerifyKeyListener(fAutoAssistListener);
-			} else {
-				StyledText textWidget= fViewer.getTextWidget();
-				if (Helper.okToUse(textWidget))
-					textWidget.removeVerifyKeyListener(fAutoAssistListener);
-			}
-			
+			fContentAssistRequestorAdapter.removeVerifyKeyListener(fAutoAssistListener);
 			fAutoAssistListener= null;
 		}
 	}
@@ -979,14 +983,29 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void setInformationControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
 	}
-		
+
+	/*
+	 * @see IContentAssistantExtension#install(IContentAssistRequestor)
+	 */
+	public void install(IContentAssistRequestor contentAssistRequestor) {
+		Assert.isNotNull(contentAssistRequestor);
+		fContentAssistRequestor= contentAssistRequestor;
+		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fContentAssistRequestor);
+		install();
+	}
+	
 	/*
 	 * @see IContentAssist#install
 	 */
 	public void install(ITextViewer textViewer) {
 		Assert.isNotNull(textViewer);
-		
 		fViewer= textViewer;
+		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
+		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fViewer);
+		install();
+	}
+	
+	protected void install() {
 		
 		fLayoutManager= new LayoutManager();
 		fInternalListener= new InternalListener();
@@ -999,8 +1018,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			delay= Math.round(delay * 1.5f);
 			controller= new AdditionalInfoController(fInformationControlCreator, delay);
 		}
-		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
-		fProposalPopup= new CompletionProposalPopup(this, fViewer, controller);
+		
+		if (fContentAssistRequestor != null)
+			fProposalPopup= new CompletionProposalPopup(this, fContentAssistRequestor, controller);
+		else
+			fProposalPopup= new CompletionProposalPopup(this, fViewer, controller);
 		
 		manageAutoActivation(fIsAutoActivated);
 	}
@@ -1018,6 +1040,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 		
 		fViewer= null;
+		fContentAssistRequestor= null;
+		fContentAssistRequestorAdapter= null;
 	}
 
 	/**
@@ -1063,8 +1087,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 2.0
 	 */
 	int getSelectionOffset() {
-		StyledText text= fViewer.getTextWidget();
-		return text.getSelectionRange().x;
+		return fContentAssistRequestorAdapter.getWidgetSelectionRange().x;
 	}
 	
 	/**
@@ -1084,7 +1107,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		switch (type) {
 			case CONTEXT_SELECTOR:
 			case PROPOSAL_SELECTOR:
-				if (fViewer instanceof IWidgetTokenOwner) {
+				if (fContentAssistRequestor instanceof IWidgetTokenOwner) {
+					IWidgetTokenOwner owner= (IWidgetTokenOwner)fContentAssistRequestor;
+					return owner.requestWidgetToken(this);
+				} else if (fContentAssistRequestor instanceof IWidgetTokenOwnerExtension)  {
+					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension)fContentAssistRequestor;
+					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
+				} else if (fViewer instanceof IWidgetTokenOwner) {
 					IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
 					return owner.requestWidgetToken(this);
 				} else if (fViewer instanceof IWidgetTokenOwnerExtension)  {
@@ -1120,7 +1149,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			if (getNumberOfListeners() == 1) {
 				fCloser= new Closer();
 				fCloser.install();
-				fViewer.setEventConsumer(fInternalListener);
+				fContentAssistRequestorAdapter.setEventConsumer(fInternalListener);
 				installKeyListener();
 			}
 			return true;
@@ -1133,18 +1162,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Installs a key listener on the text viewer's widget.
 	 */
 	private void installKeyListener() {
-		if (!fKeyListenerHooked) {
-			StyledText text= fViewer.getTextWidget();
-			if (Helper.okToUse(text)) {
-				
-				if (fViewer instanceof ITextViewerExtension) {
-					ITextViewerExtension e= (ITextViewerExtension) fViewer;
-					e.prependVerifyKeyListener(fInternalListener);
-				} else {
-					text.addVerifyKeyListener(fInternalListener);
-				}
-				
-				fKeyListenerHooked= true;
+		if (!fVerifyKeyListenerHooked) {
+			if (Helper.okToUse(fContentAssistRequestorAdapter.getControl())) {
+				fVerifyKeyListenerHooked= fContentAssistRequestorAdapter.prependVerifyKeyListener(fInternalListener);
 			}
 		}
 	}
@@ -1165,10 +1185,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private void releaseWidgetToken(int type) {
 		if (fListeners[CONTEXT_SELECTOR] == null && fListeners[PROPOSAL_SELECTOR] == null) {
-			if (fViewer instanceof IWidgetTokenOwner) {
-				IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+			IWidgetTokenOwner owner= null;
+			if (fContentAssistRequestor instanceof IWidgetTokenOwner)
+				owner= (IWidgetTokenOwner)fContentAssistRequestor;
+			else if (fViewer instanceof IWidgetTokenOwner)
+				owner= (IWidgetTokenOwner)fViewer;
+			if (owner != null)
 				owner.releaseWidgetToken(this);
-			}
 		}
 	}
 	
@@ -1190,8 +1213,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				fCloser= null;
 			}
 		
-			uninstallKeyListener();
-			fViewer.setEventConsumer(null);
+			uninstallVerifyKeyListener();
+			fContentAssistRequestorAdapter.setEventConsumer(null);
 		}
 		
 		releaseWidgetToken(type);
@@ -1200,20 +1223,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Uninstall the key listener from the text viewer's widget.
 	 */
-	private void uninstallKeyListener() {
-		if (fKeyListenerHooked) {
-			StyledText text= fViewer.getTextWidget();
-			if (Helper.okToUse(text)) {
-				
-				if (fViewer instanceof ITextViewerExtension) {
-					ITextViewerExtension e= (ITextViewerExtension) fViewer;
-					e.removeVerifyKeyListener(fInternalListener);
-				} else {
-					text.removeVerifyKeyListener(fInternalListener);
-				}
-				
-				fKeyListenerHooked= false;
-			}
+	private void uninstallVerifyKeyListener() {
+		if (fVerifyKeyListenerHooked) {
+			if (Helper.okToUse(fContentAssistRequestorAdapter.getControl()))
+				fContentAssistRequestorAdapter.removeVerifyKeyListener(fInternalListener);
+			fVerifyKeyListenerHooked= false;
 		}
 	}
 	
@@ -1250,7 +1264,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssist#showContextInformation
 	 */
 	public String showContextInformation() {
-		return fContextInfoPopup.showContextProposals(false);
+		if (fContextInfoPopup != null)
+			return fContextInfoPopup.showContextProposals(false);
+		else
+			return null;
 	}
 	
 	/**
@@ -1268,7 +1285,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 2.0
 	 */
 	void showContextInformation(IContextInformation contextInformation, int position) {
-		fContextInfoPopup.showContextInformation(contextInformation, position);
+		if (fContextInfoPopup != null)
+			fContextInfoPopup.showContextInformation(contextInformation, position);
 	}
 	
 	/**
@@ -1300,6 +1318,57 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 		
 		return null;
+	}
+
+	/**
+	 * Returns the content assist processor for the content
+	 * type of the specified document position.
+	 *
+	 * @param contentAssistRequestor the content assist requestor
+	 * @param offset a offset within the document
+	 * @return a content-assist processor or <code>null</code> if none exists
+	 */
+	private IContentAssistProcessor getProcessor(IContentAssistRequestor contentAssistRequestor, int offset) {
+		try {
+			
+			IDocument document= contentAssistRequestor.getDocument();
+			String type;
+			if (document != null)
+				type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset);
+			else 
+				type= IDocument.DEFAULT_CONTENT_TYPE;
+			
+			return getContentAssistProcessor(type);
+		
+		} catch (BadLocationException x) {
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns an array of completion proposals computed based on 
+	 * the specified document position. The position is used to 
+	 * determine the appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistRequestor the content assit requestor
+	 * @param position a document position
+	 * @return an array of completion proposals
+	 *
+	 * @see IContentAssistProcessor#computeCompletionProposals
+	 */
+	ICompletionProposal[] computeCompletionProposals(IContentAssistRequestor contentAssistRequestor, int position) {
+		fLastErrorMessage= null;
+		
+		ICompletionProposal[] result= null;
+		
+		IContentAssistProcessor p= getProcessor(contentAssistRequestor, position);
+		if (p instanceof IContentAssistProcessorExtension) {
+			result= ((IContentAssistProcessorExtension)p).computeCompletionProposals(contentAssistRequestor, position);
+			fLastErrorMessage= p.getErrorMessage();
+		}
+		
+		return result;
 	}
 		
 	/**
@@ -1368,7 +1437,24 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		IContentAssistProcessor p= getProcessor(viewer, offset);
 		return p != null ? p.getContextInformationValidator() : null;
 	}
-	
+
+	/**
+	 * Returns the context information validator that should be used to 
+	 * determine when the currently displayed context information should
+	 * be dismissed. The position is used to determine the appropriate 
+	 * content assist processor to invoke.
+	 *
+	 * @param viewer the text viewer
+	 * @param offset a document offset
+	 * @return an validator
+	 *
+	 * @see IContentAssistProcessor#getContextInformationValidator
+	 */
+	IContextInformationValidator getContextInformationValidator(IContentAssistRequestor contentAssistRequestor, int offset) {
+		IContentAssistProcessor p= getProcessor(contentAssistRequestor, offset);
+		return p != null ? p.getContextInformationValidator() : null;
+	}
+
 	/**
 	 * Returns the context information presenter that should be used to 
 	 * display context information. The position is used to determine the appropriate 
@@ -1384,6 +1470,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (validator instanceof IContextInformationPresenter)
 			return (IContextInformationPresenter) validator;
 		return null;
+	}
+	
+	/**
+	 * Returns the characters which when typed by the user should automatically
+	 * initiate proposing completions. The position is used to determine the 
+	 * appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistRequestor the content assist requestor
+	 * @param offset a document offset
+	 * @return the auto activation characters
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
+	 * @since 3.0
+	 */
+	private char[] getCompletionProposalAutoActivationCharacters(IContentAssistRequestor contentAssistRequestor, int offset) {
+		IContentAssistProcessor p= getProcessor(contentAssistRequestor, offset);
+		return p != null ? p.getCompletionProposalAutoActivationCharacters() : null;
 	}
 	
 	/**
@@ -1415,6 +1517,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
+		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
+	}
+	
+	/**
+	 * Returns the characters which when typed by the user should automatically
+	 * initiate the presentation of context information. The position is used
+	 * to determine the appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistRequestor the content assist requestor
+	 * @param offset a document offset
+	 * @return the auto activation characters
+	 *
+	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
+	 */
+	private char[] getContextInformationAutoActivationCharacters(IContentAssistRequestor contentAssistRequestor, int offset) {
+		IContentAssistProcessor p= getProcessor(contentAssistRequestor, offset);
 		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
 	}
 	
@@ -1462,4 +1580,3 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fContextInfoPopup.hide();
 	}
 }
-

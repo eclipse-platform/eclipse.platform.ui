@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -92,6 +91,20 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private String fLineDelimiter;
 	/** The most recently selected proposal. */
 	private ICompletionProposal fLastProposal;
+	/**
+	 * The content assist requestor.
+	 * This replaces <code>fViewer</code>
+	 * 
+	 * @since 3.0
+	 */
+	private IContentAssistRequestor fContentAssistRequestor;
+	/**
+	 * The content assist requestor adapter.
+	 * This replaces <code>fViewer</code>
+	 * 
+	 * @since 3.0
+	 */
+	private ContentAssistRequestorAdapter fContentAssistRequestorAdapter;
 
 	
 	/**
@@ -106,6 +119,24 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fContentAssistant= contentAssistant;
 		fViewer= viewer;
 		fAdditionalInfoController= infoController;
+		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fViewer);
+	}
+
+	/**
+	 * Creates a new completion proposal popup for the given elements.
+	 * <p>
+	 * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
+	 * </p>
+	 * @param contentAssistant the content assistant feeding this popup
+	 * @param contentAssistRequestor the content assist requestor on top of which this popup appears
+	 * @param infoController the info control collaborating with this popup
+	 * @since 3.0
+	 */
+	public CompletionProposalPopup(ContentAssistant contentAssistant, IContentAssistRequestor contentAssistRequestor, AdditionalInfoController infoController) {
+		fContentAssistant= contentAssistant;
+		fContentAssistRequestor= contentAssistRequestor;
+		fAdditionalInfoController= infoController;
+		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fContentAssistRequestor);
 	}
 
 	/**
@@ -145,21 +176,21 @@ class CompletionProposalPopup implements IContentAssistListener {
 			};
 		}
 
-		final StyledText styledText= fViewer.getTextWidget();
-		if (styledText != null && !styledText.isDisposed())
-			styledText.addKeyListener(fKeyListener);
+		final Control control= fContentAssistRequestorAdapter.getControl();
+		if (control != null && !control.isDisposed())
+			fContentAssistRequestorAdapter.addKeyListener(fKeyListener);
 
-		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				
-				fInvocationOffset= fViewer.getSelectedRange().x;
+				fInvocationOffset= fContentAssistRequestorAdapter.getSelectedRange().x;
 				fComputedProposals= computeProposals(fInvocationOffset);
 				
 				int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
 				if (count == 0) {
 					
 					if (!autoActivated)
-						styledText.getDisplay().beep();
+						control.getDisplay().beep();
 				
 				} else {
 					
@@ -170,7 +201,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					else {
 					
 						if (fLineDelimiter == null)
-							fLineDelimiter= styledText.getLineDelimiter();
+							fLineDelimiter= fContentAssistRequestorAdapter.getLineDelimiter();
 						
 						createProposalSelector();
 						setProposals(fComputedProposals);
@@ -191,7 +222,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return the completion proposals available at this offset
 	 */
 	private ICompletionProposal[] computeProposals(int offset) {
-		return fContentAssistant.computeCompletionProposals(fViewer, offset);
+		if (fContentAssistRequestor != null)
+			return fContentAssistant.computeCompletionProposals(fContentAssistRequestor, offset);
+		else
+			return fContentAssistant.computeCompletionProposals(fViewer, offset);
 	}
 	
 	/**
@@ -210,7 +244,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (Helper.okToUse(fProposalShell))
 			return;
 		
-		Control control= fViewer.getTextWidget();
+		Control control= fContentAssistRequestorAdapter.getControl();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		
@@ -299,7 +333,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		ICompletionProposal p= getSelectedProposal();
 		hide();
 		if (p != null)
-			insertProposal(p, (char) 0, stateMask, fViewer.getSelectedRange().x);
+			insertProposal(p, (char) 0, stateMask, fContentAssistRequestorAdapter.getSelectedRange().x);
 	}
 	
 	/**
@@ -318,7 +352,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		try {
 			
-			IDocument document= fViewer.getDocument();
+			IDocument document= fContentAssistRequestorAdapter.getDocument();
 			
 			if (fViewer instanceof ITextViewerExtension) {
 				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
@@ -327,8 +361,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 			if (target != null)
 				target.beginCompoundChange();
-			
-			if (p instanceof ICompletionProposalExtension2) {
+
+			if (p instanceof ICompletionProposalExtension2 && fViewer != null) {
 				ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
 				e.apply(fViewer, trigger, stateMask, offset);				
 			} else if (p instanceof ICompletionProposalExtension) {
@@ -340,8 +374,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 			Point selection= p.getSelection(document);
 			if (selection != null) {
-				fViewer.setSelectedRange(selection.x, selection.y);
-				fViewer.revealRange(selection.x, selection.y);
+				fContentAssistRequestorAdapter.setSelectedRange(selection.x, selection.y);
+				fContentAssistRequestorAdapter.revealRange(selection.x, selection.y);
 			}
 			
 			IContextInformation info= p.getContextInformation();
@@ -353,7 +387,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					position= e.getContextInformationPosition();
 				} else {
 					if (selection == null)
-						selection= fViewer.getSelectedRange();
+						selection= fContentAssistRequestorAdapter.getSelectedRange();
 					position= selection.x + selection.y;
 				}
 				
@@ -399,19 +433,18 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	private void unregister() {
 		if (fDocumentListener != null) {
-			IDocument document= fViewer.getDocument();
+			IDocument document= fContentAssistRequestorAdapter.getDocument();
 			if (document != null)
 				document.removeDocumentListener(fDocumentListener);
 			fDocumentListener= null;
 		}
 		fDocumentEvents.clear();		
 
-		StyledText styledText= fViewer.getTextWidget();
-		if (fKeyListener != null && styledText != null && !styledText.isDisposed())
-			styledText.removeKeyListener(fKeyListener);
-
+		if (fKeyListener != null && fContentAssistRequestorAdapter.getControl() != null && !fContentAssistRequestorAdapter.getControl().isDisposed())
+			fContentAssistRequestorAdapter.removeKeyListener(fKeyListener);
+		
 		if (fLastProposal != null) {
-			if (fLastProposal instanceof ICompletionProposalExtension2) {
+			if (fLastProposal instanceof ICompletionProposalExtension2 && fViewer != null) {
 				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) fLastProposal;
 				extension.unselected(fViewer);
 			}
@@ -441,7 +474,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (Helper.okToUse(fProposalTable)) {
 
 			ICompletionProposal oldProposal= getSelectedProposal();
-			if (oldProposal instanceof ICompletionProposalExtension2)
+			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
 			fFilteredProposals= proposals;
@@ -476,13 +509,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return the location of this popup
 	 */
 	private Point getLocation() {
-		StyledText text= fViewer.getTextWidget();
-		int caret= text.getCaretOffset();
-		Point p= text.getLocationAtOffset(caret);
+		int caret= fContentAssistRequestorAdapter.getCaretOffset();
+		Point p= fContentAssistRequestorAdapter.getLocationAtOffset(caret);
 		if (p.x < 0) p.x= 0;
 		if (p.y < 0) p.y= 0;
-		p= new Point(p.x, p.y + text.getLineHeight());
-		p= text.toDisplay(p);
+		p= new Point(p.x, p.y + fContentAssistRequestorAdapter.getLineHeight());
+		p= fContentAssistRequestorAdapter.getControl().toDisplay(p);
 		if (p.x < 0) p.x= 0;
 		if (p.y < 0) p.y= 0;
 		return p;
@@ -511,11 +543,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 							filterProposals();
 					}
 				};
-			IDocument document= fViewer.getDocument();
+			IDocument document= fContentAssistRequestorAdapter.getDocument();
 			if (document != null)
 				document.addDocumentListener(fDocumentListener);		
 				
 			fProposalShell.setVisible(true);
+			// XXX: transfer focus since no verify key listern can be attached
+			if (!fContentAssistRequestorAdapter.supportsVerifyKeyListener())
+				fProposalShell.setFocus();
+			
 			if (fAdditionalInfoController != null) {
 				fAdditionalInfoController.install(fProposalTable);		
 				fAdditionalInfoController.handleTableSelectionChanged();
@@ -612,7 +648,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 						if (contains(triggers, key)) {		
 							e.doit= false;
 							hide();
-							insertProposal(p, key, e.stateMask, fViewer.getSelectedRange().x);
+							insertProposal(p, key, e.stateMask, fContentAssistRequestorAdapter.getSelectedRange().x);
 						}
 					}
 			}
@@ -632,11 +668,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void selectProposal(int index, boolean smartToggle) {
 
 		ICompletionProposal oldProposal= getSelectedProposal();
-		if (oldProposal instanceof ICompletionProposalExtension2)
+		if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
 		ICompletionProposal proposal= fFilteredProposals[index];
-		if (proposal instanceof ICompletionProposalExtension2)
+		if (proposal instanceof ICompletionProposalExtension2 && fViewer != null)
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
 		
 		fLastProposal= proposal;
@@ -681,14 +717,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void filterProposals() {
 		++ fInvocationCounter;
-		Control control= fViewer.getTextWidget();
+		Control control= fContentAssistRequestorAdapter.getControl();
 		control.getDisplay().asyncExec(new Runnable() {
 			long fCounter= fInvocationCounter;
 			public void run() {
 				
 				if (fCounter != fInvocationCounter) return;
 				
-				int offset= fViewer.getSelectedRange().x;
+				int offset= fContentAssistRequestorAdapter.getSelectedRange().x;
 				ICompletionProposal[] proposals= null;
 				try  {
 					if (offset > -1) {
@@ -736,7 +772,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (proposals == null)
 			return null;
 			
-		IDocument document= fViewer.getDocument();
+		IDocument document= fContentAssistRequestorAdapter.getDocument();
 		int length= proposals.length;
 		List filtered= new ArrayList(length);
 		for (int i= 0; i < length; i++) {
@@ -776,5 +812,4 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.setFocus();
 		}		
 	}
-	
 }

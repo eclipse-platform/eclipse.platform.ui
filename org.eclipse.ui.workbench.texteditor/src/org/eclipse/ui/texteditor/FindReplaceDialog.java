@@ -50,6 +50,7 @@ import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -190,7 +191,7 @@ class FindReplaceDialog extends Dialog {
 	private Button fIsRegExCheckBox;
 	
 	private Button fReplaceSelectionButton, fReplaceFindButton, fFindNextButton, fReplaceAllButton;
-	private Combo fFindField, fReplaceField;
+	Combo fFindField, fReplaceField;
 	private Rectangle fDialogPositionInit;
 
 	private IDialogSettings fDialogSettings;
@@ -207,6 +208,12 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean fUseSelectedLines;
+	/**
+	 * The content assitant for the find combo.
+	 *
+	 * @since 3.0
+	 */
+	private ContentAssistant fContentAssistant;
 
 	/**
 	 * Creates a new dialog with the given shell as parent.
@@ -406,6 +413,8 @@ class FindReplaceDialog extends Dialog {
 		updateButtonState();
 		
 		applyDialogFont(panel);
+		
+		setupContentAssistant();
 		
 		return panel;
 	}
@@ -918,6 +927,8 @@ class FindReplaceDialog extends Dialog {
 
 		if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).endSession();
+
+		fContentAssistant.uninstall();
 
 		// prevent leaks
 		fActiveShell= null;
@@ -1618,5 +1629,59 @@ class FindReplaceDialog extends Dialog {
 		names= new String[history.size()];
 		history.toArray(names);
 		s.put("replacehistory", names); //$NON-NLS-1$
+	}
+	
+	// ------------- content assistant -----------------
+	
+	private void setupContentAssistant() {
+//		if (fContentAssistant == null) {
+//			fContentAssistant= new ContentAssistant();
+//				
+//			IContentAssistProcessor processor= new RegExContentAssistProcessor();
+//			fContentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+//			
+//			fContentAssistant.enableAutoActivation(true);
+////			ContentAssistPrefere.configure(fContentAssistant, getPreferenceStore());
+//				
+//			fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+//			fContentAssistant.setInformationControlCreator(new IInformationControlCreator() {
+//				/*
+//				 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
+//				 */
+//				public IInformationControl createInformationControl(Shell parent) {
+//					return new DefaultInformationControl(parent);
+//				}});
+//
+//			fFindField.addKeyListener(new KeyAdapter() {
+//			/*
+//			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+//			 */
+//			public void keyReleased(KeyEvent e) {
+//				// FIXME: should get key binding from manager but this is either not yet API or net yet implemented 
+////				ICommandManager cm= ((Workbench)PlatformUI.getWorkbench()).getCommandManager();
+////				ICommand command= cm.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+////				command.getKeyBindings();
+////				System.out.println("pressed");
+//
+//				if (e.character == ' ' && e.stateMask == SWT.CTRL) {
+//					int i= fFindField.getSelection().y;
+//					String text= fFindField.getText();
+//					String newText= ""; //$NON-NLS-1$
+//					if (i > 0)
+//						newText= text.substring(0, i - 1);
+//					if (i < text.length())
+//						newText= newText + text.substring(i);
+//					fFindField.setText(newText);
+//					i= Math.max(0, i - 1);
+//					fFindField.setSelection(new Point(i, i));
+//					String errorMessge= fContentAssistant.showPossibleCompletions();
+//					if (errorMessge != null)
+//						statusError(errorMessge);
+//				}
+//						
+//			}});
+//			fContentAssistant.install(new ComboAdapter(fFindField));
+//		}					
+//		return fContentAssistant;
 	}
 }
