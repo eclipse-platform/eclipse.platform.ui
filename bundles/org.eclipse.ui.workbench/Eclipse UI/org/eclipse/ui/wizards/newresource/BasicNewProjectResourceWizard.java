@@ -83,7 +83,7 @@ public void addPages() {
 	// only add page if there are already projects in the workspace
 	if (ResourcesPlugin.getWorkspace().getRoot().getProjects().length > 0) {
 		referencePage = new WizardNewProjectReferencePage("basicReferenceProjectPage");//$NON-NLS-1$
-		referencePage.setTitle(ResourceMessages.getString("NewProject.refeerenceTitle")); //$NON-NLS-1$
+		referencePage.setTitle(ResourceMessages.getString("NewProject.referenceTitle")); //$NON-NLS-1$
 		referencePage.setDescription(ResourceMessages.getString("NewProject.referenceDescription")); //$NON-NLS-1$
 		this.addPage(referencePage);
 	}
