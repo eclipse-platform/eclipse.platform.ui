@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,6 +113,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private Button fShowInTextCheckBox;
 	private Button fShowInOverviewRulerCheckBox;
+	private Button fHighlightInTextCheckBox;
+	private Button fShowInVerticalRulerCheckBox;
 	
 	private Control fAutoInsertDelayText;
 	private Control fAutoInsertTriggerText;
@@ -136,7 +138,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getTextPreferenceKey()));
+			if (info.getHighlightPreferenceKey() != null) {
+				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getHighlightPreferenceKey()));
+			}
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
+			if (info.getVerticalRulerPreferenceKey() != null) {
+				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getVerticalRulerPreferenceKey()));
+			}
 		}
 	
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
@@ -174,16 +182,16 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
-			listModelItems.add(new String[] { info.getPreferenceLabel(), info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey()});
+			listModelItems.add(new String[] { info.getPreferenceLabel(), info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey()});
 		}
 		String[][] items= new String[listModelItems.size()][];
 		listModelItems.toArray(items);
 		return items;
 	}
 	
-	/*
-	 * @see IWorkbenchPreferencePage#init()
-	 */	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -213,7 +221,24 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fShowInTextCheckBox.setSelection(fOverlayStore.getBoolean(key));
 		
 		key= fAnnotationColorListModel[i][3];
-		fShowInOverviewRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));				
+		fShowInOverviewRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));
+		
+		key= fAnnotationColorListModel[i][4];
+		if (key != null) {
+			fHighlightInTextCheckBox.setSelection(fOverlayStore.getBoolean(key));
+			fHighlightInTextCheckBox.setEnabled(true);
+		} else {
+			fHighlightInTextCheckBox.setEnabled(false);
+		}
+		
+		key= fAnnotationColorListModel[i][5];
+		if (key != null) {
+			fShowInVerticalRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));
+			fShowInVerticalRulerCheckBox.setEnabled(true);
+		} else {
+			fShowInVerticalRulerCheckBox.setSelection(true);
+			fShowInVerticalRulerCheckBox.setEnabled(false);
+		}		
 	}
 
 	private Control createAppearancePage(Composite parent) {
@@ -515,6 +540,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		gd.horizontalSpan= 2;
 		fShowInTextCheckBox.setLayoutData(gd);
 		
+		fHighlightInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fHighlightInTextCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.35")); //$NON-NLS-1$
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalSpan= 2;
+		fHighlightInTextCheckBox.setLayoutData(gd);
+		
 		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
 		fShowInOverviewRulerCheckBox.setFont(font);
 		fShowInOverviewRulerCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotations.showInOverviewRuler")); //$NON-NLS-1$
@@ -522,6 +554,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
+		
+		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fShowInVerticalRulerCheckBox.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.36")); //$NON-NLS-1$
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalSpan= 2;
+		fShowInVerticalRulerCheckBox.setLayoutData(gd);
 		
 		label= new Label(optionsComposite, SWT.LEFT);
 		label.setFont(font);
@@ -559,6 +598,18 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		});
 		
+		fHighlightInTextCheckBox.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			
+			public void widgetSelected(SelectionEvent e) {
+				int i= fAnnotationList.getSelectionIndex();
+				String key= fAnnotationColorListModel[i][4];
+				fOverlayStore.setValue(key, fHighlightInTextCheckBox.getSelection());
+			}
+		});
+		
 		fShowInOverviewRulerCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
@@ -568,6 +619,18 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 				int i= fAnnotationList.getSelectionIndex();
 				String key= fAnnotationColorListModel[i][3];
 				fOverlayStore.setValue(key, fShowInOverviewRulerCheckBox.getSelection());
+			}
+		});
+		
+		fShowInVerticalRulerCheckBox.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			
+			public void widgetSelected(SelectionEvent e) {
+				int i= fAnnotationList.getSelectionIndex();
+				String key= fAnnotationColorListModel[i][5];
+				fOverlayStore.setValue(key, fShowInVerticalRulerCheckBox.getSelection());
 			}
 		});
 		
@@ -585,17 +648,9 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 		return composite;
 	}
-
-//	private void addFiller(Composite composite) {
-//		Label filler= new Label(composite, SWT.LEFT );
-//		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//		gd.horizontalSpan= 2;
-//		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-//		filler.setLayoutData(gd);
-//	}
 	
-	/*
-	 * @see PreferencePage#createContents(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 
@@ -621,8 +676,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotationsTab.title")); //$NON-NLS-1$
 		item.setControl(createAnnotationsPage(folder));
 		
-		
-
 		initialize();
 		
 		return folder;
@@ -686,8 +739,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		}		
 	}
 	
-	/*
-	 * @see PreferencePage#performOk()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		fOverlayStore.propagate();
@@ -695,8 +748,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		return true;
 	}
 	
-	/*
-	 * @see PreferencePage#performDefaults()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 		
@@ -711,8 +764,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		super.performDefaults();
 	}
 	
-	/*
-	 * @see DialogPage#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
 		
@@ -805,7 +858,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		applyToStatusLine(this, status);
 	}
 
-	/**
+	/*
 	 * Applies the status to the status line of a dialog page.
 	 */
 	private void applyToStatusLine(DialogPage page, IStatus status) {
