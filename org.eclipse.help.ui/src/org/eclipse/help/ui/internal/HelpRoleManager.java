@@ -47,11 +47,8 @@ public class HelpRoleManager implements IHelpRoleManager {
 		if (i > 0)
 			href = href.substring(0, i);
 
-		Set disabledActivities =
-			new HashSet(activityManager.getDefinedActivityIds());
-		disabledActivities.removeAll(activityManager.getEnabledActivityIds());
-		disabledActivities.removeAll(commandManager.getActiveActivityIds());
-		return !activityManager.isMatch(href, disabledActivities);
+        
+        return activityManager.getIdentifier(href).isEnabled();
 	}
 
 	/*
@@ -71,21 +68,16 @@ public class HelpRoleManager implements IHelpRoleManager {
 		if (i > 0)
 			href = href.substring(0, i);
 
-		if (!activityManager
-			.isMatch(href, activityManager.getEnabledActivityIds())) {
-			Set enabledActivities =
-				new HashSet(activityManager.getEnabledActivityIds());
-			Set definedActivityIds = activityManager.getDefinedActivityIds();
-			for (Iterator it = definedActivityIds.iterator(); it.hasNext();) {
-				String definedActivityId = (String) it.next();
-				IActivity definedActivity =
-					activityManager.getActivity(definedActivityId);
-				if (definedActivity.isMatch(href))
-					enabledActivities.add(definedActivityId);
-
-			}
-			workbench.setEnabledActivityIds(enabledActivities);
-		}
+        
+        IIdentifier identifier = activityManager.getIdentifier(href);
+        Set activitityIds = identifier.getActivityIds();
+        if (activitityIds.isEmpty()) { // if there are no activities that match this identifier, do nothing.
+            return;
+        }
+        
+        Set enabledIds = new HashSet(activityManager.getEnabledActivityIds());
+        enabledIds.addAll(activitityIds);
+        workbench.setEnabledActivityIds(enabledIds);
 	}
 
 }
