@@ -49,8 +49,6 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
-import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareUnsharedInput;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.sync.ISyncViewer;
@@ -274,7 +272,6 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			});
 			if (doSync[0]) {
 				// Sync of the project
-				CVSSyncCompareInput input;
 				if (projectExists[0]) {
 					try {
 						String moduleName = getModuleName();
@@ -295,12 +292,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						} else {
 							tag = autoconnectPage.getSharing().getTag();
 						}
-						input = new CVSSyncCompareUnsharedInput(project, getLocation(), moduleName, tag);
+						mapProject(moduleName, tag);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
-				} else {
-					input = new CVSSyncCompareInput(new IResource[] {project});
 				}
 				ISyncViewer view = TeamUI.showSyncViewInActivePage(null);
 				if(view != null) {
@@ -314,6 +309,24 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		}
 
 		return result[0];
+	}
+
+	private void mapProject(final String moduleName, final CVSTag tag) throws InvocationTargetException, InterruptedException {
+		getContainer().run(true /* fork */, true /* cancel */, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					// TODO: Should do a refresh with the subscriber
+					// and then transfer sync info for folders
+					monitor.beginTask(null, 200);
+					CVSWorkspaceRoot.getRemoteSyncTree(project, getLocation(), moduleName, tag, Policy.subMonitorFor(monitor, 100));
+					CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().refresh(new IResource[] { project }, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		});
 	}
 
 	/**
