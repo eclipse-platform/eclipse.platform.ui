@@ -311,13 +311,16 @@ public final class BaseHelpSystem {
 		} else if ("ltr".equals(orientation)) {
 			return false;
 		}
-		// from comand line
+		// from command line
 		String[] args = Platform.getCommandLineArgs();
 		for (int i = 0; i < args.length; i++) {
-			if ("-dir".equalsIgnoreCase(args[i]) //$NON-NLS-1$
-					&& ((i + 1) < args.length)
-					&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
-				return true;
+			if ("-dir".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
+				if ((i + 1) < args.length
+						&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
+					return true;
+				} else {
+					return false;
+				}
 			}
 		}
 		// guess from default locale
