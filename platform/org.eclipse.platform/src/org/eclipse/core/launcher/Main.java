@@ -932,7 +932,7 @@ private void loadConfiguration(URL url) {
 		URL defaultStateURL = null;
 		try {
 			defaultStateURL = getDefaultStateLocation();
-			URL cfigURL = new URL(defaultStateURL, CONFIG_FILE);
+			URL cfigURL = new URL(defaultStateURL, ".config" +"/"+ CONFIG_FILE);
 			// first look for configuration in base location (workspace or as specified)
 			props = loadProperties(cfigURL);
 			if (debug)
