@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	Dan Rubel <dan_rubel@instantiations.com> - Implementation of getLocalTimeStamp
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
