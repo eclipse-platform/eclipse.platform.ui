@@ -92,6 +92,9 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 	 * @see IVariableComponent#getVariableValue()
 	 */
 	public String getVariableValue() {
+		if (currentWorkingSet == null || currentWorkingSet.getElements().length == 0) {
+			return null;
+		}
 		XMLMemento workingSetMemento = XMLMemento.createWriteRoot(IVariableConstants.TAG_LAUNCH_CONFIGURATION_WORKING_SET);
 	
 		IPersistableElement persistable = null;
@@ -112,7 +115,6 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 			}
 			return writer.toString();
 		}
-		getContainer().setErrorMessage(LaunchVariableMessages.getString("WorkingSetComponent.3")); //$NON-NLS-1$
 		return null;
 	}
 

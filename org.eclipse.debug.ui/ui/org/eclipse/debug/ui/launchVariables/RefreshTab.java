@@ -74,7 +74,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	
 	/**
 	 * Creates the controls needed to edit the refresh recursive
-	 * attribute of an external tool
+	 * attribute of a launch configuration
 	 * 
 	 * @param parent the composite to create the controls in
 	 */
@@ -93,7 +93,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	
 	/**
 	 * Creates the controls needed to edit the refresh scope
-	 * attribute of an external tool
+	 * attribute of a launch configuration
 	 * 
 	 * @param parent the composite to create the controls in
 	 */
@@ -105,6 +105,9 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		refreshField.setFont(parent.getFont());
 		refreshField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (variableForm != null) {
+					variableForm.validate();	
+				}
 				updateEnabledState();
 				updateLaunchConfigurationDialog();
 			}
@@ -113,7 +116,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	
 	/**
 	 * Creates the controls needed to edit the refresh scope variable
-	 * attribute of an external tool
+	 * attribute of a launch configuration
 	 * 
 	 * @param parent the composite to create the controls in
 	 */
@@ -214,11 +217,15 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 */
 	private void updateEnabledState() {
 		if (refreshField != null) {
+			boolean enabled= refreshField.getSelection();
 			if (recursiveField != null) {
-				recursiveField.setEnabled(refreshField.getSelection());
+				recursiveField.setEnabled(enabled);
 			}
 			if (variableForm != null) {
-				variableForm.setEnabled(refreshField.getSelection());
+				variableForm.setEnabled(enabled);
+			}
+			if (!enabled) {
+				super.setErrorMessage(null);
 			}
 		}
 	}
@@ -230,8 +237,8 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		super.setErrorMessage(errorMessage);
 	}
 
-	/**
-	 * @see org.eclipse.ui.externaltools.group.IVariableComponentContainer#updateValidState()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.launchVariables.IVariableComponentContainer#updateValidState()
 	 */
 	public void updateValidState() {
 		updateLaunchConfigurationDialog();
