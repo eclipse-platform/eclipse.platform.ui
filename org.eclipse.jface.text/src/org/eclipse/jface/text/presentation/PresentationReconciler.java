@@ -352,6 +352,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 */
 	public void uninstall() {
 		fViewer.removeTextInputListener(fInternalListener);
+		
+		// Ensure we uninstall all listeners
+		fInternalListener.inputDocumentAboutToBeChanged(fViewer.getDocument(), null);
 	}
 	 
 	/*
