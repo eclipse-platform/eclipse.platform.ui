@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ui.registry;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils.Sorter;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -45,7 +45,7 @@ public abstract class RegistryReader {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text); //$NON-NLS-1$
-		WorkbenchPlugin.log(buf.toString());
+		TeamUIPlugin.log(IStatus.ERROR, buf.toString(), null);
 	}
 	/**
 	 * Logs a very common registry error when a required attribute is missing.
