@@ -144,7 +144,7 @@ protected Control createDialogArea(Composite parent) {
 	l.setLayoutData(data);
 	resourceNames = new Table(dialogArea,SWT.SINGLE|SWT.BORDER|SWT.V_SCROLL);
 	data = new GridData(GridData.FILL_BOTH);
-	data.heightHint = 6 * resourceNames.getItemHeight();
+	data.heightHint = 12 * resourceNames.getItemHeight();
 	resourceNames.setLayoutData(data);
 	
 	l = new Label(dialogArea,SWT.NONE);
@@ -154,8 +154,8 @@ protected Control createDialogArea(Composite parent) {
 	
 	folderNames = new Table(dialogArea,SWT.SINGLE|SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
 	data = new GridData(GridData.FILL_BOTH);
-	data.widthHint = 250;
-	data.heightHint = 3 * folderNames.getItemHeight();
+	data.widthHint = 300;
+	data.heightHint = 4 * folderNames.getItemHeight();
 	folderNames.setLayoutData(data);
 	
 	updateThread = new UpdateThread();
