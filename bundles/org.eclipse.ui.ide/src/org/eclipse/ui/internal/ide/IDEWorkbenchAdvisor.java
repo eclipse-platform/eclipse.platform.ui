@@ -472,7 +472,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		};
 		try {
-			new ProgressMonitorJobsDialog(null).run(false, false, runnable);
+			new ProgressMonitorJobsDialog(null).run(true, false, runnable);
 		} catch (InvocationTargetException e) {
 			status.merge(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("InternalError"), e.getTargetException())); //$NON-NLS-1$
 		} catch (InterruptedException e) {
@@ -755,6 +755,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	/**
 	 * Updates the window title. Format will be:
 	 * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
+	 * @param window The window being updated.
 	 */
 	private void updateTitle(IWorkbenchWindow window) {
 		IWorkbenchWindowConfigurer windowConfigurer = getWorkbenchConfigurer().getWindowConfigurer(window);
@@ -964,6 +965,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
     /**
      * Returns the workbench action builder for the given window 
+     * @param window
+     * @return WorkbenchActionBuilder
      */
     static WorkbenchActionBuilder getActionBuilder(IWorkbenchWindow window) {
         IWorkbenchWindowConfigurer configurer = workbenchAdvisor.getWorkbenchConfigurer().getWindowConfigurer(window);
