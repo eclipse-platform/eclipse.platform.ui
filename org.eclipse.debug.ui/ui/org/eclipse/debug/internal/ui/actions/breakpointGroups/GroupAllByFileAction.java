@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -24,13 +25,19 @@ public class GroupAllByFileAction extends AbstractGroupBreakpointsAction {
      * @return
      */
     protected String getGroup(IBreakpoint breakpoint) {
-        String group= null;
+        StringBuffer group= new StringBuffer();
         IMarker marker = breakpoint.getMarker();
         if (marker != null) {
             IResource resource = marker.getResource();
-            group= resource.getName();
+            group.append(resource.getName());
+            IContainer parent = resource.getParent();
+            if (parent != null) {
+                group.append(" ["); //$NON-NLS-1$
+                group.append(parent.getFullPath().toString().substring(1));
+                group.append(']');
+            }
         }
-        return group;
+        return group.toString();
     }
 
 }
