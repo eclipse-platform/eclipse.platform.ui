@@ -1,5 +1,10 @@
 package org.eclipse.team.internal.ccvs.ui;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;

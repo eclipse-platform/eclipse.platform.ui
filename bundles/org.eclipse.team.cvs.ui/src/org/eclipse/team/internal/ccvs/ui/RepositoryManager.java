@@ -1,5 +1,10 @@
 package org.eclipse.team.internal.ccvs.ui;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
