@@ -175,10 +175,10 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		
 		fLabel= new CLabel(parent, SWT.NONE);
 		
-		Color[] colors = new Color[2];
-		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		colors[1] = fLabel.getBackground();
-		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
+		Color[] colors= new Color[2];
+		colors[0]= parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		colors[1]= fLabel.getBackground();
+		int[] gradient= new int[] {JFaceColors.STATUS_PERCENT};
 		fLabel.setBackground(colors, gradient);
 		
 		fLabel.addDisposeListener(new DisposeListener() {
