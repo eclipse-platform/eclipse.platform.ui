@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 	private boolean shutdown = false;
 	
+	private Hashtable imageCache = new Hashtable();
+	
 	public CVSDecorator() {
 		// The decorator is a singleton, there should never be more than one instance.
 		// temporary until the UI component properly calls dispose when the workbench shutsdown
@@ -89,7 +92,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 			if (format == null) {
 				return text;
 			} else {
-				Map bindings = decoration.getBindins();
+				Map bindings = decoration.getBindings();
 				if (bindings.isEmpty())
 					return text;
 				bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, text);
@@ -112,13 +115,31 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 		if (decoration != null) {
 			List overlays = decoration.getOverlays();
-			return overlays == null ? image : new OverlayIcon(image.getImageData(), new ImageDescriptor[][] {(ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()])}, new Point(16, 16)).createImage();
+			return overlays == null ? image : getCachedImage(image, overlays);
 		} else {
 			addResourcesToBeDecorated(new IResource[] { resource });
 			return image;
 		}
 	}
 
+	/**
+	 * Get the composite image for the given image and overlays. Return one from the cache if
+	 * it exists. If not, create it, cache it, and return it.
+	 */
+	private Image getCachedImage(Image image, List overlays) {
+		Hashtable overlayTable = (Hashtable)imageCache.get(image);
+		if (overlayTable == null) {
+			overlayTable = new Hashtable();
+			imageCache.put(image, overlayTable);
+		}
+		Image cachedImage = (Image)overlayTable.get(overlays);
+		if (cachedImage == null) {
+			cachedImage = new OverlayIcon(image.getImageData(), new ImageDescriptor[][] {(ImageDescriptor[])overlays.toArray(new ImageDescriptor[overlays.size()])}, new Point(16, 16)).createImage();
+			overlayTable.put(overlays, cachedImage);
+		}
+		return cachedImage;
+	}
+	
 	/*
 	 * @see IDecorationNotifier#next()
 	 */
@@ -333,6 +354,15 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		
 		decoratorNeedsUpdating.clear();
 		cache.clear();
+		Iterator it = imageCache.values().iterator();
+		while (it.hasNext()) {
+			Hashtable overlayTable = (Hashtable)it.next();
+			Iterator it2 = overlayTable.values().iterator();
+			while (it2.hasNext()) {
+				((Image)it2.next()).dispose();
+			}
+		}
+		imageCache = new Hashtable();
 		theDecorator = null;
 	}
 }
