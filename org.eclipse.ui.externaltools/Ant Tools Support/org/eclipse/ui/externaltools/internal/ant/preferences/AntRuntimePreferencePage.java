@@ -11,7 +11,6 @@ Contributors:
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -94,8 +93,8 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		super.performDefaults();
 		
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-		tasksPage.setInput(Arrays.asList(prefs.getCustomTasks()));
-		typesPage.setInput(Arrays.asList(prefs.getCustomTypes()));
+		tasksPage.setInput(prefs.getDefaultTasks());
+		typesPage.setInput(prefs.getDefaultTypes());
 		classpathPage.performDefaults();
 		propertiesPage.performDefaults();
 	}
