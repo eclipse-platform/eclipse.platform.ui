@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -31,6 +32,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.PresentationUtil;
@@ -261,8 +264,16 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param property
 	 */
 	protected void childPropertyChanged(IPresentablePart part, int property) {
-	    CTabItem tab = getTab(part);
+		
+		CTabItem tab = getTab(part);
 		initTab(tab, part);
+		if(property == IPresentablePart.PROP_BUSY){
+			FontRegistry registry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry();
+			if(part.isBusy())
+				tab.setFont(registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+			else
+				tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+		}
 	}
 
 	protected final IPresentablePart getPartForTab(CTabItem item) {

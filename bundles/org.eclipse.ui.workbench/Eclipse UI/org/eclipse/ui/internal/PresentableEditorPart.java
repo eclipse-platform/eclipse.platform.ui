@@ -90,4 +90,12 @@ public class PresentableEditorPart implements IPresentablePart {
     public void setVisible(boolean isVisible) {
         pane.setVisible(isVisible);
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#isBusy()
+	 */
+	public boolean isBusy() {
+		// editors do not support busy currently
+		return false;
+	}
 }

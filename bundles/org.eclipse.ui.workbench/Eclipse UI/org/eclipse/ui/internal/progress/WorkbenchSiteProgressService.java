@@ -9,6 +9,8 @@
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -17,21 +19,19 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.operation.IRunnableWithProgress;
-
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-import org.eclipse.ui.internal.PartSite;
 /**
  * The WorkbenchSiteProgressService is the concrete implementation of the
  * WorkbenchSiteProgressService used by the workbench components.
@@ -41,6 +41,7 @@ public class WorkbenchSiteProgressService
 			IWorkbenchSiteProgressService {
 	PartSite site;
 	IJobChangeListener listener;
+	IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
 	private Cursor waitCursor;
 
 	private class SiteUpdateJob extends WorkbenchJob {
@@ -96,7 +97,14 @@ public class WorkbenchSiteProgressService
 					control.setCursor(cursor);
 				}
 
-				site.getPane().showBusy(busy);
+				for (int i = 0; i < changeListeners.length; i++) {
+					changeListeners[i].propertyChange(
+							new PropertyChangeEvent(
+									this,
+									BUSY_PROPERTY,
+									new Boolean(!busy),
+									new Boolean(busy)));
+				}
 
 				IWorkbenchPart part = site.getPart();
 				if (part instanceof WorkbenchPart)
@@ -204,7 +212,7 @@ public class WorkbenchSiteProgressService
 				 */
 				public void aboutToRun(IJobChangeEvent event) {
 					updateJob.setBusy(true);
-					updateJob.schedule();
+					updateJob.schedule(100);
 				}
 
 				/*
@@ -214,7 +222,7 @@ public class WorkbenchSiteProgressService
 				 */
 				public void done(IJobChangeEvent event) {
 					updateJob.setBusy(false);
-					updateJob.schedule();
+					updateJob.schedule(100);
 				}
 
 
@@ -229,4 +237,32 @@ public class WorkbenchSiteProgressService
 	public void useHalfBusyCursor(Job job) {
 		//Do nothing as this is deprecated
 	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		IPropertyChangeListener[] newListeners = new IPropertyChangeListener[changeListeners.length +1];
+		System.arraycopy(changeListeners,0,newListeners,0,changeListeners.length);
+		newListeners[changeListeners.length] = listener;
+		changeListeners = newListeners;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		Collection remainingListeners = new ArrayList();
+		for (int i = 0; i < changeListeners.length; i++) {
+			if(!changeListeners[i].equals(listener))
+				remainingListeners.add(listener);
+			
+		}
+		
+		IPropertyChangeListener[] newListeners = new IPropertyChangeListener[remainingListeners.size()];
+		remainingListeners.toArray(newListeners);
+		changeListeners = newListeners;
+	}
+	
 }

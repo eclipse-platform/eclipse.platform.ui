@@ -17,7 +17,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ColorSchemeService;
@@ -99,6 +101,13 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		boolean vertical;
 		
         if (isActive()){
+        	
+        	CTabItem item = getTabFolder().getSelection();
+            if(item != null && !getPartForTab(item).isBusy()){
+            	Font tabFont = fontRegistry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
+            	item.setFont(tabFont);
+            }
+            
 	        fgColor = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
             bgColors[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
             bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
@@ -110,8 +119,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
             bgColors[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
             percent[0] = currentTheme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
             vertical = currentTheme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
-		}		
-        getTabFolder().setFont(fontRegistry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT)); 
+		}	
 		drawGradient(fgColor, bgColors, percent, vertical);	
 	}
 	

@@ -10,6 +10,7 @@
 package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * IWorkbenchPartProgressService is an IProgressService that adds API for 
@@ -27,6 +28,11 @@ import org.eclipse.core.runtime.jobs.Job;
  * @since 3.0
  */
 public interface IWorkbenchSiteProgressService extends IProgressService {
+	
+	/**
+	 * The property that is sent with busy notifications.
+	 */
+	public static final String BUSY_PROPERTY = "SITE_BUSY";
 	
 	/**
 	 * Jobs scheduled with this method will cause the part's presentation 
@@ -71,4 +77,19 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * @deprecated Use schedule (Job,long,boolean) instead
 	 */
 	public void useHalfBusyCursor(Job job);
+	
+	/**
+	 * Add an IPropertyChangeListener to the list of listeners
+	 * on the receiver.
+	 * @param listener IPropertyChangeListener
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Remove an IPropertyChangeListener to the list of listeners
+	 * on the receiver.
+	 * @param listener IPropertyChangeListener
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener);
+	
 }

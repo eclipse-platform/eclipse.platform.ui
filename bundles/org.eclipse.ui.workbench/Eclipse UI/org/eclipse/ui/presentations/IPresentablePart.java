@@ -26,6 +26,11 @@ import org.eclipse.ui.IPropertyListener;
  * @since 3.0
  */
 public interface IPresentablePart {
+	
+	/**
+	 * The property id for <code>isBusy</code>.
+	 */
+	public static final int PROP_BUSY = 0x92;
 		
 	/**
 	 * Sets the bounds of this part.
@@ -129,5 +134,11 @@ public interface IPresentablePart {
 	 * @return true iff the part is dirty
 	 */
 	public boolean isDirty();
+	
+	/**
+	 * Return true if the the receiver is currently in a busy state.
+	 * @return boolean true if busy
+	 */
+	public boolean isBusy();
 	
 }
