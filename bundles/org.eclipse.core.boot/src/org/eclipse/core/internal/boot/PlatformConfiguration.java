@@ -1906,8 +1906,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		
 		// load site properties
+		SiteEntry root = (SiteEntry)getRootSite();
+		String rootUrlString = root.getURL().toExternalForm(); 
 		SiteEntry se = (SiteEntry) loadSite(props, CFG_SITE+".0", null); //$NON-NLS-1$
-		for (int i=1; se != null; i++) {
+		for (int i=1; se != null; i++) {		
+					
+			// check if we are forcing "first use" processing with an existing
+			// platform.cfg. In this case ignore site entry that represents
+			// the platform install, and use a root site entry in its place.
+			// This ensures we do not get messed up by an exclusion list that
+			// is read from the prior state.
+			if (cmdFirstUse && rootUrlString.equals(se.getURL().toExternalForm()))
+				se = root;
+					
 			if (!se.isExternallyLinkedSite())
 				configureSite(se);
 			else
@@ -1950,7 +1961,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String urlString = loadAttribute(props, name+"."+CFG_URL, null); //$NON-NLS-1$
 		if (urlString == null)
 			return dflt;
-			
+
 		URL url = null;
 		try {
 			url = new URL(urlString);
@@ -2543,7 +2554,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return args;
 		else {
 			// Will run reconciler.
-			// Re-insert -application argument with original app
+			// Re-insert -application argument with original app and optionally
+			// force "first use" processing
 			int newArgCnt = cmdFirstUse ? 3 : 2;
 			String[] newArgs = new String[args.length+newArgCnt];
 			newArgs[0] = CMD_APPLICATION;
@@ -2551,6 +2563,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (cmdFirstUse)
 				newArgs[2] = CMD_FIRSTUSE;
 			System.arraycopy(args,0,newArgs,newArgCnt,args.length);
+			if (DEBUG)
+				debug("triggering reconciliation ...");
 			return newArgs;
 		}
 	}
@@ -2581,7 +2595,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			boolean found = false;
 		
 			// check for args without parameters (i.e., a flag arg)
-			
+					
+			// look for forced "first use" processing (triggered by stale
+			// bootstrap information)
+			if (args[i].equalsIgnoreCase(CMD_FIRSTUSE)) {
+				cmdFirstUse = true;
+				found = true;
+			}
+				
 			// look for the update flag
 			if (args[i].equalsIgnoreCase(CMD_UPDATE)) {
 				cmdUpdate = true;
