@@ -16,15 +16,16 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 
-public class DisableCommand extends ScriptedCommand {
+public class UninstallCommand extends ScriptedCommand {
 
 	private IConfiguredSite targetSite;
 	private IFeature feature;
 
-	public DisableCommand(
+	public UninstallCommand(
 		String featureId,
 		String version,
 		String toSite,
@@ -36,7 +37,7 @@ public class DisableCommand extends ScriptedCommand {
 		try {
 			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 
-			// Get site containing the feature to disable
+			// Get site that contains the feature to uninstall
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
@@ -58,12 +59,12 @@ public class DisableCommand extends ScriptedCommand {
 			}
 
 			IFeature[] features =
-				UpdateUtils.searchSite(featureId, targetSite, true);
+				UpdateUtils.searchSite(featureId, targetSite, false);
 			if (features == null || features.length == 0) {
 				System.out.println(
-					"There are no configured features with id:" + featureId);
+					"There are no unconfigured features with id:" + featureId);
 				throw new Exception(
-					"There are no configured features with id:" + featureId);
+					"There are no unconfigured features with id:" + featureId);
 			}
 			if (version == null || version.trim().length() == 0)
 				feature = features[0]; // pick the first feature
@@ -73,19 +74,20 @@ public class DisableCommand extends ScriptedCommand {
 						.getVersionedIdentifier()
 						.getVersion()
 						.toString()
-						.equals(version)) {
+						.equals(version)
+						&& !targetSite.isConfigured(features[i])) {
 						feature = features[i];
 						break;
 					}
 				}
 			if (feature == null) {
 				System.out.println(
-					"Cannot find configured feature "
+					"Cannot find unconfigured feature "
 						+ featureId
 						+ " with version "
 						+ version);
 				throw new Exception(
-					"Cannot find configured feature "
+					"Cannot find unconfigured feature "
 						+ featureId
 						+ " with version "
 						+ version);
@@ -104,21 +106,24 @@ public class DisableCommand extends ScriptedCommand {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean run() {
+		if (InstallRegistry.getInstance().get("feature_"+ feature.getVersionedIdentifier()) == null) {
+			System.out.println("Feature " + feature + " was not installed by the update manager, so it cannot be uninstalled.");
+			return false;
+		}
+							
 		if (isVerifyOnly()) {
-			IStatus status =
-				OperationsManager.getValidator().validatePendingUnconfig(
-					feature);
-			return status == null;
+			// if reached this point, it is safe to uninstall
+			return true;
 		}
 
-		final IUnconfigFeatureOperation configOperation =
-			OperationsManager.getOperationFactory().createUnconfigOperation(
+		final IUninstallFeatureOperation uninstallOperation =
+			OperationsManager.getOperationFactory().createUninstallOperation(
 				getConfiguration(),
 				targetSite,
 				feature);
 
 		try {
-			return configOperation.execute(null, null);
+			return uninstallOperation.execute(null, null);
 		} catch (CoreException e) {
 			System.out.println(e.getStatus().getMessage());
 			return false;

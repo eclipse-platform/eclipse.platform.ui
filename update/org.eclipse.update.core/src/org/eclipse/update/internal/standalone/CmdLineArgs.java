@@ -63,7 +63,8 @@ public class CmdLineArgs {
 			|| cmd.equals("disable")
 			|| cmd.equals("search")
 			|| cmd.equals("update")
-			|| cmd.equals("mirror");
+			|| cmd.equals("mirror")
+			|| cmd.equals("uninstall");
 	}
 
 	public ScriptedCommand getCommand() {
@@ -100,6 +101,12 @@ public class CmdLineArgs {
 					(String) options.get("-version"),
 					(String) options.get("-from"),
 					(String) options.get("-to"));
+			else if (cmd.equals("uninstall"))
+				return new UninstallCommand(
+					(String) options.get("-featureId"),
+					(String) options.get("-version"),
+					(String) options.get("-to"),
+					(String) options.get("-verifyOnly"));
 			return null;
 		} catch (Exception e) {
 			return null;

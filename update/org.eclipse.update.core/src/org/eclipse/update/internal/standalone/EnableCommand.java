@@ -28,7 +28,8 @@ public class EnableCommand extends ScriptedCommand {
 		String featureId,
 		String version,
 		String toSite,
-		String verifyOnly) {
+		String verifyOnly)
+		throws Exception {
 
 		super(verifyOnly);
 
@@ -40,7 +41,7 @@ public class EnableCommand extends ScriptedCommand {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
 					System.out.println("Cannot find site " + toSite);
-					return;
+					throw new Exception("Cannot find site " + toSite);
 				}
 				targetSite =
 					SiteManager
@@ -60,8 +61,9 @@ public class EnableCommand extends ScriptedCommand {
 				UpdateUtils.searchSite(featureId, targetSite, false);
 			if (features == null || features.length == 0) {
 				System.out.println(
-					"There are no configured features with id:" + featureId);
-				return;
+					"There are no unconfigured features with id:" + featureId);
+				throw new Exception(
+					"There are no unconfigured features with id:" + featureId);
 			}
 			if (version == null || version.trim().length() == 0)
 				feature = features[0]; // pick the first feature
@@ -83,13 +85,19 @@ public class EnableCommand extends ScriptedCommand {
 						+ featureId
 						+ " with version "
 						+ version);
-				return;
+				throw new Exception(
+					"Cannot find unconfigured feature "
+						+ featureId
+						+ " with version "
+						+ version);
 			}
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+			throw e;
 		} catch (CoreException e) {
 			e.printStackTrace();
+			throw e;
 		}
 	}
 

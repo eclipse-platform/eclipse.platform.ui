@@ -35,7 +35,7 @@ public class InstallCommand extends ScriptedCommand {
 		String version,
 		String fromSite,
 		String toSite,
-		String verifyOnly) {
+		String verifyOnly) throws Exception {
 
 		super(verifyOnly);
 
@@ -52,7 +52,7 @@ public class InstallCommand extends ScriptedCommand {
 				if (SiteManager.getSite(toSiteURL, null) == null) {
 					System.out.println(
 						"Cannot find site to install to: " + toSite);
-					return;
+					throw new Exception("Cannot find site to install to: " + toSite);
 				}
 				targetSite =
 					SiteManager
@@ -87,8 +87,10 @@ public class InstallCommand extends ScriptedCommand {
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+			throw e;
 		} catch (CoreException e) {
 			e.printStackTrace();
+			throw e;
 		}
 	}
 
