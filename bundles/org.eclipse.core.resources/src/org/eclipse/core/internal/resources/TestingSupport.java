@@ -67,12 +67,12 @@ public class TestingSupport {
 	}
 	/**
 	 * Blocks the calling thread until auto-build completes.
-	 * 
+	 * @deprecated to be removed before release 3.0
 	 * @since 3.0
 	 */
 	public static void waitForAutoBuild() {
 		try {
-			((Workspace) ResourcesPlugin.getWorkspace()).autoBuildJob.join();
+			org.eclipse.core.runtime.Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Interrupted while waiting for build"); //$NON-NLS-1$
