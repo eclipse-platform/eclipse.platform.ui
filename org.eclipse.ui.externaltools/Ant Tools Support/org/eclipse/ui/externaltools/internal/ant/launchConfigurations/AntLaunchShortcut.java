@@ -87,41 +87,67 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Launch the given file in the specified mode.
 	 * 
-	 * @param file
-	 * @param mode
+	 * @param resource either a build file (*.xml file) to execute or a resource
+	 * from whose location a build file should be searched for. If the given
+	 * resource is a file that does not end in ".xml", a search will begin at
+	 * the resource's enclosing folder. The given resource must be of type IFile
+	 * or IContainer.
+	 * @param mode the mode in which the build file should be executed
 	 */
-	protected void launch(IResource resource, String mode) {
-		ILaunchConfiguration configuration= null;
+	public void launch(IResource resource, String mode) {
 		if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
-			if (resource.getType() == IFile.FILE) {
+			if (resource.getType() == IResource.FILE) {
 				resource= resource.getParent();
 			}
 			resource= findBuildFile((IContainer)resource);
 		} 
 		if (resource != null) {
-			if (verifyMode(mode)) {
-				List configurations = findExistingLaunchConfigurations((IFile)resource);
-				if (configurations.isEmpty()) {
-					configuration = createDefaultLaunchConfiguration((IFile)resource);
+			launch((IFile)resource, mode, null);
+		}
+	}
+	
+	/**
+	 * Launch the given targets in the given build file. The targets are
+	 * launched in the given mode.
+	 * 
+	 * @param file the build file to launch
+	 * @param mode the mode in which the build file should be executed
+	 * @param targetAttribute the targets to launch, in the form of the launch
+	 * configuration targets attribute.
+	 */
+	public void launch(IFile file, String mode, String targetAttribute) {
+		ILaunchConfiguration configuration= null;
+		if (verifyMode(mode)) {
+			List configurations = findExistingLaunchConfigurations(file);
+			if (configurations.isEmpty()) {
+				configuration = createDefaultLaunchConfiguration(file);
+			} else {
+				if (configurations.size() == 1) {
+					configuration= (ILaunchConfiguration)configurations.get(0);
 				} else {
-					if (configurations.size() == 1) {
-						configuration= (ILaunchConfiguration)configurations.get(0);
-					} else {
-						configuration= chooseConfig(configurations);
-						if (configuration == null) {
-							// User cancelled selection
-							return;
-						}
+					configuration= chooseConfig(configurations);
+					if (configuration == null) {
+						// User cancelled selection
+						return;
 					}
 				}
-			}			
+			}
 		}
-			
+
 		if (configuration != null) {
 			if (fShowDialog) {
 				DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
-
 			} else {
+				if (targetAttribute != null) {
+					String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());
+					try {
+						configuration= configuration.copy(newName);
+						((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, targetAttribute);
+					} catch (CoreException exception) {
+						reportError(MessageFormat.format("An exception occurred while launching {0}", new String[] {file.getName()}), exception);
+						return;
+					}
+				}
 				DebugUITools.launch(configuration, mode);
 			}
 			return;
@@ -207,7 +233,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * @param file
 	 * @return list of launch configurations
 	 */
-	protected List findExistingLaunchConfigurations(IFile file) {
+	public static List findExistingLaunchConfigurations(IFile file) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		List validConfigs= new ArrayList();
@@ -248,7 +274,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			return null;
 		}
 		ILabelProvider labelProvider = DebugUITools.newDebugModelPresentation();
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(Display.getCurrent().getActiveShell(), labelProvider);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(Display.getDefault().getActiveShell(), labelProvider);
 		dialog.setElements((ILaunchConfiguration[]) configs.toArray(new ILaunchConfiguration[configs.size()]));
 		dialog.setTitle(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_Configuration_Selection_4")); //$NON-NLS-1$
 		dialog.setMessage(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Choose_an_ant_configuration_to_run_5")); //$NON-NLS-1$
@@ -288,7 +314,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		antFileNotFound();
 	}
 	
-	protected void reportError(String message, Throwable throwable) {
+	protected static void reportError(String message, Throwable throwable) {
 		IStatus status = null;
 		if (throwable instanceof CoreException) {
 			status = ((CoreException)throwable).getStatus();

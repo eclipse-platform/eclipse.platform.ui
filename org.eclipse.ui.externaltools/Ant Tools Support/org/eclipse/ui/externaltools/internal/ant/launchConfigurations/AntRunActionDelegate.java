@@ -13,7 +13,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -32,7 +31,7 @@ public class AntRunActionDelegate extends ActionDelegate implements IObjectActio
 		if (part != null && selectedFile != null) {
 			AntLaunchShortcut shortcut = new AntLaunchShortcut();
 			shortcut.setShowDialog(true);
-			shortcut.launch(new StructuredSelection(selectedFile), ILaunchManager.RUN_MODE);
+			shortcut.launch(selectedFile, ILaunchManager.RUN_MODE);
 		}
 	}
 	

@@ -25,10 +25,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -55,6 +53,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.DeactivateTargetAction;
@@ -259,14 +258,9 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private void handleProjectClosed(IProject project) {
 		ProjectNode[] projects= projectContentProvider.getRootNode().getProjects();
 		final List projectsToRemove= new ArrayList();
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		for (int i = 0; i < projects.length; i++) {
 			ProjectNode projectNode = projects[i];
-			Path buildFilePath= new Path(projectNode.getBuildFileName());
-			int matchingSegments= root.getLocation().matchingFirstSegments(buildFilePath);
-			IFile file= root.getFile(buildFilePath.removeFirstSegments(matchingSegments));
-			//if (project.equals(file.getProject())) {
-			if (!file.exists()) {
+			if (!AntUtil.getFile(projectNode.getBuildFileName()).exists()) {
 				projectsToRemove.add(projectNode);
 			}
 		}
@@ -447,7 +441,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 					((IUpdate) actionIter.next()).update();
 				}
 				Iterator selectionIter= ((IStructuredSelection) event.getSelection()).iterator();
-				Object selection= selectionIter.next();
+				Object selection= null;
+				if (selectionIter.hasNext()) {
+					selection= selectionIter.next();
+				} 
 				if (!selectionIter.hasNext() && selection instanceof ProjectNode) {
 					ProjectNode project= (ProjectNode) selection;
 					AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(project.getBuildFileName());

@@ -18,7 +18,11 @@ import java.util.StringTokenizer;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -262,5 +266,18 @@ public final class AntUtil {
 		}
 		
 		return results;
+	}
+	
+	/**
+	 * Returns an IFile with the given fully qualified path. The given path is
+	 * interpreted as relative to the file system root and the returned IFile
+	 * points to a path within the workspace. The returned IFile may or may not
+	 * exist.
+	 */
+	public static IFile getFile(String fullpath) {
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		Path buildFilePath= new Path(fullpath);
+		int matchingSegments= root.getLocation().matchingFirstSegments(buildFilePath);
+		return root.getFile(buildFilePath.removeFirstSegments(matchingSegments));
 	}
 }

@@ -8,6 +8,7 @@ package org.eclipse.ui.externaltools.internal.ant.view.elements;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -17,6 +18,8 @@ import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Representation of an ant build project.
@@ -130,26 +133,40 @@ public class ProjectNode extends AntNode {
 	 */
 	public void parseBuildFile() {
 		clear();
-		AntRunner runner = new AntRunner();
+		final AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(buildFileName);
-		TargetInfo[] infos = null;
-		try {
-			infos = runner.getAvailableTargets();
-		} catch (CoreException e) {
-			setErrorMessage("An exception occurred retrieving targets: " + e.getMessage());
-			return;
+		final List infos= new ArrayList();
+		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+			public void run() {
+				TargetInfo[] tempInfos;
+				try {
+					tempInfos= runner.getAvailableTargets();
+				} catch (CoreException e) {
+					setErrorMessage("An exception occurred retrieving targets: " + e.getMessage());
+					return;
+				}
+				for (int i = 0; i < tempInfos.length; i++) {
+					infos.add(tempInfos[i]);
+				}
+			}
+		});
+		if (isErrorNode()){
+			// An error occurred in the runnable
+			return; 
 		}
-		if (infos.length < 1) {
+		if (infos.size() < 1) {
 			setErrorMessage("No targets found");
 			return;
 		}
 		// Create Apache Ant objects
 		Project project = new Project();
-		if (infos[0].getProject() != null) {
-			project.setName(infos[0].getProject());
+		TargetInfo firstTarget= ((TargetInfo) infos.get(0));
+		if (firstTarget.getProject() != null) {
+			project.setName(firstTarget.getProject());
 		}
-		for (int i = 0; i < infos.length; i++) {
-			TargetInfo info = infos[i];
+		Iterator iter= infos.iterator();
+		while (iter.hasNext()) {
+			TargetInfo info = (TargetInfo) iter.next();
 			if (info.isDefault()) {
 				project.setDefault(info.getName());
 			}

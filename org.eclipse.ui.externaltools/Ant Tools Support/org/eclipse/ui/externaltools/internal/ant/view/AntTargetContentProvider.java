@@ -19,7 +19,10 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
  */
 public class AntTargetContentProvider implements IStructuredContentProvider {
 
-	List targets = new ArrayList();
+	/**
+	 * The collection of currently active targets
+	 */
+	private List targets = new ArrayList();
 
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
@@ -61,23 +64,27 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	}
 
 	/**
-	 * Removes the given target from the list of selected targets.
+	 * Removes the given target from the list of selected targets. Has no effect
+	 * if the given index is invalid.
 	 * 
 	 * @param index the index of the the target to remove
 	 */
 	public void removeTarget(int index) {
-		targets.remove(index);
+		if (targets.size() > index && index > 0) {
+			targets.remove(index);
+		}
 	}
 	
 	/**
 	 * Moves the given target up in the list of active targets. Has no effect if
-	 * the given target is already the first target in the list.
+	 * the given target is already the first target in the list or the given
+	 * index is invalid.
 	 * 
 	 * @param index the index of the target to move up
 	 */
 	public void moveUpTarget(int index) {
 		Object target= targets.get(index);
-		if (index == 0) {
+		if (index == 0 || target == null) {
 			return;
 		}
 		targets.set(index, targets.get(index - 1));
@@ -86,13 +93,14 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	
 	/**
 	 * Moves the given target down in the list of active targets. Has no effect
-	 * if the given target is already the last target in the list.
+	 * if the given target is already the last target in the list or the given
+	 * index is invalid.
 	 *
 	 * @param index the index of the target to move down
 	 */
 	public void moveDownTarget(int index) {
 		Object target= targets.get(index);
-		if (index == targets.size() - 1) {
+		if (index == targets.size() - 1 || target == null) {
 			return;
 		}
 		targets.set(index, targets.get(index + 1));
