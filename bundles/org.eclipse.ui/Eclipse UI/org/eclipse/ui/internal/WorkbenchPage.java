@@ -574,7 +574,7 @@ private IViewPart busyShowView(String viewID, boolean activate)
  */
 private boolean certifyPart(IWorkbenchPart part) {
 	//Workaround for bug 22325
-	if (!(part.getSite() instanceof PartSite))
+	if (part != null && !(part.getSite() instanceof PartSite))
 		return false;
 		
 	if (part instanceof IEditorPart) {
