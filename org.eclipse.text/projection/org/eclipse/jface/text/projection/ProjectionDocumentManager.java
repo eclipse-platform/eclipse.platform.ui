@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentInformationMapping;
@@ -43,29 +42,10 @@ import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
  * 
  * @since 3.0
  */
-public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager, ISlaveDocumentManagerExtension {
-	
-	
-	/**
-	 * Name of the position category used to keep track of the master
-	 * document's fragments that correspond to the segments of the projection
-	 * documents.
-	 */
-	protected final static String FRAGMENTS_CATEGORY= "__fragmentsCategory"; //$NON-NLS-1$
-
-	/**
-	 * Name of the position category used to keep track of the project
-	 * document's segments that correspond to the fragments of the master
-	 * documents.
-	 */
-	protected final static String SEGMENTS_CATEGORY= "__segmentsCategory"; //$NON-NLS-1$
-	
+public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager, ISlaveDocumentManagerExtension {	
 	
 	/** Registry for master documents and their projection documents. */
 	private Map fProjectionRegistry= new HashMap();
-	/** Registry for master documents and their fragment updaters. */
-	private Map fUpdaterRegistry= new HashMap();
-	
 	
 	/**
 	 * Registers the given projection document for the given master document.
@@ -171,15 +151,9 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public IDocument createSlaveDocument(IDocument master) {
-		if (!master.containsPositionCategory(FRAGMENTS_CATEGORY)) {
-			FragmentUpdater updater= new FragmentUpdater(FRAGMENTS_CATEGORY);
-			fUpdaterRegistry.put(master, updater);
-			master.addPositionCategory(FRAGMENTS_CATEGORY);
-			master.addPositionUpdater(updater);
+		if (!hasProjection(master))
 			master.addDocumentListener(this);
-		}
-		FragmentUpdater updater= (FragmentUpdater) fUpdaterRegistry.get(master);
-		ProjectionDocument slave= createProjectionDocument(master, updater);
+		ProjectionDocument slave= createProjectionDocument(master);
 		add(master, slave);
 		return slave;
 	}
@@ -188,11 +162,10 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 	 * Factory method for projection documents. 
 	 * 
 	 * @param master the master document
-	 * @param fragmentUpdater the fragment updater of the master document
 	 * @return the newly created projection document
 	 */
-	protected ProjectionDocument createProjectionDocument(IDocument master, FragmentUpdater fragmentUpdater) {
-		return new ProjectionDocument(master, FRAGMENTS_CATEGORY, fragmentUpdater, SEGMENTS_CATEGORY);
+	protected ProjectionDocument createProjectionDocument(IDocument master) {
+		return new ProjectionDocument(master);
 	}
 
 	/*
@@ -203,16 +176,9 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 			ProjectionDocument projectionDocument= (ProjectionDocument) slave;
 			IDocument master= projectionDocument.getMasterDocument();
 			remove(master, projectionDocument);
-			
-			try {
-				if (!hasProjection(master))  {
-					FragmentUpdater updater= (FragmentUpdater) fUpdaterRegistry.remove(master);
-					master.removeDocumentListener(this);
-					master.removePositionUpdater(updater);
-					master.removePositionCategory(FRAGMENTS_CATEGORY);
-				}
-			} catch (BadPositionCategoryException x) {
-			}
+			projectionDocument.dispose();
+			if (!hasProjection(master))
+				master.removeDocumentListener(this);
 		}
 	}
 

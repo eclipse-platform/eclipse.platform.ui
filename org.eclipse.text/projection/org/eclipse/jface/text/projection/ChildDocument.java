@@ -49,12 +49,9 @@ public class ChildDocument extends ProjectionDocument {
 	 * Creates a new child document.
 	 * 
 	 * @param masterDocument @inheritDoc
-	 * @param fragmentsCategory @inheritDoc
-	 * @param fragmentUpdater @inheritDoc
-	 * @param segmentsCategory @inheritDoc
 	 */
-	public ChildDocument(IDocument masterDocument, String fragmentsCategory, FragmentUpdater fragmentUpdater, String segmentsCategory) {
-		super(masterDocument, fragmentsCategory, fragmentUpdater, segmentsCategory);
+	public ChildDocument(IDocument masterDocument) {
+		super(masterDocument);
 	}
 
 	/**

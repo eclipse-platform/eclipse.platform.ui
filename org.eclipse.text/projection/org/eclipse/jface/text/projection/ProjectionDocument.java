@@ -45,14 +45,30 @@ import org.eclipse.jface.text.Region;
  */
 public class ProjectionDocument extends AbstractDocument {
 	
+	
+	/**
+	 * Prefix of the name of the position category used to keep track of the master
+	 * document's fragments that correspond to the segments of the projection
+	 * document.
+	 */
+	private final static String FRAGMENTS_CATEGORY_PREFIX= "__fragmentsCategory"; //$NON-NLS-1$
+
+	/**
+	 * Name of the position category used to keep track of the project
+	 * document's segments that correspond to the fragments of the master
+	 * document.
+	 */
+	private final static String SEGMENTS_CATEGORY= "__segmentsCategory"; //$NON-NLS-1$
+
+	
 	/** The master document */
-	protected IDocument fMasterDocument;
+	private IDocument fMasterDocument;
 	/** The master document as document extension */
-	protected IDocumentExtension fMasterDocumentExtension;
+	private IDocumentExtension fMasterDocumentExtension;
 	/** The fragments' position category */
-	protected String fFragmentsCategory;
+	private String fFragmentsCategory;
 	/** The segment's position category */
-	protected String fSegmentsCategory;
+	private String fSegmentsCategory;
 	/** The document event issued by the master document */
 	private DocumentEvent fMasterEvent;
 	/** The document event to be issued by the projection document */
@@ -74,21 +90,21 @@ public class ProjectionDocument extends AbstractDocument {
 	 * Creates a projection document for the given master document.
 	 *
 	 * @param masterDocument the master document
-	 * @param fragmentsCategory the document position category managing the master's fragments
-	 * @param fragmentUpdater the fragment position updater of the master document
-	 * @param segmentsCategory the document position category managing the segments
 	 */
-	public ProjectionDocument(IDocument masterDocument, String fragmentsCategory, FragmentUpdater fragmentUpdater, String segmentsCategory) {
+	public ProjectionDocument(IDocument masterDocument) {
 		super();
 		
 		fMasterDocument= masterDocument;
 		if (fMasterDocument instanceof IDocumentExtension) 
 			fMasterDocumentExtension= (IDocumentExtension) fMasterDocument;
 		
-		fFragmentsCategory= fragmentsCategory;
-		fFragmentsUpdater= fragmentUpdater;
-		fSegmentsCategory= segmentsCategory;
-		fMapping= new ProjectionMapping(masterDocument, fragmentsCategory, this, segmentsCategory);
+		fSegmentsCategory= SEGMENTS_CATEGORY;
+		fFragmentsCategory= FRAGMENTS_CATEGORY_PREFIX + hashCode();
+		fMasterDocument.addPositionCategory(fFragmentsCategory);
+		fFragmentsUpdater= new FragmentUpdater(fFragmentsCategory);
+		fMasterDocument.addPositionUpdater(fFragmentsUpdater);		
+		
+		fMapping= new ProjectionMapping(masterDocument, fFragmentsCategory, this, fSegmentsCategory);
 		
 		ITextStore s= new ProjectionTextStore(masterDocument, fMapping);
 		ILineTracker tracker= new DefaultLineTracker();
@@ -100,6 +116,18 @@ public class ProjectionDocument extends AbstractDocument {
 		
 		initializeProjection();
 		tracker.set(s.get(0, s.getLength()));
+	}
+	
+	/**
+	 * Disposes this projection document.
+	 */
+	public void dispose() {
+		fMasterDocument.removePositionUpdater(fFragmentsUpdater);
+		try {
+			fMasterDocument.removePositionCategory(fFragmentsCategory);
+		} catch (BadPositionCategoryException x) {
+			// allow multiple dispose calls
+		}
 	}
 		
 	private void internalError() {
@@ -430,6 +458,11 @@ public class ProjectionDocument extends AbstractDocument {
 		}
 	}
 	
+	/**
+	 * Returns whether this project is being updated.
+	 * 
+	 * @return <code>true</code> if the document is updating
+	 */
 	protected boolean isUpdating() {
 		return fIsUpdating;
 	}

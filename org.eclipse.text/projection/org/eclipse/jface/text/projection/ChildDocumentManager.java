@@ -23,15 +23,10 @@ import org.eclipse.jface.text.IDocument;
  */
 public class ChildDocumentManager extends ProjectionDocumentManager {
 	
-	/**
-	 * The position category used to manage the child documents.
-	 */
-	public final static String CHILDDOCUMENTS= FRAGMENTS_CATEGORY;
-	
 	/*
-	 * @see org.eclipse.jface.text.projection.ProjectionDocumentManager#createProjectionDocument(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.projection.FragmentUpdater)
+	 * @see org.eclipse.jface.text.projection.ProjectionDocumentManager#createProjectionDocument(org.eclipse.jface.text.IDocument)
 	 */
-	protected ProjectionDocument createProjectionDocument(IDocument master, FragmentUpdater fragmentUpdater) {
-		return new ChildDocument(master, FRAGMENTS_CATEGORY, fragmentUpdater, SEGMENTS_CATEGORY);
+	protected ProjectionDocument createProjectionDocument(IDocument master) {
+		return new ChildDocument(master);
 	}
 }
