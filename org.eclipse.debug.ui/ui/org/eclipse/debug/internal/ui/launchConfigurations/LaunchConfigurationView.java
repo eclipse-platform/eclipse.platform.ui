@@ -119,7 +119,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 					configType = ((ILaunchConfiguration) firstSelected).getType();
 				}
 				if (configType != null) {
-					String helpContextId = LaunchConfigurationPresentationManager.getDefault().getHelpContext(configType);
+					String helpContextId = LaunchConfigurationPresentationManager.getDefault().getHelpContext(configType, getLaunchGroup().getMode());
 					if (helpContextId != null) {
 						WorkbenchHelp.displayHelp(helpContextId);
 					}
@@ -135,14 +135,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 */
 	protected void createActions() {
 		
-		fCreateAction = new CreateLaunchConfigurationAction(getViewer());
+		fCreateAction = new CreateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(CreateLaunchConfigurationAction.ID_CREATE_ACTION, fCreateAction);
 		
-		fDeleteAction = new DeleteLaunchConfigurationAction(getViewer());
+		fDeleteAction = new DeleteLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DeleteLaunchConfigurationAction.ID_DELETE_ACTION, fDeleteAction);
 		setAction(IDebugView.REMOVE_ACTION, fDeleteAction);
 		
-		fDuplicateAction = new DuplicateLaunchConfigurationAction(getViewer());
+		fDuplicateAction = new DuplicateLaunchConfigurationAction(getViewer(), getLaunchGroup().getMode());
 		setAction(DuplicateLaunchConfigurationAction.ID_DUPLICATE_ACTION, fDuplicateAction);
 		
 	}

@@ -13,6 +13,9 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  
 import java.text.MessageFormat;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -41,7 +44,9 @@ public class LaunchConfigurationPresentationManager {
 	 * Collection of launch configuration tab group extensions
 	 * defined in plug-in xml. Entries are keyed by launch
 	 * configuration type identifier (<code>String</code>),
-	 * and entires are <code>LaunchConfigurationTabGroupExtension</code>.
+	 * and entires are tables of launch modes (<code>String</code>)
+	 * to <code>LaunchConfigurationTabGroupExtension</code>. "*" is
+	 * used to represent the default tab group (i.e. unspecified mode).
 	 */
 	private Hashtable fTabGroupExtensions;	
 		
@@ -92,19 +97,37 @@ public class LaunchConfigurationPresentationManager {
 				}
 			}
 			if (typeId != null) {
-				fTabGroupExtensions.put(typeId, group);
+				// get the map for the config type
+				Map map = (Map)fTabGroupExtensions.get(typeId);
+				if (map == null) {
+					map = new Hashtable();
+					fTabGroupExtensions.put(typeId, map);
+				}
+				Set modes = group.getModes();
+				if (modes == null) {
+					// default tabs - store with "*"
+					map.put("*", group); //$NON-NLS-1$
+				} else {
+					// store per mode
+					Iterator iterator = modes.iterator();
+					while (iterator.hasNext()) {
+						map.put(iterator.next(), group);
+					}
+				}
 			}
 		}
 	}	
 	
 	/**
-	 * Returns the tab group for the given type of launch configuration.
+	 * Returns the tab group for the given launch configuration type and mode.
 	 * 
+	 * @param type launch configuration type
+	 * @param mode launch mode
 	 * @return the tab group for the given type of launch configuration
 	 * @exception CoreException if an exception occurrs creating the group
 	 */
-	public ILaunchConfigurationTabGroup getTabGroup(ILaunchConfigurationType type) throws CoreException {
-		LaunchConfigurationTabGroupExtension ext = (LaunchConfigurationTabGroupExtension)fTabGroupExtensions.get(type.getIdentifier());
+	public ILaunchConfigurationTabGroup getTabGroup(ILaunchConfigurationType type, String mode) throws CoreException {
+		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), mode);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
 			 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.No_tab_group_defined_for_launch_configuration_type_{0}_3"), (new String[] {type.getIdentifier()})), null);			; //$NON-NLS-1$
@@ -115,16 +138,41 @@ public class LaunchConfigurationPresentationManager {
 	}
 	
 	/**
-	 * Returns the identifier of the help context that is associated with the
-	 * specified launch configuration type, or <code>null</code> if none.
+	 * Returns the launch tab group extension for the given type and mode, or
+	 * <code>null</code> if none
 	 * 
+	 * @param type launch configuration type identifier
+	 * @param mode launch mode identifier
+	 * @return launch tab group extension or <code>null</code>
+	 */
+	private LaunchConfigurationTabGroupExtension getExtension(String type, String mode) {
+		// get the map for the config type
+		Map map = (Map)fTabGroupExtensions.get(type);
+		if (map != null) {
+			// try the specific mode
+			Object extension = map.get(mode);
+			if (extension == null) {
+				// get the default tabs
+				extension = map.get("*"); //$NON-NLS-1$
+			}
+			return (LaunchConfigurationTabGroupExtension)extension;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the identifier of the help context that is associated with the
+	 * specified launch configuration type and mode, or <code>null</code> if none.
+	 * 
+	 * @param type launch config type
+	 * @param mode launch mode
 	 * @return the identifier for the help context associated with the given
 	 * type of launch configuration, or <code>null</code>
 	 * @exception CoreException if an exception occurrs creating the group
 	 * @since 2.1
 	 */
-	public String getHelpContext(ILaunchConfigurationType type) throws CoreException {
-		LaunchConfigurationTabGroupExtension ext = (LaunchConfigurationTabGroupExtension)fTabGroupExtensions.get(type.getIdentifier());
+	public String getHelpContext(ILaunchConfigurationType type, String mode) throws CoreException {
+		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), mode);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
 			 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.No_tab_group_defined_for_launch_configuration_type_{0}_3"), (new String[] {type.getIdentifier()})), null);			; //$NON-NLS-1$

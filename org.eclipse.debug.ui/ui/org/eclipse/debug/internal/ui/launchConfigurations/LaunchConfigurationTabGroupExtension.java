@@ -11,6 +11,10 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.DebugPlugin;
@@ -27,6 +31,12 @@ public class LaunchConfigurationTabGroupExtension {
 	 * The configuration element defining this tab group.
 	 */
 	private IConfigurationElement fConfig;
+	
+	/**
+	 * Modes this tab group is applicable to or, <code>null</code> if
+	 * default.
+	 */
+	private Set fModes;
 	
 	/**
 	 * Constructs a launch configuration tab extension based
@@ -69,6 +79,27 @@ public class LaunchConfigurationTabGroupExtension {
 	public ILaunchConfigurationType getType() {
 		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(getTypeIdentifier());
 	}
+	
+	/**
+	 * Returns the set of modes specified in the configuration data, or <code>null</code>
+	 * if none (i.e. default tab group)
+	 * 
+	 * @return the set of modes specified in the configuration data, or
+	 *  <code>null</code>
+	 */
+	protected Set getModes() {
+		if (fModes == null) {
+			String modes= getConfigurationElement().getAttribute("modes"); //$NON-NLS-1$
+			if (modes != null) {
+				StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
+				fModes = new HashSet(tokenizer.countTokens());
+				while (tokenizer.hasMoreTokens()) {
+					fModes.add(tokenizer.nextToken().trim());
+				}
+			}
+		}
+		return fModes;
+	}	
 	
 	/**
 	 * Returns the identifier of the type of launch configuration this

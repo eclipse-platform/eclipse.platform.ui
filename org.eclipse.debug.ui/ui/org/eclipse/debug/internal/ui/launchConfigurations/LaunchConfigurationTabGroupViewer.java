@@ -566,7 +566,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			public void run() {
 				ILaunchConfigurationTabGroup tabGroup = null;
 				try {
-					tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(configType);
+					tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(configType, getLaunchConfigurationDialog().getMode());
 					finalArray[0] = tabGroup;
 				} catch (CoreException ce) {
 					finalArray[1] = ce;

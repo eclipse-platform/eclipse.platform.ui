@@ -32,8 +32,8 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	/**
 	 * Constructs an action to duplicate a launch configuration 
 	 */
-	public DuplicateLaunchConfigurationAction(Viewer viewer) {
-		super(LaunchConfigurationsMessages.getString("DuplicateLaunchConfigurationAction.&Duplicate_1"), viewer); //$NON-NLS-1$
+	public DuplicateLaunchConfigurationAction(Viewer viewer, String mode) {
+		super(LaunchConfigurationsMessages.getString("DuplicateLaunchConfigurationAction.&Duplicate_1"), viewer, mode); //$NON-NLS-1$
 	}
 
 	/**

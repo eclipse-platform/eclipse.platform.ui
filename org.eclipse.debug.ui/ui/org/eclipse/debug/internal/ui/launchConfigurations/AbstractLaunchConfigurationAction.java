@@ -23,6 +23,11 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  */
 public abstract class AbstractLaunchConfigurationAction extends SelectionListenerAction {
 	
+	/** 
+	 * The mode this action was created in (run, debug, ...)
+	 */
+	private String fMode;
+	
 	/**
 	 * Allows a requestor to abort this action.
 	 */
@@ -50,10 +55,11 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 	 * Constructor for AbstractLaunchConfigurationAction.
 	 * @param text
 	 */
-	public AbstractLaunchConfigurationAction(String text, Viewer viewer) {
+	public AbstractLaunchConfigurationAction(String text, Viewer viewer, String mode) {
 		super(text);
 		fViewer = viewer;
 		fViewer.addSelectionChangedListener(this);
+		fMode = mode;
 	}
 
 	/**
@@ -125,4 +131,12 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 		ErrorDialog.openError(getShell(), null, null, exception.getStatus());
 	}
 
+	/**
+	 * Return this action's mode.
+	 * 
+	 * @return launch mode
+	 */
+	protected String getMode() {
+		return fMode;
+	}
 }

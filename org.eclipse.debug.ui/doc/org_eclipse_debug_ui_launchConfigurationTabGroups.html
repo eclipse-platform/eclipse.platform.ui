@@ -31,6 +31,7 @@ dialog for a type of launch configuration.<p><b><i>Configuration Markup:</i></b>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;helpContextId&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
 <li><b>id</b> - specifies a unique identifier for this launch configuration tab group.</li>
@@ -38,6 +39,7 @@ dialog for a type of launch configuration.<p><b><i>Configuration Markup:</i></b>
 launch configuration type extension).</li>
 <li><b>class</b> - specifies a fully qualified name of a Java class that implements <samp>ILaunchConfigurationTabGroup</samp>.</li>
 <li><b>helpContextId</b> - an optional identifier that specifies the help context to associate with this tab group's launch configuration type</li>
+<li><b>modes</b> - a comma seperated list of launch modes specifying the launch modes this tab group is applicable to. When unspecified, this tab group is the default set of tabs for this tab group's launch confiugration type.</li>
 </ul>
 <b><i>Examples: </i></b>The following is an example of a launch configuration tab group extension point:
 

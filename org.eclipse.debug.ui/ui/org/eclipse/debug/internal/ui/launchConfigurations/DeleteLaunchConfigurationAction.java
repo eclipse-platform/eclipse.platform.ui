@@ -46,8 +46,8 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/**
 	 * Constructs an action to delete launch configuration(s) 
 	 */
-	public DeleteLaunchConfigurationAction(Viewer viewer) {
-		super(LaunchConfigurationsMessages.getString("DeleteLaunchConfigurationAction.Dele&te_1"), viewer); //$NON-NLS-1$
+	public DeleteLaunchConfigurationAction(Viewer viewer, String mode) {
+		super(LaunchConfigurationsMessages.getString("DeleteLaunchConfigurationAction.Dele&te_1"), viewer, mode); //$NON-NLS-1$
 		setConfirmationRequestor(new Confirmation());
 	}
 
