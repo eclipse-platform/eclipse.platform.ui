@@ -13,6 +13,7 @@ package org.eclipse.ant.core;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -565,17 +566,21 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the extra classpath entry URL for the remote JAR to added to the classpath for a remote
+	 * Returns the URL for the remote JAR to added to the classpath for a remote
 	 * Ant build
 	 * 
 	 * @return the URL of the remoteAnt.jar
 	 * @since 3.0
 	 */
 	public URL getRemoteAntURL() {
-		for (Iterator iter = extraClasspathURLs.iterator(); iter.hasNext();) {
-			URL url = (URL) iter.next();
-			if (url.getFile().endsWith("org.eclipse.ant.ui/lib/remoteAnt.jar")) { //$NON-NLS-1$
-				return url;
+		Plugin antUIPlugin= Platform.getPlugin("org.eclipse.ant.ui"); //$NON-NLS-1$
+		if (antUIPlugin != null) {
+			IPluginDescriptor descriptor = antUIPlugin.getDescriptor();
+			try {
+				URL root = descriptor.getInstallURL();
+				return Platform.asLocalURL(new URL(root, "lib/remoteAnt.jar")); //$NON-NLS-1$;
+			} catch (MalformedURLException e) {
+			} catch (IOException e1) {
 			}
 		}
 		return null;
