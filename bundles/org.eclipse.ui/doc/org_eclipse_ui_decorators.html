@@ -22,6 +22,8 @@ CDATA
 #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass&nbsp;&nbsp; CDATA
 #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; adaptable&nbsp;&nbsp;&nbsp; (true | false)
+#IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
 <ul>
@@ -47,6 +49,11 @@ decorator will be applied to</li>
 <li>
 <b>description</b> - an optional subelement whose body should contain text
 providing short description of the decorator</li>
+
+<li>
+<b>adaptable</b> - a flag that indicates if types that adapt to IResource should
+use this object contribution. This flag is used only if objectClass adapts to
+IResource. Default value is false.</li>
 </ul>
 <tt>&nbsp;</tt><b><i>Example:</i></b>
 <p>The following is an example of an action set (note the subelements and
