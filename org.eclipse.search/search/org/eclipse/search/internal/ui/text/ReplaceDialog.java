@@ -528,6 +528,7 @@ class ReplaceDialog extends ExtendedDialogWindow {
 	private void gotoCurrentMarker() {
 		if (fMarkers.size() > 0) {
 			ReplaceMarker marker= getCurrentMarker();
+			Control focusControl= getShell().getDisplay().getFocusControl();
 			try {
 				selectEntry(marker);
 				ITextEditor editor= null;
@@ -536,6 +537,8 @@ class ReplaceDialog extends ExtendedDialogWindow {
 				else
 					editor= openEditorNoReuse(marker);
 				editor.selectAndReveal(marker.getOffset(), marker.getLength());
+				if (focusControl != null && !focusControl.isDisposed())
+					focusControl.setFocus();
 			} catch (PartInitException e) {
 				String message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_open_text_editor", marker.getFile().getName()); //$NON-NLS-1$
 				MessageDialog.openError(getParentShell(), getDialogTitle(), message);
