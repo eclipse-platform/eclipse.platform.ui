@@ -35,57 +35,57 @@ public class LaunchWizard extends Wizard {
 	/**
 	 * The collection of available launchers
 	 */
-	protected Object[] fAvailableLaunchers;
+	private Object[] fAvailableLaunchers;
 
 	/**
 	 * The selection providing context to determine launchables
 	 */
-	protected IStructuredSelection fSelection;
+	private IStructuredSelection fSelection;
 
 	/**
 	 * The launcher selection page
 	 */
-	protected LaunchWizardSelectionPage fLauncherPage;
+	private LaunchWizardSelectionPage fLauncherPage;
 	
 	/**
 	 * The project selection page
 	 */
-	protected LaunchWizardProjectSelectionPage fProjectPage;
+	private LaunchWizardProjectSelectionPage fProjectPage;
 
 	/** 
 	 * The mode of the wizard.
 	 * @see ExecutionAction#getMode()
 	 */
-	protected String fMode;
+	private String fMode;
 	
 	/**
 	 * The initial project selection, or <code>null</code> if none.
 	 */
-	protected IProject fInitialProject;
+	private IProject fInitialProject;
 	
 	/**
 	 * The initial launcher selection, or <code>null</code> if none.
 	 */
-	protected ILauncher fInitialLauncher;
+	private ILauncher fInitialLauncher;
 	
 	/**
 	 * The old default launcher set for the <code>IProject</code>
 	 * associated with the current selection.
 	 */
-	protected ILauncher fOldDefaultLauncher= null;
+	private ILauncher fOldDefaultLauncher= null;
 	
 	/**
 	 * Indicates if the default launcher has been set for the <code>IProject</code>
 	 * associated with the current selection.
 	 */
-	protected boolean fDefaultLauncherSet= false;
+	private boolean fDefaultLauncherSet= false;
 
 	public LaunchWizard(Object[] availableLaunchers, IStructuredSelection selection, String mode, IProject initialProject, ILauncher initialLauncher) {
-		fAvailableLaunchers= availableLaunchers;
-		fSelection= selection;
-		fMode= mode;
-		fInitialProject = initialProject;
-		fInitialLauncher = initialLauncher;
+		setAvailableLaunchers(availableLaunchers);;
+		setSelection(selection);
+		setMode(mode);
+		setInitialProject(initialProject);
+		setInitialLauncher(initialLauncher);
 		initialize();
 	}
 	
@@ -107,15 +107,17 @@ public class LaunchWizard extends Wizard {
 		setDefaultPageImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG));
 	}
 	/**
-	 * @see Wizard#addPages
+	 * @see Wizard#addPages()
 	 */
 	public void addPages() {
-		addPage(fProjectPage = new LaunchWizardProjectSelectionPage(fMode, fInitialProject));
-		addPage(fLauncherPage= new LaunchWizardSelectionPage(fAvailableLaunchers, fMode, fInitialLauncher));
+		setProjectPage(new LaunchWizardProjectSelectionPage(getMode(), getInitialProject()));
+		addPage(getProjectPage());
+		setLauncherPage(new LaunchWizardSelectionPage(getAvailableLaunchers(), getMode(), getInitialLauncher()));
+		addPage(getLauncherPage());
 	}
 	
 	public IStructuredSelection getSelection() {
-		if (fSelection == null) {
+		if (fSelection == null || fSelection.isEmpty()) {
 			return new StructuredSelection(getProject());
 		} else {
 			return fSelection;
@@ -128,13 +130,13 @@ public class LaunchWizard extends Wizard {
 	 */
 	public void updateDefaultLauncher() {
 		IProject project= getProject();
-		if (fLauncherPage.fSetAsDefaultLauncher.getSelection()) {
-			ILauncher launcher= fLauncherPage.getLauncher();
+		if (getLauncherPage().fSetAsDefaultLauncher.getSelection()) {
+			ILauncher launcher= getLauncherPage().getLauncher();
 			if (launcher != null) {
 				try {
-					fOldDefaultLauncher= DebugPlugin.getDefault().getLaunchManager().getDefaultLauncher(project);
+					setOldDefaultLauncher(DebugPlugin.getDefault().getLaunchManager().getDefaultLauncher(project));
 					DebugPlugin.getDefault().getLaunchManager().setDefaultLauncher(project, launcher);
-					fDefaultLauncherSet= true;
+					setDefaultLauncherSet(true);
 				} catch (CoreException e) {
 				}
 			}
@@ -146,33 +148,33 @@ public class LaunchWizard extends Wizard {
 	 * or <code>null</code> if there is no single project associated with the selection.
 	 */
 	protected IProject getProject() {
-		if (fProjectPage == null) {
-			return fInitialProject;
+		if (getProjectPage() == null) {
+			return getInitialProject();
 		}
-		return fProjectPage.getProject();
+		return getProjectPage().getProject();
 	}
 	
 	/**
-	 * @see IWizard#performFinish
+	 * @see IWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		if (!fDefaultLauncherSet) {
+		if (!getDefaultLauncherSet()) {
 			updateDefaultLauncher();
 		}
 		return true;
 	}
 	
 	/**
-	 * @see IWizard#performCancel
+	 * @see IWizard#performCancel()
 	 */
 	 public boolean performCancel() {
-		if (fDefaultLauncherSet) {
+		if (getDefaultLauncherSet()) {
 			try {
-				DebugPlugin.getDefault().getLaunchManager().setDefaultLauncher(getProject(), fOldDefaultLauncher);
+				DebugPlugin.getDefault().getLaunchManager().setDefaultLauncher(getProject(), getOldDefaultLauncher());
 			} catch (CoreException e) {
 				return false;
 			}
-			fDefaultLauncherSet= false;
+			setDefaultLauncherSet(false);
 		}
 		return true;
 	}
@@ -181,8 +183,8 @@ public class LaunchWizard extends Wizard {
 	 * @see IWizard#getNextPage(IWizardPage)
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
-		if (page == fLauncherPage) {
-			IWizardNode node= new LaunchWizardNode(page, fLauncherPage.getLauncher(), fMode);			
+		if (page == getLauncherPage()) {
+			IWizardNode node= new LaunchWizardNode(page, getLauncherPage().getLauncher(), getMode());			
 			IWizard wizard = node.getWizard();
 			wizard.addPages();
 			return wizard.getStartingPage();
@@ -198,12 +200,83 @@ public class LaunchWizard extends Wizard {
 		return false;
 	}
 	
+	/**
+	 * @see IWizard#getStartingPage()
+	 */
 	public IWizardPage getStartingPage() {
 		if (getProject() == null) {
-			return fProjectPage;
+			return getProjectPage();
 		} else {
-			return fLauncherPage;
+			return getLauncherPage();
 		}
+	}
+	
+	protected Object[] getAvailableLaunchers() {
+		return fAvailableLaunchers;
+	}
+
+	protected void setAvailableLaunchers(Object[] availableLaunchers) {
+		fAvailableLaunchers = availableLaunchers;
+	}
+
+	protected boolean getDefaultLauncherSet() {
+		return fDefaultLauncherSet;
+	}
+
+	protected void setDefaultLauncherSet(boolean defaultLauncherSet) {
+		fDefaultLauncherSet = defaultLauncherSet;
+	}
+
+	protected ILauncher getInitialLauncher() {
+		return fInitialLauncher;
+	}
+
+	protected void setInitialLauncher(ILauncher initialLauncher) {
+		fInitialLauncher = initialLauncher;
+	}
+
+	protected IProject getInitialProject() {
+		return fInitialProject;
+	}
+
+	protected void setInitialProject(IProject initialProject) {
+		fInitialProject = initialProject;
+	}
+
+	protected LaunchWizardSelectionPage getLauncherPage() {
+		return fLauncherPage;
+	}
+
+	protected void setLauncherPage(LaunchWizardSelectionPage launcherPage) {
+		fLauncherPage = launcherPage;
+	}
+
+	protected String getMode() {
+		return fMode;
+	}
+
+	protected void setMode(String mode) {
+		fMode = mode;
+	}
+
+	protected ILauncher getOldDefaultLauncher() {
+		return fOldDefaultLauncher;
+	}
+
+	protected void setOldDefaultLauncher(ILauncher oldDefaultLauncher) {
+		fOldDefaultLauncher = oldDefaultLauncher;
+	}
+
+	protected LaunchWizardProjectSelectionPage getProjectPage() {
+		return fProjectPage;
+	}
+
+	protected void setProjectPage(LaunchWizardProjectSelectionPage projectPage) {
+		fProjectPage = projectPage;
+	}
+
+	protected void setSelection(IStructuredSelection selection) {
+		fSelection = selection;
 	}
 }
 
