@@ -24,5 +24,13 @@ public static void assertTrue(boolean arg0) {
 public static void assertTrue(String arg0, boolean arg1) {
 	Assert.assert(arg0, arg1);
 }
+/**
+ * Fails the test due to the given exception.
+ * @param message
+ * @param e
+ */
+public void fail(String message, Exception e) {
+	fail(message + ": " + e);
+}
 }
 
