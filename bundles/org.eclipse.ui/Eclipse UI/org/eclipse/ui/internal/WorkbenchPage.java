@@ -1577,6 +1577,9 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 				activate(editor);
 		} else {
 			activationList.setActive(editor);
+			if (activePart != null)
+				// ensure the activation list is in a valid state
+				activationList.setActive(activePart);
 			// The previous openEditor call may create a new editor
 			// and make it visible, so send the notification.
 			IEditorPart visibleEditor = getEditorManager().getVisibleEditor();
