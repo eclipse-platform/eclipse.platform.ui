@@ -1090,38 +1090,25 @@ public class EditorManager {
 		final IRunnableWithProgress progressOp,
 		final IJobCompletionListener listener) {
 
-		NotifyingJob job = new NotifyingJob() {
-			public IStatus run(IProgressMonitor monitor) {
-				final IStatus[] statuses = new IStatus[1];
+		UIJob job = new UIJob() {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-				final IProgressMonitor finalMonitor = monitor;
-				Display.getDefault().asyncExec(new Runnable() {
-					/* (non-Javadoc)
-					 * @see java.lang.Runnable#run()
-					 */
-					public void run() {
-						try {
-							progressOp.run(finalMonitor);
-							statuses[0] = Status.OK_STATUS;
-						} catch (InvocationTargetException e) {
-							String title = WorkbenchMessages.format("EditorManager.operationFailed", new Object[] { opName }); //$NON-NLS-1$
-							Throwable targetExc = e.getTargetException();
-							statuses[0] =
-								new Status(
-									Status.WARNING,
-									PlatformUI.PLUGIN_ID,
-									0,
-									title,
-									targetExc);
-						} catch (InterruptedException e) {
-							statuses[0] = Status.CANCEL_STATUS;
-						}
+				try {
+					progressOp.run(monitor);
+					return Status.OK_STATUS;
+				} catch (InvocationTargetException e) {
+					String title = WorkbenchMessages.format("EditorManager.operationFailed", new Object[] { opName }); //$NON-NLS-1$
+					Throwable targetExc = e.getTargetException();
+					return new Status(
+						Status.WARNING,
+						PlatformUI.PLUGIN_ID,
+						0,
+						title,
+						targetExc);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
 
-					}
-
-				});
-
-				return statuses[0];
 			}
 		};
 		job.addCompletionListener(listener);
