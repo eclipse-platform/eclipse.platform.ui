@@ -15,7 +15,7 @@ import org.eclipse.swt.events.*;
 public abstract class BufferedCanvas extends Canvas {
 
 	/** The drawable for double buffering */
-	private Image fBuffer;
+	Image fBuffer;
 
 	public BufferedCanvas(Composite parent, int flags) {
 		super(parent, flags + SWT.NO_BACKGROUND);
@@ -52,7 +52,7 @@ public abstract class BufferedCanvas extends Canvas {
 	 * Double buffer drawing.
 	 * @private
 	 */
-	private void doubleBufferPaint(GC dest) {
+	void doubleBufferPaint(GC dest) {
 
 		Point size= getSize();
 

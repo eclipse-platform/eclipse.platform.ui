@@ -79,7 +79,7 @@ class ImageCanvas extends Canvas {
 	/**
 	 * @private
 	 */
-	private void paint(GC gc) {
+	void paint(GC gc) {
 		if (fImage != null) {
 			Rectangle bounds= fImage.getBounds();
 			Rectangle clientArea= getClientArea();
@@ -103,7 +103,7 @@ class ImageCanvas extends Canvas {
 	/**
 	 * @private
 	 */
-	private void updateScrollbars() {
+	void updateScrollbars() {
 		Rectangle bounds= fImage != null ? fImage.getBounds() : new Rectangle(0, 0, 0, 0);
 		Point size= getSize();
 		Rectangle clientArea= getClientArea();
