@@ -92,17 +92,17 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	public BasicTextEditorActionContributor() {
 		
-		fDeleteLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "DeleteLine."); //$NON-NLS-1$
-		fDeleteLineToBeginning= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "DeleteLineToBeginning."); //$NON-NLS-1$
-		fDeleteLineToEnd= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "DeleteLineToEnd."); //$NON-NLS-1$
-		fSetMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "SetMark."); //$NON-NLS-1$
-		fClearMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "ClearMark."); //$NON-NLS-1$
-		fSwapMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "SwapMark."); //$NON-NLS-1$
+		fDeleteLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.DeleteLine."); //$NON-NLS-1$
+		fDeleteLineToBeginning= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToBeginning."); //$NON-NLS-1$
+		fDeleteLineToEnd= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToEnd."); //$NON-NLS-1$
+		fSetMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.SetMark."); //$NON-NLS-1$
+		fClearMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.ClearMark."); //$NON-NLS-1$
+		fSwapMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.SwapMark."); //$NON-NLS-1$
 		
-		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "FindNext."); //$NON-NLS-1$
-		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "FindPrevious."); //$NON-NLS-1$
-		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "IncrementalFind."); //$NON-NLS-1$
-		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "GotoLine."); //$NON-NLS-1$
+		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindNext."); //$NON-NLS-1$
+		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious."); //$NON-NLS-1$
+		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.IncrementalFind."); //$NON-NLS-1$
+		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.GotoLine."); //$NON-NLS-1$
 		
 		fStatusFields= new HashMap(3);
 		for (int i= 0; i < STATUSFIELDS.length; i++)
