@@ -66,9 +66,6 @@ public abstract class ExecutionAction extends Action implements IActionDelegateW
 	 * @see IAction#run()
 	 */
 	public void run() {
-		int i = 0;
-		//runLaunchConfiguration();
-		//runOldStyleLaunch();
 	}
 	
 	private void runLaunchConfiguration() {
