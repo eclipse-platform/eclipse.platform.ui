@@ -53,6 +53,7 @@ public class GetAction extends TargetAction {
 		
 		public OutgoingChangesDialog(Shell shell, IResource[] outgoingChanges) {
 			super(shell, Policy.bind("GetAction.confirmFileOverwriteTitle")); //$NON-NLS-1$
+			setImageKey(DLG_IMG_QUESTION);
 			this.outgoingChanges = outgoingChanges;
 		}
 			
@@ -81,27 +82,7 @@ public class GetAction extends TargetAction {
 			return composite;
 		}
 
-		protected void createMainDialogArea(Composite top) {
-			Composite parent = new Composite(top, SWT.NONE);
-			GridLayout layout = new GridLayout();
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			layout.numColumns = 2;
-			parent.setLayout(layout);
-			parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-			parent.setFont(parent.getFont());
-			
-			// create image
-			Image image = getImage(DLG_IMG_QUESTION);
-			if (image != null) {
-				Label label = new Label(parent, 0);
-				image.setBackground(label.getBackground());
-				label.setImage(image);
-				label.setLayoutData(new GridData(
-					GridData.HORIZONTAL_ALIGN_CENTER |
-					GridData.VERTICAL_ALIGN_BEGINNING));
-			}
-			
+		protected void createMainDialogArea(Composite parent) {
 			Label label = new Label(parent, SWT.WRAP);
 			label.setText(Policy.bind("GetAction.confirmFileOverwrite")); //$NON-NLS-1$
 			GridData data = new GridData(

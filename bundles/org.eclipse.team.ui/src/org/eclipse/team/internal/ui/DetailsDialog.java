@@ -12,10 +12,12 @@ package org.eclipse.team.internal.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -55,6 +57,11 @@ abstract public class DetailsDialog extends Dialog {
 	 * Indicates whether the error details viewer is currently created.
 	 */
 	private boolean detailsCreated = false;
+	
+	/**
+	 * The key for the image to be displayed (one of the image constants on Dialog)
+	 */
+	private String imageKey = null;
 	
 	/**
 	 * Creates a details pane dialog.
@@ -120,8 +127,44 @@ abstract public class DetailsDialog extends Dialog {
 	final protected Control createDialogArea(Composite parent) {
 		// create composite
 		Composite composite = (Composite)super.createDialogArea(parent);
-			
-		createMainDialogArea(composite);
+		
+		// create image
+		Image image = JFaceResources.getImageRegistry().get(getImageKey());
+		if (image != null) {
+			// create a composite to split the dialog area in two
+			Composite top = new Composite(composite, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = 0;
+			layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+			layout.numColumns = 2;
+			top.setLayout(layout);
+			top.setLayoutData(new GridData(GridData.FILL_BOTH));
+			top.setFont(parent.getFont());
+		
+			// add the image to the left of the composite
+			Label label = new Label(top, 0);
+			image.setBackground(label.getBackground());
+			label.setImage(image);
+			label.setLayoutData(new GridData(
+				GridData.HORIZONTAL_ALIGN_CENTER |
+				GridData.VERTICAL_ALIGN_CENTER));
+				
+			// add a composite to the right to contain the custom components
+			Composite right = new Composite(top, SWT.NONE);
+			layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+			layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+			right.setLayout(layout);
+			right.setLayoutData(new GridData(GridData.FILL_BOTH));
+			right.setFont(parent.getFont());
+			createMainDialogArea(right);
+		} else {
+			createMainDialogArea(composite);
+		}
 		
 		errorMessageLabel = new Label(composite, SWT.NONE);
 		errorMessageLabel.setLayoutData(new GridData(
@@ -193,4 +236,22 @@ abstract public class DetailsDialog extends Dialog {
 	protected boolean includeCancelButton() {
 		return true;
 	}
+	/**
+	 * Returns the imageKey.
+	 * @return String
+	 */
+	protected String getImageKey() {
+		return imageKey;
+	}
+
+
+	/**
+	 * Sets the imageKey.
+	 * @param imageKey The imageKey to set
+	 */
+	protected void setImageKey(String imageKey) {
+		this.imageKey = imageKey;
+	}
+
+
 }

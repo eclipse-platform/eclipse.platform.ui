@@ -102,7 +102,8 @@ public class RemoveRootAction extends TeamAction {
 										Policy.bind("RemoteRootAction.Projects_in_the_local_workspace_are_shared_with__2", location), //$NON-NLS-1$
 										Policy.bind("RemoteRootAction.The_projects_that_are_shared_with_the_above_repository_are__4"), //$NON-NLS-1$
 										(IProject[]) shared.toArray(new IProject[shared.size()]),
-										false);
+										false,
+										DetailsDialogWithProjects.DLG_IMG_ERROR);
 									dialog.open();
 								}
 							});

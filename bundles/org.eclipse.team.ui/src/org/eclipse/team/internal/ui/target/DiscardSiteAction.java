@@ -50,6 +50,7 @@ public class DiscardSiteAction extends TargetAction {
 		
 		public AlreadyMappedDialog(Shell shell, IProject[] projects) {
 			super(shell, Policy.bind("SiteExplorerView.unmapDialogTitle")); //$NON-NLS-1$
+			setImageKey(DLG_IMG_WARNING);
 			this.projects = projects;
 		}
 			
@@ -85,28 +86,8 @@ public class DiscardSiteAction extends TargetAction {
 			return composite;
 		}
 
-		protected void createMainDialogArea(Composite top) {
-			Composite parent = new Composite(top, SWT.NONE);
-			GridLayout layout = new GridLayout();
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			layout.numColumns = 2;
-			parent.setLayout(layout);
-			parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-			parent.setFont(parent.getFont());
-			
-			// create image
-			Image image = getImage(DLG_IMG_WARNING);
-			if (image != null) {
-				Label label = new Label(parent, 0);
-				image.setBackground(label.getBackground());
-				label.setImage(image);
-				label.setLayoutData(new GridData(
-					GridData.HORIZONTAL_ALIGN_CENTER |
-					GridData.VERTICAL_ALIGN_BEGINNING));
-			}
-			
-			Label label = new Label(parent, SWT.WRAP);
+		protected void createMainDialogArea(Composite composite) {
+			Label label = new Label(composite, SWT.WRAP);
 			label.setText(Policy.bind("SiteExplorerView.projectsAlreadyMapped")); //$NON-NLS-1$
 			GridData data = new GridData(
 				GridData.GRAB_HORIZONTAL |
@@ -115,16 +96,9 @@ public class DiscardSiteAction extends TargetAction {
 				GridData.VERTICAL_ALIGN_CENTER);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			label.setLayoutData(data);
-			label.setFont(parent.getFont());
+			label.setFont(composite.getFont());
 						
-			unmap = new Button(parent, SWT.CHECK);
-			data = new GridData(
-				GridData.GRAB_HORIZONTAL |
-				GridData.GRAB_VERTICAL |
-				GridData.HORIZONTAL_ALIGN_FILL |
-				GridData.VERTICAL_ALIGN_CENTER);
-			data.horizontalSpan = 2;
-			unmap.setLayoutData(data);
+			unmap = new Button(composite, SWT.CHECK);
 			unmap.setText(Policy.bind("SiteExplorerView.unmapProjectsAndDisconnect")); //$NON-NLS-1$
 			unmap.setSelection(false);
 			unmap.addListener(SWT.Selection, new Listener() {				

@@ -44,8 +44,9 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 	 * @param parentShell
 	 * @param dialogTitle
 	 */
-	public DetailsDialogWithProjects(Shell parentShell, String dialogTitle, String dialogMessage, String detailsTitle, IProject[] projects, boolean includeCancelButton) {
+	public DetailsDialogWithProjects(Shell parentShell, String dialogTitle, String dialogMessage, String detailsTitle, IProject[] projects, boolean includeCancelButton, String imageKey) {
 		super(parentShell, dialogTitle);
+		setImageKey(imageKey);
 		this.message = dialogMessage;
 		this.detailsTitle = detailsTitle;
 		this.projects = projects;

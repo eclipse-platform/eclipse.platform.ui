@@ -252,7 +252,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 								Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository_2"), //$NON-NLS-1$
 								Policy.bind("CVSRepositoryPropertiesPage.sharedProject", location.toString()), //$NON-NLS-1$
 								(IProject[]) projects.toArray(new IProject[projects.size()]),
-								true);
+								true,
+								DetailsDialogWithProjects.DLG_IMG_WARNING);
 							int r = dialog.open();
 							if (r != dialog.OK) {
 								result[0] = false;
