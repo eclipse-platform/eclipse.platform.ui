@@ -163,7 +163,10 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 		if (page == createLocationPage) {
 			if (aboutToShow) {
 				try {
-					modulePage.setLocation(getLocation());
+					ICVSRepositoryLocation l = getLocation();
+					if (l != null) {
+						modulePage.setLocation(l);
+					}
 				} catch (TeamException e1) {
 					CVSUIPlugin.log(e1);
 				}
