@@ -44,7 +44,8 @@ public class BuildSetAction extends Action {
 			} else if (selection[i] instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable)selection[i];
 				IResource resource = (IResource)adaptable.getAdapter(IResource.class);
-				projects.add(resource.getProject());
+				if (resource != null)
+				   projects.add(resource.getProject());
 			}
 		}
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
