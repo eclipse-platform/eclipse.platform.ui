@@ -15,7 +15,7 @@ package org.eclipse.jface.viewers;
  * A content provider mediates between the viewer's model
  * and the viewer itself.
  * 
- * @see IViewer#setContentProvider
+ * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(IContentProvider)
  */
 public interface IContentProvider {
 /**

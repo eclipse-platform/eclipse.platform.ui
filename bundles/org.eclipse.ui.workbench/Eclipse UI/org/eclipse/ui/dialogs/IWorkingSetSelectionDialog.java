@@ -40,7 +40,7 @@ public interface IWorkingSetSelectionDialog {
 	 * 	set selection confirmed.
 	 * 	Window.CANCEL if the dialog closes with the working set 
 	 * 	selection dismissed.
-	 * @see org.eclipse.jface.Window
+	 * @see org.eclipse.jface.window.Window
 	 */	
 	public int open();
 	/**

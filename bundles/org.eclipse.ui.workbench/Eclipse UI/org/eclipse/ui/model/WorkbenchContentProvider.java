@@ -186,7 +186,7 @@ protected void processDelta(IResourceDelta delta) {
  * The workbench has changed.  Process the delta and issue updates to the viewer,
  * inside the UI thread.
  *
- * @see IResourceChangeListener#resourceChanged
+ * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
  */
 public void resourceChanged(final IResourceChangeEvent event) {
 	final IResourceDelta delta = event.getDelta();

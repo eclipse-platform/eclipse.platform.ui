@@ -32,7 +32,7 @@ package org.eclipse.ui;
  * Implementors should subclass this and specialize as required.
  * </p>
  *
- * @see org.eclipse.ui.actions.EditorActionBarContributor
+ * @see IEditorActionBarContributor
  */
 public interface IEditorActionBarContributor {
 /**

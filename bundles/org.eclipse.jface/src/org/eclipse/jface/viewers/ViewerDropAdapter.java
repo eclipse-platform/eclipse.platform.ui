@@ -33,7 +33,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 * Constant describing the position of the cursor relative 
 	 * to the target object.  This means the mouse is positioned
 	 * slightly before the target.
-	 * @see #getLocation
+	 * @see #getCurrentLocation()
 	 */
 	public static final int LOCATION_BEFORE = 1;
 
@@ -41,7 +41,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 * Constant describing the position of the cursor relative 
 	 * to the target object.  This means the mouse is positioned
 	 * slightly after the target.
-	 * @see #getLocation
+	 * @see #getCurrentLocation()
 	 */
 	public static final int LOCATION_AFTER = 2;
 
@@ -49,7 +49,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 * Constant describing the position of the cursor relative 
 	 * to the target object.  This means the mouse is positioned
 	 * directly on the target.
-	 * @see #getLocation
+	 * @see #getCurrentLocation()
 	 */
 	public static final int LOCATION_ON = 3;
 
@@ -57,7 +57,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 * Constant describing the position of the cursor relative 
 	 * to the target object.  This means the mouse is not positioned
 	 * over or near any valid target.
-	 * @see #getLocation
+	 * @see #getCurrentLocation()
 	 */
 	public static final int LOCATION_NONE = 4;
 

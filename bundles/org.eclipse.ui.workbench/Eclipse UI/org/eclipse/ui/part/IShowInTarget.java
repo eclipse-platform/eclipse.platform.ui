@@ -13,8 +13,8 @@ package org.eclipse.ui.part;
 
 
 /**
- * This interface must be provided by Show In... targets (parts listed
- * in the Show In... prompter).
+ * This interface must be provided by Show In targets (parts listed
+ * in the Show In prompter).
  * The part can either directly implement this interface, or provide it
  * via <code>IAdaptable.getAdapter(IShowInTarget.class)</code>.
  * 

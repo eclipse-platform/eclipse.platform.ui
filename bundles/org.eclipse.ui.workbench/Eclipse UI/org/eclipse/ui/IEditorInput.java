@@ -47,10 +47,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * are managed by the platform's adapter manager.
  * </p>
  *
- * @see IEditorPart
+ * @see org.eclipse.ui.IEditorPart
  * @see org.eclipse.core.resources.IFile
- * @see IStreamEditorInput
- * @see IFileEditorInput
+ * @see org.eclipse.ui.IStorageEditorInput
+ * @see org.eclipse.ui.IFileEditorInput
  */
 public interface IEditorInput extends IAdaptable {
 /**

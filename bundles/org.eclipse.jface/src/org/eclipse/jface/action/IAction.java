@@ -61,7 +61,7 @@ public interface IAction {
 
 	/**
 	 * Action style constant (value <code>2</code>) indicating action is 
-	 * a check box (i.e. toggle button).
+	 * a check box (or a toggle button).
 	 */
 	public static int AS_CHECK_BOX = 0x02;
 
@@ -129,7 +129,7 @@ public void addPropertyChangeListener(IPropertyChangeListener listener);
  * and a key, as explained in <code>MenuItem.getAccelerator</code>.
  *
  * @return the accelerator keycode
- * @see org.eclipse.swt.widgets.MenuItem#getAccelerator
+ * @see org.eclipse.swt.widgets.MenuItem#getAccelerator()
  */
 public int getAccelerator();
 /**

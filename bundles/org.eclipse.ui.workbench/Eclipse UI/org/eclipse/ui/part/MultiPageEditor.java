@@ -120,7 +120,7 @@ protected void onPageChange() {
  * Removes a synchronized pagebook from this editor. 
  *
  * @param pageBook the pagebook to remove 
- * @see addSyncroPageBook
+ * @see #addSyncroPageBook(PageBook)
  */
 protected void removeSyncroPageBook(PageBook pageBook) {
 	if (syncVector != null)

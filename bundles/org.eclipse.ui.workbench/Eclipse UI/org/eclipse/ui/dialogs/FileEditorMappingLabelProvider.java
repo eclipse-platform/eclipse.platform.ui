@@ -28,7 +28,6 @@ import java.util.*;
  * <code>dispose</code> is called.
  * </p>
  *
- * @see org.eclipse.ui.IResourceTypeEditorMapping
  * @see org.eclipse.jface.viewers.ILabelProvider
  */ 
 public class FileEditorMappingLabelProvider extends LabelProvider implements ITableLabelProvider {

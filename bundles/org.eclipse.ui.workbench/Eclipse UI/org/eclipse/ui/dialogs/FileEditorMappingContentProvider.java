@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.Viewer;
  * which can be used any place this kind of content provider is needed.
  * </p>
  *
- * @see org.eclipse.ui.IResourceTypeEditorMapping
  * @see org.eclipse.jface.viewers.IContentProvider
  */ 
 public class FileEditorMappingContentProvider implements IStructuredContentProvider {

@@ -20,8 +20,8 @@ import org.eclipse.jface.viewers.ISelection;
  * resource in a workbench part which it has just created.
  * </p>
  *
- * @see IView
- * @see ViewPart
+ * @see org.eclipse.ui.IViewPart
+ * @see org.eclipse.ui.part.ViewPart
  */
 public interface ISetSelectionTarget {
 /**

@@ -44,7 +44,7 @@ import org.eclipse.jface.preference.PreferenceManager;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see org.eclipse.ui.plugin.IAbstractUIPlugin#getWorkbench
+ * @see org.eclipse.ui.plugin.AbstractUIPlugin#getWorkbench()
  */
 public interface IWorkbench {
 /**

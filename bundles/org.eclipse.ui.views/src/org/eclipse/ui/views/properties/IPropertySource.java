@@ -27,8 +27,8 @@ package org.eclipse.ui.views.properties;
  * </p>
  *
  * @see org.eclipse.core.runtime.IAdaptable
- * @see org.eclipse.core.runtime.Platform#getAdapterManager
- * @see PropertySheetPage
+ * @see org.eclipse.core.runtime.Platform#getAdapterManager()
+ * @see org.eclipse.ui.views.properties.PropertySheetPage
  */
 public interface IPropertySource {
 

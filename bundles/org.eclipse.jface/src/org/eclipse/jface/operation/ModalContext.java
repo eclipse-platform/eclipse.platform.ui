@@ -182,7 +182,7 @@ public static boolean canProgressMonitorBeUsed(IProgressMonitor monitor1, IProgr
  *
  * @param monitor the progress monitor
  * @exception InterruptedException if cancelling the operation has been requested
- * @see IProgressMonitor#isCanceled
+ * @see IProgressMonitor#isCanceled()
  */
 public static void checkCanceled(IProgressMonitor monitor) throws InterruptedException {
 	if (monitor.isCanceled())

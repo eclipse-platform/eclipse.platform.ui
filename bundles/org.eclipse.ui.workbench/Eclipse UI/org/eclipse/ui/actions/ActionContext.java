@@ -65,7 +65,7 @@ public class ActionContext {
     /**
      * Sets the input element.
      * 
-     * @input the input element
+     * @param input
      */
     public void setInput(Object input) {
     	this.input = input;

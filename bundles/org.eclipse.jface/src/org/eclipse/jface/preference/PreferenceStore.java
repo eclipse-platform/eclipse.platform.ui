@@ -65,8 +65,8 @@ public class PreferenceStore implements IPersistentPreferenceStore {
  * <code>save(InputStream)</code> to load and store this
  * preference store.
  * </p>
- * @see #load(java.io.InputStream)
- * @see #save(java.io.OutputStream)
+ * @see #load(InputStream)
+ * @see #save(OutputStream, String)
  */
 public PreferenceStore() {
 	defaultProperties = new Properties();
@@ -427,7 +427,7 @@ public void setDefault(String name, boolean value) {
  *
  * @param filename the file name
  * @see #load()
- * @see #store()
+ * @see #save()
  */
 public void setFilename(String name) {
 	filename = name;

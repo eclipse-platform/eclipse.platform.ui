@@ -30,7 +30,6 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
  * </p>
  *
  * @return the registry extension id
- * @see #getConfigurationElement
  */
 public String getId();
 /**
@@ -38,7 +37,7 @@ public String getId();
  * site's part.
  *
  * @return the unique identifier of the declaring plug-in
- * @see org.eclipse.core.runtime.IPluginDescriptor#getUniqueIdentifier
+ * @see org.eclipse.core.runtime.IPluginDescriptor#getUniqueIdentifier()
  */
 public String getPluginId();
 /**

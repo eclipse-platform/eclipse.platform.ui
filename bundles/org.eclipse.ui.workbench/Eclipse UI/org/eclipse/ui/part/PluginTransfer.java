@@ -34,9 +34,9 @@ import java.io.*;
  * It is not intended to be subclassed.
  * </p>
  *
- * @see StructuredViewer
- * @see DropTarget
- * @see DragSource
+ * @see org.eclipse.jface.viewers.StructuredViewer
+ * @see org.eclipse.swt.dnd.DropTarget
+ * @see org.eclipse.swt.dnd.DragSource
  */
 public class PluginTransfer extends ByteArrayTransfer {
 

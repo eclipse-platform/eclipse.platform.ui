@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- * @see IWorkbenchPartSite
- * @see IPageSite
+ * @see org.eclipse.ui.IWorkbenchPartSite
+ * @see org.eclipse.ui.part.IPageSite
  * @since 2.0
  */
 public interface IWorkbenchSite {

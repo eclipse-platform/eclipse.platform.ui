@@ -398,10 +398,10 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	}
 	/**
 	 * Sets the given property source provider as
-	 * the property source provider
+	 * the property source provider.
 	 * <p>
 	 * Calling this method is only valid if you are using
-	 * this page's defualt root entry
+	 * this page's default root entry.
 	 * </p>
 	 * @param newProvider the property source provider
 	 */

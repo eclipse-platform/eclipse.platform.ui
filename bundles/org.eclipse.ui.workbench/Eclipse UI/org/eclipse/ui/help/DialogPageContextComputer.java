@@ -23,8 +23,6 @@ import java.util.*;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * @deprecated nested contexts are no longer supported by the help support system
- * 
- * <p>
  */ 
 public class DialogPageContextComputer implements IContextComputer {
 	private IDialogPage page;

@@ -411,7 +411,7 @@ protected void fireOpen(final OpenEvent event) {
  *
  * @param event a selection changed event
  * 
- * @see addPostSelectionChangedListener
+ * @see #addPostSelectionChangedListener(ISelectionChangedListener)
  */
 protected void firePostSelectionChanged(final SelectionChangedEvent event) {
 	Object[] listeners = postSelectionChangedListeners.getListeners();

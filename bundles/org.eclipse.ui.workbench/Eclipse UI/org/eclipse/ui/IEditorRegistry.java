@@ -35,7 +35,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see IWorkbenchPlugin#getEditorRegistry
+ * @see org.eclipse.ui.IWorkbench#getEditorRegistry()
  */
 public interface IEditorRegistry {
 

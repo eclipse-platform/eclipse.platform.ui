@@ -294,7 +294,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 	/**
 	 * Returns the window for this menu.
 	 *
-	 * @returns the window 
+	 * @return the window 
 	 */
 	protected IWorkbenchWindow getWindow() {
 		return window;

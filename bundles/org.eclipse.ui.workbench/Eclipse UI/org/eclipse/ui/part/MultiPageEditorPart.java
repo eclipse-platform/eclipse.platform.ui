@@ -53,7 +53,7 @@ import org.eclipse.ui.*;
  * their own contributors.
  * </p>
  *
- * @see AbstractMultiPageEditorActionBarContributor
+ * @see org.eclipse.ui.part.MultiPageEditorActionBarContributor
  */
 public abstract class MultiPageEditorPart extends EditorPart {
 	/**

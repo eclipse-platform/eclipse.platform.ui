@@ -162,7 +162,6 @@ public class PreferenceDialog
 	/**
 	 * Layout for the page container.
 	 *
-	 * @see #pageContainer
 	 */
 	private class PageLayout extends Layout {
 		public void layout(Composite composite, boolean force) {
@@ -919,7 +918,7 @@ public class PreferenceDialog
 	 *
 	 * @param minWidth the minimum page width
 	 * @param minHeight the minimum page height
-	 * @see #setMinimumPageSize(org.eclipse.swt.graphics.Point)
+	 * @see #setMinimumPageSize(Point)
 	 */
 	public void setMinimumPageSize(int minWidth, int minHeight) {
 		minimumPageSize.x = minWidth;

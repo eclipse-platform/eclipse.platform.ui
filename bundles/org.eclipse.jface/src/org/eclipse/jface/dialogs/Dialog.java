@@ -402,8 +402,8 @@ public abstract class Dialog extends Window {
 	 * 
 	 * @return the new button
 	 * 
-	 * @see getCancelButton
-	 * @see getOKButton
+	 * @see #getCancelButton
+	 * @see #getOKButton()
 	 */
 	protected Button createButton(
 		Composite parent,
@@ -631,7 +631,7 @@ public abstract class Dialog extends Window {
 	 * 
 	 * @return the button for the ID or <code>null</code>
 	 * 
-	 * @see createButton
+	 * @see #createButton(Composite, int, String, boolean)
 	 * @since 2.0
 	 */
 	protected Button getButton(int id) {
@@ -658,7 +658,7 @@ public abstract class Dialog extends Window {
 	 * 
 	 * @return the cancel button or <code>null</code>
 	 * 
-	 * @see createButton
+	 * @see #createButton(Composite, int, String, boolean)
 	 * @since 2.0
 	 * @deprecated Use <code>getButton(IDialogConstants.CANCEL_ID)</code> instead.
 	 * 		This method will be removed soon.
@@ -697,7 +697,7 @@ public abstract class Dialog extends Window {
 	 * 
 	 * @return the OK button or <code>null</code>
 	 * 
-	 * @see createButton
+	 * @see #createButton(Composite, int, String, boolean)
 	 * @since 2.0
 	 * @deprecated Use <code>getButton(IDialogConstants.OK_ID)</code> instead.
 	 * 		This method will be removed soon.

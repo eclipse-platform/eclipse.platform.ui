@@ -33,8 +33,8 @@ package org.eclipse.ui;
  * </p>
  *
  * @see org.eclipse.core.runtime.IAdaptable
- * @see IMemento
- * @see IElementFactory
+ * @see org.eclipse.ui.IMemento
+ * @see org.eclipse.ui.IElementFactory
  */
 public interface IPersistableElement {
 /**

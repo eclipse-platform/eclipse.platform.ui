@@ -91,7 +91,7 @@ public abstract class Viewer implements IInputSelectionProvider {
 	
 	/**
 	 * Unique key for associating element data with widgets.
-	 * @see Widget#setData(String, Object)
+	 * @see org.eclipse.swt.widgets.Widget#setData(String, Object)
 	 */
 	protected static final String WIDGET_DATA_KEY = "org.eclipse.jface.viewers.WIDGET_DATA";//$NON-NLS-1$
 /**
@@ -134,7 +134,7 @@ public void addSelectionChangedListener(ISelectionChangedListener listener) {
  *
  * @param event a help event
  *
- * @see HelpListener#helpRequested
+ * @see HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
  */
 protected void fireHelpRequested(HelpEvent event) {
 	Object[] listeners = helpListeners.getListeners();

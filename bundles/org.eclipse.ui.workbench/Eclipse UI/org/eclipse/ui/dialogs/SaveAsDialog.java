@@ -32,8 +32,7 @@ import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  *
- * @see IFile#create
- * @see ContainerGenerator
+ * @see org.eclipse.ui.dialogs.ContainerGenerator
  */
 public class SaveAsDialog extends TitleAreaDialog {
 	private IFile originalFile = null;

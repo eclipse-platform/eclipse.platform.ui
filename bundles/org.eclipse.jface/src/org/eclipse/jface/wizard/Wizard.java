@@ -399,7 +399,7 @@ public void setHelpAvailable(boolean b) {
  *
  * @param b <code>true</code> if a progress monitor is required,
  *   and <code>false</code> if none is needed
- * @see #getNeedsProgressMonitor
+ * @see #needsProgressMonitor()
  */
 public void setNeedsProgressMonitor(boolean b) {
 	needsProgressMonitor = b;

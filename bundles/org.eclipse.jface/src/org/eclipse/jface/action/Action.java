@@ -401,7 +401,7 @@ public abstract class Action implements IAction {
 	 *
 	 * @param token the key name
 	 * @return the SWT key code, <code>-1</code> if no match was found
-	 * @see org.eclipse.swt.SWT
+	 * @see SWT
 	 */
 	public static int findKeyCode(String token) {
 		if (keyCodes == null)
@@ -447,7 +447,7 @@ public abstract class Action implements IAction {
 	 * 
 	 * @param keyCode the key code to be translated
 	 * @return the string representation of the key code
-	 * @see org.eclipse.swt.SWT
+	 * @see SWT
 	 * @since 2.0
 	 */
 	public static String findKeyString(int keyCode) {
@@ -470,7 +470,7 @@ public abstract class Action implements IAction {
 	 *
 	 * @param token the modifier key name
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
-	 * @see org.eclipse.swt.SWT
+	 * @see SWT
 	 */
 	public static int findModifier(String token) {
 		token = token.toUpperCase();
@@ -529,7 +529,7 @@ public abstract class Action implements IAction {
 	 * 
 	 * @param keyCode the SWT modifier bit to be translated
 	 * @return the string representation of the SWT modifier bit, or <code>null</code> if the key code was not an SWT modifier bit
-	 * @see org.eclopse.swt.SWT
+	 * @see SWT
 	 * @since 2.0
 	 */
 	public static String findModifierString(int keyCode) {

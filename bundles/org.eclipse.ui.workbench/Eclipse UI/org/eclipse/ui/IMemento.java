@@ -74,7 +74,7 @@ public IMemento createChild(String type);
  * @param type the type
  * @param id the child id
  * @return a new child memento with the given type and id
- * @see #getId
+ * @see #getID
  */
 public IMemento createChild(String type, String id);
 /**

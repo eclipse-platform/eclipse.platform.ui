@@ -73,12 +73,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * </pre>
  * </p>
  *
- * @see StructuredViewer
- * @see DropTarget
- * @see DragSource
- * @see IEditorInput
- * @see IPersistableElement
- * @see IElementFactory
+ * @see org.eclipse.jface.viewers.StructuredViewer
+ * @see org.eclipse.swt.dnd.DropTarget
+ * @see org.eclipse.swt.dnd.DragSource
+ * @see org.eclipse.ui.IEditorInput
+ * @see org.eclipse.ui.IPersistableElement
+ * @see org.eclipse.ui.IElementFactory
  */
 public class EditorInputTransfer extends ByteArrayTransfer {
 

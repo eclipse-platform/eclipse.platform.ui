@@ -253,7 +253,7 @@ public void dispose() {
  * is constructed.
  * </p>
  *
- * @returns a parent
+ * @return a parent
  */
 protected Composite getFieldEditorParent() {
 	if (style == FLAT) {

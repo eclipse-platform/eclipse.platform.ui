@@ -53,8 +53,8 @@ public class NavigatorDropAdapter
 		super(viewer);
 	}
 
-	/**
-	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(DropTargetEvent)
+	/*
+	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void dragEnter(DropTargetEvent event) {
 		if (FileTransfer.getInstance().isSupportedType(event.currentDataType) &&
@@ -188,7 +188,8 @@ public class NavigatorDropAdapter
 	}
 	
 	/**
-	 * @see DropTargetListener#performDrop
+	 * Perform the drop.
+	 * @see DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public boolean performDrop(final Object data) {
 		alwaysOverwrite = false;
@@ -274,8 +275,8 @@ public class NavigatorDropAdapter
 		return problems;
 	}
 	
-	/**
-	 * @see IOverwriteQuery#queryOverwrite
+	/*
+	 * @see IOverwriteQuery#queryOverwrite(String)
 	 */
 	public String queryOverwrite(String pathString) {
 		if (alwaysOverwrite)

@@ -42,8 +42,8 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	public NavigatorDragAdapter(ISelectionProvider provider) {
 		selectionProvider = provider;
 	}
-	/**
-	 * @see DragSourceListener#dragFinished
+	/*
+	 * @see DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragFinished(DragSourceEvent event) {
 		LocalSelectionTransfer.getInstance().setSelection(null);
@@ -93,8 +93,8 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 			}
 		}
 	}
-	/**
-	 * @see DragSourceListener#dragSetData
+	/*
+	 * @see DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragSetData(DragSourceEvent event) {
 		final int typeMask = IResource.FILE | IResource.FOLDER;
@@ -140,8 +140,8 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		event.data = fileNames;
 	}
 
-	/**
-	 * @see DragSourceListener#dragStart
+	/*
+	 * @see DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragStart(DragSourceEvent event) {
 		lastDataType = null;

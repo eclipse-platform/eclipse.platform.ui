@@ -498,7 +498,7 @@ protected boolean sourceConflictsWithDestination(IPath sourcePath){
 	return false;
 }
 
-/**
+/*
  * @see WizardDataTransferPage.determinePageCompletion.
  */
 protected boolean determinePageCompletion() {

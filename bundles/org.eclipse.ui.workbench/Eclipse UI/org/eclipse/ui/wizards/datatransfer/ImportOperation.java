@@ -657,7 +657,7 @@ boolean queryOverwriteFile(IFile targetFile, int policy) {
  * 
  * @param shell context for use by the VCM provider to prompt user
  * 	for check-out. The user will not be prompted if set to <code>null</code>.
- * @see IWorkspace.validateEdit
+ * @see IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
  * @since 2.1
  */
 public void setContext(Shell shell) {

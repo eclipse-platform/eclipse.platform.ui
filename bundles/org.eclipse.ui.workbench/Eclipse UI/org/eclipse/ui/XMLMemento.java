@@ -137,7 +137,6 @@ public final class XMLMemento implements IMemento {
 	 * 
 	 * @param document the document for the memento
 	 * @param element the element node for the memento
-	 * @return the memento on the specified document and element
 	 */
 	public XMLMemento(Document document, Element element) {
 		super();

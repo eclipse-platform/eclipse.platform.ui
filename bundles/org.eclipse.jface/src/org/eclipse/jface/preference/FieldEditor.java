@@ -384,7 +384,7 @@ public String getPreferenceName() {
  * Returns the preference page in which this field editor
  * appears.
  *
- * @returns the preference page, or <code>null</code> if none
+ * @return the preference page, or <code>null</code> if none
  */
 protected PreferencePage getPreferencePage() {
 	return page;

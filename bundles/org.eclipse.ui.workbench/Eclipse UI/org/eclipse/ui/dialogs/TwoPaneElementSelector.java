@@ -89,7 +89,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		fElements= elements;
 	}
 
-	/**
+	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	public Control createDialogArea(Composite parent) {

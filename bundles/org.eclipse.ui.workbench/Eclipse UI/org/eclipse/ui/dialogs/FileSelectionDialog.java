@@ -43,7 +43,7 @@ import java.util.Iterator;
  *	return dialog.getResult();
  * </pre>
  * </p>
- * @deprecated. Use org.eclipse.swt.widgets.FileDialog,
+ * @deprecated Use org.eclipse.swt.widgets.FileDialog,
  */
 public class FileSelectionDialog extends SelectionDialog {
 	// the root file representative to populate the viewer with
@@ -249,7 +249,7 @@ protected void okPressed() {
  * Set whether the tree view of the file system element
  * will be fully expanded when the dialog is opened.
  *
- * @parm expandAll true to expand all on dialog open, false otherwise.
+ * @param expandAll true to expand all on dialog open, false otherwise.
  */
 public void setExpandAllOnOpen(boolean expandAll) {
 	expandAllOnOpen = expandAll;

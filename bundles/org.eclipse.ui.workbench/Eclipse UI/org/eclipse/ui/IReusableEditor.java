@@ -21,7 +21,9 @@ package org.eclipse.ui;
  */
 public interface IReusableEditor extends IEditorPart {
 /**
- * @see EditorPart#setInput
+ * Sets the input to this editor.
+ *
+ * @param input the editor input
  */
 public void setInput(IEditorInput newInput);
 }

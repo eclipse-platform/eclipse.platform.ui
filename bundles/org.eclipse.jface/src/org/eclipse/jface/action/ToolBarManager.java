@@ -49,7 +49,7 @@ public ToolBarManager() {
  * tool bar control.
  *
  * @param style the tool bar item style
- * @see org.eclipse.swt.widgets.ToolBar#ToolBar for valid style bits
+ * @see org.eclipse.swt.widgets.ToolBar for valid style bits
  */
 public ToolBarManager(int style) {
 	itemStyle= style;

@@ -450,7 +450,7 @@ public class PreferenceConverter {
 	 * @param name the name of the preference
 	 * @param value the new current value of the preference
 	 * 
-	 * @see #setValue(IPreferenceStore, String, FontData[])
+	 * @see PreferenceConverter#setValue(IPreferenceStore, String, FontData[])
 	 */
 	public static void putValue(
 		IPreferenceStore store,

@@ -272,7 +272,7 @@ public String getTitle() {
  * @param widgetID the id of the widget for which  
  *    hover help is requested
  * @return the tool tip text, or <code>null</code> if none
- * @depecated will be removed
+ * @deprecated will be removed
  */
 protected final String getToolTipText(int widgetId) {
 	// return nothing by default

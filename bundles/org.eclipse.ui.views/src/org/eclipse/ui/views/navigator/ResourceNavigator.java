@@ -445,7 +445,7 @@ public class ResourceNavigator
 		getActionGroup().fillContextMenu(menu);
 	}
 
-	/**
+	/*
 	 * @see IResourceNavigatorPart
 	 * @since 2.0
 	 */
@@ -1078,9 +1078,7 @@ public class ResourceNavigator
 		updateActionBars((IStructuredSelection) viewer.getSelection());
 	}
 
-	/**
-	 * Implements IResourceNavigatorPart
-	 * 
+	/*
 	 * @see org.eclipse.ui.views.navigator.IResourceNavigatorPart#setWorkingSet(IWorkingSet)
 	 * @since 2.0
 	 */
@@ -1191,7 +1189,7 @@ public class ResourceNavigator
 		this.actionGroup = actionGroup;
 	}
 	
-	/**
+	/*
 	 * @see IWorkbenchPart#getAdapter(Class)
 	 */
 	public Object getAdapter(Class adapter) {

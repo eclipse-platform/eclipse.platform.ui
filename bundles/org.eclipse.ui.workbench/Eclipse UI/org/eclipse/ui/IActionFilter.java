@@ -47,10 +47,10 @@ package org.eclipse.ui;
  * considered public for other clients to reference.
  * </p>
  *
- * @see IAdaptable
- * @see IResourceActionFilter
- * @see IMarkerActionFilter
- * @see IProjectActionFilter
+ * @see org.eclipse.core.runtime.IAdaptable
+ * @see org.eclipse.ui.IResourceActionFilter
+ * @see org.eclipse.ui.IMarkerActionFilter
+ * @see org.eclipse.ui.IProjectActionFilter
  */
 public interface IActionFilter {
 /**

@@ -91,7 +91,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 	 * Only encode the transfer type name since the selection is read and
 	 * written in the same process.
 	 * 
-	 * @see org.eclipse.swt.dnd.ByteArrayTransfer#javaToNative(Object, TransferData)
+	 * @see org.eclipse.swt.dnd.ByteArrayTransfer#javaToNative(java.lang.Object, org.eclipse.swt.dnd.TransferData)
 	 */
 	public void javaToNative(Object object, TransferData transferData) {
 		byte[] check= TYPE_NAME.getBytes();

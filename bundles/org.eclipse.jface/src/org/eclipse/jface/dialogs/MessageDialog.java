@@ -157,7 +157,8 @@ protected void configureShell(Shell shell) {
 		shell.setImage(titleImage);
 }
 
-/* (non-Javadoc)
+/* 
+ * (non-Javadoc)
  * Method declared on Dialog.
  */
 protected void createButtonsForButtonBar(Composite parent) {
@@ -342,7 +343,7 @@ public static void openWarning(Shell parent, String title, String message) {
 	dialog.open();
 	return;
 }
-/**
+/*
  * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite, int, java.lang.String, boolean)
  */
 protected Button createButton(Composite parent,int id,String label,boolean defaultButton) {

@@ -61,7 +61,7 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	 *
 	 * Subclasses may reimplement this method to decorate an object's
 	 * image.
-	 * @see org.eclipse.jface.resource.CompositeImage
+	 * @see org.eclipse.jface.resource.CompositeImageDescriptor
 	 */
 	protected ImageDescriptor decorateImage(
 		ImageDescriptor input,

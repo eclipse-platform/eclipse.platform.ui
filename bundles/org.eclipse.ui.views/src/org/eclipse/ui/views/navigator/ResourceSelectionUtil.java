@@ -41,7 +41,7 @@ private ResourceSelectionUtil(){
  * @return <code>true</code> if all selected elements are resources of the right
  *  type, and <code>false</code> if at least one element is either a resource
  *  of some other type or a non-resource
- * @see IResource#getType
+ * @see IResource#getType()
  */
 public static boolean allResourcesAreOfType(IStructuredSelection selection, int resourceMask) {
 	Iterator resources = selection.iterator();
@@ -63,7 +63,7 @@ public static boolean allResourcesAreOfType(IStructuredSelection selection, int 
  * @param resourceMask resource mask formed by bitwise OR of resource type
  *   constants (defined on <code>IResource</code>)
  * @return IStructuredSelection or null if any of the entries are not adaptable.
- * @see IResource#getType
+ * @see IResource#getType()
  */
 public static IStructuredSelection allResources(IStructuredSelection selection, int resourceMask) {
 	Iterator adaptables = selection.iterator();
@@ -93,7 +93,7 @@ public static IStructuredSelection allResources(IStructuredSelection selection, 
  *   constants (defined on <code>IResource</code>)
  * @return <code>true</code> if the resources has a matching type, and 
  *   <code>false</code> otherwise
- * @see IResource#getType
+ * @see IResource#getType()
  */
 public static boolean resourceIsType(IResource resource, int resourceMask) {
 	return (resource.getType() & resourceMask) != 0;

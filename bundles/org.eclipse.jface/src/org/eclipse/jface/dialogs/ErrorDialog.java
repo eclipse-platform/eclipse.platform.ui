@@ -103,7 +103,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * @param status the error to show to the user
 	 * @param displayMask the mask to use to filter the displaying of child items,
 	 *   as per <code>IStatus.matches</code>
-	 * @see org.eclipse.core.runtime.IStatus#matches
+	 * @see org.eclipse.core.runtime.IStatus#matches(int)
 	 */
 	public ErrorDialog(
 		Shell parentShell,
@@ -198,7 +198,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 	/*
 	 * @see IconAndMessageDialog#createDialogAndButtonArea(Composite)
 	 */
-
 	protected void createDialogAndButtonArea(Composite parent) {
 
 		super.createDialogAndButtonArea(parent);
@@ -342,7 +341,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 *     closing.  This will be <code>Dialog.OK</code> if the OK button was 
 	 * 	   pressed, or <code>Dialog.CANCEL</code> if this dialog's close window 
 	 *     decoration or the ESC key was used.
-	 * @see org.eclipse.core.runtime.IStatus#matches
+	 * @see org.eclipse.core.runtime.IStatus#matches(int)
 	 */
 	public static int openError(
 		Shell parentShell,
@@ -391,7 +390,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * @param mask a mask as per <code>IStatus.matches</code>
 	 * @return <code>true</code> if the given status should be displayed, 
 	 *   and <code>false</code> otherwise
-	 * @see org.eclipse.core.runtime.IStatus#matches
+	 * @see org.eclipse.core.runtime.IStatus#matches(int)
 	 */
 	protected static boolean shouldDisplay(IStatus status, int mask) {
 		IStatus[] children = status.getChildren();

@@ -827,7 +827,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	 *
 	 * @param minWidth the minimum page width
 	 * @param minHeight the minimum page height
-	 * @see #setMinimumPageSize(org.eclipse.swt.graphics.Point)
+	 * @see #setMinimumPageSize(Point)
 	 */
 	public void setMinimumPageSize(int minWidth, int minHeight) {
 		Assert.isTrue(minWidth >= 0 && minHeight >= 0);
@@ -850,7 +850,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	 *
 	 * @param width the page width
 	 * @param height the page height
-	 * @see #setPageSize(org.eclipse.swt.graphics.Point)
+	 * @see #setPageSize(Point)
 	 */
 	public void setPageSize(int width, int height) {
 		pageWidth = width;
