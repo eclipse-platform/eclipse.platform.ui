@@ -131,9 +131,9 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	 *
 	 *  @param resource org.eclipse.core.resources.IResource
 	 */
-	protected void exportResource(IResource resource)
+	protected void exportResource(IResource exportResource)
 		throws InterruptedException {
-		exportResource(resource, 1);
+		exportResource(exportResource, 1);
 	}
 
 	/**
