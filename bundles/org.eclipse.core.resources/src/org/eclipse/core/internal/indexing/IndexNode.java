@@ -385,10 +385,6 @@ class IndexNode extends IndexedStoreObject {
 		return nextAddress;
 	}
 
-	private int getNodeType() {
-		return nodeType;
-	}
-
 	int getNumberOfEntries() {
 		return numberOfEntries;
 	}
@@ -427,10 +423,6 @@ class IndexNode extends IndexedStoreObject {
 	
 	private int getUsedSpace() {
 		return usedSpace;
-	}
-	
-	private int getUsedSpaceMax() {
-		return usedSpaceMax;
 	}
 	
 	/**
@@ -649,11 +641,6 @@ class IndexNode extends IndexedStoreObject {
 			removeEntry(i);
 	}
 
-	private void setAnchorAddress(ObjectAddress address) {
-		anchorAddress = address;
-		setChanged();
-	}
-	
 	private void setNextAddress(ObjectAddress address) {
 		nextAddress = address;
 		setChanged();

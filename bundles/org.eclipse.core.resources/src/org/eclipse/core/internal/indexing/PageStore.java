@@ -21,7 +21,6 @@ public class PageStore implements Observer {
 	private static final byte[] ZEROES = new byte[1024];
 
 	private String name;
-	private String mode;
 	private RandomAccessFile file;
 	private int numberOfPages;
 	private int numberOfFileReads;
