@@ -240,7 +240,7 @@ public class AntElementNode {
 	 * Returns a string representation of this element.
 	 */
 	public String toString() {
-		return "Ant Element Node: " + getLabel() + " Offset: " + getOffset() + " Length: " + getLength();  //$NON-NLS-1$//$NON-NLS-2$
+		return "Ant Element Node: " + getLabel() + " Offset: " + getOffset() + " Length: " + getLength();  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**
@@ -368,11 +368,7 @@ public class AntElementNode {
 		AntElementNode e1= (AntElementNode) o1;
 		AntElementNode e2= (AntElementNode) o2;
 	
-		if (e1.getElementPath().equals(e2.getElementPath())) {
-			return true;
-		}
-
-		return false;
+		return e1.getElementPath().equals(e2.getElementPath());
 	}
 
 	/*
@@ -380,18 +376,8 @@ public class AntElementNode {
 	 */
 	public int hashCode() {
 		// prepared to be used in an IElementComparer, depends on http://dev.eclipse.org/bugs/show_bug.cgi?id=32254
-		Object o1= this;
-
-		if (o1 == null) {
-			return 0;
-		}
-		if (!(o1 instanceof AntElementNode)) {
-			return o1.hashCode();
-		}
-
-		AntElementNode e1= (AntElementNode) o1;
 		
-		return e1.getElementPath().hashCode();
+		return getElementPath().hashCode();
 	}
 
 	/**
