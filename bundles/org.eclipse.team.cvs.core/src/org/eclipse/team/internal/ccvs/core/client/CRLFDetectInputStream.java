@@ -14,8 +14,11 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
@@ -26,9 +29,27 @@ public class CRLFDetectInputStream extends FilterInputStream {
 	private boolean previousCR;
 	private String filename;
 
-	protected CRLFDetectInputStream(InputStream in, String filename) {
+	protected CRLFDetectInputStream(InputStream in, ICVSFile file) {
 		super(in);
-		this.filename = filename;
+		try {
+			this.filename = getFileName(file);
+		} catch (CVSException e) {
+			this.filename = file.getName();
+		}
+	}
+
+	private String getFileName(ICVSFile file) throws CVSException {
+		String fileName = file.getRepositoryRelativePath();
+		if (fileName == null) {
+			IResource resource = file.getIResource();
+			if (resource == null) {
+				fileName = file.getName();
+			} else {
+				// Use the resource path if there is one since the remote pat
+				fileName = file.getIResource().getFullPath().toString();
+			}
+		}
+		return fileName;
 	}
 
 	/**

@@ -103,11 +103,22 @@ public interface ICVSResource {
 	
 	/**
 	 * Answers the local relative path from the given ancestor to the receiver.
+	 * This method will return a path for files that are themselves not added
+	 * to CVS control but who have an ancestor that is under CVS control.
 	 * 
 	 * @return the ancestor relative path for this resource.
 	 */
 	public String getRelativePath(ICVSFolder ancestor) throws CVSException;
 
+	/**
+	 * Return the repository relative path of the remote resource. Return
+	 * <code>null</code> if the resource is not under CVS control.
+	 * 
+	 * @return
+	 * @throws CVSException
+	 */
+	public String getRepositoryRelativePath() throws CVSException;
+	
 	/**
 	 * Get the absolute remote location of a resource. This method is used by
 	 * the CVS command infrastructure during command execution. The root is used

@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
@@ -555,6 +556,16 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 */
 	protected void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
 		getParent().run(job, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#getRepositoryRelativePath()
+	 */
+	public String getRepositoryRelativePath() throws CVSException {
+		if (!isManaged()) return null;
+		String parentPath = getParent().getRepositoryRelativePath();
+		if (parentPath == null) return null;
+		return parentPath + Session.SERVER_SEPARATOR + getName();
 	}
 
 }
