@@ -35,7 +35,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 	public void init(IConsole console) {
 		fConsole = console;
 		//BUILD FAILED: file:c:/1115/test/buildFiles/23638.xml:12:
-		fErrorMatcher = new StringMatcher("*BUILD FAILED: file:*.xml*",false, false); //$NON-NLS-1$
+		fErrorMatcher = new StringMatcher("*BUILD FAILED: *.xml*",false, false); //$NON-NLS-1$
 	}
 
 	/**
@@ -53,6 +53,9 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 				int index = text.indexOf("file:"); //$NON-NLS-1$
 				if (index > 0) {
 					fileStart = index + 5;
+				} else {
+					fileStart = text.indexOf("BUILD FAILED:") + 14; //$NON-NLS-1$
+				}
 					index = text.indexOf(' ', index); //$NON-NLS-1$
 					if (index > 0) {
 						int numberEnd= index - 1;
@@ -63,7 +66,6 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 							lineNumber = text.substring(numberStart, numberEnd).trim();
 						}
 					}
-				}
 			} 
 			if (fileName != null) {
 				int num = -1;
