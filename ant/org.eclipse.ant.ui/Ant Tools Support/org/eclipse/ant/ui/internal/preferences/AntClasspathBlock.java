@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 
 public class AntClasspathBlock {
@@ -198,7 +199,7 @@ public class AntClasspathBlock {
 	 * Allows the user to enter a folder as a classpath.
 	 */
 	private void addFolder(TableViewer viewer, String message) {
-		String lastUsedPath = dialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTFOLDER);
+		String lastUsedPath = dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTFOLDER);
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
@@ -214,12 +215,12 @@ public class AntClasspathBlock {
 			}
 		}
 		viewer.setSelection(viewer.getSelection());
-		dialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTFOLDER, result);
+		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTFOLDER, result);
 		container.update();
 	}
 
 	private void addJars(TableViewer viewer) {
-		String lastUsedPath = dialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTJAR);
+		String lastUsedPath = dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTJAR);
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
@@ -244,7 +245,7 @@ public class AntClasspathBlock {
 		}
 
 		viewer.setSelection(viewer.getSelection());
-		dialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
+		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
 		container.update();
 	}
 		
@@ -465,7 +466,7 @@ public class AntClasspathBlock {
 	}
 	
 	private void browseAntHome() {
-		String lastUsedPath= dialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTANTHOME);
+		String lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTANTHOME);
 		if (lastUsedPath == null) {
 			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
@@ -478,7 +479,7 @@ public class AntClasspathBlock {
 		}
 	
 		antHome.setText(path);
-		dialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTANTHOME, path);
+		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTANTHOME, path);
 		container.update();
 	}
 		

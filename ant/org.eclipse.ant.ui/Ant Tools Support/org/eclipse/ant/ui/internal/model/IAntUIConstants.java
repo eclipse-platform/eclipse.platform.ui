@@ -148,5 +148,10 @@ public interface IAntUIConstants {
 	 * Status code used by the 'Run Ant' status handler which is invoked when
 	 * the launch dialog is opened by the 'Run Ant' action.
 	 */
-	public static final int STATUS_INIT_RUN_ANT = 1000;								
+	public static final int STATUS_INIT_RUN_ANT = 1000;
+	
+	public static final String DIALOGSTORE_LASTEXTJAR= PLUGIN_ID + ".lastextjar"; //$NON-NLS-1$
+	public static final String DIALOGSTORE_LASTEXTFILE= PLUGIN_ID + ".lastextfile"; //$NON-NLS-1$
+	public static final String DIALOGSTORE_LASTFOLDER= PLUGIN_ID + ".lastfolder"; //$NON-NLS-1$
+	public static final String DIALOGSTORE_LASTANTHOME= PLUGIN_ID + ".lastanthome"; //$NON-NLS-1$						
 }

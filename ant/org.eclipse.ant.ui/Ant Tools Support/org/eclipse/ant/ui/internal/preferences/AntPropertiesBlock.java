@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
@@ -37,7 +38,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 public class AntPropertiesBlock {
 	
@@ -192,7 +192,7 @@ public class AntPropertiesBlock {
 	 */
 	private void addPropertyFile() {
 		String lastUsedPath;
-		lastUsedPath= dialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTFILE);
+		lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTFILE);
 		if (lastUsedPath == null) {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
@@ -212,7 +212,7 @@ public class AntPropertiesBlock {
 			((ExternalToolsContentProvider)fileTableViewer.getContentProvider()).add(path.toOSString());
 		}
 	
-		dialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTFILE, filterPath.toOSString());
+		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTEXTFILE, filterPath.toOSString());
 		container.update();
 	}
 	
