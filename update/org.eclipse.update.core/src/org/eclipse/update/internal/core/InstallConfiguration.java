@@ -209,14 +209,19 @@ public class InstallConfiguration
 	 */
 	public void export(File exportFile) throws CoreException {
 		try {
-			PrintWriter fileWriter = new PrintWriter(new FileOutputStream(exportFile));
-			Writer writer = new Writer();
-			writer.writeSite(this, fileWriter);
-			fileWriter.close();
+			Writer writer = new Writer(exportFile,"UTF8");
+			writer.write(this);
 		} catch (FileNotFoundException e) {
 			throw Utilities.newCoreException(
 				Policy.bind(
 					"InstallConfiguration.UnableToSaveConfiguration",
+					exportFile.getAbsolutePath()),
+				e);
+			//$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"InstallConfiguration.UnableToEncodeConfiguration",
 					exportFile.getAbsolutePath()),
 				e);
 			//$NON-NLS-1$

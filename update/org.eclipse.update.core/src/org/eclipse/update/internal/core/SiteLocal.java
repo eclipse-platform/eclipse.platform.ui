@@ -174,24 +174,23 @@ public class SiteLocal
 					Object[] siteLocalListeners = listeners.getListeners();
 					for (int i = 0; i < siteLocalListeners.length; i++) {
 						(
-							(
-								ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved(
+							(ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved(
 							(IInstallConfiguration) removedConfig);
 					}
-					
+
 					//remove files
 					URL url = removedConfig.getURL();
 					UpdateManagerUtils.removeFromFileSystem(new File(url.getFile()));
 				}
-				
+
 			}
 
 			// set configuration as current		
 			if (getCurrentConfigurationModel() != null)
 				getCurrentConfigurationModel().setCurrent(false);
-			if (config instanceof InstallConfiguration)	
-				((InstallConfiguration)config).setCurrent(true);
-			
+			if (config instanceof InstallConfiguration)
+				 ((InstallConfiguration) config).setCurrent(true);
+
 			setCurrentConfigurationModel((InstallConfigurationModel) config);
 			((InstallConfigurationModel) config).markReadOnly();
 
@@ -239,18 +238,22 @@ public class SiteLocal
 		if (getLocationURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
 			File file = null;
 			try {
-				URL newURL =
-					UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
+				URL newURL = UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
 				file = new File(newURL.getFile());
 				if (isTransient())
 					file.deleteOnExit();
-				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
-				Writer writer = new Writer();
-				writer.writeSite(this, fileWriter);
-				fileWriter.close();
+				Writer writer = new Writer(file, "UTF8");
+				writer.write(this);
 			} catch (FileNotFoundException e) {
 				throw Utilities.newCoreException(
-					Policy.bind("SiteLocal.UnableToSaveStateIn") + file.getAbsolutePath(),
+					Policy.bind("SiteLocal.UnableToSaveStateIn", file.getAbsolutePath()),
+					e);
+				//$NON-NLS-1$
+			} catch (UnsupportedEncodingException e) {
+				throw Utilities.newCoreException(
+					Policy.bind(
+						"SiteLocal.UnableToEncodeConfiguration",
+						 file.getAbsolutePath()),
 					e);
 				//$NON-NLS-1$
 			} catch (MalformedURLException e) {
@@ -311,12 +314,10 @@ public class SiteLocal
 
 		if (getPreservedConfigurations() != null) {
 			// write preserved configurations
-			w.print(
-				gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
+			w.print(gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
 			//$NON-NLS-1$ //$NON-NLS-2$
 
-			InstallConfigurationModel[] preservedConfig =
-				getPreservedConfigurationsModel();
+			InstallConfigurationModel[] preservedConfig = getPreservedConfigurationsModel();
 			for (int index = 0; index < preservedConfig.length; index++) {
 				InstallConfigurationModel element = preservedConfig[index];
 				writeConfig(gap + increment + increment, w, element);
@@ -397,8 +398,7 @@ public class SiteLocal
 	/**
 	 * @since 2.0
 	 */
-	public IInstallConfiguration cloneCurrentConfiguration()
-		throws CoreException {
+	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException {
 		return cloneConfigurationSite(getCurrentConfiguration(), null, null);
 	}
 
@@ -480,12 +480,12 @@ public class SiteLocal
 					e);
 				//$NON-NLS-1$
 			}
-			
+
 			// activity
 			ConfigurationActivity activity =
 				new ConfigurationActivity(IActivity.ACTION_ADD_PRESERVED);
 			activity.setLabel(configuration.getLabel());
-			activity.setDate(new Date());			
+			activity.setDate(new Date());
 			activity.setStatus(IActivity.STATUS_OK);
 			((InstallConfiguration) newConfiguration).addActivityModel(activity);
 			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
@@ -712,8 +712,7 @@ public class SiteLocal
 		throws CoreException {
 
 		ConfiguredSite newConfiguredSite = createNewConfigSite(oldConfiguredSite);
-		ConfigurationPolicy newSitePolicy =
-			newConfiguredSite.getConfigurationPolicy();
+		ConfigurationPolicy newSitePolicy = newConfiguredSite.getConfigurationPolicy();
 		ConfigurationPolicy oldSitePolicy =
 			((ConfiguredSite) oldConfiguredSite).getConfigurationPolicy();
 
@@ -740,10 +739,11 @@ public class SiteLocal
 			// new fature found: add as configured if site is Exclude
 			// otherwise add as unconfigured (bug 13695)
 			if (!newFeatureFound) {
-				if (oldSitePolicy.getPolicy()==IPlatformConfiguration.ISitePolicy.USER_EXCLUDE){
+				if (oldSitePolicy.getPolicy()
+					== IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 					newSitePolicy.addConfiguredFeatureReference(currentFeatureRefModel);
 				} else {
-					newSitePolicy.addUnconfiguredFeatureReference(currentFeatureRefModel);					
+					newSitePolicy.addUnconfiguredFeatureReference(currentFeatureRefModel);
 				}
 			}
 		}
@@ -751,7 +751,7 @@ public class SiteLocal
 		// if a feature has been found in new and old state use old state (configured/unconfigured)
 		Iterator featureIter = toCheck.iterator();
 		while (featureIter.hasNext()) {
-			IFeatureReference oldFeatureRef = (IFeatureReference)featureIter.next();
+			IFeatureReference oldFeatureRef = (IFeatureReference) featureIter.next();
 			if (oldSitePolicy.isConfigured(oldFeatureRef)) {
 				newSitePolicy.addConfiguredFeatureReference(oldFeatureRef);
 			} else {
@@ -854,7 +854,7 @@ public class SiteLocal
 
 			// within the configured site
 			// compare with the other configured features of this site
-			for (int restOfConfiguredFeatures = indexConfiguredFeatures+1;
+			for (int restOfConfiguredFeatures = indexConfiguredFeatures + 1;
 				restOfConfiguredFeatures < configuredFeatures.length;
 				restOfConfiguredFeatures++) {
 				int result =
@@ -961,8 +961,7 @@ public class SiteLocal
 		throws CoreException {
 		// create a copy of the ConfigSite based on old ConfigSite
 		// this is not a clone, do not copy any features
-		ConfiguredSite cSiteToReconcile =
-			(ConfiguredSite) oldConfiguredSiteToReconcile;
+		ConfiguredSite cSiteToReconcile = (ConfiguredSite) oldConfiguredSiteToReconcile;
 		SiteModel siteModel = cSiteToReconcile.getSiteModel();
 		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
 
@@ -1112,8 +1111,7 @@ public class SiteLocal
 	/**
 	 * return the appropriate resource bundle for this sitelocal
 	 */
-	private static ResourceBundle getResourceBundle(URL url)
-		throws CoreException {
+	private static ResourceBundle getResourceBundle(URL url) throws CoreException {
 		ResourceBundle bundle = null;
 		try {
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
