@@ -245,216 +245,216 @@ public class DefaultSiteParser extends DefaultHandler {
 	private void processArchive(Attributes attributes) {
 		ArchiveReferenceModel archive = factory.createArchiveReferenceModel();
 		String id = attributes.getValue("path");
-		archive.setPath(id);
-		String urlString = UpdateManagerUtils.encode(attributes.getValue("url"));
-		archive.setURLString(urlString);
+		if (id == null || id.trim().equals("")) {
+			internalError("The id tag of an archive is null or does not exist.");
+		} else {
+			archive.setPath(id);
 
-		SiteMapModel site = (SiteMapModel) objectStack.peek();
-		site.addArchiveReferenceModel(archive);
+			String url = attributes.getValue("url");
+			if (url == null || url.trim().equals("")) {
+				internalError("The url tag of an archive is null or does not exist.");
+			} else {
+				url = UpdateManagerUtils.encode(url);
+				archive.setURLString(url);
 
-		if (DEBUG)
-			debug("End processing Archive: path:" + id + " url:" + urlString);
+				SiteMapModel site = (SiteMapModel) objectStack.peek();
+				site.addArchiveReferenceModel(archive);
+			}
+			if (DEBUG)
+				debug("End processing Archive: path:" + id + " url:" + url);
+		}		
 	}
 
-	/** 
-	 * process the Category  info
-	 */
-	private void processCategory(Attributes attributes) {
-		String category = attributes.getValue("name");
-		FeatureReferenceModel feature = (FeatureReferenceModel) objectStack.peek();
-		feature.addCategoryName(category);
+		/** 
+		 * process the Category  info
+		 */
+		private void processCategory(Attributes attributes) {
+			String category = attributes.getValue("name");
+			FeatureReferenceModel feature = (FeatureReferenceModel) objectStack.peek();
+			feature.addCategoryName(category);
 
-		if (DEBUG)
-			debug("End processing Category: name:" + category);
-	}
+			if (DEBUG)
+				debug("End processing Category: name:" + category);
+		}
 
-	/** 
-	 * process category def info
-	 */
-	private void processCategoryDef(Attributes attributes) {
-		SiteCategoryModel category = factory.createSiteCategoryModel();
-		String name = attributes.getValue("name");
-		String label = attributes.getValue("label");
-		category.setName(name);
-		category.setLabel(label);
+		/** 
+		 * process category def info
+		 */
+		private void processCategoryDef(Attributes attributes) {
+			SiteCategoryModel category = factory.createSiteCategoryModel();
+			String name = attributes.getValue("name");
+			String label = attributes.getValue("label");
+			category.setName(name);
+			category.setLabel(label);
 
-		SiteMapModel site = (SiteMapModel) objectStack.peek();
-		site.addCategoryModel(category);
-		objectStack.push(category);
+			SiteMapModel site = (SiteMapModel) objectStack.peek();
+			site.addCategoryModel(category);
+			objectStack.push(category);
 
-		if (DEBUG)
-			debug("End processing CategoryDef: name:" + name + " label:" + label);
-	}
+			if (DEBUG)
+				debug("End processing CategoryDef: name:" + name + " label:" + label);
+		}
 
-	/** 
-	 * process URL info with element text
-	 */
-	private void processInfo(Attributes attributes) {
-		URLEntryModel inf = factory.createURLEntryModel();
-		String infoURL = attributes.getValue("url");
-		inf.setURLString(infoURL);
+		/** 
+		 * process URL info with element text
+		 */
+		private void processInfo(Attributes attributes) {
+			URLEntryModel inf = factory.createURLEntryModel();
+			String infoURL = attributes.getValue("url");
+			inf.setURLString(infoURL);
 
-		if (DEBUG)
-			debug("Processed Info: url:" + infoURL);
+			if (DEBUG)
+				debug("Processed Info: url:" + infoURL);
 
-		objectStack.push(inf);
-	}
+			objectStack.push(inf);
+		}
 
-	/**
-	 * @see DefaultHandler#endElement(String, String, String)
-	 */
-	public void endElement(String uri, String localName, String qName) {
+		/**
+		 * @see DefaultHandler#endElement(String, String, String)
+		 */
+		public void endElement(String uri, String localName, String qName) {
 
-		String tag = localName.trim();
+			String tag = localName.trim();
 
-		int state = ((Integer) stateStack.peek()).intValue();
-		switch (state) {
-			case IGNORED_ELEMENT_STATE :
-				stateStack.pop();
-				break;
-			case STATE_INITIAL :
-				internalError("Stack back to Initial State, error parsing file");
-				break;
+			int state = ((Integer) stateStack.peek()).intValue();
+			switch (state) {
+				case IGNORED_ELEMENT_STATE :
+				case STATE_ARCHIVE :
+				case STATE_CATEGORY :				
+					stateStack.pop();
+					break;
+					
+				case STATE_INITIAL :
+					internalError("Stack back to Initial State, error parsing file");
+					break;
 
-			case STATE_SITE :
-				stateStack.pop();
-				if (objectStack.peek() instanceof String) {
-					String text = (String) objectStack.pop();
-					SiteMapModel site = (SiteMapModel) objectStack.peek();
-					site.getDescriptionModel().setAnnotation(text);
-				}
-				//do not pop
-				break;
+				case STATE_SITE :
+					stateStack.pop();
+					if (objectStack.peek() instanceof String) {
+						String text = (String) objectStack.pop();
+						SiteMapModel site = (SiteMapModel) objectStack.peek();
+						site.getDescriptionModel().setAnnotation(text);
+					}
+					//do not pop
+					break;
 
-			case STATE_FEATURE :
-				stateStack.pop();
-				objectStack.pop();
-				break;
+				case STATE_FEATURE :
+					stateStack.pop();
+					objectStack.pop();
+					break;
 
-			case STATE_ARCHIVE :
-				stateStack.pop();
-				break;
-
-			case STATE_CATEGORY :
-				stateStack.pop();
-
-				break;
-
-			case STATE_CATEGORY_DEF :
-				stateStack.pop();
-				if (objectStack.peek() instanceof String) {
-					String text = (String) objectStack.pop();
-					SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
-					category.getDescriptionModel().setAnnotation(text);
-				}
-				objectStack.pop();
-				break;
-
-			case STATE_DESCRIPTION :
-				stateStack.pop();
-				URLEntryModel info = (URLEntry) objectStack.pop();
-				int innerState = ((Integer) stateStack.peek()).intValue();
-				switch (innerState) {
-
-					case STATE_SITE :
-
-						SiteMapModel siteModel = (SiteMapModel) objectStack.peek();
-						siteModel.setDescriptionModel(info);
-						break;
-
-					case STATE_CATEGORY_DEF :
+				case STATE_CATEGORY_DEF :
+					stateStack.pop();
+					if (objectStack.peek() instanceof String) {
+						String text = (String) objectStack.pop();
 						SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
-						category.setDescriptionModel(info);
-						break;
+						category.getDescriptionModel().setAnnotation(text);
+					}
+					objectStack.pop();
+					break;
 
-					default :
-						internalError("Description in wrong state:" + state);
-						break;
-				}
-				break;
+				case STATE_DESCRIPTION :
+					stateStack.pop();
+					URLEntryModel info = (URLEntry) objectStack.pop();
+					int innerState = ((Integer) stateStack.peek()).intValue();
+					switch (innerState) {
 
-			default :
-				internalError("unknown state:" + state);
-				break;
+						case STATE_SITE :
+
+							SiteMapModel siteModel = (SiteMapModel) objectStack.peek();
+							siteModel.setDescriptionModel(info);
+							break;
+
+						case STATE_CATEGORY_DEF :
+							SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
+							category.setDescriptionModel(info);
+							break;
+
+						default :
+							internalError("Description in wrong state:" + state);
+							break;
+					}
+					break;
+
+				default :
+					internalError("unknown state:" + state);
+					break;
+			}
+
+			if (DEBUG)
+				debug("End Element:" + uri + ":" + localName + ":" + qName);
 		}
 
-		if (DEBUG)
-			debug("End Element:" + uri + ":" + localName + ":" + qName);
-	}
-
-	/**
-	 * @see DefaultHandler#characters(char[], int, int)
-	 */
-	public void characters(char[] ch, int start, int length) {
-		String text = new String(ch, start, length).trim();
-		if (!text.equals(""))
-			objectStack.push(text);
-	}
-
-	private void debug(String s) {
-		System.out.println("DefaultSiteParser: " + s);
-	}
-
-	public void error(SAXParseException ex) {
-		logStatus(ex);
-	}
-
-	public void fatalError(SAXParseException ex) throws SAXException {
-		logStatus(ex);
-		throw ex;
-	}
-
-	private void logStatus(SAXParseException ex) {
-		String name = ex.getSystemId();
-		if (name == null)
-			name = "";
-		else
-			name = name.substring(1 + name.lastIndexOf("/"));
-
-		String msg;
-		if (name.equals(""))
-			msg = "Error Parsing";
-		else
-			msg = "Error:" + name + " line:" + Integer.toString(ex.getLineNumber()) + " column:" + Integer.toString(ex.getColumnNumber()) + " message:" + ex.getMessage();
-		error(new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
-	}
-
-	/**
-	 * Handles an error state specified by the status.  The collection of all logged status
-	 * objects can be accessed using <code>getStatus()</code>.
-	 *
-	 * @param error a status detailing the error condition
-	 */
-	public void error(IStatus error) {
-
-		getStatus().add(error);
-		UpdateManagerPlugin.getPlugin().getLog().log(error);
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-			UpdateManagerPlugin.getPlugin().debug(error.toString());
-	}
-	/**
-	 * Handles an error state specified by the status.  The collection of all logged status
-	 * objects can be accessed using <code>getStatus()</code>.
-	 *
-	 * @param error a status detailing the error condition
-	 */
-	public void internalErrorUnknownTag(String msg) {
-		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(msg);
-	}
-	/**
-	 * Returns all of the status objects logged thus far by this factory.
-	 *
-	 * @return a multi-status containing all of the logged status objects
-	 */
-	public MultiStatus getStatus() {
-		if (status == null) {
-			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, "Error parsing Site.xml", null);
+		/**
+		 * @see DefaultHandler#characters(char[], int, int)
+		 */
+		public void characters(char[] ch, int start, int length) {
+			String text = new String(ch, start, length).trim();
+			if (!text.equals(""))
+				objectStack.push(text);
 		}
-		return status;
-	}
 
-	private void internalError(String message) {
-		error(new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
+		private void debug(String s) {
+			System.out.println("DefaultSiteParser: " + s);
+		}
+
+		public void error(SAXParseException ex) {
+			logStatus(ex);
+		}
+
+		public void fatalError(SAXParseException ex) throws SAXException {
+			logStatus(ex);
+			throw ex;
+		}
+
+		private void logStatus(SAXParseException ex) {
+			String name = ex.getSystemId();
+			if (name == null)
+				name = "";
+			else
+				name = name.substring(1 + name.lastIndexOf("/"));
+
+			String msg;
+			if (name.equals(""))
+				msg = "Error Parsing";
+			else
+				msg = "Error:" + name + " line:" + Integer.toString(ex.getLineNumber()) + " column:" + Integer.toString(ex.getColumnNumber()) + " message:" + ex.getMessage();
+			error(new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
+		}
+
+		/**
+		 * Handles an error state specified by the status.  The collection of all logged status
+		 * objects can be accessed using <code>getStatus()</code>.
+		 *
+		 * @param error a status detailing the error condition
+		 */
+		public void error(IStatus error) {
+
+			getStatus().add(error);
+			UpdateManagerPlugin.getPlugin().getLog().log(error);
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+				UpdateManagerPlugin.getPlugin().debug(error.toString());
+		}
+		/**
+		 *
+		 */
+		public void internalErrorUnknownTag(String msg) {
+			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+			internalError(msg);
+		}
+		/**
+		 * Returns all of the status objects logged thus far by this factory.
+		 *
+		 * @return a multi-status containing all of the logged status objects
+		 */
+		public MultiStatus getStatus() {
+			if (status == null) {
+				status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, "Error parsing Site.xml", null);
+			}
+			return status;
+		}
+
+		private void internalError(String message) {
+			error(new Status(IStatus.WARNING, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
+		}
 	}
-}
