@@ -400,7 +400,13 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		// update icon and label
 		safeUpdateItem.item = item;
 		safeUpdateItem.element = element;
-		Platform.run(safeUpdateItem);
+		try {
+			Platform.run(safeUpdateItem);
+		}
+		finally {
+			safeUpdateItem.item = null;
+			safeUpdateItem.element = null;
+		}
 	}
 }
 /**
@@ -640,9 +646,12 @@ protected Object[] getRawChildren(Object parent) {
 	if (parent != null) {
 		if (equals(parent, getRoot()))
 			return super.getRawChildren(parent);
-		Object[] result = ((ITreeContentProvider) getContentProvider()).getChildren(parent);
-		if (result != null)
-			return result;
+		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
+		if (cp != null) {
+			Object[] result = cp.getChildren(parent);
+			if (result != null)
+				return result;
+		}
 	}
 	return new Object[0];
 }
@@ -786,10 +795,15 @@ protected Widget internalExpand(Object element, boolean expand) {
 
 	Widget w= findItem(element);
 	if (w == null) {	
-		if (equals(element, getRoot()))	// stop at root
+		if (equals(element, getRoot())) {	// stop at root
 			return null;
+		}
 		// my parent has to create me
-		Object parent= ((ITreeContentProvider) getContentProvider()).getParent(element);
+		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
+		if (cp == null) {
+			return null;
+		}
+		Object parent= cp.getParent(element);
 		if (parent != null) {
 			Widget pw= internalExpand(parent, expand);
 			if (pw != null) {
@@ -1011,7 +1025,8 @@ private void internalSetExpanded(HashSet expandedElements, Widget widget) {
  * the given element can be expanded, or <code>false</code> if not
  */
 public boolean isExpandable(Object element) {
-	return ((ITreeContentProvider) getContentProvider()).hasChildren(element);
+	ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
+	return cp != null && cp.hasChildren(element);
 }
 /* (non-Javadoc)
  * Method declared on Viewer.

@@ -502,8 +502,11 @@ protected Item getItem(int x, int y) {
 protected Object[] getRawChildren(Object parent) {
 	Object[] result = null;
 	if (parent != null) {
-		result = ((IStructuredContentProvider) getContentProvider()).getElements(parent);
-		Assert.isNotNull(result);
+		IStructuredContentProvider cp = (IStructuredContentProvider) getContentProvider();
+		if (cp != null) {
+			result = cp.getElements(parent);
+			Assert.isNotNull(result);
+		}
 	}
 	return (result != null) ? result : new Object[0];
 }
