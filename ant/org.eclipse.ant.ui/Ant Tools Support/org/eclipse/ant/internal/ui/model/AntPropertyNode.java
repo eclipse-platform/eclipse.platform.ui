@@ -184,4 +184,18 @@ public class AntPropertyNode extends AntTaskNode {
 		}
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getModifiedOccurrencesIdentifier(java.lang.String)
+	 */
+	public String getModifiedOccurrencesIdentifier(String identifier) {
+		return identifier;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencePositionOffset()
+	 */
+	public int getOccurrencePositionOffset() {
+		return 0;
+	}
 }

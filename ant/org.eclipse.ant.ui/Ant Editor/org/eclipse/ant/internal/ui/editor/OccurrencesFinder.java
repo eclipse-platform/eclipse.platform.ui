@@ -73,9 +73,12 @@ public class OccurrencesFinder {
 		int length= identifier.length();
 		for (Iterator each= fUsages.iterator(); each.hasNext();) {
 			AntElementNode currentNode= (AntElementNode)each.next();
-			int offset= fAntModel.computeIdentifierOffset(currentNode, currentNode.getModifiedOccurrencesIdentifier(identifier));
-			if (offset != -1) {
-				positions.add(new Position(offset + currentNode.getOccurrencePositionOffset(), length));
+			List offsets= fAntModel.computeIdentifierOffsets(currentNode, currentNode.getModifiedOccurrencesIdentifier(identifier));
+			if (offsets != null) {
+				int occurrencePositionOffset= currentNode.getOccurrencePositionOffset();
+				for (int i = 0; i < offsets.size(); i++) {
+					positions.add(new Position(((Integer)offsets.get(i)).intValue() + occurrencePositionOffset, length));
+				}
 			}
 		}
 	

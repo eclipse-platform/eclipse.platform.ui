@@ -11,6 +11,9 @@
 
 package org.eclipse.ant.internal.ui.model;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.RuntimeConfigurable;
 import org.apache.tools.ant.Task;
@@ -135,10 +138,38 @@ public class AntTaskNode extends AntElementNode {
 	
 	public boolean containsOccurrence(String identifier) {
 		RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
+		
+		Map attributeMap= wrapper.getAttributeMap();
+		Set keys= attributeMap.keySet();
+		String modifiedIdentifier= getModifiedOccurrencesIdentifier(identifier);
+		for (Iterator iter = keys.iterator(); iter.hasNext(); ) {
+			String key = (String) iter.next();
+			String value= (String) attributeMap.get(key);
+			if (value.indexOf(modifiedIdentifier) != -1) {
+				return true;
+			}
+		}
 		StringBuffer text= wrapper.getText();
 		if (text.length() > 0) {
-			return text.indexOf(identifier) != -1;
+			if (text.indexOf(modifiedIdentifier) != -1) {
+				return true;
+			}
 		}
+	
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getModifiedIdentifier(java.lang.String)
+	 */
+	public String getModifiedOccurrencesIdentifier(String identifier) {
+		return new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencePositionOffset()
+	 */
+	public int getOccurrencePositionOffset() {
+		return 1;
 	}
 }
