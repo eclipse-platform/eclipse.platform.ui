@@ -86,7 +86,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		colorProvider.connect(fProcess, this);
 		
 		setName(computeName());
-		setImageDescriptor(computeImageDescriptor());
 		
 		Color color = fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM);
 		in.setColor(color);
@@ -494,5 +493,14 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             }
             return Status.OK_STATUS;
         }
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsole#getImageDescriptor()
+     */
+    public ImageDescriptor getImageDescriptor() {
+        if (super.getImageDescriptor() == null) {
+            setImageDescriptor(computeImageDescriptor());
+        }
+        return super.getImageDescriptor();
     }
 }
