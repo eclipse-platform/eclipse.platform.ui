@@ -50,12 +50,11 @@ package org.eclipse.core.resources;
  *    as a hierarchical resource delta. Event type is
  *    <code>POST_CHANGE</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
- *    workspace root.  These events are broadcast to interested parties immediately after
- *    any <code>POST_AUTO_BUILD</code> events and happen whether 
- *    or not auto-building is enabled.  The workspace is closed for change during 
- *    notification of these events.
- *    The delta reported in this event cycle is identical across
- *    all listeners registered for this type of event.
+ *    workspace root.  These events are broadcast to interested parties after
+ *    a set of resource changes and happen whether or not auto-building is enabled.  
+ *    The workspace is closed for change during notification of these events.
+ *    The delta reported in this event cycle is identical across all listeners registered for 
+ *    this type of event.
  *   </li>
  *   <li>
  *    Before-the-fact reports of the impending closure of a single
