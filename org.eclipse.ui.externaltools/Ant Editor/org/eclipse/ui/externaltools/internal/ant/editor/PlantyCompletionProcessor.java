@@ -21,7 +21,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -188,8 +186,6 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 
     protected final static String REQUIRED = "#REQUIRED"; //$NON-NLS-1$
     
-	private List computedCompletionStrings = new Vector();
-    
     /**
      * The line where the cursor sits now.
      * <P>
@@ -258,7 +254,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
     /**
      * Parses the dtd.
      */
-    protected ISchema parseDtd() throws ParseError, IOException {
+    private ISchema parseDtd() throws ParseError, IOException {
         InputStream tempStream = getClass().getResourceAsStream(ANT_1_5_DTD_FILENAME);
         InputStreamReader tempReader = new InputStreamReader(tempStream, "UTF-8"); //$NON-NLS-1$
         Parser parser = new Parser();
@@ -270,7 +266,6 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 		this.viewer = viewer;
-        computedCompletionStrings.clear();
 		return determineProposals();
 	
 	}
@@ -316,7 +311,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
     /**
      * Returns the new determined proposals.
      */ 
-	protected ICompletionProposal[] determineProposals() {
+	private ICompletionProposal[] determineProposals() {
 		
 		String prefix = getCurrentPrefix();
 		cursorPosition = ((ITextSelection)viewer.getSelectionProvider().getSelection()).getOffset();
@@ -340,11 +335,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 			return null;
 		}
 	
-		// just being extra sure it's clear..
-		computedCompletionStrings.clear();
 		ICompletionProposal[] proposals = getProposalsFromDocument(tempDocument.get(), prefix);
-		computedCompletionStrings.clear();
-		
 		return proposals;
 		
 	}
@@ -528,7 +519,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                 }
                  
                 String tempReplacementString = "${"+tempPropertyName+"}"; //$NON-NLS-1$ //$NON-NLS-2$
-                org.eclipse.swt.graphics.Image tempImage = null;
+                Image tempImage = null;
                 if(ExternalToolsPlugin.getDefault() != null) { //not running test suite
 	                tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
                 }
@@ -585,8 +576,9 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 	       	if(lastDefaultHandler != null) {
                 tempRootElementName = lastDefaultHandler.rootElementName;
         	}
-			if (tempRootElementName == null)
+			if (tempRootElementName == null) {
 				tempRootElementName = aPrefix + "project"; //$NON-NLS-1$
+			}
 			IElement tempRootElement = dtd.getElement(tempRootElementName);
 			if(tempRootElement != null && tempRootElementName.startsWith(aPrefix)) {
 				String tempProposalInfo = null;
@@ -662,40 +654,6 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
        return (ICompletionProposal[])tempProposals.toArray(new ICompletionProposal[tempProposals.size()]);
    }
 
-	/**
-	 * Returns a completion proposal for a given element name.
-	 * @param tempElementName
-	 * @param aPrefix
-	 * @param aWholeDocumentString
-	 * @return ICompletionProposal
-	 */
-	protected ICompletionProposal makeProposal(String tempElementName, String aPrefix, String aWholeDocumentString) {
-		String tempProposalInfo = null;
-		String tempDescription = descriptionProvider.getDescriptionForTask(tempElementName);
-		if(tempDescription != null) {
-			tempProposalInfo = tempDescription;
-		}
-	                                
-		String tempReplacementString = getTaskProposalReplacementString(tempElementName);
-		int tempReplacementOffset = cursorPosition-aPrefix.length();
-		int tempReplacementLength = aPrefix.length();
-		if(tempReplacementOffset > 0 && aWholeDocumentString.charAt(tempReplacementOffset-1) == '<') {
-			tempReplacementOffset--;
-			tempReplacementLength++;
-		}
-
-		ICompletionProposal tempProposal = new CompletionProposal(
-			tempReplacementString, 
-			tempReplacementOffset, 
-			tempReplacementLength, 
-			tempElementName.length()+2, 
-			ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK), 
-			tempElementName, 
-			null, 
-			tempProposalInfo);
-		
-		return tempProposal;
-	}
     /**
      * Returns the one possible completion for the specified unclosed task 
      * element.
@@ -708,12 +666,12 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * 
      * @return array which may contain either one or none proposals
      */
-    protected ICompletionProposal[] getClosingTaskProposals(Element aUnclosedTaskElement, String aPrefix) {
+    private ICompletionProposal[] getClosingTaskProposals(Element aUnclosedTaskElement, String aPrefix) {
         Set tempProposals = new CompletionSet();
         if(aUnclosedTaskElement != null) {
             if(aUnclosedTaskElement.getTagName().startsWith(aPrefix)) {
                 String tempReplaceString = aUnclosedTaskElement.getTagName();
-                tempProposals.add(new CompletionProposal(tempReplaceString+">", cursorPosition - aPrefix.length(), aPrefix.length(), tempReplaceString.length()+1, null, tempReplaceString, null, null)); //$NON-NLS-1$
+                tempProposals.add(new CompletionProposal(tempReplaceString + '>', cursorPosition - aPrefix.length(), aPrefix.length(), tempReplaceString.length()+1, null, tempReplaceString, null, null));
             }
         }
         return (ICompletionProposal[])tempProposals.toArray(new ICompletionProposal[tempProposals.size()]);
@@ -723,14 +681,17 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * Returns the replacement string for the specified task name.
      */
     private String getTaskProposalReplacementString(String aTaskName) {
-        String tempReplacementString = "<" + aTaskName; //$NON-NLS-1$
+        StringBuffer tempReplacement = new StringBuffer("<"); //$NON-NLS-1$
+        tempReplacement.append(aTaskName); 
         if(isEmpty(aTaskName)) {
-            tempReplacementString += " />"; //$NON-NLS-1$
+            tempReplacement.append(" />"); //$NON-NLS-1$
         }
         else {
-            tempReplacementString += " ></" +aTaskName+ ">"; //$NON-NLS-1$ //$NON-NLS-2$
+            tempReplacement.append(" ></"); //$NON-NLS-1$
+            tempReplacement.append(aTaskName);
+            tempReplacement.append('>');
         }
-        return tempReplacementString;               
+        return tempReplacement.toString();               
     }
 
 
@@ -772,13 +733,13 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      */
 	private String getCurrentPrefix() {
 
-		IDocument doc = viewer.getDocument();
 		ITextSelection selection = (ITextSelection)viewer.getSelectionProvider().getSelection();
 		
 		if (selection.getLength() > 0) {
 			return null;
 		}
 		
+		IDocument doc = viewer.getDocument();
 
         return getPrefixFromDocument(doc.get(), selection.getOffset());
 	}
@@ -916,7 +877,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * @return the extracted task string or <code>null</code> if no string could
      * be extracted.
      */
-    protected String getTaskStringFromDocumentStringToPrefix(
+    private String getTaskStringFromDocumentStringToPrefix(
             String aDocumentStringToPrefix) {
             
         int tempLessThanIndex = aDocumentStringToPrefix.lastIndexOf('<');
@@ -949,7 +910,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * Calling this method is only safe if the current proposal mode is really
      * <code>PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL</code>.
      */
-    protected String getAttributeStringFromDocmentStringToPrefix(String aDocumentStringToPrefix) {
+    private String getAttributeStringFromDocmentStringToPrefix(String aDocumentStringToPrefix) {
         int tempIndex = aDocumentStringToPrefix.lastIndexOf('=');
         String tempSubString = aDocumentStringToPrefix.substring(0, tempIndex);
         tempSubString = tempSubString.trim();
@@ -973,11 +934,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
     /**
      * Returns wether the specified task name is known according to the DTD.
      */
-    protected boolean isNamedTaskKnown(String aTaskName) {
-    	/*bf
-        Object tempValue = dtd.elements.get(aTaskName);
-        return (tempValue != null);
-        */
+    private boolean isNamedTaskKnown(String aTaskName) {
         return dtd.getElement(aTaskName) != null;
     }
 
@@ -1078,16 +1035,20 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
          * that is passed.
          */
         File tempFile = getEditedFile();
-        tempProject.setUserProperty("ant.file", tempFile.getAbsolutePath()); //$NON-NLS-1$
+        String filePath= ""; //$NON-NLS-1$
+        if (tempFile != null) {
+			filePath= tempFile.getAbsolutePath();
+        }
+        tempProject.setUserProperty("ant.file", filePath); //$NON-NLS-1$
 
         try {
             ProjectHelper.configureProject(tempProject, tempFile, aWholeDocumentString);  // File will be parsed here
         }
         catch(BuildException e) {
-            // ignore a build exception on purpose, since we also parse unvalid
+            // ignore a build exception on purpose, since we also parse invalid
             // build files.
         }    
-        Hashtable tempTable = tempProject.getProperties();
+        Map properties = tempProject.getProperties();
         
         // Determine the parent
         Element tempElement = findEnclosingTargetElement(aWholeDocumentString, lineNumber, columnNumber);
@@ -1095,15 +1056,15 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         if(tempElement == null 
         		|| (tempTargetName = tempElement.getAttribute("name")) == null //$NON-NLS-1$
         		|| tempTargetName.length() == 0) {
-        	return tempTable;
+        	return properties;
         }
-        Vector tempSortedTargets = tempProject.topoSort(tempTargetName, tempProject.getTargets());
+        List tempSortedTargets = tempProject.topoSort(tempTargetName, tempProject.getTargets());
 
         int curidx = 0;
         Target curtarget;
 
         do {
-            curtarget = (Target) tempSortedTargets.elementAt(curidx++);
+            curtarget = (Target) tempSortedTargets.get(curidx++);
 			Task[] tempTasks = curtarget.getTasks();
 			
 			for (int i = 0; i < tempTasks.length; i++) {
@@ -1139,7 +1100,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 //				}
 			
 				// Ant 1.5
-//				if(tempTask instanceof XmlPropery) {
+//				if(tempTask instanceof XmlProperty) {
 //				
 //				}
 			
@@ -1158,11 +1119,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 //				if(tempTask instanceof LoadProperties) {
 //				
 //				}
-			
             }
-			
-			
-			
         } while (!curtarget.getName().equals(tempTargetName));
 
         
@@ -1170,7 +1127,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         return tempProject.getProperties();
     }
 
-    protected File getEditedFile() {
+    private File getEditedFile() {
     	IWorkbenchPage page= ExternalToolsPlugin.getActivePage();
     	if (page == null) {
     		return null;
