@@ -10,6 +10,7 @@
 package org.eclipse.core.tests.harness;
 
 import junit.framework.Assert;
+
 /**
  * This class acts as an implementation of a barrier that is appropriate for
  * concurrency test cases that want to fail if a thread fails to achieve a
@@ -53,6 +54,7 @@ public class TestBarrier {
 	 * test.
 	 */
 	public static final int STATUS_WAIT_FOR_START = 0;
+
 	/**
 	 * Blocks the calling thread until the status integer at the given index
 	 * is set to the given value. Fails if the status change does not occur in 
@@ -63,8 +65,7 @@ public class TestBarrier {
 	 * thread is waiting for
 	 * @param status the status that the calling thread should wait for
 	 */
-	private static void doWaitForStatus(int[] statuses, int index, int status,
-			int timeout) {
+	private static void doWaitForStatus(int[] statuses, int index, int status, int timeout) {
 		int i = 0;
 		while (statuses[index] != status) {
 			try {
@@ -75,11 +76,10 @@ public class TestBarrier {
 				//ignore
 			}
 			//sanity test to avoid hanging tests
-			Assert.assertTrue("Timeout waiting for status to change from "
-					+ getStatus(statuses[index]) + " to " + getStatus(status),
-					i++ < timeout);
+			Assert.assertTrue("Timeout waiting for status to change from " + getStatus(statuses[index]) + " to " + getStatus(status), i++ < timeout);
 		}
 	}
+
 	private static String getStatus(int status) {
 		switch (status) {
 			case STATUS_WAIT_FOR_START :
@@ -100,9 +100,11 @@ public class TestBarrier {
 				return "UNKNOWN_STATUS";
 		}
 	}
+
 	public static void waitForStatus(int[] location, int status) {
 		doWaitForStatus(location, 0, status, 100);
 	}
+
 	/**
 	 * Blocks the current thread until the given variable is set to the given
 	 * value Times out after a predefined period to avoid hanging tests
@@ -110,6 +112,7 @@ public class TestBarrier {
 	public static void waitForStatus(int[] location, int index, int status) {
 		doWaitForStatus(location, index, status, 100);
 	}
+
 	/**
 	 * The same as other barrier methods, except it will not fail if the job
 	 * does not start in a "reasonable" time. This is only appropriate for tests

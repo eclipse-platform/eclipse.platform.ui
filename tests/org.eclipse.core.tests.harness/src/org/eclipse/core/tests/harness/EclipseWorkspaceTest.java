@@ -57,6 +57,7 @@ public class EclipseWorkspaceTest extends TestCase {
 
 	/** counter for generating unique random filesystem locations */
 	protected static int nextLocationCounter = 0;
+
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.
 	 * This constructor should not do any real work nor should it be
@@ -65,6 +66,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public EclipseWorkspaceTest() {
 		super(null);
 	}
+
 	/**
 	 * Creates a new EclipseWorkspaceTest
 	 * @param name java.lang.String
@@ -72,6 +74,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public EclipseWorkspaceTest(String name) {
 		super(name);
 	}
+
 	/**
 	 * Assert that each element of the resource array does not exist in the 
 	 * local store.
@@ -79,6 +82,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertDoesNotExistInFileSystem(IResource[] resources) {
 		assertDoesNotExistInFileSystem("", resources); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element of the resource array does not exist in the 
 	 * local store.
@@ -87,6 +91,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		for (int i = 0; i < resources.length; i++)
 			assertDoesNotExistInFileSystem(message, resources[i]);
 	}
+
 	/**
 	 * Assert that the given resource does not exist in the local store.
 	 */
@@ -96,12 +101,14 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail(formatted + resource.getFullPath() + " unexpectedly exists in the file system");
 		}
 	}
+
 	/**
 	 * Assert that the given resource does not exist in the local store.
 	 */
 	public void assertDoesNotExistInFileSystem(IResource resource) {
 		assertDoesNotExistInFileSystem("", resource); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element of the resource array does not exist 
 	 * in the workspace resource info tree.
@@ -109,6 +116,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertDoesNotExistInWorkspace(IResource[] resources) {
 		assertDoesNotExistInWorkspace("", resources); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element of the resource array does not exist 
 	 * in the workspace resource info tree.
@@ -118,6 +126,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			assertDoesNotExistInWorkspace(message, resources[i]);
 		}
 	}
+
 	protected void assertEquals(String message, Object[] expected, Object[] actual) {
 		if (expected == null && actual == null)
 			return;
@@ -128,6 +137,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		for (int i = 0; i < expected.length; i++)
 			assertEquals(message, expected[i], actual[i]);
 	}
+
 	/**
 	 * Assert that the given resource does not exist in the workspace 
 	 * resource info tree.
@@ -138,6 +148,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail(formatted + resource.getFullPath().toString() + " unexpectedly exists in the workspace");
 		}
 	}
+
 	/**
 	 * Assert that the given resource does not exist in the workspace 
 	 * resource info tree.
@@ -145,12 +156,14 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertDoesNotExistInWorkspace(IResource resource) {
 		assertDoesNotExistInWorkspace("", resource); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element in the resource array  exists in the local store.
 	 */
 	public void assertExistsInFileSystem(IResource[] resources) {
 		assertExistsInFileSystem("", resources); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element in the resource array  exists in the local store.
 	 */
@@ -158,6 +171,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		for (int i = 0; i < resources.length; i++)
 			assertExistsInFileSystem(message, resources[i]);
 	}
+
 	/**
 	 * Assert whether or not the given resource exists in the local 
 	 * store. Use the resource manager to ensure that we have a 
@@ -169,6 +183,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail(formatted + resource.getFullPath() + " unexpectedly does not exist in the file system");
 		}
 	}
+
 	/**
 	 * Assert whether or not the given resource exists in the local 
 	 * store. Use the resource manager to ensure that we have a 
@@ -177,6 +192,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertExistsInFileSystem(IResource resource) {
 		assertExistsInFileSystem("", resource); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element of the resource array exists in the 
 	 * workspace resource info tree.
@@ -184,6 +200,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertExistsInWorkspace(IResource[] resources) {
 		assertExistsInWorkspace("", resources, false); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element of the resource array exists in the 
 	 * workspace resource info tree.
@@ -191,6 +208,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertExistsInWorkspace(IResource[] resources, boolean phantom) {
 		assertExistsInWorkspace("", resources, phantom); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert that each element of the resource array exists in the 
 	 * workspace resource info tree.
@@ -199,6 +217,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		for (int i = 0; i < resources.length; i++)
 			assertExistsInWorkspace(message, resources[i], false);
 	}
+
 	/**
 	 * Assert that each element of the resource array exists in the 
 	 * workspace resource info tree.
@@ -207,6 +226,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		for (int i = 0; i < resources.length; i++)
 			assertExistsInWorkspace(message, resources[i], phantom);
 	}
+
 	/**
 	 * Assert whether or not the given resource exists in the workspace 
 	 * resource info tree.
@@ -214,6 +234,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertExistsInWorkspace(String message, IResource resource) {
 		assertExistsInWorkspace(message, resource, false);
 	}
+
 	/**
 	 * Assert whether or not the given resource exists in the workspace 
 	 * resource info tree.
@@ -224,6 +245,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail(formatted + resource.getFullPath().toString() + " unexpectedly does not exist in the workspace");
 		}
 	}
+
 	/**
 	 * Assert whether or not the given resource exists in the workspace 
 	 * resource info tree.
@@ -231,6 +253,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertExistsInWorkspace(IResource resource) {
 		assertExistsInWorkspace("", resource, false); //$NON-NLS-1$
 	}
+
 	/**
 	 * Assert whether or not the given resource exists in the workspace 
 	 * resource info tree.
@@ -238,12 +261,14 @@ public class EclipseWorkspaceTest extends TestCase {
 	public void assertExistsInWorkspace(IResource resource, boolean phantom) {
 		assertExistsInWorkspace("", resource, phantom); //$NON-NLS-1$
 	}
+
 	/**
 	 * Return a collection of resources the hierarcy defined by defineHeirarchy().
 	 */
 	public IResource[] buildResources() {
 		return buildResources(getWorkspace().getRoot(), defineHierarchy());
 	}
+
 	/**
 	 * Return a collection of resources for the given hierarchy at 
 	 * the given root.
@@ -270,6 +295,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		return result;
 	}
+
 	/**
 	 * Returns a boolean value indicating whether or not the contents
 	 * of the given streams are considered to be equal. Closes both input streams.
@@ -300,6 +326,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			}
 		}
 	}
+
 	private IPath computeDefaultLocation(IResource target) {
 		switch (target.getType()) {
 			case IResource.ROOT :
@@ -312,6 +339,7 @@ public class EclipseWorkspaceTest extends TestCase {
 				return location;
 		}
 	}
+
 	protected void create(final IResource resource, boolean local) throws CoreException {
 		if (resource == null || resource.exists())
 			return;
@@ -319,17 +347,18 @@ public class EclipseWorkspaceTest extends TestCase {
 			create(resource.getParent(), local);
 		switch (resource.getType()) {
 			case IResource.FILE :
-				 ((IFile) resource).create(local ? new ByteArrayInputStream(new byte[0]) : null, true, getMonitor());
+				((IFile) resource).create(local ? new ByteArrayInputStream(new byte[0]) : null, true, getMonitor());
 				break;
 			case IResource.FOLDER :
-				 ((IFolder) resource).create(true, local, getMonitor());
+				((IFolder) resource).create(true, local, getMonitor());
 				break;
 			case IResource.PROJECT :
-				 ((IProject) resource).create(getMonitor());
+				((IProject) resource).create(getMonitor());
 				((IProject) resource).open(getMonitor());
 				break;
 		}
 	}
+
 	/**
 	 * Create the given file in the local store. 
 	 */
@@ -351,6 +380,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			}
 		}
 	}
+
 	/**
 	 * Create the given file in the local store. 
 	 */
@@ -360,11 +390,13 @@ public class EclipseWorkspaceTest extends TestCase {
 		FileOutputStream output = new FileOutputStream(file);
 		transferData(contents, output);
 	}
+
 	public IResource[] createHierarchy() {
 		IResource[] result = buildResources();
 		ensureExistsInWorkspace(result, true);
 		return result;
 	}
+
 	/**
 	 * Returns a collection of string paths describing the standard 
 	 * resource hierarchy for this test.  In the string forms, folders are
@@ -379,6 +411,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public String[] defineHierarchy() {
 		return new String[0];
 	}
+
 	/**
 	 * Delete the resources in the array from the local store.
 	 */
@@ -386,6 +419,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		for (int i = 0; i < resources.length; i++)
 			ensureDoesNotExistInFileSystem(resources[i]);
 	}
+
 	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
 		if (!file.exists())
 			return;
@@ -398,6 +432,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		if (!file.delete())
 			System.out.println("WARNING: ensureDoesNotExistInFileSystem(File) could not delete: " + file.getPath());
 	}
+
 	/**
 	 * Delete the given resource from the local store. Use the resource
 	 * manager to ensure that we have a correct Path -> File mapping.
@@ -407,6 +442,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		if (path != null)
 			ensureDoesNotExistInFileSystem(path.toFile());
 	}
+
 	/**
 	 * Delete each element of the resource array from the workspace 
 	 * resource info tree.
@@ -424,6 +460,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail("#ensureDoesNotExistInWorkspace(IResource[])", e);
 		}
 	}
+
 	/**
 	 * Delete the given resource from the workspace resource tree.
 	 */
@@ -435,6 +472,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail("#ensureDoesNotExistInWorkspace(IResource): " + resource.getFullPath(), e);
 		}
 	}
+
 	/**
 	 * Create the each resource of the array in the local store.
 	 */
@@ -442,6 +480,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		for (int i = 0; i < resources.length; i++)
 			ensureExistsInFileSystem(resources[i]);
 	}
+
 	/**
 	 * Create the given file in the local store. Use the resource manager
 	 * to ensure that we have a correct Path -> File mapping.
@@ -455,6 +494,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail("#ensureExistsInFileSystem(IFile): " + file.getFullPath(), e);
 		}
 	}
+
 	/**
 	 * Create the given folder in the local store. Use the resource
 	 * manager to ensure that we have a correct Path -> File mapping.
@@ -468,6 +508,7 @@ public class EclipseWorkspaceTest extends TestCase {
 				path.toFile().mkdirs();
 		}
 	}
+
 	/**
 	 * Create each element of the resource array in the workspace resource 
 	 * info tree.
@@ -485,6 +526,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail("#ensureExistsInWorkspace(IResource[])", e);
 		}
 	}
+
 	/**
 	 * Modifies the resource in the filesystem so that it is out of sync
 	 * with the workspace.
@@ -503,6 +545,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			}
 		}
 	}
+
 	/**
 	 * Create the given file in the workspace resource info tree.
 	 */
@@ -525,12 +568,14 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail("#ensureExistsInWorkspace(IFile, InputStream): " + resource.getFullPath(), e);
 		}
 	}
+
 	/**
 	 * Create the given file in the workspace resource info tree.
 	 */
 	public void ensureExistsInWorkspace(IFile resource, String contents) {
 		ensureExistsInWorkspace(resource, new ByteArrayInputStream(contents.getBytes()));
 	}
+
 	/**
 	 * Create the given resource in the workspace resource info tree.
 	 */
@@ -546,16 +591,19 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail("#ensureExistsInWorkspace(IResource): " + resource.getFullPath(), e);
 		}
 	}
+
 	private boolean existsInFileSystem(IResource resource) {
 		IPath path = resource.getLocation();
 		if (path == null)
 			path = computeDefaultLocation(resource);
 		return path.toFile().exists();
 	}
+
 	private boolean existsInWorkspace(IResource resource, boolean phantom) {
 		IResource target = getWorkspace().getRoot().findMember(resource.getFullPath(), phantom);
 		return target != null && target.getType() == resource.getType();
 	}
+
 	/**
 	 * Fails the test due to the given throwable.
 	 * @param message
@@ -571,6 +619,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		fail(message + ": " + e);
 	}
+
 	protected void indent(OutputStream output, int indent) {
 		for (int i = 0; i < indent; i++)
 			try {
@@ -579,6 +628,7 @@ public class EclipseWorkspaceTest extends TestCase {
 				// ignore
 			}
 	}
+
 	protected void write(IStatus status, int indent) {
 		PrintStream output = System.out;
 		indent(output, indent);
@@ -599,6 +649,7 @@ public class EclipseWorkspaceTest extends TestCase {
 				write(children[i], indent + 1);
 		}
 	}
+
 	/**
 	 * Does some garbage collections to free unused resources
 	 */
@@ -609,6 +660,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			System.gc();
 		}
 	}
+
 	/** 
 	 * Returns the unqualified class name of the receiver (ie. without the package prefix).
 	 */
@@ -616,6 +668,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		String fullClassName = getClass().getName();
 		return fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
 	}
+
 	public InputStream getContents(java.io.File target, String errorCode) {
 		try {
 			return new FileInputStream(target);
@@ -624,6 +677,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		return null; // never happens
 	}
+
 	/**
 	 * Return an input stream with some the specified text to use
 	 * as contents for a file resource.
@@ -631,38 +685,30 @@ public class EclipseWorkspaceTest extends TestCase {
 	public InputStream getContents(String text) {
 		return new ByteArrayInputStream(text.getBytes());
 	}
+
 	/**
 	 * Returns invalid sets of natures
 	 */
 	protected String[][] getInvalidNatureSets() {
-		return new String[][] { { NATURE_SNOW }, //missing water pre-req
-			{
-				NATURE_WATER, NATURE_EARTH }, //duplicates from state-set
-			{
-				NATURE_WATER, NATURE_MUD }, //missing earth pre-req
-			{
-				NATURE_WATER, NATURE_EARTH, NATURE_MUD }, //duplicates from state-set
-			{
-				NATURE_SIMPLE, NATURE_SNOW, NATURE_WATER, NATURE_MUD }, //dups from other-set, missing pre-req
-			{
-				NATURE_MISSING }, //doesn't exist
-			{
-				NATURE_SIMPLE, NATURE_MISSING }, //missing doesn't exist
-			{
-				NATURE_MISSING_PREREQ }, //requires nature that doesn't exist
-			{
-				NATURE_SIMPLE, NATURE_MISSING_PREREQ }, //requires nature that doesn't exist
-			{
-				NATURE_CYCLE1 }, //missing pre-req
-			{
-				NATURE_CYCLE2, NATURE_CYCLE3 }, //missing pre-req
-			{
-				NATURE_CYCLE1, NATURE_SIMPLE, NATURE_CYCLE2, NATURE_CYCLE3 }, //cycle
+		return new String[][] { {NATURE_SNOW}, //missing water pre-req
+				{NATURE_WATER, NATURE_EARTH}, //duplicates from state-set
+				{NATURE_WATER, NATURE_MUD}, //missing earth pre-req
+				{NATURE_WATER, NATURE_EARTH, NATURE_MUD}, //duplicates from state-set
+				{NATURE_SIMPLE, NATURE_SNOW, NATURE_WATER, NATURE_MUD}, //dups from other-set, missing pre-req
+				{NATURE_MISSING}, //doesn't exist
+				{NATURE_SIMPLE, NATURE_MISSING}, //missing doesn't exist
+				{NATURE_MISSING_PREREQ}, //requires nature that doesn't exist
+				{NATURE_SIMPLE, NATURE_MISSING_PREREQ}, //requires nature that doesn't exist
+				{NATURE_CYCLE1}, //missing pre-req
+				{NATURE_CYCLE2, NATURE_CYCLE3}, //missing pre-req
+				{NATURE_CYCLE1, NATURE_SIMPLE, NATURE_CYCLE2, NATURE_CYCLE3}, //cycle
 		};
 	}
+
 	public IProgressMonitor getMonitor() {
 		return new FussyProgressMonitor();
 	}
+
 	/**
 	 * Return an input stream with some random text to use
 	 * as contents for a file resource.
@@ -670,6 +716,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	public InputStream getRandomContents() {
 		return new ByteArrayInputStream(getRandomString().getBytes());
 	}
+
 	/**
 	 * Returns a unique location on disk.  It is guaranteed that no file currently
 	 * exists at that location.  The returned location will be unique with respect 
@@ -694,6 +741,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		return path;
 	}
+
 	/**
 	 * Return String with some random text to use
 	 * as contents for a file resource.
@@ -724,23 +772,22 @@ public class EclipseWorkspaceTest extends TestCase {
 				return "these are my contents";
 		}
 	}
+
 	public String getUniqueString() {
 		return new UniversalUniqueIdentifier().toString();
 	}
+
 	/**
 	 * Returns valid sets of natures
 	 */
 	protected String[][] getValidNatureSets() {
-		return new String[][] { {
-			}, {
-				NATURE_SIMPLE }, {
-				NATURE_SNOW, NATURE_WATER }, {
-				NATURE_EARTH }, {
-				NATURE_WATER, NATURE_SIMPLE, NATURE_SNOW }, };
+		return new String[][] { {}, {NATURE_SIMPLE}, {NATURE_SNOW, NATURE_WATER}, {NATURE_EARTH}, {NATURE_WATER, NATURE_SIMPLE, NATURE_SNOW},};
 	}
+
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
+
 	/**
 	 * Modifies the content of the given file in the file system by
 	 * appending an 'f'.
@@ -762,6 +809,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail(m + "0.0", e);
 		}
 	}
+
 	/**
 	 * Modifies the content of the given file in the workspace by
 	 * appending a 'w'.
@@ -777,6 +825,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail(m + "0.0");
 		}
 	}
+
 	/**
 	 * Returns the content of the given file in the file system as a
 	 * byte array.
@@ -795,6 +844,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns the content of the given file in the workspace as a
 	 * byte array.
@@ -811,6 +861,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns the content of the given file in the file system as a
 	 * String (UTF8).
@@ -825,6 +876,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns the content of the given file in the workspace as a
 	 * String (UTF8).
@@ -839,6 +891,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 		return null;
 	}
+
 	/**
 	 * The environment should be set-up in the main method.
 	 */
@@ -849,12 +902,14 @@ public class EclipseWorkspaceTest extends TestCase {
 			getWorkspace().addResourceChangeListener(deltaListener);
 		}
 	}
+
 	/**
 	 * Returns the test suite for this test class.
 	 */
 	public static Test suite() {
 		return new TestSuite();
 	}
+
 	/**
 	 * Copy the data from the input stream to the output stream.
 	 * Close both streams when finished.
@@ -874,6 +929,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			assertTrue(e.toString(), false);
 		}
 	}
+
 	/**
 	 * Copy the data from the input stream to the output stream.
 	 * Do not close either of the streams.
@@ -888,6 +944,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			assertTrue(e.toString(), false);
 		}
 	}
+
 	/**
 	 * Log messages if we are in debug mode.
 	 */
@@ -897,6 +954,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		if (plugin.isDebugging())
 			System.out.println(message);
 	}
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// Ensure everything is in a clean state for next one.

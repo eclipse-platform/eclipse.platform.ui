@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import junit.framework.TestFailure;
+
 /**
  * A LoggingPerformanceTestResult adds the ability to create an HTML or
  * other output file, and have test results written to that file instead
@@ -30,16 +31,19 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 			return new PrintWriter(System.out, true);
 		}
 	}
+
 	public LoggingPerformanceTestResult(File logFile) {
 		super(createWriter(logFile));
 		printHTMLHeader(output);
 	}
+
 	/**
 	 * Logs the given string in the test log file
 	 */
 	public synchronized void log(String s) {
 		output.println(s);
 	}
+
 	/**
 	 * Prints the test result
 	 */
@@ -52,6 +56,7 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 			output.close();
 		}
 	}
+
 	/**
 	 * Prints the errors to the standard output
 	 */
@@ -73,7 +78,9 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 		} else {
 			out.println("No errors reported.");
 		}
-	} /**
+	}
+
+	/**
 	 * Prints the failures to the output
 	 */
 	protected void printFailures(PrintWriter out) {
@@ -95,11 +102,13 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 			out.println("No failures reported.");
 		}
 	}
+
 	/**
 	 * Prints the header of the report
 	 */
 	protected void printHeader(PrintWriter out) {
 	}
+
 	/**
 	 * Prints the header of the report
 	 */
@@ -109,6 +118,7 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 		buf.append("</head>\n<body>\n");
 		out.println(buf.toString());
 	}
+
 	/**
 	 * Prints the header of the report
 	 */
@@ -116,6 +126,7 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 		out.println("</body>");
 		out.println("</html>");
 	}
+
 	/**
 	 * Prints the timings of the result.
 	 */
@@ -131,6 +142,7 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 		}
 		out.println("</ul>");
 	}
+
 	/**
 	 * Start the timer with the given name.  If the timer has already
 	 * been created, send it a startTiming message.  If not, create it
@@ -141,6 +153,7 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 		super.startTimer(timerName);
 		//log("Starting timer: " + timerName);
 	}
+
 	/**
 	 * Look up the timer with the given name and send it a stopTiming
 	 * message.  If the timer does not exist, report an error.

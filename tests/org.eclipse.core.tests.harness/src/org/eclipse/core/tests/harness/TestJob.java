@@ -22,12 +22,14 @@ public class TestJob extends Job {
 	private int ticks;
 	private long tickLength;
 	private int runCount = 0;
+
 	/**
 	 * A job that runs for one second in 100 millisecond increments.
 	 */
 	public TestJob(String name) {
 		this(name, 10, 100);
 	}
+
 	/**
 	 * A job that runs for the specified number of ticks at the
 	 * given tick duration.
@@ -40,6 +42,7 @@ public class TestJob extends Job {
 		this.ticks = ticks;
 		this.tickLength = tickDuration;
 	}
+
 	/**
 	 * Returns the number of times this job instance has been run, possibly including 
 	 * the current invocation if the job is currently running.
@@ -47,11 +50,12 @@ public class TestJob extends Job {
 	public synchronized int getRunCount() {
 		return runCount;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
-		setRunCount(getRunCount()+1);
+		setRunCount(getRunCount() + 1);
 		//must have positive work
 		monitor.beginTask(getName(), ticks <= 0 ? 1 : ticks);
 		try {
@@ -72,6 +76,7 @@ public class TestJob extends Job {
 		}
 		return Status.OK_STATUS;
 	}
+
 	private synchronized void setRunCount(int count) {
 		runCount = count;
 	}

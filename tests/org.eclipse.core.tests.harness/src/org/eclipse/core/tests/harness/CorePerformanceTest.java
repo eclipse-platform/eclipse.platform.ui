@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,12 +50,15 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 	public CorePerformanceTest() {
 		super();
 	}
+
 	public CorePerformanceTest(String name) {
 		super(name);
 	}
+
 	protected PerformanceTestResult defaultTest() {
 		return new PerformanceTestResult();
 	}
+
 	/**
 	 * Logs or writes string to console.
 	 */
@@ -65,6 +68,7 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 		else
 			System.out.println(s);
 	}
+
 	/**
 	 * A convenience method to run this test, collecting the results with a
 	 * default PerformanceTestResult object.
@@ -76,6 +80,7 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 		run(test);
 		return test;
 	}
+
 	/**
 	 * Runs the test case and collects the results in a PerformanceTestResult.
 	 * This is the template method that defines the control flow
@@ -87,11 +92,13 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 			logger = (LoggingPerformanceTestResult) test;
 		super.run(test);
 	}
+
 	protected void startBench() {
 		for (int i = 0; i < 20; ++i)
 			System.gc();
 		benchStart = System.currentTimeMillis();
 	}
+
 	/**
 	 * Tell the result to start a timer with the given name.
 	 * If no timer exists with that name, result creates a new timer
@@ -100,6 +107,7 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 	protected void startTimer(String timerName) {
 		result.startTimer(timerName);
 	}
+
 	protected void stopBench(String benchName, int numOperations) {
 		long duration = System.currentTimeMillis() - benchStart;
 		double perOp = (double) duration / (double) numOperations;
@@ -111,6 +119,7 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 			opString = "(" + (perOp * 1000.0) + "us per operation)"; //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println(benchName + " took " + duration + "ms " + opString); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	/**
 	 * Tell the result to stop the timer with the given name.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,23 +37,23 @@ package org.eclipse.core.tests.harness;
 public class WorkspaceSessionTest extends EclipseWorkspaceTest {
 	protected String testName;
 
-/**
- * Constructor for WorkspaceSessionTest.
- */
-public WorkspaceSessionTest() {
-	super();
-}
+	/**
+	 * Constructor for WorkspaceSessionTest.
+	 */
+	public WorkspaceSessionTest() {
+		super();
+	}
 
-/**
- * Constructor for WorkspaceSessionTest.
- * @param name
- */
-public WorkspaceSessionTest(String name) {
-	super(name);
-}
+	/**
+	 * Constructor for WorkspaceSessionTest.
+	 * @param name
+	 */
+	public WorkspaceSessionTest(String name) {
+		super(name);
+	}
 
-protected void tearDown() throws Exception {
-	// We should not run super.tearDown() on session tests.
-	// If needed, we should call it explicitly.
-}
+	protected void tearDown() throws Exception {
+		// We should not run super.tearDown() on session tests.
+		// If needed, we should call it explicitly.
+	}
 }

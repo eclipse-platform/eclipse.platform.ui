@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,19 +23,22 @@ public class PerformanceTestResult extends TestResult {
 	protected PrintWriter output;
 	protected ArrayList timerList = new ArrayList();
 	protected HashMap timers = new HashMap();
-	
+
 	public PerformanceTestResult() {
 		this(new PrintWriter(System.out));
 	}
+
 	public PerformanceTestResult(PrintWriter outputStream) {
 		this.output = outputStream;
 	}
+
 	/**
 	 * Informs the result that a test was completed.
 	 */
 	public synchronized void endTest(Test test) {
 		print();
 	}
+
 	/**
 	 * Prints the test result
 	 */
@@ -46,6 +49,7 @@ public class PerformanceTestResult extends TestResult {
 		printFailures(output);
 		printTimings(output);
 	}
+
 	/**
 	 * Prints the errors to the output
 	 */
@@ -64,24 +68,26 @@ public class PerformanceTestResult extends TestResult {
 			}
 		}
 	}
+
 	/**
 	 * Prints the failures to the output
 	 */
-   protected void printFailures(PrintWriter out) {
-	   int count = failureCount();
-	   if (count != 0) {
-		   if (count == 1)
-			   out.println("There was " + count + " failure:");
-		   else
-			   out.println("There were " + count + " failures:");
-		   int i = 1;
-		   for (Enumeration e = failures(); e.hasMoreElements(); i++) {
-			   TestFailure failure = (TestFailure) e.nextElement();
-			   out.println(i + ") " + failure.failedTest());
-			   failure.thrownException().printStackTrace(out);
-		   }
-	   }
-   }
+	protected void printFailures(PrintWriter out) {
+		int count = failureCount();
+		if (count != 0) {
+			if (count == 1)
+				out.println("There was " + count + " failure:");
+			else
+				out.println("There were " + count + " failures:");
+			int i = 1;
+			for (Enumeration e = failures(); e.hasMoreElements(); i++) {
+				TestFailure failure = (TestFailure) e.nextElement();
+				out.println(i + ") " + failure.failedTest());
+				failure.thrownException().printStackTrace(out);
+			}
+		}
+	}
+
 	/**
 	 * Prints the header of the report
 	 */
@@ -97,6 +103,7 @@ public class PerformanceTestResult extends TestResult {
 			out.println("Run: " + runCount() + " Failures: " + failureCount() + " Errors: " + errorCount());
 		}
 	}
+
 	/**
 	 * Prints the timings of the result.
 	 */
@@ -107,6 +114,7 @@ public class PerformanceTestResult extends TestResult {
 			out.println("Timing " + timer.getName() + " : " + timer.getElapsedTime() + " ms ");
 		}
 	}
+
 	/**
 	 * Start the test
 	 */
@@ -114,6 +122,7 @@ public class PerformanceTestResult extends TestResult {
 		super.startTest(test);
 		System.out.print(".");
 	}
+
 	/**
 	 * Start the timer with the given name.  If the timer has already
 	 * been created, send it a startTiming message.  If not, create it
@@ -129,6 +138,7 @@ public class PerformanceTestResult extends TestResult {
 		}
 		timer.startTiming();
 	}
+
 	/**
 	 * Look up the timer with the given name and send it a stopTiming
 	 * message.  If the timer does not exist, report an error.
@@ -140,6 +150,7 @@ public class PerformanceTestResult extends TestResult {
 		}
 		timer.stopTiming();
 	}
+
 	/**
 	 * Stops all timers
 	 */
