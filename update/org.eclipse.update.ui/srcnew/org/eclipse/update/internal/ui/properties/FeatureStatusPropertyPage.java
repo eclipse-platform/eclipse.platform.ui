@@ -40,14 +40,6 @@ public class FeatureStatusPropertyPage
 	 */
 	protected Control createContents(Composite parent) {
 		try {
-			ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) getElement();
-			IFeature feature = adapter.getFeature(null);
-			IStatus status = getStatus(feature);
-			int severity = status.getSeverity();
-			if (severity == IStatus.ERROR
-				&& getStatusCode(feature, status) == IFeature.STATUS_HAPPY) {
-				severity = IStatus.OK;
-			}
 
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout();
@@ -57,10 +49,26 @@ public class FeatureStatusPropertyPage
 
 			Text message = new Text(composite, SWT.MULTI | SWT.WRAP);
 			message.setEditable(false);
-			message.setText(status.getMessage());
 			GridData gd = new GridData();
 			gd.widthHint = 350;
 			message.setLayoutData(gd);
+			
+			ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) getElement();
+			IFeature feature = adapter.getFeature(null);
+			
+			if (UpdateManager.getOperationsManager().findPendingChange(feature) != null) {
+				message.setText("The feature has pending changes.  Therefore, its status cannot be determined until you restart the workbench.");
+				return composite;
+			}
+			
+			IStatus status = getStatus(feature);
+			int severity = status.getSeverity();
+			if (severity == IStatus.ERROR
+				&& getStatusCode(feature, status) == IFeature.STATUS_HAPPY) {
+				severity = IStatus.OK;
+			}
+			
+			message.setText(status.getMessage());
 
 			if (severity != IStatus.OK && status.isMultiStatus()) {
 				String reason = getReason(status);
