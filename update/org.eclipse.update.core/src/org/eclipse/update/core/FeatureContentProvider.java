@@ -1,36 +1,38 @@
 package org.eclipse.update.core;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 
-import org.eclipse.update.core.model.ContentEntryModel;
-import org.eclipse.update.core.model.NonPluginEntryModel;
-import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
- * Base class for feature content providers.
- * </p>
+ * Base implementation of a feature content provider.
+ * This class provides a set of helper methods useful for implementing
+ * feature content providers. In particular, methods dealing with
+ * downloading and caching of feature files. 
+ * <p>
+ * This class must be subclassed by clients.
+ * </p> 
+ * @see org.eclipse.update.core.IFeatureContentProvider
  * @since 2.0
  */
-
-public abstract class FeatureContentProvider implements IFeatureContentProvider {
+public abstract class FeatureContentProvider
+	implements IFeatureContentProvider {
 
 	private URL base;
 	private IFeature feature;
 	private File tmpDir; // local work area for each provider
 
 	/**
+	 * Feature content provider constructor
+	 * 
+	 * @param base feature URL. The interpretation of this URL 
+	 * is specific to each content provider.
 	 * @since 2.0
 	 */
 	public FeatureContentProvider(URL base) {
@@ -38,21 +40,24 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		this.feature = null;
 	}
 
-	/*
+	/**
+	 * Returns the feature url. 
 	 * @see IFeatureContentProvider#getURL()
 	 */
 	public URL getURL() {
 		return base;
 	}
 
-	/*
+	/**
+	 * Returns the feature associated with this content provider.
 	 * @see IFeatureContentProvider#getFeature()
 	 */
 	public IFeature getFeature() {
 		return feature;
 	}
 
-	/*
+	/**
+	 * Sets the feature associated with this content provider.
 	 * @see IFeatureContentProvider#setFeature(IFeature)
 	 */
 	public void setFeature(IFeature feature) {
@@ -64,9 +69,15 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * If required, the file represented by the specified content
 	 * reference is first downloaded to the local system
 	 * 
+	 * @param ref content reference
+	 * @param monitor progress monitor, can be <code>null</code>
+	 * @exception IOException
 	 * @since 2.0
 	 */
-	public ContentReference asLocalReference(ContentReference ref, InstallMonitor monitor) throws IOException {
+	public ContentReference asLocalReference(
+		ContentReference ref,
+		InstallMonitor monitor)
+		throws IOException {
 
 		// check to see if this is already a local reference
 		if (ref.isLocalReference())
@@ -86,7 +97,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		try {
 			if (monitor != null) {
 				monitor.saveState();
-				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading")); //$NON-NLS-1$
+				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
+				//$NON-NLS-1$
 				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
 				monitor.setTotalCount(ref.getInputSize());
 				monitor.showCopyDetails(true);
@@ -119,9 +131,13 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * If required, the file represented by the specified content
 	 * reference is first downloaded to the local system
 	 * 
+	 * @param ref content reference
+	 * @param monitor progress monitor, can be <code>null</code>
+	 * @exception IOException	 * 
 	 * @since 2.0
 	 */
-	public File asLocalFile(ContentReference ref, InstallMonitor monitor) throws IOException {
+	public File asLocalFile(ContentReference ref, InstallMonitor monitor)
+		throws IOException {
 		File file = ref.asFile();
 		if (file != null)
 			return file;
@@ -134,6 +150,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	/**
 	 * Returns working directory for this content provider
 	 * 
+	 * @return working directory
+	 * @exception IOException
 	 * @since 2.0
 	 */
 	protected File getWorkingDirectory() throws IOException {
@@ -141,13 +159,19 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			tmpDir = Utilities.createWorkingDirectory();
 		return tmpDir;
 	}
-	/*
+	
+	/**
+	 * Returns the total size of all archives required for the
+	 * specified plug-in and non-plug-in entries (the "packaging" view).
 	 * @see IFeatureContentProvider#getDownloadSizeFor(IPluginEntry[], INonPluginEntry[])
 	 */
-	public long getDownloadSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries) {
+	public long getDownloadSizeFor(
+		IPluginEntry[] pluginEntries,
+		INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
-		if ((pluginEntries == null || pluginEntries.length == 0) && (nonPluginEntries == null || nonPluginEntries.length == 0)) {
+		if ((pluginEntries == null || pluginEntries.length == 0)
+			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -173,13 +197,18 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		return result;
 	}
 
-	/*
+	/**
+	 * Returns the total size of all files required for the
+	 * specified plug-in and non-plug-in entries (the "logical" view).
 	 * @see IFeatureContentProvider#getInstallSizeFor(IPluginEntry[], INonPluginEntry[])
 	 */
-	public long getInstallSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries) {
+	public long getInstallSizeFor(
+		IPluginEntry[] pluginEntries,
+		INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
-		if ((pluginEntries == null || pluginEntries.length == 0) && (nonPluginEntries == null || nonPluginEntries.length == 0)) {
+		if ((pluginEntries == null || pluginEntries.length == 0)
+			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -204,6 +233,5 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 
 		return result;
 	}
-
 
 }
