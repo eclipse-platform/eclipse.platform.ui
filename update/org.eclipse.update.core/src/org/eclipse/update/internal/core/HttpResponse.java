@@ -42,14 +42,19 @@ public class HttpResponse extends Response {
 		throws IOException, CoreException {
 		if (in == null && url != null) {
 			connection = url.openConnection();
-			lastModified = connection.getLastModified();
+
 			if (monitor != null && connection instanceof HttpURLConnection) {
 				this.in =
 					openStreamWithCancel(
 						(HttpURLConnection) connection,
 						monitor);
-			} else
+			} else {
 				this.in = connection.getInputStream();
+			}
+			// this can also be run inside a monitoring thread, but it is safe to
+			// just call it now, if the input stream has already been obtained
+			if (in != null)
+				this.lastModified = connection.getLastModified();
 		}
 		return in;
 	}
