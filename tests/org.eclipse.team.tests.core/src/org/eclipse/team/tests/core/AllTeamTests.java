@@ -31,7 +31,7 @@ public class AllTeamTests extends EclipseWorkspaceTest {
 		TestSuite suite = new TestSuite();
 		suite.addTest(RepositoryProviderTests.suite());
 		suite.addTest(StreamTests.suite());
-		return new TargetTestSetup(suite);
+		return suite;
 	}
 }
 
