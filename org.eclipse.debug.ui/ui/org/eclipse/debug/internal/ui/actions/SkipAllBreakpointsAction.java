@@ -12,18 +12,29 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An action which toggles the breakpoint manager's enablement.
  * This causes debug targets which honor the manager's enablement
  * to skip (not suspend for) all breakpoints. 
+ * 
+ * This class also implements the window action delegate for the action presented as
+ * part of the "Breakpoints" group for the "Run" menu.
  */
-public class SkipAllBreakpointsAction extends Action {
+public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindowActionDelegate, IBreakpointManagerListener {
+	
+	//The real action if this is an action delegate
+	private IAction fAction;
 	
 	public SkipAllBreakpointsAction() {
 		super(ActionMessages.getString("SkipAllBreakpointsAction.0")); //$NON-NLS-1$
@@ -33,8 +44,9 @@ public class SkipAllBreakpointsAction extends Action {
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SKIP_ALL_BREAKPOINT_ACTION);
 		updateActionCheckedState();
 	}
-	/**
-	 * @see IAction#run()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run(){
 		IBreakpointManager manager = getBreakpointManager();
@@ -46,7 +58,11 @@ public class SkipAllBreakpointsAction extends Action {
 	 * state of the breakpoint manager.
 	 */
 	public void updateActionCheckedState() {
-		setChecked(!getBreakpointManager().isEnabled());
+		if (fAction != null) {
+			fAction.setChecked(!getBreakpointManager().isEnabled());
+		} else {
+			setChecked(!getBreakpointManager().isEnabled());
+		}
 	}
 	
 	/**
@@ -56,5 +72,43 @@ public class SkipAllBreakpointsAction extends Action {
 	 */
 	public static IBreakpointManager getBreakpointManager() {
 		return DebugPlugin.getDefault().getBreakpointManager();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+		getBreakpointManager().removeBreakpointManagerListener(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+		updateActionCheckedState();
+		getBreakpointManager().addBreakpointManagerListener(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	public void run(IAction action) {
+		run();	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		fAction= action;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
+	 */
+	public void breakpointManagerEnablementChanged(boolean enabled) {
+		if (fAction != null) {
+			fAction.setChecked(!enabled);
+		}
 	}
 }

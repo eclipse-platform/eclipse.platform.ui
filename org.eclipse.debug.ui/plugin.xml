@@ -393,6 +393,16 @@
                   name="emptyBreakpointGroup">
             </groupMarker>
          </menu>
+          <action
+               definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
+               label="%SkipAllBreakpointsAction.label"
+               icon="icons/full/clcl16/skip_brkp.gif"
+               helpContextId="skip_all_breakpoints_action_context"
+               class="org.eclipse.debug.internal.ui.actions.SkipAllBreakpointsAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               style="toggle"
+               id="org.eclipse.debug.ui.actions.SkipAllBreakpoints">
+         </action>
          <action
                definitionId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
                label="%ToggleWatchpointAction.label"
@@ -1440,6 +1450,18 @@
             string="Ctrl+Shift+B"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.skipAllBreakpoints.name"
+            description="%ActionDefinition.skipAllBreakpoints.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.ui.commands.SkipAllBreakpoints">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
