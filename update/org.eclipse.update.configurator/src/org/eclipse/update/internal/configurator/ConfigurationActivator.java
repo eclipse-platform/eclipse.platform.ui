@@ -168,12 +168,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			for (int i = 0; i < plugins.length; i++) {
 				String location = plugins[i].toExternalForm();
 				try {
-					// strip /plugin.xml, /fragment.xml or /META-INF/MANIFEST.MF
-					if(location.endsWith("/META-INF/MANIFEST.MF")){
-						location = "reference:" + location.substring(0, location.length()-"/META-INF/MANIFEST.MF".length());
-					}else{
-						location = "reference:" + location.substring(0, location.lastIndexOf('/'));
-					}
+					location = "reference:" + location.substring(0, location.lastIndexOf('/'));
 					if (!isInstalled(location)) {
 						if (DEBUG)
 							Utils.debug("Installing " + location);
