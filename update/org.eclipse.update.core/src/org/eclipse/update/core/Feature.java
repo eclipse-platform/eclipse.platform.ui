@@ -230,17 +230,9 @@ public class Feature extends FeatureModel implements IFeature {
 		boolean success = false;
 		Throwable originalException = null;
 
-		// Get source feature provider, parentVerifier and verifier.
+		// Get source feature provider and verifier.
 		// Initialize target variables.
 		IFeatureContentProvider provider = getFeatureContentProvider();
-
-		IVerifier parentVerifier = null;
-		if (targetFeature.getFeatureContentConsumer().getParent() != null) {
-			IFeatureContentConsumer parentConsumer =
-				targetFeature.getFeatureContentConsumer().getParent();
-			IFeature parentFeature = parentConsumer.getFeature();
-			parentVerifier = parentFeature.getFeatureContentProvider().getVerifier();
-		}
 		IVerifier verifier = provider.getVerifier();
 		IFeatureReference result = null;
 		IFeatureContentConsumer consumer = null;
@@ -250,9 +242,11 @@ public class Feature extends FeatureModel implements IFeature {
 			IFeatureReference[] children = getIncludedFeatureReferences();
 			for (int i = 0; i < children.length; i++) {
 				Site targetSite = (Site) targetFeature.getSite();
+				IFeature childFeature = children[i].getFeature();
 				targetSite.install(
-					children[i].getFeature(),
+					childFeature,
 					targetFeature.getFeatureContentConsumer(),
+					verifier,
 					verificationListener,
 					monitor);
 			}
@@ -282,29 +276,16 @@ public class Feature extends FeatureModel implements IFeature {
 			handler.installInitiated();
 
 			// Download and verify feature archive(s)
+			IVerificationResult vr;
 			ContentReference[] references =
 				provider.getFeatureEntryArchiveReferences(monitor);
-			IVerificationResult vr;
-
-			// VERIFICATION 
-			// if the parent verified the reference, use the verification result
-			// if the parent doesn't recognize the reference or doesn't exist
-			// verify ourself
-			if (verifier != null || parentVerifier != null) {
-				for (int i = 0; i < references.length; i++) {
-					vr = null;
-					if (parentVerifier != null) {
-						vr = parentVerifier.verify(this, references[i], true, monitor);
-						if (vr.getVerificationCode() == IVerificationResult.TYPE_ENTRY_UNRECOGNIZED) {
-							if (verifier != null)
-								vr = verifier.verify(this, references[i], true, monitor);
+			for (int i = 0; i < pluginsToInstall.length; i++) {
+				if (verifier != null) {
+					for (int j = 0; j < references.length; j++) {
+						vr = verifier.verify(this, references[j], false, monitor);
+						if (vr != null) {
+							promptForVerification(vr, verificationListener);
 						}
-					} else {
-						if (verifier != null)
-							vr = verifier.verify(this, references[i], true, monitor);
-					}
-					if (vr != null) {
-						promptForVerification(vr, verificationListener);
 					}
 				}
 			}
@@ -319,21 +300,9 @@ public class Feature extends FeatureModel implements IFeature {
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				references =
 					provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
-
-				// VERIFICATION
-				if (verifier != null || parentVerifier != null) {
+				if (verifier != null) {
 					for (int j = 0; j < references.length; j++) {
-						vr = null;
-						if (parentVerifier != null) {
-							vr = parentVerifier.verify(this, references[j], false, monitor);
-							if (vr.getVerificationCode() == IVerificationResult.TYPE_ENTRY_UNRECOGNIZED) {
-								if (verifier != null)
-									vr = verifier.verify(this, references[j], true, monitor);
-							}
-						} else {
-							if (verifier != null)
-								vr = verifier.verify(this, references[j], true, monitor);
-						}
+						vr = verifier.verify(this, references[j], false, monitor);
 						if (vr != null) {
 							promptForVerification(vr, verificationListener);
 						}
@@ -421,7 +390,7 @@ public class Feature extends FeatureModel implements IFeature {
 			Exception newException = null;
 			try {
 				if (consumer != null) {
-					if (success){
+					if (success) {
 						result = consumer.close();
 					} else {
 						consumer.abort();

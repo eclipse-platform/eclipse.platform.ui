@@ -71,11 +71,12 @@ public class SiteFile extends Site {
 	}
 
 	/*
-	 * @see ISite#install(IFeature,IFeatureContentConsumer, IVerifier, IProgressMonitor)
+	 * @see ISite#install(IFeature,IFeatureContentConsumer, IVerifier,IVerificationLIstener, IProgressMonitor)
 	 */
 	public IFeatureReference install(
 		IFeature sourceFeature,
 		IFeatureContentConsumer parentContentConsumer,
+		IVerifier parentVerifier,
 		IVerificationListener verificationListener,
 		IProgressMonitor progress)
 		throws CoreException {
@@ -95,6 +96,10 @@ public class SiteFile extends Site {
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 		parentContentConsumer.addChild(localFeature);
+		
+		// set the verifier
+		IVerifier vr = sourceFeature.getFeatureContentProvider().getVerifier();
+		if (vr!=null) vr.setParent(parentVerifier);
 
 		IFeatureReference localFeatureReference =
 			sourceFeature.install(localFeature, verificationListener, monitor);

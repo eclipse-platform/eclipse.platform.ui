@@ -41,4 +41,23 @@ public interface IVerifier {
 		boolean isFeatureVerification,
 		InstallMonitor monitor)
 		throws CoreException;
+		
+	/**
+	 * Sets the parent verifier.
+	 * 
+	 * The parent verifier can only be set once by the parent feature.
+	 * It may used for different verification strategies. 
+	 * (for instance, you may decide that both the parent and current verifier
+	 * must sucessfully verify the content reference, or that only one of them must verify)
+	 * @param parentVerifier the parent verifier.
+	 */
+	public void setParent(IVerifier parentVerifier);
+	
+	/**
+	 * Returns the parent verifier
+	 * 
+	 * @return the parent verifier
+	 * @since 2.0
+	 */
+	public IVerifier getParent();
 }

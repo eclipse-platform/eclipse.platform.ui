@@ -404,13 +404,19 @@ public class Site extends SiteModel implements ISite {
 	 * This implementation always throws UnsupportedOperationException
 	 * because this implementation does not support the install action.
 	 * 
-	 * @see ISite#install(IFeature, IFeatureContentConsumer, IVerificationListener, IProgressMonitor)
-	 * @exception java.jang.UnsupportedOperationException
-	 * @since 2.0
+	 * @param feature feature to install
+	 * @param parentContentConsumer content consumer of the parent feature
+	 * @param parentVerifier verifier of the parent feature
+	 * @param verificationListener install verification listener
+	 * @param monitor install monitor, can be <code>null</code>
+	 * @exception CoreException
+	 * @exception java.jang.UnsupportedOperationException 
+	 * @since 2.0 
 	 */
 	 public IFeatureReference  install(
 		IFeature sourceFeature,
 		IFeatureContentConsumer parentContentConsumer,
+		IVerifier parentVerifier,
 		IVerificationListener verificationListener,
 		IProgressMonitor progress)
 		throws CoreException {

@@ -18,6 +18,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 	private ContentReference localManifest = null;
 	private ContentReference[] localFeatureFiles = new ContentReference[0];
+	private IVerifier jarVerifier = null;
 
 	/*
 	 * filer for file with .jar
@@ -36,10 +37,22 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	}
 
 	/*
-	 * Returns a new verifier for each install
+	 * Returns a new verifier for each top-level install
+	 * (if the verifier has a parent, return the verifier
+	 * otherwise reinitialize)
 	 */
 	public IVerifier getVerifier() throws CoreException {
-		return new JarVerifier();
+		if (jarVerifier == null) {
+			jarVerifier = new JarVerifier();
+			return jarVerifier;
+		}
+		
+		if (jarVerifier.getParent() == null) {
+			jarVerifier = new JarVerifier();
+			return jarVerifier;
+		}
+		
+		return jarVerifier;
 	}
 
 	/*
