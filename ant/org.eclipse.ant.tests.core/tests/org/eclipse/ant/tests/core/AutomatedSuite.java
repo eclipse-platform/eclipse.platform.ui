@@ -11,22 +11,20 @@
 package org.eclipse.ant.tests.core;
 
 
-import java.util.Enumeration;
-
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.ant.tests.core.tests.*;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Test all areas of Ant.
  * 
  * To run this test suite:
  * <ol>
- * <li>Create a new Run-time Workbench launch configuration</li>
- * <li>Append "org.eclipse.ant.tests.core.AutomatedSuite" to the Program Arguments</li>
- * <li>Set the Application Name to "org.eclipse.ant.tests.core.app"</li>
- * <li>Run the launch configuration. Output from the tests will be written to the debug console</li>
+ * <li>Create a new JUnit plugin test launch configuration</li>
+ * <li>Set the Test class to "org.eclipse.ant.tests.core.AutomatedSuite"</li>
+ * <li>Set the Project to "org.eclipse.ant.tests.core"</li>
+ * <li>Run the launch configuration. Output from the tests will be displayed in a JUnit view</li>
  * </ol>
  */
 public class AutomatedSuite extends TestSuite {
@@ -58,40 +56,40 @@ public class AutomatedSuite extends TestSuite {
 	}
 
 	/**
-	 * Runs the tests and collects their result in a TestResult.
-	 * The Ant tests cannot be run in the UI thread or the event
-	 * waiter blocks the UI when a resource changes.
+	 * Runs the tests and collects their result in a TestResult without blocking.
+	 * the UI thread. Not normally needed but nice to have to check on the state of
+	 * environment during a test run.
 	 */
-	public void run(final TestResult result) {
-		final Display display = Display.getCurrent();
-		Thread thread = null;
-		try {
-			Runnable r = new Runnable() {
-				public void run() {
-					for (Enumeration e= tests(); e.hasMoreElements(); ) {
-				  		if (result.shouldStop() )
-				  			break;
-						Test test= (Test)e.nextElement();
-						runTest(test, result);
-					}					
-					testing = false;
-					display.wake();
-				}
-			};
-			thread = new Thread(r);
-			thread.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-				
-		while (testing) {
-			try {
-				if (!display.readAndDispatch())
-					display.sleep();
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}			
-		}		
-	}
+//	public void run(final TestResult result) {
+//		final Display display = Display.getCurrent();
+//		Thread thread = null;
+//		try {
+//			Runnable r = new Runnable() {
+//				public void run() {
+//					for (Enumeration e= tests(); e.hasMoreElements(); ) {
+//				  		if (result.shouldStop() )
+//				  			break;
+//						Test test= (Test)e.nextElement();
+//						runTest(test, result);
+//					}					
+//					testing = false;
+//					display.wake();
+//				}
+//			};
+//			thread = new Thread(r);
+//			thread.start();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//				
+//		while (testing) {
+//			try {
+//				if (!display.readAndDispatch())
+//					display.sleep();
+//			} catch (Throwable e) {
+//				e.printStackTrace();
+//			}			
+//		}		
+//	}
 }
 
