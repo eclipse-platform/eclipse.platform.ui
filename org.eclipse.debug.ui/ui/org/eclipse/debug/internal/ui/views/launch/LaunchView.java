@@ -311,10 +311,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		getSite().setSelectionProvider(lv);
 		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
 		setEventHandler(new LaunchViewEventHandler(this));
-		
-		// determine if active
-		setActive(getSite().getPage().findView(getSite().getId()) != null);
-		
 		return lv;
 	}
 	
