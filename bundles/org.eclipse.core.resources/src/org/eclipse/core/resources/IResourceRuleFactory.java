@@ -112,5 +112,4 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule validateEditRule(IResource[] resources);
-
 }
