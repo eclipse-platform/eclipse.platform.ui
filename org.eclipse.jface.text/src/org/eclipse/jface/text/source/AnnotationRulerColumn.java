@@ -607,16 +607,19 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int topLeft= getInclusiveTopIndexStartOffset();
 		int bottomRight;
 		
+		IRegion coverage= null;
 		if (fCachedTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-			IRegion coverage= extension.getModelCoverage();
-			bottomRight= coverage.getOffset() + coverage.getLength();
+			coverage= extension.getModelCoverage();
 		} else if (fCachedTextViewer instanceof TextViewer) {
 			// TODO remove once TextViewer implements ITextViewerExtension5
 			TextViewer extension= (TextViewer) fCachedTextViewer;
-			IRegion coverage= extension.getModelCoverage();
+			coverage= extension.getModelCoverage();
+		}
+		
+		if (coverage != null)
 			bottomRight= coverage.getOffset() + coverage.getLength();
-		} else {
+		else {
 			// http://dev.eclipse.org/bugs/show_bug.cgi?id=14938
 			// http://dev.eclipse.org/bugs/show_bug.cgi?id=22487
 			// add 1 as getBottomIndexEndOffset returns the inclusive offset, but we want the exclusive offset (right after the last character)

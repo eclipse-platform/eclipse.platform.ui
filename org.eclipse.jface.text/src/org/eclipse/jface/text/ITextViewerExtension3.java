@@ -26,9 +26,9 @@ public interface ITextViewerExtension3 {
 	
 	/**
 	 * Returns the minimal region of the viewer's document that completely comprises everything that is
-	 * visible in the viewer's widget.
+	 * visible in the viewer's widget or <code>null</code> if there is no such region.
 	 * 
-	 * @return the minimal region of the viewer's document comprising the contents of the viewer's widget
+	 * @return the minimal region of the viewer's document comprising the contents of the viewer's widget or <code>null</code>
 	 */
 	IRegion getModelCoverage();
 	

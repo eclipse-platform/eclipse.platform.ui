@@ -2586,6 +2586,8 @@ public class TextViewer extends Viewer implements
 			return -1;
 		
 		IRegion coverage= getModelCoverage();
+		if (coverage == null)
+			return -1;
 		
 		try {
 			
@@ -2646,6 +2648,9 @@ public class TextViewer extends Viewer implements
 			int bottomEndOffset= line.getOffset() + line.getLength() - 1;
 			
 			IRegion coverage= getModelCoverage();
+			if (coverage == null)
+				return -1;
+			
 			int coverageEndOffset=  coverage.getOffset() + coverage.getLength() - 1;
 			return Math.min(coverageEndOffset, bottomEndOffset);
 				
@@ -2676,7 +2681,7 @@ public class TextViewer extends Viewer implements
 		} else {
 			
 			IRegion coverage= getModelCoverage();
-			int cursor= start < coverage.getOffset() ? 0 : getVisibleDocument().getLength();
+			int cursor= (coverage == null || start < coverage.getOffset()) ? 0 : getVisibleDocument().getLength();
 			internalRevealRange(cursor, cursor);
 		}
 	}
@@ -3259,10 +3264,12 @@ public class TextViewer extends Viewer implements
 					if (widgetCaret == -1) {
 						// try to move it to the closest spot
 						IRegion region= getModelCoverage();
-						if (documentCaret <= region.getOffset())
-							widgetCaret= 0;
-						else if (documentCaret >= region.getOffset() + region.getLength())
-							widgetCaret= getVisibleRegion().getLength();
+						if (region != null) {
+							if (documentCaret <= region.getOffset())
+								widgetCaret= 0;
+							else if (documentCaret >= region.getOffset() + region.getLength())
+								widgetCaret= getVisibleRegion().getLength();
+						}
 					}
 					
 					if (widgetCaret != -1) {
