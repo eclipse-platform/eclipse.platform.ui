@@ -228,6 +228,9 @@ The path is relative to the location of the plugin.xml file of the contributing 
                <documentation>
                   a name of the fully qualified class that implements &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt; (for object contributions), &lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt; (for viewer contributions to a view part), or &lt;samp&gt;org.eclipse.ui.IEditorActionDelegate&lt;/samp&gt; (for viewer contributions to an editor part).  For backwards compatibility, &lt;samp&gt;org.eclipse.ui.IActionDelegate&lt;/samp&gt; may be implemented for object contributions.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="enablesFor" type="string">

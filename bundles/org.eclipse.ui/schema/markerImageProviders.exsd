@@ -67,6 +67,9 @@
                <documentation>
                   The class is the fully qualifed name of the class that will be used to look up an image. This class must implement &lt;code&gt;IMarkerImageProvider&lt;/code&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.IMarkerImageProvider"/>
+               </appInfo>               
             </annotation>
          </attribute>
       </complexType>
