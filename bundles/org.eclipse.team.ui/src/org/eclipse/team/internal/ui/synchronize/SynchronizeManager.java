@@ -42,7 +42,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 	 * List of registered synchronize view pages {String id -> List participant
 	 * instances}}
 	 */
-	private Map synchronizeParticipants = new HashMap(10);
+	private Map synchronizeParticipants = Collections.synchronizedMap(new HashMap(10));
 	private SynchronizeParticipantRegistry participantRegistry = new SynchronizeParticipantRegistry();
 
 	// change notification constants
