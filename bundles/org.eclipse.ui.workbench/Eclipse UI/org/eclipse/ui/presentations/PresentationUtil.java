@@ -34,6 +34,10 @@ public class PresentationUtil {
 	private static Listener dragListener = new Listener() {
 		public void handleEvent(Event event) {
 			dragEvent = event;
+			if (dragSource != event.widget) {
+				dragSource = null;
+				currentListener = null;
+			}
 		}
 	};
 		
@@ -61,9 +65,13 @@ public class PresentationUtil {
 	private static Listener mouseDownListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (event.widget instanceof Control) {
-				Control dragSource = (Control)event.widget;
+				dragSource = (Control)event.widget;
 				currentListener = (Listener)dragSource.getData(LISTENER_ID);
-				anchor = DragUtil.getEventLoc(event);	
+				anchor = DragUtil.getEventLoc(event);
+				
+				if (dragEvent != null && (dragEvent.widget != dragSource)) {
+					dragEvent = null;
+				}
 			}
 		}
 	};
@@ -74,19 +82,21 @@ public class PresentationUtil {
 	
 	private static void handleMouseMove(Event e) {
 		if (currentListener != null && dragEvent != null && hasMovedEnough(e)) {
-			Event de = dragEvent;
-			Listener l = currentListener;
-			cancelDrag();
-			l.handleEvent(de);
+			if (dragSource != null && !dragSource.isDisposed() && dragSource == e.widget) {
+				Event de = dragEvent;
+				Listener l = currentListener;
+				cancelDrag();
+				l.handleEvent(de);
+			} else {
+				cancelDrag();
+			}
 		}
 	}	
 	
 	private static void cancelDrag() {
-		if (currentListener != null) {
-			currentListener = null;
-		}
-		
+		currentListener = null;
 		dragEvent = null;
+		dragSource = null;
 	}
 	
 	/**
@@ -126,6 +136,9 @@ public class PresentationUtil {
 		control.removeListener(SWT.MouseDown, mouseDownListener);
 		control.removeListener(SWT.MouseMove, moveListener);
 		control.setData(LISTENER_ID, null);
+		if (externalDragListener == currentListener) {
+			cancelDrag();
+		}
 	}
 		
 }
