@@ -17,14 +17,6 @@ public class FontPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
 
-	/**
-	 * Return the localized name of the preference
-	 */
-
-	private String localizedName(String name, String localeName) {
-		return name + "_" + localeName;
-	}
-
 	/*
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
@@ -35,17 +27,17 @@ public class FontPreferencePage
 
 		createFieldEditor(
 			JFaceResources.getBannerFont(),
-			localizedName(JFaceResources.BANNER_FONT, localeName),
+			JFaceResources.BANNER_FONT,
 			"Banner Font: ",
 			editorParent);
-			createFieldEditor(
+		createFieldEditor(
 			JFaceResources.getTerminalFont(),
-			localizedName(JFaceResources.TEXT_FONT, localeName),
+			JFaceResources.TERMINAL_FONT,
 			"Terminal Font: ",
 			editorParent);
-			createFieldEditor(
+		createFieldEditor(
 			JFaceResources.getTextFont(),
-			localizedName(JFaceResources.TEXT_FONT, localeName),
+			JFaceResources.TEXT_FONT,
 			"Text Font: ",
 			editorParent);
 	}
@@ -88,19 +80,17 @@ public class FontPreferencePage
 	 * current value at preferenceName.
 	 */
 
-	private void setRegistryValue(String preferenceName) {
-		String localeName = Locale.getDefault().toString();
-		String preferenceKey = localizedName(preferenceName, localeName);
+	private void setRegistryValue(String preferenceKey) {
 		FontData[] data = new FontData[1];
 		data[0] = PreferenceConverter.getFontData(getPreferenceStore(), preferenceKey);
 
 		//Only update if there has been a change
 		FontData[] currentSetting =
-			JFaceResources.getFontRegistry().get(preferenceName).getFontData();
+			JFaceResources.getFontRegistry().get(preferenceKey).getFontData();
 		if (currentSetting[0].equals(data[0]))
 			return;
 
-		JFaceResources.getFontRegistry().put(preferenceName, data);
+		JFaceResources.getFontRegistry().put(preferenceKey, data);
 	}
 
 	/** 

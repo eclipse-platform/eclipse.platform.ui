@@ -253,7 +253,6 @@ protected Label createDescriptionLabel(Composite parent) {
 	String description = getDescription();
 	if (description != null) {
 		result = new Label(parent, SWT.WRAP);
-		result.setFont(getFont());
 		result.setText(description);
 	}
 	return result;

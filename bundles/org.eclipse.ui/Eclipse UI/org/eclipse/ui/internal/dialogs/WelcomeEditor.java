@@ -19,6 +19,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
@@ -56,6 +57,13 @@ public class WelcomeEditor extends EditorPart {
 	private IWorkbench workbench;
 	private WelcomeParser parser;
 	private Image image;
+	
+	/**
+	 * The font property change listener
+	 */
+	private IPropertyChangeListener fontListener;
+
+
 /**
  * Create a new instance of the welcome editor
  */
@@ -283,10 +291,28 @@ private Composite createTitleArea(Composite parent) {
 	titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	// Message label
-	CLabel messageLabel = new CLabel(titleArea, SWT.LEFT);
+	final CLabel messageLabel = new CLabel(titleArea, SWT.LEFT);
 	messageLabel.setBackground(bg);
 	messageLabel.setText(getBannerTitle());
 	messageLabel.setFont(JFaceResources.getBannerFont());
+	
+	fontListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if(JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+				messageLabel.setFont(JFaceResources.getBannerFont());
+			}
+		}
+	};
+	
+	messageLabel.addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent event) {
+			JFaceResources.getFontRegistry().removeListener(fontListener);
+		}
+	});
+	
+	JFaceResources.getFontRegistry().addListener(fontListener);
+	
+	
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	messageLabel.setLayoutData(gd);
 
