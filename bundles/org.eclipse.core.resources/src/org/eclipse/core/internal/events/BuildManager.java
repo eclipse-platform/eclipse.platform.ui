@@ -33,11 +33,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		private ElementTree oldTree;
 		private IPath projectPath;
 
-		public void cache(IPath project, ElementTree oldTree, ElementTree newTree, Object delta) {
+		public void cache(IPath project, ElementTree anOldTree, ElementTree aNewTree, Object aDelta) {
 			this.projectPath = project;
-			this.oldTree = oldTree;
-			this.newTree = newTree;
-			this.delta = delta;
+			this.oldTree = anOldTree;
+			this.newTree = aNewTree;
+			this.delta = aDelta;
 		}
 
 		public void flush() {
@@ -51,11 +51,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		 * Returns the cached resource delta for the given project and trees, or
 		 * null if there is no matching delta in the cache.
 		 */
-		public Object getDelta(IPath project, ElementTree oldTree, ElementTree newTree) {
+		public Object getDelta(IPath project, ElementTree anOldTree, ElementTree aNewTree) {
 			if (delta == null)
 				return null;
 			boolean pathsEqual = projectPath == null ? project == null : projectPath.equals(project);
-			if (pathsEqual && this.oldTree == oldTree && this.newTree == newTree)
+			if (pathsEqual && this.oldTree == anOldTree && this.newTree == aNewTree)
 				return delta;
 			return null;
 		}
@@ -75,7 +75,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		/**
 		 * Log an exception on the first build, and silently do nothing on subsequent builds.
 		 */
-		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
 			if (!hasBeenBuilt) {
 				hasBeenBuilt = true;
 				String msg = Policy.bind("events.skippingBuilder", new String[] {name, getProject().getName()}); //$NON-NLS-1$
@@ -185,8 +185,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			monitor.beginTask(message, Math.max(1, commands.length));
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
-				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 				BuildCommand command = (BuildCommand) commands[i];
+				if (!command.isBuilding(trigger)) {
+					monitor.worked(1);
+					continue;
+				}
+				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 				IncrementalProjectBuilder builder = getBuilder(project, command, i, status);
 				if (builder != null)
 					basicBuild(trigger, builder, command.getArguments(false), status, sub);

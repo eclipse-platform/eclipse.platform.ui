@@ -16,6 +16,11 @@ public interface IModelObjectConstants {
 	public static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 	public static final String BUILD_ORDER = "buildOrder"; //$NON-NLS-1$
 	public static final String BUILD_SPEC = "buildSpec"; //$NON-NLS-1$
+	public static final String BUILD_TRIGGERS = "triggers"; //$NON-NLS-1$
+	public static final String TRIGGER_AUTO = "auto"; //$NON-NLS-1$
+	public static final String TRIGGER_CLEAN = "clean"; //$NON-NLS-1$
+	public static final String TRIGGER_FULL = "full"; //$NON-NLS-1$
+	public static final String TRIGGER_INCREMENTAL = "incremental"; //$NON-NLS-1$
 	public static final String COMMENT = "comment"; //$NON-NLS-1$
 	public static final String DICTIONARY = "dictionary"; //$NON-NLS-1$
 	public static final String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$

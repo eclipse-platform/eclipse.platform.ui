@@ -28,6 +28,7 @@ public class AllTests extends TestCase {
 		suite.addTest(MultiProjectBuildTest.suite());
 		suite.addTest(BuilderNatureTest.suite());
 		suite.addTest(BuilderCycleTest.suite());
+		suite.addTest(CustomBuildTriggerTest.suite());
 		return suite;
 	}
 }

@@ -16,10 +16,29 @@ import java.util.*;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 
 //
 public class ModelObjectWriter implements IModelObjectConstants {
+
+	/**
+	 * Returns the string representing the serialized set of build triggers for
+	 * the given command
+	 */
+	private static String triggerString(BuildCommand command) {
+		StringBuffer buf = new StringBuffer();
+		if (command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD))
+			buf.append(TRIGGER_AUTO).append(',');
+		if (command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD))
+			buf.append(TRIGGER_CLEAN).append(',');
+		if (command.isBuilding(IncrementalProjectBuilder.FULL_BUILD))
+			buf.append(TRIGGER_FULL).append(',');
+		if (command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD))
+			buf.append(TRIGGER_INCREMENTAL).append(',');
+		return buf.toString();
+	}
+
 	public ModelObjectWriter() {
 		super();
 	}
@@ -30,6 +49,58 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		for (int i = 0; i < projects.length; i++)
 			result[i] = projects[i].getName();
 		return result;
+	}
+
+	protected void write(BuildCommand command, XMLWriter writer) {
+		writer.startTag(BUILD_COMMAND, null);
+		if (command != null) {
+			writer.printSimpleTag(NAME, command.getName());
+			if (shouldWriteTriggers(command))
+				writer.printSimpleTag(BUILD_TRIGGERS, triggerString(command));
+			write(ARGUMENTS, command.getArguments(false), writer);
+		}
+		writer.endTag(BUILD_COMMAND);
+	}
+
+	/**
+	 * Returns whether the build triggers for this command should be written.
+	 */
+	private boolean shouldWriteTriggers(BuildCommand command) {
+		//only write triggers if command is configurable and there exists a trigger
+		//that the builder does NOT respond to.  I.e., don't write out on the default
+		//cases to avoid dirtying .project files unnecessarily.	
+		if (!command.isConfigurable())
+			return false;
+		return !command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD) || 
+			!command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD) || 
+			!command.isBuilding(IncrementalProjectBuilder.FULL_BUILD) || 
+			!command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD);
+	}
+
+	protected void write(LinkDescription description, XMLWriter writer) {
+		writer.startTag(LINK, null);
+		if (description != null) {
+			writer.printSimpleTag(NAME, description.getName());
+			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
+			writer.printSimpleTag(LOCATION, description.getLocation().toPortableString());
+		}
+		writer.endTag(LINK);
+	}
+
+	/**
+	 * The parameter tempLocation is a location to place our temp file (copy of the target one)
+	 * to be used in case we could not successfully write the new file.
+	 */
+	public void write(Object object, IPath location, IPath tempLocation) throws IOException {
+		SafeFileOutputStream file = null;
+		String tempPath = tempLocation == null ? null : tempLocation.toOSString();
+		try {
+			file = new SafeFileOutputStream(location.toOSString(), tempPath);
+			write(object, file);
+		} finally {
+			if (file != null)
+				file.close();
+		}
 	}
 
 	/**
@@ -67,74 +138,6 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.println(obj.toString());
 	}
 
-	/**
-	 * The parameter tempLocation is a location to place our temp file (copy of the target one)
-	 * to be used in case we could not successfully write the new file.
-	 */
-	public void write(Object object, IPath location, IPath tempLocation) throws IOException {
-		SafeFileOutputStream file = null;
-		String tempPath = tempLocation == null ? null : tempLocation.toOSString();
-		try {
-			file = new SafeFileOutputStream(location.toOSString(), tempPath);
-			write(object, file);
-		} finally {
-			if (file != null)
-				file.close();
-		}
-	}
-
-	protected void write(String name, String elementTagName, String[] array, XMLWriter writer) throws IOException {
-		writer.startTag(name, null);
-		for (int i = 0; i < array.length; i++)
-			writer.printSimpleTag(elementTagName, array[i]);
-		writer.endTag(name);
-	}
-
-	protected void write(String name, Collection collection, XMLWriter writer) throws IOException {
-		writer.startTag(name, null);
-		for (Iterator it = collection.iterator(); it.hasNext();)
-			write(it.next(), writer);
-		writer.endTag(name);
-	}
-
-	/**
-	 * Write maps of (String, String).
-	 */
-	protected void write(String name, Map table, XMLWriter writer) throws IOException {
-		writer.startTag(name, null);
-		for (Iterator it = table.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			Object value = entry.getValue();
-			writer.startTag(DICTIONARY, null);
-			{
-				writer.printSimpleTag(KEY, key);
-				writer.printSimpleTag(VALUE, value);
-			}
-			writer.endTag(DICTIONARY);
-		}
-		writer.endTag(name);
-	}
-
-	protected void write(BuildCommand command, XMLWriter writer) throws IOException {
-		writer.startTag(BUILD_COMMAND, null);
-		if (command != null) {
-			writer.printSimpleTag(NAME, command.getName());
-			write(ARGUMENTS, command.getArguments(false), writer);
-		}
-		writer.endTag(BUILD_COMMAND);
-	}
-
-	protected void write(LinkDescription description, XMLWriter writer) throws IOException {
-		writer.startTag(LINK, null);
-		if (description != null) {
-			writer.printSimpleTag(NAME, description.getName());
-			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
-			writer.printSimpleTag(LOCATION, description.getLocation().toPortableString());
-		}
-		writer.endTag(LINK);
-	}
-
 	protected void write(ProjectDescription description, XMLWriter writer) throws IOException {
 		writer.startTag(PROJECT_DESCRIPTION, null);
 		if (description != null) {
@@ -151,7 +154,40 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.endTag(PROJECT_DESCRIPTION);
 	}
 
-	protected void write(WorkspaceDescription description, XMLWriter writer) throws IOException {
+	protected void write(String name, Collection collection, XMLWriter writer) throws IOException {
+		writer.startTag(name, null);
+		for (Iterator it = collection.iterator(); it.hasNext();)
+			write(it.next(), writer);
+		writer.endTag(name);
+	}
+
+	/**
+	 * Write maps of (String, String).
+	 */
+	protected void write(String name, Map table, XMLWriter writer) {
+		writer.startTag(name, null);
+		for (Iterator it = table.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String key = (String) entry.getKey();
+			Object value = entry.getValue();
+			writer.startTag(DICTIONARY, null);
+			{
+				writer.printSimpleTag(KEY, key);
+				writer.printSimpleTag(VALUE, value);
+			}
+			writer.endTag(DICTIONARY);
+		}
+		writer.endTag(name);
+	}
+
+	protected void write(String name, String elementTagName, String[] array, XMLWriter writer) {
+		writer.startTag(name, null);
+		for (int i = 0; i < array.length; i++)
+			writer.printSimpleTag(elementTagName, array[i]);
+		writer.endTag(name);
+	}
+
+	protected void write(WorkspaceDescription description, XMLWriter writer) {
 		writer.startTag(WORKSPACE_DESCRIPTION, null);
 		if (description != null) {
 			writer.printSimpleTag(NAME, description.getName());

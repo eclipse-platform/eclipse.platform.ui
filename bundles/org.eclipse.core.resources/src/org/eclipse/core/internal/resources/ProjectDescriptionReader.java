@@ -26,28 +26,31 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/** constants */
 	protected static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
-	protected static final int S_BUILD_COMMAND = 4;
-	protected static final int S_BUILD_COMMAND_ARGUMENTS = 11;
-	protected static final int S_BUILD_COMMAND_NAME = 10;
-	protected static final int S_BUILD_SPEC = 3;
-	protected static final int S_DICTIONARY = 12;
-	protected static final int S_DICTIONARY_KEY = 13;
-	protected static final int S_DICTIONARY_VALUE = 14;
+
 	//states
-	protected static final int S_INITIAL = 0;
-	protected static final int S_LINK = 17;
-	protected static final int S_LINK_LOCATION = 20;
-	protected static final int S_LINK_NAME = 18;
-	protected static final int S_LINK_TYPE = 19;
-	protected static final int S_LINKED_RESOURCES = 16;
-	protected static final int S_NATURE_NAME = 15;
-	protected static final int S_NATURES = 5;
-	protected static final int S_PROJECT_COMMENT = 8;
-	protected static final int S_PROJECT_DESC = 2;
-	protected static final int S_PROJECT_NAME = 7;
-	protected static final int S_PROJECTS = 6;
-	protected static final int S_REFERENCED_PROJECT_NAME = 9;
-	protected static final int S_WORKSPACE_DESC = 1;
+	protected static final int S_BUILD_COMMAND = 0;
+	protected static final int S_BUILD_COMMAND_ARGUMENTS = 1;
+	protected static final int S_BUILD_COMMAND_NAME = 2;
+	protected static final int S_BUILD_COMMAND_TRIGGERS = 3;
+	protected static final int S_BUILD_SPEC = 4;
+	protected static final int S_DICTIONARY = 5;
+	protected static final int S_DICTIONARY_KEY = 6;
+	protected static final int S_DICTIONARY_VALUE = 7;
+	protected static final int S_INITIAL = 8;
+	protected static final int S_LINK = 9;
+	protected static final int S_LINK_LOCATION = 10;
+	protected static final int S_LINK_NAME = 11;
+	protected static final int S_LINK_TYPE = 12;
+	protected static final int S_LINKED_RESOURCES = 13;
+	protected static final int S_NATURE_NAME = 14;
+	protected static final int S_NATURES = 15;
+	protected static final int S_PROJECT_COMMENT = 16;
+	protected static final int S_PROJECT_DESC = 17;
+	protected static final int S_PROJECT_NAME = 18;
+	protected static final int S_PROJECTS = 19;
+	protected static final int S_REFERENCED_PROJECT_NAME = 20;
+	protected static final int S_WORKSPACE_DESC = 21;
+	
 	protected final StringBuffer charBuffer = new StringBuffer();
 
 	protected Stack objectStack;
@@ -60,7 +63,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ContentHandler#characters(char[], int, int)
 	 */
-	public void characters(char[] chars, int offset, int length) throws SAXException {
+	public void characters(char[] chars, int offset, int length) {
 		//accumulate characters and process them when endElement is reached
 		charBuffer.append(chars, offset, length);
 	}
@@ -148,7 +151,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
-	public void endElement(String uri, String elementName, String qname) throws SAXException {
+	public void endElement(String uri, String elementName, String qname) {
 		switch (state) {
 			case S_PROJECT_DESC :
 				// Don't think we need to do anything here.
@@ -187,6 +190,9 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				break;
 			case S_BUILD_SPEC :
 				endBuildSpecElement(elementName);
+				break;
+			case S_BUILD_COMMAND_TRIGGERS :
+				endBuildTriggersElement(elementName);
 				break;
 			case S_NATURES :
 				endNaturesElement(elementName);
@@ -248,6 +254,39 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				break;
 		}
 		charBuffer.setLength(0);
+	}
+
+	/**
+	 * End a build triggers element and set the triggers for the current
+	 * build command element.
+	 */
+	private void endBuildTriggersElement(String elementName) {
+		if (elementName.equals(BUILD_TRIGGERS)) {
+			state = S_BUILD_COMMAND;
+			BuildCommand command = (BuildCommand)objectStack.peek();
+			//presence of this element indicates the builder is configurable
+			command.setConfigurable(true);
+			//clear all existing values
+			command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
+			command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
+			command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, false);
+			command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
+
+			//set new values according to value in the triggers element
+			StringTokenizer tokens = new StringTokenizer(charBuffer.toString(), ","); //$NON-NLS-1$
+			while (tokens.hasMoreTokens()) {
+				String next = tokens.nextToken();
+				if (next.toLowerCase().equals(TRIGGER_AUTO)) {
+					command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
+				} else if (next.toLowerCase().equals(TRIGGER_CLEAN)) {
+					command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
+				} else if (next.toLowerCase().equals(TRIGGER_FULL)) {
+					command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
+				} else if (next.toLowerCase().equals(TRIGGER_INCREMENTAL)) {
+					command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+				}
+			}
+		}
 	}
 
 	/**
@@ -387,7 +426,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
-	public void error(SAXParseException error) throws SAXException {
+	public void error(SAXParseException error) {
 		log(error);
 	}
 
@@ -546,6 +585,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_BUILD_COMMAND :
 				if (elementName.equals(NAME)) {
 					state = S_BUILD_COMMAND_NAME;
+				} else if (elementName.equals(BUILD_TRIGGERS)) {
+					state = S_BUILD_COMMAND_TRIGGERS;
 				} else if (elementName.equals(ARGUMENTS)) {
 					state = S_BUILD_COMMAND_ARGUMENTS;
 					// Push a HashMap to hold all the key/value pairs which
@@ -596,7 +637,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	/**
 	 * @see ErrorHandler#warning(SAXParseException)
 	 */
-	public void warning(SAXParseException error) throws SAXException {
+	public void warning(SAXParseException error) {
 		log(error);
 	}
 }

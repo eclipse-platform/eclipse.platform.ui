@@ -11,6 +11,7 @@
 package org.eclipse.core.resources;
 
 import java.util.Map;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A builder command names a builder and supplies a table of
@@ -22,6 +23,7 @@ import java.util.Map;
  * @see IProjectDescription
  */
 public interface ICommand {
+
 	/**
 	 * Returns a table of the arguments for this command, or <code>null</code>
 	 * if there are no arguments. The argument names and values are both strings.
@@ -40,6 +42,34 @@ public interface ICommand {
 	 * @see #setBuilderName(String)
 	 */
 	public String getBuilderName();
+
+	/**
+	 * Returns whether this build command responds to the given trigger.
+	 * <p>
+	 * By default, build commands respond to all build triggers.
+	 * 
+	 * @param trigger One of the <tt>*_BUILD</code> constants defined
+	 * on <code>IncrementalProjectBuilder</code>
+	 * @return <code>true</code> if this build command responds to the specified
+	 * trigger, and <code>false</code> otherwise.
+	 * @see #setBuilding(int, boolean)
+	 * @since 3.1
+	 */
+	public boolean isBuilding(int trigger);
+
+	/**
+	 * Returns whether this command allows configuring of what triggers
+	 * it responds to.  By default, commands are only configurable
+	 * if the corresponding builder defines the <code>isConfigurable</code>
+	 * attribute in its builder extension declaration. A command that is not 
+	 * configurable will always respond to all build triggers.
+	 * 
+	 * @return <code>true</code> If this command allows configuration of
+	 * its triggers, and <code>false</code> otherwise.
+	 * @see #setBuilding(int, boolean)
+	 * @since 3.1
+	 */
+	public boolean isConfigurable();
 
 	/**
 	 * Sets this command's arguments to be the given table of name-values
@@ -74,4 +104,25 @@ public interface ICommand {
 	 * @see #getBuilderName()
 	 */
 	public void setBuilderName(String builderName);
+
+	/**
+	 * Specifies whether this build command responds to the provided trigger.
+	 * <p>
+	 * When a command is configured to not respond to a given trigger, the
+	 * builder instance will not be called when a build with that trigger is initiated.
+	 * <p>
+	 * This method has no effect if this build command does not allow its
+	 * build triggers to be configured.
+	 * 
+	 * @param trigger One of the <tt>*_BUILD</code> constants defined
+	 * on <code>IncrementalProjectBuilder</code>
+	 * @param value <code>true</code> if this build command responds to the 
+	 * specified trigger, and <code>false</code> otherwise.
+	 * @see #isBuilding(int)
+	 * @see #isConfigurable()
+	 * @see IWorkspace#build(int, IProgressMonitor)
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @since 3.1
+	 */
+	public void setBuilding(int trigger, boolean value);
 }

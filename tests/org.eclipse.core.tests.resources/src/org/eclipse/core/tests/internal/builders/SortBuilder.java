@@ -281,6 +281,10 @@ public class SortBuilder extends TestBuilder {
 	public static SortBuilder getInstance() {
 		return singleton;
 	}
+	
+	public static void resetSingleton() {
+		singleton = null;
+	}
 
 	/**
 	 * Returns the folder under which sorted resources are found.
