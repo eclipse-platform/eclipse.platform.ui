@@ -93,10 +93,10 @@ public abstract class AntPage {
 	 * @param buttonId the id to assign to this button
 	 * @return a new and initialized button
 	 */
-	protected Button createButton(Composite parent, String labelKey, int buttonId) {
+	protected Button createPushButton(Composite parent, String buttonText, int buttonId) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
-		button.setText(AntPreferencesMessages.getString(labelKey));
+		button.setText(buttonText);
 		button.setData(new Integer(buttonId));
 		button.addSelectionListener(selectionAdapter);
 		preferencePage.setButtonLayoutData(button);

@@ -51,10 +51,10 @@ public class AntTasksPage extends AntPage {
 	 * Method declared on AntPage.
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
-		createButton(parent, "AntTasksPage.addTaskButtonTitle", ADD_TASK_BUTTON); //$NON-NLS-1$
-		editButton = createButton(parent, "AntTasksPage.editTaskButtonTitle", EDIT_TASK_BUTTON); //$NON-NLS-1$
+		createPushButton(parent, AntPreferencesMessages.getString("AntTasksPage.addTaskButtonTitle"), ADD_TASK_BUTTON); //$NON-NLS-1$
+		editButton = createPushButton(parent, AntPreferencesMessages.getString("AntTasksPage.editTaskButtonTitle"), EDIT_TASK_BUTTON); //$NON-NLS-1$
 		createSeparator(parent);
-		removeButton = createButton(parent, "AntTasksPage.removeButtonTitle", REMOVE_BUTTON); //$NON-NLS-1$
+		removeButton = createPushButton(parent, AntPreferencesMessages.getString("AntTasksPage.removeButtonTitle"), REMOVE_BUTTON); //$NON-NLS-1$
 	}
 	
 	/**
