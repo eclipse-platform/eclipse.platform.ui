@@ -78,7 +78,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 		public int compare(Object arg0, Object arg1) {
 			String s1 = ((CategoryNode)arg0).getPath();
 			String s2 = ((CategoryNode)arg1).getPath();
-			return collator.compare(s2, s1);
+			return collator.compare(s1, s2);
 		}
 	}; 
 

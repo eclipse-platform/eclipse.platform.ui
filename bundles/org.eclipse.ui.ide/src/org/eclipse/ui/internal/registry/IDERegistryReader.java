@@ -40,7 +40,7 @@ public abstract class IDERegistryReader {
 		public int compare(Object arg0, Object arg1) {
 			String s1 = ((IExtension)arg0).getDeclaringPluginDescriptor().getUniqueIdentifier();
 			String s2 = ((IExtension)arg1).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			return s2.compareToIgnoreCase(s1);
+			return s1.compareToIgnoreCase(s2);
 		}
 	}; 
 

@@ -72,7 +72,7 @@ public class OpenWithMenu extends ContributionItem {
 		public int compare(Object arg0, Object arg1) {
 			String s1 = ((IEditorDescriptor)arg0).getLabel();
 			String s2 = ((IEditorDescriptor)arg1).getLabel();
-			return collator.compare(s2, s1);
+			return collator.compare(s1, s2);
 		}
 	}; 
 
