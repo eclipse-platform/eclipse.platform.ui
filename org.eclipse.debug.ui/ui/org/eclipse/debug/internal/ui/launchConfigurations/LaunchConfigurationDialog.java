@@ -1909,8 +1909,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		// save and launch buttons
 		ILaunchConfigurationTab tab = getActiveTab();
+		boolean verified = false;
+		try {
+			verify();
+			verified = true;
+		} catch (CoreException e) {
+		}
 		if (tab != null) {
-			getSaveButton().setEnabled(tab.isValid());
+			getSaveButton().setEnabled(verified && tab.isValid());
 			getLaunchButton().setEnabled(canLaunch());		
 		}
 	}
