@@ -10,7 +10,9 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -430,7 +432,37 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		openSameWindowButton.setSelection(IPreferenceConstants.OPM_ACTIVE_PAGE == openPerspMode);
 		openNewWindowButton.setSelection(IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode);
 	}
+	/*
+	 * Delete the perspectives selected by the user if there is not
+	 * opened instance of that perspective.
+	 */
 
+	private boolean deletePerspectives() {
+		HashSet openPersp = new HashSet();
+		IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchPage pages[] = windows[i].getPages();
+			for (int j = 0; j < pages.length; j++) {
+				WorkbenchPage page = (WorkbenchPage)pages[j];
+				for (int k = 0; k < perspToDelete.size(); k++) {
+					IPerspectiveDescriptor desc = (IPerspectiveDescriptor)perspToDelete.get(k);				
+					if(page.findPerspective(desc) != null) {
+						MessageDialog.openInformation(
+							getShell(),
+							WorkbenchMessages.getString("PerspectivesPreference.cannotdelete.title"), //$NON-NLS-1$
+							WorkbenchMessages.format("PerspectivesPreference.cannotdelete.message", new String[]{desc.getLabel()})); //$NON-NLS-1$
+						return false;
+					}
+				}
+			}
+		}
+		
+		// Delete the perspectives
+		for (int i = 0; i < perspToDelete.size(); i++)
+			perspectiveRegistry.deletePerspective(
+				(IPerspectiveDescriptor) perspToDelete.get(i));
+		return true;
+	}
 	/**
 	 * Apply the user's changes if any
 	 */
@@ -440,10 +472,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 			.equals(perspectiveRegistry.getDefaultPerspective()))
 			perspectiveRegistry.setDefaultPerspective(defaultPerspectiveId);
 
-		// Delete the perspectives
-		for (int i = 0; i < perspToDelete.size(); i++)
-			perspectiveRegistry.deletePerspective(
-				(IPerspectiveDescriptor) perspToDelete.get(i));
+		if(!deletePerspectives())
+			return false;
 
 		// Revert the perspectives
 		for (int i = 0; i < perspToRevert.size(); i++)

@@ -1035,7 +1035,7 @@ public boolean editActionSets() {
 /**
  * Returns the first view manager with given ID.
  */
-private Perspective findPerspective(IPerspectiveDescriptor desc) {
+public Perspective findPerspective(IPerspectiveDescriptor desc) {
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
 		Perspective mgr = (Perspective)enum.next();
