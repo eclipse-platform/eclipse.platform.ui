@@ -287,6 +287,12 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			}
 		}
 	}
+	public void makeBranch(IResource[] resources, CVSTag version, CVSTag branch, boolean update) throws CVSException {
+		BranchOperation op = new BranchOperation(null, resources) {
+			
+		};
+		executeHeadless(op);
+	}
 	/**
 	 * Return a collection of resources defined by hierarchy. The resources
 	 * are added to the workspace and to the file system. If the manage flag is true, the

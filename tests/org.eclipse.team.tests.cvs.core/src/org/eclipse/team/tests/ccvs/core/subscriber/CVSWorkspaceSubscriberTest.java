@@ -1049,7 +1049,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		CVSTag version = new CVSTag("v1", CVSTag.BRANCH);
 		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
-		getProvider(copy).makeBranch(new IResource[] {copy}, version, branch, true, DEFAULT_MONITOR);
+		makeBranch(new IResource[] {copy}, version, branch, true);
 		addResources(copy, new String[] {"folder2/folder3/a.txt"}, true);
 		
 		// Fetch the tree corresponding to the branch using the original as the base.

@@ -10,26 +10,67 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.resources.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Commit;
+import org.eclipse.team.internal.ccvs.core.client.Diff;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.client.listeners.*;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
+import org.eclipse.team.internal.ccvs.core.client.listeners.AdminKSubstListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.EditorsListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
-import org.eclipse.team.internal.ccvs.core.util.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
+import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
@@ -157,8 +198,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public IProject getProject() {
 		return project;
 	}
-	
-
 
 	/**
 	 * @see IProjectNature#setProject(IProject)
@@ -173,48 +212,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 		} catch (CVSException e) {
 			// Ignore exceptions here. They will be surfaced elsewhere
-		}
-	}
-	
-	/**
-	 * Checkin any local changes using "cvs commit ...".
-	 * 
-	 * TODO: This method can be removed once the RelEng plugin no longer uses it
-	 * @deprecated use CommitOperation instead
-	 */
-	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-			
-		// Build the local options
-		List localOptions = new ArrayList();
-		localOptions.add(Commit.makeArgumentOption(Command.MESSAGE_OPTION, comment));
-
-		// If the depth is not infinite, we want the -l option
-		if (depth != IResource.DEPTH_INFINITE) {
-			localOptions.add(Commit.DO_NOT_RECURSE);
-		}
-		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
-
-		// Build the arguments list
-		String[] arguments = getValidArguments(resources, commandOptions);
-					
-		// Commit the resources
-		IStatus status;
-		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-		progress.beginTask(null, 100);
-		try {
-			// Opening the session takes 20% of the time
-			s.open(Policy.subMonitorFor(progress, 20), true /* open for modification */);
-			status = Command.COMMIT.execute(s,
-			Command.NO_GLOBAL_OPTIONS,
-			commandOptions,
-			arguments, null,
-			Policy.subMonitorFor(progress, 80));
-		} finally {
-			s.close();
-			progress.done();
-		}
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			throw new CVSServerException(status);
 		}
 	}
 	
@@ -397,185 +394,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 			throw e;
 		}
 	}
-	
-	/*
-	 * Use specialiazed tagging to move all local changes (including additions and
-	 * deletions) to the specified branch.
-	 */
-	public void makeBranch(IResource[] resources, final CVSTag versionTag, final CVSTag branchTag, boolean moveToBranch, IProgressMonitor monitor) throws TeamException {
-		
-		// Determine the total amount of work
-		int totalWork = (versionTag!= null ? 60 : 40) + (moveToBranch ? 20 : 0);
-		monitor.beginTask(Policy.bind("CVSTeamProvider.makeBranch"), totalWork);  //$NON-NLS-1$
-		try {
-			// Build the arguments list
-			final ICVSResource[] arguments = getCVSArguments(resources);
-			
-			// Tag the remote resources
-			IStatus status = null;
-			if (versionTag != null) {
-				// Version using a custom tag command that skips added but not commited reesources
-				Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-				session.open(Policy.subMonitorFor(monitor, 5), true /* open for modification */);
-				try {
-					status = Command.CUSTOM_TAG.execute(
-						session,
-						Command.NO_GLOBAL_OPTIONS,
-						Command.NO_LOCAL_OPTIONS,
-						versionTag,
-						arguments,
-						null,
-						Policy.subMonitorFor(monitor, 35));
-				} finally {
-					session.close();
-				}
-				if (status.isOK()) {
-					// Branch using the tag
-					session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-					session.open(Policy.subMonitorFor(monitor, 5), true /* open for modification */);
-					try {
-						status = Command.CUSTOM_TAG.execute(
-							session,
-							Command.NO_GLOBAL_OPTIONS,
-							Command.NO_LOCAL_OPTIONS,
-							branchTag,
-							arguments,
-							null,
-						Policy.subMonitorFor(monitor, 15));
-					} finally {
-						session.close();
-					}
-				}
-			} else {
-				// Just branch using tag
-				Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-				session.open(Policy.subMonitorFor(monitor, 5), true /* open for modification */);
-				try {
-					status = Command.CUSTOM_TAG.execute(
-						session,
-						Command.NO_GLOBAL_OPTIONS,
-						Command.NO_LOCAL_OPTIONS,
-						branchTag,
-						arguments,
-						null,
-						Policy.subMonitorFor(monitor, 35));
-				} finally {
-					session.close();
-				}
-
-			}
-			if ( ! status.isOK()) {
-				throw new CVSServerException(status);
-			}
-			
-			// Set the tag of the local resources to the branch tag (The update command will not
-			// properly update "cvs added" and "cvs removed" resources so a custom visitor is used
-			if (moveToBranch) {
-				setTag(resources, branchTag, Policy.subMonitorFor(monitor, 20));
-			}
-		} finally {
-			monitor.done();
-		}
-	}
 
 	/**
 	 * Set the comment to be used on the next checkin
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;
-	}
-	
-	/*
-	 * This method sets the tag for a project.
-	 * It expects to be passed an InfiniteSubProgressMonitor
-	 */
-	private void setTag(final IResource[] resources, final CVSTag tag, IProgressMonitor monitor) throws TeamException {
-	
-		workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
-			public void run(IProgressMonitor progress) throws CVSException {
-				try {
-					// 512 ticks gives us a maximum of 2048 which seems reasonable for folders and files in a project
-					progress.beginTask(null, 100);
-					final IProgressMonitor monitor = Policy.infiniteSubMonitorFor(progress, 100);
-					monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 512);  //$NON-NLS-1$
-					
-					// Visit all the children folders in order to set the root in the folder sync info
-					for (int i = 0; i < resources.length; i++) {
-						CVSWorkspaceRoot.getCVSResourceFor(resources[i]).accept(new ICVSResourceVisitor() {
-							public void visitFile(ICVSFile file) throws CVSException {
-								monitor.worked(1);
-								//ResourceSyncInfo info = file.getSyncInfo();
-								byte[] syncBytes = file.getSyncBytes();
-								if (syncBytes != null) {
-									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", file.getName())); //$NON-NLS-1$
-									file.setSyncBytes(ResourceSyncInfo.setTag(syncBytes, tag), ICVSFile.UNKNOWN);
-								}
-							}
-							public void visitFolder(ICVSFolder folder) throws CVSException {
-								monitor.worked(1);
-								FolderSyncInfo info = folder.getFolderSyncInfo();
-								if (info != null) {
-									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
-									folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic()));
-									folder.acceptChildren(this);
-								}
-							}
-						});
-					}
-				} finally {
-					progress.done();
-				}
-			}
-		}, monitor);
-	}
-	
-	/**
-	 * Generally useful update.
-	 * 
-	 * The tag parameter determines any stickyness after the update is run. If tag is null, any tagging on the
-	 * resources being updated remain the same. If the tag is a branch, version or date tag, then the resources
-	 * will be appropriatly tagged. If the tag is HEAD, then there will be no tag on the resources (same as -A
-	 * clear sticky option).
-	 * 
-	 * TODO: This method can be removed once the RelEng plugin no longer uses it
-	 * @param createBackups if true, creates .# files for updated files
-	 * @deprecated use UpdateOperation instead
-	 */
-	public void update(IResource[] resources, LocalOption[] options, CVSTag tag, boolean createBackups, IProgressMonitor progress) throws TeamException {
-		progress.beginTask(null, 100);
-		Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
-		session.open(Policy.subMonitorFor(progress,10), false /* read-only */);
-		try {
-			update(session, resources, options, tag, createBackups, Policy.subMonitorFor(progress, 90));
-		} finally {
-			session.close();
-		}
-	}
-	
-	private void update(Session session, IResource[] resources, LocalOption[] options, CVSTag tag, boolean createBackups, IProgressMonitor progress) throws TeamException {
-		// Build the local options
-		List localOptions = new ArrayList();
-		
-		// Use the appropriate tag options
-		if (tag != null) {
-			localOptions.add(Update.makeTagOption(tag));
-		}
-		
-		// Build the arguments list
-		localOptions.addAll(Arrays.asList(options));
-		final LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
-		final ICVSResource[] arguments = getCVSArguments(resources);
-
-		IStatus status = Command.UPDATE.execute(
-			session, 
-			Command.NO_GLOBAL_OPTIONS, 
-			commandOptions, 
-			arguments,
-			null, 
-			progress);
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			throw new CVSServerException(status);
-		}
 	}
 	
 	/*
