@@ -29,6 +29,7 @@
 
 
 <!-- Workbench extension points -->
+
    <extension-point id="acceleratorSets" name="%ExtPoint.acceleratorSets" schema="schema/acceleratorSets.exsd"/>
    <extension-point id="acceleratorConfigurations" name="%ExtPoint.acceleratorConfigurations" schema="schema/acceleratorConfigurations.exsd"/>
    <extension-point id="acceleratorScopes" name="%ExtPoint.acceleratorScopes" schema="schema/acceleratorScopes.exsd"/>
@@ -36,6 +37,7 @@
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
    <extension-point id="capabilities" name="%ExtPoint.capabilities" schema="schema/capabilities.exsd"/>
+   <extension-point id="commands" name="%ExtPoint.commands" schema="schema/commands.exsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.exsd"/>
    <extension-point id="dropActions" name="%ExtPoint.dropActions" schema="schema/dropActions.exsd"/>
    <extension-point id="editorActions" name="%ExtPoint.editorActions" schema="schema/editorActions.exsd"/>
@@ -76,566 +78,567 @@
          </run>
       </application>
    </extension>
-   <extension
-         point="org.eclipse.ui.actionDefinitions">
-      <actionDefinition
-            name="%ActionDefinition.newWizard.name"
-            description="%ActionDefinition.newWizard.description"
-            id="org.eclipse.ui.newWizard">
-      </actionDefinition>
-      <actionDefinition
+   
+	<extension
+		point="org.eclipse.ui.commands">
+		<command 
+			name="%ActionDefinition.newWizard.name" 
+			description="%ActionDefinition.newWizard.description" 
+			id="org.eclipse.ui.newWizard"/>
+      <command
             name="%ActionDefinition.close.name"
             description="%ActionDefinition.close.description"
             id="org.eclipse.ui.file.close">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.closeAll.name"
             description="%ActionDefinition.closeAll.description"
             id="org.eclipse.ui.file.closeAll">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.save.name"
             icon="icons/full/ctool16/save_edit.gif"
             description="%ActionDefinition.save.description"
             id="org.eclipse.ui.file.save">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.saveAll.name"
             icon="icons/full/ctool16/saveall_edit.gif"
             description="%ActionDefinition.saveAll.description"
             id="org.eclipse.ui.file.saveAll">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.print.name"
             icon="icons/full/ctool16/print_edit.gif"
             description="%ActionDefinition.print.description"
             id="org.eclipse.ui.file.print">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.revert.name"
             description="%ActionDefinition.revert.description"
             id="org.eclipse.ui.file.revert">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.refresh.name"
             icon="icons/full/clcl16/refresh_nav.gif"
             description="%ActionDefinition.refresh.description"
             id="org.eclipse.ui.file.refresh">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.properties.name"
             description="%ActionDefinition.properties.description"
             id="org.eclipse.ui.file.properties">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.undo.name"
             icon="icons/full/ctool16/undo_edit.gif"
             description="%ActionDefinition.undo.description"
             id="org.eclipse.ui.edit.undo">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.redo.name"
             icon="icons/full/ctool16/redo_edit.gif"
             description="%ActionDefinition.redo.description"
             id="org.eclipse.ui.edit.redo">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.cut.name"
             icon="icons/full/ctool16/cut_edit.gif"
             description="%ActionDefinition.cut.description"
             id="org.eclipse.ui.edit.cut">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.copy.name"
             icon="icons/full/ctool16/copy_edit.gif"
             description="%ActionDefinition.copy.description"
             id="org.eclipse.ui.edit.copy">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.paste.name"
             icon="icons/full/ctool16/paste_edit.gif"
             description="%ActionDefinition.paste.description"
             id="org.eclipse.ui.edit.paste">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.delete.name"
             icon="icons/full/ctool16/delete_edit.gif"
             description="%ActionDefinition.delete.description"
             id="org.eclipse.ui.edit.delete">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.deleteLine.name"
             description="%ActionDefinition.deleteLine.description"
             id="org.eclipse.ui.edit.text.delete.line">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.deleteLineBeginning.name"
             description="%ActionDefinition.deleteLineBeginning.description"
             id="org.eclipse.ui.edit.text.delete.line.to.beginning">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.deleteLineEnd.name"
             description="%ActionDefinition.deleteLineEnd.description"
             id="org.eclipse.ui.edit.text.delete.line.to.end">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.move.name"
             icon="icons/full/ctool16/move_edit.gif"
             description="%ActionDefinition.move.description"
             id="org.eclipse.ui.edit.move">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.rename.name"
             icon="icons/full/ctool16/rename_edit.gif"
             description="%ActionDefinition.rename.description"
             id="org.eclipse.ui.edit.rename">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectAll.name"
             description="%ActionDefinition.selectAll.description"
             id="org.eclipse.ui.edit.selectAll">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.setMark.name"
             description="%ActionDefinition.setMark.description"
             id="org.eclipse.ui.edit.text.set.mark">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.clearMark.name"
             description="%ActionDefinition.clearMark.description"
             id="org.eclipse.ui.edit.text.clear.mark">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.swapMark.name"
             description="%ActionDefinition.swapMark.description"
             id="org.eclipse.ui.edit.text.swap.mark">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.findReplace.name"
             description="%ActionDefinition.findReplace.description"
             id="org.eclipse.ui.edit.findReplace">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.addBookmark.name"
             icon="icons/full/obj16/bkmrk_tsk.gif"
             description="%ActionDefinition.addBookmark.description"
             id="org.eclipse.ui.edit.addBookmark">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.goInto.name"
             description="%ActionDefinition.goInto.description"
             id="org.eclipse.ui.navigate.goInto">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.back.name"
             icon="icons/full/clcl16/backward_nav.gif"
             description="%ActionDefinition.back.description"
             id="org.eclipse.ui.navigate.back">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.forward.name"
             icon="icons/full/clcl16/forward_nav.gif"
             description="%ActionDefinition.forward.description"
             id="org.eclipse.ui.navigate.forward">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.up.name"
             icon="icons/full/clcl16/up_nav.gif"
             description="%ActionDefinition.up.description"
             id="org.eclipse.ui.navigate.up">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.goToResource.name"
             description="%ActionDefinition.goToResource.description"
             id="org.eclipse.ui.navigate.goToResource">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.showIn.name"
             description="%ActionDefinition.showIn.description"
             id="org.eclipse.ui.navigate.showIn">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.openResource.name"
             description="%ActionDefinition.openResource.description"
             id="org.eclipse.ui.navigate.openResource">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.next.name"
             icon="icons/full/ctool16/next_nav.gif"
             description="%ActionDefinition.next.description"
             id="org.eclipse.ui.navigate.next">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.backwardHistory.name"
             icon="icons/full/clcl16/backward_nav.gif"
             description="%ActionDefinition.backwardHistory.description"
             id="org.eclipse.ui.navigate.backwardHistory">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.forwardHistory.name"
             icon="icons/full/clcl16/forward_nav.gif"
             description="%ActionDefinition.forwardHistory.description"
             id="org.eclipse.ui.navigate.forwardHistory">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.previous.name"
             icon="icons/full/ctool16/prev_nav.gif"
             description="%ActionDefinition.previous.description"
             id="org.eclipse.ui.navigate.previous">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.openProject.name"
             icon="icons/full/obj16/prj_obj.gif"
             description="%ActionDefinition.openProject.description"
             id="org.eclipse.ui.project.openProject">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.closeProject.name"
             icon="icons/full/obj16/cprj_obj.gif"
             description="%ActionDefinition.closeProject.description"
             id="org.eclipse.ui.project.closeProject">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.buildProject.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%ActionDefinition.buildProject.description"
             id="org.eclipse.ui.project.buildProject">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.rebuildProject.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%ActionDefinition.rebuildProject.description"
             id="org.eclipse.ui.project.rebuildProject">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.buildAll.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%ActionDefinition.buildAll.description"
             id="org.eclipse.ui.project.buildAll">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.rebuildAll.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%ActionDefinition.rebuildAll.description"
             id="org.eclipse.ui.project.rebuildAll">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.switchToEditor.name"
             description="%ActionDefinition.switchToEditor.description"
             id="org.eclipse.ui.window.switchToEditor">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.showSystemMenu.name"
             description="%ActionDefinition.showSystemMenu.description"
             id="org.eclipse.ui.window.showSystemMenu">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.showViewMenu.name"
             description="%ActionDefinition.showViewMenu.description"
             id="org.eclipse.ui.window.showViewMenu">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.activateEditor.name"
             description="%ActionDefinition.activateEditor.description"
             id="org.eclipse.ui.window.activateEditor">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.nextEditor.name"
             description="%ActionDefinition.nextEditor.description"
             id="org.eclipse.ui.window.nextEditor">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.previousEditor.name"
             description="%ActionDefinition.previousEditor.description"
             id="org.eclipse.ui.window.previousEditor">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.nextView.name"
             description="%ActionDefinition.nextView.description"
             id="org.eclipse.ui.window.nextView">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.previousView.name"
             description="%ActionDefinition.previousView.description"
             id="org.eclipse.ui.window.previousView">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.nextPerspective.name"
             description="%ActionDefinition.nextPerspective.description"
             id="org.eclipse.ui.window.nextPerspective">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.previousPerspective.name"
             description="%ActionDefinition.previousPerspective.description"
             id="org.eclipse.ui.window.previousPerspective">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.findNext.name"
             description="%ActionDefinition.findNext.description"
             id="org.eclipse.ui.edit.findNext">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.findPrevious.name"
             description="%ActionDefinition.findPrevious.description"
             id="org.eclipse.ui.edit.findPrevious">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.findIncremental.name"
             description="%ActionDefinition.findIncremental.description"
             id="org.eclipse.ui.edit.findIncremental">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.findIncrementalReverse.name"
             description="%ActionDefinition.findIncrementalReverse.description"
             id="org.eclipse.ui.edit.findIncrementalReverse">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.revertToSaved.name"
             description="%ActionDefinition.revertToSaved.description"
             id="org.eclipse.ui.edit.revertToSaved">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.addTask.name"
             icon="icons/full/clcl16/addtsk_tsk.gif"
             description="%ActionDefinition.addTask.description"
             id="org.eclipse.ui.edit.addTask">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.lineUp.name"
             description="%ActionDefinition.lineUp.description"
             id="org.eclipse.ui.edit.text.goto.lineUp">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.lineDown.name"
             description="%ActionDefinition.lineDown.description"
             id="org.eclipse.ui.edit.text.goto.lineDown">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.lineStart.name"
             description="%ActionDefinition.lineStart.description"
             id="org.eclipse.ui.edit.text.goto.lineStart">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.lineEnd.name"
             description="%ActionDefinition.lineEnd.description"
             id="org.eclipse.ui.edit.text.goto.lineEnd">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.goToLine.name"
             description="%ActionDefinition.goToLine.description"
             id="org.eclipse.ui.edit.text.goto.line">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.previousColumn.name"
             description="%ActionDefinition.previousColumn.description"
             id="org.eclipse.ui.edit.text.goto.columnPrevious">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.nextColumn.name"
             description="%ActionDefinition.nextColumn.description"
             id="org.eclipse.ui.edit.text.goto.columnNext">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.pageUp.name"
             description="%ActionDefinition.pageUp.description"
             id="org.eclipse.ui.edit.text.goto.pageUp">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.pageDown.name"
             description="%ActionDefinition.pageDown.description"
             id="org.eclipse.ui.edit.text.goto.pageDown">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.previousWord.name"
             description="%ActionDefinition.previousWord.description"
             id="org.eclipse.ui.edit.text.goto.wordPrevious">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.nextWord.name"
             description="%ActionDefinition.nextWord.description"
             id="org.eclipse.ui.edit.text.goto.wordNext">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.textStart.name"
             description="%ActionDefinition.textStart.description"
             id="org.eclipse.ui.edit.text.goto.textStart">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.textEnd.name"
             description="%ActionDefinition.textEnd.description"
             id="org.eclipse.ui.edit.text.goto.textEnd">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.windowStart.name"
             description="%ActionDefinition.windowStart.description"
             id="org.eclipse.ui.edit.text.goto.windowStart">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.windowEnd.name"
             description="%ActionDefinition.windowEnd.description"
             id="org.eclipse.ui.edit.text.goto.windowEnd">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.scrollLineUp.name"
             description="%ActionDefinition.scrollLineUp.description"
             id="org.eclipse.ui.edit.text.scroll.lineUp">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.scrollLineDown.name"
             description="%ActionDefinition.scrollLineDown.description"
             id="org.eclipse.ui.edit.text.scroll.lineDown">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectLineUp.name"
             description="%ActionDefinition.selectLineUp.description"
             id="org.eclipse.ui.edit.text.select.lineUp">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectLineDown.name"
             description="%ActionDefinition.selectLineDown.description"
             id="org.eclipse.ui.edit.text.select.lineDown">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectLineStart.name"
             description="%ActionDefinition.selectLineStart.description"
             id="org.eclipse.ui.edit.text.select.lineStart">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectLineEnd.name"
             description="%ActionDefinition.selectLineEnd.description"
             id="org.eclipse.ui.edit.text.select.lineEnd">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectPreviousColumn.name"
             description="%ActionDefinition.selectPreviousColumn.description"
             id="org.eclipse.ui.edit.text.select.columnPrevious">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectNextColumn.name"
             description="%ActionDefinition.selectNextColumn.description"
             id="org.eclipse.ui.edit.text.select.columnNext">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectPageUp.name"
             description="%ActionDefinition.selectPageUp.description"
             id="org.eclipse.ui.edit.text.select.pageUp">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectPageDown.name"
             description="%ActionDefinition.selectPageDown.description"
             id="org.eclipse.ui.edit.text.select.pageDown">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectWordPrevious.name"
             description="%ActionDefinition.selectWordPrevious.description"
             id="org.eclipse.ui.edit.text.select.wordPrevious">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectWordNext.name"
             description="%ActionDefinition.selectWordNext.description"
             id="org.eclipse.ui.edit.text.select.wordNext">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectTextStart.name"
             description="%ActionDefinition.selectTextStart.description"
             id="org.eclipse.ui.edit.text.select.textStart">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectTextEnd.name"
             description="%ActionDefinition.selectTextEnd.description"
             id="org.eclipse.ui.edit.text.select.textEnd">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectWindowStart.name"
             description="%ActionDefinition.selectWindowStart.description"
             id="org.eclipse.ui.edit.text.select.windowStart">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.selectWindowEnd.name"
             description="%ActionDefinition.selectWindowEnd.description"
             id="org.eclipse.ui.edit.text.select.windowEnd">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.deletePrevious.name"
             description="%ActionDefinition.deletePrevious.description"
             id="org.eclipse.ui.edit.text.deletePrevious">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.deleteNext.name"
             description="%ActionDefinition.deleteNext.description"
             id="org.eclipse.ui.edit.text.deleteNext">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.shiftRight.name"
             description="%ActionDefinition.shiftRight.description"
             id="org.eclipse.ui.edit.text.shiftRight">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.shiftLeft.name"
             description="%ActionDefinition.shiftLeft.description"
             id="org.eclipse.ui.edit.text.shiftLeft">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.toggleOverwrite.name"
             description="%ActionDefinition.toggleOverwrite.description"
             id="org.eclipse.ui.edit.text.toggleOverwrite">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.showRulerContextMenu.name"
             description="%ActionDefinition.showRulerContextMenu.description"
             id="org.eclipse.ui.edit.text.showRulerContextMenu">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.us_ascii.name"
             description="%ActionDefinition.us_ascii.description"
             id="org.eclipse.ui.edit.text.encoding.us-ascii">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.iso_8859_1.name"
             description="%ActionDefinition.iso_8859_1.description"
             id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.utf_8.name"
             description="%ActionDefinition.utf_8.description"
             id="org.eclipse.ui.edit.text.encoding.utf-8">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.utf_16be.name"
             description="%ActionDefinition.utf_16be.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16be">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.utf_16le.name"
             description="%ActionDefinition.utf_16le.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16le">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.utf_16.name"
             description="%ActionDefinition.utf_16.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.system.name"
             description="%ActionDefinition.system.description"
             id="org.eclipse.ui.edit.text.encoding.system">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
             name="%ActionDefinition.custom.name"
             description="%ActionDefinition.custom.description"
             id="org.eclipse.ui.edit.text.encoding.custom">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
 			name= "%ActionDefinition.contentAssistProposals.name"
 			description="%ActionDefinition.contentAssistProposals.description"
 			id="org.eclipse.ui.edit.text.contentAssist.proposals">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
 			name= "%ActionDefinition.contentAssistContextInformation.name"
 			description="%ActionDefinition.contentAssistContextInformation.description"
 			id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
-	  </actionDefinition>
-   </extension>
+	</command>
+	</extension>
+      
    <extension
          point="org.eclipse.ui.acceleratorConfigurations">
       <acceleratorConfiguration
