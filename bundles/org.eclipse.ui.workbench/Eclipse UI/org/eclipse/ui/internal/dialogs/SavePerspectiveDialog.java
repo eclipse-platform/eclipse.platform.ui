@@ -126,6 +126,7 @@ protected Control createDialogArea(Composite parent) {
 	list.setSorter(new ViewerSorter() {});
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
+	list.getTable().setFont(parent.getFont());
 
 	// Set perspective list size.
 	Control ctrl = list.getControl();
