@@ -144,7 +144,7 @@ public class SiteForm extends UpdateWebForm {
 		if (webSite)
 			return currentAdapter.getURL();
 		else {
-			ISite site = currentAdapter.getSite();
+			ISite site = currentAdapter.getSite(null);
 			if (site == null)
 				return null;
 			if (rawURL)

@@ -366,7 +366,7 @@ public class SearchObject extends NamedModelObject {
 	private SearchResultSite findResultSite(ISite site) {
 		for (int i = 0; i < result.size(); i++) {
 			SearchResultSite resultSite = (SearchResultSite) result.get(i);
-			if (resultSite.getSite().equals(site))
+			if (resultSite.getSite(null).equals(site))
 				return resultSite;
 		}
 		return null;

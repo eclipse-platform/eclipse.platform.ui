@@ -505,7 +505,7 @@ public class DetailsForm extends PropertyWebForm {
 					IFeatureAdapter adapter = (IFeatureAdapter) obj;
 					try {
 						currentAdapter = adapter;
-						currentFeature = adapter.getFeature();
+						currentFeature = adapter.getFeature(null);
 					} catch (CoreException e) {
 						//UpdateUIPlugin.logException(e);
 						currentFeature =

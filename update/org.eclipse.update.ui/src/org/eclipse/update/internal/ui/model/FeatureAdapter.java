@@ -9,6 +9,7 @@ package org.eclipse.update.internal.ui.model;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @version 	1.0
@@ -34,16 +35,16 @@ public abstract class FeatureAdapter extends UIModelObject implements IFeatureAd
 	
 	public String toString() {
 		try {
-			IFeature feature = getFeature();
+			IFeature feature = getFeature(null);
 			return feature.getLabel();
 		}
 		catch (CoreException e) {
 			return "<failure>";
 		}
 	}
-	public boolean hasIncludedFeatures() {
+	public boolean hasIncludedFeatures(IProgressMonitor monitor) {
 		try {
-			IFeatureReference [] included = getFeature().getIncludedFeatureReferences();
+			IFeatureReference [] included = getFeature(monitor).getIncludedFeatureReferences();
 			return included.length>0;
 		}
 		catch (CoreException e) {

@@ -47,7 +47,7 @@ public class ItemsView extends BaseTableView {
 		public String getText(Object obj) {
 			if (obj instanceof IFeatureAdapter) {
 				try {
-					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+					IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
 					VersionedIdentifier versionedIdentifier =
 						(feature != null)
 							? feature.getVersionedIdentifier()

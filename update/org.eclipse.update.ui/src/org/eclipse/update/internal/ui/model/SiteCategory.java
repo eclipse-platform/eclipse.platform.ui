@@ -98,7 +98,7 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 			Object child = children.get(i);
 			if (child instanceof FeatureReferenceAdapter) {
 				FeatureReferenceAdapter cf = (FeatureReferenceAdapter)child;
-				cf.getFeature();
+				cf.getFeature(null);
 			}
 			else if (child instanceof SiteCategory) {
 				((SiteCategory)child).touchFeatures();

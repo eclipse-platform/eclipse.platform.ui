@@ -10,6 +10,7 @@ import java.net.URL;
 
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @version 	1.0
@@ -18,9 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 public interface IFeatureAdapter {
 	public URL getURL();
 	public ISite getSite();
-	public IFeature getFeature() throws CoreException;
-	public IFeatureAdapter [] getIncludedFeatures();
-	public boolean hasIncludedFeatures();
+	public IFeature getFeature(IProgressMonitor monitor) throws CoreException;
+	public IFeatureAdapter [] getIncludedFeatures(IProgressMonitor monitor);
+	public boolean hasIncludedFeatures(IProgressMonitor monitor);
 	public boolean isIncluded();
 	public boolean isOptional();
+	public String getFastLabel();
 }

@@ -4,17 +4,18 @@ package org.eclipse.update.internal.ui.views;
  * All Rights Reserved.
  */
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWTError;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -201,20 +202,10 @@ public class UpdatesView
 			}
 			if (parent instanceof SiteCategory) {
 				final SiteCategory category = (SiteCategory) parent;
-				/*BusyIndicator
-					.showWhile(getControl().getDisplay(), new Runnable() {
-					public void run() {
-						try {
-							category.touchFeatures();
-						} catch (CoreException e) {
-							UpdateUIPlugin.logException(e);
-						}
-					}
-				});*/
 				return category.getChildren();
 			}
 			if (parent instanceof IFeatureAdapter) {
-				return ((IFeatureAdapter) parent).getIncludedFeatures();
+				return getIncludedFeatures((IFeatureAdapter)parent);
 			}
 			return new Object[0];
 		}
@@ -252,7 +243,7 @@ public class UpdatesView
 				return ((SearchResultSite) parent).getChildCount() > 0;
 			}
 			if (parent instanceof IFeatureAdapter) {
-				return ((IFeatureAdapter) parent).hasIncludedFeatures();
+				return ((IFeatureAdapter) parent).hasIncludedFeatures(null);
 			}
 			return false;
 		}
@@ -997,6 +988,7 @@ public class UpdatesView
 		final Object obj = sel.getFirstElement();
 
 		if (obj != null) {
+			/*
 			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
 					try {
@@ -1006,13 +998,51 @@ public class UpdatesView
 						if (auth != null)
 							auth.reset();
 						if (obj instanceof SiteBookmark)
-							 ((SiteBookmark) obj).connect(false);
+							 ((SiteBookmark) obj).connect(false, null);
 						getViewer().refresh(obj);
 					} catch (CoreException e) {
 						UpdateUIPlugin.logException(e);
 					}
 				}
 			});
+			*/
+			IRunnableWithProgress op = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException {
+					try {
+						monitor.beginTask("", 3);
+						// reinitialize the authenticator  
+						UpdateManagerAuthenticator auth =
+							UpdateUIPlugin.getDefault().getAuthenticator();
+						if (auth != null)
+							auth.reset();
+						monitor.worked(1);
+						if (obj instanceof SiteBookmark) {
+							((SiteBookmark) obj).connect(
+								false,
+								new SubProgressMonitor(monitor, 1));
+						} else
+							monitor.worked(1);
+						monitor.setTaskName("Updating...");
+						getControl().getDisplay().syncExec(new Runnable() {
+							public void run() {
+								getViewer().refresh(obj);
+							}
+						});
+						monitor.worked(1);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					} finally {
+						monitor.done();
+					}
+				}
+			};
+			try {
+				getViewSite().getWorkbenchWindow().run(true, true, op);
+			} catch (InvocationTargetException e) {
+				UpdateUIPlugin.logException(e);
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 
@@ -1075,18 +1105,34 @@ public class UpdatesView
 		final SiteBookmark bookmark,
 		final boolean connect) {
 		final CatalogBag bag = new CatalogBag();
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
+
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
 				try {
+					monitor.beginTask("Connecting...", 2);
+
 					if (connect)
-						bookmark.connect();
+						bookmark.connect(new SubProgressMonitor(monitor, 1));
+					else
+						monitor.worked(1);
 					bag.catalog =
-						bookmark.getCatalog(showCategoriesAction.isChecked());
+						bookmark.getCatalog(
+							showCategoriesAction.isChecked(),
+							new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e);
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
-		});
+		};
+		try {
+			getViewSite().getWorkbenchWindow().run(true, true, op);
+		} catch (InvocationTargetException e) {
+			UpdateUIPlugin.logException(e);
+		} catch (InterruptedException e) {
+		}
 		return bag.catalog;
 	}
 
@@ -1163,25 +1209,46 @@ public class UpdatesView
 
 	private IFeature getFeature(final IFeatureAdapter adapter) {
 		final IFeature[] result = new IFeature[1];
-		final CoreException[] exception = new CoreException[1];
 
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
 				try {
-					result[0] = adapter.getFeature();
-					exception[0] = null;
+					monitor.beginTask("Downloading "+adapter.getFastLabel()+"...", 1);
+					result[0] = adapter.getFeature(new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
-					exception[0] = e;
 					result[0] =
 						new MissingFeature(adapter.getSite(), adapter.getURL());
+				} finally {
+					monitor.done();
 				}
 			}
-		});
-		/*
-		if (exception[0] != null) {
-			throw exception[0];
+		};
+		try {
+			getViewSite().getWorkbenchWindow().run(true, false, op);
+		} catch (InvocationTargetException e) {
+			UpdateUIPlugin.logException(e);
+		} catch (InterruptedException e) {
 		}
-		*/
+		return result[0];
+	}
+	
+	private Object[] getIncludedFeatures(final IFeatureAdapter adapter) {
+		final Object [][] result = new Object[1][];
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
+				monitor.beginTask("Downloading "+adapter.getFastLabel()+"...", 1);
+				result[0] = adapter.getIncludedFeatures(new SubProgressMonitor(monitor, 1));
+				monitor.done();
+			}
+		};
+		try {
+			getViewSite().getWorkbenchWindow().run(true, false, op);
+		} catch (InvocationTargetException e) {
+			UpdateUIPlugin.logException(e);
+		} catch (InterruptedException e) {
+		}
 		return result[0];
 	}
 

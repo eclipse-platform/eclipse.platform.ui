@@ -7,6 +7,7 @@ package org.eclipse.update.internal.ui.search;
 import java.net.URL;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.update.core.ISite;
@@ -38,7 +39,7 @@ public class SearchResultSite
 		return search;
 	}
 
-	public ISite getSite() {
+	public ISite getSite(IProgressMonitor monitor) {
 		return site;
 	}
 

@@ -64,14 +64,14 @@ public class SiteBookmark extends NamedModelObject
 		notifyObjectChanged(P_URL);
 	}
 	
-	public ISite getSite() {
-		return getSite(true);
+	public ISite getSite(IProgressMonitor monitor) {
+		return getSite(true, monitor);
 	}
 	
-	public ISite getSite(boolean showDialogIfFailed) {
+	public ISite getSite(boolean showDialogIfFailed, IProgressMonitor monitor) {
 		if (site==null) {
 			try {
-				connect();
+				connect(monitor);
 			}
 			catch (CoreException e) {
 				UpdateUIPlugin.logException(e, showDialogIfFailed);
@@ -84,39 +84,50 @@ public class SiteBookmark extends NamedModelObject
 		return site!=null;
 	}
 	
-	public void connect() throws CoreException {
-		connect(true);
+	public void connect(IProgressMonitor monitor) throws CoreException {
+		connect(true, monitor);
 	}
 	
-	public void connect(boolean useCache) throws CoreException {
-		site = SiteManager.getSite(url, useCache);
-		createCatalog();
+	public void connect(boolean useCache, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 2);
+		monitor.subTask("Connecting to "+url.toString()+"...");
+		site = SiteManager.getSite(url, useCache, new SubProgressMonitor(monitor, 1));
+		createCatalog(new SubProgressMonitor(monitor, 1));
 	}
 	
-	private void createCatalog() {
+	private void createCatalog(IProgressMonitor monitor) {
 		catalog = new Vector();
 		otherCategory = new SiteCategory(null, null);
 		// Add all the categories
 		ICategory [] categories;
+		monitor.subTask("Loading categories...");
 		categories = site.getCategories();
+		
+		ISiteFeatureReference [] featureRefs;
+		monitor.subTask("Loading feature references...");
+		featureRefs = site.getRawFeatureReferences();
+		
+		monitor.beginTask("", featureRefs.length + categories.length);
 
 		for (int i=0; i<categories.length; i++) {
 			ICategory category = categories[i];
+			monitor.subTask("Adding category: "+category.getLabel());
 			addCategoryToCatalog(category);
+			monitor.worked(1);
 		}
 		// Add features to categories
-		ISiteFeatureReference [] featureRefs;
-		featureRefs = site.getFeatureReferences();
 
+		monitor.subTask("Linking features and categories...");
 		for (int i=0; i<featureRefs.length; i++) {
 			ISiteFeatureReference featureRef = featureRefs[i];
 			addFeatureToCatalog(featureRef);
+			monitor.worked(1);
 		}
 		if (otherCategory.getChildCount()>0)
 		   catalog.add(otherCategory);
 	}
 
-	public Object [] getCatalog(boolean withCategories) {
+	public Object [] getCatalog(boolean withCategories, IProgressMonitor monitor) {
 		if (withCategories)
 			return catalog.toArray();
 		else {

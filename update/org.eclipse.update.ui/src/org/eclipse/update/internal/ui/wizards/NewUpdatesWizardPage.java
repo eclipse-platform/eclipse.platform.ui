@@ -73,7 +73,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		public Image getColumnImage(Object obj, int col) {
 			if (col == 0) {
 				try {
-					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+					IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
 					boolean patch = feature.isPatch();
 					return UpdateUIPlugin.getDefault().getLabelProvider().get(
 						patch
@@ -95,7 +95,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 			if (obj instanceof IFeatureAdapter) {
 
 				try {
-					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+					IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
 
 					switch (col) {
 						case 0 :

@@ -6,6 +6,7 @@ package org.eclipse.update.internal.ui.model;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
 
 public class FeatureReferenceAdapter extends FeatureAdapter {
@@ -16,8 +17,12 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 		setIncluded(featureRef instanceof IIncludedFeatureReference);
 	}
 	
-	public IFeature getFeature() throws CoreException {
-		return featureRef.getFeature();
+	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
+		return featureRef.getFeature(monitor);
+	}
+	
+	public String getFastLabel() {
+		return featureRef.getURL().toString();
 	}
 	
 	public ISite getSite() {
@@ -33,10 +38,10 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 			((IIncludedFeatureReference)featureRef).isOptional():false;
 	}
 
-	public IFeatureAdapter[] getIncludedFeatures() {
+	public IFeatureAdapter[] getIncludedFeatures(IProgressMonitor monitor) {
 		try {
 			IFeatureReference[] included =
-				getFeature().getIncludedFeatureReferences();
+				getFeature(monitor).getIncludedFeatureReferences();
 			FeatureReferenceAdapter[] result =
 				new FeatureReferenceAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {

@@ -7,7 +7,9 @@
 package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
@@ -47,19 +49,22 @@ public class ConfiguredFeatureAdapter
 	public boolean isUpdated() {
 		return updated;
 	}
-	public IFeatureAdapter[] getIncludedFeatures() {
+	public IFeatureAdapter[] getIncludedFeatures(IProgressMonitor monitor) {
 		try {
 			IIncludedFeatureReference[] included =
-				getFeature().getIncludedFeatureReferences();
+				getFeature(null).getIncludedFeatureReferences();
 			ConfiguredFeatureAdapter[] result =
 				new ConfiguredFeatureAdapter[included.length];
+			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+			subMonitor.beginTask("", included.length);
+
 			for (int i = 0; i < included.length; i++) {
 				IIncludedFeatureReference fref = included[i];
 				IFeature feature;
 				boolean childConfigured=configured;
 				boolean updated = false;
 				try {
-					feature = fref.getFeature(!configured, getConfigurationSite());
+					feature = fref.getFeature(!configured, getConfigurationSite(), new SubProgressMonitor(subMonitor, 1));
 					childConfigured = adapter.getConfigurationSite().isConfigured(feature);
 					///*
 					PluginVersionIdentifier refpid = fref.getVersionedIdentifier().getVersion();
@@ -67,7 +72,7 @@ public class ConfiguredFeatureAdapter
 					updated = !refpid.equals(fpid);
 					//*/
 				} catch (CoreException e) {
-					feature = new MissingFeature(getFeature(), fref);
+					feature = new MissingFeature(getFeature(null), fref);
 					childConfigured = false;
 				}
 				

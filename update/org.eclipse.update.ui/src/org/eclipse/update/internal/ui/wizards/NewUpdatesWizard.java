@@ -63,7 +63,7 @@ public class NewUpdatesWizard extends Wizard {
 		for (int i = 0; i < candidates.length; i++) {
 			SimpleFeatureAdapter adapter = (SimpleFeatureAdapter) candidates[i];
 			try {
-				IFeature feature = adapter.getFeature();
+				IFeature feature = adapter.getFeature(null);
 				IFeature[] installed =
 					UpdateUIPlugin.getInstalledFeatures(feature);
 				PendingChange change = new PendingChange(installed[0], feature);

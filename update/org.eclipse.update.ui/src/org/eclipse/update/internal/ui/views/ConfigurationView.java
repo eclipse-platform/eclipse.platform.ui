@@ -204,7 +204,7 @@ public class ConfigurationView
 			}
 			if (parent instanceof ConfiguredFeatureAdapter) {
 				return ((ConfiguredFeatureAdapter) parent)
-					.getIncludedFeatures();
+					.getIncludedFeatures(null);
 			}
 			return new Object[0];
 		}
@@ -290,7 +290,7 @@ public class ConfigurationView
 				for (int i = 0; i < list.size(); i++) {
 					ConfiguredFeatureAdapter cf =
 						(ConfiguredFeatureAdapter) list.get(i);
-					IFeature feature = cf.getFeature();
+					IFeature feature = cf.getFeature(null);
 					if (feature != null)
 						addChildFeatures(
 							feature,
@@ -301,7 +301,7 @@ public class ConfigurationView
 				for (int i = 0; i < list.size(); i++) {
 					ConfiguredFeatureAdapter cf =
 						(ConfiguredFeatureAdapter) list.get(i);
-					IFeature feature = cf.getFeature();
+					IFeature feature = cf.getFeature(null);
 					if (feature != null
 						&& isChildFeature(feature, children) == false)
 						result.add(cf);
@@ -351,7 +351,7 @@ public class ConfigurationView
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ConfiguredFeatureAdapter) {
 				return ((ConfiguredFeatureAdapter) parent)
-					.hasIncludedFeatures();
+					.hasIncludedFeatures(null);
 			}
 			return true;
 		}
@@ -381,7 +381,7 @@ public class ConfigurationView
 			}
 			if (obj instanceof IFeatureAdapter) {
 				try {
-					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+					IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
 					if (feature instanceof MissingFeature) {
 						return UpdateUIPlugin.getFormattedMessage(
 							KEY_MISSING_FEATURE,
@@ -461,7 +461,7 @@ public class ConfigurationView
 			}
 			ILocalSite localSite = getLocalSite();
 			try {
-				IFeature feature = adapter.getFeature();
+				IFeature feature = adapter.getFeature(null);
 				if (feature instanceof MissingFeature) {
 					MissingFeature mfeature = (MissingFeature) feature;
 					if (mfeature.isOptional() == false)
@@ -858,7 +858,7 @@ public class ConfigurationView
 				Object obj = getSelectedObject();
 				try {
 					if (obj instanceof IFeatureAdapter) {
-						IFeature feature = ((IFeatureAdapter) obj).getFeature();
+						IFeature feature = ((IFeatureAdapter) obj).getFeature(null);
 						showFeatureStatus(feature);
 					}
 				} catch (CoreException e) {

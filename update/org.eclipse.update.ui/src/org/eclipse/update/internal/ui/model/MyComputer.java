@@ -117,7 +117,7 @@ public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 				monitor.subTask(child.getPath());
 				SiteBookmark bookmark = MyComputerDirectory.createSite(child);
 				if (bookmark != null) {
-					ISite site = bookmark.getSite(false);
+					ISite site = bookmark.getSite(false, null);
 					if (site != null)
 						sites.add(bookmark);
 				} else

@@ -182,9 +182,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 				label = getURL().toString();
 			return label;
 		}
-		public ISite getSite() {
+		public ISite getSite(IProgressMonitor monitor) {
 			try {
-				return SiteManager.getSite(getURL());
+				return SiteManager.getSite(getURL(), monitor);
 			} catch (CoreException e) {
 				return null;
 			}

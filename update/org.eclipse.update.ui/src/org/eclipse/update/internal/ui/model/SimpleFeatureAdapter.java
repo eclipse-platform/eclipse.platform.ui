@@ -10,6 +10,7 @@ import java.net.URL;
 
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @version 	1.0
@@ -26,8 +27,12 @@ public class SimpleFeatureAdapter extends FeatureAdapter {
 		this.optional = optional;
 	}
 	
-	public IFeature getFeature() throws CoreException {
+	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
 		return feature;
+	}
+	
+	public String getFastLabel() {
+		return feature.getLabel();
 	}
 	
 	public URL getURL() {
@@ -38,9 +43,9 @@ public class SimpleFeatureAdapter extends FeatureAdapter {
 		return feature.getSite();
 	}
 	
-	public IFeatureAdapter[] getIncludedFeatures() {
+	public IFeatureAdapter[] getIncludedFeatures(IProgressMonitor monitor) {
 		try {
-			IIncludedFeatureReference[] included = getFeature().getIncludedFeatureReferences();
+			IIncludedFeatureReference[] included = getFeature(monitor).getIncludedFeatureReferences();
 			SimpleFeatureAdapter[] result =
 				new SimpleFeatureAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {

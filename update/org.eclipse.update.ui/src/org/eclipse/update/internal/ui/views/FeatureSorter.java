@@ -29,8 +29,8 @@ public class FeatureSorter extends ViewerSorter {
 		IFeature f1, f2;
 
 		try {
-			f1 = a1.getFeature();
-			f2 = a2.getFeature();
+			f1 = a1.getFeature(null);
+			f2 = a2.getFeature(null);
 		} catch (CoreException e) {
 			return super.compare(viewer, e1, e2);
 		}

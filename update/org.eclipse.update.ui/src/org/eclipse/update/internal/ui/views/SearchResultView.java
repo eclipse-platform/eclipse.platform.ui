@@ -78,7 +78,7 @@ public class SearchResultView
 			if (obj instanceof IFeatureAdapter) {
 				IFeature feature;
 				try {
-					feature = ((IFeatureAdapter) obj).getFeature();
+					feature = ((IFeatureAdapter) obj).getFeature(null);
 				} catch (CoreException e) {
 					if (col == 0)
 						return getText(obj);
