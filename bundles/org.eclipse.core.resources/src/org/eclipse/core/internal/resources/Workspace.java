@@ -240,34 +240,25 @@ public void close(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(msg, rootCount + 2);
 		monitor.subTask(msg);
 		//this operation will never end because the world is going away
-		String message = Policy.bind("resources.workspaceClose");
-		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		try {
 			prepareOperation();
 			if (isOpen()) {
 				beginOperation(true);
 				IProject[] projects = getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
-					try {
-						Project project = (Project) projects[i];
-						project.close(false, Policy.subMonitorFor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-						// Closing the project may have caused it to be deleted
-						ResourceInfo info = project.getResourceInfo(true, false);
-						if (project.exists(project.getFlags(info), true))
-							deleteResource(project);
-					} catch (CoreException e) {
-						result.add(e.getStatus());
-					}
+					//notify managers of closing so they can cleanup
+					closing(projects[i]);
+					monitor.worked(1);
 				}
+				//empty the workspace tree so we leave in a clean state
+				deleteResource(getRoot());
 				openFlag = false;
 			}
 			// endOperation not needed here
 		} finally {
 			// Shutdown needs to be executed anyway. Doesn't matter if the workspace was not open.
-			shutdown(Policy.subMonitorFor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+			shutdown(Policy.subMonitorFor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 		}
-		if (result.matches(IStatus.ERROR))
-			throw new ResourceException(result);
 	} finally {
 		monitor.done();
 	}

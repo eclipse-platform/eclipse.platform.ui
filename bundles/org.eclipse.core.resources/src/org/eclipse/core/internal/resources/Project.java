@@ -130,12 +130,6 @@ protected void checkDescription(IProject project, IProjectDescription desc, bool
  * @see IProject#close
  */
 public void close(IProgressMonitor monitor) throws CoreException {
-	close(true, monitor);
-}
-/**
- * @see #close(IProgressMonitor)
- */
-public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String msg = Policy.bind("resources.closing.1", getFullPath().toString());
@@ -149,25 +143,15 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 			if (!isOpen(flags))
 				return;
 			// Signal that this resource is about to be closed.  Do this at the very 
-			// beginning so that people have a chance to do clean up while the 
-			// resources still exist.
+			// beginning so that infrastructure pieces have a chance to do clean up 
+			// while the resources still exist.
 			// Do this before the begin to prevent lifecycle participants to change the tree.
 			workspace.closing(this);
 			workspace.beginOperation(true);
 			// flush the build order early in case there is a problem
 			workspace.flushBuildOrder();
-			IStatus saveStatus = null;
-			if (save) {
-				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-				saveStatus = workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
-			}
-			// If the project has never been saved at this point, delete the 
-			// project but leave its contents.
-			//FIXME: revisit this behaviour of deleting if not saved
-			if (!hasBeenSaved()) {
-				delete(false, true, Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-				return;
-			}
+			IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
+			IStatus saveStatus = workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
 			internalClose();
 			monitor.worked(Policy.opWork / 2);
 			if (saveStatus != null && !saveStatus.isOK())
@@ -387,13 +371,6 @@ public IProject[] getReferencingProjects() {
  */
 public int getType() {
 	return PROJECT;
-}
-/**
- * Returns true if this project has ever been saved to disk before, and
- * false otherwise. 
- */
-protected boolean hasBeenSaved() {
-	return workspace.getFileSystemManager().hasSavedProject(this);
 }
 /**
  * @see IProject#hasNature
