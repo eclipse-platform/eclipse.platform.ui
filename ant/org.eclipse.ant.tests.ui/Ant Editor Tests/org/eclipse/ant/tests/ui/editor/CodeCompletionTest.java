@@ -267,14 +267,14 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	}
     
     /**
-     * Tests the code completion for tasks that have been defined in the buildfile
+     * Tests the code completion for tasks that have been defined via the task extension point
      */
 	public void testExtensionPointTaskProposals() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("taskdef.xml"));
 
-		ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), "target", "eclipse");
-		assertEquals(11, proposals.length);
-		assertContains("eclipse.refreshLocal", proposals);
+		ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), "target", "cool");
+		assertEquals(4, proposals.length);
+		assertContains("coolUITask", proposals);
 	}
     
     /**
@@ -288,6 +288,24 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		ICompletionProposal proposal = proposals[0];
 		assertEquals("eclipseMacro", proposal.getDisplayString());
         
+	}
+	
+	/**
+     * Tests the code completion for tasks that have been defined via macrodef in the buildfile
+     */
+	public void testMacrodefAttributeProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("macrodef.xml"));
+		int lineNumber= 12;
+    	int columnNumber= 16;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 2);
+    	assertContains("v", proposals);
+    	assertContains("eclipse", proposals);
+    	assertTrue("Additional proposal information not correct", proposals[1].getAdditionalProposalInfo().startsWith("Testing Eclipse"));
 	}
 
     /**
@@ -524,7 +542,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
     /**
-     * Tests the code completion for custom task that has boolean attribute
+     * Tests the code completion for custom task that has a boolean attribute
      */
     public void testCustomBooleanProposals() throws BadLocationException {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("customBoolean.xml"));
@@ -543,7 +561,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
      /**
-     * Tests the code completion for custom task that an enumerated attribute
+     * Tests the code completion for custom task that has an enumerated attribute
      */
     public void testCustomEnumeratedProposals() throws BadLocationException {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("extensionPointTaskSepVM.xml"));
@@ -558,5 +576,22 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("cool", proposals);
     	assertContains("chillin", proposals);
     	assertDoesNotContain("awesome", proposals);
+    }
+    
+    /**
+     * Tests the code completion for custom task that an enumerated attribute
+     */
+    public void testCustomReferenceProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("extensionPointTaskSepVM.xml"));
+		int lineNumber= 2;
+    	int columnNumber= 41;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "e");
+    	assertTrue(proposals.length == 1);
+    	//the reference to the project by name
+    	assertContains("Extension Point Task", proposals);
     }
 }

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,6 +37,8 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Available;
+import org.apache.tools.ant.taskdefs.MacroDef;
+import org.apache.tools.ant.taskdefs.MacroInstance;
 import org.apache.tools.ant.taskdefs.Parallel;
 import org.apache.tools.ant.taskdefs.PathConvert;
 import org.apache.tools.ant.taskdefs.Property;
@@ -43,12 +46,14 @@ import org.apache.tools.ant.taskdefs.Sequential;
 import org.apache.tools.ant.taskdefs.UpToDate;
 import org.apache.tools.ant.taskdefs.condition.Condition;
 import org.apache.tools.ant.types.EnumeratedAttribute;
+import org.apache.tools.ant.types.Reference;
 import org.eclipse.ant.internal.ui.dtd.IAttribute;
 import org.eclipse.ant.internal.ui.dtd.IDfm;
 import org.eclipse.ant.internal.ui.dtd.IElement;
 import org.eclipse.ant.internal.ui.dtd.ISchema;
 import org.eclipse.ant.internal.ui.dtd.ParseError;
 import org.eclipse.ant.internal.ui.dtd.Parser;
+import org.eclipse.ant.internal.ui.editor.model.AntDefiningTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
@@ -369,10 +374,10 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	private ICompletionProposal[] getReferencesValueProposals(String prefix) {
 		Project project= antModel.getProjectNode().getProject();
 		Map references= project.getReferences();
-		Set refIds= references.keySet();
-		if (refIds.isEmpty()) {
+		if (references.isEmpty()) {
 			return NO_PROPOSALS;
 		}
+		Set refIds= references.keySet();
 		AntElementNode node= antModel.getNode(cursorPosition, false);
 		while (node.getParentNode() instanceof AntTaskNode) {
 			node= node.getParentNode();
@@ -480,38 +485,77 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                         }
                     }
                     
-                    addAttributeProposal(taskName, prefix, proposals, attrName, replacementString, displayString);
+                    addAttributeProposal(taskName, prefix, proposals, attrName, replacementString, displayString, true);
                 }       
             }
         } else { //possibly a user defined task or type
         	Class taskClass= getTaskClass(taskName);
         	if (taskClass != null) {
-        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
-        		Enumeration attributes= helper.getAttributes();
-	        	while (attributes.hasMoreElements()) {
-					String attribute = (String) attributes.nextElement();
-					if (prefix.length() == 0 || attribute.toLowerCase().startsWith(prefix)) {
-						String replacementString = attribute + "=\"\""; //$NON-NLS-1$
-						addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute);
+        		if (taskClass == MacroInstance.class) {
+        			addMacroDefProposals(taskName, prefix, proposals);
+                	
+        		} else {
+	        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+	        		Enumeration attributes= helper.getAttributes();
+		        	while (attributes.hasMoreElements()) {
+						String attribute = (String) attributes.nextElement();
+						if (prefix.length() == 0 || attribute.toLowerCase().startsWith(prefix)) {
+							String replacementString = attribute + "=\"\""; //$NON-NLS-1$
+							addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute, false);
+						}
 					}
-				}
+        		}
         	}
         }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
 
-    private void addAttributeProposal(String taskName, String prefix, List proposals, String attrName, String replacementString, String displayString) {
-		String proposalInfo = null;
-		String required = descriptionProvider.getRequiredAttributeForTaskAttribute(taskName, attrName);
-		if(required != null && required.length() > 0) {
-		    proposalInfo = AntEditorMessages.getString("AntEditorCompletionProcessor.Required___4") + required; //$NON-NLS-1$
-		    proposalInfo += "<BR><BR>"; //$NON-NLS-1$
+    private void addMacroDefProposals(String taskName, String prefix, List proposals) {
+		AntProjectNode projectNode= antModel.getProjectNode();
+		AntDefiningTaskNode node= projectNode.getDefininingTaskNode(taskName);
+		Object task= node.getRealTask();
+		if (task instanceof MacroDef) {
+			List attributes= ((MacroDef)task).getAttributes();
+			Iterator itr= attributes.iterator();
+			while (itr.hasNext()) {
+				MacroDef.Attribute attribute = (MacroDef.Attribute) itr.next();
+				String attributeName= attribute.getName();
+				if (prefix.length() == 0 || attributeName.toLowerCase().startsWith(prefix)) {
+					String replacementString = attributeName + "=\"\""; //$NON-NLS-1$
+					String proposalInfo = null;
+					
+					String description = attribute.getDescription();
+					if(description != null) {
+					    proposalInfo= description;
+					}
+					String deflt = attribute.getDefault();
+					if(deflt != null && deflt.length() > 0) {
+						proposalInfo= (proposalInfo == null ?  "<BR><BR>" : (proposalInfo += "<BR><BR>")); //$NON-NLS-1$ //$NON-NLS-2$
+						proposalInfo+= MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.59"), new String[]{deflt}); //$NON-NLS-1$
+					}
+					
+					ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), attributeName.length() + 2, null, attributeName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+					proposals.add(proposal);
+				}
+			}
 		}
-		String description = descriptionProvider.getDescriptionForTaskAttribute(taskName, attrName);
-		if(description != null) {
-		    proposalInfo = (proposalInfo == null ? "" : proposalInfo); //$NON-NLS-1$
-		    proposalInfo += description;
+	}
+
+	private void addAttributeProposal(String taskName, String prefix, List proposals, String attrName, String replacementString, String displayString, boolean lookupDescription) {
+    	
+		String proposalInfo = null;
+		if (lookupDescription) {
+			String required = descriptionProvider.getRequiredAttributeForTaskAttribute(taskName, attrName);
+			if(required != null && required.length() > 0) {
+			    proposalInfo = AntEditorMessages.getString("AntEditorCompletionProcessor.Required___4") + required; //$NON-NLS-1$
+			    proposalInfo += "<BR><BR>"; //$NON-NLS-1$
+			}
+			String description = descriptionProvider.getDescriptionForTaskAttribute(taskName, attrName);
+			if(description != null) {
+			    proposalInfo = (proposalInfo == null ? "" : proposalInfo); //$NON-NLS-1$
+			    proposalInfo += description;
+			}
 		}
 		
 		ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), attrName.length()+2, null, displayString, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
@@ -559,6 +603,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 					if (attribute.equals(attributeName)) {
 						Class attributeType= helper.getAttributeType(attribute);
 						addAttributeValueProposalsForAttributeType(attributeType, prefix, proposals);
+						break;
 					}
 				}
         	}
@@ -575,6 +620,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			} catch (InstantiationException e) {
 			} catch (IllegalAccessException e) {
 			}
+		} else if (Reference.class == attributeType) {
+			proposals.addAll(Arrays.asList(getReferencesValueProposals(prefix)));
 		}
 	}
 	
@@ -1161,7 +1208,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     		AntProjectNode node= antModel.getProjectNode();
         	if (node != null) {
         		Project antProject= node.getProject();
-        		return ComponentHelper.getComponentHelper(antProject).getAntTypeTable().get(elementName) != null; 
+        		return ComponentHelper.getComponentHelper(antProject).getDefinition(elementName) != null; 
         	}
     	}
         return false;
