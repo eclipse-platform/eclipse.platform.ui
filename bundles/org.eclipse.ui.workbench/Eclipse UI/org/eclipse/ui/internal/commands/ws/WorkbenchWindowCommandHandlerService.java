@@ -14,8 +14,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandHandlerServiceEvent;
+import org.eclipse.ui.commands.CommandHandlerServiceFactory;
 import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
@@ -101,9 +103,29 @@ final class WorkbenchWindowCommandHandlerService
 		workbenchWindow.addPageListener(pageListener);
 		workbenchWindow.addPerspectiveListener(perspectiveListener);
 		workbenchWindow.getPartService().addPartListener(partListener);
+		
+		// TODO review post M6 start	
+		localCompoundCommandHandlerService = CommandHandlerServiceFactory.getCompoundCommandHandlerService();
+		localCompoundCommandHandlerService.addCommandHandlerServiceListener(commandHandlerServiceListener);
+		// TODO review post M6 end	
+		
 		update();
 	}
 
+	// TODO review post M6 start
+	ICompoundCommandHandlerService localCompoundCommandHandlerService;
+	
+	public void addCommandHandlerService(ICommandHandlerService commandHandlerService) {
+		localCompoundCommandHandlerService.addCommandHandlerService(commandHandlerService);	
+		update();
+	}
+	
+	public void removeCommandHandlerService(ICommandHandlerService commandHandlerService) {
+		localCompoundCommandHandlerService.removeCommandHandlerService(commandHandlerService);
+		update();
+	}	
+	// TODO review post M6 end
+	
 	public Map getHandlersByCommandId() {
 		return Collections.unmodifiableMap(handlersByCommandId);
 	}
@@ -216,6 +238,12 @@ final class WorkbenchWindowCommandHandlerService
 
 		Map handlersByCommandId = new HashMap();
 
+		// TODO review post M6 start
+		handlersByCommandId.putAll(
+				localCompoundCommandHandlerService
+				.getHandlersByCommandId());
+		// TODO review post M6 end
+		
 		if (this.workbenchCompoundCommandHandlerService != null)
 			handlersByCommandId.putAll(
 				workbenchCompoundCommandHandlerService

@@ -77,7 +77,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.CommandHandlerServiceFactory;
-import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
@@ -442,13 +441,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		workbenchWindowCommandSupport = new WorkbenchWindowCommandSupport(this);
 		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);
-		ICompoundCommandHandlerService compoundCommandHandlerService = getWorkbenchImpl().getCommandSupport().getCompoundCommandHandlerService();
-		compoundCommandHandlerService.addCommandHandlerService(actionSetAndGlobalActionCommandHandlerService);
+		((WorkbenchWindowCommandSupport) workbenchWindowCommandSupport).addCommandHandlerService(actionSetAndGlobalActionCommandHandlerService);
 	}
 
 	private Map actionSetHandlersByCommandId = new HashMap();
 	private Map globalActionHandlersByCommandId = new HashMap();
-	private IMutableCommandHandlerService actionSetAndGlobalActionCommandHandlerService = CommandHandlerServiceFactory.getMutableCommandHandlerService();
+	public IMutableCommandHandlerService actionSetAndGlobalActionCommandHandlerService = CommandHandlerServiceFactory.getMutableCommandHandlerService();
 	
 	void registerActionSets(IActionSet[] actionSets) {
 		actionSetHandlersByCommandId.clear();
