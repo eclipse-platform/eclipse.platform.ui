@@ -27,14 +27,14 @@ package org.eclipse.core.resources;
  *    would have occurred. The workspace is open for change during notification of 
  *    these events. The delta reported in this event cycle is identical across
  *    all listeners registered for this type of event.
- *    Resource changes attempted during a <code>PRE_AUTO_BUILD</code> callback
+ *    Resource changes attempted during a <code>PRE_BUILD</code> callback
  *    <b>must</b> be done in the thread doing the notification.
  *   </li>
  *   <li>
  *    After-the-fact batch reports of arbitrary creations, 
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
- *    <code>POST_AUTO_BUILD</code>, and <code>getDelta</code> returns
+ *    <code>POST_BUILD</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties at the
  *    end of every workspace operation in which a build of any kind occurred.
@@ -42,7 +42,7 @@ package org.eclipse.core.resources;
  *    would have occurred. The workspace is open for change during notification of 
  *    these events. The delta reported in this event cycle is identical across
  *    all listeners registered for this type of event.
- *    Resource changes attempted during a <code>POST_AUTO_BUILD</code> callback
+ *    Resource changes attempted during a <code>POST_BUILD</code> callback
  *    <b>must</b> be done in the thread doing the notification.
  *   </li>
  *   <li>
