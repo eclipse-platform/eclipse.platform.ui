@@ -1040,6 +1040,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			fBatchedUpdates.clear();
 			updateBusyLabel();
 		}
+		getViewPart().updateLabel();
 		clear();
 	}
 
