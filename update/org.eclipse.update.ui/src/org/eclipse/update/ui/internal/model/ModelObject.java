@@ -4,8 +4,10 @@ package org.eclipse.update.ui.internal.model;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.jface.resource.ImageDescriptor;
 
-public class ModelObject extends PlatformObject {
+public class ModelObject extends PlatformObject implements IWorkbenchAdapter {
 	UpdateModel model;
 	
 	void setModel(UpdateModel model) {
@@ -19,5 +21,19 @@ public class ModelObject extends PlatformObject {
 	protected void notifyObjectChanged(String property) {
 		if (model==null) return;
 		model.fireObjectChanged(this, property);
+	}
+	
+	public Object [] getChildren(Object obj) {
+		return new Object[0];
+	}
+	
+	public Object getParent(Object obj) {
+		return null;
+	}
+	public String getLabel(Object obj) {
+		return toString();
+	}
+	public ImageDescriptor getImageDescriptor(Object obj) {
+		return null;
 	}
 }

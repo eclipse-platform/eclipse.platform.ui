@@ -7,13 +7,15 @@ import org.eclipse.update.core.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 
-public class ChecklistJob extends ModelObject {
+public class PendingChange extends ModelObject {
 	public static final int INSTALL = 0x1;
 	public static final int UNINSTALL = 0x2;
+	public static final int CONFIGURE = 0x3;
+	public static final int UNCONFIGURE = 0x4;
 	private int jobType;
 	private IFeature feature;
 	
-	public ChecklistJob(IFeature feature, int jobType) {
+	public PendingChange(IFeature feature, int jobType) {
 		this.jobType = jobType;
 		this.feature = feature;
 	}

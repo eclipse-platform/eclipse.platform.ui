@@ -245,7 +245,6 @@ class SearchAdapter extends MonitorAdapter {
 	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
 		VersionedIdentifier fvi = feature.getVersionIdentifier();
 		VersionedIdentifier cvi = candidate.getVersionIdentifier();
-		if (!fvi.getIdentifier().equals(cvi.getIdentifier())) return false;
 		Version fv = fvi.getVersion();
 		Version cv = cvi.getVersion();
 		return cv.compare(fv) > 0;

@@ -49,10 +49,10 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 	
 	public boolean performOk() {
 		if (changed) {
-			IInstallConfiguration config = (IInstallConfiguration)getElement();
+			IInstallConfiguration config = getConfiguration();
 			config.setLabel(nameText.getText());
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-			model.fireObjectChanged(config, null);
+			model.fireObjectChanged(getElement(), null);
 			try {
 				SiteManager.getLocalSite().save();
 			}
@@ -63,8 +63,15 @@ public class ConfigurationPropertyPage extends PropertyPage implements IWorkbenc
 		return true;
 	}
 	
+	private IInstallConfiguration getConfiguration() {
+		Object obj = getElement();
+		if (obj instanceof PreservedConfiguration)
+		   return ((PreservedConfiguration)obj).getConfiguration();
+		return (IInstallConfiguration)obj;
+	}
+	
 	private void initializeFields() {
-		IInstallConfiguration config = (IInstallConfiguration)getElement();
+		IInstallConfiguration config = getConfiguration();
 		nameText.setText(config.getLabel());
 		nameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

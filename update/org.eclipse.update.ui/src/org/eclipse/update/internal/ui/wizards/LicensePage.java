@@ -21,11 +21,11 @@ private static final String KEY_DESC = "InstallWizard.LicensePage.desc";
 private static final String KEY_ACCEPT = "InstallWizard.LicensePage.accept";
 private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline";
 
-	private ChecklistJob job;
+	private PendingChange job;
 	/**
 	 * Constructor for ReviewPage
 	 */
-	public LicensePage(ChecklistJob job) {
+	public LicensePage(PendingChange job) {
 		super("License");
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));

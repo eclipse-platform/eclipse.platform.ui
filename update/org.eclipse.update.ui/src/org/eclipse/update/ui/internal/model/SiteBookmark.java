@@ -15,15 +15,33 @@ import org.eclipse.update.internal.ui.*;
 public class SiteBookmark extends ModelObject 
 						implements IWorkbenchAdapter,
 									ISiteWrapper {
+	public static final int USER = 0;
+	public static final int LOCAL = 1;
+	public static final int LOCAL_BOOKMARK = 2;
 	private String name;
 	private URL url;
 	private ISite site;
 	private Vector catalog;
+	private SiteCategory otherCategory;
+	private int type;
 	
 	public static final String P_NAME="p_name";
 	public static final String P_URL="p_url";
 	
 	public SiteBookmark() {
+	}
+	
+	public SiteBookmark(String name, URL url) {
+		this.name = name;
+		this.url = url;
+	}
+	
+	public void setType(int type) {
+		this.type = type;
+	}
+	
+	public int getType() {
+		return type;
 	}
 	
 	public Object getAdapter(Class adapter) {
@@ -33,10 +51,7 @@ public class SiteBookmark extends ModelObject
 		return super.getAdapter(adapter);
 	}
 	
-	public SiteBookmark(String name, URL url) {
-		this.name = name;
-		this.url = url;
-	}
+
 	
 	public String getName() {
 		return name;
@@ -111,6 +126,7 @@ public class SiteBookmark extends ModelObject
 	
 	private void createCatalog() {
 		catalog = new Vector();
+		otherCategory = new SiteCategory(null, null);
 		// Add all the categories
 		ICategory [] categories;
 		categories = site.getCategories();
@@ -127,11 +143,24 @@ public class SiteBookmark extends ModelObject
 			IFeatureReference featureRef = featureRefs[i];
 			addFeatureToCatalog(featureRef);
 		}
+		if (otherCategory.getChildCount()>0)
+		   catalog.add(otherCategory);
 	}
 
-	public Object [] getCatalog() {
-		return catalog.toArray();
+	public Object [] getCatalog(boolean withCategories) {
+		if (withCategories)
+			return catalog.toArray();
+		else {
+			// Make a flat catalog
+			Vector flatCatalog = new Vector();
+			for (int i=0; i<catalog.size(); i++) {
+				SiteCategory category = (SiteCategory)catalog.get(i);
+				category.addFeaturesTo(flatCatalog);
+			}
+			return flatCatalog.toArray();
+		}
 	}
+	
 	private void addCategoryToCatalog(ICategory category) {
 		String name = category.getName();
 		int loc = name.indexOf('/');
@@ -152,17 +181,20 @@ public class SiteBookmark extends ModelObject
 	private void addFeatureToCatalog(IFeatureReference feature) {
 		ICategory [] categories;
 		categories = feature.getCategories();
+		boolean orphan = true;
 
 		for (int i=0; i<categories.length; i++) {
 			ICategory category = categories[i];
 			String name = category.getName();
 			IPath path = new Path(name);
 			SiteCategory parentCategory = findCategory(path, catalog.toArray());
-			if (parentCategory!=null)
-			   parentCategory.add(new CategorizedFeature(feature));
-			else
-			   catalog.add(feature);
+			if (parentCategory!=null) {
+		   		parentCategory.add(new CategorizedFeature(feature));
+		   		orphan = false;
+			}
 		}
+		if (orphan)
+			otherCategory.add(new CategorizedFeature(feature));
 	}
 	
 	private SiteCategory findCategory(IPath path, Object [] children) {

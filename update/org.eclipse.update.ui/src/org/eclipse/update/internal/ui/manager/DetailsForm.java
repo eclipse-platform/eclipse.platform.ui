@@ -67,8 +67,8 @@ private Label nlLabel;
 private Label descriptionText;
 private URL infoLinkURL;
 private SelectableFormLabel infoLinkLabel;
-private InfoGroup licenseGroup;
-private InfoGroup copyrightGroup;
+private InfoLink licenseLink;
+private InfoLink copyrightLink;
 private ReflowGroup supportedPlatformsGroup;
 private Image providerImage;
 private Button doButton;
@@ -83,8 +83,8 @@ class ModelListener implements IUpdateModelChangedListener {
 	 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
 	 */
 	public void objectAdded(Object parent, Object child) {
-		if (child instanceof ChecklistJob) {
-			ChecklistJob job = (ChecklistJob)child;
+		if (child instanceof PendingChange) {
+			PendingChange job = (PendingChange)child;
 			if (job.getFeature().equals(currentFeature)) {
 				doButton.setEnabled(false);
 			}
@@ -95,8 +95,8 @@ class ModelListener implements IUpdateModelChangedListener {
 	 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
 	 */
 	public void objectRemoved(Object parent, Object child) {
-		if (child instanceof ChecklistJob) {
-			ChecklistJob job = (ChecklistJob)child;
+		if (child instanceof PendingChange) {
+			PendingChange job = (PendingChange)child;
 			if (job.getFeature().equals(currentFeature)) {
 				doButton.setEnabled(true);
 			}
@@ -133,20 +133,6 @@ abstract class LinkListener implements IHyperlinkListener {
 	}
 }
 
-class ReflowInfoGroup extends InfoGroup {
-	public ReflowInfoGroup(DetailsView view) {
-		super(view);
-	}
-	public void expanded() {
-		reflow();
-		updateSize();
-	}
-	public void collapsed() {
-		reflow();
-		updateSize();
-	}
-}
-
 abstract class ReflowGroup extends ExpandableGroup {
 	public void expanded() {
 		reflow();
@@ -164,12 +150,6 @@ abstract class ReflowGroup extends ExpandableGroup {
 	protected HyperlinkHandler getHyperlinkHandler(FormWidgetFactory factory) {
 		return sectionHandler;
 	}
-}
-
-class PageSettings {
-	public static final int LICENSE_EXPANDED = 0x2;
-	public static final int COPYRIGHT_EXPANDED = 0x4;
-	public int flags;
 }
 
 public DetailsForm(UpdateFormPage page) {
@@ -285,16 +265,16 @@ public void createContents(Composite container) {
    	factory.turnIntoHyperlink(infoLinkLabel, listener);
    	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
    	infoLinkLabel.setLayoutData(gd);
-   	licenseGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
-   	licenseGroup.setText(UpdateUIPlugin.getResourceString(KEY_LICENSE_LINK));
-   	licenseGroup.createControl(footer, factory);
+   	licenseLink = new InfoLink((DetailsView)getPage().getView());
+   	licenseLink.setText(UpdateUIPlugin.getResourceString(KEY_LICENSE_LINK));
+   	licenseLink.createControl(footer, factory);
     gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-   	licenseGroup.getControl().setLayoutData(gd);
-   	copyrightGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
-   	copyrightGroup.setText(UpdateUIPlugin.getResourceString(KEY_COPYRIGHT_LINK));
-   	copyrightGroup.createControl(footer, factory);
+   	licenseLink.getControl().setLayoutData(gd);
+   	copyrightLink = new InfoLink((DetailsView)getPage().getView());
+   	copyrightLink.setText(UpdateUIPlugin.getResourceString(KEY_COPYRIGHT_LINK));
+   	copyrightLink.createControl(footer, factory);
    	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-   	copyrightGroup.getControl().setLayoutData(gd);
+   	copyrightLink.getControl().setLayoutData(gd);
 
   	doButton = factory.createButton(footer, "", SWT.PUSH);
   	doButton.addSelectionListener(new SelectionAdapter() {
@@ -321,9 +301,6 @@ public void expandTo(final Object obj) {
 				catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				}
-			}
-			else if (obj instanceof ChecklistJob) {
-				inputChanged(((ChecklistJob)obj).getFeature());
 			}
 			else inputChanged(null);
 		}
@@ -363,9 +340,7 @@ private String getInstalledVersion(IFeature feature) {
 
 private void inputChanged(IFeature feature) {
 	boolean newerVersion=false;
-	if (currentFeature!=null) {
-		saveSettings(currentFeature);
-	}
+
 	if (feature==null) feature = currentFeature;
 	if (feature==null) return;
 	
@@ -395,12 +370,11 @@ private void inputChanged(IFeature feature) {
 	setWS(feature.getWS());
 	setNL(feature.getNL());
 	
-	licenseGroup.setInfo(feature.getLicense());
-	copyrightGroup.setInfo(feature.getCopyright());
+	licenseLink.setInfo(feature.getLicense());
+	copyrightLink.setInfo(feature.getCopyright());
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	doButton.setEnabled(!model.checklistContains(feature));
 	
-	restoreSettings(feature);
 	reflow();
 	updateSize();
 	((Composite)getControl()).redraw();
@@ -417,26 +391,6 @@ private void updateButtonText(IFeature feature, boolean update) {
 	}
 	else
 	  	doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_INSTALL));
-}
-
-private void restoreSettings(IFeature feature) {
-	PageSettings settings = (PageSettings)getSettings(feature);
-	if (settings==null) return;
-	if ((settings.flags & PageSettings.LICENSE_EXPANDED)!=0)
-	   licenseGroup.setExpanded(true);
-	if ((settings.flags & PageSettings.COPYRIGHT_EXPANDED)!=0)
-	   copyrightGroup.setExpanded(true);
-}
-
-private void saveSettings(IFeature feature) {
-	PageSettings settings = (PageSettings)getSettings(feature);
-	if (settings==null) settings = new PageSettings();
-	settings.flags =0;
-	if (licenseGroup.isExpanded())
-	   settings.flags |= PageSettings.LICENSE_EXPANDED;
-	if (copyrightGroup.isExpanded())
-	   settings.flags |= PageSettings.COPYRIGHT_EXPANDED;
-	setSettings(feature, settings);
 }
 
 private Image loadProviderImage(IFeature feature) {
@@ -555,11 +509,11 @@ private void openURL(final String url) {
 
 private void doButtonSelected() {
 	if (currentFeature!=null) {
-		int mode = ChecklistJob.INSTALL;
+		int mode = PendingChange.INSTALL;
 		if (alreadyInstalled) {
-			mode = ChecklistJob.UNINSTALL;
+			mode = PendingChange.UNINSTALL;
 		}
-		final ChecklistJob job = new ChecklistJob(currentFeature, mode);
+		final PendingChange job = new PendingChange(currentFeature, mode);
 		//UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		//model.addJob(job);
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {

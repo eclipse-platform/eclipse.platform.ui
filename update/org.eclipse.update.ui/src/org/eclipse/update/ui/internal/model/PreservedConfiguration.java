@@ -6,7 +6,7 @@ package org.eclipse.update.ui.internal.model;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
-public class PreservedConfiguration extends PlatformObject {
+public class PreservedConfiguration extends ModelObject {
 	private IInstallConfiguration config;
 	
 	public PreservedConfiguration(IInstallConfiguration config) {

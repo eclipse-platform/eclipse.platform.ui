@@ -5,9 +5,11 @@ package org.eclipse.update.ui.internal.model;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class CategorizedFeature extends PlatformObject {
+public class CategorizedFeature extends ModelObject {
 	private IFeatureReference featureRef;
+
 	public CategorizedFeature(IFeatureReference featureRef) {
 		this.featureRef = featureRef;
 	}

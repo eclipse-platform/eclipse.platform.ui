@@ -158,7 +158,7 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		IStructuredSelection ssel = (IStructuredSelection)sel;
 		if (ssel.size()==1) {
 			Object el = ssel.getFirstElement();
-			if (el instanceof IFeature || el instanceof ChecklistJob ||
+			if (el instanceof IFeature || el instanceof PendingChange ||
 								el instanceof CategorizedFeature) {
 				showPageWithInput(DETAILS_PAGE, el);
 				return;

@@ -16,11 +16,11 @@ import java.lang.reflect.*;
 public class InstallWizard extends Wizard {
 	private ReviewPage reviewPage;
 	private TargetPage targetPage;
-	private ChecklistJob job;
+	private PendingChange job;
 	private boolean successfulInstall=false;
 	private IInstallConfiguration config;
 
-	public InstallWizard(ChecklistJob job) {
+	public InstallWizard(PendingChange job) {
 		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
@@ -75,7 +75,7 @@ public class InstallWizard extends Wizard {
 		reviewPage = new ReviewPage(job);
 		addPage(reviewPage);
 		
-		if (job.getJobType()==ChecklistJob.INSTALL){			
+		if (job.getJobType()==PendingChange.INSTALL){			
 			if (hasLicense()) {
 				addPage(new LicensePage(job));
 			}
@@ -124,7 +124,7 @@ public class InstallWizard extends Wizard {
 	 */
 	private void performInstall(IConfigurationSite targetSite, IProgressMonitor monitor) throws CoreException {
 		IFeature feature = job.getFeature();		
-		if (job.getJobType()==ChecklistJob.UNINSTALL){
+		if (job.getJobType()==PendingChange.UNINSTALL){
 			
 			//find the  config site of this feature
 			ILocalSite localSite = SiteManager.getLocalSite();
@@ -138,7 +138,7 @@ public class InstallWizard extends Wizard {
 			}
 			
 		}
-		if (job.getJobType()==ChecklistJob.INSTALL){
+		if (job.getJobType()==PendingChange.INSTALL){
 			targetSite.install(feature,monitor);
 		}
 	}

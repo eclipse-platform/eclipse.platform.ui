@@ -26,11 +26,11 @@ private static final String KEY_VERSION = "InstallWizard.ReviewPage.version";
 private static final String KEY_CORRECT_INSTALL = "InstallWizard.ReviewPage.correct.install"; 
 private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.correct.uninstall"; 
 
-	private ChecklistJob job;
+	private PendingChange job;
 	/**
 	 * Constructor for ReviewPage
 	 */
-	public ReviewPage(ChecklistJob job) {
+	public ReviewPage(PendingChange job) {
 		super("Review");
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
@@ -49,10 +49,10 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		client.setLayout(layout);
 		Label label = new Label(client, SWT.NULL);
 		switch (job.getJobType()) {
-			case ChecklistJob.UNINSTALL :
+			case PendingChange.UNINSTALL :
 				label.setText(UpdateUIPlugin.getResourceString(KEY_ABOUT_UNINSTALL));				
 				break;
-			case ChecklistJob.INSTALL :
+			case PendingChange.INSTALL :
 				label.setText(UpdateUIPlugin.getResourceString(KEY_ABOUT_INSTALL));				
 				break;			
 			default :
@@ -92,7 +92,7 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		label.setLayoutData(gd);
 
 		label = new Label(client, SWT.NULL);
-		if (job.getJobType()==ChecklistJob.UNINSTALL){
+		if (job.getJobType()==PendingChange.UNINSTALL){
 			label.setText(UpdateUIPlugin.getResourceString(KEY_CORRECT_UNINSTALL));
 		} else {
 			label.setText(UpdateUIPlugin.getResourceString(KEY_CORRECT_INSTALL));

@@ -10,7 +10,7 @@ import org.eclipse.update.internal.ui.*;
 import java.net.*;
 
 public class UpdateModel {
-	private Vector jobs = new Vector();
+	private Vector changes = new Vector();
 	private Vector bookmarks = new Vector();
 	private Vector listeners = new Vector();
 	private IDialogSettings settings;
@@ -58,25 +58,25 @@ public class UpdateModel {
 		settings.put(KEY_BOOKMARK_URLS, urls);
 	}
 
-	public ChecklistJob [] getJobs() {
-		return (ChecklistJob[])
-			jobs.toArray(new ChecklistJob[jobs.size()]);
+	public PendingChange [] getPendingChanges() {
+		return (PendingChange[])
+			changes.toArray(new PendingChange[changes.size()]);
 	}
 	
-	public ChecklistJob [] getJobs(int type) {
+	public PendingChange [] getPendingChanges(int type) {
 		Vector v = new Vector();
-		for (int i=0; i<jobs.size(); i++) {
-			ChecklistJob job = (ChecklistJob)jobs.elementAt(i);
+		for (int i=0; i<changes.size(); i++) {
+			PendingChange job = (PendingChange)changes.elementAt(i);
 			if (job.getJobType() == type)
 			   v.add(job);
 		}
-		return (ChecklistJob[])
-			v.toArray(new ChecklistJob[v.size()]);
+		return (PendingChange[])
+			v.toArray(new PendingChange[v.size()]);
 	}
 	
-	public ChecklistJob findJob(IFeature feature) {
-		for (int i=0; i<jobs.size(); i++) {
-			ChecklistJob job = (ChecklistJob)jobs.elementAt(i);
+	public PendingChange findPendingChange(IFeature feature) {
+		for (int i=0; i<changes.size(); i++) {
+			PendingChange job = (PendingChange)changes.elementAt(i);
 			if (job.getFeature().equals(feature))
 			   return job;
 		}
@@ -85,25 +85,25 @@ public class UpdateModel {
 			
 	
 	public boolean checklistContains(IFeature feature) {
-		return findJob(feature)!=null;
+		return findPendingChange(feature)!=null;
 	}
 	
-	public void addJob(ChecklistJob job) {
-		jobs.add(job);
-		job.setModel(this);
-		fireObjectAdded(null, job);
+	public void addPendingChange(PendingChange change) {
+		changes.add(change);
+		change.setModel(this);
+		fireObjectAdded(this, change);
 	}
 	
-	public void removeJob(ChecklistJob job) {
-		jobs.remove(job);
-		job.setModel(null);
-		fireObjectRemoved(null, job);
+	public void removePendingChange(PendingChange change) {
+		changes.remove(change);
+		change.setModel(null);
+		fireObjectRemoved(this, change);
 	}
 	
-	public void removeJob(IFeature scheduledFeature) {
-		ChecklistJob job = findJob(scheduledFeature);
-		if (job!=null)
-		   removeJob(job);
+	public void removePendingChange(IFeature scheduledFeature) {
+		PendingChange change = findPendingChange(scheduledFeature);
+		if (change!=null)
+		   removePendingChange(change);
 	}	
 
 	public void addBookmark(SiteBookmark bookmark) {

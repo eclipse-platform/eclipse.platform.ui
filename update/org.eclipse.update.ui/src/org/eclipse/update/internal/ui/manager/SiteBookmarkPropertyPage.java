@@ -82,6 +82,8 @@ public class SiteBookmarkPropertyPage extends PropertyPage implements IWorkbench
 				checkFields();
 			}
 		});
+		siteName.setEnabled(site.getType()!=SiteBookmark.LOCAL);
+		siteURL.setEnabled(site.getType()==SiteBookmark.USER);
 	}
 	private void checkFields() {
 		boolean valid = true;
