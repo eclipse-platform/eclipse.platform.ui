@@ -72,6 +72,8 @@ public abstract class UIJob extends Job {
 	 *      runInUIThread() instead.
 	 */
 	public final IStatus run(final IProgressMonitor monitor) {
+		if(monitor.isCanceled())
+			return Status.CANCEL_STATUS;
 		Display asyncDisplay = getDisplay();
 		if (asyncDisplay == null || asyncDisplay.isDisposed()) {
 			return Status.CANCEL_STATUS;
@@ -84,7 +86,10 @@ public abstract class UIJob extends Job {
 					//As we are in the UI Thread we can
 					//always know what to tell the job.
 					setThread(Thread.currentThread());
-					result = runInUIThread(monitor);
+					if(monitor.isCanceled())
+						result = Status.CANCEL_STATUS;
+					else
+						result = runInUIThread(monitor);
 					
 					//Debug testing for instrumenting UI jobs
 					if (Policy.DEBUG_LONG_UI_WARNING) {
