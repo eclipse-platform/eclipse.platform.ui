@@ -140,19 +140,27 @@ public void testDescriptionConstant() {
 /**
  * Tests creation and manipulation of projects names that are reserved on some platforms.
  */
-public void skipTestInvalidProjectNames() {
-	//FIXME Temporarily skip this test due to VM vendor bug #96338
-	
+public void testInvalidProjectNames() {
 	IWorkspaceRoot root = getWorkspace().getRoot();
 	
+	//should not be able to create a project with invalid path on any platform
+	String[] names = new String[] {":", "", "/"};
+	for (int i = 0; i < names.length; i++) {
+			try {
+				root.getProject(names[i]);
+				fail("0.99");
+			} catch (RuntimeException e) {
+				//should fail
+			}
+	}
 	//do some tests with invalid names
-	String[] names = new String[0];
+	names = new String[0];
 	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
 		//invalid windows names
 		names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", 
 			"com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",
 			"lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
-			"AUX", "con.foo", "LPT4.txt", ":", "*", "?", "\"", "<", ">", "|"};
+			"AUX", "con.foo", "LPT4.txt","*", "?", "\"", "<", ">", "|"};
 	} else {
 		//invalid names on non-windows platforms
 		names = new String[] {":"};
