@@ -75,7 +75,7 @@ public abstract class PluginAction extends Action
 	}
 
 	/**
-	 * Creates the delegate.
+	 * Creates the delegate and refreshes its enablement.
 	 */
 	protected final void createDelegate() {
 		if (delegate == null) {
