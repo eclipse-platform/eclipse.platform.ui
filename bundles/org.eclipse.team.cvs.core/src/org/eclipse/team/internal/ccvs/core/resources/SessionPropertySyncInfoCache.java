@@ -316,8 +316,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				if (resource.getType() == IResource.FILE) {
 					if (ResourceSyncInfo.isFolder(bytes)) {
 						genderChange = true;
-					} else {
-						bytes = ResourceSyncInfo.convertFromDeletion(bytes);
 					}
 				} else if (!ResourceSyncInfo.isFolder(bytes)) {
 					genderChange = true;
@@ -326,7 +324,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 					// Return null if it is a gender change
 					bytes = null;
 				} else {
-					safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, bytes);
+					safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, ResourceSyncInfo.convertFromDeletion(bytes));
 				}
 			}
 		}
@@ -374,6 +372,10 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#setCachedSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	void setCachedSyncBytes(IResource resource, byte[] syncBytes, boolean canModifyWorkspace) throws CVSException {
+		if (syncBytes != null && ResourceSyncInfo.isDeletion(syncBytes)) {
+			// Ensue that the sync bytes do not indicate a deletion
+			syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
+		}
 		safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, syncBytes);
 		if (resource.exists()) {
 			// Ensure the synchronizer is clear for exiting resources
