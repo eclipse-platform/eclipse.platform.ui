@@ -372,29 +372,15 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#setCachedSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	void setCachedSyncBytes(IResource resource, byte[] syncBytes, boolean canModifyWorkspace) throws CVSException {
+		// Ensure that the sync bytes do not indicate a deletion
 		if (syncBytes != null && ResourceSyncInfo.isDeletion(syncBytes)) {
-			// Ensue that the sync bytes do not indicate a deletion
 			syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
 		}
+		// Put the sync bytes into the cache
 		safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, syncBytes);
-		if (resource.exists()) {
-			// Ensure the synchronizer is clear for exiting resources
-			if (canModifyWorkspace) {
-				byte[] oldBytes = synchronizerCache.getCachedSyncBytes(resource);
-				if (oldBytes != null && canModifyWorkspace) {
-					synchronizerCache.setCachedSyncBytes(resource, null, canModifyWorkspace);
-					if (ResourceSyncInfo.isFolder(syncBytes)) {
-						// Handle gender changes
-						IContainer container;
-						if (resource.getType() == IResource.FILE) {
-							container = resource.getParent().getFolder(new Path(resource.getName()));
-						} else {
-							container = (IContainer)resource;
-						}
-						synchronizerCache.setCachedFolderSync(container, null, canModifyWorkspace);
-					}
-				}
-			}
+		// Ensure the synchronizer is clear
+		if (canModifyWorkspace && synchronizerCache.getCachedSyncBytes(resource) != null) {
+			synchronizerCache.setCachedSyncBytes(resource, null, canModifyWorkspace);
 		}
 	}
 
