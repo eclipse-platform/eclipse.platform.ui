@@ -14,7 +14,6 @@ package org.eclipse.ui.keys;
 import org.eclipse.ui.internal.keys.CompactKeyFormatter;
 import org.eclipse.ui.internal.keys.EmacsKeyFormatter;
 import org.eclipse.ui.internal.keys.FormalKeyFormatter;
-import org.eclipse.ui.internal.keys.NativeKeyFormatter;
 
 /**
  * A cache for formatters. It keeps a bunch of formatters around for use within
@@ -37,12 +36,6 @@ public final class KeyFormatterFactory {
 		new FormalKeyFormatter();
 
 	/**
-	 * A native formatter instance.
-	 */
-	private static final IKeyFormatter NATIVE_FORMATTER =
-		new NativeKeyFormatter();
-
-	/**
 	 * An Emacs natural formatter instance.
 	 */
 	private static final IKeyFormatter EMACS_FORMATTER =
@@ -51,7 +44,7 @@ public final class KeyFormatterFactory {
 	/**
 	 * The default formatter instance.
 	 */
-	private static IKeyFormatter defaultFormatter = NATIVE_FORMATTER;
+	private static IKeyFormatter defaultFormatter = FORMAL_FORMATTER;
 
 	/**
 	 * Provides an instance of <code>CompactKeyFormatter</code>.
@@ -90,35 +83,22 @@ public final class KeyFormatterFactory {
 	}
 
 	/**
-	 * Provides an instance of <code>NativeKeyFormatter</code>.
-	 * 
-	 * @return The native formatter; never <code>null</code>.
-	 */
-	public static IKeyFormatter getNativeKeyFormatter() {
-		return NATIVE_FORMATTER;
-	}
-
-	/**
 	 * Sets the default key formatter. If the <code>formatter</code> provided
-	 * is <code>null</code>, then this changes the default to the native
+	 * is <code>null</code>, then this changes the default to the formal
 	 * formatter.
 	 * 
 	 * @param formatter
 	 *            The formatter to use; <code>null</code> means use the
-	 *            native formatter.
+	 *            formal formatter.
 	 */
 	public static void setDefault(IKeyFormatter formatter) {
 		if (formatter == null) {
-			defaultFormatter = NATIVE_FORMATTER;
+			defaultFormatter = FORMAL_FORMATTER;
 		} else {
 			defaultFormatter = formatter;
 		}
 	}
 
-	/**
-	 * This class should never be instantied.
-	 */
 	private KeyFormatterFactory() {
-		// This class should not be instantiated.
 	}
 }

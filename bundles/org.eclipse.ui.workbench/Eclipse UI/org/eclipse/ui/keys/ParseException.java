@@ -33,7 +33,6 @@ public final class ParseException extends Exception {
 	 * message.
 	 */
 	public ParseException() {
-		// Nothing to do.
 	}
 
 	/**

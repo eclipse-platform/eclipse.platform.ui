@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.internal.keys.NativeKeyFormatter;
 
 /**
  * A utility class for converting SWT events into key strokes.
@@ -189,7 +190,8 @@ public final class SWTKeySupport {
 					naturalKey = SpecialKey.SCROLL_LOCK;
 					break;
 				default :
-					naturalKey = CharacterKey.getInstance((char) (accelerator & 0xFFFF));
+					naturalKey =
+						CharacterKey.getInstance((char) (accelerator & 0xFFFF));
 			}
 		}
 
@@ -222,7 +224,9 @@ public final class SWTKeySupport {
 	 * @return The combination of the state mask and the unmodified character.
 	 */
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
-		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
+		return convertEventToUnmodifiedAccelerator(
+			event.stateMask,
+			event.keyCode);
 	}
 
 	/**
@@ -237,7 +241,9 @@ public final class SWTKeySupport {
 	 *            The key that was pressed, before being modified.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
-	private static int convertEventToUnmodifiedAccelerator(int stateMask, int keyCode) {
+	private static int convertEventToUnmodifiedAccelerator(
+		int stateMask,
+		int keyCode) {
 		int modifiers = stateMask & SWT.MODIFIER_MASK;
 		int character = keyCode;
 		return modifiers + toUpperCase(character);
@@ -254,7 +260,9 @@ public final class SWTKeySupport {
 	 * @return The combination of the state mask and the unmodified character.
 	 */
 	public static int convertEventToUnmodifiedAccelerator(KeyEvent event) {
-		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
+		return convertEventToUnmodifiedAccelerator(
+			event.stateMask,
+			event.keyCode);
 	}
 
 	/**
@@ -358,6 +366,20 @@ public final class SWTKeySupport {
 		return accelerator;
 	}
 
+	private static final IKeyFormatter NATIVE_FORMATTER =
+		new NativeKeyFormatter();
+
+	/**
+	 * Provides an instance of <code>IKeyFormatter</code> appropriate for the
+	 * current instance.
+	 * 
+	 * @return an instance of <code>IKeyFormatter</code> appropriate for the
+	 *         current instance. never <code>null</code>.
+	 */
+	public static IKeyFormatter getKeyFormatterForPlatform() {
+		return NATIVE_FORMATTER;
+	}
+
 	/**
 	 * Makes sure that a fully-modified character is converted to the normal
 	 * form. This means that "Ctrl+" key strokes must reverse the modification
@@ -373,7 +395,9 @@ public final class SWTKeySupport {
 		char character = event.character;
 		boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
 
-		if (ctrlDown && event.character != event.keyCode && event.character < 0x20)
+		if (ctrlDown
+			&& event.character != event.keyCode
+			&& event.character < 0x20)
 			character += 0x40;
 
 		return character;
@@ -395,7 +419,9 @@ public final class SWTKeySupport {
 
 		// Downcast in safety. Only make characters uppercase.
 		char character = (char) keyCode;
-		return Character.isLetter(character) ? Character.toUpperCase(character) : keyCode;
+		return Character.isLetter(character)
+			? Character.toUpperCase(character)
+			: keyCode;
 	}
 
 	/**

@@ -2,21 +2,20 @@ package org.eclipse.ui.internal.commands.ws;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.commands.CommandHandlerServiceFactory;
 import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
+import org.eclipse.ui.keys.KeyFormatterFactory;
+import org.eclipse.ui.keys.SWTKeySupport;
 
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
@@ -51,7 +50,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		/* TODO getMutableCommandManager */
 		compoundCommandHandlerService =
 			CommandHandlerServiceFactory.getCompoundCommandHandlerService();
-
+		KeyFormatterFactory.setDefault(SWTKeySupport.getKeyFormatterForPlatform());		
 		keyboard = new WorkbenchKeyboard(workbench, getCommandManager());
 		enableKeyFilter();
 	}
