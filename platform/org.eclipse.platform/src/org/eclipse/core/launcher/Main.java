@@ -123,12 +123,12 @@ public class Main {
 	/**
 	 * The location of the install root
 	 */
-	protected String installLocation = null;
+	protected URL installLocation = null;
 
 	/**
 	 * The location of the configuration information for this instance
 	 */
-	protected String configurationLocation = null;
+	protected URL configurationLocation = null;
 
 	/**
 	 * The location of the configuration information in the install root
@@ -363,19 +363,21 @@ public class Main {
 	 * @exception MalformedURLException if a problem occurs computing the class path
 	 */
 	private URL[] getDevPath(URL base) throws IOException {
-		String devBase = base.toExternalForm();
 		ArrayList result = new ArrayList(5);
 		if (inDevelopmentMode)
-			addDevEntries(devBase, result); //$NON-NLS-1$
+			addDevEntries(base, result); //$NON-NLS-1$
 		//The jars from the base always need to be added, even when running in dev mode (bug 46772)
-		addBaseJars(devBase, result);
+		addBaseJars(base, result);
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
-	private void addBaseJars(String devBase, ArrayList result) throws IOException {
+	private void addBaseJars(URL base, ArrayList result) throws IOException {
 		String baseJarList = System.getProperty(PROP_CLASSPATH);
 		if (baseJarList == null) {
-			Properties defaults = loadProperties(devBase + ECLIPSE_PROPERTIES);
+			URL url = new URL(base, ECLIPSE_PROPERTIES);
+			if (debug)
+				System.out.println("Loading framework classpath from:\n    " + url.toExternalForm()); //$NON-NLS-1$
+			Properties defaults = loadProperties(url);
 			baseJarList = defaults.getProperty(PROP_CLASSPATH);
 			if (baseJarList == null)
 				throw new IOException("Unable to initialize " + PROP_CLASSPATH); //$NON-NLS-1$
@@ -385,10 +387,17 @@ public class Main {
 		for (int i = 0; i < baseJars.length; i++) {
 			String string = baseJars[i];
 			try {
-				URL url = new URL(string);
+				// if the string is a file: URL then *carefully* construct the URL.  Otherwise
+				// just try to build a URL. In either case, if we fail, use string as something to tack
+				// on the end of the base.
+				URL url = null;
+				if (string.startsWith("file:"))
+					url = new File(string.substring(5)).toURL();
+				else
+					url = new URL(string);
 				addEntry(url, result);
 			} catch (MalformedURLException e) {
-				addEntry(new URL(devBase + string), result);
+				addEntry(new URL(base, string), result);
 			}
 		}
 	}
@@ -398,16 +407,16 @@ public class Main {
 			result.add(url);
 	}
 
-	private void addDevEntries(String devBase, List result) throws MalformedURLException {
+	private void addDevEntries(URL base, List result) throws MalformedURLException {
 		String[] locations = getArrayFromList(devClassPath);
 		for (int i = 0; i < locations.length; i++) {
-			String spec = devBase + locations[i];
-			char lastChar = spec.charAt(spec.length() - 1);
+			String location = locations[i];
+			char lastChar = location.charAt(location.length() - 1);
 			URL url;
-			if ((spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\'))) //$NON-NLS-1$
-				url = new URL(spec);
+			if ((location.endsWith(".jar") || (lastChar == '/' || lastChar == '\\'))) //$NON-NLS-1$
+				url = new URL(base, location);
 			else
-				url = new URL(spec + "/"); //$NON-NLS-1$
+				url = new URL(base, location + "/"); //$NON-NLS-1$
 			addEntry(url, result);
 		}
 	}
@@ -422,21 +431,24 @@ public class Main {
 	private URL[] getBootPath(String base) throws IOException {
 		URL url = null;
 		if (base != null) {
-			url = new URL(base);
+			url = buildURL(base, true);
 		} else {
 			// search in the root location
-			url = new URL(getInstallLocation());
-			String path = url.getFile() + "plugins"; //$NON-NLS-1$
+			url = getInstallLocation();
+			String path = new File(url.getFile(), "plugins").toString(); //$NON-NLS-1$
 			path = searchFor(framework, path);
 			if (path == null)
 				throw new RuntimeException("Could not find framework"); //$NON-NLS-1$
-			// add on any dev path elements
-			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
+			if (url.getProtocol().equals("file")) //$NON-NLS-1$
+				url = new File(path).toURL();
+			else
+				url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 		}
 		if (System.getProperty(PROP_FRAMEWORK) == null)
 			System.getProperties().put(PROP_FRAMEWORK, url.toExternalForm());
 		if (debug)
 			System.out.println("Framework located:\n    " + url.toExternalForm()); //$NON-NLS-1$
+		// add on any dev path elements
 		URL[] result = getDevPath(url);
 		if (debug) {
 			System.out.println("Framework classpath:"); //$NON-NLS-1$
@@ -542,24 +554,34 @@ public class Main {
 		return result;
 	}
 
-	private URL buildURL(String spec, boolean trailingSlash) {
+	private static URL buildURL(String spec, boolean trailingSlash) {
 		if (spec == null)
 			return null;
-		// if the spec is a file: url then see if it is absolute.  If not, break it up
-		// and make it absolute.  
-		if (spec.startsWith(FILE_SCHEME)) {
-			File file = new File(spec.substring(5));
-			if (!file.isAbsolute())
-				spec = FILE_SCHEME + file.getAbsolutePath();
-		}
+		boolean isFile = spec.startsWith("file:"); //$NON-NLS-1$
 		try {
-			spec = adjustTrailingSlash(spec, true);
-			return new URL(spec);
+			if (isFile)
+				return adjustTrailingSlash(new File(spec.substring(5)).toURL(), trailingSlash);
+			else
+				return new URL(spec);
 		} catch (MalformedURLException e) {
-			if (spec.startsWith(FILE_SCHEME))
+			// if we failed and it is a file spec, there is nothing more we can do
+			// otherwise, try to make the spec into a file URL.
+			if (isFile)
 				return null;
-			return buildURL(FILE_SCHEME + spec, trailingSlash);
+			try {
+				return adjustTrailingSlash(new File(spec).toURL(), trailingSlash);
+			} catch (MalformedURLException e1) {
+				return null;
+			}
 		}
+	}
+
+	private static URL adjustTrailingSlash(URL url, boolean trailingSlash) throws MalformedURLException {
+		String file = url.getFile();
+		if (trailingSlash == (file.endsWith("/")))
+			return url;
+		file = trailingSlash ? file + "/" : file.substring(0, file.length() - 1);
+		return new URL(url.getProtocol(), url.getHost(), file);
 	}
 
 	private URL buildLocation(String property, URL defaultLocation, String userDefaultAppendage) {
@@ -604,10 +626,10 @@ public class Main {
 		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
 		//    exist, use "eclipse" as the application-id.
 
-		String install = getInstallLocation();
+		URL install = getInstallLocation();
 		// TODO a little dangerous here.  Basically we have to assume that it is a file URL.
-		if (install.startsWith(FILE_SCHEME)) {
-			File installDir = new File(install.substring(5));
+		if (install.getProtocol().equals("file")) {
+			File installDir = new File(install.getFile());
 			if (installDir.canWrite())
 				return installDir.getAbsolutePath() + File.separator + CONFIG_DIR;
 		}
@@ -627,10 +649,10 @@ public class Main {
 		//    is unique for each local user, and <application-id> is the one 
 		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
 		//    exist, use "eclipse" as the application-id.
-		URL installURL = buildURL(getInstallLocation(), true);
+		URL installURL = getInstallLocation();
 		if (installURL == null)
 			return null;
-		File installDir = new File(installURL.getPath());
+		File installDir = new File(installURL.getFile());
 		String appName = "." + ECLIPSE; //$NON-NLS-1$
 		File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER);
 		if (eclipseProduct.exists()) {
@@ -904,16 +926,14 @@ public class Main {
 		}
 	}
 
-	private String getConfigurationLocation() {
+	private URL getConfigurationLocation() {
 		if (configurationLocation != null)
 			return configurationLocation;
-		URL result = buildLocation(PROP_CONFIG_AREA, null, CONFIG_DIR);
-		if (result == null)
-			result = buildURL(computeDefaultConfigurationLocation(), true);
-		if (result == null)
-			return null;
-		configurationLocation = adjustTrailingSlash(result.toExternalForm(), true);
-		System.getProperties().put(PROP_CONFIG_AREA, configurationLocation);
+		configurationLocation = buildLocation(PROP_CONFIG_AREA, null, CONFIG_DIR);
+		if (configurationLocation == null)
+			configurationLocation = buildURL(computeDefaultConfigurationLocation(), true);
+		if (configurationLocation != null)
+			System.getProperties().put(PROP_CONFIG_AREA, configurationLocation.toExternalForm());
 		if (debug)
 			System.out.println("Configuration location:\n    " + configurationLocation); //$NON-NLS-1$
 		return configurationLocation;
@@ -934,11 +954,15 @@ public class Main {
 				// point to the config file.
 				baseConfigurationLocation = buildURL(baseLocation, true);
 			if (baseConfigurationLocation == null)
-				// here we access the install location but this is very early.  This case will only happen if
-				// the config area is not set and the base config area is not set (or is bogus).
-				// In this case we compute based on the install location.
-				baseConfigurationLocation = buildURL(getInstallLocation() + CONFIG_DIR, true);
-			baseConfiguration = loadConfiguration(baseConfigurationLocation.toExternalForm());
+				try {
+					// here we access the install location but this is very early.  This case will only happen if
+					// the config area is not set and the base config area is not set (or is bogus).
+					// In this case we compute based on the install location.
+					baseConfigurationLocation = new URL(getInstallLocation(), CONFIG_DIR);
+				} catch (MalformedURLException e) {
+					// leave baseConfigurationLocation null
+				}
+			baseConfiguration = loadConfiguration(baseConfigurationLocation);
 			if (baseConfiguration != null) {
 				// if the base sets the install area then use that value if the property.  We know the 
 				// property is not already set.
@@ -966,22 +990,20 @@ public class Main {
 			configuration = loadConfiguration(getConfigurationLocation());
 		mergeProperties(System.getProperties(), configuration);
 		if ("false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) //$NON-NLS-1$
-			// if we are not cascaded then remvoe the parent property even if it was set.
+			// if we are not cascaded then remove the parent property even if it was set.
 			System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
 		else {
 			URL sharedConfigURL = buildLocation(PROP_SHARED_CONFIG_AREA, null, CONFIG_DIR);
 			if (sharedConfigURL == null)
-				// here we access the install location but this is very early.  This case will only happen if
-				// the config is cascaded and the parent config area is not set (or is bogus).
-				// In this case we compute based on the install location.  Note that we should not 
-				// precompute this value and use it as the default in the call to buildLocation as it will
-				// unnecessarily bind the install location.
-				sharedConfigURL = buildURL(getInstallLocation() + CONFIG_DIR, true);
-
+				try {
+					// there is no shared config value so compute one
+					sharedConfigURL = new URL(getInstallLocation(), CONFIG_DIR);
+				} catch (MalformedURLException e) {
+					// leave sharedConfigurationLocation null
+				}
 			// if the parent location is different from the config location, read it too.
 			if (sharedConfigURL != null) {
-				String location = sharedConfigURL.toExternalForm();
-				if (location.equals(getConfigurationLocation()))
+				if (sharedConfigURL.equals(getConfigurationLocation()))
 					// remove the property to show that we do not have a parent.
 					System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
 				else {
@@ -989,19 +1011,19 @@ public class Main {
 					// just reuse the base
 					configuration = baseConfiguration;
 					if (!sharedConfigURL.equals(baseConfigurationLocation))
-						configuration = loadConfiguration(location);
+						configuration = loadConfiguration(sharedConfigURL);
 					mergeProperties(System.getProperties(), configuration);
-					System.getProperties().put(PROP_SHARED_CONFIG_AREA, location);
+					System.getProperties().put(PROP_SHARED_CONFIG_AREA, sharedConfigURL.toExternalForm());
 					if (debug)
-						System.out.println("Shared configuration location:\n    " + location); //$NON-NLS-1$
+						System.out.println("Shared configuration location:\n    " + sharedConfigURL.toExternalForm()); //$NON-NLS-1$
 				}
 			}
 		}
 		// setup the path to the framework
 		String urlString = System.getProperty(PROP_FRAMEWORK, null);
 		if (urlString != null) {
-			urlString = adjustTrailingSlash(urlString, true);
-			System.getProperties().put(PROP_FRAMEWORK, urlString);
+			URL url = buildURL(urlString, true);
+			System.getProperties().put(PROP_FRAMEWORK, url.toExternalForm());
 			bootLocation = resolve(urlString);
 		}
 	}
@@ -1009,18 +1031,17 @@ public class Main {
 	/**
 	 * Returns url of the location this class was loaded from
 	 */
-	private String getInstallLocation() {
+	private URL getInstallLocation() {
 		if (installLocation != null)
 			return installLocation;
 
 		// value is not set so compute the default and set the value
-		installLocation = System.getProperty(PROP_INSTALL_AREA);
-		if (installLocation != null) {
-			URL location = buildURL(installLocation, true);
-			if (location == null)
-				throw new IllegalStateException("Install location is invalid: " + installLocation); //$NON-NLS-1$
-			installLocation = location.toExternalForm();
-			System.getProperties().put(PROP_INSTALL_AREA, installLocation);
+		String installArea = System.getProperty(PROP_INSTALL_AREA);
+		if (installArea != null) {
+			installLocation = buildURL(installArea, true);
+			if (installLocation == null)
+				throw new IllegalStateException("Install location is invalid: " + installArea); //$NON-NLS-1$
+			System.getProperties().put(PROP_INSTALL_AREA, installLocation.toExternalForm());
 			if (debug)
 				System.out.println("Install location:\n    " + installLocation); //$NON-NLS-1$
 			return installLocation;
@@ -1028,9 +1049,12 @@ public class Main {
 
 		URL result = Main.class.getProtectionDomain().getCodeSource().getLocation();
 		String path = decode(result.getFile());
-		path = new File(path).getAbsolutePath().replace(File.separatorChar, '/');
+		// normalize to not have leading / so we can check the form
+		File file = new File(path);
+		path = file.toString().replace('\\', '/');
 		// TODO need a better test for windows
 		// If on Windows then canonicalize the drive letter to be lowercase.
+		// remember that there may be UNC paths 
 		if (File.separatorChar == '\\')
 			if (Character.isUpperCase(path.charAt(0))) {
 				char[] chars = path.toCharArray();
@@ -1040,8 +1064,15 @@ public class Main {
 		if (path.endsWith(".jar")) //$NON-NLS-1$
 			path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
 		try {
-			installLocation = new URL(result.getProtocol(), result.getHost(), result.getPort(), path).toExternalForm();
-			System.getProperties().put(PROP_INSTALL_AREA, installLocation);
+			try {
+				// create a file URL (via File) to normalize the form (e.g., put 
+				// the leading / on if necessary)
+				path = new File(path).toURL().getFile();
+			} catch (MalformedURLException e1) {
+				// will never happen.  The path is straight from a URL.  
+			}
+			installLocation = new URL(result.getProtocol(), result.getHost(), result.getPort(), path);
+			System.getProperties().put(PROP_INSTALL_AREA, installLocation.toExternalForm());
 		} catch (MalformedURLException e) {
 			// TODO Very unlikely case.  log here.  
 		}
@@ -1053,9 +1084,13 @@ public class Main {
 	/*
 	 * Load the given configuration file
 	 */
-	private Properties loadConfiguration(String url) {
+	private Properties loadConfiguration(URL url) {
 		Properties result = null;
-		url += CONFIG_FILE;
+		try {
+			url = new URL(url, CONFIG_FILE);
+		} catch (MalformedURLException e) {
+			return null;
+		}
 		try {
 			if (debug)
 				System.out.print("Configuration file:\n    " + url.toString()); //$NON-NLS-1$
@@ -1069,9 +1104,8 @@ public class Main {
 		return result;
 	}
 
-	private Properties loadProperties(String location) throws IOException {
+	private Properties loadProperties(URL url) throws IOException {
 		// try to load saved configuration file (watch for failed prior save())
-		URL url = buildURL(location, false);
 		if (url == null)
 			return null;
 		Properties result = null;
@@ -1552,14 +1586,5 @@ public class Main {
 			}
 			System.getProperties().put(property, result.toString());
 		}
-	}
-
-	private String adjustTrailingSlash(String value, boolean slash) {
-		boolean hasSlash = value.endsWith("/") || value.endsWith(File.separator); //$NON-NLS-1$
-		if (hasSlash == slash)
-			return value;
-		if (hasSlash)
-			return value.substring(0, value.length() - 1);
-		return value + "/"; //$NON-NLS-1$
 	}
 }
