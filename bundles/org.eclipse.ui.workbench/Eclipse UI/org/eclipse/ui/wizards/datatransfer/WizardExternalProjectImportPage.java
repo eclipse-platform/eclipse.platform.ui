@@ -251,14 +251,17 @@ public class WizardExternalProjectImportPage extends WizardPage {
 				"WizardExternalProjectImportPage.directoryLabel")); //$NON-NLS-1$
 
 		String dirName = getProjectLocationFieldValue();
-		if (dirName.equals(""))
+		if (dirName.length() == 0)
 			dirName = previouslyBrowsedDirectory;
-
-		if (!dirName.equals("")) { //$NON-NLS-1$
+			
+		
+		if (dirName.length() == 0)  //$NON-NLS-1$
+			dialog.setFilterPath(getWorkspace().getRoot().getLocation().toOSString());
+		else{
 			File path = new File(dirName);
 			if (path.exists())
 				dialog.setFilterPath(new Path(dirName).toOSString());
-		}
+		}		
 
 		String selectedDirectory = dialog.open();
 		if (selectedDirectory != null) {
