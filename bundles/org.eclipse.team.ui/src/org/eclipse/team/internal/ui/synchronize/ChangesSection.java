@@ -277,6 +277,7 @@ public class ChangesSection extends Composite {
 		forms.dispose();
 		configuration.removeActionContribution(changedListener);
 		getWorkingSetSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
+		getSyncInfoTree().removeSyncSetChangedListener(outputSetListener);
 	}
 	
 	private Composite getErrorComposite(Composite parent) {
@@ -335,9 +336,5 @@ public class ChangesSection extends Composite {
 	
 	private SyncInfoSet getWorkingSetSyncInfoSet() {
 		return (SyncInfoSet)configuration.getProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET);
-	}
-	
-	private SyncInfoSet getParticpantSyncInfoSet() {
-		return (SyncInfoSet)configuration.getProperty(SynchronizePageConfiguration.P_PARTICIPANT_SYNC_INFO_SET);
 	}
 }
