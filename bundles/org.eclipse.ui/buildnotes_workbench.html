@@ -10,18 +10,27 @@
 <h1> Eclipse Platform Build Notes<br>
   Workbench</h1>
   
-<!-- I20031202 -->
+<!-- I20031209 -->
 <p>Integration Build (Tuesday, December 9, 2003)</p>
 <h2>What's new in this drop</h2>
 <h2>Other highlights</h2>
 <h2>Breaking API Changes</h2>
+	Deprecated matching methods on IActivity and IActivityManager have been 
+	removed as well as getActivityManager() and setEnabledActivities() on 
+	IWorkbench.  To accomodate for futher extensions, IWorkbench now inherits 
+	from IAdaptable and a new class IWorkbenchActivitySupport may be obtained 
+	in this way.  IWorkbenchActivitySupport contains getActivityManager() and 
+	setEnabledActivities().
 <h2>Known deficiencies. </h2>
 <h2>Problem reports fixed</h2>
+<p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=36297">36297</a> 
+[Preferences] Need a page that informs of preference page creation failure</p>
 <p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47404">47404</a> [Jobs] 
   UI no longer responsive during CVS update action</p>
 <p><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47852">47852</a> [Jobs] 
   NPE during redraw animation</p>
 <hr SIZE="0" WIDTH="100%">
+
 <!-- I20031202 -->
 <p>Integration Build (Tuesday, December 2, 2003)</p>
 <h2>What's new in this drop</h2>
