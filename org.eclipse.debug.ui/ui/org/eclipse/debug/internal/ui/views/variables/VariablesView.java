@@ -147,7 +147,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				IVariable variable = (IVariable) element;
 				try {
 					if (variable.hasValueChanged()) {
-						return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB);
+						return JFaceResources.getColorRegistry().get(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR);
 					}
 				} catch (DebugException e) {
 					DebugUIPlugin.log(e);
@@ -358,8 +358,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public void dispose() {
 		getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
+		JFaceResources.getColorRegistry().removeListener(this);
 		Viewer viewer = getViewer();
 		if (viewer != null) {
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
@@ -513,7 +513,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
-		if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
+		if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR)) {
 			getEventHandler().refresh();
 		} else if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
 			getDetailViewer().getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));			
@@ -585,8 +585,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
 		fModelPresentation = new VariablesViewModelPresentation();
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
+		JFaceResources.getColorRegistry().addListener(this);
 		// create the sash form that will contain the tree viewer & text viewer
 		setSashForm(new SashForm(parent, SWT.NONE));
 		

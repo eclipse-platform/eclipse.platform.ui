@@ -112,7 +112,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
-
+		JFaceResources.getColorRegistry().addListener(this);
 		getTextWidget().setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
 		getTextWidget().addMouseTrackListener(this);
 		getTextWidget().addPaintListener(this);
@@ -182,9 +182,9 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
-		if (propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB) ||
-			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB) ||
-			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB)) {
+		if (propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR) ||
+			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR) ||
+			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR)) {
 				getTextWidget().redraw();
 		} else if (propertyName.equals(IConsoleConstants.CONSOLE_FONT)) {
 			getTextWidget().setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
@@ -210,6 +210,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
+		JFaceResources.getColorRegistry().removeListener(this);
 	}
 	
 	/**

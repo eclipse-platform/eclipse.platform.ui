@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,15 +62,12 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -299,7 +296,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fStepFilterManager.shutdown();
 		}
 		
-		ColorManager.getDefault().dispose();
 		if (fgPresentation != null) {
 			fgPresentation.dispose();
 		}
@@ -360,16 +356,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK, 100000);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, 8);
 		
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
-		
 		//LaunchHistoryPreferencePage
 		prefs.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 10);
 		
 		//VariableViewsPreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, new RGB(255, 0, 0));
 		prefs.setDefault(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
 		
 		//Registers View
@@ -568,18 +559,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 		return display;		
 	}	
-	
-	/**
-	 * Returns the a color based on the type of output.
-	 * Valid types:
-	 * <li>CONSOLE_SYS_OUT_RGB</li>
-	 * <li>CONSOLE_SYS_ERR_RGB</li>
-	 * <li>CONSOLE_SYS_IN_RGB</li>
-	 * <li>CHANGED_VARIABLE_RGB</li>
-	 */
-	public static Color getPreferenceColor(String type) {
-		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), type));
-	}
 
 	/**
 	 * Returns the console document manager. The manager will be created lazily on 
@@ -587,7 +566,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * 
 	 * @return ConsoleDocumentManager
 	 */
-	public  ConsoleDocumentManager getConsoleDocumentManager() {
+	public ConsoleDocumentManager getConsoleDocumentManager() {
 		if (fConsoleDocumentManager == null) {
 			fConsoleDocumentManager = new ConsoleDocumentManager();
 		}

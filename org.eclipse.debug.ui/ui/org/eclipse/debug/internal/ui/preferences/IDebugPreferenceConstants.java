@@ -27,11 +27,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 public interface IDebugPreferenceConstants {
 
 	/**
-	 * RGB colors for displaying the content in the Console
+	 * The symbolic names for colors for displaying the content in the Console
+	 * @see org.eclipse.jface.resource.ColorRegistry
 	 */
-	public static final String CONSOLE_SYS_ERR_RGB= "Console.stdErrColor"; //$NON-NLS-1$
-	public static final String CONSOLE_SYS_OUT_RGB= "Console.stdOutColor"; //$NON-NLS-1$
-	public static final String CONSOLE_SYS_IN_RGB= "Console.stdInColor"; //$NON-NLS-1$
+	public static final String CONSOLE_SYS_ERR_COLOR= "org.eclipse.debug.ui.errorColor"; //$NON-NLS-1$
+	public static final String CONSOLE_SYS_OUT_COLOR= "org.eclipse.debug.ui.outColor"; //$NON-NLS-1$
+	public static final String CONSOLE_SYS_IN_COLOR= "org.eclipse.debug.ui.inColor"; //$NON-NLS-1$
 	
 	/**
 	 * (boolean) Whether or not the text in the console will wrap
@@ -80,9 +81,10 @@ public interface IDebugPreferenceConstants {
 	public static final String VARIABLES_DETAIL_PANE_HIDDEN = "Variables.detail.orientation.hidden"; //$NON-NLS-1$
 	
 	/**
-	 * The RGB for the color to be used to indicate changed variables
+	 * The symbolic name for the color to indicate a changed variable
+	 * @see org.eclipse.jface.resource.ColorRegistry
 	 */
-	public static final String CHANGED_VARIABLE_RGB= "Changed.Variable.RGB"; //$NON-NLS-1$
+	public static final String CHANGED_VARIABLE_COLOR= "org.eclipse.debug.ui.changedVariableColor"; //$NON-NLS-1$
 	
 	/**
 	 * Memento for the last selected launch config in the

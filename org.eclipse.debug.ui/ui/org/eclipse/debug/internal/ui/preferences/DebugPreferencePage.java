@@ -18,11 +18,12 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -78,8 +79,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		createSaveBeforeLaunchEditors();
 		
 		createSpacer(getFieldEditorParent(), 2);
-		
-		addField(new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("DebugPreferencePage.1"), getFieldEditorParent())); //$NON-NLS-1$
 		
 		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.getString("DebugPreferencePage.10"), getFieldEditorParent()); //$NON-NLS-1$
 		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;

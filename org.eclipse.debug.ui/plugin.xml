@@ -1768,4 +1768,37 @@
            contextId="org.eclipse.debug.ui.debugging">
      </contextViewBinding>
   </extension>
+  
+   <extension
+         point="org.eclipse.ui.themes">
+		<themeElementCategory label="%debugPresentation.label" id="org.eclipse.debug.ui.presentation"/>
+		<colorDefinition
+			label="%standardErrorColor.label"
+            value="COLOR_RED"
+            categoryId= "org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.errorColor">
+            <description>%standardErrorColor.description</description> 
+		</colorDefinition>
+		<colorDefinition
+            label="%standardOutColor.label"
+            value="COLOR_BLUE"
+			categoryId= "org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.outColor">
+            <description>%standardOutColor.description</description> 
+		</colorDefinition>
+		<colorDefinition
+            label="%standardInColor.label"
+            value="0,200,125"
+			categoryId= "org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.inColor">
+            <description>%standardInColor.description</description>             
+		</colorDefinition>
+		<colorDefinition
+            label="%changedVariableColor.label"
+            value="COLOR_RED"
+			categoryId= "org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.changedVariableColor">
+            <description>%changedVariableColor.description</description>             
+		</colorDefinition>  
+   </extension>
 </plugin>

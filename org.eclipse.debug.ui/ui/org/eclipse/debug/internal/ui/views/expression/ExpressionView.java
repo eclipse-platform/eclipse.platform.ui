@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IWatchExpression;
-import org.eclipse.debug.internal.ui.ColorManager;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -36,8 +35,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
  
@@ -69,7 +69,7 @@ public class ExpressionView extends VariablesView {
 				expressionWithError= true;
 			}
 			if (expressionWithError) {
-				return ColorManager.getDefault().getColor(new RGB(255, 0, 0));
+				return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 			}
 			return super.getForeground(element);
 		}
