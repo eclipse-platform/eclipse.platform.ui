@@ -442,6 +442,84 @@ public class UpdateManager {
 		return false;
 	}
 	
+	
+	public static boolean hasObsoletePatches(IFeature feature) {
+		// Check all the included features that
+		// are unconfigured, and see if their patch 
+		// references are better than the original.
+		try {
+			IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+			for (int i = 0; i < irefs.length; i++) {
+				IFeatureReference iref = irefs[i];
+				IFeature ifeature = iref.getFeature(null);
+				IConfiguredSite csite = ifeature.getSite().getCurrentConfiguredSite();
+				if (!csite.isConfigured(ifeature)) {
+					if (!isPatchHappy(ifeature))
+						return false;
+				}
+			}
+		} catch (CoreException e) {
+			return false;
+		}
+		// All checks went well
+		return true;
+	}
+	
+	public static boolean isPatchHappy(IFeature feature) throws CoreException {
+		// If this is a patch and it includes 
+		// another patch and the included patch
+		// is disabled but the feature it was declared
+		// to patch is now newer (and is presumed to
+		// contain the now disabled patch), and
+		// the newer patched feature is enabled,
+		// a 'leap of faith' assumption can be
+		// made:
+
+		// Although the included patch is disabled,
+		// the feature it was designed to patch
+		// is now newer and most likely contains
+		// the equivalent fix and more. Consequently,
+		// we can claim that the status and the error
+		// icon overlay are misleading because
+		// all the right plug-ins are configured.
+		IImport[] imports = feature.getImports();
+		IImport patchReference = null;
+		for (int i = 0; i < imports.length; i++) {
+			IImport iimport = imports[i];
+			if (iimport.isPatch()) {
+				patchReference = iimport;
+				break;
+			}
+		}
+		if (patchReference == null)
+			return false;
+		VersionedIdentifier refVid = patchReference.getVersionedIdentifier();
+
+		// Find the patched feature and 
+		IConfiguredSite csite = feature.getSite().getCurrentConfiguredSite();
+		if (csite == null)
+			return false;
+
+		IFeatureReference[] crefs = csite.getConfiguredFeatures();
+		for (int i = 0; i < crefs.length; i++) {
+			IFeatureReference cref = crefs[i];
+			VersionedIdentifier cvid = cref.getVersionedIdentifier();
+			if (cvid.getIdentifier().equals(refVid.getIdentifier())) {
+				// This is the one.
+				if (cvid.getVersion().isGreaterThan(refVid.getVersion())) {
+					// Bingo: we found the referenced feature
+					// and its version is greater - 
+					// we can assume that it contains better code
+					// than the patch that referenced the
+					// older version.
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	
 	/**
 	 * Gets the authenticator.
 	 * @return Returns a UpdateManagerAuthenticator
