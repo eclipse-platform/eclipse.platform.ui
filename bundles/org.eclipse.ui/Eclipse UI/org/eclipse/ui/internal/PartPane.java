@@ -102,6 +102,8 @@ public void createControl(Composite parent) {
 	control.addListener(SWT.Activate, this);
 	hookFocus(control);
 	hookFocus(content);
+
+	page.firePartOpened(part);
 }
 protected abstract WorkbenchPart createErrorPart(WorkbenchPart oldPart);
 /**
