@@ -58,7 +58,7 @@ public class AddMarkerAction extends TextEditorAction {
 
 	
 	/** The maximum length of an proposed label. */
-	private static final int MAX_LABEL_LENGTH= 10;
+	private static final int MAX_LABEL_LENGTH= 30;
 	/** The type for newly created markers */
 	private String fMarkerType;
 	/** Should the user be asked for a label? */
