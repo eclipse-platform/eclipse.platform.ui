@@ -1,0 +1,174 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.ui.memory;
+
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+
+/**
+ * An arbitrary rendering of a memory block. A memory rendering is contributed
+ * via the <code>memoryRenderings</code> extension point.
+ * <p>
+ * Following is an example definition of a memory renderings extension.
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.ui.memoryRenderings"&gt;
+ *   &lt;memoryRenderingType
+ *      id="com.example.asciiRendering"
+ *      name="ASCII"
+ *      class="com.example.RenderingFactory"&gt;
+ *   &lt;/memoryRenderingType&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * The attributes are specified as follows:
+ * <ul>
+ * <li><code>id</code> specifies a unique identifier for a type of memory rendering</li>
+ * <li><code>name</code> specifies a human readable label for a rendering type</li>
+ * <li><code>class</code> specifies the fully qualified name of the Java class
+ *   that implements <code>IMemoryRenderingFactory</code>. Renderings are created
+ *   via this factory.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * A rendering provides an image and label. To support dynamic labels and images, property
+ * change notification is used with the following property constants defined in
+ * <code>IBasicPropertyConstants</code>:
+ * <ul>
+ * <li><code>P_TEXT</code> - indicates a label change</li>
+ * <li><code>P_IMAGE</code> - indicates a image change</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Renderings needing to synchronize with other renderings are intended to use
+ * property change notifications via its synchronization service. For example, when a
+ * rendering becomes visible, it can register for property change events with its rendering
+ * site's synchronization service, and when it becomes hidden it can deregister. When a
+ * rendering is activated, it should set itself as the synchrnoization provider in its
+ * rendering site and fire property change events to communicate information to
+ * interested listeners.
+ * </p> 
+ * <p>
+ * Clients contributing a memory rendering type are intended to implement this interface
+ * and <code>IMemoryRenderingFactory</code>. The factory will be used to create instances
+ * of <code>IMemoryRendering</code>.
+ * </p>
+ * @since 3.1
+ */
+public interface IMemoryRendering {
+    
+    /**
+     * Initializes this rendering to be hosted in the given view, displaying
+     * the given memory block. This method is called before this rendering's control
+     * has been created.
+     * 
+     * @param site container hosting this rendering
+     * @param block the memory block to render
+     */
+    public void init(IMemoryRenderingSite site, IMemoryBlock block);
+    
+    /**
+     * Creates the top level control for this rendering under the given parent composite.
+     * This method is called after this rendering's <code>init</code> method has been
+     * called.
+     * <p>
+     * Implementors are responsible for ensuring that
+     * the created control can be accessed via <code>getControl</code>
+     * </p>
+     *
+     * @param parent the parent composite
+     */
+    public Control createControl(Composite parent);
+
+    /**
+     * Returns the top level control for this rendering.
+     * <p>
+     * May return <code>null</code> if the control
+     * has not been created yet.
+     * </p>
+     *
+     * @return the top level control or <code>null</code>
+     */
+    public Control getControl();
+    
+    /**
+     * Disposes this rendering.
+     */
+    public void dispose();
+    
+    /**
+     * Notification this rendering has become the active rendering.
+     */
+    public void activated();
+    
+    /**
+     * Notification this rendering is no longer the active rendering.
+     */
+    public void deactivated();
+    
+    /**
+     * Notification this rendering has become visible in its container.
+     * Note that a rendering does not have to be active to be visible.
+     */
+    public void becomesVisible();
+    
+    /**
+     * Notification this rendering has become hidden in its container.
+     */
+    public void becomesHidden();
+    
+    /**
+     * @return if the rendering is enabled
+     */
+    public boolean isEnabled();
+    
+    /**
+     * @return the memory block displayed by this rendering.
+     */
+    public IMemoryBlock getMemoryBlock();
+    
+    /**
+     * @return the rendering id of this rendering.
+     */
+    public String getRenderingId();
+    
+    /**
+     * Adds a listener for property changes to this rendering.
+     * Has no effect if an identical listener is already registered.
+     * 
+     * @param listener a property change listener
+     */
+    public void addPropertyChangeListener(IPropertyChangeListener listener);
+    
+    /**
+     * Removes the given property change listener from this rendering.
+     * Has no effect if the identical listener is not registered.
+     *
+     * @param listener a property change listener
+     */
+    public void removePropertyChangeListener(IPropertyChangeListener listener);
+    
+    /**
+     * Returns an image for this rendering.
+     * 
+     * @return an image for this rendering
+     */
+    public Image getImage();
+    
+    /**
+     * Returns a label for this rendering.
+     * 
+     * @return a label for this rendering
+     */
+    public String getLabel();
+    
+}

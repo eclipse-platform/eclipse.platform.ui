@@ -1,0 +1,52 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.ui.memory;
+
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.jface.util.IPropertyChangeListener;
+
+
+/**
+ * Provides facilities related to the synchronization of memory renderings.
+ */
+public interface IMemoryRenderingSynchronizationService {
+    
+    /**
+     * Adds a listener for property changes notification for the specified properties.
+     * Specifying <code>null</code> indicates that the listener is interested in all 
+     * properties. If an identical listener is already registered, the properties
+     * it is registered to listen for are updated.
+     *
+     * @param listener a property change listener
+     * @param properites properties the listener is interested in, or <code>null</code>
+     *  to indicate all properties.
+     */    
+    public void addPropertyChangeListener(IPropertyChangeListener listener, String[] properties);
+    
+    /**
+     * Removes the given listener for property change notification.
+     * Has no effect if the identical listener is not registered.
+     *
+     * @param listener a property change listener
+     */
+    public void removePropertyChangeListener(IPropertyChangeListener listener);
+    
+    /**
+     * Returns the current value of the specified property for the given memory block, or
+     * <code>null</code> if none.
+     * 
+     * @param block memory block for which a property is requested
+     * @param property the name of the property
+     * @return the property value or <code>null</code>
+     */
+    public Object getProperty(IMemoryBlock block, String property);
+
+}
