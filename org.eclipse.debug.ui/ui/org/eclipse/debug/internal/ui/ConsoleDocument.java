@@ -78,6 +78,8 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	public void close() {
 		stopReading();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
+		store.removePropertyChangeListener(this);		
 		fClosed= true;
 		fStyleRanges= new ArrayList(0);
 		set("");
