@@ -210,7 +210,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * a failed action. Default is to return the empty String.
 	 */
 	protected String getStatusMessage(){
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	/**
 	 * Returns the text for this action. Default is to return null.

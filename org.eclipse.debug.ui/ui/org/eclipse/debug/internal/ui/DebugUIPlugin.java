@@ -195,15 +195,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	/**
 	 * The names of the files used to persist the launch history.
 	 */
-	private static final String LAUNCH_CONFIGURATION_HISTORY_FILENAME = "launchConfigurationHistory.xml";
-	private static final String LAUNCH_OLD_HISTORY_FILENAME = "launchHistory.xml";
+	private static final String LAUNCH_CONFIGURATION_HISTORY_FILENAME = "launchConfigurationHistory.xml"; //$NON-NLS-1$
+	private static final String LAUNCH_OLD_HISTORY_FILENAME = "launchHistory.xml"; //$NON-NLS-1$
 	
-	private static final String HISTORY_ROOT_NODE = "launchHistory";
-	private static final String HISTORY_LAUNCH_NODE = "launch";
-	private static final String HISTORY_LAST_LAUNCH_NODE = "lastLaunch";
-	private static final String HISTORY_MEMENTO_ATT = "memento";
-	private static final String HISTORY_MODE_ATT = "mode";
-	private static final String HISTORY_LABEL_ATT = "label";
+	private static final String HISTORY_ROOT_NODE = "launchHistory"; //$NON-NLS-1$
+	private static final String HISTORY_LAUNCH_NODE = "launch"; //$NON-NLS-1$
+	private static final String HISTORY_LAST_LAUNCH_NODE = "lastLaunch"; //$NON-NLS-1$
+	private static final String HISTORY_MEMENTO_ATT = "memento"; //$NON-NLS-1$
+	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
+	private static final String HISTORY_LABEL_ATT = "label"; //$NON-NLS-1$
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace

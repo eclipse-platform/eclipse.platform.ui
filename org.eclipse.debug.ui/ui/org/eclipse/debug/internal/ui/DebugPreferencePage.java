@@ -46,8 +46,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 											"Launching style", 
 											1,
 											new String[][] {
-												{"La&uncher-based", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, //$NON-NLS-1$
-												{"C&onfiguration-based", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} //$NON-NLS-1$
+												{"La&uncher-based", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, 
+												{"C&onfiguration-based", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} 
 											},
 											getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$

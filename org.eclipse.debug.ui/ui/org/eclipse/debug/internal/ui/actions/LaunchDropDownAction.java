@@ -183,7 +183,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 				if (window instanceof ApplicationWindow) {
 					ApplicationWindow appWindow= (ApplicationWindow)window;
 					IMenuManager manager= appWindow.getMenuBarManager();
-					IContributionItem actionSetItem= manager.findUsingPath("org.eclipse.debug.ui.DebugMenu");
+					IContributionItem actionSetItem= manager.findUsingPath("org.eclipse.debug.ui.DebugMenu"); //$NON-NLS-1$
 					if (actionSetItem instanceof SubContributionItem) {
 						IContributionItem item= ((SubContributionItem)actionSetItem).getInnerItem();
 						if (item instanceof IMenuManager) {

@@ -246,7 +246,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		} catch (CoreException e) {
 			DebugUIPlugin.logError(e);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	protected String getMarkerImageKey(IMarker marker) {

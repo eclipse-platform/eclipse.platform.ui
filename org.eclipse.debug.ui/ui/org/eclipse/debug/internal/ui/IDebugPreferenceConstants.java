@@ -45,9 +45,9 @@ public interface IDebugPreferenceConstants {
 	/**
 	 * The type of launching to perform
 	 */
-	public static final String LAUNCHING_STYLE = "Launching.style";
-	public static final String LAUNCHING_STYLE_LAUNCHERS = "Launching.style.launchers";
-	public static final String LAUNCHING_STYLE_CONFIGURATIONS = "Launching.style.configurations";
+	public static final String LAUNCHING_STYLE = "Launching.style"; //$NON-NLS-1$
+	public static final String LAUNCHING_STYLE_LAUNCHERS = "Launching.style.launchers"; //$NON-NLS-1$
+	public static final String LAUNCHING_STYLE_CONFIGURATIONS = "Launching.style.configurations"; //$NON-NLS-1$
 }
 
 

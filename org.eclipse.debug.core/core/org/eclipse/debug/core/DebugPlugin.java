@@ -246,7 +246,7 @@ public class DebugPlugin extends Plugin {
 		IConfigurationElement config = (IConfigurationElement)fStatusHandlers.get(key);
 		if (config != null) {
 			try {
-				return (IStatusHandler)config.createExecutableExtension("class");
+				return (IStatusHandler)config.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				log(e.getStatus());
 			}
@@ -557,8 +557,8 @@ public class DebugPlugin extends Plugin {
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		for (int i= 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
-			String id = configurationElement.getAttribute("plugin");
-			String code = configurationElement.getAttribute("code");
+			String id = configurationElement.getAttribute("plugin"); //$NON-NLS-1$
+			String code = configurationElement.getAttribute("code"); //$NON-NLS-1$
 			
 			if (id != null && code != null) {
 				try {
@@ -566,11 +566,11 @@ public class DebugPlugin extends Plugin {
 					fStatusHandlers.put(key, configurationElement);
 				} catch (NumberFormatException e) {
 					// invalid status handler
-					invalidStatusHandler(e, configurationElement.getAttribute("id"));
+					invalidStatusHandler(e, configurationElement.getAttribute("id")); //$NON-NLS-1$
 				}
 			} else {
 				// invalid status handler
-				invalidStatusHandler(null, configurationElement.getAttribute("id"));
+				invalidStatusHandler(null, configurationElement.getAttribute("id")); //$NON-NLS-1$
 			}
 		}			
 	}
