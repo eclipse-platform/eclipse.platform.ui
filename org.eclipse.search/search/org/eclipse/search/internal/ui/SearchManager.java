@@ -242,18 +242,17 @@ public class SearchManager implements IResourceChangeListener {
 			final Viewer visibleViewer= ((SearchResultView)SearchPlugin.getSearchResultView()).getViewer();
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
-				viewer.setGotoMarkerAction(search.getGotoMarkerAction());
-				if (search.getContextMenuContributor() != null)
-					viewer.setContextMenuTarget(search.getContextMenuContributor());
 				display.syncExec(new Runnable() {
 					public void run() {
 						if (previousSearch != null && viewer == visibleViewer)
 							previousSearch.setSelection(viewer.getSelection());
 						viewer.setPageId(search.getPageId());
+						viewer.setGotoMarkerAction(search.getGotoMarkerAction());
+						viewer.setContextMenuTarget(search.getContextMenuContributor());
+						viewer.setActionGroupFactory(null);
 						viewer.setInput(getCurrentResults());
-						viewer.setSelection(fCurrentSearch.getSelection(), true);
-						viewer.setSelection(new StructuredSelection(getCurrentResults().get(0)));
 						viewer.setActionGroupFactory(search.getActionGroupFactory());
+						viewer.setSelection(fCurrentSearch.getSelection(), true);
 					}
 				});
 			}
@@ -399,8 +398,9 @@ public class SearchManager implements IResourceChangeListener {
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
 			viewer.setPageId(search.getPageId());
-			viewer.setContextMenuTarget(search.getContextMenuContributor());
 			viewer.setGotoMarkerAction(search.getGotoMarkerAction());
+			viewer.setContextMenuTarget(search.getContextMenuContributor());
+			viewer.setActionGroupFactory(null);
 			viewer.setInput(getCurrentResults());
 			viewer.setActionGroupFactory(search.getActionGroupFactory());
 		}

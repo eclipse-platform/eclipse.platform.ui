@@ -566,6 +566,8 @@ public class SearchResultViewer extends TableViewer {
 	 * Handle remove all.
 	 */
 	protected void handleRemoveAll() {
+		setContextMenuTarget(null);
+		setActionGroupFactory(null);
 		setInput(null);
 	}
 
