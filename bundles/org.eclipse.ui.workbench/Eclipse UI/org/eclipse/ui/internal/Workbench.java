@@ -440,6 +440,18 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		});
 		return ret[0];
 	}
+	
+	/**
+	 * Creates the action builder for the given window.
+	 * 
+	 * @param window the window
+	 * @return the action builder
+	 */
+	protected WorkbenchActionBuilder createActionBuilder(IWorkbenchWindow window) {
+		return new WorkbenchActionBuilder(window);
+	}
+ 
+	
 	/**
 	 * Connect to the core workspace.
 	 */

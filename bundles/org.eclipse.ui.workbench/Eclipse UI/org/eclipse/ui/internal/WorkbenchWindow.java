@@ -248,7 +248,7 @@ public WorkbenchWindow(Workbench workbench, int number) {
 
 	// Add actions.
 	actionPresentation = new ActionPresentation(this);
-	actionBuilder = createActionBuilder();
+	actionBuilder = ((Workbench) getWorkbench()).createActionBuilder(this);
 	actionBuilder.buildActions();
 	
 	// include the workspace location in the title 
@@ -555,15 +555,6 @@ protected Control createToolBarControl(Shell shell) {
  */
 protected ToolBarManager createToolBarManager(int style) {
 	return null;
-}
-
-/**
- * Creates the action builder for this window.
- * 
- * @return the action builder
- */
-protected WorkbenchActionBuilder createActionBuilder() {
-	return new WorkbenchActionBuilder(this);
 }
 
 /* (non-Javadoc)

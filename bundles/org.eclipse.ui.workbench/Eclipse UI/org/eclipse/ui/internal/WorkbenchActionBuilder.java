@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -174,8 +175,8 @@ public class WorkbenchActionBuilder {
 	 * 
 	 * @window the window
 	 */
-	public WorkbenchActionBuilder(WorkbenchWindow window) {
-		this.window = window;
+	public WorkbenchActionBuilder(IWorkbenchWindow window) {
+		this.window = (WorkbenchWindow) window;
 	}
 	
 	/**
