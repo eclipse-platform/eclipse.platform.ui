@@ -5,8 +5,19 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -62,7 +73,6 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	 * @see org.eclipse.jface.viewer.ITreeContentProvider
 	 */
 	public Object getParent(Object item) {
-		Object parent= null;
 		if (item instanceof IStackFrame) {
 			return ((IStackFrame)item).getThread();
 		}

@@ -173,7 +173,6 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 	public boolean performOk() {
 		IProject project= getProject();
 		if (project != null && project.isOpen()) {
-			boolean ok;
 			String selection= fCombo.getText();
 			return saveLauncherProperty(project, selection);
 		}
@@ -192,7 +191,6 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 	 */
 	protected IProject getProject() {
 		IAdaptable element= getElement();
-		IProject project= null;
 		IResource resource= (IResource)element.getAdapter(IResource.class);
 		if (resource != null) {
 			return resource.getProject();

@@ -279,7 +279,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 */
 	public String getText(Object item) {
 		boolean displayVariableTypes= showVariableTypeNames();
-		boolean displayQualifiedNames= showQualifiedNames();
 		if (item instanceof InspectItem) {
 			return getInspectItemText((InspectItem)item);
 		} else if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) { 

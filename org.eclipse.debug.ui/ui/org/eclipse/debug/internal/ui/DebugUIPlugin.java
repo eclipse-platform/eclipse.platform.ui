@@ -635,7 +635,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			if (eventSource instanceof ILaunch) {
 				launch= (ILaunch) eventSource;
 			}
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		String perspectiveID= launch == null ? null : launch.getLauncher().getPerspectiveIdentifier();
 		if (perspectiveID == null) {
 			perspectiveID= IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
@@ -1296,8 +1295,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 		
 		// Look for an equivalent launch in the history list
 		int index;
-		boolean found= false;
-
+		
 		index = history.indexOf(item);
 		
 		//It's already listed as the most recent launch, so nothing to do

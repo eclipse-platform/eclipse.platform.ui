@@ -5,16 +5,24 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Display;
 
 public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
@@ -49,7 +57,6 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	protected void doAction(Object element) {
 		StringBuffer buffer= new StringBuffer();
 		doAction(element, buffer);
-		RTFTransfer rtfTransfer = RTFTransfer.getInstance();
 		TextTransfer plainTextTransfer = TextTransfer.getInstance();
 		Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
 		clipboard.setContents(
@@ -108,14 +115,12 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 */
 	public void run() {
 		final Iterator iter= pruneSelection();
-		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				StringBuffer buffer= new StringBuffer();
 				while (iter.hasNext()) {
 					doAction(iter.next(), buffer);
 				}
-				RTFTransfer rtfTransfer = RTFTransfer.getInstance();
 				TextTransfer plainTextTransfer = TextTransfer.getInstance();
 				Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
 				clipboard.setContents(
