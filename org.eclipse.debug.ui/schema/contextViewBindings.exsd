@@ -44,28 +44,30 @@
          <attribute name="contextId" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the context identifier that this binding is for
+                  Specifies the context identifier that this binding is for
                </documentation>
             </annotation>
          </attribute>
          <attribute name="viewId" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the identifier of the view which should be associated with the specified context. When the specified context is activated in the Debug view, this view will be automatically activated.
+                  Specifies the identifier of the view which should be associated with the specified context. When the specified context is enabled, this view will be automatically brought to the front. When elements are selected in the Debug view, contexts associated with those elements (as specified by extensions of the debugModelContextBindings extension point) are automatically enabled.
+Note that this only occurs in perspectives for which the user has requested &quot;automatic view management&quot; via the preferences (by default, only in the Debug perspective).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="autoOpen" type="boolean">
             <annotation>
                <documentation>
-                  specifies whether the specified view should be automatically opened when the given context is activated. If unspecified, the specified view will be automatically opened.
+                  Specifies whether the view should be automatically opened when the given context is enabled. If unspecified, the value of this attribute is true. If this attribute is specified false, the view will not be automatically opened, but it will still be brought to the front if it is open when the given context is enabled. Clients are intended to specify false to avoid cluttering the perspective with views that are used infrequently.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="autoClose" type="boolean">
             <annotation>
                <documentation>
-                  specifies whether the specified view should be automatically closed when a context that isn&apos;t associated with the view is activated. If unspecified, the specified view will be automatically closed.
+                  Clients are not intended to specify this attribute except in rare cases.
+Specifies whether the view should be automatically closed when the given context is disabled (this occurs when all debug targets that contained the specified context have terminated). When unspecified, the value of this attribute is true. This attribute should only be specified false in the unlikely case that a debugging view must remain open even when the user is not debugging.
                </documentation>
             </annotation>
          </attribute>
@@ -86,19 +88,19 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-      The following is an example of a context view binding contribution:
+         The following is an example of a context view binding contribution:
 &lt;pre&gt;
 &lt;extension
-      point="org.eclipse.debug.ui.contextViewBindings"&gt;
+      point=&quot;org.eclipse.debug.ui.contextViewBindings&quot;&gt;
    &lt;contextViewBinding
-         contextId="com.example.mydebugger.debugging"
-         viewId="com.example.view"
-         autoOpen="true"
-         autoClose="false"&gt;
+         contextId=&quot;com.example.mydebugger.debugging&quot;
+         viewId=&quot;com.example.view&quot;
+         autoOpen=&quot;true&quot;
+         autoClose=&quot;false&quot;&gt;
    &lt;/modelContextBinding&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
-In the above example, when a context with the specified identifier is activated by the Debug view, the given view will be automatically opened. When a context which is bound to a different debug model is activated that isn't associated with the view, the view will not be automatically closed.
+In the above example, when a context with the specified identifier is activated by the Debug view, the given view will be automatically opened. When a context which is bound to a different debug model is activated that isn&apos;t associated with the view, the view will not be automatically closed.
       </documentation>
    </annotation>
 
