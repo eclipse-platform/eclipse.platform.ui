@@ -606,8 +606,11 @@ public class DecoratorManager
 	public void setEnabled(String decoratorId, boolean enabled)
 		throws CoreException {
 		DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
-		if (definition != null)
+		if (definition != null) {
 			definition.setEnabled(enabled);
+			clearCaches();
+			updateForEnablementChange();
+		}
 	}
 
 	/*
