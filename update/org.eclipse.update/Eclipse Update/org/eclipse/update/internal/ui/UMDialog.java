@@ -623,61 +623,67 @@ public void setRestartMessageRequired(boolean bRequired) {
  * @param aDesktop  the desktop for this preference page
  */
 protected void updateEnabledState() {
-	
-	boolean bScriptSelected = _tableTreeItems.getSelectionCount() > 0;
-	
-	// Update button
-	//--------------
-	if (LaunchInfo.getCurrent().isUpdateEnabled() == true) {
-		_buttonUpdateSelected.setEnabled(bScriptSelected);
-	}
-	else {
-		_buttonUpdateSelected.setEnabled(false);
-	}
 
-	// Update All button
-	//------------------
-	if (LaunchInfo.getCurrent().isUpdateEnabled() == true && _tableTreeItems.getItemCount() > 0) {
-		_buttonUpdateAll.setEnabled(true);
-	}
-	else {
+	if( LaunchInfo.getCurrent().isUpdateEnabled() == false ){
+		_buttonAdd.setEnabled(false);
 		_buttonUpdateAll.setEnabled(false);
+		_buttonUpdateSelected.setEnabled(false);
+		_buttonRemove.setEnabled(false);
+		_buttonRevert.setEnabled(false);
 	}
+	
+	else{
+			
+		boolean bScriptSelected = _tableTreeItems.getSelectionCount() > 0;
+	
+		// Update button
+		//--------------
+		_buttonUpdateSelected.setEnabled(bScriptSelected);
 
-	// Remove button
-	// Disable the button if any one of the selected items
-	// cannot be removed
-	//----------------------------------------------------
-	boolean bEnableRemoveButton = false;
+		// Update All button
+		//------------------
+		if (_tableTreeItems.getItemCount() > 0) {
+			_buttonUpdateAll.setEnabled(true);
+		}
+		else {
+			_buttonUpdateAll.setEnabled(false);
+		}
 
-	if (bScriptSelected == true) {
+		// Remove button
+		// Disable the button if any one of the selected items
+		// cannot be removed
+		//----------------------------------------------------
+		boolean bEnableRemoveButton = false;
+	
+		if (bScriptSelected == true) {
+	
+			bEnableRemoveButton = true;
+	
+			TableTreeItem[] items = _tableTreeItems.getSelection();
+	
+			for (int i = 0; i < items.length; ++i) {
 
-		bEnableRemoveButton = true;
+				UMWizardTreeItem umTreeItem = (UMWizardTreeItem) items[i].getData();
 
-		TableTreeItem[] items = _tableTreeItems.getSelection();
-
-		for (int i = 0; i < items.length; ++i) {
-
-			UMWizardTreeItem umTreeItem = (UMWizardTreeItem) items[i].getData();
-
-			if (umTreeItem != null) {
-				if (umTreeItem._descriptorCurrent instanceof ProductDescriptor) {
-					if (((ProductDescriptor) umTreeItem._descriptorCurrent).isRemovable() == false) {
-						bEnableRemoveButton = false;
-						break;
+				if (umTreeItem != null) {
+					if (umTreeItem._descriptorCurrent instanceof ProductDescriptor) {
+						if (((ProductDescriptor) umTreeItem._descriptorCurrent).isRemovable() == false) {
+							bEnableRemoveButton = false;
+							break;
+						}
 					}
-				}
-				else if (umTreeItem._descriptorCurrent instanceof ComponentDescriptor) {
-					if (((ComponentDescriptor) umTreeItem._descriptorCurrent).isRemovable() == false) {
-						bEnableRemoveButton = false;
-						break;
+					else if (umTreeItem._descriptorCurrent instanceof ComponentDescriptor) {
+						if (((ComponentDescriptor) umTreeItem._descriptorCurrent).isRemovable() == false) {
+							bEnableRemoveButton = false;
+							break;
+						}
 					}
 				}
 			}
 		}
+	
+		_buttonRemove.setEnabled(bEnableRemoveButton);
 	}
-
-	_buttonRemove.setEnabled(bEnableRemoveButton);
 }
 /**
  * Sent when default selection occurs in the control.
