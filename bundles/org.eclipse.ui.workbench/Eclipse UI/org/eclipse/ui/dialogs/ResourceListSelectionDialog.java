@@ -339,6 +339,7 @@ public void create() {
  * @param parent parent to create the dialog widgets in
  */
 protected Control createDialogArea(Composite parent) {
+	
 	Composite dialogArea = (Composite)super.createDialogArea(parent);
 	Label l = new Label(dialogArea,SWT.NONE);
 	l.setText(WorkbenchMessages.getString("ResourceSelectionDialog.label")); //$NON-NLS-1$
@@ -369,6 +370,7 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = 300;
 	data.heightHint = 4 * folderNames.getItemHeight();
+	System.out.println(String.valueOf(folderNames.getItemHeight()));
 	folderNames.setLayoutData(data);
 	
 	if (gatherResourcesDynamically) {
@@ -399,6 +401,8 @@ protected Control createDialogArea(Composite parent) {
 		}
 	});
 	
+	
+	applyDialogFont(dialogArea);
 	return dialogArea;
 }
 /**
