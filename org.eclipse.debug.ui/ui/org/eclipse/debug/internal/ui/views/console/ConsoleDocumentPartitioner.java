@@ -347,15 +347,10 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			if (amountDeleted > 0) {
 				// deletion
 				fInputBuffer.replace(bufferModifyOffset, bufferModifyOffsetEnd, text);
-				InputPartition partition = null;
-				if (fInputBuffer.length() > 0) { 
-					// replace the last partition
-					partition = new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, bufferStartOffset, fInputBuffer.length());
-					fPartitions.set(fPartitions.size() - 1, partition);
-				} else {
-					// remove last partition - it is now empty
-					fPartitions.remove(fPartitions.size() - 1);
-				}
+				InputPartition partition = null; 
+				// replace the last partition
+				partition = new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, bufferStartOffset, fInputBuffer.length());
+				fPartitions.set(fPartitions.size() - 1, partition);
 			} else {
 				// insert/replace - must process entire buffer in case of
 				// line delimiter insertion in middle of buffer
@@ -378,7 +373,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 						remaining = remaining.substring(split);
 						String buffer = fInputBuffer.toString();
 						fInputBuffer.setLength(0);
-						addPartition(new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, partitionOffset, split));
+						InputPartition written = (InputPartition)addPartition(new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, partitionOffset, split));
+						written.setReadOnly(true);
 						partitionOffset += split;
 						addPartition(new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, partitionOffset, 0));
 						if (fProxy != null) {
@@ -419,7 +415,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * Adds a new colored input partition, combining with the previous partition if
 	 * possible.
 	 */
-	protected void addPartition(StreamPartition partition) {
+	protected StreamPartition addPartition(StreamPartition partition) {
 		if (fPartitions.isEmpty()) {
 			fPartitions.add(partition);
 		} else {
@@ -434,6 +430,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				fPartitions.add(partition);
 			}
 		}
+		return partition;
 	}	
 	
 	/**

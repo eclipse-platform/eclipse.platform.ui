@@ -13,6 +13,12 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  * A partition in a console document that contains input from the keyboard.
  */
 public class InputPartition extends StreamPartition {
+	
+	/**
+	 * Once an input partition has been written to standard-in, it cannot
+	 * be modifed.
+	 */
+	private boolean fReadOnly = false;
 
 	/**
 	 * Partition type
@@ -29,5 +35,34 @@ public class InputPartition extends StreamPartition {
 	 */
 	public StreamPartition createNewPartition(String streamIdentifier, int offset, int length) {
 		return new InputPartition(streamIdentifier, offset, length);
+	}	
+	
+	/**
+	 * Sets whether this partition is read-only.
+	 * 
+	 * @param readOnly whether this partition is read-only
+	 */
+	public void setReadOnly(boolean readOnly) {
+		fReadOnly = readOnly; 
+	}
+	
+	/**
+	 * Returns whether this partition is read-only.
+	 * 
+	 * @return whether this partition is read-only
+	 */
+	public boolean isReadOnly() {
+		return fReadOnly;
+	}
+	
+	/**
+	 * Returns whether this partition is allowed to be combined with the
+	 * given partition. Once read-only, this partition cannot be combined.
+	 * 
+	 * @param partition
+	 * @return boolean
+	 */
+	public boolean canBeCombinedWith(StreamPartition partition) {
+		return (!isReadOnly() && super.canBeCombinedWith(partition));
 	}	
 }
