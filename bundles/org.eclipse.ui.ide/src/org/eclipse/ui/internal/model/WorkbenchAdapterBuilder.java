@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.model;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Registers the adapters on core constructs
@@ -30,5 +37,14 @@ public static void registerAdapters() {
 	manager.registerAdapters(factory, IFolder.class);
 	manager.registerAdapters(factory, IFile.class);
 	manager.registerAdapters(factory, IMarker.class);
+	
+	// properties adapters
+	IAdapterFactory paFactory = new StandardPropertiesAdapterFactory();
+	manager.registerAdapters(paFactory, IWorkspace.class);
+	manager.registerAdapters(paFactory, IWorkspaceRoot.class);
+	manager.registerAdapters(paFactory, IProject.class);
+	manager.registerAdapters(paFactory, IFolder.class);
+	manager.registerAdapters(paFactory, IFile.class);
+	manager.registerAdapters(paFactory, IMarker.class);
 }
 }
