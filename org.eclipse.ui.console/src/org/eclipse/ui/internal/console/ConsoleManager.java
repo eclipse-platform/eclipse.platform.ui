@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -325,6 +327,15 @@ public class ConsoleManager implements IConsoleManager {
             for (int i = 0; i < configurationElements.length; i++) {
                 fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElements[i]));
             }
+            Collections.sort(fConsoleFactoryExtensions, new Comparator() {
+                public int compare(Object o1, Object o2) {
+                    return ((ConsoleFactoryExtension)o1).getLabel().compareTo(((ConsoleFactoryExtension)o2).getLabel()); 
+                }
+
+                public boolean equals(Object obj) {
+                    return obj == this; 
+                }
+            });
         }
         return (ConsoleFactoryExtension[]) fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);
     }
