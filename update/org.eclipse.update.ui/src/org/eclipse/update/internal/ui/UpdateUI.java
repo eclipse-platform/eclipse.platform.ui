@@ -45,6 +45,9 @@ import org.eclipse.update.internal.ui.views.*;
 public class UpdateUI extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.update.ui";
 	public static final String WEB_APP_ID = "org.eclipse.update";
+	
+	public static final String ID_BROWSER = PLUGIN_ID + "WebBrowser";
+	
 	//The shared instance.
 	private static UpdateUI plugin;
 	//Resource bundle.
@@ -456,7 +459,7 @@ public class UpdateUI extends AbstractUIPlugin {
 			try {
 				//IViewPart part = page.findView(UpdatePerspective.ID_BROWSER);
 				//if (part == null) {
-					IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
+					IViewPart part = page.showView(ID_BROWSER);
 					focusGrabbed = true;
 				//} else
 					//page.bringToTop(part);
