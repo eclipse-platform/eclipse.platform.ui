@@ -359,10 +359,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				public void run() {
 					//initialize the selected resource manager
 					SelectedResourceManager.getDefault();
+					// forces launch shortcuts to be intialized so their key-bindings work
+					getLaunchConfigurationManager().getLaunchShortcuts();
 				}
 			});	
-		// forces launch shortcuts to be intialized so their key-bindings work
-		getLaunchConfigurationManager().getLaunchShortcuts();
+		
 	}
 
 	protected IProcess getProcessFromInput(Object input) {
