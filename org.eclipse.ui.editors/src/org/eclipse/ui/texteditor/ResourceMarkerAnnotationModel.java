@@ -130,7 +130,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 					markers[i].delete();
 				}
 			}
-		}, null);
+		}, null, IWorkspace.AVOID_UPDATE, null);
 	}
 	
 	/*

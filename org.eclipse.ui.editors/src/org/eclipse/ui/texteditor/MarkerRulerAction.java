@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
@@ -345,7 +346,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 						marker.delete();
 					}
 				}
-			}, null);
+			}, null, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException x) {
 			handleCoreException(x, TextEditorMessages.getString("MarkerRulerAction.removeMarkers")); //$NON-NLS-1$
 		}
