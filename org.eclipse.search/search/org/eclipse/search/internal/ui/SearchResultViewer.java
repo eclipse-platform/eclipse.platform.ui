@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.SWT;
@@ -632,11 +633,14 @@ public class SearchResultViewer extends TableViewer {
 			ArrayList others= new ArrayList(changed.length);
 			for (int i= 0; i < changed.length; i++) {
 				Object curr= changed[i];
-				if (curr instanceof IResource) {
+				if (curr instanceof IResource)
 					fResourceToItemsMapper.resourceChanged((IResource) curr);
-				} else {
+				else if (curr instanceof IAdaptable) {
+					IResource resource= (IResource)((IAdaptable)curr).getAdapter(IResource.class);
+					if (resource != null)
+						fResourceToItemsMapper.resourceChanged(resource);
+				} else
 					others.add(curr);
-				}
 			}
 			if (others.isEmpty()) {
 				return;
