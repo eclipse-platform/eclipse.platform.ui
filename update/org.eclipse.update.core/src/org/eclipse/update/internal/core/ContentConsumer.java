@@ -3,10 +3,8 @@ package org.eclipse.update.internal.core;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
- */ 
+ */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.IContentConsumer;
 
 /**
@@ -16,7 +14,5 @@ import org.eclipse.update.core.IContentConsumer;
  */
 
 public abstract class ContentConsumer implements IContentConsumer {
-	
-
 
 }

@@ -20,7 +20,6 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	private ContentReference[] localFeatureFiles = new ContentReference[0];
 	private  IVerifier jarVerifier = new JarVerifier();
 
-	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 
 	public static final FilenameFilter filter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {
@@ -42,25 +41,6 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		return jarVerifier;
 	}
 	
-	/**
-	 * return the archive ID for a plugin
-	 *  plugins/pluginId_pluginVer.jar
-	 */
-	private String getPluginEntryArchiveID(IPluginEntry entry) {
-		return Site.DEFAULT_PLUGIN_PATH + entry.getVersionedIdentifier().toString() + JAR_EXTENSION;
-	}
-
-	/**
-	 * @see AbstractFeature#getArchiveID()
-	 */
-	public String[] getFeatureEntryArchiveID() {
-		String[] names = new String[getFeature().getPluginEntryCount()];
-		IPluginEntry[] entries = getFeature().getPluginEntries();
-		for (int i = 0; i < getFeature().getPluginEntryCount(); i++) {
-			names[i] = getPluginEntryArchiveID(entries[i]);
-		}
-		return names;
-	}
 
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifestReference()
@@ -158,36 +138,11 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 */
 	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 		ContentReference[] references = new ContentReference[1];
-		String archiveID = getPluginEntryArchiveID(pluginEntry);
+		String archiveID = getPathID(pluginEntry);
 		URL url = getFeature().getSite().getSiteContentProvider().getArchiveReference(archiveID);
 
-		// FIXME... Hack to support plugin executable for a packaged feature... not necessary
 		try {
-		// protocol is a file protocol		
-		if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
-			// either the URL is pointing to a directory or to a JAR file
-			File pluginDir = new File(url.getFile());
-			if (!pluginDir.exists()) {
-				// plugin dir does not exist attmpt to add a '/' and see if it is a directory
-				if (!pluginDir.getAbsolutePath().endsWith(File.separator)) {
-					pluginDir = new File(pluginDir.getAbsolutePath() + File.separator);
-				}
-			}
-
-			if (pluginDir.exists()) {
-				if (pluginDir.isDirectory()) {
-					// directory, then attempt executable plugin
-					references[0] = new ContentReference(archiveID, pluginDir);
-				} else {
-					// file , attemp JAR file
-					references[0] = asLocalReference(new JarContentReference(archiveID, pluginDir),monitor);
-				}
-			} else
-				throw Utilities.newCoreException(Policy.bind("FeaturePackagedContentProvider.FileDoesNotExist", pluginDir.getAbsolutePath()), null); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			//if the protocol is not File, we have to suppose it is a JAR file
 			references[0] = asLocalReference(new JarContentReference(archiveID, url),monitor);
-		}
 		}catch (IOException e) {
 			String urlString = (getFeature() == null) ? Policy.bind("FeaturePackagedContentProvider.NoFeature") : "" + getFeature().getURL(); //$NON-NLS-1$ //$NON-NLS-2$
 			String refString = (references[0]==null)?Policy.bind("FeaturePackagedContentProvider.NoReference"):references[0].getIdentifier(); //$NON-NLS-1$

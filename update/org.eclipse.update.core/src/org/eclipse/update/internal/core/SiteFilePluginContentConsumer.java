@@ -21,28 +21,37 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	 * Constructor for FileSite
 	 */
 	public SiteFilePluginContentConsumer(IPluginEntry pluginEntry, ISite site) {
-		this.pluginEntry = pluginEntry;
-		this.site = site;
+		this.pluginEntry= pluginEntry;
+		this.site= site;
 	}
 
 	/*
 	 * @see ISiteContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
-	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
+	public void store(ContentReference contentReference, IProgressMonitor monitor)
+		throws CoreException {
 		//String path = site.getURL().getFile();
-		InputStream inStream = null;
-		String pluginPath = null;		
-		
-		try {
-			URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString());
-			pluginPath = newURL.getFile();
-			String contentKey = contentReference.getIdentifier();
-			pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
+		InputStream inStream= null;
+		String pluginPath= null;
 
-			inStream = contentReference.getInputStream();
+		try {
+			URL newURL=
+				new URL(
+					site.getURL(),
+					Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString());
+			pluginPath= newURL.getFile();
+			String contentKey= contentReference.getIdentifier();
+			pluginPath += pluginPath.endsWith(File.separator)
+				? contentKey
+				: File.separator + contentKey;
+
+			inStream= contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath),
+				e);
+			//$NON-NLS-1$
 		} finally {
 			try {
 				// close stream
@@ -54,13 +63,11 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	}
 
 	/*
-	 * @see ISiteContentConsumer#close()
+	 * @see ISiteContentConsumer#close() 
 	 */
 	public void close() {
-		if (site instanceof SiteFile) 
-			((SiteFile) site).addPluginEntry(pluginEntry);
+		if (site instanceof SiteFile)
+			 ((SiteFile) site).addPluginEntry(pluginEntry);
 	}
-	
-		
-	
+
 }

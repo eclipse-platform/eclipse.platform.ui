@@ -1,10 +1,13 @@
 package org.eclipse.update.internal.core;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+ 
 import java.io.PrintWriter;
 import java.util.*;
+
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
@@ -12,6 +15,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.*;
+
 /**
  * A Configured site manages the Configured and unconfigured features of a Site
  */
@@ -22,13 +26,13 @@ public class ConfiguredSite
 	// listeners	
 	private ListenersList listeners= new ListenersList();
 
-	/**
+	/*
 	 * Default Constructor
 	 */
 	public ConfiguredSite() {
 	}
 
-	/**
+	/*
 	 * Copy Constructor
 	 * As of now, configSite can only be of type ConfiguredSite
 	 */
@@ -42,7 +46,7 @@ public class ConfiguredSite
 		setPlatformURLString(cSite.getPlatformURLString());
 	}
 
-	/**
+	/*
 	 *  Adds a listener
 	 */
 	public void addConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener) {
@@ -51,7 +55,7 @@ public class ConfiguredSite
 		}
 	}
 
-	/**
+	/*
 	 * Removes a listener
 	 */
 	public void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener) {
@@ -347,7 +351,7 @@ public class ConfiguredSite
 		return result;
 	}
 
-	/**
+	/*
 	 * Configure and unconfigure appropriate feature to
 	 * become 'like' currentConfiguration which is the configuration
 	 * the user wants to revert to.

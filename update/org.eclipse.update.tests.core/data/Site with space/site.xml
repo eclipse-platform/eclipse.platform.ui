@@ -13,7 +13,7 @@
   <archive path="plugins/org.eclipse.help_1.0.0.jar" url="plugins space/help.jar"/>
   <archive path="plugins/org.eclipse.pde.core_1.0.0.jar" url="plugins space/Pde_core.jar"/>
   <archive path="plugins/org.junit_3.5.0.jar" url="plugins space/junit_3.7.jar"/>
-  <archive path="plugins/org.eclipse.update.plugin1_1.1.1" url="plugins space/org.eclipse.update.plugin1_1.1.1"/>  
+  <archive path="plugins/org.eclipse.update.plugin1_1.1.1.jar" url="plugins space/org.eclipse.update.plugin1_1.1.1"/>  
   <category-def label="IBM WSAD Tools" name="eclipse"/>
   <category-def label="J2EE tools" name="eclipse/J2EE"/>
   <category-def label="EJB Tools" name="eclipse/J2EE/EJB"/>

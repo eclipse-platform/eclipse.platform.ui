@@ -178,8 +178,12 @@ public class SiteLocal
 								ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved(
 							(IInstallConfiguration) removedConfig);
 					}
+					
+					//remove files
+					URL url = removedConfig.getURL();
+					UpdateManagerUtils.removeFromFileSystem(new File(url.getFile()));
 				}
-				// FIXME: should we remove file ? Can they be shared or remote !!!
+				
 			}
 
 			// set configuration as current		

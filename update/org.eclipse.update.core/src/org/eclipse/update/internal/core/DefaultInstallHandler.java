@@ -1,4 +1,5 @@
 package org.eclipse.update.internal.core;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -8,22 +9,15 @@ import java.io.IOException;
 import java.util.jar.JarEntry;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.BaseInstallHandler;
-import org.eclipse.update.core.ContentReference;
-import org.eclipse.update.core.IContentConsumer;
-import org.eclipse.update.core.IFeatureContentConsumer;
-import org.eclipse.update.core.IFeatureContentProvider;
-import org.eclipse.update.core.INonPluginEntry;
-import org.eclipse.update.core.IVerificationListener;
-import org.eclipse.update.core.IVerificationResult;
-import org.eclipse.update.core.IVerifier;
-import org.eclipse.update.core.JarContentReference;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.JarContentReference.ContentSelector;
 
+/**
+ * Default Implementation of InstallHandler
+ */
 public class DefaultInstallHandler extends BaseInstallHandler {
 
-	/**
+	/*
 	 * @see IInstallHandler#nonPluginDataDownloaded(INonPluginEntry[], IVerificationListener)
 	 */
 	public void nonPluginDataDownloaded(
@@ -67,7 +61,7 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 		}
 	}
 
-	/**
+	/*
 	 * @see IInstallHandler#completeInstall(IFeatureContentConsumer)
 	 */
 	public void completeInstall(IFeatureContentConsumer consumer)
@@ -120,6 +114,9 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 		}
 	}
 
+	/*
+	 * 
+	 */
 	private void promptForVerification(
 		IVerificationResult verificationResult,
 		IVerificationListener listener)

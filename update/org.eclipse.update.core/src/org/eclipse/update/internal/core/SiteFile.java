@@ -3,6 +3,7 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,7 +13,6 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * Site on the File System
@@ -65,14 +65,17 @@ public class SiteFile extends Site {
 
 		// add the installed plugins directories as archives entry
 		SiteFileFactory archiveFactory = new SiteFileFactory();		
-		ArchiveReferenceModel archive = archiveFactory.createArchiveReferenceModel();
+		ArchiveReferenceModel archive = null;
 		IPluginEntry[] pluginEntries = localFeatureReference.getFeature().getPluginEntries();
 		for (int i = 0; i <pluginEntries.length; i++) {
-			String pluginID = Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString() + FeaturePackagedContentProvider.JAR_EXTENSION;
+			String versionId = pluginEntries[i].getVersionedIdentifier().toString();
+			String pluginID = Site.DEFAULT_PLUGIN_PATH + versionId + FeaturePackagedContentProvider.JAR_EXTENSION;
+			archive = archiveFactory.createArchiveReferenceModel();
 			archive.setPath(pluginID);
 			try {
-				URL url = new URL(getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString());
+				URL url = new URL(getURL(), Site.DEFAULT_PLUGIN_PATH + versionId +File.separator);
 				archive.setURLString(url.toExternalForm());
+				archive.resolve(url,null);
 				this.addArchiveReferenceModel(archive);
 			} catch (MalformedURLException e){
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();

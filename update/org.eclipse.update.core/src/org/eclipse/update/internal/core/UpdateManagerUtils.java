@@ -157,8 +157,6 @@ public class UpdateManagerUtils {
 		
 		// if there is a separator after the dot
 		// do not consider it as an extension
-		// FIXME: LINUX ???
-		//String ext = (dotIndex != -1 && fileIndex < dotIndex) ? "." + remotePath.substring(dotIndex) : "";
 		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : ""; //$NON-NLS-1$
 		
 		// the name is the string between the separator and the dot

@@ -27,6 +27,7 @@ public abstract class FeatureContentProvider
 	private URL base;
 	private IFeature feature;
 	private File tmpDir; // local work area for each provider
+	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$	
 
 	/**
 	 * Feature content provider constructor
@@ -133,7 +134,7 @@ public abstract class FeatureContentProvider
 	 * 
 	 * @param ref content reference
 	 * @param monitor progress monitor, can be <code>null</code>
-	 * @exception IOException	 * 
+	 * @exception IOException	  
 	 * @since 2.0
 	 */
 	public File asLocalFile(ContentReference ref, InstallMonitor monitor)
@@ -232,6 +233,27 @@ public abstract class FeatureContentProvider
 		}
 
 		return result;
+	}
+
+	/**
+	 * Returns the path identifier for a plugin entry.
+	 * <code>plugins/&lt;pluginId>_&lt;pluginVersion>.jar</code> 
+	 * @return the path identifier
+	 */
+	protected String getPathID(IPluginEntry entry) {
+		return Site.DEFAULT_PLUGIN_PATH + entry.getVersionedIdentifier().toString() + JAR_EXTENSION;
+	}
+
+	/**
+	 * Returns the path identifer for a non plugin entry.
+	 * <code>features/&lt;featureId>_&lt;featureVersion>/&lt;dataId></code>
+	 * @return the path identifier
+  	 */
+	protected String getPathID(INonPluginEntry entry) {
+		String nonPluginBaseID=
+			Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString() + "/";
+		//$NON-NLS-1$
+		return nonPluginBaseID + entry.getIdentifier();
 	}
 
 }

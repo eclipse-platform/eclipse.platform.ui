@@ -129,7 +129,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (!isCurrent() && isReadOnly())
 			return;
 
-		//FIXME: Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
