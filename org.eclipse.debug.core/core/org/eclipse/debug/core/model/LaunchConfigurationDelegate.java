@@ -64,12 +64,34 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		return true;
+		IProject[] projects = getBuildOrder(configuration, mode);
+		if (projects == null) {
+			return true;
+		} else {
+			buildProjects(projects, monitor);
+			return false;
+		}
 	}
+	
+	/**
+	 * Returns the projects to build before launching the given launch configuration
+	 * or <code>null</code> if the entire workspace should be built incrementatlly.
+	 * Subclasses should override as required.
+	 * 
+	 * @param configuration the configuration being launched
+	 * @param mode launch mode
+	 * @return projects to build, in build order, or <code>null</code>
+	 * @throws CoreException if an exception occurrs
+	 */
+	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#finalLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -121,15 +143,14 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @throws CoreException if an error occurs while computing referenced
 	 *  projects
 	 */
-	protected IProject[] getBuildOrder(IProject[] baseProjects) throws CoreException {
+	protected IProject[] computeReferencedBuildOrder(IProject[] baseProjects) throws CoreException {
 		HashSet unorderedProjects = new HashSet();
 		for(int i = 0; i< baseProjects.length; i++) {
 			unorderedProjects.add(baseProjects[i]);
 			addReferencedProjects(baseProjects[i], unorderedProjects);
 		}
-		
 		IProject[] projectSet = (IProject[]) unorderedProjects.toArray(new IProject[unorderedProjects.size()]);
-		return orderProjectSet(projectSet);
+		return computeBuildOrder(projectSet);
 	}
 
 
@@ -160,7 +181,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @param projects the list of projects to sort into build order
 	 * @return a list of projects in build order.
 	 */
-	protected IProject[] orderProjectSet(IProject[] projects) { 
+	protected IProject[] computeBuildOrder(IProject[] projects) { 
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 		if (orderedNames != null) {
 			List orderedProjects = new ArrayList(projects.length);
@@ -201,7 +222,6 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 */
 	protected boolean existsProblems(IProject proj, int severity) throws CoreException {
 		IMarker[] markers = proj.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-		
 		if (markers.length > 0) {
 			for (int i = 0; i < markers.length; i++) {
 				if (((Integer)markers[i].getAttribute(IMarker.SEVERITY)).intValue() >= severity) {
