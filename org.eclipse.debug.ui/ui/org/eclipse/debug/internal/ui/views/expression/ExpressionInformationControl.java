@@ -313,5 +313,6 @@ public class ExpressionInformationControl extends PopupInformationControl {
         if (modelPresentation != null) {
             modelPresentation.dispose();
         }
+        exp.dispose();
     }
 }
