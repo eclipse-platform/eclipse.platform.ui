@@ -151,28 +151,11 @@ IContainer createContainersFor(IPath path) throws CoreException {
 	IContainer currentFolder = (IContainer) destinationContainer;
 	int segmentCount = path.segmentCount();
 
-	if (segmentCount == 0) {
-		// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-		monitor.worked(1);
-	} else {
-		// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-		IProgressMonitor localMonitor = new SubProgressMonitor(monitor, segmentCount);
-		localMonitor.beginTask(DataTransferMessages.getString("ImportOperation.creatingFolder"), segmentCount); //$NON-NLS-1$
-		try {
-			for (int i = 0; i < segmentCount; i++) {
-				currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
-				if (!currentFolder.exists()) {
-					// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-					((IFolder) currentFolder).create(
-						false,
-						true,
-						new SubProgressMonitor(localMonitor, 1));
-				}
-			}
-		} finally {
-			localMonitor.done();
-		}
-
+	
+	for (int i = 0; i < segmentCount; i++) {
+		currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
+		if (!currentFolder.exists()) 
+			((IFolder) currentFolder).create(false,true,null);
 	}
 
 	return currentFolder;
@@ -185,7 +168,7 @@ IContainer createContainersFor(IPath path) throws CoreException {
  */
 void deleteResource(IResource resource) {
 	try {
-		resource.delete(false,new SubProgressMonitor(monitor,1,SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+		resource.delete(false,null);
 	} catch (CoreException e) {
 		errorTable.add(e.getStatus());
 	}
@@ -230,13 +213,13 @@ protected void execute(IProgressMonitor progressMonitor) {
 			monitor.worked(90);
 		} else {
 			// Choose twice the selected files size to take folders into account
-			int creationCount = selectedFiles.size() * 2;
+			int creationCount = selectedFiles.size();
 			monitor.beginTask(DataTransferMessages.getString("DataTransfer.importTask"),creationCount + 100); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destinationPath);
 			monitor.worked(50);
 			destinationContainer = generator.generateContainer(new SubProgressMonitor(monitor, 50));
 			importFileSystemObjects(selectedFiles);
-			monitor.worked(creationCount);
+			monitor.done();
 		}
 	}
 	catch (CoreException e) {
@@ -310,6 +293,7 @@ void importFile(Object fileObject, int policy) {
 	String fileObjectPath = provider.getFullPath(fileObject);
 	monitor.subTask(fileObjectPath);
 	IFile targetResource = containerResource.getFile(new Path(provider.getLabel(fileObject)));
+	monitor.worked(1);
 
 	if (!ensureTargetDoesNotExist(targetResource, policy)) {
 		// Do not add an error status because the user
@@ -334,7 +318,7 @@ void importFile(Object fileObject, int policy) {
 		targetResource.create(
 			contentStream,
 			false,
-			new SubProgressMonitor(monitor,1,SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+			null);
 	} catch (CoreException e) {
 		errorTable.add(e.getStatus());
 	} finally {
@@ -425,7 +409,6 @@ int importFolder(Object folderObject, int policy) {
 			// update the monitor as it was done in queryOverwrite.
 			return POLICY_SKIP_CHILDREN;
 		}
-		monitor.worked(1);
 		return POLICY_FORCE_OVERWRITE;
 	}
 
@@ -433,7 +416,7 @@ int importFolder(Object folderObject, int policy) {
 		workspace.getRoot().getFolder(resourcePath).create(
 			false,
 			true,
-			new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+			null);
 	} catch (CoreException e) {
 		errorTable.add(e.getStatus());
 	}
