@@ -39,6 +39,9 @@ There are two possible forms of product extension, static and dynamic.  Static p
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -4,10 +4,10 @@
    <extension-point id="applications" name="%applicationsName" schema="schema/applications.exsd"/>
    <extension-point id="products" name="%productsName" schema="schema/products.exsd"/>
    <extension-point id="adapters" name="%adaptersName" schema="schema/adapters.exsd"/>
-   <extension-point id="preferences" name="preferences" schema="schema/preferences.exsd"/>
+   <extension-point id="preferences" name="%preferencesName" schema="schema/preferences.exsd"/>
    <extension-point id="contentTypes" name="%contentTypesName" schema="schema/contentTypes.exsd"/>
 
-	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="platform-preferences">
+	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="%preferencesExtPtName">
 		<scope name="configuration" class="org.eclipse.core.internal.preferences.ConfigurationPreferences"/>
 		<scope name="instance" class="org.eclipse.core.internal.preferences.InstancePreferences"/>
 		<scope name="default" class="org.eclipse.core.internal.preferences.DefaultPreferences"/>
