@@ -58,7 +58,8 @@ function setContentToolbarTitle(title)
 }
 
 /**
- * Shows specified view. Called from actions that switch the view */
+ * Shows specified view. Called from actions that switch the view
+ */
 function showView(view)
 {
 	// Note: assumes the same id shared by tabs and iframes

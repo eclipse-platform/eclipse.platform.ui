@@ -157,7 +157,8 @@ function closeAdvanced()
 /**
  * This function can be called from this page or from
  * the advanced search page. When called from the advanced
- * search page, a query is passed. */
+ * search page, a query is passed.
+ */
 function doSearch(query)
 {
 	var workingSet = document.getElementById("scope").firstChild.nodeValue;
