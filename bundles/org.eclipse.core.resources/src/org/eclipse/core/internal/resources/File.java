@@ -11,11 +11,13 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
+import org.eclipse.core.internal.content.ContentType;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -236,12 +238,23 @@ public class File extends Resource implements IFile {
 	 * @see org.eclipse.core.resources.IFile#getContentDescription()
 	 */
 	public IContentDescription getContentDescription() throws CoreException {
+		//first look for cached description information to avoid locking overhead
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = info.getFlags();
+		if ((flags & ICoreConstants.M_NO_CONTENT_DESCRIPTION) != 0)
+			return null;
+		if ((flags & ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION) != 0) {
+			IContentTypeManager contentTypeManager = org.eclipse.core.runtime.Platform.getContentTypeManager();
+			IContentType type = contentTypeManager.findContentTypeFor(getName());
+			if (type != null)
+				return ((ContentType) type).getDefaultDescription();
+		}
+		//no cached information, so compute the content type
 		try {
 			workspace.prepareOperation(null, null);
-			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));			
 			workspace.beginOperation(true);			
-			return workspace.getContentDescriptionManager().getDescriptionFor(this);			
+			return workspace.getContentDescriptionManager().getDescriptionFor(this);
 		} finally {
 			workspace.endOperation(null, false, null);
 		}

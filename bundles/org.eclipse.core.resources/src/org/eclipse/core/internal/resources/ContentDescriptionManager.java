@@ -32,44 +32,34 @@ public class ContentDescriptionManager implements IManager {
 	}
 
 	public IContentDescription getDescriptionFor(File file) throws CoreException {
+		//open the resource info
 		ResourceInfo info = file.getResourceInfo(false, true);
-		int flags = info.getFlags();
-		if ((flags & ICoreConstants.M_NO_CONTENT_DESCRIPTION) != 0)
-			return null;
-		if ((flags & ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION) != 0) {
-			IContentTypeManager contentTypeManager = org.eclipse.core.runtime.Platform.getContentTypeManager();
-			IContentType type = contentTypeManager.findContentTypeFor(file.getName());
-			if (type != null)
-				return ((ContentType) type).getDefaultDescription();
-			// it seems no content type is associated to this file name anymore... fix that 
-			info.clear(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
-		}
+		//make sure no cached information is set on the info
+		info.clear(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
 		// tries to get a description from the cache		
-		synchronized (this) {
-			Cache.Entry entry = cache.getEntry(file.getFullPath());
-			if (entry != null && entry.getTimestamp() == info.getContentId())
-				// there was a description in the cache, and it was up to date
-				return (IContentDescription) entry.getCached();
-			// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
-			IContentDescription newDescription = readDescription(file);
-			if (newDescription == null)
-				// no content type exists for this file name
-				info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
-			else if (((ContentType) newDescription.getContentType()).getDefaultDescription() == newDescription)
-				// the default content description is enough fo this file
-				info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
+		Cache.Entry entry = cache.getEntry(file.getFullPath());
+		if (entry != null && entry.getTimestamp() == info.getContentId())
+			// there was a description in the cache, and it was up to date
+			return (IContentDescription) entry.getCached();
+		// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
+		IContentDescription newDescription = readDescription(file);
+		if (newDescription == null)
+			// no content type exists for this file name
+			info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
+		else if (((ContentType) newDescription.getContentType()).getDefaultDescription() == newDescription)
+			// the default content description is enough fo this file
+			info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
+		else {
+			// we actually got a description filled by a describer
+			if (entry == null)
+				// there was none - creates one
+				entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
 			else {
-				// we actually got a description filled by a describer
-				if (entry == null)
-					// there was none - creates one
-					entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
-				else {
-					entry.setTimestamp(info.getContentId());
-					entry.setCached(newDescription);
-				}
+				entry.setTimestamp(info.getContentId());
+				entry.setCached(newDescription);
 			}
-			return newDescription;
 		}
+		return newDescription;
 	}
 
 	/**
