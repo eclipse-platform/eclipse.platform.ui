@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Test cheatsheet without cheatsheet element">
+
+<intro>
+		<description>
+Simple test
+		</description>
+		<description>
+Simple test, an extra description
+		</description>
+		<description>
+Simple test, another extra description
+		</description>
+</intro>
+
+	<item
+		title="Just a simple test">
+		<description>
+Did it work? Of course not, it is suppose to cause a parsing error.
+		</description>
+</item>
+
+</cheatsheet>

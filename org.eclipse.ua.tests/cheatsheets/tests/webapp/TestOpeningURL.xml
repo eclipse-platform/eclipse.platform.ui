@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Test cheatsheet opening from URL">
+
+	<intro>
+		<description>
+Simple test
+		</description>
+</intro>
+
+	<item
+		title="Just a simple test">
+		<description>
+Did it work?
+		</description>
+</item>
+
+</cheatsheet>
