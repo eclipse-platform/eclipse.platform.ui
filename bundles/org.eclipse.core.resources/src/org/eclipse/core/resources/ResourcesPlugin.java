@@ -282,10 +282,11 @@ public static ResourcesPlugin getPlugin() {
 	return plugin;
 }
 /**
- * Returns the workspace.
+ * Returns the workspace. The workspace is not accessible after the resources
+ * plug-in has shutdown.
  *
  * @return the workspace that was created by the single instance of this
- *   plug-in runtime class
+ *   plug-in class, or <code>null</code> if this plug-in has been shut down.
  */
 public static IWorkspace getWorkspace() {
 	return workspace;
