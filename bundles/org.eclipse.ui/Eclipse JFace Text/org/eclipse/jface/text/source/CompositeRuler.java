@@ -13,18 +13,26 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.SWTEventListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -90,11 +98,11 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	 */
 	static class CompositeRulerCanvas extends Canvas {
 		
-		private static class ListenerInfo {
-			Listener listener;
-			int eventType;
+		static class ListenerInfo {
+			Class fClass;
+			SWTEventListener fListener;
 		};
-		
+				
 		private List fCachedListeners= new ArrayList();
 		private MouseListener fMouseListener;
 		
@@ -108,7 +116,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 					if (3 == e.button) {
 						Menu menu= getMenu();
 						if (menu != null) {
-							Control c= (Control)e.widget;
+							Control c= (Control) e.widget;
 							Point p= new Point(e.x, e.y);
 							Point p2= c.toDisplay(p);
 							menu.setLocation(p2.x, p2.y);
@@ -117,7 +125,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 					}
 				}
 			};
-			addDisposeListener(new DisposeListener() {
+			super.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					if (fCachedListeners != null) {
 						fCachedListeners.clear();
@@ -127,34 +135,110 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			});
 		}
 		
-		/* 
-		 * @see Widget#addListener(int, Listener)
-		 */
-		public void addListener(int eventType, Listener listener) {
-			
-			super.addListener(eventType, listener);
-			
+		private void addListener(Class clazz, Control control, SWTEventListener listener) {
+			if (ControlListener.class.equals(clazz)) {
+				control. addControlListener((ControlListener) listener);
+				return;
+			}
+			if (FocusListener.class.equals(clazz)) {
+				control. addFocusListener((FocusListener) listener);
+				return;
+			}
+			if (HelpListener.class.equals(clazz)) {
+				control. addHelpListener((HelpListener) listener);
+				return;
+			}
+			if (KeyListener.class.equals(clazz)) {
+				control. addKeyListener((KeyListener) listener);
+				return;
+			}
+			if (MouseListener.class.equals(clazz)) {
+				control. addMouseListener((MouseListener) listener);
+				return;
+			}
+			if (MouseMoveListener.class.equals(clazz)) {
+				control. addMouseMoveListener((MouseMoveListener) listener);
+				return;
+			}
+			if (MouseTrackListener.class.equals(clazz)) {
+				control. addMouseTrackListener((MouseTrackListener) listener);
+				return;
+			}
+			if (PaintListener.class.equals(clazz)) {
+				control. addPaintListener((PaintListener) listener);
+				return;
+			}
+			if (TraverseListener.class.equals(clazz)) {
+				control. addTraverseListener((TraverseListener) listener);
+				return;
+			}
+			if (DisposeListener.class.equals(clazz)) {
+				control. addDisposeListener((DisposeListener) listener);
+				return;
+			}
+		}
+		
+		private void removeListener(Class clazz, Control control, SWTEventListener listener) {
+			if (ControlListener.class.equals(clazz)) {
+				control. removeControlListener((ControlListener) listener);
+				return;
+			}
+			if (FocusListener.class.equals(clazz)) {
+				control. removeFocusListener((FocusListener) listener);
+				return;
+			}
+			if (HelpListener.class.equals(clazz)) {
+				control. removeHelpListener((HelpListener) listener);
+				return;
+			}
+			if (KeyListener.class.equals(clazz)) {
+				control. removeKeyListener((KeyListener) listener);
+				return;
+			}
+			if (MouseListener.class.equals(clazz)) {
+				control. removeMouseListener((MouseListener) listener);
+				return;
+			}
+			if (MouseMoveListener.class.equals(clazz)) {
+				control. removeMouseMoveListener((MouseMoveListener) listener);
+				return;
+			}
+			if (MouseTrackListener.class.equals(clazz)) {
+				control. removeMouseTrackListener((MouseTrackListener) listener);
+				return;
+			}
+			if (PaintListener.class.equals(clazz)) {
+				control. removePaintListener((PaintListener) listener);
+				return;
+			}
+			if (TraverseListener.class.equals(clazz)) {
+				control. removeTraverseListener((TraverseListener) listener);
+				return;
+			}
+			if (DisposeListener.class.equals(clazz)) {
+				control. removeDisposeListener((DisposeListener) listener);
+				return;
+			}		
+		}
+				
+		private void addListener(Class clazz, SWTEventListener listener) {
 			Control[] children= getChildren();
 			for (int i= 0; i < children.length; i++) {
 				if (children[i] != null && !children[i].isDisposed())
-					children[i].addListener(eventType, listener);
+					addListener(clazz, children[i], listener);
 			}
 			
 			ListenerInfo info= new ListenerInfo();
-			info.listener= listener;
-			info.eventType= eventType;
+			info.fClass= clazz;
+			info.fListener= listener;
 			fCachedListeners.add(info);
 		}
 		
-		/*
-		 * @see Widget#removeListener(int, Listener)
-		 */
-		public void removeListener(int eventType, Listener listener) {
-			
+		private void removeListener(Class clazz, SWTEventListener listener) {
 			int length= fCachedListeners.size();
 			for (int i= 0; i < length; i++) {
 				ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
-				if (listener == info.listener && eventType == info.eventType) {
+				if (listener == info.fListener && clazz.equals(info.fClass)) {
 					fCachedListeners.remove(i);
 					break;
 				}
@@ -163,10 +247,8 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 			Control[] children= getChildren();
 			for (int i= 0; i < children.length; i++) {
 				if (children[i] != null && !children[i].isDisposed())
-					children[i].removeListener(eventType, listener);
+					removeListener(clazz, children[i], listener);
 			}
-			
-			super.removeListener(eventType, listener);
 		}
 		
 		/**
@@ -174,13 +256,11 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		 */
 		public void childAdded(Control child) {
 			if (child != null && !child.isDisposed()) {
-				
 				int length= fCachedListeners.size();
 				for (int i= 0; i < length; i++) {
 					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
-					child.addListener(info.eventType, info.listener);
+					addListener(info.fClass, child, info.fListener);
 				}
-				
 				child.addMouseListener(fMouseListener);
 			}
 		}
@@ -190,15 +270,173 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		 */
 		public void childRemoved(Control child) {
 			if (child != null && !child.isDisposed()) {
-				
 				int length= fCachedListeners.size();
 				for (int i= 0; i < length; i++) {
 					ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
-					child.removeListener(info.eventType, info.listener);
+					removeListener(info.fClass, child, info.fListener);
 				}
-				
 				child.removeMouseListener(fMouseListener);
 			}
+		}
+		
+		/*
+		 * @see Control#removeControlListener(ControlListener)
+		 */
+		public void removeControlListener(ControlListener listener) {
+			removeListener(ControlListener.class, listener);
+			super.removeControlListener(listener);
+		}
+		
+		/*
+		 * @see Control#removeFocusListener(FocusListener)
+		 */
+		public void removeFocusListener(FocusListener listener) {
+			removeListener(FocusListener.class, listener);
+			super.removeFocusListener(listener);
+		}
+		
+		/*
+		 * @see Control#removeHelpListener(HelpListener)
+		 */
+		public void removeHelpListener(HelpListener listener) {
+			removeListener(HelpListener.class, listener);
+			super.removeHelpListener(listener);
+		}
+		
+		/*
+		 * @see Control#removeKeyListener(KeyListener)
+		 */
+		public void removeKeyListener(KeyListener listener) {
+			removeListener(KeyListener.class, listener);
+			super.removeKeyListener(listener);
+		}
+		
+		/*
+		 * @see Control#removeMouseListener(MouseListener)
+		 */
+		public void removeMouseListener(MouseListener listener) {
+			removeListener(MouseListener.class, listener);
+			super.removeMouseListener(listener);
+		}
+		
+		/*
+		 * @see Control#removeMouseMoveListener(MouseMoveListener)
+		 */
+		public void removeMouseMoveListener(MouseMoveListener listener) {
+			removeListener(MouseMoveListener.class, listener);
+			super.removeMouseMoveListener(listener);
+		}
+		
+		/*
+		 * @see Control#removeMouseTrackListener(MouseTrackListener)
+		 */
+		public void removeMouseTrackListener(MouseTrackListener listener) {
+			removeListener(MouseTrackListener.class, listener);
+			super.removeMouseTrackListener(listener);
+		}
+		
+		/*
+		 * @see Control#removePaintListener(PaintListener)
+		 */
+		public void removePaintListener(PaintListener listener) {
+			removeListener(PaintListener.class, listener);
+			super.removePaintListener(listener);
+		}
+		
+		/*
+		 * @see Control#removeTraverseListener(TraverseListener)
+		 */
+		public void removeTraverseListener(TraverseListener listener) {
+			removeListener(TraverseListener.class, listener);
+			super.removeTraverseListener(listener);
+		}
+		
+		/*
+		 * @see Widget#removeDisposeListener(DisposeListener)
+		 */
+		public void removeDisposeListener(DisposeListener listener) {
+			removeListener(DisposeListener.class, listener);
+			super.removeDisposeListener(listener);
+		}
+		
+		/*
+		 * @seeControl#addControlListener(ControlListener)
+		 */
+		public void addControlListener(ControlListener listener) {
+			super.addControlListener(listener);
+			addListener(ControlListener.class, listener);
+		}
+		
+		/*
+		 * @see Control#addFocusListener(FocusListener)
+		 */
+		public void addFocusListener(FocusListener listener) {
+			super.addFocusListener(listener);
+			addListener(FocusListener.class, listener);
+		}
+		
+		/* 
+		 * @see Control#addHelpListener(HelpListener)
+		 */
+		public void addHelpListener(HelpListener listener) {
+			super.addHelpListener(listener);
+			addListener(HelpListener.class, listener);
+		}
+
+		/*
+		 * @see Control#addKeyListener(KeyListener)
+		 */
+		public void addKeyListener(KeyListener listener) {
+			super.addKeyListener(listener);
+			addListener(KeyListener.class, listener);
+		}
+		
+		/*
+		 * @see Control#addMouseListener(MouseListener)
+		 */
+		public void addMouseListener(MouseListener listener) {
+			super.addMouseListener(listener);
+			addListener(MouseListener.class, listener);
+		}
+
+		/*
+		 * @see Control#addMouseMoveListener(MouseMoveListener)
+		 */
+		public void addMouseMoveListener(MouseMoveListener listener) {
+			super.addMouseMoveListener(listener);
+			addListener(MouseMoveListener.class, listener);
+		}
+
+		/* 
+		 * @see Control#addMouseTrackListener(MouseTrackListener)
+		 */
+		public void addMouseTrackListener(MouseTrackListener listener) {
+			super.addMouseTrackListener(listener);
+			addListener(MouseTrackListener.class, listener);
+		}
+		
+		/* 
+		 * @seeControl#addPaintListener(PaintListener)
+		 */
+		public void addPaintListener(PaintListener listener) {
+			super.addPaintListener(listener);
+			addListener(PaintListener.class, listener);
+		}
+		
+		/* 
+		 * @see Control#addTraverseListener(TraverseListener)
+		 */
+		public void addTraverseListener(TraverseListener listener) {
+			super.addTraverseListener(listener);
+			addListener(TraverseListener.class, listener);
+		}
+		
+		/*
+		 * @see Widget#addDisposeListener(DisposeListener)
+		 */
+		public void addDisposeListener(DisposeListener listener) {
+			super.addDisposeListener(listener);
+			addListener(DisposeListener.class, listener);
 		}
 	};
 	
