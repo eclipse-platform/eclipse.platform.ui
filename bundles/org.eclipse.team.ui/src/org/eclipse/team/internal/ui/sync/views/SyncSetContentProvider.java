@@ -32,10 +32,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	protected Viewer viewer;
 	
 	protected SyncSet getSyncSet() {
-		if(viewer == null || viewer.getControl().isDisposed()) {
-			return null;	
-		}
-		Object input = viewer.getInput();
+		SubscriberInput input = getSubscriberInput();
 		if (input == null) {
 			return null;
 		}
@@ -83,9 +80,9 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		SyncSet syncSet = getSyncSet();
-		if (syncSet != null) {
-			syncSet.removeSyncSetChangedListener(this);
+		SubscriberInput input = getSubscriberInput();
+		if (input != null) {
+			input.getFilteredSyncSet().removeSyncSetChangedListener(this);
 		}
 	}
 
@@ -210,7 +207,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	 * out-of-sync resources.
 	 */
 	public Object[] members(IResource resource) {
-		IResource[] resources = getSyncSet().members(resource);
+		IResource[] resources = getSubscriberInput().getFilteredSyncSet().members(resource);
 		Object[] result = new Object[resources.length];
 		for (int i = 0; i < resources.length; i++) {
 			IResource child = resources[i];
@@ -258,7 +255,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	 */
 	public Object getModelObject(IResource resource) {
 		if (resource.getType() == IResource.ROOT) {
-			return getSyncSet();
+			return getSubscriberInput();
 		} else {
 			return new SynchronizeViewNode(getSubscriberInput(), resource);
 		}

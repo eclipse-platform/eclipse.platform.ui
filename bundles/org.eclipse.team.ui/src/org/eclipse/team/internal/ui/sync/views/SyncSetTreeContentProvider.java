@@ -78,7 +78,7 @@ public class SyncSetTreeContentProvider extends SyncSetContentProvider implement
 				IResource resource = added[i];
 				Object parent;
 				if (resource.getType() == IResource.PROJECT) {
-					parent = getSyncSet();
+					parent = getSubscriberInput();
 				} else {
 					parent = getModelParent(resource);				
 				}
