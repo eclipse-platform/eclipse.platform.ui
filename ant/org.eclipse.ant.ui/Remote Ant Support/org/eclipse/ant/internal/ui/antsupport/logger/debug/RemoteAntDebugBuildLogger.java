@@ -255,9 +255,11 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		if (fBreakpoints == null) {
 			return null;
 		}
+		String fileName= getFileName(location);
+		int lineNumber= getLineNumber(location);
 		for (int i = 0; i < fBreakpoints.size(); i++) {
 			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) fBreakpoints.get(i);
-			if (breakpoint.isAt(location)) {
+			if (breakpoint.isAt(fileName, lineNumber)) {
 				return breakpoint;
 			}
 		}
@@ -285,9 +287,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	        
 	        Location location= task.getLocation();
-	        stackRepresentation.append(location.getFileName());
+	        stackRepresentation.append(getFileName(location));
 	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	        stackRepresentation.append(location.getLineNumber());
+	        stackRepresentation.append(getLineNumber(location));
 	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	    }	
 	    sendRequestResponse(stackRepresentation.toString());
@@ -352,6 +354,54 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 				iter.remove();
 				return;
 			}
+		}
+	}
+	
+	private static int getLineNumber(Location location) {
+		try {
+			return location.getLineNumber();
+		} catch (NoSuchMethodError e) {
+			//Ant before 1.6
+			String locationString= location.toString();
+			if (locationString.length() == 0) {
+				return 0;
+			}
+			//filename: lineNumber: ("c:\buildfile.xml: 12: ")
+			int lastIndex= locationString.lastIndexOf(':');
+			int index =locationString.lastIndexOf(':', lastIndex - 1);
+			if (index != -1) {
+				try {
+					return Integer.parseInt(locationString.substring(index+1, lastIndex));
+				} catch (NumberFormatException nfe) {
+					return 0;
+				}
+			}
+			return 0;
+		}
+	}
+	
+	private String getFileName(Location location) {
+		try {
+			return location.getFileName();
+		} catch (NoSuchMethodError e) {
+			//Ant before 1.6
+			String locationString= location.toString();
+			if (locationString.length() == 0) {
+				return null;
+			}
+			//filename: lineNumber: ("c:\buildfile.xml: 12: ")			
+			int lastIndex= locationString.lastIndexOf(':');
+			int index =locationString.lastIndexOf(':', lastIndex-1);
+			if (index == -1) {
+				index= lastIndex; //only the filename is known
+			}
+			if (index != -1) {
+				if (lastIndex == - 1) {
+					lastIndex= locationString.length();
+				}
+				return locationString.substring(5, index);
+			}
+			return null;
 		}
 	}
 }

@@ -12,8 +12,6 @@ package org.eclipse.ant.internal.ui.antsupport.logger.debug;
 
 import java.io.File;
 
-import org.apache.tools.ant.Location;
-
 public class RemoteAntBreakpoint {
 	
     private File fFile;
@@ -29,8 +27,8 @@ public class RemoteAntBreakpoint {
 		fLineNumber= Integer.parseInt(lineNumber);
 	}
 
-	public boolean isAt(Location location) {
-		return fLineNumber == location.getLineNumber() && fFile.equals(new File(location.getFileName()));
+	public boolean isAt(String fileName, int lineNumber) {
+		return fLineNumber == lineNumber && fileName != null && fFile.equals(new File(fileName));
 	}
 	
 	public String toMarshallString() {

@@ -242,19 +242,69 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
         if (fBreakpoints == null) {
             return null;
         }
+        int lineNumber= getLineNumber(location);
+        File locationFile= new File(getFileName(location));
         for (int i = 0; i < fBreakpoints.size(); i++) {
             ILineBreakpoint breakpoint = (ILineBreakpoint) fBreakpoints.get(i);
-            int lineNumber;
+            int breakpointLineNumber;
             try {
-                lineNumber = breakpoint.getLineNumber();
+            	breakpointLineNumber = breakpoint.getLineNumber();
             } catch (CoreException e) {
                return null;
             }
             IFile resource= (IFile) breakpoint.getMarker().getResource();
-            if (lineNumber == location.getLineNumber() && resource.getLocation().toFile().equals(new File(location.getFileName()))) {
+            if (breakpointLineNumber == lineNumber && resource.getLocation().toFile().equals(locationFile)) {
                 return breakpoint;
             }
         }
         return null;
     }
+    
+    private static int getLineNumber(Location location) {
+		try { //succeeds with Ant newer than 1.6
+			return location.getLineNumber();
+		} catch (NoSuchMethodError e) {
+			//Ant before 1.6
+			String locationString= location.toString();
+			if (locationString.length() == 0) {
+				return 0;
+			}
+			//filename: lineNumber: ("c:\buildfile.xml: 12: ")
+			int lastIndex= locationString.lastIndexOf(':');
+			int index =locationString.lastIndexOf(':', lastIndex - 1);
+			if (index != -1) {
+				try {
+					return Integer.parseInt(locationString.substring(index+1, lastIndex));
+				} catch (NumberFormatException nfe) {
+					return 0;
+				}
+			}
+			return 0;
+		}
+	}
+	
+	private String getFileName(Location location) {
+		try {//succeeds with Ant newer than 1.6
+			return location.getFileName();
+		} catch (NoSuchMethodError e) {
+			//Ant before 1.6
+			String locationString= location.toString();
+			if (locationString.length() == 0) {
+				return null;
+			}
+			//filename: lineNumber: ("c:\buildfile.xml: 12: ")			
+			int lastIndex= locationString.lastIndexOf(':');
+			int index =locationString.lastIndexOf(':', lastIndex-1);
+			if (index == -1) {
+				index= lastIndex; //only the filename is known
+			}
+			if (index != -1) {
+				if (lastIndex == - 1) {
+					lastIndex= locationString.length();
+				}
+				return locationString.substring(5, index);
+			}
+			return null;
+		}
+	}
 }
