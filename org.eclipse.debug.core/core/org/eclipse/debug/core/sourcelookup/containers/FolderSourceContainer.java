@@ -13,11 +13,14 @@ package org.eclipse.debug.core.sourcelookup.containers;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.containers.*;
 
 /**
- * A folder in the workspace. Source elements are searched
- * for within a folder and its nested folders.
- * 
+ * A folder in the workspace.
+ * <p>
+ * Clients may instantiate this class. This class is not intended to
+ * be subclassed.
+ * </p>
  * @since 3.0
  */
 public class FolderSourceContainer extends ContainerSourceContainer {

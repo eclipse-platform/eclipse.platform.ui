@@ -90,7 +90,17 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         The following is an example of a source container type definition:
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.debug.core.sourceContainerTypes&quot;&gt;
+	&lt;sourceContainerType
+		name=&quot;Project&quot;
+		class=&quot;org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType&quot;
+		id=&quot;org.eclipse.debug.core.containerType.project&quot;
+		description=&quot;A project in the workspace&quot;&gt;
+	&lt;/sourceContainerType&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 

@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
  * <p>
  * Clients implementing source container delegates should subclass this class.
  * </p>
- * @sicne 3.0
+ * @since 3.0
  */
 public abstract class AbstractSourceContainerTypeDelegate implements ISourceContainerTypeDelegate {
 	

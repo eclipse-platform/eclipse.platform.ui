@@ -20,9 +20,18 @@ package org.eclipse.debug.core.sourcelookup;
  * <p>
  * A source container type is contributed via the <code>sourceContainerTypes</code>
  * extension point, providing a delegate to the work specific to the contributed
- * type.
+ * type. Following is an example contribution.
+ * <pre>
+ * &lt;extension point=&quot;org.eclipse.debug.core.sourceContainerTypes&quot;&gt;
+ * 	&lt;sourceContainerType
+ * 		name=&quot;Project&quot;
+ * 		class=&quot;org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType&quot;
+ * 		id=&quot;org.eclipse.debug.core.containerType.project&quot;
+ * 		description=&quot;A project in the workspace&quot;&gt;
+ * 	&lt;/sourceContainerType&gt;
+ * &lt;/extension&gt;
+ * </pre>
  * </p>
- * 
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate
  * @since 3.0

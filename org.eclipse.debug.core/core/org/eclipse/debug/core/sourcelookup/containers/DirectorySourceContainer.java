@@ -20,10 +20,13 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 
 /**
- * A folder in the local file system. Source elements returned
+ * A directory in the local file system. Source elements returned
  * from <code>findSourceElements(...)</code> are instances
  * of <code>LocalFileStorage</code>.
- * 
+ * <p>
+ * Clients may instantiate this class. This class is not intended to
+ * be subclassed.
+ * </p>
  * @since 3.0
  */
 

@@ -24,7 +24,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
  * <p>
  * Clients implementing source containers should subclass this class.
  * </p>
- * @sicne 3.0
+ * @since 3.0
  */
 public abstract class AbstractSourceContainer extends PlatformObject implements ISourceContainer {
 	

@@ -20,10 +20,13 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 
 /**
- * A source container that can be used as the root container for default source containers.
- * Listens to the configuration file and marks itself as dirty when changes have occurred.
- * When dirty, it will refresh it's children before the next time it is searched or displayed.
- * 
+ * A source container that computers the default source lookup path
+ * for a launch configuration on each launch using a launch configuration's
+ * associated source path computer.
+ * <p>
+ * Clients may instantiate this class. This class is not intended to
+ * be subclassed.
+ * </p>
  * @since 3.0
  */
 public class DefaultSourceContainer extends CompositeSourceContainer {  

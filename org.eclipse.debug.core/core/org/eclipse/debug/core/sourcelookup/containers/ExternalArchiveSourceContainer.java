@@ -24,9 +24,12 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
- * Archive source container. Returns instances of <code>ZipEntryStorage</code>
- * as source elemetns.
- * 
+ * An archive in the local file system. Returns instances
+ * of <code>ZipEntryStorage</code> as source elemetns.
+ * <p>
+ * Clients may instantiate this class. This class is not intended to
+ * be subclassed.
+ * </p>
  * @since 3.0
  */
 public class ExternalArchiveSourceContainer extends AbstractSourceContainer {

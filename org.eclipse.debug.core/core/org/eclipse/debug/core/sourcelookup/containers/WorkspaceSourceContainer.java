@@ -20,9 +20,10 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 
 /**
  * All projects in the workspace.
- * 
- * TODO: need workspace browser/workbench adapter
- * 
+ * <p>
+ * Clients may instantiate this class. This class is not intended to
+ * be subclassed.
+ * </p>
  * @since 3.0
  */
 public class WorkspaceSourceContainer extends CompositeSourceContainer {

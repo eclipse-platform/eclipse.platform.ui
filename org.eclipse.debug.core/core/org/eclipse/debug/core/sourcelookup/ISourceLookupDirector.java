@@ -16,7 +16,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 /**
  * A source lookup director directs the source lookup process
  * among a set of participants and source containers.
- * 
+ * <p>
+ * Clients may implement this interface. An astract implementation
+ * is provided by <code>AbstractSourceLookupDirector</code>, which
+ * clients should subclass.
+ * </p>
  * @since 3.0
  */
 public interface ISourceLookupDirector extends IPersistableSourceLocator2 {

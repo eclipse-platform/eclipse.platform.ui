@@ -22,7 +22,11 @@ import org.eclipse.core.runtime.CoreException;
  * (<code>ISourceContainer</code>), to search for source elements. Source containers
  * are generally debug model independant, whereas source lookup participants are
  * debug model specific.  
- *  
+ * <p>
+ * Clients may implement this interface. An abstract implementation is
+ * provided by <code>AbstractSourceLookupParticipant</code>, which clients
+ * should subclass.
+ * </p>
  * @since 3.0
  */
 public interface ISourceLookupParticipant {

@@ -21,7 +21,10 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 
 /**
  * A source container of source containers.
- *  
+ * <p>
+ * Clients implementing composite source containers should subclass
+ * this class.
+ * </p>
  * @since 3.0
  */
 public abstract class CompositeSourceContainer extends AbstractSourceContainer {

@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.CoreException;
  * A source container type delegate is contributed via the
  * <code>sourceContainerTypes</code> extension point.
  * </p>
- * 
- * TODO: example plug-in XML definition/description
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p> 
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainerType
  * @since 3.0

@@ -84,7 +84,15 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         Following is an example source path computer definition:
+&lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.debug.core.sourcePathComputers&quot;&gt;
+   		&lt;sourcePathComputer
+   			id=&quot;org.eclipse.example.exampleSourcePathComputer&quot;
+   			class=&quot;org.eclipse.example.SourcePathComputer&quot;&gt;
+   		&lt;/sourcePathComputer&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 

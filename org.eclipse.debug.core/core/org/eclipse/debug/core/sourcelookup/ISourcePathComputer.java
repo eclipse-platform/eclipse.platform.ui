@@ -18,12 +18,17 @@ import org.eclipse.debug.core.DebugPlugin;
  * <p>
  * A source path computer is contributed in plug-in XML via the 
  * <code>sourcePathComputers</code> extension point, that provides a delegate
- * to compute the path specific to a launch configuration.
- * </p>
- * 
- * TODO: Didn't we also want to be able to override the registered computer
- *  with a configuration attribute? 
- * 
+ * to compute the path specific to a launch configuration. Following
+ * is an example contribution.
+ * <pre>
+ * &lt;extension point=&quot;org.eclipse.debug.core.sourcePathComputers&quot;&gt;
+ *    	&lt;sourcePathComputer
+ *    		id=&quot;org.eclipse.example.exampleSourcePathComputer&quot;
+ *    		class=&quot;org.eclipse.example.SourcePathComputer&quot;&gt;
+ *    	&lt;/sourcePathComputer&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * </p> 
  * @since 3.0
  */
 public interface ISourcePathComputer extends ISourcePathComputerDelegate {

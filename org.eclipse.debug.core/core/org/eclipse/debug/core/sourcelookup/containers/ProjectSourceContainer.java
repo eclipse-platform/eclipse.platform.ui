@@ -17,14 +17,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.containers.*;
 
 /**
  * A project in the workspace. Source is searched for in the root project
  * folder and all folders within the project recursively. Optionally,
  * referenced projects may be searched as well.
- * 
- * TODO: need project browser/workbench adapter
- * 
+ * <p>
+ * Clients may instantiate this class. This class is not intended to
+ * be subclassed.
+ * </p>
  * @since 3.0
  */
 public class ProjectSourceContainer extends ContainerSourceContainer {

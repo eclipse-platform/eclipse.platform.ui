@@ -15,25 +15,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * A source path computer computes the default source lookup path (set of source
- * containers that should be considered) for a launch configuration.
+ * A source path computer delegate computes the default source lookup path
+ * (set of source containers that should be considered) for a launch
+ * configuration.
  * <p>
  * A source path computer is contributed in plug-in XML via the 
  * <code>sourcePathComputers</code> extension point, providing a delegate
- * to compute the default source lookup path specific to a launch configuration.
+ * to compute the default source lookup path specific to a launch
+ * configuration.
  * </p>
- * <pre>
- * <extension point="org.eclipse.debug.core.sourcePathComputers">
- *	 <sourcePathComputer
- *		id="com.example.debug.pdt.PDTSourcePathComputer"
- *		class="com.example.debug.pdt.PDTSourcePathComputer">
- *	 </sourcePathComputer>
- * </extension>
- * </pre>
- * 
- * TODO: Didn't we also want to be able to override the registered computer
- *  with a configuration attribute? 
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputer
  * @since 3.0
  */
 public interface ISourcePathComputerDelegate {
