@@ -780,7 +780,7 @@
             defaultsTo="org.eclipse.jface.textfont"
             id="pref_console_font">
       	<description>
-      		The font for the CVS console.
+      		%CVSConsoleFont.description
       	</description>
       </fontDefinition>
 	</extension>
