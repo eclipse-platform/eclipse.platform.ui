@@ -36,7 +36,7 @@ public class EditorSwitchTest extends BasicPerformanceTest {
     }
 	
     /**
-     * Test perspective switching performance. This test always fails.
+     * Test editor opening performance. This test always fails.
      */
     protected void runTest() throws CoreException {
 
