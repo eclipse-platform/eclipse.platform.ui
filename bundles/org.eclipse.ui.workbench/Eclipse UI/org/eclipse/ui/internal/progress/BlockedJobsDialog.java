@@ -244,7 +244,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	private BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking,
 			IStatus blockingStatus) {
 		super(parentShell == null
-				? ProgressManagerUtil.getDefaultParent()
+				? ProgressManagerUtil.getNonModalShell()
 				: parentShell);
 		blockingMonitor = blocking;
 		if (blockingStatus instanceof IJobStatus)
