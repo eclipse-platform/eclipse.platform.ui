@@ -371,6 +371,8 @@ function keyDownHandler(e)
 		highlightTopic(next);
 		if (next)
 			next.focus();
+		else
+			return true;
 
   	} else if (key == 38 ) { // up arrow
   		var clickedNode = getTarget(e);
@@ -380,7 +382,10 @@ function keyDownHandler(e)
 		highlightTopic(next);
 		if (next)
 			next.focus();
-  	}
+		else
+			return true;
+  	} else
+  		return true;
   				
   	return false;
 }
