@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -783,15 +784,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 	}
 	
-	private static Job[] getCurrentBuildJobs() {
-		Job[] autoBuilds = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD);
-		Job[] manBuilds = Platform.getJobManager().find(ResourcesPlugin.FAMILY_MANUAL_BUILD);
-		Job[] allBuilds = new Job[autoBuilds.length + manBuilds.length];
-		System.arraycopy(autoBuilds, 0, allBuilds, 0, autoBuilds.length);
-		System.arraycopy(manBuilds, 0, allBuilds, autoBuilds.length, manBuilds.length);
-		return allBuilds;
-	}
-
 	/**
 	 * Saves and builds the workspace according to current preference settings and
 	 * launches the given launch configuration in the specified mode in the
@@ -806,12 +798,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (!DebugUIPlugin.preLaunchSave()) {
 			return;
 		}
-				
+			
+		final IJobManager jobManager = Platform.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-		final Job[] builds = getCurrentBuildJobs();
 		boolean wait = false;
 		
-		if (builds.length > 0) {
+		if (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0 || jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length >0) {
 			String waitForBuild = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 
 			if (waitForBuild.equals(AlwaysNeverDialog.PROMPT)) {
@@ -838,17 +830,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			IProgressService progressService = workbench.getProgressService();
 			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					int buildsCompleted = 0;
-					while (buildsCompleted < builds.length && !monitor.isCanceled()) {
-						try {
-							Thread.sleep(100);
-							for (int i = 0; i < builds.length; i++) {
-								if (builds[i].getState() == Job.NONE) {
-									buildsCompleted++;
-								}
-							}
-						} catch (InterruptedException e) {
-						}
+					try {
+						jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
+						jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
+					} catch (InterruptedException e) {
+						// continue
 					}
 					if (!monitor.isCanceled()) {
 						try {
@@ -881,7 +867,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			} catch (InvocationTargetException e) {
 				handleInvocationTargetException(e, configuration, mode);
 			} catch (InterruptedException e) {
-				// cancelled
 			}							
 
 		}
@@ -922,10 +907,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			return;
 		}
 
+		IJobManager jobManager = Platform.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 
-		final Job[] builds = getCurrentBuildJobs();
-		boolean wait = (builds.length > 0);
+		boolean wait = (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0) || (jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length > 0);
 		
 		String waitPref = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (wait) { // if there are build jobs running, do we wait or not??
@@ -945,8 +930,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				}
 			}
 		}
-
-		
 		
 		final boolean waitInJob = wait;
 		Job job = new Job(DebugUIMessages.getString("DebugUITools.3")) { //$NON-NLS-1$
@@ -954,18 +937,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				try {
 					if(waitInJob) {
 						String configName = configuration.getName();
-						for (int i = 0; i < builds.length; i++) {
-							try {
-								String taskName = MessageFormat.format(DebugUIMessages.getString("DebugUITools.7"), new String[] {configName, builds[i].getName()}); //$NON-NLS-1$
-								monitor.subTask(taskName);
-								monitor.beginTask(taskName, 100);
-								builds[i].join();
-							} catch (InterruptedException e) {
-							}
+						IJobManager jobManager = Platform.getJobManager();
+						try {
+							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
+							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
+						} catch (InterruptedException e) {
+							// just continue.
 						}
 					}
 					
-					buildAndLaunch(configuration, mode, monitor);
+					if (!monitor.isCanceled()) {
+						buildAndLaunch(configuration, mode, monitor);
+					}
 					
 				} catch (CoreException e) {
 					final IStatus status= e.getStatus();
