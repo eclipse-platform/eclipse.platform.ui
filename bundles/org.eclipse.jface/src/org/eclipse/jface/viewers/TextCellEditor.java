@@ -349,12 +349,22 @@ public boolean isSelectAllEnabled() {
  * The <code>TextCellEditor</code> implementation of this framework method 
  * ignores when the RETURN key is pressed since this is handled in 
  * <code>handleDefaultSelection</code>.
+ * An exception is made for Ctrl+Enter for multi-line texts, since
+ * a default selection event is not sent in this case. 
  * </p>
  *
  * @param keyEvent the key event
  */
 protected void keyReleaseOccured(KeyEvent keyEvent) {
 	if (keyEvent.character == '\r') { // Return key
+		// Enter is handled in handleDefaultSelection.
+		// Do not apply the editor value in response to an Enter key event
+		// since this can be received from the IME when the intent is -not-
+		// to apply the value.  
+		// See bug 39074 [CellEditors] [DBCS] canna input mode fires bogus event from Text Control
+		//
+		// An exception is made for Ctrl+Enter for multi-line texts, since
+		// a default selection event is not sent in this case. 
 	    if (text != null && !text.isDisposed() && (text.getStyle() & SWT.MULTI) != 0) {
 	        if ((keyEvent.stateMask & SWT.CTRL) != 0) {
 	            super.keyReleaseOccured(keyEvent);
