@@ -146,7 +146,10 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	 * Implements TeamHook#setRuleFactory
 	 */
 	void setRuleFactory(IProject project, IResourceRuleFactory factory) {
-		projectsToRules.put(project.getName(), factory);
+		if (factory == null)
+			projectsToRules.remove(project.getName());
+		else
+			projectsToRules.put(project.getName(), factory);
 	}
 
 	/**

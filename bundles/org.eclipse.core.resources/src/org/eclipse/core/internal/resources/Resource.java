@@ -670,7 +670,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				} finally {
 					workManager.endUnprotected(depth);
 				}
-				if (getType() == IResource.ROOT) {
+				if (getType() == ROOT) {
 					// need to clear out the root info
 					workspace.getMarkerManager().removeMarkers(this, IResource.DEPTH_ZERO);
 					getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
@@ -684,6 +684,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				//note that deletion of a linked resource cannot affect other resources
 				if (!wasLinked)
 					workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
+				//make sure the rule factory is cleared on project deletion
+				if (getType() == PROJECT)
+					((Rules)workspace.getRuleFactory()).setRuleFactory((IProject)this, null);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
@@ -1072,8 +1075,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public boolean isLocal(int flags, int depth) {
 		if (getType() == PROJECT)
 			return flags != NULL_FLAG; // exists
-		else
-			return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
+		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
 	}
 
 	/* (non-Javadoc)
