@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestSiteValidation extends UpdateManagerTestCase {
