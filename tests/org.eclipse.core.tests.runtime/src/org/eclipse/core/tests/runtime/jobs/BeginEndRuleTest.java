@@ -334,6 +334,35 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		manager.endRule(rule1);
 	}
 
+	/**
+	 * Tests create a job with one scheduling rule, and then attempting
+	 * to acquire an unrelated rule from within that job.
+	 */
+	public void testFailedNestRuleInJob() {
+		final ISchedulingRule rule1 = new PathRule("/testFailedNestRuleInJob/A/");
+		final ISchedulingRule rule2 = new PathRule("/testFailedNestRuleInJob/B/");
+		final Exception[] exception = new Exception[1];
+		Job job = new Job("testFailedNestRuleInJob") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					try {
+						manager.beginRule(rule2, monitor);
+					} finally {
+						manager.endRule(rule2);
+					}
+				} catch (RuntimeException e) {
+					exception[0] = e;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setRule(rule1);
+		job.schedule();
+		waitForEnd(job);
+		assertTrue("1.0", exception[0] != null);
+		assertTrue("1.1", exception[0].getMessage().indexOf("does not match outer scope rule") > 0);
+	}
+	
 	public void testNestedCase() {
 		ISchedulingRule rule1 = new PathRule("/testNestedCase");
 		ISchedulingRule rule2 = new PathRule("/testNestedCase/B");
@@ -554,7 +583,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	 */
 	private void waitForEnd(Job job) {
 		int i = 0;
-		while (job.getState() == Job.RUNNING) {
+		while (job.getState() != Job.NONE) {
 			Thread.yield();
 			try {
 				Thread.sleep(100);

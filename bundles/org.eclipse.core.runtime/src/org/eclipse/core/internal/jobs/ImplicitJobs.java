@@ -75,9 +75,9 @@ class ImplicitJobs {
 			//indicate if it is a system job to ensure isBlocking works correctly
 			threadJob.setRealJob(realJob);
 			threadJob.setThread(currentThread);
-			threadJob.push(rule);
 		}
 		try {
+			threadJob.push(rule);
 			//join the thread job outside sync block
 			if (threadJob.acquireRule) {
 				//no need to reaquire any locks because the thread did not wait to get this lock
