@@ -43,7 +43,6 @@
       </complexType>
    </element>
 
-
    <element name="theme">
       <annotation>
          <appInfo>
@@ -73,7 +72,7 @@
          </attribute>
       </complexType>
    </element>
-   
+
    <element name="themeElementCategory">
       <annotation>
          <documentation>
@@ -110,7 +109,6 @@
          </attribute>
       </complexType>
    </element>
-   
 
    <element name="colorDefinition">
       <annotation>
@@ -148,8 +146,12 @@ Only one of defaultsTo or value may be defined.
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  The default value of this color.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
-
+                  The default value of this color.  The value may be specified in the following ways:
+&lt;ul&gt;
+&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
+&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
+&lt;ul&gt;
 Only one of defaultsTo or value may be defined.
                </documentation>
             </annotation>
@@ -257,7 +259,13 @@ Only one or neither of value or defaultsTo may be used.
          <attribute name="initialValue" type="string" use="required">
             <annotation>
                <documentation>
-                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+                  The starting value of this gradient.  The value may be specified in the following ways:
+&lt;ul&gt;
+&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
+&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
+&lt;ul&gt;
+Only one of defaultsTo or value may be defined.
                </documentation>
             </annotation>
          </attribute>
@@ -288,7 +296,13 @@ Only one or neither of value or defaultsTo may be used.
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+                  The value of this gradient part.  The value may be specified in the following ways:
+&lt;ul&gt;
+&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
+&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
+&lt;ul&gt;
+Only one of defaultsTo or value may be defined.
                </documentation>
             </annotation>
          </attribute>
@@ -312,8 +326,13 @@ Only one or neither of value or defaultsTo may be used.
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  the color value.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
-
+                  The overriding value of this color.  The value may be specified in the following ways:
+&lt;ul&gt;
+&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
+&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
+&lt;ul&gt;
+Only one of defaultsTo or value may be defined.
 Unlike a colorDefinition, you may not supply a defaultsTo for an override.
                </documentation>
             </annotation>
@@ -381,7 +400,13 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          <attribute name="initialValue" type="string" use="required">
             <annotation>
                <documentation>
-                  the starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+                  The starting initial value of this gradient.  The value may be specified in the following ways:
+&lt;ul&gt;
+&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
+&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
+&lt;ul&gt;
+Only one of defaultsTo or value may be defined.
                </documentation>
             </annotation>
          </attribute>
