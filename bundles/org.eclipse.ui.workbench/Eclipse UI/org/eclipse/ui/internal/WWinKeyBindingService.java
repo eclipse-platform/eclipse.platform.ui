@@ -445,7 +445,7 @@ public class WWinKeyBindingService {
 			if (fixedWidth < 0) {
 				GC gc = new GC(parent);
 				gc.setFont(parent.getFont());
-				fixedWidth = gc.getFontMetrics().getAverageCharWidth() * 22;
+				fixedWidth = gc.getFontMetrics().getAverageCharWidth() * 40;
 				gc.dispose();
 			}
 			data.widthHint = fixedWidth;
