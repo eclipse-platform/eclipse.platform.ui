@@ -308,7 +308,7 @@ public class PerformanceView extends ViewPart {
 				case COLUMN_COUNT:
 					return Integer.toString(stats.getRunCount());
 				case COLUMN_TIME:
-					return Long.toString(stats.getRunningTime());
+					return Long.toString(stats.getRunningTime()/stats.getRunCount());
 				}
 				return PerformanceMessages.PerformanceView_InvalidColumn;
 
