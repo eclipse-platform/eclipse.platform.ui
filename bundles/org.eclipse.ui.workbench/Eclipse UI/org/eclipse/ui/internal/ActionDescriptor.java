@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -28,11 +29,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * global (workbench) menu/tool bar, popup menu actions,
  * as well as view's pulldown and local tool bar.
  */
-public class ActionDescriptor {
+public class ActionDescriptor implements IPluginContribution {
 	private PluginAction action;
 	private String toolbarId;
 	private String menuPath;
 	private String id;
+	private String pluginId;
 	private String menuGroup;
 	private String toolbarGroupId;
 	
@@ -78,6 +80,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType) {
 public ActionDescriptor(IConfigurationElement actionElement, int targetType, Object target) {
 	// Load attributes.
 	id = actionElement.getAttribute(ATT_ID);
+	pluginId = actionElement.getDeclaringExtension().getNamespace();
 	String label = actionElement.getAttribute(ATT_LABEL);
 	String defId = actionElement.getAttribute(ATT_DEFINITION_ID);
 	String tooltip = actionElement.getAttribute(ATT_TOOLTIP);
@@ -290,5 +293,16 @@ private void processAccelerator(IAction action, String acceleratorText){
 	else
 		action.setAccelerator(Action.convertAccelerator(acceleratorText));
 }
-		
+/* (non-Javadoc)
+ * @see org.eclipse.ui.IPluginContribution#getLocalId()
+ */
+public String getLocalId() {
+    return getId();
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.IPluginContribution#getPluginId()
+ */
+public String getPluginId() { 
+    return pluginId;
+}
 }
