@@ -2347,6 +2347,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fFont.dispose();
 			fFont= null;
 		}
+		
+		if (fForegroundColor != null) {
+			fForegroundColor.dispose();
+			fForegroundColor= null;
+		}
+		
+		if (fBackgroundColor != null) {
+			fBackgroundColor.dispose();
+			fBackgroundColor= null;
+		}
+		
+		if (fFindScopeHighlightColor != null) {
+			fFindScopeHighlightColor.dispose();
+			fFindScopeHighlightColor= null;
+		}
 
 		if (fFontPropertyChangeListener != null) {
 			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
@@ -3632,7 +3647,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				IFindReplaceTarget target= (fSourceViewer == null ? null : fSourceViewer.getFindReplaceTarget());
 				if (target != null) {
 					fFindReplaceTarget= new FindReplaceTarget(this, target);
-					fFindReplaceTarget.setScopeHighlightColor(fFindScopeHighlightColor);
+					if (fFindScopeHighlightColor != null)
+						fFindReplaceTarget.setScopeHighlightColor(fFindScopeHighlightColor);
 				}
 			}
 			return fFindReplaceTarget;
