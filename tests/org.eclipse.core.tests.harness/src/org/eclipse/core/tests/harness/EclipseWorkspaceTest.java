@@ -13,6 +13,7 @@ package org.eclipse.core.tests.harness;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestCase;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.*;
  */
 public class EclipseWorkspaceTest extends TestCase {
 	public static final String PI_HARNESS = "org.eclipse.core.tests.harness"; //$NON-NLS-1$	
-	
+
 	//constants for nature sets	
 	protected static final String SET_STATE = "org.eclipse.core.tests.resources.stateSet";
 	protected static final String SET_OTHER = "org.eclipse.core.tests.resources.otherSet";
@@ -57,15 +58,12 @@ public class EclipseWorkspaceTest extends TestCase {
 	/** delta change listener if requested */
 	public static IResourceChangeListener deltaListener;
 
-	/** counter for generating unique random filesystem locations */
-	protected static int nextLocationCounter = 0;
-
 	/**
 	 * Log messages if we are in debug mode.
 	 */
 	public static void log(String message) {
 		String id = "org.eclipse.core.tests.harness/debug";
-		String option= Platform.getDebugOption(id);
+		String option = Platform.getDebugOption(id);
 		if (Boolean.TRUE.toString().equalsIgnoreCase(option))
 			System.out.println(message);
 	}
@@ -433,16 +431,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	}
 
 	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
-		if (!file.exists())
-			return;
-		if (file.isDirectory()) {
-			String[] files = file.list();
-			if (files != null) // be careful since file.list() can return null
-				for (int i = 0; i < files.length; ++i)
-					ensureDoesNotExistInFileSystem(new java.io.File(file, files[i]));
-		}
-		if (!file.delete())
-			System.out.println("WARNING: ensureDoesNotExistInFileSystem(File) could not delete: " + file.getPath());
+		FileSystemHelper.clear(file);
 	}
 
 	/**
@@ -737,21 +726,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	 * deleting it when finished.
 	 */
 	public IPath getRandomLocation() {
-		//low order bits are current time, high order bits are static counter
-		IPath parent = getTempDir();
-		final long mask = 0x00000000FFFFFFFFL;
-		long segment = (((long) ++nextLocationCounter) << 32) | (System.currentTimeMillis() & mask);
-		IPath path = parent.append(Long.toString(segment));
-		while (path.toFile().exists()) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// ignore
-			}
-			segment = (((long) ++nextLocationCounter) << 32) | (System.currentTimeMillis() & mask);
-			path = parent.append(Long.toString(segment));
-		}
-		return path;
+		return FileSystemHelper.getRandomLocation(getTempDir());
 	}
 
 	/**
@@ -789,7 +764,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	 * Return the root directory for the temp dir.
 	 */
 	public IPath getTempDir() {
-		return new Path(System.getProperty("java.io.tmpdir"));
+		return FileSystemHelper.getTempDir();
 	}
 
 	public String getUniqueString() {
@@ -925,13 +900,13 @@ public class EclipseWorkspaceTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Returns the test suite for this test class.
-	 */
-	public static Test suite() {
-		// subclasses must provide their own suite method
-		throw new UnsupportedOperationException("Every test class must provide a suite() method");
-	}
+//	/**
+//	 * Returns the test suite for this test class.
+//	 */
+//	public static Test suite() {
+//		// subclasses must provide their own suite method
+//		throw new UnsupportedOperationException("Every test class must provide a suite() method");
+//	}
 
 	/**
 	 * Copy the data from the input stream to the output stream.
@@ -988,4 +963,14 @@ public class EclipseWorkspaceTest extends TestCase {
 			//ignore
 		}
 	}
+	
+	public static void log(IStatus status) {
+		Platform.getPlugin(PI_HARNESS).getLog().log(status);
+	}
+
+	public static void log(Throwable e) {
+		log(new Status(IStatus.ERROR, EclipseWorkspaceTest.PI_HARNESS, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+	}
+
+	
 }

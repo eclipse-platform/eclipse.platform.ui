@@ -34,6 +34,7 @@ public class ProcessController {
 
 	private boolean finished;
 	private OutputStream forwardStdErr;
+	private InputStream forwardStdIn;
 	private OutputStream forwardStdOut;
 	private boolean killed;
 	private String params;
@@ -54,7 +55,7 @@ public class ProcessController {
 	}
 
 	private void controlProcess() {
-		new Thread() {
+		new Thread("Process controller") {
 			public void run() {
 				while (!isFinished() && !timedOut())
 					synchronized (this) {
@@ -87,9 +88,11 @@ public class ProcessController {
 		// starts the process
 		process = Runtime.getRuntime().exec(params);
 		if (forwardStdErr != null)
-			forwardStream(process.getErrorStream(), forwardStdErr);
+			forwardStream("stderr", process.getErrorStream(), forwardStdErr);
 		if (forwardStdOut != null)
-			forwardStream(process.getInputStream(), forwardStdOut);
+			forwardStream("stdout", process.getInputStream(), forwardStdOut);
+		if (forwardStdIn != null)
+			forwardStream("stdin", forwardStdIn, process.getOutputStream());
 		if (timeLimit > 0)
 			// ensures process execution time does not exceed the time limit 
 			controlProcess();
@@ -124,8 +127,8 @@ public class ProcessController {
 		this.forwardStdOut = out;
 	}
 
-	private void forwardStream(final InputStream in, final OutputStream out) {
-		new Thread() {
+	private void forwardStream(final String name, final InputStream in, final OutputStream out) {
+		new Thread("Stream forwarder [" + name + "]") {
 			public void run() {
 				try {
 					while (!isFinished()) {
@@ -170,7 +173,6 @@ public class ProcessController {
 				return;
 			killed = true;
 		}
-		Policy.debug("Having to kill the process");
 		process.destroy();
 	}
 
@@ -191,5 +193,16 @@ public class ProcessController {
 	 */
 	public boolean wasKilled() {
 		return killed;
+	}
+
+	/**
+	 * Forwards the given input stream to the process standard input.
+	 * Must be called before execution has started.
+	 * 
+	 * @param err an input stream where the process 
+	 * standard input will be forwarded to 
+	 */
+	public void forwardInput(InputStream in) {
+		forwardStdIn = in;
 	}
 }

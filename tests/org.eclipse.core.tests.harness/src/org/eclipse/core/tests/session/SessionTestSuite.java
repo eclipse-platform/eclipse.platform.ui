@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import java.util.Enumeration;
+import java.util.*;
 import junit.framework.*;
 
 public class SessionTestSuite extends TestSuite {
@@ -19,6 +19,7 @@ public class SessionTestSuite extends TestSuite {
 	protected String applicationId = CORE_TEST_APPLICATION;
 	protected String pluginId;
 	protected SessionTestRunner testRunner;
+	private Set crashTests = new HashSet(); 
 
 	public SessionTestSuite(String pluginId) {
 		super();
@@ -40,19 +41,47 @@ public class SessionTestSuite extends TestSuite {
 		this.pluginId = pluginId;
 	}
 
+	public void addCrashTest(TestCase test) {
+		crashTests.add(test);
+		super.addTest(test);
+	}
+
+	protected void fillTestDescriptor(TestDescriptor test) {
+		if (test.getApplicationId() == null)
+			test.setApplicationId(applicationId);
+		if (test.getPluginId() == null)
+			test.setPluginId(pluginId);
+		if (test.getSetup() == null)
+			test.setSetup(getSetup());
+		if (!test.isCrashTest() && crashTests.contains(test.getTest()))
+			test.setCrashTest(true);
+		test.setTestRunner(getTestRunner());
+	}
+
 	public String getApplicationId() {
 		return applicationId;
 	}
 
+	protected Setup getSetup() {
+		return SetupManager.getInstance().getDefaultSetup();
+	}
+
 	protected SessionTestRunner getTestRunner() {
 		if (testRunner == null)
-			testRunner = new SessionTestRunner(pluginId, applicationId);
+			testRunner = new SessionTestRunner();
 		return testRunner;
 	}
 
+	protected void runSessionTest(TestDescriptor test, TestResult result) {
+		fillTestDescriptor(test);
+		test.run(result);
+	}
+
 	public void runTest(Test test, TestResult result) {
-		if (test instanceof TestCase)
-			runTestCase((TestCase) test, result);
+		if (test instanceof TestDescriptor)
+			runSessionTest((TestDescriptor) test, result);
+		else if (test instanceof TestCase)
+			runSessionTest(new TestDescriptor((TestCase) test), result);
 		else if (test instanceof TestSuite)
 			// find and run the test cases that make up the suite
 			runTestSuite((TestSuite) test, result);
@@ -60,10 +89,6 @@ public class SessionTestSuite extends TestSuite {
 			// we don't support session tests for things that are not TestCases 
 			// or TestSuites (e.g. TestDecorators) 
 			test.run(result);
-	}
-
-	protected void runTestCase(TestCase test, TestResult result) {
-		getTestRunner().run(test, result, null);
 	}
 
 	/*

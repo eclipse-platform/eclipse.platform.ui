@@ -12,9 +12,7 @@ package org.eclipse.core.tests.session;
 
 import java.io.*;
 import java.net.*;
-import junit.framework.TestCase;
 import junit.framework.TestResult;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
@@ -101,16 +99,19 @@ public class SessionTestRunner {
 		}
 
 		public void run() {
-			if (!shouldRun())
-				return;
 			Socket connection = null;
 			try {
+				// someone asked us to stop before we could do anything
+				if (!shouldRun())
+					return;
 				try {
 					connection = serverSocket.accept();
 				} catch (SocketException se) {
 					if (!shouldRun())
 						// we have been finished without ever getting any connections
+						// no need to throw exception
 						return;
+					// something else stopped us
 					throw se;
 				}
 				BufferedReader messageReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
@@ -121,14 +122,14 @@ public class SessionTestRunner {
 							processAvailableMessages(messageReader);
 							if (!shouldRun())
 								return;
-							this.wait(500);
+							this.wait(150);
 						}
 					}
 				} catch (InterruptedException e) {
 					// not expected
 				}
 			} catch (IOException e) {
-				log(e);
+				EclipseWorkspaceTest.log(e);
 			} finally {
 				// remember we are already finished
 				markAsFinished();
@@ -137,12 +138,13 @@ public class SessionTestRunner {
 					if (connection != null && !connection.isClosed())
 						connection.close();
 				} catch (IOException e) {
-					log(e);
+					EclipseWorkspaceTest.log(e);
 				}
 				try {
-					serverSocket.close();
+					if (serverSocket != null && !serverSocket.isClosed())
+						serverSocket.close();
 				} catch (IOException e) {
-					log(e);
+					EclipseWorkspaceTest.log(e);
 				}
 			}
 		}
@@ -163,7 +165,7 @@ public class SessionTestRunner {
 				try {
 					serverSocket.close();
 				} catch (IOException e) {
-					log(e);
+					EclipseWorkspaceTest.log(e);
 				}
 				notifyAll();
 			}
@@ -180,43 +182,30 @@ public class SessionTestRunner {
 
 	}
 
-	private String applicationId;
-	private Setup baseSetup;
-	private String pluginId;
-
-	public static void log(IStatus status) {
-		InternalPlatform.getDefault().log(status);
-	}
-
-	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, EclipseWorkspaceTest.PI_HARNESS, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
-	}
-
-	public SessionTestRunner(String pluginId, String applicationId) {
-		this.pluginId = pluginId;
-		this.applicationId = applicationId;
-	}
-
-	private Setup createSetup(TestCase test, Setup sessionSetup, int port) {
-		Setup setup = (Setup) (sessionSetup != null ? sessionSetup.clone() : getBaseSetup().clone());
-		setup.setApplication(applicationId);
-		StringBuffer appArgs = new StringBuffer(setup.getApplicationArgs());
-		appArgs.append(" -testpluginname ");
-		appArgs.append(pluginId);
-		appArgs.append(" -test ");
-		appArgs.append(test.getClass().getName());
-		appArgs.append(':');
-		appArgs.append(test.getName());
-		appArgs.append(" -port ");
-		appArgs.append(port);
-		setup.setApplicationArgs(appArgs.toString());
+	/**
+	 * 	Creates a brand new setup object to be used for this session only, based 
+	 * on the setup provided by the test descriptor.
+	 * 
+	 * @param descriptor a test descriptor for the session test to run
+	 * @param port the port used by the result collector 
+	 * @return a brand new setup
+	 */
+	private Setup createSetup(TestDescriptor descriptor, int port) {
+		Setup setup = (Setup) descriptor.getSetup().clone();
+		setup.setApplication(descriptor.getApplicationId());
+		StringBuffer eclipseArgs = new StringBuffer(200);
+		if (setup.getEclipseArgs() != null)
+			eclipseArgs.append(setup.getEclipseArgs());
+		eclipseArgs.append(" -testpluginname ");
+		eclipseArgs.append(descriptor.getPluginId());
+		eclipseArgs.append(" -test ");
+		eclipseArgs.append(descriptor.getTestClass());
+		eclipseArgs.append(':');
+		eclipseArgs.append(descriptor.getTestMethod());
+		eclipseArgs.append(" -port ");
+		eclipseArgs.append(port);
+		setup.setEclipseArgs(eclipseArgs.toString());
 		return setup;
-	}
-
-	public Setup getBaseSetup() {
-		if (baseSetup == null)
-			return SetupManager.getInstance().getDefaultSetup();
-		return baseSetup;
 	}
 
 	/**
@@ -225,55 +214,68 @@ public class SessionTestRunner {
 	 * @return a status object indicating the outcome 
 	 */
 	private IStatus launch(String command, long timeout) {
+		if (Platform.inDebugMode()) {
+			System.out.println("Command line: ");
+			System.out.print('\t');
+			System.out.println(command);
+		}
 		IStatus outcome = Status.OK_STATUS;
 		try {
 			ProcessController process = new ProcessController(timeout, command);
 			process.forwardErrorOutput(System.err);
 			process.forwardOutput(System.out);
+			//if necessary to interact with the spawned process, this would have
+			// to be done
+			//process.forwardInput(System.in);
 			int returnCode = process.execute();
 			if (returnCode != 0)
-				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode, null);
+				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " +command, null);
 		} catch (Exception e) {
-			outcome = new Status(IStatus.ERROR, Platform.PI_RUNTIME, -1, "Error running process", e);
+			outcome = new Status(IStatus.ERROR, Platform.PI_RUNTIME, -1, "Error running process\n\tCommand: " +command, e);
 		}
 		return outcome;
 	}
 
-	public void run(TestCase test, TestResult result, Setup sessionSetup) {
-		result.startTest(test);
+	/**
+	 * Runsthe test described  in a separate session using 
+	 * @param descriptor
+	 * @param result
+	 * @param sessionSetup
+	 */
+	public final void run(TestDescriptor descriptor, TestResult result) {
+		result.startTest(descriptor.getTest());
 		try {
 			ResultCollector collector = null;
 			try {
 				collector = new ResultCollector();
 			} catch (IOException e) {
-				result.addError(test, e);
+				result.addError(descriptor.getTest(), e);
 				return;
 			}
-			Setup setup = createSetup(test, sessionSetup, collector.getPort());
-			new Thread(collector).start();
-			result.startTest(test);
+			Setup setup = createSetup(descriptor, collector.getPort());
+			new Thread(collector, "Test result collector").start();
 			IStatus status = launch(setup.getCommandLine(), setup.getTimeout());
 			collector.shutdown();
 			// ensure the session ran without any errors
 			if (!status.isOK()) {
-				log(status);
-				result.addError(test, new CoreException(status));
-				return;
+				EclipseWorkspaceTest.log(status);
+				if (status.getSeverity() == IStatus.ERROR) {
+					result.addError(descriptor.getTest(), new CoreException(status));
+					return;
+				}
 			}
 			Result collected = collector.getResult();
-			if (collected == null)
-				// should never happen
-				result.addError(test, new Exception("Test did not run"));
-			else if (collected.type == Result.FAILURE)
-				result.addFailure(test, new RemoteAssertionFailedError(collected.message, collected.stackTrace));
+			if (collected == null) {
+				if (!descriptor.isCrashTest())
+					result.addError(descriptor.getTest(), new Exception("Test did not run"));
+			} else if (collected.type == Result.FAILURE)
+				result.addFailure(descriptor.getTest(), new RemoteAssertionFailedError(collected.message, collected.stackTrace));
 			else if (collected.type == Result.ERROR)
-				result.addError(test, new RemoteTestException(collected.message, collected.stackTrace));
+				result.addError(descriptor.getTest(), new RemoteTestException(collected.message, collected.stackTrace));
+			else if (descriptor.isCrashTest())
+				result.addError(descriptor.getTest(), new Exception("Crash test failed to cause crash"));
 		} finally {
-			result.endTest(test);
+			result.endTest(descriptor.getTest());
 		}
-	}
-
-	public void setBaseSetup(Setup baseSetup) {
-		this.baseSetup = baseSetup;
 	}
 }

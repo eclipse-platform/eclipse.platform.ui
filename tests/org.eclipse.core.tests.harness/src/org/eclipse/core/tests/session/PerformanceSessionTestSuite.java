@@ -17,7 +17,6 @@ import junit.framework.*;
  * enabling assertions for the first run.
  */
 public class PerformanceSessionTestSuite extends SessionTestSuite {
-	public static final String PROP_PERFORMANCE = "perf_ctrl";
 
 	/**
 	 * This custom test result allows multiple test runs to show up as a 
@@ -67,32 +66,14 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		}
 	}
 
+	public static final String PROP_PERFORMANCE = "perf_ctrl";
+
 	private int timesToRun;
-
-	public PerformanceSessionTestSuite(String pluginId, int timesToRun) {
-		super(pluginId);
-		this.timesToRun = timesToRun;
-	}
-
-	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class theClass) {
-		super(pluginId, theClass);
-		this.timesToRun = timesToRun;
-	}
-
-	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class theClass, String name) {
-		super(pluginId, theClass, name);
-		this.timesToRun = timesToRun;
-	}
-
-	public PerformanceSessionTestSuite(String pluginId, int timesToRun, String name) {
-		super(pluginId, name);
-		this.timesToRun = timesToRun;
-	}
 
 	/* 
 	 * This method will not be needed when the performance testing API
 	 * change to use multiple properties instead of perf_ctrl.
-	 */ 
+	 */
 	public static String[] parsePerfCtrl() {
 		String[] result = new String[2];
 		String perfCtrl = System.getProperty(PROP_PERFORMANCE);
@@ -116,22 +97,42 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		return result;
 	}
 
-	protected void runTestCase(TestCase test, TestResult result) {
-		Setup baseSetup = (Setup) getTestRunner().getBaseSetup().clone();
+	public PerformanceSessionTestSuite(String pluginId, int timesToRun) {
+		super(pluginId);
+		this.timesToRun = timesToRun;
+	}
+
+	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class theClass) {
+		super(pluginId, theClass);
+		this.timesToRun = timesToRun;
+	}
+
+	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class theClass, String name) {
+		super(pluginId, theClass, name);
+		this.timesToRun = timesToRun;
+	}
+
+	public PerformanceSessionTestSuite(String pluginId, int timesToRun, String name) {
+		super(pluginId, name);
+		this.timesToRun = timesToRun;
+	}
+
+	protected void runSessionTest(TestDescriptor descriptor, TestResult result) {
+		fillTestDescriptor(descriptor);
 		// first component contains the property except assertAgainst=*
 		// second component contains only assertAgainst=*
 		String[] perfCtrl = parsePerfCtrl();
-		if (perfCtrl[0] != null)		
-			baseSetup.getSystemProperties().put(PROP_PERFORMANCE, perfCtrl[0]);
+		if (perfCtrl[0] != null)
+			descriptor.getSetup().getSystemProperties().put(PROP_PERFORMANCE, perfCtrl[0]);
 		// run test cases n-1 times
 		ConsolidatedTestResult consolidated = new ConsolidatedTestResult(result);
 		for (int i = 0; !consolidated.shouldStop() && i < timesToRun - 1; i++)
-			getTestRunner().run(test, consolidated, baseSetup);
+			descriptor.run(consolidated);
 		if (consolidated.shouldStop())
 			return;
 		// for the n-th run, enable assertions
 		if (perfCtrl[1] != null)
-			baseSetup.getSystemProperties().put(PROP_PERFORMANCE, perfCtrl[0] + ';' + perfCtrl[1]);
-		getTestRunner().run(test, consolidated, baseSetup);
+			descriptor.getSetup().getSystemProperties().put(PROP_PERFORMANCE, perfCtrl[0] + ';' + perfCtrl[1]);
+		descriptor.run(consolidated);
 	}
 }

@@ -18,17 +18,17 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class Setup implements Cloneable {
-	private String allArgs;
+	private static final int DEFAULT_TIMEOUT = 0;
 	private String application;
-	private String applicationArgs;
 	private String configuration;
 	private String debugOption;
 	private String devOption;
+	// includes all non-VM args
+	private String eclipseArgs;
 	private String id;
 	private String installLocation;
 	private String instanceLocation;
 	private String name;
-	private int numberOfRuns;
 	private Properties systemProperties = new Properties();
 	private int timeout;
 	private String vmArgs;
@@ -48,9 +48,6 @@ public class Setup implements Cloneable {
 	}
 
 	public static String getDefaultInstallLocation() {
-		String userSet = System.getProperty("install");
-		if (userSet != null)
-			return userSet;
 		String currentInstall = System.getProperty(InternalPlatform.PROP_INSTALL_AREA);
 		if (currentInstall != null)
 			try {
@@ -65,6 +62,18 @@ public class Setup implements Cloneable {
 		return new Path(System.getProperty("java.io.tmpdir")).append("workspace").toOSString();
 	}
 
+	/**
+	 * Creates a setup containing default settings. The default settings will vary 
+	 * depending on the running environment.
+	 * 
+	 * @see #getDefaultConfiguration()
+	 * @see #getDefaultDebugOption()
+	 * @see #getDefaultDevOption()
+	 * @see #getDefaultInstallLocation()
+	 * @see #getDefaultInstanceLocation()
+	 * @see #getDefaultVMLocation()
+	 * @return
+	 */
 	public static Setup getDefaultSetup() {
 		Setup defaultSetup = new Setup();
 		defaultSetup.setVMLocation(Setup.getDefaultVMLocation());
@@ -73,6 +82,7 @@ public class Setup implements Cloneable {
 		defaultSetup.setDevOption(Setup.getDefaultDevOption());
 		defaultSetup.setInstallLocation(Setup.getDefaultInstallLocation());
 		defaultSetup.setInstanceLocation(Setup.getDefaultInstanceLocation());
+		defaultSetup.setTimeout(DEFAULT_TIMEOUT);
 		return defaultSetup;
 	}
 
@@ -83,11 +93,19 @@ public class Setup implements Cloneable {
 		javaVM = (String) System.getProperties().get("java.home");
 		if (javaVM == null)
 			return null;
-		//TODO: this is a hack and will not work with some VMs...
+		//XXX: this is a hack and will not work with some VMs...
 		return new Path(javaVM).append("bin").append("java").toOSString();
 	}
 
-	private void appendApplicationArgs(StringBuffer params) {
+	private void appendClassPath(StringBuffer params) {
+		if (installLocation == null)
+			return;
+		params.append(" -classpath ");
+		IPath classPath = new Path(installLocation).append("startup.jar");
+		params.append(classPath.toOSString());
+	}
+
+	private void appendEclipseArgs(StringBuffer params) {
 		if (application != null) {
 			params.append(" -application ");
 			params.append(application);
@@ -120,17 +138,11 @@ public class Setup implements Cloneable {
 		// always enable -consolelog TODO should make this configurable 
 		//params.append(" -consolelog");
 
-		// application args
-		if (applicationArgs != null) {
+		// eclipse args
+		if (eclipseArgs != null) {
 			params.append(' ');
-			params.append(applicationArgs);
+			params.append(eclipseArgs);
 		}
-	}
-
-	private void appendClassPath(StringBuffer params) {
-		params.append(" -classpath ");
-		IPath classPath = new Path(installLocation).append("startup.jar");
-		params.append(classPath.toOSString());
 	}
 
 	private void appendSystemProperties(StringBuffer command) {
@@ -167,20 +179,16 @@ public class Setup implements Cloneable {
 		return clone;
 	}
 
+	private boolean containsOption(String args, String option) {
+		return args.indexOf("-" + option) >= 0;
+	}
+
 	public void copyProperty(String propertyKey) {
 		systemProperties.put(propertyKey, System.getProperty(propertyKey));
 	}
 
-	public String getAllArgs() {
-		return allArgs == null ? "" : allArgs;
-	}
-
 	public String getApplication() {
 		return application;
-	}
-
-	public String getApplicationArgs() {
-		return applicationArgs == null ? "" : applicationArgs;
 	}
 
 	public String getCommandLine() {
@@ -190,10 +198,7 @@ public class Setup implements Cloneable {
 		appendSystemProperties(command);
 		command.append(' ');
 		command.append("org.eclipse.core.launcher.Main");
-		appendApplicationArgs(command);
-//		System.out.println("Command line: ");
-//		System.out.print('\t');
-//		System.out.println(command);
+		appendEclipseArgs(command);
 		return command.toString();
 	}
 
@@ -207,6 +212,13 @@ public class Setup implements Cloneable {
 
 	public String getDevOption() {
 		return devOption;
+	}
+
+	/**
+	 * Returns a string containing all Eclipse args.
+	 */
+	public String getEclipseArgs() {
+		return eclipseArgs;
 	}
 
 	public String getId() {
@@ -225,10 +237,6 @@ public class Setup implements Cloneable {
 		return name;
 	}
 
-	public int getNumberOfRuns() {
-		return numberOfRuns;
-	}
-
 	public Properties getSystemProperties() {
 		return systemProperties;
 	}
@@ -238,23 +246,44 @@ public class Setup implements Cloneable {
 	}
 
 	public String getVMArgs() {
-		return vmArgs == null ? "" : vmArgs;
+		return vmArgs;
 	}
 
 	public String getVMLocation() {
 		return vmLocation;
 	}
 
-	public void setAllArgs(String allArgs) {
-		this.allArgs = allArgs;
+	public void merge(Setup variation) {
+		String eclipseLocation = variation.getInstallLocation();
+		if (eclipseLocation != null)
+			setInstallLocation(eclipseLocation);
+		String eclipseArgs = variation.getEclipseArgs();
+		if (eclipseArgs != null) {
+			if (getEclipseArgs() != null) {
+				StringBuffer newEclipseArgs = new StringBuffer(getEclipseArgs());
+				newEclipseArgs.append(' ');
+				newEclipseArgs.append(eclipseArgs);
+				eclipseArgs = newEclipseArgs.toString();
+			}
+			setEclipseArgs(eclipseArgs);
+		}
+		String vmLocation = variation.getVMLocation();
+		if (vmLocation != null)
+			setVMLocation(vmLocation);
+		String vmArgs = variation.getVMArgs();
+		if (vmArgs != null) {
+			if (getVMArgs() != null) {
+				StringBuffer newVMArgs = new StringBuffer(getVMArgs());
+				newVMArgs.append(' ');				
+				newVMArgs.append(vmArgs);
+				vmArgs = newVMArgs.toString();
+			}
+			setVMArgs(vmArgs);
+		}
 	}
 
 	public void setApplication(String application) {
 		this.application = application;
-	}
-
-	public void setApplicationArgs(String applicationArgs) {
-		this.applicationArgs = applicationArgs;
 	}
 
 	public void setConfiguration(String configuration) {
@@ -267,6 +296,22 @@ public class Setup implements Cloneable {
 
 	public void setDevOption(String devOption) {
 		this.devOption = devOption;
+	}
+
+	public void setEclipseArgs(String eclipseArgs) {
+		this.eclipseArgs = eclipseArgs;
+		if (eclipseArgs == null)
+			return;
+		if (containsOption(eclipseArgs, "application"))
+			this.application = null;
+		if (containsOption(eclipseArgs, "configuration"))
+			this.configuration = null;
+		if (containsOption(eclipseArgs, "debug"))
+			this.debugOption = null;
+		if (containsOption(eclipseArgs, "dev"))
+			this.devOption = null;
+		if (containsOption(eclipseArgs, "data"))
+			this.instanceLocation = null;
 	}
 
 	public void setId(String id) {
@@ -285,10 +330,6 @@ public class Setup implements Cloneable {
 		this.name = name;
 	}
 
-	public void setNumberOfRuns(int repeat) {
-		this.numberOfRuns = repeat;
-	}
-
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
@@ -299,5 +340,9 @@ public class Setup implements Cloneable {
 
 	public void setVMLocation(String vmLocation) {
 		this.vmLocation = vmLocation;
+	}
+
+	public String toString() {
+		return "[" + getCommandLine() + "]";
 	}
 }
