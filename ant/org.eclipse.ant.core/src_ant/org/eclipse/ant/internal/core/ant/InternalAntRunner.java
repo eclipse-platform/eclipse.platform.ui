@@ -305,58 +305,63 @@ public class InternalAntRunner {
 	 * project name, and the last elements is an array of dependencies.
 	 */
 	public List getTargets() {
-		Project antProject;
+		try {
+			Project antProject;
 		
-		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-			//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
-			antProject= new Project();
-		} else {
-			antProject= new InternalProject();
-		}
-		antProject.init();
-		setTypes(antProject);
-		processProperties(getArrayList(extraArguments));
-		
-		setProperties(antProject);
-		
-		parseBuildFile(antProject);
-		defaultTarget = antProject.getDefaultTarget();
-		Enumeration projectTargets = antProject.getTargets().elements();
-		List infos= new ArrayList();
-		infos.add(antProject.getName());
-		infos.add(antProject.getDescription());
-		List info;
-		Target target;
-		boolean defaultFound= false;
-		while (projectTargets.hasMoreElements()) {
-			target = (Target) projectTargets.nextElement();
-			String name= target.getName();
-			if (name.length() == 0) {
-				//"no name" implicit target of Ant 1.6
-				continue;
+			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+				//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
+				antProject= new Project();
+			} else {
+				antProject= new InternalProject();
 			}
-			info= new ArrayList(4);
-			info.add(name);
-			if (target.getName().equals(defaultTarget)) {
-				defaultFound= true;
+			processAntHome(false);
+			antProject.init();
+			setTypes(antProject);
+			processProperties(getArrayList(extraArguments));
+			
+			setProperties(antProject);
+			
+			parseBuildFile(antProject);
+			defaultTarget = antProject.getDefaultTarget();
+			Enumeration projectTargets = antProject.getTargets().elements();
+			List infos= new ArrayList();
+			infos.add(antProject.getName());
+			infos.add(antProject.getDescription());
+			List info;
+			Target target;
+			boolean defaultFound= false;
+			while (projectTargets.hasMoreElements()) {
+				target = (Target) projectTargets.nextElement();
+				String name= target.getName();
+				if (name.length() == 0) {
+					//"no name" implicit target of Ant 1.6
+					continue;
+				}
+				info= new ArrayList(4);
+				info.add(name);
+				if (target.getName().equals(defaultTarget)) {
+					defaultFound= true;
+				}
+				info.add(target.getDescription());
+				List dependencies= new ArrayList();
+				Enumeration enumeration= target.getDependencies();
+				while (enumeration.hasMoreElements()) {
+					dependencies.add(enumeration.nextElement());
+				}
+				String[] dependencyArray= new String[dependencies.size()];
+				dependencies.toArray(dependencyArray);
+				info.add(dependencyArray);
+				infos.add(info);
 			}
-			info.add(target.getDescription());
-			List dependencies= new ArrayList();
-			Enumeration enumeration= target.getDependencies();
-			while (enumeration.hasMoreElements()) {
-				dependencies.add(enumeration.nextElement());
+			
+			if (!defaultFound) {
+				//default target must exist
+				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			String[] dependencyArray= new String[dependencies.size()];
-			dependencies.toArray(dependencyArray);
-			info.add(dependencyArray);
-			infos.add(info);
+			return infos;
+		} finally {
+			processAntHome(true);
 		}
-		
-		if (!defaultFound) {
-			//default target must exist
-			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		return infos;
 	}
 	
 	/**

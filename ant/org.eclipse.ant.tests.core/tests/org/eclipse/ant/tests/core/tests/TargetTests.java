@@ -43,6 +43,21 @@ public class TargetTests extends AbstractAntTest {
 	}
 	
 	/**
+	 * Ensures that targets are found in a buildfile with a fileset based on ant_home
+	 * (that ant_home is set at parse time)
+	 * Bug 42926.
+	 */
+	public void testGetTargetsWithAntHome() {
+		System.getProperties().remove("ant.home");
+		try {
+			getTargets("Bug42926.xml");
+		} catch (CoreException ce) {
+			//classpathref was successful but the task is not defined
+			ce.getMessage().equals("file:c:/runtime-test-workspace/AntTests/buildfiles/Bug42926.xml:7: taskdef class com.foo.SomeTask cannot be found");
+		}
+	}
+	
+	/**
 	 * Ensures that target names are retrieved properly
 	 */
 	public void testTargetNames() throws CoreException {
