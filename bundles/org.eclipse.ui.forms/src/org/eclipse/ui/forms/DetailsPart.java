@@ -275,6 +275,10 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 				return;
 			}
 		}
+		// If we are switching from an old page to nothing,
+		// don't loose data 
+		if (oldPage!=null && oldPage.isDirty())
+			oldPage.commit(false);
 		pageBook.showEmptyPage();
 	}
 	private void checkLimit() {
