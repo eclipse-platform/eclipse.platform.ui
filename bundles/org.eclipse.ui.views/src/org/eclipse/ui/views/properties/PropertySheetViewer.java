@@ -34,7 +34,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -201,18 +200,6 @@ class PropertySheetViewer extends Viewer {
         activationListeners.add(listener);
     }
 
-    private ControlListener controlListener = new ControlAdapter() {
-        public void controlResized(ControlEvent e) {
-            Rectangle area = tree.getClientArea();
-            TreeColumn[] columns = tree.getColumns();
-            if (area.width > 0 && columns[0].getWidth() == 0) {
-                columns[0].setWidth(area.width * 40 / 100);
-                columns[1].setWidth(area.width - columns[0].getWidth() - 4);
-                tree.removeControlListener(controlListener);
-            }
-        }
-    };
-    
     /**
      * Add columns to the tree and set up the layout manager accordingly.
      */
@@ -232,7 +219,17 @@ class PropertySheetViewer extends Viewer {
             }
         }
 
-        tree.addControlListener(controlListener);
+        tree.addControlListener(new ControlAdapter() {
+            public void controlResized(ControlEvent e) {
+                Rectangle area = tree.getClientArea();
+                TreeColumn[] columns = tree.getColumns();
+                if (area.width > 0 && columns[0].getWidth() == 0) {
+                    columns[0].setWidth(area.width * 40 / 100);
+                    columns[1].setWidth(area.width - columns[0].getWidth() - 4);
+                    tree.removeControlListener(this);
+                }
+            }
+        });
 
     }
 
