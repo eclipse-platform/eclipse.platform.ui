@@ -27,6 +27,8 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; adaptable&nbsp;&nbsp;&nbsp; (true
 | false) #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true
+| false) #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
 <ul>
@@ -54,6 +56,10 @@ Default value is an empty String.</li>
 <b>adaptable</b> - a flag that indicates if types that adapt to IResource
 should use this object contribution. This flag is used only if objectClass
 adapts to IResource. Default value is false.</li>
+
+<li>
+<b>state</b> - a flag that indicates if the decorator is on by default. 
+Default value is false.</li>
 </ul>
 <b><i>Example:</i></b>
 <p>The following is an example of decorators:
