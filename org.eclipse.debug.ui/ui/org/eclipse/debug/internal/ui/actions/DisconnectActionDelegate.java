@@ -85,7 +85,7 @@ public class DisconnectActionDelegate extends ListenerActionDelegate {
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {	
 		if (event.getKind() == DebugEvent.TERMINATE) {
-			getAction().setEnabled(false);
+			update(getAction(), getSelection());
 		}
 	}
 }

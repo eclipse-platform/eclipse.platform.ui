@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -93,21 +92,4 @@ public class SuspendActionDelegate extends ListenerActionDelegate {
 		return ActionMessages.getString("SuspendActionDelegate.&Suspend_4"); //$NON-NLS-1$
 	}
 	
-	/**
-	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
-	 */
-	protected void doHandleDebugEvent(DebugEvent event) {
-		IAction action= getAction();
-		switch (event.getKind()) {
-			case DebugEvent.TERMINATE :
-				action.setEnabled(false);
-				break;
-			case DebugEvent.RESUME :
-				action.setEnabled(true);
-				break;
-			case DebugEvent.SUSPEND :
-				update(getAction(), getSelection());
-				break;
-		}
-	}		
-}
+	}
