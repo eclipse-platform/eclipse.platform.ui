@@ -4,19 +4,26 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.URL;
+
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
 /**
  * A simple editor input for the welcome editor
  */	
 public class WelcomeEditorInput implements IEditorInput {
-	private final String FACTORY_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"; //$NON-NLS-1$
+	private AboutInfo aboutInfo;
+	private final static String FACTORY_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"; //$NON-NLS-1$
+	public final static String FEATURE_ID = "featureId"; //$NON-NLS-1$
 /**
  * WelcomeEditorInput constructor comment.
  */
-public WelcomeEditorInput() {
+public WelcomeEditorInput(AboutInfo info) {
 	super();
+	Assert.isNotNull(info);
+	aboutInfo = info;	
 }
 		public boolean exists() {
 			return false;
@@ -36,16 +43,22 @@ public WelcomeEditorInput() {
 					return FACTORY_ID;
 				}
 				public void saveState(IMemento memento) {
-					return;
+					memento.putString(FEATURE_ID, aboutInfo.getFeatureId());
 				}
 			};
 		}
+		public AboutInfo getAboutInfo() {
+			return aboutInfo;
+		}
 		public boolean equals(Object o) {
-			if((o != null) && (o instanceof WelcomeEditorInput))
-				return true;
+			if((o != null) && (o instanceof WelcomeEditorInput)) {
+				if (((WelcomeEditorInput)o).aboutInfo.getFeatureId().equals(
+					aboutInfo.getFeatureId()))
+					return true;
+			}
 			return false;
 		}
 		public String getToolTipText() {
-			return WorkbenchMessages.getString("WelcomeEditor.title"); //$NON-NLS-1$	
+			return WorkbenchMessages.format("WelcomeEditor.toolTip", new Object[]{aboutInfo.getFeatureLabel()}); //$NON-NLS-1$	
 		}
 }

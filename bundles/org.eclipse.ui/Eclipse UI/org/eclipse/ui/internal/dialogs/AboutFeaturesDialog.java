@@ -427,14 +427,14 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					String provider1, provider2, name1, name2;
 					i1 = (AboutInfo)a;
 					provider1 = i1.getProviderName();
-					name1 = i1.getProductName();
+					name1 = i1.getFeatureLabel();
 					if (provider1 == null)
 						provider1 = "";
 					if (name1 == null)
 						name1 = "";
 					i2 = (AboutInfo)b;
 					provider2 = i2.getProviderName();
-					name2 = i2.getProductName();
+					name2 = i2.getFeatureLabel();
 					if (provider2 == null)
 						provider2 = "";
 					if (name2 == null)
@@ -469,9 +469,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					AboutInfo i1, i2;
 					String name1, name2;
 					i1 = (AboutInfo)a;
-					name1 = i1.getProductName();
+					name1 = i1.getFeatureLabel();
 					i2 = (AboutInfo)b;
-					name2 = i2.getProductName();
+					name2 = i2.getFeatureLabel();
 					if (name1 == null)
 						name1 = "";
 					if (name2 == null)
@@ -506,14 +506,14 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					String version1, version2, name1, name2;
 					i1 = (AboutInfo)a;
 					version1 = i1.getVersion();
-					name1 = i1.getProductName();
+					name1 = i1.getFeatureLabel();
 					if (version1 == null)
 						version1 = "";
 					if (name1 == null)
 						name1 = "";
 					i2 = (AboutInfo)b;
 					version2 = i2.getVersion();
-					name2 = i2.getProductName();
+					name2 = i2.getFeatureLabel();
 					if (version2 == null)
 						version2 = "";
 					if (name2 == null)

@@ -5,6 +5,12 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Locale;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -39,35 +45,82 @@ public QuickStartAction(IWorkbench aWorkbench) {
  *	The user has invoked this action
  */
 public void run() {
-	WorkbenchPage page = (WorkbenchPage)workbench.getActiveWorkbenchWindow().getActivePage();
-	if (page == null) {
-		// Create the initial page.
-		try {
-			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
-			page = (WorkbenchPage)workbench.getActiveWorkbenchWindow().openPage(
-				WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective(), root);
-		} catch (WorkbenchException e) {
-			MessageDialog.openError(
-				workbench.getActiveWorkbenchWindow().getShell(), 
-				WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
-				e.getMessage());
-		}
+	// Ask the user to select a feature
+	AboutInfo[] features = ((Workbench)workbench).getFeaturesInfo();
+	ArrayList welcomeFeatures = new ArrayList();
+	for (int i = 0; i < features.length; i++) {
+		if (features[i].getWelcomePageURL() != null) 
+			welcomeFeatures.add(features[i]);
 	}
-
-	if (page == null)
-			return;
+	Shell shell = workbench.getActiveWorkbenchWindow().getShell();
+	
+	if (welcomeFeatures.size() == 0) {
+		MessageDialog.openInformation(
+			shell, 
+			WorkbenchMessages.getString("QuickStartMessageDialog.title"),
+			WorkbenchMessages.getString("QuickStartMessageDialog.message"));
+		return;
+	}			
+	
+	features = new AboutInfo[welcomeFeatures.size()];
+	welcomeFeatures.toArray(features);
+	
+	// Sort ascending
+	Arrays.sort(features, new Comparator() {
+		Collator coll = Collator.getInstance(Locale.getDefault());
+			public int compare(Object a, Object b) {
+				AboutInfo i1, i2;
+				String name1, name2;
+				i1 = (AboutInfo)a;
+				name1 = i1.getFeatureLabel();
+				i2 = (AboutInfo)b;
+				name2 = i2.getFeatureLabel();
+				if (name1 == null)
+					name1 = "";
+				if (name2 == null)
+					name2 = "";
+				return coll.compare(name1, name2);
+			}
+		});
+	
+	WelcomePageSelectionDialog d = 
+		new WelcomePageSelectionDialog(
+			workbench.getActiveWorkbenchWindow().getShell(),
+			features);
+	if(d.open() != d.OK || d.getResult().length != 1)
+		return;
+		
+	AboutInfo feature = (AboutInfo)d.getResult()[0];
+	
+	// See if the feature wants a specific perspective
+	String perspectiveId = feature.getWelcomePerspective();
+	if (perspectiveId == null)
+		perspectiveId = WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();		
+			
+	WorkbenchPage page;
+	try {
+		page =
+			(WorkbenchPage) workbench.showPerspective(
+				perspectiveId,
+				workbench.getActiveWorkbenchWindow());
+	} catch (WorkbenchException e) {
+		return;
+	}
 	
 	page.setEditorAreaVisible(true);
 
+	// create input
+	WelcomeEditorInput input = new WelcomeEditorInput(feature);
+
 	// see if we already have a welcome editor
-	IEditorPart editor = page.findEditor(new WelcomeEditorInput());
+	IEditorPart editor = page.findEditor(input);
 	if(editor != null) {
-		page.bringToTop(editor);
+		page.activate(editor);
 		return;
 	}
 
 	try {
-		page.openEditor(new WelcomeEditorInput(), EDITOR_ID);
+		page.openEditor(input, EDITOR_ID);
 	} catch (PartInitException e) {
 		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 		ErrorDialog.openError(
@@ -76,6 +129,5 @@ public void run() {
 			WorkbenchMessages.getString("QuickStartAction.errorDialogMessage"),  //$NON-NLS-1$
 			status);
 	}
-
 }
 }

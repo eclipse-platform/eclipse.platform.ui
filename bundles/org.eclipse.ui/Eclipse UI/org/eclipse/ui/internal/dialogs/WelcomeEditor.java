@@ -618,9 +618,12 @@ public void gotoMarker(IMarker marker) {
  * </pre>
  */
 public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	if (!(input instanceof WelcomeEditorInput))
+		throw new PartInitException("Invalid Input: Must be IFileEditorInput");
 	setSite(site);
-	setInput(new WelcomeEditorInput());
+	setInput(input);
 }
+
 /* (non-Javadoc)
  * Returns whether the contents of this editor have changed since the last save
  * operation.
@@ -657,11 +660,10 @@ public void read(InputStream is) {
  * Reads the welcome file
  */
 public void readFile() {
-	AboutInfo info = ((Workbench)PlatformUI.getWorkbench()).getAboutInfo();
-	URL url = info.getWelcomePageURL();
+	URL url = ((WelcomeEditorInput)getEditorInput()).getAboutInfo().getWelcomePageURL();
 
 	if (url == null)
-		// should not happen since we disable if none specified
+		// should not happen 
 		return;
 		
 	InputStream is = null;

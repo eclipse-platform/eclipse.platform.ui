@@ -32,6 +32,7 @@ public class AboutInfo extends NewConfigurationInfo {
 	private ImageDescriptor featureImage;
 	private String aboutText;
 	private URL welcomePageURL;
+	private String welcomePerspective;
 	private String featureImageName;
 	private Long featureImageCRC;
 	private boolean calculatedImageCRC = false;
@@ -217,6 +218,16 @@ public class AboutInfo extends NewConfigurationInfo {
 	}
 
 	/**
+	 * Returns the id of a perspective in which to show the welcome page.
+	 * May be <code>null</code>.
+	 * 
+	 * @return the welcome page perspective id, or <code>null</code> if none
+	 */
+	public String getWelcomePerspective() {
+		return welcomePerspective;
+	}
+
+	/**
 	 * Returns the image descriptor for the window image to use for this product.
 	 * Products designed to run "headless" typically would not have such an image.
 	 * 
@@ -312,7 +323,8 @@ public class AboutInfo extends NewConfigurationInfo {
 		featureImageName = (String) ini.get("featureImage"); //$NON-NLS-1$
 		featureImage = getImage(ini, "featureImage"); //$NON-NLS-1$
 
-		welcomePageURL = getURL(ini, "welcomePage");
+		welcomePageURL = getURL(ini, "welcomePage"); //$NON-NLS-1$
+		welcomePerspective = (String) ini.get("welcomePerspective"); //$NON-NLS-1$
 
 		appName = (String) ini.get("appName"); //$NON-NLS-1$
 		appName = getResourceString(appName, bundle, mappingsArray);

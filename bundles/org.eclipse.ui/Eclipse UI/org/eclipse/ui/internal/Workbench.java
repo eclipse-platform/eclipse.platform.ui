@@ -36,6 +36,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
@@ -59,6 +60,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final int RESTORE_CODE_OK = 0;
 	private static final int RESTORE_CODE_RESET = 1;
 	private static final int RESTORE_CODE_EXIT = 2;
+	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor";  //$NON-NLS-1$
+	
 
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
@@ -563,7 +566,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			openFirstTimeWindow();
 		
 		forceOpenPerspective();
-		openWelcomeDialog();
+		openWelcomeEditor();
 		refreshFromLocal();
 		isStarting = false;
 		return true;
@@ -806,9 +809,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return result[0];
 	}
 	/**
-	 * Open the Welcome dialog
+	 * Open the Welcome editor for the primary feature
 	 */
-	private void openWelcomeDialog() {
+	private void openWelcomeEditor() {
 		// See if a welcome page is specified
 		AboutInfo info = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
 		URL url = info.getWelcomePageURL();
@@ -816,13 +819,60 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			return;
 
 		// Show the quick start wizard the first time the workbench opens.
-		if (WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
-			QuickStartAction action = new QuickStartAction(this);
-			action.run();
-			// Don't show it again
-			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
+		if (!WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) 
+			return;
+
+		// Don't show it again
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
+
+		if (getWorkbenchWindowCount() == 0) {
+			// Something is wrong, there should be at least
+			// one workbench window open by now.
+			return;
 		}
 
+		IWorkbenchWindow win = getActiveWorkbenchWindow();
+		if (win == null)
+			win = getWorkbenchWindows()[0];
+
+		WorkbenchPage page = (WorkbenchPage)win.getActivePage();
+		if (page == null) {
+			// Create the initial page. We use the default perspective rather than
+			// the perspective specified by a welcome perspective
+			try {
+				IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+				page = (WorkbenchPage)getActiveWorkbenchWindow().openPage(
+					WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective(), root);
+			} catch (WorkbenchException e) {
+				MessageDialog.openError(
+					win.getShell(), 
+					WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
+					e.getMessage());
+			}
+		}
+	
+		if (page == null)
+			return;
+		
+		page.setEditorAreaVisible(true);
+	
+		// see if we already have a welcome editor
+		IEditorPart editor = page.findEditor(new WelcomeEditorInput(info));
+		if (editor != null) {	
+			page.activate(editor);
+				return;
+		}
+	
+		try {
+			page.openEditor(new WelcomeEditorInput(info), WELCOME_EDITOR_ID);
+		} catch (PartInitException e) {
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
+			ErrorDialog.openError(
+				win.getShell(),
+				WorkbenchMessages.getString("QuickStartAction.errorDialogTitle"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("QuickStartAction.errorDialogMessage"),  //$NON-NLS-1$
+				status);
+		}
 	}
 	/**
 	 * Opens a new window and page with the default perspective.
