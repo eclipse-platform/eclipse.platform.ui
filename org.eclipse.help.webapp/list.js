@@ -117,7 +117,7 @@ function highlightTopic(topic)
 /**
  * Selects a topic in the tree: expand tree and highlight it
  */
-function selectTopic(topic)
+function selectTopic(topic) 
 {
 	if (!topic || topic == "") return;
 	
@@ -127,7 +127,8 @@ function selectTopic(topic)
 	{
 		// take into account the extra ?toc=.. or &toc=
 		if (links[i].href.indexOf(topic+"?toc=") == 0 ||
-			links[i].href.indexOf(topic+"&toc=") == 0)
+			links[i].href.indexOf(topic+"&toc=") == 0 ||
+			links[i].href.indexOf(topic+"/?toc=") == 0)
 		{
 			highlightTopic(links[i]);
 			scrollIntoView(links[i]);
@@ -171,7 +172,7 @@ function scrollIntoView(node)
 	{
 		scroll = nodeTop - pageTop;
 	}
-	
+
 	window.scrollBy(0, scroll);
 }
 

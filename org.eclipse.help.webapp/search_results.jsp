@@ -202,8 +202,11 @@ else if (topic != null && topic.startsWith("file:/"))
 %>
 
 <script language="JavaScript">
-var topic = window.location.protocol + "//" +window.location.host + '<%=topic%>';
-selectTopic(topic);
+// check if the topic URL starts with http
+if (!'<%=topic%>'.indexOf("http")==0)
+	selectTopic(window.location.protocol + "//" +window.location.host + '<%=topic%>');
+else
+	selectTopic('<%=topic%>');
 </script>
 
 </body>
