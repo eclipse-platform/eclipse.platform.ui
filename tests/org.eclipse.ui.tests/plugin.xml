@@ -1546,4 +1546,35 @@
          	parent="org.eclipse.ui.tests.commands.scope1" />
    </extension>
 
-</plugin>
+
+	<!--malformed activity definitions -->
+   <extension
+         name="Actvities for PersistanceTest"
+         point="org.eclipse.ui.activities">
+      <activity
+            id="org.eclipse.ui.PT.A1"/>
+      <activity
+            name="org.eclipse.ui.tests.activity3"
+            id="org.eclipse.ui.PT.A2"/>   
+      <activity
+            name="org.eclipse.ui.PT.A3"/>
+                     
+      <category
+            id="org.eclipse.ui.PT.C1"/>
+      <category
+            name="org.eclipse.ui.tests.category2"
+            id="org.eclipse.ui.PT.C2"/>            
+      <category
+            name="org.eclipse.ui.PT.C3"/>
+            
+      <activityPatternBinding
+            activityId="org.eclipse.ui.PT.A2"/>
+            
+      <activityRequirementBinding
+            activityId="org.eclipse.ui.PT.A2"/> 
+            
+      <categoryActivityBinding
+      		categoryId="org.eclipse.ui.PT.C2" />
+      		           
+   </extension>
+</plugin>            
