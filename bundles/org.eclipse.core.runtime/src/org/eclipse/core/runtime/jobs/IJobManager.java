@@ -142,8 +142,6 @@ public interface IJobManager {
 	 * is contained within the rule for the outer <tt>beginRule</tt>.  Also, begin/end
 	 * pairs must be strictly nested.  Only the rule that has most recently begun
 	 * can be ended at any given time.
-	 * <p>
-	 * This API is experimental, and is subject to change or removal without notice.
 	 * 
 	 * @param rule the rule to end applying in this thread
 	 * @throws IllegalArgumentException if this method is called on a rule for which
