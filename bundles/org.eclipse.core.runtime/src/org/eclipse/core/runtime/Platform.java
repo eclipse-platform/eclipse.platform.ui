@@ -358,6 +358,17 @@ public static String getProtectionSpace(URL resourceUrl) {
 	return InternalPlatform.getProtectionSpace(resourceUrl);
 }
 /**
+ * Returns whether the platform runtime is based on OSGi.
+ * @return <code>true</code> if the platform runtime is based on OSGi,
+ * <code>false</code> otherwise. 
+ * @deprecated this API is temporary and will be removed by the end of 
+ * the Eclipse 3.0 cycle.
+ * @since 3.0 
+ */
+public static boolean isRunningOSGi() {
+	return false;
+}
+/**
  * Returns a plug-in registry containing all of the plug-ins discovered
  * on the given plug-in path.  Any problems encountered are added to
  * the status managed by the supplied factory.
