@@ -87,4 +87,12 @@ public boolean isExported();
  *    <code>false</code> if it is private or has filtered content
  */
 public boolean isFullyExported();
+/**
+ * Returns the array of package prefixes that this library declares. This 
+ * is used in classloader enhancements and is an optional entry in the plugin.xml.
+ * 
+ * @return the array of package prefixes or <code>null</code>
+ * @since 2.1
+ */
+public String[] getPackagePrefixes();
 }

@@ -30,6 +30,7 @@ public class LibraryModel extends PluginModelObject {
 	// DTD properties (included in plug-in manifest)
 	private String[] exports = null;
 	private String type = CODE;
+	private String[] packagePrefixes = null;
 
 	// transient properties (not included in plug-in manifest)
 	private boolean isExported = false;
@@ -119,5 +120,17 @@ public void setType(String value) {
 	String lcValue = value.toLowerCase();
 	Assert.isTrue (lcValue.equals(CODE) || lcValue.equals(RESOURCE));
 	type = lcValue;
+}
+/**
+ * @see ILibrary#getPackagePrefixes
+ */
+public String[] getPackagePrefixes() {
+	return packagePrefixes;
+}
+/**
+ * Sets this library's package prefixes to be the specified array or <code>null</code>.
+ */
+public void setPackagePrefixes(String[] packagePrefixes) {
+	this.packagePrefixes = packagePrefixes;
 }
 }
