@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -37,6 +39,28 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		showActive(true);
 	}
 
+	/**
+	 * Returns the available list of perspectives to display in the menu.
+	 * Extends the super implementation by ensuring that the current perspective
+	 * is included in the list.
+	 * 
+	 * @return an <code>ArrayList<code> of perspective items <code>IPerspectiveDescriptor</code>
+	 */
+	protected ArrayList getPerspectiveItems() {
+		ArrayList list = super.getPerspectiveItems();
+		IWorkbenchWindow window = getWindow();
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
+			IPerspectiveDescriptor desc = page.getPerspective();
+			if (desc != null) {
+				if (!list.contains(desc)) {
+					list.add(desc);
+				}
+			}
+		}
+		return list;
+	}
+	
 	/* (non-Javadoc)
 	 * @see PerspectiveMenu#run(IPerspectiveDescriptor)
 	 */
