@@ -29,7 +29,10 @@ import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -52,6 +55,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	ToolBar toolbar;
 
 	GroupedPreferenceLabelProvider groupedLabelProvider;
+
+	private WorkbenchPreferenceGroup currentGroup;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -194,8 +199,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetSelected(SelectionEvent e) {
-					getTreeViewer().setInput(group);
-					lastGroupId = group.getId();
+					groupSelected(group);
 				}
 			});
 
@@ -256,6 +260,20 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			groupedLabelProvider = new GroupedPreferenceLabelProvider();
 			tree.setContentProvider(new GroupedPreferenceContentProvider());
 			tree.setLabelProvider(groupedLabelProvider);
+			tree.addSelectionChangedListener(new ISelectionChangedListener() {
+				/* (non-Javadoc)
+				 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+				 */
+				public void selectionChanged(SelectionChangedEvent event) {
+					if (event.getSelection() instanceof IStructuredSelection) {
+						IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+						if(selection.isEmpty())
+							return;
+						Object item = selection.getFirstElement();
+						currentGroup.setLastSelection(item);
+					}
+				}
+			});
 
 		} else {
 			tree.setContentProvider(new FilteredPreferenceContentProvider());
@@ -303,13 +321,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				toolbar.getItem(0).setSelection(true);
 				startGroup = getGroups()[0];
 			}
-			getTreeViewer().setInput(startGroup);
-
-			StructuredSelection selection = new StructuredSelection(
-					startGroup.getLastNode());
-			getTreeViewer().setSelection(selection);
+			groupSelected(startGroup);
 		}
-		super.selectSavedItem();
+		else
+			super.selectSavedItem();
 	}
 
 	/**
@@ -343,6 +358,22 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	public void updateTitle() {
 		if (getCurrentPage() != null)
 			super.updateTitle();
+	}
+
+	/**
+	 * A group has been selected. Update the tree viewer.
+	 * @param group
+	 */
+	private void groupSelected(final WorkbenchPreferenceGroup group) {
+		
+		lastGroupId = group.getId();
+		currentGroup = group;
+		
+		getTreeViewer().setInput(group);
+		Object selection = group.getLastSelection();
+		if (selection == null)
+			selection = group.getGroupsAndNodes()[0];
+		getTreeViewer().setSelection(new StructuredSelection(selection), true);
 	}
 
 }

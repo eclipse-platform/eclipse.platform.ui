@@ -36,6 +36,7 @@ public class WorkbenchPreferenceGroup {
 	private ImageDescriptor imageDescriptor;
 	private Image image;
 	private boolean highlight = false;
+	private Object lastSelection = null;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -205,13 +206,79 @@ public class WorkbenchPreferenceGroup {
 	public boolean isHighlighted() {
 		return highlight;
 	}
-
+	
 	/**
-	 * Get the previously selected node.
+	 * Get the last selected object in this group.
 	 * @return Object
 	 */
-	public Object getLastNode() {
-		return pages.iterator().next();
+	public Object getLastSelection() {
+		return lastSelection;
 	}
-	
+	/**
+	 * Set the last selected object in this group.
+	 * @param lastSelection WorkbenchPreferenceGroup
+	 * or WorkbenchPreferenceNode.
+	 */
+	public void setLastSelection(Object lastSelection) {
+		this.lastSelection = lastSelection;
+	}
+
+	/**
+	 * Find the parent of element in the receiver.
+	 * If there isn't one return <code>null</null>.
+	 * @param element
+	 * @return Object or <code>null</null>.
+	 */
+	public Object findParent(Object element) {
+		return findParent(this,element);
+	}
+
+	/**
+	 * Find the parent of this element starting at this group.
+	 * @param group
+	 * @param element
+	 */
+	private Object findParent(WorkbenchPreferenceGroup group, Object element) {
+		Iterator pagesIterator = group.pages.iterator();
+		while(pagesIterator.hasNext()){
+			WorkbenchPreferenceNode next = (WorkbenchPreferenceNode) pagesIterator.next();
+			if(next.equals(element))
+				return group;
+			Object parent = findParent(next,element);
+			if(parent != null)
+				return parent;
+		}
+		
+		Iterator subGroupsIterator = group.childGroups.iterator();
+		while(subGroupsIterator.hasNext()){
+			WorkbenchPreferenceGroup next = (WorkbenchPreferenceGroup) subGroupsIterator.next();
+			if(next.equals(element))
+				return group;
+			Object parent = findParent(next,element);
+			if(parent != null)
+				return parent;
+		}
+		
+		return null;
+		
+	}
+
+	/**
+	 * Find the parent of this element starting at this node.
+	 * @param node
+	 * @param element
+	 * @return Object or <code>null</code>.
+	 */
+	private Object findParent(IPreferenceNode node, Object element) {
+		IPreferenceNode[] subs = node.getSubNodes();
+		for (int i = 0; i < subs.length; i++) {
+			IPreferenceNode subNode = subs[i];
+			if(subNode.equals(element))
+				return node;
+			Object parent = findParent(subNode,element);
+			if(parent != null)
+				return parent;			
+		}
+		return null;
+	}
 }

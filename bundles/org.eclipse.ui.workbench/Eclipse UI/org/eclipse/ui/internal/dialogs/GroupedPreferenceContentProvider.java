@@ -25,6 +25,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class GroupedPreferenceContentProvider extends FilteredPreferenceContentProvider {
 
 	Collection groupedIds;
+	
+	WorkbenchPreferenceGroup currentInput;
 
 	/**
 	 * 
@@ -55,9 +57,10 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	 * @see org.eclipse.jface.preference.PreferenceContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null)
+		if (newInput == null || !(newInput instanceof WorkbenchPreferenceGroup))
 			return;
 		
+		currentInput = (WorkbenchPreferenceGroup) newInput;
 		viewer.refresh();
 	}
 
@@ -65,7 +68,7 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		return null;
+		return currentInput.findParent(element);
 	}
 
 	/* (non-Javadoc)
