@@ -475,7 +475,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				newItems.add(coolItems[i]);
 			}
 		}
-
 		Iterator iterator = newItems.iterator();
 		while (iterator.hasNext()) {
 			CoolItem coolItem = (CoolItem) iterator.next();
@@ -489,6 +488,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				} else if (i == index) {
 					// index of new item is already used. move items up one
 					System.arraycopy(itemOrder, i, itemOrder, i + 1, itemOrder.length - i - 1);
+					for (int j=i+1; j<itemOrder.length; j++) {
+						itemOrder[j]++;
+					}
 					System.arraycopy(itemSizes, i, itemSizes, i + 1, itemSizes.length - i - 1);
 					itemOrder[i] = index;
 					itemSizes[i] = coolItem.getSize();
@@ -519,7 +521,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			itemOrder = newItemOrder;
 			itemSizes = newItemSizes;
 		}
-
 		/*
 		 * TODO: Make sure that a new item that used to be the last item
 		 * and is now no longer the last item doesn't take more space than
@@ -527,23 +528,23 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		 * Otherwise it would move the following items to the right
 		 */
 
-		//		System.out.print("item create positions ");
-		//		CoolItem[] itms = coolBar.getItems();
-		//		for (int i=0; i<itms.length; i++) {
-		//			CoolItem cItem = itms[i];
-		//			System.out.print(coolBar.indexOf(cItem) + " ");
-		//		}
-		//		System.out.println();
-		//		System.out.print("item order ");
-		//		for (int i=0; i<itemOrder.length; i++) {
-		//			System.out.print(itemOrder[i] + " ");
-		//		}
-		//		System.out.println();
-		//		System.out.print("item sizes ");
-		//		for (int i=0; i<itemSizes.length; i++) {
-		//			System.out.print(itemSizes[i] + " ");
-		//		}
-		//		System.out.println();
+//				System.out.print("item create positions ");
+//				CoolItem[] itms = coolBar.getItems();
+//				for (int i=0; i<itms.length; i++) {
+//					CoolItem cItem = itms[i];
+//					System.out.print(coolBar.indexOf(cItem) + " ");
+//				}
+//				System.out.println();
+//				System.out.print("item order ");
+//				for (int i=0; i<itemOrder.length; i++) {
+//					System.out.print(itemOrder[i] + " ");
+//				}
+//				System.out.println();
+//				System.out.print("item sizes ");
+//				for (int i=0; i<itemSizes.length; i++) {
+//					System.out.print(itemSizes[i] + " ");
+//				}
+//				System.out.println();
 
 		coolBar.setRedraw(false);
 		coolBar.setItemLayout(itemOrder, new int[0], itemSizes);
@@ -566,8 +567,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			} else {
 				// wrap item no longer exists, wrap on the next visual item 
 				int visualIndex = layout.itemWrapIndices[i];
-				wrapIndices[j] = visualIndex - unusedCount + 1;
-				j++;
+				int nextIndex = visualIndex + 1;
+				if (nextIndex < itemSizes.length) {
+					wrapIndices[j] = nextIndex;
+					j++;
+				}
 			}
 		}
 		int[] itemWraps = new int[j];
