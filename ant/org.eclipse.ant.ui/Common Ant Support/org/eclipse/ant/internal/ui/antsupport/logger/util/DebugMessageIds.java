@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.antsupport.logger.util;
 
-import org.eclipse.ant.internal.ui.antsupport.logger.MessageIds;
 
-public class DebugMessageIds extends MessageIds {
+public class DebugMessageIds {
 	
 	public final static String MESSAGE_DELIMITER= ","; //$NON-NLS-1$
 	

@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
-import org.eclipse.ant.internal.ui.launchConfigurations.MessageIds;
-
-public class DebugMessageIds extends MessageIds {
+public class DebugMessageIds {
 	
 	public final static String MESSAGE_DELIMITER= ","; //$NON-NLS-1$
 	
