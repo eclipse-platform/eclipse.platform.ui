@@ -1548,11 +1548,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		Map env = null;
 		// build base environment
+		env= new HashMap();
 		boolean append= configuration.getAttribute(ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		if (append) {
-			env= getNativeEnvironment();
-		} else {
-			env= new HashMap();
+			env.putAll(getNativeEnvironment());
 		}
 		
 		// Add variables from config
@@ -1582,7 +1581,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 
 	 * @return the native system environment variables
 	 */
-	private static HashMap getNativeEnvironment() {
+	public static HashMap getNativeEnvironment() {
 		if (fgNativeEnv != null) {
 			return fgNativeEnv;
 		}

@@ -88,5 +88,14 @@
             mode="profile">
       </launchMode>
    </extension>
+<!-- Dynamic (String Substitution) Variables -->	
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="env_var"
+            resolver="org.eclipse.debug.internal.core.EnvironmentVariableResolver"
+            description="%env_var.description">
+      </variable>
+   </extension>
 
 </plugin>
