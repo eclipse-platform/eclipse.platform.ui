@@ -5,7 +5,13 @@ package org.eclipse.help.ui.internal.search;
  */
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+
+import org.eclipse.help.IAppServer;
+import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
+import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.help.internal.util.URLCoder;
+import org.eclipse.help.ui.browser.IBrowser;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.search.ui.*;
@@ -21,7 +27,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	private static final int ENTRY_FIELD_LENGTH = 256;
 	private static final int ENTRY_FIELD_ROW_COUNT = 1;
 	private Combo patternCombo = null;
-	private static java.util.List previousSearchOperations =
+	private static java.util.List previousSearchQueryData =
 		new java.util.ArrayList(20);
 	private Button advancedButton = null;
 	//private Button headingsButton = null;
@@ -29,13 +35,13 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	private ISearchPageContainer scontainer = null;
 	private boolean firstTime = true;
 	// Search query based on the data entered in the UI
-	private SearchOperation searchOperation;
+	private SearchQueryData searchQueryData;
 	/**
 	 * Search Page
 	 */
 	public HelpSearchPage() {
 		super();
-		searchOperation = new SearchOperation();
+		searchQueryData = new SearchQueryData();
 	}
 	public void createControl(Composite parent) {
 		Composite control = new Composite(parent, SWT.NULL);
@@ -64,9 +70,9 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 				if (patternCombo.getSelectionIndex() < 0)
 					return;
 				int index =
-					previousSearchOperations.size() - 1 - patternCombo.getSelectionIndex();
-				searchOperation = (SearchOperation) previousSearchOperations.get(index);
-				patternCombo.setText(searchOperation.getQueryData().getExpression());
+					previousSearchQueryData.size() - 1 - patternCombo.getSelectionIndex();
+				searchQueryData = (SearchQueryData) previousSearchQueryData.get(index);
+				patternCombo.setText(searchQueryData.getExpression());
 				//headingsButton.setSelection(searchOperation.getQueryData().isFieldsSearch());
 				//filteringOptions.setExcludedCategories(
 				//searchOperation.getQueryData().getExcludedCategories());
@@ -107,31 +113,41 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	 * @see ISearchPage#performAction()
 	 */
 	public boolean performAction() {
-		searchOperation.getQueryData().setExpression(patternCombo.getText());
-		searchOperation.getQueryData().setFieldsSearch(false
+		searchQueryData.setExpression(patternCombo.getText());
+		searchQueryData.setFieldsSearch(false
 		/*headingsButton.getSelection()*/
 		);
 		//java.util.List excluded = filteringOptions.getExcludedCategories();
-		searchOperation.getQueryData().setCategoryFiltering(false
+		searchQueryData.setCategoryFiltering(false
 		/*excluded.size() > 0*/
 		);
-		searchOperation.getQueryData().setExcludedCategories(new ArrayList(0)
+		searchQueryData.setExcludedCategories(new ArrayList(0)
 		/*excluded*/
 		);
-		if (!previousSearchOperations.contains(searchOperation))
-			previousSearchOperations.add(searchOperation);
+		if (!previousSearchQueryData.contains(searchQueryData))
+			previousSearchQueryData.add(searchQueryData);
 		IRunnableContext context = null;
 		scontainer.getRunnableContext();
 		Shell shell = patternCombo.getShell();
-		if (context == null)
-			context = new ProgressMonitorDialog(shell);
-		try {
-			context.run(true, true, searchOperation);
-		} catch (InvocationTargetException ex) {
-			return false;
-		} catch (InterruptedException e) {
-			return false;
-		}
+
+				try {
+					//Help.displayHelp(topicsURL);
+					IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
+					if (appServer == null)
+						return true; // may want to display an error message
+						
+					String url = 
+						"http://"
+							+ appServer.getHost()
+							+ ":"
+							+ appServer.getPort()
+							+ "/help?tab=search&query="+URLCoder.encode(searchQueryData.getExpression());
+					IBrowser browser=((DefaultHelp)WorkbenchHelp.getHelpSupport()).getHelpBrowser();
+					browser.displayURL(url);
+				} catch (Exception e) {
+				}
+
+
 		return true;
 	}
 	public void setContainer(ISearchPageContainer container) {
@@ -145,11 +161,10 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			if (firstTime) {
 				firstTime = false;
 				// Set item and text here to prevent page from resizing
-				String[] patterns = new String[previousSearchOperations.size()];
-				for (int i = 0; i < previousSearchOperations.size(); i++) {
-					patterns[previousSearchOperations.size() - 1 - i] =
-						((SearchOperation) previousSearchOperations.get(i))
-							.getQueryData()
+				String[] patterns = new String[previousSearchQueryData.size()];
+				for (int i = 0; i < previousSearchQueryData.size(); i++) {
+					patterns[previousSearchQueryData.size() - 1 - i] =
+						((SearchQueryData) previousSearchQueryData.get(i))
 							.getExpression();
 				}
 				patternCombo.setItems(patterns);
