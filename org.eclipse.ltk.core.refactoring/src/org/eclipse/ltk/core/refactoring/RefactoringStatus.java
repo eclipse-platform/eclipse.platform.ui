@@ -102,12 +102,35 @@ public class RefactoringStatus {
 	 * Returns the list of refactoring status entries.
 	 * 
 	 * @return the list of refactoring status entries. Returns an empty array
-	 *  if not entries are managed.
+	 *  if no entries are managed.
 	 */
 	public RefactoringStatusEntry[] getEntries() {
 		return (RefactoringStatusEntry[])fEntries.toArray(new RefactoringStatusEntry[fEntries.size()]);
 	}
 	
+	/**
+	 * Returns a list of refactoring status entries which are considered equal
+	 * to the specified status entry.
+	 * 
+	 * @param comparator the comparator to determine whether two status entries
+	 *               are considered equal
+	 * @param entry the refactoring status entry to compare the entries of this
+	 *               status with
+	 * @return the list of refactoring status entries that are considered equal
+	 *               to the specified one, in no particular order. Returns an empty
+	 *               array if no entries are managed or none of them matches.
+	 */
+	public RefactoringStatusEntry[] getEntries(IRefactoringStatusEntryComparator comparator, RefactoringStatusEntry entry) {
+		final List matches= new ArrayList(fEntries.size());
+		RefactoringStatusEntry current= null;
+		for (Iterator iterator= fEntries.iterator(); iterator.hasNext();) {
+			current= (RefactoringStatusEntry) iterator.next();
+			if (comparator.compare(current, entry) == 0)
+				matches.add(current);
+		}
+		return (RefactoringStatusEntry[]) matches.toArray(new RefactoringStatusEntry[matches.size()]);
+	}
+
 	/**
 	 * Returns whether the status has entries or not.
 	 * 
