@@ -109,9 +109,11 @@ public class WorkbenchWindow
 	private Workbench workbench;
 	private PageList pageList = new PageList();
 	private PageListenerList pageListeners = new PageListenerList();
-	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
+	private PerspectiveListenerListOld perspectiveListeners =
+		new PerspectiveListenerListOld();
 	private IPartDropListener partDropListener;
-	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
+	private WWinPerspectiveService perspectiveService =
+		new WWinPerspectiveService(this);
 	private KeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
@@ -438,7 +440,9 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						actionsForActionSets.put(command, new ActionHandler(pluginAction));
+						actionsForActionSets.put(
+							command,
+							new ActionHandler(pluginAction));
 				}
 			}
 		}
@@ -450,7 +454,9 @@ public class WorkbenchWindow
 		String command = globalAction.getActionDefinitionId();
 
 		if (command != null)
-			actionsForGlobalActions.put(command, new ActionHandler(globalAction));
+			actionsForGlobalActions.put(
+				command,
+				new ActionHandler(globalAction));
 
 		workbench.updateCommandsAndContexts();
 	}
@@ -812,7 +818,8 @@ public class WorkbenchWindow
 		final MenuManager result = super.createMenuManager();
 		result.setOverrides(new IContributionManagerOverrides() {
 
-			private CommandManager commandManager = CommandManager.getInstance();
+			private CommandManager commandManager =
+				CommandManager.getInstance();
 
 			private String formatCarbon(KeySequence keySequence) {
 				StringBuffer stringBuffer = new StringBuffer();
@@ -854,34 +861,49 @@ public class WorkbenchWindow
 				if (!(contributionItem instanceof ActionContributionItem))
 					return null;
 
-				ActionContributionItem actionContributionItem = (ActionContributionItem) contributionItem;
-				String commandId = actionContributionItem.getAction().getActionDefinitionId();
+				ActionContributionItem actionContributionItem =
+					(ActionContributionItem) contributionItem;
+				String commandId =
+					actionContributionItem.getAction().getActionDefinitionId();
 
 				if (commandId == null) {
-					int accelerator = actionContributionItem.getAction().getAccelerator();
+					int accelerator =
+						actionContributionItem.getAction().getAccelerator();
 
 					if (accelerator != 0) {
-						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
-						KeySequence keySequence = KeySequence.getInstance(keyStroke);
-						Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
+						KeyStroke keyStroke =
+							KeySupport.convertAcceleratorToKeyStroke(
+								accelerator);
+						KeySequence keySequence =
+							KeySequence.getInstance(keyStroke);
+						Map matchesByKeySequenceForMode =
+							commandManager.getMatchesByKeySequenceForMode();
 
-						if (matchesByKeySequenceForMode.get(keySequence) == null)
+						if (matchesByKeySequenceForMode.get(keySequence)
+							== null)
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 		
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
-					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
+					Map keyBindingsByCommandId =
+						commandManager.getKeyBindingsByCommandId();
+					SortedSet keyBindings =
+						(SortedSet) keyBindingsByCommandId.get(commandId);
 
 					if (keyBindings != null) {
-						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+						IKeyBinding keyBinding =
+							(IKeyBinding) keyBindings.first();
 
 						if (keyBinding != null) {
-							KeySequence keySequence = keyBinding.getKeySequence();
+							KeySequence keySequence =
+								keyBinding.getKeySequence();
 							List keyStrokes = keySequence.getKeyStrokes();
 
 							if (keyStrokes.size() == 1) {
-								KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-								return new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+								KeyStroke keyStroke =
+									(KeyStroke) keyStrokes.get(0);
+								return new Integer(
+									KeySupport.convertKeyStrokeToAccelerator(
+										keyStroke));
 							}
 						}
 					}
@@ -894,32 +916,44 @@ public class WorkbenchWindow
 				if (!(contributionItem instanceof ActionContributionItem))
 					return null;
 
-				ActionContributionItem actionContributionItem = (ActionContributionItem) contributionItem;
-				String commandId = actionContributionItem.getAction().getActionDefinitionId();
+				ActionContributionItem actionContributionItem =
+					(ActionContributionItem) contributionItem;
+				String commandId =
+					actionContributionItem.getAction().getActionDefinitionId();
 
 				if (commandId == null) {
-					int accelerator = actionContributionItem.getAction().getAccelerator();
+					int accelerator =
+						actionContributionItem.getAction().getAccelerator();
 
 					if (accelerator != 0) {
-						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
-						KeySequence keySequence = KeySequence.getInstance(keyStroke);
-						Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
+						KeyStroke keyStroke =
+							KeySupport.convertAcceleratorToKeyStroke(
+								accelerator);
+						KeySequence keySequence =
+							KeySequence.getInstance(keyStroke);
+						Map matchesByKeySequenceForMode =
+							commandManager.getMatchesByKeySequenceForMode();
 
-						if (matchesByKeySequenceForMode.get(keySequence) == null)
+						if (matchesByKeySequenceForMode.get(keySequence)
+							== null)
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
-					SortedSet keyBindings =	(SortedSet) keyBindingsByCommandId.get(commandId);
+					Map keyBindingsByCommandId =
+						commandManager.getKeyBindingsByCommandId();
+					SortedSet keyBindings =
+						(SortedSet) keyBindingsByCommandId.get(commandId);
 
 					if (keyBindings != null) {
-						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+						IKeyBinding keyBinding =
+							(IKeyBinding) keyBindings.first();
 
 						if (keyBinding != null)
 							return formatCarbon(keyBinding.getKeySequence());
 					}
 				} else {
-					String acceleratorText = commandManager.getKeyTextForCommand(commandId);
+					String acceleratorText =
+						commandManager.getKeyTextForCommand(commandId);
 
 					if (acceleratorText != null)
 						return acceleratorText;
@@ -954,10 +988,14 @@ public class WorkbenchWindow
 				char altChar = Character.toUpperCase(text.charAt(index + 1));
 				KeySequence mode = commandManager.getMode();
 				List keyStrokes = new ArrayList(mode.getKeyStrokes());
-				keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(SWT.ALT | altChar));
+				keyStrokes.add(
+					KeySupport.convertAcceleratorToKeyStroke(
+						SWT.ALT | altChar));
 				KeySequence childMode = KeySequence.getInstance(keyStrokes);
-				Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
-				Match match = (Match) matchesByKeySequenceForMode.get(childMode);
+				Map matchesByKeySequenceForMode =
+					commandManager.getMatchesByKeySequenceForMode();
+				Match match =
+					(Match) matchesByKeySequenceForMode.get(childMode);
 
 				if (match == null || match.getCommandId() == null)
 					return text;
@@ -1166,7 +1204,10 @@ public class WorkbenchWindow
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(workbench.getActionService(), workbench.getContextActivationService());
+			keyBindingService =
+				new KeyBindingService(
+					workbench.getActionService(),
+					workbench.getContextActivationService());
 			updateActiveActions();
 		}
 
