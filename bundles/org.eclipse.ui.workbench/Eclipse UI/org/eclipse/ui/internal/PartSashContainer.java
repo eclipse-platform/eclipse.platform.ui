@@ -223,6 +223,18 @@ protected void addChild(RelationshipInfo info) {
 
 }
 /**
+ * Adds the child using ratio and position attributes
+ * from the specified placeholder without replacing
+ * the placeholder
+ */
+void addChildForPlaceholder(LayoutPart part, LayoutPart placeholder) {
+	//FIXME we need to get the relation and ratio 
+	// from the placholder
+	add(part, SWT.RIGHT, 0.5f, placeholder);
+	root.updateSashes(parent);
+	resizeSashes(parent.getClientArea());
+}
+/**
  * See ILayoutContainer#allowBorder
  */
 public boolean allowsBorder() {

@@ -2760,7 +2760,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			PerspectivePresentation pres = newPersp.getPresentation();
 			for (Iterator iter = set.iterator(); iter.hasNext();) {
 				PartPane pane = (PartPane) iter.next();
-				boolean isVisible = pres.isPartVisible(pane.getID());
+				String secondaryId = null;
+				if (pane instanceof ViewPane) {
+					ViewPane vp = (ViewPane) pane;
+					IViewReference ref = (IViewReference)vp.getPartReference();
+					secondaryId = ref.getSecondaryId();
+				}
+				boolean isVisible = pres.isPartVisible(pane.getID(), secondaryId);
 				pane.setVisible(isVisible);
 			}
 		} else {

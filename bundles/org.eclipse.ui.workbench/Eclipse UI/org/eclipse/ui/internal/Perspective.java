@@ -120,7 +120,7 @@ public void addFastView(IViewReference ref) {
 	if (!isFastView(ref)) {
 		// Only remove the part from the presentation if it
 		// is actually in the presentation.
-		if (presentation.hasPlaceholder(pane.getID()) ||
+		if (presentation.hasPlaceholder(ref.getId(), ref.getSecondaryId()) ||
 			pane.getContainer() != null)
 				presentation.removePart(pane);
 		// We are drag-enabling the pane because it has been disabled
@@ -730,11 +730,13 @@ private IStatus createReferences(IMemento views[]) {
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
-		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
+		String primaryId = childMem.getString(IWorkbenchConstants.TAG_ID);
+		String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
 		// Create and open the view.
 		try {
-			if(!"true".equals(childMem.getString(IWorkbenchConstants.TAG_REMOVED))) //$NON-NLS-1$
-				viewFactory.createView(viewID);
+			if(!"true".equals(childMem.getString(IWorkbenchConstants.TAG_REMOVED))) { //$NON-NLS-1$
+				viewFactory.createView(primaryId, secondaryId);
+			}
 		} catch (PartInitException e) {
 			childMem.putString(IWorkbenchConstants.TAG_REMOVED,"true"); //$NON-NLS-1$
 			result.add(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,e.getMessage(),e));
@@ -786,16 +788,24 @@ public IStatus restoreState() {
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
-		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
-		if (viewID.equals(IIntroConstants.INTRO_VIEW_ID))
+		String primaryId = childMem.getString(IWorkbenchConstants.TAG_ID);
+		String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
+		if (primaryId.equals(IIntroConstants.INTRO_VIEW_ID))
 			continue;
 
 		// Create and open the view.
-		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.getView(viewID);
+		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.getView(primaryId, secondaryId);
+		
+		// report error
 		if(ref == null) {
+			String[] viewIds;
+			if (secondaryId != null)
+				viewIds = new String[]{primaryId};
+			else
+				viewIds = new String[]{primaryId+":"+secondaryId}; //$NON-NLS-1$		
 			result.add(new Status(
 				Status.ERROR,PlatformUI.PLUGIN_ID,0,
-				WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
+				WorkbenchMessages.format("Perspective.couldNotFind", viewIds), //$NON-NLS-1$
 				null));
 			continue;
 		}
@@ -1137,6 +1147,8 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		IViewReference ref = pane.getViewReference();
 		IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
 		viewMemento.putString(IWorkbenchConstants.TAG_ID, ref.getId());
+		if (ref.getSecondaryId() != null)
+			viewMemento.putString(IWorkbenchConstants.TAG_SECONDARY_ID, ref.getSecondaryId());
 	}
 
 	if(fastViews.size() > 0) {
@@ -1417,7 +1429,7 @@ public IViewPart showView(String viewId, String secondaryId)
 	
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
-	if (presentation.hasPlaceholder(viewId)) {
+	if (presentation.hasPlaceholder(viewId, secondaryId)) {
 		presentation.addPart(pane);
 	} else if (openViewMode == IPreferenceConstants.OVM_EMBED) {
 		presentation.addPart(pane);
