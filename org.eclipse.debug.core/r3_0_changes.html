@@ -23,6 +23,10 @@
   to be extended by third parties, to support new launch modes. For example, a 
   client could contribute a launch delegate that launches a Java Application in 
   profile mode (currently, the SDK does not provide a profiler).</p>
+<p>For backwards compatibility, the launch delegate supplied by a launch configuration 
+  type extension is used for the launch modes specified by the launch configuration 
+  type. A launch delegate supplied for a specific mode, is used only for that 
+  mode. </p>
 <p>The debug platform has added an optional element (<code>launchMode</code>), 
   to the definition of a launch tab group extension - <code>(org.eclipse.debug.ui.launchConfigurationTabGroup</code>), 
   to support the contribution of a set of tabs for a specific launch configuration 
@@ -35,5 +39,18 @@
   configuration is launched in the associated mode. For example, a client contributing 
   a profiler may also contribute a profiling perspective that should be displayed 
   when an application is profiled.</p>
+<p>For backwards compatibility, the tab group contributed for a launch confiugration 
+  type (specifying no launch mode), is used for all launch modes for which a specific 
+  launch tab group is not contributed. Thus, when a mode is not specified by a 
+  tab group, the tab group effectively becomes the default tab group.</p>
+<h2>API Changes</h2>
+<h3>Extensible Lanuch Modes</h3>
+<p>With the introduction of extensible launch modes, more than one launch delegate 
+  can exist for a launch configuration type. Releases prior to 3.0 only supported 
+  one launch delegate per launch configuration type. The method <code>ILaunchConfigurationType.getDelegate()</code> 
+  is now deprecated. The method <code>getDelegate(String mode)</code> should be 
+  used in its place to retrieve the launch delegate for a specific launch mode. 
+  The deprecated method has been changed to return the launch delegate for the 
+  <code>run</code> mode.</p>
 </body>
 </html>
