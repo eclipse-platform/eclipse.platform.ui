@@ -22,10 +22,9 @@ import org.eclipse.ui.internal.console.IOConsolePartitioner;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * A console that displays text, accepts keyboard input from users,
- * provides hyperlinks.
- * The console may have multiple output streams connected to it and
- * provides one input stream connected to the keyboard.
+ * A console that displays text from I/O streams. An I/O console can have multiple
+ * output streams connected to it and provides one input stream connected to the
+ * keyboard.
  * <p>
  * Clients may instantiate and subclass this class.
  * </p>
@@ -54,8 +53,8 @@ public class IOConsole extends TextConsole {
 
     
     /**
-     * Constructs a console with the given name, type, image, and the workbench's
-     * default encoding.
+     * Constructs a console with the given name, type, image, and lifecycle, with the
+     * workbench's default encoding.
      * 
      * @param name name to display for this console
      * @param consoleType console type identifier or <code>null</code>
@@ -89,8 +88,9 @@ public class IOConsole extends TextConsole {
     }
     
     /**
-     * Constructs a console with the given name, type, and image. Lifecycle methods
-     * will be called when this console is added/removed from the console manager.
+     * Constructs a console with the given name, type, and image with the workbench's
+     * default encoding. Lifecycle methods will be called when this console is
+     * added/removed from the console manager.
      * 
      * @param name name to display for this console
      * @param consoleType console type identifier or <code>null</code>
@@ -185,12 +185,14 @@ public class IOConsole extends TextConsole {
 	 *  water mark is exceeded (if -1 the console does not limit output)
 	 * @param high the maximum number of characters this console will cache in
 	 *  its text buffer (if -1 the console does not limit output)
-	 * @exception IllegalArgumentException if low >= high
+	 * @exception IllegalArgumentException if low >= high & low != -1
 	 */
 	public void setWaterMarks(int low, int high) {
-	    if (low >= high) {
-	        throw new IllegalArgumentException("High water mark must be greater than low water mark"); //$NON-NLS-1$
-	    }
+        if (low >= 0) {
+    	    if (low >= high) {
+    	        throw new IllegalArgumentException("High water mark must be greater than low water mark"); //$NON-NLS-1$
+    	    }
+        }
 		partitioner.setWaterMarks(low, high);
 	}
 

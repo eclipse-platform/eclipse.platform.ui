@@ -29,7 +29,8 @@ import org.eclipse.ui.internal.console.ConsolePatternMatcher;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * An abstract text console that supports regular expression matching.
+ * An abstract text console that supports regular expression matching and
+ * hyperlinks.
  * <p>
  * Pattern match listeners can be registered with a console programmatically
  * or via the <code>org.eclipse.ui.console.consolePatternMatchListeners</code>
